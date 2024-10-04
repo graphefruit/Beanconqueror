@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanModalSelectComponent } from './bean-modal-select.component';
@@ -37,7 +38,7 @@ describe('BeanModalSelectComponent', () => {
     } as Settings;
     TestBed.configureTestingModule({
       declarations: [BeanModalSelectComponent, TranslatePipe],
-      imports: [IonicModule.forRoot()],
+      imports: [IonicModule.forRoot(), FormsModule],
       providers: [
         {
           provide: UIBeanStorage,

@@ -26,18 +26,12 @@ import { PrivacyComponent } from '../info/privacy/privacy.component';
 import { TermsComponent } from '../info/terms/terms.component';
 import { ThanksComponent } from '../info/thanks/thanks.component';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { BeansPage } from '../beans/beans.page';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
 import { BeansEditComponent } from '../beans/beans-edit/beans-edit.component';
@@ -49,7 +43,6 @@ import { LogComponent } from '../info/log/log.component';
 import { LogTextComponent } from '../info/log/log-text/log-text.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { HelperPage } from '../helper/helper.page';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { CuppingRadarComponent } from '../../components/cupping-radar/cupping-radar.component';
@@ -82,7 +75,6 @@ import { PreparationOverlayDirective } from '../../directive/preparation-overlay
 import { DisableDoubleClickDirective } from '../../directive/disable-double-click.directive';
 import { NgxStarsModule } from 'ngx-stars';
 import { BrewCuppingComponent } from '../brew/brew-cupping/brew-cupping.component';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { UpdatePopoverComponent } from '../../popover/update-popover/update-popover.component';
 import { PreparationCustomParametersComponent } from '../preparation/preparation-custom-parameters/preparation-custom-parameters.component';
 import { DefaultCustomParameterComponent } from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
@@ -142,13 +134,11 @@ import { BrewBeverageQuantityCalculatorComponent } from '../brew/brew-beverage-q
 import { BrewFlavorPickerComponent } from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import { BrewChoosePreparationToBrewComponent } from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import { ShortPressDirective } from '../../directive/short-press.directive';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TransformDateDirective } from '../../directive/transform-date';
 import { PreparationEditToolComponent } from '../preparation/preparation-edit-tool/preparation-edit-tool.component';
 import { ListViewParameterComponent } from '../brew-parameter/list-view-parameter/list-view-parameter.component';
 import { ListViewCustomParameterComponent } from '../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
 import { BrewFlowComponent } from '../brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { BeanFilterComponent } from '../beans/bean-filter/bean-filter.component';
 import { ChooseDateOverlayDirective } from '../../directive/choose-date.directive';
 import { BeanPopoverAddComponent } from '../beans/bean-popover-add/bean-popover-add.component';
@@ -374,8 +364,6 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     PipesModule,
   ],
   providers: [
-    AppVersion,
-    StatusBar,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
@@ -392,24 +380,16 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     TransformDateDirective,
     DisableDoubleClickDirective,
     InAppBrowser,
-    File,
-    Device,
     FileChooser,
-    FilePath,
 
     SocialSharing,
-    Keyboard,
     ThreeDeeTouch,
-    Camera,
     ImagePicker,
     AndroidPermissions,
     InAppBrowser,
     Globalization,
-    Geolocation,
     Insomnia,
     Deeplinks,
-    FileTransfer,
-    ScreenOrientation,
   ],
   exports: [
     SettingsPage,

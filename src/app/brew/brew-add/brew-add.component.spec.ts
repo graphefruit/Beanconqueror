@@ -8,10 +8,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { BrewTimerComponent } from '../../../components/brew-timer/brew-timer.component';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
@@ -20,7 +17,6 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
@@ -54,10 +50,7 @@ describe('BrewAddComponent', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: File },
-        { provide: Camera },
         { provide: ImagePicker },
-        { provide: AndroidPermissions },
         {
           provide: UIBeanStorage,
           useValue: {
@@ -95,7 +88,6 @@ describe('BrewAddComponent', () => {
         { provide: UIAnalytics, useValue: {} },
         { provide: BrewTrackingService, useValue: {} },
         { provide: VisualizerService, useValue: {} },
-        Geolocation,
         Insomnia,
         { provide: Router },
         { provide: SocialSharing },

@@ -309,7 +309,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
           await this.uiAlert.showLoadingSpinner();
           try {
-            const jsonParsed = await this.uiFileHelper.getJSONFile(
+            const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
               referencePath
             );
             this.reference_profile_raw = jsonParsed;
@@ -1977,7 +1977,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.__setPressureFlow({ actual: press, old: press });
       this.__setTemperatureFlow({ actual: temp, old: temp });
     };
-    prepDeviceCall.fetchRuntimeData(() => {
+
+    // TODO Capacitor migration: The callback was not awaited before, so I kept
+    // it that way. Maybe it should be awaited.
+    prepDeviceCall.fetchRuntimeData().then(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.
       setSanremoData();
     });
@@ -1988,7 +1991,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         //let apiDelayEnd;
 
         // We don't use the callback function to make sure we don't have to many performance issues
-        prepDeviceCall.fetchRuntimeData(() => {
+        prepDeviceCall.fetchRuntimeData().then(() => {
           //apiDelayEnd = moment();
 
           //before we start the interval, we fetch the data once to overwrite, and set them.
@@ -2098,13 +2101,15 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.__setPressureFlow({ actual: press, old: press });
       this.__setTemperatureFlow({ actual: temp, old: temp });
     };
-    prepDeviceCall.fetchPressureAndTemperature(() => {
+    // TODO Capacitor migration: The callback was not awaited before, so I kept
+    // it that way. Maybe it should be awaited.
+    prepDeviceCall.fetchPressureAndTemperature().then(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.
       setTempAndPressure();
     });
     setTimeout(() => {
       // Give the machine some time :)
-      prepDeviceCall.fetchAndSetDeviceTemperature(() => {
+      prepDeviceCall.fetchAndSetDeviceTemperature().then(() => {
         try {
           const temp = prepDeviceCall.getDevicetemperature();
           if (temp > 70) {
@@ -2120,7 +2125,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.xeniaOverviewInterval = setInterval(async () => {
       try {
         // We don't use the callback function to make sure we don't have to many performance issues
-        prepDeviceCall.fetchPressureAndTemperature(() => {
+        prepDeviceCall.fetchPressureAndTemperature().then(() => {
           //before we start the interval, we fetch the data once to overwrite, and set them.
           setTempAndPressure();
         });
@@ -3223,7 +3228,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (this.platform.is('cordova')) {
         if (_flowProfile !== '') {
           try {
-            const jsonParsed = await this.uiFileHelper.getJSONFile(
+            const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
               _flowProfile
             );
             resolve(jsonParsed);
@@ -3240,7 +3245,9 @@ export class BrewBrewingGraphComponent implements OnInit {
     const flowProfilePath =
       'brews/' + this.data.config.uuid + '_flow_profile.json';
     try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+        flowProfilePath
+      );
       this.flow_profile_raw = jsonParsed;
     } catch (ex) {}
   }
@@ -3250,7 +3257,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (this.data.flow_profile !== '') {
         const flowProfilePath =
           'brews/' + this.data.config.uuid + '_flow_profile.json';
-        await this.uiFileHelper.deleteFile(flowProfilePath);
+        await this.uiFileHelper.deleteInternalFile(flowProfilePath);
       }
     } catch (ex) {}
   }

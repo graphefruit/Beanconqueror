@@ -26,7 +26,6 @@ import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIAlert } from '../../../services/uiAlert';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import moment from 'moment';
 
 import { UILog } from '../../../services/uiLog';
@@ -73,7 +72,6 @@ export class BrewDetailComponent {
     private readonly uiAlert: UIAlert,
     private readonly socialSharing: SocialSharing,
     private readonly platform: Platform,
-    private readonly screenOrientation: ScreenOrientation,
     private readonly alertCtrl: AlertController,
     private readonly uiLog: UILog
   ) {
@@ -303,7 +301,7 @@ export class BrewDetailComponent {
 
   public async downloadJSONProfile() {
     if (this.data.flow_profile !== '') {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
         this.data.flow_profile
       );
       const filename: string =

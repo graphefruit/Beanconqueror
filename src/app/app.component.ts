@@ -5,10 +5,12 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
+import { Device } from '@capacitor/device';
+import { Animation, StatusBar, Style } from '@capacitor/status-bar';
+import { Keyboard } from '@capacitor/keyboard';
 
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import {
   ThreeDeeTouch,
   ThreeDeeTouchQuickAction,
@@ -53,8 +55,6 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 
 import { UIToast } from '../services/uiToast';
@@ -215,7 +215,6 @@ export class AppComponent implements AfterViewInit {
   constructor(
     private readonly router: Router,
     public platform: Platform,
-    public statusBar: StatusBar,
     private readonly uiLog: UILog,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -224,7 +223,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly menuCtrl: MenuController,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly keyboard: Keyboard,
     private readonly threeDeeTouch: ThreeDeeTouch,
     private readonly modalCtrl: ModalController,
     private readonly uiHelper: UIHelper,
@@ -246,8 +244,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly cleanupService: CleanupService,
-    private readonly device: Device,
-    private readonly appVersion: AppVersion,
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
     private readonly uiExportImportHelper: UIExportImportHelper,
@@ -292,14 +288,14 @@ export class AppComponent implements AfterViewInit {
     this.platform.ready().then(async () => {
       await this.uiStorage.init();
       try {
+        const deviceInfo = await Device.getInfo();
         // #285 - Add more device loggings
-        this.uiLog.log(`Device-Model: ${this.device.model}`);
-        this.uiLog.log(`Manufacturer: ${this.device.manufacturer}`);
-        this.uiLog.log(`Platform: ${this.device.platform}`);
-        this.uiLog.log(`Version: ${this.device.version}`);
+        this.uiLog.log(`Device-Model: ${deviceInfo.model}`);
+        this.uiLog.log(`Manufacturer: ${deviceInfo.manufacturer}`);
+        this.uiLog.log(`Platform: ${deviceInfo.platform}`);
+        this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
         if (this.platform.is('cordova')) {
-          const versionCode: string | number =
-            await this.appVersion.getVersionNumber();
+          const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
           this.uiLog.log(
             `Storage-Driver: ${this.uiStorage.getStorage().driver}`
@@ -327,15 +323,13 @@ export class AppComponent implements AfterViewInit {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       // #7
-      this.statusBar.show();
-      this.statusBar.styleDefault();
-      if (this.platform.is('android')) {
-        try {
-          this.statusBar.styleLightContent();
-        } catch (ex) {}
-      }
+      await StatusBar.show({ animation: Animation.None });
+      const statusBarStyle = this.platform.is('android')
+        ? Style.Light
+        : Style.Default;
+      await StatusBar.setStyle({ style: statusBarStyle });
 
-      this.keyboard.hideFormAccessoryBar(false);
+      Keyboard.setAccessoryBarVisible({ isVisible: true });
       if (environment.production === true) {
         // When we're in cordova, disable the log messages
         this.uiLog.disable();
@@ -983,9 +977,7 @@ export class AppComponent implements AfterViewInit {
       ) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home') >= 0) {
-        window.plugins.appMinimize.minimize();
-        // or if that doesn't work, try
-        // navigator['app'].exitApp();
+        App.minimizeApp();
       } else {
         this.router.navigate(['/home/dashboard'], { replaceUrl: true });
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");

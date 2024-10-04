@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { App } from '@capacitor/app';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,7 +13,6 @@ export class AboutComponent implements OnInit {
 
   constructor(
     public platform: Platform,
-    private readonly appVersion: AppVersion,
     private readonly translate: TranslateService
   ) {}
 
@@ -24,8 +23,7 @@ export class AboutComponent implements OnInit {
   public async setAppVersion() {
     this.versionStr = this.translate.instant('PAGE_ABOUT_NO_VERSION_AVAILABLE');
     if (this.platform.is('cordova')) {
-      const versionCode: string | number =
-        await this.appVersion.getVersionNumber();
+      const versionCode = (await App.getInfo()).version;
       this.versionStr =
         this.translate.instant('PAGE_ABOUT_APP_VERSION') + ': ' + versionCode;
     }

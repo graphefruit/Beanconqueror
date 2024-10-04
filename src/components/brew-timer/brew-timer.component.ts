@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 
+import { Device } from '@capacitor/device';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
@@ -16,7 +17,6 @@ import { ModalController, Platform } from '@ionic/angular';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 @Component({
   selector: 'brew-timer',
@@ -100,15 +100,19 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public timer: ITimer;
   public settings: Settings;
+  private isIos16 = false;
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly platform: Platform,
-    private readonly device: Device
+    private readonly platform: Platform
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    Device.getInfo().then((deviceInfo) => {
+      this.isIos16 =
+        this.platform.is('ios') && deviceInfo.osVersion.indexOf('16.') >= 0;
+    });
   }
 
   public smartScaleConnected() {
@@ -201,11 +205,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   private __preventEventClickOnIos(_event) {
     try {
       //Just do this on iOS 16.X...
-      if (
-        _event &&
-        this.platform.is('ios') &&
-        this.device.version.indexOf('16.') >= 0
-      ) {
+      if (_event && this.isIos16) {
         _event.cancelBubble = true;
         _event.preventDefault();
         _event.stopImmediatePropagation();
@@ -441,11 +441,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public async showTimeOverlay(_event) {
     try {
       //Just do this on iOS 16.X...
-      if (
-        _event &&
-        this.platform.is('ios') &&
-        this.device.version.indexOf('16.') >= 0
-      ) {
+      if (_event && this.isIos16) {
         if (_event.target.outerHTML.indexOf('<ion-input') >= 0) {
           /** If <ion-input is the start, the click was somehow done by the button, else just the "input" is clicked...
            * Thats why we return here, and ignore the click.

@@ -6,7 +6,6 @@ import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
 import * as XLSX from 'xlsx';
-import { File, FileEntry } from '@awesome-cordova-plugins/file/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { UIBrewStorage } from './uiBrewStorage';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,7 +36,6 @@ export class UIExcel {
     protected uiStorage: UIStorage,
     protected uiHelper: UIHelper,
     protected uiLog: UILog,
-    private readonly file: File,
     private readonly platform: Platform,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiBeanStorage: UIBeanStorage,
@@ -559,11 +557,7 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
-          filename,
-          blob,
-          true
-        );
+        await this.uiFileHelper.exportFile(filename, blob, true);
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
@@ -673,11 +667,7 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
-          filename,
-          blob,
-          true
-        );
+        await this.uiFileHelper.exportFile(filename, blob, true);
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
@@ -1266,11 +1256,7 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
-          filename,
-          blob,
-          true
-        );
+        await this.uiFileHelper.exportFile(filename, blob, true);
         await this.uiAlert.hideLoadingSpinner();
       } catch (ex) {}
     } catch (e) {

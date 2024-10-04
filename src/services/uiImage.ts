@@ -1,8 +1,12 @@
 /** Core */
 import { Injectable } from '@angular/core';
+import {
+  Camera,
+  CameraDirection,
+  CameraResultType,
+  CameraSource,
+} from '@capacitor/camera';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-/** Ionic native  */
-import { Camera, CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 /** Ionic */
 import { AlertController, ModalController, Platform } from '@ionic/angular';
@@ -10,7 +14,6 @@ import { UIHelper } from './uiHelper';
 import { UIFileHelper } from './uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { UIAlert } from './uiAlert';
 import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
 import { Brew } from '../classes/brew/brew';
@@ -29,7 +32,6 @@ import { UILog } from './uiLog';
 })
 export class UIImage {
   constructor(
-    private readonly camera: Camera,
     private readonly imagePicker: ImagePicker,
     private readonly alertController: AlertController,
     private readonly platform: Platform,
@@ -37,73 +39,41 @@ export class UIImage {
     private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly translate: TranslateService,
-    private readonly filePath: FilePath,
     private readonly uiAlert: UIAlert,
     private readonly modalCtrl: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiLog: UILog
   ) {}
 
-  private getImageQuality() {
+  private getImageQuality(): number {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.image_quality;
   }
 
-  public async takePhoto(): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
-      // const isIos: boolean = this.platform.is('ios');
-      const options: CameraOptions = {
-        quality: this.getImageQuality(),
-        destinationType: this.camera.DestinationType.DATA_URL,
-        encodingType: this.camera.EncodingType.JPEG,
-        mediaType: this.camera.MediaType.PICTURE,
-        sourceType: this.camera.PictureSourceType.CAMERA,
-        saveToPhotoAlbum: false,
-        correctOrientation: true,
-        cameraDirection: this.camera.Direction.BACK,
-      };
-
-      this.camera.getPicture(options).then(
-        (imageData) => {
-          const imageStr: string = `data:image/jpeg;base64,${imageData}`;
-          this.uiFileHelper
-            .saveBase64File('beanconqueror_image', '.jpg', imageStr)
-            .then(
-              (_newURL) => {
-                // const filePath = _newURL.replace(/^file:\/\//, '');
-                resolve(_newURL);
-                // this.__cleanupCamera();
-              },
-              (_error) => {
-                reject(_error);
-              }
-            );
-        },
-        (_error: any) => {
-          reject(_error);
-        }
-      );
-    });
-
-    return promise;
+  private async saveBase64Photo(base64: string): Promise<string> {
+    const fileName = await this.uiFileHelper.generateInternalPath(
+      'beanconqueror_image',
+      '.jpg'
+    );
+    const fileUri = await this.uiFileHelper.writeInternalFileFromBase64(
+      base64,
+      fileName
+    );
+    return fileUri;
   }
 
-  private __cleanupCamera() {
-    try {
-      const isCordova: boolean = this.platform.is('cordova');
-      const isIOS: boolean = this.platform.is('ios');
-      if (isCordova && isIOS) {
-        this.uiLog.log('Cleanup camera');
-        this.camera.cleanup().then(
-          () => {
-            this.uiLog.log('Cleanup camera - sucessfully');
-          },
-          () => {
-            this.uiLog.error('Cleanup camera - error');
-          }
-        );
-      }
-    } catch (ex) {}
+  public async takePhoto(): Promise<string> {
+    const imageData = await Camera.getPhoto({
+      correctOrientation: true,
+      direction: CameraDirection.Rear,
+      quality: this.getImageQuality(),
+      resultType: CameraResultType.Base64, // starts with 'data:image/jpeg;base64,'
+      saveToGallery: false,
+      source: CameraSource.Camera,
+    });
+
+    const fileUri = await this.saveBase64Photo(imageData.base64String);
+    return fileUri;
   }
 
   public async choosePhoto(): Promise<any> {
@@ -130,14 +100,10 @@ export class UIImage {
                       for await (const result of results) {
                         if (result && result.path) {
                           try {
-                            const imageStr: string = `data:image/jpeg;base64,${result.path}`;
-                            const newURL =
-                              await this.uiFileHelper.saveBase64File(
-                                'beanconqueror_image',
-                                '.jpg',
-                                imageStr
-                              );
-                            fileurls.push(newURL);
+                            const newUri = await this.saveBase64Photo(
+                              result.path
+                            );
+                            fileurls.push(newUri);
                           } catch (ex) {
                             //nothing
                           }
@@ -189,25 +155,14 @@ export class UIImage {
                           }
                         }
 
-                        const result =
-                          await this.uiFileHelper.getBase64FileFromExternalAndroid(
-                            newFileName
-                          );
-                        let imageStr: string = '';
-                        if (result.indexOf('data:image') >= 0) {
-                          // All good
-                          imageStr = result;
-                        } else {
-                          imageStr = `data:image/jpeg;base64,${result}`;
-                        }
+                        let imageBase64 =
+                          await this.uiFileHelper.readFileAsBase64(newFileName);
 
                         try {
-                          const newUrl = await this.uiFileHelper.saveBase64File(
-                            'beanconqueror_image',
-                            '.jpg',
-                            imageStr
+                          const newUri = await this.saveBase64Photo(
+                            imageBase64
                           );
-                          fileurls.push(newUrl);
+                          fileurls.push(newUri);
                         } catch (ex) {}
                       } catch (ex) {
                         setTimeout(() => {

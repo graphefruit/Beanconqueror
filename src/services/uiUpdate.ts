@@ -14,18 +14,18 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { UILog } from './uiLog';
 import { UiVersionStorage } from './uiVersionStorage';
 import { Version } from '../classes/version/iVersion';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { ModalController, Platform } from '@ionic/angular';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UIFileHelper } from './uiFileHelper';
-import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import { UIAlert } from './uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 import { UIStorage } from './uiStorage';
 import { maxBy, keys } from 'lodash';
 import { UIHelper } from './uiHelper';
 import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
+import { App } from '@capacitor/app';
 
 @Injectable({
   providedIn: 'root',
@@ -39,11 +39,9 @@ export class UIUpdate {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiLog: UILog,
     private readonly uiVersionStorage: UiVersionStorage,
-    private readonly appVersion: AppVersion,
     private readonly platform: Platform,
     private readonly modalCtrl: ModalController,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly file: File,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
     private readonly uiStorage: UIStorage,
@@ -377,14 +375,18 @@ export class UIUpdate {
                         oldPath = oldPath.substr(1);
                       }
                       this.uiLog.log(
-                        `${_version} - Move file from ${this.file.dataDirectory} to ${this.file.documentsDirectory}; Name: ${oldPath}`
+                        `${_version} - Move file from data directory to document directory; Name: ${oldPath}`
                       );
-                      const newPath: string = await this.uiFileHelper.moveFile(
-                        this.file.dataDirectory,
-                        this.file.documentsDirectory,
-                        oldPath,
-                        oldPath
-                      );
+                      await Filesystem.rename({
+                        directory: Directory.Data,
+                        from: oldPath,
+                        to: oldPath,
+                        toDirectory: Directory.Documents,
+                      });
+                      const { uri: newPath } = await Filesystem.getUri({
+                        path: oldPath,
+                        directory: Directory.Documents,
+                      });
 
                       this.uiLog.log(
                         `${_version} Update path from ${oldPath} to ${newPath}`
@@ -611,7 +613,7 @@ export class UIUpdate {
     const promise = new Promise(async (resolve, reject) => {
       let versionCode: string;
       if (this.platform.is('cordova')) {
-        versionCode = await this.appVersion.getVersionNumber();
+        versionCode = (await App.getInfo()).version;
       } else {
         // Hardcored for testing
         versionCode = '7.5.0';

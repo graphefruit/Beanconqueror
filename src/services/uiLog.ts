@@ -3,11 +3,6 @@ import { Injectable } from '@angular/core';
 import { LOGS_ENUM } from '../enums/logs/logs';
 import { ILogInterface } from '../interfaces/log/iLog';
 import moment from 'moment';
-import { Brew } from '../classes/brew/brew';
-import { Bean } from '../classes/bean/bean';
-
-/** Third party */
-declare var console;
 
 @Injectable({
   providedIn: 'root',
@@ -45,30 +40,30 @@ export class UILog {
     return this.logs;
   }
 
-  public debug(_message): void {
-    this.generateLogMessage(LOGS_ENUM.LOG, _message);
+  public debug(_message, ...optionalParams: any[]): void {
+    this.generateLogMessage(LOGS_ENUM.LOG, _message, optionalParams);
     if (!this.disabled) {
-      console.log(_message);
+      console.log(_message, ...optionalParams);
     }
   }
-  public log(_message: string): void {
-    this.generateLogMessage(LOGS_ENUM.LOG, _message);
+  public log(_message: string, ...optionalParams: any[]): void {
+    this.generateLogMessage(LOGS_ENUM.LOG, _message, optionalParams);
     if (!this.disabled) {
-      console.log(_message);
+      console.log(_message, ...optionalParams);
     }
   }
 
-  public info(_message: string): void {
-    this.generateLogMessage(LOGS_ENUM.INFO, _message);
+  public info(_message: string, ...optionalParams: any[]): void {
+    this.generateLogMessage(LOGS_ENUM.INFO, _message, optionalParams);
     if (this.disabled === false && console.info) {
-      console.info(_message);
+      console.info(_message, ...optionalParams);
     }
   }
 
-  public error(_message: string): void {
-    this.generateLogMessage(LOGS_ENUM.ERR, _message);
+  public error(_message: string, ...optionalParams: any[]): void {
+    this.generateLogMessage(LOGS_ENUM.ERR, _message, optionalParams);
     if (this.disabled === false && console.error) {
-      console.error(_message);
+      console.error(_message, ...optionalParams);
     }
   }
 
@@ -76,21 +71,31 @@ export class UILog {
     this.generateLogMessage(LOGS_ENUM.ERR, _message);
   }
 
-  public warn(_message: string): void {
-    this.generateLogMessage(LOGS_ENUM.WARN, _message);
+  public warn(_message: string, ...optionalParams: any[]): void {
+    this.generateLogMessage(LOGS_ENUM.WARN, _message, optionalParams);
     if (this.disabled === false && console.warn) {
-      console.warn(_message);
+      console.warn(_message, ...optionalParams);
     }
   }
 
-  private generateLogMessage(_type: LOGS_ENUM, _message: string) {
+  private generateLogMessage(
+    _type: LOGS_ENUM,
+    _message: string,
+    ...optionalParams: any[]
+  ) {
     if (this.logs.length > 3000) {
       // Make sure we don't exceed when something wents wrong inside the app.
       this.logs = [];
     }
+
+    let formattedMessage = _message;
+    if (optionalParams.length > 0) {
+      formattedMessage += ` [${optionalParams.join(', ')}]`;
+    }
+
     const logMessage: ILogInterface = {} as ILogInterface;
     logMessage.key = _type;
-    logMessage.value = _message;
+    logMessage.value = formattedMessage;
     logMessage.timestamp = moment().format('DD.MM.YYYY HH:mm:ss:SSS');
     this.logs.push(logMessage);
   }

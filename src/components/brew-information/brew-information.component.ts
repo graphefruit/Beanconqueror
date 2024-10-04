@@ -443,7 +443,7 @@ export class BrewInformationComponent implements OnInit {
 
   private async readFlowProfile(): Promise<BrewFlow> {
     try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
         this.brew.flow_profile
       );
 

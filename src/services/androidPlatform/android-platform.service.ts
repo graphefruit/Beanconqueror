@@ -35,7 +35,7 @@ export class AndroidPlatformService {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
           // Delete on startup old json backup files
-          this.uiFileHelper.deleteZIPBackupsOlderThenSevenDays().then(
+          this.uiFileHelper.deleteZIPBackupsOlderThanSevenDays().then(
             () => {},
             () => {}
           );

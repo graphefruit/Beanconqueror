@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanListViewParameterComponent } from './bean-list-view-parameter.component';
@@ -20,7 +21,7 @@ describe('BeanListViewParameterComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [BeanListViewParameterComponent, TranslatePipe],
-      imports: [IonicModule.forRoot()],
+      imports: [IonicModule.forRoot(), FormsModule],
       providers: [
         {
           provide: UISettingsStorage,

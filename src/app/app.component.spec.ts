@@ -2,51 +2,37 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 
 import { AngularDelegate, ModalController } from '@ionic/angular';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from './app.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Storage } from '@ionic/storage';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { IntentHandlerService } from 'src/services/intentHandler/intent-handler.service';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { UIPreparationHelper } from 'src/services/uiPreparationHelper';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 describe('AppComponent', () => {
   let statusBarSpy, platformReadySpy, platformSpy;
 
   beforeEach(waitForAsync(() => {
-    statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault']);
-
     TestBed.configureTestingModule({
       declarations: [AppComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
-        { provide: StatusBar, useValue: statusBarSpy },
+        { provide: AndroidPermissions },
         { provide: Storage },
         { provide: InAppBrowser },
-        { provide: File },
-        { provide: Keyboard },
         { provide: ThreeDeeTouch },
         { provide: ModalController },
         { provide: Globalization },
         { provide: AngularDelegate },
         { provide: SocialSharing },
-        { provide: FileTransfer },
-        { provide: AppVersion },
         { provide: IntentHandlerService, useValue: {} },
-        { provide: AndroidPermissions },
         { provide: UIPreparationHelper, useValue: {} },
-        { provide: Device },
       ],
       imports: [RouterTestingModule.withRoutes([]), TranslateModule.forRoot()],
     }).compileComponents();
@@ -57,14 +43,6 @@ describe('AppComponent', () => {
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   });
-
-  /**it('should initialize the app', async () => {
-    TestBed.createComponent(AppComponent);
-    expect(platformSpy.ready).toHaveBeenCalled();
-    await platformReadySpy;
-    expect(statusBarSpy.styleDefault).toHaveBeenCalled();
-    expect(splashScreenSpy.hide).toHaveBeenCalled();
-  });**/
 
   /** it('should have menu labels', async () => {
     const fixture = await TestBed.createComponent(AppComponent);

@@ -16,6 +16,7 @@ import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { UILog } from '../../services/uiLog';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
@@ -88,6 +89,7 @@ export class BeansPage implements OnDestroy {
 
   private beanStorageChangeSubscription: Subscription;
   constructor(
+    private readonly uiLog: UILog,
     private readonly modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly uiBeanStorage: UIBeanStorage,
@@ -363,12 +365,13 @@ export class BeansPage implements OnDestroy {
 
   public async scanBean() {
     if (this.platform.is('cordova')) {
-      await this.qrScannerService.scan().then(
-        async (scannedCode) => {
-          await this.intenthandler.handleQRCodeLink(scannedCode);
-        },
-        () => {}
-      );
+      try {
+        const scannedCode = await this.qrScannerService.scan();
+        await this.intenthandler.handleQRCodeLink(scannedCode);
+      } catch (error) {
+        // Just log and do nothing else, it's likely the user just cancelled
+        this.uiLog.warn('Bean QR code scan error:', error);
+      }
     } else {
       // Test sample for development
       // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=e7ada0a6');

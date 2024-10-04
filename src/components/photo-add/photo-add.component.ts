@@ -74,12 +74,12 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
         // TAKE
         this.uiImage.takePhoto().then(
           (_path) => {
-            this.data.attachments.push(_path.toString());
+            this.data.attachments.push(_path);
             this.emitChanges();
           },
           (_error) => {
             this.uiAlert.showMessage(
-              JSON.stringify(_error),
+              _error.toString(),
               this.translate.instant('ERROR_OCCURED')
             );
           }
@@ -105,7 +105,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
     for (const path of splicedPaths) {
       try {
-        await this.uiFileHelper.deleteFile(path);
+        await this.uiFileHelper.deleteInternalFile(path);
         this.emitChanges();
         this.uiToast.showInfoToast('IMAGE_DELETED');
       } catch (ex) {

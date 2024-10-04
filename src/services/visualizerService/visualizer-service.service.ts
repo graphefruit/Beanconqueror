@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CapacitorHttp } from '@capacitor/core';
 import { UIFileHelper } from '../uiFileHelper';
 import { Visualizer } from '../../classes/visualizer/visualizer';
 import { Brew } from '../../classes/brew/brew';
@@ -9,8 +10,6 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UILog } from '../uiLog';
 import { UIBrewHelper } from '../uiBrewHelper';
-
-declare var cordova;
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +26,7 @@ export class VisualizerService {
 
   private async readFlowProfile(_brew: Brew): Promise<BrewFlow> {
     try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
         _brew.flow_profile
       );
 
@@ -39,191 +38,151 @@ export class VisualizerService {
     }
   }
 
-  public async importShotWithSharedCode(_shareCode: string) {
-    const retrieveURL =
-      'https://visualizer.coffee/api/shots/shared?code=' +
-      _shareCode +
-      '&with_data=1';
-
-    this.uiLog.log('Get SHOT-Data from visualizer ' + retrieveURL);
-    const options = {
-      method: 'get',
+  private getAuthHeaders(settings: Settings) {
+    const username = settings.visualizer_username;
+    const password = settings.visualizer_password;
+    const credentials = btoa(username + ':' + password);
+    return {
+      Authorization: 'Basic ' + credentials,
     };
-
-    cordova.plugin.http.sendRequest(
-      retrieveURL,
-      options,
-      (response) => {
-        try {
-          const parsedJSON = JSON.parse(response.data);
-          if ('brewdata' in parsedJSON) {
-            if (
-              parsedJSON['brewdata'].application === 'BEANCONQUEROR' &&
-              parsedJSON['brewdata'].brewFlow
-            ) {
-              const brewFlow = parsedJSON['brewdata'].brewFlow;
-              this.uiBrewHelper.addBrewFromVisualizerWithGraph(brewFlow);
-            }
-          }
-        } catch (e) {}
-      },
-      (response) => {
-        // prints 403
-      }
-    );
   }
 
-  public async uploadToVisualizer(_brew: Brew, _showToast: boolean = true) {
-    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
-      if (
-        _brew.flow_profile === null ||
-        _brew.flow_profile === undefined ||
-        _brew.flow_profile === ''
-      ) {
-        return;
-      }
-      const settings: Settings = this.uiSettingsStorage.getSettings();
-      const vS: Visualizer = new Visualizer();
-      try {
-        vS.mapBrew(_brew);
-        try {
-          if (_brew.tds > 0) {
-            vS.brew.ey = Number(_brew.getExtractionYield());
-          }
-        } catch (ex) {}
+  public async importShotWithSharedCode(_shareCode: string): Promise<void> {
+    try {
+      const url =
+        'https://visualizer.coffee/api/shots/shared?' +
+        new URLSearchParams({
+          code: _shareCode,
+          with_data: '1',
+        });
+      this.uiLog.info('Get SHOT-Data from visualizer ', url);
 
-        vS.mapBean(_brew.getBean());
-        vS.mapWater(_brew.getWater());
-        vS.mapPreparation(_brew.getPreparation());
-        vS.mapMill(_brew.getMill());
-        vS.brewFlow = await this.readFlowProfile(_brew);
-        // Put the actual visualizer id into the request if we stored one
-        if (_brew.customInformation && _brew.customInformation.visualizer_id) {
-          vS.visualizerId = _brew.customInformation.visualizer_id;
+      const result = await fetch(url);
+      const responseJSON = await result.json();
+      // TODO Capacitor migration: Check if this works. During testing the
+      // server returned an array with one object in it instead of the
+      // object directly.
+      if ('brewdata' in responseJSON) {
+        if (
+          responseJSON['brewdata'].application === 'BEANCONQUEROR' &&
+          responseJSON['brewdata'].brewFlow
+        ) {
+          const brewFlow = responseJSON['brewdata'].brewFlow;
+          this.uiBrewHelper.addBrewFromVisualizerWithGraph(brewFlow);
+        }
+      }
+    } catch (error) {
+      this.uiLog.error('Error while getting shot data from visualizer', error);
+    }
+  }
+
+  public async uploadToVisualizer(
+    _brew: Brew,
+    _showToast: boolean = true
+  ): Promise<void> {
+    if (!_brew.flow_profile) {
+      return;
+    }
+
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    const vS: Visualizer = new Visualizer();
+    try {
+      vS.mapBrew(_brew);
+      try {
+        if (_brew.tds > 0) {
+          vS.brew.ey = Number(_brew.getExtractionYield());
         }
       } catch (ex) {}
-      if (vS.brewFlow === null || vS.brewFlow === undefined) {
-        this.uiLog.log('Upload visualizer shot - We did not find any brewflow');
-        // We could not read the data - maybe import data where missing.
-        reject();
-        return;
+
+      vS.mapBean(_brew.getBean());
+      vS.mapWater(_brew.getWater());
+      vS.mapPreparation(_brew.getPreparation());
+      vS.mapMill(_brew.getMill());
+      vS.brewFlow = await this.readFlowProfile(_brew);
+      // Put the actual visualizer id into the request if we stored one
+      if (_brew.customInformation && _brew.customInformation.visualizer_id) {
+        vS.visualizerId = _brew.customInformation.visualizer_id;
       }
+    } catch (ex) {}
+    if (vS.brewFlow === null || vS.brewFlow === undefined) {
+      const errorMessage =
+        'Cannot upload visualizer shot because the data does not contain any brewflow';
+      this.uiLog.error(errorMessage);
+      // We could not read the data - maybe import data where missing.
+      throw new Error(errorMessage);
+    }
 
-      try {
-        const fileData = await this.uiFileHelper.saveJSONFile(
-          'VisualizerUploadShotTemp_' + _brew.config.uuid + '.json',
-          JSON.stringify(vS)
+    try {
+      const url = settings.visualizer_url + 'api/shots/upload'; // 'https://visualizer.coffee/api/shots/upload';
+      const formData = new FormData();
+      const contentJSON = JSON.stringify(vS);
+      const contentFile = new File([contentJSON], 'visualizer.json', {
+        type: 'application/json',
+      });
+      formData.append('file', contentFile);
+
+      // fetch() is patched by CapacitorHttp to perform the request from the
+      // native side. It's not possible to use the CapacitorHttp API for
+      // mulipart form upload, only the patched fetch() can do it
+      const result = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: this.getAuthHeaders(settings),
+      });
+      const responseJson = await result.json();
+
+      const visualizerId = responseJson.id;
+      if (!visualizerId) {
+        throw new Error(
+          'Received invalid visualizer reponse: ' + JSON.stringify(responseJson)
         );
-
-        // Define HTTP basic authentication credentials
-        const username = settings.visualizer_username;
-        const password = settings.visualizer_password;
-        const credentials = btoa(username + ':' + password);
-        const headers = {
-          Authorization: 'Basic ' + credentials,
-        };
-
-        const url = settings.visualizer_url + 'api/shots/upload'; // 'https://visualizer.coffee/api/shots/upload';
-
-        this.uiLog.log(
-          'Upload visualizer shot - ' +
-            'VisualizerUploadShotTemp_' +
-            _brew.config.uuid +
-            '.json'
-        );
-        cordova.plugin.http.uploadFile(
-          url,
-          undefined,
-          headers,
-          fileData.NATIVE_URL,
-          'file',
-          async (_successData) => {
-            try {
-              await this.uiFileHelper.deleteFile(fileData.FULL_PATH);
-            } catch (ex) {}
-
-            if (_successData && 'data' in _successData) {
-              this.uiLog.log('Upload visualizer shot successfully');
-              const dataObj = JSON.parse(_successData.data);
-              const visualizerId = dataObj.id;
-              _brew.customInformation.visualizer_id = visualizerId;
-              await this.uiBrewStorage.update(_brew);
-            } else {
-              this.uiLog.log('Upload visualizer shot not successfully');
-            }
-
-            setTimeout(() => {
-              if (_showToast === true) {
-                this.uiToast.showInfoToastBottom(
-                  'VISUALIZER.SHOT.UPLOAD_SUCCESSFULLY'
-                );
-              }
-
-              resolve(undefined);
-            }, 75);
-          },
-          (_errorData) => {
-            this.uiLog.log('Upload visualizer shot error occured');
-            if (_showToast === true) {
-              this.uiToast.showInfoToastBottom(
-                'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY'
-              );
-            }
-            this.uiLog.error(JSON.stringify(_errorData));
-            reject();
-          }
-        );
-      } catch (ex) {
-        this.uiLog.log(
-          'Upload visualizer shot excpection occured' + ex.message
-        );
-        reject();
       }
-    });
-    return promise;
+      _brew.customInformation.visualizer_id = visualizerId;
+      await this.uiBrewStorage.update(_brew);
+
+      if (_showToast === true) {
+        this.uiToast.showInfoToastBottom('VISUALIZER.SHOT.UPLOAD_SUCCESSFULLY');
+      }
+      return;
+    } catch (error) {
+      this.uiLog.error('Upload visualizer shot error occurred', error);
+      if (_showToast === true) {
+        this.uiToast.showInfoToastBottom(
+          'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY'
+        );
+      }
+      throw error;
+    }
   }
 
-  public async checkConnection() {
-    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
-      const settings: Settings = this.uiSettingsStorage.getSettings();
-      const username = settings.visualizer_username;
-      const password = settings.visualizer_password;
-      const credentials = btoa(username + ':' + password);
+  public async checkConnection(): Promise<boolean> {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
 
-      const url = settings.visualizer_url + 'api/me'; // 'https://visualizer.coffee/api/shots/upload';
-      const options = {
-        method: 'get',
-        headers: { Authorization: 'Basic ' + credentials },
-      };
-      cordova.plugin.http.sendRequest(
-        url,
-        options,
-        (response) => {
-          try {
-            if (response && 'data' in response) {
-              resolve(undefined);
-            } else {
-              this.uiLog.error(
-                'Visualizer check connection, no data object given - ' +
-                  JSON.stringify(response)
-              );
-              reject();
-            }
-          } catch (e) {
-            this.uiLog.error(
-              'Visualizer check connection, try catch triggered - ' +
-                JSON.stringify(response)
-            );
-            reject();
-          }
-        },
-        (response) => {
-          // prints 403
-          this.uiLog.error(JSON.stringify(response));
-          reject();
-        }
+    try {
+      const response = await CapacitorHttp.get({
+        url: settings.visualizer_url + 'api/me', // https://visualizer.coffee/api/me
+        headers: this.getAuthHeaders(settings),
+      });
+      if (response.status === 200 && response.data) {
+        this.uiLog.info(
+          'Visualizer connection check successful, got data:',
+          response.data
+        );
+        return true;
+      }
+
+      this.uiLog.error(
+        'Visualizer connection check did not return data:',
+        JSON.stringify(response)
       );
-    });
-    return promise;
+      return false;
+    } catch (errorResponse) {
+      // Typical case that ends up here: wrong credentials, 401 status code
+      this.uiLog.error(
+        'Visualizer connection check errored:',
+        JSON.stringify(errorResponse)
+      );
+      return false;
+    }
   }
 }

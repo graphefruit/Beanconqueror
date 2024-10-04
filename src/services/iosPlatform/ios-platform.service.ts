@@ -8,7 +8,6 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { Platform } from '@ionic/angular';
 import { debounceTime } from 'rxjs/operators';
 import moment from 'moment';
-import { FileEntry } from '@awesome-cordova-plugins/file';
 import { UIHelper } from '../uiHelper';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
@@ -35,7 +34,7 @@ export class IosPlatformService {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
           // Delete on startup old json backup files
-          this.uiFileHelper.deleteZIPBackupsOlderThenSevenDays().then(
+          this.uiFileHelper.deleteZIPBackupsOlderThanSevenDays().then(
             () => {},
             () => {}
           );

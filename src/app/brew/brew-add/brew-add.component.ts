@@ -7,6 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -16,7 +17,6 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UILog } from '../../../services/uiLog';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -85,7 +85,6 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiToast: UIToast,
     private readonly platform: Platform,
-    private readonly geolocation: Geolocation,
     private readonly uiLog: UILog,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiHealthKit: UIHealthKit,
@@ -142,7 +141,12 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       );
     }
 
+    // TODO Capacitor migration: There is a race condition here, as this function
+    // sets the geo coordinates as a side effect and is not awaited.
+    // This was present before the Capacitor migration, too, but should be fixed
+    // eventually.
     this.getCoordinates(true);
+
     this.initialBeanData = JSON.stringify(this.data);
 
     this.bluetoothSubscription = this.bleManager
@@ -224,35 +228,32 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getCoordinates(_highAccuracy: boolean) {
-    if (this.settings.track_brew_coordinates) {
-      this.geolocation
-        .getCurrentPosition({
-          maximumAge: 3000,
-          timeout: 5000,
-          enableHighAccuracy: _highAccuracy,
-        })
-        .then((resp) => {
-          this.data.coordinates.latitude = resp.coords.latitude;
-          this.data.coordinates.accuracy = resp.coords.accuracy;
-          this.data.coordinates.altitude = resp.coords.altitude;
-          this.data.coordinates.altitudeAccuracy = resp.coords.altitudeAccuracy;
-          this.data.coordinates.heading = resp.coords.heading;
-          this.data.coordinates.speed = resp.coords.speed;
-          this.data.coordinates.longitude = resp.coords.longitude;
-          this.uiLog.info(
-            'BREW - Coordinates found - ' +
-              JSON.stringify(this.data.coordinates)
-          );
-        })
-        .catch((_error) => {
-          // Couldn't get coordinates sorry.
-          this.uiLog.error('BREW - No Coordinates found');
-          if (_highAccuracy === true) {
-            this.uiLog.error('BREW - Try to get coordinates with low accuracy');
-            this.getCoordinates(false);
-          }
-        });
+  private async getCoordinates(_highAccuracy: boolean): Promise<void> {
+    if (!this.settings.track_brew_coordinates) {
+      return;
+    }
+    try {
+      const resp = await Geolocation.getCurrentPosition({
+        maximumAge: 3000,
+        timeout: 5000,
+        enableHighAccuracy: _highAccuracy,
+      });
+      this.data.coordinates.latitude = resp.coords.latitude;
+      this.data.coordinates.accuracy = resp.coords.accuracy;
+      this.data.coordinates.altitude = resp.coords.altitude;
+      this.data.coordinates.altitudeAccuracy = resp.coords.altitudeAccuracy;
+      this.data.coordinates.heading = resp.coords.heading;
+      this.data.coordinates.speed = resp.coords.speed;
+      this.data.coordinates.longitude = resp.coords.longitude;
+      this.uiLog.info(
+        'BREW - Coordinates found - ' + JSON.stringify(this.data.coordinates)
+      );
+    } catch (error) {
+      this.uiLog.error('BREW - No Coordinates found: ', error);
+      if (_highAccuracy === true) {
+        this.uiLog.error('BREW - Try to get coordinates with low accuracy');
+        return await this.getCoordinates(false);
+      }
     }
   }
 
