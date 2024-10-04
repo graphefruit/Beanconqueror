@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Preparation } from 'src/classes/preparation/preparation';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 describe('PreparationSortToolsComponent', () => {
   let component: PreparationSortToolsComponent;
@@ -20,11 +19,7 @@ describe('PreparationSortToolsComponent', () => {
         TranslateModule.forChild(),
         TranslateModule.forRoot(),
       ],
-      providers: [
-        { provide: InAppBrowser },
-        { provide: SocialSharing },
-        { provide: FileTransfer },
-      ],
+      providers: [{ provide: InAppBrowser }, { provide: SocialSharing }],
     }).compileComponents();
   }));
 

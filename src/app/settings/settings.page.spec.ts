@@ -15,7 +15,6 @@ import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('SettingsPage', () => {
@@ -42,7 +41,6 @@ describe('SettingsPage', () => {
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
         { provide: FileChooser },
-        { provide: FileTransfer },
         { provide: SocialSharing },
       ],
     }).compileComponents();

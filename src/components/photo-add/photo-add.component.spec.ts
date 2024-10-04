@@ -5,7 +5,6 @@ import { PhotoAddComponent } from './photo-add.component';
 import { UIImage } from '../../services/uiImage';
 import { UIImageMock } from '../../classes/mock';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TranslateModule } from '@ngx-translate/core';
 
 describe('PhotoAddComponent', () => {
@@ -22,7 +21,6 @@ describe('PhotoAddComponent', () => {
           useClass: UIImageMock,
         },
         { provide: SocialSharing },
-        { provide: FileTransfer },
       ],
     }).compileComponents();
 

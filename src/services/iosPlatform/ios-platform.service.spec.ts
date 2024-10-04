@@ -5,7 +5,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../uiHelper';
 
@@ -17,7 +16,6 @@ describe('IosPlatformService', () => {
       providers: [
         { provide: Storage },
         { provide: SocialSharing },
-        { provide: FileTransfer },
         {
           provide: UIHelper,
           useClass: UIHelperMock,

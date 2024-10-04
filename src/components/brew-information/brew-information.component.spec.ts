@@ -11,7 +11,6 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { Brew } from '../../classes/brew/brew';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { Bean } from '../../classes/bean/bean';
@@ -40,7 +39,6 @@ describe('BrewInformationComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: UIImage, useClass: UIImageMock },
         { provide: SocialSharing },
-        { provide: FileTransfer },
         { provide: FileChooser },
       ],
     }).compileComponents();

@@ -27,7 +27,6 @@
     "@awesome-cordova-plugins/deeplinks": "^6.4.0",
     "@awesome-cordova-plugins/file": "^6.4.0",
     "@awesome-cordova-plugins/file-chooser": "^6.4.0",
-    "@awesome-cordova-plugins/file-transfer": "^6.4.0",
     "@awesome-cordova-plugins/globalization": "^6.4.0",
     "@awesome-cordova-plugins/image-picker": "^6.4.0",
     "@awesome-cordova-plugins/in-app-browser": "^6.4.0",
@@ -104,7 +103,6 @@
     "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-ble-central": "^1.7.4",
     "cordova-plugin-file": "^8.0.0",
-    "cordova-plugin-file-transfer": "github:dpa99c/cordova-plugin-file-transfer",
     "cordova-plugin-health": "^2.1.0",
     "cordova-plugin-inappbrowser": "^6.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
@@ -160,7 +158,6 @@
         "DEEPLINK_5_SCHEME": " ",
         "DEEPLINK_5_HOST": " "
       },
-      "cordova-plugin-file-transfer": {},
       "cordova-plugin-advanced-http": {
         "ANDROIDBLACKLISTSECURESOCKETPROTOCOLS": "SSLv3,TLSv1"
       },

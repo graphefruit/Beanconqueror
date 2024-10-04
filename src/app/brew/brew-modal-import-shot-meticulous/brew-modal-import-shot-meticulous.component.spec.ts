@@ -5,7 +5,6 @@ import { IonicModule } from '@ionic/angular';
 import { BrewModalImportShotMeticulousComponent } from './brew-modal-import-shot-meticulous.component';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateServiceMock } from '../../../classes/mock';
 
@@ -20,7 +19,6 @@ describe('BrewModalImportShotMeticulousComponent', () => {
       providers: [
         { provide: InAppBrowser },
         { provide: SocialSharing },
-        { provide: FileTransfer },
         {
           provide: TranslateService,
           useValue: TranslateServiceMock,

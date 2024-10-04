@@ -9,7 +9,6 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { Brew } from '../../../classes/brew/brew';
 
@@ -34,9 +33,6 @@ describe('BrewChooseGraphReferenceComponent', () => {
         },
         {
           provide: SocialSharing,
-        },
-        {
-          provide: FileTransfer,
         },
       ],
     }).compileComponents();

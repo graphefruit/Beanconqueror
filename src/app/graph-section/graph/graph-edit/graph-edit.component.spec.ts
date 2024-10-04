@@ -8,7 +8,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { FormsModule } from '@angular/forms';
 
 describe('GraphEditComponent', () => {
@@ -29,9 +28,6 @@ describe('GraphEditComponent', () => {
         },
         {
           provide: FileChooser,
-        },
-        {
-          provide: FileTransfer,
         },
       ],
     }).compileComponents();

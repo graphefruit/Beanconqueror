@@ -7,7 +7,6 @@ import { TranslateServiceMock, UIHelperMock } from '../../classes/mock';
 import { IonicModule } from '@ionic/angular';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { UIHelper } from '../uiHelper';
 
 describe('AndroidPlatformService', () => {
@@ -29,9 +28,6 @@ describe('AndroidPlatformService', () => {
         },
         {
           provide: SocialSharing,
-        },
-        {
-          provide: FileTransfer,
         },
         {
           provide: UIHelper,

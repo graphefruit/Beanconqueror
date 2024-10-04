@@ -134,7 +134,6 @@ import { BrewBeverageQuantityCalculatorComponent } from '../brew/brew-beverage-q
 import { BrewFlavorPickerComponent } from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import { BrewChoosePreparationToBrewComponent } from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import { ShortPressDirective } from '../../directive/short-press.directive';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TransformDateDirective } from '../../directive/transform-date';
 import { PreparationEditToolComponent } from '../preparation/preparation-edit-tool/preparation-edit-tool.component';
 import { ListViewParameterComponent } from '../brew-parameter/list-view-parameter/list-view-parameter.component';
@@ -389,7 +388,6 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     Globalization,
     Insomnia,
     Deeplinks,
-    FileTransfer,
   ],
   exports: [
     SettingsPage,

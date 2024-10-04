@@ -13,7 +13,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIImage } from '../../../../services/uiImage';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 describe('GreenBeanEditComponent', () => {
   let component: GreenBeanEditComponent;
@@ -37,7 +36,6 @@ describe('GreenBeanEditComponent', () => {
         {
           provide: SocialSharing,
         },
-        FileTransfer,
       ],
     }).compileComponents();
   }));

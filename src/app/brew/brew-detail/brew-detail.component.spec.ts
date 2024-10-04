@@ -11,7 +11,6 @@ import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PipesModule } from 'src/pipes/pipes.module';
 
@@ -38,7 +37,6 @@ describe('BrewDetailComponent', () => {
         { provide: ImagePicker },
         { provide: SocialSharing },
         { provide: Router },
-        { provide: FileTransfer },
       ],
     }).compileComponents();
   }));
