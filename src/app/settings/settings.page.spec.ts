@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
@@ -32,6 +33,7 @@ describe('SettingsPage', () => {
       ],
       declarations: [SettingsPage],
       providers: [
+        { provide: AndroidPermissions },
         { provide: InAppBrowser },
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
