@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { GreenBeanEditComponent } from './green-bean-edit.component';
@@ -21,7 +22,7 @@ describe('GreenBeanEditComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeanEditComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },

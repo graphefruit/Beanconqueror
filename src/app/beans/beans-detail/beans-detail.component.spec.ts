@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { BeansDetailComponent } from './beans-detail.component';
@@ -22,7 +23,7 @@ describe('BeansDetailComponent', () => {
     } as Settings;
     TestBed.configureTestingModule({
       declarations: [BeansDetailComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         {
           provide: NavParams,

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { PreparationCustomParametersComponent } from './preparation-custom-parameters.component';
@@ -14,7 +15,7 @@ describe('PreparationCustomParametersComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationCustomParametersComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },

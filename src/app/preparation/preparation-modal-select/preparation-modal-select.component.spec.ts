@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { PreparationModalSelectComponent } from './preparation-modal-select.component';
@@ -19,6 +20,7 @@ describe('PreparationModalSelectComponent', () => {
         IonicModule.forRoot(),
         TranslateModule.forRoot(),
         HttpClientTestingModule,
+        FormsModule,
       ],
       providers: [
         {

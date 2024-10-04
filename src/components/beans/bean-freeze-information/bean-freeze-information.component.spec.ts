@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanFreezeInformationComponent } from './bean-freeze-information.component';
@@ -21,6 +22,7 @@ describe('BeanFreezeInformationComponent', () => {
         IonicStorageModule.forRoot(),
         TranslateModule.forRoot(),
         PipesModule,
+        FormsModule,
       ],
       providers: [{ provide: UIHelper, useClass: UIHelperMock }],
     }).compileComponents();

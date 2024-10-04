@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { CuppingFlavorsComponent } from './cupping-flavors.component';
@@ -13,7 +14,7 @@ describe('CuppingFlavorsComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CuppingFlavorsComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [{ provide: UIHelper, useClass: UIHelperMock }],
     }).compileComponents();
 

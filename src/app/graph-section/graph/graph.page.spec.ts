@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { GraphPage } from './graph.page';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -27,7 +28,12 @@ describe('GraphPage', () => {
         { provide: SocialSharing },
         { provide: FileTransfer },
       ],
-      imports: [IonicModule.forRoot(), CommonModule, TranslateModule.forRoot()],
+      imports: [
+        IonicModule.forRoot(),
+        CommonModule,
+        TranslateModule.forRoot(),
+        FormsModule,
+      ],
     }).compileComponents();
   }));
 

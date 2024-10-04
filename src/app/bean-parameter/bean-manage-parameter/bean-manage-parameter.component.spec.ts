@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanManageParameterComponent } from './bean-manage-parameter.component';
@@ -20,7 +21,7 @@ describe('BeanManageParameterComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [BeanManageParameterComponent, TranslatePipe],
-      imports: [IonicModule.forRoot()],
+      imports: [IonicModule.forRoot(), FormsModule],
       providers: [
         {
           provide: UISettingsStorage,
