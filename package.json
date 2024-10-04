@@ -12,7 +12,7 @@
     "e2e": "ng e2e",
     "prepare": "husky install",
     "generate_proto": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto  --ts_proto_opt=snakeToCamel=false --ts_proto_out ./src/generated ./src/classes/bean/bean.proto",
-    "capsync": "capacitor sync android"
+    "capsync": "capacitor sync android && capacitor sync ios"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +43,7 @@
     "@capacitor/filesystem": "^6.0.1",
     "@capacitor/geolocation": "^6.0.1",
     "@capacitor/haptics": "^6.0.1",
+    "@capacitor/ios": "6.1.2",
     "@capacitor/keyboard": "6.0.2",
     "@capacitor/status-bar": "6.0.1",
     "@ionic/angular": "^7.5.7",
