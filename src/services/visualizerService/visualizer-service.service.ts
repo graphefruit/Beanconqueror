@@ -9,6 +9,7 @@ import { UIBrewStorage } from '../uiBrewStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UILog } from '../uiLog';
+import { UIBrewHelper } from '../uiBrewHelper';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,8 @@ export class VisualizerService {
     private readonly uiToast: UIToast,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly uiBrewHelper: UIBrewHelper
   ) {}
 
   private async readFlowProfile(_brew: Brew): Promise<BrewFlow> {
@@ -43,6 +45,35 @@ export class VisualizerService {
     return {
       Authorization: 'Basic ' + credentials,
     };
+  }
+
+  public async importShotWithSharedCode(_shareCode: string): Promise<void> {
+    try {
+      const url =
+        'https://visualizer.coffee/api/shots/shared?' +
+        new URLSearchParams({
+          code: _shareCode,
+          with_data: '1',
+        });
+      this.uiLog.info('Get SHOT-Data from visualizer ', url);
+
+      const result = await fetch(url);
+      const responseJSON = await result.json();
+      // TODO Capacitor migration: Check if this works. During testing the
+      // server returned an array with one object in it instead of the
+      // object directly.
+      if ('brewdata' in responseJSON) {
+        if (
+          responseJSON['brewdata'].application === 'BEANCONQUEROR' &&
+          responseJSON['brewdata'].brewFlow
+        ) {
+          const brewFlow = responseJSON['brewdata'].brewFlow;
+          this.uiBrewHelper.addBrewFromVisualizerWithGraph(brewFlow);
+        }
+      }
+    } catch (error) {
+      this.uiLog.error('Error while getting shot data from visualizer', error);
+    }
   }
 
   public async uploadToVisualizer(

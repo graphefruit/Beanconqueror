@@ -50,7 +50,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <brew-brewing #brewBrewing [loadSpecificLastPreparation]="loadSpecificLastPreparation" [brewTemplate]="brew_template"
+  <brew-brewing #brewBrewing [loadSpecificLastPreparation]="loadSpecificLastPreparation" [brewTemplate]="brew_template" [brewFlowPreset]='brew_flow_preset'
     [(data)]="data"></brew-brewing>
 </ion-content>
 <ion-footer *ngIf="showFooter" class="ion-no-border">

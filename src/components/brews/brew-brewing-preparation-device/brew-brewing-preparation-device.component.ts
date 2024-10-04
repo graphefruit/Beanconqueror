@@ -45,6 +45,7 @@ import {
   SanremoYOUParams,
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
@@ -77,7 +78,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly modalController: ModalController,
-    public readonly uiBrewHelper: UIBrewHelper
+    public readonly uiBrewHelper: UIBrewHelper,
+    private readonly translate: TranslateService
   ) {}
 
   public ngOnInit() {
@@ -339,12 +341,66 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   ) {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
     this.data.preparationDeviceBrew.params = new SanremoYOUParams();
+
     await connectedDevice.deviceConnected().then(
       () => {
         this.preparationDevice = connectedDevice as SanremoYOUDevice;
       },
       () => {
         //Not connected
+        this.uiAlert.showMessage(
+          'PREPARATION_DEVICE.TYPE_SANREMO_YOU.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+          'CARE',
+          'OK',
+          true
+        );
+      }
+    );
+
+    if (!this.preparationDevice) {
+      //Ignore the rest of this function
+      return;
+    }
+
+    /** Seccond call**/
+    await connectedDevice.deviceConnected().then(
+      () => {},
+      () => {}
+    );
+    /** Third call call**/
+
+    const apiThirdCallDelayStart = moment(); // create a moment with the current time
+    let apiDelayEnd;
+    const delayCallTimeout = setTimeout(() => {
+      let apiTakesToLong: boolean = false;
+      let delta;
+      if (apiDelayEnd === undefined) {
+        //After 2 seconds we didn't even hit the return
+        delta = 1000;
+      } else {
+        delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+      }
+      if (delta > 200) {
+        apiTakesToLong = true;
+      }
+
+      if (apiTakesToLong) {
+        this.uiAlert.showMessage(
+          this.translate.instant('SANREMO_API_RESPONSE_TAKE_TO_LONG', {
+            time: delta,
+          }),
+          this.translate.instant('CARE'),
+          this.translate.instant('OK'),
+          false
+        );
+      }
+    }, 1000);
+    await connectedDevice.deviceConnected().then(
+      () => {
+        apiDelayEnd = moment(); // create a moment with the other time timestamp in seconds
+      },
+      () => {
+        clearTimeout(delayCallTimeout);
       }
     );
   }

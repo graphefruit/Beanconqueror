@@ -176,6 +176,8 @@ export class Settings implements ISettings {
   public bluetooth_scale_ignore_weight_button_active: boolean;
   public bluetooth_scale_first_drip_threshold: number;
 
+  public maximize_hide_value_cards_on_maximize_screen: boolean;
+
   public pressure_id: string;
   public pressure_type: PressureType;
   public pressure_log: boolean;
@@ -448,6 +450,8 @@ export class Settings implements ISettings {
     this.bluetooth_scale_listening_threshold_active = false;
     this.bluetooth_scale_ignore_weight_button_active = false;
     this.bluetooth_scale_first_drip_threshold = 0.1;
+
+    this.maximize_hide_value_cards_on_maximize_screen = false;
 
     this.scale_log = false;
 

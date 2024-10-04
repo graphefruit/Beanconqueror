@@ -295,7 +295,11 @@ export class BrewBrewingGraphComponent implements OnInit {
         let referencePath: string = '';
         const uuid = _brew.reference_flow_profile.uuid;
         let referenceObj: Brew | Graph = null;
-        if (_brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW) {
+        if (
+          _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
+          _brew.reference_flow_profile.type ===
+            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
           referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
         } else {
           referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
@@ -515,6 +519,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.realtimeFlowTraceReference = undefined;
       this.pressureTraceReference = undefined;
       this.temperatureTraceReference = undefined;
+
       if (
         this.reference_profile_raw.weight.length > 0 ||
         this.reference_profile_raw.pressureFlow.length > 0 ||
@@ -663,30 +668,48 @@ export class BrewBrewingGraphComponent implements OnInit {
             presetFlowProfile.pressureFlow &&
             presetFlowProfile.pressureFlow.length > 0
           ) {
-            this.chartData.push(this.pressureTraceReference);
-            for (const data of presetFlowProfile.pressureFlow) {
-              this.pressureTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.pressureTraceReference.y.push(data.actual_pressure);
+            const pressureDevice = this.bleManager.getPressureDevice();
+            if (
+              (pressureDevice != null &&
+                this.getPreparation().style_type ===
+                  PREPARATION_STYLE_TYPE.ESPRESSO) ||
+              this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
+              !this.platform.is('cordova')
+            ) {
+              /** We just push the data, if we also got an pressure device connected**/
+              this.chartData.push(this.pressureTraceReference);
+              for (const data of presetFlowProfile.pressureFlow) {
+                this.pressureTraceReference.x.push(
+                  new Date(
+                    moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                      delay
+                  )
+                );
+                this.pressureTraceReference.y.push(data.actual_pressure);
+              }
             }
           }
           if (
             presetFlowProfile.temperatureFlow &&
             presetFlowProfile.temperatureFlow.length > 0
           ) {
-            this.chartData.push(this.temperatureTraceReference);
-            for (const data of presetFlowProfile.temperatureFlow) {
-              this.temperatureTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.temperatureTraceReference.y.push(data.actual_temperature);
+            const temperatureDevice = this.bleManager.getTemperatureDevice();
+            if (
+              temperatureDevice != null ||
+              this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
+              !this.platform.is('cordova')
+            ) {
+              /** We just push the data, if we also got an temperature device connected**/
+              this.chartData.push(this.temperatureTraceReference);
+              for (const data of presetFlowProfile.temperatureFlow) {
+                this.temperatureTraceReference.x.push(
+                  new Date(
+                    moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                      delay
+                  )
+                );
+                this.temperatureTraceReference.y.push(data.actual_temperature);
+              }
             }
           }
         }
@@ -1759,7 +1782,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.data.flow_profile = '';
 
         //Check if we have an reference flow, and when reset, preset it again
-
         if (this.data.reference_flow_profile) {
           await this.readReferenceFlowProfile(this.data);
         }
@@ -1962,13 +1984,20 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     this.sanremoYOUFetchingInterval = setInterval(async () => {
       try {
+        //const apiThirdCallDelayStart = moment(); // create a moment with the current time
+        //let apiDelayEnd;
+
         // We don't use the callback function to make sure we don't have to many performance issues
         prepDeviceCall.fetchRuntimeData(() => {
+          //apiDelayEnd = moment();
+
           //before we start the interval, we fetch the data once to overwrite, and set them.
+          //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+          //console.log(delta);
           setSanremoData();
         });
       } catch (ex) {}
-    }, 100);
+    }, 250);
   }
 
   public startFetchingDataFromMeticulous() {
@@ -2674,7 +2703,10 @@ export class BrewBrewingGraphComponent implements OnInit {
                   try {
                     const scale: BluetoothScale = this.bleManager.getScale();
                     if (scale) {
-                      scale.tare();
+                      if (scale.getWeight() !== 0) {
+                        //Just tare if the scale is not zero yet.
+                        scale.tare();
+                      }
                     }
                   } catch (ex) {}
                 }

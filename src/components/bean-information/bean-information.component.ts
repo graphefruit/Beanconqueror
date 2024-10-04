@@ -564,11 +564,9 @@ export class BeanInformationComponent implements OnInit {
     const beanWeight = this.bean.weight;
     const beanCost = this.bean.cost;
 
-    const costPerGramm = this.uiHelper.toFixedIfNecessary(
-      beanCost / beanWeight,
-      2
-    );
+    const costPerGramm = beanCost / beanWeight;
+
     const kgCost = costPerGramm * 1000;
-    return kgCost;
+    return this.uiHelper.toFixedIfNecessary(kgCost, 2);
   }
 }

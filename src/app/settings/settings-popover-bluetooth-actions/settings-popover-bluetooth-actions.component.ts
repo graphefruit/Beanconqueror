@@ -8,6 +8,11 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { BluetoothTypes } from '../../../classes/devices';
+import { AppEvent } from '../../../classes/appEvent/appEvent';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 
 @Component({
   selector: 'app-settings-popover-bluetooth-actions',
@@ -18,14 +23,15 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
   public static COMPONENT_ID = 'settings-popover-bluetooth-actions';
 
   public settings: Settings;
-
+  public readonly BluetoothTypes = BluetoothTypes;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper,
     private readonly uiSettings: UISettingsStorage,
     private readonly bluetoothService: CoffeeBluetoothDevicesService,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
+    private readonly eventQueue: EventQueueService
   ) {
     this.settings = this.uiSettings.getSettings();
   }
@@ -33,6 +39,105 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
   public ionViewDidEnter(): void {}
   public ngOnInit() {}
 
+  public async connectDevice(_type: BluetoothTypes) {
+    const modal = await this.modalController.create({
+      component: BluetoothDeviceChooserPopoverComponent,
+      id: BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
+      componentProps: { bluetoothTypeSearch: _type },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+    this.settings = this.uiSettings.getSettings();
+  }
+  public async disconnectDevice(_type: BluetoothTypes) {
+    /** Its true, because we try to disconnect, and if this is not possible, we just still forgot the device**/
+    let disconnected: boolean = true;
+
+    if (_type === BluetoothTypes.SCALE) {
+      this.eventQueue.dispatch(
+        new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
+      );
+      if (this.settings.scale_id !== '' && this.bluetoothService.getScale()) {
+        disconnected = await this.bluetoothService.disconnect(
+          this.settings.scale_id
+        );
+      }
+      if (disconnected) {
+        this.settings.scale_id = '';
+        this.settings.scale_type = null;
+      }
+    } else if (_type === BluetoothTypes.PRESSURE) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT,
+          undefined
+        )
+      );
+      if (
+        this.settings.pressure_id !== '' &&
+        this.bluetoothService.getPressureDevice()
+      ) {
+        disconnected = await this.bluetoothService.disconnectPressureDevice(
+          this.settings.pressure_id
+        );
+      }
+
+      if (disconnected) {
+        this.settings.pressure_id = '';
+        this.settings.pressure_type = null;
+      }
+    } else if (_type === BluetoothTypes.TEMPERATURE) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
+          undefined
+        )
+      );
+      if (
+        this.settings.temperature_id !== '' &&
+        this.bluetoothService.getTemperatureDevice()
+      ) {
+        disconnected = await this.bluetoothService.disconnectTemperatureDevice(
+          this.settings.temperature_id
+        );
+      }
+
+      if (disconnected) {
+        this.settings.temperature_id = '';
+        this.settings.temperature_type = null;
+      }
+    } else if (_type === BluetoothTypes.TDS) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
+          undefined
+        )
+      );
+
+      if (
+        this.settings.refractometer_id !== '' &&
+        this.bluetoothService.getRefractometerDevice()
+      ) {
+        disconnected =
+          await this.bluetoothService.disconnectRefractometerDevice(
+            this.settings.refractometer_id
+          );
+      }
+
+      if (disconnected) {
+        this.settings.refractometer_id = '';
+        this.settings.refractometer_type = null;
+      }
+    }
+
+    if (disconnected) {
+      await this.saveSettings();
+    }
+  }
+
+  public async saveSettings() {
+    await this.uiSettings.saveSettings(this.settings);
+  }
   public async reconnectScale() {
     let timeoutVar: any = null;
     const scaleId = this.settings.scale_id;

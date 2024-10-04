@@ -595,20 +595,12 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.scale_id !== '' && isScaleConnected() === false" (click)="retryConnectScale()"
-              tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.scale_id !== ''" (click)="disconnectScale()" tappable button>
+            <ion-item *ngIf="settings.scale_id !== ''" (click)="disconnectDevice(BluetoothTypes.SCALE)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>
               <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
             </ion-item>
-
             <ion-item>
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_stay_connected">
                 <div class='ion-label' style="white-space: normal;">
@@ -649,6 +641,14 @@
                 [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer">
                 <div class='ion-label' style="white-space: normal;">
                   <h2>{{"SMART_SCALE_MAXIMIZE_ON_START_TIMER" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.maximize_hide_value_cards_on_maximize_screen">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN" | translate}}</h2>
                 </div>
               </ion-checkbox>
             </ion-item>
@@ -932,14 +932,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.pressure_id !== '' && isPressureDeviceConnected() === false"
-              (click)="retryConnectPressureDevice()" tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.pressure_id !== ''" (click)="disconnectPressureDevice()" tappable button>
+            <ion-item *ngIf="settings.pressure_id !== ''" (click)="disconnectDevice(BluetoothTypes.PRESSURE)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>
@@ -1029,14 +1022,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.temperature_id !== '' && isTemperatureDeviceConnected() === false"
-              (click)="retryConnectTemperatureDevice()" tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.temperature_id !== ''" (click)="disconnectTemperatureDevice()" tappable button>
+            <ion-item *ngIf="settings.temperature_id !== ''" (click)="disconnectDevice(BluetoothTypes.TEMPERATURE)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>
@@ -1098,14 +1084,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.refractometer_id !== '' && isRefractometerDeviceConnected() === false"
-              (click)="retryConnectRefractometerDevice()" tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.refractometer_id !== ''" (click)="disconnectRefractometerDevice()" tappable button>
+            <ion-item *ngIf="settings.refractometer_id !== ''" (click)="disconnectDevice(BluetoothTypes.TDS)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>

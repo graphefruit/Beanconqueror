@@ -11,7 +11,7 @@ import { Bean } from '../../classes/bean/bean';
 
 import { Brew } from '../../classes/brew/brew';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { IBean } from '../../interfaces/bean/iBean';
@@ -64,14 +64,16 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
-import { ScaleType, sleep } from '../../classes/devices';
+import { BluetoothTypes } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
 import { Graph } from '../../classes/graph/graph';
 import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
-import { BrewFlow, IBrewWaterFlow } from '../../classes/brew/brewFlow';
+import { BrewFlow } from '../../classes/brew/brewFlow';
+import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 
 declare var window: any;
 declare var FilePicker;
@@ -199,521 +201,114 @@ export class SettingsPage {
     }, 1000);
   }
 
-  public async findAndConnectRefractometerDevice(_retry: boolean = false) {
-    if (this.platform.is('ios')) {
-      await this.uiAlert.showLoadingSpinner();
-      await this.bleManager.enableIOSBluetooth();
-      await this.uiAlert.hideLoadingSpinner();
-    }
-
-    const hasLocationPermission: boolean =
-      await this.bleManager.hasLocationPermission();
-    if (!hasLocationPermission) {
-      await this.uiAlert.showMessage(
-        'REFRACTOMETER.REQUEST_PERMISSION.LOCATION',
-        undefined,
-        undefined,
-        true
-      );
-      await this.bleManager.requestLocationPermissions();
-    }
-
-    const hasBluetoothPermission: boolean =
-      await this.bleManager.hasBluetoothPermission();
-    if (!hasBluetoothPermission) {
-      await this.uiAlert.showMessage(
-        'REFRACTOMETER.REQUEST_PERMISSION.BLUETOOTH',
-        undefined,
-        undefined,
-        true
-      );
-      await this.bleManager.requestBluetoothPermissions();
-    }
-
-    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
-    if (bleEnabled === false) {
-      await this.uiAlert.showMessage(
-        'REFRACTOMETER.BLUETOOTH_NOT_ENABLED',
-        undefined,
-        undefined,
-        true
-      );
-      return;
-    }
-
-    await this.uiAlert.showLoadingSpinner(
-      'REFRACTOMETER.BLUETOOTH_SCAN_RUNNING',
-      true
-    );
-
-    const refractometerDevice =
-      await this.bleManager.tryToFindRefractometerDevice();
-    await this.uiAlert.hideLoadingSpinner();
-    if (refractometerDevice) {
-      try {
-        // We don't need to retry for iOS, because we just did scan before.
-
-        // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectRefractometerDevice(
-          refractometerDevice.type,
-          refractometerDevice.id,
-          false
-        );
-      } catch (ex) {}
-
-      this.settings.refractometer_id = refractometerDevice.id;
-      this.settings.refractometer_type = refractometerDevice.type;
-
-      //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
-
-      await this.saveSettings();
-
-      await this.enableTdsParameter();
-    } else {
-      this.uiAlert.showMessage(
-        'REFRACTOMETER.CONNECTION_NOT_ESTABLISHED',
-        undefined,
-        undefined,
-        true
-      );
-    }
+  private async showBluetoothPopover(_type: BluetoothTypes) {
+    const modal = await this.modalCtrl.create({
+      component: BluetoothDeviceChooserPopoverComponent,
+      id: BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
+      componentProps: { bluetoothTypeSearch: _type },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  private async enableTdsParameter() {
-    await this.uiAlert.showLoadingSpinner();
-    try {
-      if (this.settings.manage_parameters.tds === false) {
-        this.settings.manage_parameters.tds = true;
-        await this.saveSettings();
-      }
-
-      const preps: Array<Preparation> =
-        this.uiPreparationStorage.getAllEntries();
-      if (preps.length > 0) {
-        for (const prep of preps) {
-          if (prep.manage_parameters.tds === false) {
-            prep.manage_parameters.tds = true;
-            await this.uiPreparationStorage.update(prep);
-          }
-        }
-      }
-    } catch (ex) {}
-
-    await this.uiAlert.hideLoadingSpinner();
+  public async findAndConnectRefractometerDevice(_retry: boolean = false) {
+    this.showBluetoothPopover(BluetoothTypes.TDS);
   }
 
   public async findAndConnectTemperatureDevice(_retry: boolean = false) {
-    if (this.platform.is('ios')) {
-      await this.uiAlert.showLoadingSpinner();
-      await this.bleManager.enableIOSBluetooth();
-      await this.uiAlert.hideLoadingSpinner();
-    }
-
-    const hasLocationPermission: boolean =
-      await this.bleManager.hasLocationPermission();
-    if (!hasLocationPermission) {
-      await this.uiAlert.showMessage(
-        'TEMPERATURE.REQUEST_PERMISSION.LOCATION',
-        undefined,
-        undefined,
-        true
-      );
-      await this.bleManager.requestLocationPermissions();
-    }
-
-    const hasBluetoothPermission: boolean =
-      await this.bleManager.hasBluetoothPermission();
-    if (!hasBluetoothPermission) {
-      await this.uiAlert.showMessage(
-        'TEMPERATURE.REQUEST_PERMISSION.BLUETOOTH',
-        undefined,
-        undefined,
-        true
-      );
-      await this.bleManager.requestBluetoothPermissions();
-    }
-
-    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
-    if (bleEnabled === false) {
-      await this.uiAlert.showMessage(
-        'TEMPERATURE.BLUETOOTH_NOT_ENABLED',
-        undefined,
-        undefined,
-        true
-      );
-      return;
-    }
-
-    await this.uiAlert.showLoadingSpinner(
-      'TEMPERATURE.BLUETOOTH_SCAN_RUNNING',
-      true
-    );
-
-    const temperatureDevice =
-      await this.bleManager.tryToFindTemperatureDevice();
-    await this.uiAlert.hideLoadingSpinner();
-    if (temperatureDevice) {
-      try {
-        // We don't need to retry for iOS, because we just did scan before.
-
-        // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectTemperatureDevice(
-          temperatureDevice.type,
-          temperatureDevice.id,
-          false
-        );
-      } catch (ex) {}
-
-      this.settings.temperature_id = temperatureDevice.id;
-      this.settings.temperature_type = temperatureDevice.type;
-
-      //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
-
-      await this.saveSettings();
-    } else {
-      this.uiAlert.showMessage(
-        'TEMPERATURE.CONNECTION_NOT_ESTABLISHED',
-        undefined,
-        undefined,
-        true
-      );
-    }
+    this.showBluetoothPopover(BluetoothTypes.TEMPERATURE);
   }
 
   public async findAndConnectPressureDevice(_retry: boolean = false) {
-    if (this.platform.is('ios')) {
-      await this.uiAlert.showLoadingSpinner();
-      await this.bleManager.enableIOSBluetooth();
-      await this.uiAlert.hideLoadingSpinner();
-    }
-
-    const hasLocationPermission: boolean =
-      await this.bleManager.hasLocationPermission();
-    if (!hasLocationPermission) {
-      await this.uiAlert.showMessage(
-        'PRESSURE.REQUEST_PERMISSION.LOCATION',
-        undefined,
-        undefined,
-        true
-      );
-      await this.bleManager.requestLocationPermissions();
-    }
-
-    const hasBluetoothPermission: boolean =
-      await this.bleManager.hasBluetoothPermission();
-    if (!hasBluetoothPermission) {
-      await this.uiAlert.showMessage(
-        'PRESSURE.REQUEST_PERMISSION.BLUETOOTH',
-        undefined,
-        undefined,
-        true
-      );
-      await this.bleManager.requestBluetoothPermissions();
-    }
-
-    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
-    if (bleEnabled === false) {
-      await this.uiAlert.showMessage(
-        'PRESSURE.BLUETOOTH_NOT_ENABLED',
-        undefined,
-        undefined,
-        true
-      );
-      return;
-    }
-
-    await this.uiAlert.showLoadingSpinner(
-      'PRESSURE.BLUETOOTH_SCAN_RUNNING',
-      true
-    );
-
-    const pressureDevice = await this.bleManager.tryToFindPressureDevice();
-    await this.uiAlert.hideLoadingSpinner();
-    if (pressureDevice) {
-      try {
-        // We don't need to retry for iOS, because we just did scan before.
-
-        // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectPressureDevice(
-          pressureDevice.type,
-          pressureDevice.id,
-          false
-        );
-      } catch (ex) {}
-
-      this.settings.pressure_id = pressureDevice.id;
-      this.settings.pressure_type = pressureDevice.type;
-
-      //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
-
-      await this.saveSettings();
-    } else {
-      this.uiAlert.showMessage(
-        'PRESSURE.CONNECTION_NOT_ESTABLISHED',
-        undefined,
-        undefined,
-        true
-      );
-    }
+    this.showBluetoothPopover(BluetoothTypes.PRESSURE);
   }
 
   public async findAndConnectScale(_retry: boolean = false) {
-    if (this.platform.is('ios')) {
-      await this.uiAlert.showLoadingSpinner();
-      await this.bleManager.enableIOSBluetooth();
-      await this.uiAlert.hideLoadingSpinner();
-    }
-    const hasLocationPermission: boolean =
-      await this.bleManager.hasLocationPermission();
-    if (!hasLocationPermission) {
-      await this.uiAlert.showMessage(
-        'SCALE.REQUEST_PERMISSION.LOCATION',
-        undefined,
-        undefined,
-        true
+    this.showBluetoothPopover(BluetoothTypes.SCALE);
+  }
+
+  public async disconnectDevice(_type: BluetoothTypes) {
+    /** Its true, because we try to disconnect, and if this is not possible, we just still forgot the device**/
+    let disconnected: boolean = true;
+
+    if (_type === BluetoothTypes.SCALE) {
+      this.eventQueue.dispatch(
+        new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
       );
-      await this.bleManager.requestLocationPermissions();
-    }
-
-    const hasBluetoothPermission: boolean =
-      await this.bleManager.hasBluetoothPermission();
-    if (!hasBluetoothPermission) {
-      await this.uiAlert.showMessage(
-        'SCALE.REQUEST_PERMISSION.BLUETOOTH',
-        undefined,
-        undefined,
-        true
+      if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
+        disconnected = await this.bleManager.disconnect(this.settings.scale_id);
+      }
+      if (disconnected) {
+        this.settings.scale_id = '';
+        this.settings.scale_type = null;
+      }
+    } else if (_type === BluetoothTypes.PRESSURE) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT,
+          undefined
+        )
       );
-      await this.bleManager.requestBluetoothPermissions();
-    }
-
-    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
-    if (bleEnabled === false) {
-      await this.uiAlert.showMessage(
-        'SCALE.BLUETOOTH_NOT_ENABLED',
-        undefined,
-        undefined,
-        true
-      );
-      return;
-    }
-
-    await new Promise(async (resolve) => {
-      // Give some time
-      await this.uiAlert.showLoadingSpinner(
-        'SCALE.BLUETOOTH_SCAN_RUNNING',
-        true
-      );
-      setTimeout(async () => {
-        resolve(undefined);
-      }, 100);
-    });
-    if (_retry) {
-      await new Promise(async (resolve) => {
-        // Give some time
-        if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
-          const disconnected = await this.bleManager.disconnect(
-            this.settings.scale_id
-          );
-        }
-        setTimeout(async () => {
-          resolve(undefined);
-        }, 250);
-      });
-    }
-
-    const scale = await this.bleManager.tryToFindScale();
-
-    await sleep(500);
-    await this.uiAlert.hideLoadingSpinner();
-
-    if (scale) {
-      try {
-        // We don't need to retry for iOS, because we just did scan before.
-
-        // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectScale(
-          scale.type,
-          scale.id,
-          false,
-          () => {},
-          () => {}
+      if (
+        this.settings.pressure_id !== '' &&
+        this.bleManager.getPressureDevice()
+      ) {
+        disconnected = await this.bleManager.disconnectPressureDevice(
+          this.settings.pressure_id
         );
-      } catch (ex) {}
+      }
 
-      this.settings.scale_id = scale.id;
-      this.settings.scale_type = scale.type;
+      if (disconnected) {
+        this.settings.pressure_id = '';
+        this.settings.pressure_type = null;
+      }
+    } else if (_type === BluetoothTypes.TEMPERATURE) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
+          undefined
+        )
+      );
+      if (
+        this.settings.temperature_id !== '' &&
+        this.bleManager.getTemperatureDevice()
+      ) {
+        disconnected = await this.bleManager.disconnectTemperatureDevice(
+          this.settings.temperature_id
+        );
+      }
+
+      if (disconnected) {
+        this.settings.temperature_id = '';
+        this.settings.temperature_type = null;
+      }
+    } else if (_type === BluetoothTypes.TDS) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
+          undefined
+        )
+      );
 
       if (
-        scale.type === ScaleType.DIFLUIDMICROBALANCE ||
-        scale.type === ScaleType.DIFLUIDMICROBALANCETI
+        this.settings.refractometer_id !== '' &&
+        this.bleManager.getRefractometerDevice()
       ) {
-        //If there are multiple commands, and also to reset the sclae, the difluid have issues with this, therefore set delay to 300ms
-        this.settings.bluetooth_command_delay = 300;
-      } else if (scale.type === ScaleType.FELICITA) {
-        this.settings.bluetooth_command_delay = 100;
+        disconnected = await this.bleManager.disconnectRefractometerDevice(
+          this.settings.refractometer_id
+        );
       }
 
-      this.uiAnalytics.trackEvent(
-        SETTINGS_TRACKING.TITLE,
-        SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,
-        scale.type
-      );
-
-      await this.saveSettings();
-
-      let skipLoop = 0;
-      for (let i = 0; i < 5; i++) {
-        await new Promise((resolve) => {
-          setTimeout(async () => {
-            const connectedScale = this.bleManager.getScale();
-            if (connectedScale !== null && connectedScale !== undefined) {
-              skipLoop = 1;
-              try {
-                connectedScale.setLed(true, true);
-              } catch (ex) {}
-            }
-            resolve(undefined);
-          }, 1000);
-        });
-        if (skipLoop === 1) {
-          break;
-        }
+      if (disconnected) {
+        this.settings.refractometer_id = '';
+        this.settings.refractometer_type = null;
       }
-    } else {
-      this.uiAlert.showMessage(
-        'SCALE.CONNECTION_NOT_ESTABLISHED',
-        undefined,
-        undefined,
-        true
-      );
-    }
-  }
-
-  public async disconnectRefractometerDevice() {
-    this.eventQueue.dispatch(
-      new AppEvent(
-        AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
-        undefined
-      )
-    );
-    let disconnected: boolean = true;
-
-    if (
-      this.settings.refractometer_id !== '' &&
-      this.bleManager.getRefractometerDevice()
-    ) {
-      disconnected = await this.bleManager.disconnectRefractometerDevice(
-        this.settings.refractometer_id
-      );
     }
 
     if (disconnected) {
-      this.settings.refractometer_id = '';
-      this.settings.refractometer_type = null;
       await this.saveSettings();
     }
-  }
-
-  public async disconnectTemperatureDevice() {
-    this.eventQueue.dispatch(
-      new AppEvent(
-        AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
-        undefined
-      )
-    );
-    let disconnected: boolean = true;
-
-    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
-    if (
-      this.settings.temperature_id !== '' &&
-      this.bleManager.getTemperatureDevice()
-    ) {
-      disconnected = await this.bleManager.disconnectTemperatureDevice(
-        this.settings.temperature_id
-      );
-    }
-
-    if (disconnected) {
-      this.settings.temperature_id = '';
-      this.settings.temperature_type = null;
-      await this.saveSettings();
-    }
-  }
-
-  public async disconnectScale() {
-    this.eventQueue.dispatch(
-      new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
-    );
-    let disconnected: boolean = true;
-
-    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
-    if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
-      disconnected = await this.bleManager.disconnect(this.settings.scale_id);
-    }
-
-    if (disconnected) {
-      this.settings.scale_id = '';
-      this.settings.scale_type = null;
-      await this.saveSettings();
-    }
-  }
-
-  public async disconnectPressureDevice() {
-    this.eventQueue.dispatch(
-      new AppEvent(AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT, undefined)
-    );
-    let disconnected: boolean = true;
-
-    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
-    if (
-      this.settings.pressure_id !== '' &&
-      this.bleManager.getPressureDevice()
-    ) {
-      disconnected = await this.bleManager.disconnectPressureDevice(
-        this.settings.pressure_id
-      );
-    }
-
-    if (disconnected) {
-      this.settings.pressure_id = '';
-      this.settings.pressure_type = null;
-      await this.saveSettings();
-    }
-  }
-
-  public async retryConnectRefractometerDevice() {
-    await this.findAndConnectRefractometerDevice(true);
-  }
-
-  public async retryConnectTemperatureDevice() {
-    await this.findAndConnectTemperatureDevice(true);
-  }
-
-  public async retryConnectPressureDevice() {
-    await this.findAndConnectPressureDevice(true);
-  }
-
-  public async retryConnectScale() {
-    if (this.isScaleConnected() === false) {
-      await this.findAndConnectScale(true);
-    }
-  }
-
-  public isRefractometerDeviceConnected(): boolean {
-    return this.bleManager.refractometerDevice !== null;
-  }
-
-  public isTemperatureDeviceConnected(): boolean {
-    return this.bleManager.temperatureDevice !== null;
-  }
-
-  public isScaleConnected(): boolean {
-    return this.bleManager.getScale() !== null;
-  }
-
-  public isPressureDeviceConnected(): boolean {
-    return this.bleManager.pressureDevice !== null;
   }
 
   public async checkWaterSection() {
@@ -1052,10 +647,6 @@ export class SettingsPage {
         this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`
       );
     }
-  }
-
-  public isMobile(): boolean {
-    return this.platform.is('android') || this.platform.is('ios');
   }
 
   private async exportAttachments() {
@@ -1426,7 +1017,28 @@ export class SettingsPage {
   }
 
   private async _importFlowProfileFiles(
-    _storedData: Brew[] | Graph[],
+    _storedData: Brew[],
+    _importDirectory: string
+  ) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile) {
+        await this._importFile(entry.flow_profile, _importDirectory);
+      }
+      if (entry.reference_flow_profile) {
+        if (
+          entry.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
+          /*If we have an imported graph, the uuid, is used with the importedGraph folder, because else we would not been able to store those graphs coming from e.g. visualizer.*/
+          /** Making a new object for this seems to be like totaly overdrived **/
+          await this._importFile(entry.getGraphPath(), _importDirectory);
+        }
+      }
+    }
+  }
+
+  private async _importGraphProfileFiles(
+    _storedData: Graph[],
     _importDirectory: string
   ) {
     for (const entry of _storedData) {
@@ -1613,12 +1225,13 @@ export class SettingsPage {
                       await this._importFiles(collection, _importDirectory);
                     }
 
-                    const graphData = this.uiGraphStorage.getAllEntries();
                     await this._importFlowProfileFiles(
                       brewsData,
                       _importDirectory
                     );
-                    await this._importFlowProfileFiles(
+
+                    const graphData = this.uiGraphStorage.getAllEntries();
+                    await this._importGraphProfileFiles(
                       graphData,
                       _importDirectory
                     );
@@ -1762,4 +1375,6 @@ export class SettingsPage {
       );
     }
   }
+
+  protected readonly BluetoothTypes = BluetoothTypes;
 }

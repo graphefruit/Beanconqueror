@@ -74,6 +74,7 @@ import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { HapticService } from '../../../services/hapticService/haptic.service';
+import { BrewFlow } from '../../../classes/brew/brewFlow';
 
 declare var cordova;
 
@@ -102,6 +103,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
+  @Input() public brewFlowPreset: BrewFlow;
+
   @Input() public loadSpecificLastPreparation: Preparation;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
@@ -279,6 +282,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       if (this.brewBrewingGraphEl) {
+        if (this.isEdit === false && this.brewFlowPreset) {
+          this.brewBrewingGraphEl.reference_profile_raw =
+            this.uiHelper.cloneData(this.brewFlowPreset);
+        }
+
         await this.brewBrewingGraphEl?.instance();
       }
 
@@ -819,6 +827,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const savingPath = 'brews/' + _uuid + '_flow_profile.json';
       await this.uiFileHelper.writeInternalFileFromText(
         JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw),
+        savingPath
+      );
+      return savingPath;
+    } catch (ex) {
+      return '';
+    }
+  }
+
+  /**
+   * This function is triggered outside of add/edit component, because the uuid is not existing on adding at start
+   * @param _uuid
+   */
+  public async saveReferenceFlowProfile(_uuid: string): Promise<string> {
+    try {
+      const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
+      await this.uiFileHelper.writeInternalFileFromText(
+        JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw),
         savingPath
       );
       return savingPath;

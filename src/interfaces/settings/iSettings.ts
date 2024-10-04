@@ -167,6 +167,8 @@ export interface ISettings {
   bluetooth_scale_ignore_weight_button_active: boolean;
   bluetooth_scale_first_drip_threshold: number;
 
+  maximize_hide_value_cards_on_maximize_screen: boolean;
+
   pressure_id: string;
   pressure_type: PressureType;
   pressure_log: boolean;
