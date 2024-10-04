@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIHelperMock } from '../../../../classes/mock';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { FormsModule } from '@angular/forms';
@@ -27,7 +26,6 @@ describe('GraphAddComponent', () => {
           useClass: UIHelperMock,
         },
         { provide: FileChooser },
-        { provide: File },
         { provide: SocialSharing },
         { provide: FileTransfer },
       ],

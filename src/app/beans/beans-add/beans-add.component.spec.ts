@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -43,7 +42,6 @@ describe('BeansAddComponent', () => {
         { provide: InAppBrowser },
         { provide: ModalController },
         { provide: UIBeanStorage, useValue: {} },
-        { provide: File },
         { provide: ImagePicker },
         { provide: Router },
         { provide: UIHelper, useValue: {} },

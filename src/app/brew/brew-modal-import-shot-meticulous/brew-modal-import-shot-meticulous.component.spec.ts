@@ -3,7 +3,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { BrewModalImportShotMeticulousComponent } from './brew-modal-import-shot-meticulous.component';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -18,7 +17,6 @@ describe('BrewModalImportShotMeticulousComponent', () => {
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
       providers: [
         { provide: InAppBrowser },
-        { provide: File },
         { provide: SocialSharing },
         { provide: FileTransfer },
         {

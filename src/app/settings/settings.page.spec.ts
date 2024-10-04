@@ -8,11 +8,9 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
@@ -38,13 +36,11 @@ describe('SettingsPage', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: File },
         { provide: ImagePicker },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
         { provide: FileChooser },
         { provide: FileTransfer },
-        { provide: FilePath },
         { provide: SocialSharing },
       ],
     }).compileComponents();

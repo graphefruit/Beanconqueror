@@ -5,7 +5,6 @@ import { PreparationSortToolsComponent } from './preparation-sort-tools.componen
 import { TranslateModule } from '@ngx-translate/core';
 import { Preparation } from 'src/classes/preparation/preparation';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
@@ -23,7 +22,6 @@ describe('PreparationSortToolsComponent', () => {
       ],
       providers: [
         { provide: InAppBrowser },
-        { provide: File },
         { provide: SocialSharing },
         { provide: FileTransfer },
       ],

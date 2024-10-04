@@ -5,7 +5,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateServiceMock, UIHelperMock } from '../../classes/mock';
 import { IonicModule } from '@ionic/angular';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { UIHelper } from '../uiHelper';
@@ -23,9 +22,6 @@ describe('AndroidPlatformService', () => {
         {
           provide: TranslateService,
           useValue: TranslateServiceMock,
-        },
-        {
-          provide: File,
         },
         {
           provide: SocialSharing,

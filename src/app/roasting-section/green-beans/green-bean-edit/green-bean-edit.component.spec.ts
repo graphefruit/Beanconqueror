@@ -11,7 +11,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIImage } from '../../../../services/uiImage';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
@@ -33,9 +32,6 @@ describe('GreenBeanEditComponent', () => {
         {
           provide: UIImage,
           useClass: UIImageMock,
-        },
-        {
-          provide: File,
         },
         {
           provide: SocialSharing,
