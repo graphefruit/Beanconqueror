@@ -1,5 +1,4 @@
 import type { CapacitorConfig } from '@capacitor/cli';
-import { platform } from 'os';
 import { argv, env } from 'process';
 
 type Platform = 'android' | 'ios';
