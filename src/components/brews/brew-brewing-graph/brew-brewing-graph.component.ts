@@ -305,7 +305,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
           await this.uiAlert.showLoadingSpinner();
           try {
-            const jsonParsed = await this.uiFileHelper.getJSONFile(
+            const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
               referencePath
             );
             this.reference_profile_raw = jsonParsed;
@@ -3191,7 +3191,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (this.platform.is('cordova')) {
         if (_flowProfile !== '') {
           try {
-            const jsonParsed = await this.uiFileHelper.getJSONFile(
+            const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
               _flowProfile
             );
             resolve(jsonParsed);
@@ -3208,7 +3208,9 @@ export class BrewBrewingGraphComponent implements OnInit {
     const flowProfilePath =
       'brews/' + this.data.config.uuid + '_flow_profile.json';
     try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+        flowProfilePath
+      );
       this.flow_profile_raw = jsonParsed;
     } catch (ex) {}
   }

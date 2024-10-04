@@ -96,7 +96,7 @@ export class GraphEditComponent implements OnInit {
     if (this.platform.is('cordova')) {
       if (this.data.flow_profile !== '') {
         try {
-          const jsonParsed = await this.uiFileHelper.getJSONFile(
+          const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
             this.data.flow_profile
           );
           this.flowData = jsonParsed;

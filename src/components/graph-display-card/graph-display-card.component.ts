@@ -399,7 +399,7 @@ export class GraphDisplayCardComponent implements OnInit {
     if (this.platform.is('cordova')) {
       if (this.flowProfilePath !== '') {
         try {
-          const jsonParsed = await this.uiFileHelper.getJSONFile(
+          const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
             this.flowProfilePath
           );
           this.flow_profile_raw = jsonParsed;

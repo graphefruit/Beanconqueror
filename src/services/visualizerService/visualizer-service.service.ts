@@ -27,7 +27,7 @@ export class VisualizerService {
 
   private async readFlowProfile(_brew: Brew): Promise<BrewFlow> {
     try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
         _brew.flow_profile
       );
 

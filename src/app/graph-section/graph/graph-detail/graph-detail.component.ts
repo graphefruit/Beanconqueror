@@ -413,7 +413,9 @@ export class GraphDetailComponent implements OnInit {
     if (this.platform.is('cordova')) {
       if (_path !== '') {
         try {
-          const jsonParsed = await this.uiFileHelper.getJSONFile(_path);
+          const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+            _path
+          );
           this.flow_profile_raw = jsonParsed;
         } catch (ex) {}
       }

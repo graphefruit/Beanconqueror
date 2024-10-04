@@ -163,11 +163,6 @@ export class UIExportImportHelper {
     return importJSONData;
   }
 
-  public async importZIPFile(fileContent: Uint8Array): Promise<void> {
-    const json = await this.getJSONFromZIPArrayBufferContent(fileContent);
-    await this.importBackupJSON(json);
-  }
-
   private async checkBackupAndSeeIfDataAreCorrupted(_actualUIStorageDataObj) {
     try {
       this.uiLog.log(
@@ -324,7 +319,7 @@ export class UIExportImportHelper {
           this.uiLog.log(
             `Read ZIP-FILE failed, try to read an old ${EXPORT_MAIN_FILE_NAME}`
           );
-          this.uiFileHelper.getJSONFile(EXPORT_MAIN_FILE_NAME).then(
+          this.uiFileHelper.readInternalJSONFile(EXPORT_MAIN_FILE_NAME).then(
             async (_json) => {
               this.uiLog.log('Read ZIP-File, we found an json-file');
               resolve(_json);

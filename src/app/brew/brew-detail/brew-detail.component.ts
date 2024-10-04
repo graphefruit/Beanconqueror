@@ -301,7 +301,7 @@ export class BrewDetailComponent {
 
   public async downloadJSONProfile() {
     if (this.data.flow_profile !== '') {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
         this.data.flow_profile
       );
       const filename: string =

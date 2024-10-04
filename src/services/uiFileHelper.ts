@@ -1,6 +1,6 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, CapacitorException } from '@capacitor/core';
 import {
   Filesystem,
   Directory,
@@ -41,7 +41,7 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  private normalizeFileName(fileName: string): string {
+  public normalizeFileName(fileName: string): string {
     if (fileName.startsWith('/')) {
       return fileName.slice(1);
     }
@@ -157,15 +157,28 @@ export class UIFileHelper extends InstanceClass {
     );
   }
 
-  public async getJSONFile(fileName: string): Promise<any> {
+  public async readJSONFile(path: string, directory?: Directory): Promise<any> {
+    this.uiLog.debug('readJSONFile for path', path, 'in directory', directory);
     try {
-      const fileContent = await this.readInternalFileAsText(fileName);
+      const fileContent = await this.readFileAsText(path, directory);
       const parsedJSON = JSON.parse(fileContent);
       return parsedJSON;
-    } catch (ex) {
-      this.uiLog.error(`We could not read json file ${fileName}` + ex.message);
-      throw ex;
+    } catch (error) {
+      this.uiLog.error(
+        'Error in readJSONFile for path',
+        path,
+        'in directory',
+        directory,
+        '; Error: ',
+        error
+      );
+      throw error;
     }
+  }
+
+  public async readInternalJSONFile(path: string): Promise<any> {
+    this.uiLog.debug('readInternalJSONFile for path', path);
+    return this.readJSONFile(path, this.getDataDirectory());
   }
 
   public async writeFileFromBase64(
@@ -482,12 +495,45 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  public mkdirsInternal(path: string): Promise<void> {
-    return Filesystem.mkdir({
-      path: path,
-      directory: this.getDataDirectory(),
-      recursive: true,
-    });
+  public async makeParentDirs(
+    path: string,
+    directory?: Directory
+  ): Promise<void> {
+    this.uiLog.debug(
+      'makeParentDirs for path',
+      path,
+      'in directory',
+      directory
+    );
+
+    const parts = this.splitFilePath(path);
+
+    this.uiLog.debug(
+      'Calling mkdir() with path',
+      path,
+      'in directory',
+      directory
+    );
+    try {
+      await Filesystem.mkdir({
+        path: parts.FILE_PATH,
+        recursive: true,
+        directory: directory,
+      });
+    } catch (error) {
+      if (
+        error instanceof CapacitorException &&
+        error.message === 'Directory exists'
+      ) {
+        // If the directory already exists just ignore the error
+        return;
+      }
+      throw error;
+    }
+  }
+  public makeParentDirsInternal(path: string): Promise<void> {
+    this.uiLog.debug('makeParentDirsInternal for path', path);
+    return this.makeParentDirs(path, this.getDataDirectory());
   }
 
   public async duplicateInternalFile(path: string): Promise<string> {
@@ -499,11 +545,12 @@ export class UIFileHelper extends InstanceClass {
       );
     }
 
-    const fileObj = this.__splitFilePath(path);
+    const fileObj = this.splitFilePath(path);
     const newPath = await this.generateInternalPath(
       fileObj.FILE_NAME,
       fileObj.EXTENSION
     );
+    await this.makeParentDirsInternal(newPath);
     const result = await Filesystem.copy({
       from: path,
       directory: this.getDataDirectory(),
@@ -526,7 +573,7 @@ export class UIFileHelper extends InstanceClass {
     return newPath;
   }
 
-  private __splitFilePath(_filePath: string): {
+  private splitFilePath(_filePath: string): {
     FILE_NAME: string;
     FILE_PATH: string;
     EXTENSION: string;
@@ -598,7 +645,7 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  private async fileExists(options: StatOptions): Promise<boolean> {
+  public async fileExists(options: StatOptions): Promise<boolean> {
     try {
       await Filesystem.stat(options);
       return true;
