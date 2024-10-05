@@ -11,10 +11,6 @@ import { Animation, StatusBar, Style } from '@capacitor/status-bar';
 import { Keyboard } from '@capacitor/keyboard';
 
 import {
-  ThreeDeeTouch,
-  ThreeDeeTouchQuickAction,
-} from '@awesome-cordova-plugins/three-dee-touch/ngx';
-import {
   IonRouterOutlet,
   MenuController,
   ModalController,
@@ -222,7 +218,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly menuCtrl: MenuController,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly threeDeeTouch: ThreeDeeTouch,
     private readonly modalCtrl: ModalController,
     private readonly uiHelper: UIHelper,
     private readonly uiAlert: UIAlert,
@@ -604,7 +599,6 @@ export class AppComponent implements AfterViewInit {
     this.__registerBack();
     await this.__setDeviceLanguage();
 
-    this.__setThreeDeeTouchActions();
     await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
@@ -837,42 +831,6 @@ export class AppComponent implements AfterViewInit {
         );
       }
     });
-  }
-
-  private __setThreeDeeTouchActions() {
-    // Ignore for now
-    try {
-      if (this.platform.is('ios')) {
-        const actions: ThreeDeeTouchQuickAction[] = [
-          {
-            type: 'Brew',
-            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BREW'),
-            iconType: 'Add',
-          },
-          {
-            type: 'Bean',
-            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BEAN'),
-            iconType: 'Add',
-          },
-          {
-            type: 'Preparation',
-            title: this._translate.instant(
-              'THREE_DEE_TOUCH_ACTION_PREPARATION'
-            ),
-            iconType: 'Add',
-          },
-          {
-            type: 'Mill',
-            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_MILL'),
-            iconType: 'Add',
-          },
-        ];
-
-        this.threeDeeTouch.configureQuickActions(actions);
-      }
-    } catch (ex) {
-      this.uiLog.error('Could not set three dee actions');
-    }
   }
 
   private __instanceAppRating() {

@@ -8,7 +8,6 @@ import { AppComponent } from './app.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Storage } from '@ionic/storage';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { IntentHandlerService } from 'src/services/intentHandler/intent-handler.service';
 import { UIPreparationHelper } from 'src/services/uiPreparationHelper';
 
@@ -22,7 +21,6 @@ describe('AppComponent', () => {
       providers: [
         { provide: AndroidPermissions },
         { provide: Storage },
-        { provide: ThreeDeeTouch },
         { provide: ModalController },
         { provide: AngularDelegate },
         { provide: IntentHandlerService, useValue: {} },

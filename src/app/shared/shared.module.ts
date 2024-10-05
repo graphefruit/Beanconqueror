@@ -27,7 +27,6 @@ import { TermsComponent } from '../info/terms/terms.component';
 import { ThanksComponent } from '../info/thanks/thanks.component';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 
-import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { BeansPage } from '../beans/beans.page';
@@ -375,7 +374,6 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     TransformDateDirective,
     DisableDoubleClickDirective,
     FileChooser,
-    ThreeDeeTouch,
     ImagePicker,
     AndroidPermissions,
   ],
