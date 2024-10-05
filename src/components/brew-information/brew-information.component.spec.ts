@@ -8,7 +8,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelperMock, UIImageMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Brew } from '../../classes/brew/brew';
 import { IBrew } from '../../interfaces/brew/iBrew';
@@ -36,7 +35,6 @@ describe('BrewInformationComponent', () => {
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: UIImage, useClass: UIImageMock },
-        { provide: SocialSharing },
         { provide: FileChooser },
       ],
     }).compileComponents();

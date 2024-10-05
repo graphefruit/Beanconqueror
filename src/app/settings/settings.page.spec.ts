@@ -12,7 +12,6 @@ import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
 import { PipesModule } from 'src/pipes/pipes.module';
@@ -40,7 +39,6 @@ describe('SettingsPage', () => {
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
         { provide: FileChooser },
-        { provide: SocialSharing },
       ],
     }).compileComponents();
   }));

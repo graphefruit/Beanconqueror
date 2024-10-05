@@ -8,7 +8,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { Brew } from '../../../classes/brew/brew';
 
@@ -30,9 +29,6 @@ describe('BrewChooseGraphReferenceComponent', () => {
         },
         {
           provide: FileChooser,
-        },
-        {
-          provide: SocialSharing,
         },
       ],
     }).compileComponents();

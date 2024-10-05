@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { BrewModalImportShotMeticulousComponent } from './brew-modal-import-shot-meticulous.component';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateServiceMock } from '../../../classes/mock';
 
@@ -16,7 +15,6 @@ describe('BrewModalImportShotMeticulousComponent', () => {
       declarations: [BrewModalImportShotMeticulousComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
-        { provide: SocialSharing },
         {
           provide: TranslateService,
           useValue: TranslateServiceMock,

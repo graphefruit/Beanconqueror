@@ -10,7 +10,6 @@ import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { PipesModule } from 'src/pipes/pipes.module';
@@ -35,7 +34,6 @@ describe('BrewPage', () => {
         { provide: Storage },
         { provide: ImagePicker },
         { provide: Router },
-        { provide: SocialSharing },
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();

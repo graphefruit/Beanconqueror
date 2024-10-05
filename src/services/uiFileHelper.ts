@@ -10,9 +10,11 @@ import {
 import { Platform } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UILog } from './uiLog';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+
 import moment from 'moment';
 import { InstanceClass } from './instanceClass';
+
+import { Share } from '@capacitor/share';
 
 /**
  * Handles every helping functionalities
@@ -25,8 +27,7 @@ export class UIFileHelper extends InstanceClass {
   constructor(
     private readonly uiLog: UILog,
     private readonly platform: Platform,
-    private readonly domSanitizer: DomSanitizer,
-    private readonly socialSharing: SocialSharing
+    private readonly domSanitizer: DomSanitizer
   ) {
     super();
   }
@@ -185,7 +186,7 @@ export class UIFileHelper extends InstanceClass {
     base64: string,
     path: string,
     directory?: Directory
-  ): Promise<string> {
+  ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug(
       'writeFileFromBase64 for path',
       path,
@@ -218,13 +219,13 @@ export class UIFileHelper extends InstanceClass {
     // return the relative path we used to write the file instead of the
     // absolute path returned in writeResult.uri for backwards compatibility
     // with cordova-plugin-file.
-    return path;
+    return { path: path, fullpath: writeResult.uri };
   }
 
   public async writeInternalFileFromBase64(
     base64: string,
     path: string
-  ): Promise<string> {
+  ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug('writeInternalFileFromBase64 for path', path);
     return this.writeFileFromBase64(base64, path, this.getDataDirectory());
   }
@@ -233,7 +234,7 @@ export class UIFileHelper extends InstanceClass {
     blob: Blob,
     path: string,
     directory?: Directory
-  ): Promise<string> {
+  ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug(
       'writeFileFromBlob for path',
       path,
@@ -248,7 +249,7 @@ export class UIFileHelper extends InstanceClass {
   public async writeInternalFileFromBlob(
     blob: Blob,
     path: string
-  ): Promise<string> {
+  ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug('writeInternalFileFromBlob for path', path);
     return this.writeFileFromBlob(blob, path, this.getDataDirectory());
   }
@@ -468,7 +469,10 @@ export class UIFileHelper extends InstanceClass {
         directory: Directory.External,
       });
       if (share === true) {
-        this.socialSharing.share(undefined, undefined, exportUri);
+        /**We cant use the shareservice.- because else we got a CI issue*/
+        await Share.share({
+          url: exportUri,
+        });
       }
       return path;
     } else {

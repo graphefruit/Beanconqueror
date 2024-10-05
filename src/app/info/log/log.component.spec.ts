@@ -9,7 +9,6 @@ import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelper } from '../../../services/uiHelper';
 import { PipesModule } from 'src/pipes/pipes.module';
 
@@ -33,7 +32,6 @@ describe('LogComponent', () => {
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: ImagePicker },
-        { provide: SocialSharing },
         { provide: Router },
       ],
     }).compileComponents();

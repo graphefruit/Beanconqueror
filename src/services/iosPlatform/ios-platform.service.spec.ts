@@ -4,7 +4,7 @@ import { IosPlatformService } from './ios-platform.service';
 import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from '@ionic/angular';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+
 import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../uiHelper';
 
@@ -15,7 +15,6 @@ describe('IosPlatformService', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: Storage },
-        { provide: SocialSharing },
         {
           provide: UIHelper,
           useClass: UIHelperMock,

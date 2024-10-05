@@ -19,7 +19,6 @@ import { IBrew } from '../../interfaces/brew/iBrew';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -139,7 +138,7 @@ export class SettingsPage {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly socialSharing: SocialSharing,
+
     private readonly uiLog: UILog,
     private readonly translate: TranslateService,
     private readonly changeDetectorRef: ChangeDetectorRef,

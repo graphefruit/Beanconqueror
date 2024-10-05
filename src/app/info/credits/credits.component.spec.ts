@@ -9,7 +9,6 @@ import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('CreditsComponent', () => {
@@ -31,7 +30,6 @@ describe('CreditsComponent', () => {
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
         { provide: ImagePicker },
-        { provide: SocialSharing },
         { provide: Router },
       ],
     }).compileComponents();

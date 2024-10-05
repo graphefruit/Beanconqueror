@@ -59,7 +59,7 @@ export class UIImage {
       base64,
       fileName
     );
-    return fileUri;
+    return fileUri.path;
   }
 
   public async takePhoto(): Promise<string> {

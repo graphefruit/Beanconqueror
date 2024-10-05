@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIHelperMock } from '../../../../classes/mock';
 import { Storage } from '@ionic/storage';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
 describe('GraphDetailComponent', () => {
   let component: GraphDetailComponent;
@@ -22,7 +21,6 @@ describe('GraphDetailComponent', () => {
           useClass: UIHelperMock,
         },
         { provide: Storage },
-        { provide: SocialSharing },
       ],
     }).compileComponents();
   }));

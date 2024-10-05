@@ -4,7 +4,6 @@ import { IonicModule } from '@ionic/angular';
 import { PreparationSortToolsComponent } from './preparation-sort-tools.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Preparation } from 'src/classes/preparation/preparation';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
 describe('PreparationSortToolsComponent', () => {
   let component: PreparationSortToolsComponent;
@@ -18,7 +17,7 @@ describe('PreparationSortToolsComponent', () => {
         TranslateModule.forChild(),
         TranslateModule.forRoot(),
       ],
-      providers: [{ provide: SocialSharing }],
+      providers: [],
     }).compileComponents();
   }));
 

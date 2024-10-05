@@ -25,7 +25,6 @@ import { Settings } from '../../../classes/settings/settings';
 import { Bean } from '../../../classes/bean/bean';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Mill } from '../../../classes/mill/mill';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelper } from '../../../services/uiHelper';
 import { PipesModule } from 'src/pipes/pipes.module';
 
@@ -88,7 +87,6 @@ describe('BrewAddComponent', () => {
         { provide: VisualizerService, useValue: {} },
         Insomnia,
         { provide: Router },
-        { provide: SocialSharing },
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();

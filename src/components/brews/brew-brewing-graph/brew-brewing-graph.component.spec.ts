@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { BrewMock, UIHelperMock } from '../../../classes/mock';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
 describe('BrewBrewingGraphComponent', () => {
   let component: BrewBrewingGraphComponent;
@@ -24,7 +23,6 @@ describe('BrewBrewingGraphComponent', () => {
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
-        { provide: SocialSharing },
       ],
     }).compileComponents();
   }));

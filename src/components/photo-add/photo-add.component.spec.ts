@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { PhotoAddComponent } from './photo-add.component';
 import { UIImage } from '../../services/uiImage';
 import { UIImageMock } from '../../classes/mock';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+
 import { TranslateModule } from '@ngx-translate/core';
 
 describe('PhotoAddComponent', () => {
@@ -20,7 +20,6 @@ describe('PhotoAddComponent', () => {
           provide: UIImage,
           useClass: UIImageMock,
         },
-        { provide: SocialSharing },
       ],
     }).compileComponents();
 

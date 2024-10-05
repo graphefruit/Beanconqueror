@@ -10,7 +10,6 @@ import { NavParamsMock } from '../../../classes/mock';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { PipesModule } from 'src/pipes/pipes.module';
@@ -36,7 +35,6 @@ describe('BrewEditComponent', () => {
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
         { provide: ImagePicker },
-        { provide: SocialSharing },
         { provide: Router },
         { provide: Insomnia },
       ],

@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock, UIImageMock } from '../../classes/mock';
 import { UIImage } from '../../services/uiImage';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Bean } from '../../classes/bean/bean';
 
@@ -30,7 +29,6 @@ describe('BeanInformationComponent', () => {
           provide: UIImage,
           useClass: UIImageMock,
         },
-        { provide: SocialSharing },
       ],
     }).compileComponents();
   }));

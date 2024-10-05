@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { Graph } from '../../classes/graph/graph';
 
 describe('GraphInformationCardComponent', () => {
@@ -25,7 +24,6 @@ describe('GraphInformationCardComponent', () => {
           useClass: UIHelperMock,
         },
         { provide: FileChooser },
-        { provide: SocialSharing },
       ],
     }).compileComponents();
   }));

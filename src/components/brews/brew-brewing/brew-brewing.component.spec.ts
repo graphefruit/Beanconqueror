@@ -6,7 +6,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { BrewMock, UIHelperMock } from '../../../classes/mock';
 import { UIHelper } from '../../../services/uiHelper';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +33,6 @@ describe('BrewBrewingComponent', () => {
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
-        { provide: SocialSharing },
       ],
     }).compileComponents();
   }));

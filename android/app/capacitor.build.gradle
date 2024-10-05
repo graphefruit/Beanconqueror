@@ -19,12 +19,12 @@ dependencies {
     implementation project(':capacitor-haptics')
     implementation project(':capacitor-inappbrowser')
     implementation project(':capacitor-keyboard')
+    implementation project(':capacitor-share')
     implementation project(':capacitor-status-bar')
     implementation "com.android.support:appcompat-v7:27.1.1"
     implementation "androidx.annotation:annotation:*"
     implementation "com.google.android.gms:play-services-fitness:21.1.0"
     implementation "com.google.android.gms:play-services-auth:20.2.0"
-    implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "com.android.support:support-annotations:+"
 }
 

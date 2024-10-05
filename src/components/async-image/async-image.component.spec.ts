@@ -7,8 +7,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-
 describe('AsyncImageComponent', () => {
   let component: AsyncImageComponent;
   let fixture: ComponentFixture<AsyncImageComponent>;
@@ -22,7 +20,7 @@ describe('AsyncImageComponent', () => {
         IonicModule,
       ],
       declarations: [AsyncImageComponent],
-      providers: [{ provide: Storage }, { provide: SocialSharing }],
+      providers: [{ provide: Storage }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
   }));
