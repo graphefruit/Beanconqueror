@@ -50,7 +50,6 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^4.0.0",
     "@zip.js/zip.js": "^2.7.14",
-    "ag-virtual-scroll": "^1.6.0",
     "ble-central-advertisements": "^1.1.0",
     "chart.js": "^3.9.1",
     "core-js": "^3.29.1",
