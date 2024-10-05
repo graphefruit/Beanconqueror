@@ -28,7 +28,6 @@
     "@awesome-cordova-plugins/file-chooser": "^6.4.0",
     "@awesome-cordova-plugins/image-picker": "^6.4.0",
     "@awesome-cordova-plugins/insomnia": "^6.4.0",
-    "@awesome-cordova-plugins/native-storage": "^6.6.0",
     "@awesome-cordova-plugins/three-dee-touch": "^6.4.0",
     "@capacitor/android": "6.1.2",
     "@capacitor/app": "6.0.1",
