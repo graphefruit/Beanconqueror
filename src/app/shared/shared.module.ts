@@ -115,7 +115,6 @@ import { ImpressumComponent } from '../info/impressum/impressum.component';
 import { CookieComponent } from '../info/cookie/cookie.component';
 import { FilesystemErrorPopoverComponent } from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 import { BeanArchivePopoverComponent } from '../beans/bean-archive-popover/bean-archive-popover.component';
 import { CuppingFlavorsComponent } from '../../components/cupping-flavors/cupping-flavors.component';
 import { WaterSectionPage } from '../water-section/water-section.page';
@@ -383,7 +382,6 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     AndroidPermissions,
     Globalization,
     Insomnia,
-    Deeplinks,
   ],
   exports: [
     SettingsPage,

@@ -259,6 +259,11 @@ export class AppComponent implements AfterViewInit {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
       const _db = window.sqlitePlugin;
     } catch (ex) {}
+
+    if (this.platform.is('cordova')) {
+      // Just support deeplinks on devices.
+      this.intentHandlerService.attachOnHandleOpenUrl();
+    }
   }
 
   public ngOnInit() {}
@@ -367,10 +372,6 @@ export class AppComponent implements AfterViewInit {
         });
       }
 
-      if (this.platform.is('cordova')) {
-        // Just support deeplinks on devices.
-        this.intentHandlerService.attachOnHandleOpenUrl();
-      }
       // Before we update and show messages, we need atleast to set one default language.
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();

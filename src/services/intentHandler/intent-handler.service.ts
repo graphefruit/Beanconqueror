@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { UIHelper } from '../uiHelper';
-import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 
 import { UILog } from '../uiLog';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
@@ -10,9 +9,9 @@ import { UIAlert } from '../uiAlert';
 import QR_TRACKING from '../../data/tracking/qrTracking';
 import { UIAnalytics } from '../uiAnalytics';
 import { VisualizerService } from '../visualizerService/visualizer-service.service';
+import { App, URLOpenListenerEvent } from '@capacitor/app';
 
 declare var window;
-declare var IonicDeeplink;
 @Injectable({
   providedIn: 'root',
 })
@@ -23,31 +22,26 @@ export class IntentHandlerService {
   };
   constructor(
     private readonly uiHelper: UIHelper,
-    private readonly deeplinks: Deeplinks,
     private readonly uiLog: UILog,
     private readonly serverCommunicationService: ServerCommunicationService,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiAlert: UIAlert,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly zone: NgZone
   ) {}
 
   public attachOnHandleOpenUrl() {
-    if (typeof IonicDeeplink !== 'undefined') {
-      IonicDeeplink.route(
-        {
-          '/NO_LINK_EVER_WILL_WORK_HERE/': '/NO_LINK_EVER_WILL_WORK_HERE/',
-        },
-        (match) => {
-          this.uiLog.log('Deeplink matched ' + JSON.stringify(match));
-          this.handleDeepLink(match.$link);
-        },
-        (nomatch) => {
-          this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch));
-          this.handleDeepLink(nomatch.$link);
-        }
-      );
-    }
+    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+      console.log(event);
+      this.zone.run(() => {
+        this.uiLog.log('Deeplink matched ' + JSON.stringify(event));
+        this.uiLog.log('Deeplink matched ' + event.url);
+        setTimeout(() => {
+          this.handleDeepLink(event.url);
+        }, 2000);
+      });
+    });
   }
   private findGetParameter(_url: string, _parameterName: string) {
     let result = null,
@@ -97,11 +91,13 @@ export class IntentHandlerService {
     });
   }
 
-  public async handleDeepLink(_matchLink) {
+  public async handleDeepLink(_url) {
     try {
-      if (_matchLink && _matchLink.url) {
+      if (_url) {
         await this.uiHelper.isBeanconqurorAppReady().then(async () => {
-          const url: string = _matchLink.url;
+          const url: string = _url;
+
+          const urlParams = new URLSearchParams(url.split('?')[1]);
 
           this.uiLog.log('Handle deeplink: ' + url);
           if (
@@ -109,14 +105,10 @@ export class IntentHandlerService {
             url.indexOf('https://beanconqueror.com?qr=') === 0 ||
             url.indexOf('?qr=') >= 0
           ) {
-            const qrCodeId: string = String(
-              this.findGetParameter(_matchLink.queryString, 'qr')
-            );
+            const qrCodeId: string = urlParams.get('qr');
             await this.addBeanFromServer(qrCodeId);
           } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
-            const qrCodeId: string = String(
-              this.findGetParameter(_matchLink.queryString, 'id')
-            );
+            const qrCodeId: string = urlParams.get('id');
             await this.addBeanFromServer(qrCodeId);
           } else if (
             url.indexOf('https://beanconqueror.com/?shareUserBean0=') === 0 ||
@@ -129,9 +121,7 @@ export class IntentHandlerService {
             const foundJSONParams = url.match(regex);
             try {
               for (const param of foundJSONParams) {
-                userBeanJSON += String(
-                  this.findGetParameter(_matchLink.queryString, param)
-                );
+                userBeanJSON += String(urlParams.get(param));
               }
             } catch (ex) {}
             this.uiLog.log('Found shared bean ' + userBeanJSON);
@@ -144,34 +134,25 @@ export class IntentHandlerService {
             const regex = /((shareUserBean)[0-9]+(?=\=))/gi;
             const foundJSONParams = url.match(regex);
             for (const param of foundJSONParams) {
-              userBeanJSON += String(
-                this.findGetParameter(_matchLink.queryString, param)
-              );
+              userBeanJSON += String(urlParams.get(param));
             }
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
           } else if (url.indexOf('beanconqueror://VISUALIZER_SHARE?') === 0) {
-            const visualizerShareCode: string = String(
-              this.findGetParameter(_matchLink.queryString, 'code')
-            );
+            const visualizerShareCode = String(urlParams.get('code'));
+
             this.importVisualizerShot(visualizerShareCode);
           } else if (
             url.indexOf('https://beanconqueror.com/?visualizerShare=') === 0 ||
             url.indexOf('https://beanconqueror.com?visualizerShare=') === 0 ||
             url.indexOf('?visualizerShare=') >= 0
           ) {
-            let shareCode: string = '';
-
-            //  const regex = /((visualizerShare=)[a-zA-Z]+)/gi;
-            // const foundJSONParams = url.match(regex);
-
-            shareCode = this.findGetParameter(
-              _matchLink.queryString,
-              'visualizerShare'
+            const visualizerShareCode = String(
+              urlParams.get('visualizerShare')
             );
 
-            this.importVisualizerShot(shareCode);
+            this.importVisualizerShot(visualizerShareCode);
           } else {
             this.uiAlert.showMessage(
               'QR.WRONG_LINK_DESCRIPTION',
