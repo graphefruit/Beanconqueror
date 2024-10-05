@@ -93,6 +93,8 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+      <key>CFBundleURLName</key>
+      <string>com.beanconqueror.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>beanconqueror</string>
