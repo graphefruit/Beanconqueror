@@ -4,7 +4,6 @@ import { IonicModule } from '@ionic/angular';
 import { BrewInformationComponent } from './brew-information.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelperMock, UIImageMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
@@ -35,7 +34,6 @@ describe('BrewInformationComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: Storage },
-        { provide: InAppBrowser },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: UIImage, useClass: UIImageMock },
         { provide: SocialSharing },

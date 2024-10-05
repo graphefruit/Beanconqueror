@@ -25,7 +25,6 @@ import { LicencesComponent } from '../info/licences/licences.component';
 import { PrivacyComponent } from '../info/privacy/privacy.component';
 import { TermsComponent } from '../info/terms/terms.component';
 import { ThanksComponent } from '../info/thanks/thanks.component';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
@@ -379,14 +378,12 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     TooltipDirective,
     TransformDateDirective,
     DisableDoubleClickDirective,
-    InAppBrowser,
     FileChooser,
 
     SocialSharing,
     ThreeDeeTouch,
     ImagePicker,
     AndroidPermissions,
-    InAppBrowser,
     Globalization,
     Insomnia,
     Deeplinks,

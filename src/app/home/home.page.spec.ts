@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { UIHelper } from '../../services/uiHelper';
 import { NavParamsMock, UIHelperMock } from '../../classes/mock';
@@ -29,7 +28,6 @@ describe('HomePage', () => {
       ],
       declarations: [HomePage],
       providers: [
-        { provide: InAppBrowser },
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },

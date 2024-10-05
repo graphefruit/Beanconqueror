@@ -1,6 +1,5 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { Clipboard } from '@capacitor/clipboard';
 /** Ionic */
 import { Platform } from '@ionic/angular';
@@ -16,6 +15,7 @@ import { UIAlert } from './uiAlert';
 import { cloneDeep } from 'lodash';
 import { UIToast } from './uiToast';
 import { UISettingsStorage } from './uiSettingsStorage';
+import { InAppBrowser } from '@capacitor/inappbrowser';
 /**
  * Handles every helping functionalities
  */
@@ -30,7 +30,6 @@ export class UIHelper {
 
   constructor(
     private readonly platform: Platform,
-    private readonly inAppBrowser: InAppBrowser,
     private readonly sanitizer: DomSanitizer,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiLog: UILog,
@@ -265,9 +264,9 @@ export class UIHelper {
       url = 'http://' + url;
     }
 
-    this.inAppBrowser.create(url, '_system');
-
-    // window.open(_url, "_system");
+    InAppBrowser.openInExternalBrowser({
+      url: url,
+    });
   }
 
   public async exportJSON(

@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
@@ -33,7 +32,6 @@ describe('BeansEditComponent', () => {
       ],
       declarations: [BeansEditComponent, AsyncImageComponent],
       providers: [
-        { provide: InAppBrowser },
         { provide: ModalController },
         { provide: Storage },
         { provide: ImagePicker },

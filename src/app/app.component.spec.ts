@@ -8,7 +8,6 @@ import { AppComponent } from './app.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Storage } from '@ionic/storage';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
@@ -25,7 +24,6 @@ describe('AppComponent', () => {
       providers: [
         { provide: AndroidPermissions },
         { provide: Storage },
-        { provide: InAppBrowser },
         { provide: ThreeDeeTouch },
         { provide: ModalController },
         { provide: Globalization },
