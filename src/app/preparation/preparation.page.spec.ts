@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
@@ -33,7 +32,6 @@ describe('PreparationPage', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: ImagePicker },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
       ],

@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { UIHelperMock } from '../../../classes/mock';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -33,7 +32,6 @@ describe('BrewPopoverActionsComponent', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: ImagePicker },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: UIPreparationStorage },
       ],

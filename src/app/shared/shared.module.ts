@@ -26,8 +26,6 @@ import { PrivacyComponent } from '../info/privacy/privacy.component';
 import { TermsComponent } from '../info/terms/terms.component';
 import { ThanksComponent } from '../info/thanks/thanks.component';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { BeansPage } from '../beans/beans.page';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
@@ -374,7 +372,6 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     TransformDateDirective,
     DisableDoubleClickDirective,
     FileChooser,
-    ImagePicker,
     AndroidPermissions,
   ],
   exports: [

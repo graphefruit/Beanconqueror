@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -34,7 +33,6 @@ describe('BeansEditComponent', () => {
       providers: [
         { provide: ModalController },
         { provide: Storage },
-        { provide: ImagePicker },
         { provide: UIAnalytics, useValue: {} },
         { provide: UIBeanStorage, useValue: {} },
         { provide: UIBeanHelper, useValue: {} },

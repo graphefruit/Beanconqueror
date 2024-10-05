@@ -9,7 +9,6 @@ import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { UIHelperMock } from '../../classes/mock';
@@ -35,7 +34,6 @@ describe('SettingsPage', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: ImagePicker },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
         { provide: FileChooser },

@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { BrewTimerComponent } from '../../../components/brew-timer/brew-timer.component';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
@@ -46,7 +45,6 @@ describe('BrewAddComponent', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: ImagePicker },
         {
           provide: UIBeanStorage,
           useValue: {

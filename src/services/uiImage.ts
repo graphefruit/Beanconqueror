@@ -7,13 +7,13 @@ import {
   CameraSource,
 } from '@capacitor/camera';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
+
 /** Ionic */
 import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { UIHelper } from './uiHelper';
 import { UIFileHelper } from './uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+
 import { UIAlert } from './uiAlert';
 import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
 import { Brew } from '../classes/brew/brew';
@@ -32,17 +32,14 @@ import { UILog } from './uiLog';
 })
 export class UIImage {
   constructor(
-    private readonly imagePicker: ImagePicker,
     private readonly alertController: AlertController,
     private readonly platform: Platform,
     private readonly androidPermissions: AndroidPermissions,
-    private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly translate: TranslateService,
     private readonly uiAlert: UIAlert,
     private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiLog: UILog
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
   private getImageQuality(): number {
@@ -81,114 +78,40 @@ export class UIImage {
       this.__checkPermission(
         async () => {
           setTimeout(async () => {
-            const isCordova: boolean = this.platform.is('cordova');
-            const isAndroid: boolean = this.platform.is('android');
             const fileurls: Array<string> = [];
-            if (!(isCordova && isAndroid)) {
-              if (isCordova) {
-                // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
-                this.imagePicker
-                  .getPictures({
-                    maximumImagesCount: 5,
-                    outputType: 1,
-                    disable_popover: true,
-                    quality: this.getImageQuality(),
-                  })
-                  .then(
-                    async (results) => {
-                      await this.uiAlert.showLoadingSpinner();
-                      for await (const result of results) {
-                        if (result && result.path) {
-                          try {
-                            const newUri = await this.saveBase64Photo(
-                              result.path
-                            );
-                            fileurls.push(newUri);
-                          } catch (ex) {
-                            //nothing
-                          }
-                        } else {
-                          //Nothing
-                        }
-                      }
-                      setTimeout(() => {
-                        this.uiAlert.hideLoadingSpinner();
-                      }, 50);
 
-                      // this.__cleanupCamera();
-                      if (fileurls.length > 0) {
-                        resolve(fileurls);
-                      } else {
-                        reject('We found no file urls');
-                      }
-                    },
-                    (err) => {
-                      setTimeout(() => {
-                        this.uiAlert.hideLoadingSpinner();
-                      }, 50);
-                      reject(err);
-                    }
-                  );
-              }
-            } else {
-              // Android
-              this.imagePicker
-                .getPictures({
-                  maximumImagesCount: 5,
-                  outputType: 1,
-                  disable_popover: true,
-                  quality: this.getImageQuality(),
-                })
-                .then(
-                  async (_files) => {
-                    await this.uiAlert.showLoadingSpinner();
+            const results = await Camera.pickImages({
+              quality: this.getImageQuality(),
+            });
 
-                    for await (const file of _files) {
-                      let newFileName = file.path;
-                      try {
-                        // We cant copy the file if it doesn't start with file:///,
-                        if (file.path.indexOf('file:') <= -1) {
-                          if (file.path.indexOf('/') === 0) {
-                            newFileName = 'file://' + file.path;
-                          } else {
-                            newFileName = 'file:///' + file.path;
-                          }
-                        }
+            await this.uiAlert.showLoadingSpinner();
 
-                        let imageBase64 =
-                          await this.uiFileHelper.readFileAsBase64(newFileName);
-
-                        try {
-                          const newUri = await this.saveBase64Photo(
-                            imageBase64
-                          );
-                          fileurls.push(newUri);
-                        } catch (ex) {}
-                      } catch (ex) {
-                        setTimeout(() => {
-                          this.uiAlert.hideLoadingSpinner();
-                        }, 50);
-                        reject(ex);
-                      }
-                    }
-                    setTimeout(() => {
-                      this.uiAlert.hideLoadingSpinner();
-                    }, 50);
-                    // this.__cleanupCamera();
-
-                    if (fileurls.length > 0) {
-                      resolve(fileurls);
-                    } else {
-                      reject('We found no file urls');
-                    }
-                  },
-                  (_err) => {
-                    setTimeout(() => {
-                      this.uiAlert.hideLoadingSpinner();
-                    }, 50);
-                    reject(_err);
-                  }
+            for await (const file of results.photos) {
+              try {
+                const imageBase64 = await this.uiFileHelper.readFileAsBase64(
+                  file.path
                 );
+
+                try {
+                  const newUri = await this.saveBase64Photo(imageBase64);
+                  fileurls.push(newUri);
+                } catch (ex) {}
+              } catch (ex) {
+                setTimeout(() => {
+                  this.uiAlert.hideLoadingSpinner();
+                }, 50);
+                reject(ex);
+              }
+            }
+            setTimeout(() => {
+              this.uiAlert.hideLoadingSpinner();
+            }, 50);
+            // this.__cleanupCamera();
+
+            if (fileurls.length > 0) {
+              resolve(fileurls);
+            } else {
+              reject('We found no file urls');
             }
           });
         },

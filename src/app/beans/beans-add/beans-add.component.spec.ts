@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -40,7 +39,6 @@ describe('BeansAddComponent', () => {
       providers: [
         { provide: ModalController },
         { provide: UIBeanStorage, useValue: {} },
-        { provide: ImagePicker },
         { provide: Router },
         { provide: UIHelper, useValue: {} },
         { provide: UIFileHelper, useValue: {} },

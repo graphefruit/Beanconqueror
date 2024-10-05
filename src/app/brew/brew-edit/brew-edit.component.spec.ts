@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { NavParamsMock } from '../../../classes/mock';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -33,7 +32,6 @@ describe('BrewEditComponent', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: ImagePicker },
         { provide: Router },
       ],
     }).compileComponents();

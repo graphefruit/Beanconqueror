@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { UIHelper } from '../../services/uiHelper';
@@ -32,7 +31,6 @@ describe('BrewPage', () => {
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: ImagePicker },
         { provide: Router },
         { provide: UIHelper, useClass: UIHelperMock },
       ],
