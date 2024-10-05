@@ -69,7 +69,7 @@ export class BluetoothDeviceChooserPopoverComponent
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
       await this.uiAlert.showMessage(
-        'REFRACTOMETER.REQUEST_PERMISSION.LOCATION',
+        'BLUETOOTH_REQUEST_PERMISSION.LOCATION',
         undefined,
         undefined,
         true
@@ -81,7 +81,7 @@ export class BluetoothDeviceChooserPopoverComponent
       await this.bleManager.hasBluetoothPermission();
     if (!hasBluetoothPermission) {
       await this.uiAlert.showMessage(
-        'REFRACTOMETER.REQUEST_PERMISSION.BLUETOOTH',
+        'BLUETOOTH_REQUEST_PERMISSION.BLUETOOTH',
         undefined,
         undefined,
         true
