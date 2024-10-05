@@ -60,7 +60,10 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Logger } from '../../classes/devices/common/logger';
-import { UIFileHelper } from '../../services/uiFileHelper';
+import {
+  CreateTempCacheDirectoryResult,
+  UIFileHelper,
+} from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 import { BluetoothTypes } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
@@ -73,8 +76,7 @@ import { BrewFlow } from '../../classes/brew/brewFlow';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
-
-declare var window: any;
+import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 
 @Component({
   selector: 'settings',
@@ -98,6 +100,9 @@ export class SettingsPage {
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
   public isScrolling: boolean = false;
+
+  public readonly isAndroid: boolean;
+  public readonly isIos: boolean;
 
   private __cleanupAttachmentData(
     _data: Array<
@@ -182,6 +187,9 @@ export class SettingsPage {
     } else {
       this.isTextToSpeechSectionAvailable = false;
     }
+
+    this.isAndroid = this.platform.is('cordova') && this.platform.is('android');
+    this.isIos = this.platform.is('cordova') && this.platform.is('ios');
   }
 
   public handleScrollStart() {
@@ -577,51 +585,64 @@ export class SettingsPage {
     );
     this.uiLog.log('Import real data');
 
-    const fileUri = await FilePicker.pickFiles({ limit: 1 });
+    const { files: pickedFiles } = await FilePicker.pickFiles({ limit: 1 });
 
-    if (!fileUri.files || !fileUri.files[0]?.path) {
+    if (!pickedFiles || !pickedFiles[0]?.path) {
       return;
     }
+    const pickedFile = pickedFiles[0];
     if (
-      fileUri.files[0].mimeType.indexOf('zip') <= 0 &&
-      fileUri.files[0].mimeType.indexOf('json') <= 0
+      pickedFile.mimeType.indexOf('zip') === -1 &&
+      pickedFile.mimeType.indexOf('json') === -1
     ) {
       this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
       return;
     }
 
-    const path = fileUri.files[0].path;
+    const path = pickedFile.path;
     // path/uri post-processing
     let directoryUri = path.substring(0, path.lastIndexOf('/'));
-    const fileName = path.substring(path.lastIndexOf('/') + 1, path.length);
-    if (this.platform.is('ios')) {
-    } else {
-      // Until SAF can be implemented or until we package the addition files
-      // into the ZIP file, we just have to always import from the external
-      // storage directory, i.e. /sdcard/Android/com.beanconqueror.app/files/
+    if (this.platform.is('android')) {
+      // Until we package the additional files into the ZIP file, we just have
+      // to always import from the external storage directory,
+      // i.e. /sdcard/Android/com.beanconqueror.app/files/
+      //
+      // As an alternative, importFromDirectoryAndroid can be used, which
+      // uses SAF to get all the other files as well.
       const result = await Filesystem.getUri({
         path: 'Download/Beanconqueror_export/',
         directory: Directory.External,
       });
       directoryUri = result.uri;
     }
+    const importMode =
+      pickedFile.mimeType.indexOf('zip') !== -1 ? 'zip' : 'json';
+    await this.doImport(importMode, path, directoryUri);
+  }
 
+  private async doImport(
+    importMode: 'zip' | 'json',
+    mainFileUri: string,
+    directoryUri: string
+  ): Promise<void> {
     try {
-      if (fileUri.files[0].mimeType.indexOf('zip') > 0) {
-        const zipContent = await this.uiFileHelper.readFileAsUint8Array(path);
+      if (importMode === 'zip') {
+        const zipContent = await this.uiFileHelper.readFileAsUint8Array(
+          mainFileUri
+        );
         const parsedJSON =
           await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
             zipContent
           );
         await this.__importJSON(parsedJSON, directoryUri);
       } else {
-        // fileUri.endsWith('.json')
-        await this.uiFileHelper.readJSONFile(path);
+        // importMode === 'json'
+        await this.uiFileHelper.readJSONFile(mainFileUri);
       }
     } catch (error) {
       this.uiLog.error(
         'Error while importing file',
-        fileUri,
+        mainFileUri,
         'from directory',
         directoryUri,
         '; Error',
@@ -633,7 +654,155 @@ export class SettingsPage {
     }
   }
 
-  private async exportAttachments() {
+  public async importFromDirectoryAndroid(): Promise<void> {
+    const logTag = 'importFromDirectoryAndroid:';
+
+    if (!this.isAndroid) {
+      throw new Error(
+        'importFromDirectoryAndroid is only available on Android'
+      );
+    }
+
+    this.uiLog.info(logTag, 'Asking for SAF directory');
+    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
+      takePersistentPermissions: false,
+    });
+    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
+
+    let cacheDir: CreateTempCacheDirectoryResult | undefined;
+    try {
+      await this.uiAlert.showLoadingSpinner();
+
+      // Attempt to read the main import file from the SAF directory and only
+      // proceed with copying the SAF directory to cache if the main file exists.
+      const mainFileName = 'Beanconqueror.zip';
+      const { exists } = await AndroidNativeCalls.fileExistsSaf({
+        safTreeUri: safTreeUri,
+        pathComponents: [mainFileName],
+      });
+      if (!exists) {
+        this.uiAlert.showMessage(
+          this.translate.instant('FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND', {
+            fileName: mainFileName,
+          })
+        );
+        return;
+      }
+
+      // Create a cache directory to move the selected SAF directory content into.
+      // This allows us to re-use the existing import logic that is common to
+      // Android and iOS.
+      cacheDir = await this.uiFileHelper.createTempCacheDirectory('safImport');
+      await AndroidNativeCalls.copySafDirectoryToFileDirectory({
+        fromSafTreeUri: safTreeUri,
+        toDirectoryUri: cacheDir.uri,
+      });
+
+      await this.doImport(
+        'zip',
+        cacheDir.uri + '/' + mainFileName,
+        cacheDir.uri
+      );
+    } finally {
+      try {
+        if (cacheDir) {
+          await Filesystem.rmdir({
+            path: cacheDir.path,
+            directory: cacheDir.directory,
+            recursive: true,
+          });
+        }
+      } catch (error) {
+        this.uiLog.error(
+          logTag,
+          'Could not delete cache dir',
+          cacheDir.path,
+          '; Error',
+          error
+        );
+        // ignore
+      }
+      this.uiAlert.hideLoadingSpinner();
+    }
+  }
+
+  public async exportToSafDirectoryAndroid(): Promise<void> {
+    const logTag = 'exportToDirectoryAndroid:';
+
+    if (!this.isAndroid) {
+      throw new Error('exportToDirectoryAndroid is only available on Android');
+    }
+
+    this.uiLog.info(logTag, 'Asking for SAF directory');
+    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
+      takePersistentPermissions: false,
+    });
+    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
+
+    let cacheDir: CreateTempCacheDirectoryResult | undefined;
+    try {
+      await this.uiAlert.showLoadingSpinner();
+
+      const mainFileName = 'Beanconqueror.zip';
+      const { exists } = await AndroidNativeCalls.fileExistsSaf({
+        safTreeUri: safTreeUri,
+        pathComponents: [mainFileName],
+      });
+      if (exists) {
+        this.uiAlert.showMessage(
+          this.translate.instant(
+            'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+            {
+              fileName: mainFileName,
+            }
+          )
+        );
+        return;
+      }
+
+      // Create a cache directory to export to. Then a native method will be
+      // used to move the contents to the SAF directory afterwards.
+      // This allows us to re-use the existing export logic that is common to
+      // Android and iOS.
+      cacheDir = await this.uiFileHelper.createTempCacheDirectory('safExport');
+      await this.exportToPath(
+        { path: cacheDir.path, directory: cacheDir.directory },
+        false
+      );
+      await AndroidNativeCalls.moveFileDirectoryToSafDirectory({
+        fromDirectoryUri: cacheDir.uri,
+        toSafTreeUri: safTreeUri,
+      });
+      this.uiAlert.showMessage(this.translate.instant('EXPORT_COMPLETED'));
+    } finally {
+      try {
+        if (cacheDir) {
+          await Filesystem.rmdir({
+            path: cacheDir.path,
+            directory: cacheDir.directory,
+            recursive: true,
+          });
+        }
+      } catch (error) {
+        this.uiLog.error(
+          logTag,
+          'Could not delete cache dir',
+          cacheDir.path,
+          '; Error',
+          error
+        );
+        // ignore
+      }
+      if (this.uiAlert.isLoadingSpinnerShown) {
+        this.uiAlert.hideLoadingSpinner();
+      }
+    }
+  }
+
+  private async exportAttachments(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
     const exportObjects: Array<any> = [
       ...this.uiBeanStorage.getAllEntries(),
       ...this.uiBrewStorage.getAllEntries(),
@@ -644,92 +813,77 @@ export class SettingsPage {
       ...this.uiRoastingMachineStorage.getAllEntries(),
     ];
 
-    await this._exportAttachments(exportObjects);
+    await this._exportAttachments(exportObjects, exportPath);
   }
 
-  private async exportFlowProfiles() {
+  private async exportFlowProfiles(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
     const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
-    await this._exportFlowProfiles(exportObjects);
+    await this._exportFlowProfiles(exportObjects, exportPath);
   }
 
-  private async exportGraphProfiles() {
+  private async exportGraphProfiles(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
     const exportObjects: Array<any> = [...this.uiGraphStorage.getAllEntries()];
-    await this._exportGraphProfiles(exportObjects);
+    await this._exportGraphProfiles(exportObjects, exportPath);
   }
 
   public async export() {
     await this.uiAlert.showLoadingSpinner();
+    // Do an export to the default export location
+    const defaultExportPath = {
+      path: 'Download/Beanconqueror_export',
+      directory: Directory.External,
+    };
+    await this.exportToPath(defaultExportPath, true);
+
+    await this.uiAlert.hideLoadingSpinner();
+  }
+
+  private async exportToPath(
+    exportPath: {
+      path: string;
+      directory: Directory;
+    },
+    share: boolean
+  ) {
+    this.uiLog.log(
+      'Starting export to directory',
+      exportPath.directory,
+      'in directory',
+      exportPath.directory
+    );
 
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,
       SETTINGS_TRACKING.ACTIONS.EXPORT
     );
 
-    this.uiExportImportHelper.buildExportZIP().then(
-      async (_blob) => {
-        this.uiLog.log('New zip-export way');
+    const zipBlob = await this.uiExportImportHelper.buildExportZIP();
 
-        if (this.platform.is('cordova')) {
-          if (this.platform.is('android')) {
-            await this.exportAttachments();
-            await this.exportFlowProfiles();
-            await this.exportGraphProfiles();
-          }
-        }
-        await this.uiFileHelper.exportFile('Beanconqueror.zip', _blob, true);
+    // Export attachment files on android because they are stored in the
+    // internal storage, which is not accessible for users.
+    // On iOS this is not required because the attachments are stored in the
+    // documents directory and are user-accessible anyway
+    if (this.isAndroid) {
+      await this.exportAttachments(exportPath);
+      await this.exportFlowProfiles(exportPath);
+      await this.exportGraphProfiles(exportPath);
+    }
 
-        await this.uiAlert.hideLoadingSpinner();
+    await this.uiFileHelper.exportFile(
+      {
+        fileName: 'Beanconqueror.zip',
+        path: exportPath.path,
+        directory: exportPath.directory,
       },
-      () => {
-        // Error
-        // Do the old conventional way
-        this.uiStorage.export().then(
-          (_data) => {
-            this.uiLog.log('Old JSON-Export way');
-            const isIOS = this.platform.is('ios');
-            this.uiHelper
-              .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
-              .then(
-                async () => {
-                  if (this.platform.is('cordova')) {
-                    if (this.platform.is('android')) {
-                      await this.exportAttachments();
-                      await this.exportFlowProfiles();
-                      await this.exportGraphProfiles();
-                      await this.uiAlert.hideLoadingSpinner();
-
-                      const alert = await this.alertCtrl.create({
-                        header: this.translate.instant('DOWNLOADED'),
-                        subHeader: this.translate.instant(
-                          'FILE_DOWNLOADED_SUCCESSFULLY',
-                          { fileName: 'Beanconqueror.json' }
-                        ),
-                        buttons: ['OK'],
-                      });
-                      await alert.present();
-                    } else {
-                      await this.uiAlert.hideLoadingSpinner();
-                      // File already downloaded
-                      // We don't support image export yet, because
-                    }
-                  } else {
-                    await this.uiAlert.hideLoadingSpinner();
-                    // File already downloaded
-                    // We don't support image export yet, because
-                  }
-                },
-                async () => {
-                  await this.uiAlert.hideLoadingSpinner();
-                }
-              );
-          },
-          async () => {
-            await this.uiAlert.hideLoadingSpinner();
-          }
-        );
-      }
+      zipBlob,
+      share
     );
-    return;
   }
 
   public excelExport(): void {
@@ -897,43 +1051,71 @@ export class SettingsPage {
       | Array<Mill>
       | Array<GreenBean>
       | Array<RoastingMachine>
-      | Array<Water>
+      | Array<Water>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
   ) {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
-        await this._exportFile(attachment);
+        await this._exportFile(attachment, exportPath);
       }
     }
   }
 
-  private async _exportFlowProfiles(_storedData: Array<Brew>) {
-    await this.exportStoredData(_storedData);
+  private async _exportFlowProfiles(
+    _storedData: Array<Brew>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
+  ) {
+    await this.exportStoredData(_storedData, exportPath);
   }
 
-  private async _exportGraphProfiles(_storedData: Array<Graph>) {
-    await this.exportStoredData(_storedData);
+  private async _exportGraphProfiles(
+    _storedData: Array<Graph>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
+  ) {
+    await this.exportStoredData(_storedData, exportPath);
   }
 
-  private async exportStoredData(_storedData: Array<Brew> | Array<Graph>) {
+  private async exportStoredData(
+    _storedData: Array<Brew> | Array<Graph>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
+  ) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFile(entry.flow_profile);
+        await this._exportFile(entry.flow_profile, exportPath);
       }
     }
   }
 
-  private async _exportFile(fileName: string) {
+  private async _exportFile(
+    fileName: string,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
+  ) {
     try {
       const sourceFile = this.uiFileHelper.normalizeFileName(fileName);
-      const targetFile = `Download/Beanconqueror_export/${sourceFile}`;
-      const targetDirectory = Directory.External;
+      const targetFile = `${exportPath.path}/${fileName}`;
 
-      await this.uiFileHelper.makeParentDirs(targetFile, targetDirectory);
+      this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);
+
       const copyResult = await Filesystem.copy({
         from: sourceFile,
         directory: this.uiFileHelper.getDataDirectory(),
         to: targetFile,
-        toDirectory: targetDirectory,
+        toDirectory: exportPath.directory,
       });
       this.uiLog.info(
         'File',

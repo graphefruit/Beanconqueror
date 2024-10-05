@@ -557,7 +557,11 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        await this.uiFileHelper.exportFile(filename, blob, true);
+        await this.uiFileHelper.exportFileToDefaultDirectory(
+          filename,
+          blob,
+          true
+        );
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
@@ -667,7 +671,11 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        await this.uiFileHelper.exportFile(filename, blob, true);
+        await this.uiFileHelper.exportFileToDefaultDirectory(
+          filename,
+          blob,
+          true
+        );
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
@@ -1256,7 +1264,11 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        await this.uiFileHelper.exportFile(filename, blob, true);
+        await this.uiFileHelper.exportFileToDefaultDirectory(
+          filename,
+          blob,
+          true
+        );
         await this.uiAlert.hideLoadingSpinner();
       } catch (ex) {}
     } catch (e) {

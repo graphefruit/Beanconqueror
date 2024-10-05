@@ -16,6 +16,12 @@ import { InstanceClass } from './instanceClass';
 
 import { Share } from '@capacitor/share';
 
+export type CreateTempCacheDirectoryResult = {
+  path: string;
+  directory: Directory;
+  uri: string;
+};
+
 /**
  * Handles every helping functionalities
  */
@@ -479,17 +485,35 @@ export class UIFileHelper extends InstanceClass {
   }
 
   // TODO Capacitor migration: Give this a better name
-  public async exportFile(
+  public async exportFileToDefaultDirectory(
     fileName: string,
     blob: Blob,
     share: boolean = true
   ): Promise<string | undefined> {
     if (this.platform.is('cordova')) {
-      const path = `Download/Beanconqueror_export/${fileName}`;
-      await this.writeFileFromBlob(blob, path, Directory.External);
+      const path = 'Download/Beanconqueror_export';
+      return this.exportFile(
+        { fileName, path, directory: Directory.External },
+        blob,
+        share
+      );
+    } else {
+      this.exportFileInBrowser(fileName, blob);
+    }
+  }
+
+  // TODO Capacitor migration: Give this a better name
+  public async exportFile(
+    exportPath: { fileName: string; path: string; directory: Directory },
+    blob: Blob,
+    share: boolean = true
+  ): Promise<string | undefined> {
+    if (this.platform.is('cordova')) {
+      const fullpath = `${exportPath.path}/${exportPath.fileName}`;
+      await this.writeFileFromBlob(blob, fullpath, exportPath.directory);
       const { uri: exportUri } = await Filesystem.getUri({
-        path,
-        directory: Directory.External,
+        path: fullpath,
+        directory: exportPath.directory,
       });
       if (share === true) {
         /**We cant use the shareservice.- because else we got a CI issue*/
@@ -497,29 +521,34 @@ export class UIFileHelper extends InstanceClass {
           url: exportUri,
         });
       }
-      return path;
+      return exportUri;
     } else {
-      // We are in a browser
-      setTimeout(() => {
-        if (navigator.msSaveBlob) {
-          // IE 10+
-          navigator.msSaveBlob(blob, fileName);
-        } else {
-          const link = document.createElement('a');
-          if (link.download !== undefined) {
-            // feature detection
-            // Browsers that support HTML5 download attribute
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }
-        }
-      }, 250);
-      return fileName;
+      this.exportFileInBrowser(exportPath.fileName, blob);
     }
+  }
+
+  private async exportFileInBrowser(
+    fileName: string,
+    blob: Blob
+  ): Promise<void> {
+    setTimeout(() => {
+      if (navigator.msSaveBlob) {
+        // IE 10+
+        navigator.msSaveBlob(blob, fileName);
+      } else {
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+          // feature detection
+          // Browsers that support HTML5 download attribute
+          const url = URL.createObjectURL(blob);
+          link.setAttribute('href', url);
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      }
+    }, 250);
   }
 
   public async makeParentDirs(
@@ -679,6 +708,29 @@ export class UIFileHelper extends InstanceClass {
     } catch (error) {
       return false;
     }
+  }
+
+  public async createTempCacheDirectory(
+    prefix: string
+  ): Promise<CreateTempCacheDirectoryResult> {
+    const cacheDirPath = 'tempDir' + prefix + Date.now();
+    this.uiLog.info('createTempCacheDirectory: Creating', cacheDirPath);
+
+    await Filesystem.mkdir({
+      path: cacheDirPath,
+      directory: Directory.Cache,
+      recursive: true,
+    });
+    const { uri: cacheDirUri } = await Filesystem.getUri({
+      path: cacheDirPath,
+      directory: Directory.Cache,
+    });
+
+    return {
+      path: cacheDirPath,
+      directory: Directory.Cache,
+      uri: cacheDirUri,
+    };
   }
 
   private binaryStringToUint8Array(binaryString: string): Uint8Array {

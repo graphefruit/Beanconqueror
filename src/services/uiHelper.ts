@@ -291,6 +291,10 @@ export class UIHelper {
     const blob = new Blob([jsonContent], {
       type: 'application/json;charset=UTF-8;',
     });
-    await this.uiFileHelper.exportFile(fileName, blob, _share);
+    await this.uiFileHelper.exportFileToDefaultDirectory(
+      fileName,
+      blob,
+      _share
+    );
   }
 }
