@@ -583,8 +583,8 @@ export class SettingsPage {
       return;
     }
     if (
-      !fileUri.files[0].path.endsWith('.zip') &&
-      !fileUri.files[0].path.endsWith('.json')
+      fileUri.files[0].mimeType.indexOf('zip') <= 0 &&
+      fileUri.files[0].mimeType.indexOf('json') <= 0
     ) {
       this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
       return;
@@ -608,7 +608,7 @@ export class SettingsPage {
 
     try {
       // TODO Capacitor migration: Test if this works on iOS
-      if (path.endsWith('.zip')) {
+      if (fileUri.files[0].mimeType.indexOf('zip') > 0) {
         const zipContent = await this.uiFileHelper.readFileAsUint8Array(path);
         const parsedJSON =
           await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
@@ -867,8 +867,9 @@ export class SettingsPage {
         return;
       }
       if (
-        fileUri.files[0].path.endsWith('.xlsx') ||
-        fileUri.files[0].path.endsWith('.xls')
+        fileUri.files[0].mimeType.indexOf(
+          'openxmlformats-officedocument.spreadsheetml.sheet'
+        ) > 0
       ) {
         this.uiFileHelper.readFileAsUint8Array(fileUri.files[0].path).then(
           async (_arrayBuffer) => {
