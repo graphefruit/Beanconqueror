@@ -12,7 +12,10 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PipesModule } from 'src/pipes/pipes.module';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('PreparationPage', () => {
   let component: PreparationPage;
@@ -20,13 +23,15 @@ describe('PreparationPage', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PreparationPage],
-    imports: [TranslateModule.forRoot(),
+      declarations: [PreparationPage],
+      imports: [
+        TranslateModule.forRoot(),
         FormsModule,
         CommonModule,
         IonicModule,
-        PipesModule],
-    providers: [
+        PipesModule,
+      ],
+      providers: [
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
@@ -34,8 +39,8 @@ describe('PreparationPage', () => {
         { provide: Router },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

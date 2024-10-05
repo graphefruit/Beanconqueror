@@ -11,7 +11,10 @@ import { Router } from '@angular/router';
 import { UIHelper } from '../../../services/uiHelper';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PipesModule } from 'src/pipes/pipes.module';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('PreparationEditComponent', () => {
   let component: PreparationEditComponent;
@@ -19,13 +22,15 @@ describe('PreparationEditComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PreparationEditComponent],
-    imports: [TranslateModule.forRoot(),
+      declarations: [PreparationEditComponent],
+      imports: [
+        TranslateModule.forRoot(),
         FormsModule,
         CommonModule,
         IonicModule,
-        PipesModule],
-    providers: [
+        PipesModule,
+      ],
+      providers: [
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
@@ -33,8 +38,8 @@ describe('PreparationEditComponent', () => {
         { provide: Router },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

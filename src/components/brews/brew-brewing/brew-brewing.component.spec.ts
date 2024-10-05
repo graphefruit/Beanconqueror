@@ -11,30 +11,35 @@ import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-gr
 import { FormsModule } from '@angular/forms';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { PipesModule } from 'src/pipes/pipes.module';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('BrewBrewingComponent', () => {
   let component: BrewBrewingComponent;
   let fixture: ComponentFixture<BrewBrewingComponent>;
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    // TODO: Decouple from other BrewBrewing components
-    declarations: [
+      // TODO: Decouple from other BrewBrewing components
+      declarations: [
         BrewBrewingComponent,
         BrewBrewingGraphComponent,
         BrewBrewingPreparationDeviceComponent,
-    ],
-    imports: [IonicModule.forRoot(),
+      ],
+      imports: [
+        IonicModule.forRoot(),
         TranslateModule.forRoot(),
         FormsModule,
-        PipesModule],
-    providers: [
+        PipesModule,
+      ],
+      providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

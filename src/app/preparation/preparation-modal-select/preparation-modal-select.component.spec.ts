@@ -8,7 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('PreparationModalSelectComponent', () => {
   let component: PreparationModalSelectComponent;
@@ -16,22 +19,20 @@ describe('PreparationModalSelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PreparationModalSelectComponent],
-    imports: [IonicModule.forRoot(),
-        TranslateModule.forRoot(),
-        FormsModule],
-    providers: [
+      declarations: [PreparationModalSelectComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
+      providers: [
         {
-            provide: Storage,
+          provide: Storage,
         },
         {
-            provide: UIHelper,
-            useClass: UIHelperMock,
+          provide: UIHelper,
+          useClass: UIHelperMock,
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

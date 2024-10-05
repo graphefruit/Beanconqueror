@@ -10,7 +10,10 @@ import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { Router } from '@angular/router';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PipesModule } from 'src/pipes/pipes.module';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('BrewDetailComponent', () => {
   let component: BrewDetailComponent;
@@ -18,21 +21,23 @@ describe('BrewDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [BrewDetailComponent],
-    imports: [TranslateModule.forRoot(),
+      declarations: [BrewDetailComponent],
+      imports: [
+        TranslateModule.forRoot(),
         FormsModule,
         CommonModule,
         IonicModule,
-        PipesModule],
-    providers: [
+        PipesModule,
+      ],
+      providers: [
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
         { provide: Router },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

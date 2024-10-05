@@ -9,7 +9,10 @@ import { UIHelperMock, UIImageMock } from '../../classes/mock';
 import { UIImage } from '../../services/uiImage';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Bean } from '../../classes/bean/bean';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('BeanInformationComponent', () => {
   let component: BeanInformationComponent;
@@ -17,20 +20,19 @@ describe('BeanInformationComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [BeanInformationComponent],
-    imports: [IonicModule.forRoot(),
-        TranslateModule.forRoot()],
-    providers: [
+      declarations: [BeanInformationComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         {
-            provide: UIImage,
-            useClass: UIImageMock,
+          provide: UIImage,
+          useClass: UIImageMock,
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

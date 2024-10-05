@@ -7,7 +7,10 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { Storage } from '@ionic/storage';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('WelcomePopoverComponent', () => {
   let component: WelcomePopoverComponent;
@@ -15,16 +18,15 @@ describe('WelcomePopoverComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [WelcomePopoverComponent],
-    imports: [IonicModule.forRoot(),
-        TranslateModule.forRoot()],
-    providers: [
+      declarations: [WelcomePopoverComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Storage },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

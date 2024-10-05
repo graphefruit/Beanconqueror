@@ -12,7 +12,11 @@ import { SharedModule } from './shared/shared.module';
 
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  HttpClient,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { UILog } from '../services/uiLog';
@@ -75,36 +79,42 @@ class MyErrorHandler implements ErrorHandler {
   }
 }
 
-@NgModule({ declarations: [AppComponent],
-    bootstrap: [AppComponent],
-    exports: [],
-    schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA], imports: [BrowserModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
-        IonicModule.forRoot({
-            mode: 'md',
-            menuIcon: 'beanconqueror-menu',
-            swipeBackEnabled: true,
-            animated: true,
-            rippleEffect: false,
-        }),
-        IonicStorageModule.forRoot({
-            name: '__baristaDB',
-            driverOrder: [
-                Drivers.IndexedDB,
-                CordovaSQLiteDriver._driver,
-                Drivers.LocalStorage,
-            ],
-        }),
-        AppRoutingModule,
-        SharedModule], providers: [
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-        { provide: ErrorHandler, useClass: MyErrorHandler },
-        provideHttpClient(withInterceptorsFromDi()),
-    ] })
+@NgModule({
+  declarations: [AppComponent],
+  bootstrap: [AppComponent],
+  exports: [],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
+  imports: [
+    BrowserModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    }),
+    IonicModule.forRoot({
+      mode: 'md',
+      menuIcon: 'beanconqueror-menu',
+      swipeBackEnabled: true,
+      animated: true,
+      rippleEffect: false,
+    }),
+    IonicStorageModule.forRoot({
+      name: '__baristaDB',
+      driverOrder: [
+        Drivers.IndexedDB,
+        CordovaSQLiteDriver._driver,
+        Drivers.LocalStorage,
+      ],
+    }),
+    AppRoutingModule,
+    SharedModule,
+  ],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: ErrorHandler, useClass: MyErrorHandler },
+    provideHttpClient(withInterceptorsFromDi()),
+  ],
+})
 export class AppModule {}

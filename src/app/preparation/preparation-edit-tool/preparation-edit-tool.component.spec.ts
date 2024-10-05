@@ -8,7 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Storage } from '@ionic/storage';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('PreparationEditToolComponent', () => {
   let component: PreparationEditToolComponent;
@@ -16,17 +19,15 @@ describe('PreparationEditToolComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PreparationEditToolComponent],
-    imports: [IonicModule.forRoot(),
-        TranslateModule.forRoot(),
-        FormsModule],
-    providers: [
+      declarations: [PreparationEditToolComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
+      providers: [
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Storage },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -9,7 +9,10 @@ import { UIHelperMock, UIImageMock } from '../../classes/mock';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { UIImage } from '../../services/uiImage';
 import { Preparation } from '../../classes/preparation/preparation';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('PreparationInformationCardComponent', () => {
   let component: PreparationInformationCardComponent;
@@ -17,20 +20,19 @@ describe('PreparationInformationCardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PreparationInformationCardComponent],
-    imports: [IonicModule.forRoot(),
-        TranslateModule.forRoot()],
-    providers: [
+      declarations: [PreparationInformationCardComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         {
-            provide: UIImage,
-            useClass: UIImageMock,
+          provide: UIImage,
+          useClass: UIImageMock,
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

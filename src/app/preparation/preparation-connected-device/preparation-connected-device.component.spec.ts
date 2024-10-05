@@ -10,7 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('PreparationConnectedDeviceComponent', () => {
   let component: PreparationConnectedDeviceComponent;
@@ -18,20 +21,18 @@ describe('PreparationConnectedDeviceComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [PreparationConnectedDeviceComponent],
-    imports: [IonicModule.forRoot(),
-        TranslateModule.forRoot(),
-        FormsModule],
-    providers: [
+      declarations: [PreparationConnectedDeviceComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
+      providers: [
         { provide: Storage },
         {
-            provide: UIHelper,
-            useClass: UIHelperMock,
+          provide: UIHelper,
+          useClass: UIHelperMock,
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents();
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
