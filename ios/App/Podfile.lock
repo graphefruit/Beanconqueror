@@ -34,7 +34,6 @@ PODS:
     - Capacitor
   - CordovaPlugins (6.1.2):
     - CapacitorCordova
-  - CordovaPluginsResources (0.0.105)
   - OSBarcodeLib (1.1.2)
   - OSInAppBrowserLib (1.0.0)
 
@@ -56,7 +55,6 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/@capawesome/capacitor-file-picker`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
-  - CordovaPluginsResources (from `../capacitor-cordova-ios-plugins`)
 
 SPEC REPOS:
   trunk:
@@ -98,8 +96,6 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capawesome/capacitor-file-picker"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
-  CordovaPluginsResources:
-    :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
   Capacitor: 679f9673fdf30597493a6362a5d5bf233d46abc2
@@ -118,11 +114,10 @@ SPEC CHECKSUMS:
   CapacitorShare: 591ae4693d85686ceb590db8e8b44aa014ec6490
   CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
   CapawesomeCapacitorFilePicker: abd66735806935246403855cbe62fee8e299cdc5
-  CordovaPlugins: f5afe98ce7b25190266c4d0a2ea34da9db574531
-  CordovaPluginsResources: 0c211f770ed91763a179ebcd9b9346e120b70662
+  CordovaPlugins: f790be0810d2d6702990c22c98d10843333dbe81
   OSBarcodeLib: 4bb4cc0b9850451fe71ba4953c1c934368e767df
   OSInAppBrowserLib: c3d0b21a0c8b6d81e69117ad08bb6b8a4849c4e1
 
-PODFILE CHECKSUM: 4a1f6ceea8450adf1f648a8604872fa22e4f38f8
+PODFILE CHECKSUM: 0a381f5d20a18046e03168c62376c482a2f81eec
 
 COCOAPODS: 1.15.2
