@@ -149,6 +149,11 @@ export class IntentHandlerService {
             );
 
             this.importVisualizerShot(visualizerShareCode);
+          } else if (url.indexOf('bean.html?id') >= 0) {
+            /**
+             * On Android the whole path is directly resolved, therefore its the new url used**/
+            const qrCodeId: string = urlParams.get('id');
+            await this.addBeanFromServer(qrCodeId);
           } else {
             this.uiAlert.showMessage(
               'QR.WRONG_LINK_DESCRIPTION',
