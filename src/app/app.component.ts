@@ -323,9 +323,7 @@ export class AppComponent implements AfterViewInit {
         // Here you can do any higher level native things you might need.
         // #7
         await StatusBar.show({ animation: Animation.None });
-        const statusBarStyle = this.platform.is('android')
-          ? Style.Light
-          : Style.Default;
+        const statusBarStyle = Style.Default;
         await StatusBar.setStyle({ style: statusBarStyle });
 
         Keyboard.setAccessoryBarVisible({ isVisible: true });
