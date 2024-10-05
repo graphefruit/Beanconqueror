@@ -6,7 +6,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { Graph } from '../../classes/graph/graph';
 
 describe('GraphInformationCardComponent', () => {
@@ -23,7 +22,6 @@ describe('GraphInformationCardComponent', () => {
           provide: UIHelper,
           useClass: UIHelperMock,
         },
-        { provide: FileChooser },
       ],
     }).compileComponents();
   }));

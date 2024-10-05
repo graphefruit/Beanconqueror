@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 
 describe('GraphPage', () => {
   let component: GraphPage;
@@ -22,7 +21,6 @@ describe('GraphPage', () => {
           provide: UIHelper,
           useClass: UIHelperMock,
         },
-        { provide: FileChooser },
       ],
       imports: [
         IonicModule.forRoot(),

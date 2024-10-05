@@ -30,6 +30,8 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (6.0.1):
     - Capacitor
+  - CapawesomeCapacitorFilePicker (6.1.0):
+    - Capacitor
   - CordovaPlugins (6.1.2):
     - CapacitorCordova
   - CordovaPluginsResources (0.0.105)
@@ -52,6 +54,7 @@ DEPENDENCIES:
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
   - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "CapawesomeCapacitorFilePicker (from `../../node_modules/@capawesome/capacitor-file-picker`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - CordovaPluginsResources (from `../capacitor-cordova-ios-plugins`)
 
@@ -91,6 +94,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/share"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapawesomeCapacitorFilePicker:
+    :path: "../../node_modules/@capawesome/capacitor-file-picker"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
   CordovaPluginsResources:
@@ -112,11 +117,12 @@ SPEC CHECKSUMS:
   CapacitorKeyboard: 2700f9b18687be021e28b5a09b59eb151a46d5e0
   CapacitorShare: 591ae4693d85686ceb590db8e8b44aa014ec6490
   CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
+  CapawesomeCapacitorFilePicker: abd66735806935246403855cbe62fee8e299cdc5
   CordovaPlugins: f5afe98ce7b25190266c4d0a2ea34da9db574531
   CordovaPluginsResources: 0c211f770ed91763a179ebcd9b9346e120b70662
   OSBarcodeLib: 4bb4cc0b9850451fe71ba4953c1c934368e767df
   OSInAppBrowserLib: c3d0b21a0c8b6d81e69117ad08bb6b8a4849c4e1
 
-PODFILE CHECKSUM: ad0e379d6401d3e70e089ff32db2ec36e5499426
+PODFILE CHECKSUM: 4a1f6ceea8450adf1f648a8604872fa22e4f38f8
 
 COCOAPODS: 1.15.2

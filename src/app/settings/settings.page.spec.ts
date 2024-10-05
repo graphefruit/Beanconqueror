@@ -10,7 +10,7 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { Router } from '@angular/router';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+
 import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
 import { PipesModule } from 'src/pipes/pipes.module';
@@ -36,7 +36,6 @@ describe('SettingsPage', () => {
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
-        { provide: FileChooser },
       ],
     }).compileComponents();
   }));

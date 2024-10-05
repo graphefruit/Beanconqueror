@@ -7,7 +7,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { Brew } from '../../../classes/brew/brew';
 
@@ -26,9 +25,6 @@ describe('BrewChooseGraphReferenceComponent', () => {
         {
           provide: UIHelper,
           useClass: UIHelperMock,
-        },
-        {
-          provide: FileChooser,
         },
       ],
     }).compileComponents();

@@ -15,7 +15,6 @@ import { Bean } from '../../classes/bean/bean';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 import { PipesModule } from 'src/pipes/pipes.module';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 
 describe('BrewInformationComponent', () => {
   let component: BrewInformationComponent;
@@ -35,7 +34,6 @@ describe('BrewInformationComponent', () => {
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: UIImage, useClass: UIImageMock },
-        { provide: FileChooser },
       ],
     }).compileComponents();
   }));

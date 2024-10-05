@@ -6,7 +6,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIHelperMock } from '../../../../classes/mock';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { FormsModule } from '@angular/forms';
 
 describe('GraphAddComponent', () => {
@@ -23,7 +22,6 @@ describe('GraphAddComponent', () => {
           provide: UIHelper,
           useClass: UIHelperMock,
         },
-        { provide: FileChooser },
       ],
     }).compileComponents();
   }));

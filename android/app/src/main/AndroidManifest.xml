@@ -14,6 +14,8 @@
   <uses-permission
     android:name="android.permission.ACCESS_FINE_LOCATION"
     tools:remove="android:maxSdkVersion" />
+  <uses-permission
+    android:name="android.permission.READ_EXTERNAL_STORAGE"/>
   <!-- Capacitor Geolocation plugin end -->
 
   <application

@@ -1,41 +1,30 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { UIBrewStorage } from './uiBrewStorage';
-
-import { UIAnalytics } from './uiAnalytics';
 import { ModalController, Platform } from '@ionic/angular';
 import { Graph } from '../classes/graph/graph';
 import { GraphEditComponent } from '../app/graph-section/graph/graph-edit/graph-edit.component';
 import { GraphAddComponent } from '../app/graph-section/graph/graph-add/graph-add.component';
 import { GraphDetailComponent } from '../app/graph-section/graph/graph-detail/graph-detail.component';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { UIAlert } from './uiAlert';
 import { TranslateService } from '@ngx-translate/core';
-import { UILog } from './uiLog';
 import { UIFileHelper } from './uiFileHelper';
 import BeanconquerorFlowTestDataDummy from '../assets/BeanconquerorFlowTestDataFourth.json';
 import { Brew } from '../classes/brew/brew';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 
 /**
  * Handles every helping functionalities
  */
-
-declare var window: any;
-declare var FilePicker;
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIGraphHelper {
   constructor(
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics,
     private readonly modalController: ModalController,
     private readonly platform: Platform,
-    private readonly fileChooser: FileChooser,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
-    private readonly uiLog: UILog,
     private readonly uiFileHelper: UIFileHelper
   ) {}
 
@@ -89,58 +78,20 @@ export class UIGraphHelper {
   }
 
   public async chooseGraph(): Promise<any> {
-    if (this.platform.is('android')) {
-      const uri = await this.fileChooser.open();
-      try {
-        const data = await this.uiFileHelper.readJSONFile(uri);
-        return data;
-      } catch (error) {
-        this.uiAlert.showMessage(
-          this.translate.instant('ERROR_ON_FILE_READING') + error
-        );
-        throw error;
+    try {
+      const fileUri = await FilePicker.pickFiles({ limit: 1 });
+
+      if (!fileUri.files || !fileUri.files[0]?.path) {
+        return;
       }
-    } else {
-      return this.chooseGraphIOS();
-    }
-  }
-
-  private chooseGraphIOS(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      FilePicker.pickFile(
-        (uri) => {
-          if (uri.endsWith('.json')) {
-            let path = uri.substring(0, uri.lastIndexOf('/'));
-            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-            if (path.indexOf('file://') !== 0) {
-              path = 'file://' + path;
-            }
-
-            // TODO Capacitor migration: Check if this works on iOS
-            this.uiFileHelper
-              .readJSONFile(path + '/' + file)
-              .then((_data) => {
-                // nothing todo
-                resolve(_data);
-              })
-              .catch((_err) => {
-                reject();
-                this.uiAlert.showMessage(
-                  this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
-                );
-              });
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
-            );
-          }
-        },
-        () => {}
+      const uri = fileUri.files[0]?.path;
+      const data = await this.uiFileHelper.readJSONFile(uri);
+      return data;
+    } catch (error) {
+      this.uiAlert.showMessage(
+        this.translate.instant('ERROR_ON_FILE_READING') + error
       );
-    });
+    }
   }
 
   public async saveGraph(_uuid: string, _jsonObj): Promise<string> {

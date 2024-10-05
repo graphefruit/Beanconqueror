@@ -13,7 +13,6 @@ import { Brew } from '../../classes/brew/brew';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { ISettings } from '../../interfaces/settings/iSettings';
@@ -73,9 +72,9 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 
 declare var window: any;
-declare var FilePicker;
 
 @Component({
   selector: 'settings',
@@ -130,7 +129,6 @@ export class SettingsPage {
     public uiSettingsStorage: UISettingsStorage,
     public uiStorage: UIStorage,
     public uiHelper: UIHelper,
-    private readonly fileChooser: FileChooser,
     private readonly alertCtrl: AlertController,
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationStorage: UIPreparationStorage,
@@ -579,34 +577,24 @@ export class SettingsPage {
     );
     this.uiLog.log('Import real data');
 
-    let fileUri: string;
-    if (this.platform.is('android')) {
-      fileUri = await this.fileChooser.open();
-    } else {
-      fileUri = await new Promise((resolve, reject) =>
-        FilePicker.pickFile(resolve, reject)
-      );
-    }
+    const fileUri = await FilePicker.pickFiles({ limit: 1 });
 
-    if (!fileUri) {
+    if (!fileUri.files || !fileUri.files[0]?.path) {
       return;
     }
-    if (!fileUri.endsWith('.zip') && !fileUri.endsWith('.json')) {
+    if (
+      !fileUri.files[0].path.endsWith('.zip') &&
+      !fileUri.files[0].path.endsWith('.json')
+    ) {
       this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
       return;
     }
 
+    const path = fileUri.files[0].path;
     // path/uri post-processing
-    let directoryUri = fileUri.substring(0, fileUri.lastIndexOf('/'));
-    const fileName = fileUri.substring(
-      fileUri.lastIndexOf('/') + 1,
-      fileUri.length
-    );
+    let directoryUri = path.substring(0, path.lastIndexOf('/'));
+    const fileName = path.substring(path.lastIndexOf('/') + 1, path.length);
     if (this.platform.is('ios')) {
-      if (directoryUri.indexOf('file://') !== 0) {
-        directoryUri = 'file://' + directoryUri;
-      }
-      fileUri = directoryUri + '/' + fileName;
     } else {
       // Until SAF can be implemented or until we package the addition files
       // into the ZIP file, we just have to always import from the external
@@ -620,10 +608,8 @@ export class SettingsPage {
 
     try {
       // TODO Capacitor migration: Test if this works on iOS
-      if (fileUri.endsWith('.zip')) {
-        const zipContent = await this.uiFileHelper.readFileAsUint8Array(
-          fileUri
-        );
+      if (path.endsWith('.zip')) {
+        const zipContent = await this.uiFileHelper.readFileAsUint8Array(path);
         const parsedJSON =
           await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
             zipContent
@@ -631,7 +617,7 @@ export class SettingsPage {
         await this.__importJSON(parsedJSON, directoryUri);
       } else {
         // fileUri.endsWith('.json')
-        await this.uiFileHelper.readJSONFile(fileUri);
+        await this.uiFileHelper.readJSONFile(path);
       }
     } catch (error) {
       this.uiLog.error(
@@ -869,67 +855,35 @@ export class SettingsPage {
     );
   }
 
-  public importBeansExcel(_type: string = 'roasted'): void {
+  public async importBeansExcel(_type: string = 'roasted') {
     if (this.platform.is('cordova')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
         SETTINGS_TRACKING.ACTIONS.IMPORT
       );
       this.uiLog.log('Import real data');
-      if (this.platform.is('android')) {
-        this.fileChooser.open().then(async (uri) => {
-          try {
-            this.uiFileHelper.readFileAsUint8Array(uri).then(
-              async (_arrayBuffer) => {
-                if (_type === 'roasted') {
-                  this.uiExcel.importBeansByExcel(_arrayBuffer);
-                } else {
-                  this.uiExcel.importGreenBeansByExcel(_arrayBuffer);
-                }
-              },
-              () => {
-                // Backup, maybe it was a .JSON?
-              }
-            );
-          } catch (ex) {
-            this.uiAlert.showMessage(
-              this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                ' (' +
-                JSON.stringify(ex) +
-                ')'
-            );
-          }
-        });
-      } else {
-        FilePicker.pickFile(
-          (uri) => {
-            if (uri && uri.endsWith('.xlsx')) {
-              let path = uri.substring(0, uri.lastIndexOf('/'));
-              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-              if (path.indexOf('file://') !== 0) {
-                path = 'file://' + path;
-              }
-              // TODO Capacitor migration: Check if this works on iOS
-              this.uiFileHelper.readFileAsUint8Array(path + '/' + file).then(
-                async (_arrayBuffer) => {
-                  if (_type === 'roasted') {
-                    this.uiExcel.importBeansByExcel(_arrayBuffer);
-                  } else {
-                    this.uiExcel.importGreenBeansByExcel(_arrayBuffer);
-                  }
-                },
-                () => {
-                  // Backup, maybe it was a .JSON?
-                }
-              );
+      const fileUri = await FilePicker.pickFiles({ limit: 1 });
+      if (!fileUri.files || !fileUri.files[0]?.path) {
+        return;
+      }
+      if (
+        fileUri.files[0].path.endsWith('.xlsx') ||
+        fileUri.files[0].path.endsWith('.xls')
+      ) {
+        this.uiFileHelper.readFileAsUint8Array(fileUri.files[0].path).then(
+          async (_arrayBuffer) => {
+            if (_type === 'roasted') {
+              this.uiExcel.importBeansByExcel(_arrayBuffer.buffer);
             } else {
-              this.uiAlert.showMessage(
-                this.translate.instant('INVALID_FILE_FORMAT')
-              );
+              this.uiExcel.importGreenBeansByExcel(_arrayBuffer.buffer);
             }
           },
-          () => {}
+          () => {
+            // Backup, maybe it was a .JSON?
+          }
         );
+      } else {
+        this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
       }
     } else {
     }

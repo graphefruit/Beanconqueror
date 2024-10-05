@@ -6,7 +6,6 @@ import { NavParamsMock, UIHelperMock } from '../../../../classes/mock';
 import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { FormsModule } from '@angular/forms';
 
 describe('GraphEditComponent', () => {
@@ -23,9 +22,6 @@ describe('GraphEditComponent', () => {
         {
           provide: UIHelper,
           useClass: UIHelperMock,
-        },
-        {
-          provide: FileChooser,
         },
       ],
     }).compileComponents();
