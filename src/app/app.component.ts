@@ -343,11 +343,10 @@ export class AppComponent implements AfterViewInit {
 
       if (this.platform.is('ios')) {
         this.uiLog.log(`iOS Device - attach to home icon pressed`);
-        this.threeDeeTouch.onHomeIconPressed().subscribe(async (payload) => {
-          /* We need to wait for app finished loading, but already attach on platform start, else
-           *  the event won't get triggered **/
+        // Thanks to the solution here: https://forum.ionicframework.com/t/how-to-implement-quick-actions-home-screen-for-ionic-capacitor-app/235690/2
+        window.handleQuickAction = (type: any) => {
           this.uiHelper.isBeanconqurorAppReady().then(async () => {
-            const payloadType = payload.type;
+            const payloadType = type;
             try {
               this.uiAnalytics.trackEvent(
                 STARTUP_TRACKING.TITLE,
@@ -356,18 +355,17 @@ export class AppComponent implements AfterViewInit {
               );
               this.uiLog.log(`iOS Device - Home icon was pressed`);
             } catch (ex) {}
-            if (payload.type === 'Brew') {
+            if (payloadType === 'Brew') {
               await this.__trackNewBrew();
-            } else if (payload.type === 'Bean') {
+            } else if (payloadType === 'Bean') {
               await this.__trackNewBean();
-            } else if (payload.type === 'Preparation') {
+            } else if (payloadType === 'Preparation') {
               await this.__trackNewPreparation();
-            } else if (payload.type === 'Mill') {
+            } else if (payloadType === 'Mill') {
               await this.__trackNewMill();
             }
           });
-          // returns an object that is the button you presed
-        });
+        };
       }
 
       // Before we update and show messages, we need atleast to set one default language.
