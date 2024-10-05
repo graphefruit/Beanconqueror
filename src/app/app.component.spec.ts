@@ -9,7 +9,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Storage } from '@ionic/storage';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
-import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { IntentHandlerService } from 'src/services/intentHandler/intent-handler.service';
 import { UIPreparationHelper } from 'src/services/uiPreparationHelper';
 
@@ -25,7 +24,6 @@ describe('AppComponent', () => {
         { provide: Storage },
         { provide: ThreeDeeTouch },
         { provide: ModalController },
-        { provide: Globalization },
         { provide: AngularDelegate },
         { provide: IntentHandlerService, useValue: {} },
         { provide: UIPreparationHelper, useValue: {} },
