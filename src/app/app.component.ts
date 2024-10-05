@@ -320,16 +320,18 @@ export class AppComponent implements AfterViewInit {
         });
       } catch (ex) {}
 
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      // #7
-      await StatusBar.show({ animation: Animation.None });
-      const statusBarStyle = this.platform.is('android')
-        ? Style.Light
-        : Style.Default;
-      await StatusBar.setStyle({ style: statusBarStyle });
+      if (this.platform.is('cordova')) {
+        // Okay, so the platform is ready and our plugins are available.
+        // Here you can do any higher level native things you might need.
+        // #7
+        await StatusBar.show({ animation: Animation.None });
+        const statusBarStyle = this.platform.is('android')
+          ? Style.Light
+          : Style.Default;
+        await StatusBar.setStyle({ style: statusBarStyle });
 
-      Keyboard.setAccessoryBarVisible({ isVisible: true });
+        Keyboard.setAccessoryBarVisible({ isVisible: true });
+      }
       if (environment.production === true) {
         // When we're in cordova, disable the log messages
         this.uiLog.disable();
