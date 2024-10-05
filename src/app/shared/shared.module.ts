@@ -40,7 +40,6 @@ import { BrewPopoverActionsComponent } from '../brew/brew-popover-actions/brew-p
 import { LogComponent } from '../info/log/log.component';
 import { LogTextComponent } from '../info/log/log-text/log-text.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { HelperPage } from '../helper/helper.page';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { CuppingRadarComponent } from '../../components/cupping-radar/cupping-radar.component';
@@ -380,7 +379,6 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     ThreeDeeTouch,
     ImagePicker,
     AndroidPermissions,
-    Globalization,
     Insomnia,
   ],
   exports: [

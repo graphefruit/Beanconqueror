@@ -10,7 +10,6 @@ import { Device } from '@capacitor/device';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
 import { Keyboard } from '@capacitor/keyboard';
 
-import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import {
   ThreeDeeTouch,
   ThreeDeeTouchQuickAction,
@@ -228,7 +227,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiHelper: UIHelper,
     private readonly uiAlert: UIAlert,
     private _translate: TranslateService,
-    private globalization: Globalization,
     private readonly uiAnalytics: UIAnalytics,
     private readonly menu: MenuController,
     private readonly uiUpdate: UIUpdate,
@@ -485,52 +483,49 @@ export class AppComponent implements AfterViewInit {
             settings.language === undefined ||
             settings.language === ''
           ) {
-            this.globalization
-              .getPreferredLanguage()
-              .then(async (res) => {
-                // Run other functions after getting device default lang
-                let systemLanguage: string = res['value'].toLowerCase();
-                this.uiLog.log(`Found system language: ${systemLanguage}`);
-                if (systemLanguage.indexOf('-') > -1) {
-                  systemLanguage = systemLanguage.split('-')[0];
-                }
+            try {
+              // Run other functions after getting device default lang
+              let systemLanguage: string = navigator.language.toLowerCase();
+              this.uiLog.log(`Found system language: ${systemLanguage}`);
+              if (systemLanguage.indexOf('-') > -1) {
+                systemLanguage = systemLanguage.split('-')[0];
+              }
 
-                let settingLanguage: string;
-                if (systemLanguage === 'de') {
-                  settingLanguage = 'de';
-                } else if (systemLanguage === 'es') {
-                  settingLanguage = 'es';
-                } else if (systemLanguage === 'tr') {
-                  settingLanguage = 'tr';
-                } else if (systemLanguage === 'zh') {
-                  settingLanguage = 'zh';
-                } else if (systemLanguage === 'fr') {
-                  settingLanguage = 'fr';
-                } else if (systemLanguage === 'id') {
-                  settingLanguage = 'id';
-                } else if (systemLanguage === 'nl') {
-                  settingLanguage = 'nl';
-                } else {
-                  settingLanguage = 'en';
-                }
-                this.uiLog.log(`Setting language: ${settingLanguage}`);
-                this._translate.setDefaultLang(settingLanguage);
-                settings.language = settingLanguage;
-                await this.uiSettingsStorage.saveSettings(settings);
-                await this._translate.use(settingLanguage).toPromise();
-                moment.locale(settingLanguage);
-                resolve(undefined);
-              })
-              .catch(async (ex) => {
-                const exMessage: string = JSON.stringify(ex);
-                this.uiLog.error(
-                  `Exception occured when setting language ${exMessage}`
-                );
-                this._translate.setDefaultLang('en');
-                await this._translate.use('en').toPromise();
-                moment.locale('en');
-                resolve(undefined);
-              });
+              let settingLanguage: string;
+              if (systemLanguage === 'de') {
+                settingLanguage = 'de';
+              } else if (systemLanguage === 'es') {
+                settingLanguage = 'es';
+              } else if (systemLanguage === 'tr') {
+                settingLanguage = 'tr';
+              } else if (systemLanguage === 'zh') {
+                settingLanguage = 'zh';
+              } else if (systemLanguage === 'fr') {
+                settingLanguage = 'fr';
+              } else if (systemLanguage === 'id') {
+                settingLanguage = 'id';
+              } else if (systemLanguage === 'nl') {
+                settingLanguage = 'nl';
+              } else {
+                settingLanguage = 'en';
+              }
+              this.uiLog.log(`Setting language: ${settingLanguage}`);
+              this._translate.setDefaultLang(settingLanguage);
+              settings.language = settingLanguage;
+              await this.uiSettingsStorage.saveSettings(settings);
+              await this._translate.use(settingLanguage).toPromise();
+              moment.locale(settingLanguage);
+              resolve(undefined);
+            } catch (ex) {
+              const exMessage: string = JSON.stringify(ex);
+              this.uiLog.error(
+                `Exception occured when setting language ${exMessage}`
+              );
+              this._translate.setDefaultLang('en');
+              await this._translate.use('en').toPromise();
+              moment.locale('en');
+              resolve(undefined);
+            }
           } else {
             this.uiLog.info('Language settings already existing, set language');
             const settingLanguage: string = settings.language;
@@ -885,21 +880,21 @@ export class AppComponent implements AfterViewInit {
   private __instanceAppRating() {
     if (this.platform.is('cordova')) {
       /** const appLanguage = this.uiSettingsStorage.getSettings().language;
-      AppRate.setPreferences({
-        usesUntilPrompt: 25,
-        storeAppURL: {
-          ios: '1445297158',
-          android: 'market://details?id=com.beanconqueror.app',
-        },
-        promptAgainForEachNewVersion: false,
-        reviewType: {
-          ios: 'AppStoreReview',
-          android: 'InAppReview',
-        },
-        useLanguage: appLanguage,
-      });
+       AppRate.setPreferences({
+       usesUntilPrompt: 25,
+       storeAppURL: {
+       ios: '1445297158',
+       android: 'market://details?id=com.beanconqueror.app',
+       },
+       promptAgainForEachNewVersion: false,
+       reviewType: {
+       ios: 'AppStoreReview',
+       android: 'InAppReview',
+       },
+       useLanguage: appLanguage,
+       });
 
-      AppRate.promptForRating(false);**/
+       AppRate.promptForRating(false);**/
     }
   }
 
@@ -923,6 +918,7 @@ export class AppComponent implements AfterViewInit {
       await modal.onWillDismiss();
     }
   }
+
   private async __checkMeticulousHelpPage() {
     return;
     const settings = this.uiSettingsStorage.getSettings();
