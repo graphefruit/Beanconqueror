@@ -8,13 +8,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelperMock, UIImageMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Brew } from '../../classes/brew/brew';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { Bean } from '../../classes/bean/bean';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 import { PipesModule } from 'src/pipes/pipes.module';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('BrewInformationComponent', () => {
   let component: BrewInformationComponent;
@@ -22,20 +23,19 @@ describe('BrewInformationComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BrewInformationComponent],
-      imports: [
-        IonicModule.forRoot(),
+    declarations: [BrewInformationComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    imports: [IonicModule.forRoot(),
         TranslateModule.forRoot(),
-        HttpClientTestingModule,
-        PipesModule,
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
+        PipesModule],
+    providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: UIImage, useClass: UIImageMock },
-      ],
-    }).compileComponents();
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ]
+}).compileComponents();
   }));
 
   beforeEach(() => {
