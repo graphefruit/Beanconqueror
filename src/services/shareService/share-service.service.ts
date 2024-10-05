@@ -22,6 +22,8 @@ import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { Share } from '@capacitor/share';
 import { UIFileHelper } from '../uiFileHelper';
 
+import { Platform } from '@ionic/angular';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,7 +33,7 @@ export class ShareService {
     private readonly uiHelper: UIHelper,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiFileHelper: UIFileHelper,
-
+    private readonly platform: Platform,
     private readonly uiLog: UILog
   ) {}
 
@@ -40,6 +42,7 @@ export class ShareService {
       await this.shareFile('', _dataUrl);
     } catch (ex) {}
   }
+
   public async shareFile(_filename: string, _dataUrl: string) {
     try {
       let extensionEnding = '.jpg';
@@ -51,19 +54,32 @@ export class ShareService {
       }
 
       /** We need to save the file before we can share, because base64 share is not supported**/
-      const path = await this.uiFileHelper.writeInternalFileFromBase64(
-        _dataUrl,
-        'sharefile' + extensionEnding
-      );
+      let path;
+
+      if (this.platform.is('android')) {
+        /** We need to save the file before we can share, because base64 share is not supported**/
+        path = await this.uiFileHelper.writeExternalFileFromBase64ForSharing(
+          _dataUrl,
+          'sharefile' + extensionEnding
+        );
+      } else {
+        path = await this.uiFileHelper.writeInternalFileFromBase64(
+          _dataUrl,
+          'sharefile' + extensionEnding
+        );
+      }
 
       await Share.share({
         url: path.fullpath,
-        dialogTitle: 'Share',
       });
-
-      await this.uiFileHelper.deleteInternalFile(path.path);
+      if (this.platform.is('android')) {
+        await this.uiFileHelper.deleteExternalSharedFile(path.path);
+      } else {
+        await this.uiFileHelper.deleteInternalFile(path.path);
+      }
     } catch (ex) {}
   }
+
   public async shareUrl(_dataUrl: string) {
     try {
       await Share.share({

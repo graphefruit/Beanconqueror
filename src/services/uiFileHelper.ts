@@ -2,9 +2,9 @@
 import { Injectable } from '@angular/core';
 import { Capacitor, CapacitorException } from '@capacitor/core';
 import {
-  Filesystem,
   Directory,
   Encoding,
+  Filesystem,
   StatOptions,
 } from '@capacitor/filesystem';
 import { Platform } from '@ionic/angular';
@@ -230,6 +230,20 @@ export class UIFileHelper extends InstanceClass {
     return this.writeFileFromBase64(base64, path, this.getDataDirectory());
   }
 
+  /**
+   * This function is just for ANDROID uses and share plugin.
+   * The share plugin cant access internal files, so we need to write it external
+   * @param base64
+   * @param path
+   */
+  public async writeExternalFileFromBase64ForSharing(
+    base64: string,
+    path: string
+  ): Promise<{ path: string; fullpath: string }> {
+    this.uiLog.debug('writeExternalFileFromBase64 for path', path);
+    return this.writeFileFromBase64(base64, path, Directory.External);
+  }
+
   public async writeFileFromBlob(
     blob: Blob,
     path: string,
@@ -355,6 +369,15 @@ export class UIFileHelper extends InstanceClass {
   public async deleteInternalFile(path: string): Promise<void> {
     this.uiLog.debug('deleteInternalFile for path', path);
     await this.deleteFile(path, this.getDataDirectory());
+  }
+
+  /**
+   * This function is just used for android sharing
+   * @param path
+   */
+  public async deleteExternalSharedFile(path: string): Promise<void> {
+    this.uiLog.debug('deleteExternalSharedFile for path', path);
+    await this.deleteFile(path, Directory.External);
   }
 
   public async deleteZIPBackupsOlderThanSevenDays(): Promise<void> {
