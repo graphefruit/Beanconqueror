@@ -90,7 +90,6 @@ import { GreenBeanEditComponent } from '../roasting-section/green-beans/green-be
 import { GreenBeanDetailComponent } from '../roasting-section/green-beans/green-bean-detail/green-bean-detail.component';
 import { GreenBeanPopoverActionsComponent } from '../roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import { GreenBeanInformationComponent } from '../../components/green-bean-information/green-bean-information.component';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { PhotoPopoverComponent } from '../../popover/photo-popover/photo-popover.component';
 import { PhotoAddComponent } from '../../components/photo-add/photo-add.component';
 import { BeanRoastInformationComponent } from '../../components/beans/bean-roast-information/bean-roast-information.component';
@@ -379,7 +378,6 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     ThreeDeeTouch,
     ImagePicker,
     AndroidPermissions,
-    Insomnia,
   ],
   exports: [
     SettingsPage,

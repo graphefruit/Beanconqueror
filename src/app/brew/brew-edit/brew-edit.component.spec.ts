@@ -11,7 +11,6 @@ import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewEditComponent', () => {
@@ -36,7 +35,6 @@ describe('BrewEditComponent', () => {
         { provide: Storage },
         { provide: ImagePicker },
         { provide: Router },
-        { provide: Insomnia },
       ],
     }).compileComponents();
   }));

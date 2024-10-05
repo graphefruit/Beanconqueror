@@ -17,7 +17,6 @@ import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
@@ -85,7 +84,6 @@ describe('BrewAddComponent', () => {
         { provide: UIAnalytics, useValue: {} },
         { provide: BrewTrackingService, useValue: {} },
         { provide: VisualizerService, useValue: {} },
-        Insomnia,
         { provide: Router },
         { provide: UIHelper, useClass: UIHelperMock },
       ],

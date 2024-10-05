@@ -10,6 +10,8 @@ PODS:
     - Capacitor
   - CapacitorClipboard (6.0.1):
     - Capacitor
+  - CapacitorCommunityKeepAwake (5.0.1):
+    - Capacitor
   - CapacitorCordova (6.1.2)
   - CapacitorDevice (6.0.1):
     - Capacitor
@@ -40,6 +42,7 @@ DEPENDENCIES:
   - "CapacitorBarcodeScanner (from `../../node_modules/@capacitor/barcode-scanner`)"
   - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
   - "CapacitorClipboard (from `../../node_modules/@capacitor/clipboard`)"
+  - "CapacitorCommunityKeepAwake (from `../../node_modules/@capacitor-community/keep-awake`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorDevice (from `../../node_modules/@capacitor/device`)"
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
@@ -68,6 +71,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/camera"
   CapacitorClipboard:
     :path: "../../node_modules/@capacitor/clipboard"
+  CapacitorCommunityKeepAwake:
+    :path: "../../node_modules/@capacitor-community/keep-awake"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorDevice:
@@ -97,6 +102,7 @@ SPEC CHECKSUMS:
   CapacitorBarcodeScanner: 3057910347ab6c3db06e1a38bdf688a6a469227a
   CapacitorCamera: ed022171dbf3853e68eec877b4d78995378af6b7
   CapacitorClipboard: 756cd7e83e8d5d19b0c74f40b57517c287bd5fe2
+  CapacitorCommunityKeepAwake: e2ddd50812e3407f8dc3a2c28e97d66e9b59b2f5
   CapacitorCordova: f48c89f96c319101cd2f0ce8a2b7449b5fb8b3dd
   CapacitorDevice: 7097a1deb4224b77fd13a6e60a355d0062a5d772
   CapacitorFilesystem: 37fb3aa5c945b4539ab11c74a5c57925a302bf24
@@ -111,6 +117,6 @@ SPEC CHECKSUMS:
   OSBarcodeLib: 4bb4cc0b9850451fe71ba4953c1c934368e767df
   OSInAppBrowserLib: c3d0b21a0c8b6d81e69117ad08bb6b8a4849c4e1
 
-PODFILE CHECKSUM: 30fb69e4e19accf809b98b75f801bdc0e4181b2a
+PODFILE CHECKSUM: ad0e379d6401d3e70e089ff32db2ec36e5499426
 
 COCOAPODS: 1.15.2

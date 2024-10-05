@@ -16,6 +16,7 @@ import { cloneDeep } from 'lodash';
 import { UIToast } from './uiToast';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { InAppBrowser } from '@capacitor/inappbrowser';
+import { KeepAwake } from '@capacitor-community/keep-awake';
 /**
  * Handles every helping functionalities
  */
@@ -243,6 +244,17 @@ export class UIHelper {
     });
 
     return promise;
+  }
+
+  public deviceKeepAwake() {
+    try {
+      KeepAwake.keepAwake();
+    } catch (ex) {}
+  }
+  public deviceAllowSleepAgain() {
+    try {
+      KeepAwake.allowSleep();
+    } catch (ex) {}
   }
 
   public convertToNumber(event: any): number {

@@ -12,7 +12,6 @@ import { BrewTrackingService } from '../../../services/brewTracking/brew-trackin
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import {
@@ -53,7 +52,6 @@ export class BrewEditComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly insomnia: Insomnia,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiAlert: UIAlert,
     private readonly visualizerService: VisualizerService,
@@ -80,19 +78,13 @@ export class BrewEditComponent implements OnInit {
   }
   public ionViewDidEnter(): void {
     if (this.settings.wake_lock) {
-      this.insomnia.keepAwake().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceKeepAwake();
     }
     this.initialBeanData = JSON.stringify(this.data);
   }
   public ionViewWillLeave() {
     if (this.settings.wake_lock) {
-      this.insomnia.allowSleepAgain().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceAllowSleepAgain();
     }
   }
 

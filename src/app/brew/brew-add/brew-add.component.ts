@@ -22,7 +22,6 @@ import { UILog } from '../../../services/uiLog';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UIHealthKit } from '../../../services/uiHealthKit';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { UIAlert } from '../../../services/uiAlert';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
@@ -47,6 +46,7 @@ import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevic
 import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
+import { UIHelper } from '../../../services/uiHelper';
 
 declare var Plotly;
 
@@ -88,14 +88,14 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly uiLog: UILog,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiHealthKit: UIHealthKit,
-    private readonly insomnia: Insomnia,
     private readonly uiAlert: UIAlert,
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly visualizerService: VisualizerService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly hapticService: HapticService
+    private readonly hapticService: HapticService,
+    private readonly uiHelper: UIHelper
   ) {
     // Initialize to standard in drop down
 
@@ -135,10 +135,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
     if (this.settings.wake_lock) {
-      this.insomnia.keepAwake().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceKeepAwake();
     }
 
     // TODO Capacitor migration: There is a race condition here, as this function
@@ -192,10 +189,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
   public ionViewWillLeave() {
     if (this.settings.wake_lock) {
-      this.insomnia.allowSleepAgain().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceAllowSleepAgain();
     }
   }
 
