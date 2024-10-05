@@ -138,11 +138,10 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.uiHelper.deviceKeepAwake();
     }
 
-    // TODO Capacitor migration: There is a race condition here, as this function
-    // sets the geo coordinates as a side effect and is not awaited.
-    // This was present before the Capacitor migration, too, but should be fixed
-    // eventually.
-    this.getCoordinates(true);
+    /**
+     * We don'T need to await here, because the coordinates are set in the background
+     */
+    this.setCoordinates(true);
 
     this.initialBeanData = JSON.stringify(this.data);
 
@@ -222,7 +221,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async getCoordinates(_highAccuracy: boolean): Promise<void> {
+  private async setCoordinates(_highAccuracy: boolean): Promise<void> {
     if (!this.settings.track_brew_coordinates) {
       return;
     }
@@ -246,7 +245,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.uiLog.error('BREW - No Coordinates found: ', error);
       if (_highAccuracy === true) {
         this.uiLog.error('BREW - Try to get coordinates with low accuracy');
-        return await this.getCoordinates(false);
+        return await this.setCoordinates(false);
       }
     }
   }

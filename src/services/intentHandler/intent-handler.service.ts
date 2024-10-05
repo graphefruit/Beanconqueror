@@ -103,7 +103,11 @@ export class IntentHandlerService {
           ) {
             const qrCodeId: string = urlParams.get('qr');
             await this.addBeanFromServer(qrCodeId);
-          } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
+          } else if (
+            url
+              .toLowerCase()
+              .indexOf('beanconqueror://ADD_BEAN_ONLINE'.toLowerCase()) === 0
+          ) {
             const qrCodeId: string = urlParams.get('id');
             await this.addBeanFromServer(qrCodeId);
           } else if (
@@ -124,7 +128,11 @@ export class IntentHandlerService {
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
-          } else if (url.indexOf('beanconqueror://ADD_USER_BEAN?') === 0) {
+          } else if (
+            url
+              .toLowerCase()
+              .indexOf('beanconqueror://ADD_USER_BEAN'.toLowerCase()) === 0
+          ) {
             let userBeanJSON: string = '';
 
             const regex = /((shareUserBean)[0-9]+(?=\=))/gi;
@@ -135,7 +143,11 @@ export class IntentHandlerService {
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
-          } else if (url.indexOf('beanconqueror://VISUALIZER_SHARE?') === 0) {
+          } else if (
+            url
+              .toLowerCase()
+              .indexOf('beanconqueror://VISUALIZER_SHARE'.toLowerCase()) === 0
+          ) {
             const visualizerShareCode = String(urlParams.get('code'));
 
             this.importVisualizerShot(visualizerShareCode);
@@ -149,7 +161,7 @@ export class IntentHandlerService {
             );
 
             this.importVisualizerShot(visualizerShareCode);
-          } else if (url.indexOf('bean.html?id') >= 0) {
+          } else if (url.indexOf('bean.html') >= 0) {
             /**
              * On Android the whole path is directly resolved, therefore its the new url used**/
             const qrCodeId: string = urlParams.get('id');

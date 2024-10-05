@@ -607,7 +607,6 @@ export class SettingsPage {
     }
 
     try {
-      // TODO Capacitor migration: Test if this works on iOS
       if (fileUri.files[0].mimeType.indexOf('zip') > 0) {
         const zipContent = await this.uiFileHelper.readFileAsUint8Array(path);
         const parsedJSON =
