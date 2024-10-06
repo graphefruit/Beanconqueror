@@ -28,7 +28,6 @@ export class UIBeanStorage extends StorageClass {
     if (UIBeanStorage.instance) {
       return UIBeanStorage.instance;
     }
-    // noinspection TsLint
 
     return undefined;
   }

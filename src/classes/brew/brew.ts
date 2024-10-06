@@ -35,49 +35,33 @@ import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 
 export class Brew implements IBrew {
-  // tslint:disable-next-line
   public grind_size: string;
-  // tslint:disable-next-line
   public grind_weight: number;
   // UUID
-  // tslint:disable-next-line
   public method_of_preparation: string;
   // UUID
   public mill: string;
-  // tslint:disable-next-line
   public mill_speed: number;
-  // tslint:disable-next-line
   public mill_timer: number;
-  // tslint:disable-next-line
   public mill_timer_milliseconds: number;
-  // tslint:disable-next-line
   public pressure_profile: string;
   // UUID
   public bean: string;
-  // tslint:disable-next-line
   public brew_temperature: number;
-  // tslint:disable-next-line
   public brew_temperature_time: number;
 
   public brew_temperature_time_milliseconds: number;
 
-  // tslint:disable-next-line
   public brew_time: number;
   public brew_time_milliseconds: number;
-  // tslint:disable-next-line
   public brew_quantity: number;
-  // tslint:disable-next-line
   public brew_quantity_type: BREW_QUANTITY_TYPES_ENUM;
   public note: string;
   public rating: number;
-  // tslint:disable-next-line
   public coffee_type: string;
-  // tslint:disable-next-line
   public coffee_concentration: string;
-  // tslint:disable-next-line
   public coffee_first_drip_time: number;
   public coffee_first_drip_time_milliseconds: number;
-  // tslint:disable-next-line
   public coffee_blooming_time: number;
   public coffee_blooming_time_milliseconds: number;
   public attachments: Array<string>;

@@ -17,7 +17,6 @@ export class UILog {
     if (UILog.instance) {
       return UILog.instance;
     }
-    // noinspection TsLint
 
     return undefined;
   }

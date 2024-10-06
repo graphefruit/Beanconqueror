@@ -3623,7 +3623,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.settings.bluetooth_ignore_negative_values === true
       ) {
         for (const item of this.flowProfileArrObjs) {
-          // tslint:disable-next-line:no-shadowed-variable
           let weightToAdd = item.weight;
 
           if (this.settings.bluetooth_ignore_anomaly_values === true) {

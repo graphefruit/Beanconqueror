@@ -1,24 +1,23 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Classes */
 /** Interfaces */
 
 /** Services */
-import {StorageClass} from '../classes/storageClass';
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-import {TranslateService} from '@ngx-translate/core';
-import {IGreenBean} from '../interfaces/green-bean/iGreenBean';
-import {GreenBean} from '../classes/green-bean/green-bean';
+import { StorageClass } from '../classes/storageClass';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIStorage } from './uiStorage';
+import { TranslateService } from '@ngx-translate/core';
+import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
+import { GreenBean } from '../classes/green-bean/green-bean';
 
 /** Ionic native */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIGreenBeanStorage extends StorageClass {
-
   /**
    * Singelton instance
    */
@@ -30,16 +29,16 @@ export class UIGreenBeanStorage extends StorageClass {
     if (UIGreenBeanStorage.instance) {
       return UIGreenBeanStorage.instance;
     }
-    // noinspection TsLint
 
     return undefined;
   }
 
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog,
-              private readonly translate: TranslateService) {
-
+  constructor(
+    protected uiStorage: UIStorage,
+    protected uiHelper: UIHelper,
+    protected uiLog: UILog,
+    private readonly translate: TranslateService
+  ) {
     super(uiStorage, uiHelper, uiLog, 'GREEN_BEANS');
     if (UIGreenBeanStorage.instance === undefined) {
       UIGreenBeanStorage.instance = this;
@@ -80,5 +79,4 @@ export class UIGreenBeanStorage extends StorageClass {
     }
     return this.beans;
   }
-
 }

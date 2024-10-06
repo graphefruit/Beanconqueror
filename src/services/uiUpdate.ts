@@ -365,7 +365,6 @@ export class UIUpdate {
                       `${_version} - Check entry ${entryIndex} of ${allEntries.length}`
                     );
                     let entryNeedsUpdate: boolean = false;
-                    // tslint:disable-next-line
                     for (let i = 0; i < entry.attachments.length; i++) {
                       this.uiLog.log(`${_version} - Check attachments ${i}`);
                       // We don't have a real path here, just the name

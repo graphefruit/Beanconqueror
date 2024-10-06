@@ -180,7 +180,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     /**
      * If Resetbuttons is false, we likely had the "listening" feature for the scale, so this button was presesd, but we don'T want to reset the buttons in the end
      */
-    // tslint:disable-next-line
     this.timer = {
       runTimer: false,
       hasStarted: false,

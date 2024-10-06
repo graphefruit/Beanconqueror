@@ -73,7 +73,6 @@ export class UIBeanHelper {
     if (UIBeanHelper.instance) {
       return UIBeanHelper.instance;
     }
-    // noinspection TsLint
 
     return undefined;
   }

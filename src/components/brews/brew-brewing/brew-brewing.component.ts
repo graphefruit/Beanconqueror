@@ -1114,7 +1114,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // tslint:disable-next-line
   private async __loadLastBrew() {
     let wasAnythingLoaded: boolean = false;
     if (

@@ -5,7 +5,6 @@ import { Clipboard } from '@capacitor/clipboard';
 import { Platform } from '@ionic/angular';
 /** Third party */
 import moment from 'moment';
-// tslint:disable-next-line
 import 'moment/locale/de';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { UIFileHelper } from './uiFileHelper';
@@ -40,7 +39,6 @@ export class UIHelper {
 
   public static generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      // tslint:disable
       const r =
           ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
             16) |
@@ -105,7 +103,6 @@ export class UIHelper {
 
   public generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      // tslint:disable
       const r =
           ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
             16) |

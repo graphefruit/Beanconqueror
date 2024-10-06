@@ -1,24 +1,18 @@
-import {Directive, HostListener, Input} from '@angular/core';
-import {NgModel} from '@angular/forms';
+import { Directive, HostListener, Input } from '@angular/core';
+import { NgModel } from '@angular/forms';
 
 @Directive({
-    // tslint:disable-next-line:directive-selector
-    selector: '[ngModel][max-number-value]',
+  selector: '[ngModel][max-number-value]',
 })
 export class MaxNumberValueDirective {
-
-    @Input('max-number-value') public value: string;
-    constructor(private readonly model: NgModel) {
-    }
-
+  @Input('max-number-value') public value: string;
+  constructor(private readonly model: NgModel) {}
 
   @HostListener('ionBlur', ['$event.target'])
   public blur(): void {
-
     let val: any = this.model.control.value;
 
     // Value needs to be combined as a string
-    // tslint:disable-next-line
     val = val + '';
     if (val === '') {
       val = '0';
@@ -34,7 +28,7 @@ export class MaxNumberValueDirective {
     if (parsedFloat > parseFloat(this.value)) {
       this.model.control.setValue(0);
     } else {
-      if (parsedFloat <0) {
+      if (parsedFloat < 0) {
         this.model.control.setValue(0);
       } else {
         if (Number.isNaN(parsedFloat)) {
@@ -43,9 +37,6 @@ export class MaxNumberValueDirective {
           this.model.control.setValue(parsedFloat);
         }
       }
-
     }
-
-
   }
 }

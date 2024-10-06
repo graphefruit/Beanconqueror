@@ -644,7 +644,6 @@ function encode(msgType: number, payload: number[]): ArrayBuffer {
 }
 
 function promisify(fn: any) {
-  // tslint:disable-next-line:only-arrow-functions
   return function (...args: any) {
     return new Promise((resolve, reject) => {
       fn(...args, resolve, reject);

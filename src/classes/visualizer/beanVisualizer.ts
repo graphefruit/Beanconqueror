@@ -16,7 +16,6 @@ export class BeanVisualizer implements IBeanVisualizer {
   public roast_range: number;
   public beanMix: BEAN_MIX_ENUM;
 
-  // tslint:disable-next-line
   public roast_custom: string;
   public aromatics: string;
   public weight: number;

@@ -120,7 +120,6 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   public initTimer(): void {
-    // tslint:disable-next-line
     this.timer = {
       runTimer: false,
       hasStarted: false,

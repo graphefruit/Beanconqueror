@@ -51,7 +51,6 @@ export class UIBrewHelper {
     if (UIBrewHelper.instance) {
       return UIBrewHelper.instance;
     }
-    // noinspection TsLint
 
     return undefined;
   }

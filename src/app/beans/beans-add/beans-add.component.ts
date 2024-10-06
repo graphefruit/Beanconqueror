@@ -243,7 +243,6 @@ export class BeansAddComponent implements OnInit {
     this.data.roast = _bean.roast;
     this.data.beanMix = _bean.beanMix;
 
-    // tslint:disable-next-line
     this.data.roast_custom = _bean.roast_custom;
     this.data.aromatics = _bean.aromatics;
     this.data.weight = _bean.weight;

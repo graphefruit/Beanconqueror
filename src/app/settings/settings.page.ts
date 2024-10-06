@@ -1252,7 +1252,6 @@ export class SettingsPage {
     }
   }
 
-  /* tslint:disable */
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
     const dummyData = BeanconquerorSettingsDummy;
