@@ -144,6 +144,7 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
       copySafDirectoryToFileDirectoryRecursive(fromSafTree, targetFile);
       call.resolve();
     } catch (IOException e) {
+      Log.e(TAG, "Error while copying directory from SAF.", e);
       call.reject("An error occurred while copying", e);
     }
   }
@@ -154,12 +155,14 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
       File target = new File(targetDir, src.getName());
       if (src.isDirectory()) {
         // create the target directory first, then recurse
+        Log.d(TAG, "Creating target directory " + target);
         target.mkdirs();
         copySafDirectoryToFileDirectoryRecursive(src, target);
         continue;
       }
 
       // src is a file, copy it manually
+      Log.d(TAG, "Copying SAF file " + src.getUri() + " to " + target);
       try (InputStream srcStream = getContext().getContentResolver().openInputStream(src.getUri());
            OutputStream targetStream = new FileOutputStream(target)) {
         this.transferStream(srcStream, targetStream);
@@ -193,6 +196,7 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
       this.moveFileDirectoryToSafDirectoryRecursive(fromDirectory, toSafTree);
       call.resolve();
     } catch (IOException e) {
+      Log.e(TAG, "Error while moving directory to SAF.", e);
       call.reject("An error occurred while moving", e);
     }
   }
@@ -202,7 +206,10 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
     for (File src : srcDir.listFiles()) {
       if (src.isDirectory()) {
         // create the target directory first, then recurse
-        DocumentFile targetDir = targetSafDir.createDirectory(src.getName());
+        String dirName = src.getName();
+        Log.d(TAG,
+          "Creating target directory " + dirName + " in SAF directory " + targetSafDir.getUri());
+        DocumentFile targetDir = targetSafDir.createDirectory(dirName);
         moveFileDirectoryToSafDirectoryRecursive(src, targetDir);
         // after the directory was copied, delete it
         src.delete();
@@ -216,6 +223,7 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
       String mimeType =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
       DocumentFile target = targetSafDir.createFile(mimeType, src.getName());
+      Log.d(TAG, "Moving file " + src + " to SAF file " + target.getUri());
 
       try (InputStream srcStream = new FileInputStream(src);
            OutputStream targetStream = getContext().getContentResolver()
