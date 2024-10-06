@@ -16,16 +16,17 @@ import { InstanceClass } from './instanceClass';
 
 import { Share } from '@capacitor/share';
 
-export type CreateTempCacheDirectoryResult = {
+export interface CreateTempCacheDirectoryResult {
   path: string;
   directory: Directory;
   uri: string;
-};
+}
+
+declare let navigator: any;
 
 /**
  * Handles every helping functionalities
  */
-declare var navigator: any;
 @Injectable({
   providedIn: 'root',
 })
@@ -44,7 +45,9 @@ export class UIFileHelper extends InstanceClass {
     } else if (this.platform.is('android') && this.platform.is('cordova')) {
       return Directory.Data;
     } else {
-      throw new Error(`Unsupported platform: ${this.platform.platforms()}`);
+      throw new Error(
+        `Unsupported platform: ${JSON.stringify(this.platform.platforms())}`
+      );
     }
   }
 
@@ -86,7 +89,7 @@ export class UIFileHelper extends InstanceClass {
       );
     }
     // returned data is a plain text string because we set the encoding
-    return readResult.data as string;
+    return readResult.data;
   }
 
   public async readInternalFileAsText(fileName: string): Promise<string> {
@@ -127,7 +130,7 @@ export class UIFileHelper extends InstanceClass {
       );
     }
     // returned data is a base64 string of the file contents
-    return readResult.data as string;
+    return readResult.data;
   }
 
   public async readInternalFileAsBase64(fileName: string): Promise<string> {
@@ -421,7 +424,7 @@ export class UIFileHelper extends InstanceClass {
           continue;
         }
 
-        if (lastSevenDays.indexOf(directoryEntry.name) > -1) {
+        if (lastSevenDays.includes(directoryEntry.name)) {
           this.uiLog.info(
             'Backup file ',
             directoryEntry.name,
@@ -460,8 +463,8 @@ export class UIFileHelper extends InstanceClass {
 
   public async downloadExternalFile(
     url: string,
-    fileName: string = 'beanconqueror_image',
-    fileExtension: string = '.png'
+    fileName = 'beanconqueror_image',
+    fileExtension = '.png'
   ): Promise<string> {
     const path = await this.generateInternalPath(fileName, fileExtension);
     const directory = this.getDataDirectory();
@@ -488,7 +491,7 @@ export class UIFileHelper extends InstanceClass {
   public async exportFileToDefaultDirectory(
     fileName: string,
     blob: Blob,
-    share: boolean = true
+    share = true
   ): Promise<string | undefined> {
     if (this.platform.is('cordova')) {
       const path = 'Download/Beanconqueror_export';
@@ -506,7 +509,7 @@ export class UIFileHelper extends InstanceClass {
   public async exportFile(
     exportPath: { fileName: string; path: string; directory: Directory },
     blob: Blob,
-    share: boolean = true
+    share = true
   ): Promise<string | undefined> {
     if (this.platform.is('cordova')) {
       const fullpath = `${exportPath.path}/${exportPath.fileName}`;
@@ -527,10 +530,7 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  private async exportFileInBrowser(
-    fileName: string,
-    blob: Blob
-  ): Promise<void> {
+  private exportFileInBrowser(fileName: string, blob: Blob): void {
     setTimeout(() => {
       if (navigator.msSaveBlob) {
         // IE 10+
@@ -652,7 +652,7 @@ export class UIFileHelper extends InstanceClass {
         FILE_PATH: filePath,
         EXTENSION: exstension,
       };
-    } catch (ex) {
+    } catch {
       return {
         FILE_NAME: '',
         FILE_PATH: '',
@@ -662,7 +662,7 @@ export class UIFileHelper extends InstanceClass {
   }
   public async getInternalFileSrc(
     _filePath: string,
-    _addTimeStamp: boolean = false
+    _addTimeStamp = false
   ): Promise<any> {
     if (!this.platform.is('cordova')) {
       return '';
@@ -672,7 +672,7 @@ export class UIFileHelper extends InstanceClass {
 
       if (this.platform.is('ios')) {
         // After switching to iOS cloud, the fullPath saves the Cloud path actualy with, so we need to delete this one :)
-        const searchForCloud: string = 'Cloud/';
+        const searchForCloud = 'Cloud/';
         if (fileName.startsWith(searchForCloud)) {
           fileName = fileName.substring(searchForCloud.length);
         }
@@ -705,7 +705,7 @@ export class UIFileHelper extends InstanceClass {
     try {
       await Filesystem.stat(options);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -742,7 +742,7 @@ export class UIFileHelper extends InstanceClass {
   }
 
   private blobToBase64(blob: Blob): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUrl = reader.result as string;
