@@ -1,0 +1,4 @@
+export enum BREW_GRAPH_TYPE {
+  BREW = 'BREW',
+  IMPORTED_GRAPH = 'IMPORTED_GRAPH',
+}

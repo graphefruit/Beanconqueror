@@ -77,6 +77,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
+import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 
 @Component({
   selector: 'settings',
@@ -1095,7 +1096,19 @@ export class SettingsPage {
   ) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFile(entry.flow_profile, exportPath);
+        await this._exportFile(entry.getGraphPath(), exportPath);
+      }
+
+      if (
+        entry instanceof Brew &&
+        entry.reference_flow_profile &&
+        entry.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        await this._exportFile(
+          entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
+          exportPath
+        );
       }
     }
   }
@@ -1158,8 +1171,8 @@ export class SettingsPage {
     _importDirectory: string
   ) {
     for (const entry of _storedData) {
-      if (entry.flow_profile) {
-        await this._importFile(entry.flow_profile, _importDirectory);
+      if (entry.flow_profile && entry.flow_profile.length) {
+        await this._importFile(entry.getGraphPath(), _importDirectory);
       }
       if (entry.reference_flow_profile) {
         if (
@@ -1168,7 +1181,10 @@ export class SettingsPage {
         ) {
           /*If we have an imported graph, the uuid, is used with the importedGraph folder, because else we would not been able to store those graphs coming from e.g. visualizer.*/
           /** Making a new object for this seems to be like totaly overdrived **/
-          await this._importFile(entry.getGraphPath(), _importDirectory);
+          await this._importFile(
+            entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
+            _importDirectory
+          );
         }
       }
     }

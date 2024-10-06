@@ -32,6 +32,7 @@ import { CustomInformationBrew } from './customInformationBrew';
 import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
 import { ReferenceGraph } from './referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -769,13 +770,19 @@ export class Brew implements IBrew {
 
     return fixNeeded;
   }
-  public getGraphPath() {
-    if (
-      this.reference_flow_profile?.type === REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-    ) {
-      return 'importedGraph/' + this.config.uuid + '_flow_profile.json';
+
+  public getGraphPath(_type: BREW_GRAPH_TYPE = BREW_GRAPH_TYPE.BREW) {
+    if (_type === BREW_GRAPH_TYPE.BREW) {
+      return 'brews/' + this.config.uuid + '_flow_profile.json';
+    } else if (_type === BREW_GRAPH_TYPE.IMPORTED_GRAPH) {
+      if (
+        this.reference_flow_profile?.type ===
+        REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        return 'importedGraph/' + this.config.uuid + '_flow_profile.json';
+      }
     }
-    return 'brews/' + this.config.uuid + '_flow_profile.json';
+    return '';
   }
 
   public getBeanAgeByBrewDate() {
