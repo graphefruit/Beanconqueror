@@ -1,15 +1,15 @@
 import { registerPlugin } from '@capacitor/core';
 
-export type PickDirectoryOptions = {
+export interface PickDirectoryOptions {
   /**
    * Determines if persistent permissions to the picked directory should be
    * requested. If this is not done, the access only persists until the device
    * restarts.
    */
   takePersistentPermissions?: boolean;
-};
+}
 
-export type FileExistsSafOptions = {
+export interface FileExistsSafOptions {
   /**
    * The Android SAF Tree URI to use as the root directory to resolve the path
    * components from.
@@ -26,9 +26,9 @@ export type FileExistsSafOptions = {
    * ['my', 'dir', 'and', 'filename.txt']
    */
   pathComponents: string[];
-};
+}
 
-export type CopySafDirectoryToFileDirectoryOptions = {
+export interface CopySafDirectoryToFileDirectoryOptions {
   /**
    * The Android SAF Tree URI to copy all files recursively from.
    * Use {@link BCAndroidNativeCalls.pickDirectory pickDirectory} to get a
@@ -41,9 +41,9 @@ export type CopySafDirectoryToFileDirectoryOptions = {
    * file: URI and the directory should already exist.
    */
   toDirectoryUri: string;
-};
+}
 
-export type CopyFileDirectoryToSafDirectoryOptions = {
+export interface CopyFileDirectoryToSafDirectoryOptions {
   /**
    * The directory URI to copy all files recursively from. This should be a
    * file: URI and the directory should already exist.
@@ -56,7 +56,7 @@ export type CopyFileDirectoryToSafDirectoryOptions = {
    * suitable safTreeUri.
    */
   toSafTreeUri: string;
-};
+}
 
 export interface BCAndroidNativeCalls {
   /**
