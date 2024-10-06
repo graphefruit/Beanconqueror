@@ -595,7 +595,9 @@ export class SettingsPage {
       pickedFile.mimeType.indexOf('zip') === -1 &&
       pickedFile.mimeType.indexOf('json') === -1
     ) {
-      this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
+      await this.uiAlert.showMessage(
+        this.translate.instant('INVALID_FILE_FORMAT')
+      );
       return;
     }
 
@@ -648,7 +650,7 @@ export class SettingsPage {
         '; Error',
         error
       );
-      this.uiAlert.showMessage(
+      await this.uiAlert.showMessage(
         this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`
       );
     }
@@ -681,7 +683,7 @@ export class SettingsPage {
         pathComponents: [mainFileName],
       });
       if (!exists) {
-        this.uiAlert.showMessage(
+        await this.uiAlert.showMessage(
           this.translate.instant('FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND', {
             fileName: mainFileName,
           })
@@ -722,7 +724,7 @@ export class SettingsPage {
         );
         // ignore
       }
-      this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.hideLoadingSpinner();
     }
   }
 
@@ -1215,7 +1217,7 @@ export class SettingsPage {
         fileToImport
       );
       await this.uiFileHelper.makeParentDirsInternal(internalPathToImportTo);
-      Filesystem.copy({
+      await Filesystem.copy({
         from: fileToImport,
         to: internalPathToImportTo,
         toDirectory: this.uiFileHelper.getDataDirectory(),
@@ -1301,142 +1303,131 @@ export class SettingsPage {
         parsedContent[this.uiGraphStorage.getDBPath()] = [];
       }
       if (
-        parsedContent[this.uiPreparationStorage.getDBPath()] &&
-        parsedContent[this.uiBeanStorage.getDBPath()] &&
-        parsedContent[this.uiBrewStorage.getDBPath()] &&
-        parsedContent[this.uiSettingsStorage.getDBPath()]
+        !parsedContent[this.uiPreparationStorage.getDBPath()] ||
+        !parsedContent[this.uiBeanStorage.getDBPath()] ||
+        !parsedContent[this.uiBrewStorage.getDBPath()] ||
+        !parsedContent[this.uiSettingsStorage.getDBPath()]
       ) {
-        this.uiLog.log('All data existing');
-        this.__cleanupImportSettingsData(
-          parsedContent[this.uiSettingsStorage.getDBPath()]
+        await this.uiAlert.showMessage(
+          this.translate.instant('INVALID_FILE_DATA')
         );
+        return;
+      }
 
-        // When exporting the value is a number, when importing it needs to be  a string.
-        parsedContent['SETTINGS'][0]['brew_view'] =
-          parsedContent['SETTINGS'][0]['brew_view'] + '';
-        this.uiLog.log('Cleaned all data');
-        try {
-          if (
-            !parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined
-          ) {
-            this.uiLog.log('Old brew order structure');
-            // Breaking change, we need to throw away the old order types by import
-            const settingsConst = new Settings();
-            parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
-              settingsConst.brew_order
-            );
-          }
-        } catch (ex) {
+      this.uiLog.log('All data existing');
+      this.__cleanupImportSettingsData(
+        parsedContent[this.uiSettingsStorage.getDBPath()]
+      );
+
+      // When exporting the value is a number, when importing it needs to be  a string.
+      parsedContent['SETTINGS'][0]['brew_view'] =
+        parsedContent['SETTINGS'][0]['brew_view'] + '';
+      this.uiLog.log('Cleaned all data');
+      try {
+        if (
+          !parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined
+        ) {
+          this.uiLog.log('Old brew order structure');
+          // Breaking change, we need to throw away the old order types by import
           const settingsConst = new Settings();
           parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
             settingsConst.brew_order
           );
         }
-
-        await this.uiAlert.showLoadingSpinner();
-        this.uiStorage.import(parsedContent).then(
-          async (_data) => {
-            if (_data.BACKUP === false) {
-              this.__reinitializeStorages().then(
-                async () => {
-                  // Show loadingspinner again, because the reintializestorages hides it.
-                  await this.uiAlert.showLoadingSpinner();
-                  this.uiAnalytics.disableTracking();
-                  this.__initializeSettings();
-
-                  if (!isIOS) {
-                    const brewsData = this.uiBrewStorage.getAllEntries();
-                    const importAttachmentCollections = [
-                      brewsData,
-                      this.uiBeanStorage.getAllEntries(),
-                      this.uiPreparationStorage.getAllEntries(),
-                      this.uiMillStorage.getAllEntries(),
-                      this.uiGreenBeanStorage.getAllEntries(),
-                      this.uiRoastingMachineStorage.getAllEntries(),
-                      this.uiWaterStorage.getAllEntries(),
-                    ];
-
-                    for (const collection of importAttachmentCollections) {
-                      await this._importFiles(collection, _importDirectory);
-                    }
-
-                    await this._importFlowProfileFiles(
-                      brewsData,
-                      _importDirectory
-                    );
-
-                    const graphData = this.uiGraphStorage.getAllEntries();
-                    await this._importGraphProfileFiles(
-                      graphData,
-                      _importDirectory
-                    );
-                  }
-
-                  if (
-                    this.uiBrewStorage.getAllEntries().length > 0 &&
-                    this.uiMillStorage.getAllEntries().length <= 0
-                  ) {
-                    // We got an update and we got no mills yet, therefore we add a Standard mill.
-                    const data: Mill = new Mill();
-                    data.name = 'Standard';
-                    await this.uiMillStorage.add(data);
-
-                    const brews: Array<Brew> =
-                      this.uiBrewStorage.getAllEntries();
-                    for (const brew of brews) {
-                      brew.mill = data.config.uuid;
-                      await this.uiBrewStorage.update(brew);
-                    }
-                  }
-                  this.setLanguage();
-
-                  if (
-                    this.settings.brew_rating_steps === null ||
-                    this.settings.brew_rating_steps === undefined
-                  ) {
-                    this.settings.brew_rating_steps = 1;
-                  }
-                  if (
-                    this.settings.bean_rating_steps === null ||
-                    this.settings.bean_rating_steps === undefined
-                  ) {
-                    this.settings.bean_rating_steps = 1;
-                  }
-                  this.settings.resetFilter();
-                  await this.uiSettingsStorage.saveSettings(this.settings);
-                  await this.uiAlert.hideLoadingSpinner();
-                  await this.uiAlert.showMessage(
-                    this.translate.instant('IMPORT_SUCCESSFULLY')
-                  );
-                  if (this.settings.matomo_analytics === undefined) {
-                    await this.showAnalyticsInformation();
-                  } else {
-                    this.uiAnalytics.enableTracking();
-                  }
-                },
-                async () => {
-                  await this.uiAlert.hideLoadingSpinner();
-                }
-              );
-            } else {
-              await this.uiAlert.hideLoadingSpinner();
-              this.uiAlert.showMessage(
-                this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
-              );
-            }
-          },
-          async () => {
-            await this.uiAlert.hideLoadingSpinner();
-            this.uiAlert.showMessage(
-              this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
-            );
-          }
+      } catch {
+        const settingsConst = new Settings();
+        parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
+          settingsConst.brew_order
         );
-      } else {
-        this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
+      }
+
+      await this.uiAlert.showLoadingSpinner();
+      try {
+        const _data = await this.uiStorage.import(parsedContent);
+        if (_data.BACKUP === false) {
+          await this.__reinitializeStorages();
+          // Show loadingspinner again, because the reintializestorages hides it.
+          await this.uiAlert.showLoadingSpinner();
+          this.uiAnalytics.disableTracking();
+          this.__initializeSettings();
+
+          if (!isIOS) {
+            const brewsData = this.uiBrewStorage.getAllEntries();
+            const importAttachmentCollections = [
+              brewsData,
+              this.uiBeanStorage.getAllEntries(),
+              this.uiPreparationStorage.getAllEntries(),
+              this.uiMillStorage.getAllEntries(),
+              this.uiGreenBeanStorage.getAllEntries(),
+              this.uiRoastingMachineStorage.getAllEntries(),
+              this.uiWaterStorage.getAllEntries(),
+            ];
+
+            for (const collection of importAttachmentCollections) {
+              await this._importFiles(collection, _importDirectory);
+            }
+
+            await this._importFlowProfileFiles(brewsData, _importDirectory);
+
+            const graphData = this.uiGraphStorage.getAllEntries();
+            await this._importGraphProfileFiles(graphData, _importDirectory);
+          }
+
+          if (
+            this.uiBrewStorage.getAllEntries().length > 0 &&
+            this.uiMillStorage.getAllEntries().length <= 0
+          ) {
+            // We got an update and we got no mills yet, therefore we add a Standard mill.
+            const data: Mill = new Mill();
+            data.name = 'Standard';
+            await this.uiMillStorage.add(data);
+
+            const brews: Brew[] = this.uiBrewStorage.getAllEntries();
+            for (const brew of brews) {
+              brew.mill = data.config.uuid;
+              await this.uiBrewStorage.update(brew);
+            }
+          }
+          this.setLanguage();
+
+          if (
+            this.settings.brew_rating_steps === null ||
+            this.settings.brew_rating_steps === undefined
+          ) {
+            this.settings.brew_rating_steps = 1;
+          }
+          if (
+            this.settings.bean_rating_steps === null ||
+            this.settings.bean_rating_steps === undefined
+          ) {
+            this.settings.bean_rating_steps = 1;
+          }
+          this.settings.resetFilter();
+          await this.uiSettingsStorage.saveSettings(this.settings);
+          await this.uiAlert.hideLoadingSpinner();
+          await this.uiAlert.showMessage(
+            this.translate.instant('IMPORT_SUCCESSFULLY')
+          );
+          if (this.settings.matomo_analytics === undefined) {
+            await this.showAnalyticsInformation();
+          } else {
+            this.uiAnalytics.enableTracking();
+          }
+        } else {
+          await this.uiAlert.hideLoadingSpinner();
+          await this.uiAlert.showMessage(
+            this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
+          );
+        }
+      } catch (error) {
+        this.uiLog.error('Error during import', error);
+        await this.uiAlert.hideLoadingSpinner();
+        await this.uiAlert.showMessage(
+          this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
+        );
       }
     } catch (ex) {
-      this.uiAlert.showMessage(
+      await this.uiAlert.showMessage(
         this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex)
       );
     }
@@ -1447,55 +1438,46 @@ export class SettingsPage {
   }
 
   private async __reinitializeStorages(): Promise<any> {
-    return new Promise(async (resolve) => {
-      await this.uiBeanStorage.reinitializeStorage();
-      await this.uiPreparationStorage.reinitializeStorage();
-      await this.uiSettingsStorage.reinitializeStorage();
-      await this.uiBrewStorage.reinitializeStorage();
-      await this.uiMillStorage.reinitializeStorage();
-      await this.uiVersionStorage.reinitializeStorage();
-      await this.uiGreenBeanStorage.reinitializeStorage();
-      await this.uiRoastingMachineStorage.reinitializeStorage();
-      await this.uiWaterStorage.reinitializeStorage();
-      await this.uiGraphStorage.reinitializeStorage();
+    await this.uiBeanStorage.reinitializeStorage();
+    await this.uiPreparationStorage.reinitializeStorage();
+    await this.uiSettingsStorage.reinitializeStorage();
+    await this.uiBrewStorage.reinitializeStorage();
+    await this.uiMillStorage.reinitializeStorage();
+    await this.uiVersionStorage.reinitializeStorage();
+    await this.uiGreenBeanStorage.reinitializeStorage();
+    await this.uiRoastingMachineStorage.reinitializeStorage();
+    await this.uiWaterStorage.reinitializeStorage();
+    await this.uiGraphStorage.reinitializeStorage();
 
-      // Wait for every necessary service to be ready before starting the app
-      // Settings and version, will create a new object on start, so we need to wait for this in the end.
-      const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
-      const preparationStorageReadyCallback =
-        this.uiPreparationStorage.storageReady();
-      const uiSettingsStorageReadyCallback =
-        this.uiSettingsStorage.storageReady();
-      const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
-      const millStorageReadyCallback = this.uiMillStorage.storageReady();
-      const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
-      const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
-      const roastingMachineStorageCallback =
-        this.uiRoastingMachineStorage.storageReady();
-      const waterStorageCallback = this.uiWaterStorage.storageReady();
-      const graphStorageCallback = this.uiGraphStorage.storageReady();
+    // Wait for every necessary service to be ready before starting the app
+    // Settings and version, will create a new object on start, so we need to wait for this in the end.
+    const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
+    const preparationStorageReadyCallback =
+      this.uiPreparationStorage.storageReady();
+    const uiSettingsStorageReadyCallback =
+      this.uiSettingsStorage.storageReady();
+    const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+    const millStorageReadyCallback = this.uiMillStorage.storageReady();
+    const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+    const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
+    const roastingMachineStorageCallback =
+      this.uiRoastingMachineStorage.storageReady();
+    const waterStorageCallback = this.uiWaterStorage.storageReady();
+    const graphStorageCallback = this.uiGraphStorage.storageReady();
 
-      Promise.all([
-        beanStorageReadyCallback,
-        preparationStorageReadyCallback,
-        brewStorageReadyCallback,
-        uiSettingsStorageReadyCallback,
-        millStorageReadyCallback,
-        versionStorageReadyCallback,
-        greenBeanStorageCallback,
-        roastingMachineStorageCallback,
-        waterStorageCallback,
-        graphStorageCallback,
-      ]).then(
-        async () => {
-          await this.uiUpdate.checkUpdate();
-          resolve(undefined);
-        },
-        () => {
-          resolve(undefined);
-        }
-      );
-    });
+    await Promise.all([
+      beanStorageReadyCallback,
+      preparationStorageReadyCallback,
+      brewStorageReadyCallback,
+      uiSettingsStorageReadyCallback,
+      millStorageReadyCallback,
+      versionStorageReadyCallback,
+      greenBeanStorageCallback,
+      roastingMachineStorageCallback,
+      waterStorageCallback,
+      graphStorageCallback,
+    ]);
+    await this.uiUpdate.checkUpdate();
   }
 
   public async checkVisualizerConnection() {
