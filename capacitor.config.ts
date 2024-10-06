@@ -80,9 +80,9 @@ const createConfig = () => {
       preferences: {
         ScrollEnabled: 'false',
         'android-minSdkVersion': '24',
-        'android-targetSdkVersion': '34',
-        'android-compileSdkVersion': '34',
-        'android-buildToolsVersion': '34.0.0',
+        'android-targetSdkVersion': '35',
+        'android-compileSdkVersion': '35',
+        'android-buildToolsVersion': '35.0.0',
         SplashMaintainAspectRatio: 'true',
         FadeSplashScreenDuration: '300',
         SplashShowOnlyFirstTime: 'false',
