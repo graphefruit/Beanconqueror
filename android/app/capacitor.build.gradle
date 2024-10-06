@@ -21,6 +21,7 @@ dependencies {
     implementation project(':capacitor-inappbrowser')
     implementation project(':capacitor-keyboard')
     implementation project(':capacitor-share')
+    implementation project(':capacitor-splash-screen')
     implementation project(':capacitor-status-bar')
     implementation project(':capawesome-capacitor-file-picker')
     implementation "androidx.annotation:annotation:*"

@@ -67,6 +67,7 @@ import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 declare var window;
 
@@ -422,6 +423,7 @@ export class AppComponent implements AfterViewInit {
             await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);
+            await SplashScreen.hide();
           },
           async () => {
             await this.uiAlert.showAppShetItSelfMessage();

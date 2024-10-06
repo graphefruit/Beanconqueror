@@ -75,6 +75,12 @@ const createConfig = () => {
         // See https://capacitorjs.com/docs/apis/http#configuration
         enabled: true,
       },
+      SplashScreen: {
+        launchAutoHide: false, // we will hide the splashcreen inside the app
+        backgroundColor: '#FFFFFF',
+        androidScaleType: 'CENTER_INSIDE',
+        useDialog: false, // required to set the correct scale type
+      },
     },
     cordova: {
       preferences: {
@@ -83,11 +89,6 @@ const createConfig = () => {
         'android-targetSdkVersion': '35',
         'android-compileSdkVersion': '35',
         'android-buildToolsVersion': '35.0.0',
-        SplashMaintainAspectRatio: 'true',
-        FadeSplashScreenDuration: '300',
-        SplashShowOnlyFirstTime: 'false',
-        SplashScreen: 'screen',
-        SplashScreenDelay: '300',
         StatusBarOverlaysWebView: 'false',
         StatusBarBackgroundColor: '#F0F0F0',
         StatusBarStyle: 'light',

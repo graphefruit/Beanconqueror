@@ -40,6 +40,7 @@
     "@capacitor/ios": "6.1.2",
     "@capacitor/keyboard": "6.0.2",
     "@capacitor/share": "^6.0.2",
+    "@capacitor/splash-screen": "^6.0.2",
     "@capacitor/status-bar": "6.0.1",
     "@capawesome/capacitor-file-picker": "^6.1.0",
     "@ionic/angular": "^8.3.2",
