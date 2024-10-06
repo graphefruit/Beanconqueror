@@ -82,23 +82,6 @@ const createConfig = () => {
         useDialog: false, // required to set the correct scale type
       },
     },
-    cordova: {
-      preferences: {
-        ScrollEnabled: 'false',
-        'android-minSdkVersion': '24',
-        'android-targetSdkVersion': '35',
-        'android-compileSdkVersion': '35',
-        'android-buildToolsVersion': '35.0.0',
-        StatusBarOverlaysWebView: 'false',
-        StatusBarBackgroundColor: '#F0F0F0',
-        StatusBarStyle: 'light',
-        AndroidPersistentFileLocation: 'Compatibility',
-        AndroidExtraFilesystems:
-          'files,files-external,documents,cache,cache-external',
-        iosExtraFilesystems:
-          'library,library-nosync,documents,documents-nosync,cache,bundle,root',
-      },
-    },
   };
 
   switch (getPlatform()) {
