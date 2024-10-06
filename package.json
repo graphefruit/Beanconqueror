@@ -87,11 +87,13 @@
     "@types/jasminewd2": "~2.0.8",
     "@types/lodash": "^4.14.178",
     "@types/node": "^20.12.7",
+    "angular-eslint": "18.3.1",
     "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-ble-central": "^1.7.8",
     "cordova-plugin-health": "^2.1.0",
     "cordova-sqlite-storage": "^5.1.0",
     "elliptic": ">=6.5.4",
+    "eslint": "^9.9.1",
     "husky": "^8.0.1",
     "jasmine-core": "~3.8.0",
     "jasmine-spec-reporter": "~5.0.0",
@@ -108,8 +110,8 @@
     "stylelint-config-standard": "^20.0.0",
     "ts-node": "~8.3.0",
     "ts-proto": "^1.122.0",
-    "tslint": "~6.1.0",
     "typescript": "^5.4.5",
+    "typescript-eslint": "8.2.0",
     "webpack-subresource-integrity": "^1.5.2"
   },
   "overrides": {
