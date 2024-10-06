@@ -194,66 +194,11 @@ The app needs access to your filesystem aswell as the camera
 
 # Develop on your own
 
-## Development & Building it yourself
-
-If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).
-To get started with anything you need [Node.js](https://nodejs.org/en/download/) installed
+Please look at [our development guide in DEVELOPING.md](DEVELOPING.md).
 
 ## Want to check the code quality?
 
 https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
-
-## Get Started
-
-```
-npm install
-```
-
-## Build iOS/Android - Develop
-
-```
-npm run && npm run capsync
-```
-
-## Build iOS/Android - Production
-
-```
-npm run -- build --configuration production && npm run capsync
-```
-
-## Reload on live device
-
-Execute in terminal:
-
-### Android
-
-```
-CAPACITOR_PLATFORM_OVERRIDE=android ionic capacitor run android --livereload --external
-```
-
-### iOS
-
-```
-CAPACITOR_PLATFORM_OVERRIDE=ios ionic capacitor run ios --livereload --external
-```
-
-## Play with it?
-
-```
-# In shell number 1
-ng run app:serve --host=0.0.0.0 --port=8100
-
-# In shell number 2
-CAPACITOR_PLATFORM_OVERRIDE=ios npm run -- cap run ios --live-reload --port 8100
-```
-
-### NPM-Version
-
-npm -v -> 10.8.1 - works
-
-### NodeJS-Version
-
-node -v -> v22.4.1 -> works
 
 ### Github Page Hosting
 
