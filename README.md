@@ -221,6 +221,32 @@ npm run && npm run capsync
 npm run -- build --configuration production && npm run capsync
 ```
 
+## Reload on live device
+
+Execute in terminal:
+
+### Android
+
+```
+CAPACITOR_PLATFORM_OVERRIDE=android ionic capacitor run android --livereload --external
+```
+
+### iOS
+
+```
+CAPACITOR_PLATFORM_OVERRIDE=ios ionic capacitor run ios --livereload --external
+```
+
+## Play with it?
+
+```
+# In shell number 1
+ng run app:serve --host=0.0.0.0 --port=8100
+
+# In shell number 2
+CAPACITOR_PLATFORM_OVERRIDE=ios npm run -- cap run ios --live-reload --port 8100
+```
+
 ### NPM-Version
 
 npm -v -> 10.8.1 - works
