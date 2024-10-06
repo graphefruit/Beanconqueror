@@ -44,8 +44,8 @@ const getPlatform: () => Platform = () => {
     `${PlatformOverrideEnvVariable} = '${env[PlatformOverrideEnvVariable]}'; ` +
     `argv[3]='${argv[3]}'\n\n` +
     'Please run platform configuration seperately, for example ' +
-    '"npx cap sync android" and "npx cap sync ios" ' +
-    'instead of just "npx cap sync".\n' +
+    '"npm run cap sync android" and "npm run cap sync ios" ' +
+    'instead of just "npm run cap sync".\n' +
     'If you just want to sync all platforms, run "npm run capsync" as a ' +
     'convenient shorcut.\n' +
     'If you really need to, you can override the platform using the ' +
