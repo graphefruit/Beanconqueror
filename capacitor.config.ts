@@ -111,7 +111,7 @@ const createConfig = () => {
       // Using this hostname and scheme is required to retain access
       // to the __baristaDB on iOS when updating from Cordova builds
       config.server.hostname = 'localhost';
-      config.ios.scheme = 'ionic';
+      config.server.iosScheme = 'ionic';
       break;
   }
 
