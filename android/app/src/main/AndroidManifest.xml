@@ -8,7 +8,6 @@
   <!-- (see https://capacitorjs.com/docs/apis/geolocation#android) -->
   <!-- Removing the maxSdkVersion is required, as otherwise the manifest merging algorithm
        will add that attribute from the Bluetooth LE plugin. -->
-  <uses-feature android:name="android.hardware.location.gps" />
   <uses-permission
     android:name="android.permission.ACCESS_COARSE_LOCATION"
     tools:remove="android:maxSdkVersion" />
