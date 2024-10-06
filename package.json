@@ -112,6 +112,12 @@
     "typescript": "^5.4.5",
     "webpack-subresource-integrity": "^1.5.2"
   },
+  "overrides": {
+    "ag-virtual-scroll": {
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core"
+    }
+  },
   "description": "Beanconqueror",
   "platforms": [
     "android",
