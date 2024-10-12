@@ -326,8 +326,9 @@ export class AppComponent implements AfterViewInit {
         await StatusBar.show({ animation: Animation.None });
         const statusBarStyle = Style.Default;
         await StatusBar.setStyle({ style: statusBarStyle });
-
-        Keyboard.setAccessoryBarVisible({ isVisible: true });
+        if (this.platform.is('ios')) {
+          await Keyboard.setAccessoryBarVisible({ isVisible: true });
+        }
       }
       if (environment.production === true) {
         // When we're in cordova, disable the log messages
