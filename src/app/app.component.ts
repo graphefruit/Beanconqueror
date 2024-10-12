@@ -367,6 +367,8 @@ export class AppComponent implements AfterViewInit {
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();
 
+      await SplashScreen.hide();
+
       if (this.platform.is('cordova')) {
         try {
           await this.uiExportImportHelper.checkBackup();
@@ -424,7 +426,6 @@ export class AppComponent implements AfterViewInit {
             await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);
-            await SplashScreen.hide();
           },
           async () => {
             await this.uiAlert.showAppShetItSelfMessage();
