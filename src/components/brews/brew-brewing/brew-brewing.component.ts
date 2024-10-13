@@ -101,6 +101,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public brewStars: NgxStarsComponent;
   @ViewChild('brewMillTimer', { static: false })
   public brewMillTimer: TimerComponent;
+  @ViewChild('calculatedCoffeeBrewTime', { static: false })
+  public calculatedCoffeeBrewTime: ElementRef;
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
@@ -133,6 +135,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
   public brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
   public brewTemperatureGraphSubject: EventEmitter<any> = new EventEmitter();
+  public brewTimerTickedSubject: EventEmitter<any> = new EventEmitter();
   public maximizeFlowGraphIsShown: boolean = false;
 
   public preparationDevice: XeniaDevice | MeticulousDevice = undefined;
@@ -377,6 +380,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         brewFlowGraphEvent: this.brewFlowGraphSubject,
         brewPressureGraphEvent: this.brewPressureGraphSubject,
         brewTemperatureGraphEvent: this.brewTemperatureGraphSubject,
+        brewTimerTickedEvent: this.brewTimerTickedSubject,
       },
     });
 
@@ -574,6 +578,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (this.settings.brew_milliseconds) {
         this.data.brew_time_milliseconds = 0;
       }
+    }
+    this.writeCalculatedCoffeeBrewTime();
+    this.brewTimerTickedSubject.next(true);
+  }
+
+  private writeCalculatedCoffeeBrewTime() {
+    if (this.calculatedCoffeeBrewTime?.nativeElement) {
+      window.requestAnimationFrame(() => {
+        this.calculatedCoffeeBrewTime.nativeElement.innerHTML =
+          this.data.getFormattedCoffeeBrewTime();
+      });
     }
   }
 

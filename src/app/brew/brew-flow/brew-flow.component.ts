@@ -47,6 +47,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @Input() private brewFlowGraphEvent: EventEmitter<any>;
   @Input() private brewPressureGraphEvent: EventEmitter<any>;
   @Input() private brewTemperatureGraphEvent: EventEmitter<any>;
+  @Input() private brewTimerTickedEvent: EventEmitter<any>;
 
   @Input() public brew: Brew;
   @Input() public brewComponent: BrewBrewingComponent;
@@ -54,6 +55,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   private brewFlowGraphSubscription: Subscription;
   private brewPressureGraphSubscription: Subscription;
   private brewTemperatureGraphSubscription: Subscription;
+  private brewTimerTickedSubscription: Subscription;
+
+  @ViewChild('timerElement', { static: false })
+  public timerElement: ElementRef;
 
   public settings: Settings;
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
@@ -203,6 +208,32 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         this.brewTemperatureGraphEvent.subscribe((_val) => {
           this.setActualTemperatureInformation(_val);
         });
+
+      const wantedDisplayFormat = this.returnWantedDisplayFormat();
+      this.brewTimerTickedSubscription = this.brewTimerTickedEvent.subscribe(
+        (_val) => {
+          let writingVal = '';
+          if (this.settings.brew_milliseconds === false) {
+            writingVal = String(
+              this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss')
+            );
+          } else {
+            writingVal = String(
+              this.uiHelper.formatSecondsAndMilliseconds(
+                this.brew.brew_time,
+                this.brew.brew_time_milliseconds,
+                wantedDisplayFormat
+              )
+            );
+          }
+
+          if (this.timerElement?.nativeElement) {
+            window.requestAnimationFrame(() => {
+              this.timerElement.nativeElement.innerHTML = writingVal;
+            });
+          }
+        }
+      );
 
       this.showBloomTimer = this.uiBrewHelper.fieldVisible(
         this.settings.manage_parameters.coffee_blooming_time,
@@ -420,6 +451,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     if (this.brewTemperatureGraphSubscription) {
       this.brewTemperatureGraphSubscription.unsubscribe();
       this.brewTemperatureGraphSubscription = undefined;
+    }
+    if (this.brewTimerTickedSubscription) {
+      this.brewTimerTickedSubscription.unsubscribe();
+      this.brewTimerTickedSubscription = undefined;
     }
   }
 
