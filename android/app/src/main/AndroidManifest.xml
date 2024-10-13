@@ -16,15 +16,30 @@
     tools:remove="android:maxSdkVersion" />
   <uses-permission
     android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+  <!-- Request legacy Bluetooth permissions on older devices. -->
+  <uses-permission android:name="android.permission.BLUETOOTH"
+                   android:maxSdkVersion="30" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+                   android:maxSdkVersion="30" />
+
+  <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
   <!-- Capacitor Geolocation plugin end -->
 
+  <!-- NFC Plugin its not required -->
+  <uses-feature android:name="android.hardware.nfc" android:required="false" />
+
+  <!--UseCleartexttraffic is needed, cause some machine api's are http:// only -->
   <application
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
-    android:theme="@style/AppTheme">
+    android:theme="@style/AppTheme"
+    android:usesCleartextTraffic="true">
     <activity
       android:name=".MainActivity"
       android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
@@ -58,6 +73,13 @@
           android:scheme="https" />
       </intent-filter>
       <!-- ionic-plugin-deeplinks end -->
+      <!--Nfc Plugin https://developer.android.com/develop/connectivity/nfc/nfc?hl=de#ndef-disc -->
+      <!--https://github.com/EYALIN/community-cordova-plugin-nfc-->
+      <intent-filter>
+        <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <data android:mimeType="text/plain" />
+      </intent-filter>
     </activity>
 
     <provider
@@ -83,5 +105,6 @@
       <meta-data android:name="photopicker_activity:0:required" android:value="" />
     </service>
     <!-- Capacitor camera plugin end -->
+
   </application>
 </manifest>

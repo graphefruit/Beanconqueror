@@ -174,6 +174,7 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
 import { DataCorruptionFoundComponent } from '../../popover/data-corruption-found/data-corruption-found.component';
 import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popover-list.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
 
 @NgModule({
   declarations: [
@@ -301,6 +302,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanInternalShareCodeGeneratorComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
     BeanPopoverListComponent,
@@ -493,6 +495,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     GraphPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanInternalShareCodeGeneratorComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
     BeanPopoverListComponent,

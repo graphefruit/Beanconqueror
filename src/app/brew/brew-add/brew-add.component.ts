@@ -47,6 +47,7 @@ import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { UIHelper } from '../../../services/uiHelper';
+import { Bean } from '../../../classes/bean/bean';
 
 declare var Plotly;
 
@@ -62,6 +63,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   public settings: Settings;
 
   @Input() public brew_flow_preset: BrewFlow;
+  @Input() public bean_preset: Bean;
 
   public loadSpecificLastPreparation: Preparation;
 

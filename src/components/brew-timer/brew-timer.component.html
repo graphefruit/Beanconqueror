@@ -1,8 +1,6 @@
 
 <ion-item  class="no-bottom-border item" lines="none">
-
-
-  <ion-input label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
+  <ion-input #timerElement label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);"></ion-input>
 
   <ion-button (click)="startListening($event)" *ngIf="!timer.hasStarted && showListeningButton"
               class="big-icon-only" fill="clear" slot="end" tappable>

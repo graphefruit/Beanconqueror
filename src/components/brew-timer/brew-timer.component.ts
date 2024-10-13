@@ -3,16 +3,18 @@ import {
   Component,
   EventEmitter,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 
 import { Device } from '@capacitor/device';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import { ModalController, Platform } from '@ionic/angular';
+import { IonInput, ModalController, Platform } from '@ionic/angular';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -49,6 +51,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   private startedTimer;
   private pausedTimer;
   private startedOffset;
+
+  @ViewChild('timerElement', { read: IonInput })
+  public timerElement: IonInput;
+
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }
@@ -106,7 +112,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly zone: NgZone
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
@@ -199,6 +206,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       .add('seconds', this.timer.seconds)
       .add('milliseconds', this.timer.milliseconds)
       .toISOString();
+    window.setTimeout(() => {
+      this.updateBrewTimerText();
+    }, 500);
   }
 
   private __preventEventClickOnIos(_event) {
@@ -346,6 +356,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
         .add('seconds', this.timer.seconds)
         .add('milliseconds', this.timer.milliseconds)
         .toISOString();
+      this.updateBrewTimerText();
       this.millisecondTick();
       this.changeEvent();
     }, 10);
@@ -368,7 +379,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
         .add('seconds', this.timer.seconds)
         .add('milliseconds', this.timer.milliseconds)
         .toISOString();
-
+      this.updateBrewTimerText();
       this.timerTick();
       this.changeEvent();
     }, 1000);
@@ -413,6 +424,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       .add('seconds', this.timer.seconds)
       .add('milliseconds', this.timer.milliseconds)
       .toISOString();
+    this.updateBrewTimerText();
   }
 
   public getSecondsAsDigitalClock(inputSeconds: number): string {
@@ -427,11 +439,34 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return `${hoursString}:${minutesString}:${secondsString}`;
   }
 
+  private brewTimerElementRef = undefined;
+  private displayFormat = undefined;
+  public async updateBrewTimerText() {
+    if (this.brewTimerElementRef === undefined) {
+      await this.timerElement.getInputElement().then((_el) => {
+        this.brewTimerElementRef = _el;
+        this.displayFormat = this.returnWantedDisplayFormat();
+      });
+    } else {
+    }
+
+    this.zone.runOutsideAngular(() => {
+      const _date = moment(this.displayingTime);
+
+      if (_date.isValid()) {
+        window.requestAnimationFrame(() => {
+          this.brewTimerElementRef.value = _date.format(this.displayFormat);
+        });
+      }
+    });
+  }
+
   public changeDate(_event) {
     const durationPassed = moment.duration(
       moment(_event).diff(moment(_event).startOf('day'))
     );
     this.displayingTime = moment(_event).toISOString();
+    this.updateBrewTimerText();
     this.timer.seconds = durationPassed.asSeconds();
     // Emit event so parent page can do something
     this.changeEvent();
@@ -470,6 +505,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       modalData.data.displayingTime !== undefined
     ) {
       this.displayingTime = modalData.data.displayingTime;
+      this.updateBrewTimerText();
       this.timer.seconds = moment
         .duration(
           moment(this.displayingTime).diff(

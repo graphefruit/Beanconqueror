@@ -4,6 +4,8 @@ import { Preparation } from '../../preparation/preparation';
 
 import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
 import { UILog } from '../../../services/uiLog';
+import { CapacitorHttp, HttpResponse } from '@capacitor/core';
+import moment from 'moment';
 
 export class XeniaDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -86,18 +88,26 @@ export class XeniaDevice extends PreparationDevice {
     return this.deviceTemperature;
   }
 
-  public async fetchPressureAndTemperature(): Promise<void> {
+  public async fetchPressureAndTemperature(_callback: any = null) {
     try {
-      const responseJSON = await this.getOverview();
-      this.temperature = responseJSON.BG_SENS_TEMP_A;
-      this.pressure = responseJSON.PU_SENS_PRESS;
+      this.getOverview()
+        .then((_responseJSON) => {
+          this.temperature = _responseJSON.BG_SENS_TEMP_A;
+          this.pressure = _responseJSON.PU_SENS_PRESS;
+          if (_callback) {
+            _callback();
+          }
+        })
+        .catch((error) => {
+          this.logError('Error in fetchPressureAndTemperature():', error);
+        });
     } catch (error) {
       this.logError('Error in fetchPressureAndTemperature():', error);
       // don't throw/reject here!
     }
   }
 
-  public async fetchAndSetDeviceTemperature(): Promise<void> {
+  public async fetchAndSetDeviceTemperature(_callback: any = null) {
     let url = this.getPreparation().connectedPreparationDevice.url;
     if (this.apiVersion === 1) {
       url += '/overview_single';
@@ -106,10 +116,21 @@ export class XeniaDevice extends PreparationDevice {
     }
 
     try {
-      const response = await fetch(url);
-      const responseJSON = await response.json();
+      const options = {
+        url: url,
+      };
 
-      this.deviceTemperature = responseJSON.BG_SET_TEMP;
+      CapacitorHttp.get(options)
+        .then((_response) => {
+          const responseJSON = _response.data;
+          this.deviceTemperature = responseJSON.BG_SET_TEMP;
+          if (_callback) {
+            _callback();
+          }
+        })
+        .catch((error) => {
+          this.logError('Error in fetchAndSetDeviceTemperature():', error);
+        });
     } catch (error) {
       this.logError('Error in fetchAndSetDeviceTemperature():', error);
       // don't throw/reject here!
@@ -125,8 +146,16 @@ export class XeniaDevice extends PreparationDevice {
     }
 
     try {
-      const response = await fetch(url);
-      const responseJSON = await response.json();
+      const options = {
+        url: url,
+      };
+      const apiThirdCallDelayStart = moment(); // create a moment with the current time
+      let apiDelayEnd;
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+      apiDelayEnd = moment(); // cre
+      const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds');
+      console.log(delta);
       return responseJSON;
     } catch (error) {
       this.logError('Error in getOverview():', error);
@@ -143,8 +172,12 @@ export class XeniaDevice extends PreparationDevice {
     }
 
     try {
-      const response = await fetch(url);
-      const responseJSON = await response.json();
+      const options = {
+        url: url,
+      };
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
       return responseJSON;
     } catch (error) {
       this.logError('Error in getScripts():', error);
@@ -162,8 +195,13 @@ export class XeniaDevice extends PreparationDevice {
     }
 
     try {
-      const response = await fetch(url);
-      const responseJSON = await response.json();
+      const options = {
+        url: url,
+      };
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+
       return responseJSON;
     } catch (error) {
       this.logError('Error in getLogs():', error);
@@ -185,37 +223,33 @@ export class XeniaDevice extends PreparationDevice {
 
   public async startScript(_id: any): Promise<any> {
     let url = this.getPreparation().connectedPreparationDevice.url;
-    let options: RequestInit;
+    let options: any;
 
     // TODO Capacitor migration: It's very likely that this will be broken by
     // the migration, please test again.
     if (this.apiVersion === 1) {
       url += '/execute_script';
       options = {
-        method: 'POST',
-        body: JSON.stringify({ ID: _id }),
+        url: url,
+        data: JSON.stringify({ ID: _id }),
         headers: {
-          // TODO Capacitor migration: This would be the most sane thing to do,
-          // but I don't know if the API is sane
           'Content-Type': 'application/json',
         },
       };
     } else {
       url += '/api/v2/scripts/execute';
       options = {
-        method: 'post',
-        body: JSON.stringify({ ID: _id }),
+        url: url,
+        data: JSON.stringify({ ID: _id }),
         headers: {
-          // TODO Capacitor migration: This looks completely insane,
-          // test it please. The body is clearly JSON and not form encoded
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         },
       };
     }
 
     try {
-      const response = await fetch(url, options);
-      const responseJSON = await response.json();
+      const response = await CapacitorHttp.post(options);
+      const responseJSON = await response.data;
       return responseJSON;
     } catch (error) {
       this.logError('Error in startScript():', error);

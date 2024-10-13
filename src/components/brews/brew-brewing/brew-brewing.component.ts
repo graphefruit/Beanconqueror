@@ -75,6 +75,7 @@ import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-gr
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { BrewFlow } from '../../../classes/brew/brewFlow';
+import { Bean } from '../../../classes/bean/bean';
 
 declare var cordova;
 
@@ -104,6 +105,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
   @Input() public brewFlowPreset: BrewFlow;
+
+  @Input() public beanPreset: Bean;
 
   @Input() public loadSpecificLastPreparation: Preparation;
   @Input() public isEdit: boolean = false;
@@ -275,6 +278,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             this.data.coffee_first_drip_time_milliseconds
           );
         }
+      }
+
+      if (this.beanPreset && this.beanPreset?.config?.uuid) {
+        /**We got called from an internal identifier to start a brew directly with this bean.**/
+        this.data.bean = this.beanPreset.config.uuid;
       }
 
       if (this.brewBrewingPreparationDeviceEl) {

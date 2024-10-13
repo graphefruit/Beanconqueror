@@ -77,11 +77,25 @@ export interface ISettings {
   bean_filter: {
     OPEN: IBeanPageFilter;
     ARCHIVED: IBeanPageFilter;
+    FROZEN: IBeanPageFilter;
+  };
+
+  bean_filter_selection: {
+    OPEN: IBeanPageFilter;
+    ARCHIVED: IBeanPageFilter;
+    FROZEN: IBeanPageFilter;
   };
 
   bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
+    FROZEN: IBeanPageSort;
+  };
+
+  bean_sort_selection: {
+    OPEN: IBeanPageSort;
+    ARCHIVED: IBeanPageSort;
+    FROZEN: IBeanPageSort;
   };
 
   bean_collapsed: {

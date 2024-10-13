@@ -21,12 +21,12 @@
       <ion-label>{{"CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf='settings.freeze_coffee_beans' value='frozen'>
+    <ion-segment-button *ngIf='settings.freeze_coffee_beans && frozenBeansLength' value='frozen'>
       <ion-label>{{"FROZEN_BEANS" | translate }}
       </ion-label>
 
     </ion-segment-button>
-    <ion-segment-button *ngIf='showFinished===true && getFinishedBeans().length > 0' value='archive'>
+    <ion-segment-button *ngIf='showFinished===true && finishedBeansLength > 0' value='archive'>
       <ion-label>{{"TAB_ARCHIVE" | translate }}
       </ion-label>
 
@@ -35,43 +35,25 @@
   <div *ngIf='multiple'>
     <div [ngSwitch]='bean_segment'>
       <div *ngSwitchCase="'open'">
-        <ion-card *ngIf='getOpenBeans().length > 0'>
+        <ion-card *ngIf='openBeansLength > 0'>
           <div class='ion-justify-content-end container'>
             <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='openBeansFilterText'
                            class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                            search-icon='beanconqueror-detail' showCancelButton='never'></ion-searchbar>
-            <ion-button (click)="showFilter('open')" fill='clear' size='small' tappable>
-              <ion-icon *ngIf="isFilterActive('open')" name='beanconqueror-filter-active'
+            <ion-button (click)="showFilter()" fill='clear' size='small' tappable>
+              <ion-icon *ngIf="isFilterActive()" name='beanconqueror-filter-active'
                         slot='icon-only'></ion-icon>
-              <ion-icon *ngIf="!isFilterActive('open')" name='beanconqueror-filter-inactive'
+              <ion-icon *ngIf="!isFilterActive()" name='beanconqueror-filter-inactive'
                         slot='icon-only'></ion-icon>
+            </ion-button>
+            <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+              <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                        slot="icon-only"></ion-icon>
+              <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
+                        slot="icon-only"></ion-icon>
             </ion-button>
           </div>
 
-          <ion-item *ngIf="isFilterActive('open')">
-            <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}'
-                        #bean_roasting_type='ngModel' (ionChange)='research()'
-                        [(ngModel)]='filter_open.bean_roasting_type' cancelText="{{'CANCEL'| translate }}"
-                        name='bean_roasting_type'
-                        okText="{{'CHOOSE'| translate }}"
-                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
-                        style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                        multiple='true'>
-              <ion-select-option *ngFor='let key of beanRoastingTypeEnum | keys'
-                                 value='{{key}}'>{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item *ngIf="isFilterActive('open')">
-            <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster='ngModel'
-                        (ionChange)='research()' [(ngModel)]='filter_open.bean_roaster'
-                        cancelText="{{'CANCEL'| translate }}" name='bean_roaster'
-                        okText="{{'CHOOSE'| translate }}"
-                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
-                        style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                        multiple='true'>
-              <ion-select-option *ngFor='let key of open_roasteries' value='{{key}}'>{{key}}</ion-select-option>
-            </ion-select>
-          </ion-item>
           <hr />
           <ng-container *ngIf='openBeans.length > 0'>
             <ag-virtual-scroll #openScroll [items]='openBeans' height='100vh' min-row-height='60'>
@@ -126,37 +108,19 @@
             <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='frozenBeansFilterText'
                            class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                            search-icon='beanconqueror-detail' showCancelButton='never'></ion-searchbar>
-            <ion-button (click)="showFilter('frozen')" fill='clear' size='small' tappable>
-              <ion-icon *ngIf="isFilterActive('frozen')" name='beanconqueror-filter-active'
+            <ion-button (click)="showFilter()" fill='clear' size='small' tappable>
+              <ion-icon *ngIf="isFilterActive()" name='beanconqueror-filter-active'
                         slot='icon-only'></ion-icon>
-              <ion-icon *ngIf="!isFilterActive('frozen')" name='beanconqueror-filter-inactive'
+              <ion-icon *ngIf="!isFilterActive()" name='beanconqueror-filter-inactive'
                         slot='icon-only'></ion-icon>
             </ion-button>
+            <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+              <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                        slot="icon-only"></ion-icon>
+              <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
+                        slot="icon-only"></ion-icon>
+            </ion-button>
           </div>
-          <ion-item *ngIf="isFilterActive('frozen')">
-            <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}'
-                        #bean_roasting_type='ngModel' (ionChange)='research()'
-                        [(ngModel)]='filter_frozen.bean_roasting_type' cancelText="{{'CANCEL'| translate }}"
-                        name='bean_roasting_type'
-                        okText="{{'CHOOSE'| translate }}"
-                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
-                        style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                        multiple='true'>
-              <ion-select-option *ngFor='let key of beanRoastingTypeEnum | keys'
-                                 value='{{key}}'>{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item *ngIf="isFilterActive('frozen')">
-            <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster='ngModel'
-                        (ionChange)='research()' [(ngModel)]='filter_frozen.bean_roaster'
-                        cancelText="{{'CANCEL'| translate }}" name='bean_roaster'
-                        okText="{{'CHOOSE'| translate }}"
-                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
-                        style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                        multiple='true'>
-              <ion-select-option *ngFor='let key of frozen_roasteries' value='{{key}}'>{{key}}</ion-select-option>
-            </ion-select>
-          </ion-item>
           <hr />
           <ng-container *ngIf='frozenBeans.length > 0'>
             <ag-virtual-scroll #frozenScroll [items]='frozenBeans' height='100vh' min-row-height='60'>
@@ -206,40 +170,22 @@
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <div class='ion-justify-content-end container'>
-            <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='finishedBeansFilterText'
+            <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='archivedBeansFilterText'
                            class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                            search-icon='beanconqueror-detail' showCancelButton='never'></ion-searchbar>
-            <ion-button (click)="showFilter('archive')" fill='clear' size='small' tappable>
-              <ion-icon *ngIf="isFilterActive('archive')" name='beanconqueror-filter-active'
+            <ion-button (click)="showFilter()" fill='clear' size='small' tappable>
+              <ion-icon *ngIf="isFilterActive()" name='beanconqueror-filter-active'
                         slot='icon-only'></ion-icon>
-              <ion-icon *ngIf="!isFilterActive('archive')" name='beanconqueror-filter-inactive'
+              <ion-icon *ngIf="!isFilterActive()" name='beanconqueror-filter-inactive'
                         slot='icon-only'></ion-icon>
             </ion-button>
+            <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+              <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                        slot="icon-only"></ion-icon>
+              <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
+                        slot="icon-only"></ion-icon>
+            </ion-button>
           </div>
-          <ion-item *ngIf="isFilterActive('archive')">
-            <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}'
-                        #bean_roasting_type='ngModel' (ionChange)='research()'
-                        [(ngModel)]='filter_finished.bean_roasting_type' cancelText="{{'CANCEL'| translate }}"
-                        name='bean_roasting_type'
-                        okText="{{'CHOOSE'| translate }}"
-                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
-                        style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                        multiple='true'>
-              <ion-select-option *ngFor='let key of beanRoastingTypeEnum | keys'
-                                 value='{{key}}'>{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-item *ngIf="isFilterActive('archive')">
-            <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster='ngModel'
-                        (ionChange)='research()' [(ngModel)]='filter_finished.bean_roaster'
-                        cancelText="{{'CANCEL'| translate }}" name='bean_roaster'
-                        okText="{{'CHOOSE'| translate }}"
-                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
-                        style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                        multiple='true'>
-              <ion-select-option *ngFor='let key of finished_roasteries' value='{{key}}'>{{key}}</ion-select-option>
-            </ion-select>
-          </ion-item>
           <hr />
           <ng-container *ngIf='finishedBeans.length > 0'>
             <ag-virtual-scroll #archivedScroll [items]='finishedBeans' height='100vh' min-row-height='60'>
@@ -297,43 +243,24 @@
     <ion-radio-group [(ngModel)]='radioSelection'>
       <div [ngSwitch]='bean_segment'>
         <div *ngSwitchCase="'open'">
-          <ion-card *ngIf='getOpenBeans().length > 0'>
+          <ion-card *ngIf='openBeansLength > 0'>
             <div class='ion-justify-content-end container'>
               <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='openBeansFilterText'
                              class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                              search-icon='beanconqueror-detail' showCancelButton='never'></ion-searchbar>
-              <ion-button (click)="showFilter('open')" fill='clear' size='small' tappable>
-                <ion-icon *ngIf="isFilterActive('open')" name='beanconqueror-filter-active'
+              <ion-button (click)="showFilter()" fill='clear' size='small' tappable>
+                <ion-icon *ngIf="isFilterActive()" name='beanconqueror-filter-active'
                           slot='icon-only'></ion-icon>
-                <ion-icon *ngIf="!isFilterActive('open')" name='beanconqueror-filter-inactive'
+                <ion-icon *ngIf="!isFilterActive()" name='beanconqueror-filter-inactive'
                           slot='icon-only'></ion-icon>
               </ion-button>
+              <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                          slot="icon-only"></ion-icon>
+                <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
+                          slot="icon-only"></ion-icon>
+              </ion-button>
             </div>
-
-            <ion-item *ngIf="isFilterActive('open')">
-              <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}'
-                          #bean_roasting_type='ngModel' (ionChange)='research()'
-                          [(ngModel)]='filter_open.bean_roasting_type' cancelText="{{'CANCEL'| translate }}"
-                          name='bean_roasting_type'
-                          okText="{{'CHOOSE'| translate }}"
-                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
-                          style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                          multiple='true'>
-                <ion-select-option *ngFor='let key of beanRoastingTypeEnum | keys'
-                                   value='{{key}}'>{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-item *ngIf="isFilterActive('open')">
-              <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster='ngModel'
-                          (ionChange)='research()' [(ngModel)]='filter_open.bean_roaster'
-                          cancelText="{{'CANCEL'| translate }}" name='bean_roaster'
-                          okText="{{'CHOOSE'| translate }}"
-                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
-                          style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                          multiple='true'>
-                <ion-select-option *ngFor='let key of open_roasteries' value='{{key}}'>{{key}}</ion-select-option>
-              </ion-select>
-            </ion-item>
             <hr />
             <ng-container *ngIf='openBeans.length > 0'>
               <ag-virtual-scroll #openScroll [items]='openBeans' height='100vh' min-row-height='60'>
@@ -390,37 +317,19 @@
               <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='frozenBeansFilterText'
                              class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                              search-icon='beanconqueror-detail' showCancelButton='never'></ion-searchbar>
-              <ion-button (click)="showFilter('frozen')" fill='clear' size='small' tappable>
-                <ion-icon *ngIf="isFilterActive('frozen')" name='beanconqueror-filter-active'
+              <ion-button (click)="showFilter()" fill='clear' size='small' tappable>
+                <ion-icon *ngIf="isFilterActive()" name='beanconqueror-filter-active'
                           slot='icon-only'></ion-icon>
-                <ion-icon *ngIf="!isFilterActive('frozen')" name='beanconqueror-filter-inactive'
+                <ion-icon *ngIf="!isFilterActive()" name='beanconqueror-filter-inactive'
                           slot='icon-only'></ion-icon>
               </ion-button>
+              <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                          slot="icon-only"></ion-icon>
+                <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
+                          slot="icon-only"></ion-icon>
+              </ion-button>
             </div>
-            <ion-item *ngIf="isFilterActive('frozen')">
-              <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}'
-                          #bean_roasting_type='ngModel' (ionChange)='research()'
-                          [(ngModel)]='filter_frozen.bean_roasting_type' cancelText="{{'CANCEL'| translate }}"
-                          name='bean_roasting_type'
-                          okText="{{'CHOOSE'| translate }}"
-                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
-                          style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                          multiple='true'>
-                <ion-select-option *ngFor='let key of beanRoastingTypeEnum | keys'
-                                   value='{{key}}'>{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-item *ngIf="isFilterActive('frozen')">
-              <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster='ngModel'
-                          (ionChange)='research()' [(ngModel)]='filter_frozen.bean_roaster'
-                          cancelText="{{'CANCEL'| translate }}" name='bean_roaster'
-                          okText="{{'CHOOSE'| translate }}"
-                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
-                          style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                          multiple='true'>
-                <ion-select-option *ngFor='let key of frozen_roasteries' value='{{key}}'>{{key}}</ion-select-option>
-              </ion-select>
-            </ion-item>
             <hr />
             <ng-container *ngIf='frozenBeans.length > 0'>
               <ag-virtual-scroll #frozenScroll [items]='frozenBeans' height='100vh' min-row-height='60'>
@@ -472,40 +381,22 @@
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <div class='ion-justify-content-end container'>
-              <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='finishedBeansFilterText'
+              <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='archivedBeansFilterText'
                              class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                              search-icon='beanconqueror-detail' showCancelButton='never'></ion-searchbar>
-              <ion-button (click)="showFilter('archive')" fill='clear' size='small' tappable>
-                <ion-icon *ngIf="isFilterActive('archive')" name='beanconqueror-filter-active'
+              <ion-button (click)="showFilter()" fill='clear' size='small' tappable>
+                <ion-icon *ngIf="isFilterActive()" name='beanconqueror-filter-active'
                           slot='icon-only'></ion-icon>
-                <ion-icon *ngIf="!isFilterActive('archive')" name='beanconqueror-filter-inactive'
+                <ion-icon *ngIf="!isFilterActive()" name='beanconqueror-filter-inactive'
                           slot='icon-only'></ion-icon>
               </ion-button>
+              <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                          slot="icon-only"></ion-icon>
+                <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
+                          slot="icon-only"></ion-icon>
+              </ion-button>
             </div>
-            <ion-item *ngIf="isFilterActive('archive')">
-              <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}'
-                          #bean_roasting_type='ngModel' (ionChange)='research()'
-                          [(ngModel)]='filter_finished.bean_roasting_type' cancelText="{{'CANCEL'| translate }}"
-                          name='bean_roasting_type'
-                          okText="{{'CHOOSE'| translate }}"
-                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
-                          style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                          multiple='true'>
-                <ion-select-option *ngFor='let key of beanRoastingTypeEnum | keys'
-                                   value='{{key}}'>{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
-              </ion-select>
-            </ion-item>
-            <ion-item *ngIf="isFilterActive('archive')">
-              <ion-select label-placement='stacked' label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster='ngModel'
-                          (ionChange)='research()' [(ngModel)]='filter_finished.bean_roaster'
-                          cancelText="{{'CANCEL'| translate }}" name='bean_roaster'
-                          okText="{{'CHOOSE'| translate }}"
-                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
-                          style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                          multiple='true'>
-                <ion-select-option *ngFor='let key of finished_roasteries' value='{{key}}'>{{key}}</ion-select-option>
-              </ion-select>
-            </ion-item>
             <hr />
             <ng-container *ngIf='finishedBeans.length > 0'>
               <ag-virtual-scroll #archivedScroll [items]='finishedBeans' height='100vh' min-row-height='60'>

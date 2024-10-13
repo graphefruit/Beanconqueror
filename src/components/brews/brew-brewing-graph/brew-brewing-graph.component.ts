@@ -1982,7 +1982,7 @@ export class BrewBrewingGraphComponent implements OnInit {
      * This doesn't need to be awaited, we get the data from the device when it happens.
      * When we would await it we would maybe build in very big lag potential
      */
-    prepDeviceCall.fetchRuntimeData().then(() => {
+    prepDeviceCall.fetchRuntimeData(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.
       setSanremoData();
     });
@@ -1993,7 +1993,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         //let apiDelayEnd;
 
         // We don't use the callback function to make sure we don't have to many performance issues
-        prepDeviceCall.fetchRuntimeData().then(() => {
+        prepDeviceCall.fetchRuntimeData(() => {
           //apiDelayEnd = moment();
 
           //before we start the interval, we fetch the data once to overwrite, and set them.
@@ -2107,13 +2107,14 @@ export class BrewBrewingGraphComponent implements OnInit {
      * This doesn't need to be awaited, we get the data from the device when it happens.
      * When we would await it we would maybe build in very big lag potential
      */
-    prepDeviceCall.fetchPressureAndTemperature().then(() => {
+    prepDeviceCall.fetchPressureAndTemperature(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.
       setTempAndPressure();
     });
     setTimeout(() => {
       // Give the machine some time :)
-      prepDeviceCall.fetchAndSetDeviceTemperature().then(() => {
+      // After discussion with Holger we set this to 1s to give the machine more time
+      prepDeviceCall.fetchAndSetDeviceTemperature(() => {
         try {
           const temp = prepDeviceCall.getDevicetemperature();
           if (temp > 70) {
@@ -2124,12 +2125,12 @@ export class BrewBrewingGraphComponent implements OnInit {
           }
         } catch (ex) {}
       });
-    }, 100);
+    }, 1000);
 
     this.xeniaOverviewInterval = setInterval(async () => {
       try {
         // We don't use the callback function to make sure we don't have to many performance issues
-        prepDeviceCall.fetchPressureAndTemperature().then(() => {
+        prepDeviceCall.fetchPressureAndTemperature(() => {
           //before we start the interval, we fetch the data once to overwrite, and set them.
           setTempAndPressure();
         });

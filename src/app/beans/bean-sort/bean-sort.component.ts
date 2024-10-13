@@ -19,8 +19,6 @@ export class BeanSortComponent implements OnInit {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
   };
 
-  public segment: string = 'open';
-
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -28,7 +26,6 @@ export class BeanSortComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    this.segment = this.navParams.get('segment');
     this.filter = this.uiHelper.copyData(this.navParams.get('bean_sort'));
     this.__reloadFilterSettings();
   }

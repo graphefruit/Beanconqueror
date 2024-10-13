@@ -285,6 +285,10 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.uiLog.log(`App Ready, wait for Platform ready`);
     this.platform.ready().then(async () => {
+      try {
+        await SplashScreen.hide();
+      } catch (ex) {}
+
       await this.uiStorage.init();
       try {
         const deviceInfo = await Device.getInfo();
@@ -423,7 +427,6 @@ export class AppComponent implements AfterViewInit {
             await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);
-            await SplashScreen.hide();
           },
           async () => {
             await this.uiAlert.showAppShetItSelfMessage();

@@ -53,6 +53,10 @@ export class Bean implements IBean {
   public bean_roast_information: BeanRoastInformation;
 
   public qr_code: string;
+  /**
+   * This one is used for generating qr-codes / NFC tags to directly brew them or view them
+   */
+  public internal_share_code: string;
 
   public favourite: boolean;
   public shared: boolean;
@@ -97,6 +101,7 @@ export class Bean implements IBean {
     this.bean_roast_information = new BeanRoastInformation();
     this.rating = 0;
     this.qr_code = '';
+    this.internal_share_code = '';
     this.favourite = false;
     this.shared = false;
 

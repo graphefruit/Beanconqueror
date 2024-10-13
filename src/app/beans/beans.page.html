@@ -4,6 +4,9 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button (click)="scanNFC()" tappable class="big-add-icon" fill="clear">
+        <ion-icon class="ion-color-accent" name="beanconqueror-nfc-scan" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button (click)="scanBean()" tappable class="big-add-icon" fill="clear">
         <ion-icon class="ion-color-accent" name="beanconqueror-qr-code-button" slot="icon-only"></ion-icon>
       </ion-button>

@@ -405,8 +405,11 @@ ion-menu:host .menu-inner {
     font-family: 'Baloo', sans-serif;
     text-transform: inherit;
     height: 40px;
-    font-size: 24px;
+    font-size: 16px;
     --box-shadow:none;
+  }
+  ion-button ion-icon[slot="icon-only"] {
+    font-size: 28px;
   }
 
   .subtitle {

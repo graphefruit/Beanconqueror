@@ -10,8 +10,9 @@ import QR_TRACKING from '../../data/tracking/qrTracking';
 import { UIAnalytics } from '../uiAnalytics';
 import { VisualizerService } from '../visualizerService/visualizer-service.service';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
+import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
+import { UIBrewHelper } from '../uiBrewHelper';
 
-declare var window;
 @Injectable({
   providedIn: 'root',
 })
@@ -25,6 +26,7 @@ export class IntentHandlerService {
     private readonly uiLog: UILog,
     private readonly serverCommunicationService: ServerCommunicationService,
     private readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiAlert: UIAlert,
     private readonly uiAnalytics: UIAnalytics,
     private readonly visualizerService: VisualizerService,
@@ -39,51 +41,12 @@ export class IntentHandlerService {
       });
     });
   }
-  private findGetParameter(_url: string, _parameterName: string) {
-    let result = null,
-      tmp = [];
-    _url.split('&').forEach((item) => {
-      tmp = item.split('=');
-      if (
-        tmp[0] === _parameterName ||
-        tmp[0] === _parameterName.replace('=', '')
-      ) {
-        result = decodeURIComponent(tmp[1]);
-      }
-    });
-    return result;
-  }
-
-  private findParameterByCompleteUrl(_url, _parameter) {
-    const urlObj: any = new window.URL(_url);
-    const val = urlObj.searchParams.get(_parameter);
-    return val;
-  }
 
   public async handleQRCodeLink(_url) {
     await this.uiHelper.isBeanconqurorAppReady().then(async () => {
       const url: string = _url;
       this.uiLog.log('Handle QR Code Link: ' + url);
-      if (
-        url.indexOf('https://beanconqueror.com/?qr=') === 0 ||
-        url.indexOf('https://beanconqueror.com?qr=') === 0
-      ) {
-        this.uiAnalytics.trackEvent(
-          QR_TRACKING.TITLE,
-          QR_TRACKING.ACTIONS.SCAN
-        );
-        const qrCodeId: string = String(
-          this.findParameterByCompleteUrl(url, 'qr')
-        );
-        await this.addBeanFromServer(qrCodeId);
-      } else {
-        this.uiAlert.showMessage(
-          'QR.WRONG_QRCODE_DESCRIPTION',
-          'QR.WRONG_QRCODE_TITLE',
-          undefined,
-          true
-        );
-      }
+      await this.handleDeepLink(_url);
     });
   }
 
@@ -166,10 +129,37 @@ export class IntentHandlerService {
              * On Android the whole path is directly resolved, therefore its the new url used**/
             const qrCodeId: string = urlParams.get('id');
             await this.addBeanFromServer(qrCodeId);
+          } else if (url.indexOf('int/') > 0) {
+            //We got an internal call ihr right now :)
+            // Split into type, id, action ['bean', '3E95E1', 'START_BREW']
+            const data = url.split('int/')[1].split('/');
+            const actionType = data[0];
+            const id = data[1];
+            const action = data[2];
+            if (actionType === 'bean') {
+              if ((action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.DETAIL) {
+                await this.uiBeanHelper.detailBeanByInternalShareCode(id);
+              } else if (
+                (action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.EDIT
+              ) {
+                await this.uiBeanHelper.editBeanByInternalShareCode(id);
+              } else if (
+                (action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.START_BREW
+              ) {
+                await this.uiBrewHelper.startBrewForBeanByInternalShareCode(id);
+              } else if (
+                (action as BEAN_CODE_ACTION) ===
+                BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION
+              ) {
+                await this.uiBrewHelper.startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
+                  id
+                );
+              }
+            }
           } else {
             this.uiAlert.showMessage(
-              'QR.WRONG_LINK_DESCRIPTION',
-              'QR.WRONG_LINK_TITLE',
+              'QR.WRONG_QRCODE_DESCRIPTION',
+              'QR.WRONG_QRCODE_TITLE',
               undefined,
               true
             );

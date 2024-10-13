@@ -1,0 +1,19 @@
+:host {
+  .qrcodeImage {
+    display: flex;
+    flex: 1;
+  }
+
+  /* Add custom styles here */
+  .center {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+  }
+
+    ion-item {
+      --border-width: 0px;
+      margin-left: 16px;
+      margin-right: 16px;
+    }
+}

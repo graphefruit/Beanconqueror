@@ -82,12 +82,24 @@ export class Settings implements ISettings {
     ARCHIVED: IBeanPageFilter;
     FROZEN: IBeanPageFilter;
   };
+  public bean_filter_selection: {
+    OPEN: IBeanPageFilter;
+    ARCHIVED: IBeanPageFilter;
+    FROZEN: IBeanPageFilter;
+  };
 
   public bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
     FROZEN: IBeanPageSort;
   };
+
+  public bean_sort_selection = {
+    OPEN: {} as IBeanPageSort,
+    ARCHIVED: {} as IBeanPageSort,
+    FROZEN: {} as IBeanPageSort,
+  };
+
   public bean_collapsed: {
     OPEN: boolean;
     ARCHIVED: boolean;
@@ -326,8 +338,19 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter,
       FROZEN: {} as IBeanPageFilter,
     };
+    this.bean_filter_selection = {
+      OPEN: {} as IBeanPageFilter,
+      ARCHIVED: {} as IBeanPageFilter,
+      FROZEN: {} as IBeanPageFilter,
+    };
 
     this.bean_sort = {
+      OPEN: {} as IBeanPageSort,
+      ARCHIVED: {} as IBeanPageSort,
+      FROZEN: {} as IBeanPageSort,
+    };
+
+    this.bean_sort_selection = {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort,
       FROZEN: {} as IBeanPageSort,
@@ -405,6 +428,10 @@ export class Settings implements ISettings {
     this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
     this.bean_filter.FROZEN = this.GET_BEAN_FILTER();
 
+    this.bean_filter_selection.OPEN = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.ARCHIVED = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.FROZEN = this.GET_BEAN_FILTER();
+
     this.bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -414,6 +441,19 @@ export class Settings implements ISettings {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
     this.bean_sort.FROZEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+
+    this.bean_sort_selection.OPEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.ARCHIVED = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.FROZEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
@@ -543,9 +583,19 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter,
       FROZEN: {} as IBeanPageFilter,
     };
+    this.bean_filter_selection = {
+      OPEN: {} as IBeanPageFilter,
+      ARCHIVED: {} as IBeanPageFilter,
+      FROZEN: {} as IBeanPageFilter,
+    };
+
     this.bean_filter.OPEN = this.GET_BEAN_FILTER();
     this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
     this.bean_filter.FROZEN = this.GET_BEAN_FILTER();
+
+    this.bean_filter_selection.OPEN = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.ARCHIVED = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.FROZEN = this.GET_BEAN_FILTER();
   }
 
   public resetBrewFilter() {
@@ -568,6 +618,13 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageSort,
       FROZEN: {} as IBeanPageSort,
     };
+
+    this.bean_sort_selection = {
+      OPEN: {} as IBeanPageSort,
+      ARCHIVED: {} as IBeanPageSort,
+      FROZEN: {} as IBeanPageSort,
+    };
+
     this.bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -577,6 +634,19 @@ export class Settings implements ISettings {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
     this.bean_sort.FROZEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+
+    this.bean_sort_selection.OPEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.ARCHIVED = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.FROZEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;

@@ -517,6 +517,18 @@ export class UIBrewHelper {
     }
   }
 
+  public async addBrewWithPresetBean(_bean) {
+    if (this.canBrewIfNotShowMessage()) {
+      const modal = await this.modalController.create({
+        component: BrewAddComponent,
+        id: BrewAddComponent.COMPONENT_ID,
+        componentProps: { bean_preset: _bean },
+      });
+      await modal.present();
+      await modal.onWillDismiss();
+    }
+  }
+
   public async addBrewFromVisualizerWithGraph(_brewFlow: BrewFlow) {
     if (this.canBrewIfNotShowMessage()) {
       const modal = await this.modalController.create({
@@ -536,6 +548,30 @@ export class UIBrewHelper {
     await modal.present();
     await modal.onWillDismiss();
   }
+  private findBeanByInternalShareCode(internalBeanShareCode: string) {
+    const allEntries = this.uiBeanStorage.getAllEntries();
+    const bean = allEntries.find(
+      (b) => b.internal_share_code === internalBeanShareCode
+    );
+    return bean;
+  }
+  public async startBrewForBeanByInternalShareCode(
+    internalBeanShareCode: string
+  ) {
+    const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
+    if (bean) {
+      await this.addBrewWithPresetBean(bean);
+    }
+  }
+
+  public async startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
+    internalBeanShareCode: string
+  ) {
+    const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
+    if (bean) {
+      await this.choosePreparationMethodAndStartBrew(bean);
+    }
+  }
 
   public async repeatBrew(_brew: Brew) {
     const modal = await this.modalController.create({
@@ -548,46 +584,48 @@ export class UIBrewHelper {
   }
   public async longPressAddBrew() {
     if (this.canBrewIfNotShowMessage()) {
-      const preparationCount = this.uiPreparationStorage.getAllEntries().length;
+      await this.choosePreparationMethodAndStartBrew();
+    }
+  }
 
-      let initalBreakpoint = 1;
-      /**if (preparationCount > 9) {
-        initalBreakpoint = 1;
-      } else if (preparationCount > 4) {
-        initalBreakpoint = 0.75;
-      } else if (preparationCount > 2) {
-        initalBreakpoint = 0.5;
-      }**/
+  public async choosePreparationMethodAndStartBrew(
+    _presetBean: Bean = undefined
+  ) {
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.LONG_PRESS_ADD
+    );
+    const modal = await this.modalController.create({
+      component: BrewChoosePreparationToBrewComponent,
+      id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      backdropDismiss: false,
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+    });
+    //A hack - when the user long-presses to upen op the modal, the backdrop would be "triggered" by removing the thumb, and the menu would dismiss directly.
+    //Therefore give some time and enable dismiss then again.
+    setTimeout(() => {
+      modal.backdropDismiss = true;
+    }, 3000);
+    await modal.present();
 
-      this.uiAnalytics.trackEvent(
-        BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.LONG_PRESS_ADD
-      );
-      const modal = await this.modalController.create({
-        component: BrewChoosePreparationToBrewComponent,
-        id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
-        cssClass: 'popover-actions',
-        backdropDismiss: false,
-        breakpoints: [0, 1],
-        initialBreakpoint: initalBreakpoint,
-      });
-      //A hack - when the user long-presses to upen op the modal, the backdrop would be "triggered" by removing the thumb, and the menu would dismiss directly.
-      //Therefore give some time and enable dismiss then again.
-      setTimeout(() => {
-        modal.backdropDismiss = true;
-      }, 3000);
-      await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data !== undefined && data.preparation) {
+      const compProps = {
+        loadSpecificLastPreparation: data.preparation,
+      };
 
-      const { data } = await modal.onWillDismiss();
-      if (data !== undefined && data.preparation) {
-        const modalBrew = await this.modalController.create({
-          component: BrewAddComponent,
-          componentProps: { loadSpecificLastPreparation: data.preparation },
-          id: BrewAddComponent.COMPONENT_ID,
-        });
-        await modalBrew.present();
-        await modalBrew.onWillDismiss();
+      if (_presetBean) {
+        compProps['bean_preset'] = _presetBean;
       }
+      const modalBrew = await this.modalController.create({
+        component: BrewAddComponent,
+        componentProps: compProps,
+        id: BrewAddComponent.COMPONENT_ID,
+      });
+      await modalBrew.present();
+      await modalBrew.onWillDismiss();
     }
   }
   public async editBrew(_brew: Brew): Promise<Brew> {

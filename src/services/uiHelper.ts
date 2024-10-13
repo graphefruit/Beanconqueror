@@ -100,6 +100,16 @@ export class UIHelper {
       this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_UNSUCCESSFULLY');
     }
   }
+  public generateShortUUID(): string {
+    return 'xxxxxx'.replace(/[xy]/g, (c) => {
+      const r =
+          ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+            16) |
+          0,
+        v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
 
   public generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {

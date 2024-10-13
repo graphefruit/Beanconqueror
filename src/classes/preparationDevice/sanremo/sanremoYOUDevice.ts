@@ -5,6 +5,7 @@ import { Preparation } from '../../preparation/preparation';
 import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { UILog } from '../../../services/uiLog';
+import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -23,8 +24,13 @@ export class SanremoYOUDevice extends PreparationDevice {
 
   public async deviceConnected(): Promise<boolean> {
     try {
-      const response = await fetch(this.connectionURL + '/api/runtime');
-      return response.status === 200;
+      const options = {
+        url: this.connectionURL + '/api/runtime',
+      };
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+
+      return responseJSON.status === 200;
       // TODO Capacitor migration: The code before the migration didn't do
       // anything else, but there was unreachable code below it.
       // Please double check.
@@ -91,18 +97,28 @@ export class SanremoYOUDevice extends PreparationDevice {
     return this.deviceTemperature;
   }
 
-  public async fetchRuntimeData(): Promise<void> {
+  public async fetchRuntimeData(_callback: any = null): Promise<void> {
     try {
-      const response = await fetch(this.connectionURL + '/api/runtime');
-      const responseJSON = await response.json();
+      const options = {
+        url: this.connectionURL + '/api/runtime',
+      };
+      CapacitorHttp.get(options)
+        .then((_response) => {
+          const responseJSON = _response.data;
+          const temp = responseJSON.tempBoilerCoffe;
+          const press = responseJSON.pumpPress * 10;
+          const statusPhase = responseJSON.statusPhase;
 
-      const temp = responseJSON.tempBoilerCoffe;
-      const press = responseJSON.pumpPress * 10;
-      const statusPhase = responseJSON.statusPhase;
-
-      this.temperature = temp;
-      this.pressure = press;
-      this.statusPhase = statusPhase;
+          this.temperature = temp;
+          this.pressure = press;
+          this.statusPhase = statusPhase;
+          if (_callback) {
+            _callback();
+          }
+        })
+        .catch((_error) => {
+          this.logError('Error in fetchRuntimeData():', _error);
+        });
     } catch (error) {
       this.logError('Error in fetchRuntimeData():', error);
       // don't throw/reject here!
@@ -111,29 +127,39 @@ export class SanremoYOUDevice extends PreparationDevice {
 
   public async startShot(_mode: SanremoYOUMode): Promise<any> {
     try {
-      const response = await fetch(
-        this.getPreparation().connectedPreparationDevice.url +
-          this.getApiEndpointForMode(_mode, 'start')
-      );
-      const responseJSON = await response.json();
-      return responseJSON;
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          this.getApiEndpointForMode(_mode, 'start'),
+      };
+      CapacitorHttp.get(options)
+        .then((_response) => {
+          const responseJSON = _response.data;
+        })
+        .catch((_error) => {
+          this.logError('Error in startShot():', _error);
+        });
     } catch (error) {
       this.logError('Error in startShot():', error);
-      throw error;
     }
   }
 
   public async stopShot(_mode: SanremoYOUMode): Promise<any> {
     try {
-      const response = await fetch(
-        this.getPreparation().connectedPreparationDevice.url +
-          this.getApiEndpointForMode(_mode, 'stop')
-      );
-      const responseJSON = await response.json();
-      return responseJSON;
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          this.getApiEndpointForMode(_mode, 'stop'),
+      };
+      CapacitorHttp.get(options)
+        .then((_response) => {
+          const responseJSON = _response.data;
+        })
+        .catch((_error) => {
+          this.logError('Error in startShot():', _error);
+        });
     } catch (error) {
       this.logError('Error in stopShot():', error);
-      throw error;
     }
   }
 }

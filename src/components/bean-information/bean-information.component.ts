@@ -239,6 +239,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.UNFREEZE:
         await this.unfreezeBean();
         break;
+      case BEAN_ACTION.GENERATE_INTERNAL_SHARE_CODE:
+        await this.generateQrCode();
+        break;
       default:
         break;
     }
@@ -279,6 +282,9 @@ export class BeanInformationComponent implements OnInit {
     await this.resetSettings();
   }
 
+  public async generateQrCode() {
+    await this.uiBeanHelper.generateQRCode(this.bean);
+  }
   public async freezeBean() {
     await this.uiBeanHelper.freezeBean(this.bean);
   }
