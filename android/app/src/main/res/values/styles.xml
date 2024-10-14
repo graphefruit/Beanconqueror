@@ -21,6 +21,7 @@
 
 
   <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
+    <!-- Will not be used on API level 32 and up; see the API level 32 style -->
     <item name="android:windowBackground">@drawable/splash</item>
   </style>
 </resources>
