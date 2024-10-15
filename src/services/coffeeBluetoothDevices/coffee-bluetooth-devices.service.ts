@@ -44,6 +44,7 @@ import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer
 import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
+import { TimemoreScale } from 'src/classes/devices/timemoreScale';
 
 declare var ble: any;
 declare var cordova: any;
@@ -710,6 +711,13 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceScale.id,
         type: ScaleType.BOKOOSCALE,
+      };
+    }
+    if (TimemoreScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a Timemore scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.TIMEMORESCALE,
       };
     }
 
