@@ -227,28 +227,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         });
 
       const wantedDisplayFormat = this.returnWantedDisplayFormat();
+      this.__writeTimeNative(wantedDisplayFormat);
       this.brewTimerTickedSubscription = this.brewTimerTickedEvent.subscribe(
         (_val) => {
-          let writingVal = '';
-          if (this.settings.brew_milliseconds === false) {
-            writingVal = String(
-              this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss')
-            );
-          } else {
-            writingVal = String(
-              this.uiHelper.formatSecondsAndMilliseconds(
-                this.brew.brew_time,
-                this.brew.brew_time_milliseconds,
-                wantedDisplayFormat
-              )
-            );
-          }
-
-          if (this.timerElement?.nativeElement) {
-            window.requestAnimationFrame(() => {
-              this.timerElement.nativeElement.innerHTML = writingVal;
-            });
-          }
+          this.__writeTimeNative(wantedDisplayFormat);
         }
       );
 
@@ -274,6 +256,28 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     }, 150);
   }
 
+  private __writeTimeNative(_wantedDisplayFormat) {
+    let writingVal = '';
+    if (this.settings.brew_milliseconds === false) {
+      writingVal = String(
+        this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss')
+      );
+    } else {
+      writingVal = String(
+        this.uiHelper.formatSecondsAndMilliseconds(
+          this.brew.brew_time,
+          this.brew.brew_time_milliseconds,
+          _wantedDisplayFormat
+        )
+      );
+    }
+
+    if (this.timerElement?.nativeElement) {
+      window.requestAnimationFrame(() => {
+        this.timerElement.nativeElement.innerHTML = writingVal;
+      });
+    }
+  }
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange() {
@@ -380,28 +384,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     setTimeout(() => {
       this.onOrientationChange();
     }, 500);
-  }
-
-  private waitForPleaseWaitToBeFinished() {
-    // #604
-    return new Promise((resolve, reject) => {
-      let waitForPleaseWaitInterval = setInterval(async () => {
-        if (this.uiAlert.isLoadingSpinnerShown() === true) {
-          // wait another round
-        } else {
-          clearInterval(waitForPleaseWaitInterval);
-          waitForPleaseWaitInterval = undefined;
-          resolve(undefined);
-        }
-      });
-      setTimeout(() => {
-        if (waitForPleaseWaitInterval !== undefined) {
-          clearInterval(waitForPleaseWaitInterval);
-          waitForPleaseWaitInterval = undefined;
-          resolve(undefined);
-        }
-      }, 5000);
-    });
   }
 
   public async resetTimer() {
