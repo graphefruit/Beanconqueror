@@ -137,10 +137,10 @@
     <h2>{{graph.name}}</h2>
   </ion-grid>
   <ng-container *ngIf='isGraphType() && graph.flow_profile'>
-     <graph-display-card [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile'></graph-display-card>
+     <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile'></graph-display-card>
   </ng-container>
   <ng-container *ngIf='!isGraphType() && brew.flow_profile'>
-    <graph-display-card [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+    <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
   </ng-container>
 </div>
 <div style="height:10px;"></div>

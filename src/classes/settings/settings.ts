@@ -278,6 +278,8 @@ export class Settings implements ISettings {
       realtime_flow: true,
       pressure: true,
       temperature: true,
+      weightSecond: true,
+      realtime_flowSecond: true,
     } as IBrewGraphs;
   }
 
@@ -378,7 +380,6 @@ export class Settings implements ISettings {
     this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
     this.graph.FILTER = this.GET_BREW_GRAPHS();
     this.graph.FILTER.realtime_flow = false;
-
     this.graph_time = {
       ESPRESSO: {
         NORMAL_SCREEN: 20,

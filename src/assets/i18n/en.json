@@ -1429,5 +1429,7 @@
     "WRITE_UNCOMPLETED_TITLE": "Write failed",
     "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": "Please hold your tag to the reader",
     "WRITE_NFC_TAG": "Write NFC tag"
-  }
+  },
+  "BREW_FLOW_WEIGHT_REALTIME_SECOND": "Flow (Realtime, out)",
+  "BREW_FLOW_WEIGHT_SECOND": "Weight (out)"
 }

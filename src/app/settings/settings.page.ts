@@ -65,7 +65,7 @@ import {
   UIFileHelper,
 } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
-import { BluetoothTypes } from '../../classes/devices';
+import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
@@ -556,6 +556,18 @@ export class SettingsPage {
     });
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public smartScaleConnected() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
+  }
+  public smartScaleSupportsTwoWeight() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale && scale.supportsTwoWeights === true) {
+      return true;
+    }
+    return false;
   }
 
   public languageChanged(_query): void {

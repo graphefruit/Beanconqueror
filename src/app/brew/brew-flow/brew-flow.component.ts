@@ -45,6 +45,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @Input() public flowChart: any;
   @Input() public flowChartEl: any;
   @Input() private brewFlowGraphEvent: EventEmitter<any>;
+  @Input() private brewFlowGraphSecondEvent: EventEmitter<any>;
+
   @Input() private brewPressureGraphEvent: EventEmitter<any>;
   @Input() private brewTemperatureGraphEvent: EventEmitter<any>;
   @Input() private brewTimerTickedEvent: EventEmitter<any>;
@@ -53,6 +55,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @Input() public brewComponent: BrewBrewingComponent;
   @Input() public isDetail: boolean = false;
   private brewFlowGraphSubscription: Subscription;
+  private brewFlowGraphSecondSubscription: Subscription;
   private brewPressureGraphSubscription: Subscription;
   private brewTemperatureGraphSubscription: Subscription;
   private brewTimerTickedSubscription: Subscription;
@@ -77,6 +80,12 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   public pressureDetail: ElementRef;
   @ViewChild('temperatureDetail', { read: ElementRef })
   public temperatureDetail: ElementRef;
+
+  @ViewChild('smartScaleWeightSecondDetail', { read: ElementRef })
+  public smartScaleWeightSecondDetail: ElementRef;
+  @ViewChild('smartScaleRealtimeFlowSecondDetail', { read: ElementRef })
+  public smartScaleRealtimeFlowSecondDetail: ElementRef;
+
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   protected heightInformationBlock: number = 50;
@@ -200,6 +209,14 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
           this.setActualScaleInformation(_val);
         }
       );
+
+      if (this.smartScaleSupportsTwoWeight()) {
+        this.brewFlowGraphSecondSubscription =
+          this.brewFlowGraphSecondEvent.subscribe((_val) => {
+            this.setActualScaleSecondInformation(_val);
+          });
+      }
+
       this.brewPressureGraphSubscription =
         this.brewPressureGraphEvent.subscribe((_val) => {
           this.setActualPressureInformation(_val);
@@ -327,6 +344,14 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     return !!scale;
   }
 
+  public smartScaleSupportsTwoWeight() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale && scale.supportsTwoWeights === true) {
+      return true;
+    }
+    return false;
+  }
+
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
 
@@ -420,6 +445,16 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       }
     });
   }
+  public setActualScaleSecondInformation(_val: any) {
+    this.ngZone.runOutsideAngular(() => {
+      if (this.smartScaleWeightDetail?.nativeElement) {
+        const weightEl = this.smartScaleWeightSecondDetail.nativeElement;
+        const flowEl = this.smartScaleRealtimeFlowSecondDetail.nativeElement;
+        weightEl.textContent = _val.scaleWeight;
+        flowEl.textContent = _val.smoothedWeight;
+      }
+    });
+  }
 
   public setActualPressureInformation(_val: any) {
     this.ngZone.runOutsideAngular(() => {
@@ -444,6 +479,11 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       this.brewFlowGraphSubscription.unsubscribe();
       this.brewFlowGraphSubscription = undefined;
     }
+    if (this.brewFlowGraphSecondSubscription) {
+      this.brewFlowGraphSecondSubscription.unsubscribe();
+      this.brewFlowGraphSecondSubscription = undefined;
+    }
+
     if (this.brewPressureGraphSubscription) {
       this.brewPressureGraphSubscription.unsubscribe();
       this.brewPressureGraphSubscription = undefined;

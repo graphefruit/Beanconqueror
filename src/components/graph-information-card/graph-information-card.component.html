@@ -19,7 +19,7 @@
     <ion-grid class="no-ion-col-vertical-padding" *ngIf='graph.flow_profile'>
       <ion-row>
         <ion-col [size]="12" class="ion-no-padding-right">
-          <graph-display-card [flowProfilePath]='graph.flow_profile'></graph-display-card>
+          <graph-display-card [staticChart]="true" [flowProfilePath]='graph.flow_profile'></graph-display-card>
         </ion-col>
       </ion-row>
     </ion-grid>

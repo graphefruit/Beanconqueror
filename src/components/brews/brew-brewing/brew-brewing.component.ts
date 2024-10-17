@@ -133,6 +133,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private preparationMethodFocusedSubscription: Subscription = undefined;
 
   public brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
+  public brewFlowGraphSecondSubject: EventEmitter<any> = new EventEmitter();
   public brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
   public brewTemperatureGraphSubject: EventEmitter<any> = new EventEmitter();
   public brewTimerTickedSubject: EventEmitter<any> = new EventEmitter();
@@ -378,6 +379,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         brewComponent: this,
         brew: this.data,
         brewFlowGraphEvent: this.brewFlowGraphSubject,
+        brewFlowGraphSecondEvent: this.brewFlowGraphSecondSubject,
         brewPressureGraphEvent: this.brewPressureGraphSubject,
         brewTemperatureGraphEvent: this.brewTemperatureGraphSubject,
         brewTimerTickedEvent: this.brewTimerTickedSubject,

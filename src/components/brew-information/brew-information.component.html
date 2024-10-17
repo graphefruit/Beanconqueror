@@ -249,7 +249,7 @@
       <!--Z-index -1 to let it scroll all good-->
       <ion-card class='long-card brew-layout' style='z-index:-1'>
         <ion-card-content class='no-ion-col-vertical-padding ion-padding-top' >
-          <graph-display-card *ngIf='informationContainerWidth' [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+          <graph-display-card *ngIf='informationContainerWidth' [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile'></graph-display-card>
         </ion-card-content>
       </ion-card>
 

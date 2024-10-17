@@ -149,13 +149,8 @@ export class XeniaDevice extends PreparationDevice {
       const options = {
         url: url,
       };
-      const apiThirdCallDelayStart = moment(); // create a moment with the current time
-      let apiDelayEnd;
       const response: HttpResponse = await CapacitorHttp.get(options);
       const responseJSON = await response.data;
-      apiDelayEnd = moment(); // cre
-      const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds');
-      console.log(delta);
       return responseJSON;
     } catch (error) {
       this.logError('Error in getOverview():', error);

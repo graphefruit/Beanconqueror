@@ -65,6 +65,7 @@ export class UIUpdate {
         'UPDATE_9',
         'UPDATE_10',
         'UPDATE_11',
+        'UPDATE_12',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -89,6 +90,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_11', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_12', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -560,6 +562,12 @@ export class UIUpdate {
             const settings_v11: Settings = this.uiSettingsStorage.getSettings();
             settings_v11.resetBeanSort();
             await this.uiSettingsStorage.saveSettings(settings_v11);
+            break;
+          case 'UPDATE_12':
+            const settings_v12: Settings = this.uiSettingsStorage.getSettings();
+            settings_v12.graph.FILTER.weightSecond = true;
+            settings_v12.graph.FILTER.realtime_flowSecond = true;
+            await this.uiSettingsStorage.saveSettings(settings_v12);
             break;
           default:
             break;

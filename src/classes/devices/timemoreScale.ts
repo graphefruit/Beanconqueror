@@ -18,12 +18,21 @@ export class TimemoreScale extends BluetoothScale {
     notMutatedWeight: 0,
   };
 
+  protected override secondWeight: Weight = {
+    actual: 0,
+    old: 0,
+    smoothed: 0,
+    oldSmoothed: 0,
+    notMutatedWeight: 0,
+  };
+
   private logger: Logger;
 
   constructor(data: PeripheralData, type: ScaleType) {
     super(data, type);
     this.logger = new Logger('Timemore Scale');
     this.connect();
+    this.supportsTwoWeights = true;
   }
 
   public static test(device: any): boolean {
@@ -45,6 +54,14 @@ export class TimemoreScale extends BluetoothScale {
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
+
+    if (this.supportsTwoWeights === true) {
+      this.secondWeight.smoothed = 0;
+      this.secondWeight.actual = 0;
+      this.secondWeight.oldSmoothed = 0;
+      this.secondWeight.old = 0;
+      this.setSecondWeight(0);
+    }
 
     await this.write(new Uint8Array([0x00]));
   }
@@ -80,6 +97,10 @@ export class TimemoreScale extends BluetoothScale {
 
   public override getWeight() {
     return this.weight.actual;
+  }
+
+  public getSecondWeight(): number {
+    return this.secondWeight.actual;
   }
 
   public override getSmoothedWeight() {
@@ -122,6 +143,8 @@ export class TimemoreScale extends BluetoothScale {
     const weight = await this.getInt(timemoreRawStatus.slice(1, 4));
     const weight2 = await this.getInt(timemoreRawStatus.slice(5, 8));
     this.setWeight(weight / 10);
+
+    this.setSecondWeight(weight2 / 10);
   }
 
   private async deattachNotification() {

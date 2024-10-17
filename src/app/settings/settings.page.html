@@ -812,6 +812,20 @@
                 <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</div>
               </ion-checkbox>
             </ion-item>
+            <ng-container *ngIf="smartScaleConnected() && smartScaleSupportsTwoWeight()">
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.weightSecond">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_SECOND" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.realtime_flowSecond">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME_SECOND" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+            </ng-container>
           </ion-list>
         </ion-card-content>
       </ion-card>
