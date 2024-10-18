@@ -75,53 +75,45 @@ export class UIImage {
 
   public async choosePhoto(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
-      this.__checkPermission(
-        async () => {
-          setTimeout(async () => {
-            const fileurls: Array<string> = [];
+      try {
+        const fileurls: Array<string> = [];
 
-            const results = await Camera.pickImages({
-              quality: this.getImageQuality(),
-            });
+        const results = await Camera.pickImages({
+          quality: this.getImageQuality(),
+        });
 
-            await this.uiAlert.showLoadingSpinner();
+        await this.uiAlert.showLoadingSpinner();
 
-            for await (const file of results.photos) {
-              try {
-                const imageBase64 = await this.uiFileHelper.readFileAsBase64(
-                  file.path
-                );
+        for await (const file of results.photos) {
+          try {
+            const imageBase64 = await this.uiFileHelper.readFileAsBase64(
+              file.path
+            );
 
-                try {
-                  const newUri = await this.saveBase64Photo(imageBase64);
-                  fileurls.push(newUri);
-                } catch (ex) {}
-              } catch (ex) {
-                setTimeout(() => {
-                  this.uiAlert.hideLoadingSpinner();
-                }, 50);
-                reject(ex);
-              }
-            }
+            try {
+              const newUri = await this.saveBase64Photo(imageBase64);
+              fileurls.push(newUri);
+            } catch (ex) {}
+          } catch (ex) {
             setTimeout(() => {
               this.uiAlert.hideLoadingSpinner();
             }, 50);
-            // this.__cleanupCamera();
-
-            if (fileurls.length > 0) {
-              resolve(fileurls);
-            } else {
-              reject('We found no file urls');
-            }
-          });
-        },
-        (_err) => {
-          setTimeout(() => {
-            this.uiAlert.hideLoadingSpinner();
-          }, 50);
-          reject(_err);
+            reject(ex);
+          }
         }
-      );
+        setTimeout(() => {
+          this.uiAlert.hideLoadingSpinner();
+        }, 50);
+        // this.__cleanupCamera();
+
+        if (fileurls.length > 0) {
+          resolve(fileurls);
+        } else {
+          reject('We found no file urls');
+        }
+      } catch (ex) {
+        this.uiAlert.hideLoadingSpinner();
+      }
     });
 
     return promise;
@@ -151,63 +143,6 @@ export class UIImage {
     });
 
     return promise;
-  }
-
-  private __requestGaleryPermission(_success: any, _error: any): void {
-    this.androidPermissions
-      .requestPermissions([
-        this.androidPermissions.PERMISSION.READ_MEDIA_IMAGES,
-      ])
-      .then(
-        (_status) => {
-          if (_status.hasPermission) {
-            _success();
-          } else {
-            _error();
-          }
-        },
-        () => {
-          _error();
-        }
-      );
-  }
-
-  private __checkPermission(_success: any, _error: any): void {
-    this.platform.ready().then(() => {
-      const isCordova: boolean = this.platform.is('capacitor');
-      const isAndroid: boolean = this.platform.is('android');
-      if (isCordova && isAndroid) {
-        this.androidPermissions
-          .checkPermission(this.androidPermissions.PERMISSION.READ_MEDIA_IMAGES)
-          .then(
-            (_status) => {
-              if (_status.hasPermission === false) {
-                this.__requestGaleryPermission(_success, _error);
-              } else {
-                // We already have permission
-                _success();
-              }
-            },
-            () => {
-              this.__requestGaleryPermission(_success, _error);
-            }
-          );
-      } else {
-        // No need to check for validations
-        _success();
-      }
-    });
-
-    /**
-     * Check if we have permission to read images
-     * @returns {Promise<boolean>} Returns a promise that resolves with a boolean that indicates whether we have permission
-     */
-    // hasReadPermission(): Promise<boolean>;
-    /**
-     * Request permission to read images
-     * @returns {Promise<any>}
-     */
-    // requestReadPermission(): Promise<any>;
   }
 
   public async viewPhotos(
