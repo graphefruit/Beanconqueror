@@ -105,7 +105,7 @@ export class UIGraphHelper {
 
   public async readFlowProfile(_flowProfilePath: string) {
     return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         if (_flowProfilePath !== '') {
           try {
             const jsonParsed = await this.uiFileHelper.readInternalJSONFile(

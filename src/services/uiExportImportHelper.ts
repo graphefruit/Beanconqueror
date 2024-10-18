@@ -237,7 +237,7 @@ export class UIExportImportHelper {
   }
 
   public async checkBackup(): Promise<void> {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return;
     }
 

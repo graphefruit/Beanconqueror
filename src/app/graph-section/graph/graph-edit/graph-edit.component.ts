@@ -93,7 +93,7 @@ export class GraphEditComponent implements OnInit {
   }
 
   private async readFlowProfile() {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       if (this.data.flow_profile !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
@@ -109,7 +109,7 @@ export class GraphEditComponent implements OnInit {
 
   public async uploadGraph() {
     try {
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         const data: any = await this.uiGraphHelper.chooseGraph();
         if (
           data &&

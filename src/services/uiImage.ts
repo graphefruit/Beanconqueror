@@ -174,9 +174,7 @@ export class UIImage {
 
   private __checkPermission(_success: any, _error: any): void {
     this.platform.ready().then(() => {
-      _success();
-      return;
-      const isCordova: boolean = this.platform.is('cordova');
+      const isCordova: boolean = this.platform.is('capacitor');
       const isAndroid: boolean = this.platform.is('android');
       if (isCordova && isAndroid) {
         this.androidPermissions

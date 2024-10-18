@@ -138,7 +138,7 @@ export class BeansAddComponent implements OnInit {
     }
 
     // Download images after loading the bean, else they would be copied :O
-    if (this.server_bean && this.platform.is('cordova')) {
+    if (this.server_bean && this.platform.is('capacitor')) {
       if (this.server_bean.attachment.length > 0) {
         // await this.uiAlert.showLoadingSpinner();
         // this.uiAlert.setLoadingSpinnerMessage('QR.IMAGES_GETTING_DOWNLOADED');

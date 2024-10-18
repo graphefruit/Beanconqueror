@@ -254,7 +254,7 @@ export class AppComponent implements AfterViewInit {
       const _db = window.sqlitePlugin;
     } catch (ex) {}
 
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       // Just support deeplinks on devices.
       this.intentHandlerService.attachOnHandleOpenUrl();
     }
@@ -297,7 +297,7 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.log(`Manufacturer: ${deviceInfo.manufacturer}`);
         this.uiLog.log(`Platform: ${deviceInfo.platform}`);
         this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
-        if (this.platform.is('cordova')) {
+        if (this.platform.is('capacitor')) {
           const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
           this.uiLog.log(
@@ -323,7 +323,7 @@ export class AppComponent implements AfterViewInit {
         });
       } catch (ex) {}
 
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         // #7
@@ -373,7 +373,7 @@ export class AppComponent implements AfterViewInit {
 
       await SplashScreen.hide();
 
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         try {
           await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}
@@ -473,7 +473,7 @@ export class AppComponent implements AfterViewInit {
   private async __setDeviceLanguage(): Promise<any> {
     return new Promise(async (resolve, _reject) => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         try {
           this.uiLog.info('Its a mobile device, try to set language now');
 
@@ -840,7 +840,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __instanceAppRating() {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       /** const appLanguage = this.uiSettingsStorage.getSettings().language;
        AppRate.setPreferences({
        usesUntilPrompt: 25,

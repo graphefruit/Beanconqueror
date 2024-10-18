@@ -419,7 +419,7 @@ export class GraphHelperService {
       if (
         (pressureDevice != null && isEspressoBrew) ||
         _preparationDeviceConnected ||
-        !this.platform.is('cordova')
+        !this.platform.is('capacitor')
       ) {
         const graph_pressure_settings = settings.graph_pressure;
         const suggestedMinPressure: number = graph_pressure_settings.lower;
@@ -441,7 +441,7 @@ export class GraphHelperService {
       if (
         temperatureDevice != null ||
         _preparationDeviceConnected ||
-        !this.platform.is('cordova')
+        !this.platform.is('capacitor')
       ) {
         layout['yaxis5'] = {
           title: '',

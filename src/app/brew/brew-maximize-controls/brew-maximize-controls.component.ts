@@ -109,7 +109,7 @@ export class BrewMaximizeControlsComponent
   }
 
   public pressureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 

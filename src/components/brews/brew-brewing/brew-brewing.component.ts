@@ -432,7 +432,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public refractometerConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -600,7 +600,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.brewBrewingGraphEl.smartScaleConnected() ||
         this.brewBrewingGraphEl.pressureDeviceConnected() ||
         this.brewBrewingGraphEl.temperatureDeviceConnected() ||
-        !this.platform.is('cordova')
+        !this.platform.is('capacitor')
       ) {
         this.uiAlert.showMessage(
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION',
@@ -766,7 +766,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public chooseDateTime(_event) {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       _event.target.blur();
       _event.cancelBubble = true;
       _event.preventDefault();

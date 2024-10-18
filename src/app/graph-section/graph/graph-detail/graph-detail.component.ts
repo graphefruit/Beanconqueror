@@ -184,7 +184,7 @@ export class GraphDetailComponent implements OnInit {
   }
 
   private async readFlowProfile(_path) {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       if (_path !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.readInternalJSONFile(

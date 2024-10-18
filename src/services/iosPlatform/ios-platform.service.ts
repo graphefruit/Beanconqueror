@@ -30,7 +30,7 @@ export class IosPlatformService {
     private readonly uiAlert: UIAlert,
     private readonly uiExportImportHelper: UIExportImportHelper
   ) {
-    if (this.platform.is('cordova') && this.platform.is('ios')) {
+    if (this.platform.is('capacitor') && this.platform.is('ios')) {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
           // Delete on startup old json backup files

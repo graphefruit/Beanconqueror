@@ -56,7 +56,7 @@ export class GraphAddComponent {
 
   public async uploadGraph() {
     try {
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         const data: any = await this.uiGraphHelper.chooseGraph();
         if (
           data &&

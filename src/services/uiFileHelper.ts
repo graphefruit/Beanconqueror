@@ -40,9 +40,9 @@ export class UIFileHelper extends InstanceClass {
   }
 
   public getDataDirectory(): Directory {
-    if (this.platform.is('ios') && this.platform.is('cordova')) {
+    if (this.platform.is('ios') && this.platform.is('capacitor')) {
       return Directory.Documents;
-    } else if (this.platform.is('android') && this.platform.is('cordova')) {
+    } else if (this.platform.is('android') && this.platform.is('capacitor')) {
       return Directory.Data;
     } else {
       throw new Error(
@@ -69,7 +69,7 @@ export class UIFileHelper extends InstanceClass {
       directory
     );
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.'
       );
@@ -111,7 +111,7 @@ export class UIFileHelper extends InstanceClass {
       directory
     );
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.'
       );
@@ -203,7 +203,7 @@ export class UIFileHelper extends InstanceClass {
       directory
     );
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.'
       );
@@ -289,7 +289,7 @@ export class UIFileHelper extends InstanceClass {
       directory
     );
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.'
       );
@@ -363,7 +363,7 @@ export class UIFileHelper extends InstanceClass {
   public async deleteFile(path: string, directory?: Directory): Promise<void> {
     this.uiLog.debug('deleteFile for path', path, 'in directory', directory);
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.'
       );
@@ -392,7 +392,7 @@ export class UIFileHelper extends InstanceClass {
   public async deleteZIPBackupsOlderThanSevenDays(): Promise<void> {
     this.uiLog.debug('deleteZIPBackupsOlderThanSevenDays starting');
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.'
       );
@@ -493,7 +493,7 @@ export class UIFileHelper extends InstanceClass {
     blob: Blob,
     share = true
   ): Promise<string | undefined> {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       const path = 'Download/Beanconqueror_export';
       return this.exportFile(
         { fileName, path, directory: Directory.External },
@@ -511,7 +511,7 @@ export class UIFileHelper extends InstanceClass {
     blob: Blob,
     share = true
   ): Promise<string | undefined> {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       const fullpath = `${exportPath.path}/${exportPath.fileName}`;
       await this.writeFileFromBlob(blob, fullpath, exportPath.directory);
       const { uri: exportUri } = await Filesystem.getUri({
@@ -595,7 +595,7 @@ export class UIFileHelper extends InstanceClass {
   public async duplicateInternalFile(path: string): Promise<string> {
     this.uiLog.debug('duplicateInternalFile for path', path);
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.'
       );
@@ -664,7 +664,7 @@ export class UIFileHelper extends InstanceClass {
     _filePath: string,
     _addTimeStamp = false
   ): Promise<any> {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return '';
     }
     try {

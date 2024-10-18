@@ -161,7 +161,7 @@ export class GraphDisplayCardComponent implements OnInit {
   }
 
   private async readFlowProfile() {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       if (this.flowProfilePath !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.readInternalJSONFile(

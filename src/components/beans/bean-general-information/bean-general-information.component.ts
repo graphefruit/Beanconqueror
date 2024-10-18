@@ -84,7 +84,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
 
   public smartScaleConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -151,7 +151,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     _event.stopImmediatePropagation();
     _event.stopPropagation();
 
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       const myDate = new Date(); // From model.
 
       cordova.plugins.DateTimePicker.show({

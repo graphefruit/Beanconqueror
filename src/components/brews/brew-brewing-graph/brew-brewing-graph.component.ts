@@ -296,7 +296,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   private async readReferenceFlowProfile(_brew: Brew) {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
         let referencePath: string = '';
         const uuid = _brew.reference_flow_profile.uuid;
@@ -340,7 +340,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public smartScaleConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -357,7 +357,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public temperatureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -367,7 +367,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public pressureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -571,7 +571,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           this.getPreparation().style_type ===
             PREPARATION_STYLE_TYPE.ESPRESSO) ||
           this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
-          !this.platform.is('cordova')) &&
+          !this.platform.is('capacitor')) &&
         this.traceReferences.pressureTrace &&
         this.traceReferences.pressureTrace.x?.length > 0
       ) {
@@ -581,7 +581,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (
         (temperatureDevice != null ||
           this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
-          !this.platform.is('cordova')) &&
+          !this.platform.is('capacitor')) &&
         this.traceReferences.temperatureTrace &&
         this.traceReferences.temperatureTrace.x?.length > 0
       ) {
@@ -1431,7 +1431,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.stopFetchingDataFromMeticulous();
     }
 
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       window.clearInterval(this.graphTimerTest);
     }
   }
@@ -1735,7 +1735,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
-    if (true && !this.platform.is('cordova')) {
+    if (true && !this.platform.is('capacitor')) {
       let weight = 0;
       let realtime_flow = 0;
       let flow = 0;
@@ -2788,7 +2788,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   private async returnFlowProfile(_flowProfile: string) {
     const promiseRtr = new Promise(async (resolve) => {
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         if (_flowProfile !== '') {
           try {
             const jsonParsed = await this.uiFileHelper.readInternalJSONFile(

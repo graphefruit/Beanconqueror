@@ -308,7 +308,7 @@ export class BeansPage implements OnDestroy {
   }
 
   public async scanNFC() {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       try {
         await this.nfcService.readNFCTag();
       } catch (error) {
@@ -320,7 +320,7 @@ export class BeansPage implements OnDestroy {
     this.loadBeans();
   }
   public async scanBean() {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       try {
         const scannedCode = await this.qrScannerService.scan();
         await this.intenthandler.handleQRCodeLink(scannedCode);

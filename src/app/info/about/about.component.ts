@@ -22,7 +22,7 @@ export class AboutComponent implements OnInit {
 
   public async setAppVersion() {
     this.versionStr = this.translate.instant('PAGE_ABOUT_NO_VERSION_AVAILABLE');
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       const versionCode = (await App.getInfo()).version;
       this.versionStr =
         this.translate.instant('PAGE_ABOUT_APP_VERSION') + ': ' + versionCode;

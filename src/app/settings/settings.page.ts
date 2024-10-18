@@ -189,8 +189,9 @@ export class SettingsPage {
       this.isTextToSpeechSectionAvailable = false;
     }
 
-    this.isAndroid = this.platform.is('cordova') && this.platform.is('android');
-    this.isIos = this.platform.is('cordova') && this.platform.is('ios');
+    this.isAndroid =
+      this.platform.is('capacitor') && this.platform.is('android');
+    this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
   }
 
   public handleScrollStart() {
@@ -587,7 +588,7 @@ export class SettingsPage {
   }
 
   public async import(): Promise<void> {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       this.__importDummyData();
       return;
     }
@@ -937,8 +938,7 @@ export class SettingsPage {
     try {
       const allPreps = [];
       let allPreparations = this.uiPreparationStorage.getAllEntries();
-      // Just take 60, else the excel will be exploding.
-      allPreparations = allPreparations.reverse().slice(0, 60);
+
       for (const prep of allPreparations) {
         if (
           _type === 'xenia' &&
@@ -988,6 +988,11 @@ export class SettingsPage {
           );
       }
 
+      // Just take 60, else the excel will be exploding.
+      if (allBrewsWithProfiles.length > 60) {
+        allBrewsWithProfiles = allBrewsWithProfiles.reverse().slice(0, 60);
+      }
+
       const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
       for await (const brew of allBrewsWithProfiles) {
         const flow: BrewFlow = await this.readFlowProfile(brew);
@@ -1024,7 +1029,7 @@ export class SettingsPage {
   }
 
   public async importBeansExcel(_type: string = 'roasted') {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
         SETTINGS_TRACKING.ACTIONS.IMPORT

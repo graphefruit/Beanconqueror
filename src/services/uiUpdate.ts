@@ -346,7 +346,7 @@ export class UIUpdate {
             await this.uiSettingsStorage.saveSettings(settings_v3);
             break;
           case 'UPDATE_4':
-            if (this.platform.is('cordova') && this.platform.is('ios')) {
+            if (this.platform.is('capacitor') && this.platform.is('ios')) {
               // Greenbean and roasting machines just existing in this updated version then.
               const allEntries: Array<Brew | Mill | Preparation | Bean> = [
                 ...this.uiBrewStorage.getAllEntries(),
@@ -619,7 +619,7 @@ export class UIUpdate {
   public async checkUpdateScreen(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       let versionCode: string;
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         versionCode = (await App.getInfo()).version;
       } else {
         // Hardcored for testing

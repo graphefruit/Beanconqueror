@@ -309,7 +309,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public pressureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
     if (
@@ -324,7 +324,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public temperatureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -334,7 +334,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public smartScaleConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
     if (
