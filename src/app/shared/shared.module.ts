@@ -56,7 +56,6 @@ import { ManageParameterComponent } from '../brew-parameter/manage-parameter/man
 import { DefaultParameterComponent } from '../brew-parameter/default-parameter/default-parameter.component';
 import { InfoComponent } from '../info/info.component';
 import { RouterModule } from '@angular/router';
-import { CustomPopoverComponent } from '../../popover/custom-popover/custom-popover.component';
 import { WelcomePopoverComponent } from '../../popover/welcome-popover/welcome-popover.component';
 import { PreparationAddTypeComponent } from '../preparation/preparation-add-type/preparation-add-type.component';
 import { BeanOverlayDirective } from '../../directive/bean-overlay.directive';
@@ -212,7 +211,6 @@ import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-
     ImpressumComponent,
     PreparationAddTypeComponent,
     BluetoothDeviceChooserPopoverComponent,
-    CustomPopoverComponent,
     LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
@@ -408,7 +406,6 @@ import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-
     ImpressumComponent,
     PreparationAddTypeComponent,
     BluetoothDeviceChooserPopoverComponent,
-    CustomPopoverComponent,
     LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
