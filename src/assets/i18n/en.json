@@ -1431,5 +1431,6 @@
     "WRITE_NFC_TAG": "Write NFC tag"
   },
   "BREW_FLOW_WEIGHT_REALTIME_SECOND": "Flow (Realtime, out)",
-  "BREW_FLOW_WEIGHT_SECOND": "Weight (out)"
+  "BREW_FLOW_WEIGHT_SECOND": "Weight (out)",
+  "BEAN_WEIGHT_IN_PLACEHOLDER_NO_BR": "This parameter is not used for the brew-ratio calculation"
 }
