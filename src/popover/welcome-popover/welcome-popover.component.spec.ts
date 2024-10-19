@@ -6,7 +6,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { Storage } from '@ionic/storage';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('WelcomePopoverComponent', () => {
   let component: WelcomePopoverComponent;
@@ -15,14 +19,12 @@ describe('WelcomePopoverComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [WelcomePopoverComponent],
-      imports: [
-        IonicModule.forRoot(),
-        TranslateModule.forRoot(),
-        HttpClientTestingModule,
-      ],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
       providers: [
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Storage },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   }));

@@ -1,24 +1,21 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { Clipboard } from '@capacitor/clipboard';
 /** Ionic */
 import { Platform } from '@ionic/angular';
 /** Third party */
 import moment from 'moment';
-// tslint:disable-next-line
 import 'moment/locale/de';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { File, FileEntry } from '@awesome-cordova-plugins/file/ngx';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
 import { UIAlert } from './uiAlert';
 
-declare var cordova: any;
-declare var device: any;
-declare var window: any;
 import { cloneDeep } from 'lodash';
 import { UIToast } from './uiToast';
 import { UISettingsStorage } from './uiSettingsStorage';
+import { InAppBrowser } from '@capacitor/inappbrowser';
+import { KeepAwake } from '@capacitor-community/keep-awake';
 /**
  * Handles every helping functionalities
  */
@@ -33,9 +30,7 @@ export class UIHelper {
 
   constructor(
     private readonly platform: Platform,
-    private readonly inAppBrowser: InAppBrowser,
     private readonly sanitizer: DomSanitizer,
-    private readonly file: File,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiLog: UILog,
     private readonly uiAlert: UIAlert,
@@ -44,7 +39,6 @@ export class UIHelper {
 
   public static generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      // tslint:disable
       const r =
           ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
             16) |
@@ -98,25 +92,27 @@ export class UIHelper {
     return undefined;
   }
 
-  public copyToClipboard(_text: string) {
+  public async copyToClipboard(_text: string): Promise<void> {
     try {
-      window.cordova.plugins.clipboard.copy(
-        _text,
-        () => {
-          this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_SUCCESSFULLY');
-        },
-        () => {
-          this.uiToast.showInfoToastBottom(
-            'COPIED_TO_CLIPBOARD_UNSUCCESSFULLY'
-          );
-        }
-      );
-    } catch (ex) {}
+      await Clipboard.write({ string: _text });
+      this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_SUCCESSFULLY');
+    } catch (error) {
+      this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_UNSUCCESSFULLY');
+    }
+  }
+  public generateShortUUID(): string {
+    return 'xxxxxx'.replace(/[xy]/g, (c) => {
+      const r =
+          ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+            16) |
+          0,
+        v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
   }
 
   public generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      // tslint:disable
       const r =
           ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
             16) |
@@ -257,6 +253,17 @@ export class UIHelper {
     return promise;
   }
 
+  public deviceKeepAwake() {
+    try {
+      KeepAwake.keepAwake();
+    } catch (ex) {}
+  }
+  public deviceAllowSleepAgain() {
+    try {
+      KeepAwake.allowSleep();
+    } catch (ex) {}
+  }
+
   public convertToNumber(event: any): number {
     let eventInput: any = event;
     if (eventInput === '') {
@@ -276,41 +283,25 @@ export class UIHelper {
       url = 'http://' + url;
     }
 
-    this.inAppBrowser.create(url, '_system');
-
-    // window.open(_url, "_system");
-  }
-
-  public sanitizeImagePath(imagePath: string): SafeUrl {
-    return this.sanitizer.bypassSecurityTrustUrl(imagePath);
-  }
-
-  public getBase64Data(imagePath: string) {
-    return this.uiFileHelper.getBase64File(imagePath);
+    InAppBrowser.openInExternalBrowser({
+      url: url,
+    });
   }
 
   public async exportJSON(
     fileName: string,
     jsonContent: string,
     _share: boolean = false
-  ): Promise<any> {
-    const promise = new Promise(async (resolve, reject) => {
-      // Fixed umlaut issue
-      // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
-      const blob = new Blob([jsonContent], {
-        type: 'application/json;charset=UTF-8;',
-      });
-      try {
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          fileName,
-          blob,
-          _share
-        );
-        resolve(file);
-      } catch (ex) {
-        reject();
-      }
+  ): Promise<void> {
+    // Fixed umlaut issue
+    // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
+    const blob = new Blob([jsonContent], {
+      type: 'application/json;charset=UTF-8;',
     });
-    return promise;
+    await this.uiFileHelper.exportFileToDefaultDirectory(
+      fileName,
+      blob,
+      _share
+    );
   }
 }

@@ -6,26 +6,34 @@
     <ion-chip (click)="toggleChartLines('weight')" *ngIf="
     smartScaleConnected() ||
     ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&  brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)
-    || (isDetail === true && this.weightTrace?.x?.length >0)"
-              [outline]="!this.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+    || (isDetail === true && this.traces.weightTrace?.x?.length >0)"
+              [outline]="!this.traces.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
     <ion-chip (click)="toggleChartLines('calc_flow')" *ngIf="smartScaleConnected() ||
     ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&  brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)
-    || (isDetail === true && this.weightTrace?.x?.length >0)"
-              [outline]="!this.flowPerSecondTrace?.visible" class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' |
+    || (isDetail === true && this.traces.weightTrace?.x?.length >0)"
+              [outline]="!this.traces.flowPerSecondTrace?.visible" class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' |
       translate}}</ion-chip>
     <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected() ||
     ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&  brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)
-    || (isDetail === true && this.weightTrace?.x?.length >0)"
-              [outline]="!this.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
+    || (isDetail === true && this.traces.weightTrace?.x?.length >0)"
+              [outline]="!this.traces.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
       translate}}</ion-chip>
     <ion-chip (click)="toggleChartLines('pressure')" *ngIf="(pressureDeviceConnected() && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) ||
     ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected())
-    || (isDetail === true && this.pressureTrace?.x?.length >0)"
-              [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
+    || (isDetail === true && this.traces.pressureTrace?.x?.length >0)"
+              [outline]="!this.traces.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
     <ion-chip (click)="toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected() ||
      ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected())
-     || (isDetail === true && this.temperatureTrace?.x?.length >0)"
-              [outline]="!this.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
+     || (isDetail === true && this.traces.temperatureTrace?.x?.length >0)"
+              [outline]="!this.traces.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
+      translate}}</ion-chip>
+    <ion-chip (click)="toggleChartLines('weightSecond')" *ngIf="
+     smartScaleSupportsTwoWeight()
+    || (isDetail === true && this.traces.weightTraceSecond?.x?.length >0)"
+              [outline]="!this.traces.weightTraceSecond?.visible" class="weightsecond">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
+    <ion-chip (click)="toggleChartLines('realtimeFlowSecond')" *ngIf="smartScaleSupportsTwoWeight()
+    || (isDetail === true && this.traces.weightTraceSecond?.x?.length >0)"
+              [outline]="!this.traces.realtimeFlowTraceSecond?.visible" class="flowrealsecond">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' |
       translate}}</ion-chip>
   </div>
 </ion-item>
@@ -37,6 +45,7 @@
         <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
           <ion-card-header>
             <div #smartScaleWeight>? g</div>
+            <div #smartScaleSecondWeight *ngIf="smartScaleSupportsTwoWeight()">?g</div>
             <div class='information-tile-no-overflow'>({{data.getBrewRatio()}})</div>
           </ion-card-header>
           <ion-card-content>
@@ -50,6 +59,7 @@
           <ion-card-header>
             <div class='information-tile-no-overflow' #smartScaleWeightPerSecond>? g/s</div>
             <div class='information-tile-no-overflow' #smartScaleAvgFlowPerSecond>? g/s</div>
+            <div class='information-tile-no-overflow' *ngIf="smartScaleSupportsTwoWeight()" #smartScaleWeightSecondPerSecond>? g/s</div>
           </ion-card-header>
           <ion-card-content>
             <ion-icon name="water-outline"></ion-icon>

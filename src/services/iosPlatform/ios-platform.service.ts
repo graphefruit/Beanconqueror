@@ -8,7 +8,6 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { Platform } from '@ionic/angular';
 import { debounceTime } from 'rxjs/operators';
 import moment from 'moment';
-import { FileEntry } from '@awesome-cordova-plugins/file';
 import { UIHelper } from '../uiHelper';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
@@ -31,11 +30,11 @@ export class IosPlatformService {
     private readonly uiAlert: UIAlert,
     private readonly uiExportImportHelper: UIExportImportHelper
   ) {
-    if (this.platform.is('cordova') && this.platform.is('ios')) {
+    if (this.platform.is('capacitor') && this.platform.is('ios')) {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
           // Delete on startup old json backup files
-          this.uiFileHelper.deleteZIPBackupsOlderThenSevenDays().then(
+          this.uiFileHelper.deleteZIPBackupsOlderThanSevenDays().then(
             () => {},
             () => {}
           );

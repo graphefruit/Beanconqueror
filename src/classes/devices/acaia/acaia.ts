@@ -23,9 +23,9 @@ import { DEBUG } from '../common/constants';
 import { sleep, to128bitUUID } from '../common/util';
 import { Decoder } from './decoder';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Capacitor } from '@capacitor/core';
 
 declare var window: any;
-declare var device: any;
 export enum EventType {
   WEIGHT,
   TIMER_START,
@@ -195,7 +195,7 @@ export class AcaiaScale {
 
     this.callback = callback;
 
-    if (device !== null && device.platform === 'Android') {
+    if (Capacitor.getPlatform() === 'android') {
       try {
         await promisify(window.ble.requestMtu)(this.device_id, 247);
       } catch (e) {
@@ -644,7 +644,6 @@ function encode(msgType: number, payload: number[]): ArrayBuffer {
 }
 
 function promisify(fn: any) {
-  // tslint:disable-next-line:only-arrow-functions
   return function (...args: any) {
     return new Promise((resolve, reject) => {
       fn(...args, resolve, reject);

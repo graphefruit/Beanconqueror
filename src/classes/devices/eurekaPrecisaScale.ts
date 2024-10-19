@@ -4,6 +4,7 @@ import { Logger } from './common/logger';
 import { ScaleType } from './index';
 
 const DEVICE_NAME = 'CFS-9002';
+const DEVICE_NAME_SECOND = 'LSJ-001';
 
 const DATA_SERVICE = 'FFF0';
 const DATA_CHARACTERISTIC = 'FFF1';
@@ -63,7 +64,12 @@ export class EurekaPrecisaScale extends BluetoothScale {
    * @returns boolean If support is provided for device.
    */
   public static test(device: any): boolean {
-    return device && device.name && [DEVICE_NAME].includes(device.name);
+    return (
+      device &&
+      device.name &&
+      ([DEVICE_NAME].includes(device.name) ||
+        [DEVICE_NAME_SECOND].includes(device.name))
+    );
   }
 
   public override getWeight() {

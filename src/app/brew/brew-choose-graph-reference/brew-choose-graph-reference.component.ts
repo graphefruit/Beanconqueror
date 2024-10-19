@@ -286,7 +286,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       );
     }
 
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       brewsFilters = brewsFilters.filter(
         (b) =>
           b.flow_profile !== undefined &&

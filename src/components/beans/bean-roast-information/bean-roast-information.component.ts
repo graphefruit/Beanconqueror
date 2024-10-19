@@ -29,7 +29,7 @@ export class BeanRoastInformationComponent implements OnInit {
       .toISOString();
   }
   public smartScaleConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 

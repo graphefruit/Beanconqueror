@@ -41,7 +41,7 @@ export class BeanFilterComponent implements OnInit {
     private readonly uiMillStorage: UIMillStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.filter = this.settings.GET_BEAN_FILTER();
+
     const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
     this.roasteries = [...new Set(beans.map((e: Bean) => e.roaster))];
     this.roasteries = this.roasteries
@@ -132,7 +132,8 @@ export class BeanFilterComponent implements OnInit {
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (this.segment === 'open') {
+    /** we accept open and frozen **/
+    if (this.segment !== 'archive') {
       this.beans = this.beans.filter((e) => e.finished === false);
       this.mills = this.mills.filter((e) => e.finished === false);
       this.method_of_preparations = this.method_of_preparations.filter(

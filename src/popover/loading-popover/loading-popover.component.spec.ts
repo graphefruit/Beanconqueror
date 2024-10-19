@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { LoadingPopoverComponent } from './loading-popover.component';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
@@ -17,7 +16,6 @@ describe('LoadingPopoverComponent', () => {
       declarations: [LoadingPopoverComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
       providers: [
-        { provide: SocialSharing },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Storage },
       ],

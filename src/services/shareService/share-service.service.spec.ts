@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ShareService } from './share-service.service';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../uiHelper';
 import { UIHelperMock } from '../../classes/mock';
@@ -14,9 +13,6 @@ describe('ShareService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        {
-          provide: SocialSharing,
-        },
         {
           provide: UIHelper,
           useClass: UIHelperMock,

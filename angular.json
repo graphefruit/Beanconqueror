@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/@angular-devkit/core/src/workspace/workspace-schema.json",
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -36,11 +36,11 @@
             ],
             "styles": [
               {
-                "input": "src/theme/variables.scss",
+                "input": "src/global.scss",
                 "inject": true
               },
               {
-                "input": "src/global.scss",
+                "input": "src/theme/variables.scss",
                 "inject": true
               },
               {
@@ -55,8 +55,7 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true,
-
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -91,11 +90,11 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "app:build"
+            "buildTarget": "app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "app:build:production"
             },
             "ci": {
             }
@@ -104,7 +103,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "app:build"
+            "buildTarget": "app:build"
           }
         },
         "test": {
@@ -136,28 +135,13 @@
             }
           }
         },
-        "ionic-cordova-build": {
-          "builder": "@ionic/cordova-builders:cordova-build",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "browserTarget": "app:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "app:build:production"
-            }
-          }
-        },
-        "ionic-cordova-serve": {
-          "builder": "@ionic/cordova-builders:cordova-serve",
-          "options": {
-            "cordovaBuildTarget": "app:ionic-cordova-build",
-            "devServerTarget": "app:serve"
-          },
-          "configurations": {
-            "production": {
-              "cordovaBuildTarget": "app:ionic-cordova-build:production",
-              "devServerTarget": "app:serve:production"
-            }
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
@@ -186,7 +170,8 @@
   },
   "cli": {
     "schematicCollections": [
-      "@ionic/angular-toolkit"
+      "@ionic/angular-toolkit",
+      "@angular-eslint/schematics"
     ],
     "analytics": false
   },

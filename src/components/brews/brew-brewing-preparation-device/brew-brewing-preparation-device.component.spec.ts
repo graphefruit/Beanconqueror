@@ -6,7 +6,11 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('BrewBrewingPreparationDeviceComponent', () => {
   let component: BrewBrewingPreparationDeviceComponent;
@@ -15,14 +19,12 @@ describe('BrewBrewingPreparationDeviceComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewBrewingPreparationDeviceComponent],
-      imports: [
-        IonicModule.forRoot(),
-        TranslateModule.forRoot(),
-        HttpClientTestingModule,
-      ],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   }));

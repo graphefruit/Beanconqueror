@@ -12,7 +12,11 @@ import { SharedModule } from './shared/shared.module';
 
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import {
+  HttpClient,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { UILog } from '../services/uiLog';
@@ -77,9 +81,11 @@ class MyErrorHandler implements ErrorHandler {
 
 @NgModule({
   declarations: [AppComponent],
+  bootstrap: [AppComponent],
+  exports: [],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     BrowserModule,
-    HttpClientModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -108,9 +114,7 @@ class MyErrorHandler implements ErrorHandler {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: MyErrorHandler },
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent],
-  exports: [],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

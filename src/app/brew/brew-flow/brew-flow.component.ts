@@ -45,15 +45,23 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @Input() public flowChart: any;
   @Input() public flowChartEl: any;
   @Input() private brewFlowGraphEvent: EventEmitter<any>;
+  @Input() private brewFlowGraphSecondEvent: EventEmitter<any>;
+
   @Input() private brewPressureGraphEvent: EventEmitter<any>;
   @Input() private brewTemperatureGraphEvent: EventEmitter<any>;
+  @Input() private brewTimerTickedEvent: EventEmitter<any>;
 
   @Input() public brew: Brew;
   @Input() public brewComponent: BrewBrewingComponent;
   @Input() public isDetail: boolean = false;
   private brewFlowGraphSubscription: Subscription;
+  private brewFlowGraphSecondSubscription: Subscription;
   private brewPressureGraphSubscription: Subscription;
   private brewTemperatureGraphSubscription: Subscription;
+  private brewTimerTickedSubscription: Subscription;
+
+  @ViewChild('timerElement', { static: false })
+  public timerElement: ElementRef;
 
   public settings: Settings;
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
@@ -72,6 +80,12 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   public pressureDetail: ElementRef;
   @ViewChild('temperatureDetail', { read: ElementRef })
   public temperatureDetail: ElementRef;
+
+  @ViewChild('smartScaleWeightSecondDetail', { read: ElementRef })
+  public smartScaleWeightSecondDetail: ElementRef;
+  @ViewChild('smartScaleRealtimeFlowSecondDetail', { read: ElementRef })
+  public smartScaleRealtimeFlowSecondDetail: ElementRef;
+
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   protected heightInformationBlock: number = 50;
@@ -195,6 +209,14 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
           this.setActualScaleInformation(_val);
         }
       );
+
+      if (this.smartScaleSupportsTwoWeight()) {
+        this.brewFlowGraphSecondSubscription =
+          this.brewFlowGraphSecondEvent.subscribe((_val) => {
+            this.setActualScaleSecondInformation(_val);
+          });
+      }
+
       this.brewPressureGraphSubscription =
         this.brewPressureGraphEvent.subscribe((_val) => {
           this.setActualPressureInformation(_val);
@@ -203,6 +225,14 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         this.brewTemperatureGraphEvent.subscribe((_val) => {
           this.setActualTemperatureInformation(_val);
         });
+
+      const wantedDisplayFormat = this.returnWantedDisplayFormat();
+      this.__writeTimeNative(wantedDisplayFormat);
+      this.brewTimerTickedSubscription = this.brewTimerTickedEvent.subscribe(
+        (_val) => {
+          this.__writeTimeNative(wantedDisplayFormat);
+        }
+      );
 
       this.showBloomTimer = this.uiBrewHelper.fieldVisible(
         this.settings.manage_parameters.coffee_blooming_time,
@@ -226,6 +256,28 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     }, 150);
   }
 
+  private __writeTimeNative(_wantedDisplayFormat) {
+    let writingVal = '';
+    if (this.settings.brew_milliseconds === false) {
+      writingVal = String(
+        this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss')
+      );
+    } else {
+      writingVal = String(
+        this.uiHelper.formatSecondsAndMilliseconds(
+          this.brew.brew_time,
+          this.brew.brew_time_milliseconds,
+          _wantedDisplayFormat
+        )
+      );
+    }
+
+    if (this.timerElement?.nativeElement) {
+      window.requestAnimationFrame(() => {
+        this.timerElement.nativeElement.innerHTML = writingVal;
+      });
+    }
+  }
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange() {
@@ -257,7 +309,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public pressureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
     if (
@@ -272,7 +324,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public temperatureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -282,7 +334,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public smartScaleConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
     if (
@@ -294,6 +346,14 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     }
     const scale: BluetoothScale = this.bleManager.getScale();
     return !!scale;
+  }
+
+  public smartScaleSupportsTwoWeight() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale && scale.supportsTwoWeights === true) {
+      return true;
+    }
+    return false;
   }
 
   public async startTimer() {
@@ -324,28 +384,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     setTimeout(() => {
       this.onOrientationChange();
     }, 500);
-  }
-
-  private waitForPleaseWaitToBeFinished() {
-    // #604
-    return new Promise((resolve, reject) => {
-      let waitForPleaseWaitInterval = setInterval(async () => {
-        if (this.uiAlert.isLoadingSpinnerShown() === true) {
-          // wait another round
-        } else {
-          clearInterval(waitForPleaseWaitInterval);
-          waitForPleaseWaitInterval = undefined;
-          resolve(undefined);
-        }
-      });
-      setTimeout(() => {
-        if (waitForPleaseWaitInterval !== undefined) {
-          clearInterval(waitForPleaseWaitInterval);
-          waitForPleaseWaitInterval = undefined;
-          resolve(undefined);
-        }
-      }, 5000);
-    });
   }
 
   public async resetTimer() {
@@ -389,6 +427,16 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       }
     });
   }
+  public setActualScaleSecondInformation(_val: any) {
+    this.ngZone.runOutsideAngular(() => {
+      if (this.smartScaleWeightDetail?.nativeElement) {
+        const weightEl = this.smartScaleWeightSecondDetail.nativeElement;
+        const flowEl = this.smartScaleRealtimeFlowSecondDetail.nativeElement;
+        weightEl.textContent = _val.scaleWeight;
+        flowEl.textContent = _val.smoothedWeight;
+      }
+    });
+  }
 
   public setActualPressureInformation(_val: any) {
     this.ngZone.runOutsideAngular(() => {
@@ -413,6 +461,11 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       this.brewFlowGraphSubscription.unsubscribe();
       this.brewFlowGraphSubscription = undefined;
     }
+    if (this.brewFlowGraphSecondSubscription) {
+      this.brewFlowGraphSecondSubscription.unsubscribe();
+      this.brewFlowGraphSecondSubscription = undefined;
+    }
+
     if (this.brewPressureGraphSubscription) {
       this.brewPressureGraphSubscription.unsubscribe();
       this.brewPressureGraphSubscription = undefined;
@@ -420,6 +473,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     if (this.brewTemperatureGraphSubscription) {
       this.brewTemperatureGraphSubscription.unsubscribe();
       this.brewTemperatureGraphSubscription = undefined;
+    }
+    if (this.brewTimerTickedSubscription) {
+      this.brewTimerTickedSubscription.unsubscribe();
+      this.brewTimerTickedSubscription = undefined;
     }
   }
 

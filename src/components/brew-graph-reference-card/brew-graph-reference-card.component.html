@@ -76,7 +76,7 @@
                       brew.getPreparation().visible_list_view_parameters.grind_size,
                       brew.getPreparation().use_custom_parameters)">{{brew?.grind_size}}</span><span *ngIf="brew?.mill_speed > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill_speed,
                       brew.getPreparation().visible_list_view_parameters.mill_speed,
-                      brew.getPreparation().use_custom_parameters)">&nbsp;@&nbsp;{{ brew?.mill_speed }}</span></ion-text>
+                      brew.getPreparation().use_custom_parameters)">&nbsp;&#64;&nbsp;{{ brew?.mill_speed }}</span></ion-text>
       </ion-col>
       <ion-col *ngIf="brew?.tds > 0 && brew?.brew_beverage_quantity>0"  size="6">
         <ion-label class="card-headline">{{'BREW_DATA_TDS_EY' | translate}}</ion-label><br/>
@@ -137,10 +137,10 @@
     <h2>{{graph.name}}</h2>
   </ion-grid>
   <ng-container *ngIf='isGraphType() && graph.flow_profile'>
-     <graph-display-card [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile'></graph-display-card>
+     <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile'></graph-display-card>
   </ng-container>
   <ng-container *ngIf='!isGraphType() && brew.flow_profile'>
-    <graph-display-card [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+    <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
   </ng-container>
 </div>
 <div style="height:10px;"></div>

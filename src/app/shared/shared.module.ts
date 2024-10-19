@@ -25,19 +25,7 @@ import { LicencesComponent } from '../info/licences/licences.component';
 import { PrivacyComponent } from '../info/privacy/privacy.component';
 import { TermsComponent } from '../info/terms/terms.component';
 import { ThanksComponent } from '../info/thanks/thanks.component';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
-import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { BeansPage } from '../beans/beans.page';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
 import { BeansEditComponent } from '../beans/beans-edit/beans-edit.component';
@@ -48,8 +36,6 @@ import { BrewPopoverActionsComponent } from '../brew/brew-popover-actions/brew-p
 import { LogComponent } from '../info/log/log.component';
 import { LogTextComponent } from '../info/log/log-text/log-text.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { HelperPage } from '../helper/helper.page';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { CuppingRadarComponent } from '../../components/cupping-radar/cupping-radar.component';
@@ -82,7 +68,6 @@ import { PreparationOverlayDirective } from '../../directive/preparation-overlay
 import { DisableDoubleClickDirective } from '../../directive/disable-double-click.directive';
 import { NgxStarsModule } from 'ngx-stars';
 import { BrewCuppingComponent } from '../brew/brew-cupping/brew-cupping.component';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { UpdatePopoverComponent } from '../../popover/update-popover/update-popover.component';
 import { PreparationCustomParametersComponent } from '../preparation/preparation-custom-parameters/preparation-custom-parameters.component';
 import { DefaultCustomParameterComponent } from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
@@ -101,7 +86,6 @@ import { GreenBeanEditComponent } from '../roasting-section/green-beans/green-be
 import { GreenBeanDetailComponent } from '../roasting-section/green-beans/green-bean-detail/green-bean-detail.component';
 import { GreenBeanPopoverActionsComponent } from '../roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import { GreenBeanInformationComponent } from '../../components/green-bean-information/green-bean-information.component';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { PhotoPopoverComponent } from '../../popover/photo-popover/photo-popover.component';
 import { PhotoAddComponent } from '../../components/photo-add/photo-add.component';
 import { BeanRoastInformationComponent } from '../../components/beans/bean-roast-information/bean-roast-information.component';
@@ -125,7 +109,6 @@ import { ImpressumComponent } from '../info/impressum/impressum.component';
 import { CookieComponent } from '../info/cookie/cookie.component';
 import { FilesystemErrorPopoverComponent } from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 import { BeanArchivePopoverComponent } from '../beans/bean-archive-popover/bean-archive-popover.component';
 import { CuppingFlavorsComponent } from '../../components/cupping-flavors/cupping-flavors.component';
 import { WaterSectionPage } from '../water-section/water-section.page';
@@ -142,13 +125,11 @@ import { BrewBeverageQuantityCalculatorComponent } from '../brew/brew-beverage-q
 import { BrewFlavorPickerComponent } from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import { BrewChoosePreparationToBrewComponent } from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import { ShortPressDirective } from '../../directive/short-press.directive';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TransformDateDirective } from '../../directive/transform-date';
 import { PreparationEditToolComponent } from '../preparation/preparation-edit-tool/preparation-edit-tool.component';
 import { ListViewParameterComponent } from '../brew-parameter/list-view-parameter/list-view-parameter.component';
 import { ListViewCustomParameterComponent } from '../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
 import { BrewFlowComponent } from '../brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { BeanFilterComponent } from '../beans/bean-filter/bean-filter.component';
 import { ChooseDateOverlayDirective } from '../../directive/choose-date.directive';
 import { BeanPopoverAddComponent } from '../beans/bean-popover-add/bean-popover-add.component';
@@ -193,6 +174,7 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
 import { DataCorruptionFoundComponent } from '../../popover/data-corruption-found/data-corruption-found.component';
 import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popover-list.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
 
 @NgModule({
   declarations: [
@@ -320,6 +302,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanInternalShareCodeGeneratorComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
     BeanPopoverListComponent,
@@ -374,8 +357,6 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     PipesModule,
   ],
   providers: [
-    AppVersion,
-    StatusBar,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
@@ -391,25 +372,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     TooltipDirective,
     TransformDateDirective,
     DisableDoubleClickDirective,
-    InAppBrowser,
-    File,
-    Device,
-    FileChooser,
-    FilePath,
-
-    SocialSharing,
-    Keyboard,
-    ThreeDeeTouch,
-    Camera,
-    ImagePicker,
     AndroidPermissions,
-    InAppBrowser,
-    Globalization,
-    Geolocation,
-    Insomnia,
-    Deeplinks,
-    FileTransfer,
-    ScreenOrientation,
   ],
   exports: [
     SettingsPage,
@@ -532,6 +495,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
     GraphPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanInternalShareCodeGeneratorComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
     BeanPopoverListComponent,

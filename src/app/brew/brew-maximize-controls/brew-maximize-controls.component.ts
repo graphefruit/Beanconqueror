@@ -9,7 +9,6 @@ import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { Settings } from '../../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -110,7 +109,7 @@ export class BrewMaximizeControlsComponent
   }
 
   public pressureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 

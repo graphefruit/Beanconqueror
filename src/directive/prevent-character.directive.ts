@@ -1,22 +1,17 @@
-import {Directive, HostListener} from '@angular/core';
-import {NgModel} from '@angular/forms';
+import { Directive, HostListener } from '@angular/core';
+import { NgModel } from '@angular/forms';
 
 @Directive({
-    selector: '[ngModel][prevent-characters]',
+  selector: '[ngModel][prevent-characters]',
 })
 export class PreventCharacterDirective {
+  constructor(private readonly model: NgModel) {}
 
-    constructor(private readonly model: NgModel) {
-
-    }
-
-    @HostListener('ionBlur', ['$event.target'])
-    public blur(): void {
-
+  @HostListener('ionBlur', ['$event.target'])
+  public blur(): void {
     let val: any = this.model.control.value;
 
     // Value needs to be combined as a string
-    // tslint:disable-next-line
     val = val + '';
     if (val === '') {
       val = '0';
@@ -34,6 +29,5 @@ export class PreventCharacterDirective {
     } else {
       this.model.control.setValue(parsedFloat);
     }
-
-    }
+  }
 }

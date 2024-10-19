@@ -408,6 +408,9 @@ ion-menu:host .menu-inner {
     font-size: 16px;
     --box-shadow:none;
   }
+  ion-button ion-icon[slot="icon-only"] {
+    font-size: 28px;
+  }
 
   .subtitle {
     margin: 0;
@@ -1061,3 +1064,63 @@ ion-chip.machine-disconnected {
   background-color: rgba(204, 51, 17,0.4);
 
 }
+ion-chip.weight {
+  --background: #cdc2ac;
+  --color: black;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #cdc2ac;
+}
+
+ion-chip.flowcalculated {
+  --background: #7F97A2;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #7F97A2;
+}
+
+ion-chip.chip-outline {
+  --color: black !important;
+}
+
+ion-chip.flowreal {
+  --background: #09485D;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #09485D;
+}
+
+ion-chip.pressure {
+  --background: #05C793;
+  --color: black;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #05C793;
+}
+
+ion-chip.temperature {
+  --background: #CC3311;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #CC3311;
+}
+
+ion-chip.weightsecond {
+  --background: #8F6400;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #8F6400;
+}
+
+ion-chip.flowrealsecond {
+  --background: #1FB6EA;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #1FB6EA;
+}
+

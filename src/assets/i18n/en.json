@@ -124,7 +124,14 @@
     "CONTACT": "Contact",
     "NAME": "Name",
     "IMPORT": "Import",
+    "FULL_IMPORT_FROM_DIRECTORY": "Full import from directory",
+    "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": "Import all data (including all pictures and flow profiles) from the selected directory.",
+    "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": "Could not find {{fileName}} in selected directory. Please pick a different directory.",
     "EXPORT": "Export",
+    "FULL_EXPORT_TO_DIRECTORY": "Full export to directory",
+    "FULL_EXPORT_TO_DIRECTORY_DESCRIPTION": "Export all data (including all pictures and flow profiles) to the selected directory.",
+    "FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS": "{{fileName}} already exists in the selected directory. Please clean up the directory and try again.",
+    "EXPORT_COMPLETED": "Export was completed.",
     "VIEW": "View",
     "ARCHIVE": "Archive",
     "CURRENT": "Current",
@@ -857,8 +864,6 @@
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Invalid QR code or unrecognised content",
         "WRONG_QRCODE_TITLE": "Error",
-        "WRONG_LINK_DESCRIPTION": "Invalid QR link",
-        "WRONG_LINK_TITLE": "Error",
         "SERVER": {
             "ERROR_OCCURED": "An error is occured, QR-code could not be read, please try again.",
             "BEAN_NOT_APPROVED": "Bean has not been approved yet, please try later again"
@@ -1114,7 +1119,7 @@
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "The brew ratio will be calculated with this value only for brews of type 'espresso'",
     "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "It looks like the bluetooth scale was not connected correctly. This usually happens on iOS-Devices with Acaia scales, please reconnect the scale and make sure the weight tile is updated",
     "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "No weight values?",
-    "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "The flow rate at which the brew should be stopped. The brew will only be stopped when a minimum of 5 seconds has passed, 5 grams is in the cup or if you entered ground coffee weight - at least a 1:1 brew ratio is achieved (e.g: 18g in, 18g out). After those conditions are me, the minimum flow rate set here will be checked",
+    "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "The flow rate at which the brew should be stopped. The brew will only be stopped when a minimum of 5 seconds has passed, 5 grams is in the cup or if you entered ground coffee weight - at least a 1:1 brew ratio is achieved (e.g: 18g in, 18g out). After those conditions are met, the minimum flow rate set here will be checked",
     "ONLY_BEST_BREWS": "Only best brews",
     "POPOVER_BEST_BREW": "Best brew",
     "PAGE_SETTINGS_BEST_BREW": "Activate best brews",
@@ -1402,5 +1407,30 @@
   "DISCONNECT_TEMPERATURE": "Disconnect temperature",
   "DISCONNECT_REFRACTOMETER": "Disconnect refractometer",
   "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "We didn't find any supported bluetooth devices, please try again",
-  "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": "Hide value cards on maximized screen"
+  "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": "Hide value cards on maximized screen",
+  "BLUETOOTH_REQUEST_PERMISSION": {
+    "LOCATION": "To find bluetooth devices, the app needs access to the location.",
+    "BLUETOOTH": "To find bluetooth devices, the app needs access to bluetooth"
+  },
+  "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generate share Code",
+  "BEAN_CODE_ACTION":{
+    "TITLE":  "Bean qr code action",
+    "START_BREW": "Start brew",
+    "START_BREW_CHOOSE_PREPARATION": "Start brew and choose preparation method",
+    "DETAIL": "Detail view",
+    "EDIT": "Edit bean"
+  },
+  "DOWNLOAD_QR_CODE": "Download QR code",
+  "NFC": {
+    "PLEASE_ENABLED_NFC_DESCRIPTION": "Please enable NFC, else this feature cant be used",
+    "WRITE_COMPLETED_DESCRIPTION": "NFC tag was successfully written",
+    "WRITE_COMPLETED_TITLE": "Write completed",
+    "WRITE_UNCOMPLETED_DESCRIPTION": "NFC tag could not be written",
+    "WRITE_UNCOMPLETED_TITLE": "Write failed",
+    "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": "Please hold your tag to the reader",
+    "WRITE_NFC_TAG": "Write NFC tag"
+  },
+  "BREW_FLOW_WEIGHT_REALTIME_SECOND": "Flow (Realtime, out)",
+  "BREW_FLOW_WEIGHT_SECOND": "Weight (out)",
+  "BEAN_WEIGHT_IN_PLACEHOLDER_NO_BR": "This parameter is not used for the brew-ratio calculation"
 }

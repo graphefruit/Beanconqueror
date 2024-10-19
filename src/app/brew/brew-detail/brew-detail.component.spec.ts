@@ -6,18 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PipesModule } from 'src/pipes/pipes.module';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('BrewDetailComponent', () => {
   let component: BrewDetailComponent;
@@ -25,28 +21,21 @@ describe('BrewDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      declarations: [BrewDetailComponent],
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
         CommonModule,
         IonicModule,
-        HttpClientTestingModule,
         PipesModule,
       ],
-      declarations: [BrewDetailComponent],
       providers: [
-        { provide: InAppBrowser },
         { provide: ModalController },
         { provide: NavParams, useClass: NavParamsMock },
         { provide: Storage },
-        { provide: File },
-        { provide: Camera },
-        { provide: ImagePicker },
-        { provide: AndroidPermissions },
-        { provide: SocialSharing },
         { provide: Router },
-        { provide: FileTransfer },
-        { provide: ScreenOrientation },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   }));

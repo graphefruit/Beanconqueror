@@ -5,8 +5,7 @@ import { Injectable } from '@angular/core';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
-import * as XLSX from 'xlsx';
-import { File, FileEntry } from '@awesome-cordova-plugins/file/ngx';
+
 import { AlertController, Platform } from '@ionic/angular';
 import { UIBrewStorage } from './uiBrewStorage';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,6 +27,10 @@ import { UIBeanHelper } from './uiBeanHelper';
 import { GreenBean } from '../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from './uiGreenBeanStorage';
 
+import { WorkBook, WorkSheet } from '../assets/ts/sheetjs-index';
+import { sleep } from '../classes/devices';
+
+declare var XLSX: any;
 @Injectable({
   providedIn: 'root',
 })
@@ -37,7 +40,6 @@ export class UIExcel {
     protected uiStorage: UIStorage,
     protected uiHelper: UIHelper,
     protected uiLog: UILog,
-    private readonly file: File,
     private readonly platform: Platform,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiBeanStorage: UIBeanStorage,
@@ -52,12 +54,12 @@ export class UIExcel {
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
-  private write(): XLSX.WorkBook {
+  private write(): WorkBook {
     /* generate worksheet */
-    // const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(this.data);
+    // const ws: WorkSheet = XLSX.utils.aoa_to_sheet(this.data);
 
     /* generate workbook and add the worksheet */
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    const wb: WorkBook = XLSX.utils.book_new();
 
     this.exportBrews(wb);
     this.exportBeans(wb);
@@ -66,8 +68,8 @@ export class UIExcel {
     return wb;
   }
 
-  private generateBrewFlowProfileRaw(_flow: BrewFlow): XLSX.WorkBook {
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  private generateBrewFlowProfileRaw(_flow: BrewFlow): WorkBook {
+    const wb: WorkBook = XLSX.utils.book_new();
     const header: Array<string> = [];
     header.push('Timestamp');
     header.push('Brew time');
@@ -97,7 +99,7 @@ export class UIExcel {
       }
       wsData.push(wbEntry);
     }
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+    const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(
       wb,
       ws,
@@ -118,7 +120,7 @@ export class UIExcel {
       ];
       wsDataFlow.push(wbEntry);
     }
-    const wsFlow: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlow);
+    const wsFlow: WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlow);
     XLSX.utils.book_append_sheet(
       wb,
       wsFlow,
@@ -145,7 +147,7 @@ export class UIExcel {
         ];
         wsDataFlowRealtime.push(wbEntry);
       }
-      const wsFlowRealtime: XLSX.WorkSheet =
+      const wsFlowRealtime: WorkSheet =
         XLSX.utils.aoa_to_sheet(wsDataFlowRealtime);
       XLSX.utils.book_append_sheet(
         wb,
@@ -171,7 +173,7 @@ export class UIExcel {
         ];
         wsDataPressureFlow.push(wbEntry);
       }
-      const wsFlowRealtime: XLSX.WorkSheet =
+      const wsFlowRealtime: WorkSheet =
         XLSX.utils.aoa_to_sheet(wsDataPressureFlow);
       XLSX.utils.book_append_sheet(
         wb,
@@ -196,7 +198,7 @@ export class UIExcel {
         ];
         wsDataTemperatureFlow.push(wbEntry);
       }
-      const wsFlowRealtime: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(
+      const wsFlowRealtime: WorkSheet = XLSX.utils.aoa_to_sheet(
         wsDataTemperatureFlow
       );
       XLSX.utils.book_append_sheet(
@@ -239,7 +241,7 @@ export class UIExcel {
         ];
         wsDatafinalWeightFlow.push(wbEntry);
       }
-      const wsFinalWeight: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(
+      const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
         wsDatafinalWeightFlow
       );
       XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'Brew by weight');
@@ -248,7 +250,7 @@ export class UIExcel {
     return wb;
   }
 
-  private exportGrinders(_wb: XLSX.WorkBook) {
+  private exportGrinders(_wb: WorkBook) {
     const header: Array<string> = [];
 
     header.push(this.translate.instant('NAME'));
@@ -272,10 +274,10 @@ export class UIExcel {
       wsData.push(entry);
     }
 
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+    const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(_wb, ws, this.translate.instant('NAV_MILL'));
   }
-  private exportPreparationMethods(_wb: XLSX.WorkBook) {
+  private exportPreparationMethods(_wb: WorkBook) {
     const header: Array<string> = [];
 
     header.push(this.translate.instant('PREPARATION_TYPE'));
@@ -306,7 +308,7 @@ export class UIExcel {
       wsData.push(entry);
     }
 
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+    const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(
       _wb,
       ws,
@@ -314,7 +316,7 @@ export class UIExcel {
     );
   }
 
-  private exportBeans(_wb: XLSX.WorkBook) {
+  private exportBeans(_wb: WorkBook) {
     const header: Array<string> = [];
 
     header.push(this.translate.instant('BEAN_DATA_NAME'));
@@ -407,11 +409,11 @@ export class UIExcel {
         i + 1 + '. ' + this.translate.instant('BEAN_DATA_CERTIFICATION')
       );
     }
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+    const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(_wb, ws, this.translate.instant('NAV_BEANS'));
   }
 
-  private exportBrews(_wb: XLSX.WorkBook) {
+  private exportBrews(_wb: WorkBook) {
     const header: Array<string> = [];
 
     header.push(this.translate.instant('BREW_DATA_GRIND_SIZE'));
@@ -537,13 +539,13 @@ export class UIExcel {
 
       wsData.push(entry);
     }
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+    const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(_wb, ws, this.translate.instant('NAV_BREWS'));
   }
 
   public async exportBrewFlowProfile(_flow: BrewFlow) {
     await this.uiAlert.showLoadingSpinner();
-    const wb: XLSX.WorkBook = this.generateBrewFlowProfileRaw(_flow);
+    const wb: WorkBook = this.generateBrewFlowProfileRaw(_flow);
 
     const filename: string =
       'Beanconqueror_Flowprofile_Raw_' +
@@ -559,7 +561,7 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
+        await this.uiFileHelper.exportFileToDefaultDirectory(
           filename,
           blob,
           true
@@ -596,8 +598,10 @@ export class UIExcel {
 
     let counter: number = 0;
 
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    const wb: WorkBook = XLSX.utils.book_new();
     for (const exportEntry of _entry) {
+      /**The wait time is important, because on more data, like 50, it can be like more then 10mb, and it somehow seems that to fast the RAM is used and not cleared again, and therefore the app reboots**/
+      await sleep(50);
       const grindWeight = exportEntry.BREW.grind_weight;
       const brewBeverageQuantity = exportEntry.BREW.brew_beverage_quantity;
       const avgFlow: number = this.getAvgFlow(exportEntry.FLOW);
@@ -651,7 +655,7 @@ export class UIExcel {
           ];
           wsDatafinalWeightFlow.push(wbEntry);
         }
-        const wsFinalWeight: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(
+        const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
           wsDatafinalWeightFlow
         );
         XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'S-' + counter);
@@ -673,7 +677,7 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
+        await this.uiFileHelper.exportFileToDefaultDirectory(
           filename,
           blob,
           true
@@ -1249,7 +1253,7 @@ export class UIExcel {
   /* Export button */
   public async export() {
     await this.uiAlert.showLoadingSpinner();
-    const wb: XLSX.WorkBook = this.write();
+    const wb: WorkBook = this.write();
 
     const dateTimeStr: string = this.uiHelper.formateDate(
       new Date().getTime() / 1000,
@@ -1266,7 +1270,7 @@ export class UIExcel {
         type: 'application/octet-stream',
       });
       try {
-        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
+        await this.uiFileHelper.exportFileToDefaultDirectory(
           filename,
           blob,
           true

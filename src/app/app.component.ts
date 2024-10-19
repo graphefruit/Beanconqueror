@@ -5,14 +5,11 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
+import { Device } from '@capacitor/device';
+import { Animation, StatusBar, Style } from '@capacitor/status-bar';
+import { Keyboard } from '@capacitor/keyboard';
 
-import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
-import {
-  ThreeDeeTouch,
-  ThreeDeeTouchQuickAction,
-} from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import {
   IonRouterOutlet,
   MenuController,
@@ -53,8 +50,6 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 
 import { UIToast } from '../services/uiToast';
@@ -72,6 +67,7 @@ import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 declare var window;
 
@@ -215,7 +211,6 @@ export class AppComponent implements AfterViewInit {
   constructor(
     private readonly router: Router,
     public platform: Platform,
-    public statusBar: StatusBar,
     private readonly uiLog: UILog,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -224,13 +219,10 @@ export class AppComponent implements AfterViewInit {
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly menuCtrl: MenuController,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly keyboard: Keyboard,
-    private readonly threeDeeTouch: ThreeDeeTouch,
     private readonly modalCtrl: ModalController,
     private readonly uiHelper: UIHelper,
     private readonly uiAlert: UIAlert,
     private _translate: TranslateService,
-    private globalization: Globalization,
     private readonly uiAnalytics: UIAnalytics,
     private readonly menu: MenuController,
     private readonly uiUpdate: UIUpdate,
@@ -246,8 +238,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly cleanupService: CleanupService,
-    private readonly device: Device,
-    private readonly appVersion: AppVersion,
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
     private readonly uiExportImportHelper: UIExportImportHelper,
@@ -263,6 +253,11 @@ export class AppComponent implements AfterViewInit {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
       const _db = window.sqlitePlugin;
     } catch (ex) {}
+
+    if (this.platform.is('capacitor')) {
+      // Just support deeplinks on devices.
+      this.intentHandlerService.attachOnHandleOpenUrl();
+    }
   }
 
   public ngOnInit() {}
@@ -290,16 +285,20 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.uiLog.log(`App Ready, wait for Platform ready`);
     this.platform.ready().then(async () => {
+      try {
+        await SplashScreen.hide();
+      } catch (ex) {}
+
       await this.uiStorage.init();
       try {
+        const deviceInfo = await Device.getInfo();
         // #285 - Add more device loggings
-        this.uiLog.log(`Device-Model: ${this.device.model}`);
-        this.uiLog.log(`Manufacturer: ${this.device.manufacturer}`);
-        this.uiLog.log(`Platform: ${this.device.platform}`);
-        this.uiLog.log(`Version: ${this.device.version}`);
-        if (this.platform.is('cordova')) {
-          const versionCode: string | number =
-            await this.appVersion.getVersionNumber();
+        this.uiLog.log(`Device-Model: ${deviceInfo.model}`);
+        this.uiLog.log(`Manufacturer: ${deviceInfo.manufacturer}`);
+        this.uiLog.log(`Platform: ${deviceInfo.platform}`);
+        this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
+        if (this.platform.is('capacitor')) {
+          const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
           this.uiLog.log(
             `Storage-Driver: ${this.uiStorage.getStorage().driver}`
@@ -324,18 +323,17 @@ export class AppComponent implements AfterViewInit {
         });
       } catch (ex) {}
 
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      // #7
-      this.statusBar.show();
-      this.statusBar.styleDefault();
-      if (this.platform.is('android')) {
-        try {
-          this.statusBar.styleLightContent();
-        } catch (ex) {}
+      if (this.platform.is('capacitor')) {
+        // Okay, so the platform is ready and our plugins are available.
+        // Here you can do any higher level native things you might need.
+        // #7
+        await StatusBar.show({ animation: Animation.None });
+        const statusBarStyle = Style.Default;
+        await StatusBar.setStyle({ style: statusBarStyle });
+        if (this.platform.is('ios')) {
+          await Keyboard.setAccessoryBarVisible({ isVisible: true });
+        }
       }
-
-      this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {
         // When we're in cordova, disable the log messages
         this.uiLog.disable();
@@ -344,11 +342,10 @@ export class AppComponent implements AfterViewInit {
 
       if (this.platform.is('ios')) {
         this.uiLog.log(`iOS Device - attach to home icon pressed`);
-        this.threeDeeTouch.onHomeIconPressed().subscribe(async (payload) => {
-          /* We need to wait for app finished loading, but already attach on platform start, else
-           *  the event won't get triggered **/
+        // Thanks to the solution here: https://forum.ionicframework.com/t/how-to-implement-quick-actions-home-screen-for-ionic-capacitor-app/235690/2
+        window.handleQuickAction = (type: any) => {
           this.uiHelper.isBeanconqurorAppReady().then(async () => {
-            const payloadType = payload.type;
+            const payloadType = type;
             try {
               this.uiAnalytics.trackEvent(
                 STARTUP_TRACKING.TITLE,
@@ -357,29 +354,26 @@ export class AppComponent implements AfterViewInit {
               );
               this.uiLog.log(`iOS Device - Home icon was pressed`);
             } catch (ex) {}
-            if (payload.type === 'Brew') {
+            if (payloadType === 'Brew') {
               await this.__trackNewBrew();
-            } else if (payload.type === 'Bean') {
+            } else if (payloadType === 'Bean') {
               await this.__trackNewBean();
-            } else if (payload.type === 'Preparation') {
+            } else if (payloadType === 'Preparation') {
               await this.__trackNewPreparation();
-            } else if (payload.type === 'Mill') {
+            } else if (payloadType === 'Mill') {
               await this.__trackNewMill();
             }
           });
-          // returns an object that is the button you presed
-        });
+        };
       }
 
-      if (this.platform.is('cordova')) {
-        // Just support deeplinks on devices.
-        this.intentHandlerService.attachOnHandleOpenUrl();
-      }
       // Before we update and show messages, we need atleast to set one default language.
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();
 
-      if (this.platform.is('cordova')) {
+      await SplashScreen.hide();
+
+      if (this.platform.is('capacitor')) {
         try {
           await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}
@@ -479,7 +473,7 @@ export class AppComponent implements AfterViewInit {
   private async __setDeviceLanguage(): Promise<any> {
     return new Promise(async (resolve, _reject) => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         try {
           this.uiLog.info('Its a mobile device, try to set language now');
 
@@ -488,52 +482,49 @@ export class AppComponent implements AfterViewInit {
             settings.language === undefined ||
             settings.language === ''
           ) {
-            this.globalization
-              .getPreferredLanguage()
-              .then(async (res) => {
-                // Run other functions after getting device default lang
-                let systemLanguage: string = res['value'].toLowerCase();
-                this.uiLog.log(`Found system language: ${systemLanguage}`);
-                if (systemLanguage.indexOf('-') > -1) {
-                  systemLanguage = systemLanguage.split('-')[0];
-                }
+            try {
+              // Run other functions after getting device default lang
+              let systemLanguage: string = navigator.language.toLowerCase();
+              this.uiLog.log(`Found system language: ${systemLanguage}`);
+              if (systemLanguage.indexOf('-') > -1) {
+                systemLanguage = systemLanguage.split('-')[0];
+              }
 
-                let settingLanguage: string;
-                if (systemLanguage === 'de') {
-                  settingLanguage = 'de';
-                } else if (systemLanguage === 'es') {
-                  settingLanguage = 'es';
-                } else if (systemLanguage === 'tr') {
-                  settingLanguage = 'tr';
-                } else if (systemLanguage === 'zh') {
-                  settingLanguage = 'zh';
-                } else if (systemLanguage === 'fr') {
-                  settingLanguage = 'fr';
-                } else if (systemLanguage === 'id') {
-                  settingLanguage = 'id';
-                } else if (systemLanguage === 'nl') {
-                  settingLanguage = 'nl';
-                } else {
-                  settingLanguage = 'en';
-                }
-                this.uiLog.log(`Setting language: ${settingLanguage}`);
-                this._translate.setDefaultLang(settingLanguage);
-                settings.language = settingLanguage;
-                await this.uiSettingsStorage.saveSettings(settings);
-                await this._translate.use(settingLanguage).toPromise();
-                moment.locale(settingLanguage);
-                resolve(undefined);
-              })
-              .catch(async (ex) => {
-                const exMessage: string = JSON.stringify(ex);
-                this.uiLog.error(
-                  `Exception occured when setting language ${exMessage}`
-                );
-                this._translate.setDefaultLang('en');
-                await this._translate.use('en').toPromise();
-                moment.locale('en');
-                resolve(undefined);
-              });
+              let settingLanguage: string;
+              if (systemLanguage === 'de') {
+                settingLanguage = 'de';
+              } else if (systemLanguage === 'es') {
+                settingLanguage = 'es';
+              } else if (systemLanguage === 'tr') {
+                settingLanguage = 'tr';
+              } else if (systemLanguage === 'zh') {
+                settingLanguage = 'zh';
+              } else if (systemLanguage === 'fr') {
+                settingLanguage = 'fr';
+              } else if (systemLanguage === 'id') {
+                settingLanguage = 'id';
+              } else if (systemLanguage === 'nl') {
+                settingLanguage = 'nl';
+              } else {
+                settingLanguage = 'en';
+              }
+              this.uiLog.log(`Setting language: ${settingLanguage}`);
+              this._translate.setDefaultLang(settingLanguage);
+              settings.language = settingLanguage;
+              await this.uiSettingsStorage.saveSettings(settings);
+              await this._translate.use(settingLanguage).toPromise();
+              moment.locale(settingLanguage);
+              resolve(undefined);
+            } catch (ex) {
+              const exMessage: string = JSON.stringify(ex);
+              this.uiLog.error(
+                `Exception occured when setting language ${exMessage}`
+              );
+              this._translate.setDefaultLang('en');
+              await this._translate.use('en').toPromise();
+              moment.locale('en');
+              resolve(undefined);
+            }
           } else {
             this.uiLog.info('Language settings already existing, set language');
             const settingLanguage: string = settings.language;
@@ -614,7 +605,6 @@ export class AppComponent implements AfterViewInit {
     this.__registerBack();
     await this.__setDeviceLanguage();
 
-    this.__setThreeDeeTouchActions();
     await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
@@ -849,60 +839,24 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  private __setThreeDeeTouchActions() {
-    // Ignore for now
-    try {
-      if (this.platform.is('ios')) {
-        const actions: ThreeDeeTouchQuickAction[] = [
-          {
-            type: 'Brew',
-            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BREW'),
-            iconType: 'Add',
-          },
-          {
-            type: 'Bean',
-            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BEAN'),
-            iconType: 'Add',
-          },
-          {
-            type: 'Preparation',
-            title: this._translate.instant(
-              'THREE_DEE_TOUCH_ACTION_PREPARATION'
-            ),
-            iconType: 'Add',
-          },
-          {
-            type: 'Mill',
-            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_MILL'),
-            iconType: 'Add',
-          },
-        ];
-
-        this.threeDeeTouch.configureQuickActions(actions);
-      }
-    } catch (ex) {
-      this.uiLog.error('Could not set three dee actions');
-    }
-  }
-
   private __instanceAppRating() {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       /** const appLanguage = this.uiSettingsStorage.getSettings().language;
-      AppRate.setPreferences({
-        usesUntilPrompt: 25,
-        storeAppURL: {
-          ios: '1445297158',
-          android: 'market://details?id=com.beanconqueror.app',
-        },
-        promptAgainForEachNewVersion: false,
-        reviewType: {
-          ios: 'AppStoreReview',
-          android: 'InAppReview',
-        },
-        useLanguage: appLanguage,
-      });
+       AppRate.setPreferences({
+       usesUntilPrompt: 25,
+       storeAppURL: {
+       ios: '1445297158',
+       android: 'market://details?id=com.beanconqueror.app',
+       },
+       promptAgainForEachNewVersion: false,
+       reviewType: {
+       ios: 'AppStoreReview',
+       android: 'InAppReview',
+       },
+       useLanguage: appLanguage,
+       });
 
-      AppRate.promptForRating(false);**/
+       AppRate.promptForRating(false);**/
     }
   }
 
@@ -926,6 +880,7 @@ export class AppComponent implements AfterViewInit {
       await modal.onWillDismiss();
     }
   }
+
   private async __checkMeticulousHelpPage() {
     return;
     const settings = this.uiSettingsStorage.getSettings();
@@ -983,9 +938,7 @@ export class AppComponent implements AfterViewInit {
       ) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home') >= 0) {
-        window.plugins.appMinimize.minimize();
-        // or if that doesn't work, try
-        // navigator['app'].exitApp();
+        App.minimizeApp();
       } else {
         this.router.navigate(['/home/dashboard'], { replaceUrl: true });
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");

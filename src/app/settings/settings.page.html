@@ -44,10 +44,24 @@
             <ion-label>{{"IMPORT" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
+          <ion-item *ngIf="isAndroid" (click)="importFromDirectoryAndroid()" button tappable>
+            <ion-label>
+              <h2>{{"FULL_IMPORT_FROM_DIRECTORY" | translate}}</h2>
+              <p>{{"FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION" | translate}}</p>
+            </ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
           <ion-item (click)="export()" button tappable>
             <ion-label>
               <h2>{{"EXPORT" | translate}}</h2>
               <p>{{"EXPORT_CAUTION" | translate}}</p>
+            </ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item *ngIf="isAndroid" (click)="exportToSafDirectoryAndroid()" button tappable>
+            <ion-label>
+              <h2>{{"FULL_EXPORT_TO_DIRECTORY" | translate}}</h2>
+              <p>{{"FULL_EXPORT_TO_DIRECTORY_DESCRIPTION" | translate}}</p>
             </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
@@ -798,6 +812,20 @@
                 <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</div>
               </ion-checkbox>
             </ion-item>
+            <ng-container *ngIf="smartScaleConnected() && smartScaleSupportsTwoWeight()">
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.weightSecond">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_SECOND" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.realtime_flowSecond">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME_SECOND" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+            </ng-container>
           </ion-list>
         </ion-card-content>
       </ion-card>

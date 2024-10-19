@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { GraphPage } from './graph.page';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -6,10 +7,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 describe('GraphPage', () => {
   let component: GraphPage;
@@ -24,12 +21,13 @@ describe('GraphPage', () => {
           provide: UIHelper,
           useClass: UIHelperMock,
         },
-        { provide: FileChooser },
-        { provide: File },
-        { provide: SocialSharing },
-        { provide: FileTransfer },
       ],
-      imports: [IonicModule.forRoot(), CommonModule, TranslateModule.forRoot()],
+      imports: [
+        IonicModule.forRoot(),
+        CommonModule,
+        TranslateModule.forRoot(),
+        FormsModule,
+      ],
     }).compileComponents();
   }));
 

@@ -6,15 +6,15 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { BrewMock, UIHelperMock } from '../../../classes/mock';
 import { UIHelper } from '../../../services/uiHelper';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { FormsModule } from '@angular/forms';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { PipesModule } from 'src/pipes/pipes.module';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('BrewBrewingComponent', () => {
   let component: BrewBrewingComponent;
@@ -30,17 +30,14 @@ describe('BrewBrewingComponent', () => {
       imports: [
         IonicModule.forRoot(),
         TranslateModule.forRoot(),
-        HttpClientTestingModule,
         FormsModule,
         PipesModule,
       ],
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
-        { provide: File },
-        { provide: SocialSharing },
-        { provide: FileTransfer },
-        { provide: ScreenOrientation },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   }));

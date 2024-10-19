@@ -4,6 +4,8 @@ import {
   Platform,
   ScrollDetail,
 } from '@ionic/angular';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Geolocation } from '@capacitor/geolocation';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import { Bean } from '../../classes/bean/bean';
 
@@ -11,15 +13,11 @@ import { Brew } from '../../classes/brew/brew';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { DirectoryEntry, FileEntry } from '@awesome-cordova-plugins/file';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -62,9 +60,12 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Logger } from '../../classes/devices/common/logger';
-import { UIFileHelper } from '../../services/uiFileHelper';
+import {
+  CreateTempCacheDirectoryResult,
+  UIFileHelper,
+} from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
-import { BluetoothTypes } from '../../classes/devices';
+import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
@@ -74,12 +75,9 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
-
-declare var cordova: any;
-declare var device: any;
-
-declare var window: any;
-declare var FilePicker;
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
+import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 
 @Component({
   selector: 'settings',
@@ -103,6 +101,9 @@ export class SettingsPage {
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
   public isScrolling: boolean = false;
+
+  public readonly isAndroid: boolean;
+  public readonly isIos: boolean;
 
   private __cleanupAttachmentData(
     _data: Array<
@@ -134,8 +135,6 @@ export class SettingsPage {
     public uiSettingsStorage: UISettingsStorage,
     public uiStorage: UIStorage,
     public uiHelper: UIHelper,
-    private readonly fileChooser: FileChooser,
-    private readonly file: File,
     private readonly alertCtrl: AlertController,
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationStorage: UIPreparationStorage,
@@ -143,7 +142,7 @@ export class SettingsPage {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly socialSharing: SocialSharing,
+
     private readonly uiLog: UILog,
     private readonly translate: TranslateService,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -189,6 +188,10 @@ export class SettingsPage {
     } else {
       this.isTextToSpeechSectionAvailable = false;
     }
+
+    this.isAndroid =
+      this.platform.is('capacitor') && this.platform.is('android');
+    this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
   }
 
   public handleScrollStart() {
@@ -368,26 +371,33 @@ export class SettingsPage {
     }
   }
 
-  public checkCoordinates() {
-    if (this.platform.is('android')) {
-      // Request permission,
-      this.androidPermissions
-        .checkPermission(
-          this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
-        )
-        .then(
-          (_status) => {
-            this.androidPermissions
-              .requestPermission(
-                this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
-              )
-              .then(
-                (_status) => {},
-                () => {}
-              );
-          },
-          () => {}
+  public async checkCoordinates() {
+    // Only ask for permissions when the geolocation feature is turned on and
+    // the current platform is android.
+    if (!this.settings.track_brew_coordinates || !this.platform.is('android')) {
+      return;
+    }
+
+    try {
+      const currentPermissions = await Geolocation.checkPermissions();
+      if (currentPermissions.location === 'granted') {
+        this.uiLog.info('Location permission is already granted.');
+        return;
+      }
+      // TODO Capacitor migration: We should also handle the other possible
+      // outcomes, see https://capacitorjs.com/docs/plugins/web#aliases
+      // At the very least, we should display a message to the user.
+
+      const requestResult = await Geolocation.requestPermissions({
+        permissions: ['location'],
+      });
+      if (requestResult.location !== 'granted') {
+        throw new Error(
+          'Permission request did not work, maybe the user declined?'
         );
+      }
+    } catch (error) {
+      this.uiLog.warn('Error obtaining location permission:', error);
     }
   }
 
@@ -549,6 +559,18 @@ export class SettingsPage {
     await modal.onWillDismiss();
   }
 
+  public smartScaleConnected() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
+  }
+  public smartScaleSupportsTwoWeight() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale && scale.supportsTwoWeights === true) {
+      return true;
+    }
+    return false;
+  }
+
   public languageChanged(_query): void {
     this.debounceLanguageFilter.next(_query);
   }
@@ -565,106 +587,238 @@ export class SettingsPage {
     moment.locale(this.settings.language);
   }
 
-  public import(): void {
-    if (this.platform.is('cordova')) {
-      this.uiAnalytics.trackEvent(
-        SETTINGS_TRACKING.TITLE,
-        SETTINGS_TRACKING.ACTIONS.IMPORT
-      );
-      this.uiLog.log('Import real data');
-      if (this.platform.is('android')) {
-        this.fileChooser.open().then(async (uri) => {
-          try {
-            const fileEntry: any = await new Promise(
-              async (resolve) =>
-                await window.resolveLocalFileSystemURL(uri, resolve, () => {})
-            );
-
-            // After the new API-Changes we just can support this download path
-            const importPath =
-              this.file.externalDataDirectory +
-              'Download/Beanconqueror_export/';
-            this.__readZipFile(fileEntry).then(
-              (_importData) => {
-                this.__importJSON(_importData, importPath);
-              },
-              (_err) => {
-                this.__readAndroidJSONFile(fileEntry, importPath).then(
-                  () => {
-                    // nothing todo
-                  },
-                  (_err2) => {
-                    this.uiAlert.showMessage(
-                      this.translate.instant('ERROR_ON_FILE_READING') +
-                        ' (' +
-                        JSON.stringify(_err2) +
-                        ')'
-                    );
-                  }
-                );
-              }
-            );
-          } catch (ex) {
-            this.uiAlert.showMessage(
-              this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                ' (' +
-                JSON.stringify(ex) +
-                ')'
-            );
-          }
-        });
-      } else {
-        FilePicker.pickFile(
-          (uri) => {
-            if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
-              let path = uri.substring(0, uri.lastIndexOf('/'));
-              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-              if (path.indexOf('file://') !== 0) {
-                path = 'file://' + path;
-              }
-
-              if (uri.endsWith('.zip')) {
-                this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
-                  async (_arrayBuffer) => {
-                    const parsedJSON =
-                      await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
-                        _arrayBuffer
-                      );
-                    this.__importJSON(parsedJSON, path);
-                  },
-                  () => {
-                    // Backup, maybe it was a .JSON?
-                  }
-                );
-              } else {
-                this.__readJSONFile(path, file)
-                  .then(() => {
-                    // nothing todo
-                  })
-                  .catch((_err) => {
-                    this.uiAlert.showMessage(
-                      this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                        ' (' +
-                        JSON.stringify(_err) +
-                        ')'
-                    );
-                  });
-              }
-            } else {
-              this.uiAlert.showMessage(
-                this.translate.instant('INVALID_FILE_FORMAT')
-              );
-            }
-          },
-          () => {}
-        );
-      }
-    } else {
+  public async import(): Promise<void> {
+    if (!this.platform.is('capacitor')) {
       this.__importDummyData();
+      return;
+    }
+
+    this.uiAnalytics.trackEvent(
+      SETTINGS_TRACKING.TITLE,
+      SETTINGS_TRACKING.ACTIONS.IMPORT
+    );
+    this.uiLog.log('Import real data');
+
+    const { files: pickedFiles } = await FilePicker.pickFiles({ limit: 1 });
+
+    if (!pickedFiles || !pickedFiles[0]?.path) {
+      return;
+    }
+    const pickedFile = pickedFiles[0];
+    if (
+      pickedFile.mimeType.indexOf('zip') === -1 &&
+      pickedFile.mimeType.indexOf('json') === -1
+    ) {
+      await this.uiAlert.showMessage(
+        this.translate.instant('INVALID_FILE_FORMAT')
+      );
+      return;
+    }
+
+    const path = pickedFile.path;
+    // path/uri post-processing
+    let directoryUri = path.substring(0, path.lastIndexOf('/'));
+    if (this.platform.is('android')) {
+      // Until we package the additional files into the ZIP file, we just have
+      // to always import from the external storage directory,
+      // i.e. /sdcard/Android/com.beanconqueror.app/files/
+      //
+      // As an alternative, importFromDirectoryAndroid can be used, which
+      // uses SAF to get all the other files as well.
+      const result = await Filesystem.getUri({
+        path: 'Download/Beanconqueror_export/',
+        directory: Directory.External,
+      });
+      directoryUri = result.uri;
+    }
+    const importMode =
+      pickedFile.mimeType.indexOf('zip') !== -1 ? 'zip' : 'json';
+    await this.doImport(importMode, path, directoryUri);
+  }
+
+  private async doImport(
+    importMode: 'zip' | 'json',
+    mainFileUri: string,
+    directoryUri: string
+  ): Promise<void> {
+    try {
+      if (importMode === 'zip') {
+        const zipContent = await this.uiFileHelper.readFileAsUint8Array(
+          mainFileUri
+        );
+        const parsedJSON =
+          await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+            zipContent
+          );
+        await this.__importJSON(parsedJSON, directoryUri);
+      } else {
+        // importMode === 'json'
+        await this.uiFileHelper.readJSONFile(mainFileUri);
+      }
+    } catch (error) {
+      this.uiLog.error(
+        'Error while importing file',
+        mainFileUri,
+        'from directory',
+        directoryUri,
+        '; Error',
+        error
+      );
+      await this.uiAlert.showMessage(
+        this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`
+      );
     }
   }
 
-  private async exportAttachments() {
+  public async importFromDirectoryAndroid(): Promise<void> {
+    const logTag = 'importFromDirectoryAndroid:';
+
+    if (!this.isAndroid) {
+      throw new Error(
+        'importFromDirectoryAndroid is only available on Android'
+      );
+    }
+
+    this.uiLog.info(logTag, 'Asking for SAF directory');
+    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
+      takePersistentPermissions: false,
+    });
+    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
+
+    let cacheDir: CreateTempCacheDirectoryResult | undefined;
+    try {
+      await this.uiAlert.showLoadingSpinner();
+
+      // Attempt to read the main import file from the SAF directory and only
+      // proceed with copying the SAF directory to cache if the main file exists.
+      const mainFileName = 'Beanconqueror.zip';
+      const { exists } = await AndroidNativeCalls.fileExistsSaf({
+        safTreeUri: safTreeUri,
+        pathComponents: [mainFileName],
+      });
+      if (!exists) {
+        await this.uiAlert.showMessage(
+          this.translate.instant('FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND', {
+            fileName: mainFileName,
+          })
+        );
+        return;
+      }
+
+      // Create a cache directory to move the selected SAF directory content into.
+      // This allows us to re-use the existing import logic that is common to
+      // Android and iOS.
+      cacheDir = await this.uiFileHelper.createTempCacheDirectory('safImport');
+      await AndroidNativeCalls.copySafDirectoryToFileDirectory({
+        fromSafTreeUri: safTreeUri,
+        toDirectoryUri: cacheDir.uri,
+      });
+
+      await this.doImport(
+        'zip',
+        cacheDir.uri + '/' + mainFileName,
+        cacheDir.uri
+      );
+    } finally {
+      try {
+        if (cacheDir) {
+          await Filesystem.rmdir({
+            path: cacheDir.path,
+            directory: cacheDir.directory,
+            recursive: true,
+          });
+        }
+      } catch (error) {
+        this.uiLog.error(
+          logTag,
+          'Could not delete cache dir',
+          cacheDir.path,
+          '; Error',
+          error
+        );
+        // ignore
+      }
+      await this.uiAlert.hideLoadingSpinner();
+    }
+  }
+
+  public async exportToSafDirectoryAndroid(): Promise<void> {
+    const logTag = 'exportToDirectoryAndroid:';
+
+    if (!this.isAndroid) {
+      throw new Error('exportToDirectoryAndroid is only available on Android');
+    }
+
+    this.uiLog.info(logTag, 'Asking for SAF directory');
+    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
+      takePersistentPermissions: false,
+    });
+    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
+
+    let cacheDir: CreateTempCacheDirectoryResult | undefined;
+    try {
+      await this.uiAlert.showLoadingSpinner();
+
+      const mainFileName = 'Beanconqueror.zip';
+      const { exists } = await AndroidNativeCalls.fileExistsSaf({
+        safTreeUri: safTreeUri,
+        pathComponents: [mainFileName],
+      });
+      if (exists) {
+        this.uiAlert.showMessage(
+          this.translate.instant(
+            'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+            {
+              fileName: mainFileName,
+            }
+          )
+        );
+        return;
+      }
+
+      // Create a cache directory to export to. Then a native method will be
+      // used to move the contents to the SAF directory afterwards.
+      // This allows us to re-use the existing export logic that is common to
+      // Android and iOS.
+      cacheDir = await this.uiFileHelper.createTempCacheDirectory('safExport');
+      await this.exportToPath(
+        { path: cacheDir.path, directory: cacheDir.directory },
+        false
+      );
+      await AndroidNativeCalls.moveFileDirectoryToSafDirectory({
+        fromDirectoryUri: cacheDir.uri,
+        toSafTreeUri: safTreeUri,
+      });
+      this.uiAlert.showMessage(this.translate.instant('EXPORT_COMPLETED'));
+    } finally {
+      try {
+        if (cacheDir) {
+          await Filesystem.rmdir({
+            path: cacheDir.path,
+            directory: cacheDir.directory,
+            recursive: true,
+          });
+        }
+      } catch (error) {
+        this.uiLog.error(
+          logTag,
+          'Could not delete cache dir',
+          cacheDir.path,
+          '; Error',
+          error
+        );
+        // ignore
+      }
+      if (this.uiAlert.isLoadingSpinnerShown) {
+        this.uiAlert.hideLoadingSpinner();
+      }
+    }
+  }
+
+  private async exportAttachments(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
     const exportObjects: Array<any> = [
       ...this.uiBeanStorage.getAllEntries(),
       ...this.uiBrewStorage.getAllEntries(),
@@ -675,126 +829,77 @@ export class SettingsPage {
       ...this.uiRoastingMachineStorage.getAllEntries(),
     ];
 
-    await this._exportAttachments(exportObjects);
+    await this._exportAttachments(exportObjects, exportPath);
   }
 
-  private async exportFlowProfiles() {
+  private async exportFlowProfiles(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
     const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
-    await this._exportFlowProfiles(exportObjects);
+    await this._exportFlowProfiles(exportObjects, exportPath);
   }
 
-  private async exportGraphProfiles() {
+  private async exportGraphProfiles(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
     const exportObjects: Array<any> = [...this.uiGraphStorage.getAllEntries()];
-    await this._exportGraphProfiles(exportObjects);
+    await this._exportGraphProfiles(exportObjects, exportPath);
   }
 
   public async export() {
     await this.uiAlert.showLoadingSpinner();
+    // Do an export to the default export location
+    const defaultExportPath = {
+      path: 'Download/Beanconqueror_export',
+      directory: Directory.External,
+    };
+    await this.exportToPath(defaultExportPath, true);
+
+    await this.uiAlert.hideLoadingSpinner();
+  }
+
+  private async exportToPath(
+    exportPath: {
+      path: string;
+      directory: Directory;
+    },
+    share: boolean
+  ) {
+    this.uiLog.log(
+      'Starting export to directory',
+      exportPath.directory,
+      'in directory',
+      exportPath.directory
+    );
 
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,
       SETTINGS_TRACKING.ACTIONS.EXPORT
     );
 
-    if (this.platform.is('cordova')) {
-      if (this.platform.is('android')) {
-        const storageLocation = cordova.file.externalDataDirectory;
-        if (storageLocation === null || storageLocation === undefined) {
-          await this.uiAlert.hideLoadingSpinner();
-          await this.uiAlert.showMessage(
-            'ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION',
-            'ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE',
-            undefined,
-            true
-          );
-          //We cant export because no file system existing, so break.
-          this.uiExportImportHelper.buildExportZIP().then(async (_blob) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(_blob);
-            reader.onloadend = () => {
-              let base64data = reader.result.toString();
-              base64data = base64data.replace(
-                'data:application/octet-stream;',
-                'data:application/zip;'
-              );
-              this.socialSharing.share(undefined, 'Beanconqueror', base64data);
-            };
-          });
+    const zipBlob = await this.uiExportImportHelper.buildExportZIP();
 
-          return;
-        }
-      }
+    // Export attachment files on android because they are stored in the
+    // internal storage, which is not accessible for users.
+    // On iOS this is not required because the attachments are stored in the
+    // documents directory and are user-accessible anyway
+    if (this.isAndroid) {
+      await this.exportAttachments(exportPath);
+      await this.exportFlowProfiles(exportPath);
+      await this.exportGraphProfiles(exportPath);
     }
 
-    this.uiExportImportHelper.buildExportZIP().then(
-      async (_blob) => {
-        this.uiLog.log('New zip-export way');
-
-        if (this.platform.is('cordova')) {
-          if (this.platform.is('android')) {
-            await this.exportAttachments();
-            await this.exportFlowProfiles();
-            await this.exportGraphProfiles();
-          }
-        }
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          'Beanconqueror.zip',
-          _blob,
-          true
-        );
-
-        await this.uiAlert.hideLoadingSpinner();
+    await this.uiFileHelper.exportFile(
+      {
+        fileName: 'Beanconqueror.zip',
+        path: exportPath.path,
+        directory: exportPath.directory,
       },
-      () => {
-        // Error
-        // Do the old conventional way
-        this.uiStorage.export().then(
-          (_data) => {
-            this.uiLog.log('Old JSON-Export way');
-            const isIOS = this.platform.is('ios');
-            this.uiHelper
-              .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
-              .then(
-                async (_fileEntry: FileEntry) => {
-                  if (this.platform.is('cordova')) {
-                    if (this.platform.is('android')) {
-                      await this.exportAttachments();
-                      await this.exportFlowProfiles();
-                      await this.exportGraphProfiles();
-                      await this.uiAlert.hideLoadingSpinner();
-
-                      const alert = await this.alertCtrl.create({
-                        header: this.translate.instant('DOWNLOADED'),
-                        subHeader: this.translate.instant(
-                          'FILE_DOWNLOADED_SUCCESSFULLY',
-                          { fileName: _fileEntry.name }
-                        ),
-                        buttons: ['OK'],
-                      });
-                      await alert.present();
-                    } else {
-                      await this.uiAlert.hideLoadingSpinner();
-                      // File already downloaded
-                      // We don't support image export yet, because
-                    }
-                  } else {
-                    await this.uiAlert.hideLoadingSpinner();
-                    // File already downloaded
-                    // We don't support image export yet, because
-                  }
-                },
-                async () => {
-                  await this.uiAlert.hideLoadingSpinner();
-                }
-              );
-          },
-          async () => {
-            await this.uiAlert.hideLoadingSpinner();
-          }
-        );
-      }
+      zipBlob,
+      share
     );
-    return;
   }
 
   public excelExport(): void {
@@ -833,8 +938,7 @@ export class SettingsPage {
     try {
       const allPreps = [];
       let allPreparations = this.uiPreparationStorage.getAllEntries();
-      // Just take 60, else the excel will be exploding.
-      allPreparations = allPreparations.reverse().slice(0, 60);
+
       for (const prep of allPreparations) {
         if (
           _type === 'xenia' &&
@@ -884,6 +988,11 @@ export class SettingsPage {
           );
       }
 
+      // Just take 60, else the excel will be exploding.
+      if (allBrewsWithProfiles.length > 60) {
+        allBrewsWithProfiles = allBrewsWithProfiles.reverse().slice(0, 60);
+      }
+
       const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
       for await (const brew of allBrewsWithProfiles) {
         const flow: BrewFlow = await this.readFlowProfile(brew);
@@ -904,7 +1013,9 @@ export class SettingsPage {
   public async readFlowProfile(_brew: Brew) {
     const flowProfilePath = 'brews/' + _brew.config.uuid + '_flow_profile.json';
     try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+        flowProfilePath
+      );
       return jsonParsed as BrewFlow;
     } catch (ex) {
       return null;
@@ -917,71 +1028,36 @@ export class SettingsPage {
     );
   }
 
-  public importBeansExcel(_type: string = 'roasted'): void {
-    if (this.platform.is('cordova')) {
+  public async importBeansExcel(_type: string = 'roasted') {
+    if (this.platform.is('capacitor')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
         SETTINGS_TRACKING.ACTIONS.IMPORT
       );
       this.uiLog.log('Import real data');
-      if (this.platform.is('android')) {
-        this.fileChooser.open().then(async (uri) => {
-          try {
-            const fileEntry: any = await new Promise(
-              async (resolve) =>
-                await window.resolveLocalFileSystemURL(uri, resolve, () => {})
-            );
-
-            this.uiFileHelper.readFileEntryAsArrayBuffer(fileEntry).then(
-              async (_arrayBuffer) => {
-                if (_type === 'roasted') {
-                  this.uiExcel.importBeansByExcel(_arrayBuffer);
-                } else {
-                  this.uiExcel.importGreenBeansByExcel(_arrayBuffer);
-                }
-              },
-              () => {
-                // Backup, maybe it was a .JSON?
-              }
-            );
-          } catch (ex) {
-            this.uiAlert.showMessage(
-              this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                ' (' +
-                JSON.stringify(ex) +
-                ')'
-            );
-          }
-        });
-      } else {
-        FilePicker.pickFile(
-          (uri) => {
-            if (uri && uri.endsWith('.xlsx')) {
-              let path = uri.substring(0, uri.lastIndexOf('/'));
-              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-              if (path.indexOf('file://') !== 0) {
-                path = 'file://' + path;
-              }
-              this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
-                async (_arrayBuffer) => {
-                  if (_type === 'roasted') {
-                    this.uiExcel.importBeansByExcel(_arrayBuffer);
-                  } else {
-                    this.uiExcel.importGreenBeansByExcel(_arrayBuffer);
-                  }
-                },
-                () => {
-                  // Backup, maybe it was a .JSON?
-                }
-              );
+      const fileUri = await FilePicker.pickFiles({ limit: 1 });
+      if (!fileUri.files || !fileUri.files[0]?.path) {
+        return;
+      }
+      if (
+        fileUri.files[0].mimeType.indexOf(
+          'openxmlformats-officedocument.spreadsheetml.sheet'
+        ) > 0
+      ) {
+        this.uiFileHelper.readFileAsUint8Array(fileUri.files[0].path).then(
+          async (_arrayBuffer) => {
+            if (_type === 'roasted') {
+              this.uiExcel.importBeansByExcel(_arrayBuffer.buffer);
             } else {
-              this.uiAlert.showMessage(
-                this.translate.instant('INVALID_FILE_FORMAT')
-              );
+              this.uiExcel.importGreenBeansByExcel(_arrayBuffer.buffer);
             }
           },
-          () => {}
+          () => {
+            // Backup, maybe it was a .JSON?
+          }
         );
+      } else {
+        this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
       }
     } else {
     }
@@ -995,219 +1071,125 @@ export class SettingsPage {
       | Array<Mill>
       | Array<GreenBean>
       | Array<RoastingMachine>
-      | Array<Water>
+      | Array<Water>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
   ) {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
-        await this._exportFile(attachment);
+        await this._exportFile(attachment, exportPath);
       }
     }
   }
 
-  private async _exportFlowProfiles(_storedData: Array<Brew>) {
-    await this.exportStoredData(_storedData);
+  private async _exportFlowProfiles(
+    _storedData: Array<Brew>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
+  ) {
+    await this.exportStoredData(_storedData, exportPath);
   }
 
-  private async _exportGraphProfiles(_storedData: Array<Graph>) {
-    await this.exportStoredData(_storedData);
+  private async _exportGraphProfiles(
+    _storedData: Array<Graph>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
+  ) {
+    await this.exportStoredData(_storedData, exportPath);
   }
 
-  private async exportStoredData(_storedData: Array<Brew> | Array<Graph>) {
+  private async exportStoredData(
+    _storedData: Array<Brew> | Array<Graph>,
+    exportPath: {
+      path: string;
+      directory: Directory;
+    }
+  ) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFlowProfileFile(entry.flow_profile);
+        await this._exportFile(entry.getGraphPath(), exportPath);
+      }
+
+      if (
+        entry instanceof Brew &&
+        entry.reference_flow_profile &&
+        entry.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        await this._exportFile(
+          entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
+          exportPath
+        );
       }
     }
   }
 
-  private async _exportFlowProfileFile(_filePath) {
-    let path: string;
-    let fileName: string;
-    path = this.file.dataDirectory;
-    fileName = _filePath;
-    if (fileName.startsWith('/')) {
-      fileName = fileName.slice(1);
+  private async _exportFile(
+    fileName: string,
+    exportPath: {
+      path: string;
+      directory: Directory;
     }
-    let storageLocation: string = '';
-
-    switch (device.platform) {
-      case 'Android':
-        storageLocation = cordova.file.externalDataDirectory;
-        break;
-      case 'iOS':
-        storageLocation = cordova.file.documentsDirectory;
-        break;
-    }
-
+  ) {
     try {
-      const fileSystem: any = await new Promise(
-        async (resolve) =>
-          await window.resolveLocalFileSystemURL(storageLocation, resolve)
-      );
+      const sourceFile = this.uiFileHelper.normalizeFileName(fileName);
+      const targetFile = `${exportPath.path}/${fileName}`;
 
-      const directory: DirectoryEntry = await new Promise(
-        async (resolve) =>
-          await fileSystem.getDirectory(
-            'Download',
-            {
-              create: true,
-              exclusive: false,
-            },
-            resolve
-          )
-      );
-      let exportDirectory: DirectoryEntry = await new Promise(
-        async (resolve) =>
-          await directory.getDirectory(
-            'Beanconqueror_export',
-            {
-              create: true,
-              exclusive: false,
-            },
-            resolve
-          )
-      );
+      this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);
 
-      let exportingFilename = '';
-      const folders = fileName.split('/');
-      for (let i = 0; i < folders.length; i++) {
-        const folderName = folders[i];
-        if (folderName.indexOf('.') >= 0) {
-          // We found the filename woop
-          exportingFilename = folderName.trim();
-        } else if (folderName !== '') {
-          // We found another folder, create it or just get it
-          path = path + folderName + '/';
-          exportDirectory = await new Promise(
-            async (resolve) =>
-              await exportDirectory.getDirectory(
-                folderName,
-                {
-                  create: true,
-                  exclusive: false,
-                },
-                resolve
-              )
-          );
-        }
-      }
-
-      await this.file.copyFile(
-        path,
-        exportingFilename,
-        exportDirectory.nativeURL,
-        exportingFilename
+      const copyResult = await Filesystem.copy({
+        from: sourceFile,
+        directory: this.uiFileHelper.getDataDirectory(),
+        to: targetFile,
+        toDirectory: exportPath.directory,
+      });
+      this.uiLog.info(
+        'File',
+        fileName,
+        'exported successfully to',
+        copyResult.uri
       );
-    } catch (ex) {}
-  }
-
-  private async _exportFile(_filePath) {
-    let path: string;
-    let fileName: string;
-    path = this.file.dataDirectory;
-    fileName = _filePath;
-    if (fileName.startsWith('/')) {
-      fileName = fileName.slice(1);
+    } catch (error) {
+      this.uiLog.error(
+        'Error while exporting',
+        fileName,
+        error,
+        '.The error will be ignored.'
+      );
     }
-    let storageLocation: string = '';
-
-    switch (device.platform) {
-      case 'Android':
-        storageLocation = cordova.file.externalDataDirectory;
-        break;
-      case 'iOS':
-        storageLocation = cordova.file.documentsDirectory;
-        break;
-    }
-
-    try {
-      const fileSystem: any = await new Promise(
-        async (resolve) =>
-          await window.resolveLocalFileSystemURL(storageLocation, resolve)
-      );
-
-      const directory: DirectoryEntry = await new Promise(
-        async (resolve) =>
-          await fileSystem.getDirectory(
-            'Download',
-            {
-              create: true,
-              exclusive: false,
-            },
-            resolve
-          )
-      );
-      let exportDirectory: DirectoryEntry = await new Promise(
-        async (resolve) =>
-          await directory.getDirectory(
-            'Beanconqueror_export',
-            {
-              create: true,
-              exclusive: false,
-            },
-            resolve
-          )
-      );
-
-      let exportingFilename = '';
-      const folders = fileName.split('/');
-      for (let i = 0; i < folders.length; i++) {
-        const folderName = folders[i];
-        if (folderName.indexOf('.') >= 0) {
-          // We found the filename woop
-          exportingFilename = folderName.trim();
-        } else if (folderName !== '') {
-          // We found another folder, create it or just get it
-          path = path + folderName + '/';
-          exportDirectory = await new Promise(
-            async (resolve) =>
-              await exportDirectory.getDirectory(
-                folderName,
-                {
-                  create: true,
-                  exclusive: false,
-                },
-                resolve
-              )
-          );
-        }
-      }
-
-      await this.file.copyFile(
-        path,
-        exportingFilename,
-        exportDirectory.nativeURL,
-        exportingFilename
-      );
-    } catch (ex) {}
   }
 
   private async _importFiles(
     _storedData:
-      | Array<Bean>
-      | Array<Brew>
-      | Array<Preparation>
-      | Array<Mill>
-      | Array<GreenBean>
-      | Array<RoastingMachine>
-      | Array<Water>,
-    _importPath: string
+      | Bean[]
+      | Brew[]
+      | Preparation[]
+      | Mill[]
+      | GreenBean[]
+      | RoastingMachine[]
+      | Water[],
+    _importDirectory: string
   ) {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
-        await this._importFile(attachment, _importPath);
+        await this._importFile(attachment, _importDirectory);
       }
     }
   }
 
   private async _importFlowProfileFiles(
-    _storedData: Array<Brew>,
-    _importPath: string,
-    _rootImportPath: string
+    _storedData: Brew[],
+    _importDirectory: string
   ) {
     for (const entry of _storedData) {
-      if (entry.flow_profile) {
-        await this._importFileFlowProfile(entry.flow_profile, _importPath);
+      if (entry.flow_profile && entry.flow_profile.length) {
+        await this._importFile(entry.getGraphPath(), _importDirectory);
       }
       if (entry.reference_flow_profile) {
         if (
@@ -1216,9 +1198,9 @@ export class SettingsPage {
         ) {
           /*If we have an imported graph, the uuid, is used with the importedGraph folder, because else we would not been able to store those graphs coming from e.g. visualizer.*/
           /** Making a new object for this seems to be like totaly overdrived **/
-          await this._importFileFlowProfile(
-            entry.getGraphPath(),
-            _rootImportPath + 'importedGraph/'
+          await this._importFile(
+            entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
+            _importDirectory
           );
         }
       }
@@ -1226,199 +1208,67 @@ export class SettingsPage {
   }
 
   private async _importGraphProfileFiles(
-    _storedData: Array<Graph>,
-    _importPath: string
+    _storedData: Graph[],
+    _importDirectory: string
   ) {
     for (const entry of _storedData) {
       if (entry.flow_profile) {
-        await this._importFileFlowProfile(entry.flow_profile, _importPath);
+        await this._importFile(entry.flow_profile, _importDirectory);
       }
     }
   }
 
-  private async _importFileFlowProfile(_filePath: string, _importPath: string) {
-    let path: string;
-    let fileName: string;
-    if (this.platform.is('ios') && this.platform.is('cordova')) {
-      path = this.file.documentsDirectory;
-    } else {
-      path = this.file.dataDirectory;
-    }
-    fileName = _filePath;
-    if (fileName.startsWith('/')) {
-      fileName = fileName.slice(1);
-    }
-    let addSubFolder = '';
-    if (fileName.indexOf('/') > -1) {
-      //we still got a slash inside
-      const splittedFileName = fileName.split('/');
-      fileName = splittedFileName[splittedFileName.length - 1];
-      for (let i = 0; i < splittedFileName.length; i++) {
-        if (i + 1 === splittedFileName.length) {
-          //Ignore last one
-        } else {
-          addSubFolder += splittedFileName[i] + '/';
-        }
-      }
-    }
-    let storageLocation: string = '';
-
-    switch (device.platform) {
-      case 'Android':
-        storageLocation = _importPath;
-        break;
-      case 'iOS':
-        storageLocation = cordova.file.documentsDirectory;
-        break;
-    }
-
+  private async _importFile(
+    internalPathToImportTo: string,
+    importDirectory: string
+  ) {
     try {
-      await this.uiFileHelper.createFolder(_filePath);
-    } catch (ex) {
+      internalPathToImportTo = this.uiFileHelper.normalizeFileName(
+        internalPathToImportTo
+      );
+
+      const fileToImport = importDirectory + '/' + internalPathToImportTo;
+      const fileToImportExists = await this.uiFileHelper.fileExists({
+        path: fileToImport,
+      });
+      if (!fileToImportExists) {
+        this.uiLog.error(
+          'File to import with internal path',
+          internalPathToImportTo,
+          'does not exist at',
+          fileToImport,
+          '; Skipping import.'
+        );
+        // Just give up and try to import the other files
+        return;
+      }
+
+      this.uiLog.info(
+        'Importing to internal path',
+        internalPathToImportTo,
+        'from',
+        fileToImport
+      );
+      await this.uiFileHelper.makeParentDirsInternal(internalPathToImportTo);
+      await Filesystem.copy({
+        from: fileToImport,
+        to: internalPathToImportTo,
+        toDirectory: this.uiFileHelper.getDataDirectory(),
+      });
+    } catch (error) {
+      // We never want to throw from this method. We always want to try importing
+      // all the other files, so this global catch is important
       this.uiLog.error(
-        'Settings - import file - We could not create folders ' + _filePath
+        'Import file error for file',
+        internalPathToImportTo,
+        'in path',
+        importDirectory,
+        '; Error:',
+        error
       );
-    }
-
-    try {
-      const fileExists: boolean = await this.file.checkFile(
-        storageLocation,
-        fileName
-      );
-
-      if (fileExists === true) {
-        this.uiLog.log(
-          'File did exist and was copied - file:' +
-            storageLocation +
-            '' +
-            fileName +
-            ' to: ' +
-            path +
-            '' +
-            fileName
-        );
-
-        await this.file.copyFile(
-          storageLocation,
-          fileName,
-          path + addSubFolder,
-          fileName
-        );
-      } else {
-        this.uiLog.log(
-          'File doesnt exist - file:' +
-            storageLocation +
-            '' +
-            fileName +
-            ' to: ' +
-            path +
-            addSubFolder +
-            '' +
-            fileName
-        );
-      }
-
-      try {
-        // extra catch because maybe file is not existing
-        // await this.file.removeFile(path, fileName);
-      } catch (ex) {}
-    } catch (ex) {
-      this.uiLog.error('Import file ' + ex.message);
     }
   }
 
-  private async _importFile(_filePath: string, _importPath: string) {
-    let path: string;
-    let fileName: string;
-    if (this.platform.is('ios') && this.platform.is('cordova')) {
-      path = this.file.documentsDirectory;
-    } else {
-      path = this.file.dataDirectory;
-    }
-    fileName = _filePath;
-    if (fileName.startsWith('/')) {
-      fileName = fileName.slice(1);
-    }
-    let addSubFolder = '';
-    if (fileName.indexOf('/') > -1) {
-      //we still got a slash inside
-      const splittedFileName = fileName.split('/');
-      fileName = splittedFileName[splittedFileName.length - 1];
-      for (let i = 0; i < splittedFileName.length; i++) {
-        if (i + 1 === splittedFileName.length) {
-          //Ignore last one
-        } else {
-          addSubFolder += splittedFileName[i] + '/';
-        }
-      }
-    }
-    let storageLocation: string = '';
-
-    switch (device.platform) {
-      case 'Android':
-        storageLocation = _importPath;
-        break;
-      case 'iOS':
-        storageLocation = cordova.file.documentsDirectory;
-        break;
-    }
-
-    try {
-      await this.uiFileHelper.createFolder(_filePath);
-    } catch (ex) {
-      this.uiLog.error(
-        'Settings - import file - We could not create folders ' + _filePath
-      );
-    }
-
-    try {
-      const fileExists: boolean = await this.file.checkFile(
-        storageLocation,
-        fileName
-      );
-
-      if (fileExists === true) {
-        this.uiLog.log(
-          'File did exist and was copied - file:' +
-            storageLocation +
-            '' +
-            fileName +
-            ' to: ' +
-            path +
-            '' +
-            fileName
-        );
-
-        await this.file.copyFile(
-          storageLocation,
-          fileName,
-          path + addSubFolder,
-          fileName
-        );
-      } else {
-        this.uiLog.log(
-          'File doesnt exist - file:' +
-            storageLocation +
-            '' +
-            fileName +
-            ' to: ' +
-            path +
-            addSubFolder +
-            '' +
-            fileName
-        );
-      }
-
-      try {
-        // extra catch because maybe file is not existing
-        // await this.file.removeFile(path, fileName);
-      } catch (ex) {}
-    } catch (ex) {
-      this.uiLog.error('Import file ' + ex.message);
-    }
-  }
-
-  /* tslint:disable */
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
     const dummyData = BeanconquerorSettingsDummy;
@@ -1451,48 +1301,7 @@ export class SettingsPage {
     });
   }
 
-  private async __readZipFile(_fileEntry: FileEntry): Promise<any> {
-    return this.uiExportImportHelper.importZIPFile(_fileEntry);
-  }
-
-  /* tslint:enable */
-  private async __readAndroidJSONFile(
-    _fileEntry: FileEntry,
-    _importPath: string
-  ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      _fileEntry.file(async (file) => {
-        const reader = new FileReader();
-        reader.onloadend = (event: Event) => {
-          const parsedJSON = JSON.parse(reader.result as string);
-          this.__importJSON(parsedJSON, _importPath);
-        };
-        reader.onerror = (event: Event) => {
-          reject();
-        };
-
-        reader.readAsText(file);
-      });
-    });
-  }
-
-  /* tslint:enable */
-  private async __readJSONFile(path, file): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.file
-        .readAsText(path, file)
-        .then((content) => {
-          const parsedContent = JSON.parse(content);
-          this.__importJSON(parsedContent, path);
-        })
-        .catch((err) => {
-          this.uiLog.error(`Could not read json file ${JSON.stringify(err)}`);
-          reject(err);
-        });
-    });
-  }
-
-  private async __importJSON(_parsedJSON: any, _importPath: string) {
+  private async __importJSON(_parsedJSON: any, _importDirectory: string) {
     try {
       const parsedContent = _parsedJSON;
       this.uiLog.log('Parsed import data successfully');
@@ -1526,152 +1335,131 @@ export class SettingsPage {
         parsedContent[this.uiGraphStorage.getDBPath()] = [];
       }
       if (
-        parsedContent[this.uiPreparationStorage.getDBPath()] &&
-        parsedContent[this.uiBeanStorage.getDBPath()] &&
-        parsedContent[this.uiBrewStorage.getDBPath()] &&
-        parsedContent[this.uiSettingsStorage.getDBPath()]
+        !parsedContent[this.uiPreparationStorage.getDBPath()] ||
+        !parsedContent[this.uiBeanStorage.getDBPath()] ||
+        !parsedContent[this.uiBrewStorage.getDBPath()] ||
+        !parsedContent[this.uiSettingsStorage.getDBPath()]
       ) {
-        this.uiLog.log('All data existing');
-        this.__cleanupImportSettingsData(
-          parsedContent[this.uiSettingsStorage.getDBPath()]
+        await this.uiAlert.showMessage(
+          this.translate.instant('INVALID_FILE_DATA')
         );
+        return;
+      }
 
-        // When exporting the value is a number, when importing it needs to be  a string.
-        parsedContent['SETTINGS'][0]['brew_view'] =
-          parsedContent['SETTINGS'][0]['brew_view'] + '';
-        this.uiLog.log('Cleaned all data');
-        try {
-          if (
-            !parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined
-          ) {
-            this.uiLog.log('Old brew order structure');
-            // Breaking change, we need to throw away the old order types by import
-            const settingsConst = new Settings();
-            parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
-              settingsConst.brew_order
-            );
-          }
-        } catch (ex) {
+      this.uiLog.log('All data existing');
+      this.__cleanupImportSettingsData(
+        parsedContent[this.uiSettingsStorage.getDBPath()]
+      );
+
+      // When exporting the value is a number, when importing it needs to be  a string.
+      parsedContent['SETTINGS'][0]['brew_view'] =
+        parsedContent['SETTINGS'][0]['brew_view'] + '';
+      this.uiLog.log('Cleaned all data');
+      try {
+        if (
+          !parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined
+        ) {
+          this.uiLog.log('Old brew order structure');
+          // Breaking change, we need to throw away the old order types by import
           const settingsConst = new Settings();
           parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
             settingsConst.brew_order
           );
         }
-
-        await this.uiAlert.showLoadingSpinner();
-        this.uiStorage.import(parsedContent).then(
-          async (_data) => {
-            if (_data.BACKUP === false) {
-              this.__reinitializeStorages().then(
-                async () => {
-                  // Show loadingspinner again, because the reintializestorages hides it.
-                  await this.uiAlert.showLoadingSpinner();
-                  this.uiAnalytics.disableTracking();
-                  this.__initializeSettings();
-
-                  if (!isIOS) {
-                    const brewsData: Array<Brew> =
-                      this.uiBrewStorage.getAllEntries();
-                    const beansData: Array<Bean> =
-                      this.uiBeanStorage.getAllEntries();
-                    const preparationData: Array<Preparation> =
-                      this.uiPreparationStorage.getAllEntries();
-                    const millData: Array<Mill> =
-                      this.uiMillStorage.getAllEntries();
-                    const greenBeanData: Array<GreenBean> =
-                      this.uiGreenBeanStorage.getAllEntries();
-                    const roastingMachineData: Array<RoastingMachine> =
-                      this.uiRoastingMachineStorage.getAllEntries();
-                    const waterData: Array<Water> =
-                      this.uiWaterStorage.getAllEntries();
-                    const graphData: Array<Graph> =
-                      this.uiGraphStorage.getAllEntries();
-
-                    await this._importFiles(brewsData, _importPath);
-                    await this._importFiles(beansData, _importPath);
-                    await this._importFiles(preparationData, _importPath);
-                    await this._importFiles(millData, _importPath);
-                    await this._importFiles(greenBeanData, _importPath);
-                    await this._importFiles(roastingMachineData, _importPath);
-                    await this._importFiles(waterData, _importPath);
-
-                    await this._importFlowProfileFiles(
-                      brewsData,
-                      _importPath + 'brews/',
-                      _importPath
-                    );
-
-                    await this._importGraphProfileFiles(
-                      graphData,
-                      _importPath + 'graphs/'
-                    );
-                  }
-
-                  if (
-                    this.uiBrewStorage.getAllEntries().length > 0 &&
-                    this.uiMillStorage.getAllEntries().length <= 0
-                  ) {
-                    // We got an update and we got no mills yet, therefore we add a Standard mill.
-                    const data: Mill = new Mill();
-                    data.name = 'Standard';
-                    await this.uiMillStorage.add(data);
-
-                    const brews: Array<Brew> =
-                      this.uiBrewStorage.getAllEntries();
-                    for (const brew of brews) {
-                      brew.mill = data.config.uuid;
-                      await this.uiBrewStorage.update(brew);
-                    }
-                  }
-                  this.setLanguage();
-
-                  if (
-                    this.settings.brew_rating_steps === null ||
-                    this.settings.brew_rating_steps === undefined
-                  ) {
-                    this.settings.brew_rating_steps = 1;
-                  }
-                  if (
-                    this.settings.bean_rating_steps === null ||
-                    this.settings.bean_rating_steps === undefined
-                  ) {
-                    this.settings.bean_rating_steps = 1;
-                  }
-                  this.settings.resetFilter();
-                  await this.uiSettingsStorage.saveSettings(this.settings);
-                  await this.uiAlert.hideLoadingSpinner();
-                  await this.uiAlert.showMessage(
-                    this.translate.instant('IMPORT_SUCCESSFULLY')
-                  );
-                  if (this.settings.matomo_analytics === undefined) {
-                    await this.showAnalyticsInformation();
-                  } else {
-                    this.uiAnalytics.enableTracking();
-                  }
-                },
-                async () => {
-                  await this.uiAlert.hideLoadingSpinner();
-                }
-              );
-            } else {
-              await this.uiAlert.hideLoadingSpinner();
-              this.uiAlert.showMessage(
-                this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
-              );
-            }
-          },
-          async () => {
-            await this.uiAlert.hideLoadingSpinner();
-            this.uiAlert.showMessage(
-              this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
-            );
-          }
+      } catch {
+        const settingsConst = new Settings();
+        parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
+          settingsConst.brew_order
         );
-      } else {
-        this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
+      }
+
+      await this.uiAlert.showLoadingSpinner();
+      try {
+        const _data = await this.uiStorage.import(parsedContent);
+        if (_data.BACKUP === false) {
+          await this.__reinitializeStorages();
+          // Show loadingspinner again, because the reintializestorages hides it.
+          await this.uiAlert.showLoadingSpinner();
+          this.uiAnalytics.disableTracking();
+          this.__initializeSettings();
+
+          if (!isIOS) {
+            const brewsData = this.uiBrewStorage.getAllEntries();
+            const importAttachmentCollections = [
+              brewsData,
+              this.uiBeanStorage.getAllEntries(),
+              this.uiPreparationStorage.getAllEntries(),
+              this.uiMillStorage.getAllEntries(),
+              this.uiGreenBeanStorage.getAllEntries(),
+              this.uiRoastingMachineStorage.getAllEntries(),
+              this.uiWaterStorage.getAllEntries(),
+            ];
+
+            for (const collection of importAttachmentCollections) {
+              await this._importFiles(collection, _importDirectory);
+            }
+
+            await this._importFlowProfileFiles(brewsData, _importDirectory);
+
+            const graphData = this.uiGraphStorage.getAllEntries();
+            await this._importGraphProfileFiles(graphData, _importDirectory);
+          }
+
+          if (
+            this.uiBrewStorage.getAllEntries().length > 0 &&
+            this.uiMillStorage.getAllEntries().length <= 0
+          ) {
+            // We got an update and we got no mills yet, therefore we add a Standard mill.
+            const data: Mill = new Mill();
+            data.name = 'Standard';
+            await this.uiMillStorage.add(data);
+
+            const brews: Brew[] = this.uiBrewStorage.getAllEntries();
+            for (const brew of brews) {
+              brew.mill = data.config.uuid;
+              await this.uiBrewStorage.update(brew);
+            }
+          }
+          this.setLanguage();
+
+          if (
+            this.settings.brew_rating_steps === null ||
+            this.settings.brew_rating_steps === undefined
+          ) {
+            this.settings.brew_rating_steps = 1;
+          }
+          if (
+            this.settings.bean_rating_steps === null ||
+            this.settings.bean_rating_steps === undefined
+          ) {
+            this.settings.bean_rating_steps = 1;
+          }
+          this.settings.resetFilter();
+          await this.uiSettingsStorage.saveSettings(this.settings);
+          await this.uiAlert.hideLoadingSpinner();
+          await this.uiAlert.showMessage(
+            this.translate.instant('IMPORT_SUCCESSFULLY')
+          );
+          if (this.settings.matomo_analytics === undefined) {
+            await this.showAnalyticsInformation();
+          } else {
+            this.uiAnalytics.enableTracking();
+          }
+        } else {
+          await this.uiAlert.hideLoadingSpinner();
+          await this.uiAlert.showMessage(
+            this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
+          );
+        }
+      } catch (error) {
+        this.uiLog.error('Error during import', error);
+        await this.uiAlert.hideLoadingSpinner();
+        await this.uiAlert.showMessage(
+          this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
+        );
       }
     } catch (ex) {
-      this.uiAlert.showMessage(
+      await this.uiAlert.showMessage(
         this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex)
       );
     }
@@ -1682,73 +1470,59 @@ export class SettingsPage {
   }
 
   private async __reinitializeStorages(): Promise<any> {
-    return new Promise(async (resolve) => {
-      await this.uiBeanStorage.reinitializeStorage();
-      await this.uiPreparationStorage.reinitializeStorage();
-      await this.uiSettingsStorage.reinitializeStorage();
-      await this.uiBrewStorage.reinitializeStorage();
-      await this.uiMillStorage.reinitializeStorage();
-      await this.uiVersionStorage.reinitializeStorage();
-      await this.uiGreenBeanStorage.reinitializeStorage();
-      await this.uiRoastingMachineStorage.reinitializeStorage();
-      await this.uiWaterStorage.reinitializeStorage();
-      await this.uiGraphStorage.reinitializeStorage();
+    await this.uiBeanStorage.reinitializeStorage();
+    await this.uiPreparationStorage.reinitializeStorage();
+    await this.uiSettingsStorage.reinitializeStorage();
+    await this.uiBrewStorage.reinitializeStorage();
+    await this.uiMillStorage.reinitializeStorage();
+    await this.uiVersionStorage.reinitializeStorage();
+    await this.uiGreenBeanStorage.reinitializeStorage();
+    await this.uiRoastingMachineStorage.reinitializeStorage();
+    await this.uiWaterStorage.reinitializeStorage();
+    await this.uiGraphStorage.reinitializeStorage();
 
-      // Wait for every necessary service to be ready before starting the app
-      // Settings and version, will create a new object on start, so we need to wait for this in the end.
-      const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
-      const preparationStorageReadyCallback =
-        this.uiPreparationStorage.storageReady();
-      const uiSettingsStorageReadyCallback =
-        this.uiSettingsStorage.storageReady();
-      const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
-      const millStorageReadyCallback = this.uiMillStorage.storageReady();
-      const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
-      const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
-      const roastingMachineStorageCallback =
-        this.uiRoastingMachineStorage.storageReady();
-      const waterStorageCallback = this.uiWaterStorage.storageReady();
-      const graphStorageCallback = this.uiGraphStorage.storageReady();
+    // Wait for every necessary service to be ready before starting the app
+    // Settings and version, will create a new object on start, so we need to wait for this in the end.
+    const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
+    const preparationStorageReadyCallback =
+      this.uiPreparationStorage.storageReady();
+    const uiSettingsStorageReadyCallback =
+      this.uiSettingsStorage.storageReady();
+    const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+    const millStorageReadyCallback = this.uiMillStorage.storageReady();
+    const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+    const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
+    const roastingMachineStorageCallback =
+      this.uiRoastingMachineStorage.storageReady();
+    const waterStorageCallback = this.uiWaterStorage.storageReady();
+    const graphStorageCallback = this.uiGraphStorage.storageReady();
 
-      Promise.all([
-        beanStorageReadyCallback,
-        preparationStorageReadyCallback,
-        brewStorageReadyCallback,
-        uiSettingsStorageReadyCallback,
-        millStorageReadyCallback,
-        versionStorageReadyCallback,
-        greenBeanStorageCallback,
-        roastingMachineStorageCallback,
-        waterStorageCallback,
-        graphStorageCallback,
-      ]).then(
-        async () => {
-          await this.uiUpdate.checkUpdate();
-          resolve(undefined);
-        },
-        () => {
-          resolve(undefined);
-        }
-      );
-    });
+    await Promise.all([
+      beanStorageReadyCallback,
+      preparationStorageReadyCallback,
+      brewStorageReadyCallback,
+      uiSettingsStorageReadyCallback,
+      millStorageReadyCallback,
+      versionStorageReadyCallback,
+      greenBeanStorageCallback,
+      roastingMachineStorageCallback,
+      waterStorageCallback,
+      graphStorageCallback,
+    ]);
+    await this.uiUpdate.checkUpdate();
   }
 
-  public checkVisualizerConnection() {
-    this.visualizerService.checkConnection().then(
-      () => {
-        //Works
-        this.uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
-      },
-      () => {
-        // Didn't work
-        this.uiAlert.showMessage(
-          'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
-          undefined,
-          undefined,
-          true
-        );
-      }
-    );
+  public async checkVisualizerConnection() {
+    if (await this.visualizerService.checkConnection()) {
+      this.uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
+    } else {
+      this.uiAlert.showMessage(
+        'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
+        undefined,
+        undefined,
+        true
+      );
+    }
   }
 
   protected readonly BluetoothTypes = BluetoothTypes;

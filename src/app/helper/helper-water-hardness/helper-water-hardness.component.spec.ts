@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { HelperWaterHardnessComponent } from './helper-water-hardness.component';
@@ -11,7 +12,7 @@ describe('HelperWaterHardnessComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HelperWaterHardnessComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HelperWaterHardnessComponent);

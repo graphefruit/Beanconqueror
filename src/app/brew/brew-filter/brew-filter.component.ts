@@ -36,6 +36,9 @@ export class BrewFilterComponent implements OnInit {
   public selectOptions = {
     cssClass: 'select-max-width',
   };
+
+  public preparationToolsExist: boolean;
+  public maxBrewRating: number;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBrewHelper: UIBrewHelper,
@@ -59,6 +62,8 @@ export class BrewFilterComponent implements OnInit {
     this.hide_options = this.navParams.get('hide_options');
     this.__reloadFilterSettings();
     this.profiles = this.getProfiles();
+    this.preparationToolsExist = this.hasPreparationTools();
+    this.maxBrewRating = this.getMaxBrewRating();
   }
   public showOption(_option: string) {
     if (_option === 'chart_data') {

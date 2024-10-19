@@ -48,6 +48,10 @@ export interface IBean {
 
   rating: number;
   qr_code: string;
+  /**
+   * This one is used for generating qr-codes / NFC tags to directly brew them or view them
+   */
+  internal_share_code: string;
   shared: boolean;
   cupping: ICupping;
   cupped_flavor: IFlavor;

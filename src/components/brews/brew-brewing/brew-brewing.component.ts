@@ -45,7 +45,6 @@ import { UIExcel } from '../../../services/uiExcel';
 
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
@@ -76,6 +75,7 @@ import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-gr
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { BrewFlow } from '../../../classes/brew/brewFlow';
+import { Bean } from '../../../classes/bean/bean';
 
 declare var cordova;
 
@@ -101,10 +101,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public brewStars: NgxStarsComponent;
   @ViewChild('brewMillTimer', { static: false })
   public brewMillTimer: TimerComponent;
+  @ViewChild('calculatedCoffeeBrewTime', { static: false })
+  public calculatedCoffeeBrewTime: ElementRef;
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
   @Input() public brewFlowPreset: BrewFlow;
+
+  @Input() public beanPreset: Bean;
 
   @Input() public loadSpecificLastPreparation: Preparation;
   @Input() public isEdit: boolean = false;
@@ -129,8 +133,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private preparationMethodFocusedSubscription: Subscription = undefined;
 
   public brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
+  public brewFlowGraphSecondSubject: EventEmitter<any> = new EventEmitter();
   public brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
   public brewTemperatureGraphSubject: EventEmitter<any> = new EventEmitter();
+  public brewTimerTickedSubject: EventEmitter<any> = new EventEmitter();
   public maximizeFlowGraphIsShown: boolean = false;
 
   public preparationDevice: XeniaDevice | MeticulousDevice = undefined;
@@ -157,7 +163,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly screenOrientation: ScreenOrientation,
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
@@ -279,6 +284,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
 
+      if (this.beanPreset && this.beanPreset?.config?.uuid) {
+        /**We got called from an internal identifier to start a brew directly with this bean.**/
+        this.data.bean = this.beanPreset.config.uuid;
+      }
+
       if (this.brewBrewingPreparationDeviceEl) {
         await this.brewBrewingPreparationDeviceEl?.instance();
       }
@@ -360,13 +370,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.maximizeFlowGraphIsShown = true;
 
-    let actualOrientation;
-    try {
-      if (this.platform.is('cordova')) {
-        actualOrientation = this.screenOrientation.type;
-      }
-    } catch (ex) {}
-
     const modal = await this.modalController.create({
       component: BrewFlowComponent,
 
@@ -376,8 +379,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         brewComponent: this,
         brew: this.data,
         brewFlowGraphEvent: this.brewFlowGraphSubject,
+        brewFlowGraphSecondEvent: this.brewFlowGraphSecondSubject,
         brewPressureGraphEvent: this.brewPressureGraphSubject,
         brewTemperatureGraphEvent: this.brewTemperatureGraphSubject,
+        brewTimerTickedEvent: this.brewTimerTickedSubject,
       },
     });
 
@@ -427,7 +432,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public refractometerConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -576,6 +581,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.data.brew_time_milliseconds = 0;
       }
     }
+    this.writeCalculatedCoffeeBrewTime();
+    this.brewTimerTickedSubject.next(true);
+  }
+
+  private writeCalculatedCoffeeBrewTime() {
+    if (this.calculatedCoffeeBrewTime?.nativeElement) {
+      window.requestAnimationFrame(() => {
+        this.calculatedCoffeeBrewTime.nativeElement.innerHTML =
+          this.data.getFormattedCoffeeBrewTime();
+      });
+    }
   }
 
   public async timerStartPressed(_event) {
@@ -584,7 +600,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.brewBrewingGraphEl.smartScaleConnected() ||
         this.brewBrewingGraphEl.pressureDeviceConnected() ||
         this.brewBrewingGraphEl.temperatureDeviceConnected() ||
-        !this.platform.is('cordova')
+        !this.platform.is('capacitor')
       ) {
         this.uiAlert.showMessage(
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION',
@@ -750,7 +766,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public chooseDateTime(_event) {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       _event.target.blur();
       _event.cancelBubble = true;
       _event.preventDefault();
@@ -832,18 +848,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
    * @param _uuid
    */
   public async saveFlowProfile(_uuid: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const savingPath = 'brews/' + _uuid + '_flow_profile.json';
-        await this.uiFileHelper.saveJSONFile(
-          savingPath,
-          JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw)
-        );
-        resolve(savingPath);
-      } catch (ex) {
-        resolve('');
-      }
-    });
+    try {
+      const savingPath = 'brews/' + _uuid + '_flow_profile.json';
+      await this.uiFileHelper.writeInternalFileFromText(
+        JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw),
+        savingPath
+      );
+      return savingPath;
+    } catch (ex) {
+      return '';
+    }
   }
 
   /**
@@ -851,18 +865,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
    * @param _uuid
    */
   public async saveReferenceFlowProfile(_uuid: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
-        await this.uiFileHelper.saveJSONFile(
-          savingPath,
-          JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw)
-        );
-        resolve(savingPath);
-      } catch (ex) {
-        resolve('');
-      }
-    });
+    try {
+      const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
+      await this.uiFileHelper.writeInternalFileFromText(
+        JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw),
+        savingPath
+      );
+      return savingPath;
+    } catch (ex) {
+      return '';
+    }
   }
 
   public getActualScaleWeight() {
@@ -1127,7 +1139,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // tslint:disable-next-line
   private async __loadLastBrew() {
     let wasAnythingLoaded: boolean = false;
     if (

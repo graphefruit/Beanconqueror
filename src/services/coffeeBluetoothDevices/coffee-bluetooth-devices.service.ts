@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { BluetoothScale } from 'src/classes/devices/bluetoothDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { ETITemperature } from 'src/classes/devices/etiTemperature';
@@ -43,8 +44,8 @@ import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer
 import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
+import { TimemoreScale } from 'src/classes/devices/timemoreScale';
 
-declare var device: any;
 declare var ble: any;
 declare var cordova: any;
 
@@ -84,12 +85,7 @@ export class CoffeeBluetoothDevicesService {
     this.failed = false;
     this.ready = true;
 
-    if (
-      typeof cordova !== 'undefined' &&
-      typeof device !== 'undefined' &&
-      device !== null &&
-      device.platform === 'Android'
-    ) {
+    if (Capacitor.getPlatform() === 'android') {
       this.androidPermissions = cordova.plugins.permissions;
     }
   }
@@ -101,7 +97,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasLocationPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (device !== null && device.platform === 'Android') {
+        if (Capacitor.getPlatform() === 'android') {
           this.androidPermissions.hasPermission(
             this.androidPermissions.ACCESS_FINE_LOCATION,
             (_status: any) => {
@@ -127,7 +123,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasBluetoothPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (device !== null && device.platform === 'Android') {
+        if (Capacitor.getPlatform() === 'android') {
           this.androidPermissions.hasPermission(
             this.androidPermissions.BLUETOOTH_ADMIN,
             (_status: any) => {
@@ -219,7 +215,7 @@ export class CoffeeBluetoothDevicesService {
     let searchOptions: any = {
       reportDuplicates: true,
     };
-    if (device !== null && device.platform === 'Android') {
+    if (Capacitor.getPlatform() === 'android') {
       searchOptions = {
         reportDuplicates: true,
       };
@@ -717,6 +713,13 @@ export class CoffeeBluetoothDevicesService {
         type: ScaleType.BOKOOSCALE,
       };
     }
+    if (TimemoreScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a Timemore scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.TIMEMORESCALE,
+      };
+    }
 
     return undefined;
   }
@@ -933,7 +936,7 @@ export class CoffeeBluetoothDevicesService {
 
           const settings = this.uiStettingsStorage.getSettings();
           if (settings.scale_id && settings.scale_id === deviceId) {
-            if (device !== null && device.platform === 'Android') {
+            if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
               await new Promise((resolve) => {
@@ -941,7 +944,7 @@ export class CoffeeBluetoothDevicesService {
                   resolve(undefined);
                 }, 500);
               });
-            } else if (device !== null && device.platform === 'iOS') {
+            } else if (Capacitor.getPlatform() === 'ios') {
               if (settings?.scale_type === ScaleType.LUNAR) {
                 await this.enableIOSBluetooth();
                 await this.findDeviceWithDirectId(deviceId, 6000);
@@ -1036,7 +1039,7 @@ export class CoffeeBluetoothDevicesService {
 
           const settings = this.uiStettingsStorage.getSettings();
           if (settings.pressure_id && settings.pressure_id === deviceId) {
-            if (device !== null && device.platform === 'Android') {
+            if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
               await new Promise((resolve) => {

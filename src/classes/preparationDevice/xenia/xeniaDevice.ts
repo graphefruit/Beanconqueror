@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Preparation } from '../../preparation/preparation';
 
 import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
-declare var cordova;
+import { UILog } from '../../../services/uiLog';
+import { CapacitorHttp, HttpResponse } from '@capacitor/core';
+import moment from 'moment';
+
 export class XeniaDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
 
@@ -11,55 +14,39 @@ export class XeniaDevice extends PreparationDevice {
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
 
-    if (typeof cordova !== 'undefined') {
-      const connectedPreparationDevice =
-        this.getPreparation().connectedPreparationDevice;
-      if (
-        connectedPreparationDevice.customParams &&
-        connectedPreparationDevice.customParams.apiVersion
-      ) {
-        if (connectedPreparationDevice.customParams.apiVersion === 'V1') {
-          this.apiVersion = 1;
-        } else {
-        }
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    if (
+      connectedPreparationDevice.customParams &&
+      connectedPreparationDevice.customParams.apiVersion
+    ) {
+      if (connectedPreparationDevice.customParams.apiVersion === 'V1') {
+        this.apiVersion = 1;
+      } else {
       }
     }
   }
 
+  private logError(...args: any[]) {
+    UILog.getInstance().error('XeniaDevice:', ...args);
+  }
+
   public override async deviceConnected(): Promise<boolean> {
-    const promise = new Promise<boolean>((resolve, reject) => {
-      const options = {
-        method: 'get',
-      };
-      let urlAdding = '/overview';
-      if (this.apiVersion !== 1) {
-        urlAdding = '/api/v2/overview';
+    try {
+      const responseJSON = await this.getOverview();
+      if (responseJSON && 'MA_STATUS' in responseJSON) {
+        return true;
       }
-      cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + urlAdding,
-        options,
-        (response) => {
-          try {
-            const parsedJSON = JSON.parse(response.data);
-            if (parsedJSON && 'MA_STATUS' in parsedJSON) {
-              resolve(true);
-            } else {
-              // alert("Error in Resolve MA Status not given");
-              reject('');
-            }
-          } catch (e) {
-            // alert("Error in Resolve " + JSON.stringify(e));
-            reject(JSON.stringify(e));
-          }
-        },
-        (response) => {
-          // prints 403
-          // alert("Error " + JSON.stringify(response));
-          reject(JSON.stringify(response));
-        }
-      );
-    });
-    return promise;
+
+      const errorMessage = `Unexpected JSON response: ${JSON.stringify(
+        responseJSON
+      )}`;
+      this.logError(errorMessage);
+      throw new Error(errorMessage);
+    } catch (error) {
+      this.logError('Error in deviceConnected():', error);
+      throw error;
+    }
   }
 
   public getPressure() {
@@ -101,150 +88,120 @@ export class XeniaDevice extends PreparationDevice {
     return this.deviceTemperature;
   }
 
-  public fetchPressureAndTemperature(_callback: any = null) {
-    const options = {
-      method: 'get',
-    };
-    let urlAdding = '/overview';
-    if (this.apiVersion !== 1) {
-      urlAdding = '/api/v2/overview';
-    }
-    cordova.plugin.http.sendRequest(
-      this.getPreparation().connectedPreparationDevice.url + urlAdding,
-      options,
-      (response) => {
-        try {
-          const parsedJSON = JSON.parse(response.data);
-          const temp = parsedJSON.BG_SENS_TEMP_A;
-          const press = parsedJSON.PU_SENS_PRESS;
-
-          this.temperature = temp;
-          this.pressure = press;
+  public async fetchPressureAndTemperature(_callback: any = null) {
+    try {
+      this.getOverview()
+        .then((_responseJSON) => {
+          this.temperature = _responseJSON.BG_SENS_TEMP_A;
+          this.pressure = _responseJSON.PU_SENS_PRESS;
           if (_callback) {
             _callback();
           }
-        } catch (e) {}
-      },
-      (response) => {
-        // prints 403
-      }
-    );
-  }
-  public fetchAndSetDeviceTemperature(_callback: any = null) {
-    const options = {
-      method: 'get',
-    };
-
-    let urlAdding = '/overview_single';
-    if (this.apiVersion !== 1) {
-      urlAdding = '/api/v2/overview_single';
+        })
+        .catch((error) => {
+          this.logError('Error in fetchPressureAndTemperature():', error);
+        });
+    } catch (error) {
+      this.logError('Error in fetchPressureAndTemperature():', error);
+      // don't throw/reject here!
     }
-    cordova.plugin.http.sendRequest(
-      this.getPreparation().connectedPreparationDevice.url + urlAdding,
-      options,
-      (response) => {
-        try {
-          const parsedJSON = JSON.parse(response.data);
-          const setDevicetemp = parsedJSON.BG_SET_TEMP;
+  }
 
-          this.deviceTemperature = setDevicetemp;
+  public async fetchAndSetDeviceTemperature(_callback: any = null) {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    if (this.apiVersion === 1) {
+      url += '/overview_single';
+    } else {
+      url += '/api/v2/overview_single';
+    }
+
+    try {
+      const options = {
+        url: url,
+      };
+
+      CapacitorHttp.get(options)
+        .then((_response) => {
+          const responseJSON = _response.data;
+          this.deviceTemperature = responseJSON.BG_SET_TEMP;
           if (_callback) {
             _callback();
           }
-        } catch (e) {}
-      },
-      (response) => {
-        // prints 403
-      }
-    );
+        })
+        .catch((error) => {
+          this.logError('Error in fetchAndSetDeviceTemperature():', error);
+        });
+    } catch (error) {
+      this.logError('Error in fetchAndSetDeviceTemperature():', error);
+      // don't throw/reject here!
+    }
   }
 
-  public getOverview(): Promise<any> {
-    const promise = new Promise<any>((resolve, reject) => {
+  public async getOverview(): Promise<any> {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    if (this.apiVersion === 1) {
+      url += '/overview';
+    } else {
+      url += '/api/v2/overview';
+    }
+
+    try {
       const options = {
-        method: 'get',
+        url: url,
       };
-      let urlAdding = '/overview';
-      if (this.apiVersion !== 1) {
-        urlAdding = '/api/v2/overview';
-      }
-      cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + urlAdding,
-        options,
-        (response) => {
-          try {
-            const parsedJSON = JSON.parse(response.data);
-            resolve(parsedJSON);
-          } catch (e) {
-            reject(JSON.stringify(e));
-          }
-        },
-        (response) => {
-          // prints 403
-          reject(JSON.stringify(response));
-        }
-      );
-    });
-    return promise;
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+      return responseJSON;
+    } catch (error) {
+      this.logError('Error in getOverview():', error);
+      throw error;
+    }
   }
 
-  public getScripts() {
-    const promise = new Promise<any>((resolve, reject) => {
+  public async getScripts(): Promise<any> {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    if (this.apiVersion === 1) {
+      url += '/scripts_list';
+    } else {
+      url += '/api/v2/scripts/list';
+    }
+
+    try {
       const options = {
-        method: 'get',
+        url: url,
       };
-      let urlAdding = '/scripts_list';
-      if (this.apiVersion !== 1) {
-        urlAdding = '/api/v2/scripts/list';
-      }
-      cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + urlAdding,
-        options,
-        (response) => {
-          try {
-            const parsedJSON = JSON.parse(response.data);
-            resolve(parsedJSON);
-          } catch (e) {
-            reject(JSON.stringify(e));
-          }
-        },
-        (response) => {
-          // prints 403
-          reject(JSON.stringify(response));
-        }
-      );
-    });
-    return promise;
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+      return responseJSON;
+    } catch (error) {
+      this.logError('Error in getScripts():', error);
+      throw error;
+    }
   }
 
-  public getLogs() {
-    const promise = new Promise<any>((resolve, reject) => {
+  public async getLogs(): Promise<any> {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    if (this.apiVersion === 1) {
+      //Was not supported in V1 at all
+      return undefined;
+    } else {
+      url += '/api/v2/logs';
+    }
+
+    try {
       const options = {
-        method: 'get',
+        url: url,
       };
-      const urlAdding = '/api/v2/logs';
-      if (this.apiVersion === 1) {
-        //Was not supported in V1 at all
-        return;
-      }
-      cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + urlAdding,
-        options,
-        (response) => {
-          try {
-            const parsedJSON = JSON.parse(response.data);
-            resolve(parsedJSON);
-          } catch (e) {
-            reject(JSON.stringify(e));
-          }
-        },
-        (response) => {
-          // prints 403
-          reject(JSON.stringify(response));
-        }
-      );
-    });
-    return promise;
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+
+      return responseJSON;
+    } catch (error) {
+      this.logError('Error in getLogs():', error);
+      throw error;
+    }
   }
 
   public mapScriptsAndSaveTemp(_serverRespList: any) {
@@ -259,76 +216,59 @@ export class XeniaDevice extends PreparationDevice {
     }
   }
 
-  public startScript(_id: any) {
-    const promise = new Promise<boolean>((resolve, reject) => {
-      let options = {};
+  public async startScript(_id: any): Promise<any> {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    let options: any;
 
-      let urlAdding = '/execute_script';
-      if (this.apiVersion !== 1) {
-        urlAdding = '/api/v2/scripts/execute';
-        options = {
-          method: 'post',
-          data: JSON.stringify({ ID: _id }),
-          serializer: 'utf8',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          },
-        };
-      } else {
-        options = {
-          method: 'post',
-          data: { ID: _id },
-        };
-      }
-      cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + urlAdding,
-        options,
-        (response) => {
-          try {
-            const parsedJSON = JSON.parse(response.data);
-            resolve(parsedJSON);
-          } catch (e) {
-            reject(JSON.stringify(e));
-          }
+    // TODO Capacitor migration: It's very likely that this will be broken by
+    // the migration, please test again.
+    if (this.apiVersion === 1) {
+      url += '/execute_script';
+      options = {
+        url: url,
+        data: JSON.stringify({ ID: _id }),
+        headers: {
+          'Content-Type': 'application/json',
         },
-        (response) => {
-          // prints 403
-          reject(JSON.stringify(response));
-        }
-      );
-    });
-    return promise;
+      };
+    } else {
+      url += '/api/v2/scripts/execute';
+      options = {
+        url: url,
+        data: JSON.stringify({ ID: _id }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+      };
+    }
+
+    try {
+      const response = await CapacitorHttp.post(options);
+      const responseJSON = await response.data;
+      return responseJSON;
+    } catch (error) {
+      this.logError('Error in startScript():', error);
+      throw error;
+    }
   }
 
-  public stopScript() {
-    const promise = new Promise<boolean>((resolve, reject) => {
-      const options = {
-        method: 'get',
-      };
+  public async stopScript(): Promise<any> {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    if (this.apiVersion === 1) {
+      url += '/stop_script';
+    } else {
+      url += '/api/v2/scripts/stop';
+    }
 
-      let urlAdding = '/stop_script';
-      if (this.apiVersion !== 1) {
-        urlAdding = '/api/v2/scripts/stop';
-      }
-
-      cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + urlAdding,
-        options,
-        (response) => {
-          try {
-            const parsedJSON = JSON.parse(response.data);
-            resolve(parsedJSON);
-          } catch (e) {
-            reject(JSON.stringify(e));
-          }
-        },
-        (response) => {
-          // prints 403
-          reject(JSON.stringify(response));
-        }
-      );
-    });
-    return promise;
+    try {
+      // Yes, starting is a POST and stopping is a GET
+      const response = await fetch(url, { method: 'GET' });
+      const responseJSON = await response.json();
+      return responseJSON;
+    } catch (error) {
+      this.logError('Error in stopScript():', error);
+      throw error;
+    }
   }
 }
 

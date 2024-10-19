@@ -4,4 +4,6 @@ export interface IBrewGraphs {
   realtime_flow: boolean;
   pressure: boolean;
   temperature: boolean;
+  weightSecond: boolean;
+  realtime_flowSecond: boolean;
 }

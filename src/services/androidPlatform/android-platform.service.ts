@@ -31,11 +31,11 @@ export class AndroidPlatformService {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiExportImportHelper: UIExportImportHelper
   ) {
-    if (this.platform.is('cordova') && this.platform.is('android')) {
+    if (this.platform.is('capacitor') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
           // Delete on startup old json backup files
-          this.uiFileHelper.deleteZIPBackupsOlderThenSevenDays().then(
+          this.uiFileHelper.deleteZIPBackupsOlderThanSevenDays().then(
             () => {},
             () => {}
           );

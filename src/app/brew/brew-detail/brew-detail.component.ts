@@ -24,9 +24,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IBrewWaterFlow } from '../../../classes/brew/brewFlow';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIAlert } from '../../../services/uiAlert';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import moment from 'moment';
 
 import { UILog } from '../../../services/uiLog';
@@ -34,6 +32,7 @@ import { Visualizer } from '../../../classes/visualizer/visualizer';
 import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
 import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { sleep } from '../../../classes/devices';
+import { ShareService } from '../../../services/shareService/share-service.service';
 
 declare var Plotly;
 @Component({
@@ -71,11 +70,10 @@ export class BrewDetailComponent {
     private readonly translate: TranslateService,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiAlert: UIAlert,
-    private readonly socialSharing: SocialSharing,
     private readonly platform: Platform,
-    private readonly screenOrientation: ScreenOrientation,
     private readonly alertCtrl: AlertController,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly shareService: ShareService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -253,7 +251,7 @@ export class BrewDetailComponent {
             }
           ).once('success', async (urlNew) => {
             try {
-              this.socialSharing.share(null, null, urlNew, null);
+              this.shareService.shareFile('', urlNew);
             } catch (err) {
               this.uiLog.error('Cant share profilechart ' + err.message);
             }
@@ -268,7 +266,7 @@ export class BrewDetailComponent {
         }
       ).once('success', async (url) => {
         try {
-          this.socialSharing.share(null, null, url, null);
+          this.shareService.shareFile('', url);
         } catch (err) {
           this.uiLog.error('Cant share profilechart ' + err.message);
         }
@@ -303,7 +301,7 @@ export class BrewDetailComponent {
 
   public async downloadJSONProfile() {
     if (this.data.flow_profile !== '') {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
         this.data.flow_profile
       );
       const filename: string =

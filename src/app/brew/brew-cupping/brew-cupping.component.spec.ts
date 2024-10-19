@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { BrewCuppingComponent } from './brew-cupping.component';
@@ -14,7 +15,7 @@ describe('BrewCuppingComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewCuppingComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         {
           provide: NavParams,

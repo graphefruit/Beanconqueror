@@ -46,7 +46,7 @@ export class BeanFreezeInformationComponent implements OnInit {
     _event.stopImmediatePropagation();
     _event.stopPropagation();
 
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       const myDate = new Date(); // From model.
 
       cordova.plugins.DateTimePicker.show({

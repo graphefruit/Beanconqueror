@@ -56,7 +56,7 @@ export class GraphAddComponent {
 
   public async uploadGraph() {
     try {
-      if (this.platform.is('cordova')) {
+      if (this.platform.is('capacitor')) {
         const data: any = await this.uiGraphHelper.chooseGraph();
         if (
           data &&
@@ -64,23 +64,26 @@ export class GraphAddComponent {
         ) {
           // Export from a normal flow data
           this.flowData = data as BrewFlow;
-        } else if (
-          data &&
-          (data?.DATA?.weight ||
-            data?.DATA?.pressureFlow ||
-            data?.DATA?.temperatureFlow)
-        ) {
-          this.flowData = data.DATA as BrewFlow;
-          if (data.NAME) {
-            this.data.name = data.NAME;
-          }
-          if (data.NOTE) {
-            this.data.note = data.NOTE;
-          }
         } else {
-          this.uiAlert.showMessage(
-            this.translate.instant('INVALID_FILE_FORMAT')
-          );
+          // Export from graph object
+          if (
+            data &&
+            (data?.DATA?.weight ||
+              data?.DATA?.pressureFlow ||
+              data?.DATA?.temperatureFlow)
+          ) {
+            this.flowData = data.DATA as BrewFlow;
+            if (data.NAME) {
+              this.data.name = data.NAME;
+            }
+            if (data.NOTE) {
+              this.data.note = data.NOTE;
+            }
+          } else {
+            this.uiAlert.showMessage(
+              this.translate.instant('INVALID_FILE_FORMAT')
+            );
+          }
         }
       } else {
         this.flowData = BeanconquerorFlowTestDataDummy as BrewFlow;

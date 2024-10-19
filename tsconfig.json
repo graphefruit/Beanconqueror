@@ -20,6 +20,7 @@
     ],
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+
   }
 }

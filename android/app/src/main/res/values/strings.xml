@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Beanconqueror</string>
+    <string name="title_activity_main">Beanconqueror</string>
+    <string name="package_name">com.beanconqueror.app</string>
+    <string name="custom_url_scheme">com.beanconqueror.app</string>
+</resources>

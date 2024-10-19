@@ -40,16 +40,24 @@ export class BluetoothScale {
   public batteryLevel: number;
   public weightChange: EventEmitter<WeightChangeEvent> = new EventEmitter();
   public flowChange: EventEmitter<FlowChangeEvent> = new EventEmitter();
+
+  public weightSecondChange: EventEmitter<WeightChangeEvent> =
+    new EventEmitter();
+  public flowSecondChange: EventEmitter<FlowChangeEvent> = new EventEmitter();
+
   public timerEvent: EventEmitter<TimerEvent | null> = new EventEmitter();
   public tareEvent: EventEmitter<TareEvent> = new EventEmitter();
   public supportsTaring: boolean;
+  public supportsTwoWeights: boolean;
   protected weight: Weight;
+  protected secondWeight: Weight;
   protected blueToothParentlogger: Logger;
   private scaleType = undefined;
 
   constructor(data: PeripheralData, type: ScaleType) {
     this.device_id = data.id;
     this.supportsTaring = true;
+    this.supportsTwoWeights = false;
     try {
       this.device_name = data.name;
     } catch (ex) {}
@@ -68,6 +76,9 @@ export class BluetoothScale {
   public async setTimer(_timer: SCALE_TIMER_COMMAND) {}
 
   public getWeight(): number {
+    return 0;
+  }
+  public getSecondWeight(): number {
     return 0;
   }
 
@@ -132,6 +143,47 @@ export class BluetoothScale {
     this.weight.old = _newWeight;
   }
 
+  protected setSecondWeight(
+    _newWeight: number,
+    _stableWeight: boolean = false
+  ) {
+    // Allow negative weight
+    // Each value effect the current weight bei 10%.
+    // (A3 * 03 + b2 * 0.7)
+    //  Actual value * 03 + smoothed value * 0.7
+
+    this.secondWeight.notMutatedWeight = _newWeight;
+
+    this.blueToothParentlogger.log(
+      'Bluetooth Scale - New weight recieved ' + _newWeight
+    );
+
+    this.secondWeight.oldSmoothed = this.secondWeight.smoothed;
+    this.secondWeight.smoothed = this.calculateSmoothedWeight(
+      _newWeight,
+      this.secondWeight.smoothed
+    );
+
+    // We passed every shake change, seems like everything correct, set the new weight.
+    this.secondWeight.actual = _newWeight;
+
+    try {
+      this.blueToothParentlogger.log(
+        'Bluetooth Scale - Are weight subscriptions existing? ' +
+          this.weightSecondChange?.observers?.length
+      );
+    } catch (ex) {}
+    this.weightSecondChange.emit({
+      actual: this.secondWeight.actual,
+      smoothed: this.secondWeight.smoothed,
+      stable: _stableWeight,
+      old: this.secondWeight.old,
+      oldSmoothed: this.secondWeight.oldSmoothed,
+      notMutatedWeight: this.secondWeight.notMutatedWeight,
+    });
+    this.triggerSecondFlow(_stableWeight);
+    this.secondWeight.old = _newWeight;
+  }
   protected calculateSmoothedWeight(
     _actualWeight: number,
     _smoothedWeight: number
@@ -156,6 +208,26 @@ export class BluetoothScale {
       oldSmoothed: this.weight.oldSmoothed,
       date: actualDate,
       notMutatedWeight: this.weight.notMutatedWeight,
+    });
+  }
+
+  protected triggerSecondFlow(_stableWeight: boolean = false) {
+    const actualDate = new Date();
+    this.blueToothParentlogger.log('Bluetooth Scale - Flow second triggered');
+    try {
+      this.blueToothParentlogger.log(
+        'Bluetooth Scale - Are flow second subscriptions existing? ' +
+          this.flowSecondChange?.observers?.length
+      );
+    } catch (ex) {}
+    this.flowSecondChange.emit({
+      actual: this.secondWeight.actual,
+      smoothed: this.secondWeight.smoothed,
+      stable: _stableWeight,
+      old: this.secondWeight.old,
+      oldSmoothed: this.secondWeight.oldSmoothed,
+      date: actualDate,
+      notMutatedWeight: this.secondWeight.notMutatedWeight,
     });
   }
 }

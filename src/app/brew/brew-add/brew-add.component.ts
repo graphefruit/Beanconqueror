@@ -7,6 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Geolocation } from '@capacitor/geolocation';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -16,13 +17,11 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UILog } from '../../../services/uiLog';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UIHealthKit } from '../../../services/uiHealthKit';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { UIAlert } from '../../../services/uiAlert';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
@@ -47,6 +46,8 @@ import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevic
 import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
+import { UIHelper } from '../../../services/uiHelper';
+import { Bean } from '../../../classes/bean/bean';
 
 declare var Plotly;
 
@@ -62,6 +63,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   public settings: Settings;
 
   @Input() public brew_flow_preset: BrewFlow;
+  @Input() public bean_preset: Bean;
 
   public loadSpecificLastPreparation: Preparation;
 
@@ -85,18 +87,17 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiToast: UIToast,
     private readonly platform: Platform,
-    private readonly geolocation: Geolocation,
     private readonly uiLog: UILog,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiHealthKit: UIHealthKit,
-    private readonly insomnia: Insomnia,
     private readonly uiAlert: UIAlert,
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly visualizerService: VisualizerService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly hapticService: HapticService
+    private readonly hapticService: HapticService,
+    private readonly uiHelper: UIHelper
   ) {
     // Initialize to standard in drop down
 
@@ -136,13 +137,14 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
     if (this.settings.wake_lock) {
-      this.insomnia.keepAwake().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceKeepAwake();
     }
 
-    this.getCoordinates(true);
+    /**
+     * We don'T need to await here, because the coordinates are set in the background
+     */
+    this.setCoordinates(true);
+
     this.initialBeanData = JSON.stringify(this.data);
 
     this.bluetoothSubscription = this.bleManager
@@ -188,10 +190,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
   public ionViewWillLeave() {
     if (this.settings.wake_lock) {
-      this.insomnia.allowSleepAgain().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceAllowSleepAgain();
     }
   }
 
@@ -224,35 +223,32 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getCoordinates(_highAccuracy: boolean) {
-    if (this.settings.track_brew_coordinates) {
-      this.geolocation
-        .getCurrentPosition({
-          maximumAge: 3000,
-          timeout: 5000,
-          enableHighAccuracy: _highAccuracy,
-        })
-        .then((resp) => {
-          this.data.coordinates.latitude = resp.coords.latitude;
-          this.data.coordinates.accuracy = resp.coords.accuracy;
-          this.data.coordinates.altitude = resp.coords.altitude;
-          this.data.coordinates.altitudeAccuracy = resp.coords.altitudeAccuracy;
-          this.data.coordinates.heading = resp.coords.heading;
-          this.data.coordinates.speed = resp.coords.speed;
-          this.data.coordinates.longitude = resp.coords.longitude;
-          this.uiLog.info(
-            'BREW - Coordinates found - ' +
-              JSON.stringify(this.data.coordinates)
-          );
-        })
-        .catch((_error) => {
-          // Couldn't get coordinates sorry.
-          this.uiLog.error('BREW - No Coordinates found');
-          if (_highAccuracy === true) {
-            this.uiLog.error('BREW - Try to get coordinates with low accuracy');
-            this.getCoordinates(false);
-          }
-        });
+  private async setCoordinates(_highAccuracy: boolean): Promise<void> {
+    if (!this.settings.track_brew_coordinates) {
+      return;
+    }
+    try {
+      const resp = await Geolocation.getCurrentPosition({
+        maximumAge: 3000,
+        timeout: 5000,
+        enableHighAccuracy: _highAccuracy,
+      });
+      this.data.coordinates.latitude = resp.coords.latitude;
+      this.data.coordinates.accuracy = resp.coords.accuracy;
+      this.data.coordinates.altitude = resp.coords.altitude;
+      this.data.coordinates.altitudeAccuracy = resp.coords.altitudeAccuracy;
+      this.data.coordinates.heading = resp.coords.heading;
+      this.data.coordinates.speed = resp.coords.speed;
+      this.data.coordinates.longitude = resp.coords.longitude;
+      this.uiLog.info(
+        'BREW - Coordinates found - ' + JSON.stringify(this.data.coordinates)
+      );
+    } catch (error) {
+      this.uiLog.error('BREW - No Coordinates found: ', error);
+      if (_highAccuracy === true) {
+        this.uiLog.error('BREW - Try to get coordinates with low accuracy');
+        return await this.setCoordinates(false);
+      }
     }
   }
 

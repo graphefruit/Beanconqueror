@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { BrewChooseGraphReferenceComponent } from './brew-choose-graph-reference.component';
@@ -6,10 +7,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
-import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { Brew } from '../../../classes/brew/brew';
 
@@ -20,7 +17,7 @@ describe('BrewChooseGraphReferenceComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewChooseGraphReferenceComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         {
           provide: Storage,
@@ -28,18 +25,6 @@ describe('BrewChooseGraphReferenceComponent', () => {
         {
           provide: UIHelper,
           useClass: UIHelperMock,
-        },
-        {
-          provide: FileChooser,
-        },
-        {
-          provide: File,
-        },
-        {
-          provide: SocialSharing,
-        },
-        {
-          provide: FileTransfer,
         },
       ],
     }).compileComponents();

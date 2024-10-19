@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { RoastingMachineModalSelectComponent } from './roasting-machine-modal-select.component';
@@ -14,7 +15,7 @@ describe('RoastingMachineModalSelectComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RoastingMachineModalSelectComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         {
           provide: Storage,
