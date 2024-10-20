@@ -153,11 +153,20 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
   public roastCount(): number {
-    const relatedRoastingBeans: Array<Bean> =
+    let relatedRoastingBeans: Array<Bean> =
       this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(
         this.greenBean.config.uuid
       );
-    return relatedRoastingBeans.length;
+
+    const allBeansWithoutFrozenId = relatedRoastingBeans.filter(
+      (e) => !e.frozenGroupId
+    );
+    const allBeansWithFrozenId = new Set(
+      relatedRoastingBeans
+        .filter((e) => e.frozenGroupId)
+        .map((e) => e.frozenGroupId)
+    );
+    return allBeansWithoutFrozenId.length + allBeansWithFrozenId.size;
   }
   public async detailBean() {
     await this.uiGreenBeanHelper.detailGreenBean(this.greenBean);
