@@ -110,7 +110,11 @@ export class BeanPopoverFreezeComponent implements OnInit {
       burnInPercentage = 100 - (originalWeight * 100) / originalGreenBeanWeight;
     }
 
-    const groupBeanId = this.uiHelper.generateUUID();
+    let groupBeanId = this.uiHelper.generateUUID();
+    if (this.bean.frozenGroupId) {
+      //If we froze the initial bean already, we use this as the reference again.
+      groupBeanId = this.bean.frozenGroupId;
+    }
     for await (const bag of this.addedBags) {
       await this.__createNewFrozenBean(
         bag.weight,
