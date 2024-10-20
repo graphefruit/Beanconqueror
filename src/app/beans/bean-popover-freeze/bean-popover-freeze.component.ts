@@ -13,7 +13,6 @@ import { Config } from '../../../classes/objectConfig/objectConfig';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIAlert } from '../../../services/uiAlert';
 import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 
 declare var cordova;
@@ -42,6 +41,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
   public allNewCreatedBeans: Array<Bean> = [];
   public readonly beanFreezingStorageEnum = BEAN_FREEZING_STORAGE_ENUM;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -96,14 +96,28 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
     let index = 1;
 
-    const groupBeanId = this.uiHelper.generateUUID();
+    //If burnInPercentage is set, we know its a roasted one.
+    let burnInPercentage = 0;
+    if (this.bean.bean_roast_information.green_bean_weight > 0) {
+      //250
+      const originalWeight = this.bean.weight;
+      //220
+      const originalGreenBeanWeight =
+        this.bean.bean_roast_information.green_bean_weight;
 
+      //Example 12%
+
+      burnInPercentage = 100 - (originalWeight * 100) / originalGreenBeanWeight;
+    }
+
+    const groupBeanId = this.uiHelper.generateUUID();
     for await (const bag of this.addedBags) {
       await this.__createNewFrozenBean(
         bag.weight,
         bag.type,
         index,
-        groupBeanId
+        groupBeanId,
+        burnInPercentage
       );
       index = index + 1;
     }
@@ -127,6 +141,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
           this.bean.cost = newCost;
         } catch (ex) {
           this.bean.cost = 0;
+        }
+
+        if (this.bean.bean_roast_information.green_bean_weight > 0) {
+          const newGreenBeanWeight =
+            this.bean.weight + this.bean.weight * (burnInPercentage / 100);
+          this.bean.bean_roast_information.green_bean_weight =
+            this.uiHelper.toFixedIfNecessary(newGreenBeanWeight, 2);
         }
 
         //Don't delete the bean, because we did brews with this
@@ -174,6 +195,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
         this.bean.cost = 0;
       }
 
+      if (this.bean.bean_roast_information.green_bean_weight > 0) {
+        const newGreenBeanWeight =
+          this.bean.weight + this.bean.weight * (burnInPercentage / 100);
+        this.bean.bean_roast_information.green_bean_weight =
+          this.uiHelper.toFixedIfNecessary(newGreenBeanWeight, 2);
+      }
+
       this.bean.frozenGroupId = groupBeanId;
       await this.uiBeanStorage.update(this.bean);
     }
@@ -191,7 +219,8 @@ export class BeanPopoverFreezeComponent implements OnInit {
     _freezingWeight: number,
     _freezingType: BEAN_FREEZING_STORAGE_ENUM,
     _index: number,
-    _groupBeanId: string
+    _groupBeanId: string,
+    _burnInPercentage: number
   ) {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
 
@@ -203,6 +232,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
     clonedBean.frozenGroupId = _groupBeanId;
     clonedBean.frozenStorageType = _freezingType;
     clonedBean.frozenNote = this.frozenNote;
+
+    if (this.bean.bean_roast_information.green_bean_weight > 0) {
+      const newGreenBeanWeight =
+        _freezingWeight + _freezingWeight * (_burnInPercentage / 100);
+      clonedBean.bean_roast_information.green_bean_weight =
+        this.uiHelper.toFixedIfNecessary(newGreenBeanWeight, 2);
+    }
 
     if (this.bean.cost !== 0) {
       try {

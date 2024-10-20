@@ -28,12 +28,14 @@ export class NfcService {
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast
   ) {
-    this.uiHelper.isBeanconqurorAppReady().then(async () => {
-      this.nfcEnabled = await this.getEnabledState();
-      if (this.isNFCEnabled) {
-        this.listenToNFCAndroid();
-      }
-    });
+    if (this.platform.is('capacitor')) {
+      this.uiHelper.isBeanconqurorAppReady().then(async () => {
+        this.nfcEnabled = await this.getEnabledState();
+        if (this.isNFCEnabled) {
+          this.listenToNFCAndroid();
+        }
+      });
+    }
   }
 
   public isNFCEnabled() {
