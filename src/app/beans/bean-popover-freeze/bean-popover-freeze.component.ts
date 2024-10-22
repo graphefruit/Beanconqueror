@@ -109,6 +109,11 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
       burnInPercentage = 100 - (originalWeight * 100) / originalGreenBeanWeight;
     }
+    const totalActualBeanWeight = this.bean.weight;
+    let totalGreenBeanWeight = 0;
+    if (this.bean.bean_roast_information.green_bean_weight > 0) {
+      totalGreenBeanWeight = this.bean.bean_roast_information.green_bean_weight;
+    }
 
     let groupBeanId = this.uiHelper.generateUUID();
     if (this.bean.frozenGroupId) {
@@ -121,7 +126,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
         bag.type,
         index,
         groupBeanId,
-        burnInPercentage
+        burnInPercentage,
+        totalActualBeanWeight,
+        totalGreenBeanWeight
       );
       index = index + 1;
     }
@@ -148,10 +155,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
         }
 
         if (this.bean.bean_roast_information.green_bean_weight > 0) {
-          const newGreenBeanWeight =
-            this.bean.weight + this.bean.weight * (burnInPercentage / 100);
+          const percentageBeanWeightShare =
+            this.bean.weight / totalActualBeanWeight;
           this.bean.bean_roast_information.green_bean_weight =
-            this.uiHelper.toFixedIfNecessary(newGreenBeanWeight, 2);
+            this.uiHelper.toFixedIfNecessary(
+              totalGreenBeanWeight * percentageBeanWeightShare,
+              2
+            );
         }
 
         //Don't delete the bean, because we did brews with this
@@ -176,6 +186,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
         } catch (ex) {
           //Reset the weight to zero atleast.
           this.bean.weight = 0;
+          if (this.bean.bean_roast_information.green_bean_weight > 0) {
+            this.bean.bean_roast_information.green_bean_weight = 0;
+          }
+
           await this.uiBeanStorage.update(this.bean);
         }
       }
@@ -200,10 +214,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
       }
 
       if (this.bean.bean_roast_information.green_bean_weight > 0) {
-        const newGreenBeanWeight =
-          this.bean.weight + this.bean.weight * (burnInPercentage / 100);
+        const percentageBeanWeightShare =
+          this.bean.weight / totalActualBeanWeight;
         this.bean.bean_roast_information.green_bean_weight =
-          this.uiHelper.toFixedIfNecessary(newGreenBeanWeight, 2);
+          this.uiHelper.toFixedIfNecessary(
+            totalGreenBeanWeight * percentageBeanWeightShare,
+            2
+          );
       }
 
       this.bean.frozenGroupId = groupBeanId;
@@ -224,7 +241,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
     _freezingType: BEAN_FREEZING_STORAGE_ENUM,
     _index: number,
     _groupBeanId: string,
-    _burnInPercentage: number
+    _burnInPercentage: number,
+    _totalBeanWeight: number,
+    _totalGreenBeanWeight: number
   ) {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
 
@@ -236,13 +255,6 @@ export class BeanPopoverFreezeComponent implements OnInit {
     clonedBean.frozenGroupId = _groupBeanId;
     clonedBean.frozenStorageType = _freezingType;
     clonedBean.frozenNote = this.frozenNote;
-
-    if (this.bean.bean_roast_information.green_bean_weight > 0) {
-      const newGreenBeanWeight =
-        _freezingWeight + _freezingWeight * (_burnInPercentage / 100);
-      clonedBean.bean_roast_information.green_bean_weight =
-        this.uiHelper.toFixedIfNecessary(newGreenBeanWeight, 2);
-    }
 
     if (this.bean.cost !== 0) {
       try {
@@ -256,6 +268,16 @@ export class BeanPopoverFreezeComponent implements OnInit {
       }
     }
     clonedBean.weight = this.uiHelper.toFixedIfNecessary(_freezingWeight, 1);
+
+    if (this.bean.bean_roast_information.green_bean_weight > 0) {
+      const percentageBeanWeightShare = clonedBean.weight / _totalBeanWeight;
+      clonedBean.bean_roast_information.green_bean_weight =
+        this.uiHelper.toFixedIfNecessary(
+          _totalGreenBeanWeight * percentageBeanWeightShare,
+          2
+        );
+    }
+
     clonedBean.config = new Config();
     const newClonedBean = await this.uiBeanStorage.add(clonedBean);
     const newBean: Bean = new Bean();
