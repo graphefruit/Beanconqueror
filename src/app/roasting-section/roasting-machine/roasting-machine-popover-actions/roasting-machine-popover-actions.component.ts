@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, Input } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../../services/uiHelper';
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
@@ -14,14 +14,16 @@ export class RoastingMachinePopoverActionsComponent {
   public static readonly COMPONENT_ID = 'roasting-machine-popover-actions';
   public data: RoastingMachine = new RoastingMachine();
 
+  @Input('roastingMachine') public roastingMachine: IRoastingMachine;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper
-  ) {
+  ) {}
+  public ngOnInit() {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const roastingMachine: IRoastingMachine = this.uiHelper.copyData(
-      this.navParams.get('roastingMachine')
+      this.roastingMachine
     );
 
     this.data.initializeByObject(roastingMachine);

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -25,7 +25,9 @@ export class BeanFilterComponent implements OnInit {
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
   public mills: Array<Mill> = [];
-  public segment: string = 'open';
+  @Input('segment') public segment: string = 'open';
+
+  @Input('bean_filter') public bean_filter: any;
 
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
 
@@ -33,7 +35,6 @@ export class BeanFilterComponent implements OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
@@ -62,8 +63,7 @@ export class BeanFilterComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.segment = this.navParams.get('segment');
-    this.filter = this.uiHelper.copyData(this.navParams.get('bean_filter'));
+    this.filter = this.uiHelper.copyData(this.bean_filter);
     this.__reloadFilterSettings();
   }
 

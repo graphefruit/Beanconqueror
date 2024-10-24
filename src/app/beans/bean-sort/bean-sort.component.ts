@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
@@ -19,14 +19,15 @@ export class BeanSortComponent implements OnInit {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
   };
 
+  @Input('bean_sort') public bean_sort: any;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper
   ) {}
 
   public ngOnInit() {
-    this.filter = this.uiHelper.copyData(this.navParams.get('bean_sort'));
+    this.filter = this.uiHelper.copyData(this.bean_sort);
     this.__reloadFilterSettings();
   }
 

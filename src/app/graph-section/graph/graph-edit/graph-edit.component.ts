@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, NavParams, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -30,7 +30,6 @@ export class GraphEditComponent implements OnInit {
   @Input() private graph: IGraph;
 
   constructor(
-    private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiHelper: UIHelper,

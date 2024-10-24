@@ -1,8 +1,14 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController, NavParams, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
@@ -41,9 +47,9 @@ export class BrewEditComponent implements OnInit {
   private initialBeanData: string = '';
   private disableHardwareBack;
   public readonly PreparationDeviceType = PreparationDeviceType;
+  @Input('brew') public brew: IBrew;
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
@@ -59,11 +65,6 @@ export class BrewEditComponent implements OnInit {
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
-
-    if (brew !== undefined) {
-      this.data.initializeByObject(brew);
-    }
   }
 
   @HostListener('window:keyboardWillShow')
@@ -76,6 +77,7 @@ export class BrewEditComponent implements OnInit {
     // Describe your logic which will be run each time when keyboard is about to be closed.
     this.showFooter = true;
   }
+
   public ionViewDidEnter(): void {
     if (this.settings.wake_lock) {
       this.uiHelper.deviceKeepAwake();
@@ -228,6 +230,9 @@ export class BrewEditComponent implements OnInit {
   }
 
   public ngOnInit() {
+    if (this.brew !== undefined) {
+      this.data.initializeByObject(this.brew);
+    }
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.EDIT

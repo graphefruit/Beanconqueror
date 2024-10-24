@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAlert } from '../../../services/uiAlert';
@@ -26,7 +26,6 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
   public readonly BluetoothTypes = BluetoothTypes;
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper,
     private readonly uiSettings: UISettingsStorage,
     private readonly bluetoothService: CoffeeBluetoothDevicesService,

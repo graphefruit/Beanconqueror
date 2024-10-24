@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -24,13 +23,13 @@ export class BrewFilterComponent implements OnInit {
   public static COMPONENT_ID = 'brew-filter';
   public settings: Settings;
 
-  public hide_options: any = {};
-
   public filter: IBrewPageFilter;
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
   public mills: Array<Mill> = [];
-  public segment: string = 'open';
+  @Input('segment') public segment: string = 'open';
+  @Input('brew_filter') public brew_filter: any;
+  @Input('hide_options') public hide_options: any;
 
   public profiles: Array<string> = [];
   public selectOptions = {
@@ -41,8 +40,6 @@ export class BrewFilterComponent implements OnInit {
   public maxBrewRating: number;
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly navParams: NavParams,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
@@ -55,11 +52,8 @@ export class BrewFilterComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.segment = this.navParams.get('segment');
+    this.filter = this.uiHelper.copyData(this.brew_filter);
 
-    this.filter = this.uiHelper.copyData(this.navParams.get('brew_filter'));
-
-    this.hide_options = this.navParams.get('hide_options');
     this.__reloadFilterSettings();
     this.profiles = this.getProfiles();
     this.preparationToolsExist = this.hasPreparationTools();

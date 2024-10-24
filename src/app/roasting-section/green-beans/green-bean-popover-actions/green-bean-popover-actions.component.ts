@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
-import {ModalController, NavParams} from '@ionic/angular';
-import {UIHelper} from '../../../../services/uiHelper';
-import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
-import {GREEN_BEAN_ACTION} from '../../../../enums/green-beans/greenBeanAction';
-import {GreenBean} from '../../../../classes/green-bean/green-bean';
-
+import { ModalController } from '@ionic/angular';
+import { UIHelper } from '../../../../services/uiHelper';
+import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
+import { GREEN_BEAN_ACTION } from '../../../../enums/green-beans/greenBeanAction';
+import { GreenBean } from '../../../../classes/green-bean/green-bean';
 
 @Component({
   selector: 'green-bean-popover-actions',
@@ -15,21 +14,19 @@ import {GreenBean} from '../../../../classes/green-bean/green-bean';
 export class GreenBeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-popover-actions';
   public data: GreenBean = new GreenBean();
+  @Input('greenbean') public greenbean: IGreenBean;
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly uiHelper: UIHelper
+  ) {}
 
-  constructor(private readonly modalController: ModalController,
-              private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper) {
-    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const bean: IGreenBean = this.uiHelper.copyData(this.navParams.get('green-bean'));
-
-    this.data.initializeByObject(bean);
-  }
-
-  public ionViewDidEnter(): void {
-  }
+  public ionViewDidEnter(): void {}
 
   public ngOnInit() {
+    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
+    const bean: IGreenBean = this.uiHelper.copyData(this.greenbean);
 
+    this.data.initializeByObject(bean);
   }
 
   public hasPhotos(): boolean {
@@ -41,9 +38,17 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type, GreenBeanPopoverActionsComponent.COMPONENT_ID);
+    this.modalController.dismiss(
+      undefined,
+      _type,
+      GreenBeanPopoverActionsComponent.COMPONENT_ID
+    );
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined, GreenBeanPopoverActionsComponent.COMPONENT_ID);
+    this.modalController.dismiss(
+      undefined,
+      undefined,
+      GreenBeanPopoverActionsComponent.COMPONENT_ID
+    );
   }
 }

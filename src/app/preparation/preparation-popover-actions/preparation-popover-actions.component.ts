@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -15,23 +15,21 @@ import { PreparationDeviceType } from '../../../classes/preparationDevice';
 export class PreparationPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-popover-actions';
   public data: Preparation = new Preparation();
+  @Input('preparation') public preparation: IPreparation;
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper
-  ) {
-    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const preparation: IPreparation = this.uiHelper.copyData(
-      this.navParams.get('preparation')
-    );
-
-    this.data.initializeByObject(preparation);
-  }
+  ) {}
 
   public ionViewDidEnter(): void {}
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
+    const preparation: IPreparation = this.uiHelper.copyData(this.preparation);
+
+    this.data.initializeByObject(preparation);
+  }
 
   public isEspresso(): boolean {
     return this.data.getPresetStyleType() === PREPARATION_STYLE_TYPE.ESPRESSO;

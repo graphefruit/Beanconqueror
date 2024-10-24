@@ -11,7 +11,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { ModalController, NavParams, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
@@ -58,13 +58,14 @@ declare var Plotly;
 })
 export class BrewAddComponent implements OnInit, OnDestroy {
   public static readonly COMPONENT_ID: string = 'brew-add';
-  public brew_template: Brew;
+  @Input('brew_template') public brew_template: Brew;
   public data: Brew = new Brew();
   public settings: Settings;
 
   @Input() public brew_flow_preset: BrewFlow;
   @Input() public bean_preset: Bean;
 
+  @Input('loadSpecificLastPreparation')
   public loadSpecificLastPreparation: Preparation;
 
   @ViewChild('brewBrewing', { read: BrewBrewingComponent, static: false })
@@ -77,9 +78,10 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private disableHardwareBack;
   public bluetoothSubscription: Subscription = undefined;
   public readonly PreparationDeviceType = PreparationDeviceType;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
+
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -100,12 +102,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly uiHelper: UIHelper
   ) {
     // Initialize to standard in drop down
-
     this.settings = this.uiSettingsStorage.getSettings();
-    this.brew_template = this.navParams.get('brew_template');
-    this.loadSpecificLastPreparation = this.navParams.get(
-      'loadSpecificLastPreparation'
-    );
 
     // Get first entry
     this.data.bean = this.uiBeanStorage

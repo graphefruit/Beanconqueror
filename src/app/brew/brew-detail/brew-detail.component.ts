@@ -1,11 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import {
-  AlertController,
-  ModalController,
-  NavParams,
-  Platform,
-} from '@ionic/angular';
+import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -47,7 +42,7 @@ export class BrewDetailComponent {
   public settings: Settings;
 
   @ViewChild('cuppingChart', { static: false }) public cuppingChart;
-  private brew: IBrew;
+  @Input('brew') public brew: IBrew;
   public loaded: boolean = false;
 
   private maximizeFlowGraphIsShown: boolean = false;
@@ -58,7 +53,6 @@ export class BrewDetailComponent {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     public uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBrewHelper: UIBrewHelper,
@@ -83,7 +77,6 @@ export class BrewDetailComponent {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.DETAIL
     );
-    this.brew = this.navParams.get('brew');
     if (this.brew) {
       const copy: IBrew = this.uiHelper.copyData(this.brew);
       this.data.initializeByObject(copy);

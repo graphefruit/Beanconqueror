@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import {BEAN_SORT_AFTER} from '../../../../enums/beans/beanSortAfter';
-import {BEAN_SORT_ORDER} from '../../../../enums/beans/beanSortOrder';
+import { Component, Input, OnInit } from '@angular/core';
+import { BEAN_SORT_AFTER } from '../../../../enums/beans/beanSortAfter';
+import { BEAN_SORT_ORDER } from '../../../../enums/beans/beanSortOrder';
 
-import {ModalController, NavParams} from '@ionic/angular';
-import {UIBrewHelper} from '../../../../services/uiBrewHelper';
-import {UIHelper} from '../../../../services/uiHelper';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-green-bean-filter',
@@ -12,9 +10,7 @@ import {UIHelper} from '../../../../services/uiHelper';
   styleUrls: ['./green-bean-filter.component.scss'],
 })
 export class GreenBeanFilterComponent implements OnInit {
-
   public static COMPONENT_ID = 'green-bean-filter';
-
 
   public beanSortAfterEnum = BEAN_SORT_AFTER;
   public beanSortOrderEnum = BEAN_SORT_ORDER;
@@ -23,25 +19,15 @@ export class GreenBeanFilterComponent implements OnInit {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
   };*/
 
-  public segment: string = 'open';
+  @Input('segment') public segment: string = 'open';
 
-  constructor(private readonly modalController: ModalController,
-              private readonly uiBrewHelper: UIBrewHelper,
-              private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper) {
+  constructor(private readonly modalController: ModalController) {}
 
-
-  }
-
-  public ngOnInit() {
-
-    this.segment = this.navParams.get('segment');
-    //this.filter = this.uiHelper.copyData(this.navParams.get('bean_filter'));
-  }
+  public ngOnInit() {}
 
   public dismiss(): void {
     this.modalController.dismiss({
-      bean_filter: undefined
+      bean_filter: undefined,
     });
   }
 
@@ -62,7 +48,7 @@ export class GreenBeanFilterComponent implements OnInit {
   }
 
   public setSortOrder(_order: any) {
-   /* this.filter.sort_order = _order;
+    /* this.filter.sort_order = _order;
     if (this.filter.sort_after === BEAN_SORT_AFTER.UNKOWN) {
       this.filter.sort_after = BEAN_SORT_AFTER.NAME;
     }*/
@@ -79,5 +65,4 @@ export class GreenBeanFilterComponent implements OnInit {
   public isOrderActive(_order: any) {
     return true; //return this.filter.sort_order === _order;
   }
-
 }

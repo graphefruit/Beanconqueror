@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { IBrew } from '../../../interfaces/brew/iBrew';
 import { Brew } from '../../../classes/brew/brew';
 import { UIHelper } from '../../../services/uiHelper';
@@ -18,21 +18,24 @@ export class BrewPopoverActionsComponent implements OnInit {
   public data: Brew = new Brew();
   public settings: Settings;
 
+  @Input('brew') public brew: IBrew;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper,
     private readonly uiSettings: UISettingsStorage,
     private readonly uiBrewHelper: UIBrewHelper
   ) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
+
     this.settings = this.uiSettings.getSettings();
-    this.data.initializeByObject(brew);
   }
 
   public ionViewDidEnter(): void {}
-  public ngOnInit() {}
+  public ngOnInit() {
+    const brew: IBrew = this.uiHelper.copyData(this.brew);
+    this.data.initializeByObject(brew);
+  }
 
   public hasPhotos(): boolean {
     return this.data.attachments.length > 0;

@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
-import {UIHelper} from '../../../services/uiHelper';
-import {IMill} from '../../../interfaces/mill/iMill';
-import {MILL_ACTION} from '../../../enums/mills/millActions';
-import {Mill} from '../../../classes/mill/mill';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { UIHelper } from '../../../services/uiHelper';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { MILL_ACTION } from '../../../enums/mills/millActions';
+import { Mill } from '../../../classes/mill/mill';
 
 @Component({
   selector: 'mill-popover-actions',
@@ -11,24 +11,21 @@ import {Mill} from '../../../classes/mill/mill';
   styleUrls: ['./mill-popover-actions.component.scss'],
 })
 export class MillPopoverActionsComponent implements OnInit {
-
   public static COMPONENT_ID = 'mill-popover-actions';
   public data: Mill = new Mill();
+  @Input('mill') public mill: IMill;
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly uiHelper: UIHelper
+  ) {}
 
-  constructor(private readonly modalController: ModalController,
-              private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper) {
-    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const mill: IMill = this.uiHelper.copyData(this.navParams.get('mill'));
-
-    this.data.initializeByObject(mill);
-  }
-
-  public ionViewDidEnter(): void {
-  }
+  public ionViewDidEnter(): void {}
 
   public ngOnInit() {
+    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
+    const mill: IMill = this.uiHelper.copyData(this.mill);
 
+    this.data.initializeByObject(mill);
   }
 
   public hasPhotos(): boolean {
@@ -40,9 +37,17 @@ export class MillPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type,MillPopoverActionsComponent.COMPONENT_ID);
+    this.modalController.dismiss(
+      undefined,
+      _type,
+      MillPopoverActionsComponent.COMPONENT_ID
+    );
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,MillPopoverActionsComponent.COMPONENT_ID);
+    this.modalController.dismiss(
+      undefined,
+      undefined,
+      MillPopoverActionsComponent.COMPONENT_ID
+    );
   }
 }

@@ -1,11 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
-import moment from 'moment/moment';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { NgxStarsComponent } from 'ngx-stars';
 import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { Brew } from '../../../classes/brew/brew';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 
@@ -22,20 +21,14 @@ export class BrewRatingComponent implements OnInit {
   @ViewChild('brewStars', { read: NgxStarsComponent, static: false })
   public brewStars: NgxStarsComponent;
 
+  @Input('brew') public brew: IBrew;
+
   constructor(
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiBrewStorage: UIBrewStorage
-  ) {
-    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const brew: IBrew = this.uiHelper.cloneData(this.navParams.get('brew'));
-
-    if (brew !== undefined) {
-      this.data.initializeByObject(brew);
-    }
-  }
+  ) {}
 
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
@@ -47,6 +40,11 @@ export class BrewRatingComponent implements OnInit {
   }
 
   public ngOnInit() {
+    const brew: IBrew = this.uiHelper.cloneData(this.brew);
+
+    if (brew !== undefined) {
+      this.data.initializeByObject(brew);
+    }
     this.settings = this.uiSettingsStorage.getSettings();
 
     this.maxBrewRating = this.settings.brew_rating;
