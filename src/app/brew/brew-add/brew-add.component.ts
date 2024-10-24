@@ -317,6 +317,8 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
       this.manageCaffeineConsumption();
 
+      await this.manageOpenDateForBean(addedBrewObj);
+
       if (!this.hide_toast_message) {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
@@ -379,6 +381,24 @@ export class BrewAddComponent implements OnInit, OnDestroy {
         moment(this.brewBrewing.customCreationDate).toDate()
       );
     }
+  }
+
+  private async manageOpenDateForBean(addedBrewObj: Brew) {
+    //#825
+    try {
+      this.uiLog.log('Brew add - Step OpenDateForBean');
+      const bean = this.data.getBean();
+      if (bean && !bean.openDate) {
+        if (this.settings.bean_manage_parameters.openDate === true) {
+          if (this.brewBrewing.customCreationDate) {
+            bean.openDate = this.brewBrewing.customCreationDate;
+          } else {
+            bean.openDate = moment(new Date()).toISOString();
+          }
+          await this.uiBeanStorage.update(bean);
+        }
+      }
+    } catch (ex) {}
   }
 
   private manageUploadToVisualizer(addedBrewObj: Brew): void {
