@@ -42,6 +42,8 @@ export class DashboardPage implements OnInit {
       // If an brew is deleted, we need to reset our array for the next call.
       this.leftOverBeansWeight = undefined;
       this.leftOverFrozenBeansWeight = undefined;
+
+      this.loadBrews();
     });
 
     this.uiBeanStorage.attachOnEvent().subscribe((_val) => {

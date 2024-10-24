@@ -18,6 +18,7 @@ import { Bean } from '../../classes/bean/bean';
 import { BrewFilterComponent } from './brew-filter/brew-filter.component';
 import { Settings } from '../../classes/settings/settings';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'brew',
@@ -51,7 +52,7 @@ export class BrewPage implements OnInit {
   public archivedBrewsCollapsed: boolean = false;
 
   public settings: Settings;
-
+  private brewStorageChangeSubscription: Subscription;
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -73,6 +74,13 @@ export class BrewPage implements OnInit {
     this.loadBrews();
 
     this.retriggerScroll();
+
+    this.brewStorageChangeSubscription = this.uiBrewStorage
+      .attachOnEvent()
+      .subscribe((_val) => {
+        // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
+        this.loadBrews();
+      });
   }
 
   public segmentChanged() {
@@ -387,6 +395,12 @@ export class BrewPage implements OnInit {
   }
   public ngOnInit() {}
 
+  public async ngOnDestroy() {
+    if (this.brewStorageChangeSubscription) {
+      this.brewStorageChangeSubscription.unsubscribe();
+      this.brewStorageChangeSubscription = undefined;
+    }
+  }
   public async longPressAdd(_event) {
     _event.target.blur();
     _event.cancelBubble = true;
