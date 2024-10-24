@@ -34,6 +34,7 @@ export class BrewPage implements OnInit {
   public archiveBrewsLength: number = 0;
 
   public brew_segment: 'open' | 'archive' = 'open';
+  public segmentScrollHeight: string = undefined;
 
   @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
   public openScroll: AgVirtualSrollComponent;
@@ -53,6 +54,7 @@ export class BrewPage implements OnInit {
 
   public settings: Settings;
   private brewStorageChangeSubscription: Subscription;
+
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -88,7 +90,7 @@ export class BrewPage implements OnInit {
   }
 
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.brewContent.nativeElement;
       let scrollComponent: AgVirtualSrollComponent;
       if (this.openScroll !== undefined) {
@@ -99,6 +101,8 @@ export class BrewPage implements OnInit {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 150);
   }
 
@@ -107,6 +111,7 @@ export class BrewPage implements OnInit {
   public onOrientationChange(event) {
     this.retriggerScroll();
   }
+
   public async add() {
     await this.uiBrewHelper.addBrew();
     this.loadBrews();
@@ -265,6 +270,7 @@ export class BrewPage implements OnInit {
     this.settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
+
   private async __saveCollapseFilter() {
     this.settings.brew_collapsed.OPEN = this.openBrewsCollapsed;
     this.settings.brew_collapsed.ARCHIVED = this.archivedBrewsCollapsed;
@@ -275,6 +281,7 @@ export class BrewPage implements OnInit {
     this.__initializeBrewView(this.brew_segment);
     this.retriggerScroll();
   }
+
   private __initializeBrewView(_type: string): void {
     // sort latest to top.
     const brewsCopy: Array<Brew> = [...this.brews];
@@ -393,6 +400,7 @@ export class BrewPage implements OnInit {
       this.archiveBrewsView = sortedBrews;
     }
   }
+
   public ngOnInit() {}
 
   public async ngOnDestroy() {
@@ -401,6 +409,7 @@ export class BrewPage implements OnInit {
       this.brewStorageChangeSubscription = undefined;
     }
   }
+
   public async longPressAdd(_event) {
     _event.target.blur();
     _event.cancelBubble = true;
