@@ -1481,10 +1481,12 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.stopFetchingDataFromSanremoYOU();
 
     const setSanremoData = () => {
-      const temp = prepDeviceCall.getTemperature();
-      const press = prepDeviceCall.getPressure();
-      this.__setPressureFlow({ actual: press, old: press });
-      this.__setTemperatureFlow({ actual: temp, old: temp });
+      this.ngZone.runOutsideAngular(() => {
+        const temp = prepDeviceCall.getTemperature();
+        const press = prepDeviceCall.getPressure();
+        this.__setPressureFlow({ actual: press, old: press });
+        this.__setTemperatureFlow({ actual: temp, old: temp });
+      });
     };
 
     /**
@@ -1496,22 +1498,24 @@ export class BrewBrewingGraphComponent implements OnInit {
       setSanremoData();
     });
 
-    this.sanremoYOUFetchingInterval = setInterval(async () => {
-      try {
-        //const apiThirdCallDelayStart = moment(); // create a moment with the current time
-        //let apiDelayEnd;
+    this.ngZone.runOutsideAngular(() => {
+      this.sanremoYOUFetchingInterval = setInterval(async () => {
+        try {
+          //const apiThirdCallDelayStart = moment(); // create a moment with the current time
+          //let apiDelayEnd;
 
-        // We don't use the callback function to make sure we don't have to many performance issues
-        prepDeviceCall.fetchRuntimeData(() => {
-          //apiDelayEnd = moment();
+          // We don't use the callback function to make sure we don't have to many performance issues
+          prepDeviceCall.fetchRuntimeData(() => {
+            //apiDelayEnd = moment();
 
-          //before we start the interval, we fetch the data once to overwrite, and set them.
-          //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
-          //console.log(delta);
-          setSanremoData();
-        });
-      } catch (ex) {}
-    }, 250);
+            //before we start the interval, we fetch the data once to overwrite, and set them.
+            //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+            //console.log(delta);
+            setSanremoData();
+          });
+        } catch (ex) {}
+      }, 250);
+    });
   }
 
   public startFetchingDataFromMeticulous() {
@@ -2870,7 +2874,11 @@ export class BrewBrewingGraphComponent implements OnInit {
       pressureObj.old
     );
 
-    this.updateChart('pressure');
+    if (!isSmartScaleConnected) {
+      //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
+      this.updateChart('pressure');
+    }
+
     if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
@@ -2923,7 +2931,11 @@ export class BrewBrewingGraphComponent implements OnInit {
       temperatureObj.old
     );
 
-    this.updateChart('temperature');
+    if (!isSmartScaleConnected) {
+      //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
+      this.updateChart('temperature');
+    }
+
     if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
