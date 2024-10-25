@@ -55,7 +55,7 @@ export class GreenBeansPage implements OnInit {
   public openBeansFilterText: string = '';
 
   public settings: Settings;
-
+  public segmentScrollHeight: string = undefined;
   constructor(
     public modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -103,6 +103,8 @@ export class GreenBeansPage implements OnInit {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 250);
   }
 

@@ -87,7 +87,7 @@ export class BeansPage implements OnDestroy {
   public frozenBeansFilter: IBeanPageFilter;
 
   private beanStorageChangeSubscription: Subscription;
-
+  public segmentScrollHeight: string = undefined;
   constructor(
     private readonly uiLog: UILog,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -357,6 +357,7 @@ export class BeansPage implements OnDestroy {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 250);
   }
 

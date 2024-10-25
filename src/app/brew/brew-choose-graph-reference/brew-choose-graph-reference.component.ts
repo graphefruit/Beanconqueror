@@ -67,6 +67,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
 
+  public segmentScrollHeight: string = undefined;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -150,6 +152,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
           15 -
           scrollComponent.el.offsetTop +
           'px';
+        this.segmentScrollHeight = scrollComponent.el.style.height;
       }
     }, 150);
   }

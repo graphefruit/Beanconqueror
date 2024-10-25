@@ -92,7 +92,7 @@
       </div>
 
 
-      <ag-virtual-scroll #openScroll [items]="openBeans" height="100vh" [min-row-height]="isCollapseActive()?60:210">
+      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="segmentScrollHeight" [min-row-height]="isCollapseActive()?60:210">
         <bean-information [collapsed]='isCollapseActive()' (beanAction)="beanAction()" *ngFor="let bean of openScroll.items"
                           [bean]="bean"></bean-information>
 
@@ -129,7 +129,7 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS" | translate}}
           </div>
         </div>
-        <ag-virtual-scroll #frozenScroll [items]="frozenBeans" height="100vh" [min-row-height]="isCollapseActive()?60:210">
+        <ag-virtual-scroll #frozenScroll [items]="frozenBeans" [height]="segmentScrollHeight" [min-row-height]="isCollapseActive()?60:210">
           <bean-information [collapsed]='isCollapseActive()' (beanAction)="beanAction()"  *ngFor="let bean of frozenScroll.items"
                             [bean]="bean"></bean-information>
 
@@ -166,7 +166,7 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" height="100vh" [min-row-height]="isCollapseActive()?60:210">
+        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="segmentScrollHeight" [min-row-height]="isCollapseActive()?60:210">
           <bean-information [collapsed]='isCollapseActive()' (beanAction)="beanAction()"  *ngFor="let bean of archivedScroll.items"
                             [bean]="bean"></bean-information>
 

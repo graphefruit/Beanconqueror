@@ -38,6 +38,7 @@ export class PreparationPage implements OnInit {
   public archivedScroll: AgVirtualSrollComponent;
   @ViewChild('preparationContent', { read: ElementRef })
   public preparationContent: ElementRef;
+  public segmentScrollHeight: string = undefined;
   constructor(
     public modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -82,6 +83,8 @@ export class PreparationPage implements OnInit {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 150);
   }
 

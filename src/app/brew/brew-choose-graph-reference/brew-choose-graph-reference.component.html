@@ -36,7 +36,7 @@
           <ion-card *ngIf="graphOpenView.length > 0">
             <ng-container *ngIf='graphOpenView?.length > 0'>
               <ion-radio-group  [(ngModel)]="radioSelection">
-                <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" height="100vh" min-row-height="180">
+                <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="segmentScrollHeight" min-row-height="180">
                   <brew-graph-reference-card *ngFor="let graph of graphOpenScroll.items" [graph]="graph"></brew-graph-reference-card>
                 </ag-virtual-scroll>
               </ion-radio-group>
@@ -69,7 +69,7 @@
 
             <ng-container *ngIf='openBrewsView?.length > 0'>
               <ion-radio-group  [(ngModel)]="radioSelection">
-                <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh" min-row-height="180">
+                <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="segmentScrollHeight" min-row-height="180">
                   <brew-graph-reference-card  *ngFor="let brew of openScroll.items" [brew]="brew"></brew-graph-reference-card>
                 </ag-virtual-scroll>
               </ion-radio-group>
@@ -98,7 +98,7 @@
             <hr  *ngIf="archiveBrewsView?.length > 0" />
             <ng-container *ngIf='archiveBrewsView?.length > 0'>
               <ion-radio-group  [(ngModel)]="radioSelection">
-                <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="385">
+                <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="segmentScrollHeight" min-row-height="385">
                   <brew-graph-reference-card  *ngFor="let brew of archivedScroll.items" [brew]="brew"></brew-graph-reference-card>
                 </ag-virtual-scroll>
               </ion-radio-group>

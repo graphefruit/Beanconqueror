@@ -1,50 +1,57 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {UIMillStorage} from '../../services/uiMillStorage';
-import {UIAlert} from '../../services/uiAlert';
-import {Mill} from '../../classes/mill/mill';
-import {ModalController} from '@ionic/angular';
-import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIAlert } from '../../services/uiAlert';
+import { Mill } from '../../classes/mill/mill';
+import { ModalController } from '@ionic/angular';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
 
-import {MILL_ACTION} from '../../enums/mills/millActions';
-import {Settings} from '../../classes/settings/settings';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {UIAnalytics} from '../../services/uiAnalytics';
-import {UIMillHelper} from '../../services/uiMillHelper';
-import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
-
+import { MILL_ACTION } from '../../enums/mills/millActions';
+import { Settings } from '../../classes/settings/settings';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIMillHelper } from '../../services/uiMillHelper';
+import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 
 @Component({
   selector: 'mill',
   templateUrl: './mill.page.html',
   styleUrls: ['./mill.page.scss'],
 })
-export class MillPage  implements OnInit  {
-
+export class MillPage implements OnInit {
   public mills: Array<Mill> = [];
 
   public openMillsView: Array<Mill> = [];
   public archiveMillsView: Array<Mill> = [];
 
-  @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
-  @ViewChild('millContent',{read: ElementRef}) public millContent: ElementRef;
+  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
+  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
+  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('millContent', { read: ElementRef })
+  public millContent: ElementRef;
 
   public settings: Settings;
   public segment: string = 'open';
+  public segmentScrollHeight: string = undefined;
+  constructor(
+    public modalCtrl: ModalController,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly uiMillStorage: UIMillStorage,
+    private readonly uiAlert: UIAlert,
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly uiMillHelper: UIMillHelper
+  ) {}
 
-  constructor (public modalCtrl: ModalController,
-               private readonly changeDetectorRef: ChangeDetectorRef,
-               private readonly uiMillStorage: UIMillStorage,
-               private readonly uiAlert: UIAlert,
-               private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly uiAnalytics: UIAnalytics,
-               private readonly uiMillHelper: UIMillHelper) {
-
-  }
-
-  public ngOnInit(): void {
-  }
+  public ngOnInit(): void {}
 
   public segmentChanged() {
     this.retriggerScroll();
@@ -56,10 +63,8 @@ export class MillPage  implements OnInit  {
     this.retriggerScroll();
   }
   private retriggerScroll() {
-
-    setTimeout(async () =>{
-
-      const el =  this.millContent.nativeElement;
+    setTimeout(async () => {
+      const el = this.millContent.nativeElement;
       let scrollComponent: AgVirtualSrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
@@ -67,11 +72,11 @@ export class MillPage  implements OnInit  {
         scrollComponent = this.archivedScroll;
       }
 
-      scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
-    },150);
-
+      scrollComponent.el.style.height =
+        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
+    }, 150);
   }
-
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -94,7 +99,6 @@ export class MillPage  implements OnInit  {
 
   public async millAction(action: MILL_ACTION, mill: Mill): Promise<void> {
     this.loadMills();
-
   }
 
   public async add() {
@@ -105,12 +109,11 @@ export class MillPage  implements OnInit  {
   private __initializeMills(): void {
     this.openMillsView = [];
     this.archiveMillsView = [];
-    this.mills = this.uiMillStorage.getAllEntries()
-        .sort((a, b) => a.name.localeCompare(b.name));
+    this.mills = this.uiMillStorage
+      .getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
 
-    this.openMillsView = this.mills.filter((e)=> e.finished === false);
-    this.archiveMillsView = this.mills.filter((e)=> e.finished === true);
+    this.openMillsView = this.mills.filter((e) => e.finished === false);
+    this.archiveMillsView = this.mills.filter((e) => e.finished === true);
   }
-
-
 }

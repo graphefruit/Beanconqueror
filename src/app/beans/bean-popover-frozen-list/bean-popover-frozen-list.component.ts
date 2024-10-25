@@ -26,7 +26,7 @@ export class BeanPopoverFrozenListComponent {
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
-
+  public segmentScrollHeight: string = undefined;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanHelper: UIBeanHelper
@@ -49,6 +49,7 @@ export class BeanPopoverFrozenListComponent {
       scrollComponent = this.openScroll;
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 150);
   }
 

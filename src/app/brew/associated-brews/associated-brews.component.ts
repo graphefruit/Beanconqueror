@@ -35,7 +35,7 @@ export class AssociatedBrewsComponent {
 
   @ViewChild('brewContent', { read: ElementRef })
   public brewContent: ElementRef;
-
+  public segmentScrollHeight: string = undefined;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanHelper: UIBeanHelper,
@@ -66,6 +66,7 @@ export class AssociatedBrewsComponent {
       scrollComponent = this.openScroll;
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 150);
   }
 

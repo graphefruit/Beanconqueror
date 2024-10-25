@@ -36,7 +36,7 @@
           {{"GRAPH_SECTION.NO_ENTRIES" | translate}}
         </div>
       </div>
-      <ag-virtual-scroll #openScroll [items]="openGraphs" height="100vh" min-row-height="165">
+      <ag-virtual-scroll #openScroll [items]="openGraphs" [height]="segmentScrollHeight" min-row-height="165">
         <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" *ngFor="let graph of openScroll.items" [graph]="graph"></graph-information-card>
       </ag-virtual-scroll>
     </div>
@@ -55,7 +55,7 @@
 
 
 
-        <ag-virtual-scroll #archivedScroll [items]="finishedGraphs" height="100vh" min-row-height="165">
+        <ag-virtual-scroll #archivedScroll [items]="finishedGraphs" [height]="segmentScrollHeight" min-row-height="165">
           <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" *ngFor="let graph of archivedScroll.items" [graph]="graph"></graph-information-card>
         </ag-virtual-scroll>
       </div>

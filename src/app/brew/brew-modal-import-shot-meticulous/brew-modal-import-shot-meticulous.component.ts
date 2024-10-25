@@ -39,7 +39,7 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
-
+  public segmentScrollHeight: string = undefined;
   constructor(
     private readonly modalController: ModalController,
     public readonly uiHelper: UIHelper
@@ -66,6 +66,7 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
 
       if (scrollComponent) {
         scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
+        this.segmentScrollHeight = scrollComponent.el.style.height;
       }
     }, 150);
   }

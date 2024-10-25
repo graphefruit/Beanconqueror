@@ -95,6 +95,8 @@ export class BeanModalSelectComponent implements OnInit {
   public openBeansLength: number = 0;
   public frozenBeansLength: number = 0;
 
+  public segmentScrollHeight: string = undefined;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanStorage: UIBeanStorage,
@@ -189,6 +191,7 @@ export class BeanModalSelectComponent implements OnInit {
         10 -
         scrollComponent.el.offsetTop +
         'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 250);
   }
 
