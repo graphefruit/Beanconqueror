@@ -1,7 +1,7 @@
 <div *ngIf="layout === 'brew'" #brewInformationContainer>
   <swiper-container #swiper  pager="true" [pagination]="{ draggable: true, clickable: true }">
     <swiper-slide>
-      <ion-card #ionCardParent class='long-card brew-layout' tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'>
+      <ion-card #ionCardParent class='long-card brew-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'>
         <ion-card-content #card class='no-ion-col-vertical-padding ion-padding-top' [ngClass]="brew.flow_profile?'add-bottom-spacing':''">
           <ion-grid class='no-padding-bottom' style='padding-top:0px;'>
             <ion-row style='height:60px;'>
@@ -247,7 +247,7 @@
     </swiper-slide>
     <swiper-slide *ngIf='brew.flow_profile'>
       <!--Z-index -1 to let it scroll all good-->
-      <ion-card class='long-card brew-layout' style='z-index:-1'>
+      <ion-card class='long-card brew-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" style='z-index:-1'>
         <ion-card-content class='no-ion-col-vertical-padding ion-padding-top' >
           <graph-display-card *ngIf='informationContainerWidth' [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile'></graph-display-card>
         </ion-card-content>
@@ -258,7 +258,7 @@
 
   <div style='height:10px;'></div>
 </div>
-<ion-card class='long-card dashboard-layout' tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'
+<ion-card class='long-card dashboard-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'
           *ngIf="layout === 'dashboard'">
   <ion-card-content class='no-ion-padding no-ion-margin' #card>
     <ion-grid class='ion-no-padding'>
