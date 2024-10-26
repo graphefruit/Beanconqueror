@@ -689,7 +689,9 @@ export class BrewBrewingGraphComponent implements OnInit {
   public drawTargetWeight(_targetWeight: number) {
     if (
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
-      PreparationDeviceType.SANREMO_YOU
+        PreparationDeviceType.SANREMO_YOU ||
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.XENIA
     ) {
       if (!('shapes' in this.lastChartLayout)) {
         this.lastChartLayout['shapes'] = [];
@@ -1638,7 +1640,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           }
         } catch (ex) {}
       });
-    }, 1000);
+    }, 2500);
 
     this.xeniaOverviewInterval = setInterval(async () => {
       try {
