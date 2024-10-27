@@ -21,6 +21,8 @@ export class BeanSortComponent implements OnInit {
 
   @Input('bean_sort') public bean_sort: any;
 
+  public extendedSortActive: boolean = false;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper
@@ -71,6 +73,10 @@ export class BeanSortComponent implements OnInit {
     if (this.filter.sort_order === BEAN_SORT_ORDER.UNKOWN) {
       this.filter.sort_order = BEAN_SORT_ORDER.ASCENDING;
     }
+  }
+
+  public toggleExtendSort() {
+    this.extendedSortActive = !this.extendedSortActive;
   }
 
   public isSortActive(_sort: any) {

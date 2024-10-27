@@ -1432,5 +1432,13 @@
   },
   "BREW_FLOW_WEIGHT_REALTIME_SECOND": "Flow (Realtime, out)",
   "BREW_FLOW_WEIGHT_SECOND": "Weight (out)",
-  "BEAN_WEIGHT_IN_PLACEHOLDER_NO_BR": "This parameter is not used for the brew-ratio calculation"
+  "BEAN_WEIGHT_IN_PLACEHOLDER_NO_BR": "This parameter is not used for the brew-ratio calculation",
+  "EXTEND_SORT_AFTER": "Extended sort",
+  "BEAN_SORT_BEAN_ROASTING_TYPE": "Roast type",
+  "BEAN_SORT_WEIGHT": "Weight",
+  "BEAN_SORT_AROMATICS": "Flavour profile",
+  "BEAN_SORT_INFORMATION_COUNTRY": "Country",
+  "BEAN_SORT_INFORMATION_REGION": "Region",
+  "BEAN_SORT_INFORMATION_VARIETY": "Variety",
+  "BEAN_SORT_INFORMATION_PROCESSING": "Processing"
 }

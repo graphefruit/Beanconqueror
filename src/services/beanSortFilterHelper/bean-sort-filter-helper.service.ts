@@ -211,6 +211,111 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
+        case BEAN_SORT_AFTER.BEAN_ROASTING_TYPE:
+          filterBeans = filterBeans.sort((a, b) => {
+            const nameA = a.bean_roasting_type.toUpperCase();
+            const nameB = b.bean_roasting_type.toUpperCase();
+
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.WEIGHT:
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.weight < b.weight) {
+              return -1;
+            }
+            if (a.weight > b.weight) {
+              return 1;
+            }
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.AROMATICS:
+          filterBeans = filterBeans.sort((a, b) => {
+            const nameA = a.aromatics.toUpperCase();
+            const nameB = b.aromatics.toUpperCase();
+
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.INFORMATION_COUNTRY:
+          filterBeans = filterBeans.sort((a, b) => {
+            try {
+              const nameA = a.bean_information[0].country.toUpperCase();
+              const nameB = b.bean_information[0].country.toUpperCase();
+
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+            } catch (ex) {}
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.INFORMATION_REGION:
+          filterBeans = filterBeans.sort((a, b) => {
+            try {
+              const nameA = a.bean_information[0].region.toUpperCase();
+              const nameB = b.bean_information[0].region.toUpperCase();
+
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+            } catch (ex) {}
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.INFORMATION_VARIETY:
+          filterBeans = filterBeans.sort((a, b) => {
+            try {
+              const nameA = a.bean_information[0].variety.toUpperCase();
+              const nameB = b.bean_information[0].variety.toUpperCase();
+
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+            } catch (ex) {}
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.INFORMATION_PROCESSING:
+          filterBeans = filterBeans.sort((a, b) => {
+            try {
+              const nameA = a.bean_information[0].processing.toUpperCase();
+              const nameB = b.bean_information[0].processing.toUpperCase();
+
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+            } catch (ex) {}
+            return 0;
+          });
+          break;
       }
 
       if (sort.sort_order === BEAN_SORT_ORDER.DESCENDING) {
