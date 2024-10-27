@@ -63,8 +63,7 @@
 
       <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.METICULOUS">
       <ion-item>
-        <ion-label id='preparationURL'>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
-        <ion-input aria-labelledby='preparationURL' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+        <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
                    tabIndex="1" type="text"></ion-input>
         <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
                     slot="end" style="margin-left:0px;" tabIndex="2" tappable>
@@ -74,8 +73,7 @@
       </ng-container>
       <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.SANREMO_YOU">
       <ion-item>
-        <ion-label id='preparationURL'>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
-        <ion-input aria-labelledby='preparationURL' (ionBlur)="save();checkURL();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+        <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();checkURL();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
                    tabIndex="1" type="text"></ion-input>
         <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
                     slot="end" style="margin-left:0px;" tabIndex="2" tappable>
