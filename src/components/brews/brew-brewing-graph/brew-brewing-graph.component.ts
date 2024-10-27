@@ -1686,44 +1686,46 @@ export class BrewBrewingGraphComponent implements OnInit {
           this.settings.bluetooth_scale_tare_on_start_timer === true &&
           scale.supportsTaring
         ) {
-          await new Promise(async (resolve) => {
-            await this.uiAlert.showLoadingSpinner();
-            await new Promise((_internalResolve) => {
-              scale.tare();
-              setTimeout(async () => {
-                _internalResolve(undefined);
-              }, this.settings.bluetooth_command_delay);
-            });
-            let minimumWeightNullReports = 0;
-            let weightReports = 0;
-            this.deattachToScaleStartTareListening();
-            this.scaleStartTareListeningSubscription =
-              scale.flowChange.subscribe((_val) => {
-                const weight: number = this.uiHelper.toFixedIfNecessary(
-                  _val.actual,
-                  1
-                );
-                weightReports = weightReports + 1;
-                if (weight <= 0) {
-                  minimumWeightNullReports = minimumWeightNullReports + 1;
-                }
-                if (minimumWeightNullReports >= 3) {
-                  this.deattachToScaleStartTareListening();
-                  resolve(undefined);
-                } else if (weightReports > 20) {
-                  // We hope this should be never called?!
-                  this.deattachToScaleStartTareListening();
-                  resolve(undefined);
-                }
+          if (scale && scale.getWeight() !== 0) {
+            await new Promise(async (resolve) => {
+              await this.uiAlert.showLoadingSpinner();
+              await new Promise((_internalResolve) => {
+                scale.tare();
+                setTimeout(async () => {
+                  _internalResolve(undefined);
+                }, this.settings.bluetooth_command_delay);
               });
-            /** Maybe we have issues with scale sending weight reports (like on the acaia), so we set an timeout, if after 3 seconds nothing happends, we just deatach and resolve**/
-            setTimeout(() => {
-              if (weightReports <= 0) {
-                this.deattachToScaleStartTareListening();
-                resolve(undefined);
-              }
-            }, 3000);
-          });
+              let minimumWeightNullReports = 0;
+              let weightReports = 0;
+              this.deattachToScaleStartTareListening();
+              this.scaleStartTareListeningSubscription =
+                scale.flowChange.subscribe((_val) => {
+                  const weight: number = this.uiHelper.toFixedIfNecessary(
+                    _val.actual,
+                    1
+                  );
+                  weightReports = weightReports + 1;
+                  if (weight <= 0) {
+                    minimumWeightNullReports = minimumWeightNullReports + 1;
+                  }
+                  if (minimumWeightNullReports >= 3) {
+                    this.deattachToScaleStartTareListening();
+                    resolve(undefined);
+                  } else if (weightReports > 20) {
+                    // We hope this should be never called?!
+                    this.deattachToScaleStartTareListening();
+                    resolve(undefined);
+                  }
+                });
+              /** Maybe we have issues with scale sending weight reports (like on the acaia), so we set an timeout, if after 3 seconds nothing happends, we just deatach and resolve**/
+              setTimeout(() => {
+                if (weightReports <= 0) {
+                  this.deattachToScaleStartTareListening();
+                  resolve(undefined);
+                }
+              }, 3000);
+            });
+          }
           this.brewComponent.checkChanges();
           this.checkChanges();
           await this.uiAlert.hideLoadingSpinner();
@@ -2296,7 +2298,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                 ) {
                   try {
                     const scale: BluetoothScale = this.bleManager.getScale();
-                    if (scale) {
+                    if (scale && scale.getWeight() !== 0) {
                       await new Promise((resolve) => {
                         scale.tare();
                         setTimeout(async () => {
