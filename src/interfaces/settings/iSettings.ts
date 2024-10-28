@@ -16,8 +16,8 @@ import {
   ScaleType,
   TemperatureType,
 } from '../../classes/devices';
-import { BeanListViewParameter } from '../../classes/parameter/beanListViewParameter';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { IBrewPageSort } from '../brew/iBrewPageSort';
 
 export interface ISettings {
   // Properties
@@ -90,6 +90,11 @@ export interface ISettings {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
     FROZEN: IBeanPageSort;
+  };
+
+  brew_sort: {
+    OPEN: IBrewPageSort;
+    ARCHIVED: IBrewPageSort;
   };
 
   bean_sort_selection: {

@@ -14,11 +14,13 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { Brew } from '../../classes/brew/brew';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
-import { Bean } from '../../classes/bean/bean';
 import { BrewFilterComponent } from './brew-filter/brew-filter.component';
 import { Settings } from '../../classes/settings/settings';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { Subscription } from 'rxjs';
+import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 
 @Component({
   selector: 'brew',
@@ -49,6 +51,15 @@ export class BrewPage implements OnInit {
   public archivedBrewsFilter: IBrewPageFilter;
   public openBrewsFilter: IBrewPageFilter;
 
+  public openSortBrewsFilter: IBrewPageSort = {
+    sort_after: BREW_SORT_AFTER.UNKOWN,
+    sort_order: BREW_SORT_ORDER.UNKOWN,
+  };
+  public archivedSortBrewsFilter: IBrewPageSort = {
+    sort_after: BREW_SORT_AFTER.UNKOWN,
+    sort_order: BREW_SORT_ORDER.UNKOWN,
+  };
+
   public openBrewsCollapsed: boolean = false;
   public archivedBrewsCollapsed: boolean = false;
 
@@ -73,6 +84,10 @@ export class BrewPage implements OnInit {
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.openBrewsCollapsed = this.settings.brew_collapsed.OPEN;
     this.archivedBrewsCollapsed = this.settings.brew_collapsed.ARCHIVED;
+
+    this.archivedSortBrewsFilter = this.settings.brew_sort.ARCHIVED;
+    this.openSortBrewsFilter = this.settings.brew_sort.OPEN;
+
     this.loadBrews();
 
     this.retriggerScroll();
@@ -226,9 +241,40 @@ export class BrewPage implements OnInit {
     return shallBarDisplayed;
   }
 
-  // Treat the instructor name as the unique identifier for the object
-  public trackByUUID(index, instructor: Bean) {
-    return instructor.config.uuid;
+  public isSortActive(): boolean {
+    let sort;
+    if (this.brew_segment === 'open') {
+      sort = this.openSortBrewsFilter;
+    } else {
+      sort = this.archivedSortBrewsFilter;
+    }
+
+    return !(
+      sort.sort_order === BREW_SORT_ORDER.DESCENDING &&
+      sort.sort_after === BREW_SORT_AFTER.BREW_DATE
+    );
+  }
+
+  public async showSort() {
+    let sortSegment;
+    if (this.brew_segment === 'open') {
+      sortSegment = this.openSortBrewsFilter;
+    } else {
+      sortSegment = this.archivedSortBrewsFilter;
+    }
+
+    const newSort = await this.uiBrewHelper.showSort(sortSegment);
+    if (newSort) {
+      if (this.brew_segment === 'open') {
+        this.openSortBrewsFilter = newSort;
+      } else if (this.brew_segment === 'archive') {
+        this.archivedSortBrewsFilter = newSort;
+      }
+
+      await this.__saveBrewFilter();
+
+      this.loadBrews();
+    }
   }
 
   public async showFilter() {
@@ -268,6 +314,8 @@ export class BrewPage implements OnInit {
   private async __saveBrewFilter() {
     this.settings.brew_filter.OPEN = this.openBrewsFilter;
     this.settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
+    this.settings.brew_sort.OPEN = this.openSortBrewsFilter;
+    this.settings.brew_sort.ARCHIVED = this.archivedSortBrewsFilter;
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
@@ -308,10 +356,13 @@ export class BrewPage implements OnInit {
     }
 
     let filter: IBrewPageFilter;
+    let sort: IBrewPageSort;
     if (isOpen) {
       filter = this.openBrewsFilter;
+      sort = this.openSortBrewsFilter;
     } else {
       filter = this.archivedBrewsFilter;
+      sort = this.archivedSortBrewsFilter;
     }
 
     if (filter.mill.length > 0) {
@@ -365,8 +416,88 @@ export class BrewPage implements OnInit {
           e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
       );
     }
+    let sortedBrews: Array<Brew> = [];
+    if (
+      sort.sort_order !== BREW_SORT_ORDER.UNKOWN &&
+      sort.sort_after !== BREW_SORT_AFTER.UNKOWN
+    ) {
+      switch (sort.sort_after) {
+        case BREW_SORT_AFTER.BREW_DATE:
+          sortedBrews = brewsFilters.sort((obj1, obj2) => {
+            if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
+              return 1;
+            }
+            if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
+              return -1;
+            }
 
-    let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
+            return 0;
+          });
+          break;
+        case BREW_SORT_AFTER.RATING:
+          sortedBrews = brewsFilters.sort((obj1, obj2) => {
+            if (obj1.rating > obj2.rating) {
+              return 1;
+            }
+            if (obj1.rating < obj2.rating) {
+              return -1;
+            }
+
+            return 0;
+          });
+          break;
+        case BREW_SORT_AFTER.GRINDER:
+          sortedBrews = brewsFilters.sort((a, b) => {
+            const nameA = a.getMill().name.toUpperCase();
+            const nameB = b.getMill().name.toUpperCase();
+
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+            return 0;
+          });
+          break;
+        case BREW_SORT_AFTER.BEAN_NAME:
+          sortedBrews = brewsFilters.sort((a, b) => {
+            const nameA = a.getBean().name.toUpperCase();
+            const nameB = b.getBean().name.toUpperCase();
+
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+            return 0;
+          });
+          break;
+        case BREW_SORT_AFTER.PREPARATION:
+          sortedBrews = brewsFilters.sort((a, b) => {
+            const nameA = a.getPreparation().name.toUpperCase();
+            const nameB = b.getPreparation().name.toUpperCase();
+
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+            return 0;
+          });
+          break;
+      }
+    }
+    if (sort.sort_order === BREW_SORT_ORDER.DESCENDING) {
+      sortedBrews.reverse();
+    }
+
+    //let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
     let searchText: string = '';
     if (_type === 'open') {
       searchText = this.openBrewFilterText.toLowerCase();

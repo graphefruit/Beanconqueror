@@ -567,6 +567,8 @@ export class UIUpdate {
             const settings_v12: Settings = this.uiSettingsStorage.getSettings();
             settings_v12.graph.FILTER.weightSecond = true;
             settings_v12.graph.FILTER.realtime_flowSecond = true;
+
+            settings_v12.resetBrewSort();
             await this.uiSettingsStorage.saveSettings(settings_v12);
             break;
           default:

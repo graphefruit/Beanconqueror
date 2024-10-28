@@ -55,6 +55,12 @@
           <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
                     slot="icon-only"></ion-icon>
         </ion-button>
+        <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+          <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                    slot="icon-only"></ion-icon>
+          <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
+                    slot="icon-only"></ion-icon>
+        </ion-button>
 
         <ion-button (click)="toggleCollapseBrews()" fill="clear" size="small" tappable>
           <ion-icon *ngIf="isCollapseActive()" name="beanconqueror-expand-active"  slot="icon-only"></ion-icon>
@@ -88,6 +94,12 @@
             <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-filter-active"
                       slot="icon-only"></ion-icon>
             <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
+                      slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+            <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                      slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
                       slot="icon-only"></ion-icon>
           </ion-button>
           <ion-button (click)="toggleCollapseBrews()" fill="clear" size="small" tappable>

@@ -1,25 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
-import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
-import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
-import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { BREW_SORT_AFTER } from '../../../enums/brews/brewSortAfter';
+import { BREW_SORT_ORDER } from '../../../enums/brews/brewSortOrder';
+import { IBrewPageSort } from '../../../interfaces/brew/iBrewPageSort';
 
 @Component({
-  selector: 'app-bean-sort',
-  templateUrl: './bean-sort.component.html',
-  styleUrls: ['./bean-sort.component.scss'],
+  selector: 'app-brew-sort',
+  templateUrl: './brew-sort.component.html',
+  styleUrls: ['./brew-sort.component.scss'],
 })
-export class BeanSortComponent implements OnInit {
-  public static readonly COMPONENT_ID = 'bean-sort';
-  public beanSortAfterEnum = BEAN_SORT_AFTER;
-  public beanSortOrderEnum = BEAN_SORT_ORDER;
-  public filter: IBeanPageSort = {
-    sort_order: BEAN_SORT_ORDER.UNKOWN,
-    sort_after: BEAN_SORT_AFTER.UNKOWN,
+export class BrewSortComponent implements OnInit {
+  public static readonly COMPONENT_ID = 'brew-sort';
+  public brewSortAfterEnum = BREW_SORT_AFTER;
+  public brewSortOrderEnum = BREW_SORT_ORDER;
+  public filter: IBrewPageSort = {
+    sort_order: BREW_SORT_ORDER.UNKOWN,
+    sort_after: BREW_SORT_AFTER.UNKOWN,
   };
 
-  @Input('bean_sort') public bean_sort: any;
+  @Input('brew_sort') public brew_sort: any;
 
   public extendedSortActive: boolean = false;
 
@@ -29,7 +29,7 @@ export class BeanSortComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    this.filter = this.uiHelper.copyData(this.bean_sort);
+    this.filter = this.uiHelper.copyData(this.brew_sort);
     this.__reloadFilterSettings();
   }
 
@@ -39,40 +39,39 @@ export class BeanSortComponent implements OnInit {
         bean_sort: undefined,
       },
       undefined,
-      BeanSortComponent.COMPONENT_ID
+      BrewSortComponent.COMPONENT_ID
     );
   }
 
   public useFilter() {
     this.modalController.dismiss(
       {
-        bean_sort: this.uiHelper.copyData(this.filter),
+        brew_sort: this.uiHelper.copyData(this.filter),
       },
       undefined,
-      BeanSortComponent.COMPONENT_ID
+      BrewSortComponent.COMPONENT_ID
     );
   }
 
   public resetFilter() {
     this.filter = {
-      sort_order: BEAN_SORT_ORDER.UNKOWN,
-      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
     };
     this.useFilter();
   }
 
   public setSortOrder(_order: any) {
     this.filter.sort_order = _order;
-    /**Preset the first sort if nothing is selected yet**/
-    if (this.filter.sort_after === BEAN_SORT_AFTER.UNKOWN) {
-      this.filter.sort_after = BEAN_SORT_AFTER.NAME;
+    if (this.filter.sort_after === BREW_SORT_AFTER.UNKOWN) {
+      this.filter.sort_after = BREW_SORT_AFTER.BREW_DATE;
     }
   }
 
   public setSortAfter(_sort: any) {
     this.filter.sort_after = _sort;
-    if (this.filter.sort_order === BEAN_SORT_ORDER.UNKOWN) {
-      this.filter.sort_order = BEAN_SORT_ORDER.ASCENDING;
+    if (this.filter.sort_order === BREW_SORT_ORDER.UNKOWN) {
+      this.filter.sort_order = BREW_SORT_ORDER.DESCENDING;
     }
   }
 

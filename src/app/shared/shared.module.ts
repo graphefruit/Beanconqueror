@@ -174,6 +174,7 @@ import { DataCorruptionFoundComponent } from '../../popover/data-corruption-foun
 import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popover-list.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
+import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
 
 @NgModule({
   declarations: [
@@ -251,6 +252,7 @@ import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-
     BrewFilterComponent,
     BeanFilterComponent,
     BeanSortComponent,
+    BrewSortComponent,
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
@@ -440,6 +442,7 @@ import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-
     BrewFilterComponent,
     BeanFilterComponent,
     BeanSortComponent,
+    BrewSortComponent,
     MillPage,
     MillEditComponent,
     MillDetailComponent,

@@ -32,6 +32,8 @@ import { UIHelper } from './uiHelper';
 import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
 import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 import { BrewFlow } from '../classes/brew/brewFlow';
+import { IBrewPageSort } from '../interfaces/brew/iBrewPageSort';
+import { BrewSortComponent } from '../app/brew/brew-sort/brew-sort.component';
 
 /**
  * Handles every helping functionalities
@@ -683,6 +685,26 @@ export class UIBrewHelper {
     });
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public async showSort(_sort: IBrewPageSort) {
+    const brewSort: IBrewPageSort = this.uiHelper.cloneData(_sort);
+
+    const modal = await this.modalController.create({
+      component: BrewSortComponent,
+      componentProps: { brew_sort: brewSort },
+      id: BrewSortComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 1,
+    });
+    await modal.present();
+    const modalData = await modal.onWillDismiss();
+    if (modalData?.data?.brew_sort !== undefined) {
+      return modalData.data.brew_sort;
+    } else {
+      return undefined;
+    }
   }
 
   /**

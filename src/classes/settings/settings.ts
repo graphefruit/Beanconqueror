@@ -28,6 +28,9 @@ import {
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -92,6 +95,11 @@ export class Settings implements ISettings {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
     FROZEN: IBeanPageSort;
+  };
+
+  public brew_sort: {
+    OPEN: IBrewPageSort;
+    ARCHIVED: IBrewPageSort;
   };
 
   public bean_sort_selection = {
@@ -351,6 +359,10 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageSort,
       FROZEN: {} as IBeanPageSort,
     };
+    this.brew_sort = {
+      OPEN: {} as IBrewPageSort,
+      ARCHIVED: {} as IBrewPageSort,
+    };
 
     this.bean_sort_selection = {
       OPEN: {} as IBeanPageSort,
@@ -467,6 +479,15 @@ export class Settings implements ISettings {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
+
+    this.brew_sort.OPEN = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
+    this.brew_sort.ARCHIVED = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
@@ -613,6 +634,20 @@ export class Settings implements ISettings {
     this.resetBeanFilter();
   }
 
+  public resetBrewSort() {
+    this.brew_sort = {
+      OPEN: {} as IBrewPageSort,
+      ARCHIVED: {} as IBrewPageSort,
+    };
+    this.brew_sort.OPEN = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
+    this.brew_sort.ARCHIVED = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
+  }
   public resetBeanSort() {
     this.bean_sort = {
       OPEN: {} as IBeanPageSort,
