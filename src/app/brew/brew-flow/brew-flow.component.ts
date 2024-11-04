@@ -151,43 +151,30 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.METICULOUS
     ) {
-      return 2;
+      return 2.4;
     }
-    let bluetoothDeviceConnections = 0;
-    let smartScaleConnected: boolean = false;
+
+    //One is the timer ;)
+    let visibleTiles = 1;
+
     if (
       (this.pressureDeviceConnected() ||
         this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected()) &&
       this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
-      bluetoothDeviceConnections += 1;
+      visibleTiles += 1;
     }
     if (
       this.temperatureDeviceConnected() ||
       this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected()
     ) {
-      bluetoothDeviceConnections += 1;
+      visibleTiles += 1;
     }
     if (this.smartScaleConnected()) {
-      bluetoothDeviceConnections += 1;
-      smartScaleConnected = true;
+      visibleTiles += 2;
     }
 
-    if (bluetoothDeviceConnections === 3) {
-      return 2;
-    } else if (bluetoothDeviceConnections === 2) {
-      if (smartScaleConnected) {
-        return 2;
-      } else {
-        return 4;
-      }
-    } else if (bluetoothDeviceConnections === 1) {
-      if (smartScaleConnected) {
-        return 3;
-      } else {
-        return 6;
-      }
-    }
+    return this.uiHelper.toFixedIfNecessary(12 / visibleTiles, 1);
   }
   public async ionViewDidEnter() {
     await new Promise((resolve) => {

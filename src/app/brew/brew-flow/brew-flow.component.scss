@@ -60,7 +60,7 @@
     ion-card-header {
       color: #FFFFFF;
       background-color: var(--ion-color-accent) !important;
-      font-size: 20px;
+      font-size: 18px;
       padding: 2px;
       display: flex;
       justify-content: space-evenly;
@@ -73,6 +73,12 @@
         min-height:75px;
         height:75px;
       }
+    }
+
+    .information-tile-no-overflow {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     ion-card-content {

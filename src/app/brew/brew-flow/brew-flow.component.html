@@ -62,8 +62,7 @@
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
           <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+            size="{{this.getGraphIonColSize()}}" style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
               <ion-card-header>
                 <div #smartScaleWeightDetail>? g</div>
@@ -76,24 +75,12 @@
             </ion-card>
           </ion-col>
           <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center flow-avg-card" style="height: 100%;">
-              <ion-card-header>
-                <div><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon name="water-outline"></ion-icon>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+            size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
               <ion-card-header>
-                <div><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
-                <div *ngIf="smartScaleSupportsTwoWeight()"><span #smartScaleRealtimeFlowSecondDetail>?</span> g/s</div>
+                <div class='information-tile-no-overflow'><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
+                <div class='information-tile-no-overflow'><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
+                <div class='information-tile-no-overflow' *ngIf="smartScaleSupportsTwoWeight()"><span #smartScaleRealtimeFlowSecondDetail>?</span> g/s</div>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="water-outline"></ion-icon>
@@ -101,8 +88,7 @@
             </ion-card>
           </ion-col>
           <ion-col (click)="resetPressure()" *ngIf="(pressureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+            size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
               <ion-card-header>
                 <div #pressureDetail>? bar</div>
@@ -113,8 +99,7 @@
             </ion-card>
           </ion-col>
           <ion-col *ngIf="temperatureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()"
-                   size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+                   size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
               <ion-card-header>
                 <div #temperatureDetail>? °C</div>
@@ -125,11 +110,10 @@
             </ion-card>
           </ion-col>
           <ion-col
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+            size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
               <ion-card-header>
-                <span #timerElement></span>
+                <span class='information-tile-no-overflow' #timerElement></span>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="time-outline"></ion-icon>
