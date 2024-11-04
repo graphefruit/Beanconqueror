@@ -569,6 +569,9 @@ export class UIUpdate {
             settings_v12.graph.FILTER.realtime_flowSecond = true;
 
             settings_v12.resetBrewSort();
+
+            settings_v12.bluetooth_ignore_anomaly_values = false;
+            settings_v12.bluetooth_ignore_negative_values = false;
             await this.uiSettingsStorage.saveSettings(settings_v12);
             break;
           default:

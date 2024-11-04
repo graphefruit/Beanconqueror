@@ -707,22 +707,28 @@
                 <div class='ion-label' slot="end">{{settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow | number : '.0-2'}} g/s</div>
               </ion-range>
             </ion-item>
-            <ion-item>
-              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values">
+            <ion-item lines="none">
+              <ion-checkbox  disabled="true" label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values">
                 <div class="ion-label" style="white-space: normal;">
                   <h2>{{"IGNORE_NEGATIVE_VALUES" | translate}}</h2>
                   <p>{{"IGNORE_NEGATIVE_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>
-            <ion-item>
-              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_anomaly_values">
+            <ion-item style="margin-top:-15px;">
+              <ion-label>{{"BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED" | translate}}</ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-checkbox  disabled="true" label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_anomaly_values">
                 <div class='ion-label'>
                   <h2>{{"IGNORE_ANOMALY_VALUES" | translate}}</h2>
                   <p>{{"IGNORE_ANOMALY_VALUES_TOOLTIP" | translate}}</p>
                   <p>{{"IGNORE_ANOMALY_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
+            </ion-item>
+            <ion-item style="margin-top:-15px;">
+              <ion-label>{{"BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED" | translate}}</ion-label>
             </ion-item>
             <ion-item>
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_ignore_weight_button_active">
