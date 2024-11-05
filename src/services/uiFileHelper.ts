@@ -657,15 +657,12 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  public async getInternalFileSrc(
-    _filePath: string,
-    _addTimeStamp = false
-  ): Promise<any> {
+  public async getInternalFileSrc(filePath: string): Promise<any> {
     if (!this.platform.is('capacitor')) {
       return '';
     }
     try {
-      let fileName = this.normalizeFileName(_filePath);
+      let fileName = this.normalizeFileName(filePath);
 
       if (this.platform.is('ios')) {
         // After switching to iOS cloud, the fullPath saves the Cloud path actualy with, so we need to delete this one :)
@@ -682,15 +679,12 @@ export class UIFileHelper extends InstanceClass {
       // Check if file exists; stat() will throw if it does not exist
       await Filesystem.stat(fileOptions);
       const { uri } = await Filesystem.getUri(fileOptions);
-      let fileSrcUri = Capacitor.convertFileSrc(uri);
-      if (_addTimeStamp) {
-        fileSrcUri += '?' + moment().unix();
-      }
+      const fileSrcUri = Capacitor.convertFileSrc(uri);
       return this.domSanitizer.bypassSecurityTrustResourceUrl(fileSrcUri);
     } catch (error) {
       this.uiLog.error(
         'Error in getInternalFileSrc for path',
-        _filePath,
+        filePath,
         ':',
         error
       );
