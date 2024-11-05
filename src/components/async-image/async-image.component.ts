@@ -1,5 +1,5 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {UIFileHelper} from '../../services/uiFileHelper';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { UIFileHelper } from '../../services/uiFileHelper';
 
 @Component({
   selector: 'async-image',
@@ -9,11 +9,10 @@ import {UIFileHelper} from '../../services/uiFileHelper';
 export class AsyncImageComponent implements OnInit, OnChanges {
   @Input() public filePath: string;
 
-
-  public errorOccured:boolean = false;
+  public errorOccured: boolean = false;
   public img: string = '';
   public preloadImg: string = 'assets/img/loading.gif';
-  constructor( private uiFileHelper: UIFileHelper) { }
+  constructor(private uiFileHelper: UIFileHelper) {}
 
   public async ngOnInit(): Promise<void> {
     await this.__checkImageChanges();
@@ -28,18 +27,21 @@ export class AsyncImageComponent implements OnInit, OnChanges {
   }
 
   private async __checkImageChanges(): Promise<void> {
-
-    if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
+    if (
+      this.filePath === undefined ||
+      this.filePath === null ||
+      this.filePath === ''
+    ) {
       this.img = '';
     } else {
       if (this.filePath.startsWith('http')) {
         this.img = this.filePath;
       } else {
-
-        this.img = await this.uiFileHelper.getInternalFileSrc(this.filePath,true);
-
+        this.img = await this.uiFileHelper.getInternalFileSrc(
+          this.filePath,
+          true
+        );
       }
-
     }
     if (this.img === '') {
       this.errorOccured = true;
@@ -47,5 +49,4 @@ export class AsyncImageComponent implements OnInit, OnChanges {
       this.errorOccured = false;
     }
   }
-
 }
