@@ -131,7 +131,7 @@ export class SettingsPage {
   }
 
   constructor(
-    private readonly platform: Platform,
+    protected readonly platform: Platform,
     public uiSettingsStorage: UISettingsStorage,
     public uiStorage: UIStorage,
     public uiHelper: UIHelper,

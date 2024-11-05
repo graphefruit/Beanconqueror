@@ -1441,5 +1441,6 @@
   "BEAN_SORT_INFORMATION_REGION": "Region",
   "BEAN_SORT_INFORMATION_VARIETY": "Variety",
   "BEAN_SORT_INFORMATION_PROCESSING": "Processing",
-  "BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED": "This feature has been disabled due to issues while working with combined bluetooth devices. Please use the ignore current weight solution which is much better overall"
+  "BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED": "This feature has been disabled due to issues while working with combined bluetooth devices. Please use the ignore current weight solution which is much better overall",
+  "EXPORT_CAUTION_IOS": "iOS: If you want to set up a new phone, the best and easiest way is using the iCloud Backup"
 }

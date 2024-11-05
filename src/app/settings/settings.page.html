@@ -55,6 +55,7 @@
             <ion-label>
               <h2>{{"EXPORT" | translate}}</h2>
               <p>{{"EXPORT_CAUTION" | translate}}</p>
+              <p *ngIf="platform.is('ios')">{{"EXPORT_CAUTION_IOS" | translate}}</p>
             </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
