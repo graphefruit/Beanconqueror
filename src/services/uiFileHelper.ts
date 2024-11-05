@@ -327,37 +327,33 @@ export class UIFileHelper extends InstanceClass {
   }
 
   public async generateInternalPath(
-    fileName: string,
+    prefix: string,
     fileExtension: string
   ): Promise<string> {
     this.uiLog.debug(
-      'generateInternalPath for fileName',
-      fileName,
+      'generateInternalPath for prefix',
+      prefix,
       'and extension',
       fileExtension
     );
-    let generatedFileName = `${fileName}${fileExtension}`;
-    let fileExists = await this.fileExists({
-      path: generatedFileName,
-      directory: this.getDataDirectory(),
-    });
-    if (!fileExists) {
-      this.uiLog.debug(generatedFileName, 'does not exist yet, using that');
-      return generatedFileName;
-    }
-
-    let counter = 0;
-    do {
-      counter++;
-      generatedFileName = `${fileName}${counter}${fileExtension}`;
-
-      fileExists = await this.fileExists({
+    let generatedFileName: string;
+    while (true) {
+      const uuid = crypto.randomUUID();
+      generatedFileName = `${prefix}_${uuid}${fileExtension}`;
+      const fileExists = await this.fileExists({
         path: generatedFileName,
         directory: this.getDataDirectory(),
       });
-    } while (fileExists);
-    this.uiLog.debug(generatedFileName, 'does not exist yet, using that');
-    return generatedFileName;
+      if (!fileExists) {
+        this.uiLog.debug(generatedFileName, 'does not exist yet, using that');
+        return generatedFileName;
+      }
+      this.uiLog.debug(
+        generatedFileName,
+        'already exists. This is VERY unlucky, ' +
+          'but re-rolling the UUID should fix that.'
+      );
+    }
   }
 
   public async deleteFile(path: string, directory?: Directory): Promise<void> {
@@ -463,10 +459,10 @@ export class UIFileHelper extends InstanceClass {
 
   public async downloadExternalFile(
     url: string,
-    fileName = 'beanconqueror_image',
+    prefix = 'download_image',
     fileExtension = '.png'
   ): Promise<string> {
-    const path = await this.generateInternalPath(fileName, fileExtension);
+    const path = await this.generateInternalPath(prefix, fileExtension);
     const directory = this.getDataDirectory();
     const result = await Filesystem.downloadFile({ url, path, directory });
 
@@ -603,7 +599,7 @@ export class UIFileHelper extends InstanceClass {
 
     const fileObj = this.splitFilePath(path);
     const newPath = await this.generateInternalPath(
-      fileObj.FILE_NAME,
+      'duplicate',
       fileObj.EXTENSION
     );
     await this.makeParentDirsInternal(newPath);
@@ -660,6 +656,7 @@ export class UIFileHelper extends InstanceClass {
       };
     }
   }
+
   public async getInternalFileSrc(
     _filePath: string,
     _addTimeStamp = false

@@ -49,7 +49,7 @@ export class UIImage {
 
   private async saveBase64Photo(base64: string): Promise<string> {
     const fileName = await this.uiFileHelper.generateInternalPath(
-      'beanconqueror_image',
+      'photo',
       '.jpg'
     );
     const fileUri = await this.uiFileHelper.writeInternalFileFromBase64(
