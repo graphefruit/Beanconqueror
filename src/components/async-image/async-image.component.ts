@@ -9,17 +9,19 @@ import { UIFileHelper } from '../../services/uiFileHelper';
 export class AsyncImageComponent implements OnInit, OnChanges {
   @Input() public filePath: string;
 
-  public errorOccured: boolean = false;
-  public img: string = '';
-  public preloadImg: string = 'assets/img/loading.gif';
+  public errorOccured = false;
+  public img = '';
+  public preloadImg = 'assets/img/loading.gif';
   constructor(private uiFileHelper: UIFileHelper) {}
 
-  public async ngOnInit(): Promise<void> {
-    await this.__checkImageChanges();
+  public ngOnInit(): void {
+    // ngOnInit does not support Promise return types, can't await
+    void this.__checkImageChanges();
   }
 
-  public async ngOnChanges(): Promise<void> {
-    await this.__checkImageChanges();
+  public ngOnChanges(): void {
+    // ngOnChanges does not support Promise return types, can't await
+    void this.__checkImageChanges();
   }
 
   public onError() {
