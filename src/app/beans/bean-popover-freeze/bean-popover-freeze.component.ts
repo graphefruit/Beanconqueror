@@ -115,7 +115,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
       totalGreenBeanWeight = this.bean.bean_roast_information.green_bean_weight;
     }
 
-    let groupBeanId = this.uiHelper.generateUUID();
+    let groupBeanId: string = crypto.randomUUID();
     if (this.bean.frozenGroupId) {
       //If we froze the initial bean already, we use this as the reference again.
       groupBeanId = this.bean.frozenGroupId;

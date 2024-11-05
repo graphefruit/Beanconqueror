@@ -111,17 +111,6 @@ export class UIHelper {
     });
   }
 
-  public generateUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r =
-          ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
-            16) |
-          0,
-        v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-  }
-
   public showAlert(_message, _title?: string) {
     this.uiAlert.showMessage(_message, _title);
   }
