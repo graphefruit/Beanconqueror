@@ -8,7 +8,7 @@ import {
   StatOptions,
 } from '@capacitor/filesystem';
 import { Platform } from '@ionic/angular';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UILog } from './uiLog';
 
 import moment from 'moment';
@@ -657,7 +657,7 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  public async getInternalFileSrc(filePath: string): Promise<any> {
+  public async getInternalFileSrc(filePath: string): Promise<SafeResourceUrl> {
     if (!this.platform.is('capacitor')) {
       return '';
     }
