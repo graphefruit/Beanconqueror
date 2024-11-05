@@ -1,2 +1,4 @@
-<img (error)="onError()" *ngIf="img !== '' && errorOccured === false" [src]="img" alt="Async error image"/>
-<img *ngIf="img==='' && errorOccured === false" [src]="preloadImg" alt="Preload image" class="preload-img"/>
+<!-- If we wanted a reasonable alt-text, it would have to be set by the user of this component -->
+<!-- eslint-disable-next-line @angular-eslint/template/alt-text -->
+<img *ngIf="!isLoading && !errorOccured && (img | async)" [src]="img | async"/>
+<img *ngIf="isLoading && showLoadingImage" [src]="preloadImg" alt="Image is loading" class="preload-img"/>
