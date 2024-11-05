@@ -688,7 +688,8 @@ export class UIFileHelper extends InstanceClass {
         ':',
         error
       );
-      return '';
+      // still reject after logging
+      throw error;
     }
   }
 
