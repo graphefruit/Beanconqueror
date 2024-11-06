@@ -61,7 +61,7 @@
                 <ion-item lines='none' tappable>
                   <ion-checkbox justify='start' label-placement='end' [(ngModel)]='multipleSelection[bean.config.uuid]'>
                     <div style='margin-top:5px;'>
-                      <h6><ng-element *ngIf="bean.frozenId"><ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>&nbsp;</ng-element>{{bean.name}}</h6>
+                      <h6 class="no-overflow-ellipsis"><ng-element *ngIf="bean.frozenId"><ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>&nbsp;</ng-element>{{bean.name}}</h6>
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
@@ -129,7 +129,7 @@
                   <ion-checkbox justify='start' label-placement='end' [(ngModel)]='multipleSelection[bean.config.uuid]'
                                 slot='start'>
                     <div style='margin-top:5px;'>
-                      <h6><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
+                      <h6 class="no-overflow-ellipsis"><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
                                     *ngIf="bean.isFrozen()"></ion-icon><span *ngIf='bean.isFrozen()'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
@@ -194,7 +194,7 @@
                   <ion-checkbox justify='start' label-placement='end' [(ngModel)]='multipleSelection[bean.config.uuid]'
                                 slot='start'>
                     <div style='margin-top:5px;'>
-                      <h6><ng-element *ngIf="bean.frozenId">(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)&nbsp;</ng-element>{{bean.name}}</h6>
+                      <h6 class="no-overflow-ellipsis"><ng-element *ngIf="bean.frozenId">(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)&nbsp;</ng-element>{{bean.name}}</h6>
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
@@ -269,7 +269,7 @@
 
                     <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
 
-                      <h6><ng-element *ngIf="bean.frozenId">(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)&nbsp;</ng-element>{{bean.name}}</h6>
+                      <h6 class="no-overflow-ellipsis"><ng-element *ngIf="bean.frozenId">(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)&nbsp;</ng-element>{{bean.name}}</h6>
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
@@ -336,7 +336,7 @@
                 <ng-element *ngFor='let bean of frozenScroll.items'>
                   <ion-item lines='none' tappable>
                     <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
-                      <h6><ng-element *ngIf="bean.frozenId"><ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>&nbsp;</ng-element>{{bean.name}}</h6>
+                      <h6 class="no-overflow-ellipsis"><ng-element *ngIf="bean.frozenId"><ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>&nbsp;</ng-element>{{bean.name}}</h6>
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
@@ -405,7 +405,7 @@
 
                     <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
 
-                      <h6><ng-element *ngIf="bean.frozenId">(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)&nbsp;</ng-element>{{bean.name}}</h6>
+                      <h6 class="no-overflow-ellipsis"><ng-element *ngIf="bean.frozenId">(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)&nbsp;</ng-element>{{bean.name}}</h6>
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>

@@ -1127,3 +1127,8 @@ ion-chip.flowrealsecond {
   border: 1px solid #1FB6EA;
 }
 
+.no-overflow-ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
