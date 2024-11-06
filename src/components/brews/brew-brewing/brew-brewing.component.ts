@@ -122,13 +122,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public maxBrewRating: number = 5;
 
-  public profileResultsAvailable: boolean = false;
-  public profileResults: string[] = [];
-  public profileFocused: boolean = false;
-
-  public vesselResultsAvailable: boolean = false;
-  public vesselResults: Array<any> = [];
-  public vesselFocused: boolean = false;
   public refractometerDeviceSubscription: Subscription = undefined;
   private preparationMethodFocusedSubscription: Subscription = undefined;
 
@@ -145,6 +138,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public readonly PreparationDeviceType = PreparationDeviceType;
+
+  public typeaheadSearch = {};
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -735,6 +731,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.brew_temperature_time_milliseconds = 0;
     }
   }
+
   public millTimerChanged(_event): void {
     if (this.brewMillTimer) {
       this.data.mill_timer = this.brewMillTimer.getSeconds();
@@ -894,117 +891,103 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     );
   }
 
-  public onProfileSearchChange(event: any) {
-    if (!this.profileFocused) {
+  public onSearchChange(_type: string, event: any) {
+    if (!this.typeaheadSearch[_type + 'Focused']) {
       return;
     }
     let actualSearchValue = event.target.value;
-    this.profileResults = [];
-    this.profileResultsAvailable = false;
+    this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
+    this.typeaheadSearch[_type + 'Results'] = [];
     if (actualSearchValue === undefined || actualSearchValue === '') {
       return;
     }
 
     actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBrewStorage
-      .getAllEntries()
-      .filter((e) =>
-        e.pressure_profile.toLowerCase().includes(actualSearchValue)
-      );
+    let filteredEntries: Array<Brew>;
 
-    for (const entry of filteredEntries) {
-      this.profileResults.push(entry.pressure_profile);
-    }
-    // Distinct values
-    this.profileResults = Array.from(
-      new Set(this.profileResults.map((e) => e))
-    );
+    let distictedValues = [];
+    if (_type !== 'vessel') {
+      filteredEntries = this.uiBrewStorage
+        .getAllEntries()
+        .filter((e) => e[_type].toLowerCase().includes(actualSearchValue));
+      for (const entry of filteredEntries) {
+        this.typeaheadSearch[_type + 'Results'].push(entry[_type]);
+      }
 
-    if (this.profileResults.length > 0) {
-      this.profileResultsAvailable = true;
+      this.typeaheadSearch[_type + 'Results'].forEach((element) => {
+        if (!distictedValues.includes(element.trim())) {
+          distictedValues.push(element.trim());
+        }
+      });
     } else {
-      this.profileResultsAvailable = false;
-    }
-  }
-
-  public onProfileSearchLeave($event) {
-    setTimeout(() => {
-      this.profileResultsAvailable = false;
-      this.profileResults = [];
-      this.profileFocused = false;
-    }, 150);
-  }
-
-  public onProfileSearchFocus($event) {
-    this.profileFocused = true;
-  }
-
-  public profileSelected(selected: string): void {
-    this.data.pressure_profile = selected;
-    this.profileResults = [];
-    this.profileResultsAvailable = false;
-    this.profileFocused = false;
-  }
-
-  public onVesselSearchChange(event: any) {
-    if (!this.vesselFocused) {
-      return;
-    }
-    let actualSearchValue = event.target.value;
-    this.vesselResults = [];
-    this.vesselResultsAvailable = false;
-    if (actualSearchValue === undefined || actualSearchValue === '') {
-      return;
-    }
-
-    actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBrewStorage
-      .getAllEntries()
-      .filter(
-        (e) =>
-          e.vessel_name !== '' &&
-          e.vessel_name.toLowerCase().includes(actualSearchValue)
-      );
-
-    for (const entry of filteredEntries) {
-      if (
-        this.vesselResults.filter(
+      filteredEntries = this.uiBrewStorage
+        .getAllEntries()
+        .filter(
           (e) =>
-            e.name === entry.vessel_name && e.weight === entry.vessel_weight
-        ).length <= 0
-      ) {
-        this.vesselResults.push({
-          name: entry.vessel_name,
-          weight: entry.vessel_weight,
-        });
+            e.vessel_name !== '' &&
+            e.vessel_name.toLowerCase().includes(actualSearchValue)
+        );
+
+      for (const entry of filteredEntries) {
+        if (
+          distictedValues.filter(
+            (e) =>
+              e.name === entry.vessel_name && e.weight === entry.vessel_weight
+          ).length <= 0
+        ) {
+          distictedValues.push({
+            name: entry.vessel_name,
+            weight: entry.vessel_weight,
+          });
+        }
       }
     }
+
     // Distinct values
-    if (this.vesselResults.length > 0) {
-      this.vesselResultsAvailable = true;
+    this.typeaheadSearch[_type + 'Results'] = distictedValues;
+
+    if (this.typeaheadSearch[_type + 'Results'].length > 0) {
+      this.typeaheadSearch[_type + 'ResultsAvailable'] = true;
     } else {
-      this.vesselResultsAvailable = false;
+      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
     }
   }
 
-  public onVesselSearchLeave($event) {
+  public searchResultsAvailable(_type): boolean {
+    if (this.typeaheadSearch[_type + 'Results']) {
+      return this.typeaheadSearch[_type + 'Results'].length > 0;
+    }
+    return false;
+  }
+
+  public getResults(_type: string) {
+    if (this.typeaheadSearch[_type + 'Results']) {
+      return this.typeaheadSearch[_type + 'Results'];
+    }
+    return [];
+  }
+
+  public onSearchLeave(_type: string) {
     setTimeout(() => {
-      this.vesselResults = [];
-      this.vesselResultsAvailable = false;
-      this.vesselFocused = false;
+      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
+      this.typeaheadSearch[_type + 'Results'] = [];
+      this.typeaheadSearch[_type + 'Focused'] = false;
     }, 150);
   }
 
-  public onVesselSearchFocus($event) {
-    this.vesselFocused = true;
+  public onSearchFocus(_type: string) {
+    this.typeaheadSearch[_type + 'Focused'] = true;
   }
 
-  public vesselSelected(selected: string): void {
-    this.data.vessel_name = selected['name'];
-    this.data.vessel_weight = selected['weight'];
-    this.vesselResults = [];
-    this.vesselResultsAvailable = false;
-    this.vesselFocused = false;
+  public searchResultSelected(_type: string, selected: any): void {
+    if (_type !== 'vessel') {
+      this.data[_type] = selected;
+    } else {
+      this.data.vessel_name = selected['name'];
+      this.data.vessel_weight = selected['weight'];
+    }
+
+    this.onSearchLeave(_type);
   }
 
   public hasWaterEntries(): boolean {

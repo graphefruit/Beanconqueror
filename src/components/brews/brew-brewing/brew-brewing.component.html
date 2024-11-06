@@ -92,25 +92,23 @@
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.pressure_profile,
                       data.getPreparation().brew_order.before.pressure_profile,
                       data.getPreparation().use_custom_parameters)" lines="inset">
-    <ion-input label-placement="stacked" label='{{"BREW_DATA_PRESSURE_PROFILE" | translate}}'  (ionFocus)="onProfileSearchFocus($event);" (ionBlur)="onProfileSearchLeave($event)"
-      (ionInput)="onProfileSearchChange($event)" [(ngModel)]="data.pressure_profile" autocapitalize="sentences"
+    <ion-input label-placement="stacked" label='{{"BREW_DATA_PRESSURE_PROFILE" | translate}}'
+               (ionBlur)="onSearchLeave('pressure_profile')"
+               (ionInput)="onSearchChange('pressure_profile',$event)"
+               (ionFocus)="onSearchFocus('pressure_profile');"
+               [(ngModel)]="data.pressure_profile" autocapitalize="sentences"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" spellcheck="false"
       type="text"></ion-input>
   </ion-item>
-  <ion-item *ngIf="profileResultsAvailable && uiBrewHelper.fieldVisible(settings.manage_parameters.pressure_profile,
-                      data.getPreparation().manage_parameters.pressure_profile,
-                      data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.pressure_profile,
+  <ion-item *ngIf="searchResultsAvailable('pressure_profile')" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.pressure_profile,
                       data.getPreparation().brew_order.before.pressure_profile,
-                      data.getPreparation().use_custom_parameters)" lines="none"
-    style="margin-top: 5px;margin-bottom: 5px;">
+                      data.getPreparation().use_custom_parameters)" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
     <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-      <ion-item (click)="profileSelected(result)" *ngFor="let result of profileResults;let last = last" button tappable
-        lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-item (click)="searchResultSelected('pressure_profile',result)" *ngFor="let result of getResults('pressure_profile');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
         <ion-label>{{result}}</ion-label>
       </ion-item>
     </ion-list>
   </ion-item>
-
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.method_of_preparation_tool,
                       data.getPreparation().manage_parameters.method_of_preparation_tool,
                       data.getPreparation().use_custom_parameters)"
@@ -158,8 +156,11 @@
                       data.getPreparation().use_custom_parameters)" lines="inset">
     <ion-row style="width:100%" class="ion-no-padding">
       <ion-col class="ion-no-padding" size="7">
-        <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_NAME" | translate}}' (ionFocus)="onVesselSearchFocus($event);" (ionBlur)="onVesselSearchLeave($event)"
-          (ionInput)="onVesselSearchChange($event)" [(ngModel)]="data.vessel_name"
+        <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_NAME" | translate}}'
+                   (ionBlur)="onSearchLeave('vessel')"
+                   (ionInput)="onSearchChange('vessel',$event)"
+                   (ionFocus)="onSearchFocus('vessel');"
+                   [(ngModel)]="data.vessel_name"
           placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}" type="text"></ion-input>
       </ion-col>
       <ion-col class="ion-no-padding" size="5">
@@ -169,15 +170,11 @@
       </ion-col>
     </ion-row>
   </ion-item>
-  <ion-item *ngIf="vesselResultsAvailable && uiBrewHelper.fieldVisible(settings.manage_parameters.vessel,
-                      data.getPreparation().manage_parameters.vessel,
-                      data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.vessel,
+  <ion-item *ngIf="searchResultsAvailable('vessel')" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.vessel,
                       data.getPreparation().brew_order.before.vessel,
-                      data.getPreparation().use_custom_parameters)" lines="none"
-    style="margin-top: 5px;margin-bottom: 5px;">
+                      data.getPreparation().use_custom_parameters)" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
     <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-      <ion-item (click)="vesselSelected(result)" *ngFor="let result of vesselResults;let last = last" button tappable
-        lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-item (click)="searchResultSelected('vessel',result)" *ngFor="let result of getResults('vessel');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
         <ion-label>{{result.name}} - {{result.weight}}</ion-label>
       </ion-item>
     </ion-list>
@@ -329,8 +326,21 @@
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.coffee_type,
                       data.getPreparation().brew_order.after.coffee_type,
                       data.getPreparation().use_custom_parameters)" lines="inset">
-    <ion-input label-placement="stacked" label='{{"BREW_DATA_COFFEE_TYPE" | translate}}' [(ngModel)]="data.coffee_type" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_TYPE' | translate}}"
+    <ion-input
+      (ionBlur)="onSearchLeave('coffee_type')"
+      (ionInput)="onSearchChange('coffee_type',$event)"
+      (ionFocus)="onSearchFocus('coffee_type');"
+      label-placement="stacked" label='{{"BREW_DATA_COFFEE_TYPE" | translate}}' [(ngModel)]="data.coffee_type" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_TYPE' | translate}}"
       type="text"></ion-input>
+  </ion-item>
+  <ion-item *ngIf="searchResultsAvailable('coffee_type')" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.coffee_type,
+                      data.getPreparation().brew_order.after.coffee_type,
+                      data.getPreparation().use_custom_parameters)" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
+    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
+      <ion-item (click)="searchResultSelected('coffee_type',result)" *ngFor="let result of getResults('coffee_type');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+        <ion-label>{{result}}</ion-label>
+      </ion-item>
+    </ion-list>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_concentration,
                       data.getPreparation().manage_parameters.coffee_concentration,
