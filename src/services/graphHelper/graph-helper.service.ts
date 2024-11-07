@@ -52,7 +52,7 @@ export class GraphHelperService {
         color: _isReference ? '#ebe6dd' : '#cdc2ac',
         width: 2,
       },
-      visible: _graphSettings.weight,
+      visible: _isDetail ? true : _graphSettings.weight,
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
@@ -68,7 +68,7 @@ export class GraphHelperService {
         color: _isReference ? '#cbd5d9' : '#7F97A2',
         width: 2,
       },
-      visible: _graphSettings.calc_flow,
+      visible: _isDetail ? true : _graphSettings.calc_flow,
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
@@ -85,7 +85,7 @@ export class GraphHelperService {
         color: _isReference ? '#9cb5be' : '#09485D',
         width: 2,
       },
-      visible: _graphSettings.realtime_flow,
+      visible: _isDetail ? true : _graphSettings.realtime_flow,
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
@@ -102,7 +102,7 @@ export class GraphHelperService {
         color: _isReference ? '#9be8d3' : '#05C793',
         width: 2,
       },
-      visible: _graphSettings.pressure,
+      visible: _isDetail ? true : _graphSettings.pressure,
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
@@ -119,7 +119,7 @@ export class GraphHelperService {
         color: _isReference ? '#eaad9f' : '#CC3311',
         width: 2,
       },
-      visible: _graphSettings.temperature,
+      visible: _isDetail ? true : _graphSettings.temperature,
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
@@ -135,7 +135,7 @@ export class GraphHelperService {
         color: _isReference ? '#b0924c' : '#8F6400',
         width: 2,
       },
-      visible: _graphSettings.weightSecond,
+      visible: _isDetail ? true : _graphSettings.weightSecond,
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
@@ -152,7 +152,7 @@ export class GraphHelperService {
         color: _isReference ? '#62cbf0' : '#1FB6EA',
         width: 2,
       },
-      visible: _graphSettings.realtime_flowSecond,
+      visible: _isDetail ? true : _graphSettings.realtime_flowSecond,
       hoverinfo: _isDetail ? 'all' : 'skip',
       showlegend: false,
     };
