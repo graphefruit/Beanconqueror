@@ -33,6 +33,8 @@ export class BeanFilterComponent implements OnInit {
 
   public roasteries: Array<string> = undefined;
 
+  public maxBeanRating: number = undefined;
+
   constructor(
     private readonly modalController: ModalController,
     public readonly uiHelper: UIHelper,
@@ -65,6 +67,7 @@ export class BeanFilterComponent implements OnInit {
   public ngOnInit() {
     this.filter = this.uiHelper.copyData(this.bean_filter);
     this.__reloadFilterSettings();
+    this.maxBeanRating = this.getMaxBeanRating();
   }
 
   public pinFormatter(value: any) {
