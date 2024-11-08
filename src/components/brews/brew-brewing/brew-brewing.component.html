@@ -358,7 +358,7 @@
                       data.getPreparation().brew_order.after.rating,
                       data.getPreparation().use_custom_parameters)" lines="none">
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{uiHelper.toFixedIfNecessary(data.rating,2)}}</ion-badge>
+      style="vertical-align: top;">{{data.rating| toFixed: 2}}</ion-badge>
     </ion-label>
   </ion-item>
 

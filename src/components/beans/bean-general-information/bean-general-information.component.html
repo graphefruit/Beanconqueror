@@ -43,7 +43,7 @@
   </ion-item>
   <ion-item lines='none' *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roast_range,initialBeanData.roast_range)">
     <ion-label position="stacked" style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.roast_range,2)}}</ion-badge>
+      style="vertical-align: top;">{{data.roast_range| toFixed: 2}}</ion-badge>
     </ion-label>
   </ion-item>
   <ion-item style="top:-10px;" *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roast_range,initialBeanData.roast_range)">
@@ -71,7 +71,7 @@
 
   <ion-item lines='none' *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.rating,initialBeanData.rating)">
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.rating,2)}}</ion-badge>
+      style="vertical-align: top;">{{data.rating| toFixed: 2}}</ion-badge>
     </ion-label>
   </ion-item>
   <ion-item style="top:-10px;" *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.rating,initialBeanData.rating)">

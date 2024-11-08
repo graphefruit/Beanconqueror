@@ -22,7 +22,7 @@
       <ion-col *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.rating,
                       brew.getPreparation().visible_list_view_parameters.rating,
                       brew.getPreparation().use_custom_parameters) && (brew?.rating > 0  && hasCustomRatingRange() === true)" size="2" class="ion-text-right">
-        <ion-badge>{{this.uiHelper.toFixedIfNecessary(brew.rating,2)}}</ion-badge>
+        <ion-badge>{{brew.rating| toFixed: 2}}</ion-badge>
       </ion-col>
     </ion-row>
     <ion-row>
