@@ -141,6 +141,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public typeaheadSearch = {};
 
+  public choosenPreparation: Preparation = undefined;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -178,21 +180,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public getActivePreparationTools() {
-    return this.data.getPreparation().tools.filter((e) => e.archived === false);
-  }
-
-  public getChoosenPreparationToolsWhichAreArchived() {
-    const toolIds = this.data.method_of_preparation_tools;
-    const tools: Array<PreparationTool> = [];
-    for (const id of toolIds) {
-      const tool = this.data
-        .getPreparation()
-        .tools.find((e) => e.config.uuid === id);
-      if (tool?.archived === true) {
-        tools.push(tool);
-      }
-    }
-    return tools;
+    return this.choosenPreparation.tools.filter((e) => e.archived === false);
   }
 
   public async ngAfterViewInit() {
@@ -227,7 +215,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         } else {
           await this.__loadLastBrew();
         }
+
+        this.setChoosenPreparation();
       } else {
+        this.setChoosenPreparation();
         if (this.timer) {
           this.timer.setTime(
             this.data.brew_time,
@@ -422,6 +413,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       AppEventType.PREPARATION_SELECTION_CHANGED
     );
     this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
+      this.setChoosenPreparation();
       this.resetPreparationTools();
       this.deattachToPreparationMethodFocused();
     });
@@ -758,8 +750,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public setChoosenPreparation() {
+    this.choosenPreparation = this.data.getPreparation();
+  }
   public getPreparation(): Preparation {
-    return this.data.getPreparation();
+    if (this.choosenPreparation === undefined) {
+      this.setChoosenPreparation();
+    }
+    return this.choosenPreparation;
   }
 
   public chooseDateTime(_event) {
@@ -1002,9 +1000,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async brewRatioCalculator() {
     let waterQuantity: number = 0;
-    if (
-      this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
-    ) {
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
       waterQuantity = this.data.brew_beverage_quantity;
     } else {
       waterQuantity = this.data.brew_quantity;
@@ -1126,7 +1122,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     let wasAnythingLoaded: boolean = false;
     if (
       this.settings.manage_parameters.set_last_coffee_brew ||
-      this.data.getPreparation().manage_parameters.set_last_coffee_brew
+      this.getPreparation().manage_parameters.set_last_coffee_brew
     ) {
       const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
