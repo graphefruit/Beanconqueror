@@ -19,6 +19,7 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { Brew } from '../brew/brew';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
+import { Mill } from '../mill/mill';
 
 export class Bean implements IBean {
   public name: string;
@@ -339,15 +340,23 @@ export class Bean implements IBean {
     return uiRoastingMachineStorage;
   }
 
+  private _tempRoastingMachine: RoastingMachine = undefined;
   public getRoastingMachine(): RoastingMachine {
-    const iRoastingMachine: IRoastingMachine =
-      this.getRoastingMachineStorage().getByUUID(
+    if (
+      this._tempRoastingMachine === undefined ||
+      this._tempRoastingMachine.config.uuid !==
         this.bean_roast_information.roaster_machine
-      ) as IRoastingMachine;
-    const roastingMachine: RoastingMachine = new RoastingMachine();
-    roastingMachine.initializeByObject(iRoastingMachine);
+    ) {
+      const iRoastingMachine: IRoastingMachine =
+        this.getRoastingMachineStorage().getByUUID(
+          this.bean_roast_information.roaster_machine
+        ) as IRoastingMachine;
+      const roastingMachine: RoastingMachine = new RoastingMachine();
+      roastingMachine.initializeByObject(iRoastingMachine);
 
-    return roastingMachine;
+      this._tempRoastingMachine = roastingMachine;
+    }
+    return this._tempRoastingMachine;
   }
 
   public hasPhotos() {

@@ -215,45 +215,75 @@ export class Brew implements IBrew {
     return BREW_QUANTITY_TYPES_ENUM[this.brew_beverage_quantity_type];
   }
 
+  private _tempBean: Bean = undefined;
   public getBean(): Bean {
-    const iBean: IBean = this.getBeanStorageInstance().getByUUID(
-      this.bean
-    ) as IBean;
-    const bean: Bean = new Bean();
-    bean.initializeByObject(iBean);
-
-    return bean;
+    if (
+      this._tempBean === undefined ||
+      this._tempBean.config.uuid !== this.bean
+    ) {
+      const iBean: IBean = this.getBeanStorageInstance().getByUUID(
+        this.bean
+      ) as IBean;
+      const bean: Bean = new Bean();
+      bean.initializeByObject(iBean);
+      this._tempBean = bean;
+    }
+    return this._tempBean;
   }
 
+  /**We do this, else we get called all day and have performance downtimes **/
+  private _tempPreparation: Preparation = undefined;
   public getPreparation(): Preparation {
-    const iPreparation: IPreparation =
-      this.getPreparationStorageInstance().getByUUID(
-        this.method_of_preparation
-      ) as IPreparation;
-    const preparation: Preparation = new Preparation();
-    preparation.initializeByObject(iPreparation);
+    if (
+      this._tempPreparation === undefined ||
+      this._tempPreparation.config.uuid !== this.method_of_preparation
+    ) {
+      const iPreparation: IPreparation =
+        this.getPreparationStorageInstance().getByUUID(
+          this.method_of_preparation
+        ) as IPreparation;
+      const preparation: Preparation = new Preparation();
+      preparation.initializeByObject(iPreparation);
 
-    return preparation;
+      this._tempPreparation = preparation;
+    }
+
+    return this._tempPreparation;
   }
 
+  private _tempMill: Mill = undefined;
   public getMill(): Mill {
-    const iMill: IMill = this.getMillStorageInstance().getByUUID(
-      this.mill
-    ) as IMill;
-    const mill: Mill = new Mill();
-    mill.initializeByObject(iMill);
+    if (
+      this._tempMill === undefined ||
+      this._tempMill.config.uuid !== this.mill
+    ) {
+      const iMill: IMill = this.getMillStorageInstance().getByUUID(
+        this.mill
+      ) as IMill;
+      const mill: Mill = new Mill();
+      mill.initializeByObject(iMill);
+      this._tempMill = mill;
+    }
 
-    return mill;
+    return this._tempMill;
   }
 
+  private _tempWater: Water = undefined;
   public getWater(): Water {
-    const iWater: IWater = this.getWaterStorageInstance().getByUUID(
-      this.water
-    ) as IWater;
-    const water: Water = new Water();
-    water.initializeByObject(iWater);
+    if (
+      this._tempWater === undefined ||
+      this._tempWater.config.uuid !== this.water
+    ) {
+      const iWater: IWater = this.getWaterStorageInstance().getByUUID(
+        this.water
+      ) as IWater;
+      const water: Water = new Water();
+      water.initializeByObject(iWater);
 
-    return water;
+      this._tempWater = water;
+    }
+
+    return this._tempWater;
   }
 
   /**
@@ -261,9 +291,7 @@ export class Brew implements IBrew {
    * If no age could be calculated it returns -1
    */
   public getCalculatedBeanAge(): number {
-    const bean: IBean = this.getBeanStorageInstance().getByUUID(
-      this.bean
-    ) as IBean;
+    const bean: Bean = this.getBean();
     if (bean) {
       if (bean.roastingDate) {
         const roastingDate = moment(bean.roastingDate).startOf('day');
