@@ -1743,7 +1743,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
-    if (true && !this.platform.is('capacitor')) {
+    if (!this.platform.is('capacitor')) {
       let weight = 0;
       let realtime_flow = 0;
       let flow = 0;
