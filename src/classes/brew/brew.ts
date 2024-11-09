@@ -33,13 +33,20 @@ import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
 import { ReferenceGraph } from './referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
-class BrewInstanceHelper {
+export class BrewInstanceHelper {
   constructor() {}
 
   public static preparations: any = {};
   public static mills: any = {};
   public static beans: any = {};
   public static waters: any = {};
+
+  public static setEntryAmountBackToZero() {
+    this.preparations = {};
+    this.mills = {};
+    this.beans = {};
+    this.waters = {};
+  }
 }
 export class Brew implements IBrew {
   public grind_size: string;

@@ -1,7 +1,7 @@
 /** Core */
 import { Injectable } from '@angular/core';
 /** Class */
-import { Brew } from '../classes/brew/brew';
+import { Brew, BrewInstanceHelper } from '../classes/brew/brew';
 /** Services */
 import { StorageClass } from '../classes/storageClass';
 import { UIHelper } from './uiHelper';
@@ -71,12 +71,16 @@ export class UIBrewStorage extends StorageClass {
   }
   public async add(_entry: Brew): Promise<any> {
     _entry.fixDataTypes();
+    //We cache objects, it should be enough to zero it back when adding/editing something
+    BrewInstanceHelper.setEntryAmountBackToZero();
     return await super.add(_entry);
   }
 
   public async update(_obj: Brew): Promise<boolean> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
       _obj.fixDataTypes();
+      //We cache objects, it should be enough to zero it back when adding/editing something
+      BrewInstanceHelper.setEntryAmountBackToZero();
       const updateval: boolean = await super.update(_obj);
       resolve(updateval);
     });
