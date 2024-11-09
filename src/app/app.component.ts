@@ -68,6 +68,7 @@ import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { BrewInstanceHelper } from '../classes/brew/brew';
 
 declare var window;
 
@@ -807,6 +808,9 @@ export class AppComponent implements AfterViewInit {
           );
         }
       }
+
+      //Users let the app mostly open all day long, so we set the cache to zero if we pause.
+      BrewInstanceHelper.setEntryAmountBackToZero();
     });
   }
 
