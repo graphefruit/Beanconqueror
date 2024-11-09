@@ -90,9 +90,12 @@
         {{"PAGE_BREWS_NO_ENTRIES" | translate}}
       </div>
     </div>
-    <div *ngFor="let brew of brews">
-      <brew-information [layout]="'dashboard'" (brewAction)="brewAction($event[0],$event[1])"
-                                  [brew]="brew"></brew-information>
-    </div>
+  <ng-container *ngIf="brews.length > 0">
+      <div  *ngFor="let brew of brews ">
+        <brew-information [layout]="'dashboard'" (brewAction)="brewAction($event[0],$event[1])"
+                          [brew]="brew"></brew-information>
+      </div>
+  </ng-container>
+
   </ion-list>
 </ion-content>

@@ -97,13 +97,11 @@
                 <br />
                 <ion-text *ngIf='preparation?.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO'>
                   {{ brew?.grind_weight | number : '.0-2' }}gr
-                  / {{ brew.brew_quantity | number : '.0-2' }}{{ brewQuantityEnum[brew?.brew_quantity_type] }}&nbsp;({{ brew?.getBrewRatio() }}
-                  )
+                  / {{ brew.brew_quantity | number : '.0-2' }}{{ brewQuantityEnum[brew?.brew_quantity_type] }}&nbsp;({{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})
                 </ion-text>
                 <ion-text *ngIf='preparation?.style_type === PREPARATION_STYLE_TYPE.ESPRESSO'>
                   {{ brew?.grind_weight | number : '.0-2' }}gr
-                  / {{ brew.brew_beverage_quantity | number : '.0-2' }}{{ brewQuantityEnum[brew?.brew_beverage_quantity_type] }}&nbsp;({{ brew?.getBrewRatio() }}
-                  )
+                  / {{ brew.brew_beverage_quantity | number : '.0-2' }}{{ brewQuantityEnum[brew?.brew_beverage_quantity_type] }}&nbsp;({{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})
                 </ion-text>
               </ion-col>
               <ion-col *ngIf='brew?.brew_time && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_time,
@@ -129,7 +127,7 @@
               <ion-col *ngIf='brew?.tds > 0 && brew?.brew_beverage_quantity>0' size='6'>
                 <ion-label class='card-headline'>{{ 'BREW_DATA_TDS_EY' | translate }}</ion-label>
                 <br />
-                <ion-text>{{ brew?.tds }},&nbsp;%{{ brew?.getExtractionYield() }}</ion-text>
+                <ion-text>{{ brew?.tds }},&nbsp;%{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD}}</ion-text>
               </ion-col>
               <ion-col size='6' *ngIf='brew?.brew_temperature > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_temperature,
                       preparation?.visible_list_view_parameters.brew_temperature,
@@ -171,21 +169,21 @@
                       preparation?.use_custom_parameters])'>
                 <ion-label class='card-headline'>{{ "BREW_DATA_TEMPERATURE_TIME" | translate }}</ion-label>
                 <br />
-                <ion-text>{{ brew?.getFormattedTotalCoffeeTemperatureTime() }}</ion-text>
+                <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_TEMPERATURE_TIME }}</ion-text>
               </ion-col>
               <ion-col size='6' *ngIf='brew?.coffee_blooming_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_blooming_time,
                       preparation?.visible_list_view_parameters.coffee_blooming_time,
                       preparation?.use_custom_parameters])'>
                 <ion-label class='card-headline'>{{ "BREW_DATA_COFFEE_BLOOMING_TIME" | translate }}</ion-label>
                 <br />
-                <ion-text>{{ brew?.getFormattedTotalCoffeeBloomingTime() }}</ion-text>
+                <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BLOOMING_TIME }}</ion-text>
               </ion-col>
               <ion-col size='6' *ngIf='(preparation?.style_type === PREPARATION_STYLE_TYPE.ESPRESSO && brew?.coffee_first_drip_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_first_drip_time,
                       preparation?.visible_list_view_parameters.coffee_first_drip_time,
                       preparation?.use_custom_parameters])) || (preparation?.use_custom_parameters &&  preparation?.visible_list_view_parameters.coffee_first_drip_time && brew?.coffee_first_drip_time > 0)'>
                 <ion-label class='card-headline'>{{ "BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate }}</ion-label>
                 <br />
-                <ion-text>{{ brew?.getFormattedTotalCoffeeFirstDripTime() }}</ion-text>
+                <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_FIRST_DRIP_TIME }}</ion-text>
               </ion-col>
               <ion-col size='6' *ngIf="brew?.water !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.water,
                       preparation?.visible_list_view_parameters.water,
@@ -213,7 +211,7 @@
                       preparation?.use_custom_parameters])'>
                 <ion-label class='card-headline'>{{ "BREW_INFORMATION_BEAN_AGE" | translate }}</ion-label>
                 <br />
-                <ion-text>{{ brew?.getCalculatedBeanAge() }}</ion-text>
+                <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE }}</ion-text>
               </ion-col>
               <ion-col size='12' *ngIf='brew?.method_of_preparation_tools.length > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.method_of_preparation_tool,
                       preparation?.visible_list_view_parameters.method_of_preparation_tool,
@@ -311,12 +309,12 @@
                   </ion-list>
                 </ion-col>
                 <ion-col size='2'>
-                  <ion-button *ngIf='brew.isArchived()===false' (click)='showBrewActions($event)'
+                  <ion-button *ngIf='(brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED)===false' (click)='showBrewActions($event)'
                               class='button-top-absolute' color='accent'
                               fill='clear' tappable>
                     <ion-icon name='beanconqueror-dots' slot='icon-only'></ion-icon>
                   </ion-button>
-                  <ion-button *ngIf='brew.isArchived()===true' class='button-top-absolute' color='accent' fill='clear'>
+                  <ion-button *ngIf='(brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED) === true' class='button-top-absolute' color='accent' fill='clear'>
                     <ion-icon name='archive' slot='icon-only'></ion-icon>
                   </ion-button>
                 </ion-col>

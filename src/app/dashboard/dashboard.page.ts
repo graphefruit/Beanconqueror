@@ -12,6 +12,8 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UIMillStorage } from '../../services/uiMillStorage';
 
 @Component({
   selector: 'dashboard',
@@ -33,28 +35,39 @@ export class DashboardPage implements OnInit {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiMillStorage: UIMillStorage
   ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
-      // If an brew is deleted, we need to reset our array for the next call.
-      this.leftOverBeansWeight = undefined;
-      this.leftOverFrozenBeansWeight = undefined;
-
-      this.loadBrews();
+      this.reloadBrews();
     });
 
     this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
-      // If an brew is deleted, we need to reset our array for the next call.
-      this.leftOverBeansWeight = undefined;
-      this.leftOverFrozenBeansWeight = undefined;
+      this.reloadBrews();
+    });
+    this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
+    });
+    this.uiMillStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
     });
   }
 
-  public async ionViewWillEnter() {
+  private reloadBrews() {
+    // If an brew is deleted, we need to reset our array for the next call.
+    this.leftOverBeansWeight = undefined;
+    this.leftOverFrozenBeansWeight = undefined;
+    this.brews = [];
+
     this.loadBrews();
+  }
+
+  public async ionViewWillEnter() {
+    this.reloadBrews();
   }
 
   public loadBrews() {

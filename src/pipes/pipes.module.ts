@@ -6,6 +6,7 @@ import { ToFixedPipe } from './toFixed';
 import { BrewFieldVisiblePipe } from './brew/brewFieldVisible';
 import { BrewFieldOrder } from './brew/brewFieldOrder';
 import { BeanFieldVisiblePipe } from './bean/beanFieldVisible';
+import { BrewFunction } from './brew/brewFunction';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { BeanFieldVisiblePipe } from './bean/beanFieldVisible';
     BrewFieldVisiblePipe,
     BrewFieldOrder,
     BeanFieldVisiblePipe,
+    BrewFunction,
   ],
   exports: [
     EnumToArrayPipe,
@@ -25,6 +27,7 @@ import { BeanFieldVisiblePipe } from './bean/beanFieldVisible';
     BrewFieldVisiblePipe,
     BrewFieldOrder,
     BeanFieldVisiblePipe,
+    BrewFunction,
   ],
 })
 export class PipesModule {}

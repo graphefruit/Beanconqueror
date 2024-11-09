@@ -40,6 +40,7 @@ import { BrewFlow } from '../../classes/brew/brewFlow';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphHelper } from '../../services/uiGraphHelper';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -554,4 +555,6 @@ export class BrewInformationComponent implements OnInit {
   private async __deleteBrew() {
     await this.uiBrewStorage.removeByObject(this.brew);
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
 }
