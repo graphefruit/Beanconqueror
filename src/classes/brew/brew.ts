@@ -34,9 +34,7 @@ import { ReferenceGraph } from './referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 class BrewInstanceHelper {
-  constructor() {
-
-  }
+  constructor() {}
 
   public static preparations: any = {};
   public static mills: any = {};
@@ -225,7 +223,7 @@ export class Brew implements IBrew {
   }
 
   public getBean(): Bean {
-    const uniqueCachingID = this.config.uuid + "-" + this.bean;
+    const uniqueCachingID = this.config.uuid + '-' + this.bean;
     if (
       BrewInstanceHelper.beans[uniqueCachingID] === undefined ||
       BrewInstanceHelper.beans[uniqueCachingID].config.uuid !== this.bean
@@ -236,18 +234,18 @@ export class Brew implements IBrew {
       const bean: Bean = new Bean();
       bean.initializeByObject(iBean);
       BrewInstanceHelper.beans[uniqueCachingID] = bean;
-
     }
-    return  BrewInstanceHelper.beans[uniqueCachingID];
+    return BrewInstanceHelper.beans[uniqueCachingID];
   }
 
   /**We do this, else we get called all day and have performance downtimes **/
 
   public getPreparation(): Preparation {
-    const uniqueCachingID = this.config.uuid + "-" + this.method_of_preparation;
+    const uniqueCachingID = this.config.uuid + '-' + this.method_of_preparation;
     if (
       BrewInstanceHelper.preparations[uniqueCachingID] === undefined ||
-      BrewInstanceHelper.preparations[uniqueCachingID].config.uuid !== this.method_of_preparation
+      BrewInstanceHelper.preparations[uniqueCachingID].config.uuid !==
+        this.method_of_preparation
     ) {
       const iPreparation: IPreparation =
         this.getPreparationStorageInstance().getByUUID(
@@ -262,9 +260,8 @@ export class Brew implements IBrew {
     return BrewInstanceHelper.preparations[uniqueCachingID];
   }
 
-
   public getMill(): Mill {
-    const uniqueCachingID = this.config.uuid + "-" + this.mill;
+    const uniqueCachingID = this.config.uuid + '-' + this.mill;
     if (
       BrewInstanceHelper.mills[uniqueCachingID] === undefined ||
       BrewInstanceHelper.mills[uniqueCachingID].config.uuid !== this.mill
@@ -276,12 +273,11 @@ export class Brew implements IBrew {
       mill.initializeByObject(iMill);
       BrewInstanceHelper.mills[uniqueCachingID] = mill;
     }
-    return  BrewInstanceHelper.mills[uniqueCachingID];
+    return BrewInstanceHelper.mills[uniqueCachingID];
   }
 
-
   public getWater(): Water {
-    const uniqueCachingID = this.config.uuid + "-" + this.water;
+    const uniqueCachingID = this.config.uuid + '-' + this.water;
     if (
       BrewInstanceHelper.waters[uniqueCachingID] === undefined ||
       BrewInstanceHelper.waters[uniqueCachingID].config.uuid !== this.water

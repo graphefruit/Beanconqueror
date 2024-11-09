@@ -20,7 +20,6 @@ import { Brew } from '../brew/brew';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 
-
 export class Bean implements IBean {
   public name: string;
   public buyDate: string;
@@ -333,12 +332,6 @@ export class Bean implements IBean {
     return false;
   }
 
-
-  public removeTempReferences() {
-    delete this._tempRoastingMachine;
-  }
-
-
   private getRoastingMachineStorage(): UIRoastingMachineStorage {
     let uiRoastingMachineStorage: UIRoastingMachineStorage;
     uiRoastingMachineStorage = UIRoastingMachineStorage.getInstance();
@@ -346,15 +339,14 @@ export class Bean implements IBean {
     return uiRoastingMachineStorage;
   }
 
-
   public getRoastingMachine(): RoastingMachine {
-      const iRoastingMachine: IRoastingMachine =
-        this.getRoastingMachineStorage().getByUUID(
-          this.bean_roast_information.roaster_machine
-        ) as IRoastingMachine;
-      const roastingMachine: RoastingMachine = new RoastingMachine();
-      roastingMachine.initializeByObject(iRoastingMachine);
-      return roastingMachine;
+    const iRoastingMachine: IRoastingMachine =
+      this.getRoastingMachineStorage().getByUUID(
+        this.bean_roast_information.roaster_machine
+      ) as IRoastingMachine;
+    const roastingMachine: RoastingMachine = new RoastingMachine();
+    roastingMachine.initializeByObject(iRoastingMachine);
+    return roastingMachine;
   }
 
   public hasPhotos() {

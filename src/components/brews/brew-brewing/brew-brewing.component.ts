@@ -183,7 +183,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return this.choosenPreparation.tools.filter((e) => e.archived === false);
   }
 
-
   public async ngAfterViewInit() {
     setTimeout(async () => {
       // If we wouldn't wait in the timeout, the components wouldnt be existing
