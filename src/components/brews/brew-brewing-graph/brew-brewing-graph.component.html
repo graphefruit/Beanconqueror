@@ -1,7 +1,7 @@
 
-<ion-item [hidden]="shallFlowProfileBeHidden()" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+<ion-item [hidden]="shallFlowProfileBeHidden()" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)" class="ion-padding-bottom-half" lines="none">
+                      data.getPreparation().use_custom_parameters])" class="ion-padding-bottom-half" lines="none">
   <div class="ion-text-center" style="width:100%">
     <ion-chip (click)="toggleChartLines('weight')" *ngIf="
     smartScaleConnected() ||

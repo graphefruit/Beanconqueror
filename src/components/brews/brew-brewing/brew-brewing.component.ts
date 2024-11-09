@@ -183,6 +183,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return this.choosenPreparation.tools.filter((e) => e.archived === false);
   }
 
+
   public async ngAfterViewInit() {
     setTimeout(async () => {
       // If we wouldn't wait in the timeout, the components wouldnt be existing
@@ -517,6 +518,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     this.maxBrewRating = this.settings.brew_rating;
+    this.setChoosenPreparation();
   }
 
   public getTime(): number {

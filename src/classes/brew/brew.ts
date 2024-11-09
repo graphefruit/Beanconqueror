@@ -33,7 +33,16 @@ import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
 import { ReferenceGraph } from './referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+class BrewInstanceHelper {
+  constructor() {
 
+  }
+
+  public static preparations: any = {};
+  public static mills: any = {};
+  public static beans: any = {};
+  public static waters: any = {};
+}
 export class Brew implements IBrew {
   public grind_size: string;
   public grind_weight: number;
@@ -215,28 +224,30 @@ export class Brew implements IBrew {
     return BREW_QUANTITY_TYPES_ENUM[this.brew_beverage_quantity_type];
   }
 
-  private _tempBean: Bean = undefined;
   public getBean(): Bean {
+    const uniqueCachingID = this.config.uuid + "-" + this.bean;
     if (
-      this._tempBean === undefined ||
-      this._tempBean.config.uuid !== this.bean
+      BrewInstanceHelper.beans[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.beans[uniqueCachingID].config.uuid !== this.bean
     ) {
       const iBean: IBean = this.getBeanStorageInstance().getByUUID(
         this.bean
       ) as IBean;
       const bean: Bean = new Bean();
       bean.initializeByObject(iBean);
-      this._tempBean = bean;
+      BrewInstanceHelper.beans[uniqueCachingID] = bean;
+
     }
-    return this._tempBean;
+    return  BrewInstanceHelper.beans[uniqueCachingID];
   }
 
   /**We do this, else we get called all day and have performance downtimes **/
-  private _tempPreparation: Preparation = undefined;
+
   public getPreparation(): Preparation {
+    const uniqueCachingID = this.config.uuid + "-" + this.method_of_preparation;
     if (
-      this._tempPreparation === undefined ||
-      this._tempPreparation.config.uuid !== this.method_of_preparation
+      BrewInstanceHelper.preparations[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.preparations[uniqueCachingID].config.uuid !== this.method_of_preparation
     ) {
       const iPreparation: IPreparation =
         this.getPreparationStorageInstance().getByUUID(
@@ -245,45 +256,45 @@ export class Brew implements IBrew {
       const preparation: Preparation = new Preparation();
       preparation.initializeByObject(iPreparation);
 
-      this._tempPreparation = preparation;
+      BrewInstanceHelper.preparations[uniqueCachingID] = preparation;
     }
 
-    return this._tempPreparation;
+    return BrewInstanceHelper.preparations[uniqueCachingID];
   }
 
-  private _tempMill: Mill = undefined;
+
   public getMill(): Mill {
+    const uniqueCachingID = this.config.uuid + "-" + this.mill;
     if (
-      this._tempMill === undefined ||
-      this._tempMill.config.uuid !== this.mill
+      BrewInstanceHelper.mills[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.mills[uniqueCachingID].config.uuid !== this.mill
     ) {
       const iMill: IMill = this.getMillStorageInstance().getByUUID(
         this.mill
       ) as IMill;
       const mill: Mill = new Mill();
       mill.initializeByObject(iMill);
-      this._tempMill = mill;
+      BrewInstanceHelper.mills[uniqueCachingID] = mill;
     }
-
-    return this._tempMill;
+    return  BrewInstanceHelper.mills[uniqueCachingID];
   }
 
-  private _tempWater: Water = undefined;
+
   public getWater(): Water {
+    const uniqueCachingID = this.config.uuid + "-" + this.water;
     if (
-      this._tempWater === undefined ||
-      this._tempWater.config.uuid !== this.water
+      BrewInstanceHelper.waters[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.waters[uniqueCachingID].config.uuid !== this.water
     ) {
       const iWater: IWater = this.getWaterStorageInstance().getByUUID(
         this.water
       ) as IWater;
       const water: Water = new Water();
       water.initializeByObject(iWater);
-
-      this._tempWater = water;
+      BrewInstanceHelper.waters[uniqueCachingID] = water;
     }
 
-    return this._tempWater;
+    return BrewInstanceHelper.waters[uniqueCachingID];
   }
 
   /**
