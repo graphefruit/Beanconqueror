@@ -51,6 +51,10 @@ export class BrewFunction implements PipeTransform {
           return value.getPreparation().name;
         case BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME:
           return value.getWater().name;
+        case BREW_FUNCTION_PIPE_ENUM.HAS_CUSTOM_FLAVORS:
+          return value.hasCustomFlavors();
+        case BREW_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS:
+          return value.hasPredefinedFlavors();
       }
     } catch (ex) {}
   }

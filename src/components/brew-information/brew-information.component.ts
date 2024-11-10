@@ -41,6 +41,8 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphHelper } from '../../services/uiGraphHelper';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -82,6 +84,9 @@ export class BrewInformationComponent implements OnInit {
 
   public informationContainerHeight: number = undefined;
   public informationContainerWidth: number = undefined;
+
+  public uiHasCustomRatingRange: boolean = undefined;
+  public uiCuppedBrewFlavors: Array<string> = [];
 
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -140,6 +145,8 @@ export class BrewInformationComponent implements OnInit {
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
 
+      this.uiHasCustomRatingRange = this.getHasCustomRatingRange();
+      this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
       /**On Android we somehow need a bit more ms for the calc... specific on older once**/
       let timeoutMS = 350;
       if (this.platform.is('ios')) {
@@ -170,7 +177,7 @@ export class BrewInformationComponent implements OnInit {
     }
   }
 
-  public hasCustomRatingRange(): boolean {
+  public getHasCustomRatingRange(): boolean {
     if (this.settings) {
       // #379
       if (Number(this.settings.brew_rating) !== 5) {
@@ -409,6 +416,7 @@ export class BrewInformationComponent implements OnInit {
         break;
       case BREW_ACTION.CUPPING:
         await this.cupBrew();
+        this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
         break;
       case BREW_ACTION.SHOW_MAP_COORDINATES:
         await this.showMapCoordinates();
@@ -557,4 +565,7 @@ export class BrewInformationComponent implements OnInit {
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
+  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
+  protected readonly PREPARATION_FUNCTION_PIPE_ENUM =
+    PREPARATION_FUNCTION_PIPE_ENUM;
 }

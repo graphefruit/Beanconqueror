@@ -6,17 +6,17 @@
           <ion-grid class='no-padding-bottom' style='padding-top:0px;'>
             <ion-row style='height:60px;'>
               <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' class='ion-no-padding'
-                       *ngIf='(settings?.brew_display_bean_image != true || bean?.hasPhotos() === false) && !preparation?.hasPhotos()'>
+                       *ngIf='(settings?.brew_display_bean_image != true || (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) === false) &&  ((preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS) === false)'>
                 <ion-icon class='full-sized-icon' name='{{preparation.getIcon()}}'></ion-icon>
               </ion-col>
               <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' class='ion-no-padding' size='1'
-                       *ngIf='(settings?.brew_display_bean_image != true || bean?.hasPhotos() === false) && preparation?.hasPhotos()'>
+                       *ngIf='(settings?.brew_display_bean_image != true || (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) === false) && (preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)'>
                 <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
                   <async-image [filePath]='preparation?.attachments[0]' class='bean-slider'></async-image>
                 </div>
               </ion-col>
               <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' class='ion-no-padding' size='1'
-                       *ngIf='settings?.brew_display_bean_image == true && bean?.hasPhotos()'>
+                       *ngIf='settings?.brew_display_bean_image == true && (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)'>
                 <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
                   <async-image [filePath]='bean?.attachments[0]' class='bean-slider'></async-image>
                 </div>
@@ -42,18 +42,18 @@
                     </ion-col>
                   </ion-row>
                   <ion-row>
-                    <ion-col [size]='brew?.rating>0 ? (hasCustomRatingRange()? 10:8) :12'>
+                    <ion-col [size]='brew?.rating>0 ? (uiHasCustomRatingRange? 10:8) :12'>
                       <div class='ion-no-padding font-size-20 ion-title brew-title'>
                         <ion-icon style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
-                                  *ngIf='bean.isFrozen()'></ion-icon>
-                        <ng-container *ngIf='bean.isUnfrozen()'>(<ion-icon style='top: 3px;position: relative;' name='snow-outline'></ion-icon>)
+                                  *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)'></ion-icon>
+                        <ng-container *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN)'>(<ion-icon style='top: 3px;position: relative;' name='snow-outline'></ion-icon>)
                         </ng-container>
                         {{ bean?.name }}<span class='font-size-16' *ngIf='bean?.roaster'>&nbsp;({{ bean?.roaster }})</span>
                       </div>
                     </ion-col>
                     <ion-col *ngIf='(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
                       preparation?.visible_list_view_parameters.rating,
-                      preparation?.use_custom_parameters]) && (brew?.rating > 0 && hasCustomRatingRange() === false)'
+                      preparation?.use_custom_parameters]) && (brew?.rating > 0 && uiHasCustomRatingRange === false)'
                              size='4'>
                       <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]='brew.rating' [maxStars]='5'
                                  [readonly]='true' [wholeStars]='true' class='ion-float-right brew-stars'>
@@ -61,7 +61,7 @@
                     </ion-col>
                     <ion-col *ngIf='(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
                       preparation?.visible_list_view_parameters.rating,
-                      preparation?.use_custom_parameters]) && (brew?.rating > 0  && hasCustomRatingRange() === true)'
+                      preparation?.use_custom_parameters]) && (brew?.rating > 0  && uiHasCustomRatingRange === true)'
                              size='2' class='ion-text-right'>
                       <ion-badge>{{ brew.rating | toFixed: 2 }}</ion-badge>
                     </ion-col>
@@ -223,10 +223,10 @@
                   </ion-chip>
                 </div>
               </ion-col>
-              <ion-col *ngIf='(brew?.hasCustomFlavors() || brew?.hasPredefinedFlavors())' size='12'>
+              <ion-col *ngIf='((brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.HAS_CUSTOM_FLAVORS) || (brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS))' size='12'>
                 <ion-label class='card-headline'>{{ 'BREW_DATA_FLAVOR' | translate }}</ion-label>
                 <br />
-                <ion-text class='ion-text-wrap'>{{ getCuppedBrewFlavors() }}</ion-text>
+                <ion-text class='ion-text-wrap'>{{ uiCuppedBrewFlavors }}</ion-text>
               </ion-col>
               <ion-col size='12' *ngIf="brew?.note != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.note,
                       preparation?.visible_list_view_parameters.note,
@@ -290,8 +290,8 @@
                         <ion-icon *ngIf='brew?.flow_profile' name='analytics-outline'
                                   style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
                         <ion-icon style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
-                                  *ngIf='bean.isFrozen()'></ion-icon>
-                        <ng-container *ngIf='bean.isUnfrozen()'>(<ion-icon style='top: 3px;position: relative;' name='snow-outline'></ion-icon>)
+                                  *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)'></ion-icon>
+                        <ng-container *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN)'>(<ion-icon style='top: 3px;position: relative;' name='snow-outline'></ion-icon>)
                         </ng-container>
                         {{ bean?.name }}
                       </ion-col>

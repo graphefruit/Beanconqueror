@@ -3,6 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { Bean } from '../../classes/bean/bean';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 
 @Pipe({ name: 'beanFunctionPipe' })
 export class BeanFunction implements PipeTransform {
@@ -45,6 +46,8 @@ export class BeanFunction implements PipeTransform {
             return true;
           }
           return false;
+        case BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN:
+          return value.isUnfrozen();
       }
     } catch (ex) {}
   }
