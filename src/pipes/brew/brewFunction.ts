@@ -5,9 +5,18 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 
 @Pipe({ name: 'brewFunctionPipe' })
 export class BrewFunction implements PipeTransform {
-  public transform(value: Brew, arg: BREW_FUNCTION_PIPE_ENUM): any {
+  public transform(
+    value: Brew,
+    arg: BREW_FUNCTION_PIPE_ENUM | Array<BREW_FUNCTION_PIPE_ENUM | any>
+  ): any {
     try {
-      switch (arg) {
+      let action;
+      if (typeof arg !== 'object') {
+        action = arg;
+      } else {
+        action = arg[0];
+      }
+      switch (action) {
         case BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD:
           return value.getExtractionYield();
         case BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO:
@@ -22,6 +31,16 @@ export class BrewFunction implements PipeTransform {
           return value.getCalculatedBeanAge();
         case BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED:
           return value.isArchived();
+        case BREW_FUNCTION_PIPE_ENUM.GET_GRAMS_PER_LITER:
+          return value.getGramsPerLiter();
+        case BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_MILL_TIME:
+          return value.getFormattedTotalMillTimerTime();
+        case BREW_FUNCTION_PIPE_ENUM.FORMATTED_BREW_TIME:
+          return value.getFormattedBrewTime();
+        case BREW_FUNCTION_PIPE_ENUM.FORMATTED_COFFEE_BREW_TIME:
+          return value.getFormattedCoffeeBrewTime();
+        case BREW_FUNCTION_PIPE_ENUM.GET_PREPARATION_TOOL_NAME:
+          return value.getPreparationToolName(arg[1]);
       }
     } catch (ex) {}
   }

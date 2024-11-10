@@ -298,7 +298,7 @@
         <ion-item class="ion-no-margin-important" lines='none'>
           <ion-label id='brew_quantity' position="stacked">
             <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
-            <p style="top: -7px; position: relative;">({{data.getBrewRatio()}} , {{data.getGramsPerLiter()}})</p>
+            <p style="top: -7px; position: relative;">({{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}} , {{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_GRAMS_PER_LITER}})</p>
           </ion-label>
           <ion-input aria-labelledby='brew_quantity' [(ngModel)]="data.brew_quantity" inputmode="decimal"
                      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_QUANTITY' | translate}}" prevent-characters
@@ -403,7 +403,7 @@
               <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</h2>
               <p style="top: -7px; position: relative;"
                  *ngIf="choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO || (data.brew_quantity <=0 && data.brew_beverage_quantity >0)">
-                ({{data.getBrewRatio()}} , {{data.getGramsPerLiter()}})</p>
+                ({{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}} , {{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_GRAMS_PER_LITER}})</p>
             </ion-label>
             <ion-input aria-labelledby='brew_beverage_quantity' [(ngModel)]="data.brew_beverage_quantity" inputmode="decimal"
                        placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_BEVERAGE_QUANTITY' | translate}}" prevent-characters
@@ -456,7 +456,7 @@
                       choosenPreparation.brew_order.after.tds,
                       choosenPreparation.use_custom_parameters])" lines="inset">
     <ion-label>
-      {{'BREW_DATA_CALCULATED_EXTRACTION_YIELD' | translate}}: {{data.getExtractionYield()}}
+      {{'BREW_DATA_CALCULATED_EXTRACTION_YIELD' | translate}}: {{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD}}
     </ion-label>
     <ion-button *ngIf="data.tds && data.getExtractionYield()" style="margin-left:0px;"
                 (click)="showExtractionChart($event)" tabIndex="1" class="big-icon-only" fill="clear" slot="end"

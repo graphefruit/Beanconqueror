@@ -65,6 +65,7 @@ import { TextToSpeechService } from '../../../services/textToSpeech/text-to-spee
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
 declare var Plotly;
 
@@ -161,6 +162,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public textToSpeechWeightInterval: any = undefined;
   public textToSpeechTimerInterval: any = undefined;
+
+  public graphIconColSize: number = 2;
 
   constructor(
     private readonly platform: Platform,
@@ -287,6 +290,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           }
           // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
           setTimeout(() => {
+            this.graphIconColSize = this.getGraphIonColSize();
             this.checkChanges();
           }, 200);
           this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
@@ -532,6 +536,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       timeout = 1000;
     }
     setTimeout(() => {
+      this.graphIconColSize = this.getGraphIonColSize();
       try {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
@@ -3863,4 +3868,6 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
     return false;
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
 }

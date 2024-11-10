@@ -25,6 +25,7 @@ import { UIAlert } from '../../../services/uiAlert';
 
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from 'src/services/uiHelper';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
 declare var Plotly;
 
@@ -90,6 +91,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   protected heightInformationBlock: number = 50;
 
+  public graphIconColSize: number = 2.4;
+  public bluetoothSubscription: Subscription = undefined;
   constructor(
     private readonly modalController: ModalController,
     public readonly uiHelper: UIHelper,
@@ -235,6 +238,13 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         ) &&
         this.brew.getPreparation().style_type ===
           PREPARATION_STYLE_TYPE.ESPRESSO;
+
+      this.graphIconColSize = this.getGraphIonColSize();
+      this.bluetoothSubscription = this.bleManager
+        .attachOnEvent()
+        .subscribe((_type) => {
+          this.graphIconColSize = this.getGraphIonColSize();
+        });
     }
     setTimeout(() => {
       if (!this.isDetail) {
@@ -444,6 +454,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public async ngOnDestroy() {
+    if (this.bluetoothSubscription) {
+      this.bluetoothSubscription.unsubscribe();
+      this.bluetoothSubscription = undefined;
+    }
     if (this.brewFlowGraphSubscription) {
       this.brewFlowGraphSubscription.unsubscribe();
       this.brewFlowGraphSubscription = undefined;
@@ -492,4 +506,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       BrewFlowComponent.COMPONENT_ID
     );
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
 }

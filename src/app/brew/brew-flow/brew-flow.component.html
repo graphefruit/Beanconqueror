@@ -12,7 +12,7 @@
           <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
             [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
             translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('pressure')" *ngIf="(pressureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('pressure')" *ngIf="(pressureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
             [outline]="!brewComponent.brewBrewingGraphEl.traces.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' |
             translate}}</ion-chip>
           <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()"
@@ -62,12 +62,13 @@
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
           <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}" style="padding-right:5px;">
+            size="{{graphIconColSize}}" style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
               <ion-card-header>
                 <div #smartScaleWeightDetail>? g</div>
                 <div #smartScaleWeightSecondDetail *ngIf="smartScaleSupportsTwoWeight()">?g</div>
-                <span style='font-size:16px;'>({{brewComponent.brewBrewingGraphEl.data.getBrewRatio()}})</span>
+                <span style='font-size:16px;'>({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})</span>
+
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="beanconqueror-scale-outline"></ion-icon>
@@ -75,7 +76,7 @@
             </ion-card>
           </ion-col>
           <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
+            size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
               <ion-card-header>
                 <div class='information-tile-no-overflow'><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
@@ -87,8 +88,8 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col (click)="resetPressure()" *ngIf="(pressureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-            size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
+          <ion-col (click)="resetPressure()" *ngIf="(pressureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+            size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
               <ion-card-header>
                 <div #pressureDetail>? bar</div>
@@ -99,7 +100,7 @@
             </ion-card>
           </ion-col>
           <ion-col *ngIf="temperatureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()"
-                   size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
+                   size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
               <ion-card-header>
                 <div #temperatureDetail>? °C</div>
@@ -110,7 +111,7 @@
             </ion-card>
           </ion-col>
           <ion-col
-            size="{{this.getGraphIonColSize()}}"   style="padding-right:5px;">
+            size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
               <ion-card-header>
                 <span class='information-tile-no-overflow' #timerElement></span>

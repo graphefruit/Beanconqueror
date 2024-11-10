@@ -76,6 +76,7 @@ import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparati
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { Bean } from '../../../classes/bean/bean';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
 declare var cordova;
 
@@ -1455,4 +1456,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     await popover.present();
     const data = await popover.onWillDismiss();
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
 }

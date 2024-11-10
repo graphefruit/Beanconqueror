@@ -219,7 +219,7 @@
                 <ion-label class='card-headline'>{{ "BREW_DATA_PREPARATION_METHOD_TOOL" | translate }}</ion-label>
                 <div>
                   <ion-chip
-                    *ngFor='let uuid of brew?.method_of_preparation_tools;let i=index;'>{{ brew?.getPreparationToolName(uuid) }}
+                    *ngFor='let uuid of brew?.method_of_preparation_tools;let i=index;'>{{brew | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_PREPARATION_TOOL_NAME,uuid] }}
                   </ion-chip>
                 </div>
               </ion-col>

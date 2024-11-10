@@ -28,6 +28,9 @@ import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-
 import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { sleep } from '../../../classes/devices';
 import { ShareService } from '../../../services/shareService/share-service.service';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { Bean } from '../../../classes/bean/bean';
+import { Mill } from '../../../classes/mill/mill';
 
 declare var Plotly;
 @Component({
@@ -51,6 +54,10 @@ export class BrewDetailComponent {
   @ViewChild('brewBrewingGraphEl', { static: false })
   public brewBrewingGraphEl: BrewBrewingGraphComponent;
 
+  public bean: Bean;
+  /**We named it that way, because the graph-componeneted access it aswell **/
+  public choosenPreparation: Preparation;
+  public mill: Mill;
   constructor(
     private readonly modalController: ModalController,
     public uiHelper: UIHelper,
@@ -80,6 +87,10 @@ export class BrewDetailComponent {
     if (this.brew) {
       const copy: IBrew = this.uiHelper.copyData(this.brew);
       this.data.initializeByObject(copy);
+
+      this.bean = this.data.getBean();
+      this.choosenPreparation = this.data.getPreparation();
+      this.mill = this.data.getMill();
     }
     if (this.showCupping()) {
       // Set timeout else element wont be visible
@@ -118,7 +129,7 @@ export class BrewDetailComponent {
   }
 
   public getPreparation(): Preparation {
-    return this.data.getPreparation();
+    return this.choosenPreparation;
   }
   public showSectionAfterBrew(): boolean {
     return this.uiBrewHelper.showSectionAfterBrew(this.getPreparation());
@@ -172,6 +183,9 @@ export class BrewDetailComponent {
     this.editActive = false;
     if (returningBrew) {
       this.data = returningBrew;
+      this.bean = this.data.getBean();
+      this.choosenPreparation = this.data.getPreparation();
+      this.mill = this.data.getMill();
       this.initializeFlowChartOnGraphEl();
     }
   }
@@ -188,7 +202,7 @@ export class BrewDetailComponent {
       .format(formattingStr);
     return formatted;
   }
-  private showCupping(): boolean {
+  public showCupping(): boolean {
     return this.uiBrewHelper.showCupping(this.data);
   }
 
@@ -365,4 +379,6 @@ export class BrewDetailComponent {
     await popover.present();
     await popover.onWillDismiss();
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
 }
