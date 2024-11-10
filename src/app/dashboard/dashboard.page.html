@@ -19,12 +19,12 @@
         <ion-col size="6">
           <ion-card [routerLink]="['/home/brews']" class="dashboard ion-no-margin" tappable>
             <ion-card-header class="ion-no-padding ion-no-margin">
-              <ion-card-title> {{uiStatistic.getBrewsDrunk()}}</ion-card-title>
+              <ion-card-title> {{getBrewsDrunk}}</ion-card-title>
               <ion-card-subtitle>
-                <span *ngIf="uiStatistic.getBrewsDrunk() == 1">
+                <span *ngIf="getBrewsDrunk == 1">
                 {{"PAGE_HOME_TOTAL_BREW" | translate}}
                 </span>
-                <span *ngIf="uiStatistic.getBrewsDrunk() != 1">
+                <span *ngIf="getBrewsDrunk != 1">
                 {{"PAGE_HOME_TOTAL_BREWS" | translate}}
                 </span>
               </ion-card-subtitle>
@@ -35,9 +35,9 @@
         <ion-col size="6">
           <ion-card [routerLink]="['/statistic']" class="dashboard ion-no-margin no-border" tappable>
             <ion-card-header class="ion-no-padding ion-no-margin">
-              <ion-card-title> {{uiStatistic.getTimePassedSinceLastBrew()}}</ion-card-title>
+              <ion-card-title> {{getTimePassedSinceLastBrew}}</ion-card-title>
               <ion-card-subtitle>
-                {{uiStatistic.getTimePassedSinceLastBrewMessage()}} {{"WITHOUT_COFFEE" | translate}}
+                {{getTimePassedSinceLastBrewMessage}} {{"WITHOUT_COFFEE" | translate}}
               </ion-card-subtitle>
 
             </ion-card-header>
@@ -50,12 +50,12 @@
         <ion-col size="6">
           <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin" tappable>
             <ion-card-header class="ion-no-padding ion-no-margin">
-              <ion-card-title> {{uiStatistic.getBeansCount()}}</ion-card-title>
+              <ion-card-title> {{getBeansCount}}</ion-card-title>
               <ion-card-subtitle>
-                <span *ngIf="uiStatistic.getBeansCount() == 1">
+                <span *ngIf="getBeansCount == 1">
                        {{"PAGE_HOME_BEAN_EXPLORED" | translate}}
                 </span>
-                <span *ngIf="uiStatistic.getBeansCount() != 1">
+                <span *ngIf="getBeansCount != 1">
                        {{"PAGE_HOME_BEANS_EXPLORED" | translate}}
               </span>
               </ion-card-subtitle>
@@ -66,8 +66,8 @@
         <ion-col size="6">
           <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin no-border" tappable>
             <ion-card-header class="ion-no-padding ion-no-margin">
-              <ion-card-title *ngIf='settings.freeze_coffee_beans === true'><ion-icon  color='accent-secondary' style="top: 3px;position: relative;" name="thermometer-outline"></ion-icon> {{openBeansLeftOverCount()}}<br/><ion-icon color='accent-secondary' style="top: 3px;position: relative;" name="snow-outline"></ion-icon> {{openFrozenBeansLeftOverCount()}}</ion-card-title>
-              <ion-card-title *ngIf='settings.freeze_coffee_beans === false'> {{openBeansLeftOverCount()}}</ion-card-title>
+              <ion-card-title *ngIf='settings.freeze_coffee_beans === true'><ion-icon  color='accent-secondary' style="top: 3px;position: relative;" name="thermometer-outline"></ion-icon> {{leftOverBeansWeight}}<br/><ion-icon color='accent-secondary' style="top: 3px;position: relative;" name="snow-outline"></ion-icon> {{leftOverFrozenBeansWeight}}</ion-card-title>
+              <ion-card-title *ngIf='settings.freeze_coffee_beans === false'> {{leftOverBeansWeight}}</ion-card-title>
               <ion-card-subtitle>
                 {{"BEANS_WEIGHT_AVAILABLE" | translate}}
               </ion-card-subtitle>
