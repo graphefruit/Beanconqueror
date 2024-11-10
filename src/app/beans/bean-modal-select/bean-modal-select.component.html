@@ -69,9 +69,9 @@
                       <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
-                        ({{bean.beanAgeInDays()}}
-                        <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
-                        <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
+                        ({{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1'>{{"DAY" | translate}}</span>
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) !== 1'>{{"DAYS" | translate}}</span>)
                       </p>
                       <p *ngIf='bean?.roaster'>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                       <p *ngIf='bean && !isBeanRoastUnknown(bean)'>{{"BEAN_DATA_ROASTING_TYPE" | translate}}
@@ -83,7 +83,7 @@
                       </p>
                     </div>
                   </ion-checkbox>
-                  <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                  <ion-thumbnail slot="end" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
                     <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
                       <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
                     </div>
@@ -130,12 +130,12 @@
                                 slot='start'>
                     <div style='margin-top:5px;'>
                       <h6 class="no-overflow-ellipsis"><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
-                                    *ngIf="bean.isFrozen()"></ion-icon><span *ngIf='bean.isFrozen()'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
+                                    *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)"></ion-icon><span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
-                        ({{bean.beanAgeInDays()}}
-                        <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
-                        <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
+                        ({{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1'>{{"DAY" | translate}}</span>
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) !== 1'>{{"DAYS" | translate}}</span>)
                       </p>
                       <p *ngIf='bean?.roaster'>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                       <p *ngIf='bean && !isBeanRoastUnknown(bean)'>{{"BEAN_DATA_ROASTING_TYPE" | translate}}
@@ -147,7 +147,7 @@
                       </p>
                     </div>
                   </ion-checkbox>
-                  <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                  <ion-thumbnail slot="end" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
                     <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
                       <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
                     </div>
@@ -202,9 +202,9 @@
                       <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
-                        ({{bean.beanAgeInDays()}}
-                        <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
-                        <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
+                        ({{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1'>{{"DAY" | translate}}</span>
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) !== 1'>{{"DAYS" | translate}}</span>)
                       </p>
                       <p *ngIf='bean?.roaster'>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                       <p *ngIf='bean && !isBeanRoastUnknown(bean)'>{{"BEAN_DATA_ROASTING_TYPE" | translate}}
@@ -216,7 +216,7 @@
                       </p>
                     </div>
                   </ion-checkbox>
-                  <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                  <ion-thumbnail slot="end" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
                     <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
                       <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
                     </div>
@@ -277,9 +277,9 @@
                       <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
-                        ({{bean.beanAgeInDays()}}
-                        <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
-                        <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
+                        ({{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1'>{{"DAY" | translate}}</span>
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) !== 1'>{{"DAYS" | translate}}</span>)
                       </p>
                       <p *ngIf='bean?.roaster'>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                       <p *ngIf='bean && !isBeanRoastUnknown(bean)'>{{"BEAN_DATA_ROASTING_TYPE" | translate}}
@@ -290,7 +290,7 @@
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
                     </ion-radio>
-                    <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                    <ion-thumbnail slot="end" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
                       <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
                         <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
                       </div>
@@ -344,9 +344,9 @@
                       <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                         <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                           : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
-                          ({{bean.beanAgeInDays()}}
-                          <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
-                          <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
+                          ({{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}
+                          <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1'>{{"DAY" | translate}}</span>
+                          <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) !== 1'>{{"DAYS" | translate}}</span>)
                         </p>
                         <p *ngIf='bean?.roaster'>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                         <p *ngIf='bean && !isBeanRoastUnknown(bean)'>{{"BEAN_DATA_ROASTING_TYPE" | translate}}
@@ -358,7 +358,7 @@
                         </p>
 
                     </ion-radio>
-                    <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                    <ion-thumbnail slot="end" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
                       <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
                         <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
                       </div>
@@ -413,9 +413,9 @@
                       <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
-                        ({{bean.beanAgeInDays()}}
-                        <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
-                        <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
+                        ({{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1'>{{"DAY" | translate}}</span>
+                        <span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) !== 1'>{{"DAYS" | translate}}</span>)
                       </p>
                       <p *ngIf='bean?.roaster'>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                       <p *ngIf='bean && !isBeanRoastUnknown(bean)'>{{"BEAN_DATA_ROASTING_TYPE" | translate}}
@@ -426,7 +426,7 @@
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
                     </ion-radio>
-                    <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                    <ion-thumbnail slot="end" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
                       <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
                         <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
                       </div>

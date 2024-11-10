@@ -22,6 +22,7 @@ import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import _ from 'lodash';
 import { BeanSortFilterHelperService } from '../../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 
 @Component({
   selector: 'bean-modal-select',
@@ -396,4 +397,6 @@ export class BeanModalSelectComponent implements OnInit {
 
     return isFilterActive;
   }
+
+  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 }
