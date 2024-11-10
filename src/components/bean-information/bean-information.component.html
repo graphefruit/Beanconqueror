@@ -4,12 +4,12 @@
       <ion-row>
         <ion-col class="expand-fill-space" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
-            <ion-icon name="snow-outline" *ngIf="bean.isFrozen()">&nbsp;</ion-icon>
-            <div *ngIf='bean.isFrozen() === false && bean.frozenId' style="display: flex;">
+            <ion-icon name="snow-outline" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)">&nbsp;</ion-icon>
+            <div *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN) === false && bean.frozenId' style="display: flex;">
               (<ion-icon name="snow-outline"></ion-icon>)
             </div>
-            <ion-icon name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>
-            <ion-icon name="qr-code-outline" *ngIf="bean.isScannedBean()"></ion-icon>
+            <ion-icon name="flame-outline" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SELF_ROASTED) "></ion-icon>
+            <ion-icon name="qr-code-outline" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SCANNED_BEAN) "></ion-icon>
             <ion-icon name="share-social-outline" *ngIf="bean.shared"></ion-icon>
             <ion-icon name="heart" *ngIf="bean.favourite"></ion-icon>
             <div class="ion-justify-content-start center-icons-to-text expand-fill-space">
@@ -53,9 +53,9 @@
 
     <ion-grid  *ngIf="!collapsed" class="no-ion-col-vertical-padding limit-grid-overflow">
       <ion-row class="ion-padding-bottom-half">
-        <ion-col [size]="(bean.hasPhotos() && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments]))?9:12" class="ion-no-padding-right">
+        <ion-col [size]="((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments]))?9:12" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
-            <ion-row *ngIf='bean.hasFrozenInformation()'>
+            <ion-row *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_FROZEN_INFORMATION)'>
               <ion-col *ngIf="bean.frozenDate" size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_DATE" | translate}}</ion-label>
                 <ion-text>{{bean.frozenDate | formatDate:[settings?.date_format]}}</ion-text>
@@ -134,23 +134,23 @@
               <ion-col size="6">
                 <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label>
                 <br/>
-                <ion-text>{{brewCounts()}}</ion-text>
+                <ion-text>{{uiBrewsCount}}</ion-text>
               </ion-col>
               <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roastingDate])" size="6">
                 <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label>
                 <br/>
-                <ion-text *ngIf="daysOld() === 1">{{daysOld()}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
-                <ion-text *ngIf="!(daysOld() === 1)">{{daysOld()}}&nbsp;{{"DAYS_OLD" | translate}}</ion-text>
+                <ion-text *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)  === 1">{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
+                <ion-text *ngIf="!((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1)">{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAYS_OLD" | translate}}</ion-text>
               </ion-col>
               <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.weight])" size="6">
                 <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
                 <br/>
                 <ion-text class='break-whitespaces'
-                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount() | number : '.0-2'}">{{daysOld()}}</ion-text>
+                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: uiUsedWeightCount | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - uiUsedWeightCount | number : '.0-2'}">{{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}</ion-text>
               </ion-col>
-              <ion-col *ngIf="(bean?.hasCustomFlavors() || bean?.hasPredefinedFlavors())" size="12">
+              <ion-col *ngIf="((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_CUSTOM_FLAVORS) || (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS))" size="12">
                 <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
-                <ion-text class="ion-text-wrap">{{getCuppedBrewFlavors()}}</ion-text>
+                <ion-text class="ion-text-wrap">{{uiCuppedBrewFlavors}}</ion-text>
               </ion-col>
               <ion-col *ngIf="bean?.buyDate !== '' &&(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.buyDate])" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_BUY_DATE' | translate}}</ion-label><br/>
@@ -162,7 +162,7 @@
               </ion-col>
               <ion-col *ngIf="bean?.cost > 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.cost])" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_COST' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.cost}}<span *ngIf='showCostPerKG()'>&nbsp;({{calculateCostPerKG()}}&nbsp;{{getCurrencySymbol()}}/kg)</span></ion-text>
+                <ion-text>{{bean?.cost}}<span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.SHOW_COST_PER_KG)'>&nbsp;({{uiCalculatedCostPerKG}}&nbsp;{{uiCurrencySymbol}}/kg)</span></ion-text>
               </ion-col>
               <ion-col *ngIf="bean?.cupping_points !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.cupping_points])" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_CUPPING_POINTS' | translate}}</ion-label><br/>
@@ -244,7 +244,7 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        <ion-col  (click)="showPhoto($event)" *ngIf="bean.hasPhotos() && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments])" class="ion-no-padding" size="3">
+        <ion-col  (click)="showPhoto($event)" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments])" class="ion-no-padding" size="3">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
           </div>

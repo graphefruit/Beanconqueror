@@ -190,7 +190,7 @@
                       preparation?.use_custom_parameters])">
                 <ion-label class='card-headline'>{{ "BREW_DATA_WATER" | translate }}</ion-label>
                 <br />
-                <ion-text>{{ brew?.getWater().name }}</ion-text>
+                <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME }}</ion-text>
               </ion-col>
               <ion-col size='6' *ngIf="brew?.coffee_type !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_type,
                       preparation?.visible_list_view_parameters.coffee_type,

@@ -41,6 +41,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
 import moment from 'moment/moment';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 
 @Component({
   selector: 'bean-information',
@@ -65,6 +66,13 @@ export class BeanInformationComponent implements OnInit {
   public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
   public roast_enum = ROASTS_ENUM;
   public settings: Settings = null;
+
+  public uiBrewsCount: number = undefined;
+  public uiUsedWeightCount: number = undefined;
+  public uiCuppedBrewFlavors: Array<string> = [];
+  public uiCalculatedCostPerKG: number = undefined;
+  public uiCurrencySymbol: string = '';
+
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBeanHelper: UIBeanHelper,
@@ -87,7 +95,17 @@ export class BeanInformationComponent implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.setUiData();
+  }
+
+  private setUiData() {
+    this.uiBrewsCount = this.getBrewCounts();
+    this.uiUsedWeightCount = this.getUsedWeightCount();
+    this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
+    this.uiCalculatedCostPerKG = this.getCalculateCostPerKG();
+    this.uiCurrencySymbol = this.getCurrencySymbol();
+  }
   public ngAfterViewInit() {
     this.resetRenderingRating();
   }
@@ -107,7 +125,7 @@ export class BeanInformationComponent implements OnInit {
     }, 250);
   }
 
-  public brewCounts(): number {
+  public getBrewCounts(): number {
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
       this.bean.config.uuid
     );
@@ -196,6 +214,7 @@ export class BeanInformationComponent implements OnInit {
         break;
       case BEAN_ACTION.EDIT:
         await this.editBean();
+        this.setUiData();
         break;
       case BEAN_ACTION.DELETE:
         try {
@@ -223,6 +242,7 @@ export class BeanInformationComponent implements OnInit {
         break;
       case BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE:
         await this.refreshDataFromQRCode();
+        this.setUiData();
         break;
       case BEAN_ACTION.SHOW_BREWS:
         await this.showBrews();
@@ -550,6 +570,9 @@ export class BeanInformationComponent implements OnInit {
     return false;
   }
 
+  /*
+    Deprecated right now, used by pipe
+   */
   public showCostPerKG(): boolean {
     if (
       this.bean.weight &&
@@ -562,11 +585,11 @@ export class BeanInformationComponent implements OnInit {
     }
     return false;
   }
-  public getCurrencySymbol() {
+  public getCurrencySymbol(): string {
     return this.currencyService.getActualCurrencySymbol();
   }
 
-  public calculateCostPerKG() {
+  public getCalculateCostPerKG() {
     const beanWeight = this.bean.weight;
     const beanCost = this.bean.cost;
 
@@ -575,4 +598,6 @@ export class BeanInformationComponent implements OnInit {
     const kgCost = costPerGramm * 1000;
     return this.uiHelper.toFixedIfNecessary(kgCost, 2);
   }
+
+  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 }

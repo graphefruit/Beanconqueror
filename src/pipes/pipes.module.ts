@@ -7,6 +7,7 @@ import { BrewFieldVisiblePipe } from './brew/brewFieldVisible';
 import { BrewFieldOrder } from './brew/brewFieldOrder';
 import { BeanFieldVisiblePipe } from './bean/beanFieldVisible';
 import { BrewFunction } from './brew/brewFunction';
+import { BeanFunction } from './bean/beanFunction';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { BrewFunction } from './brew/brewFunction';
     BrewFieldOrder,
     BeanFieldVisiblePipe,
     BrewFunction,
+    BeanFunction,
   ],
   exports: [
     EnumToArrayPipe,
@@ -28,6 +30,7 @@ import { BrewFunction } from './brew/brewFunction';
     BrewFieldOrder,
     BeanFieldVisiblePipe,
     BrewFunction,
+    BeanFunction,
   ],
 })
 export class PipesModule {}
