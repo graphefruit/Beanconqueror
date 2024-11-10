@@ -46,7 +46,7 @@
           <ion-card-header>
             <div #smartScaleWeight>? g</div>
             <div #smartScaleSecondWeight *ngIf="smartScaleSupportsTwoWeight()">?g</div>
-            <div class='information-tile-no-overflow'>({{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})</div>
+            <div class='information-tile-no-overflow'>({{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,data.brew_beverage_quantity,data.brew_quantity]}})</div>
           </ion-card-header>
           <ion-card-content>
             <ion-icon name="beanconqueror-scale-outline"></ion-icon>

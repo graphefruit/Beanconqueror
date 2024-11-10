@@ -1,6 +1,6 @@
 <ion-card *ngIf="preparationDeviceConnected() && getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.XENIA" class="popover" style="display:flex; flex-direction: column;">
   <ion-item lines="none">
-    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}&nbsp;-&nbsp;{{"PREPARATION_DEVICE.API_VERSION" | translate }}:&nbsp;{{this.data.getPreparation().connectedPreparationDevice.customParams.apiVersion}} </span>
+    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}&nbsp;-&nbsp;{{"PREPARATION_DEVICE.API_VERSION" | translate }}:&nbsp;{{this.brewComponent.choosenPreparation.connectedPreparationDevice.customParams.apiVersion}} </span>
   </ion-item>
   <ion-item lines="inset">
     <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId" (ionChange)='checkXeniaScripts()'
@@ -21,8 +21,8 @@
   </ion-item>
   <ion-item lines="inset"
             [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
-                      data.getPreparation().manage_parameters.coffee_first_drip_time,
-                      data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
+                      brewComponent.choosenPreparation.manage_parameters.coffee_first_drip_time,
+                      brewComponent.choosenPreparation.use_custom_parameters) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
     <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtFirstDripId"
                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
       <ion-select-option [value]="0">

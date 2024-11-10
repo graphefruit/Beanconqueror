@@ -380,9 +380,9 @@
                       choosenPreparation.use_custom_parameters])" lines="inset">
       <ion-label>
         <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
-        <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD}}</h3>
+        <h3>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds]}}</h3>
       </ion-label>
-      <ion-button *ngIf="data.tds && data.getExtractionYield()" style="margin-left:0px;"
+      <ion-button *ngIf="(data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds])" style="margin-left:0px;"
       (click)="showExtractionChart($event)" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
       tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only"></ion-icon>
@@ -427,7 +427,7 @@
     <div class="last-item"></div>
   </ion-card>
 
-  <ion-card *ngIf="data.hasCustomFlavors()" class="ion-margin-horizontal popover"
+  <ion-card *ngIf="(data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.HAS_CUSTOM_FLAVORS)" class="ion-margin-horizontal popover"
     style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
@@ -439,7 +439,7 @@
     </ion-item>
 
   </ion-card>
-  <ion-card *ngIf="data.hasPredefinedFlavors()" class="ion-margin-horizontal popover"
+  <ion-card *ngIf="(data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS)" class="ion-margin-horizontal popover"
     style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
