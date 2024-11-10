@@ -98,6 +98,8 @@ export class BeanModalSelectComponent implements OnInit {
 
   public segmentScrollHeight: string = undefined;
 
+  public uiUsedWeightCountCache: any = {};
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanStorage: UIBeanStorage,
@@ -211,18 +213,21 @@ export class BeanModalSelectComponent implements OnInit {
   }
 
   public getUsedWeightCount(_bean: Bean): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      _bean.config.uuid
-    );
-    for (const brew of relatedBrews) {
-      if (brew.bean_weight_in > 0) {
-        usedWeightCount += brew.bean_weight_in;
-      } else {
-        usedWeightCount += brew.grind_weight;
+    if (this.uiUsedWeightCountCache[_bean.config.uuid] === undefined) {
+      let usedWeightCount: number = 0;
+      const relatedBrews: Array<Brew> =
+        this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
+      for (const brew of relatedBrews) {
+        if (brew.bean_weight_in > 0) {
+          usedWeightCount += brew.bean_weight_in;
+        } else {
+          usedWeightCount += brew.grind_weight;
+        }
       }
+      this.uiUsedWeightCountCache[_bean.config.uuid] = usedWeightCount;
     }
-    return usedWeightCount;
+    /**We cache this one, because its called many times, and its a way faster so**/
+    return this.uiUsedWeightCountCache[_bean.config.uuid];
   }
 
   public ngOnInit() {}
