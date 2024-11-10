@@ -46,6 +46,20 @@ export class DashboardPage implements OnInit {
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+
+    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
+    });
+
+    this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
+    });
+    this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
+    });
+    this.uiMillStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
+    });
   }
 
   private reloadBrews() {
