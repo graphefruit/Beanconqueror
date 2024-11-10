@@ -68,6 +68,7 @@ import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { BrewInstanceHelper } from '../classes/brew/brew';
 
 declare var window;
 
@@ -652,6 +653,19 @@ export class AppComponent implements AfterViewInit {
     this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
+    /**If Anything changes, we reset**/
+    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
+      BrewInstanceHelper.setEntryAmountBackToZero();
+    });
+    this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
+      BrewInstanceHelper.setEntryAmountBackToZero();
+    });
+    this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
+      BrewInstanceHelper.setEntryAmountBackToZero();
+    });
+    this.uiMillStorage.attachOnEvent().subscribe((_val) => {
+      BrewInstanceHelper.setEntryAmountBackToZero();
+    });
   }
 
   private async __checkBluetoothDevices() {
@@ -807,6 +821,7 @@ export class AppComponent implements AfterViewInit {
           );
         }
       }
+      BrewInstanceHelper.setEntryAmountBackToZero();
     });
   }
 

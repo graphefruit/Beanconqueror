@@ -33,7 +33,21 @@ import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
 import { ReferenceGraph } from './referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+export class BrewInstanceHelper {
+  constructor() {}
 
+  public static preparations: any = {};
+  public static mills: any = {};
+  public static beans: any = {};
+  public static waters: any = {};
+
+  public static setEntryAmountBackToZero() {
+    this.preparations = {};
+    this.mills = {};
+    this.beans = {};
+    this.waters = {};
+  }
+}
 export class Brew implements IBrew {
   public grind_size: string;
   public grind_weight: number;
@@ -215,57 +229,30 @@ export class Brew implements IBrew {
     return BREW_QUANTITY_TYPES_ENUM[this.brew_beverage_quantity_type];
   }
 
-  private _cachingObj = {
-    BEAN: undefined,
-    MILL: undefined,
-    PREPARATION: undefined,
-    WATER: undefined,
-  };
-  public deleteCachingObjects() {
-    delete this._cachingObj;
-  }
-  private setCachingObj(_key: string, _value: any) {
-    if (this.hasOwnProperty('_cachingObj') === false) {
-      console.log('FCK.EMPTY');
-      this._cachingObj = {
-        BEAN: undefined,
-        MILL: undefined,
-        PREPARATION: undefined,
-        WATER: undefined,
-      };
-    }
-    this._cachingObj[_key] = _value;
-  }
-  private getCachingObj(_key: string) {
-    if (this.hasOwnProperty('_cachingObj') === true) {
-      return this._cachingObj[_key];
-    } else {
-      console.log('FCK2.EMPTY');
-    }
-    return undefined;
-  }
-
   public getBean(): Bean {
+    const uniqueCachingID = this.config.uuid + '-' + this.bean;
     if (
-      this._cachingObj['BEAN'] === undefined ||
-      this._cachingObj['BEAN'].config.uuid !== this.bean
+      BrewInstanceHelper.beans[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.beans[uniqueCachingID].config.uuid !== this.bean
     ) {
       const iBean: IBean = this.getBeanStorageInstance().getByUUID(
         this.bean
       ) as IBean;
       const bean: Bean = new Bean();
       bean.initializeByObject(iBean);
-      this.setCachingObj('BEAN', bean);
+      BrewInstanceHelper.beans[uniqueCachingID] = bean;
     }
-    return this.getCachingObj('BEAN');
+    return BrewInstanceHelper.beans[uniqueCachingID];
   }
 
   /**We do this, else we get called all day and have performance downtimes **/
 
   public getPreparation(): Preparation {
+    const uniqueCachingID = this.config.uuid + '-' + this.method_of_preparation;
     if (
-      this._cachingObj['PREPARATION'] === undefined ||
-      this._cachingObj['PREPARATION'].config.uuid !== this.method_of_preparation
+      BrewInstanceHelper.preparations[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.preparations[uniqueCachingID].config.uuid !==
+        this.method_of_preparation
     ) {
       const iPreparation: IPreparation =
         this.getPreparationStorageInstance().getByUUID(
@@ -273,41 +260,44 @@ export class Brew implements IBrew {
         ) as IPreparation;
       const preparation: Preparation = new Preparation();
       preparation.initializeByObject(iPreparation);
-      this.setCachingObj('PREPARATION', preparation);
+
+      BrewInstanceHelper.preparations[uniqueCachingID] = preparation;
     }
 
-    return this.getCachingObj('PREPARATION');
+    return BrewInstanceHelper.preparations[uniqueCachingID];
   }
 
   public getMill(): Mill {
+    const uniqueCachingID = this.config.uuid + '-' + this.mill;
     if (
-      this._cachingObj['MILL'] === undefined ||
-      this._cachingObj['MILL'].config.uuid !== this.mill
+      BrewInstanceHelper.mills[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.mills[uniqueCachingID].config.uuid !== this.mill
     ) {
       const iMill: IMill = this.getMillStorageInstance().getByUUID(
         this.mill
       ) as IMill;
       const mill: Mill = new Mill();
       mill.initializeByObject(iMill);
-      this.setCachingObj('MILL', mill);
+      BrewInstanceHelper.mills[uniqueCachingID] = mill;
     }
-    return this.getCachingObj('MILL');
+    return BrewInstanceHelper.mills[uniqueCachingID];
   }
 
   public getWater(): Water {
+    const uniqueCachingID = this.config.uuid + '-' + this.water;
     if (
-      this._cachingObj['WATER'] === undefined ||
-      this._cachingObj['WATER'].config.uuid !== this.water
+      BrewInstanceHelper.waters[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.waters[uniqueCachingID].config.uuid !== this.water
     ) {
       const iWater: IWater = this.getWaterStorageInstance().getByUUID(
         this.water
       ) as IWater;
       const water: Water = new Water();
       water.initializeByObject(iWater);
-      this.setCachingObj('WATER', water);
+      BrewInstanceHelper.waters[uniqueCachingID] = water;
     }
 
-    return this.getCachingObj('WATER');
+    return BrewInstanceHelper.waters[uniqueCachingID];
   }
 
   /**

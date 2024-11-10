@@ -109,7 +109,7 @@
                       preparation?.use_custom_parameters])' size='6'>
                 <ion-label class='card-headline'>{{ 'BREW_DATA_TIME' | translate }}</ion-label>
                 <br />
-                <ion-text>{{ brew?.getFormattedTotalCoffeeBrewTime() }}</ion-text>
+                <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BREW_TIME}}</ion-text>
               </ion-col>
               <ion-col *ngIf="(brew?.grind_size != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
                       preparation?.visible_list_view_parameters.grind_size,
@@ -206,7 +206,7 @@
                 <br />
                 <ion-text>{{ brew?.coffee_concentration }}</ion-text>
               </ion-col>
-              <ion-col size='6' *ngIf='brew?.getBean()?.roastingDate && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.bean_age_by_brew_date,
+              <ion-col size='6' *ngIf='bean?.roastingDate && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.bean_age_by_brew_date,
                       preparation?.visible_list_view_parameters.bean_age_by_brew_date,
                       preparation?.use_custom_parameters])'>
                 <ion-label class='card-headline'>{{ "BREW_INFORMATION_BEAN_AGE" | translate }}</ion-label>

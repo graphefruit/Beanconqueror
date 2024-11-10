@@ -62,8 +62,10 @@ export class DashboardPage implements OnInit {
     this.leftOverBeansWeight = undefined;
     this.leftOverFrozenBeansWeight = undefined;
     this.brews = [];
-
-    this.loadBrews();
+    /**Short timeout needed, else the filter pipe is not working correctly**/
+    setTimeout(() => {
+      this.loadBrews();
+    }, 50);
   }
 
   public async ionViewWillEnter() {

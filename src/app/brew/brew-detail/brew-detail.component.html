@@ -72,10 +72,10 @@
                       choosenPreparation.use_custom_parameters])" detail="true" (click)="detailBean()">
       <ion-label>
         <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
-        <h3>{{data.getBean().name}}</h3>
+        <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BEAN_NAME}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="data.getCalculatedBeanAge()>-1" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.bean_type,
+    <ion-item *ngIf="(data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE)>-1" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.bean_type,
                       choosenPreparation.brew_order.before.bean_type,
                       choosenPreparation.use_custom_parameters])">
       <ion-label>
@@ -98,7 +98,7 @@
                       choosenPreparation.use_custom_parameters])" detail="true" (click)="detailMill()">
       <ion-label>
         <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
-        <h3>{{data.getMill().name}}</h3>
+        <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_MILL_NAME}}</h3>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="(settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_speed,
@@ -176,7 +176,7 @@
                       choosenPreparation.use_custom_parameters])">
       <ion-label>
         <h2>{{"BREW_DATA_WATER" | translate}}:</h2>
-        <h3>{{data.getWater().name}}</h3>
+        <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME}}</h3>
       </ion-label>
     </ion-item>
     <div class="last-item"></div>

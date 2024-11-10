@@ -72,7 +72,6 @@ export class UIBrewStorage extends StorageClass {
   public async add(_entry: Brew): Promise<any> {
     _entry.fixDataTypes();
     const addEntry = this.uiHelper.cloneData(_entry);
-    addEntry.deleteCachingObjects();
     return await super.add(addEntry);
   }
 
@@ -81,7 +80,6 @@ export class UIBrewStorage extends StorageClass {
       _obj.fixDataTypes();
 
       const updatingObj = this.uiHelper.cloneData(_obj);
-      updatingObj.deleteCachingObjects();
       const updateval: boolean = await super.update(updatingObj);
       resolve(updateval);
     });

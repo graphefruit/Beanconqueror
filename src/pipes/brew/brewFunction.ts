@@ -39,8 +39,18 @@ export class BrewFunction implements PipeTransform {
           return value.getFormattedBrewTime();
         case BREW_FUNCTION_PIPE_ENUM.FORMATTED_COFFEE_BREW_TIME:
           return value.getFormattedCoffeeBrewTime();
+        case BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BREW_TIME:
+          return value.getFormattedTotalCoffeeBrewTime();
         case BREW_FUNCTION_PIPE_ENUM.GET_PREPARATION_TOOL_NAME:
           return value.getPreparationToolName(arg[1]);
+        case BREW_FUNCTION_PIPE_ENUM.GET_BEAN_NAME:
+          return value.getBean().name;
+        case BREW_FUNCTION_PIPE_ENUM.GET_MILL_NAME:
+          return value.getMill().name;
+        case BREW_FUNCTION_PIPE_ENUM.GET_PREPARATION_NAME:
+          return value.getPreparation().name;
+        case BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME:
+          return value.getWater().name;
       }
     } catch (ex) {}
   }
