@@ -90,8 +90,6 @@ export class BrewPage implements OnInit {
 
     this.loadBrews();
 
-    this.retriggerScroll();
-
     this.brewStorageChangeSubscription = this.uiBrewStorage
       .attachOnEvent()
       .subscribe((_val) => {
@@ -118,6 +116,11 @@ export class BrewPage implements OnInit {
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
 
       this.segmentScrollHeight = scrollComponent.el.style.height;
+      setTimeout(() => {
+        /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
+        const elScroll = scrollComponent.el;
+        elScroll.dispatchEvent(new Event('scroll'));
+      }, 15);
     }, 150);
   }
 
