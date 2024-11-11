@@ -71,15 +71,18 @@ export class AssociatedBrewsComponent {
       const el = this.associatedBrewsComponent.nativeElement;
       const scrollComponent: AgVirtualSrollComponent =
         this.openScrollAssociatedBrews;
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop - 20 + 'px';
 
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-      setTimeout(() => {
-        /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
-        const elScroll = scrollComponent.el;
-        elScroll.dispatchEvent(new Event('scroll'));
-      }, 15);
+      if (scrollComponent) {
+        scrollComponent.el.style.height =
+          el.offsetHeight - scrollComponent.el.offsetTop - 20 + 'px';
+
+        this.segmentScrollHeight = scrollComponent.el.style.height;
+        setTimeout(() => {
+          /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
+          const elScroll = scrollComponent.el;
+          elScroll.dispatchEvent(new Event('scroll'));
+        }, 15);
+      }
     }, 150);
   }
 
