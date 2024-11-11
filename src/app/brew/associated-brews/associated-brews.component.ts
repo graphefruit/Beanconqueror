@@ -86,7 +86,6 @@ export class AssociatedBrewsComponent {
   public async loadBrews() {
     let relatedBrews: Array<Brew>;
 
-    await this.uiAlert.showLoadingSpinner();
     if (this.type === 'preparation') {
       relatedBrews = this.uiPreparationHelper.getAllBrewsForThisPreparation(
         this.uuid
@@ -98,7 +97,6 @@ export class AssociatedBrewsComponent {
     }
 
     this.associatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-    await this.uiAlert.hideLoadingSpinner();
     this.retriggerScroll();
   }
 
