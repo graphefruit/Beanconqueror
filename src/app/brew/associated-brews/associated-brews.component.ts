@@ -15,6 +15,7 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { UIAlert } from '../../../services/uiAlert';
 
 @Component({
   selector: 'app-bean-associated-brews',
@@ -30,18 +31,24 @@ export class AssociatedBrewsComponent {
 
   public associatedBrews: Array<Brew> = [];
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('openScrollAssociatedBrews', {
+    read: AgVirtualSrollComponent,
+    static: false,
+  })
+  public openScrollAssociatedBrews: AgVirtualSrollComponent;
 
-  @ViewChild('brewContent', { read: ElementRef })
-  public brewContent: ElementRef;
+  @ViewChild('associatedBrewsComponent', { read: ElementRef })
+  public associatedBrewsComponent: ElementRef;
   public segmentScrollHeight: string = undefined;
+
+  public isCollapsed: boolean = false;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiMillHelper: UIMillHelper
+    private readonly uiMillHelper: UIMillHelper,
+    private readonly uiAlert: UIAlert
   ) {}
 
   public async ionViewWillEnter() {
@@ -61,18 +68,25 @@ export class AssociatedBrewsComponent {
 
   private retriggerScroll() {
     setTimeout(async () => {
-      const el = this.brewContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
-      scrollComponent = this.openScroll;
+      const el = this.associatedBrewsComponent.nativeElement;
+      const scrollComponent: AgVirtualSrollComponent =
+        this.openScrollAssociatedBrews;
       scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+        el.offsetHeight - scrollComponent.el.offsetTop - 20 + 'px';
+
       this.segmentScrollHeight = scrollComponent.el.style.height;
+      setTimeout(() => {
+        /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
+        const elScroll = scrollComponent.el;
+        elScroll.dispatchEvent(new Event('scroll'));
+      }, 15);
     }, 150);
   }
 
-  public loadBrews() {
+  public async loadBrews() {
     let relatedBrews: Array<Brew>;
 
+    await this.uiAlert.showLoadingSpinner();
     if (this.type === 'preparation') {
       relatedBrews = this.uiPreparationHelper.getAllBrewsForThisPreparation(
         this.uuid
@@ -84,6 +98,7 @@ export class AssociatedBrewsComponent {
     }
 
     this.associatedBrews = UIBrewHelper.sortBrews(relatedBrews);
+    await this.uiAlert.hideLoadingSpinner();
     this.retriggerScroll();
   }
 

@@ -7,7 +7,7 @@ android {
         applicationId "com.beanconqueror.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 80000
+        versionCode 80001
         versionName "8.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

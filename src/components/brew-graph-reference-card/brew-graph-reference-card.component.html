@@ -1,28 +1,28 @@
 <ion-item #ionItemEl tappable>
-<ion-radio #radioEl justify="start" label-placement="end"  value='{{isGraphType()===false?"BREW-" + this.brew.config.uuid:"GRAPH-" + this.graph.config.uuid}}'>
+<ion-radio #radioEl justify="start" label-placement="end"  value='{{isGraph===false?"BREW-" + this.brew?.config.uuid:"GRAPH-" + this.graph?.config.uuid}}'>
 <div class='brew-layout'  [style.width]='getElementOffsetWidth() + "px"'>
 
-  <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraphType()===false'>
+  <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraph===false'>
     <ion-row>
       <ion-col size="12">
-        <ion-icon *ngIf="brew.best_brew" name="trophy" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew.favourite" name="heart" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew?.flow_profile" name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><strong>{{brew.config.unix_timestamp | formatDate:[settings?.date_format]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span>
+        <ion-icon *ngIf="brew?.best_brew" name="trophy" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew?.favourite" name="heart" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew?.flow_profile" name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><strong>{{brew.config.unix_timestamp | formatDate:[settings?.date_format]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span>
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col [size]="brew?.rating>0 ? (hasCustomRatingRange()? 10:8) :12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{brew.getBean().name}}
-        <span class="font-size-16" *ngIf="brew.getBean().roaster">&nbsp;({{brew.getBean().roaster}})</span>
+      <ion-col [size]="brew?.rating>0 ? (isCustomRatingRange? 10:8) :12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{bean?.name}}
+        <span class="font-size-16" *ngIf="bean?.roaster">&nbsp;({{bean?.roaster}})</span>
       </div>
       </ion-col>
-      <ion-col *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.rating,
-                      brew.getPreparation().visible_list_view_parameters.rating,
-                      brew.getPreparation().use_custom_parameters) && (brew?.rating > 0 && hasCustomRatingRange() === false)" size="4">
+      <ion-col *ngIf="(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
+                      preparation?.visible_list_view_parameters.rating,
+                      preparation?.use_custom_parameters]) && (brew?.rating > 0 && isCustomRatingRange === false)" size="4">
         <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
         </ngx-stars>
       </ion-col>
-      <ion-col *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.rating,
-                      brew.getPreparation().visible_list_view_parameters.rating,
-                      brew.getPreparation().use_custom_parameters) && (brew?.rating > 0  && hasCustomRatingRange() === true)" size="2" class="ion-text-right">
-        <ion-badge>{{brew.rating| toFixed: 2}}</ion-badge>
+      <ion-col *ngIf="(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
+                      preparation?.visible_list_view_parameters.rating,
+                      preparation?.use_custom_parameters]) && (brew?.rating > 0  && isCustomRatingRange === true)" size="2" class="ion-text-right">
+        <ion-badge>{{brew?.rating| toFixed: 2}}</ion-badge>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -33,113 +33,113 @@
     <ion-row class="ion-padding-bottom-half">
       <ion-col size="6">
         <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label><br/>
-        <ion-text *ngIf="brew.getBean()?.roastingDate">
-          {{brew.getBean().roastingDate | formatDate:[settings?.date_format]}}</ion-text>
-        <ion-text *ngIf="!brew.getBean()?.roastingDate">
+        <ion-text *ngIf="bean?.roastingDate">
+          {{bean?.roastingDate | formatDate:[settings?.date_format]}}</ion-text>
+        <ion-text *ngIf="!bean?.roastingDate">
           -
         </ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.method_of_preparation,
-                      brew.getPreparation().visible_list_view_parameters.method_of_preparation,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.method_of_preparation,
+                      preparation?.visible_list_view_parameters.method_of_preparation,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label><br/>
-        <ion-text>{{brew?.getPreparation().name}}</ion-text>
+        <ion-text>{{preparation?.name}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill,
-                      brew.getPreparation().visible_list_view_parameters.mill,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill,
+                      preparation?.visible_list_view_parameters.mill,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{"BREW_DATA_MILL" |translate}}</ion-label><br/>
-        <ion-text>{{brew?.getMill().name}}</ion-text>
+        <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_MILL_NAME}}</ion-text>
       </ion-col>
       <ion-col size="6">
         <ion-label class="card-headline">{{"BREW_DATA_IN_OUT_BR" | translate}}</ion-label><br/>
-        <ion-text *ngIf="brew?.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO">
-          {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_quantity | number : '.0-2'}}&nbsp;({{brew?.getBrewRatio()}})
+        <ion-text *ngIf="preparation?.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO">
+          {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_quantity | number : '.0-2'}}&nbsp;({{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})
         </ion-text>
-        <ion-text *ngIf="brew?.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO">
-          {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_beverage_quantity | number : '.0-2'}}&nbsp;({{brew?.getBrewRatio()}})
+        <ion-text *ngIf="preparation?.style_type === PREPARATION_STYLE_TYPE.ESPRESSO">
+          {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_beverage_quantity | number : '.0-2'}}&nbsp;({{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})
         </ion-text>
       </ion-col>
-      <ion-col *ngIf="brew?.brew_time && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.brew_time,
-                      brew.getPreparation().visible_list_view_parameters.brew_time,
-                      brew.getPreparation().use_custom_parameters)" size="6">
+      <ion-col *ngIf="brew?.brew_time && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_time,
+                      preparation?.visible_list_view_parameters.brew_time,
+                      preparation?.use_custom_parameters])" size="6">
         <ion-label class="card-headline">{{'BREW_DATA_TIME' | translate}}</ion-label><br/>
-        <ion-text>{{brew?.getFormattedTotalCoffeeBrewTime()}}</ion-text>
+        <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BREW_TIME}}</ion-text>
       </ion-col>
-      <ion-col *ngIf="(brew?.grind_size != '' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.grind_size,
-                      brew.getPreparation().visible_list_view_parameters.grind_size,
-                      brew.getPreparation().use_custom_parameters)) ||  (brew?.mill_speed > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill_speed,
-                      brew.getPreparation().visible_list_view_parameters.mill_speed,
-                      brew.getPreparation().use_custom_parameters))"  size="6">
+      <ion-col *ngIf="(brew?.grind_size != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
+                      preparation?.visible_list_view_parameters.grind_size,
+                      preparation?.use_custom_parameters])) ||  (brew?.mill_speed > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_speed,
+                      preparation?.visible_list_view_parameters.mill_speed,
+                      preparation?.use_custom_parameters]))"  size="6">
         <ion-label class="card-headline">{{'BREW_DATA_GRIND_SIZE' | translate}}</ion-label><br/>
-        <ion-text><span *ngIf="brew?.grind_size != '' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.grind_size,
-                      brew.getPreparation().visible_list_view_parameters.grind_size,
-                      brew.getPreparation().use_custom_parameters)">{{brew?.grind_size}}</span><span *ngIf="brew?.mill_speed > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill_speed,
-                      brew.getPreparation().visible_list_view_parameters.mill_speed,
-                      brew.getPreparation().use_custom_parameters)">&nbsp;&#64;&nbsp;{{ brew?.mill_speed }}</span></ion-text>
+        <ion-text><span *ngIf="brew?.grind_size != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
+                      preparation?.visible_list_view_parameters.grind_size,
+                      preparation?.use_custom_parameters])">{{brew?.grind_size}}</span><span *ngIf="brew?.mill_speed > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_speed,
+                      preparation?.visible_list_view_parameters.mill_speed,
+                      preparation?.use_custom_parameters])">&nbsp;&#64;&nbsp;{{ brew?.mill_speed }}</span></ion-text>
       </ion-col>
       <ion-col *ngIf="brew?.tds > 0 && brew?.brew_beverage_quantity>0"  size="6">
         <ion-label class="card-headline">{{'BREW_DATA_TDS_EY' | translate}}</ion-label><br/>
-        <ion-text>{{brew?.tds}},&nbsp;%{{brew?.getExtractionYield()}}</ion-text>
+        <ion-text>{{brew?.tds}},&nbsp;%{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="brew?.brew_temperature > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.brew_temperature,
-                      brew.getPreparation().visible_list_view_parameters.brew_temperature,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="brew?.brew_temperature > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_temperature,
+                      preparation?.visible_list_view_parameters.brew_temperature,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{'BREW_DATA_BREW_TEMPERATURE' | translate}}</ion-label><br/>
         <ion-text>{{brew?.brew_temperature}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="brew?.pressure_profile !=='' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.pressure_profile,
-                      brew.getPreparation().visible_list_view_parameters.pressure_profile,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="brew?.pressure_profile !=='' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.pressure_profile,
+                      preparation?.visible_list_view_parameters.pressure_profile,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{'BREW_DATA_PRESSURE_PROFILE' | translate}}</ion-label><br/>
         <ion-text>{{brew?.pressure_profile}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="brew?.bean_weight_in > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.bean_weight_in,
-                      brew.getPreparation().visible_list_view_parameters.bean_weight_in,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="brew?.bean_weight_in > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.bean_weight_in,
+                      preparation?.visible_list_view_parameters.bean_weight_in,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}</ion-label><br/>
         <ion-text>{{brew?.bean_weight_in}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="brew?.mill_timer > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill_timer,
-                      brew.getPreparation().visible_list_view_parameters.mill_timer,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="brew?.mill_timer > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_timer,
+                      preparation?.visible_list_view_parameters.mill_timer,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label><br/>
         <ion-text>{{brew?.mill_timer}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="brew?.brew_temperature_time > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.brew_temperature_time,
-                      brew.getPreparation().visible_list_view_parameters.brew_temperature_time,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="brew?.brew_temperature_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_temperature_time,
+                      preparation?.visible_list_view_parameters.brew_temperature_time,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{"BREW_DATA_TEMPERATURE_TIME" | translate}}</ion-label><br/>
-        <ion-text>{{brew?.getFormattedTotalCoffeeTemperatureTime()}}</ion-text>
+        <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_TEMPERATURE_TIME}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="brew?.coffee_blooming_time > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.coffee_blooming_time,
-                      brew.getPreparation().visible_list_view_parameters.coffee_blooming_time,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="brew?.coffee_blooming_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_blooming_time,
+                      preparation?.visible_list_view_parameters.coffee_blooming_time,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label><br/>
-        <ion-text>{{brew?.getFormattedTotalCoffeeBloomingTime()}}</ion-text>
+        <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BLOOMING_TIME}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="(brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO && brew?.coffee_first_drip_time > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.coffee_first_drip_time,
-                      brew.getPreparation().visible_list_view_parameters.coffee_first_drip_time,
-                      brew.getPreparation().use_custom_parameters)) || (brew.getPreparation().use_custom_parameters &&  brew.getPreparation().visible_list_view_parameters.coffee_first_drip_time && brew?.coffee_first_drip_time > 0)">
+      <ion-col size="6" *ngIf="(preparation?.style_type === PREPARATION_STYLE_TYPE.ESPRESSO && brew?.coffee_first_drip_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_first_drip_time,
+                      preparation?.visible_list_view_parameters.coffee_first_drip_time,
+                      preparation?.use_custom_parameters])) || (preparation?.use_custom_parameters &&  preparation?.visible_list_view_parameters.coffee_first_drip_time && brew?.coffee_first_drip_time > 0)">
         <ion-label class="card-headline">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label><br/>
-        <ion-text>{{brew?.getFormattedTotalCoffeeFirstDripTime()}}</ion-text>
+        <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_FIRST_DRIP_TIME}}</ion-text>
       </ion-col>
-      <ion-col size="6" *ngIf="brew?.water !== '' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.water,
-                      brew.getPreparation().visible_list_view_parameters.water,
-                      brew.getPreparation().use_custom_parameters)">
+      <ion-col size="6" *ngIf="brew?.water !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.water,
+                      preparation?.visible_list_view_parameters.water,
+                      preparation?.use_custom_parameters])">
         <ion-label class="card-headline">{{"BREW_DATA_WATER" | translate}}</ion-label><br/>
-        <ion-text>{{brew?.getWater().name}}</ion-text>
+        <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME}}</ion-text>
       </ion-col>
 
     </ion-row>
   </ion-grid>
-  <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraphType()===true'>
-    <h2>{{graph.name}}</h2>
+  <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraph===true'>
+    <h2>{{graph?.name}}</h2>
   </ion-grid>
-  <ng-container *ngIf='isGraphType() && graph.flow_profile'>
+  <ng-container *ngIf='isGraph && graph?.flow_profile'>
      <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile'></graph-display-card>
   </ng-container>
-  <ng-container *ngIf='!isGraphType() && brew.flow_profile'>
+  <ng-container *ngIf='!isGraph && brew?.flow_profile'>
     <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
   </ng-container>
 </div>

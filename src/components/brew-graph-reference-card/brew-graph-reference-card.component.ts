@@ -13,6 +13,10 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { Graph } from '../../classes/graph/graph';
 import { UIHelper } from '../../services/uiHelper';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
+import { Bean } from '../../classes/bean/bean';
+import { Preparation } from '../../classes/preparation/preparation';
+import { Mill } from '../../classes/mill/mill';
 
 @Component({
   selector: 'brew-graph-reference-card',
@@ -33,6 +37,13 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   @ViewChild('ionItemEl', { read: ElementRef, static: false })
   public ionItemEl: ElementRef;
 
+  public bean: Bean;
+  public preparation: Preparation;
+  public mill: Mill;
+
+  public isGraph: boolean;
+  public isCustomRatingRange: boolean;
+
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     protected readonly uiBrewHelper: UIBrewHelper,
@@ -48,6 +59,15 @@ export class BrewGraphReferenceCardComponent implements OnInit {
 
   public async ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+
+    if (this.brew) {
+      this.bean = this.brew.getBean();
+      this.preparation = this.brew.getPreparation();
+      this.mill = this.brew.getMill();
+    }
+
+    this.isGraph = this.isGraphType();
+    this.isCustomRatingRange = this.hasCustomRatingRange();
   }
 
   public isGraphType() {
@@ -67,4 +87,6 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     }
     return false;
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
 }

@@ -78,7 +78,7 @@
       </div>
 
       <ag-virtual-scroll #openScroll [items]="openBrewsView"  [height]="segmentScrollHeight"  [min-row-height]="isCollapseActive()?86:180">
-        <brew-information [collapsed]='isCollapseActive()' (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
+        <brew-information [collapsed]='isCollapseActive()' (brewAction)="brewAction()" *ngFor="let brew of openScroll.items"
                           [brew]="brew"></brew-information>
 
       </ag-virtual-scroll>

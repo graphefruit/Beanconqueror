@@ -135,7 +135,7 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
+  public async brewAction(): Promise<void> {
     this.loadBrews();
   }
 
