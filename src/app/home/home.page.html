@@ -13,19 +13,19 @@
       <ion-tab-button tab="beans" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-bean"></ion-icon>
         <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
-        <ion-badge *ngIf="!activeBeansExists()" color="danger"></ion-badge>
+        <ion-badge *ngIf="!beansExist" color="danger"></ion-badge>
       </ion-tab-button>
 
       <ion-tab-button tab="preparations" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-preparation"></ion-icon>
         <ion-label>{{"NAV_PREPARATION" | translate}}</ion-label>
-        <ion-badge *ngIf="!activePreparationsExists()" color="danger"></ion-badge>
+        <ion-badge *ngIf="!preparationsExist" color="danger"></ion-badge>
       </ion-tab-button>
 
       <ion-tab-button tab="mills" tappable>
         <ion-icon class="menu-icon stroke" name="beanconqueror-pepper-mill"></ion-icon>
         <ion-label>{{"NAV_MILL" | translate}}</ion-label>
-        <ion-badge *ngIf="!activeMillsExists()" color="danger"></ion-badge>
+        <ion-badge *ngIf="!millsExist" color="danger"></ion-badge>
       </ion-tab-button>
 
 

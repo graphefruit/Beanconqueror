@@ -14,9 +14,10 @@ import { Mill } from '../../classes/mill/mill';
 })
 export class HomePage {
   /** Needed app minimize for android */
-  public brews: number = 0;
-  public beans: number = 0;
-  public preparations: number = 0;
+
+  public beansExist: boolean;
+  public preparationsExist: boolean;
+  public millsExist: boolean;
 
   constructor(
     private readonly router: Router,
@@ -25,6 +26,24 @@ export class HomePage {
     private readonly uiMillStorage: UIMillStorage
   ) {}
 
+  public ngOnInit() {
+    this._calculcateEntries();
+
+    this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
+      this._calculcateEntries();
+    });
+    this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
+      this._calculcateEntries();
+    });
+    this.uiMillStorage.attachOnEvent().subscribe((_val) => {
+      this._calculcateEntries();
+    });
+  }
+  private _calculcateEntries() {
+    this.beansExist = this.activeBeansExists();
+    this.preparationsExist = this.activePreparationsExists();
+    this.millsExist = this.activeMillsExists();
+  }
   public showBeans() {
     this.router.navigate(['/beans']);
   }
