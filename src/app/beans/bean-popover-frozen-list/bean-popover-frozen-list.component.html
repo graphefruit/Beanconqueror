@@ -10,7 +10,8 @@
 </ion-header>
 <ion-content #beanContent>
 
-  <ag-virtual-scroll #openScroll [items]="frozenBeansList" [height]="segmentScrollHeight" min-row-height="180">
+  <!--- We changed back to 100vh because of rendering issues somehow...-->
+  <ag-virtual-scroll #openScroll [items]="frozenBeansList" [height]="'100vh'" min-row-height="180">
     <bean-information [disabled]='true' [showActions]='false' *ngFor="let bean of openScroll.items"
                       [bean]="bean"></bean-information>
 
