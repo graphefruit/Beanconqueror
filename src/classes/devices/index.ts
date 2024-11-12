@@ -27,6 +27,7 @@ import { MeaterThermometer } from './meaterThermometer';
 import { CombustionThermometer } from './combustionThermometer';
 import { ArgosThermometer } from './argosThermometer';
 import { TimemoreScale } from './timemoreScale';
+import { VariaAkuScale } from './variaAku';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 
@@ -52,6 +53,7 @@ export enum ScaleType {
   DIYRUSTCOFFEESCALE = 'DIYRUSTCOFFEESCALE',
   BOKOOSCALE = 'BOOKOOSCALE',
   TIMEMORESCALE = 'TIMEMORESCALE',
+  VARIA_AKU = 'VARIA_AKU',
 }
 
 export enum PressureType {
@@ -106,6 +108,8 @@ export function makeDevice(
       return new BookooScale(data, type);
     case ScaleType.TIMEMORESCALE:
       return new TimemoreScale(data, type);
+    case ScaleType.VARIA_AKU:
+      return new VariaAkuScale(data, type);
     default:
       return null;
   }

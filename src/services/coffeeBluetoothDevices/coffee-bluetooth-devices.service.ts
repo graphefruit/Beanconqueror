@@ -45,6 +45,7 @@ import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 import { TimemoreScale } from 'src/classes/devices/timemoreScale';
+import { VariaAkuScale } from '../../classes/devices/variaAku';
 
 declare var ble: any;
 declare var cordova: any;
@@ -718,6 +719,13 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceScale.id,
         type: ScaleType.TIMEMORESCALE,
+      };
+    }
+    if (VariaAkuScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a Varia AKU scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.VARIA_AKU,
       };
     }
 
