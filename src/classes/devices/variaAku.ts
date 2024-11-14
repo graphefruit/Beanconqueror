@@ -98,13 +98,13 @@ export class VariaAkuScale extends BluetoothScale {
       VariaAkuScale.SERVICE_UUID,
       VariaAkuScale.CHAR_UUID,
       async (_data: any) => {
-        this.parseStatusUpdate(new Int8Array(_data));
+        this.parseStatusUpdate(new Uint8Array(_data));
       },
       (_data: any) => {}
     );
   }
 
-  private async parseStatusUpdate(rawStatus: Int8Array) {
+  private async parseStatusUpdate(rawStatus: Uint8Array) {
     if (rawStatus[1] === 0x01) {
       const sign: number = (rawStatus[3] & 0x10) === 0 ? 1 : -1;
       const actualData =
