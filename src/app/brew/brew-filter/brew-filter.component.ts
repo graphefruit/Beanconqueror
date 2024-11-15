@@ -10,9 +10,11 @@ import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Brew } from '../../../classes/brew/brew';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { Subscription } from 'rxjs';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
 
 @Component({
   selector: 'brew-filter',
@@ -23,6 +25,9 @@ export class BrewFilterComponent implements OnInit {
   public static COMPONENT_ID = 'brew-filter';
   public settings: Settings;
 
+  private preparationMethodFocusedSubscription: Subscription = undefined;
+
+  public brews: Array<Brew> = [];
   public filter: IBrewPageFilter;
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
@@ -45,10 +50,12 @@ export class BrewFilterComponent implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBrewStorage: UIBrewStorage
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly eventQueue: EventQueueService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.settings.GET_BREW_FILTER();
+    this.brews = this.uiBrewStorage.getAllEntries();
   }
 
   public ngOnInit() {
@@ -80,23 +87,19 @@ export class BrewFilterComponent implements OnInit {
     const isOpen = this.segment === 'open';
     let brewsFiltered: Array<Brew> = [];
     if (isOpen) {
-      brewsFiltered = this.uiBrewStorage
-        .getAllEntries()
-        .filter(
-          (e) =>
-            e.getBean().finished === !isOpen &&
-            e.getMill().finished === !isOpen &&
-            e.getPreparation().finished === !isOpen
-        );
+      brewsFiltered = this.brews.filter(
+        (e) =>
+          e.getBean().finished === !isOpen &&
+          e.getMill().finished === !isOpen &&
+          e.getPreparation().finished === !isOpen
+      );
     } else {
-      brewsFiltered = this.uiBrewStorage
-        .getAllEntries()
-        .filter(
-          (e) =>
-            e.getBean().finished === !isOpen ||
-            e.getMill().finished === !isOpen ||
-            e.getPreparation().finished === !isOpen
-        );
+      brewsFiltered = this.brews.filter(
+        (e) =>
+          e.getBean().finished === !isOpen ||
+          e.getMill().finished === !isOpen ||
+          e.getPreparation().finished === !isOpen
+      );
     }
     let maxBrewRating = maxSettingsRating;
     if (brewsFiltered.length > 0) {
@@ -124,29 +127,31 @@ export class BrewFilterComponent implements OnInit {
 
   public resetPreparationTools() {
     this.filter.method_of_preparation_tools = [];
+    this.preparationToolsExist = this.hasPreparationTools();
   }
 
-  public getPreparationTools() {
-    const preparationTools: { name: string; tool: PreparationTool }[] = [];
-    for (const uuid of this.filter.method_of_preparation) {
-      const preparation: Preparation =
-        this.uiPreparationStorage.getByUUID(uuid);
-      if (preparation.tools.length > 0) {
-        for (const tool of preparation.tools) {
-          preparationTools.push({
-            name: preparation.name,
-            tool: tool,
-          });
-        }
-      }
+  public preparationMethodFocused() {
+    this.deattachToPreparationMethodFocused();
+    const eventSubs = this.eventQueue.on(
+      AppEventType.PREPARATION_SELECTION_CHANGED
+    );
+    this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
+      this.resetPreparationTools();
+      this.deattachToPreparationMethodFocused();
+    });
+  }
+
+  public deattachToPreparationMethodFocused() {
+    if (this.preparationMethodFocusedSubscription) {
+      this.preparationMethodFocusedSubscription.unsubscribe();
+      this.preparationMethodFocusedSubscription = undefined;
     }
-    return preparationTools;
   }
 
   public getProfiles() {
-    const brews: Array<Brew> = this.uiBrewStorage
-      .getAllEntries()
-      .filter((e) => e.pressure_profile !== '');
+    const brews: Array<Brew> = this.brews.filter(
+      (e) => e.pressure_profile !== ''
+    );
     const profiles = [];
     for (const brew of brews) {
       if (profiles.indexOf(brew.pressure_profile) <= -1) {

@@ -24,6 +24,7 @@ export class BeanFilterComponent implements OnInit {
   public filter: IBeanPageFilter;
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
+  public listBeans: Array<Bean> = [];
   public mills: Array<Mill> = [];
   @Input('segment') public segment: string = 'open';
 
@@ -44,9 +45,13 @@ export class BeanFilterComponent implements OnInit {
     private readonly uiMillStorage: UIMillStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+  }
 
-    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-    this.roasteries = [...new Set(beans.map((e: Bean) => e.roaster))];
+  public ngOnInit() {
+    this.filter = this.uiHelper.copyData(this.bean_filter);
+    this.__reloadFilterSettings();
+    this.maxBeanRating = this.getMaxBeanRating();
+    this.roasteries = [...new Set(this.listBeans.map((e: Bean) => e.roaster))];
     this.roasteries = this.roasteries
       .filter((name: string) => name !== '')
       .sort((a, b) => {
@@ -64,12 +69,6 @@ export class BeanFilterComponent implements OnInit {
       });
   }
 
-  public ngOnInit() {
-    this.filter = this.uiHelper.copyData(this.bean_filter);
-    this.__reloadFilterSettings();
-    this.maxBeanRating = this.getMaxBeanRating();
-  }
-
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {
@@ -83,9 +82,7 @@ export class BeanFilterComponent implements OnInit {
     const isOpen = this.segment === 'open';
     let beansFiltered: Array<Bean>;
 
-    beansFiltered = this.uiBeanStorage
-      .getAllEntries()
-      .filter((e) => e.finished === !isOpen);
+    beansFiltered = this.listBeans.filter((e) => e.finished === !isOpen);
 
     let maxBeanRating = maxSettingsRating;
     if (beansFiltered.length > 0) {
@@ -128,22 +125,22 @@ export class BeanFilterComponent implements OnInit {
     this.method_of_preparations = this.uiPreparationStorage
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
-    this.beans = this.uiBeanStorage
+    this.mills = this.uiMillStorage
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
-    this.mills = this.uiMillStorage
+    this.listBeans = this.uiBeanStorage
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
 
     /** we accept open and frozen **/
     if (this.segment !== 'archive') {
-      this.beans = this.beans.filter((e) => e.finished === false);
+      this.beans = this.listBeans.filter((e) => e.finished === false);
       this.mills = this.mills.filter((e) => e.finished === false);
       this.method_of_preparations = this.method_of_preparations.filter(
         (e) => e.finished === false
       );
     } else {
-      this.beans = this.beans.filter((e) => e.finished === true);
+      this.beans = this.listBeans.filter((e) => e.finished === true);
     }
   }
 }

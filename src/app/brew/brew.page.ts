@@ -28,7 +28,7 @@ import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
   styleUrls: ['./brew.page.scss'],
 })
 export class BrewPage implements OnInit {
-  public brews: Array<Brew>;
+  public brews: Array<Brew> = [];
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
 
@@ -216,23 +216,19 @@ export class BrewPage implements OnInit {
       if (checkingEntries.length <= 0) {
         let entriesExisting: number = 0;
         if (isOpen) {
-          entriesExisting = this.uiBrewStorage
-            .getAllEntries()
-            .filter(
-              (e) =>
-                e.getBean().finished === !isOpen &&
-                e.getMill().finished === !isOpen &&
-                e.getPreparation().finished === !isOpen
-            ).length;
+          entriesExisting = this.brews.filter(
+            (e) =>
+              e.getBean().finished === !isOpen &&
+              e.getMill().finished === !isOpen &&
+              e.getPreparation().finished === !isOpen
+          ).length;
         } else {
-          entriesExisting = this.uiBrewStorage
-            .getAllEntries()
-            .filter(
-              (e) =>
-                e.getBean().finished === !isOpen ||
-                e.getMill().finished === !isOpen ||
-                e.getPreparation().finished === !isOpen
-            ).length;
+          entriesExisting = this.brews.filter(
+            (e) =>
+              e.getBean().finished === !isOpen ||
+              e.getMill().finished === !isOpen ||
+              e.getPreparation().finished === !isOpen
+          ).length;
         }
 
         if (entriesExisting > 0) {

@@ -22,6 +22,7 @@ import { UIMillStorage } from '../../services/uiMillStorage';
 })
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
+  public beans: Array<Bean> = [];
   public leftOverBeansWeight: string = undefined;
   public leftOverFrozenBeansWeight: string = undefined;
   public getBeansCount: number = undefined;
@@ -63,6 +64,7 @@ export class DashboardPage implements OnInit {
   }
 
   private reloadBrews() {
+    this.loadBeans();
     // If an brew is deleted, we need to reset our array for the next call.
     this.setOpenFrozenBeansLeftOverCount();
     this.setOpenBeansLeftOverCount();
@@ -81,7 +83,11 @@ export class DashboardPage implements OnInit {
   }
 
   public async ionViewWillEnter() {
+    this.loadBeans();
     this.reloadBrews();
+  }
+  public loadBeans() {
+    this.beans = this.uiBeanStorage.getAllEntries();
   }
 
   public loadBrews() {
@@ -128,9 +134,9 @@ export class DashboardPage implements OnInit {
   public setOpenBeansLeftOverCount() {
     // #183
     let leftOverCount: number = 0;
-    const openBeans: Array<Bean> = this.uiBeanStorage
-      .getAllEntries()
-      .filter((bean) => !bean.finished && bean.isFrozen() === false);
+    const openBeans: Array<Bean> = this.beans.filter(
+      (bean) => !bean.finished && bean.isFrozen() === false
+    );
     for (const bean of openBeans) {
       if (bean.weight > 0) {
         leftOverCount += bean.weight - this.getUsedWeightCount(bean);
@@ -149,9 +155,9 @@ export class DashboardPage implements OnInit {
     // #183
 
     let leftOverCount: number = 0;
-    const openBeans: Array<Bean> = this.uiBeanStorage
-      .getAllEntries()
-      .filter((bean) => !bean.finished && bean.isFrozen() === true);
+    const openBeans: Array<Bean> = this.beans.filter(
+      (bean) => !bean.finished && bean.isFrozen() === true
+    );
     for (const bean of openBeans) {
       if (bean.weight > 0) {
         leftOverCount += bean.weight - this.getUsedWeightCount(bean);
