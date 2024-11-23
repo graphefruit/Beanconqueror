@@ -5,7 +5,7 @@ type Platform = 'android' | 'ios';
 const PlatformOverrideEnvVariable = 'CAPACITOR_PLATFORM_OVERRIDE';
 
 const validatePlatformString: (
-  platformString: string
+  platformString: string,
 ) => Platform | undefined = (platformString) => {
   switch (platformString) {
     case 'android':
@@ -27,7 +27,7 @@ const getPlatform: () => Platform = () => {
    */
 
   const platformFromEnv = validatePlatformString(
-    env[PlatformOverrideEnvVariable]
+    env[PlatformOverrideEnvVariable],
   );
   if (platformFromEnv) {
     return platformFromEnv;
@@ -60,6 +60,8 @@ const createConfig = () => {
     appId: 'com.beanconqueror.app',
     appName: 'Beanconqueror',
     webDir: 'www',
+    loggingBehavior: 'none',
+    zoomEnabled: false,
     server: {
       // Will be set in platform section below
     },
