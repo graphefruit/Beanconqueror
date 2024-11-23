@@ -22,9 +22,10 @@ import { Graph } from '../../../classes/graph/graph';
 import { UIGraphHelper } from '../../../services/uiGraphHelper';
 
 @Component({
-  selector: 'app-graph',
-  templateUrl: './graph.page.html',
-  styleUrls: ['./graph.page.scss'],
+    selector: 'app-graph',
+    templateUrl: './graph.page.html',
+    styleUrls: ['./graph.page.scss'],
+    standalone: false
 })
 export class GraphPage implements OnInit {
   private graphs: Array<Graph> = [];

@@ -12,9 +12,10 @@ import { ModalController } from '@ionic/angular';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
 @Component({
-  selector: 'app-bean-popover-frozen-list',
-  templateUrl: './bean-popover-frozen-list.component.html',
-  styleUrls: ['./bean-popover-frozen-list.component.scss'],
+    selector: 'app-bean-popover-frozen-list',
+    templateUrl: './bean-popover-frozen-list.component.html',
+    styleUrls: ['./bean-popover-frozen-list.component.scss'],
+    standalone: false
 })
 export class BeanPopoverFrozenListComponent {
   public static readonly COMPONENT_ID = 'bean-popover-frozen-list';

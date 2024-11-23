@@ -12,9 +12,10 @@ import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 
 @Component({
-  selector: 'app-preparation-detail',
-  templateUrl: './preparation-detail.component.html',
-  styleUrls: ['./preparation-detail.component.scss'],
+    selector: 'app-preparation-detail',
+    templateUrl: './preparation-detail.component.html',
+    styleUrls: ['./preparation-detail.component.scss'],
+    standalone: false
 })
 export class PreparationDetailComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-detail';

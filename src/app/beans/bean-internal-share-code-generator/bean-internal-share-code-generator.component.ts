@@ -14,9 +14,10 @@ import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
 import { NfcService } from '../../../services/nfcService/nfc-service.service';
 
 @Component({
-  selector: 'app-bean-internal-share-code-generator.',
-  templateUrl: './bean-internal-share-code-generator.component.html',
-  styleUrls: ['./bean-internal-share-code-generator.component.scss'],
+    selector: 'app-bean-internal-share-code-generator.',
+    templateUrl: './bean-internal-share-code-generator.component.html',
+    styleUrls: ['./bean-internal-share-code-generator.component.scss'],
+    standalone: false
 })
 export class BeanInternalShareCodeGeneratorComponent implements OnInit {
   public static COMPONENT_ID = 'bean-internal-share-code-generator-popover';

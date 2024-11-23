@@ -5,9 +5,10 @@ import { BEAN_SORT_ORDER } from '../../../../enums/beans/beanSortOrder';
 import { ModalController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-green-bean-filter',
-  templateUrl: './green-bean-filter.component.html',
-  styleUrls: ['./green-bean-filter.component.scss'],
+    selector: 'app-green-bean-filter',
+    templateUrl: './green-bean-filter.component.html',
+    styleUrls: ['./green-bean-filter.component.scss'],
+    standalone: false
 })
 export class GreenBeanFilterComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-filter';

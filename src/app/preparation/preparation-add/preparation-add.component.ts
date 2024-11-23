@@ -9,9 +9,10 @@ import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { environment } from '../../../environments/environment';
 @Component({
-  selector: 'preparation-add',
-  templateUrl: './preparation-add.component.html',
-  styleUrls: ['./preparation-add.component.scss'],
+    selector: 'preparation-add',
+    templateUrl: './preparation-add.component.html',
+    styleUrls: ['./preparation-add.component.scss'],
+    standalone: false
 })
 export class PreparationAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-add';

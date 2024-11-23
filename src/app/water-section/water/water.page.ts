@@ -21,9 +21,10 @@ import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
 
 @Component({
-  selector: 'app-water',
-  templateUrl: './water.page.html',
-  styleUrls: ['./water.page.scss'],
+    selector: 'app-water',
+    templateUrl: './water.page.html',
+    styleUrls: ['./water.page.scss'],
+    standalone: false
 })
 export class WaterPage implements OnInit {
   private waters: Array<Water> = [];

@@ -18,9 +18,10 @@ import { Bean } from '../../../classes/bean/bean';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 
 @Component({
-  selector: 'brew-cupping',
-  templateUrl: './brew-cupping.component.html',
-  styleUrls: ['./brew-cupping.component.scss'],
+    selector: 'brew-cupping',
+    templateUrl: './brew-cupping.component.html',
+    styleUrls: ['./brew-cupping.component.scss'],
+    standalone: false
 })
 export class BrewCuppingComponent {
   public static readonly COMPONENT_ID = 'brew-cup';

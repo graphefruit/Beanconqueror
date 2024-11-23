@@ -13,9 +13,10 @@ import { UIAlert } from '../../../../services/uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-graph-add',
-  templateUrl: './graph-add.component.html',
-  styleUrls: ['./graph-add.component.scss'],
+    selector: 'app-graph-add',
+    templateUrl: './graph-add.component.html',
+    styleUrls: ['./graph-add.component.scss'],
+    standalone: false
 })
 export class GraphAddComponent {
   public static readonly COMPONENT_ID = 'graph-add';

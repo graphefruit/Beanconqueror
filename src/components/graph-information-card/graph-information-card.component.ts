@@ -33,9 +33,10 @@ import { UIHelper } from '../../services/uiHelper';
 
 declare var Plotly;
 @Component({
-  selector: 'graph-information-card',
-  templateUrl: './graph-information-card.component.html',
-  styleUrls: ['./graph-information-card.component.scss'],
+    selector: 'graph-information-card',
+    templateUrl: './graph-information-card.component.html',
+    styleUrls: ['./graph-information-card.component.scss'],
+    standalone: false
 })
 export class GraphInformationCardComponent implements OnInit {
   @Input() public graph: Graph;

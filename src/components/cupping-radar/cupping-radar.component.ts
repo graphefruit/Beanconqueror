@@ -13,9 +13,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
-  selector: 'cupping-radar',
-  templateUrl: './cupping-radar.component.html',
-  styleUrls: ['./cupping-radar.component.scss'],
+    selector: 'cupping-radar',
+    templateUrl: './cupping-radar.component.html',
+    styleUrls: ['./cupping-radar.component.scss'],
+    standalone: false
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
   public chartEl: any = undefined;

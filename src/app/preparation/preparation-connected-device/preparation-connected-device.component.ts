@@ -19,9 +19,10 @@ import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/
 import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 
 @Component({
-  selector: 'app-preparation-connected-device',
-  templateUrl: './preparation-connected-device.component.html',
-  styleUrls: ['./preparation-connected-device.component.scss'],
+    selector: 'app-preparation-connected-device',
+    templateUrl: './preparation-connected-device.component.html',
+    styleUrls: ['./preparation-connected-device.component.scss'],
+    standalone: false
 })
 export class PreparationConnectedDeviceComponent {
   public static readonly COMPONENT_ID = 'preparation-connected-device';

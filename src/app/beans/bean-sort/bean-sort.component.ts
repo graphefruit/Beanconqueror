@@ -6,9 +6,10 @@ import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
 
 @Component({
-  selector: 'app-bean-sort',
-  templateUrl: './bean-sort.component.html',
-  styleUrls: ['./bean-sort.component.scss'],
+    selector: 'app-bean-sort',
+    templateUrl: './bean-sort.component.html',
+    styleUrls: ['./bean-sort.component.scss'],
+    standalone: false
 })
 export class BeanSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-sort';

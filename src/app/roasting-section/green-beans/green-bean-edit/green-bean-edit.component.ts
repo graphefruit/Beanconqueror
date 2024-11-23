@@ -12,9 +12,10 @@ import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 
 @Component({
-  selector: 'green-bean-edit',
-  templateUrl: './green-bean-edit.component.html',
-  styleUrls: ['./green-bean-edit.component.scss'],
+    selector: 'green-bean-edit',
+    templateUrl: './green-bean-edit.component.html',
+    styleUrls: ['./green-bean-edit.component.scss'],
+    standalone: false
 })
 export class GreenBeanEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'green-bean-edit';

@@ -10,9 +10,10 @@ import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
-  selector: 'log',
-  templateUrl: './log.component.html',
-  styleUrls: ['./log.component.scss'],
+    selector: 'log',
+    templateUrl: './log.component.html',
+    styleUrls: ['./log.component.scss'],
+    standalone: false
 })
 export class LogComponent implements OnInit {
   public logs: Array<ILogInterface> = [];

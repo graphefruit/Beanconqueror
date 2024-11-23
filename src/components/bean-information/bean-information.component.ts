@@ -44,9 +44,10 @@ import { CurrencyService } from '../../services/currencyService/currency.service
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 
 @Component({
-  selector: 'bean-information',
-  templateUrl: './bean-information.component.html',
-  styleUrls: ['./bean-information.component.scss'],
+    selector: 'bean-information',
+    templateUrl: './bean-information.component.html',
+    styleUrls: ['./bean-information.component.scss'],
+    standalone: false
 })
 export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;

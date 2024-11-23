@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-bean-parameter',
-  templateUrl: './bean-parameter.page.html',
-  styleUrls: ['./bean-parameter.page.scss'],
+    selector: 'app-bean-parameter',
+    templateUrl: './bean-parameter.page.html',
+    styleUrls: ['./bean-parameter.page.scss'],
+    standalone: false
 })
 export class BeanParameterPage {
   constructor(private readonly router: Router) {}

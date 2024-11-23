@@ -22,9 +22,10 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
-  selector: 'app-brew-choose-graph-reference',
-  templateUrl: './brew-choose-graph-reference.component.html',
-  styleUrls: ['./brew-choose-graph-reference.component.scss'],
+    selector: 'app-brew-choose-graph-reference',
+    templateUrl: './brew-choose-graph-reference.component.html',
+    styleUrls: ['./brew-choose-graph-reference.component.scss'],
+    standalone: false
 })
 export class BrewChooseGraphReferenceComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-graph-reference';

@@ -18,9 +18,10 @@ import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingSto
 
 declare var cordova;
 @Component({
-  selector: 'bean-freeze-information',
-  templateUrl: './bean-freeze-information.component.html',
-  styleUrls: ['./bean-freeze-information.component.scss'],
+    selector: 'bean-freeze-information',
+    templateUrl: './bean-freeze-information.component.html',
+    styleUrls: ['./bean-freeze-information.component.scss'],
+    standalone: false
 })
 export class BeanFreezeInformationComponent implements OnInit {
   @Input() public data: Bean;

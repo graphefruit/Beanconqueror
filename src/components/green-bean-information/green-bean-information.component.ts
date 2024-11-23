@@ -31,9 +31,10 @@ import { NgxStarsComponent } from 'ngx-stars';
 import { UIGreenBeanHelper } from '../../services/uiGreenBeanHelper';
 
 @Component({
-  selector: 'green-bean-information',
-  templateUrl: './green-bean-information.component.html',
-  styleUrls: ['./green-bean-information.component.scss'],
+    selector: 'green-bean-information',
+    templateUrl: './green-bean-information.component.html',
+    styleUrls: ['./green-bean-information.component.scss'],
+    standalone: false
 })
 export class GreenBeanInformationComponent implements OnInit {
   @Input() public greenBean: GreenBean;

@@ -10,7 +10,8 @@ import moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 declare var cordova;
 @Directive({
-  selector: '[choose-date-overlay]',
+    selector: '[choose-date-overlay]',
+    standalone: false
 })
 export class ChooseDateOverlayDirective {
   @Input('data') public data: string;

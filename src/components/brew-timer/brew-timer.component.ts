@@ -21,9 +21,10 @@ import { Settings } from '../../classes/settings/settings';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
-  selector: 'brew-timer',
-  templateUrl: './brew-timer.component.html',
-  styleUrls: ['./brew-timer.component.scss'],
+    selector: 'brew-timer',
+    templateUrl: './brew-timer.component.html',
+    styleUrls: ['./brew-timer.component.scss'],
+    standalone: false
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;

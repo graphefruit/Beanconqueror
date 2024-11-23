@@ -2,7 +2,8 @@ import {Directive, ElementRef, HostListener, Input} from '@angular/core';
 import {UIAlert} from '../services/uiAlert';
 
 @Directive({
-  selector: '[tooltip]',
+    selector: '[tooltip]',
+    standalone: false
 })
 export class TooltipDirective {
 

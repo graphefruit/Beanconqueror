@@ -10,9 +10,10 @@ import { Settings } from '../../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 
 @Component({
-  selector: 'app-green-bean-detail',
-  templateUrl: './green-bean-detail.component.html',
-  styleUrls: ['./green-bean-detail.component.scss'],
+    selector: 'app-green-bean-detail',
+    templateUrl: './green-bean-detail.component.html',
+    styleUrls: ['./green-bean-detail.component.scss'],
+    standalone: false
 })
 export class GreenBeanDetailComponent {
   public static readonly COMPONENT_ID = 'green-bean-detail';

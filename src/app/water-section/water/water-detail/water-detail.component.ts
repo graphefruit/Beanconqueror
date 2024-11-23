@@ -10,9 +10,10 @@ import {UIWaterHelper} from '../../../../services/uiWaterHelper';
 import {UIAnalytics} from '../../../../services/uiAnalytics';
 
 @Component({
-  selector: 'app-water-detail',
-  templateUrl: './water-detail.component.html',
-  styleUrls: ['./water-detail.component.scss'],
+    selector: 'app-water-detail',
+    templateUrl: './water-detail.component.html',
+    styleUrls: ['./water-detail.component.scss'],
+    standalone: false
 })
 export class WaterDetailComponent implements OnInit {
   public static COMPONENT_ID = 'water-detail';

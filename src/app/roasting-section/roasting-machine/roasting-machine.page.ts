@@ -12,9 +12,10 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIRoastingMachineHelper} from '../../../services/uiRoastingMachineHelper';
 
 @Component({
-  selector: 'app-roasting-machine',
-  templateUrl: './roasting-machine.page.html',
-  styleUrls: ['./roasting-machine.page.scss'],
+    selector: 'app-roasting-machine',
+    templateUrl: './roasting-machine.page.html',
+    styleUrls: ['./roasting-machine.page.scss'],
+    standalone: false
 })
 export class RoastingMachinePage implements OnInit {
 

@@ -13,9 +13,10 @@ import { UIAlert } from '../../../services/uiAlert';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'beans-edit',
-  templateUrl: './beans-edit.component.html',
-  styleUrls: ['./beans-edit.component.scss'],
+    selector: 'beans-edit',
+    templateUrl: './beans-edit.component.html',
+    styleUrls: ['./beans-edit.component.scss'],
+    standalone: false
 })
 export class BeansEditComponent implements OnInit {
   public static readonly COMPONENT_ID: string = 'bean-edit';

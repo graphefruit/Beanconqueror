@@ -7,7 +7,8 @@ import {Water} from '../classes/water/water';
 import {WaterModalSelectComponent} from '../app/water-section/water/water-modal-select/water-modal-select.component';
 
 @Directive({
-  selector: '[ngModel][water-overlay]',
+    selector: '[ngModel][water-overlay]',
+    standalone: false
 })
 export class WaterOverlayDirective {
 

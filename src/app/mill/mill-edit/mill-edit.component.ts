@@ -9,9 +9,10 @@ import MILL_TRACKING from '../../../data/tracking/millTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 
 @Component({
-  selector: 'mill-edit',
-  templateUrl: './mill-edit.component.html',
-  styleUrls: ['./mill-edit.component.scss'],
+    selector: 'mill-edit',
+    templateUrl: './mill-edit.component.html',
+    styleUrls: ['./mill-edit.component.scss'],
+    standalone: false
 })
 export class MillEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'mill-edit';

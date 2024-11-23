@@ -7,9 +7,10 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 @Component({
-  selector: 'welcome-popover',
-  templateUrl: './welcome-popover.component.html',
-  styleUrls: ['./welcome-popover.component.scss'],
+    selector: 'welcome-popover',
+    templateUrl: './welcome-popover.component.html',
+    styleUrls: ['./welcome-popover.component.scss'],
+    standalone: false
 })
 export class WelcomePopoverComponent implements OnInit {
   public slide: number = 1;

@@ -19,9 +19,10 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { Preparation } from '../../classes/preparation/preparation';
 
 @Component({
-  selector: 'app-bluetooth-device-chooser-popover',
-  templateUrl: './bluetooth-device-chooser-popover.component.html',
-  styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
+    selector: 'app-bluetooth-device-chooser-popover',
+    templateUrl: './bluetooth-device-chooser-popover.component.html',
+    styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
+    standalone: false
 })
 export class BluetoothDeviceChooserPopoverComponent
   implements OnInit, OnDestroy

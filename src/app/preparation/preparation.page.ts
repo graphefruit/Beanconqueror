@@ -20,9 +20,10 @@ import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 
 @Component({
-  selector: 'preparation',
-  templateUrl: './preparation.page.html',
-  styleUrls: ['./preparation.page.scss'],
+    selector: 'preparation',
+    templateUrl: './preparation.page.html',
+    styleUrls: ['./preparation.page.scss'],
+    standalone: false
 })
 export class PreparationPage implements OnInit {
   public settings: Settings;

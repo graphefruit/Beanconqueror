@@ -12,9 +12,10 @@ import { BeanInformation } from '../../../generated/src/classes/bean/bean';
 import { distinct } from 'rxjs/operators';
 
 @Component({
-  selector: 'bean-sort-information',
-  templateUrl: './bean-sort-information.component.html',
-  styleUrls: ['./bean-sort-information.component.scss'],
+    selector: 'bean-sort-information',
+    templateUrl: './bean-sort-information.component.html',
+    styleUrls: ['./bean-sort-information.component.scss'],
+    standalone: false
 })
 export class BeanSortInformationComponent implements OnInit {
   @Input() public data: Bean | GreenBean;

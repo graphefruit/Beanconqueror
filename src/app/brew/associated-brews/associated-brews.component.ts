@@ -18,9 +18,10 @@ import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
 
 @Component({
-  selector: 'app-bean-associated-brews',
-  templateUrl: './associated-brews.component.html',
-  styleUrls: ['./associated-brews.component.scss'],
+    selector: 'app-bean-associated-brews',
+    templateUrl: './associated-brews.component.html',
+    styleUrls: ['./associated-brews.component.scss'],
+    standalone: false
 })
 export class AssociatedBrewsComponent {
   public static readonly COMPONENT_ID = 'associated-brews';

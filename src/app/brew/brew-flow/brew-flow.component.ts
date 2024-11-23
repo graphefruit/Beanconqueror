@@ -30,9 +30,10 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 declare var Plotly;
 
 @Component({
-  selector: 'brew-flow',
-  templateUrl: './brew-flow.component.html',
-  styleUrls: ['./brew-flow.component.scss'],
+    selector: 'brew-flow',
+    templateUrl: './brew-flow.component.html',
+    styleUrls: ['./brew-flow.component.scss'],
+    standalone: false
 })
 export class BrewFlowComponent implements OnDestroy, OnInit {
   public static readonly COMPONENT_ID: string = 'brew-flow';

@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
-  selector: 'licences',
-  templateUrl: './licences.component.html',
-  styleUrls: ['./licences.component.scss'],
+    selector: 'licences',
+    templateUrl: './licences.component.html',
+    styleUrls: ['./licences.component.scss'],
+    standalone: false
 })
 export class LicencesComponent implements OnInit {
   public licences: any = {

@@ -33,9 +33,10 @@ import { PreparationDeviceType } from '../../../classes/preparationDevice';
 declare var Plotly;
 declare var window;
 @Component({
-  selector: 'brew-edit',
-  templateUrl: './brew-edit.component.html',
-  styleUrls: ['./brew-edit.component.scss'],
+    selector: 'brew-edit',
+    templateUrl: './brew-edit.component.html',
+    styleUrls: ['./brew-edit.component.scss'],
+    standalone: false
 })
 export class BrewEditComponent implements OnInit {
   public static readonly COMPONENT_ID: string = 'brew-edit';
