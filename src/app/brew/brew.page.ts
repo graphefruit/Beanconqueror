@@ -13,7 +13,6 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { Brew } from '../../classes/brew/brew';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
-import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BrewFilterComponent } from './brew-filter/brew-filter.component';
 import { Settings } from '../../classes/settings/settings';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';

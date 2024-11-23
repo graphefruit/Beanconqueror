@@ -75,7 +75,6 @@ register();
 })
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;
-  public registerBackFunction: any;
   @ViewChild(IonRouterOutlet, { static: false })
   public routerOutlet: IonRouterOutlet;
 

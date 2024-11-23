@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UIStatistic } from '../../services/uiStatistic';
-import { ModalController } from '@ionic/angular';
 import { Brew } from '../../classes/brew/brew';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
@@ -33,7 +32,6 @@ export class DashboardPage implements OnInit {
 
   constructor(
     public uiStatistic: UIStatistic,
-    private readonly modalCtrl: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -42,7 +40,7 @@ export class DashboardPage implements OnInit {
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage
+    private readonly uiMillStorage: UIMillStorage,
   ) {}
 
   public ngOnInit() {
@@ -99,7 +97,7 @@ export class DashboardPage implements OnInit {
         (e) =>
           e.getBean().finished === false &&
           e.getMill().finished === false &&
-          e.getPreparation().finished === false
+          e.getPreparation().finished === false,
       );
     }
     this.brews = this.brews.slice(0, 10);
@@ -135,7 +133,7 @@ export class DashboardPage implements OnInit {
     // #183
     let leftOverCount: number = 0;
     const openBeans: Array<Bean> = this.beans.filter(
-      (bean) => !bean.finished && bean.isFrozen() === false
+      (bean) => !bean.finished && bean.isFrozen() === false,
     );
     for (const bean of openBeans) {
       if (bean.weight > 0) {
@@ -156,7 +154,7 @@ export class DashboardPage implements OnInit {
 
     let leftOverCount: number = 0;
     const openBeans: Array<Bean> = this.beans.filter(
-      (bean) => !bean.finished && bean.isFrozen() === true
+      (bean) => !bean.finished && bean.isFrozen() === true,
     );
     for (const bean of openBeans) {
       if (bean.weight > 0) {
@@ -175,7 +173,7 @@ export class DashboardPage implements OnInit {
   public getUsedWeightCount(_bean: Bean): number {
     let usedWeightCount: number = 0;
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      _bean.config.uuid
+      _bean.config.uuid,
     );
     for (const brew of relatedBrews) {
       if (brew?.bean_weight_in > 0) {
