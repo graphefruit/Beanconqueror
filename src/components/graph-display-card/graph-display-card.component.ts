@@ -12,7 +12,6 @@ import BeanconquerorFlowTestDataDummy from '../../assets/BeanconquerorFlowTestDa
 import { UIHelper } from '../../services/uiHelper';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { Platform } from '@ionic/angular';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
 import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
@@ -49,12 +48,10 @@ export class GraphDisplayCardComponent implements OnInit {
     private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly platform: Platform,
-    private readonly uiSettingsStorage: UISettingsStorage,
     private readonly graphHelper: GraphHelperService,
   ) {}
 
   public async ngOnInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
     if (this.flowProfilePath) {
       await this.readFlowProfile();
     } else if (this.flowProfileData) {
@@ -120,13 +117,9 @@ export class GraphDisplayCardComponent implements OnInit {
       try {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
-      const graphSettings = this.settings.graph.FILTER;
+
       this.traces = this.graphHelper.initializeTraces();
-      this.traces = this.graphHelper.fillTraces(
-        this.traces,
-        graphSettings,
-        true,
-      );
+      this.traces = this.graphHelper.fillTraces(this.traces, null, true);
 
       this.graphHelper.fillDataIntoTraces(this.flow_profile_raw, this.traces);
 
