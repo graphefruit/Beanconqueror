@@ -66,13 +66,19 @@ export class BrewPage implements OnInit {
   public settings: Settings;
   private brewStorageChangeSubscription: Subscription;
 
+  public uiIsSortActive: boolean = false;
+  public uiIsFilterActive: boolean = false;
+  public uiIsCollapseActive: boolean = false;
+  public uiShallBarBeDisplayed: boolean = false;
+  public uiSearchText: string = '';
+
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
     public uiHelper: UIHelper,
     public uiBrewHelper: UIBrewHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -99,7 +105,20 @@ export class BrewPage implements OnInit {
   }
 
   public segmentChanged() {
+    if (this.brew_segment === 'open') {
+      this.uiSearchText = this.openBrewFilterText;
+    } else {
+      this.uiSearchText = this.archivedBrewFilterText;
+    }
     this.retriggerScroll();
+    this.setUIParams();
+  }
+
+  private setUIParams() {
+    this.uiIsSortActive = this.isSortActive();
+    this.uiIsFilterActive = this.isFilterActive();
+    this.uiIsCollapseActive = this.isCollapseActive();
+    this.uiShallBarBeDisplayed = this.shallBarBeDisplayed();
   }
 
   private retriggerScroll() {
@@ -142,6 +161,7 @@ export class BrewPage implements OnInit {
   public loadBrews(): void {
     this.__initializeBrews();
     this.retriggerScroll();
+    this.setUIParams();
     this.changeDetectorRef.detectChanges();
   }
 
@@ -220,14 +240,14 @@ export class BrewPage implements OnInit {
             (e) =>
               e.getBean().finished === !isOpen &&
               e.getMill().finished === !isOpen &&
-              e.getPreparation().finished === !isOpen
+              e.getPreparation().finished === !isOpen,
           ).length;
         } else {
           entriesExisting = this.brews.filter(
             (e) =>
               e.getBean().finished === !isOpen ||
               e.getMill().finished === !isOpen ||
-              e.getPreparation().finished === !isOpen
+              e.getPreparation().finished === !isOpen,
           ).length;
         }
 
@@ -325,8 +345,15 @@ export class BrewPage implements OnInit {
   }
 
   public research() {
+    if (this.brew_segment === 'open') {
+      this.openBrewFilterText = this.uiSearchText;
+    } else {
+      this.archivedBrewFilterText = this.uiSearchText;
+    }
+
     this.__initializeBrewView(this.brew_segment);
     this.retriggerScroll();
+    this.setUIParams();
   }
 
   private __initializeBrewView(_type: string): void {
@@ -340,7 +367,7 @@ export class BrewPage implements OnInit {
         (e) =>
           e.getBean().finished === !isOpen &&
           e.getMill().finished === !isOpen &&
-          e.getPreparation().finished === !isOpen
+          e.getPreparation().finished === !isOpen,
       );
 
       this.openBrewsLength = brewsFilters.length;
@@ -350,7 +377,7 @@ export class BrewPage implements OnInit {
         (e) =>
           e.getBean().finished === !isOpen ||
           e.getMill().finished === !isOpen ||
-          e.getPreparation().finished === !isOpen
+          e.getPreparation().finished === !isOpen,
       );
     }
 
@@ -366,26 +393,26 @@ export class BrewPage implements OnInit {
 
     if (filter.mill.length > 0) {
       brewsFilters = brewsFilters.filter(
-        (e) => filter.mill.filter((z) => z === e.mill).length > 0
+        (e) => filter.mill.filter((z) => z === e.mill).length > 0,
       );
     }
     if (filter.bean.length > 0) {
       brewsFilters = brewsFilters.filter(
-        (e) => filter.bean.filter((z) => z === e.bean).length > 0
+        (e) => filter.bean.filter((z) => z === e.bean).length > 0,
       );
     }
     if (filter.profiles.length > 0) {
       brewsFilters = brewsFilters.filter(
         (e) =>
-          filter.profiles.filter((z) => z === e.pressure_profile).length > 0
+          filter.profiles.filter((z) => z === e.pressure_profile).length > 0,
       );
     }
     if (filter.method_of_preparation.length > 0) {
       brewsFilters = brewsFilters.filter(
         (e) =>
           filter.method_of_preparation.filter(
-            (z) => z === e.method_of_preparation
-          ).length > 0
+            (z) => z === e.method_of_preparation,
+          ).length > 0,
       );
 
       // Tools just can be selected when a preparation method was selected
@@ -393,8 +420,8 @@ export class BrewPage implements OnInit {
         brewsFilters = brewsFilters.filter(
           (e) =>
             filter.method_of_preparation_tools.filter((z) =>
-              e.method_of_preparation_tools.includes(z)
-            ).length > 0
+              e.method_of_preparation_tools.includes(z),
+            ).length > 0,
         );
       }
     }
@@ -406,13 +433,13 @@ export class BrewPage implements OnInit {
     }
     if (filter.chart_data) {
       brewsFilters = brewsFilters.filter(
-        (e) => e.flow_profile !== '' && e.flow_profile !== undefined
+        (e) => e.flow_profile !== '' && e.flow_profile !== undefined,
       );
     }
     if (filter.rating) {
       brewsFilters = brewsFilters.filter(
         (e: Brew) =>
-          e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
+          e.rating >= filter.rating.lower && e.rating <= filter.rating.upper,
       );
     }
     let sortedBrews: Array<Brew> = [];
@@ -520,7 +547,7 @@ export class BrewPage implements OnInit {
               bi?.processing?.toLowerCase().includes(searchText)
             );
           }) ||
-          e.coffee_type.toLowerCase().includes(searchText)
+          e.coffee_type.toLowerCase().includes(searchText),
       );
     }
 

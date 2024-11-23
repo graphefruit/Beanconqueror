@@ -1,5 +1,5 @@
 @if(choosenPreparation) {
-<ion-card *ngIf="showSectionBeforeBrew()" class="popover" style="display:flex; flex-direction: column;">
+<ion-card *ngIf="uiShowSectionBeforeBrew" class="popover" style="display:flex; flex-direction: column;">
 
   <ion-item lines="none">
     <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
@@ -184,7 +184,7 @@
   <div class="last-item"></div>
 </ion-card>
 <brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-preparation-device>
-<ion-card *ngIf="showSectionWhileBrew()" class="popover" style="display:flex; flex-direction: column;">
+<ion-card *ngIf="uiShowSectionWhileBrew" class="popover" style="display:flex; flex-direction: column;">
 
 
   <ion-item lines="none">
@@ -282,7 +282,7 @@
   </ion-item>
   <div class="last-item"></div>
 </ion-card>
-<ion-card *ngIf="showSectionAfterBrew()" class="popover" style="clear:both;display:flex; flex-direction: column;">
+<ion-card *ngIf="uiShowSectionAfterBrew" class="popover" style="clear:both;display:flex; flex-direction: column;">
   <ion-item lines="none">
     <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
   </ion-item>

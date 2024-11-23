@@ -48,7 +48,7 @@ export class MillPage implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiMillHelper: UIMillHelper
+    private readonly uiMillHelper: UIMillHelper,
   ) {}
 
   public ngOnInit(): void {}
@@ -82,6 +82,10 @@ export class MillPage implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
     this.__initializeMills();
     this.retriggerScroll();
+
+    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
+      this.loadMills();
+    });
   }
 
   public getActiveMills(): Array<Mill> {

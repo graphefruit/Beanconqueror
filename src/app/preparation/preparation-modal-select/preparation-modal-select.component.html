@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title *ngIf="multiple">{{"CHOOSE_PREPARATIONS" | translate}}</ion-title>
-    <ion-title *ngIf="!multiple">{{"CHOOSE_PREPARATION" | translate}}</ion-title>
+    <ion-title *ngIf="multiple">{{ "CHOOSE_PREPARATIONS" | translate }}</ion-title>
+    <ion-title *ngIf="!multiple">{{ "CHOOSE_PREPARATION" | translate }}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -13,117 +13,93 @@
 
   <ion-segment [(ngModel)]="preparation_segment">
     <ion-segment-button value="open">
-      <ion-label>{{"CURRENT" | translate }}
+      <ion-label>{{ "CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="showFinished===true && getArchivedPreparations().length > 0" value="archive">
-      <ion-label>{{"TAB_ARCHIVE" | translate }}
+    <ion-segment-button *ngIf="showFinished===true && archivedPreparations?.length > 0" value="archive">
+      <ion-label>{{ "TAB_ARCHIVE" | translate }}
       </ion-label>
-
     </ion-segment-button>
   </ion-segment>
-  <div  *ngIf="multiple">
+  <ion-radio-group [(ngModel)]="radioSelection">
     <div [ngSwitch]="preparation_segment">
       <div *ngSwitchCase="'open'">
-        <ion-card *ngIf="getOpenPreparations().length > 0">
-          <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
-
-            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]"><h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
-                                                                                                                                  *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
-              <p>{{"LAST_USE" | translate}}:
-                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
-                <span *ngIf="getBrewsCount(prep) <= 0">-</span>
-              </p>
-            </ion-checkbox>
-            <ion-thumbnail slot="end">
-              <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
-              <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-                <async-image [filePath]="prep.attachments[0]" class="bean-slider"></async-image>
-              </div>
-            </ion-thumbnail>
+        <ion-card *ngIf="openPreparations.length > 0">
+          <ion-item *ngFor="let prep of openPreparations" lines="none" tappable>
+            @if (multiple) {
+              <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[prep.config.uuid]">
+                <ng-container [ngTemplateOutlet]="preparationInformationCard"
+                              [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+              </ion-checkbox>
+            } @else {
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
+                <ng-container [ngTemplateOutlet]="preparationInformationCard"
+                              [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+              </ion-radio>
+            }
+            <ng-container [ngTemplateOutlet]="preparationThumbnailCard"
+                          [ngTemplateOutletContext]="{prep:prep}"></ng-container>
           </ion-item>
         </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
-          <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
-            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]">
-              <h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
-                            *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
-              <p>{{"LAST_USE" | translate}}:
-                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
-                <span *ngIf="getBrewsCount(prep) <= 0">-</span>
-              </p>
-            </ion-checkbox>
-            <ion-thumbnail slot="end">
-              <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
-              <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-                <async-image [filePath]="prep.attachments[0]" class="bean-slider"></async-image>
-              </div>
-            </ion-thumbnail>
+          <ion-item *ngFor="let prep of archivedPreparations" lines="none" tappable>
+            @if (multiple) {
+              <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[prep.config.uuid]">
+                <ng-container [ngTemplateOutlet]="preparationInformationCard"
+                              [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+              </ion-checkbox>
+            } @else {
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
+                <ng-container [ngTemplateOutlet]="preparationInformationCard"
+                              [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+              </ion-radio>
+            }
+            <ng-container [ngTemplateOutlet]="preparationThumbnailCard"
+                          [ngTemplateOutletContext]="{prep:prep}"></ng-container>
           </ion-item>
         </ion-card>
       </div>
     </div>
-  </div>
+  </ion-radio-group>
 
-  <div  *ngIf="!multiple">
-    <ion-radio-group [(ngModel)]="radioSelection">
-      <div [ngSwitch]="preparation_segment">
-        <div *ngSwitchCase="'open'">
-
-          <ion-card *ngIf="getOpenPreparations().length > 0">
-            <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
-                                                                                                           *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
-                <p>{{"LAST_USE" | translate}}:
-                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
-                  <span *ngIf="getBrewsCount(prep) <= 0">-</span>
-                </p>
-              </ion-radio>
-              <ion-thumbnail slot="end">
-                <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
-                <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-                  <async-image [filePath]="prep.attachments[0]" class="bean-slider"></async-image>
-                </div>
-              </ion-thumbnail>
-            </ion-item>
-          </ion-card>
-        </div>
-        <div *ngSwitchCase="'archive'">
-          <ion-card>
-            <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
-                <h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
-                              *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
-                <p>{{"LAST_USE" | translate}}:
-                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
-                  <span *ngIf="getBrewsCount(prep) <= 0">-</span>
-                </p>
-              </ion-radio>
-              <ion-thumbnail slot="end">
-                <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
-                <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-                  <async-image [filePath]="prep.attachments[0]" class="bean-slider"></async-image>
-                </div>
-              </ion-thumbnail>
-            </ion-item>
-          </ion-card>
-        </div>
-      </div>
-    </ion-radio-group>
-  </div>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+                  tappable>{{ "CANCEL" | translate }}
+      </ion-button>
     </ion-col>
     <ion-col size="6">
       <ion-button (click)="choose()" color="accent" expand="block" tappable
-                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+                  type="submit">{{ "CHOOSE" | translate }}
+      </ion-button>
     </ion-col>
 
   </ion-row>
 </ion-footer>
+
+<ng-template #preparationInformationCard let-prep='prep'>
+  <h6>
+    <ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
+              *ngIf='(prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)'></ion-icon>
+    {{ prep.name }}
+  </h6>
+  <p>{{ "LAST_USE" | translate }}:
+    <span *ngIf="getBrewsCount(prep)> 0">{{ lastUsed(prep) | formatDate:[settings?.date_format] }}</span>
+    <span *ngIf="getBrewsCount(prep) <= 0">-</span>
+  </p>
+</ng-template>
+<ng-template #preparationThumbnailCard let-prep='prep'>
+  <ion-thumbnail slot="end">
+    <ion-icon *ngIf="!(prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)"
+              class="full-sized-icon"
+              name="{{prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}"></ion-icon>
+    <div *ngIf="(prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)"
+         style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+      <async-image [filePath]="prep.attachments[0]" class="bean-slider"></async-image>
+    </div>
+  </ion-thumbnail>
+</ng-template>

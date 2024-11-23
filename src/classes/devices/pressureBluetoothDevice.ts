@@ -45,7 +45,7 @@ export abstract class PressureDevice {
   public abstract disconnect(): void;
   public abstract updateZero(): Promise<void>;
   public abstract enableValueTransmission(): void;
-  public abstract disableValueTransmission(): void;
+  public abstract disableValueTransmission(): Promise<void>;
 
   public getPressure() {
     return this.pressure.actual;
@@ -75,7 +75,7 @@ export abstract class PressureDevice {
             err = new Error(JSON.stringify(err));
           }
           reject(err);
-        }
+        },
       );
     });
   }
@@ -83,11 +83,12 @@ export abstract class PressureDevice {
   protected setPressure(
     _newPressure: number,
     _rawData: any,
-    _parsedData: Uint16Array | Float32Array | any
+    _parsedData: Uint16Array | Float32Array | any,
   ) {
     if (Date.now() - this.lastPressureSetTime < UPDATE_EVERY_MS) {
       return;
     }
+
     this.lastPressureSetTime = Date.now();
 
     this.pressureParentLogger.log(
@@ -96,7 +97,7 @@ export abstract class PressureDevice {
         ' - raw data ' +
         JSON.stringify(_rawData) +
         ' - Parsed Data ' +
-        JSON.stringify(_parsedData)
+        JSON.stringify(_parsedData),
     );
 
     this.pressure.actual = _newPressure;
@@ -104,7 +105,7 @@ export abstract class PressureDevice {
     try {
       this.pressureParentLogger.log(
         'Bluetooth Pressure Device - Are subscriptions existing? ' +
-          this.pressureChange?.observers?.length
+          this.pressureChange?.observers?.length,
       );
     } catch (ex) {}
     this.pressureChange.emit({

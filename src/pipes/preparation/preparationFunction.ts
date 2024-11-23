@@ -3,6 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 import { Preparation } from '../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../classes/preparationDevice';
 
 @Pipe({ name: 'preparationFunctionPipe' })
 export class PreparationFunction implements PipeTransform {
@@ -10,7 +11,7 @@ export class PreparationFunction implements PipeTransform {
     value: Preparation,
     arg:
       | PREPARATION_FUNCTION_PIPE_ENUM
-      | Array<PREPARATION_FUNCTION_PIPE_ENUM | any>
+      | Array<PREPARATION_FUNCTION_PIPE_ENUM | any>,
   ): any {
     try {
       let action;
@@ -22,6 +23,13 @@ export class PreparationFunction implements PipeTransform {
       switch (action) {
         case PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS:
           return value.hasPhotos();
+        case PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON:
+          return value.getIcon();
+        case PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION:
+          return (
+            value.connectedPreparationDevice?.type !==
+            PreparationDeviceType.NONE
+          );
       }
     } catch (ex) {}
   }

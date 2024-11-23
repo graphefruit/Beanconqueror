@@ -36,7 +36,7 @@
           {{"WATER_SECTION.YOU_GOT_NO_WATER" | translate}}
         </div>
       </div>
-      <ag-virtual-scroll #openScroll [items]="openWaters" [height]="segmentScrollHeight" min-row-height="165">
+      <ag-virtual-scroll #openScroll [items]="openWaters" [height]="'100vh'" min-row-height="165">
         <water-information-card (waterAction)="triggerAction($event[0],$event[1])" *ngFor="let water of openScroll.items" [water]="water"></water-information-card>
       </ag-virtual-scroll>
     </div>
@@ -55,7 +55,7 @@
 
 
 
-        <ag-virtual-scroll #archivedScroll [items]="finishedWaters" [height]="segmentScrollHeight" min-row-height="165">
+        <ag-virtual-scroll #archivedScroll [items]="finishedWaters" [height]="'100vh'" min-row-height="165">
           <water-information-card (waterAction)="triggerAction($event[0],$event[1])" *ngFor="let water of archivedScroll.items" [water]="water"></water-information-card>
         </ag-virtual-scroll>
       </div>

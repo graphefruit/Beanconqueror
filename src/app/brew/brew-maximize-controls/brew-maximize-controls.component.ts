@@ -12,9 +12,7 @@ import { ModalController, Platform } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { TranslateService } from '@ngx-translate/core';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
@@ -26,9 +24,6 @@ export class BrewMaximizeControlsComponent
   implements AfterViewInit, OnDestroy, OnInit
 {
   public static COMPONENT_ID: string = 'brew-maximize-controls';
-
-  public showBloomTimer: boolean = false;
-  public showDripTimer: boolean = false;
 
   @Input() public brew: Brew;
   @Input() public brewComponent: BrewBrewingComponent;
@@ -44,7 +39,7 @@ export class BrewMaximizeControlsComponent
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {}
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -54,7 +49,7 @@ export class BrewMaximizeControlsComponent
         9999,
         (processNextHandler) => {
           this.dismiss();
-        }
+        },
       );
     } catch (ex) {}
   }
@@ -90,32 +85,7 @@ export class BrewMaximizeControlsComponent
     }
   }
 
-  public async ngAfterViewInit() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-
-    this.showBloomTimer = this.uiBrewHelper.fieldVisible(
-      settings.manage_parameters.coffee_blooming_time,
-      this.brew.getPreparation().manage_parameters.coffee_blooming_time,
-      this.brew.getPreparation().use_custom_parameters
-    );
-
-    this.showDripTimer =
-      this.uiBrewHelper.fieldVisible(
-        settings.manage_parameters.coffee_first_drip_time,
-        this.brew.getPreparation().manage_parameters.coffee_first_drip_time,
-        this.brew.getPreparation().use_custom_parameters
-      ) &&
-      this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO;
-  }
-
-  public pressureDeviceConnected() {
-    if (!this.platform.is('capacitor')) {
-      return true;
-    }
-
-    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
-    return !!pressureDevice;
-  }
+  public async ngAfterViewInit() {}
 
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
@@ -142,19 +112,6 @@ export class BrewMaximizeControlsComponent
     this.brewComponent.timerResumedPressed(undefined);
   }
 
-  public setCoffeeDripTime(): void {
-    this.brewComponent.setCoffeeDripTime(undefined);
-    // this.brew.coffee_first_drip_time = this.brew.brew_time;
-
-    this.showDripTimer = false;
-  }
-
-  public setCoffeeBloomingTime(): void {
-    this.brewComponent.setCoffeeBloomingTime(undefined);
-    // this.brew.coffee_blooming_time = this.brew.brew_time;
-    this.showBloomTimer = false;
-  }
-
   public async ngOnDestroy() {}
 
   public dismiss() {
@@ -166,7 +123,7 @@ export class BrewMaximizeControlsComponent
         dismissed: true,
       },
       undefined,
-      BrewMaximizeControlsComponent.COMPONENT_ID
+      BrewMaximizeControlsComponent.COMPONENT_ID,
     );
   }
 }

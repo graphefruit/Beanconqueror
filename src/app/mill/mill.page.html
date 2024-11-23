@@ -38,7 +38,7 @@
           {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
         </div>
       </div>
-      <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="segmentScrollHeight" min-row-height="263">
+      <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" min-row-height="263">
         <mill-information-card *ngFor="let mill of openScroll.items" (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
       </ag-virtual-scroll>
     </div>
@@ -52,7 +52,7 @@
         </div>
       </div>
 
-      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="segmentScrollHeight" min-row-height="263">
+      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" min-row-height="263">
         <mill-information-card *ngFor="let mill of archivedScroll.items" (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
       </ag-virtual-scroll>
     </div>

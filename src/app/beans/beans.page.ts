@@ -88,6 +88,14 @@ export class BeansPage implements OnDestroy {
 
   private beanStorageChangeSubscription: Subscription;
   public segmentScrollHeight: string = undefined;
+
+  public uiIsSortActive: boolean = false;
+  public uiIsFilterActive: boolean = false;
+  public uiIsCollapseActive: boolean = false;
+  public uiShallBarBeDisplayed: boolean = false;
+  public uiIsTextSearchActive: boolean = false;
+  public uiSearchText: string = '';
+
   constructor(
     private readonly uiLog: UILog,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -100,7 +108,7 @@ export class BeansPage implements OnDestroy {
     private readonly platform: Platform,
     private readonly modalController: ModalController,
     private readonly beanSortFilterHelper: BeanSortFilterHelperService,
-    private readonly nfcService: NfcService
+    private readonly nfcService: NfcService,
   ) {}
 
   public ionViewWillEnter(): void {
@@ -124,6 +132,14 @@ export class BeansPage implements OnDestroy {
         // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
         this.loadBeans();
       });
+  }
+
+  private setUIParams() {
+    this.uiIsSortActive = this.isSortActive();
+    this.uiIsFilterActive = this.isFilterActive();
+    this.uiIsCollapseActive = this.isCollapseActive();
+    this.uiShallBarBeDisplayed = this.shallBarBeDisplayed();
+    this.uiIsTextSearchActive = this.isTextSearchActive();
   }
 
   public async ngOnDestroy() {
@@ -158,6 +174,7 @@ export class BeansPage implements OnDestroy {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
+    this.setUIParams();
   }
 
   private async __saveCollapseFilter() {
@@ -171,10 +188,13 @@ export class BeansPage implements OnDestroy {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
+    this.setUIParams();
   }
 
   public segmentChanged() {
+    this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
     this.retriggerScroll();
+    this.setUIParams();
   }
 
   public async beanAction(): Promise<void> {
@@ -209,7 +229,7 @@ export class BeansPage implements OnDestroy {
     const filterSegment = this.manageFilterScope(this.bean_segment);
     const newFilter = await this.beanSortFilterHelper.showFilter(
       filterSegment,
-      this.bean_segment
+      this.bean_segment,
     );
     if (newFilter) {
       /**We got the filtersegment above, so we got the reference and overwrite it**/
@@ -245,12 +265,12 @@ export class BeansPage implements OnDestroy {
 
     if (this.settings) {
       let checkingFilter: IBeanPageFilter = this.manageFilterScope(
-        this.bean_segment
+        this.bean_segment,
       );
 
       isFilterActive = !_.isEqual(
         this.settings?.GET_BEAN_FILTER(),
-        checkingFilter
+        checkingFilter,
       );
     }
 
@@ -272,7 +292,9 @@ export class BeansPage implements OnDestroy {
   }
 
   public research() {
+    this.setSearchTextScope(this.bean_segment, this.uiSearchText);
     this.__initializeBeansView(this.bean_segment);
+    this.setUIParams();
   }
 
   public async add() {
@@ -283,7 +305,7 @@ export class BeansPage implements OnDestroy {
   public async beanPopover() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS
+      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: BeanPopoverAddComponent,
@@ -384,15 +406,15 @@ export class BeansPage implements OnDestroy {
       .sort((a, b) => a.name.localeCompare(b.name));
     this.openBeansLength = this.beans.reduce(
       (n, e) => (!e.finished && e.isFrozen() === false ? n + 1 : n),
-      0
+      0,
     );
     this.finishedBeansLength = this.beans.reduce(
       (n, e) => (e.finished ? n + 1 : n),
-      0
+      0,
     );
     this.frozenBeansLength = this.beans.reduce(
       (n, e) => (!e.finished && e.isFrozen() === true ? n + 1 : n),
-      0
+      0,
     );
 
     this.openBeans = [];
@@ -413,7 +435,7 @@ export class BeansPage implements OnDestroy {
       this.beans,
       searchText,
       sort,
-      filters
+      filters,
     );
     if (_type === 'open') {
       this.openBeans = filteredBeans;
@@ -445,13 +467,28 @@ export class BeansPage implements OnDestroy {
     }
   }
 
-  private manageSearchTextScope(_type: string) {
+  private manageSearchTextScope(_type: string, _toLowerCase: boolean = true) {
+    let searchText: string = '';
     if (_type === 'open') {
-      return this.openBeansFilterText.toLowerCase();
+      searchText = this.openBeansFilterText;
     } else if (_type === 'archive') {
-      return this.archivedBeansFilterText.toLowerCase();
+      searchText = this.archivedBeansFilterText;
     } else if (_type === 'frozen') {
-      return this.frozenBeansFilterText.toLowerCase();
+      searchText = this.frozenBeansFilterText;
+    }
+    if (_toLowerCase) {
+      searchText = searchText.toLowerCase();
+    }
+    return searchText;
+  }
+
+  private setSearchTextScope(_type: string, _text: string) {
+    if (_type === 'open') {
+      this.openBeansFilterText = _text;
+    } else if (_type === 'archive') {
+      this.archivedBeansFilterText = _text;
+    } else if (_type === 'frozen') {
+      this.frozenBeansFilterText = _text;
     }
   }
 }

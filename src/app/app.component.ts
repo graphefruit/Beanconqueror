@@ -27,11 +27,8 @@ import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
 import { environment } from '../environments/environment';
 import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
-import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
-
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
-import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import { UIAlert } from '../services/uiAlert';
 import { UIAnalytics } from '../services/uiAnalytics';
 import { UIBeanHelper } from '../services/uiBeanHelper';
@@ -50,9 +47,6 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Storage } from '@ionic/storage';
-
-import { UIToast } from '../services/uiToast';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import {
   Logger,
@@ -209,6 +203,10 @@ export class AppComponent implements AfterViewInit {
     },
   };
 
+  public uiGraphSectionVisible: boolean = false;
+  public uiWaterSectionVisible: boolean = false;
+  public uiRoastingSectionVisible: boolean = false;
+
   constructor(
     private readonly router: Router,
     public platform: Platform,
@@ -218,7 +216,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiBrewHelper: UIBrewHelper,
-    private readonly menuCtrl: MenuController,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly modalCtrl: ModalController,
     private readonly uiHelper: UIHelper,
@@ -231,19 +228,15 @@ export class AppComponent implements AfterViewInit {
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
     private readonly intentHandlerService: IntentHandlerService,
-    private readonly iosPlatformService: IosPlatformService,
-    private readonly androidPlatformService: AndroidPlatformService,
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiMillHelper: UIMillHelper,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly cleanupService: CleanupService,
-    private readonly storage: Storage,
-    private readonly uiToast: UIToast,
     private readonly uiExportImportHelper: UIExportImportHelper,
     private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiStorage: UIStorage
+    private readonly uiStorage: UIStorage,
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
@@ -302,7 +295,7 @@ export class AppComponent implements AfterViewInit {
           const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
           this.uiLog.log(
-            `Storage-Driver: ${this.uiStorage.getStorage().driver}`
+            `Storage-Driver: ${this.uiStorage.getStorage().driver}`,
           );
         }
       } catch (ex) {}
@@ -351,7 +344,7 @@ export class AppComponent implements AfterViewInit {
               this.uiAnalytics.trackEvent(
                 STARTUP_TRACKING.TITLE,
                 STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
-                payloadType.toUpperCase()
+                payloadType.toUpperCase(),
               );
               this.uiLog.log(`iOS Device - Home icon was pressed`);
             } catch (ex) {}
@@ -426,7 +419,6 @@ export class AppComponent implements AfterViewInit {
         ]).then(
           async () => {
             this.uiLog.log('App finished loading');
-            this.uiLog.info('Everything should be fine!!!');
             await this.__checkUpdate();
             await this.__checkCleanup();
             await this.__initApp();
@@ -435,7 +427,7 @@ export class AppComponent implements AfterViewInit {
           async () => {
             await this.uiAlert.showAppShetItSelfMessage();
             this.uiLog.error('App finished loading, but errors occured');
-          }
+          },
         );
       } catch (ex) {
         await this.uiAlert.showAppShetItSelfMessage();
@@ -506,6 +498,8 @@ export class AppComponent implements AfterViewInit {
                 settingLanguage = 'id';
               } else if (systemLanguage === 'nl') {
                 settingLanguage = 'nl';
+              } else if (systemLanguage === 'no') {
+                settingLanguage = 'no';
               } else {
                 settingLanguage = 'en';
               }
@@ -519,7 +513,7 @@ export class AppComponent implements AfterViewInit {
             } catch (ex) {
               const exMessage: string = JSON.stringify(ex);
               this.uiLog.error(
-                `Exception occured when setting language ${exMessage}`
+                `Exception occured when setting language ${exMessage}`,
               );
               this._translate.setDefaultLang('en');
               await this._translate.use('en').toPromise();
@@ -538,7 +532,7 @@ export class AppComponent implements AfterViewInit {
         } catch (ex) {
           const exMessage: string = JSON.stringify(ex);
           this.uiLog.error(
-            `Exception occured when setting language ${exMessage}`
+            `Exception occured when setting language ${exMessage}`,
           );
           this._translate.setDefaultLang('en');
           settings.language = 'en';
@@ -549,7 +543,7 @@ export class AppComponent implements AfterViewInit {
         }
       } else {
         this.uiLog.info(
-          'Cant set language for device, because no cordova device'
+          'Cant set language for device, because no cordova device',
         );
         if (
           settings.language !== null &&
@@ -563,7 +557,7 @@ export class AppComponent implements AfterViewInit {
           resolve(undefined);
         } else {
           this.uiLog.info(
-            `Set default language from settings, because no settings set: en `
+            `Set default language from settings, because no settings set: en `,
           );
           this._translate.setDefaultLang('en');
           settings.language = 'en';
@@ -582,7 +576,7 @@ export class AppComponent implements AfterViewInit {
       this.uiAnalytics.trackEvent(
         STARTUP_TRACKING.TITLE,
         STARTUP_TRACKING.ACTIONS.STARTUP_VIEW.CATEGORY,
-        settings.startup_view
+        settings.startup_view,
       );
     }
     switch (settings.startup_view) {
@@ -602,7 +596,20 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  /**
+   * If settings are changed, we set the ui params, to not have callbacks all day long
+   * @private
+   */
+  private setUIParams() {
+    const settings = this.uiSettingsStorage.getSettings();
+    this.uiGraphSectionVisible = settings.show_graph_section;
+    this.uiWaterSectionVisible = settings.show_water_section;
+    this.uiRoastingSectionVisible = settings.show_roasting_section;
+  }
+
   private async __initApp() {
+    this.setUIParams();
+
     this.__registerBack();
     await this.__setDeviceLanguage();
 
@@ -650,7 +657,7 @@ export class AppComponent implements AfterViewInit {
     }
 
     await this.__checkStartupView();
-    this.__instanceAppRating();
+    //this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
     /**If Anything changes, we reset**/
@@ -665,6 +672,9 @@ export class AppComponent implements AfterViewInit {
     });
     this.uiMillStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
+    });
+    this.uiSettingsStorage.attachOnEvent().subscribe(() => {
+      this.setUIParams();
     });
   }
 
@@ -717,7 +727,7 @@ export class AppComponent implements AfterViewInit {
         scale_id,
         false,
         () => {},
-        () => {}
+        () => {},
       );
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
@@ -736,7 +746,7 @@ export class AppComponent implements AfterViewInit {
         pressure_id,
         false,
         () => {},
-        () => {}
+        () => {},
       );
     } else {
       this.uiLog.log('Pressure device not connected, dont try to connect');
@@ -755,7 +765,7 @@ export class AppComponent implements AfterViewInit {
         temperature_id,
         false,
         () => {},
-        () => {}
+        () => {},
       );
     } else {
       this.uiLog.log('Temperature device not connected, dont try to connect');
@@ -774,7 +784,7 @@ export class AppComponent implements AfterViewInit {
         refractometer_id,
         false,
         () => {},
-        () => {}
+        () => {},
       );
     } else {
       this.uiLog.log('Refractometer device not connected, dont try to connect');
@@ -806,7 +816,7 @@ export class AppComponent implements AfterViewInit {
           // Don't show message on device pause.
           this.bleManager.disconnectTemperatureDevice(
             settings.temperature_id,
-            false
+            false,
           );
         }
       }
@@ -817,7 +827,7 @@ export class AppComponent implements AfterViewInit {
           // Don't show message on device pause.
           this.bleManager.disconnectRefractometerDevice(
             settings.refractometer_id,
-            false
+            false,
           );
         }
       }
@@ -848,7 +858,7 @@ export class AppComponent implements AfterViewInit {
       if (this.platform.is('ios')) {
         this.uiStorage.get('MILL').then(
           () => {},
-          () => {}
+          () => {},
         );
       }
     });
@@ -964,17 +974,17 @@ export class AppComponent implements AfterViewInit {
   public openGithub() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.GITHUB
+      LINK_TRACKING.ACTIONS.GITHUB,
     );
     this.uiHelper.openExternalWebpage(
-      'https://github.com/graphefruit/Beanconqueror'
+      'https://github.com/graphefruit/Beanconqueror',
     );
   }
 
   public openDiscord() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.DISCORD
+      LINK_TRACKING.ACTIONS.DISCORD,
     );
     this.uiHelper.openExternalWebpage('https://discord.gg/vDzA5dZjG8');
   }
@@ -982,20 +992,20 @@ export class AppComponent implements AfterViewInit {
   public openInstagram() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.INSTAGRAM
+      LINK_TRACKING.ACTIONS.INSTAGRAM,
     );
     this.uiHelper.openExternalWebpage(
-      'https://www.instagram.com/beanconqueror/'
+      'https://www.instagram.com/beanconqueror/',
     );
   }
 
   public openFacebook() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.FACEBOOK
+      LINK_TRACKING.ACTIONS.FACEBOOK,
     );
     this.uiHelper.openExternalWebpage(
-      'https://www.facebook.com/Beanconqueror/'
+      'https://www.facebook.com/Beanconqueror/',
     );
   }
 

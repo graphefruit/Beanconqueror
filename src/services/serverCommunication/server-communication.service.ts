@@ -11,7 +11,10 @@ import { of } from 'rxjs';
   providedIn: 'root',
 })
 export class ServerCommunicationService {
-  constructor(private http: HttpClient, private readonly uiLog: UILog) {}
+  constructor(
+    private http: HttpClient,
+    private readonly uiLog: UILog,
+  ) {}
 
   public uploadShot() {
     const promise = new Promise<any>((resolve, reject) => {
@@ -27,20 +30,20 @@ export class ServerCommunicationService {
           timeout(10000),
           catchError((e) => {
             return of(null);
-          })
+          }),
         )
         .toPromise()
         .then(
           (data: any) => {
-            console.log(data);
+            //console.log(data);
           },
           (error) => {
-            console.log(error);
+            //console.log(error);
             reject();
-          }
+          },
         )
         .catch((error) => {
-          console.log(error);
+          //console.log(error);
           reject();
         });
     });
@@ -51,13 +54,13 @@ export class ServerCommunicationService {
       this.http
         .get(
           environment.API_URL + 'Roaster/GetBeanFromQrCodeId?id=' + _qrCodeId,
-          {}
+          {},
         )
         .pipe(
           timeout(10000),
           catchError((e) => {
             return of(null);
-          })
+          }),
         )
         .toPromise()
         .then(
@@ -67,17 +70,17 @@ export class ServerCommunicationService {
               reject();
             } else {
               this.uiLog.log(
-                `getBeanInformation - data received - ${JSON.stringify(data)}`
+                `getBeanInformation - data received - ${JSON.stringify(data)}`,
               );
               resolve(data);
             }
           },
           (error) => {
             this.uiLog.log(
-              `getBeanInformation - error received - ${JSON.stringify(error)}`
+              `getBeanInformation - error received - ${JSON.stringify(error)}`,
             );
             reject();
-          }
+          },
         )
         .catch((error) => {
           reject();
@@ -94,7 +97,7 @@ export class ServerCommunicationService {
           timeout(10000),
           catchError((e) => {
             return of(null);
-          })
+          }),
         )
         .toPromise()
         .then(
@@ -108,7 +111,7 @@ export class ServerCommunicationService {
           },
           () => {
             reject();
-          }
+          },
         )
         .catch((error) => {
           reject();

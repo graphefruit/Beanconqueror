@@ -40,8 +40,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @ViewChild('brewFlowContent', { read: ElementRef })
   public brewFlowContent: ElementRef;
 
-  public showBloomTimer: boolean = false;
-  public showDripTimer: boolean = false;
   public gaugeVisible: boolean = false;
   @Input() public flowChart: any;
   @Input() public flowChartEl: any;
@@ -101,7 +99,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly platform: Platform,
     private readonly ngZone: NgZone,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -112,7 +110,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         9999,
         (processNextHandler) => {
           this.dismiss();
-        }
+        },
       );
     } catch (ex) {}
   }
@@ -185,7 +183,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         document
           .getElementById('brewFlowContainer')
           .append(
-            this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
+            this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
           );
         resolve(undefined);
       }, 50);
@@ -197,7 +195,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       this.brewFlowGraphSubscription = this.brewFlowGraphEvent.subscribe(
         (_val) => {
           this.setActualScaleInformation(_val);
-        }
+        },
       );
 
       if (this.smartScaleSupportsTwoWeight()) {
@@ -221,23 +219,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       this.brewTimerTickedSubscription = this.brewTimerTickedEvent.subscribe(
         (_val) => {
           this.__writeTimeNative(wantedDisplayFormat);
-        }
+        },
       );
-
-      this.showBloomTimer = this.uiBrewHelper.fieldVisible(
-        this.settings.manage_parameters.coffee_blooming_time,
-        this.brew.getPreparation().manage_parameters.coffee_blooming_time,
-        this.brew.getPreparation().use_custom_parameters
-      );
-
-      this.showDripTimer =
-        this.uiBrewHelper.fieldVisible(
-          this.settings.manage_parameters.coffee_first_drip_time,
-          this.brew.getPreparation().manage_parameters.coffee_first_drip_time,
-          this.brew.getPreparation().use_custom_parameters
-        ) &&
-        this.brew.getPreparation().style_type ===
-          PREPARATION_STYLE_TYPE.ESPRESSO;
 
       this.graphIconColSize = this.getGraphIonColSize();
       this.bluetoothSubscription = this.bleManager
@@ -257,15 +240,15 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     let writingVal = '';
     if (this.settings.brew_milliseconds === false) {
       writingVal = String(
-        this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss')
+        this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss'),
       );
     } else {
       writingVal = String(
         this.uiHelper.formatSecondsAndMilliseconds(
           this.brew.brew_time,
           this.brew.brew_time_milliseconds,
-          _wantedDisplayFormat
-        )
+          _wantedDisplayFormat,
+        ),
       );
     }
 
@@ -284,7 +267,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         let informationContainerHeight = 0;
         try {
           informationContainerHeight = document.getElementById(
-            'informationContainer'
+            'informationContainer',
           ).offsetHeight;
         } catch (ex) {
           informationContainerHeight = 0;
@@ -299,7 +282,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
           document.getElementById('brewFlowContainer').offsetWidth;
         Plotly.relayout(
           this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
-          this.brewComponent.brewBrewingGraphEl.lastChartLayout
+          this.brewComponent.brewBrewingGraphEl.lastChartLayout,
         );
       } catch (ex) {}
     }, 50);
@@ -383,9 +366,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     }, 500);
   }
 
-  public async resetTimer() {
+  public async resetTimer(_event) {
     this.brewComponent.timer.reset();
-
     //await this.waitForPleaseWaitToBeFinished();
     setTimeout(() => {
       this.onOrientationChange();
@@ -398,18 +380,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   public __tareScale() {
     this.brewComponent.timer.__tareScale();
-  }
-
-  public setCoffeeDripTime(): void {
-    this.brewComponent.setCoffeeDripTime(undefined);
-
-    this.showDripTimer = false;
-  }
-
-  public setCoffeeBloomingTime(): void {
-    //this.brew.coffee_blooming_time = this.brew.brew_time;
-    this.brewComponent.setCoffeeBloomingTime(undefined);
-    this.showBloomTimer = false;
   }
 
   public setActualScaleInformation(_val: any) {
@@ -493,7 +463,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   public dismiss() {
     this.brewComponent.brewBrewingGraphEl.canvaContainer.nativeElement.append(
-      this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
+      this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
     );
     try {
       this.disableHardwareBack.unsubscribe();
@@ -503,7 +473,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         dismissed: true,
       },
       undefined,
-      BrewFlowComponent.COMPONENT_ID
+      BrewFlowComponent.COMPONENT_ID,
     );
   }
 

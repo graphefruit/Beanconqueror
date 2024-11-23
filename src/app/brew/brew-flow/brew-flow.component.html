@@ -147,13 +147,13 @@
       <ion-icon class="ion-color-accent" name="beanconqueror-scale-play" slot="icon-only"></ion-icon>
     </ion-button>
 
-    <ion-button (click)="setCoffeeBloomingTime()"
-      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
+    <ion-button (click)="brewComponent.timer.bloomTime()"
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer"
       class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="setCoffeeDripTime()"
-      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showDripTimer"
+    <ion-button (click)="brewComponent.timer.dripTime()"
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer"
       class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
     </ion-button>
@@ -163,7 +163,7 @@
       <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
 
     </ion-button>
-    <ion-button (click)="resetTimer()"
+    <ion-button (click)="resetTimer($event)"
       *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0"
       class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
@@ -175,7 +175,7 @@
       <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
     </ion-button>
 
-    <ion-button (click)="startTimer()" *ngIf="(settings?.bluetooth_scale_listening_threshold_active === true && brewComponent.timer.showListeningButton && !brewComponent.timer.timer.hasStarted) || (settings?.bluetooth_scale_listening_threshold_active === false && !brewComponent.timer.timer.hasStarted)" class="big-icon-only" fill="clear"
+    <ion-button (click)="startTimer()" *ngIf="(brewComponent.timer.showListeningButton === true && !brewComponent.timer.timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (smartScaleConnected() === false && settings.bluetooth_scale_listening_threshold_active === true)) && !brewComponent.timer.timer.hasStarted)" class="big-icon-only" fill="clear"
       tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
     </ion-button>

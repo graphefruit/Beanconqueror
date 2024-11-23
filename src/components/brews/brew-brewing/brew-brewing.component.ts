@@ -144,6 +144,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public choosenPreparation: Preparation = undefined;
 
+  public uiShowSectionAfterBrew: boolean = false;
+  public uiShowSectionWhileBrew: boolean = false;
+  public uiShowSectionBeforeBrew: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -168,9 +172,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiToast: UIToast,
     private readonly uiLog: UILog,
     private readonly eventQueue: EventQueueService,
-    private readonly hapticService: HapticService
+    private readonly hapticService: HapticService,
   ) {}
 
+  public setUIParams() {
+    this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
+    this.uiShowSectionWhileBrew = this.showSectionWhileBrew();
+    this.uiShowSectionBeforeBrew = this.showSectionBeforeBrew();
+  }
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {
@@ -199,8 +208,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               .filter(
                 (e) =>
                   e.method_of_preparation ===
-                  this.loadSpecificLastPreparation.config.uuid
-              )
+                  this.loadSpecificLastPreparation.config.uuid,
+              ),
           );
           if (foundBrews.length > 0) {
             await this.__loadBrew(foundBrews[0], false);
@@ -223,7 +232,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.timer) {
           this.timer.setTime(
             this.data.brew_time,
-            this.data.brew_time_milliseconds
+            this.data.brew_time_milliseconds,
           );
         }
 
@@ -239,7 +248,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.brewMillTimer && checkData.manage_parameters.mill_timer) {
           this.brewMillTimer.setTime(
             this.data.mill_timer,
-            this.data.mill_timer_milliseconds
+            this.data.mill_timer_milliseconds,
           );
         }
 
@@ -249,7 +258,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         ) {
           this.brewTemperatureTime.setTime(
             this.data.brew_temperature_time,
-            this.data.brew_temperature_time_milliseconds
+            this.data.brew_temperature_time_milliseconds,
           );
         }
         if (
@@ -258,7 +267,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         ) {
           this.brewCoffeeBloomingTime.setTime(
             this.data.coffee_blooming_time,
-            this.data.coffee_blooming_time_milliseconds
+            this.data.coffee_blooming_time_milliseconds,
           );
         }
         if (
@@ -267,7 +276,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         ) {
           this.brewFirstDripTime.setTime(
             this.data.coffee_first_drip_time,
-            this.data.coffee_first_drip_time_milliseconds
+            this.data.coffee_first_drip_time_milliseconds,
           );
         }
       }
@@ -411,12 +420,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public preparationMethodFocused() {
     this.deattachToPreparationMethodFocused();
     const eventSubs = this.eventQueue.on(
-      AppEventType.PREPARATION_SELECTION_CHANGED
+      AppEventType.PREPARATION_SELECTION_CHANGED,
     );
     this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
       this.setChoosenPreparation();
       this.resetPreparationTools();
       this.deattachToPreparationMethodFocused();
+      /**If we change the preparation method, we need to inform our graph-element, because we may need to disconnect the pressure device**/
+      this.brewBrewingGraphEl?.preparationChanged();
     });
   }
 
@@ -439,7 +450,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.uiLog.log('Got Refractometer Read');
           this.data.tds = refractometerDevice.getLastReading().tds;
           this.uiLog.log(
-            'Got Refractometer Read - Set new value:' + this.data.tds
+            'Got Refractometer Read - Set new value:' + this.data.tds,
           );
           await this.uiAlert.hideLoadingSpinner();
           this.uiToast.showInfoToastBottom('REFRACTOMETER.READ_END');
@@ -456,7 +467,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.brewFirstDripTime.setTime(
       this.data.coffee_first_drip_time,
-      this.data.coffee_first_drip_time_milliseconds
+      this.data.coffee_first_drip_time_milliseconds,
     );
 
     this.brewBrewingGraphEl.setFirstDripFromMachine();
@@ -484,7 +495,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(
       this.getActualBluetoothWeight() - vesselWeight,
-      2
+      2,
     );
     this.checkChanges();
   }
@@ -555,7 +566,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.brewCoffeeBloomingTime.setTime(
       this.data.coffee_blooming_time,
-      this.data.coffee_blooming_time_milliseconds
+      this.data.coffee_blooming_time_milliseconds,
     );
   }
 
@@ -596,7 +607,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION',
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
           undefined,
-          true
+          true,
         );
         return;
       } else if (
@@ -608,7 +619,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION',
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
           undefined,
-          true
+          true,
         );
         return;
       }
@@ -626,7 +637,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.uiAlert.showLoadingSpinner(
             this.translate.instant('STARTING_IN', {
               time: delayCounter,
-            })
+            }),
           );
           const delayIntv = setInterval(() => {
             delayCounter = delayCounter - 1;
@@ -639,7 +650,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                 this.translate.instant('STARTING_IN', {
                   time: delayCounter,
                 }),
-                false
+                false,
               );
             }
           }, 1000);
@@ -754,6 +765,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public setChoosenPreparation() {
     this.choosenPreparation = this.data.getPreparation();
+    this.setUIParams();
   }
   public getPreparation(): Preparation {
     if (this.choosenPreparation === undefined) {
@@ -833,8 +845,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.brew_time = moment
         .duration(
           moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day')
-          )
+            moment(modalData.data.displayingTime).startOf('day'),
+          ),
         )
         .asSeconds();
     }
@@ -849,7 +861,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const savingPath = 'brews/' + _uuid + '_flow_profile.json';
       await this.uiFileHelper.writeInternalFileFromText(
         JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw),
-        savingPath
+        savingPath,
       );
       return savingPath;
     } catch (ex) {
@@ -866,7 +878,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
       await this.uiFileHelper.writeInternalFileFromText(
         JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw),
-        savingPath
+        savingPath,
       );
       return savingPath;
     } catch (ex) {
@@ -878,7 +890,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     try {
       return this.uiHelper.toFixedIfNecessary(
         this.bleManager.getScale().getWeight(),
-        1
+        1,
       );
     } catch (ex) {
       return 0;
@@ -887,7 +899,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async downloadFlowProfile() {
     await this.uiExcel.exportBrewFlowProfile(
-      this.brewBrewingGraphEl.flow_profile_raw
+      this.brewBrewingGraphEl.flow_profile_raw,
     );
   }
 
@@ -925,14 +937,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         .filter(
           (e) =>
             e.vessel_name !== '' &&
-            e.vessel_name.toLowerCase().includes(actualSearchValue)
+            e.vessel_name.toLowerCase().includes(actualSearchValue),
         );
 
       for (const entry of filteredEntries) {
         if (
           distictedValues.filter(
             (e) =>
-              e.name === entry.vessel_name && e.weight === entry.vessel_weight
+              e.name === entry.vessel_name && e.weight === entry.vessel_weight,
           ).length <= 0
         ) {
           distictedValues.push({
@@ -1059,7 +1071,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             refractometerSubscription.unsubscribe();
             await this.uiAlert.hideLoadingSpinner();
           } catch (ex) {}
-        }
+        },
       );
 
       // Changed to the bottom, subscribe first, and start the loading spinner.
@@ -1088,7 +1100,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (data !== undefined && data.brew_beverage_quantity > 0) {
       this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(
         data.brew_beverage_quantity,
-        1
+        1,
       );
     }
   }
@@ -1147,7 +1159,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       _template === true
     ) {
       const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(
-        brew.method_of_preparation
+        brew.method_of_preparation,
       );
       if (!brewPreparation.finished) {
         this.data.method_of_preparation = brewPreparation.config.uuid;
@@ -1225,7 +1237,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           this.brewMillTimer.setTime(
             this.data.mill_timer,
-            this.data.mill_timer_milliseconds
+            this.data.mill_timer_milliseconds,
           );
         }, 250);
       }
@@ -1270,7 +1282,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           this.brewTemperatureTime.setTime(
             this.data.brew_temperature_time,
-            this.data.brew_temperature_time_milliseconds
+            this.data.brew_temperature_time_milliseconds,
           );
         }, 250);
       }
@@ -1289,7 +1301,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           this.timer.setTime(
             this.data.brew_time,
-            this.data.brew_time_milliseconds
+            this.data.brew_time_milliseconds,
           );
         }, 250);
       }
@@ -1334,7 +1346,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.brewFirstDripTime) {
           this.brewFirstDripTime.setTime(
             this.data.coffee_first_drip_time,
-            this.data.coffee_first_drip_time_milliseconds
+            this.data.coffee_first_drip_time_milliseconds,
           );
         }
       }, 250);
@@ -1355,7 +1367,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.brewCoffeeBloomingTime) {
           this.brewCoffeeBloomingTime.setTime(
             this.data.coffee_blooming_time,
-            this.data.coffee_blooming_time_milliseconds
+            this.data.coffee_blooming_time_milliseconds,
           );
         }
       }, 250);
@@ -1442,7 +1454,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
+      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH,
     );
     //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
     const popover = await this.modalCtrl.create({

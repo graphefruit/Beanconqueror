@@ -5,7 +5,7 @@
       <ion-row>
         <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">
           <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="wifi-outline"
-                    *ngIf='preparationHasDeviceConnection()'></ion-icon>
+                    *ngIf='(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)'></ion-icon>
           {{preparation.name}}</div>
           <span *ngIf="preparation.use_custom_parameters" class="ion-color-accent-secondary">{{"PREPARATION_PARAMETERS_CUSTOMIZED" | translate}}</span>
         </ion-col>
@@ -48,10 +48,10 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        <ion-col class="ion-justify-content-center ion-no-padding" size="3" *ngIf="!preparation.hasPhotos()">
-          <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
+        <ion-col class="ion-justify-content-center ion-no-padding" size="3" *ngIf="!(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
+          <ion-icon class="full-sized-icon" name="{{(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON)}}"></ion-icon>
         </ion-col>
-        <ion-col class="ion-no-padding" size="3" *ngIf="preparation.hasPhotos()" (click)="showPhoto($event)">
+        <ion-col class="ion-no-padding" size="3" *ngIf="(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)" (click)="showPhoto($event)">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="preparation.attachments[0]" class="bean-slider"></async-image>
           </div>

@@ -58,6 +58,12 @@ export class BrewDetailComponent {
   /**We named it that way, because the graph-componeneted access it aswell **/
   public choosenPreparation: Preparation;
   public mill: Mill;
+
+  public uiShowSectionAfterBrew: boolean = false;
+  public uiShowSectionWhileBrew: boolean = false;
+  public uiShowSectionBeforeBrew: boolean = false;
+  public uiShowCupping: boolean = false;
+
   constructor(
     private readonly modalController: ModalController,
     public uiHelper: UIHelper,
@@ -74,15 +80,21 @@ export class BrewDetailComponent {
     private readonly platform: Platform,
     private readonly alertCtrl: AlertController,
     private readonly uiLog: UILog,
-    private readonly shareService: ShareService
+    private readonly shareService: ShareService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+  }
+  public setUIParams() {
+    this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
+    this.uiShowSectionWhileBrew = this.showSectionWhileBrew();
+    this.uiShowSectionBeforeBrew = this.showSectionBeforeBrew();
+    this.uiShowCupping = this.showCupping();
   }
 
   public async ionViewDidEnter() {
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.DETAIL
+      BREW_TRACKING.ACTIONS.DETAIL,
     );
     if (this.brew) {
       const copy: IBrew = this.uiHelper.copyData(this.brew);
@@ -91,6 +103,7 @@ export class BrewDetailComponent {
       this.bean = this.data.getBean();
       this.choosenPreparation = this.data.getPreparation();
       this.mill = this.data.getMill();
+      this.setUIParams();
     }
     if (this.showCupping()) {
       // Set timeout else element wont be visible
@@ -121,7 +134,7 @@ export class BrewDetailComponent {
   }
   public async detailPreparation() {
     await this.uiPreparationHelper.detailPreparation(
-      this.data.getPreparation()
+      this.data.getPreparation(),
     );
   }
   public async detailMill() {
@@ -150,7 +163,7 @@ export class BrewDetailComponent {
         dismissed: true,
       },
       undefined,
-      BrewDetailComponent.COMPONENT_ID
+      BrewDetailComponent.COMPONENT_ID,
     );
   }
 
@@ -186,6 +199,7 @@ export class BrewDetailComponent {
       this.bean = this.data.getBean();
       this.choosenPreparation = this.data.getPreparation();
       this.mill = this.data.getMill();
+      this.setUIParams();
       this.initializeFlowChartOnGraphEl();
     }
   }
@@ -209,7 +223,7 @@ export class BrewDetailComponent {
   private __loadCuppingChart(): void {
     new Chart(
       this.cuppingChart.nativeElement,
-      this.uiBrewHelper.getCuppingChartData(this.data) as any
+      this.uiBrewHelper.getCuppingChartData(this.data) as any,
     );
   }
 
@@ -248,14 +262,14 @@ export class BrewDetailComponent {
         this.brewBrewingGraphEl.profileDiv.nativeElement,
         {
           format: 'jpeg',
-        }
+        },
       ).once('success', async (url) => {
         setTimeout(() => {
           Plotly.Snapshot.toImage(
             this.brewBrewingGraphEl.profileDiv.nativeElement,
             {
               format: 'jpeg',
-            }
+            },
           ).once('success', async (urlNew) => {
             try {
               this.shareService.shareFile('', urlNew);
@@ -270,7 +284,7 @@ export class BrewDetailComponent {
         this.brewBrewingGraphEl.profileDiv.nativeElement,
         {
           format: 'jpeg',
-        }
+        },
       ).once('success', async (url) => {
         try {
           this.shareService.shareFile('', url);
@@ -301,7 +315,7 @@ export class BrewDetailComponent {
       await this.uiHelper.exportJSON(
         this.brew.config.uuid + '_visualizer.json',
         JSON.stringify(vS),
-        true
+        true,
       );
     } catch (ex) {}
   }
@@ -309,7 +323,7 @@ export class BrewDetailComponent {
   public async downloadJSONProfile() {
     if (this.data.flow_profile !== '') {
       const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-        this.data.flow_profile
+        this.data.flow_profile,
       );
       const filename: string =
         'Beanconqueror_Flowprofile_JSON_' +
@@ -318,7 +332,7 @@ export class BrewDetailComponent {
       await this.uiHelper.exportJSON(
         filename,
         JSON.stringify(jsonParsed),
-        true
+        true,
       );
       // No popup needed anymore, because we share the file now
       /*if (this.platform.is('android')) {
@@ -335,7 +349,7 @@ export class BrewDetailComponent {
   }
   public async downloadFlowProfile() {
     await this.uiExcel.exportBrewFlowProfile(
-      this.brewBrewingGraphEl.flow_profile_raw
+      this.brewBrewingGraphEl.flow_profile_raw,
     );
   }
 
@@ -366,7 +380,7 @@ export class BrewDetailComponent {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
+      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH,
     );
     const popover = await this.modalController.create({
       component: BrewPopoverExtractionComponent,

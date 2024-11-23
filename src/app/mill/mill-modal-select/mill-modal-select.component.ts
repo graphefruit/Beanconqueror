@@ -7,6 +7,7 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
 
 @Component({
   selector: 'mill-modal-select',
@@ -19,6 +20,12 @@ export class MillModalSelectComponent implements OnInit {
   public multipleSelection = {};
   public radioSelection: string;
   public mill_segment: string = 'open';
+
+  public openMills: Array<Mill> = [];
+  public archivedMills: Array<Mill> = [];
+  public uiBrewsCountCache: any = {};
+  public uiLastUsedCountCache: any = {};
+  public uiLastUsedGrindSizeCache: any = {};
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
@@ -27,13 +34,16 @@ export class MillModalSelectComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiMillHelper: UIMillHelper,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
   ) {
     this.settings = this.uiSettings.getSettings();
   }
 
   public ionViewDidEnter(): void {
     this.objs = this.uiMillStorage.getAllEntries();
+
+    this.openMills = this.getOpenMills();
+    this.archivedMills = this.getArchivedMills();
     if (this.multiple) {
       for (const obj of this.objs) {
         this.multipleSelection[obj.config.uuid] =
@@ -109,7 +119,7 @@ export class MillModalSelectComponent implements OnInit {
         selected_text: selected_text,
       },
       undefined,
-      MillModalSelectComponent.COMPONENT_ID
+      MillModalSelectComponent.COMPONENT_ID,
     );
   }
 
@@ -117,40 +127,55 @@ export class MillModalSelectComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      MillModalSelectComponent.COMPONENT_ID
+      MillModalSelectComponent.COMPONENT_ID,
     );
   }
 
   public getLastUsedGrindSizeForBrew(_mill: Mill): string {
-    let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      _mill.config.uuid
-    );
-    if (relatedBrews.length > 0) {
-      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      if (relatedBrews[0].mill_speed > 0) {
-        return relatedBrews[0].grind_size + ' @ ' + relatedBrews[0].mill_speed;
+    if (this.uiLastUsedGrindSizeCache[_mill.config.uuid] === undefined) {
+      let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
+        _mill.config.uuid,
+      );
+      if (relatedBrews.length > 0) {
+        relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
+        if (relatedBrews[0].mill_speed > 0) {
+          this.uiLastUsedGrindSizeCache[_mill.config.uuid] =
+            relatedBrews[0].grind_size + ' @ ' + relatedBrews[0].mill_speed;
+        } else {
+          this.uiLastUsedGrindSizeCache[_mill.config.uuid] =
+            relatedBrews[0].grind_size;
+        }
       } else {
-        return relatedBrews[0].grind_size;
+        this.uiLastUsedGrindSizeCache[_mill.config.uuid] = '-';
       }
     }
-    return '-';
+    return this.uiLastUsedGrindSizeCache[_mill.config.uuid];
   }
 
   public lastUsed(_mill: Mill): number {
-    let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      _mill.config.uuid
-    );
-    if (relatedBrews.length > 0) {
-      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].config.unix_timestamp;
+    if (this.uiLastUsedCountCache[_mill.config.uuid] === undefined) {
+      let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
+        _mill.config.uuid,
+      );
+      if (relatedBrews.length > 0) {
+        relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
+        this.uiLastUsedCountCache[_mill.config.uuid] =
+          relatedBrews[0].config.unix_timestamp;
+      } else {
+        this.uiLastUsedCountCache[_mill.config.uuid] = -1;
+      }
     }
-    return -1;
+    return this.uiLastUsedCountCache[_mill.config.uuid];
   }
 
   public getBrewsCount(_mill: Mill): number {
-    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      _mill.config.uuid
-    );
-    return relatedBrews.length;
+    if (this.uiBrewsCountCache[_mill.config.uuid] === undefined) {
+      const relatedBrews: Array<Brew> =
+        this.uiMillHelper.getAllBrewsForThisMill(_mill.config.uuid);
+      this.uiBrewsCountCache[_mill.config.uuid] = relatedBrews.length;
+    }
+    return this.uiBrewsCountCache[_mill.config.uuid];
   }
+
+  protected readonly MILL_FUNCTION_PIPE_ENUM = MILL_FUNCTION_PIPE_ENUM;
 }

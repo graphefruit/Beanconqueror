@@ -19,7 +19,7 @@
 <!--We need to set editActive here aswell, because this will destroy 'everything' else we sometimes have the issue on android that plotly does not render the lines on the first time -->
 <ion-content *ngIf="loaded && editActive === false">
 
-  <ion-card *ngIf="showSectionBeforeBrew()" class="popover"
+  <ion-card *ngIf="uiShowSectionBeforeBrew" class="popover"
     style="display:flex; flex-direction: column;">
 
     <ion-item lines="none">
@@ -181,7 +181,7 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card *ngIf="showSectionWhileBrew()" class="popover"
+  <ion-card *ngIf="uiShowSectionWhileBrew" class="popover"
     style="display:flex; flex-direction: column;">
 
     <ion-item lines="none">
@@ -301,7 +301,7 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card *ngIf="showSectionAfterBrew()" class="popover"
+  <ion-card *ngIf="uiShowSectionAfterBrew" class="popover"
     style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
@@ -413,7 +413,7 @@
     </div>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card *ngIf="showCupping()" class="popover" style="display:flex; flex-direction: column;">
+  <ion-card *ngIf="uiShowCupping" class="popover" style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"BREW_HEADER_CUPPING" | translate }}</span>
     </ion-item>

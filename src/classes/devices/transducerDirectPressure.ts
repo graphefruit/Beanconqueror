@@ -46,7 +46,7 @@ export class TransducerDirectPressure extends PressureDevice {
         },
         () => {
           reject();
-        }
+        },
       );
     });
   }
@@ -66,7 +66,7 @@ export class TransducerDirectPressure extends PressureDevice {
         const psi = swap16(v[0]) / 10;
         this.setPressure(psiToBar(psi), _data, v);
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -76,14 +76,15 @@ export class TransducerDirectPressure extends PressureDevice {
       TransducerDirectPressure.PRESSURE_SERVICE_UUID,
       TransducerDirectPressure.PRESSURE_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
   public enableValueTransmission(): void {
     // not needed for this device
   }
-  public disableValueTransmission(): void {
+  public disableValueTransmission(): Promise<void> {
     // not needed for this device
+    return null;
   }
 }
 

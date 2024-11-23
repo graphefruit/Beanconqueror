@@ -9,6 +9,8 @@ import { BeanFieldVisiblePipe } from './bean/beanFieldVisible';
 import { BrewFunction } from './brew/brewFunction';
 import { BeanFunction } from './bean/beanFunction';
 import { PreparationFunction } from './preparation/preparationFunction';
+import { SettingFunction } from './setting/settingFunction';
+import { MillFunction } from './mill/millFunction';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { PreparationFunction } from './preparation/preparationFunction';
     BrewFunction,
     BeanFunction,
     PreparationFunction,
+    SettingFunction,
+    MillFunction,
   ],
   exports: [
     EnumToArrayPipe,
@@ -34,6 +38,8 @@ import { PreparationFunction } from './preparation/preparationFunction';
     BrewFunction,
     BeanFunction,
     PreparationFunction,
+    SettingFunction,
+    MillFunction,
   ],
 })
 export class PipesModule {}

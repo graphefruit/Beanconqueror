@@ -7,38 +7,43 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ng-container *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.hasAPreparationDeviceSet()'>
-        <ng-container *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() === PreparationDeviceType.METICULOUS'>
-          <ion-chip outline='true' class='machine-connected' *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
-            <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+      @if(brewBrewing?.brewBrewingPreparationDeviceEl?.hasAPreparationDeviceSet()) {
+        @if (brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) {
+          <ion-chip outline='true' class='machine-connected'>
+            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType()) {
+              @case (PreparationDeviceType.METICULOUS) {
+                <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
+                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+              }
+              @case (PreparationDeviceType.SANREMO_YOU) {
+                <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+                <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+              }
+              @case (PreparationDeviceType.XENIA) {
+                <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
+                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+              }
+            }
           </ion-chip>
-          <ion-chip outline='true' class='machine-disconnected' *ngIf='!brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
-            <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+        } @else {
+          <ion-chip outline='true' class='machine-disconnected'>
+            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType()) {
+              @case (PreparationDeviceType.METICULOUS) {
+                <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
+                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+              }
+              @case (PreparationDeviceType.SANREMO_YOU) {
+                <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+                <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+              }
+              @case (PreparationDeviceType.XENIA) {
+                <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
+                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+              }
+            }
           </ion-chip>
-        </ng-container>
-        <ng-container *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() === PreparationDeviceType.SANREMO_YOU'>
-          <ion-chip outline='true' class='machine-connected' *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
-            <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
-          </ion-chip>
-          <ion-chip outline='true' class='machine-disconnected' *ngIf='!brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
-            <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-          </ion-chip>
-        </ng-container>
-        <ng-container *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() === PreparationDeviceType.XENIA'>
-          <ion-chip outline='true' class='machine-connected' *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
-            <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
-          </ion-chip>
-          <ion-chip outline='true' class='machine-disconnected' *ngIf='!brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
-            <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-          </ion-chip>
-        </ng-container>
-      </ng-container>
+        }
+      }
       <ion-button (click)="tareScale()" *ngIf="smartScaleConnected() && smartScaleSupportsTaring()"  class="big-icon-only" fill="clear"  tappable>
         <ion-icon name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
       </ion-button>

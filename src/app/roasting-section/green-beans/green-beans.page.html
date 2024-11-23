@@ -45,7 +45,7 @@
           {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="segmentScrollHeight" min-row-height="165">
+      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" min-row-height="165">
         <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of openScroll.items" [greenBean]="bean"></green-bean-information>
       </ag-virtual-scroll>
     </div>
@@ -70,7 +70,7 @@
           </div>
         </div>
 
-        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="segmentScrollHeight" min-row-height="165">
+        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="'100vh'" min-row-height="165">
           <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of archivedScroll.items" [greenBean]="bean"></green-bean-information>
         </ag-virtual-scroll>
       </div>

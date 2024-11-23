@@ -99,13 +99,16 @@ export class BeanModalSelectComponent implements OnInit {
   public segmentScrollHeight: string = undefined;
 
   public uiUsedWeightCountCache: any = {};
+  public uiIsSortActive: boolean = false;
+  public uiIsFilterActive: boolean = false;
+  public uiSearchText: string = '';
 
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly beanSortFilterHelper: BeanSortFilterHelperService
+    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
 
@@ -118,6 +121,7 @@ export class BeanModalSelectComponent implements OnInit {
     this.openBeansFilter = this.settings.bean_filter_selection.OPEN;
 
     this.__initializeBeans();
+    this.setUIParams();
   }
 
   public __initializeBeans() {
@@ -127,15 +131,15 @@ export class BeanModalSelectComponent implements OnInit {
 
     this.openBeansLength = this.beans.reduce(
       (n, e) => (!e.finished && e.isFrozen() === false ? n + 1 : n),
-      0
+      0,
     );
     this.finishedBeansLength = this.beans.reduce(
       (n, e) => (e.finished ? n + 1 : n),
-      0
+      0,
     );
     this.frozenBeansLength = this.beans.reduce(
       (n, e) => (!e.finished && e.isFrozen() === true ? n + 1 : n),
-      0
+      0,
     );
 
     this.openBeans = [];
@@ -170,8 +174,16 @@ export class BeanModalSelectComponent implements OnInit {
     this.retriggerScroll();
   }
   public segmentChanged() {
+    this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
     this.retriggerScroll();
+    this.setUIParams();
   }
+
+  private setUIParams() {
+    this.uiIsSortActive = this.isSortActive();
+    this.uiIsFilterActive = this.isFilterActive();
+  }
+
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
@@ -257,7 +269,7 @@ export class BeanModalSelectComponent implements OnInit {
         selected_text: selected_text,
       },
       undefined,
-      BeanModalSelectComponent.COMPONENT_ID
+      BeanModalSelectComponent.COMPONENT_ID,
     );
   }
 
@@ -265,7 +277,7 @@ export class BeanModalSelectComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      BeanModalSelectComponent.COMPONENT_ID
+      BeanModalSelectComponent.COMPONENT_ID,
     );
   }
   public isBeanRoastUnknown(_bean: Bean) {
@@ -278,6 +290,7 @@ export class BeanModalSelectComponent implements OnInit {
   }
 
   public research() {
+    this.setSearchTextScope(this.bean_segment, this.uiSearchText);
     this.__initializeBeansView(this.bean_segment);
     this.retriggerScroll();
   }
@@ -291,7 +304,7 @@ export class BeanModalSelectComponent implements OnInit {
       this.beans,
       searchText,
       sort,
-      filters
+      filters,
     );
     if (_type === 'open') {
       this.openBeans = filteredBeans;
@@ -323,13 +336,28 @@ export class BeanModalSelectComponent implements OnInit {
     }
   }
 
-  private manageSearchTextScope(_type: string) {
+  private manageSearchTextScope(_type: string, _toLowerCase: boolean = true) {
+    let searchText: string = '';
     if (_type === 'open') {
-      return this.openBeansFilterText.toLowerCase();
+      searchText = this.openBeansFilterText;
     } else if (_type === 'archive') {
-      return this.archivedBeansFilterText.toLowerCase();
+      searchText = this.archivedBeansFilterText;
     } else if (_type === 'frozen') {
-      return this.frozenBeansFilterText.toLowerCase();
+      searchText = this.frozenBeansFilterText;
+    }
+    if (_toLowerCase) {
+      searchText = searchText.toLowerCase();
+    }
+    return searchText;
+  }
+
+  private setSearchTextScope(_type: string, _text: string) {
+    if (_type === 'open') {
+      this.openBeansFilterText = _text;
+    } else if (_type === 'archive') {
+      this.archivedBeansFilterText = _text;
+    } else if (_type === 'frozen') {
+      this.frozenBeansFilterText = _text;
     }
   }
 
@@ -348,6 +376,7 @@ export class BeanModalSelectComponent implements OnInit {
       await this.__saveBeanFilter();
 
       this.__initializeBeans();
+      this.setUIParams();
     }
   }
 
@@ -355,7 +384,7 @@ export class BeanModalSelectComponent implements OnInit {
     const filterSegment = this.manageFilterScope(this.bean_segment);
     const newFilter = await this.beanSortFilterHelper.showFilter(
       filterSegment,
-      this.bean_segment
+      this.bean_segment,
     );
     if (newFilter) {
       /**We got the filtersegment above, so we got the reference and overwrite it**/
@@ -370,6 +399,7 @@ export class BeanModalSelectComponent implements OnInit {
       await this.__saveBeanFilter();
 
       this.__initializeBeans();
+      this.setUIParams();
     }
   }
 
@@ -391,12 +421,12 @@ export class BeanModalSelectComponent implements OnInit {
 
     if (this.settings) {
       let checkingFilter: IBeanPageFilter = this.manageFilterScope(
-        this.bean_segment
+        this.bean_segment,
       );
 
       isFilterActive = !_.isEqual(
         this.settings?.GET_BEAN_FILTER(),
-        checkingFilter
+        checkingFilter,
       );
     }
 
