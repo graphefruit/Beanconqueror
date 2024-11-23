@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -48,6 +49,7 @@ declare var window;
   selector: 'brew-information',
   templateUrl: './brew-information.component.html',
   styleUrls: ['./brew-information.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;
