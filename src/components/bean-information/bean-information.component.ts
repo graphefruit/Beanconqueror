@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -48,7 +47,6 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
   styleUrls: ['./bean-information.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;

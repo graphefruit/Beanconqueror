@@ -9,7 +9,6 @@ import {
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Settings } from '../../classes/settings/settings';
 import BeanconquerorFlowTestDataDummy from '../../assets/BeanconquerorFlowTestDataFourth.json';
-import { TranslateService } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { Platform } from '@ionic/angular';
@@ -42,19 +41,16 @@ export class GraphDisplayCardComponent implements OnInit {
 
   public traces: any = {};
 
-  public flowProfileLoading: boolean = true;
-
   @ViewChild('canvaContainer', { read: ElementRef, static: true })
   public canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
   constructor(
-    private readonly translate: TranslateService,
     private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly graphHelper: GraphHelperService
+    private readonly graphHelper: GraphHelperService,
   ) {}
 
   public async ngOnInit() {
@@ -65,7 +61,7 @@ export class GraphDisplayCardComponent implements OnInit {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
     } else if (this.meticulousHistoryData) {
       this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
-        this.meticulousHistoryData.data
+        this.meticulousHistoryData.data,
       );
     }
     setTimeout(() => {
@@ -114,7 +110,7 @@ export class GraphDisplayCardComponent implements OnInit {
       true,
       chartWidth,
       chartHeight,
-      true
+      true,
     );
 
     return layout;
@@ -129,7 +125,7 @@ export class GraphDisplayCardComponent implements OnInit {
       this.traces = this.graphHelper.fillTraces(
         this.traces,
         graphSettings,
-        true
+        true,
       );
 
       this.graphHelper.fillDataIntoTraces(this.flow_profile_raw, this.traces);
@@ -151,12 +147,10 @@ export class GraphDisplayCardComponent implements OnInit {
         this.profileDiv.nativeElement,
         chartData,
         layout,
-        this.getChartConfig()
+        this.getChartConfig(),
       );
       this.profileDiv.nativeElement.removeAllListeners();
       this.profileDiv.nativeElement.removeAllListeners('plotly_click');
-
-      this.flowProfileLoading = false;
     }, 100);
   }
 
@@ -165,7 +159,7 @@ export class GraphDisplayCardComponent implements OnInit {
       if (this.flowProfilePath !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-            this.flowProfilePath
+            this.flowProfilePath,
           );
           this.flow_profile_raw = jsonParsed;
         } catch (ex) {}
