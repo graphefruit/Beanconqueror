@@ -30,10 +30,9 @@ import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper
 import { NfcService } from '../../services/nfcService/nfc-service.service';
 
 @Component({
-    selector: 'beans',
-    templateUrl: './beans.page.html',
-    styleUrls: ['./beans.page.scss'],
-    standalone: false
+  selector: 'beans',
+  templateUrl: './beans.page.html',
+  styleUrls: ['./beans.page.scss'],
 })
 export class BeansPage implements OnDestroy {
   public beans: Array<Bean> = [];

@@ -4,10 +4,9 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {Settings} from '../../../classes/settings/settings';
 
 @Component({
-    selector: 'app-cookie',
-    templateUrl: './cookie.component.html',
-    styleUrls: ['./cookie.component.scss'],
-    standalone: false
+  selector: 'app-cookie',
+  templateUrl: './cookie.component.html',
+  styleUrls: ['./cookie.component.scss'],
 })
 export class CookieComponent implements OnInit {
 

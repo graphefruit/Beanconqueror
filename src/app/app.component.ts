@@ -69,10 +69,9 @@ declare var window;
 register();
 
 @Component({
-    selector: 'app-root',
-    templateUrl: 'app.component.html',
-    encapsulation: ViewEncapsulation.None,
-    standalone: false
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;

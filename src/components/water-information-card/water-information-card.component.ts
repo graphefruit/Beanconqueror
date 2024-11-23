@@ -15,10 +15,9 @@ import { UIWaterHelper } from '../../services/uiWaterHelper';
 import { WATER_TYPES } from '../../enums/water/waterTypes';
 
 @Component({
-    selector: 'water-information-card',
-    templateUrl: './water-information-card.component.html',
-    styleUrls: ['./water-information-card.component.scss'],
-    standalone: false
+  selector: 'water-information-card',
+  templateUrl: './water-information-card.component.html',
+  styleUrls: ['./water-information-card.component.scss'],
 })
 export class WaterInformationCardComponent implements OnInit {
   @Input() public water: Water;

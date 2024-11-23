@@ -18,10 +18,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 declare var cordova;
 @Component({
-    selector: 'green-bean-general-information',
-    templateUrl: './green-bean-general-information.component.html',
-    styleUrls: ['./green-bean-general-information.component.scss'],
-    standalone: false
+  selector: 'green-bean-general-information',
+  templateUrl: './green-bean-general-information.component.html',
+  styleUrls: ['./green-bean-general-information.component.scss'],
 })
 export class GreenBeanGeneralInformationComponent implements OnInit {
   @Input() public data: GreenBean;

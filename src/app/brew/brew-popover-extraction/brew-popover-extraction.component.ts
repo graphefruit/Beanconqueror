@@ -15,10 +15,9 @@ import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleT
 declare var Plotly;
 
 @Component({
-    selector: 'app-brew-popover-extraction',
-    templateUrl: './brew-popover-extraction.component.html',
-    styleUrls: ['./brew-popover-extraction.component.scss'],
-    standalone: false
+  selector: 'app-brew-popover-extraction',
+  templateUrl: './brew-popover-extraction.component.html',
+  styleUrls: ['./brew-popover-extraction.component.scss'],
 })
 export class BrewPopoverExtractionComponent implements OnInit {
   public static COMPONENT_ID = 'brew-extraction';

@@ -15,10 +15,9 @@ import { UIAlert } from '../../../../services/uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-graph-edit',
-    templateUrl: './graph-edit.component.html',
-    styleUrls: ['./graph-edit.component.scss'],
-    standalone: false
+  selector: 'app-graph-edit',
+  templateUrl: './graph-edit.component.html',
+  styleUrls: ['./graph-edit.component.scss'],
 })
 export class GraphEditComponent implements OnInit {
   public static COMPONENT_ID = 'graph-edit';

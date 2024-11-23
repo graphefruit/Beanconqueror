@@ -3,10 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 
-@Pipe({
-    name: 'brewFunctionPipe',
-    standalone: false
-})
+@Pipe({ name: 'brewFunctionPipe' })
 export class BrewFunction implements PipeTransform {
   public transform(
     value: Brew,

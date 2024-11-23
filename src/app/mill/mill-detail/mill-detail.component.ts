@@ -7,10 +7,9 @@ import MILL_TRACKING from '../../../data/tracking/millTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 
 @Component({
-    selector: 'app-mill-detail',
-    templateUrl: './mill-detail.component.html',
-    styleUrls: ['./mill-detail.component.scss'],
-    standalone: false
+  selector: 'app-mill-detail',
+  templateUrl: './mill-detail.component.html',
+  styleUrls: ['./mill-detail.component.scss'],
 })
 export class MillDetailComponent implements OnInit {
   public static COMPONENT_ID: string = 'mill-detail';

@@ -2,8 +2,7 @@ import { Directive, HostListener } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 @Directive({
-    selector: '[ngModel][remove-empty-number]',
-    standalone: false
+  selector: '[ngModel][remove-empty-number]',
 })
 export class RemoveEmptyNumberDirective {
   // @Output() ngModelChange:EventEmitter<any> = new EventEmitter();

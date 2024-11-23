@@ -23,10 +23,9 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
 
 @Component({
-    selector: 'app-green-beans',
-    templateUrl: './green-beans.page.html',
-    styleUrls: ['./green-beans.page.scss'],
-    standalone: false
+  selector: 'app-green-beans',
+  templateUrl: './green-beans.page.html',
+  styleUrls: ['./green-beans.page.scss'],
 })
 export class GreenBeansPage implements OnInit {
   private beans: Array<GreenBean> = [];

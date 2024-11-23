@@ -17,10 +17,9 @@ import { Subscription } from 'rxjs';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 
 @Component({
-    selector: 'brew-filter',
-    templateUrl: './brew-filter.component.html',
-    styleUrls: ['./brew-filter.component.scss'],
-    standalone: false
+  selector: 'brew-filter',
+  templateUrl: './brew-filter.component.html',
+  styleUrls: ['./brew-filter.component.scss'],
 })
 export class BrewFilterComponent implements OnInit {
   public static COMPONENT_ID = 'brew-filter';

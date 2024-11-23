@@ -6,10 +6,9 @@ import {IFlavor} from '../../interfaces/flavor/iFlavor';
 import {UIHelper} from '../../services/uiHelper';
 
 @Component({
-    selector: 'cupping-flavors',
-    templateUrl: './cupping-flavors.component.html',
-    styleUrls: ['./cupping-flavors.component.scss'],
-    standalone: false
+  selector: 'cupping-flavors',
+  templateUrl: './cupping-flavors.component.html',
+  styleUrls: ['./cupping-flavors.component.scss'],
 })
 export class CuppingFlavorsComponent implements OnInit {
 

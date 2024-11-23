@@ -9,10 +9,9 @@ import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachine
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 
 @Component({
-    selector: 'app-roasting-machine-edit',
-    templateUrl: './roasting-machine-edit.component.html',
-    styleUrls: ['./roasting-machine-edit.component.scss'],
-    standalone: false
+  selector: 'app-roasting-machine-edit',
+  templateUrl: './roasting-machine-edit.component.html',
+  styleUrls: ['./roasting-machine-edit.component.scss'],
 })
 export class RoastingMachineEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-edit';

@@ -6,10 +6,9 @@ import { Settings } from '../../../../classes/settings/settings';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
 
 @Component({
-    selector: 'bean-detail-sort-information',
-    templateUrl: './bean-detail-sort-information.component.html',
-    styleUrls: ['./bean-detail-sort-information.component.scss'],
-    standalone: false
+  selector: 'bean-detail-sort-information',
+  templateUrl: './bean-detail-sort-information.component.html',
+  styleUrls: ['./bean-detail-sort-information.component.scss'],
 })
 export class BeanDetailSortInformationComponent implements OnInit {
   @Input() public data: GreenBean | Bean;

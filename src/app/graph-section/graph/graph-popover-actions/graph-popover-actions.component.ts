@@ -6,10 +6,9 @@ import { Graph } from '../../../../classes/graph/graph';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
 
 @Component({
-    selector: 'app-graph-popover-actions',
-    templateUrl: './graph-popover-actions.component.html',
-    styleUrls: ['./graph-popover-actions.component.scss'],
-    standalone: false
+  selector: 'app-graph-popover-actions',
+  templateUrl: './graph-popover-actions.component.html',
+  styleUrls: ['./graph-popover-actions.component.scss'],
 })
 export class GraphPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'graph-popover-actions';

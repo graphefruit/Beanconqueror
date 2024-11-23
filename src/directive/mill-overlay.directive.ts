@@ -6,8 +6,7 @@ import {Mill} from '../classes/mill/mill';
 import {MillModalSelectComponent} from '../app/mill/mill-modal-select/mill-modal-select.component';
 
 @Directive({
-    selector: '[ngModel][mill-overlay]',
-    standalone: false
+  selector: '[ngModel][mill-overlay]'
 })
 export class MillOverlayDirective {
 

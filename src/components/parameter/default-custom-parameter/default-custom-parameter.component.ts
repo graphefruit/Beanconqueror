@@ -8,10 +8,9 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
-    selector: 'default-custom-parameter',
-    templateUrl: './default-custom-parameter.component.html',
-    styleUrls: ['./default-custom-parameter.component.scss'],
-    standalone: false
+  selector: 'default-custom-parameter',
+  templateUrl: './default-custom-parameter.component.html',
+  styleUrls: ['./default-custom-parameter.component.scss'],
 })
 export class DefaultCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;

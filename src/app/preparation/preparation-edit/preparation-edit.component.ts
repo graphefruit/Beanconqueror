@@ -15,10 +15,9 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 
 @Component({
-    selector: 'preparation-edit',
-    templateUrl: './preparation-edit.component.html',
-    styleUrls: ['./preparation-edit.component.scss'],
-    standalone: false
+  selector: 'preparation-edit',
+  templateUrl: './preparation-edit.component.html',
+  styleUrls: ['./preparation-edit.component.scss'],
 })
 export class PreparationEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-edit';

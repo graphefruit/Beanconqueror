@@ -17,10 +17,9 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
-    selector: 'timer',
-    templateUrl: './timer.component.html',
-    styleUrls: ['./timer.component.scss'],
-    standalone: false
+  selector: 'timer',
+  templateUrl: './timer.component.html',
+  styleUrls: ['./timer.component.scss'],
 })
 export class TimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;

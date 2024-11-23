@@ -71,10 +71,9 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 declare var Plotly;
 
 @Component({
-    selector: 'brew-brewing-graph',
-    templateUrl: './brew-brewing-graph.component.html',
-    styleUrls: ['./brew-brewing-graph.component.scss'],
-    standalone: false
+  selector: 'brew-brewing-graph',
+  templateUrl: './brew-brewing-graph.component.html',
+  styleUrls: ['./brew-brewing-graph.component.scss'],
 })
 export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('smartScaleWeight', { read: ElementRef })

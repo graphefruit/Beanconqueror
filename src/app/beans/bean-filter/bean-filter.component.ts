@@ -13,10 +13,9 @@ import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 
 @Component({
-    selector: 'app-bean-filter',
-    templateUrl: './bean-filter.component.html',
-    styleUrls: ['./bean-filter.component.scss'],
-    standalone: false
+  selector: 'app-bean-filter',
+  templateUrl: './bean-filter.component.html',
+  styleUrls: ['./bean-filter.component.scss'],
 })
 export class BeanFilterComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-filter';

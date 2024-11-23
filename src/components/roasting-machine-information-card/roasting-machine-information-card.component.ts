@@ -15,10 +15,9 @@ import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracki
 import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
 
 @Component({
-    selector: 'roasting-machine-information-card',
-    templateUrl: './roasting-machine-information-card.component.html',
-    styleUrls: ['./roasting-machine-information-card.component.scss'],
-    standalone: false
+  selector: 'roasting-machine-information-card',
+  templateUrl: './roasting-machine-information-card.component.html',
+  styleUrls: ['./roasting-machine-information-card.component.scss'],
 })
 export class RoastingMachineInformationCardComponent {
   @Input() public roastingMachine: RoastingMachine;

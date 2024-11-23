@@ -17,10 +17,9 @@ import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingSto
 
 declare var cordova;
 @Component({
-    selector: 'app-bean-popover-freeze',
-    templateUrl: './bean-popover-freeze.component.html',
-    styleUrls: ['./bean-popover-freeze.component.scss'],
-    standalone: false
+  selector: 'app-bean-popover-freeze',
+  templateUrl: './bean-popover-freeze.component.html',
+  styleUrls: ['./bean-popover-freeze.component.scss'],
 })
 export class BeanPopoverFreezeComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-freeze';

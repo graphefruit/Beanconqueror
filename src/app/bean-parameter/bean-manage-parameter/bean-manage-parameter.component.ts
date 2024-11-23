@@ -6,10 +6,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-bean-manage-parameter',
-    templateUrl: './bean-manage-parameter.component.html',
-    styleUrls: ['./bean-manage-parameter.component.scss'],
-    standalone: false
+  selector: 'app-bean-manage-parameter',
+  templateUrl: './bean-manage-parameter.component.html',
+  styleUrls: ['./bean-manage-parameter.component.scss'],
 })
 export class BeanManageParameterComponent {
   public bean_segment = 'general';

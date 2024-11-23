@@ -23,10 +23,9 @@ import { GraphHelperService } from '../../../../services/graphHelper/graph-helpe
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
 declare var Plotly;
 @Component({
-    selector: 'app-graph-detail',
-    templateUrl: './graph-detail.component.html',
-    styleUrls: ['./graph-detail.component.scss'],
-    standalone: false
+  selector: 'app-graph-detail',
+  templateUrl: './graph-detail.component.html',
+  styleUrls: ['./graph-detail.component.scss'],
 })
 export class GraphDetailComponent implements OnInit {
   public static COMPONENT_ID = 'graph-detail';

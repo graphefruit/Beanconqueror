@@ -11,10 +11,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 
 @Component({
-    selector: 'app-brew-choose-preparation-to-brew',
-    templateUrl: './brew-choose-preparation-to-brew.component.html',
-    styleUrls: ['./brew-choose-preparation-to-brew.component.scss'],
-    standalone: false
+  selector: 'app-brew-choose-preparation-to-brew',
+  templateUrl: './brew-choose-preparation-to-brew.component.html',
+  styleUrls: ['./brew-choose-preparation-to-brew.component.scss'],
 })
 export class BrewChoosePreparationToBrewComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-preparation-to-brew';

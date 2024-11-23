@@ -5,10 +5,9 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 
 @Component({
-    selector: 'app-qr-code-scanner-popover',
-    templateUrl: './qr-code-scanner-popover.component.html',
-    styleUrls: ['./qr-code-scanner-popover.component.scss'],
-    standalone: false
+  selector: 'app-qr-code-scanner-popover',
+  templateUrl: './qr-code-scanner-popover.component.html',
+  styleUrls: ['./qr-code-scanner-popover.component.scss'],
 })
 export class QrCodeScannerPopoverComponent implements OnInit {
 

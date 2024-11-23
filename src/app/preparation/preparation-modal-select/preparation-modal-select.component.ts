@@ -11,10 +11,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
 
 @Component({
-    selector: 'preparation-modal-select',
-    templateUrl: './preparation-modal-select.component.html',
-    styleUrls: ['./preparation-modal-select.component.scss'],
-    standalone: false
+  selector: 'preparation-modal-select',
+  templateUrl: './preparation-modal-select.component.html',
+  styleUrls: ['./preparation-modal-select.component.scss'],
 })
 export class PreparationModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'preparation-modal-select';

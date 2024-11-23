@@ -10,10 +10,9 @@ import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WaterAddTypeComponent } from '../water-add-type/water-add-type.component';
 
 @Component({
-    selector: 'app-water-add',
-    templateUrl: './water-add.component.html',
-    styleUrls: ['./water-add.component.scss'],
-    standalone: false
+  selector: 'app-water-add',
+  templateUrl: './water-add.component.html',
+  styleUrls: ['./water-add.component.scss'],
 })
 export class WaterAddComponent implements OnInit {
   public static COMPONENT_ID = 'water-add';

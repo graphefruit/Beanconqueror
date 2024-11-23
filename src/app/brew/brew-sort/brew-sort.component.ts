@@ -6,10 +6,9 @@ import { BREW_SORT_ORDER } from '../../../enums/brews/brewSortOrder';
 import { IBrewPageSort } from '../../../interfaces/brew/iBrewPageSort';
 
 @Component({
-    selector: 'app-brew-sort',
-    templateUrl: './brew-sort.component.html',
-    styleUrls: ['./brew-sort.component.scss'],
-    standalone: false
+  selector: 'app-brew-sort',
+  templateUrl: './brew-sort.component.html',
+  styleUrls: ['./brew-sort.component.scss'],
 })
 export class BrewSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'brew-sort';

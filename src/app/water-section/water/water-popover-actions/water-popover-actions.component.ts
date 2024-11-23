@@ -6,10 +6,9 @@ import {IWater} from '../../../../interfaces/water/iWater';
 
 
 @Component({
-    selector: 'app-water-popover-actions',
-    templateUrl: './water-popover-actions.component.html',
-    styleUrls: ['./water-popover-actions.component.scss'],
-    standalone: false
+  selector: 'app-water-popover-actions',
+  templateUrl: './water-popover-actions.component.html',
+  styleUrls: ['./water-popover-actions.component.scss'],
 })
 export class WaterPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'water-popover-actions';

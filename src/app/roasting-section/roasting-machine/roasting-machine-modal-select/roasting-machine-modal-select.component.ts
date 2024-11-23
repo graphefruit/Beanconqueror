@@ -5,10 +5,9 @@ import {UIRoastingMachineStorage} from '../../../../services/uiRoastingMachineSt
 import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-machine';
 
 @Component({
-    selector: 'app-roasting-machine-modal-select',
-    templateUrl: './roasting-machine-modal-select.component.html',
-    styleUrls: ['./roasting-machine-modal-select.component.scss'],
-    standalone: false
+  selector: 'app-roasting-machine-modal-select',
+  templateUrl: './roasting-machine-modal-select.component.html',
+  styleUrls: ['./roasting-machine-modal-select.component.scss'],
 })
 export class RoastingMachineModalSelectComponent implements OnInit {
   public static COMPONENT_ID:string = 'roasting-machine-modal-select';

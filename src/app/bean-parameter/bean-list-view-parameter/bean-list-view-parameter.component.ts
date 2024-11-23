@@ -5,10 +5,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-bean-list-view-parameter',
-    templateUrl: './bean-list-view-parameter.component.html',
-    styleUrls: ['./bean-list-view-parameter.component.scss'],
-    standalone: false
+  selector: 'app-bean-list-view-parameter',
+  templateUrl: './bean-list-view-parameter.component.html',
+  styleUrls: ['./bean-list-view-parameter.component.scss'],
 })
 export class BeanListViewParameterComponent {
   public bean_segment = 'general';

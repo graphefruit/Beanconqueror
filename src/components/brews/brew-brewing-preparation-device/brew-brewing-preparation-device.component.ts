@@ -48,10 +48,9 @@ import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremo
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'brew-brewing-preparation-device',
-    templateUrl: './brew-brewing-preparation-device.component.html',
-    styleUrls: ['./brew-brewing-preparation-device.component.scss'],
-    standalone: false
+  selector: 'brew-brewing-preparation-device',
+  templateUrl: './brew-brewing-preparation-device.component.html',
+  styleUrls: ['./brew-brewing-preparation-device.component.scss'],
 })
 export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public data: Brew;

@@ -9,10 +9,9 @@ import { Settings } from '../../../classes/settings/settings';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 
 @Component({
-    selector: 'brew-popover-actions',
-    templateUrl: './brew-popover-actions.component.html',
-    styleUrls: ['./brew-popover-actions.component.scss'],
-    standalone: false
+  selector: 'brew-popover-actions',
+  templateUrl: './brew-popover-actions.component.html',
+  styleUrls: ['./brew-popover-actions.component.scss'],
 })
 export class BrewPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'brew-popover-actions';

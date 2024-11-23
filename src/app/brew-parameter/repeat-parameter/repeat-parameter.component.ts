@@ -3,10 +3,9 @@ import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
-    selector: 'app-repeat-parameter',
-    templateUrl: './repeat-parameter.component.html',
-    styleUrls: ['./repeat-parameter.component.scss'],
-    standalone: false
+  selector: 'app-repeat-parameter',
+  templateUrl: './repeat-parameter.component.html',
+  styleUrls: ['./repeat-parameter.component.scss'],
 })
 export class RepeatParameterComponent implements OnInit {
   public settings: Settings;

@@ -3,10 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 /** Third party */
 
-@Pipe({
-    name: 'toFixed',
-    standalone: false
-})
+@Pipe({ name: 'toFixed' })
 export class ToFixedPipe implements PipeTransform {
   public transform(value, format, args?: Array<string>): any {
     // SAMPLE - http://jsfiddle.net/kunycrkb/

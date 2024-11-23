@@ -8,8 +8,7 @@ import {
 } from '../app/preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
 
 @Directive({
-    selector: '[ngModel][preparation-tool-overlay]',
-    standalone: false
+  selector: '[ngModel][preparation-tool-overlay]',
 })
 export class PreparationToolOverlayDirective {
 

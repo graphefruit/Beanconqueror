@@ -17,10 +17,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 
 @Component({
-    selector: 'app-preparation-edit-tool',
-    templateUrl: './preparation-edit-tool.component.html',
-    styleUrls: ['./preparation-edit-tool.component.scss'],
-    standalone: false
+  selector: 'app-preparation-edit-tool',
+  templateUrl: './preparation-edit-tool.component.html',
+  styleUrls: ['./preparation-edit-tool.component.scss'],
 })
 export class PreparationEditToolComponent {
   public static readonly COMPONENT_ID: string = 'preparation-edit-tool';

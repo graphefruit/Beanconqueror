@@ -8,10 +8,9 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'loading-popover',
-    templateUrl: './loading-popover.component.html',
-    styleUrls: ['./loading-popover.component.scss'],
-    standalone: false
+  selector: 'loading-popover',
+  templateUrl: './loading-popover.component.html',
+  styleUrls: ['./loading-popover.component.scss'],
 })
 export class LoadingPopoverComponent implements OnInit {
   public __showDismissButton: boolean = false;

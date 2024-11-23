@@ -5,10 +5,7 @@ import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/prepara
 import { Preparation } from '../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 
-@Pipe({
-    name: 'preparationFunctionPipe',
-    standalone: false
-})
+@Pipe({ name: 'preparationFunctionPipe' })
 export class PreparationFunction implements PipeTransform {
   public transform(
     value: Preparation,

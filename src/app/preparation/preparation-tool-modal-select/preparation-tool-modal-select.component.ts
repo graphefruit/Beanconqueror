@@ -6,10 +6,9 @@ import { Bean } from '../../../classes/bean/bean';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 @Component({
-    selector: 'preparation-tool-modal-select',
-    templateUrl: './preparation-tool-modal-select.component.html',
-    styleUrls: ['./preparation-tool-modal-select.component.scss'],
-    standalone: false
+  selector: 'preparation-tool-modal-select',
+  templateUrl: './preparation-tool-modal-select.component.html',
+  styleUrls: ['./preparation-tool-modal-select.component.scss'],
 })
 export class PreparationToolModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'preparation-tool-modal-select';

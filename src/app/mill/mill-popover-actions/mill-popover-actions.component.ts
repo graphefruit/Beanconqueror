@@ -6,10 +6,9 @@ import { MILL_ACTION } from '../../../enums/mills/millActions';
 import { Mill } from '../../../classes/mill/mill';
 
 @Component({
-    selector: 'mill-popover-actions',
-    templateUrl: './mill-popover-actions.component.html',
-    styleUrls: ['./mill-popover-actions.component.scss'],
-    standalone: false
+  selector: 'mill-popover-actions',
+  templateUrl: './mill-popover-actions.component.html',
+  styleUrls: ['./mill-popover-actions.component.scss'],
 })
 export class MillPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'mill-popover-actions';

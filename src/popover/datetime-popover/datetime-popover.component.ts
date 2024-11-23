@@ -5,10 +5,9 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 
 @Component({
-    selector: 'app-datetime-popover',
-    templateUrl: './datetime-popover.component.html',
-    styleUrls: ['./datetime-popover.component.scss'],
-    standalone: false
+  selector: 'app-datetime-popover',
+  templateUrl: './datetime-popover.component.html',
+  styleUrls: ['./datetime-popover.component.scss'],
 })
 export class DatetimePopoverComponent implements OnInit {
   public timer = {

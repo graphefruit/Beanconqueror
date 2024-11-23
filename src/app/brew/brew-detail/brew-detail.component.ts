@@ -34,10 +34,9 @@ import { Mill } from '../../../classes/mill/mill';
 
 declare var Plotly;
 @Component({
-    selector: 'brew-detail',
-    templateUrl: './brew-detail.component.html',
-    styleUrls: ['./brew-detail.component.scss'],
-    standalone: false
+  selector: 'brew-detail',
+  templateUrl: './brew-detail.component.html',
+  styleUrls: ['./brew-detail.component.scss'],
 })
 export class BrewDetailComponent {
   public static readonly COMPONENT_ID = 'brew-detail';

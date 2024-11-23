@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 
 @Component({
-    selector: 'helper-water-hardness',
-    templateUrl: './helper-water-hardness.component.html',
-    styleUrls: ['./helper-water-hardness.component.scss'],
-    standalone: false
+  selector: 'helper-water-hardness',
+  templateUrl: './helper-water-hardness.component.html',
+  styleUrls: ['./helper-water-hardness.component.scss'],
 })
 export class HelperWaterHardnessComponent implements OnInit {
 

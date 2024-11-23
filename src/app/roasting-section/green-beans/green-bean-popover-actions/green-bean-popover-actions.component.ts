@@ -7,10 +7,9 @@ import { GREEN_BEAN_ACTION } from '../../../../enums/green-beans/greenBeanAction
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 
 @Component({
-    selector: 'green-bean-popover-actions',
-    templateUrl: './green-bean-popover-actions.component.html',
-    styleUrls: ['./green-bean-popover-actions.component.scss'],
-    standalone: false
+  selector: 'green-bean-popover-actions',
+  templateUrl: './green-bean-popover-actions.component.html',
+  styleUrls: ['./green-bean-popover-actions.component.scss'],
 })
 export class GreenBeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-popover-actions';

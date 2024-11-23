@@ -18,10 +18,9 @@ import MILL_TRACKING from '../../data/tracking/millTracking';
 import { UIHelper } from '../../services/uiHelper';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
 @Component({
-    selector: 'mill-information-card',
-    templateUrl: './mill-information-card.component.html',
-    styleUrls: ['./mill-information-card.component.scss'],
-    standalone: false
+  selector: 'mill-information-card',
+  templateUrl: './mill-information-card.component.html',
+  styleUrls: ['./mill-information-card.component.scss'],
 })
 export class MillInformationCardComponent implements OnInit {
   @Input() public mill: Mill;

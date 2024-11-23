@@ -3,10 +3,9 @@ import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
-    selector: 'app-brew-beverage-quantity-calculator',
-    templateUrl: './brew-beverage-quantity-calculator.component.html',
-    styleUrls: ['./brew-beverage-quantity-calculator.component.scss'],
-    standalone: false
+  selector: 'app-brew-beverage-quantity-calculator',
+  templateUrl: './brew-beverage-quantity-calculator.component.html',
+  styleUrls: ['./brew-beverage-quantity-calculator.component.scss'],
 })
 export class BrewBeverageQuantityCalculatorComponent {
   public static readonly COMPONENT_ID = 'brew-beverage-quantity-calculator';

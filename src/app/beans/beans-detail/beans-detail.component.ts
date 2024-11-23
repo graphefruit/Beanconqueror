@@ -16,10 +16,9 @@ import { Settings } from '../../../classes/settings/settings';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
 @Component({
-    selector: 'app-beans-detail',
-    templateUrl: './beans-detail.component.html',
-    styleUrls: ['./beans-detail.component.scss'],
-    standalone: false
+  selector: 'app-beans-detail',
+  templateUrl: './beans-detail.component.html',
+  styleUrls: ['./beans-detail.component.scss'],
 })
 export class BeansDetailComponent implements OnInit {
   public static readonly COMPONENT_ID: string = 'bean-detail';

@@ -19,10 +19,9 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 
 @Component({
-    selector: 'brew-graph-reference-card',
-    templateUrl: './brew-graph-reference-card.component.html',
-    styleUrls: ['./brew-graph-reference-card.component.scss'],
-    standalone: false
+  selector: 'brew-graph-reference-card',
+  templateUrl: './brew-graph-reference-card.component.html',
+  styleUrls: ['./brew-graph-reference-card.component.scss'],
 })
 export class BrewGraphReferenceCardComponent implements OnInit {
   @Input() public brew: Brew;

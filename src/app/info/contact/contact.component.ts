@@ -4,10 +4,9 @@ import LINK_TRACKING from '../../../data/tracking/linkTracking';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
-    selector: 'contact',
-    templateUrl: './contact.component.html',
-    styleUrls: ['./contact.component.scss'],
-    standalone: false
+  selector: 'contact',
+  templateUrl: './contact.component.html',
+  styleUrls: ['./contact.component.scss'],
 })
 export class ContactComponent implements OnInit {
 

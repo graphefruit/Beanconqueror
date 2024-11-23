@@ -5,10 +5,9 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
-    selector: 'privacy',
-    templateUrl: './privacy.component.html',
-    styleUrls: ['./privacy.component.scss'],
-    standalone: false
+  selector: 'privacy',
+  templateUrl: './privacy.component.html',
+  styleUrls: ['./privacy.component.scss'],
 })
 export class PrivacyComponent implements OnInit {
 

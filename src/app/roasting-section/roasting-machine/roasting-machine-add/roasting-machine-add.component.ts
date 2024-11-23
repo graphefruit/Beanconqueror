@@ -7,10 +7,9 @@ import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachine
 import {UIAnalytics} from '../../../../services/uiAnalytics';
 
 @Component({
-    selector: 'app-roasting-machine-add',
-    templateUrl: './roasting-machine-add.component.html',
-    styleUrls: ['./roasting-machine-add.component.scss'],
-    standalone: false
+  selector: 'app-roasting-machine-add',
+  templateUrl: './roasting-machine-add.component.html',
+  styleUrls: ['./roasting-machine-add.component.scss'],
 })
 export class RoastingMachineAddComponent implements OnInit {
 

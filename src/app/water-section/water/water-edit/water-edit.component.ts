@@ -13,10 +13,9 @@ import WATER_TRACKING from '../../../../data/tracking/waterTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 
 @Component({
-    selector: 'app-water-edit',
-    templateUrl: './water-edit.component.html',
-    styleUrls: ['./water-edit.component.scss'],
-    standalone: false
+  selector: 'app-water-edit',
+  templateUrl: './water-edit.component.html',
+  styleUrls: ['./water-edit.component.scss'],
 })
 export class WaterEditComponent {
   public static readonly COMPONENT_ID = 'water-edit';

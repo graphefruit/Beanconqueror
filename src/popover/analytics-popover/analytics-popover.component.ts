@@ -5,10 +5,9 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
-    selector: 'analytics-popover',
-    templateUrl: './analytics-popover.component.html',
-    styleUrls: ['./analytics-popover.component.scss'],
-    standalone: false
+  selector: 'analytics-popover',
+  templateUrl: './analytics-popover.component.html',
+  styleUrls: ['./analytics-popover.component.scss'],
 })
 export class AnalyticsPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'analytics-popover';

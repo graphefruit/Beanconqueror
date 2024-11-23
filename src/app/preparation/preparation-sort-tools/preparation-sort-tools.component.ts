@@ -5,10 +5,9 @@ import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
-    selector: 'app-preparation-sort-tools',
-    templateUrl: './preparation-sort-tools.component.html',
-    styleUrls: ['./preparation-sort-tools.component.scss'],
-    standalone: false
+  selector: 'app-preparation-sort-tools',
+  templateUrl: './preparation-sort-tools.component.html',
+  styleUrls: ['./preparation-sort-tools.component.scss'],
 })
 export class PreparationSortToolsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-sort-tools';

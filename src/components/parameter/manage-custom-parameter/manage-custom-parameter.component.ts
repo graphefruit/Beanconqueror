@@ -9,10 +9,9 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
-    selector: 'manage-custom-parameter',
-    templateUrl: './manage-custom-parameter.component.html',
-    styleUrls: ['./manage-custom-parameter.component.scss'],
-    standalone: false
+  selector: 'manage-custom-parameter',
+  templateUrl: './manage-custom-parameter.component.html',
+  styleUrls: ['./manage-custom-parameter.component.scss'],
 })
 export class ManageCustomParameterComponent implements OnInit {
   public debounceChanges: Subject<string> = new Subject<string>();

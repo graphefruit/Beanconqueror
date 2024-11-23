@@ -3,10 +3,9 @@ import { UIFileHelper } from '../../services/uiFileHelper';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-    selector: 'async-image',
-    templateUrl: './async-image.component.html',
-    styleUrls: ['./async-image.component.scss'],
-    standalone: false
+  selector: 'async-image',
+  templateUrl: './async-image.component.html',
+  styleUrls: ['./async-image.component.scss'],
 })
 export class AsyncImageComponent implements OnChanges {
   @Input() public filePath: string;

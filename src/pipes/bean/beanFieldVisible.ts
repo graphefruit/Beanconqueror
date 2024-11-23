@@ -1,10 +1,7 @@
 /** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-    name: 'beanFieldVisiblePipe',
-    standalone: false
-})
+@Pipe({ name: 'beanFieldVisiblePipe' })
 export class BeanFieldVisiblePipe implements PipeTransform {
   public transform(value, args?: Array<boolean>): any {
     const _settingsField: boolean = args[0];

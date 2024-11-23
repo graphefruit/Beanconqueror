@@ -15,8 +15,7 @@ import { IFlavor } from '../interfaces/flavor/iFlavor';
 import { Brew } from '../classes/brew/brew';
 
 @Directive({
-    selector: '[transform-date]',
-    standalone: false
+  selector: '[transform-date]',
 })
 export class TransformDateDirective implements AfterViewInit {
   private oldModelValue: any = undefined;

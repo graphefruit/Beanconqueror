@@ -10,10 +10,9 @@ import { Settings } from '../../../classes/settings/settings';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
 
 @Component({
-    selector: 'mill-modal-select',
-    templateUrl: './mill-modal-select.component.html',
-    styleUrls: ['./mill-modal-select.component.scss'],
-    standalone: false
+  selector: 'mill-modal-select',
+  templateUrl: './mill-modal-select.component.html',
+  styleUrls: ['./mill-modal-select.component.scss'],
 })
 export class MillModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'mill-modal-select';

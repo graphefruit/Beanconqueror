@@ -15,10 +15,9 @@ import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 
 @Component({
-    selector: 'green-bean-add',
-    templateUrl: './green-bean-add.component.html',
-    styleUrls: ['./green-bean-add.component.scss'],
-    standalone: false
+  selector: 'green-bean-add',
+  templateUrl: './green-bean-add.component.html',
+  styleUrls: ['./green-bean-add.component.scss'],
 })
 export class GreenBeanAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'green-bean-add';

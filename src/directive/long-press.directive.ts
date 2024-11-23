@@ -10,8 +10,7 @@ import { timer, Subscription } from 'rxjs';
 
 declare var window;
 @Directive({
-    selector: '[long-press]',
-    standalone: false
+  selector: '[long-press]',
 })
 export class LongPressDirective implements OnInit {
   private timerSub: Subscription;

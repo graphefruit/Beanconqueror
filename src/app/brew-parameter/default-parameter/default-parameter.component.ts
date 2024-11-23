@@ -3,10 +3,9 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {Settings} from '../../../classes/settings/settings';
 
 @Component({
-    selector: 'default-parameter',
-    templateUrl: './default-parameter.component.html',
-    styleUrls: ['./default-parameter.component.scss'],
-    standalone: false
+  selector: 'default-parameter',
+  templateUrl: './default-parameter.component.html',
+  styleUrls: ['./default-parameter.component.scss'],
 })
 export class DefaultParameterComponent implements OnInit {
 

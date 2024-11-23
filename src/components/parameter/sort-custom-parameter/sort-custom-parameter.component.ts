@@ -7,10 +7,9 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
 @Component({
-    selector: 'sort-custom-parameter',
-    templateUrl: './sort-custom-parameter.component.html',
-    styleUrls: ['./sort-custom-parameter.component.scss'],
-    standalone: false
+  selector: 'sort-custom-parameter',
+  templateUrl: './sort-custom-parameter.component.html',
+  styleUrls: ['./sort-custom-parameter.component.scss'],
 })
 export class SortCustomParameterComponent implements OnInit {
 

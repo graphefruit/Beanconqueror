@@ -23,10 +23,9 @@ import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 
 @Component({
-    selector: 'brew',
-    templateUrl: './brew.page.html',
-    styleUrls: ['./brew.page.scss'],
-    standalone: false
+  selector: 'brew',
+  templateUrl: './brew.page.html',
+  styleUrls: ['./brew.page.scss'],
 })
 export class BrewPage implements OnInit {
   public brews: Array<Brew> = [];

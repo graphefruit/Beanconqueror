@@ -7,10 +7,9 @@ import { ModalController } from '@ionic/angular';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
-    selector: 'app-preparation-custom-parameters',
-    templateUrl: './preparation-custom-parameters.component.html',
-    styleUrls: ['./preparation-custom-parameters.component.scss'],
-    standalone: false
+  selector: 'app-preparation-custom-parameters',
+  templateUrl: './preparation-custom-parameters.component.html',
+  styleUrls: ['./preparation-custom-parameters.component.scss'],
 })
 export class PreparationCustomParametersComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-custom-parameters';

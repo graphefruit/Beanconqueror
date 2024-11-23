@@ -3,10 +3,9 @@ import { NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
-    selector: 'brew-parameter',
-    templateUrl: './brew-parameter.page.html',
-    styleUrls: ['./brew-parameter.page.scss'],
-    standalone: false
+  selector: 'brew-parameter',
+  templateUrl: './brew-parameter.page.html',
+  styleUrls: ['./brew-parameter.page.scss'],
 })
 export class BrewParameterPage implements OnInit {
   constructor(public navCtrl: NavController, private readonly router: Router) {}

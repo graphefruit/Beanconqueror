@@ -6,8 +6,7 @@ import {UIBeanStorage} from '../services/uiBeanStorage';
 import {Bean} from '../classes/bean/bean';
 
 @Directive({
-    selector: '[ngModel][bean-overlay]',
-    standalone: false
+  selector: '[ngModel][bean-overlay]',
 })
 export class BeanOverlayDirective {
 

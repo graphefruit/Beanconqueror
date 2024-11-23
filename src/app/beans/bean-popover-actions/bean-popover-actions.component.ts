@@ -10,10 +10,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 
 @Component({
-    selector: 'bean-popover-actions',
-    templateUrl: './bean-popover-actions.component.html',
-    styleUrls: ['./bean-popover-actions.component.scss'],
-    standalone: false
+  selector: 'bean-popover-actions',
+  templateUrl: './bean-popover-actions.component.html',
+  styleUrls: ['./bean-popover-actions.component.scss'],
 })
 export class BeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-actions';

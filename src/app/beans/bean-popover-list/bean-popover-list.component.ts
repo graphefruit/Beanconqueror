@@ -11,10 +11,9 @@ import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { ModalController } from '@ionic/angular';
 
 @Component({
-    selector: 'app-bean-popover-list',
-    templateUrl: './bean-popover-list.component.html',
-    styleUrls: ['./bean-popover-list.component.scss'],
-    standalone: false
+  selector: 'app-bean-popover-list',
+  templateUrl: './bean-popover-list.component.html',
+  styleUrls: ['./bean-popover-list.component.scss'],
 })
 export class BeanPopoverListComponent {
   public static readonly COMPONENT_ID = 'bean-popover-list';

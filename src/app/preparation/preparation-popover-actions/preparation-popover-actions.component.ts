@@ -8,10 +8,9 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 
 @Component({
-    selector: 'preparation-popover-actions',
-    templateUrl: './preparation-popover-actions.component.html',
-    styleUrls: ['./preparation-popover-actions.component.scss'],
-    standalone: false
+  selector: 'preparation-popover-actions',
+  templateUrl: './preparation-popover-actions.component.html',
+  styleUrls: ['./preparation-popover-actions.component.scss'],
 })
 export class PreparationPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-popover-actions';

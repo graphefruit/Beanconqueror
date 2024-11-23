@@ -14,10 +14,9 @@ import { UIHelper } from '../../../services/uiHelper';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 
 @Component({
-    selector: 'app-brew-modal-import-shot-meticulous',
-    templateUrl: './brew-modal-import-shot-meticulous.component.html',
-    styleUrls: ['./brew-modal-import-shot-meticulous.component.scss'],
-    standalone: false
+  selector: 'app-brew-modal-import-shot-meticulous',
+  templateUrl: './brew-modal-import-shot-meticulous.component.html',
+  styleUrls: ['./brew-modal-import-shot-meticulous.component.scss'],
 })
 export class BrewModalImportShotMeticulousComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-meticulous';

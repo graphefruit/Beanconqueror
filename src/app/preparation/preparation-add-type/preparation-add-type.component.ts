@@ -14,10 +14,9 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 
 @Component({
-    selector: 'preparation-add-type',
-    templateUrl: './preparation-add-type.component.html',
-    styleUrls: ['./preparation-add-type.component.scss'],
-    standalone: false
+  selector: 'preparation-add-type',
+  templateUrl: './preparation-add-type.component.html',
+  styleUrls: ['./preparation-add-type.component.scss'],
 })
 export class PreparationAddTypeComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-add-type';
