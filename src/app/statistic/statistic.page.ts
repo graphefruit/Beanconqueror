@@ -14,9 +14,10 @@ import {UIMillStorage} from '../../services/uiMillStorage';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import {CurrencyService} from '../../services/currencyService/currency.service';
 @Component({
-  selector: 'statistic',
-  templateUrl: './statistic.page.html',
-  styleUrls: ['./statistic.page.scss'],
+    selector: 'statistic',
+    templateUrl: './statistic.page.html',
+    styleUrls: ['./statistic.page.scss'],
+    standalone: false
 })
 export class StatisticPage implements OnInit {
 

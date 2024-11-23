@@ -7,9 +7,10 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
-  selector: 'repeat-custom-parameter',
-  templateUrl: './repeat-custom-parameter.component.html',
-  styleUrls: ['./repeat-custom-parameter.component.scss'],
+    selector: 'repeat-custom-parameter',
+    templateUrl: './repeat-custom-parameter.component.html',
+    styleUrls: ['./repeat-custom-parameter.component.scss'],
+    standalone: false
 })
 export class RepeatCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;

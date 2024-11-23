@@ -4,9 +4,10 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 
 @Component({
-  selector: 'app-brew-brix-calculator',
-  templateUrl: './brew-brix-calculator.component.html',
-  styleUrls: ['./brew-brix-calculator.component.scss'],
+    selector: 'app-brew-brix-calculator',
+    templateUrl: './brew-brix-calculator.component.html',
+    styleUrls: ['./brew-brix-calculator.component.scss'],
+    standalone: false
 })
 export class BrewBrixCalculatorComponent implements OnInit {
   public static COMPONENT_ID = 'brew-brix-calculator';

@@ -27,9 +27,10 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
 declare var cordova;
 @Component({
-  selector: 'bean-general-information',
-  templateUrl: './bean-general-information.component.html',
-  styleUrls: ['./bean-general-information.component.scss'],
+    selector: 'bean-general-information',
+    templateUrl: './bean-general-information.component.html',
+    styleUrls: ['./bean-general-information.component.scss'],
+    standalone: false
 })
 export class BeanGeneralInformationComponent implements OnInit {
   @Input() public data: Bean;

@@ -3,9 +3,10 @@ import { IonContent, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-update-popover',
-  templateUrl: './update-popover.component.html',
-  styleUrls: ['./update-popover.component.scss'],
+    selector: 'app-update-popover',
+    templateUrl: './update-popover.component.html',
+    styleUrls: ['./update-popover.component.scss'],
+    standalone: false
 })
 export class UpdatePopoverComponent implements OnInit {
   @Input() public versions: Array<string>;

@@ -21,9 +21,10 @@ import { UIAlert } from '../../services/uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'photo-add',
-  templateUrl: './photo-add.component.html',
-  styleUrls: ['./photo-add.component.scss'],
+    selector: 'photo-add',
+    templateUrl: './photo-add.component.html',
+    styleUrls: ['./photo-add.component.scss'],
+    standalone: false
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;

@@ -6,7 +6,8 @@ import {RoastingMachine} from '../classes/roasting-machine/roasting-machine';
 import {RoastingMachineModalSelectComponent} from '../app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 
 @Directive({
-  selector: '[ngModel][roasting-machine-overlay]'
+    selector: '[ngModel][roasting-machine-overlay]',
+    standalone: false
 })
 export class RoastingMachineOverlayDirective {
 

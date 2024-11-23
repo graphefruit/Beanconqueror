@@ -7,9 +7,10 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
 import { BluetoothScale } from '../../../classes/devices';
 
 @Component({
-  selector: 'bean-roast-information',
-  templateUrl: './bean-roast-information.component.html',
-  styleUrls: ['./bean-roast-information.component.scss'],
+    selector: 'bean-roast-information',
+    templateUrl: './bean-roast-information.component.html',
+    styleUrls: ['./bean-roast-information.component.scss'],
+    standalone: false
 })
 export class BeanRoastInformationComponent implements OnInit {
   @Input() public data: Bean;

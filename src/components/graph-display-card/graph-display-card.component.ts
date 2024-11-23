@@ -21,9 +21,10 @@ import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyl
 
 declare var Plotly;
 @Component({
-  selector: 'graph-display-card',
-  templateUrl: './graph-display-card.component.html',
-  styleUrls: ['./graph-display-card.component.scss'],
+    selector: 'graph-display-card',
+    templateUrl: './graph-display-card.component.html',
+    styleUrls: ['./graph-display-card.component.scss'],
+    standalone: false
 })
 export class GraphDisplayCardComponent implements OnInit {
   @Input() public flowProfileData: any;

@@ -15,9 +15,10 @@ import { EventQueueService } from '../../../services/queueService/queue-service.
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 
 @Component({
-  selector: 'app-settings-popover-bluetooth-actions',
-  templateUrl: './settings-popover-bluetooth-actions.component.html',
-  styleUrls: ['./settings-popover-bluetooth-actions.component.scss'],
+    selector: 'app-settings-popover-bluetooth-actions',
+    templateUrl: './settings-popover-bluetooth-actions.component.html',
+    styleUrls: ['./settings-popover-bluetooth-actions.component.scss'],
+    standalone: false
 })
 export class SettingsPopoverBluetoothActionsComponent implements OnInit {
   public static COMPONENT_ID = 'settings-popover-bluetooth-actions';

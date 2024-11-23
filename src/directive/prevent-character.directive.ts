@@ -2,7 +2,8 @@ import { Directive, HostListener } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 @Directive({
-  selector: '[ngModel][prevent-characters]',
+    selector: '[ngModel][prevent-characters]',
+    standalone: false
 })
 export class PreventCharacterDirective {
   constructor(private readonly model: NgModel) {}

@@ -4,7 +4,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { SETTING_FUNCTION_PIPE_ENUM } from '../../enums/settings/settingFunctionPipe';
 
-@Pipe({ name: 'settingFunctionPipe' })
+@Pipe({
+    name: 'settingFunctionPipe',
+    standalone: false
+})
 export class SettingFunction implements PipeTransform {
   public transform(
     value: Settings,

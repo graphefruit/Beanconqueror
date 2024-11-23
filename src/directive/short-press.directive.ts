@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[short-press]',
+    selector: '[short-press]',
+    standalone: false
 })
 export class ShortPressDirective {
   @Input('short-press-delay') public delay?: number = 250;

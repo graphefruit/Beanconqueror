@@ -12,9 +12,10 @@ import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
 
 @Component({
-  selector: 'water-add-type',
-  templateUrl: './water-add-type.component.html',
-  styleUrls: ['./water-add-type.component.scss'],
+    selector: 'water-add-type',
+    templateUrl: './water-add-type.component.html',
+    styleUrls: ['./water-add-type.component.scss'],
+    standalone: false
 })
 export class WaterAddTypeComponent implements OnInit {
   public static COMPONENT_ID = 'water-add-type';

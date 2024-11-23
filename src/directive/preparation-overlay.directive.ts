@@ -16,7 +16,8 @@ import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
 
 @Directive({
-  selector: '[ngModel][preparation-overlay]',
+    selector: '[ngModel][preparation-overlay]',
+    standalone: false
 })
 export class PreparationOverlayDirective {
   @Output() public ngModelChange = new EventEmitter();

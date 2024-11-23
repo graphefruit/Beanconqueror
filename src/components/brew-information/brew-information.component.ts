@@ -45,9 +45,10 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 declare var window;
 @Component({
-  selector: 'brew-information',
-  templateUrl: './brew-information.component.html',
-  styleUrls: ['./brew-information.component.scss'],
+    selector: 'brew-information',
+    templateUrl: './brew-information.component.html',
+    styleUrls: ['./brew-information.component.scss'],
+    standalone: false
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;

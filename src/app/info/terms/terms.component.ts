@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import {UIHelper} from '../../../services/uiHelper';
 
 @Component({
-  selector: 'terms',
-  templateUrl: './terms.component.html',
-  styleUrls: ['./terms.component.scss'],
+    selector: 'terms',
+    templateUrl: './terms.component.html',
+    styleUrls: ['./terms.component.scss'],
+    standalone: false
 })
 export class TermsComponent implements OnInit {
 

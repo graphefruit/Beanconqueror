@@ -3,9 +3,10 @@ import {Settings} from '../../../classes/settings/settings';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 
 @Component({
-  selector: 'list-view-parameter',
-  templateUrl: './list-view-parameter.component.html',
-  styleUrls: ['./list-view-parameter.component.scss'],
+    selector: 'list-view-parameter',
+    templateUrl: './list-view-parameter.component.html',
+    styleUrls: ['./list-view-parameter.component.scss'],
+    standalone: false
 })
 export class ListViewParameterComponent implements OnInit {
 

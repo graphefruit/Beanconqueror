@@ -5,9 +5,10 @@ import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { Brew } from '../../../classes/brew/brew';
 
 @Component({
-  selector: 'app-brew-ratio-calculator',
-  templateUrl: './brew-ratio-calculator.component.html',
-  styleUrls: ['./brew-ratio-calculator.component.scss'],
+    selector: 'app-brew-ratio-calculator',
+    templateUrl: './brew-ratio-calculator.component.html',
+    styleUrls: ['./brew-ratio-calculator.component.scss'],
+    standalone: false
 })
 export class BrewRatioCalculatorComponent implements OnInit {
   public static COMPONENT_ID = 'brew-ratio-calculator';

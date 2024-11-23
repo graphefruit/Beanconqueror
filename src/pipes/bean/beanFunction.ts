@@ -5,7 +5,10 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { Bean } from '../../classes/bean/bean';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 
-@Pipe({ name: 'beanFunctionPipe' })
+@Pipe({
+    name: 'beanFunctionPipe',
+    standalone: false
+})
 export class BeanFunction implements PipeTransform {
   public transform(
     value: Bean,

@@ -81,9 +81,10 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 declare var cordova;
 
 @Component({
-  selector: 'brew-brewing',
-  templateUrl: './brew-brewing.component.html',
-  styleUrls: ['./brew-brewing.component.scss'],
+    selector: 'brew-brewing',
+    templateUrl: './brew-brewing.component.html',
+    styleUrls: ['./brew-brewing.component.scss'],
+    standalone: false
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;

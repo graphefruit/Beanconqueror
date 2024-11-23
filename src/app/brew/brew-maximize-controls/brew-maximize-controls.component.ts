@@ -16,9 +16,10 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
-  selector: 'app-brew-maximize-controls',
-  templateUrl: './brew-maximize-controls.component.html',
-  styleUrls: ['./brew-maximize-controls.component.scss'],
+    selector: 'app-brew-maximize-controls',
+    templateUrl: './brew-maximize-controls.component.html',
+    styleUrls: ['./brew-maximize-controls.component.scss'],
+    standalone: false
 })
 export class BrewMaximizeControlsComponent
   implements AfterViewInit, OnDestroy, OnInit

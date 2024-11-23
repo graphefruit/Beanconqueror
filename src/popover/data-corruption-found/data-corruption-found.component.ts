@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular';
 
 @Component({
-  selector: 'app-data-corruption-found',
-  templateUrl: './data-corruption-found.component.html',
-  styleUrls: ['./data-corruption-found.component.scss'],
+    selector: 'app-data-corruption-found',
+    templateUrl: './data-corruption-found.component.html',
+    styleUrls: ['./data-corruption-found.component.scss'],
+    standalone: false
 })
 export class DataCorruptionFoundComponent implements OnInit {
   public static POPOVER_ID: string = 'data-corruption-found-popover';

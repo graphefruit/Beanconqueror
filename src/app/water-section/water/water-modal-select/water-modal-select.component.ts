@@ -4,9 +4,10 @@ import {UIWaterStorage} from '../../../../services/uiWaterStorage';
 import {Water} from '../../../../classes/water/water';
 
 @Component({
-  selector: 'app-water-modal-select',
-  templateUrl: './water-modal-select.component.html',
-  styleUrls: ['./water-modal-select.component.scss'],
+    selector: 'app-water-modal-select',
+    templateUrl: './water-modal-select.component.html',
+    styleUrls: ['./water-modal-select.component.scss'],
+    standalone: false
 })
 export class WaterModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'water-model-select';

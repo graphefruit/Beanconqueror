@@ -6,9 +6,10 @@ import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../../services/uiHelper';
 
 @Component({
-  selector: 'app-green-bean-sort',
-  templateUrl: './green-bean-sort.component.html',
-  styleUrls: ['./green-bean-sort.component.scss'],
+    selector: 'app-green-bean-sort',
+    templateUrl: './green-bean-sort.component.html',
+    styleUrls: ['./green-bean-sort.component.scss'],
+    standalone: false
 })
 export class GreenBeanSortComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-sort';

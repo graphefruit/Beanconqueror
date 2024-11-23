@@ -3,9 +3,10 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {Settings} from '../../../classes/settings/settings';
 
 @Component({
-  selector: 'manage-parameter',
-  templateUrl: './manage-parameter.component.html',
-  styleUrls: ['./manage-parameter.component.scss'],
+    selector: 'manage-parameter',
+    templateUrl: './manage-parameter.component.html',
+    styleUrls: ['./manage-parameter.component.scss'],
+    standalone: false
 })
 export class ManageParameterComponent implements OnInit {
 

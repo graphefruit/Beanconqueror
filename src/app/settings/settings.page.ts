@@ -80,9 +80,10 @@ import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 
 @Component({
-  selector: 'settings',
-  templateUrl: './settings.page.html',
-  styleUrls: ['./settings.page.scss'],
+    selector: 'settings',
+    templateUrl: './settings.page.html',
+    styleUrls: ['./settings.page.scss'],
+    standalone: false
 })
 export class SettingsPage {
   public settings: Settings;

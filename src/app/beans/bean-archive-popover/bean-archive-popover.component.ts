@@ -10,9 +10,10 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
-  selector: 'app-bean-archive-popover',
-  templateUrl: './bean-archive-popover.component.html',
-  styleUrls: ['./bean-archive-popover.component.scss'],
+    selector: 'app-bean-archive-popover',
+    templateUrl: './bean-archive-popover.component.html',
+    styleUrls: ['./bean-archive-popover.component.scss'],
+    standalone: false
 })
 export class BeanArchivePopoverComponent implements OnInit {
   public static COMPONENT_ID = 'bean-archive-popover';

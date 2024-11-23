@@ -5,9 +5,10 @@ import {IFlavor} from '../../../interfaces/flavor/iFlavor';
 import {CuppingFlavorsComponent} from '../../../components/cupping-flavors/cupping-flavors.component';
 
 @Component({
-  selector: 'app-brew-flavor-picker',
-  templateUrl: './brew-flavor-picker.component.html',
-  styleUrls: ['./brew-flavor-picker.component.scss'],
+    selector: 'app-brew-flavor-picker',
+    templateUrl: './brew-flavor-picker.component.html',
+    styleUrls: ['./brew-flavor-picker.component.scss'],
+    standalone: false
 })
 export class BrewFlavorPickerComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-flavor-picker';

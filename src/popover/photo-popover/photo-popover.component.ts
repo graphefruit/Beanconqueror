@@ -9,9 +9,10 @@ import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 
 @Component({
-  selector: 'photo-popover',
-  templateUrl: './photo-popover.component.html',
-  styleUrls: ['./photo-popover.component.scss'],
+    selector: 'photo-popover',
+    templateUrl: './photo-popover.component.html',
+    styleUrls: ['./photo-popover.component.scss'],
+    standalone: false
 })
 export class PhotoPopoverComponent implements OnInit {
   public static COMPONENT_ID: string = 'photo-popover';

@@ -5,9 +5,10 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
-  selector: 'app-meticulous-help-popover',
-  templateUrl: './meticulous-help-popover.component.html',
-  styleUrls: ['./meticulous-help-popover.component.scss'],
+    selector: 'app-meticulous-help-popover',
+    templateUrl: './meticulous-help-popover.component.html',
+    styleUrls: ['./meticulous-help-popover.component.scss'],
+    standalone: false
 })
 export class MeticulousHelpPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'meticulous-help-popover';

@@ -7,9 +7,10 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
-  selector: 'list-view-custom-parameter',
-  templateUrl: './list-view-custom-parameter.component.html',
-  styleUrls: ['./list-view-custom-parameter.component.scss'],
+    selector: 'list-view-custom-parameter',
+    templateUrl: './list-view-custom-parameter.component.html',
+    styleUrls: ['./list-view-custom-parameter.component.scss'],
+    standalone: false
 })
 export class ListViewCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;

@@ -6,9 +6,10 @@ import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoast
 import { ROASTING_MACHINE_ACTION } from '../../../../enums/roasting-machine/roastingMachineAction';
 
 @Component({
-  selector: 'app-roasting-machine-popover-actions',
-  templateUrl: './roasting-machine-popover-actions.component.html',
-  styleUrls: ['./roasting-machine-popover-actions.component.scss'],
+    selector: 'app-roasting-machine-popover-actions',
+    templateUrl: './roasting-machine-popover-actions.component.html',
+    styleUrls: ['./roasting-machine-popover-actions.component.scss'],
+    standalone: false
 })
 export class RoastingMachinePopoverActionsComponent {
   public static readonly COMPONENT_ID = 'roasting-machine-popover-actions';

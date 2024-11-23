@@ -3,9 +3,10 @@ import {LogTextComponent} from '../../app/info/log/log-text/log-text.component';
 import {ModalController} from '@ionic/angular';
 
 @Component({
-  selector: 'app-filesystem-error-popover',
-  templateUrl: './filesystem-error-popover.component.html',
-  styleUrls: ['./filesystem-error-popover.component.scss'],
+    selector: 'app-filesystem-error-popover',
+    templateUrl: './filesystem-error-popover.component.html',
+    styleUrls: ['./filesystem-error-popover.component.scss'],
+    standalone: false
 })
 export class FilesystemErrorPopoverComponent implements OnInit {
 

@@ -21,9 +21,10 @@ import { UIHelper } from '../../services/uiHelper';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 
 @Component({
-  selector: 'preparation-information-card',
-  templateUrl: './preparation-information-card.component.html',
-  styleUrls: ['./preparation-information-card.component.scss'],
+    selector: 'preparation-information-card',
+    templateUrl: './preparation-information-card.component.html',
+    styleUrls: ['./preparation-information-card.component.scss'],
+    standalone: false
 })
 export class PreparationInformationCardComponent implements OnInit {
   @Input() public preparation: Preparation;

@@ -3,9 +3,10 @@ import {ModalController} from '@ionic/angular';
 import {UILog} from '../../../../services/uiLog';
 
 @Component({
-  selector: 'log-text',
-  templateUrl: './log-text.component.html',
-  styleUrls: ['./log-text.component.scss'],
+    selector: 'log-text',
+    templateUrl: './log-text.component.html',
+    styleUrls: ['./log-text.component.scss'],
+    standalone: false
 })
 export class LogTextComponent implements OnInit {
 

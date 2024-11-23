@@ -9,9 +9,10 @@ import { Brew } from '../../../classes/brew/brew';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 
 @Component({
-  selector: 'app-brew-rating',
-  templateUrl: './brew-rating.component.html',
-  styleUrls: ['./brew-rating.component.scss'],
+    selector: 'app-brew-rating',
+    templateUrl: './brew-rating.component.html',
+    styleUrls: ['./brew-rating.component.scss'],
+    standalone: false
 })
 export class BrewRatingComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-rating';
