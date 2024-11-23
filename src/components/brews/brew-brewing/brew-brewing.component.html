@@ -195,18 +195,19 @@
       <ion-icon name="download" slot="icon-only"></ion-icon>
     </ion-button>
 
-    <ion-button (click)="chooseGraphToSetAsReference()" *ngIf="!brewBrewingGraphEl?.shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
-      <ion-icon name="analytics-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-    <ion-button (click)="maximizeFlowGraph()" *ngIf="!brewBrewingGraphEl?.shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
-      <ion-icon name="expand-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-    <ion-button (click)="maximizeControlButtons()" *ngIf="brewBrewingGraphEl?.shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
-      <ion-icon name="expand-outline" slot="icon-only"></ion-icon>
-    </ion-button>
+    @if(brewBrewingGraphEl?.shallFlowProfileBeHidden()) {
+      <ion-button (click)="maximizeControlButtons()"  fill="clear" slot="end" tappable>
+        <ion-icon name="expand-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    } @else {
+      <ion-button (click)="chooseGraphToSetAsReference()" fill="clear" slot="end" tappable>
+        <ion-icon name="analytics-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="maximizeFlowGraph()" fill="clear" slot="end" tappable>
+        <ion-icon name="expand-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    }
   </ion-item>
-
-
   <ion-item *ngIf="(settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_temperature_time,
                       choosenPreparation.manage_parameters.brew_temperature_time,
                       choosenPreparation.use_custom_parameters])" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_temperature_time,
