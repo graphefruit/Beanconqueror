@@ -2911,9 +2911,6 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (!isSmartScaleConnected) {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
       this.updateChart('pressure');
-    }
-
-    if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
 
@@ -2968,9 +2965,6 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (!isSmartScaleConnected) {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
       this.updateChart('temperature');
-    }
-
-    if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
 
