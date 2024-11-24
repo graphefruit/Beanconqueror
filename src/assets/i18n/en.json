@@ -1412,9 +1412,9 @@
     "LOCATION": "To find bluetooth devices, the app needs access to the location.",
     "BLUETOOTH": "To find bluetooth devices, the app needs access to bluetooth"
   },
-  "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generate share Code",
+  "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generate share code / nfc",
   "BEAN_CODE_ACTION":{
-    "TITLE":  "Bean qr code action",
+    "TITLE":  "Bean qr/nfc code action",
     "START_BREW": "Start brew",
     "START_BREW_CHOOSE_PREPARATION": "Start brew and choose preparation method",
     "DETAIL": "Detail view",
