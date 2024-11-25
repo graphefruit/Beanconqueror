@@ -2384,9 +2384,10 @@ export class BrewBrewingGraphComponent implements OnInit {
           weight = oldWeight;
         }
       }
-    } else if (scaleType === ScaleType.DECENT && isEspresso) {
+    } else if (isEspresso) {
       /** We have an reported issue on a decent scale, that when a weight drops to less then zero, it sticks to like -25.9,
        * but the not mutated weight is bigger or same like 0, we set the
+       * We make this for all scales available.
        */
       if (weight < 0 && notMutatedWeight >= 0) {
         weight = notMutatedWeight;
