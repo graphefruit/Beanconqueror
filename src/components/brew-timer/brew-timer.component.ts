@@ -113,7 +113,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly platform: Platform,
-    private readonly zone: NgZone
+    private readonly zone: NgZone,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
@@ -339,50 +339,57 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public millisecondTick(): void {
-    setTimeout(() => {
-      if (!this.timer.runTimer) {
-        return;
-      }
-      const milliSecondTimer = moment(moment().toDate()).subtract(
-        this.startedOffset
-      );
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        if (!this.timer.runTimer) {
+          return;
+        }
+        const milliSecondTimer = moment(moment().toDate()).subtract(
+          this.startedOffset,
+        );
 
-      this.timer.milliseconds = milliSecondTimer.milliseconds();
-      const passedSeconds = milliSecondTimer.diff(this.startingDay, 'seconds');
-      this.timer.seconds = passedSeconds;
+        this.timer.milliseconds = milliSecondTimer.milliseconds();
+        const passedSeconds = milliSecondTimer.diff(
+          this.startingDay,
+          'seconds',
+        );
+        this.timer.seconds = passedSeconds;
 
-      this.displayingTime = moment(this.displayingTime)
-        .startOf('day')
-        .add('seconds', this.timer.seconds)
-        .add('milliseconds', this.timer.milliseconds)
-        .toISOString();
-      this.updateBrewTimerText();
-      this.millisecondTick();
-      this.changeEvent();
-    }, 10);
+        this.displayingTime = moment(this.displayingTime)
+          .startOf('day')
+          .add('seconds', this.timer.seconds)
+          .add('milliseconds', this.timer.milliseconds)
+          .toISOString();
+        this.updateBrewTimerText();
+        this.millisecondTick();
+        this.changeEvent();
+      }, 10);
+    });
   }
   public timerTick(): void {
-    setTimeout(() => {
-      if (!this.timer.runTimer) {
-        return;
-      }
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        if (!this.timer.runTimer) {
+          return;
+        }
 
-      const actualDate = moment().toDate();
+        const actualDate = moment().toDate();
 
-      const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
+        const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
 
-      const passedSeconds = actualTimerTick.diff(this.startingDay, 'seconds');
-      this.timer.seconds = passedSeconds;
+        const passedSeconds = actualTimerTick.diff(this.startingDay, 'seconds');
+        this.timer.seconds = passedSeconds;
 
-      this.displayingTime = moment(this.displayingTime)
-        .startOf('day')
-        .add('seconds', this.timer.seconds)
-        .add('milliseconds', this.timer.milliseconds)
-        .toISOString();
-      this.updateBrewTimerText();
-      this.timerTick();
-      this.changeEvent();
-    }, 1000);
+        this.displayingTime = moment(this.displayingTime)
+          .startOf('day')
+          .add('seconds', this.timer.seconds)
+          .add('milliseconds', this.timer.milliseconds)
+          .toISOString();
+        this.updateBrewTimerText();
+        this.timerTick();
+        this.changeEvent();
+      }, 1000);
+    });
   }
 
   public getSeconds(): number {
@@ -463,7 +470,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public changeDate(_event) {
     const durationPassed = moment.duration(
-      moment(_event).diff(moment(_event).startOf('day'))
+      moment(_event).diff(moment(_event).startOf('day')),
     );
     this.displayingTime = moment(_event).toISOString();
     this.updateBrewTimerText();
@@ -509,8 +516,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       this.timer.seconds = moment
         .duration(
           moment(this.displayingTime).diff(
-            moment(this.displayingTime).startOf('day')
-          )
+            moment(this.displayingTime).startOf('day'),
+          ),
         )
         .asSeconds();
       this.timer.milliseconds = moment(this.displayingTime)

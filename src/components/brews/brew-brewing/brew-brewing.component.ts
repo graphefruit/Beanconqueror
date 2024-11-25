@@ -587,12 +587,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   private writeCalculatedCoffeeBrewTime() {
-    if (this.calculatedCoffeeBrewTime?.nativeElement) {
-      window.requestAnimationFrame(() => {
-        this.calculatedCoffeeBrewTime.nativeElement.innerHTML =
-          this.data.getFormattedCoffeeBrewTime();
-      });
-    }
+    this.ngZone.runOutsideAngular(() => {
+      if (this.calculatedCoffeeBrewTime?.nativeElement) {
+        window.requestAnimationFrame(() => {
+          this.calculatedCoffeeBrewTime.nativeElement.innerHTML =
+            this.data.getFormattedCoffeeBrewTime();
+        });
+      }
+    });
   }
 
   public async timerStartPressed(_event) {
