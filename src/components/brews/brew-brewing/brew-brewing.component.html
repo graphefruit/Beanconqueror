@@ -28,7 +28,7 @@
                 tabIndex="2" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-brew-ratio" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="bluetoothScaleSetGrindWeight()" *ngIf="brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;"
+    <ion-button (click)="bluetoothScaleSetGrindWeight()" *ngIf="brewBrewingGraphEl?.uiSmartScaleConnected" style="margin-left:0px;"
                 tabIndex="3" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -113,7 +113,7 @@
   <ion-item *ngIf="(settings | brewFieldVisiblePipe: [settings.manage_parameters.method_of_preparation_tool,
                       choosenPreparation.manage_parameters.method_of_preparation_tool,
                       choosenPreparation.use_custom_parameters])"
-            [disabled]="getActivePreparationTools().length <= 0" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.method_of_preparation_tool,
+            [disabled]="uiHasActivePreparationTools" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.method_of_preparation_tool,
                       choosenPreparation.brew_order.before.method_of_preparation_tool,
                       choosenPreparation.use_custom_parameters])" lines="inset">
     <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}' [(ngModel)]="data.method_of_preparation_tools"
@@ -126,7 +126,7 @@
     </ion-select>-->
   </ion-item>
 
-  <ion-item [disabled]="!hasWaterEntries()" *ngIf="(settings | brewFieldVisiblePipe: [settings.manage_parameters.water,
+  <ion-item [disabled]="!uiHasWaterEntries" *ngIf="(settings | brewFieldVisiblePipe: [settings.manage_parameters.water,
                       choosenPreparation.manage_parameters.water,
                       choosenPreparation.use_custom_parameters])" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.water,
                       choosenPreparation.brew_order.before.water,
@@ -144,7 +144,7 @@
     <ion-input label-placement="stacked" label='{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}' [(ngModel)]="data.bean_weight_in" inputmode="decimal"
                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_WEIGHT_IN' | translate}}" prevent-characters remove-empty-number
                type="text"></ion-input>
-    <ion-button *ngIf="brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeightIn()"
+    <ion-button *ngIf="brewBrewingGraphEl?.uiSmartScaleConnected" style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeightIn()"
                 tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -216,7 +216,7 @@
     <timer #brewTemperatureTime (timerTicked)="temperatureTimeChanged($event)"
            label-id='brewTemperatureTime' label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"></timer>
   </ion-item>
-  <brew-brewing-graph   [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
+  <brew-brewing-graph  [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
                       choosenPreparation.brew_order.while.brew_time,
                       choosenPreparation.use_custom_parameters])" #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
 
@@ -234,11 +234,9 @@
                 (tareScale)="tareScale($event)" [bloomTimerVisible]="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_blooming_time,
                       choosenPreparation.manage_parameters.coffee_blooming_time,
                       choosenPreparation.use_custom_parameters)"
-                [listeningButtonVisible]="settings.bluetooth_scale_listening_threshold_active && brewBrewingGraphEl?.smartScaleConnected()"
-                [ignoreScaleWeightButtonVisible]="settings.bluetooth_scale_ignore_weight_button_active && brewBrewingGraphEl?.smartScaleConnected()"
                 [dripTimerVisible]="(uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
                       choosenPreparation.manage_parameters.coffee_first_drip_time,
-                      choosenPreparation.use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (choosenPreparation.use_custom_parameters &&  choosenPreparation.manage_parameters.coffee_first_drip_time)"
+                      choosenPreparation.use_custom_parameters) && choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (choosenPreparation.use_custom_parameters &&  choosenPreparation.manage_parameters.coffee_first_drip_time)"
                 label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>
   </ion-item>
 
@@ -318,7 +316,7 @@
         </ion-item>
       </ion-col>
     </ion-row>
-    <ion-button *ngIf="brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()"
+    <ion-button *ngIf="brewBrewingGraphEl?.uiSmartScaleConnected" style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()"
                 tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -428,7 +426,7 @@
                 slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-calculator" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button *ngIf="brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;"
+    <ion-button *ngIf="brewBrewingGraphEl?.uiSmartScaleConnected" style="margin-left:0px;"
                 (click)="bluetoothScaleSetBrewBeverageQuantityWeight()" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
                 tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
@@ -446,7 +444,7 @@
     <ion-button (click)="calculateBrixToTds()" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-refractometer" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button *ngIf="refractometerConnected()" style="margin-left:0px;" (click)="requestRefractometerRead()" class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-button *ngIf="uiRefractometerConnected" style="margin-left:0px;" (click)="requestRefractometerRead()" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-microscope" slot="icon-only"></ion-icon>
     </ion-button>
   </ion-item>

@@ -68,6 +68,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     cssClass: 'xenia-script-chooser',
   };
 
+  public uiPreparationDeviceConnected: boolean = undefined;
+  public uiPreparationDeviceType: PreparationDeviceType = undefined;
+  public uiHasAPreparationDeviceSet: boolean = undefined;
   constructor(
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiAlert: UIAlert,
@@ -79,8 +82,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly modalController: ModalController,
     public readonly uiBrewHelper: UIBrewHelper,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {}
+
+  private async setUIParams() {
+    this.uiPreparationDeviceConnected = this.preparationDeviceConnected();
+    this.uiPreparationDeviceType = this.getDataPreparationDeviceType();
+    this.uiHasAPreparationDeviceSet = this.hasAPreparationDeviceSet();
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -149,19 +158,21 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       } else if (connectedDevice instanceof SanremoYOUDevice) {
         await this.instanceSanremoYOUPreparationDevice(connectedDevice, _brew);
       }
+
       this.checkChanges();
     } else {
       this.preparationDevice = undefined;
     }
+    await this.setUIParams();
   }
   private async instanceXeniaPreparationDevice(
     connectedDevice: PreparationDevice,
-    _brew: Brew = null
+    _brew: Brew = null,
   ) {
     let preparationDeviceNotConnected: boolean = false;
     try {
       await this.uiAlert.showLoadingSpinner(
-        'PREPARATION_DEVICE.TYPE_XENIA.CHECKING_CONNECTION_TO_PORTAFILTER'
+        'PREPARATION_DEVICE.TYPE_XENIA.CHECKING_CONNECTION_TO_PORTAFILTER',
       );
       await connectedDevice.deviceConnected().then(
         () => {
@@ -173,9 +184,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             'PREPARATION_DEVICE.TYPE_XENIA.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
             'ERROR_OCCURED',
             undefined,
-            true
+            true,
           );
-        }
+        },
       );
       if (preparationDeviceNotConnected) {
         await this.uiAlert.hideLoadingSpinner();
@@ -191,7 +202,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     this.preparationDevice = connectedDevice as XeniaDevice;
     await this.uiAlert.setLoadingSpinnerMessage(
       'PREPARATION_DEVICE.TYPE_XENIA.GRABING_SCRIPTS',
-      true
+      true,
     );
     try {
       try {
@@ -200,7 +211,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       } catch (ex) {
         this.uiToast.showInfoToast(
           'We could not get scripts from xenia: ' + JSON.stringify(ex),
-          false
+          false,
         );
       }
       // We didn't set any data yet
@@ -213,7 +224,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
               _brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE
             ) {
               this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                _brew.preparationDeviceBrew
+                _brew.preparationDeviceBrew,
               );
               wasSomethingSet = true;
             }
@@ -228,11 +239,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (brews.length > 0) {
               const foundEntry = brews.find(
                 (b) =>
-                  b.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+                  b.preparationDeviceBrew.type !== PreparationDeviceType.NONE,
               );
               if (foundEntry) {
                 this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                  foundEntry.preparationDeviceBrew
+                  foundEntry.preparationDeviceBrew,
                 );
                 wasSomethingSet = true;
               }
@@ -254,7 +265,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (
               xeniaParams.scriptStartId > 2 &&
               this.preparationDevice.scriptList.findIndex(
-                (e) => e.INDEX === xeniaParams.scriptStartId
+                (e) => e.INDEX === xeniaParams.scriptStartId,
               ) === -1
             ) {
               // Script not found.
@@ -264,7 +275,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (
               xeniaParams.scriptAtFirstDripId > 2 &&
               this.preparationDevice.scriptList.findIndex(
-                (e) => e.INDEX === xeniaParams.scriptAtFirstDripId
+                (e) => e.INDEX === xeniaParams.scriptAtFirstDripId,
               ) === -1
             ) {
               // Script not found.
@@ -274,7 +285,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (
               xeniaParams.scriptAtWeightReachedId > 2 &&
               this.preparationDevice.scriptList.findIndex(
-                (e) => e.INDEX === xeniaParams.scriptAtWeightReachedId
+                (e) => e.INDEX === xeniaParams.scriptAtWeightReachedId,
               ) === -1
             ) {
               // Script not found.
@@ -286,7 +297,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
                 'PREPARATION_DEVICE.TYPE_XENIA.ERROR_NOT_ALL_SCRIPTS_FOUND',
                 'CARE',
                 undefined,
-                true
+                true,
               );
             }
           } else {
@@ -317,7 +328,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
   private async instanceMeticulousPreparationDevice(
     connectedDevice: MeticulousDevice,
-    _brew: Brew = null
+    _brew: Brew = null,
   ) {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.METICULOUS;
     this.data.preparationDeviceBrew.params = new MeticulousParams();
@@ -331,13 +342,13 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       },
       () => {
         //Should never trigger
-      }
+      },
     );
   }
 
   private async instanceSanremoYOUPreparationDevice(
     connectedDevice: SanremoYOUDevice,
-    _brew: Brew = null
+    _brew: Brew = null,
   ) {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
     this.data.preparationDeviceBrew.params = new SanremoYOUParams();
@@ -352,9 +363,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           'PREPARATION_DEVICE.TYPE_SANREMO_YOU.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
           'CARE',
           'OK',
-          true
+          true,
         );
-      }
+      },
     );
 
     if (!this.preparationDevice) {
@@ -365,7 +376,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     /** Seccond call**/
     await connectedDevice.deviceConnected().then(
       () => {},
-      () => {}
+      () => {},
     );
     /** Third call call**/
 
@@ -391,7 +402,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           }),
           this.translate.instant('CARE'),
           this.translate.instant('OK'),
-          false
+          false,
         );
       }
     }, 1000);
@@ -401,7 +412,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       },
       () => {
         clearTimeout(delayCallTimeout);
-      }
+      },
     );
   }
 

@@ -19,6 +19,8 @@ import { IonInput, ModalController, Platform } from '@ionic/angular';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { Subscription } from 'rxjs';
+import { BluetoothScale } from '../../classes/devices';
 
 @Component({
   selector: 'brew-timer',
@@ -42,6 +44,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   @Output() public timerStartPressed = new EventEmitter();
   @Output() public timerResumedPressed = new EventEmitter();
+
+  public uiSmartScaleConnected: boolean = false;
+  public uiSmartScaleSupportsTaring: boolean = false;
 
   public displayingTime: string = moment().startOf('day').toISOString();
 
@@ -107,33 +112,58 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public timer: ITimer;
   public settings: Settings;
   private isIos16 = false;
+
+  public bluetoothSubscription: Subscription = undefined;
+
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly platform: Platform,
     private readonly zone: NgZone,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
       this.isIos16 =
         this.platform.is('ios') && deviceInfo.osVersion.indexOf('16.') >= 0;
     });
+
+    this.bluetoothSubscription = this.bleManager
+      .attachOnEvent()
+      .subscribe((_type) => {
+        this.setUIParams();
+        this.checkChanges();
+      });
+    this.setUIParams();
+  }
+
+  private setUIParams() {
+    this.uiSmartScaleConnected = this.smartScaleConnected();
+    this.uiSmartScaleSupportsTaring = this.smartScaleSupportsTaring();
+    this.listeningButtonVisible =
+      this.uiSmartScaleConnected &&
+      this.settings.bluetooth_scale_listening_threshold_active;
+    this.ignoreScaleWeightButtonVisible =
+      this.uiSmartScaleConnected &&
+      this.settings.bluetooth_scale_ignore_weight_button_active;
   }
 
   public smartScaleConnected() {
-    try {
-      return this.bleManager.getScale() !== null;
-    } catch (ex) {
-      return false;
+    if (!this.platform.is('capacitor')) {
+      return true;
     }
+
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
   }
 
   public smartScaleSupportsTaring() {
     try {
       return this.bleManager.getScale().supportsTaring;
-    } catch (ex) {}
+    } catch (ex) {
+      return false;
+    }
   }
 
   public ngOnInit(): void {
@@ -177,6 +207,11 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.timer.runTimer = false;
+    // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
+    if (this.bluetoothSubscription) {
+      this.bluetoothSubscription.unsubscribe();
+      this.bluetoothSubscription = undefined;
+    }
   }
 
   public hasFinished(): boolean {

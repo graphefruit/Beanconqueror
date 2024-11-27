@@ -147,6 +147,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public uiShowSectionAfterBrew: boolean = false;
   public uiShowSectionWhileBrew: boolean = false;
   public uiShowSectionBeforeBrew: boolean = false;
+  public uiHasWaterEntries: boolean = false;
+  public uiHasActivePreparationTools: boolean = false;
+  public uiRefractometerConnected: boolean = false;
 
   constructor(
     private readonly platform: Platform,
@@ -179,6 +182,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
     this.uiShowSectionWhileBrew = this.showSectionWhileBrew();
     this.uiShowSectionBeforeBrew = this.showSectionBeforeBrew();
+    this.uiHasWaterEntries = this.hasWaterEntries();
+    this.uiHasActivePreparationTools =
+      this.getActivePreparationTools().length > 0;
+    this.uiRefractometerConnected = this.refractometerConnected();
   }
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
@@ -309,6 +316,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           ) {
             this.deattachToRefractometerChange();
           }
+          this.setUIParams();
+          this.checkChanges();
+          /**THe check changes is needed, else the values are not interpolated to all other components**/
+          this.timer.checkChanges();
         });
 
       if (this.refractometerConnected()) {

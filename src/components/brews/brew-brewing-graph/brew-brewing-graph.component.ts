@@ -292,12 +292,34 @@ export class BrewBrewingGraphComponent implements OnInit {
           // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
           setTimeout(() => {
             this.graphIconColSize = this.getGraphIonColSize();
+            this.setUIParams();
             this.checkChanges();
           }, 200);
           this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
           this.brewComponent?.checkChanges();
         });
     }
+  }
+
+  public uiSmartScaleConnected: boolean = undefined;
+  public uiSmartScaleSupportsTaring: boolean = undefined;
+  public uiPressureConnected: boolean = undefined;
+  public uiTemperatureConnected: boolean = undefined;
+  public uiPreparationDeviceConnected: boolean = undefined;
+  public uiPreparationDeviceType: PreparationDeviceType = undefined;
+  public uiSmartScaleConnectedSupportsTwoWeights: boolean = undefined;
+
+  private async setUIParams() {
+    this.uiSmartScaleConnected = this.smartScaleConnected();
+    this.uiPressureConnected = this.pressureDeviceConnected();
+    this.uiTemperatureConnected = this.temperatureDeviceConnected();
+    this.uiPreparationDeviceConnected =
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected();
+    this.uiPreparationDeviceType =
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType();
+    this.uiSmartScaleConnectedSupportsTwoWeights =
+      this.smartScaleSupportsTwoWeight();
+    this.uiSmartScaleSupportsTaring = this.smartScaleSupportsTaring();
   }
 
   private async readReferenceFlowProfile(_brew: Brew) {
@@ -382,10 +404,10 @@ export class BrewBrewingGraphComponent implements OnInit {
   public shallFlowProfileBeHidden(): boolean {
     try {
       if (
-        this.smartScaleConnected() === true ||
-        this.temperatureDeviceConnected() === true ||
-        (this.pressureDeviceConnected() === true &&
-          this.data.getPreparation()?.style_type ===
+        this.uiSmartScaleConnected === true ||
+        this.uiTemperatureConnected === true ||
+        (this.uiPressureConnected === true &&
+          this.brewComponent.choosenPreparation?.style_type ===
             PREPARATION_STYLE_TYPE.ESPRESSO) ||
         this.brewComponent?.brewBrewingPreparationDeviceEl
           ?.preparationDevice !== undefined
@@ -537,6 +559,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
     setTimeout(() => {
       this.graphIconColSize = this.getGraphIonColSize();
+      this.setUIParams();
       try {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
@@ -620,6 +643,8 @@ export class BrewBrewingGraphComponent implements OnInit {
         );
 
         setTimeout(() => {
+          /** On big tablets, the chart is not resized, so trigger the resize event**/
+          window.dispatchEvent(new Event('resize'));
           //Do this after the plot.
           if (
             this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
@@ -1074,16 +1099,14 @@ export class BrewBrewingGraphComponent implements OnInit {
           this.isDetail === false
         ) {
           setTimeout(() => {
+            const prepStyle = this.brewComponent.choosenPreparation.style_type;
             let newLayoutIsNeeded: boolean = false;
             /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
             let newRenderingInstance = 0;
 
             let normalScreenTime: number;
             let fullScreenTime: number;
-            if (
-              this.getPreparation().style_type ===
-              PREPARATION_STYLE_TYPE.ESPRESSO
-            ) {
+            if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
               normalScreenTime =
                 this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
               fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
@@ -1141,10 +1164,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                 this.traces.weightTrace.y[this.traces.weightTrace.y.length - 1];
               // add some tolerance
               let toleranceMinus = 10;
-              if (
-                this.data.getPreparation().style_type ===
-                PREPARATION_STYLE_TYPE.ESPRESSO
-              ) {
+              if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
                 toleranceMinus = 1;
               }
               if (
@@ -1152,10 +1172,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                 this.lastChartLayout.yaxis.range[1] - toleranceMinus
               ) {
                 // Scale a bit up
-                if (
-                  this.data.getPreparation().style_type ===
-                  PREPARATION_STYLE_TYPE.ESPRESSO
-                ) {
+                if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
                   this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.25;
                 } else {
                   this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
@@ -1171,10 +1188,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                 ];
               // add some tolerance
               let toleranceMinus = 3;
-              if (
-                this.data.getPreparation().style_type ===
-                PREPARATION_STYLE_TYPE.ESPRESSO
-              ) {
+              if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
                 toleranceMinus = 0.5;
               }
 
@@ -1183,10 +1197,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                 this.lastChartLayout.yaxis2.range[1] - toleranceMinus
               ) {
                 // Scale a bit up
-                if (
-                  this.data.getPreparation().style_type ===
-                  PREPARATION_STYLE_TYPE.ESPRESSO
-                ) {
+                if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
                   this.lastChartLayout.yaxis2.range[1] =
                     lastRealtimeFlowVal * 1.25;
                 } else {
@@ -1779,35 +1790,41 @@ export class BrewBrewingGraphComponent implements OnInit {
         const power = Math.pow(10, decimalPlaces);
         return Math.floor(rand * power) / power;
       };
-      this.graphTimerTest = setInterval(() => {
-        flow = Math.floor(
-          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 11,
-        );
-        realtime_flow = Math.floor(
-          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 11,
-        );
-        weight = weight + genRand(0.1, 2, 2);
-        pressure = Math.floor(
-          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 16,
-        );
-        temperature = Math.floor(
-          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 90,
-        );
-        if (this.settings.text_to_speech_active) {
-          this.textToSpeech.speak(weight.toString());
-        }
+      this.ngZone.runOutsideAngular(() => {
+        this.graphTimerTest = setInterval(() => {
+          flow = Math.floor(
+            (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+              11,
+          );
+          realtime_flow = Math.floor(
+            (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+              11,
+          );
+          weight = weight + genRand(0.1, 2, 2);
+          pressure = Math.floor(
+            (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+              16,
+          );
+          temperature = Math.floor(
+            (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+              90,
+          );
+          if (this.settings.text_to_speech_active) {
+            this.textToSpeech.speak(weight.toString());
+          }
 
-        this.__setPressureFlow({ actual: pressure, old: pressure });
+          this.__setPressureFlow({ actual: pressure, old: pressure });
 
-        this.__setTemperatureFlow({ actual: temperature, old: temperature });
-        this.__setFlowProfile({
-          actual: weight,
-          old: 1,
-          smoothed: 1,
-          oldSmoothed: 1,
-        });
-        this.setActualSmartInformation();
-      }, 100);
+          this.__setTemperatureFlow({ actual: temperature, old: temperature });
+          this.__setFlowProfile({
+            actual: weight,
+            old: 1,
+            smoothed: 1,
+            oldSmoothed: 1,
+          });
+          this.setActualSmartInformation();
+        }, 100);
+      });
     }
 
     if (scale || pressureDevice || temperatureDevice) {
@@ -2998,6 +3015,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.flowTime = this.brewComponent.getTime();
     }
     const scaleType = this.bleManager.getScale()?.getScaleType();
+    const prep = this.brewComponent.choosenPreparation;
 
     const flowObj = {
       unixTime: moment(new Date())
@@ -3057,10 +3075,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
           }
 
-          if (
-            this.data.getPreparation().style_type !==
-            PREPARATION_STYLE_TYPE.ESPRESSO
-          ) {
+          if (prep.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
             // Treat this as same level as other if and not else if.
             // We just check this when we're not on espresso, cause sometimes we just get 0.1 or 0.2g changes in 1 second
             if (val === nextVal) {
@@ -3098,10 +3113,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         const lastVal: number =
           this.flowProfileArr[this.flowProfileArr.length - 1];
 
-        if (
-          this.data.getPreparation().style_type !==
-          PREPARATION_STYLE_TYPE.ESPRESSO
-        ) {
+        if (prep.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
           // We do some calculations on filter
           if (lastVal - firstVal > 100) {
             // Threshhold reached, more then 100g in on esecond is to much
@@ -3302,8 +3314,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     /* Realtime flow End **/
 
     if (
-      this.data.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO &&
+      prep.style_type === PREPARATION_STYLE_TYPE.ESPRESSO &&
       flowObj.weight >= this.settings.bluetooth_scale_first_drip_threshold
     ) {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
@@ -3315,8 +3326,8 @@ export class BrewBrewingGraphComponent implements OnInit {
         if (
           this.uiBrewHelper.fieldVisible(
             this.settings.manage_parameters.coffee_first_drip_time,
-            this.data.getPreparation().manage_parameters.coffee_first_drip_time,
-            this.data.getPreparation().use_custom_parameters,
+            prep.manage_parameters.coffee_first_drip_time,
+            prep.use_custom_parameters,
           )
         ) {
           // The first time we set the weight, we have one sec delay, because of this do it -1 second
@@ -3559,6 +3570,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         pressureDevice?.disableValueTransmission();
       }
     }
+    await this.setUIParams();
   }
 
   private hasEspressoShotEnded(): boolean {

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -13,7 +14,6 @@ import { ModalController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Brew } from '../../../classes/brew/brew';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
@@ -21,14 +21,12 @@ import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
-import { UIAlert } from '../../../services/uiAlert';
 
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from 'src/services/uiHelper';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
 declare var Plotly;
-
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
@@ -95,11 +93,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     private readonly modalController: ModalController,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly platform: Platform,
     private readonly ngZone: NgZone,
-    private readonly uiAlert: UIAlert,
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -226,7 +223,12 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       this.bluetoothSubscription = this.bleManager
         .attachOnEvent()
         .subscribe((_type) => {
-          this.graphIconColSize = this.getGraphIonColSize();
+          //We need an delay of 250ms, because else the changes are not rightly triggered.
+          setTimeout(() => {
+            this.graphIconColSize = this.getGraphIonColSize();
+            this.checkChanges();
+            this.onOrientationChange();
+          }, 250);
         });
     }
     setTimeout(() => {
@@ -258,6 +260,15 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       });
     }
   }
+
+  public checkChanges() {
+    // #507 Wrapping check changes in set timeout so all values get checked
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+      window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    }, 15);
+  }
+
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange() {

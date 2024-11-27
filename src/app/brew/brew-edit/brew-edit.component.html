@@ -7,10 +7,10 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      @if(brewBrewing?.brewBrewingPreparationDeviceEl?.hasAPreparationDeviceSet()) {
-        @if (brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) {
+      @if(brewBrewing?.brewBrewingPreparationDeviceEl?.uiHasAPreparationDeviceSet) {
+        @if (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) {
           <ion-chip outline='true' class='machine-connected'>
-            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType()) {
+            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
               @case (PreparationDeviceType.METICULOUS) {
                 <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
                 <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
@@ -27,7 +27,7 @@
           </ion-chip>
         } @else {
           <ion-chip outline='true' class='machine-disconnected'>
-            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType()) {
+            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
               @case (PreparationDeviceType.METICULOUS) {
                 <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
                 <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
@@ -44,7 +44,7 @@
           </ion-chip>
         }
       }
-      <ion-button (click)="tareScale()" *ngIf="smartScaleConnected() && smartScaleSupportsTaring()"  class="big-icon-only" fill="clear"  tappable>
+      <ion-button (click)="tareScale()" *ngIf="brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring"  class="big-icon-only" fill="clear"  tappable>
         <ion-icon name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
       </ion-button>
       <ion-button
