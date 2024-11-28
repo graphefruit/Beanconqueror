@@ -3534,7 +3534,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           );
         }
       }
-      this.checkChanges();
+      this.brewComponent.checkChanges();
     } else {
       // Pah. Shit here.
     }

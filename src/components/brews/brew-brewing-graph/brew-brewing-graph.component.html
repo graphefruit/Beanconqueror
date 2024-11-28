@@ -1,5 +1,5 @@
-
-<ion-item [hidden]="shallFlowProfileBeHidden()" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
+@let shallProfileHidden = shallFlowProfileBeHidden();
+<ion-item [hidden]="shallProfileHidden" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
                       brewComponent.choosenPreparation.brew_order.while.brew_time,
                       brewComponent.choosenPreparation.use_custom_parameters])" class="ion-padding-bottom-half" lines="none">
   <div class="ion-text-center" style="width:100%">
@@ -24,7 +24,7 @@
     }
   </div>
 </ion-item>
-<ion-item [hidden]="shallFlowProfileBeHidden()" *ngIf='isDetail ===false' lines="none">
+<ion-item [hidden]="shallProfileHidden" *ngIf='isDetail ===false' lines="none">
   <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
     <ion-row style="padding-bottom:5px;">
       <ion-col *ngIf='(uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))' size="{{graphIconColSize}}"
@@ -79,7 +79,7 @@
     </ion-row>
   </ion-grid>
 </ion-item>
-<div class="ion-margin-top ion-margin-horizontal" [hidden]="shallFlowProfileBeHidden()">
+<div class="ion-margin-top ion-margin-horizontal" [hidden]="shallProfileHidden">
   <div style="width:100%;height:100%;" #canvaContainer>
     <div #profileDiv></div>
   </div>
