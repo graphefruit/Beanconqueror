@@ -86,6 +86,9 @@ export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('smartScaleSecondWeight', { read: ElementRef })
   public smartScaleSecondWeightEl: ElementRef;
 
+  @ViewChild('smartScaleBrewRatio', { read: ElementRef })
+  public smartScaleBrewRatio: ElementRef;
+
   @ViewChild('smartScaleWeightSecondPerSecond', { read: ElementRef })
   public smartScaleWeightSecondPerSecondEl: ElementRef;
 
@@ -1048,6 +1051,8 @@ export class BrewBrewingGraphComponent implements OnInit {
         weightEl.textContent = actualScaleWeight + ' g';
         flowEl.textContent = actualSmoothedWeightPerSecond + ' g/s';
         avgFlowEl.textContent = 'Ø ' + avgFlow + ' g/s';
+        const ratioEl = this.smartScaleBrewRatio.nativeElement;
+        ratioEl.textContent = '(' + this.data.getBrewRatio() + ')';
       } catch (ex) {}
     });
   }

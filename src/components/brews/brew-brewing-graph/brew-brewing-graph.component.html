@@ -33,7 +33,13 @@
           <ion-card-header>
             <div #smartScaleWeight>? g</div>
             <div #smartScaleSecondWeight *ngIf="uiSmartScaleConnectedSupportsTwoWeights">?g</div>
-            <div class='information-tile-no-overflow'>({{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,data.brew_beverage_quantity,data.brew_quantity]}})</div>
+            <!-- We do this, because when the timer is not running and you change the grind-weight aswell as the quantity, we would need to somehow make a change call
+              and thats why we just check if the timer is running and if its running we update just the text by normal.-->
+            @if(brewComponent.timer.timer.runTimer) {
+              <div #smartScaleBrewRatio class='information-tile-no-overflow'></div>
+            } @else {
+              <div class='information-tile-no-overflow'>({{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,data.brew_beverage_quantity,data.brew_quantity]}})</div>
+            }
           </ion-card-header>
           <ion-card-content>
             <ion-icon name="beanconqueror-scale-outline"></ion-icon>

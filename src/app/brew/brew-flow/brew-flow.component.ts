@@ -83,6 +83,9 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @ViewChild('smartScaleRealtimeFlowSecondDetail', { read: ElementRef })
   public smartScaleRealtimeFlowSecondDetail: ElementRef;
 
+  @ViewChild('smartScaleBrewRatio', { read: ElementRef })
+  public smartScaleBrewRatio: ElementRef;
+
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   protected heightInformationBlock: number = 50;
@@ -399,9 +402,12 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         const weightEl = this.smartScaleWeightDetail.nativeElement;
         const flowEl = this.smartScaleWeightPerSecondDetail.nativeElement;
         const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
+        const ratioEl = this.smartScaleBrewRatio.nativeElement;
         weightEl.textContent = _val.scaleWeight;
         flowEl.textContent = _val.smoothedWeight;
         avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
+        ratioEl.textContent =
+          '(' + this.brewComponent.data.getBrewRatio() + ')';
       }
     });
   }

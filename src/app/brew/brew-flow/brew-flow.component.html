@@ -44,7 +44,11 @@
                 <ion-card-header>
                   <div #smartScaleWeightDetail>? g</div>
                   <div #smartScaleWeightSecondDetail *ngIf="brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights">?g</div>
-                  <span style='font-size:16px;'>({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
+                  @if(brewComponent.timer.timer.runTimer) {
+                    <span #smartScaleBrewRatio style='font-size:16px;'></span>
+                  } @else {
+                    <span style='font-size:16px;'>({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
+                  }
 
                 </ion-card-header>
                 <ion-card-content>
