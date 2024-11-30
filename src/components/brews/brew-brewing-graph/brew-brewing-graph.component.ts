@@ -1051,8 +1051,10 @@ export class BrewBrewingGraphComponent implements OnInit {
         weightEl.textContent = actualScaleWeight + ' g';
         flowEl.textContent = actualSmoothedWeightPerSecond + ' g/s';
         avgFlowEl.textContent = 'Ø ' + avgFlow + ' g/s';
-        const ratioEl = this.smartScaleBrewRatio.nativeElement;
-        ratioEl.textContent = '(' + this.data.getBrewRatio() + ')';
+        const ratioEl = this.smartScaleBrewRatio?.nativeElement;
+        if (ratioEl) {
+          ratioEl.textContent = '(' + this.data.getBrewRatio() + ')';
+        }
       } catch (ex) {}
     });
   }
@@ -1643,6 +1645,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       ?.brewBrewingPreparationDeviceEl?.preparationDevice as XeniaDevice;
 
     this.stopFetchingAndSettingDataFromXenia();
+
     const setTempAndPressure = () => {
       const temp = prepDeviceCall.getTemperature();
       const press = prepDeviceCall.getPressure();
@@ -1673,15 +1676,17 @@ export class BrewBrewingGraphComponent implements OnInit {
       });
     }, 2500);
 
-    this.xeniaOverviewInterval = setInterval(async () => {
-      try {
-        // We don't use the callback function to make sure we don't have to many performance issues
-        prepDeviceCall.fetchPressureAndTemperature(() => {
-          //before we start the interval, we fetch the data once to overwrite, and set them.
-          setTempAndPressure();
-        });
-      } catch (ex) {}
-    }, 500);
+    this.ngZone.runOutsideAngular(() => {
+      this.xeniaOverviewInterval = setInterval(async () => {
+        try {
+          // We don't use the callback function to make sure we don't have to many performance issues
+          prepDeviceCall.fetchPressureAndTemperature(() => {
+            //before we start the interval, we fetch the data once to overwrite, and set them.
+            setTempAndPressure();
+          });
+        } catch (ex) {}
+      }, 500);
+    });
   }
 
   public stopFetchingAndSettingDataFromXenia() {
