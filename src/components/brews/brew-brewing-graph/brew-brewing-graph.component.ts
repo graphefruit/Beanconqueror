@@ -720,6 +720,8 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public drawTargetWeight(_targetWeight: number) {
+    /**We disabled this function right now, sadly it does performance-harm, you can't toggle buttons anymore in a performant way**/
+    return;
     if (
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.SANREMO_YOU ||
