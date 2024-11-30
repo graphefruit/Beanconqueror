@@ -402,12 +402,16 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         const weightEl = this.smartScaleWeightDetail.nativeElement;
         const flowEl = this.smartScaleWeightPerSecondDetail.nativeElement;
         const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
-        const ratioEl = this.smartScaleBrewRatio.nativeElement;
+
         weightEl.textContent = _val.scaleWeight;
         flowEl.textContent = _val.smoothedWeight;
         avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
-        ratioEl.textContent =
-          '(' + this.brewComponent.data.getBrewRatio() + ')';
+
+        const ratioEl = this.smartScaleBrewRatio?.nativeElement;
+        if (ratioEl) {
+          ratioEl.textContent =
+            '(' + this.brewComponent.data.getBrewRatio() + ')';
+        }
       }
     });
   }
