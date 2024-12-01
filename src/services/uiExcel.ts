@@ -50,7 +50,7 @@ export class UIExcel {
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBeanHelper: UIBeanHelper
+    private readonly uiBeanHelper: UIBeanHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -103,7 +103,7 @@ export class UIExcel {
     XLSX.utils.book_append_sheet(
       wb,
       ws,
-      this.translate.instant('Flow profile raw')
+      this.translate.instant('Flow profile raw'),
     );
 
     const header_flow: Array<string> = [];
@@ -124,7 +124,7 @@ export class UIExcel {
     XLSX.utils.book_append_sheet(
       wb,
       wsFlow,
-      this.translate.instant('Flow profile calculated')
+      this.translate.instant('Flow profile calculated'),
     );
 
     if (_flow.hasOwnProperty('realtimeFlow')) {
@@ -152,7 +152,7 @@ export class UIExcel {
       XLSX.utils.book_append_sheet(
         wb,
         wsFlowRealtime,
-        this.translate.instant('Flow profile realtime')
+        this.translate.instant('Flow profile realtime'),
       );
     }
 
@@ -178,7 +178,7 @@ export class UIExcel {
       XLSX.utils.book_append_sheet(
         wb,
         wsFlowRealtime,
-        this.translate.instant('Flow pressure')
+        this.translate.instant('Flow pressure'),
       );
     }
     if (_flow.hasOwnProperty('temperatureFlow')) {
@@ -199,12 +199,12 @@ export class UIExcel {
         wsDataTemperatureFlow.push(wbEntry);
       }
       const wsFlowRealtime: WorkSheet = XLSX.utils.aoa_to_sheet(
-        wsDataTemperatureFlow
+        wsDataTemperatureFlow,
       );
       XLSX.utils.book_append_sheet(
         wb,
         wsFlowRealtime,
-        this.translate.instant('Flow temperature')
+        this.translate.instant('Flow temperature'),
       );
     }
 
@@ -242,7 +242,7 @@ export class UIExcel {
         wsDatafinalWeightFlow.push(wbEntry);
       }
       const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
-        wsDatafinalWeightFlow
+        wsDatafinalWeightFlow,
       );
       XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'Brew by weight');
     }
@@ -267,7 +267,7 @@ export class UIExcel {
         mill.finished,
         this.uiHelper.formateDate(
           mill.config.unix_timestamp,
-          this.settings.date_format + ' HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss',
         ),
         mill.config.uuid,
       ];
@@ -300,7 +300,7 @@ export class UIExcel {
         preparation.finished,
         this.uiHelper.formateDate(
           preparation.config.unix_timestamp,
-          this.settings.date_format + ' HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss',
         ),
         preparation.config.uuid,
       ];
@@ -312,7 +312,7 @@ export class UIExcel {
     XLSX.utils.book_append_sheet(
       _wb,
       ws,
-      this.translate.instant('NAV_PREPARATION')
+      this.translate.instant('NAV_PREPARATION'),
     );
   }
 
@@ -347,7 +347,7 @@ export class UIExcel {
         bean.roaster,
         this.uiHelper.formateDatestr(
           bean.roastingDate,
-          this.settings.date_format
+          this.settings.date_format,
         ),
         BEAN_ROASTING_TYPE_ENUM[bean.bean_roasting_type],
         bean.getRoastName(),
@@ -364,7 +364,7 @@ export class UIExcel {
         bean.rating,
         this.uiHelper.formateDate(
           bean.config.unix_timestamp,
-          this.settings.date_format + ' HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss',
         ),
         bean.config.uuid,
         bean.finished,
@@ -397,16 +397,16 @@ export class UIExcel {
       header.push(i + 1 + '. ' + this.translate.instant('BEAN_DATA_ELEVATION'));
       header.push(i + 1 + '. ' + this.translate.instant('BEAN_DATA_VARIETY'));
       header.push(
-        i + 1 + '. ' + this.translate.instant('BEAN_DATA_PROCESSING')
+        i + 1 + '. ' + this.translate.instant('BEAN_DATA_PROCESSING'),
       );
       header.push(
-        i + 1 + '. ' + this.translate.instant('BEAN_DATA_HARVEST_TIME')
+        i + 1 + '. ' + this.translate.instant('BEAN_DATA_HARVEST_TIME'),
       );
       header.push(
-        i + 1 + '. ' + this.translate.instant('BEAN_DATA_PERCENTAGE')
+        i + 1 + '. ' + this.translate.instant('BEAN_DATA_PERCENTAGE'),
       );
       header.push(
-        i + 1 + '. ' + this.translate.instant('BEAN_DATA_CERTIFICATION')
+        i + 1 + '. ' + this.translate.instant('BEAN_DATA_CERTIFICATION'),
       );
     }
     const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
@@ -438,7 +438,7 @@ export class UIExcel {
     header.push(this.translate.instant('BREW_DATA_BREW_BEVERAGE_QUANTITY'));
     header.push(this.translate.instant('BREW_DATA_TDS'));
     header.push(
-      this.translate.instant('BREW_DATA_CALCULATED_EXTRACTION_YIELD')
+      this.translate.instant('BREW_DATA_CALCULATED_EXTRACTION_YIELD'),
     );
     header.push(this.translate.instant('BREW_CREATION_DATE'));
     header.push(this.translate.instant('BREW_INFORMATION_BREW_RATIO'));
@@ -501,7 +501,7 @@ export class UIExcel {
           .getPreparation()
           .tools.filter(
             (e) =>
-              brew.method_of_preparation_tools.includes(e.config.uuid) === true
+              brew.method_of_preparation_tools.includes(e.config.uuid) === true,
           )
           .map((e) => e.name)
           .join(','),
@@ -519,7 +519,7 @@ export class UIExcel {
         brew.getExtractionYield(),
         this.uiHelper.formateDate(
           brew.config.unix_timestamp,
-          this.settings.date_format + ' HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss',
         ),
         brew.getBrewRatio(),
         brew.getCalculatedBeanAge(),
@@ -564,7 +564,7 @@ export class UIExcel {
         await this.uiFileHelper.exportFileToDefaultDirectory(
           filename,
           blob,
-          true
+          true,
         );
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
@@ -592,7 +592,7 @@ export class UIExcel {
   }
 
   public async exportBrewByWeights(
-    _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>
+    _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>,
   ) {
     await this.uiAlert.showLoadingSpinner();
 
@@ -656,7 +656,7 @@ export class UIExcel {
           wsDatafinalWeightFlow.push(wbEntry);
         }
         const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
-          wsDatafinalWeightFlow
+          wsDatafinalWeightFlow,
         );
         XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'S-' + counter);
         counter = counter + 1;
@@ -680,7 +680,7 @@ export class UIExcel {
         await this.uiFileHelper.exportFileToDefaultDirectory(
           filename,
           blob,
-          true
+          true,
         );
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
@@ -791,6 +791,11 @@ export class UIExcel {
           bean.aromatics = flavourProfileEntry.toString();
         }
 
+        const notesEntry = entry['Notes'];
+        if (notesEntry) {
+          bean.note = notesEntry.toString();
+        }
+
         const eanArticleNumberEntry = entry['EAN / Articlenumber'];
         if (eanArticleNumberEntry) {
           bean.ean_article_number = eanArticleNumberEntry.toString();
@@ -895,7 +900,7 @@ export class UIExcel {
           Number(informationPurchasingPriceEntry) > 0
         ) {
           beanInformation.purchasing_price = Number(
-            informationPurchasingPriceEntry
+            informationPurchasingPriceEntry,
           );
           hasOneBeanInformation = true;
         }
@@ -935,7 +940,7 @@ export class UIExcel {
             'GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
             'IMPORT_SUCCESSFULLY',
             undefined,
-            true
+            true,
           );
         } catch (ex) {}
       } else {
@@ -943,7 +948,7 @@ export class UIExcel {
           'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
           'IMPORT_UNSUCCESSFULLY',
           'OK',
-          false
+          false,
         );
       }
     } catch (ex) {
@@ -951,7 +956,7 @@ export class UIExcel {
         ex.message,
         this.translate.instant('IMPORT_UNSUCCESSFULLY'),
         this.translate.instant('OK'),
-        false
+        false,
       );
     }
   }
@@ -1039,6 +1044,11 @@ export class UIExcel {
         const flavourProfileEntry = entry['Flavour profile'];
         if (flavourProfileEntry) {
           bean.aromatics = flavourProfileEntry.toString();
+        }
+
+        const notesEntry = entry['Notes'];
+        if (notesEntry) {
+          bean.note = notesEntry.toString();
         }
 
         const eanArticleNumberEntry = entry['EAN / Articlenumber'];
@@ -1154,7 +1164,7 @@ export class UIExcel {
           Number(informationPurchasingPriceEntry) > 0
         ) {
           beanInformation.purchasing_price = Number(
-            informationPurchasingPriceEntry
+            informationPurchasingPriceEntry,
           );
           hasOneBeanInformation = true;
         }
@@ -1189,7 +1199,7 @@ export class UIExcel {
         if (unfrozenDateEntry && Number(unfrozenDateEntry) > 0) {
           isOneEntryFrozen = true;
           bean.unfrozenDate = this.getJsDateFromExcel(
-            Number(unfrozenDateEntry)
+            Number(unfrozenDateEntry),
           );
         }
         toAddBeans.push(bean);
@@ -1225,7 +1235,7 @@ export class UIExcel {
             'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
             'IMPORT_SUCCESSFULLY',
             undefined,
-            true
+            true,
           );
         } catch (ex) {}
         this.uiBeanHelper.showBeans(addedBeans);
@@ -1234,7 +1244,7 @@ export class UIExcel {
           'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
           'IMPORT_UNSUCCESSFULLY',
           'OK',
-          false
+          false,
         );
       }
     } catch (ex) {
@@ -1242,7 +1252,7 @@ export class UIExcel {
         ex.message,
         this.translate.instant('IMPORT_UNSUCCESSFULLY'),
         this.translate.instant('OK'),
-        false
+        false,
       );
     }
   }
@@ -1257,7 +1267,7 @@ export class UIExcel {
 
     const dateTimeStr: string = this.uiHelper.formateDate(
       new Date().getTime() / 1000,
-      'DD_MM_YYYY_HH_mm_ss'
+      'DD_MM_YYYY_HH_mm_ss',
     );
     const filename: string = 'Beanconqueror_export_' + dateTimeStr + '.xlsx';
     try {
@@ -1273,7 +1283,7 @@ export class UIExcel {
         await this.uiFileHelper.exportFileToDefaultDirectory(
           filename,
           blob,
-          true
+          true,
         );
         await this.uiAlert.hideLoadingSpinner();
       } catch (ex) {}
