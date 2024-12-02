@@ -44,7 +44,7 @@ export class BluetoothDeviceChooserPopoverComponent
     private readonly uiAnalytics: UIAnalytics,
     private readonly changeDetector: ChangeDetectorRef,
     private readonly uiPreparationStorage: UIPreparationStorage,
-    private ngZone: NgZone
+    private ngZone: NgZone,
   ) {}
 
   public ngOnInit() {
@@ -72,7 +72,7 @@ export class BluetoothDeviceChooserPopoverComponent
         'BLUETOOTH_REQUEST_PERMISSION.LOCATION',
         undefined,
         undefined,
-        true
+        true,
       );
       await this.bleManager.requestLocationPermissions();
     }
@@ -84,7 +84,7 @@ export class BluetoothDeviceChooserPopoverComponent
         'BLUETOOTH_REQUEST_PERMISSION.BLUETOOTH',
         undefined,
         undefined,
-        true
+        true,
       );
       await this.bleManager.requestBluetoothPermissions();
     }
@@ -95,7 +95,7 @@ export class BluetoothDeviceChooserPopoverComponent
         'BLUETOOTH_NOT_ENABLED',
         undefined,
         undefined,
-        true
+        true,
       );
       return;
     }
@@ -122,7 +122,7 @@ export class BluetoothDeviceChooserPopoverComponent
       .pipe(
         finalize(() => {
           this.searchRunning = false;
-        })
+        }),
       )
       .subscribe((_device) => {
         /**Don't show a device which is currently connected**/
@@ -165,7 +165,7 @@ export class BluetoothDeviceChooserPopoverComponent
         dismissed: true,
       },
       undefined,
-      BluetoothDeviceChooserPopoverComponent.POPOVER_ID
+      BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
     );
   }
 
@@ -197,7 +197,7 @@ export class BluetoothDeviceChooserPopoverComponent
         dismissed: true,
       },
       undefined,
-      BluetoothDeviceChooserPopoverComponent.POPOVER_ID
+      BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
     );
   }
 
@@ -206,18 +206,25 @@ export class BluetoothDeviceChooserPopoverComponent
 
     if (scale) {
       try {
+        await this.uiAlert.showLoadingSpinner();
         // We don't need to retry for iOS, because we just did scan before.
 
         // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectScale(
-          scale.type,
-          scale.id,
-          false,
-          () => {},
-          () => {}
-        );
+        await new Promise(async (resolve) => {
+          this.bleManager.autoConnectScale(
+            scale.type,
+            scale.id,
+            false,
+            () => {
+              resolve(undefined);
+            },
+            () => {
+              resolve(undefined);
+            },
+          );
+        });
       } catch (ex) {}
-
+      await this.uiAlert.hideLoadingSpinner();
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
 
@@ -234,7 +241,7 @@ export class BluetoothDeviceChooserPopoverComponent
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
         SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,
-        scale.type
+        scale.type,
       );
 
       await this.saveSettings();
@@ -265,7 +272,7 @@ export class BluetoothDeviceChooserPopoverComponent
         'SCALE.CONNECTION_NOT_ESTABLISHED',
         undefined,
         undefined,
-        true
+        true,
       );
     }
   }
@@ -273,16 +280,26 @@ export class BluetoothDeviceChooserPopoverComponent
   private async connectPressure(_choosenDevice) {
     const pressureDevice = _choosenDevice;
     if (pressureDevice) {
+      await this.uiAlert.showLoadingSpinner();
       try {
         // We don't need to retry for iOS, because we just did scan before.
 
+        await new Promise(async (resolve) => {
+          this.bleManager.autoConnectPressureDevice(
+            pressureDevice.type,
+            pressureDevice.id,
+            false,
+            () => {
+              resolve(undefined);
+            },
+            () => {
+              resolve(undefined);
+            },
+          );
+        });
         // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectPressureDevice(
-          pressureDevice.type,
-          pressureDevice.id,
-          false
-        );
       } catch (ex) {}
+      await this.uiAlert.hideLoadingSpinner();
 
       this.settings.pressure_id = pressureDevice.id;
       this.settings.pressure_type = pressureDevice.type;
@@ -295,7 +312,7 @@ export class BluetoothDeviceChooserPopoverComponent
         'PRESSURE.CONNECTION_NOT_ESTABLISHED',
         undefined,
         undefined,
-        true
+        true,
       );
     }
   }
@@ -304,16 +321,25 @@ export class BluetoothDeviceChooserPopoverComponent
     const temperatureDevice = _choosenDevice;
     if (temperatureDevice) {
       try {
+        await this.uiAlert.showLoadingSpinner();
         // We don't need to retry for iOS, because we just did scan before.
 
         // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectTemperatureDevice(
-          temperatureDevice.type,
-          temperatureDevice.id,
-          false
-        );
+        await new Promise(async (resolve) => {
+          this.bleManager.autoConnectTemperatureDevice(
+            temperatureDevice.type,
+            temperatureDevice.id,
+            false,
+            () => {
+              resolve(undefined);
+            },
+            () => {
+              resolve(undefined);
+            },
+          );
+        });
       } catch (ex) {}
-
+      await this.uiAlert.hideLoadingSpinner();
       this.settings.temperature_id = temperatureDevice.id;
       this.settings.temperature_type = temperatureDevice.type;
 
@@ -325,7 +351,7 @@ export class BluetoothDeviceChooserPopoverComponent
         'TEMPERATURE.CONNECTION_NOT_ESTABLISHED',
         undefined,
         undefined,
-        true
+        true,
       );
     }
   }
@@ -334,16 +360,25 @@ export class BluetoothDeviceChooserPopoverComponent
     const refractometerDevice = _choosenDevice;
     if (refractometerDevice) {
       try {
+        await this.uiAlert.showLoadingSpinner();
         // We don't need to retry for iOS, because we just did scan before.
 
         // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectRefractometerDevice(
-          refractometerDevice.type,
-          refractometerDevice.id,
-          false
-        );
+        await new Promise(async (resolve) => {
+          this.bleManager.autoConnectRefractometerDevice(
+            refractometerDevice.type,
+            refractometerDevice.id,
+            false,
+            () => {
+              resolve(undefined);
+            },
+            () => {
+              resolve(undefined);
+            },
+          );
+        });
       } catch (ex) {}
-
+      await this.uiAlert.hideLoadingSpinner();
       this.settings.refractometer_id = refractometerDevice.id;
       this.settings.refractometer_type = refractometerDevice.type;
 
@@ -357,7 +392,7 @@ export class BluetoothDeviceChooserPopoverComponent
         'REFRACTOMETER.CONNECTION_NOT_ESTABLISHED',
         undefined,
         undefined,
-        true
+        true,
       );
     }
   }

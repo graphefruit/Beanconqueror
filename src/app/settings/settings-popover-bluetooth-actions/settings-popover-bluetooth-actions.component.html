@@ -2,7 +2,31 @@
 </ion-header>
 <ion-content>
   <ion-list lines="full">
-    <ion-item (click)="reconnectScale()" *ngIf="this.settings.scale_id" button tappable>
+    <ion-item *ngIf="settings.scale_id" (click)="disconnectDevice(BluetoothTypes.SCALE)" tappable button>
+      <ion-label>
+        <h2>{{"DISCONNECT_SCALE" | translate}}</h2>
+      </ion-label>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item *ngIf="settings.pressure_id" (click)="disconnectDevice(BluetoothTypes.PRESSURE)" tappable button>
+      <ion-label>
+        <h2>{{"DISCONNECT_PRESSURE" | translate}}</h2>
+      </ion-label>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item *ngIf="settings.temperature_id" (click)="disconnectDevice(BluetoothTypes.TEMPERATURE)" tappable button>
+      <ion-label>
+        <h2>{{"DISCONNECT_TEMPERATURE" | translate}}</h2>
+      </ion-label>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item *ngIf="settings.refractometer_id" (click)="disconnectDevice(BluetoothTypes.TDS)" tappable button>
+      <ion-label>
+        <h2>{{"DISCONNECT_REFRACTOMETER" | translate}}</h2>
+      </ion-label>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+    </ion-item>
+    <!--<ion-item (click)="reconnectScale()" *ngIf="this.settings.scale_id" button tappable>
       <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
       <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE" | translate}}</span>
     </ion-item>
@@ -17,7 +41,7 @@
     <ion-item (click)="reconnectRefractometer()" *ngIf="this.settings.refractometer_id" button tappable>
       <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
       <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER" | translate}}</span>
-    </ion-item>
+    </ion-item>-->
   </ion-list>
   <hr/>
   <ion-list lines='full'>
@@ -27,23 +51,11 @@
       </ion-label>
       <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
     </ion-item>
-    <ion-item *ngIf="settings.scale_id" (click)="disconnectDevice(BluetoothTypes.SCALE)" tappable button>
-      <ion-label>
-        <h2>{{"DISCONNECT_SCALE" | translate}}</h2>
-      </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
-    </ion-item>
     <ion-item lines="full" *ngIf="settings.pressure_id === ''" (click)="connectDevice(BluetoothTypes.PRESSURE)" tappable button>
       <ion-label>
         <h2>{{"CONNECT_PRESSURE" | translate}}</h2>
       </ion-label>
       <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-    </ion-item>
-    <ion-item *ngIf="settings.pressure_id" (click)="disconnectDevice(BluetoothTypes.PRESSURE)" tappable button>
-      <ion-label>
-        <h2>{{"DISCONNECT_PRESSURE" | translate}}</h2>
-      </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
     </ion-item>
     <ion-item lines="full" *ngIf="settings.temperature_id === ''" (click)="connectDevice(BluetoothTypes.TEMPERATURE)" tappable button>
       <ion-label>
@@ -51,23 +63,11 @@
       </ion-label>
       <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
     </ion-item>
-    <ion-item *ngIf="settings.temperature_id" (click)="disconnectDevice(BluetoothTypes.TEMPERATURE)" tappable button>
-      <ion-label>
-        <h2>{{"DISCONNECT_TEMPERATURE" | translate}}</h2>
-      </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
-    </ion-item>
     <ion-item lines="full" *ngIf="settings.refractometer_id === ''" (click)="connectDevice(BluetoothTypes.TDS)" tappable button>
       <ion-label>
         <h2>{{"CONNECT_REFRACTOMETER" | translate}}</h2>
       </ion-label>
       <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-    </ion-item>
-    <ion-item *ngIf="settings.refractometer_id" (click)="disconnectDevice(BluetoothTypes.TDS)" tappable button>
-      <ion-label>
-        <h2>{{"DISCONNECT_REFRACTOMETER" | translate}}</h2>
-      </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
     </ion-item>
   </ion-list>
 </ion-content>
