@@ -30,7 +30,7 @@ export class IntentHandlerService {
     private readonly uiAlert: UIAlert,
     private readonly uiAnalytics: UIAnalytics,
     private readonly visualizerService: VisualizerService,
-    private readonly zone: NgZone
+    private readonly zone: NgZone,
   ) {}
 
   public attachOnHandleOpenUrl() {
@@ -119,8 +119,9 @@ export class IntentHandlerService {
             url.indexOf('https://beanconqueror.com?visualizerShare=') === 0 ||
             url.indexOf('?visualizerShare=') >= 0
           ) {
+            /*e.g: "https://beanconqueror.com/app/visualizer/importVisualizer.html?visualizerShare=JRKJ"*/
             const visualizerShareCode = String(
-              urlParams.get('visualizerShare')
+              urlParams.get('visualizerShare'),
             );
 
             this.importVisualizerShot(visualizerShareCode);
@@ -152,7 +153,7 @@ export class IntentHandlerService {
                 BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION
               ) {
                 await this.uiBrewHelper.startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
-                  id
+                  id,
                 );
               }
             }
@@ -161,7 +162,7 @@ export class IntentHandlerService {
               'QR.WRONG_QRCODE_DESCRIPTION',
               'QR.WRONG_QRCODE_TITLE',
               undefined,
-              true
+              true,
             );
           }
         });
@@ -187,21 +188,21 @@ export class IntentHandlerService {
     } catch (ex) {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,
-        QR_TRACKING.ACTIONS.SCAN_FAILED
+        QR_TRACKING.ACTIONS.SCAN_FAILED,
       );
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         'QR.SERVER.ERROR_OCCURED',
         'ERROR_OCCURED',
         undefined,
-        true
+        true,
       );
     }
   }
 
   public async addBeanFromUser(_userBeanJSON: string) {
     this.uiLog.log(
-      'Load bean information from shared user context: ' + _userBeanJSON
+      'Load bean information from shared user context: ' + _userBeanJSON,
     );
 
     try {
@@ -211,14 +212,14 @@ export class IntentHandlerService {
     } catch (ex) {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,
-        QR_TRACKING.ACTIONS.SCAN_FAILED
+        QR_TRACKING.ACTIONS.SCAN_FAILED,
       );
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         'QR.SERVER.ERROR_OCCURED',
         'ERROR_OCCURED',
         undefined,
-        true
+        true,
       );
     }
   }

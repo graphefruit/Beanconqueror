@@ -10,6 +10,7 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UILog } from '../uiLog';
 import { UIBrewHelper } from '../uiBrewHelper';
+import { UIAlert } from '../uiAlert';
 
 @Injectable({
   providedIn: 'root',
@@ -21,13 +22,14 @@ export class VisualizerService {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiLog: UILog,
-    private readonly uiBrewHelper: UIBrewHelper
+    private readonly uiBrewHelper: UIBrewHelper,
+    private readonly uiAlert: UIAlert,
   ) {}
 
   private async readFlowProfile(_brew: Brew): Promise<BrewFlow> {
     try {
       const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-        _brew.flow_profile
+        _brew.flow_profile,
       );
 
       const brewFlow: BrewFlow = new BrewFlow();
@@ -48,6 +50,7 @@ export class VisualizerService {
   }
 
   public async importShotWithSharedCode(_shareCode: string): Promise<void> {
+    let errorOccured: boolean = true;
     try {
       const url =
         'https://visualizer.coffee/api/shots/shared?' +
@@ -59,26 +62,42 @@ export class VisualizerService {
 
       const result = await fetch(url);
       const responseJSON = await result.json();
-      // TODO Capacitor migration: Check if this works. During testing the
-      // server returned an array with one object in it instead of the
-      // object directly.
-      if ('brewdata' in responseJSON) {
+      const isArrayResp = Array.isArray(responseJSON);
+      if (
+        (isArrayResp && responseJSON[0].hasOwnProperty('brewdata')) ||
+        'brewdata' in responseJSON
+      ) {
+        let visualizerRespData;
+        if (isArrayResp) {
+          visualizerRespData = responseJSON[0]['brewdata'];
+        } else {
+          visualizerRespData = responseJSON['brewdata'];
+        }
         if (
-          responseJSON['brewdata'].application === 'BEANCONQUEROR' &&
-          responseJSON['brewdata'].brewFlow
+          visualizerRespData.application === 'BEANCONQUEROR' &&
+          visualizerRespData.brewFlow
         ) {
-          const brewFlow = responseJSON['brewdata'].brewFlow;
+          errorOccured = false;
+          const brewFlow = visualizerRespData.brewFlow;
           this.uiBrewHelper.addBrewFromVisualizerWithGraph(brewFlow);
         }
       }
     } catch (error) {
       this.uiLog.error('Error while getting shot data from visualizer', error);
     }
+    if (errorOccured) {
+      this.uiAlert.showMessage(
+        'VISUALIZER_SHOT_IMPORT_FAILED',
+        'ERROR_OCCURED',
+        'OK',
+        true,
+      );
+    }
   }
 
   public async uploadToVisualizer(
     _brew: Brew,
-    _showToast: boolean = true
+    _showToast: boolean = true,
   ): Promise<void> {
     if (!_brew.flow_profile) {
       return;
@@ -134,7 +153,8 @@ export class VisualizerService {
       const visualizerId = responseJson.id;
       if (!visualizerId) {
         throw new Error(
-          'Received invalid visualizer reponse: ' + JSON.stringify(responseJson)
+          'Received invalid visualizer reponse: ' +
+            JSON.stringify(responseJson),
         );
       }
       _brew.customInformation.visualizer_id = visualizerId;
@@ -148,7 +168,7 @@ export class VisualizerService {
       this.uiLog.error('Upload visualizer shot error occurred', error);
       if (_showToast === true) {
         this.uiToast.showInfoToastBottom(
-          'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY'
+          'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY',
         );
       }
       throw error;
@@ -166,21 +186,21 @@ export class VisualizerService {
       if (response.status === 200 && response.data) {
         this.uiLog.info(
           'Visualizer connection check successful, got data:',
-          response.data
+          response.data,
         );
         return true;
       }
 
       this.uiLog.error(
         'Visualizer connection check did not return data:',
-        JSON.stringify(response)
+        JSON.stringify(response),
       );
       return false;
     } catch (errorResponse) {
       // Typical case that ends up here: wrong credentials, 401 status code
       this.uiLog.error(
         'Visualizer connection check errored:',
-        JSON.stringify(errorResponse)
+        JSON.stringify(errorResponse),
       );
       return false;
     }
