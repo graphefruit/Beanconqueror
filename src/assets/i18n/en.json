@@ -1363,9 +1363,8 @@
         "8.0.0": {
             "TITLE": "Version 8.0.0: What's new",
             "DESCRIPTION": [
-
-                "<b>Capacitor<\/b>",
-                "The app layer has been changed from Capacitor to Cordova, if you encounter any situations, please contact: info@beanconqueror.com",
+                "<b>App Layer<\/b>",
+                "The app layer has been changed (from Cordova to Capacitor), if you encounter any issues, please contact: info@beanconqueror.com",
                 "Coming with this there have been done a lot of performance-tweaks",
                 "I want to give a big thanks here to RagingCactus which did an phenomenal job in lifting the application here!",
                 "",
@@ -1376,12 +1375,12 @@
                 "New support for Varia AKU Pro & Micro",
                 "New support for another eureka-typed scale",
                 "A new popup is shown, where the bluetooth device can be chosen instead of the first one found is connected",
-                "Fixing different connection & weight transfer issues with Acaia scales - Big thanks to Mimoja!",
+                "Fixing different connection & weight transfer issues with Acaia scales - Big thanks to Mimoja",
                 "Removing disable anomaly / negative value setting - Please use the ignore current weight solution if needed",
                 "Adding low energy mode for pressure-sensors (Weight is just transmitted when in brew-add screen & type espresso)",
                 "",
                 "<b>Visualizer<\/b>",
-                "Import a Beanconqueror graph from Visualizer",
+                "Import a Beanconqueror graph from Visualizer (you need a bluetooth device)",
                 "",
                 "<b>NFC/QR-Code<\/b>",
                 "Create and read NFC-Tags or QR-Codes for beans with predefined actions",
@@ -1399,14 +1398,14 @@
                 "You can hide the value-cards on a maximized screen",
                 "",
                 "[ANDROID]<b>Android<\/b>",
-                "You can now do a full export aswell as import in the Settings",
+                "[ANDROID]You can now do a full export aswell as import in the Settings",
                 "",
                 "<b>Other<\/b>",
-                "Fixing calculcation functions for frozen beans / roasted beans",
+                "Fixing calculation functions for frozen beans / roasted beans",
                 "Fixing mixed up images",
-                "Green bean weight is not reduced when roasting",
+                "Fixing green bean weight is not reduced when roasting",
                 "Fixing some paddings and spacings",
-                "Some technical changes in the code",
+                "Many technical changes in the code",
                 "Small tweaks"
             ]
         }

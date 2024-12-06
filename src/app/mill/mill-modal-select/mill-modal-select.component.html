@@ -22,7 +22,9 @@
 
     </ion-segment-button>
   </ion-segment>
+  <ion-radio-group [(ngModel)]="radioSelection">
   <div [ngSwitch]="mill_segment">
+
     <div *ngSwitchCase="'open'">
       <ion-card *ngIf="openMills.length > 0">
         <ion-item *ngFor="let mill of openMills" lines="none" tappable>
@@ -62,7 +64,9 @@
         </ion-item>
       </ion-card>
     </div>
+
   </div>
+  </ion-radio-group>
 
 </ion-content>
 <ion-footer class="ion-no-border">

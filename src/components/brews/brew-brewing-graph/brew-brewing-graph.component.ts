@@ -792,9 +792,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       const pressureDevice: PressureDevice =
         this.bleManager.getPressureDevice();
       if (!_firstStart) {
-        /** IF we're a PRS or Bookoo-device we stop the transmission and start it after 100ms again **/
+        /** IF we're a PRS or Bookoo-device we stop the transmission and start it after 300ms again **/
         await pressureDevice.disableValueTransmission();
-        await sleep(100);
+        await sleep(300);
       }
       if (_firstStart) {
         if (pressureDevice) {
