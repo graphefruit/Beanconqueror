@@ -51,7 +51,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     private readonly uiBeanHelper: UIBeanHelper,
     public readonly uiHelper: UIHelper,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
@@ -61,14 +61,14 @@ export class BeanPopoverFreezeComponent implements OnInit {
     // cant be done in constructor, else the bean object is not known
     this.leftOverBeanBagWeight = this.uiHelper.toFixedIfNecessary(
       this.bean.weight - this.getUsedWeightCount(),
-      1
+      1,
     );
   }
 
   public getUsedWeightCount(): number {
     let usedWeightCount: number = 0;
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid
+      this.bean.config.uuid,
     );
     for (const brew of relatedBrews) {
       if (brew.bean_weight_in > 0) {
@@ -84,14 +84,15 @@ export class BeanPopoverFreezeComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      BeanPopoverFreezeComponent.COMPONENT_ID
+      BeanPopoverFreezeComponent.COMPONENT_ID,
     );
   }
 
   public async save() {
+    await this.uiAlert.showLoadingSpinner();
     const spillOver = this.uiHelper.toFixedIfNecessary(
       this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
-      1
+      1,
     );
 
     let index = 1;
@@ -128,7 +129,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
         groupBeanId,
         burnInPercentage,
         totalActualBeanWeight,
-        totalGreenBeanWeight
+        totalGreenBeanWeight,
       );
       index = index + 1;
     }
@@ -136,18 +137,18 @@ export class BeanPopoverFreezeComponent implements OnInit {
     if (spillOver === 0) {
       //The whole beanbag will be finished after this
       const brews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-        this.bean.config.uuid
+        this.bean.config.uuid,
       );
       if (brews.length > 0) {
         const oldWeight = this.uiHelper.toFixedIfNecessary(this.bean.weight, 1);
         this.bean.weight = this.uiHelper.toFixedIfNecessary(
           this.bean.weight - this.getActualFreezingQuantity(),
-          1
+          1,
         );
         try {
           const newCost = this.uiHelper.toFixedIfNecessary(
             (this.bean.cost * this.bean.weight) / oldWeight,
-            2
+            2,
           );
           this.bean.cost = newCost;
         } catch (ex) {
@@ -160,10 +161,11 @@ export class BeanPopoverFreezeComponent implements OnInit {
           this.bean.bean_roast_information.green_bean_weight =
             this.uiHelper.toFixedIfNecessary(
               totalGreenBeanWeight * percentageBeanWeightShare,
-              2
+              2,
             );
         }
 
+        await this.uiAlert.hideLoadingSpinner();
         //Don't delete the bean, because we did brews with this
         this.bean.frozenGroupId = groupBeanId;
         await this.uiBeanStorage.update(this.bean);
@@ -171,15 +173,16 @@ export class BeanPopoverFreezeComponent implements OnInit {
           'BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE',
           'INFORMATION',
           'OK',
-          true
+          true,
         );
         await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
       } else {
+        await this.uiAlert.hideLoadingSpinner();
         try {
           await this.uiAlert.showConfirm(
             'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
             'CARE',
-            true
+            true,
           );
           //The bag doesn't have any brews, so just delete it.
           await this.uiBeanStorage.removeByUUID(this.bean.config.uuid);
@@ -201,12 +204,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
       const oldWeight = this.uiHelper.toFixedIfNecessary(this.bean.weight, 1);
       this.bean.weight = this.uiHelper.toFixedIfNecessary(
         this.bean.weight - this.getActualFreezingQuantity(),
-        1
+        1,
       );
       try {
         const newCost = this.uiHelper.toFixedIfNecessary(
           (this.bean.cost * this.bean.weight) / oldWeight,
-          2
+          2,
         );
         this.bean.cost = newCost;
       } catch (ex) {
@@ -219,14 +222,14 @@ export class BeanPopoverFreezeComponent implements OnInit {
         this.bean.bean_roast_information.green_bean_weight =
           this.uiHelper.toFixedIfNecessary(
             totalGreenBeanWeight * percentageBeanWeightShare,
-            2
+            2,
           );
       }
 
       this.bean.frozenGroupId = groupBeanId;
       await this.uiBeanStorage.update(this.bean);
     }
-
+    await this.uiAlert.hideLoadingSpinner();
     this.dismiss();
     const modal = await this.modalController.create({
       component: BeanPopoverFrozenListComponent,
@@ -243,7 +246,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     _groupBeanId: string,
     _burnInPercentage: number,
     _totalBeanWeight: number,
-    _totalGreenBeanWeight: number
+    _totalGreenBeanWeight: number,
   ) {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
 
@@ -260,7 +263,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
       try {
         const newCost = this.uiHelper.toFixedIfNecessary(
           (this.bean.cost * _freezingWeight) / this.bean.weight,
-          2
+          2,
         );
         clonedBean.cost = newCost;
       } catch (ex) {
@@ -274,7 +277,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
       clonedBean.bean_roast_information.green_bean_weight =
         this.uiHelper.toFixedIfNecessary(
           _totalGreenBeanWeight * percentageBeanWeightShare,
-          2
+          2,
         );
     }
 
@@ -333,7 +336,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     if (
       this.uiHelper.toFixedIfNecessary(
         Number(this.freezePartialBagGrams) + this.getActualFreezingQuantity(),
-        1
+        1,
       ) > this.leftOverBeanBagWeight
     ) {
       return true;
@@ -349,12 +352,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
     const leftFreezingCount = this.uiHelper.toFixedIfNecessary(
       this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
-      1
+      1,
     );
     if (leftFreezingCount < this.freezePartialBagGrams) {
       this.freezePartialBagGrams = this.uiHelper.toFixedIfNecessary(
         leftFreezingCount,
-        1
+        1,
       );
     }
   }
@@ -368,12 +371,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
       const leftFreezingCount = this.uiHelper.toFixedIfNecessary(
         this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
-        1
+        1,
       );
       if (leftFreezingCount < this.freezePartialBagGrams) {
         this.freezePartialBagGrams = this.uiHelper.toFixedIfNecessary(
           leftFreezingCount,
-          1
+          1,
         );
         break;
       }
@@ -384,7 +387,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     this.addedBags.splice(_index, 1);
     const leftFreezingCount = this.uiHelper.toFixedIfNecessary(
       this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
-      1
+      1,
     );
     if (leftFreezingCount < this.freezePartialBagGrams) {
       this.freezePartialBagGrams = leftFreezingCount;
