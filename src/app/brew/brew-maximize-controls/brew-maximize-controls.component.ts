@@ -1,9 +1,12 @@
 import {
   AfterViewInit,
   Component,
+  ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
@@ -11,9 +14,8 @@ import { Settings } from '../../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-brew-maximize-controls',
@@ -27,18 +29,21 @@ export class BrewMaximizeControlsComponent
 
   @Input() public brew: Brew;
   @Input() public brewComponent: BrewBrewingComponent;
-
+  @Input() private brewTimerTickedEvent: EventEmitter<any>;
   public settings: Settings;
 
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
+  private brewTimerTickedSubscription: Subscription;
+  @ViewChild('timerElement', { static: false })
+  public timerElement: ElementRef;
+
   constructor(
     private readonly modalController: ModalController,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
+
     private readonly platform: Platform,
   ) {}
   public ngOnInit() {
@@ -52,6 +57,40 @@ export class BrewMaximizeControlsComponent
         },
       );
     } catch (ex) {}
+  }
+
+  public ionViewDidEnter() {
+    const wantedDisplayFormat = this.returnWantedDisplayFormat();
+    this.__writeTimeNative(wantedDisplayFormat);
+    this.brewTimerTickedSubscription = this.brewTimerTickedEvent.subscribe(
+      (_val) => {
+        console.log('test');
+        this.__writeTimeNative(wantedDisplayFormat);
+      },
+    );
+  }
+
+  private __writeTimeNative(_wantedDisplayFormat) {
+    let writingVal = '';
+    if (this.settings.brew_milliseconds === false) {
+      writingVal = String(
+        this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss'),
+      );
+    } else {
+      writingVal = String(
+        this.uiHelper.formatSecondsAndMilliseconds(
+          this.brew.brew_time,
+          this.brew.brew_time_milliseconds,
+          _wantedDisplayFormat,
+        ),
+      );
+    }
+
+    if (this.timerElement?.nativeElement) {
+      window.requestAnimationFrame(() => {
+        this.timerElement.nativeElement.innerHTML = writingVal;
+      });
+    }
   }
 
   public returnWantedDisplayFormat() {
@@ -112,7 +151,12 @@ export class BrewMaximizeControlsComponent
     this.brewComponent.timerResumedPressed(undefined);
   }
 
-  public async ngOnDestroy() {}
+  public async ngOnDestroy() {
+    if (this.brewTimerTickedSubscription) {
+      this.brewTimerTickedSubscription.unsubscribe();
+      this.brewTimerTickedSubscription = undefined;
+    }
+  }
 
   public dismiss() {
     try {

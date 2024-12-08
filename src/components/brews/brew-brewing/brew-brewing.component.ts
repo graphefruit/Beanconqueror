@@ -354,6 +354,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       componentProps: {
         brewComponent: this,
         brew: this.data,
+        brewTimerTickedEvent: this.brewTimerTickedSubject,
       },
     });
 

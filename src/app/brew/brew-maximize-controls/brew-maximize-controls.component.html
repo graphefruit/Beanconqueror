@@ -17,12 +17,8 @@
   <div id="flowCard" style="height:100%">
     <ion-card class="flow-profile ion-text-center timer-card">
       <ion-card-header>
+        <span class='information-tile-no-overflow' #timerElement></span>
 
-                <span class='information-tile-no-overflow' *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time,
-                  'mm:ss')}}</span>
-        <span class='information-tile-no-overflow'
-              *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,
-          brew.brew_time_milliseconds, this.returnWantedDisplayFormat())}}</span>
       </ion-card-header>
     </ion-card>
     <div  id="informationContainer">
