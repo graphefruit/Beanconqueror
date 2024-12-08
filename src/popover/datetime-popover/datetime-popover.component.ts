@@ -38,7 +38,6 @@ export class DatetimePopoverComponent implements OnInit {
     this.timer.MINUTES = passedDisplayingTime.minutes();
     this.timer.SECONDS = passedDisplayingTime.seconds();
     this.timer.MILLISECONDS = passedDisplayingTime.milliseconds();
-    debugger;
     this.colSize = this.getColSize();
   }
   public ionViewDidEnter(): void {

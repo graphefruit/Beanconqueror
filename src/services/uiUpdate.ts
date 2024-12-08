@@ -631,7 +631,6 @@ export class UIUpdate {
         // Hardcored for testing
         versionCode = '8.0.0';
       }
-      debugger;
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =
         version.whichUpdateScreensShallBeDisplayed(versionCode);
