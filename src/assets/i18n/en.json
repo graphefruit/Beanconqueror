@@ -1458,5 +1458,6 @@
   "BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED": "This feature has been disabled due to issues while working with combined bluetooth devices. Please use the ignore current weight solution which is much better overall",
   "EXPORT_CAUTION_IOS": "iOS: If you want to set up a new phone, the best and easiest way is using the iCloud Backup",
   "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": "Norwegian",
-  "VISUALIZER_SHOT_IMPORT_FAILED": "Visualizer shot import failed"
+  "VISUALIZER_SHOT_IMPORT_FAILED": "Visualizer shot import failed",
+  "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portuguese"
 }
