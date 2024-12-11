@@ -514,7 +514,13 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.changeEvent();
   }
 
+  /**Somehow on devices an double/tripple click is triggered, and we can't fix this somehow, so we check if the popover is already shown and else ignore the triple tap**/
+  private _overLaytimeShown: boolean = false;
   public async showTimeOverlay(_event) {
+    if (this._overLaytimeShown === true) {
+      return;
+    }
+    this._overLaytimeShown = true;
     try {
       //Just do this on iOS 16.X...
       if (_event && this.isIos16) {
@@ -534,13 +540,14 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
-      animated: true,
+      animated: false,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.75,
       componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
+    this._overLaytimeShown = false;
     if (
       modalData !== undefined &&
       modalData.data &&

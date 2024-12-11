@@ -45,7 +45,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
@@ -191,7 +191,7 @@ export class TimerComponent implements OnInit, OnDestroy {
         return;
       }
       const milliSecondTimer = moment(moment().toDate()).subtract(
-        this.startedOffset
+        this.startedOffset,
       );
 
       this.timer.milliseconds = milliSecondTimer.milliseconds();
@@ -268,7 +268,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   public changeDate(_event) {
     const durationPassed = moment.duration(
-      moment(_event).diff(moment(_event).startOf('day'))
+      moment(_event).diff(moment(_event).startOf('day')),
     );
     this.displayingTime = moment(_event).toISOString();
     this.timer.seconds = durationPassed.asSeconds();
@@ -276,7 +276,13 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.changeEvent();
   }
 
+  /**Somehow on devices an double/tripple click is triggered, and we can't fix this somehow, so we check if the popover is already shown and else ignore the triple tap**/
+  private _overLaytimeShown: boolean = false;
   public async showTimeOverlay(_event) {
+    if (this._overLaytimeShown === true) {
+      return;
+    }
+    this._overLaytimeShown = true;
     try {
       //Just do this on iOS 16.X...
       if (_event && this.isIos16) {
@@ -295,12 +301,14 @@ export class TimerComponent implements OnInit, OnDestroy {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
+      animated: false,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.75,
       componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
+    this._overLaytimeShown = false;
     if (
       modalData !== undefined &&
       modalData.data &&
@@ -310,8 +318,8 @@ export class TimerComponent implements OnInit, OnDestroy {
       this.timer.seconds = moment
         .duration(
           moment(this.displayingTime).diff(
-            moment(this.displayingTime).startOf('day')
-          )
+            moment(this.displayingTime).startOf('day'),
+          ),
         )
         .asSeconds();
       this.timer.milliseconds = moment(this.displayingTime)

@@ -64,7 +64,6 @@ export class BrewMaximizeControlsComponent
     this.__writeTimeNative(wantedDisplayFormat);
     this.brewTimerTickedSubscription = this.brewTimerTickedEvent.subscribe(
       (_val) => {
-        console.log('test');
         this.__writeTimeNative(wantedDisplayFormat);
       },
     );
