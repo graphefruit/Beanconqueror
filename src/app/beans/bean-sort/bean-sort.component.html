@@ -60,7 +60,7 @@
       </ion-item>
     </ion-list-header>
     <ng-container *ngIf="extendedSortActive">
-      <ion-item (click)="setSortAfter(beanSortAfterEnum.BEAN_ROASTING_TYPE)" [class.active]="isSortActive(beanSortAfterEnum.BEAN_ROASTING_TYPE)" class="ion-margin-top" lines="none" tappable>
+      <ion-item (click)="setSortAfter(beanSortAfterEnum.BEAN_ROASTING_TYPE)" [class.active]="isSortActive(beanSortAfterEnum.BEAN_ROASTING_TYPE)" lines="none" tappable>
         <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_BEAN_ROASTING_TYPE" | translate}}</ion-label>
       </ion-item>
