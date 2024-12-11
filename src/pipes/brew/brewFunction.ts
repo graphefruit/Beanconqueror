@@ -7,7 +7,7 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 export class BrewFunction implements PipeTransform {
   public transform(
     value: Brew,
-    arg: BREW_FUNCTION_PIPE_ENUM | Array<BREW_FUNCTION_PIPE_ENUM | any>
+    arg: BREW_FUNCTION_PIPE_ENUM | Array<BREW_FUNCTION_PIPE_ENUM | any>,
   ): any {
     try {
       let action;
@@ -55,6 +55,8 @@ export class BrewFunction implements PipeTransform {
           return value.hasCustomFlavors();
         case BREW_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS:
           return value.hasPredefinedFlavors();
+        case BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL:
+          return value.pressure_profile.startsWith('http');
       }
     } catch (ex) {}
   }

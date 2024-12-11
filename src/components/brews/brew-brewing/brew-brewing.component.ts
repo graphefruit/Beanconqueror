@@ -178,6 +178,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly hapticService: HapticService,
   ) {}
 
+  public openURL(_url) {
+    if (_url) {
+      this.uiHelper.openExternalWebpage(_url);
+    }
+  }
   public setUIParams() {
     this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
     this.uiShowSectionWhileBrew = this.showSectionWhileBrew();

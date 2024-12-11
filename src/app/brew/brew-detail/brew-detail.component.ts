@@ -90,6 +90,11 @@ export class BrewDetailComponent {
     this.uiShowSectionBeforeBrew = this.showSectionBeforeBrew();
     this.uiShowCupping = this.showCupping();
   }
+  public openURL(_url) {
+    if (_url) {
+      this.uiHelper.openExternalWebpage(_url);
+    }
+  }
 
   public async ionViewDidEnter() {
     this.uiAnalytics.trackEvent(
