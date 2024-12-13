@@ -792,6 +792,7 @@ export class AppComponent implements AfterViewInit {
 
   private __attachOnDevicePause() {
     App.addListener('pause', async () => {
+      this.uiHelper.setActualAppState(false);
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (settings.bluetooth_scale_stay_connected === false) {
         const decent_scale_id: string = settings.scale_id;
@@ -836,6 +837,7 @@ export class AppComponent implements AfterViewInit {
 
   private __attachOnDeviceResume() {
     App.addListener('resume', async () => {
+      this.uiHelper.setActualAppState(true);
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (settings.bluetooth_scale_stay_connected === false) {
         this.__connectSmartScale();

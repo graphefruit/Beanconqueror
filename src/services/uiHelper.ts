@@ -28,13 +28,15 @@ export class UIHelper {
    */
   private isAppReady: number = -1;
 
+  private appStateIsActive: boolean = true;
+
   constructor(
     private readonly platform: Platform,
     private readonly sanitizer: DomSanitizer,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiLog: UILog,
     private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast
+    private readonly uiToast: UIToast,
   ) {}
 
   public static generateUUID(): string {
@@ -46,6 +48,13 @@ export class UIHelper {
         v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
+  }
+
+  public setActualAppState(_isActive: boolean) {
+    this.appStateIsActive = _isActive;
+  }
+  public isActualAppStateActive() {
+    return this.appStateIsActive;
   }
 
   public static jsonToArray = function (json) {
@@ -280,7 +289,7 @@ export class UIHelper {
   public async exportJSON(
     fileName: string,
     jsonContent: string,
-    _share: boolean = false
+    _share: boolean = false,
   ): Promise<void> {
     // Fixed umlaut issue
     // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
@@ -290,7 +299,7 @@ export class UIHelper {
     await this.uiFileHelper.exportFileToDefaultDirectory(
       fileName,
       blob,
-      _share
+      _share,
     );
   }
 }
