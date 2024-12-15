@@ -522,7 +522,7 @@ export class CoffeeBluetoothDevicesService {
         this.scale?.disconnectTriggered();
         this.scale = null;
         if (show_toast) {
-          // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+          this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
         }
         resolve(true);
       } catch (ex) {
@@ -540,7 +540,7 @@ export class CoffeeBluetoothDevicesService {
         await ble.withPromises.disconnect(deviceId);
         this.pressureDevice = null;
         if (show_toast) {
-          // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+          this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_SUCCESSFULLY');
         }
         resolve(true);
       } catch (ex) {
@@ -558,7 +558,7 @@ export class CoffeeBluetoothDevicesService {
         await ble.withPromises.disconnect(deviceId);
         this.temperatureDevice = null;
         if (show_toast) {
-          // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+          this.uiToast.showInfoToast('TEMPERATURE.DISCONNECTED_SUCCESSFULLY');
         }
         resolve(true);
       } catch (ex) {
@@ -576,7 +576,7 @@ export class CoffeeBluetoothDevicesService {
         await ble.withPromises.disconnect(deviceId);
         this.refractometerDevice = null;
         if (show_toast) {
-          // this.uiToast.showInfoToast('REFRACTOMETER.DISCONNECTED_SUCCESSFULLY');
+          this.uiToast.showInfoToast('REFRACTOMETER.DISCONNECTED_SUCCESSFULLY');
         }
         resolve(true);
       } catch (ex) {
@@ -944,7 +944,7 @@ export class CoffeeBluetoothDevicesService {
             return;
           }
           this.logger.log('AutoConnectScale - Scale device disconnected.');
-          if (_wasConnected === true) {
+          if (_wasConnected === true && settings.scale_id) {
             this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
             _wasConnected = false;
           }
@@ -1054,7 +1054,7 @@ export class CoffeeBluetoothDevicesService {
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device disconnected.',
           );
-          if (_wasConnected === true) {
+          if (_wasConnected === true && settings.pressure_id) {
             this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
             _wasConnected = false;
           }

@@ -56,7 +56,7 @@ export class BrewFunction implements PipeTransform {
         case BREW_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS:
           return value.hasPredefinedFlavors();
         case BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL:
-          return value.pressure_profile.startsWith('http');
+          return value.pressure_profile?.toLowerCase().startsWith('http');
       }
     } catch (ex) {}
   }
