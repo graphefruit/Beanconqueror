@@ -100,9 +100,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   public async instance() {
-    if (this.isEdit) {
-      await this.instancePreparationDevice(this.data);
-    }
+    await this.instancePreparationDevice(this.data);
   }
 
   public hasTargetWeightActive() {

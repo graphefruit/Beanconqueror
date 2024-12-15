@@ -231,10 +231,13 @@ export class BrewBrewingGraphComponent implements OnInit {
         await this.__connectTemperatureDevice(true);
         isSomethingConnected = true;
       }
+      const prepDeviceType =
+        this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType();
       if (
         this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
-        this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
-          PreparationDeviceType.METICULOUS
+        (prepDeviceType === PreparationDeviceType.METICULOUS ||
+          prepDeviceType === PreparationDeviceType.XENIA ||
+          prepDeviceType === PreparationDeviceType.SANREMO_YOU)
       ) {
         isSomethingConnected = true;
       }
