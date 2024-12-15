@@ -12,7 +12,10 @@ export class SanremoYOUDevice extends PreparationDevice {
 
   private connectionURL: string = '';
   private statusPhase: number = 0;
-  constructor(protected httpClient: HttpClient, _preparation: Preparation) {
+  constructor(
+    protected httpClient: HttpClient,
+    _preparation: Preparation,
+  ) {
     super(httpClient, _preparation);
 
     this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
@@ -26,6 +29,7 @@ export class SanremoYOUDevice extends PreparationDevice {
     try {
       const options = {
         url: this.connectionURL + '/api/runtime',
+        connectTimeout: 5000,
       };
       const response: HttpResponse = await CapacitorHttp.get(options);
       const responseJSON = await response.data;
@@ -42,7 +46,7 @@ export class SanremoYOUDevice extends PreparationDevice {
 
   private getApiEndpointForMode(
     mode: SanremoYOUMode,
-    action: 'start' | 'stop'
+    action: 'start' | 'stop',
   ): string {
     switch (mode) {
       case SanremoYOUMode.MANUAL_CONTROLLING:

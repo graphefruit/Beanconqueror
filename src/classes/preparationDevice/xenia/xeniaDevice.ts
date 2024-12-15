@@ -11,7 +11,10 @@ export class XeniaDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
 
   private apiVersion: number = 2;
-  constructor(protected httpClient: HttpClient, _preparation: Preparation) {
+  constructor(
+    protected httpClient: HttpClient,
+    _preparation: Preparation,
+  ) {
     super(httpClient, _preparation);
 
     const connectedPreparationDevice =
@@ -39,7 +42,7 @@ export class XeniaDevice extends PreparationDevice {
       }
 
       const errorMessage = `Unexpected JSON response: ${JSON.stringify(
-        responseJSON
+        responseJSON,
       )}`;
       this.logError(errorMessage);
       throw new Error(errorMessage);
@@ -148,6 +151,7 @@ export class XeniaDevice extends PreparationDevice {
     try {
       const options = {
         url: url,
+        connectTimeout: 5000,
       };
       const response: HttpResponse = await CapacitorHttp.get(options);
       const responseJSON = await response.data;

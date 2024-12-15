@@ -147,6 +147,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   public async instancePreparationDevice(_brew: Brew = null) {
+    /** If a user changes the preparation device, we need to unset the preparation device here firstly **/
+    this.preparationDevice = undefined;
     this.preparation = this.data.getPreparation();
     const connectedDevice: PreparationDevice =
       this.uiPreparationHelper.getConnectedDevice(this.preparation);

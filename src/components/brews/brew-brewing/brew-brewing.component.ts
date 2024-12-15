@@ -341,7 +341,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.method_of_preparation_tools = [];
 
       if (this.brewBrewingPreparationDeviceEl) {
-        this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+        this.brewBrewingPreparationDeviceEl.instancePreparationDevice().then(
+          () => {
+            this.checkChanges();
+          },
+          () => {
+            this.checkChanges();
+          },
+        );
       }
 
       if (this.timer?.isTimerRunning() === false) {
