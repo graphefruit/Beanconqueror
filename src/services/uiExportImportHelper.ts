@@ -62,7 +62,7 @@ export class UIExportImportHelper {
     private readonly uiAlert: UIAlert,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
   ) {}
 
   public async buildExportZIP(): Promise<Blob> {
@@ -99,13 +99,13 @@ export class UIExportImportHelper {
 
     await zipWriter.add(
       EXPORT_MAIN_FILE_NAME,
-      new TextReader(JSON.stringify(mainJsonData))
+      new TextReader(JSON.stringify(mainJsonData)),
     );
 
     for (const chunk of chunkedData) {
       await zipWriter.add(
         chunk.fileName,
-        new TextReader(JSON.stringify(chunk.content))
+        new TextReader(JSON.stringify(chunk.content)),
       );
     }
 
@@ -114,7 +114,7 @@ export class UIExportImportHelper {
   }
 
   public async getJSONFromZIPArrayBufferContent(
-    _arrayBuffer: Uint8Array | ArrayBuffer
+    _arrayBuffer: Uint8Array | ArrayBuffer,
   ): Promise<any> {
     const readBlob = new Blob([_arrayBuffer], {
       type: 'application/zip',
@@ -127,12 +127,12 @@ export class UIExportImportHelper {
       throw new Error('Attempted to import empty zip file');
     }
     const foundGeneralEntry = entries.find(
-      (e) => e.filename === EXPORT_MAIN_FILE_NAME
+      (e) => e.filename === EXPORT_MAIN_FILE_NAME,
     );
     if (foundGeneralEntry === undefined) {
       await zipReader.close();
       throw new Error(
-        `ZIP file does not contain a ${EXPORT_MAIN_FILE_NAME} file`
+        `ZIP file does not contain a ${EXPORT_MAIN_FILE_NAME} file`,
       );
     }
 
@@ -147,7 +147,7 @@ export class UIExportImportHelper {
       let entry: zip.Entry;
       while (
         (entry = entries.find(
-          (e) => e.filename === chunkFileName(c.fileName, i)
+          (e) => e.filename === chunkFileName(c.fileName, i),
         )) !== undefined
       ) {
         this.uiLog.log(`Found ${entry.filename} - Import`);
@@ -166,7 +166,7 @@ export class UIExportImportHelper {
   private async checkBackupAndSeeIfDataAreCorrupted(_actualUIStorageDataObj) {
     try {
       this.uiLog.log(
-        'checkBackupAndSeeIfDataAreCorrupted - Check if we got a deep corruption'
+        'checkBackupAndSeeIfDataAreCorrupted - Check if we got a deep corruption',
       );
       const dataObj = _actualUIStorageDataObj.DATA;
       const parsedJSON: any = await this.readBackupZIPFile();
@@ -184,37 +184,37 @@ export class UIExportImportHelper {
 
         this.uiLog.log(
           'checkBackupAndSeeIfDataAreCorrupted- Check over - if we got a deep corruption - Result: ' +
-            somethingCorrupted
+            somethingCorrupted,
         );
         if (somethingCorrupted) {
           const importBackup = await this.showDataCorruptionPopover(
             dataObj,
-            parsedJSON
+            parsedJSON,
           );
           if (importBackup) {
             await this.importBackupJSON(parsedJSON);
           }
         } else {
           this.uiLog.log(
-            "checkBackupAndSeeIfDataAreCorrupted - Check over - we didn't find any corrupted data"
+            "checkBackupAndSeeIfDataAreCorrupted - Check over - we didn't find any corrupted data",
           );
         }
       } else {
         this.uiLog.log(
-          "checkBackupAndSeeIfDataAreCorrupted - We didn't find any json backup data so we can't do any checks"
+          "checkBackupAndSeeIfDataAreCorrupted - We didn't find any json backup data so we can't do any checks",
         );
       }
     } catch (ex) {
       this.uiLog.log(
         'Check over - if we got a deep corruption - Result exception: ' +
-          JSON.stringify(ex)
+          JSON.stringify(ex),
       );
     }
   }
 
   public async showDataCorruptionPopover(
     _actualUIStorageDataObj: any,
-    _backupDataObj: any
+    _backupDataObj: any,
   ) {
     const modal = await this.modalController.create({
       component: DataCorruptionFoundComponent,
@@ -227,7 +227,7 @@ export class UIExportImportHelper {
     await modal.present();
     const returnData = await modal.onWillDismiss();
     this.uiLog.log(
-      'Data corruption, choose to import: ' + returnData?.data?.import
+      'Data corruption, choose to import: ' + returnData?.data?.import,
     );
     if (returnData?.data?.import) {
       //User choose to import backup, go
@@ -254,11 +254,11 @@ export class UIExportImportHelper {
       if (!hasData || actualUIStorageDataObj.CORRUPTED) {
         if (!hasData) {
           this.uiLog.log(
-            'Check  Backup - We did not find any data inside the app, so try to find a backup and import it'
+            'Check  Backup - We did not find any data inside the app, so try to find a backup and import it',
           );
         } else {
           this.uiLog.log(
-            'Check  Backup - We found data but they where corrupted, so try to import a backup'
+            'Check  Backup - We found data but they where corrupted, so try to import a backup',
           );
         }
 
@@ -294,7 +294,7 @@ export class UIExportImportHelper {
             this.uiAlert.hideLoadingSpinner();
           }, 150);
           resolve(null);
-        }
+        },
       );
     });
     return promise;
@@ -307,9 +307,8 @@ export class UIExportImportHelper {
         async (_arrayBuffer) => {
           try {
             this.uiLog.log('Read ZIP-File, we found an zip-file');
-            const parsedJSON = await this.getJSONFromZIPArrayBufferContent(
-              _arrayBuffer
-            );
+            const parsedJSON =
+              await this.getJSONFromZIPArrayBufferContent(_arrayBuffer);
             resolve(parsedJSON);
           } catch (ex) {
             resolve(null);
@@ -317,7 +316,7 @@ export class UIExportImportHelper {
         },
         () => {
           this.uiLog.log(
-            `Read ZIP-FILE failed, try to read an old ${EXPORT_MAIN_FILE_NAME}`
+            `Read ZIP-FILE failed, try to read an old ${EXPORT_MAIN_FILE_NAME}`,
           );
           this.uiFileHelper.readInternalJSONFile(EXPORT_MAIN_FILE_NAME).then(
             async (_json) => {
@@ -326,12 +325,12 @@ export class UIExportImportHelper {
             },
             () => {
               this.uiLog.log(
-                'Check Backup - We couldnt retrieve any JSON file'
+                'Check Backup - We couldnt retrieve any JSON file',
               );
               resolve(null);
-            }
+            },
           );
-        }
+        },
       );
     });
     return promise;
@@ -348,6 +347,7 @@ export class UIExportImportHelper {
     this.buildExportZIP().then(
       async (_blob) => {
         try {
+          this.uiLog.debug('Start writing automatic backups');
           this.__saveInternalBeanconquerorDump(_blob);
           this.__saveAutomaticBeanconquerorDump(_blob);
         } catch (ex) {
@@ -358,7 +358,7 @@ export class UIExportImportHelper {
               'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
               'CARE',
               'OK',
-              true
+              true,
             );
           }
         }
@@ -371,17 +371,17 @@ export class UIExportImportHelper {
             'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
             'CARE',
             'OK',
-            true
+            true,
           );
         }
-      }
+      },
     );
   }
   private async __saveInternalBeanconquerorDump(_blob: Blob) {
     try {
       await this.uiFileHelper.writeInternalFileFromBlob(
         _blob,
-        'Beanconqueror.zip'
+        'Beanconqueror.zip',
       );
     } catch (ex) {
       this.uiLog.error('Could not to export normal ZIP file');
@@ -391,7 +391,7 @@ export class UIExportImportHelper {
           'INTERNAL_BACKUP_DID_FAIL',
           'CARE',
           'OK',
-          true
+          true,
         );
       }
     }
@@ -408,7 +408,7 @@ export class UIExportImportHelper {
           'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
             this.getAutomatedBackupFilename() +
             '.zip',
-          Directory.External
+          Directory.External,
         );
       } catch (ex) {
         this.uiLog.error('Could not to export automatic ZIP file');
@@ -417,7 +417,7 @@ export class UIExportImportHelper {
             'AUTOMATIC_BACKUP_DID_FAIL',
             'CARE',
             'OK',
-            true
+            true,
           );
         }
       }

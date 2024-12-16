@@ -63,6 +63,8 @@ import { UIStorage } from '../services/uiStorage';
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { BrewInstanceHelper } from '../classes/brew/brew';
+import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
+import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 
 declare var window;
 
@@ -236,8 +238,10 @@ export class AppComponent implements AfterViewInit {
     private readonly uiExportImportHelper: UIExportImportHelper,
     private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiStorage: UIStorage,
+    private readonly androidPlatformService: AndroidPlatformService,
+    private readonly iosPlatformService: IosPlatformService,
   ) {
-    // Dont remove androidPlatformService, we need to initialize it via constructor
+    // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
       const _db = window.indexedDB;
