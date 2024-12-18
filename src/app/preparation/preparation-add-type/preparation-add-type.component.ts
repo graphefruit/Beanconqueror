@@ -37,13 +37,13 @@ export class PreparationAddTypeComponent implements OnInit {
     private readonly uiToast: UIToast,
     private readonly translate: TranslateService,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper
+    private readonly uiPreparationHelper: UIPreparationHelper,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.ADD_TYPE
+      PREPARATION_TRACKING.ACTIONS.ADD_TYPE,
     );
   }
 
@@ -77,6 +77,17 @@ export class PreparationAddTypeComponent implements OnInit {
     ) {
       await this.uiPreparationHelper.connectDevice(newPreparation);
     }
+
+    this.uiAnalytics.trackEvent(
+      PREPARATION_TRACKING.TITLE,
+      PREPARATION_TRACKING.ACTIONS.ADD_TYPE_FINISH,
+      this.data.type,
+    );
+    this.uiAnalytics.trackEvent(
+      PREPARATION_TRACKING.TITLE,
+      PREPARATION_TRACKING.ACTIONS.ADD_STYLE_FINISH,
+      this.data.style_type,
+    );
   }
 
   public async dismiss(_added: boolean) {
@@ -86,7 +97,7 @@ export class PreparationAddTypeComponent implements OnInit {
         added: _added,
       },
       undefined,
-      PreparationAddTypeComponent.COMPONENT_ID
+      PreparationAddTypeComponent.COMPONENT_ID,
     );
   }
 
@@ -95,7 +106,7 @@ export class PreparationAddTypeComponent implements OnInit {
 
     if (this.data.type !== PREPARATION_TYPES.CUSTOM_PREPARATION) {
       this.data.name = this.translate.instant(
-        'PREPARATION_TYPE_' + this.data.type
+        'PREPARATION_TYPE_' + this.data.type,
       );
     }
     this.data.style_type = this.data.getPresetStyleType();

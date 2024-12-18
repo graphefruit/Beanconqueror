@@ -17,6 +17,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { Preparation } from '../../classes/preparation/preparation';
+import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 
 @Component({
   selector: 'app-bluetooth-device-chooser-popover',
@@ -228,6 +229,12 @@ export class BluetoothDeviceChooserPopoverComponent
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
 
+      this.uiAnalytics.trackEvent(
+        BLUETOOTH_TRACKING.TITLE,
+        BLUETOOTH_TRACKING.ACTIONS.SCALE_CONNECTED,
+        scale.type,
+      );
+
       if (
         scale.type === ScaleType.DIFLUIDMICROBALANCE ||
         scale.type === ScaleType.DIFLUIDMICROBALANCETI
@@ -303,7 +310,11 @@ export class BluetoothDeviceChooserPopoverComponent
 
       this.settings.pressure_id = pressureDevice.id;
       this.settings.pressure_type = pressureDevice.type;
-
+      this.uiAnalytics.trackEvent(
+        BLUETOOTH_TRACKING.TITLE,
+        BLUETOOTH_TRACKING.ACTIONS.PRESSURE_CONNECTED,
+        pressureDevice.type,
+      );
       //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
 
       await this.saveSettings();
@@ -342,7 +353,11 @@ export class BluetoothDeviceChooserPopoverComponent
       await this.uiAlert.hideLoadingSpinner();
       this.settings.temperature_id = temperatureDevice.id;
       this.settings.temperature_type = temperatureDevice.type;
-
+      this.uiAnalytics.trackEvent(
+        BLUETOOTH_TRACKING.TITLE,
+        BLUETOOTH_TRACKING.ACTIONS.TEMPERATURE_CONNECTED,
+        temperatureDevice.type,
+      );
       //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
 
       await this.saveSettings();
@@ -381,7 +396,11 @@ export class BluetoothDeviceChooserPopoverComponent
       await this.uiAlert.hideLoadingSpinner();
       this.settings.refractometer_id = refractometerDevice.id;
       this.settings.refractometer_type = refractometerDevice.type;
-
+      this.uiAnalytics.trackEvent(
+        BLUETOOTH_TRACKING.TITLE,
+        BLUETOOTH_TRACKING.ACTIONS.REFRACTOMETER_CONNECTED,
+        refractometerDevice.type,
+      );
       //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
 
       await this.saveSettings();

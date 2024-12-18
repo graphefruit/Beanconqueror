@@ -12,6 +12,7 @@ import { VisualizerService } from '../visualizerService/visualizer-service.servi
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
 import { UIBrewHelper } from '../uiBrewHelper';
+import IntentHandlerTracking from '../../data/tracking/intentHandlerTracking';
 
 @Injectable({
   providedIn: 'root',
@@ -137,6 +138,13 @@ export class IntentHandlerService {
             const actionType = data[0];
             const id = data[1];
             const action = data[2];
+            try {
+              this.uiAnalytics.trackEvent(
+                IntentHandlerTracking.TITLE,
+                IntentHandlerTracking.ACTIONS.INTERNAL_CALL,
+                action as BEAN_CODE_ACTION,
+              );
+            } catch (ex) {}
             if (actionType === 'bean') {
               if ((action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.DETAIL) {
                 await this.uiBeanHelper.detailBeanByInternalShareCode(id);
@@ -175,6 +183,10 @@ export class IntentHandlerService {
   }
 
   private importVisualizerShot(_shareCode) {
+    this.uiAnalytics.trackEvent(
+      IntentHandlerTracking.TITLE,
+      IntentHandlerTracking.ACTIONS.VISUALIZER_IMPORT,
+    );
     this.visualizerService.importShotWithSharedCode(_shareCode);
   }
   private async addBeanFromServer(_qrCodeId: string) {
@@ -182,6 +194,11 @@ export class IntentHandlerService {
 
     try {
       await this.uiAlert.showLoadingSpinner();
+      this.uiAnalytics.trackEvent(
+        IntentHandlerTracking.TITLE,
+        IntentHandlerTracking.ACTIONS.IMPORT_ROASTER_BEAN,
+        _qrCodeId,
+      );
       const beanData: ServerBean =
         await this.serverCommunicationService.getBeanInformation(_qrCodeId);
       await this.uiBeanHelper.addScannedQRBean(beanData);
@@ -207,7 +224,10 @@ export class IntentHandlerService {
 
     try {
       await this.uiAlert.showLoadingSpinner();
-
+      this.uiAnalytics.trackEvent(
+        IntentHandlerTracking.TITLE,
+        IntentHandlerTracking.ACTIONS.ADD_USER_SHARED_BEAN,
+      );
       await this.uiBeanHelper.addUserSharedBean(_userBeanJSON);
     } catch (ex) {
       this.uiAnalytics.trackEvent(

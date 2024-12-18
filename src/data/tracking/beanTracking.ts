@@ -18,5 +18,7 @@ export default {
     SHOW_BREWS: 'SHOW_BREWS',
     CUPPING: 'CUPPING',
     UNARCHIVE: 'UNARCHIVE',
+    NFC_SCAN: 'NFC_SCAN',
+    NFC_WRITE: 'NFC_WRITE',
   },
 };

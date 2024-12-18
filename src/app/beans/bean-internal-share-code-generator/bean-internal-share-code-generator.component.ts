@@ -12,6 +12,8 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UILog } from '../../../services/uiLog';
 import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
 import { NfcService } from '../../../services/nfcService/nfc-service.service';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-bean-internal-share-code-generator.',
@@ -35,7 +37,8 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
     private readonly uiAlert: UIAlert,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiLog: UILog,
-    private readonly nfcService: NfcService
+    private readonly nfcService: NfcService,
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   ngOnInit() {}
@@ -54,11 +57,11 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
       while (true) {
         newShareCode = this.uiHelper.generateShortUUID().toUpperCase();
         const indexFound = allBeanEntries.findIndex(
-          (b) => b.internal_share_code === newShareCode
+          (b) => b.internal_share_code === newShareCode,
         );
         if (indexFound === -1) {
           this.uiLog.log(
-            'Generate QR Code - ' + newShareCode + ' - code not used yet.'
+            'Generate QR Code - ' + newShareCode + ' - code not used yet.',
           );
           /** This id isn't used yet**/
           break;
@@ -92,6 +95,10 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
     this.shareService.shareImage(this.imageSrc);
   }
   public writeNFC() {
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.NFC_WRITE,
+    );
     this.nfcService.writeNFCData(this.qrData);
   }
 
@@ -103,7 +110,7 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      BeanInternalShareCodeGeneratorComponent.COMPONENT_ID
+      BeanInternalShareCodeGeneratorComponent.COMPONENT_ID,
     );
   }
 

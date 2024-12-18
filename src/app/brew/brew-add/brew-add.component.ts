@@ -99,7 +99,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly visualizerService: VisualizerService,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly hapticService: HapticService,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {
     // Initialize to standard in drop down
     this.settings = this.uiSettingsStorage.getSettings();
@@ -178,7 +178,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
           },
           () => {
             // No
-          }
+          },
         );
     } else {
       this.dismiss();
@@ -238,7 +238,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.data.coordinates.speed = resp.coords.speed;
       this.data.coordinates.longitude = resp.coords.longitude;
       this.uiLog.info(
-        'BREW - Coordinates found - ' + JSON.stringify(this.data.coordinates)
+        'BREW - Coordinates found - ' + JSON.stringify(this.data.coordinates),
       );
     } catch (error) {
       this.uiLog.error('BREW - No Coordinates found: ', error);
@@ -272,7 +272,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     try {
       if (this.brewBrewing.brewBrewingGraphEl) {
         Plotly.purge(
-          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
         );
       }
     } catch (ex) {}
@@ -281,7 +281,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
         dismissed: true,
       },
       undefined,
-      BrewAddComponent.COMPONENT_ID
+      BrewAddComponent.COMPONENT_ID,
     );
   }
 
@@ -327,14 +327,25 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
       if (this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())) {
         await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
-          this.data.getBean()
+          this.data.getBean(),
         );
       }
 
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.ADD_FINISH
+        BREW_TRACKING.ACTIONS.ADD_FINISH,
       );
+      this.uiAnalytics.trackEvent(
+        BREW_TRACKING.TITLE,
+        BREW_TRACKING.ACTIONS.ADD_FINISH_PREPARATION_TYPE,
+        addedBrewObj.getPreparation().type,
+      );
+      this.uiAnalytics.trackEvent(
+        BREW_TRACKING.TITLE,
+        BREW_TRACKING.ACTIONS.ADD_FINISH_PREPARATION_STYLE,
+        addedBrewObj.getPreparation().style_type,
+      );
+
       if (
         this.brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() ===
         PreparationDeviceType.XENIA
@@ -349,11 +360,11 @@ export class BrewAddComponent implements OnInit, OnDestroy {
             await this.uiBrewStorage.update(addedBrewObj);
           } catch (ex) {
             this.uiLog.log(
-              'We could not get the logs from xenia: ' + JSON.stringify(ex)
+              'We could not get the logs from xenia: ' + JSON.stringify(ex),
             );
             this.uiToast.showInfoToast(
               'We could not get the logs from xenia: ' + JSON.stringify(ex),
-              false
+              false,
             );
           }
         }
@@ -375,7 +386,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     ) {
       this.uiHealthKit.trackCaffeineConsumption(
         this.data.getCaffeineAmount(),
-        moment(this.brewBrewing.customCreationDate).toDate()
+        moment(this.brewBrewing.customCreationDate).toDate(),
       );
     }
   }
@@ -420,7 +431,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     if (checkData.manage_parameters.set_custom_brew_time) {
       this.uiLog.log('Brew add - Step 6');
       addedBrewObj.config.unix_timestamp = moment(
-        this.brewBrewing.customCreationDate
+        this.brewBrewing.customCreationDate,
       ).unix();
       await this.uiBrewStorage.update(addedBrewObj);
     }
@@ -438,7 +449,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     if (this.hasAnyFlowProfileRequisites()) {
       this.uiLog.log('Brew add - Step 5');
       const savedPath: string = await this.brewBrewing.saveFlowProfile(
-        addedBrewObj.config.uuid
+        addedBrewObj.config.uuid,
       );
       if (savedPath !== '') {
         addedBrewObj.flow_profile = savedPath;
@@ -458,7 +469,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
         addedBrewObj.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.NONE
       ) {
         const path = await this.brewBrewing.saveReferenceFlowProfile(
-          addedBrewObj.config.uuid
+          addedBrewObj.config.uuid,
         );
 
         addedBrewObj.reference_flow_profile = new ReferenceGraph();
@@ -503,7 +514,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
         (_processNextHandler) => {
           // Don't do anything.
           this.confirmDismiss();
-        }
+        },
       );
     }
   }

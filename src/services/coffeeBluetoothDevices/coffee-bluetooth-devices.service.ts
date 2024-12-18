@@ -47,6 +47,8 @@ import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 import { TimemoreScale } from 'src/classes/devices/timemoreScale';
 import { VariaAkuScale } from '../../classes/devices/variaAku';
 import { UIHelper } from '../uiHelper';
+import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
+import { UIAnalytics } from '../uiAnalytics';
 
 declare var ble: any;
 declare var cordova: any;
@@ -83,6 +85,7 @@ export class CoffeeBluetoothDevicesService {
     private readonly translate: TranslateService,
     private readonly uiToast: UIToast,
     private readonly uiHelper: UIHelper,
+    private readonly uiAnalytics: UIAnalytics,
   ) {
     this.logger = new Logger('CoffeeBluetoothDevices');
     this.failed = false;
@@ -920,6 +923,11 @@ export class CoffeeBluetoothDevicesService {
         (data: PeripheralData) => {
           this.logger.log('AutoConnectScale - Scale device connected.');
           _wasConnected = true;
+          this.uiAnalytics.trackEvent(
+            BLUETOOTH_TRACKING.TITLE,
+            BLUETOOTH_TRACKING.ACTIONS.SCALE_USED,
+            deviceType,
+          );
           this.connectCallback(deviceType, data);
           successCallback();
 
@@ -1028,6 +1036,11 @@ export class CoffeeBluetoothDevicesService {
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device connected.',
           );
+          this.uiAnalytics.trackEvent(
+            BLUETOOTH_TRACKING.TITLE,
+            BLUETOOTH_TRACKING.ACTIONS.PRESSURE_USED,
+            pressureType,
+          );
           this.connectPressureCallback(pressureType, data);
           successCallback();
 
@@ -1123,7 +1136,11 @@ export class CoffeeBluetoothDevicesService {
           this.logger.log(
             'AutoConnectTemperatureDevice - Temperature device connected.',
           );
-
+          this.uiAnalytics.trackEvent(
+            BLUETOOTH_TRACKING.TITLE,
+            BLUETOOTH_TRACKING.ACTIONS.TEMPERATURE_USED,
+            temperatureType,
+          );
           this.connectTemperatureCallback(temperatureType, data);
           successCallback();
 
@@ -1179,6 +1196,11 @@ export class CoffeeBluetoothDevicesService {
             'AutoConnectRefractometerDevice - Refractometer device connected.',
           );
 
+          this.uiAnalytics.trackEvent(
+            BLUETOOTH_TRACKING.TITLE,
+            BLUETOOTH_TRACKING.ACTIONS.REFRACTOMETER_USED,
+            refractometerType,
+          );
           this.connectRefractometerCallback(refractometerType, data);
           successCallback();
 

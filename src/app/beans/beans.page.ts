@@ -332,6 +332,10 @@ export class BeansPage implements OnDestroy {
   public async scanNFC() {
     if (this.platform.is('capacitor')) {
       try {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.NFC_SCAN,
+        );
         await this.nfcService.readNFCTag();
       } catch (error) {
         // Just log and do nothing else, it's likely the user just cancelled
