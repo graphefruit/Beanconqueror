@@ -108,7 +108,7 @@ export class SettingsPage {
   private __cleanupAttachmentData(
     _data: Array<
       IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine
-    >
+    >,
   ): any {
     if (_data !== undefined && _data.length > 0) {
       for (const obj of _data) {
@@ -163,7 +163,7 @@ export class SettingsPage {
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiExportImportHelper: UIExportImportHelper,
     private readonly visualizerService: VisualizerService,
-    private readonly textToSpeech: TextToSpeechService
+    private readonly textToSpeech: TextToSpeechService,
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -180,7 +180,7 @@ export class SettingsPage {
       },
       () => {
         this.isHealthSectionAvailable = false;
-      }
+      },
     );
 
     if (this.platform.is('ios')) {
@@ -241,7 +241,7 @@ export class SettingsPage {
 
     if (_type === BluetoothTypes.SCALE) {
       this.eventQueue.dispatch(
-        new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
+        new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined),
       );
       if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
         disconnected = await this.bleManager.disconnect(this.settings.scale_id);
@@ -254,15 +254,15 @@ export class SettingsPage {
       this.eventQueue.dispatch(
         new AppEvent(
           AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT,
-          undefined
-        )
+          undefined,
+        ),
       );
       if (
         this.settings.pressure_id !== '' &&
         this.bleManager.getPressureDevice()
       ) {
         disconnected = await this.bleManager.disconnectPressureDevice(
-          this.settings.pressure_id
+          this.settings.pressure_id,
         );
       }
 
@@ -274,15 +274,15 @@ export class SettingsPage {
       this.eventQueue.dispatch(
         new AppEvent(
           AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
-          undefined
-        )
+          undefined,
+        ),
       );
       if (
         this.settings.temperature_id !== '' &&
         this.bleManager.getTemperatureDevice()
       ) {
         disconnected = await this.bleManager.disconnectTemperatureDevice(
-          this.settings.temperature_id
+          this.settings.temperature_id,
         );
       }
 
@@ -294,8 +294,8 @@ export class SettingsPage {
       this.eventQueue.dispatch(
         new AppEvent(
           AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
-          undefined
-        )
+          undefined,
+        ),
       );
 
       if (
@@ -303,7 +303,7 @@ export class SettingsPage {
         this.bleManager.getRefractometerDevice()
       ) {
         disconnected = await this.bleManager.disconnectRefractometerDevice(
-          this.settings.refractometer_id
+          this.settings.refractometer_id,
         );
       }
 
@@ -346,7 +346,7 @@ export class SettingsPage {
         .showConfirm(
           'HEALTH_KIT_QUESTION_MESSAGE',
           'HEALTH_KIT_QUESTION_TITLE',
-          true
+          true,
         )
         .then(
           () => {
@@ -360,13 +360,13 @@ export class SettingsPage {
                 // Forbidden
                 this.settings.track_caffeine_consumption = false;
                 await this.saveSettings();
-              }
+              },
             );
           },
           async () => {
             this.settings.track_caffeine_consumption = false;
             await this.saveSettings();
-          }
+          },
         );
     }
   }
@@ -393,7 +393,7 @@ export class SettingsPage {
       });
       if (requestResult.location !== 'granted') {
         throw new Error(
-          'Permission request did not work, maybe the user declined?'
+          'Permission request did not work, maybe the user declined?',
         );
       }
     } catch (error) {
@@ -415,7 +415,7 @@ export class SettingsPage {
           'PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE',
           'CARE',
           'CLOSE',
-          true
+          true,
         );
       }
     }, 500);
@@ -434,7 +434,7 @@ export class SettingsPage {
           'PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE',
           'CARE',
           'CLOSE',
-          true
+          true,
         );
       }
     }, 500);
@@ -481,7 +481,7 @@ export class SettingsPage {
   public async uploadBrewsToVisualizer() {
     const brewEntries = this.uiBrewStorage.getAllEntries();
     const uploadShots = brewEntries.filter(
-      (b) => b.flow_profile && !b.customInformation.visualizer_id
+      (b) => b.flow_profile && !b.customInformation.visualizer_id,
     );
     let couldABrewNotBeUploaded: boolean = false;
     await this.uiAlert.showLoadingSpinner();
@@ -500,14 +500,14 @@ export class SettingsPage {
         'VISUALIZER.NOT_ALL_SHOTS_UPLOADED',
         undefined,
         undefined,
-        true
+        true,
       );
     } else {
       this.uiAlert.showMessage(
         'VISUALIZER.ALL_SHOTS_UPLOADED',
         undefined,
         undefined,
-        true
+        true,
       );
     }
   }
@@ -515,7 +515,7 @@ export class SettingsPage {
   public howManyBrewsAreNotUploadedToVisualizer() {
     const brewEntries = this.uiBrewStorage.getAllEntries();
     return brewEntries.filter(
-      (b) => b.flow_profile && !b.customInformation.visualizer_id
+      (b) => b.flow_profile && !b.customInformation.visualizer_id,
     ).length;
   }
 
@@ -532,7 +532,7 @@ export class SettingsPage {
       this.uiHelper.toFixedIfNecessary(
         this.settings
           .bluetooth_scale_espresso_stop_on_no_weight_change_min_flow,
-        2
+        2,
       );
   }
 
@@ -581,7 +581,7 @@ export class SettingsPage {
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,
       SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.CATEGORY,
-      this.settings.language
+      this.settings.language,
     );
     this.uiSettingsStorage.saveSettings(this.settings);
     moment.locale(this.settings.language);
@@ -595,7 +595,7 @@ export class SettingsPage {
 
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,
-      SETTINGS_TRACKING.ACTIONS.IMPORT
+      SETTINGS_TRACKING.ACTIONS.IMPORT,
     );
     this.uiLog.log('Import real data');
 
@@ -610,7 +610,7 @@ export class SettingsPage {
       pickedFile.mimeType.indexOf('json') === -1
     ) {
       await this.uiAlert.showMessage(
-        this.translate.instant('INVALID_FILE_FORMAT')
+        this.translate.instant('INVALID_FILE_FORMAT'),
       );
       return;
     }
@@ -639,16 +639,15 @@ export class SettingsPage {
   private async doImport(
     importMode: 'zip' | 'json',
     mainFileUri: string,
-    directoryUri: string
+    directoryUri: string,
   ): Promise<void> {
     try {
       if (importMode === 'zip') {
-        const zipContent = await this.uiFileHelper.readFileAsUint8Array(
-          mainFileUri
-        );
+        const zipContent =
+          await this.uiFileHelper.readFileAsUint8Array(mainFileUri);
         const parsedJSON =
           await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
-            zipContent
+            zipContent,
           );
         await this.__importJSON(parsedJSON, directoryUri);
       } else {
@@ -662,10 +661,10 @@ export class SettingsPage {
         'from directory',
         directoryUri,
         '; Error',
-        error
+        error,
       );
       await this.uiAlert.showMessage(
-        this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`
+        this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`,
       );
     }
   }
@@ -675,7 +674,7 @@ export class SettingsPage {
 
     if (!this.isAndroid) {
       throw new Error(
-        'importFromDirectoryAndroid is only available on Android'
+        'importFromDirectoryAndroid is only available on Android',
       );
     }
 
@@ -700,7 +699,7 @@ export class SettingsPage {
         await this.uiAlert.showMessage(
           this.translate.instant('FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND', {
             fileName: mainFileName,
-          })
+          }),
         );
         return;
       }
@@ -717,7 +716,7 @@ export class SettingsPage {
       await this.doImport(
         'zip',
         cacheDir.uri + '/' + mainFileName,
-        cacheDir.uri
+        cacheDir.uri,
       );
     } finally {
       try {
@@ -734,7 +733,7 @@ export class SettingsPage {
           'Could not delete cache dir',
           cacheDir.path,
           '; Error',
-          error
+          error,
         );
         // ignore
       }
@@ -770,8 +769,8 @@ export class SettingsPage {
             'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
             {
               fileName: mainFileName,
-            }
-          )
+            },
+          ),
         );
         return;
       }
@@ -783,7 +782,7 @@ export class SettingsPage {
       cacheDir = await this.uiFileHelper.createTempCacheDirectory('safExport');
       await this.exportToPath(
         { path: cacheDir.path, directory: cacheDir.directory },
-        false
+        false,
       );
       await AndroidNativeCalls.moveFileDirectoryToSafDirectory({
         fromDirectoryUri: cacheDir.uri,
@@ -805,7 +804,7 @@ export class SettingsPage {
           'Could not delete cache dir',
           cacheDir.path,
           '; Error',
-          error
+          error,
         );
         // ignore
       }
@@ -855,7 +854,9 @@ export class SettingsPage {
       path: 'Download/Beanconqueror_export',
       directory: Directory.External,
     };
-    await this.exportToPath(defaultExportPath, true);
+    try {
+      await this.exportToPath(defaultExportPath, true);
+    } catch (ex) {}
 
     await this.uiAlert.hideLoadingSpinner();
   }
@@ -865,18 +866,18 @@ export class SettingsPage {
       path: string;
       directory: Directory;
     },
-    share: boolean
+    share: boolean,
   ) {
     this.uiLog.log(
       'Starting export to directory',
       exportPath.directory,
       'in directory',
-      exportPath.directory
+      exportPath.directory,
     );
 
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,
-      SETTINGS_TRACKING.ACTIONS.EXPORT
+      SETTINGS_TRACKING.ACTIONS.EXPORT,
     );
 
     const zipBlob = await this.uiExportImportHelper.buildExportZIP();
@@ -898,7 +899,7 @@ export class SettingsPage {
         directory: exportPath.directory,
       },
       zipBlob,
-      share
+      share,
     );
   }
 
@@ -965,11 +966,11 @@ export class SettingsPage {
               e.flow_profile !== undefined &&
               e.flow_profile !== '' &&
               allPreps.find(
-                (pr) => pr.config.uuid === e.method_of_preparation
+                (pr) => pr.config.uuid === e.method_of_preparation,
               ) &&
               e.preparationDeviceBrew &&
               e.preparationDeviceBrew.params &&
-              e.preparationDeviceBrew.params.brew_by_weight_active === true
+              e.preparationDeviceBrew.params.brew_by_weight_active === true,
           );
       } else if (_type === 'sanremo') {
         allBrewsWithProfiles = this.uiBrewStorage
@@ -980,11 +981,11 @@ export class SettingsPage {
               e.flow_profile !== undefined &&
               e.flow_profile !== '' &&
               allPreps.find(
-                (pr) => pr.config.uuid === e.method_of_preparation
+                (pr) => pr.config.uuid === e.method_of_preparation,
               ) &&
               e.preparationDeviceBrew &&
               e.preparationDeviceBrew.params &&
-              e.preparationDeviceBrew.params.stopAtWeight > 0
+              e.preparationDeviceBrew.params.stopAtWeight > 0,
           );
       }
 
@@ -1013,9 +1014,8 @@ export class SettingsPage {
   public async readFlowProfile(_brew: Brew) {
     const flowProfilePath = 'brews/' + _brew.config.uuid + '_flow_profile.json';
     try {
-      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-        flowProfilePath
-      );
+      const jsonParsed =
+        await this.uiFileHelper.readInternalJSONFile(flowProfilePath);
       return jsonParsed as BrewFlow;
     } catch (ex) {
       return null;
@@ -1024,7 +1024,7 @@ export class SettingsPage {
 
   public downloadImportExcelTemplates() {
     this.uiHelper.openExternalWebpage(
-      'https://beanconqueror.gitbook.io/beanconqueror/resources/files'
+      'https://beanconqueror.gitbook.io/beanconqueror/resources/files',
     );
   }
 
@@ -1032,7 +1032,7 @@ export class SettingsPage {
     if (this.platform.is('capacitor')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
-        SETTINGS_TRACKING.ACTIONS.IMPORT
+        SETTINGS_TRACKING.ACTIONS.IMPORT,
       );
       this.uiLog.log('Import real data');
       const fileUri = await FilePicker.pickFiles({ limit: 1 });
@@ -1041,7 +1041,7 @@ export class SettingsPage {
       }
       if (
         fileUri.files[0].mimeType.indexOf(
-          'openxmlformats-officedocument.spreadsheetml.sheet'
+          'openxmlformats-officedocument.spreadsheetml.sheet',
         ) > 0
       ) {
         this.uiFileHelper.readFileAsUint8Array(fileUri.files[0].path).then(
@@ -1054,7 +1054,7 @@ export class SettingsPage {
           },
           () => {
             // Backup, maybe it was a .JSON?
-          }
+          },
         );
       } else {
         this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
@@ -1075,7 +1075,7 @@ export class SettingsPage {
     exportPath: {
       path: string;
       directory: Directory;
-    }
+    },
   ) {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
@@ -1089,7 +1089,7 @@ export class SettingsPage {
     exportPath: {
       path: string;
       directory: Directory;
-    }
+    },
   ) {
     await this.exportStoredData(_storedData, exportPath);
   }
@@ -1099,7 +1099,7 @@ export class SettingsPage {
     exportPath: {
       path: string;
       directory: Directory;
-    }
+    },
   ) {
     await this.exportStoredData(_storedData, exportPath);
   }
@@ -1109,7 +1109,7 @@ export class SettingsPage {
     exportPath: {
       path: string;
       directory: Directory;
-    }
+    },
   ) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
@@ -1124,7 +1124,7 @@ export class SettingsPage {
       ) {
         await this._exportFile(
           entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
-          exportPath
+          exportPath,
         );
       }
     }
@@ -1135,7 +1135,7 @@ export class SettingsPage {
     exportPath: {
       path: string;
       directory: Directory;
-    }
+    },
   ) {
     try {
       const sourceFile = this.uiFileHelper.normalizeFileName(fileName);
@@ -1153,14 +1153,14 @@ export class SettingsPage {
         'File',
         fileName,
         'exported successfully to',
-        copyResult.uri
+        copyResult.uri,
       );
     } catch (error) {
       this.uiLog.error(
         'Error while exporting',
         fileName,
         error,
-        '.The error will be ignored.'
+        '.The error will be ignored.',
       );
     }
   }
@@ -1174,7 +1174,7 @@ export class SettingsPage {
       | GreenBean[]
       | RoastingMachine[]
       | Water[],
-    _importDirectory: string
+    _importDirectory: string,
   ) {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
@@ -1185,7 +1185,7 @@ export class SettingsPage {
 
   private async _importFlowProfileFiles(
     _storedData: Brew[],
-    _importDirectory: string
+    _importDirectory: string,
   ) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
@@ -1200,7 +1200,7 @@ export class SettingsPage {
           /** Making a new object for this seems to be like totaly overdrived **/
           await this._importFile(
             entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
-            _importDirectory
+            _importDirectory,
           );
         }
       }
@@ -1209,7 +1209,7 @@ export class SettingsPage {
 
   private async _importGraphProfileFiles(
     _storedData: Graph[],
-    _importDirectory: string
+    _importDirectory: string,
   ) {
     for (const entry of _storedData) {
       if (entry.flow_profile) {
@@ -1220,11 +1220,11 @@ export class SettingsPage {
 
   private async _importFile(
     internalPathToImportTo: string,
-    importDirectory: string
+    importDirectory: string,
   ) {
     try {
       internalPathToImportTo = this.uiFileHelper.normalizeFileName(
-        internalPathToImportTo
+        internalPathToImportTo,
       );
 
       const fileToImport = importDirectory + '/' + internalPathToImportTo;
@@ -1237,7 +1237,7 @@ export class SettingsPage {
           internalPathToImportTo,
           'does not exist at',
           fileToImport,
-          '; Skipping import.'
+          '; Skipping import.',
         );
         // Just give up and try to import the other files
         return;
@@ -1247,7 +1247,7 @@ export class SettingsPage {
         'Importing to internal path',
         internalPathToImportTo,
         'from',
-        fileToImport
+        fileToImport,
       );
       await this.uiFileHelper.makeParentDirsInternal(internalPathToImportTo);
       await Filesystem.copy({
@@ -1264,7 +1264,7 @@ export class SettingsPage {
         'in path',
         importDirectory,
         '; Error:',
-        error
+        error,
       );
     }
   }
@@ -1278,7 +1278,7 @@ export class SettingsPage {
       // Breaking change, we need to throw away the old order types by import
       const settingsConst = new Settings();
       dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
-        settingsConst.brew_order
+        settingsConst.brew_order,
       );
     }
     this.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
@@ -1290,7 +1290,7 @@ export class SettingsPage {
         this.settings.resetFilter();
         this.setLanguage();
         await this.uiAlert.showMessage(
-          this.translate.instant('IMPORT_SUCCESSFULLY')
+          this.translate.instant('IMPORT_SUCCESSFULLY'),
         );
         if (this.settings.matomo_analytics === undefined) {
           await this.showAnalyticsInformation();
@@ -1341,14 +1341,14 @@ export class SettingsPage {
         !parsedContent[this.uiSettingsStorage.getDBPath()]
       ) {
         await this.uiAlert.showMessage(
-          this.translate.instant('INVALID_FILE_DATA')
+          this.translate.instant('INVALID_FILE_DATA'),
         );
         return;
       }
 
       this.uiLog.log('All data existing');
       this.__cleanupImportSettingsData(
-        parsedContent[this.uiSettingsStorage.getDBPath()]
+        parsedContent[this.uiSettingsStorage.getDBPath()],
       );
 
       // When exporting the value is a number, when importing it needs to be  a string.
@@ -1363,13 +1363,13 @@ export class SettingsPage {
           // Breaking change, we need to throw away the old order types by import
           const settingsConst = new Settings();
           parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
-            settingsConst.brew_order
+            settingsConst.brew_order,
           );
         }
       } catch {
         const settingsConst = new Settings();
         parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
-          settingsConst.brew_order
+          settingsConst.brew_order,
         );
       }
 
@@ -1438,7 +1438,7 @@ export class SettingsPage {
           await this.uiSettingsStorage.saveSettings(this.settings);
           await this.uiAlert.hideLoadingSpinner();
           await this.uiAlert.showMessage(
-            this.translate.instant('IMPORT_SUCCESSFULLY')
+            this.translate.instant('IMPORT_SUCCESSFULLY'),
           );
           if (this.settings.matomo_analytics === undefined) {
             await this.showAnalyticsInformation();
@@ -1448,19 +1448,19 @@ export class SettingsPage {
         } else {
           await this.uiAlert.hideLoadingSpinner();
           await this.uiAlert.showMessage(
-            this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
+            this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'),
           );
         }
       } catch (error) {
         this.uiLog.error('Error during import', error);
         await this.uiAlert.hideLoadingSpinner();
         await this.uiAlert.showMessage(
-          this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
+          this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'),
         );
       }
     } catch (ex) {
       await this.uiAlert.showMessage(
-        this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex)
+        this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex),
       );
     }
   }
@@ -1520,7 +1520,7 @@ export class SettingsPage {
         'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
         undefined,
         undefined,
-        true
+        true,
       );
     }
   }
