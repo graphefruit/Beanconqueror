@@ -67,6 +67,7 @@ import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/san
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
 
 declare var Plotly;
 
@@ -340,12 +341,22 @@ export class BrewBrewingGraphComponent implements OnInit {
             REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
         ) {
           referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+
+          if (
+            _brew.reference_flow_profile.type ===
+            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+          ) {
+            referencePath = referenceObj.getGraphPath(
+              BREW_GRAPH_TYPE.IMPORTED_GRAPH,
+            );
+          } else {
+            referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
+          }
         } else {
           referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
+          referencePath = referenceObj.getGraphPath();
         }
         if (referenceObj) {
-          referencePath = referenceObj.getGraphPath();
-
           await this.uiAlert.showLoadingSpinner();
           try {
             const jsonParsed =
