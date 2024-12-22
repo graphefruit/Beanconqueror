@@ -1365,7 +1365,7 @@
         "8.0.0": {
             "TITLE": "Version 8.0.0 : Quoi de neuf",
             "DESCRIPTION": [
-                "<b>Couche application<\/b>",
+                "<b> Couche application <\/b>",
                 "La couche application a été modifiée (de Cordova à Capacitor), si vous rencontrez des problèmes, veuillez contacter : info@beanconqueror.com",
                 "Avec cela, il y a eu beaucoup d’ajustements de performances",
                 "Je souhaite dire un grand merci à RagingCactus qui a effectué un travail phénoménal pour faire avancer l'application ! ",
@@ -1399,8 +1399,8 @@
                 "<b>Paramètres<\/b>",
                 "Vous pouvez masquer les onglets de mesures sur l'affichage de graphe agrandi",
                 "",
-                "[ANDROID]<b>Android<\/b>",
-                "[ANDROID]Vous pouvez désormais faire une exportation et une importation complète depuis les Paramètres",
+                "[ANDROID] <b> Android <\/b>",
+                "[ANDROID] Vous pouvez désormais faire une exportation et une importation complète depuis les Paramètres",
                 "",
                 "<b>Autres<\/b>",
                 "Correction du fonctions de calcul pour les grains congelés\/non congelés",
