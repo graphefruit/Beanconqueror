@@ -503,6 +503,8 @@ export class AppComponent implements AfterViewInit {
                 settingLanguage = 'nl';
               } else if (systemLanguage === 'no') {
                 settingLanguage = 'no';
+              } else if (systemLanguage === 'pt') {
+                settingLanguage = 'pt';
               } else {
                 settingLanguage = 'en';
               }
