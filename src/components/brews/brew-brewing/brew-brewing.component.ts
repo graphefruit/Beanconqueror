@@ -1166,7 +1166,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     ) {
       const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
-        const lastBrew: Brew = brews[brews.length - 1];
+        const sortedBrews = UIBrewHelper.sortBrews(brews);
+        const lastBrew: Brew = sortedBrews[0];
         await this.__loadBrew(lastBrew, false);
         wasAnythingLoaded = true;
       }
@@ -1189,10 +1190,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       );
       if (!brewPreparation.finished) {
         this.data.method_of_preparation = brewPreparation.config.uuid;
+        /**We need to set the choosen preparation here, else we get the wrong reference,
+         *  after we've changed the getPreparation to temporary store
+         *  to not always request the database**/
+        this.setChoosenPreparation();
       }
     }
     let checkData: Settings | Preparation;
-
     if (
       _template === true &&
       this.getPreparation().use_custom_parameters === true &&
