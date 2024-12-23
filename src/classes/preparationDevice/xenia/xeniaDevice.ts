@@ -190,7 +190,7 @@ export class XeniaDevice extends PreparationDevice {
       //Was not supported in V1 at all
       return undefined;
     } else {
-      url += '/api/v2/logs';
+      url += '/api/v2/log/messages';
     }
 
     try {
