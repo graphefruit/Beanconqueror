@@ -298,9 +298,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.data.bean = this.beanPreset.config.uuid;
       }
 
-      if (this.brewBrewingPreparationDeviceEl) {
+      /**
+       * We removed this line, because we loaded the preparation device element twice, because it was already loaded fron the last brew
+       */
+      /** if (this.brewBrewingPreparationDeviceEl && !this.brewBrewingPreparationDeviceEl.hasAPreparationDeviceSet()) {
         await this.brewBrewingPreparationDeviceEl?.instance();
-      }
+      }**/
 
       if (this.brewBrewingGraphEl) {
         if (this.isEdit === false && this.brewFlowPreset) {

@@ -353,11 +353,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
     this.data.preparationDeviceBrew.params = new SanremoYOUParams();
 
+    await this.uiAlert.showLoadingSpinner();
     await connectedDevice.deviceConnected().then(
-      () => {
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
         this.preparationDevice = connectedDevice as SanremoYOUDevice;
       },
-      () => {
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
         //Not connected
         this.uiAlert.showMessage(
           'PREPARATION_DEVICE.TYPE_SANREMO_YOU.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
