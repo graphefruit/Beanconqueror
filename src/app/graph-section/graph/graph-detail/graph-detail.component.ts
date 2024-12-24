@@ -205,12 +205,14 @@ export class GraphDetailComponent implements OnInit {
         this.traces,
         graphSettings,
         true,
+        false,
       );
 
       this.traceReferences = this.graphHelper.initializeTraces();
       this.traceReferences = this.graphHelper.fillTraces(
         this.traceReferences,
         graphSettings,
+        true,
         true,
       );
 
