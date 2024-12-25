@@ -1971,6 +1971,15 @@ export class BrewBrewingGraphComponent implements OnInit {
                       false,
                     );
                   });
+                try {
+                  this.writeExecutionTimeToNotes(
+                    'Start script - again',
+                    this.data.preparationDeviceBrew.params.scriptStartId,
+                    this.getScriptName(
+                      this.data.preparationDeviceBrew.params.scriptStartId,
+                    ),
+                  );
+                } catch (ex) {}
               }
             },
             () => {
