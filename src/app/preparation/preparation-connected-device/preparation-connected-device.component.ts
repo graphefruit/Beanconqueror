@@ -48,7 +48,7 @@ export class PreparationConnectedDeviceComponent {
     private readonly uiToast: UIToast,
     private readonly uiAlert: UIAlert,
     public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {}
 
   public ionViewWillEnter(): void {
@@ -83,7 +83,7 @@ export class PreparationConnectedDeviceComponent {
         dismissed: true,
       },
       undefined,
-      PreparationConnectedDeviceComponent.COMPONENT_ID
+      PreparationConnectedDeviceComponent.COMPONENT_ID,
     );
   }
 
@@ -120,7 +120,9 @@ export class PreparationConnectedDeviceComponent {
         }
         if (
           this.data.connectedPreparationDevice.customParams.residualLagTime ===
-          undefined
+            undefined ||
+          this.data.connectedPreparationDevice.customParams.residualLagTime ===
+            0
         ) {
           this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
         }
@@ -178,7 +180,7 @@ export class PreparationConnectedDeviceComponent {
       connectedDevice.deviceConnected().then(
         () => {
           this.uiToast.showInfoToastBottom(
-            'PREPARATION_DEVICE.CONNECTION.SUCCESFULLY'
+            'PREPARATION_DEVICE.CONNECTION.SUCCESFULLY',
           );
         },
         () => {
@@ -186,9 +188,9 @@ export class PreparationConnectedDeviceComponent {
             'PREPARATION_DEVICE.CONNECTION.UNSUCCESFULLY',
             undefined,
             undefined,
-            true
+            true,
           );
-        }
+        },
       );
     }
   }
