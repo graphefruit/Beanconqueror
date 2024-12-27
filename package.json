@@ -29,7 +29,7 @@
     "@capacitor-community/keep-awake": "^5.0.1",
     "@capacitor/android": "6.1.2",
     "@capacitor/app": "6.0.1",
-    "@capacitor/barcode-scanner": "^1.0.1",
+    "@capacitor/barcode-scanner": "^1.0.4",
     "@capacitor/camera": "^6.0.2",
     "@capacitor/clipboard": "^6.0.1",
     "@capacitor/core": "6.1.2",

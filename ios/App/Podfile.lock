@@ -3,7 +3,7 @@ PODS:
     - CapacitorCordova
   - CapacitorApp (6.0.1):
     - Capacitor
-  - CapacitorBarcodeScanner (1.0.1):
+  - CapacitorBarcodeScanner (1.0.4):
     - Capacitor
     - OSBarcodeLib (~> 1.1.0)
   - CapacitorCamera (6.0.2):
@@ -105,7 +105,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Capacitor: 679f9673fdf30597493a6362a5d5bf233d46abc2
   CapacitorApp: 0bc633b4eae40a1f32cd2834788fad3bc42da6a1
-  CapacitorBarcodeScanner: 3057910347ab6c3db06e1a38bdf688a6a469227a
+  CapacitorBarcodeScanner: 869a8f023e90b7cc92c18919732e3d935b2c0792
   CapacitorCamera: ed022171dbf3853e68eec877b4d78995378af6b7
   CapacitorClipboard: 756cd7e83e8d5d19b0c74f40b57517c287bd5fe2
   CapacitorCommunityKeepAwake: e2ddd50812e3407f8dc3a2c28e97d66e9b59b2f5
