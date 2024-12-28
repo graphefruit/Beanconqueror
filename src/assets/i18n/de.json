@@ -1447,7 +1447,7 @@
     "NFC": {
         "PLEASE_ENABLED_NFC_DESCRIPTION": "Bitte aktivieren Sie NFC, sonst kann diese Funktion nicht genutzt werden",
         "WRITE_COMPLETED_DESCRIPTION": "NFC-Tag wurde erfolgreich geschrieben",
-        "WRITE_COMPLETED_TITLE": "Schreiben fehlgeschlagen",
+        "WRITE_COMPLETED_TITLE": "Schreiben erfolgreich",
         "WRITE_UNCOMPLETED_DESCRIPTION": "NFC-Tag konnte nicht geschrieben werden",
         "WRITE_UNCOMPLETED_TITLE": "Schreiben fehlgeschlagen",
         "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": "Bitte halten Sie Ihren Anhänger an das Lesegerät",
