@@ -1,23 +1,22 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Classes */
 /** Interfaces */
 /** Services */
-import {StorageClass} from '../classes/storageClass';
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-import {TranslateService} from '@ngx-translate/core';
-import {RoastingMachine} from '../classes/roasting-machine/roasting-machine';
-import {IRoastingMachine} from '../interfaces/roasting-machine/iRoastingMachine';
+import { StorageClass } from '../classes/storageClass';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIStorage } from './uiStorage';
+import { TranslateService } from '@ngx-translate/core';
+import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
 
 /** Ionic native */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIRoastingMachineStorage extends StorageClass {
-
   /**
    * Singelton instance
    */
@@ -29,16 +28,16 @@ export class UIRoastingMachineStorage extends StorageClass {
     if (UIRoastingMachineStorage.instance) {
       return UIRoastingMachineStorage.instance;
     }
-    // noinspection TsLint
 
     return undefined;
   }
 
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog,
-              private readonly translate: TranslateService) {
-
+  constructor(
+    protected uiStorage: UIStorage,
+    protected uiHelper: UIHelper,
+    protected uiLog: UILog,
+    private readonly translate: TranslateService
+  ) {
     super(uiStorage, uiHelper, uiLog, 'ROASTING_MACHINES');
     if (UIRoastingMachineStorage.instance === undefined) {
       UIRoastingMachineStorage.instance = this;
@@ -79,5 +78,4 @@ export class UIRoastingMachineStorage extends StorageClass {
     }
     return this.roastingMachines;
   }
-
 }

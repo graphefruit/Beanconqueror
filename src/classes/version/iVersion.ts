@@ -20,11 +20,11 @@ export class Version implements IVersion {
   }
 
   public whichUpdateScreensShallBeDisplayed(
-    actualAppVersion: string
+    actualAppVersion: string,
   ): Array<string> {
     const versionCode: string = actualAppVersion;
     const filteredVersions = this.getUpdatedVersions().filter(
-      (e) => this.alreadyDisplayedVersions.filter((b) => b === e).length === 0
+      (e) => this.alreadyDisplayedVersions.filter((b) => b === e).length === 0,
     );
 
     const displayVersions: Array<string> = [];
@@ -47,7 +47,7 @@ export class Version implements IVersion {
 
   public checkIfDataVersionWasUpdated(_updatedDataVersion: string) {
     const foundEntries = this.updatedDataVersions.find(
-      (e) => e === _updatedDataVersion
+      (e) => e === _updatedDataVersion,
     );
     if (foundEntries && foundEntries.length > 0) {
       return true;
@@ -60,7 +60,7 @@ export class Version implements IVersion {
    * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
    */
   private getUpdatedVersions() {
-    return ['7.5.0'];
+    return ['8.0.0'];
   }
 
   private versionCompare(_actualAppVersion, _updateVersion) {

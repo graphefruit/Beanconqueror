@@ -44,10 +44,25 @@
             <ion-label>{{"IMPORT" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
+          <ion-item *ngIf="isAndroid" (click)="importFromDirectoryAndroid()" button tappable>
+            <ion-label>
+              <h2>{{"FULL_IMPORT_FROM_DIRECTORY" | translate}}</h2>
+              <p>{{"FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION" | translate}}</p>
+            </ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
           <ion-item (click)="export()" button tappable>
             <ion-label>
               <h2>{{"EXPORT" | translate}}</h2>
               <p>{{"EXPORT_CAUTION" | translate}}</p>
+              <p *ngIf="platform.is('ios')">{{"EXPORT_CAUTION_IOS" | translate}}</p>
+            </ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item *ngIf="isAndroid" (click)="exportToSafDirectoryAndroid()" button tappable>
+            <ion-label>
+              <h2>{{"FULL_EXPORT_TO_DIRECTORY" | translate}}</h2>
+              <p>{{"FULL_EXPORT_TO_DIRECTORY_DESCRIPTION" | translate}}</p>
             </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
@@ -97,6 +112,8 @@
               <ion-select-option value="id">{{"PAGE_SETTINGS_LANGUAGE_INDONESIA" | translate}}</ion-select-option>
               <ion-select-option value="pl">{{"PAGE_SETTINGS_LANGUAGE_POLISH" | translate}}</ion-select-option>
               <ion-select-option value="nl">{{"PAGE_SETTINGS_LANGUAGE_DUTCH" | translate}}</ion-select-option>
+              <ion-select-option value="no">{{"PAGE_SETTINGS_LANGUAGE_NORWEGIAN" | translate}}</ion-select-option>
+              <ion-select-option value="pt">{{"PAGE_SETTINGS_LANGUAGE_PORTUGUESE" | translate}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -336,7 +353,7 @@
             <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="1" snaps="true" max="10"
                        step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_timer_start_delay_time">
               <div class='ion-label'
-                   slot="end">{{this.uiHelper.toFixedIfNecessary(settings.brew_timer_start_delay_time,1)}}</div>
+                   slot="end">{{settings.brew_timer_start_delay_time | toFixed: 1}}</div>
             </ion-range>
           </ion-item>
         </ion-card-content>
@@ -595,20 +612,12 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.scale_id !== '' && isScaleConnected() === false" (click)="retryConnectScale()"
-              tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.scale_id !== ''" (click)="disconnectScale()" tappable button>
+            <ion-item *ngIf="settings.scale_id !== ''" (click)="disconnectDevice(BluetoothTypes.SCALE)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>
               <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
             </ion-item>
-
             <ion-item>
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_stay_connected">
                 <div class='ion-label' style="white-space: normal;">
@@ -652,6 +661,14 @@
                 </div>
               </ion-checkbox>
             </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.maximize_hide_value_cards_on_maximize_screen">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
             <ion-item [lines]="settings.bluetooth_scale_listening_threshold_active?'none':'full'">
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
                             [(ngModel)]="settings.bluetooth_scale_listening_threshold_active">
@@ -669,7 +686,7 @@
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="0.1" snaps="true" max="5"
                          step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_listening_threshold_start">
                 <div class='ion-label'
-                     slot="end">{{this.uiHelper.toFixedIfNecessary(settings.bluetooth_scale_listening_threshold_start,1)}}</div>
+                     slot="end">{{settings.bluetooth_scale_listening_threshold_start| toFixed: 1}}</div>
               </ion-range>
             </ion-item>
             <ion-item [lines]="settings.bluetooth_scale_espresso_stop_on_no_weight_change?'none':'full'">
@@ -693,22 +710,28 @@
                 <div class='ion-label' slot="end">{{settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow | number : '.0-2'}} g/s</div>
               </ion-range>
             </ion-item>
-            <ion-item>
-              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values">
+            <ion-item lines="none">
+              <ion-checkbox  disabled="true" label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values">
                 <div class="ion-label" style="white-space: normal;">
                   <h2>{{"IGNORE_NEGATIVE_VALUES" | translate}}</h2>
                   <p>{{"IGNORE_NEGATIVE_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>
-            <ion-item>
-              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_anomaly_values">
+            <ion-item style="margin-top:-15px;">
+              <ion-label>{{"BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED" | translate}}</ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-checkbox  disabled="true" label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_anomaly_values">
                 <div class='ion-label'>
                   <h2>{{"IGNORE_ANOMALY_VALUES" | translate}}</h2>
                   <p>{{"IGNORE_ANOMALY_VALUES_TOOLTIP" | translate}}</p>
                   <p>{{"IGNORE_ANOMALY_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
+            </ion-item>
+            <ion-item style="margin-top:-15px;">
+              <ion-label>{{"BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED" | translate}}</ion-label>
             </ion-item>
             <ion-item>
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_ignore_weight_button_active">
@@ -798,6 +821,20 @@
                 <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</div>
               </ion-checkbox>
             </ion-item>
+            <ng-container *ngIf="smartScaleConnected() && smartScaleSupportsTwoWeight()">
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.weightSecond">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_SECOND" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.realtime_flowSecond">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME_SECOND" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+            </ng-container>
           </ion-list>
         </ion-card-content>
       </ion-card>
@@ -835,7 +872,7 @@
           <ion-list>
             <ion-item lines="none">
               <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT" | translate}}&nbsp;<ion-badge
-                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.FILTER.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.FILTER.upper,2)}} </ion-badge>
+                style="vertical-align: top;">{{settings.graph_weight.FILTER.lower| toFixed: 2}}&nbsp;-&nbsp;{{settings.graph_weight.FILTER.upper| toFixed: 2}} </ion-badge>
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
@@ -844,7 +881,7 @@
             </ion-item>
             <ion-item lines="none">
               <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW" | translate}}&nbsp;<ion-badge
-                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.FILTER.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.FILTER.upper,2)}} </ion-badge>
+                style="vertical-align: top;">{{settings.graph_flow.FILTER.lower| toFixed: 2}}&nbsp;-&nbsp;{{settings.graph_flow.FILTER.upper| toFixed: 2}} </ion-badge>
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
@@ -853,7 +890,7 @@
             </ion-item>
             <ion-item lines="none">
               <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT" | translate}}&nbsp;<ion-badge
-                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.ESPRESSO.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.ESPRESSO.upper,2)}} </ion-badge>
+                style="vertical-align: top;">{{settings.graph_weight.ESPRESSO.lower| toFixed: 2}}&nbsp;-&nbsp;{{settings.graph_weight.ESPRESSO.upper| toFixed: 2}} </ion-badge>
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
@@ -862,7 +899,7 @@
             </ion-item>
             <ion-item lines="none">
               <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW" | translate}}&nbsp;<ion-badge
-                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.ESPRESSO.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.ESPRESSO.upper,2)}} </ion-badge>
+                style="vertical-align: top;">{{settings.graph_flow.ESPRESSO.lower| toFixed: 2}}&nbsp;-&nbsp;{{settings.graph_flow.ESPRESSO.upper| toFixed: 2}} </ion-badge>
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
@@ -932,14 +969,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.pressure_id !== '' && isPressureDeviceConnected() === false"
-              (click)="retryConnectPressureDevice()" tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.pressure_id !== ''" (click)="disconnectPressureDevice()" tappable button>
+            <ion-item *ngIf="settings.pressure_id !== ''" (click)="disconnectDevice(BluetoothTypes.PRESSURE)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>
@@ -966,7 +996,7 @@
               <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
                 step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
                 <div class='ion-label'
-                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.pressure_threshold_bar,1)}}</div>
+                  slot="end">{{settings.pressure_threshold_bar| toFixed: 1}}</div>
               </ion-range>
             </ion-item>
             <ion-item>
@@ -1004,7 +1034,7 @@
           <ion-list>
             <ion-item lines="none">
               <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE" | translate}}&nbsp;<ion-badge
-                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_pressure.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_pressure.upper,2)}} </ion-badge>
+                style="vertical-align: top;">{{settings.graph_pressure.lower| toFixed: 2}}&nbsp;-&nbsp;{{settings.graph_pressure.upper| toFixed: 2}} </ion-badge>
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
@@ -1029,14 +1059,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.temperature_id !== '' && isTemperatureDeviceConnected() === false"
-              (click)="retryConnectTemperatureDevice()" tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.temperature_id !== ''" (click)="disconnectTemperatureDevice()" tappable button>
+            <ion-item *ngIf="settings.temperature_id !== ''" (click)="disconnectDevice(BluetoothTypes.TEMPERATURE)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>
@@ -1063,7 +1086,7 @@
               <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="60" snaps="true" max="100"
                 step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.temperature_threshold_temp">
                 <div class='ion-label'
-                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.temperature_threshold_temp,1)}}</div>
+                  slot="end">{{settings.temperature_threshold_temp| toFixed: 1}}</div>
               </ion-range>
             </ion-item>
             <ion-item>
@@ -1098,14 +1121,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.refractometer_id !== '' && isRefractometerDeviceConnected() === false"
-              (click)="retryConnectRefractometerDevice()" tappable button>
-              <ion-label>
-                <h2>{{"RETRY_CONNECT" | translate}}</h2>
-              </ion-label>
-              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
-            </ion-item>
-            <ion-item *ngIf="settings.refractometer_id !== ''" (click)="disconnectRefractometerDevice()" tappable button>
+            <ion-item *ngIf="settings.refractometer_id !== ''" (click)="disconnectDevice(BluetoothTypes.TDS)" tappable button>
               <ion-label>
                 <h2>{{"DISCONNECT" | translate}}</h2>
               </ion-label>

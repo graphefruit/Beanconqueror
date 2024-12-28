@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { DatetimePopoverComponent } from './datetime-popover.component';
@@ -18,7 +19,7 @@ describe('DatetimePopoverComponent', () => {
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
       ],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
     }).compileComponents();
   }));
 

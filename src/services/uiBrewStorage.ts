@@ -71,13 +71,16 @@ export class UIBrewStorage extends StorageClass {
   }
   public async add(_entry: Brew): Promise<any> {
     _entry.fixDataTypes();
-    return await super.add(_entry);
+    const addEntry = this.uiHelper.cloneData(_entry);
+    return await super.add(addEntry);
   }
 
   public async update(_obj: Brew): Promise<boolean> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
       _obj.fixDataTypes();
-      const updateval: boolean = await super.update(_obj);
+
+      const updatingObj = this.uiHelper.cloneData(_obj);
+      const updateval: boolean = await super.update(updatingObj);
       resolve(updateval);
     });
     return promise;

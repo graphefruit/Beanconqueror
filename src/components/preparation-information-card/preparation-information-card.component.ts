@@ -15,10 +15,10 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIImage } from '../../services/uiImage';
 import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
-import { PreparationConnectedDeviceComponent } from '../../app/preparation/preparation-connected-device/preparation-connected-device.component';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIHelper } from '../../services/uiHelper';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 
 @Component({
   selector: 'preparation-information-card',
@@ -46,7 +46,7 @@ export class PreparationInformationCardComponent implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiImage: UIImage,
     private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ngOnInit() {
@@ -59,7 +59,7 @@ export class PreparationInformationCardComponent implements OnInit {
     this.weightCount = this.uiHelper.toFixedIfNecessary(this.weightCount, 2);
     this.drunkenQuantity = this.uiHelper.toFixedIfNecessary(
       this.drunkenQuantity,
-      2
+      2,
     );
     this.beansCount = this.uiHelper.toFixedIfNecessary(this.beansCount, 0);
   }
@@ -67,7 +67,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public getBrewsCount(): number {
     const relatedBrews: Array<Brew> =
       this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid
+        this.preparation.config.uuid,
       );
     return relatedBrews.length;
   }
@@ -75,7 +75,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public getWeightCount(): number {
     const relatedBrews: Array<Brew> =
       this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid
+        this.preparation.config.uuid,
       );
     let grindWeight: number = 0;
     for (const brew of relatedBrews) {
@@ -87,7 +87,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public getDrunkenQuantity(): number {
     const relatedBrews: Array<Brew> =
       this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid
+        this.preparation.config.uuid,
       );
     let drunkenQuantity: number = 0;
     for (const brew of relatedBrews) {
@@ -103,7 +103,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public getBeansCount(): number {
     const relatedBrews: Array<Brew> =
       this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid
+        this.preparation.config.uuid,
       );
     const distinctBeans = relatedBrews.filter((bean, i, arr) => {
       return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
@@ -127,7 +127,7 @@ export class PreparationInformationCardComponent implements OnInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.POPOVER_ACTIONS
+      PREPARATION_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: PreparationPopoverActionsComponent,
@@ -157,7 +157,7 @@ export class PreparationInformationCardComponent implements OnInit {
   private async viewPhotos() {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.PHOTO_VIEW
+      PREPARATION_TRACKING.ACTIONS.PHOTO_VIEW,
     );
     await this.uiImage.viewPhotos(this.preparation);
   }
@@ -205,7 +205,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public async customParameters() {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.CUSTOM_PARAMETERS
+      PREPARATION_TRACKING.ACTIONS.CUSTOM_PARAMETERS,
     );
     const modal = await this.modalController.create({
       component: PreparationCustomParametersComponent,
@@ -234,11 +234,11 @@ export class PreparationInformationCardComponent implements OnInit {
   public async repeatPreparation() {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.REPEAT
+      PREPARATION_TRACKING.ACTIONS.REPEAT,
     );
     await this.uiPreparationHelper.repeatPreparation(this.preparation);
     this.uiToast.showInfoToast(
-      'TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY'
+      'TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY',
     );
   }
 
@@ -255,7 +255,7 @@ export class PreparationInformationCardComponent implements OnInit {
           // Yes
           this.uiAnalytics.trackEvent(
             PREPARATION_TRACKING.TITLE,
-            PREPARATION_TRACKING.ACTIONS.DELETE
+            PREPARATION_TRACKING.ACTIONS.DELETE,
           );
           await this.__deletePreparation();
           this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
@@ -263,14 +263,14 @@ export class PreparationInformationCardComponent implements OnInit {
         },
         () => {
           // No
-        }
+        },
       );
   }
 
   public async archive() {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.ARCHIVE
+      PREPARATION_TRACKING.ACTIONS.ARCHIVE,
     );
     this.preparation.finished = true;
     await this.uiPreparationStorage.update(this.preparation);
@@ -288,7 +288,7 @@ export class PreparationInformationCardComponent implements OnInit {
     }
     for (let i = deletingBrewIndex.length; i--; ) {
       await this.uiBrewStorage.removeByUUID(
-        brews[deletingBrewIndex[i]].config.uuid
+        brews[deletingBrewIndex[i]].config.uuid,
       );
     }
 
@@ -303,7 +303,10 @@ export class PreparationInformationCardComponent implements OnInit {
   public async showBrews() {
     await this.uiBrewHelper.showAssociatedBrews(
       this.preparation.config.uuid,
-      'preparation'
+      'preparation',
     );
   }
+
+  protected readonly PREPARATION_FUNCTION_PIPE_ENUM =
+    PREPARATION_FUNCTION_PIPE_ENUM;
 }

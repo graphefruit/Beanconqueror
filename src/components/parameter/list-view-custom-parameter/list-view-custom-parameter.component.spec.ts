@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { ListViewCustomParameterComponent } from './list-view-custom-parameter.component';
@@ -15,7 +16,7 @@ describe('ListViewCustomParameterComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ListViewCustomParameterComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },

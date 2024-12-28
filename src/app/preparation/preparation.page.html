@@ -37,7 +37,7 @@
           {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
         </div>
       </div>
-      <ag-virtual-scroll #openScroll [items]="openPreparationsView" height="100vh" min-row-height="186">
+      <ag-virtual-scroll #openScroll [items]="openPreparationsView" [height]="'100vh'" min-row-height="186">
         <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                                       [preparation]="preparation"
                                       *ngFor="let preparation of openScroll.items"></preparation-information-card>
@@ -53,7 +53,7 @@
         </div>
       </div>
 
-      <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" height="100vh" min-row-height="186">
+      <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" [height]="'100vh'" min-row-height="186">
         <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                                       [preparation]="preparation"
                                       *ngFor="let preparation of archivedScroll.items"></preparation-information-card>

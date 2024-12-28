@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -25,7 +25,6 @@ export class BeansDetailComponent implements OnInit {
   public roast_enum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
-  public bean: IBean;
   public data: Bean = new Bean();
   public visibleIndex: any = {};
   @ViewChild('beanStars', { read: NgxStarsComponent, static: false })
@@ -36,9 +35,11 @@ export class BeansDetailComponent implements OnInit {
   public settings: Settings = undefined;
   public bean_segment = 'general';
   public maxBeanRating: number = 5;
+
+  @Input('bean') public bean: IBean;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     public uiHelper: UIHelper,
     private readonly uiAnalytics: UIAnalytics,
     public readonly uiBeanHelper: UIBeanHelper,
@@ -50,7 +51,6 @@ export class BeansDetailComponent implements OnInit {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.DETAIL
     );
-    this.bean = this.navParams.get('bean');
 
     if (this.bean) {
       const copy: IBean = this.uiHelper.copyData(this.bean);

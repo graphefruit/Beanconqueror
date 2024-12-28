@@ -15,38 +15,25 @@
 <ion-content>
 
   <div id="flowCard" style="height:100%">
+    <ion-card class="flow-profile ion-text-center timer-card">
+      <ion-card-header>
+        <span class='information-tile-no-overflow' #timerElement></span>
 
+      </ion-card-header>
+    </ion-card>
     <div  id="informationContainer">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
-        <ion-row style="padding-bottom:5px;">
-          <ion-col
-            size="12"
-            style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
-              <ion-card-header>
-                <span *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time,
-                  'mm:ss')}}</span>
-                <span
-                  *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,
-                  brew.brew_time_milliseconds, this.returnWantedDisplayFormat())}}</span>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon name="time-outline"></ion-icon>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
         <ion-row class="ion-justify-content-center">
           <ion-col size='12'>
 
 
-            <ion-button (click)="setCoffeeBloomingTime()"
-                        *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
+            <ion-button (click)="brewComponent.timer.bloomTime()"
+                        *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer"
                         class="big-control-icon" fill="clear" tappable>
               <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
             </ion-button>
-            <ion-button (click)="setCoffeeDripTime()"
-                        *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showDripTimer"
+            <ion-button (click)="brewComponent.timer.dripTime()"
+                        *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer"
                         class="big-control-icon" fill="clear" tappable>
               <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
             </ion-button>

@@ -3,37 +3,26 @@
     <ion-row>
 
       <ion-col size="11">
-        <div *ngIf="isDetail===false">
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weight')" [outline]="!brewComponent.brewBrewingGraphEl.weightTrace?.visible" *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('calc_flow')" *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            [outline]="!brewComponent.brewBrewingGraphEl.flowPerSecondTrace?.visible"
-            class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            [outline]="!brewComponent.brewBrewingGraphEl.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
-            translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('pressure')" *ngIf="(pressureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-            [outline]="!brewComponent.brewBrewingGraphEl.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' |
-            translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()"
-            [outline]="!brewComponent.brewBrewingGraphEl.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
-            translate}}</ion-chip>
-        </div>
-        <div *ngIf="isDetail===true">
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weight')" [outline]="!brewComponent.brewBrewingGraphEl.weightTrace?.visible" *ngIf="brewComponent.brewBrewingGraphEl.weightTrace.x.length > 0"
-                    class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('calc_flow')"  *ngIf="brewComponent.brewBrewingGraphEl.weightTrace.x.length > 0"
-                    [outline]="!brewComponent.brewBrewingGraphEl.flowPerSecondTrace?.visible"
-                    class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtime_flow')"  *ngIf="brewComponent.brewBrewingGraphEl.weightTrace.x.length > 0"
-                    [outline]="!brewComponent.brewBrewingGraphEl.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
-            translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('pressure')"  *ngIf="brewComponent.brewBrewingGraphEl.pressureTrace.x.length > 0"
-                    [outline]="!brewComponent.brewBrewingGraphEl.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' |
-            translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('temperature')" *ngIf="brewComponent.brewBrewingGraphEl.temperatureTrace.x.length > 0"
-                    [outline]="!brewComponent.brewBrewingGraphEl.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
-            translate}}</ion-chip>
+        <div style="margin-left:4px;">
+          @if( brewComponent.brewBrewingGraphEl.uiSmartScaleConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.weightTrace?.x?.length >0)) {
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weight')" [outline]="!brewComponent.brewBrewingGraphEl.traces.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('calc_flow')" [outline]="!brewComponent.brewBrewingGraphEl.traces.flowPerSecondTrace?.visible" class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtime_flow')" [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
+          }
+          @if ((brewComponent.brewBrewingGraphEl.uiPressureConnected && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) ||
+          ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.pressureTrace?.x?.length >0)) {
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('pressure')"
+                      [outline]="!brewComponent.brewBrewingGraphEl.traces.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
+          }
+          @if(brewComponent.brewBrewingGraphEl.uiTemperatureConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.x?.length >0)) {
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('temperature')"
+                      [outline]="!brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
+              translate}}</ion-chip>
+          }
+          @if( brewComponent.brewBrewingGraphEl.uiSmartScaleConnectedSupportsTwoWeights || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.x?.length >0)) {
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weightSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.visible" class="weightsecond">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtimeFlowSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.visible" class="flowrealsecond">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
+          }
         </div>
       </ion-col>
       <ion-col class="ion-text-right" size="1">
@@ -46,50 +35,43 @@
 </ion-header>
 <ion-content #brewFlowContent>
 
-
-
-    <div *ngIf="isDetail===false" id="informationContainer">
+    <div *ngIf="isDetail===false" id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
-          <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
-              <ion-card-header>
-                <div #smartScaleWeightDetail>? g</div><span style='font-size:16px;'>({{brewComponent.brewBrewingGraphEl.data.getBrewRatio()}})</span>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon name="beanconqueror-scale-outline"></ion-icon>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center flow-avg-card" style="height: 100%;">
-              <ion-card-header>
-                <div><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon name="water-outline"></ion-icon>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
-              <ion-card-header>
-                <div><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon name="water-outline"></ion-icon>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col (click)="resetPressure()" *ngIf="(pressureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+          @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected || ( brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected && brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+            <ion-col size="{{graphIconColSize}}" style="padding-right:5px;">
+              <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
+                <ion-card-header>
+                  <div #smartScaleWeightDetail>? g</div>
+                  <div #smartScaleWeightSecondDetail *ngIf="brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights">?g</div>
+                  @if(brewComponent.timer.timer.runTimer) {
+                    <span #smartScaleBrewRatio style='font-size:16px;'></span>
+                  } @else {
+                    <span style='font-size:16px;'>({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
+                  }
+
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-icon name="beanconqueror-scale-outline"></ion-icon>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+            <ion-col
+              size="{{graphIconColSize}}"   style="padding-right:5px;">
+              <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
+                <ion-card-header>
+                  <div class='information-tile-no-overflow'><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
+                  <div class='information-tile-no-overflow'><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
+                  <div class='information-tile-no-overflow' *ngIf="brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights"><span #smartScaleRealtimeFlowSecondDetail>?</span> g/s</div>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-icon name="water-outline"></ion-icon>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          }
+          <ion-col (click)="resetPressure()" *ngIf="(brewComponent?.brewBrewingGraphEl?.uiPressureConnected || brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+            size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
               <ion-card-header>
                 <div #pressureDetail>? bar</div>
@@ -99,9 +81,8 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col *ngIf="temperatureDeviceConnected() || brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()"
-                   size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+          <ion-col *ngIf="brewComponent?.brewBrewingGraphEl?.uiTemperatureConnected || brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected"
+                   size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
               <ion-card-header>
                 <div #temperatureDetail>? °C</div>
@@ -112,15 +93,10 @@
             </ion-card>
           </ion-col>
           <ion-col
-            size="{{this.getGraphIonColSize()}}"
-            style="padding-right:5px;">
+            size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
               <ion-card-header>
-                <span *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time,
-                  'mm:ss')}}</span>
-                <span
-                  *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,
-                  brew.brew_time_milliseconds, this.returnWantedDisplayFormat())}}</span>
+                <span class='information-tile-no-overflow' #timerElement></span>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="time-outline"></ion-icon>
@@ -138,7 +114,8 @@
 
 
 </ion-content>
-<ion-footer *ngIf="isDetail===false" class="ion-no-border">
+<!--The footer is min-height 72px, because if a scale e.g. doesn't support taring, the whole bar would disappear, and if the timer would start then, the graph is wrongly displayed-->
+<ion-footer *ngIf="isDetail===false" class="ion-no-border" style="min-height:72px;">
   <div class="ion-text-center flow-icon-buttons">
     <ion-button (click)="startListening();" *ngIf="!brewComponent.timer.timer.hasStarted && brewComponent.timer.showListeningButton"
                 class="big-icon-only" fill="clear" slot="end" tappable>
@@ -153,13 +130,13 @@
       <ion-icon class="ion-color-accent" name="beanconqueror-scale-play" slot="icon-only"></ion-icon>
     </ion-button>
 
-    <ion-button (click)="setCoffeeBloomingTime()"
-      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
+    <ion-button (click)="brewComponent.timer.bloomTime()"
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer"
       class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="setCoffeeDripTime()"
-      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showDripTimer"
+    <ion-button (click)="brewComponent.timer.dripTime()"
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer"
       class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
     </ion-button>
@@ -169,8 +146,8 @@
       <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
 
     </ion-button>
-    <ion-button (click)="resetTimer()"
-      *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0"
+    <ion-button (click)="resetTimer($event)"
+      *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.timer.seconds>0"
       class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
     </ion-button>
@@ -181,16 +158,14 @@
       <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
     </ion-button>
 
-    <ion-button (click)="startTimer()" *ngIf="(settings?.bluetooth_scale_listening_threshold_active === true && brewComponent.timer.showListeningButton && !brewComponent.timer.timer.hasStarted) || (settings?.bluetooth_scale_listening_threshold_active === false && !brewComponent.timer.timer.hasStarted)" class="big-icon-only" fill="clear"
+    <ion-button (click)="startTimer()" *ngIf="(brewComponent.timer.showListeningButton === true && !brewComponent.timer.timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected === false && settings.bluetooth_scale_listening_threshold_active === true)) && !brewComponent.timer.timer.hasStarted)" class="big-icon-only" fill="clear"
       tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="__tareScale()" *ngIf="brewComponent.brewBrewingGraphEl.smartScaleConnected() && brewComponent.brewBrewingGraphEl.smartScaleSupportsTaring()" class="big-icon-only" fill="clear"
+    <ion-button (click)="__tareScale()" *ngIf="brewComponent.brewBrewingGraphEl.uiSmartScaleConnected && brewComponent?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring" class="big-icon-only" fill="clear"
       tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
     </ion-button>
-
-
   </div>
 
 </ion-footer>

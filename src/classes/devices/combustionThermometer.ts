@@ -1,10 +1,10 @@
+import { Capacitor } from '@capacitor/core';
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
 
 import { TemperatureDevice } from './temperatureBluetoothDevice';
 
 declare var ble: any;
-declare var device: any;
 import { AdvertisementDecoder } from 'ble-central-advertisements';
 export class CombustionThermometer extends TemperatureDevice {
   public static DEVICE_NAME = 'Combustion Inc';
@@ -22,7 +22,7 @@ export class CombustionThermometer extends TemperatureDevice {
 
   public static test(bleDevice: any): boolean {
     try {
-      if (device !== null && device.platform === 'iOS') {
+      if (Capacitor.getPlatform() === 'ios') {
         try {
           if (
             bleDevice &&

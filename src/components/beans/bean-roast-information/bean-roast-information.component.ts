@@ -19,7 +19,7 @@ export class BeanRoastInformationComponent implements OnInit {
   constructor(
     private readonly platform: Platform,
     private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService
+    private readonly bleManager: CoffeeBluetoothDevicesService,
   ) {}
 
   public ngOnInit() {
@@ -29,7 +29,7 @@ export class BeanRoastInformationComponent implements OnInit {
       .toISOString();
   }
   public smartScaleConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -45,7 +45,14 @@ export class BeanRoastInformationComponent implements OnInit {
     this.data.weight = this.bleManager.getScaleWeight();
   }
 
+  /**Somehow on devices an double/tripple click is triggered, and we can't fix this somehow, so we check if the popover is already shown and else ignore the triple tap**/
+  private _overLaytimeShown: boolean = false;
   public async showTimeOverlay(_event) {
+    if (this._overLaytimeShown === true) {
+      return;
+    }
+    this._overLaytimeShown = true;
+
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
@@ -53,13 +60,14 @@ export class BeanRoastInformationComponent implements OnInit {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
-      animated: true,
+      animated: false,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.75,
       componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
+    this._overLaytimeShown = false;
     if (
       modalData !== undefined &&
       modalData.data &&
@@ -69,8 +77,8 @@ export class BeanRoastInformationComponent implements OnInit {
       this.data.bean_roast_information.roast_length = moment
         .duration(
           moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day')
-          )
+            moment(modalData.data.displayingTime).startOf('day'),
+          ),
         )
         .asSeconds();
     }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -27,7 +27,6 @@ export class PreparationEditComponent implements OnInit {
   public preparationTypeEnum = PREPARATION_TYPES;
   public nextToolName: string = '';
   constructor(
-    private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiHelper: UIHelper,

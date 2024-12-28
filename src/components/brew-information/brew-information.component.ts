@@ -40,6 +40,9 @@ import { BrewFlow } from '../../classes/brew/brewFlow';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphHelper } from '../../services/uiGraphHelper';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -82,6 +85,9 @@ export class BrewInformationComponent implements OnInit {
   public informationContainerHeight: number = undefined;
   public informationContainerWidth: number = undefined;
 
+  public uiHasCustomRatingRange: boolean = undefined;
+  public uiCuppedBrewFlavors: Array<string> = [];
+
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBrewHelper: UIBrewHelper,
@@ -101,7 +107,7 @@ export class BrewInformationComponent implements OnInit {
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly visualizerService: VisualizerService,
     private readonly uiGraphHelper: UIGraphHelper,
-    private readonly menu: MenuController
+    private readonly menu: MenuController,
   ) {}
 
   @Input() set collapsed(value: boolean) {
@@ -112,7 +118,7 @@ export class BrewInformationComponent implements OnInit {
     }
     this._collapsed = value;
 
-    if (retrigger) {
+    if (retrigger && this.brew.flow_profile) {
       //When setting the container to undefined, the *ngIf removes the graph, and setting after that the new height, the element will be spawned correctly.
       this.informationContainerWidth = undefined;
       setTimeout(() => {
@@ -139,37 +145,39 @@ export class BrewInformationComponent implements OnInit {
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
 
+      this.uiHasCustomRatingRange = this.getHasCustomRatingRange();
+      this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
       /**On Android we somehow need a bit more ms for the calc... specific on older once**/
       let timeoutMS = 350;
       if (this.platform.is('ios')) {
         timeoutMS = 150;
       }
-      setTimeout(() => {
-        this.calculcationInformationContainer();
-
-        if (this.brew.flow_profile) {
+      if (this.brew.flow_profile) {
+        setTimeout(() => {
           /**If we slide on a bigger tablet, somehow ionic triggering the menu when sliding from right to left, thats why we need to attach us to touchstart/end and to ignore the slide...**/
           this.brewInformationSlider?.nativeElement.swiper.on(
             'touchStart',
             () => {
               //We got two slides
               this.menu.swipeGesture(false);
-            }
+            },
           );
           this.brewInformationSlider?.nativeElement.swiper.on(
             'touchEnd',
             () => {
               this.menu.swipeGesture(true);
-            }
+            },
           );
-        } else {
-          this.brewInformationSlider?.nativeElement.swiper.disable();
-        }
-      }, timeoutMS);
+        }, 25);
+
+        setTimeout(() => {
+          this.calculcationInformationContainer();
+        }, timeoutMS);
+      }
     }
   }
 
-  public hasCustomRatingRange(): boolean {
+  public getHasCustomRatingRange(): boolean {
     if (this.settings) {
       // #379
       if (Number(this.settings.brew_rating) !== 5) {
@@ -213,7 +221,7 @@ export class BrewInformationComponent implements OnInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.POPOVER_ACTIONS
+      BREW_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
     const popover = await this.modalCtrl.create({
@@ -236,7 +244,7 @@ export class BrewInformationComponent implements OnInit {
   public async showVisualizerShot() {
     this.uiHelper.openExternalWebpage(
       'https://visualizer.coffee/shots/' +
-        this.brew.customInformation.visualizer_id
+        this.brew.customInformation.visualizer_id,
     );
   }
   public async shareToVisualizer() {
@@ -267,7 +275,7 @@ export class BrewInformationComponent implements OnInit {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.FAST_REPEAT
+        BREW_TRACKING.ACTIONS.FAST_REPEAT,
       );
       const repeatBrew = this.uiBrewHelper.copyBrewToRepeat(this.brew);
       await this.uiBrewStorage.add(repeatBrew);
@@ -280,7 +288,7 @@ export class BrewInformationComponent implements OnInit {
       ) {
         this.uiHealthKit.trackCaffeineConsumption(
           repeatBrew.getCaffeineAmount(),
-          new Date()
+          new Date(),
         );
       }
 
@@ -288,7 +296,7 @@ export class BrewInformationComponent implements OnInit {
 
       // If fast repeat is used, also recheck if bean package is consumed
       await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
-        this.brew.getBean()
+        this.brew.getBean(),
       );
     }
   }
@@ -309,7 +317,7 @@ export class BrewInformationComponent implements OnInit {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.REPEAT
+        BREW_TRACKING.ACTIONS.REPEAT,
       );
       await this.uiBrewHelper.repeatBrew(this.brew);
     }
@@ -319,14 +327,14 @@ export class BrewInformationComponent implements OnInit {
     if (!this.brew.favourite) {
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.ADD_FAVOURITE
+        BREW_TRACKING.ACTIONS.ADD_FAVOURITE,
       );
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_ADDED');
       this.brew.favourite = true;
     } else {
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.REMOVE_FAVOURITE
+        BREW_TRACKING.ACTIONS.REMOVE_FAVOURITE,
       );
       this.brew.favourite = false;
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_REMOVED');
@@ -347,7 +355,7 @@ export class BrewInformationComponent implements OnInit {
 
     if (doOtherBestBrewsNeedsToBeDetoggled) {
       const brewsForBeans = this.uiBeanHelper.getAllBrewsForThisBean(
-        this.brew.getBean().config.uuid
+        this.brew.getBean().config.uuid,
       );
       for (const iterateBrew of brewsForBeans) {
         if (
@@ -374,7 +382,7 @@ export class BrewInformationComponent implements OnInit {
   public async showMapCoordinates() {
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.SHOW_MAP
+      BREW_TRACKING.ACTIONS.SHOW_MAP,
     );
     this.uiHelper.openExternalWebpage(this.brew.getCoordinateMapLink());
   }
@@ -382,7 +390,7 @@ export class BrewInformationComponent implements OnInit {
   public async viewPhotos() {
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.PHOTO_VIEW
+      BREW_TRACKING.ACTIONS.PHOTO_VIEW,
     );
     await this.uiImage.viewPhotos(this.brew);
   }
@@ -408,6 +416,7 @@ export class BrewInformationComponent implements OnInit {
         break;
       case BREW_ACTION.CUPPING:
         await this.cupBrew();
+        this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
         break;
       case BREW_ACTION.SHOW_MAP_COORDINATES:
         await this.showMapCoordinates();
@@ -443,8 +452,8 @@ export class BrewInformationComponent implements OnInit {
 
   private async readFlowProfile(): Promise<BrewFlow> {
     try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(
-        this.brew.flow_profile
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+        this.brew.flow_profile,
       );
 
       const brewFlow: BrewFlow = new BrewFlow();
@@ -461,7 +470,7 @@ export class BrewInformationComponent implements OnInit {
     link.download = filename;
     link.href = window.URL.createObjectURL(blob);
     link.dataset.downloadurl = ['text/json', link.download, link.href].join(
-      ':'
+      ':',
     );
 
     const evt = new MouseEvent('click', {
@@ -477,7 +486,7 @@ export class BrewInformationComponent implements OnInit {
   public async share() {
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.SHARE
+      BREW_TRACKING.ACTIONS.SHARE,
     );
     await this.uiAlert.showLoadingSpinner();
     if (this.platform.is('ios')) {
@@ -537,7 +546,7 @@ export class BrewInformationComponent implements OnInit {
             // Yes
             this.uiAnalytics.trackEvent(
               BREW_TRACKING.TITLE,
-              BREW_TRACKING.ACTIONS.DELETE
+              BREW_TRACKING.ACTIONS.DELETE,
             );
             await this.__deleteBrew();
             this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
@@ -546,7 +555,7 @@ export class BrewInformationComponent implements OnInit {
           () => {
             // No
             reject();
-          }
+          },
         );
     });
   }
@@ -554,4 +563,9 @@ export class BrewInformationComponent implements OnInit {
   private async __deleteBrew() {
     await this.uiBrewStorage.removeByObject(this.brew);
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
+  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
+  protected readonly PREPARATION_FUNCTION_PIPE_ENUM =
+    PREPARATION_FUNCTION_PIPE_ENUM;
 }

@@ -17,6 +17,12 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
+import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
+import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import _ from 'lodash';
+import { BeanSortFilterHelperService } from '../../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 
 @Component({
   selector: 'bean-modal-select',
@@ -25,28 +31,27 @@ import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingSto
 })
 export class BeanModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'bean-modal-select';
-  public bean_segment: string = 'open';
   public objs: Array<Bean> = [];
+  public bean_segment: string = 'open';
+  public beans: Array<Bean> = [];
   public multipleSelection = {};
   public radioSelection: string;
   @Input() public multiple: boolean;
   @Input() public showFinished: boolean;
   @Input() private selectedValues: Array<string>;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
-  public openBeansFilterText: string = '';
   public openBeans: Array<Bean> = [];
-  public finishedBeansFilterText: string = '';
   public finishedBeans: Array<Bean> = [];
-  public frozenBeansFilterText: string = '';
   public frozenBeans: Array<Bean> = [];
 
-  public filter_open: IBeanPageFilter;
-  public filter_finished: IBeanPageFilter;
-  public filter_frozen: IBeanPageFilter;
-  public open_roasteries: Array<string> = undefined;
-  public frozen_roasteries: Array<string> = undefined;
+  public archivedBeansFilter: IBeanPageFilter;
+  public openBeansFilter: IBeanPageFilter;
+  public frozenBeansFilter: IBeanPageFilter;
 
-  public finished_roasteries: Array<string> = undefined;
+  public archivedBeansFilterText: string = '';
+  public openBeansFilterText: string = '';
+  public frozenBeansFilterText: string = '';
+
   public settings: Settings;
 
   public filterVisible: any = {
@@ -73,94 +78,94 @@ export class BeanModalSelectComponent implements OnInit {
 
   public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
 
+  public openBeansSort: IBeanPageSort = {
+    sort_after: BEAN_SORT_AFTER.UNKOWN,
+    sort_order: BEAN_SORT_ORDER.UNKOWN,
+  };
+
+  public archivedBeansSort: IBeanPageSort = {
+    sort_after: BEAN_SORT_AFTER.UNKOWN,
+    sort_order: BEAN_SORT_ORDER.UNKOWN,
+  };
+  public frozenBeansSort: IBeanPageSort = {
+    sort_after: BEAN_SORT_AFTER.UNKOWN,
+    sort_order: BEAN_SORT_ORDER.UNKOWN,
+  };
+
+  public finishedBeansLength: number = 0;
+  public openBeansLength: number = 0;
+  public frozenBeansLength: number = 0;
+
+  public segmentScrollHeight: string = undefined;
+
+  public uiUsedWeightCountCache: any = {};
+  public uiIsSortActive: boolean = false;
+  public uiIsFilterActive: boolean = false;
+  public uiSearchText: string = '';
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.loadBeans();
+
+    this.archivedBeansSort = this.settings.bean_sort_selection.ARCHIVED;
+    this.openBeansSort = this.settings.bean_sort_selection.OPEN;
+    this.frozenBeansSort = this.settings.bean_sort_selection.FROZEN;
+
+    this.archivedBeansFilter = this.settings.bean_filter_selection.ARCHIVED;
+    this.frozenBeansFilter = this.settings.bean_filter_selection.FROZEN;
+    this.openBeansFilter = this.settings.bean_filter_selection.OPEN;
+
+    this.__initializeBeans();
+    this.setUIParams();
   }
 
-  public loadBeans() {
-    this.objs = this.uiBeanStorage.getAllEntries();
-    this.filter_open = this.settings.GET_BEAN_FILTER();
-    this.filter_finished = this.settings.GET_BEAN_FILTER();
-    this.filter_frozen = this.settings.GET_BEAN_FILTER();
-    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-    this.open_roasteries = [
-      ...new Set(
-        beans
-          .filter((e) => e.finished === false && !e.isFrozen())
-          .map((e: Bean) => e.roaster)
-      ),
-    ];
-    this.open_roasteries = this.open_roasteries
-      .filter((name: string) => name !== '')
-      .sort((a, b) => {
-        const nameA = a.toUpperCase();
-        const nameB = b.toUpperCase();
+  public __initializeBeans() {
+    this.beans = this.uiBeanStorage
+      .getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
 
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
+    this.openBeansLength = this.beans.reduce(
+      (n, e) => (!e.finished && e.isFrozen() === false ? n + 1 : n),
+      0,
+    );
+    this.finishedBeansLength = this.beans.reduce(
+      (n, e) => (e.finished ? n + 1 : n),
+      0,
+    );
+    this.frozenBeansLength = this.beans.reduce(
+      (n, e) => (!e.finished && e.isFrozen() === true ? n + 1 : n),
+      0,
+    );
 
-        return 0;
-      });
-
-    this.frozen_roasteries = [
-      ...new Set(
-        beans
-          .filter((e) => e.finished === false && e.isFrozen())
-          .map((e: Bean) => e.roaster)
-      ),
-    ];
-    this.frozen_roasteries = this.frozen_roasteries
-      .filter((name: string) => name !== '')
-      .sort((a, b) => {
-        const nameA = a.toUpperCase();
-        const nameB = b.toUpperCase();
-
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
-
-    this.finished_roasteries = [
-      ...new Set(
-        beans.filter((e) => e.finished === true).map((e: Bean) => e.roaster)
-      ),
-    ];
-    this.finished_roasteries = this.finished_roasteries
-      .filter((name: string) => name !== '')
-      .sort((a, b) => {
-        const nameA = a.toUpperCase();
-        const nameB = b.toUpperCase();
-
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
+    this.openBeans = [];
+    this.finishedBeans = [];
+    this.frozenBeans = [];
+    this.__initializeBeansView('open');
+    this.__initializeBeansView('archive');
+    this.__initializeBeansView('frozen');
   }
 
   public async add() {
     await this.uiBeanHelper.addBean();
-    this.loadBeans();
+    this.__initializeBeans();
     this.research();
+  }
+
+  private async __saveBeanFilter() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    settings.bean_sort_selection.OPEN = this.openBeansSort;
+    settings.bean_sort_selection.ARCHIVED = this.archivedBeansSort;
+    settings.bean_sort_selection.FROZEN = this.frozenBeansSort;
+
+    settings.bean_filter_selection.OPEN = this.openBeansFilter;
+    settings.bean_filter_selection.ARCHIVED = this.archivedBeansFilter;
+    settings.bean_filter_selection.FROZEN = this.frozenBeansFilter;
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   @HostListener('window:resize')
@@ -169,8 +174,16 @@ export class BeanModalSelectComponent implements OnInit {
     this.retriggerScroll();
   }
   public segmentChanged() {
+    this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
     this.retriggerScroll();
+    this.setUIParams();
   }
+
+  private setUIParams() {
+    this.uiIsSortActive = this.isSortActive();
+    this.uiIsFilterActive = this.isFilterActive();
+  }
+
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
@@ -193,12 +206,13 @@ export class BeanModalSelectComponent implements OnInit {
         10 -
         scrollComponent.el.offsetTop +
         'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 250);
   }
 
   public ionViewDidEnter(): void {
     if (this.multiple) {
-      for (const obj of this.objs) {
+      for (const obj of this.beans) {
         this.multipleSelection[obj.config.uuid] =
           this.selectedValues.filter((e) => e === obj.config.uuid).length > 0;
       }
@@ -211,57 +225,24 @@ export class BeanModalSelectComponent implements OnInit {
   }
 
   public getUsedWeightCount(_bean: Bean): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      _bean.config.uuid
-    );
-    for (const brew of relatedBrews) {
-      if (brew.bean_weight_in > 0) {
-        usedWeightCount += brew.bean_weight_in;
-      } else {
-        usedWeightCount += brew.grind_weight;
+    if (this.uiUsedWeightCountCache[_bean.config.uuid] === undefined) {
+      let usedWeightCount: number = 0;
+      const relatedBrews: Array<Brew> =
+        this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
+      for (const brew of relatedBrews) {
+        if (brew.bean_weight_in > 0) {
+          usedWeightCount += brew.bean_weight_in;
+        } else {
+          usedWeightCount += brew.grind_weight;
+        }
       }
+      this.uiUsedWeightCountCache[_bean.config.uuid] = usedWeightCount;
     }
-    return usedWeightCount;
+    /**We cache this one, because its called many times, and its a way faster so**/
+    return this.uiUsedWeightCountCache[_bean.config.uuid];
   }
 
   public ngOnInit() {}
-
-  public getOpenBeans(): Array<Bean> {
-    return this.objs
-      .filter((e) => !e.finished)
-      .sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
-  }
-
-  public getFinishedBeans(): Array<Bean> {
-    return this.objs
-      .filter((e) => e.finished)
-      .sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
-  }
 
   public async choose(): Promise<void> {
     const chosenKeys: Array<string> = [];
@@ -288,7 +269,7 @@ export class BeanModalSelectComponent implements OnInit {
         selected_text: selected_text,
       },
       undefined,
-      BeanModalSelectComponent.COMPONENT_ID
+      BeanModalSelectComponent.COMPONENT_ID,
     );
   }
 
@@ -296,7 +277,7 @@ export class BeanModalSelectComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      BeanModalSelectComponent.COMPONENT_ID
+      BeanModalSelectComponent.COMPONENT_ID,
     );
   }
   public isBeanRoastUnknown(_bean: Bean) {
@@ -308,117 +289,149 @@ export class BeanModalSelectComponent implements OnInit {
     return true;
   }
 
-  public async showFilter(_type: string) {
-    if (_type === 'open') {
-      this.filterVisible.open = !this.filterVisible.open;
-    } else if (_type === 'archive') {
-      this.filterVisible.archived = !this.filterVisible.archived;
-    } else if (_type === 'frozen') {
-      this.filterVisible.frozen = !this.filterVisible.frozen;
-    }
-    this.retriggerScroll();
-  }
-  public isFilterActive(_type: string) {
-    if (_type === 'open') {
-      return this.filterVisible.open;
-    } else if (_type === 'archive') {
-      return this.filterVisible.archived;
-    } else if (_type === 'frozen') {
-      return this.filterVisible.frozen;
-    }
-  }
-
   public research() {
-    this.__initializeBeansView('open');
-    this.__initializeBeansView('archive');
-    this.__initializeBeansView('frozen');
+    this.setSearchTextScope(this.bean_segment, this.uiSearchText);
+    this.__initializeBeansView(this.bean_segment);
     this.retriggerScroll();
   }
   private __initializeBeansView(_type: string) {
-    const beansCopy: Array<Bean> = [...this.objs];
+    const searchText = this.manageSearchTextScope(_type);
+    const sort = this.manageSortScope(_type);
+    const filters = this.manageFilterScope(_type);
 
-    let filterBeans: Array<Bean>;
+    const filteredBeans = this.beanSortFilterHelper.initializeBeansView(
+      _type,
+      this.beans,
+      searchText,
+      sort,
+      filters,
+    );
     if (_type === 'open') {
-      filterBeans = beansCopy.filter(
-        (bean) => !bean.finished && !bean.isFrozen()
-      );
-
-      if (this.filter_open.bean_roaster?.length > 0) {
-        filterBeans = filterBeans.filter(
-          (e: Bean) =>
-            this.filter_open.bean_roaster.includes(e.roaster) === true
-        );
-      }
-      if (this.filter_open.bean_roasting_type?.length > 0) {
-        filterBeans = filterBeans.filter(
-          (e: Bean) =>
-            this.filter_open.bean_roasting_type.includes(
-              e.bean_roasting_type
-            ) === true
-        );
-      }
+      this.openBeans = filteredBeans;
     } else if (_type === 'archive') {
-      filterBeans = beansCopy.filter((bean) => bean.finished);
-      if (this.filter_finished.bean_roaster?.length > 0) {
-        filterBeans = filterBeans.filter(
-          (e: Bean) =>
-            this.filter_finished.bean_roaster.includes(e.roaster) === true
-        );
-      }
-      if (this.filter_finished.bean_roasting_type?.length > 0) {
-        filterBeans = filterBeans.filter(
-          (e: Bean) =>
-            this.filter_finished.bean_roasting_type.includes(
-              e.bean_roasting_type
-            ) === true
-        );
-      }
+      this.finishedBeans = filteredBeans;
     } else if (_type === 'frozen') {
-      filterBeans = beansCopy.filter(
-        (bean) => !bean.finished && bean.isFrozen()
-      );
-      if (this.filter_frozen.bean_roaster?.length > 0) {
-        filterBeans = filterBeans.filter(
-          (e: Bean) =>
-            this.filter_frozen.bean_roaster.includes(e.roaster) === true
-        );
-      }
-      if (this.filter_frozen.bean_roasting_type?.length > 0) {
-        filterBeans = filterBeans.filter(
-          (e: Bean) =>
-            this.filter_frozen.bean_roasting_type.includes(
-              e.bean_roasting_type
-            ) === true
-        );
-      }
+      this.frozenBeans = filteredBeans;
     }
+    this.retriggerScroll();
+  }
 
-    let searchText: string = '';
+  private manageFilterScope(_type: string): IBeanPageFilter {
     if (_type === 'open') {
-      searchText = this.openBeansFilterText.toLowerCase();
+      return this.openBeansFilter;
     } else if (_type === 'archive') {
-      searchText = this.finishedBeansFilterText.toLowerCase();
+      return this.archivedBeansFilter;
     } else if (_type === 'frozen') {
-      searchText = this.frozenBeansFilterText.toLowerCase();
-    }
-
-    if (searchText) {
-      filterBeans = filterBeans.filter(
-        (e) =>
-          e.note?.toLowerCase().includes(searchText) ||
-          e.name?.toLowerCase().includes(searchText) ||
-          e.roaster?.toLowerCase().includes(searchText) ||
-          e.aromatics?.toLowerCase().includes(searchText) ||
-          e.frozenId?.toLowerCase().includes(searchText) ||
-          e.ean_article_number?.toLowerCase().includes(searchText)
-      );
-    }
-    if (_type === 'open') {
-      this.openBeans = filterBeans;
-    } else if (_type === 'archive') {
-      this.finishedBeans = filterBeans;
-    } else if (_type === 'frozen') {
-      this.frozenBeans = filterBeans;
+      return this.frozenBeansFilter;
     }
   }
+
+  private manageSortScope(_type: string): IBeanPageSort {
+    if (_type === 'open') {
+      return this.openBeansSort;
+    } else if (_type === 'archive') {
+      return this.archivedBeansSort;
+    } else if (_type === 'frozen') {
+      return this.frozenBeansSort;
+    }
+  }
+
+  private manageSearchTextScope(_type: string, _toLowerCase: boolean = true) {
+    let searchText: string = '';
+    if (_type === 'open') {
+      searchText = this.openBeansFilterText;
+    } else if (_type === 'archive') {
+      searchText = this.archivedBeansFilterText;
+    } else if (_type === 'frozen') {
+      searchText = this.frozenBeansFilterText;
+    }
+    if (_toLowerCase) {
+      searchText = searchText.toLowerCase();
+    }
+    return searchText;
+  }
+
+  private setSearchTextScope(_type: string, _text: string) {
+    if (_type === 'open') {
+      this.openBeansFilterText = _text;
+    } else if (_type === 'archive') {
+      this.archivedBeansFilterText = _text;
+    } else if (_type === 'frozen') {
+      this.frozenBeansFilterText = _text;
+    }
+  }
+
+  public async showSort() {
+    const sortSegment = this.manageSortScope(this.bean_segment);
+    const newSort = await this.beanSortFilterHelper.showSort(sortSegment);
+    if (newSort) {
+      if (this.bean_segment === 'open') {
+        this.openBeansSort = newSort;
+      } else if (this.bean_segment === 'archive') {
+        this.archivedBeansSort = newSort;
+      } else if (this.bean_segment === 'frozen') {
+        this.frozenBeansSort = newSort;
+      }
+
+      await this.__saveBeanFilter();
+
+      this.__initializeBeans();
+      this.setUIParams();
+    }
+  }
+
+  public async showFilter() {
+    const filterSegment = this.manageFilterScope(this.bean_segment);
+    const newFilter = await this.beanSortFilterHelper.showFilter(
+      filterSegment,
+      this.bean_segment,
+    );
+    if (newFilter) {
+      /**We got the filtersegment above, so we got the reference and overwrite it**/
+
+      if (this.bean_segment === 'open') {
+        this.openBeansFilter = newFilter;
+      } else if (this.bean_segment === 'archive') {
+        this.archivedBeansFilter = newFilter;
+      } else if (this.bean_segment === 'frozen') {
+        this.frozenBeansFilter = newFilter;
+      }
+      await this.__saveBeanFilter();
+
+      this.__initializeBeans();
+      this.setUIParams();
+    }
+  }
+
+  public isSortActive(): boolean {
+    const sort = this.manageSortScope(this.bean_segment);
+    return (
+      sort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
+      sort.sort_after !== BEAN_SORT_AFTER.UNKOWN
+    );
+  }
+
+  public isTextSearchActive() {
+    const searchText = this.manageSearchTextScope(this.bean_segment);
+    return searchText != '';
+  }
+
+  public isFilterActive(): boolean {
+    let isFilterActive: boolean = false;
+
+    if (this.settings) {
+      let checkingFilter: IBeanPageFilter = this.manageFilterScope(
+        this.bean_segment,
+      );
+
+      isFilterActive = !_.isEqual(
+        this.settings?.GET_BEAN_FILTER(),
+        checkingFilter,
+      );
+    }
+
+    return isFilterActive;
+  }
+
+  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 }

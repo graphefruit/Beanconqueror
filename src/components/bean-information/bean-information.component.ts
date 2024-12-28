@@ -41,6 +41,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
 import moment from 'moment/moment';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 
 @Component({
   selector: 'bean-information',
@@ -65,6 +66,13 @@ export class BeanInformationComponent implements OnInit {
   public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
   public roast_enum = ROASTS_ENUM;
   public settings: Settings = null;
+
+  public uiBrewsCount: number = undefined;
+  public uiUsedWeightCount: number = undefined;
+  public uiCuppedBrewFlavors: Array<string> = [];
+  public uiCalculatedCostPerKG: number = undefined;
+  public uiCurrencySymbol: string = '';
+
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBeanHelper: UIBeanHelper,
@@ -82,12 +90,22 @@ export class BeanInformationComponent implements OnInit {
     private readonly platform: Platform,
     private readonly uiBrewHelper: UIBrewHelper,
     private actionSheetCtrl: ActionSheetController,
-    private readonly currencyService: CurrencyService
+    private readonly currencyService: CurrencyService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.setUiData();
+  }
+
+  private setUiData() {
+    this.uiBrewsCount = this.getBrewCounts();
+    this.uiUsedWeightCount = this.getUsedWeightCount();
+    this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
+    this.uiCalculatedCostPerKG = this.getCalculateCostPerKG();
+    this.uiCurrencySymbol = this.getCurrencySymbol();
+  }
   public ngAfterViewInit() {
     this.resetRenderingRating();
   }
@@ -107,9 +125,9 @@ export class BeanInformationComponent implements OnInit {
     }, 250);
   }
 
-  public brewCounts(): number {
+  public getBrewCounts(): number {
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid
+      this.bean.config.uuid,
     );
     return relatedBrews.length;
   }
@@ -131,7 +149,7 @@ export class BeanInformationComponent implements OnInit {
   public getUsedWeightCount(): number {
     let usedWeightCount: number = 0;
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid
+      this.bean.config.uuid,
     );
     for (const brew of relatedBrews) {
       if (brew.bean_weight_in > 0) {
@@ -167,7 +185,7 @@ export class BeanInformationComponent implements OnInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS
+      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: BeanPopoverActionsComponent,
@@ -196,6 +214,7 @@ export class BeanInformationComponent implements OnInit {
         break;
       case BEAN_ACTION.EDIT:
         await this.editBean();
+        this.setUiData();
         break;
       case BEAN_ACTION.DELETE:
         try {
@@ -223,6 +242,7 @@ export class BeanInformationComponent implements OnInit {
         break;
       case BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE:
         await this.refreshDataFromQRCode();
+        this.setUiData();
         break;
       case BEAN_ACTION.SHOW_BREWS:
         await this.showBrews();
@@ -239,6 +259,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.UNFREEZE:
         await this.unfreezeBean();
         break;
+      case BEAN_ACTION.GENERATE_INTERNAL_SHARE_CODE:
+        await this.generateQrCode();
+        break;
       default:
         break;
     }
@@ -253,7 +276,7 @@ export class BeanInformationComponent implements OnInit {
   private async viewPhotos() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.PHOTO_VIEW
+      BEAN_TRACKING.ACTIONS.PHOTO_VIEW,
     );
     await this.uiImage.viewPhotos(this.bean);
   }
@@ -271,7 +294,7 @@ export class BeanInformationComponent implements OnInit {
   public async unarchiveBean() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.UNARCHIVE
+      BEAN_TRACKING.ACTIONS.UNARCHIVE,
     );
     this.bean.finished = false;
     await this.uiBeanStorage.update(this.bean);
@@ -279,6 +302,9 @@ export class BeanInformationComponent implements OnInit {
     await this.resetSettings();
   }
 
+  public async generateQrCode() {
+    await this.uiBeanHelper.generateQRCode(this.bean);
+  }
   public async freezeBean() {
     await this.uiBeanHelper.freezeBean(this.bean);
   }
@@ -293,14 +319,14 @@ export class BeanInformationComponent implements OnInit {
     if (!this.bean.favourite) {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
-        BEAN_TRACKING.ACTIONS.ADD_FAVOURITE
+        BEAN_TRACKING.ACTIONS.ADD_FAVOURITE,
       );
       this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_ADDED');
       this.bean.favourite = true;
     } else {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
-        BEAN_TRACKING.ACTIONS.REMOVE_FAVOURITE
+        BEAN_TRACKING.ACTIONS.REMOVE_FAVOURITE,
       );
       this.bean.favourite = false;
       this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_REMOVED');
@@ -332,7 +358,7 @@ export class BeanInformationComponent implements OnInit {
   public async shareBeanImage() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.SHARE_IMAGE
+      BEAN_TRACKING.ACTIONS.SHARE_IMAGE,
     );
     await this.uiAlert.showLoadingSpinner();
     if (this.platform.is('ios')) {
@@ -379,13 +405,13 @@ export class BeanInformationComponent implements OnInit {
 
   public async repeatLastOrBestBrew() {
     let associatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid
+      this.bean.config.uuid,
     );
     associatedBrews = associatedBrews.filter(
       (e) =>
         e.getBean().finished === false &&
         e.getMill().finished === false &&
-        e.getPreparation().finished === false
+        e.getPreparation().finished === false,
     );
     let hasBestBrews: boolean = false;
     if (associatedBrews.length > 0) {
@@ -410,7 +436,7 @@ export class BeanInformationComponent implements OnInit {
               text: this.translate.instant('REPEAT_BEST_BREW'),
               handler: async () => {
                 const bestBrew = associatedBrews.filter(
-                  (b) => b.best_brew === true
+                  (b) => b.best_brew === true,
                 )[0];
                 await this.uiBrewHelper.repeatBrew(bestBrew);
               },
@@ -434,20 +460,19 @@ export class BeanInformationComponent implements OnInit {
           try {
             const _scannedQRBean: ServerBean =
               await this.serverCommunicationService.getBeanInformation(
-                this.bean.qr_code
+                this.bean.qr_code,
               );
             if (_scannedQRBean.error === null) {
               this.uiAnalytics.trackEvent(
                 QR_TRACKING.TITLE,
-                QR_TRACKING.ACTIONS.REFRESH_SUCCESSFULLY
+                QR_TRACKING.ACTIONS.REFRESH_SUCCESSFULLY,
               );
               this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_REFRESHED');
               await this.uiAlert.showLoadingSpinner();
               // Get the new bean from server, just save the uuid, all other information will be overwritten
               const newMapper = new BeanMapper();
-              const newBean: Bean = await newMapper.mapServerToClientBean(
-                _scannedQRBean
-              );
+              const newBean: Bean =
+                await newMapper.mapServerToClientBean(_scannedQRBean);
               const savedUUID = this.bean.config.uuid;
               this.bean = newBean;
               this.bean.config.uuid = savedUUID;
@@ -464,11 +489,11 @@ export class BeanInformationComponent implements OnInit {
               'QR.SERVER.ERROR_OCCURED',
               'ERROR_OCCURED',
               undefined,
-              true
+              true,
             );
           }
         },
-        () => {}
+        () => {},
       );
   }
 
@@ -482,7 +507,7 @@ export class BeanInformationComponent implements OnInit {
             // Yes
             this.uiAnalytics.trackEvent(
               BEAN_TRACKING.TITLE,
-              BEAN_TRACKING.ACTIONS.DELETE
+              BEAN_TRACKING.ACTIONS.DELETE,
             );
             await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
@@ -492,7 +517,7 @@ export class BeanInformationComponent implements OnInit {
           () => {
             // No
             reject();
-          }
+          },
         );
     });
   }
@@ -506,7 +531,7 @@ export class BeanInformationComponent implements OnInit {
   public async repeatBean() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.REPEAT
+      BEAN_TRACKING.ACTIONS.REPEAT,
     );
     await this.uiBeanHelper.repeatBean(this.bean);
   }
@@ -522,7 +547,7 @@ export class BeanInformationComponent implements OnInit {
     }
     for (let i = deletingBrewIndex.length; i--; ) {
       await this.uiBrewStorage.removeByUUID(
-        brews[deletingBrewIndex[i]].config.uuid
+        brews[deletingBrewIndex[i]].config.uuid,
       );
     }
 
@@ -544,6 +569,9 @@ export class BeanInformationComponent implements OnInit {
     return false;
   }
 
+  /*
+    Deprecated right now, used by pipe
+   */
   public showCostPerKG(): boolean {
     if (
       this.bean.weight &&
@@ -556,19 +584,19 @@ export class BeanInformationComponent implements OnInit {
     }
     return false;
   }
-  public getCurrencySymbol() {
+  public getCurrencySymbol(): string {
     return this.currencyService.getActualCurrencySymbol();
   }
 
-  public calculateCostPerKG() {
+  public getCalculateCostPerKG() {
     const beanWeight = this.bean.weight;
     const beanCost = this.bean.cost;
 
-    const costPerGramm = this.uiHelper.toFixedIfNecessary(
-      beanCost / beanWeight,
-      2
-    );
+    const costPerGramm = beanCost / beanWeight;
+
     const kgCost = costPerGramm * 1000;
-    return kgCost;
+    return this.uiHelper.toFixedIfNecessary(kgCost, 2);
   }
+
+  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 }

@@ -83,7 +83,19 @@ ion-icon {
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
 }
-app-home.ion-page, helper.ion-page, app-roasting-section.ion-page, water-section.ion-page {
+app-home.ion-page,
+helper.ion-page,
+app-roasting-section.ion-page,
+water-section.ion-page,
+brew.ion-page ,
+dashboard.ion-page,
+beans.ion-page,
+preparation.ion-page,
+mill.ion-page,
+app-water.ion-page,
+app-green-beans.ion-page,
+app-graph.ion-page,
+app-graph-section.ion-page{
   padding-bottom:0px;
 }
 
@@ -408,6 +420,9 @@ ion-menu:host .menu-inner {
     font-size: 16px;
     --box-shadow:none;
   }
+  ion-button ion-icon[slot="icon-only"] {
+    font-size: 28px;
+  }
 
   .subtitle {
     margin: 0;
@@ -501,7 +516,10 @@ ion-menu:host .menu-inner {
   ion-card {
     background-color: #FFFFFF;
     border-radius: 6px 6px 6px 6px;
-    box-shadow: 0px 0px 10px #0000001F;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    /*box-shadow: 0px 0px 10px #0000001F;*/
+    box-shadow:none;
+    -webkit-box-shadow: none;
     color: var(--ion-text-color);
     outline: none;
   }
@@ -1059,5 +1077,82 @@ ion-chip.machine-connected {
 ion-chip.machine-disconnected {
 
   background-color: rgba(204, 51, 17,0.4);
+
+}
+ion-chip.weight {
+  --background: #cdc2ac;
+  --color: black;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #cdc2ac;
+}
+
+ion-chip.flowcalculated {
+  --background: #7F97A2;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #7F97A2;
+}
+
+ion-chip.chip-outline {
+  --color: black !important;
+}
+
+ion-chip.flowreal {
+  --background: #09485D;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #09485D;
+}
+
+ion-chip.pressure {
+  --background: #05C793;
+  --color: black;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #05C793;
+}
+
+ion-chip.temperature {
+  --background: #CC3311;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #CC3311;
+}
+
+ion-chip.weightsecond {
+  --background: #8F6400;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #8F6400;
+}
+
+ion-chip.flowrealsecond {
+  --background: #1FB6EA;
+  --color: white;
+  margin-right: 2px;
+  margin-left: 0px;
+  border: 1px solid #1FB6EA;
+}
+
+.no-overflow-ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/**
+Somehow i've found out that ionic is rendering this media-tags and setting box-shadows and border radius, anyway - they hurt performance, so we kill them.
+ */
+@media only screen and (min-width: 768px) and (min-height: 600px) {
+  ion-content,ion-footer,ion-toolbar,ion-header,ion-modal{
+    --border-radius: none!important;
+    --box-shadow:none!important;
+  }
+
 
 }

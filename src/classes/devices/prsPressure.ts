@@ -25,8 +25,6 @@ export class PrsPressure extends PressureDevice {
   }
 
   public connect() {
-    this.attachNotification();
-    //Wait after connection for updating to zero.
     setTimeout(() => {
       this.updateZero().catch(() => {});
     }, 1000);
@@ -46,7 +44,7 @@ export class PrsPressure extends PressureDevice {
         },
         () => {
           reject();
-        }
+        },
       );
     });
   }
@@ -85,7 +83,7 @@ export class PrsPressure extends PressureDevice {
         actualPressure = this.toFixedIfNecessary(actualPressure, 1);
         this.setPressure(actualPressure, _data, val);
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -95,14 +93,15 @@ export class PrsPressure extends PressureDevice {
       PrsPressure.PRESSURE_SERVICE_UUID,
       PrsPressure.PRESSURE_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 
   public enableValueTransmission(): void {
-    // not needed for this device
+    this.attachNotification();
   }
-  public disableValueTransmission(): void {
-    // not needed for this device
+  public disableValueTransmission(): Promise<void> {
+    this.deattachNotification();
+    return null;
   }
 }

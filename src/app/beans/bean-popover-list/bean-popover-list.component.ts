@@ -25,7 +25,7 @@ export class BeanPopoverListComponent {
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
-
+  public segmentScrollHeight: string = undefined;
   constructor(private readonly modalController: ModalController) {}
 
   public async ionViewWillEnter() {
@@ -45,6 +45,7 @@ export class BeanPopoverListComponent {
       scrollComponent = this.openScroll;
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 150);
   }
 

@@ -1,8 +1,14 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController, NavParams, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
@@ -12,7 +18,6 @@ import { BrewTrackingService } from '../../../services/brewTracking/brew-trackin
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import {
@@ -42,9 +47,9 @@ export class BrewEditComponent implements OnInit {
   private initialBeanData: string = '';
   private disableHardwareBack;
   public readonly PreparationDeviceType = PreparationDeviceType;
+  @Input('brew') public brew: IBrew;
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
@@ -53,19 +58,13 @@ export class BrewEditComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly insomnia: Insomnia,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiAlert: UIAlert,
     private readonly visualizerService: VisualizerService,
-    private readonly hapticService: HapticService
+    private readonly hapticService: HapticService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
-
-    if (brew !== undefined) {
-      this.data.initializeByObject(brew);
-    }
   }
 
   @HostListener('window:keyboardWillShow')
@@ -78,21 +77,16 @@ export class BrewEditComponent implements OnInit {
     // Describe your logic which will be run each time when keyboard is about to be closed.
     this.showFooter = true;
   }
+
   public ionViewDidEnter(): void {
     if (this.settings.wake_lock) {
-      this.insomnia.keepAwake().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceKeepAwake();
     }
     this.initialBeanData = JSON.stringify(this.data);
   }
   public ionViewWillLeave() {
     if (this.settings.wake_lock) {
-      this.insomnia.allowSleepAgain().then(
-        () => {},
-        () => {}
-      );
+      this.uiHelper.deviceAllowSleepAgain();
     }
   }
 
@@ -110,7 +104,7 @@ export class BrewEditComponent implements OnInit {
           },
           () => {
             // No
-          }
+          },
         );
     } else {
       this.dismiss();
@@ -127,7 +121,7 @@ export class BrewEditComponent implements OnInit {
     try {
       if (this.brewBrewing.brewBrewingGraphEl) {
         Plotly.purge(
-          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
         );
       }
     } catch (ex) {}
@@ -136,7 +130,7 @@ export class BrewEditComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewEditComponent.COMPONENT_ID
+      BrewEditComponent.COMPONENT_ID,
     );
   }
   private stopScaleTimer() {
@@ -195,7 +189,7 @@ export class BrewEditComponent implements OnInit {
         .length > 0
     ) {
       const savedPath: string = await this.brewBrewing.saveFlowProfile(
-        this.data.config.uuid
+        this.data.config.uuid,
       );
       if (savedPath !== '') {
         this.data.flow_profile = savedPath;
@@ -218,7 +212,17 @@ export class BrewEditComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.EDIT_FINISH
+      BREW_TRACKING.ACTIONS.EDIT_FINISH,
+    );
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.EDIT_FINISH_PREPARATION_TYPE,
+      this.data.getPreparation().type,
+    );
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.EDIT_FINISH_PREPARATION_STYLE,
+      this.data.getPreparation().style_type,
     );
     this.dismiss();
   }
@@ -236,9 +240,12 @@ export class BrewEditComponent implements OnInit {
   }
 
   public ngOnInit() {
+    if (this.brew !== undefined) {
+      this.data.initializeByObject(this.brew);
+    }
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.EDIT
+      BREW_TRACKING.ACTIONS.EDIT,
     );
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
@@ -246,7 +253,7 @@ export class BrewEditComponent implements OnInit {
         (processNextHandler) => {
           // Don't do anything.
           this.confirmDismiss();
-        }
+        },
       );
     }
   }

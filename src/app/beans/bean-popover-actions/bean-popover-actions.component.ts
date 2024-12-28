@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -18,25 +18,25 @@ export class BeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-actions';
   public data: Bean = new Bean();
 
+  @Input('bean') public bean: IBean;
+
   public settings: Settings;
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiSettingsStorage: UISettingsStorage
   ) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    const bean: IBean = this.uiHelper.copyData(this.navParams.get('bean'));
-
-    this.data.initializeByObject(bean);
-
-    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   public ionViewDidEnter(): void {}
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    const bean: IBean = this.uiHelper.copyData(this.bean);
+    this.data.initializeByObject(bean);
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public hasPhotos(): boolean {
     return this.data.attachments.length > 0;

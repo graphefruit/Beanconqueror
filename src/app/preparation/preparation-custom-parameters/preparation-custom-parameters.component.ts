@@ -3,7 +3,7 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
@@ -20,7 +20,6 @@ export class PreparationCustomParametersComponent implements OnInit {
   @Input() private preparation: IPreparation;
 
   constructor(
-    private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage
   ) {}

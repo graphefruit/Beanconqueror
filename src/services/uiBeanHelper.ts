@@ -26,11 +26,11 @@ import { UIHelper } from './uiHelper';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { ROASTS_ENUM } from '../enums/beans/roasts';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
-import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
 import { BeanPopoverFreezeComponent } from '../app/beans/bean-popover-freeze/bean-popover-freeze.component';
-import { BeanPopoverFrozenListComponent } from '../app/beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
+
 import { BeanPopoverListComponent } from '../app/beans/bean-popover-list/bean-popover-list.component';
+import { BeanInternalShareCodeGeneratorComponent } from '../app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
 
 /**
  * Handles every helping functionalities
@@ -73,7 +73,6 @@ export class UIBeanHelper {
     if (UIBeanHelper.instance) {
       return UIBeanHelper.instance;
     }
-    // noinspection TsLint
 
     return undefined;
   }
@@ -217,6 +216,16 @@ export class UIBeanHelper {
     await modal.onWillDismiss();
   }
 
+  public async generateQRCode(_bean: Bean) {
+    const modal = await this.modalController.create({
+      component: BeanInternalShareCodeGeneratorComponent,
+      id: BeanInternalShareCodeGeneratorComponent.COMPONENT_ID,
+      componentProps: { bean: _bean },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
   public async repeatBean(_bean: Bean) {
     const modal = await this.modalController.create({
       component: BeansAddComponent,
@@ -339,6 +348,26 @@ export class UIBeanHelper {
     });
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  private findBeanByInternalShareCode(internalShareCode: string) {
+    const allEntries = this.uiBeanStorage.getAllEntries();
+    const bean = allEntries.find(
+      (b) => b.internal_share_code === internalShareCode
+    );
+    return bean;
+  }
+  public async detailBeanByInternalShareCode(internalShareCode: string) {
+    const bean = this.findBeanByInternalShareCode(internalShareCode);
+    if (bean) {
+      await this.detailBean(bean);
+    }
+  }
+  public async editBeanByInternalShareCode(internalShareCode: string) {
+    const bean = this.findBeanByInternalShareCode(internalShareCode);
+    if (bean) {
+      await this.editBean(bean);
+    }
   }
 
   public async detailBean(_bean: Bean) {

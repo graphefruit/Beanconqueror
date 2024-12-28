@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
@@ -19,17 +19,17 @@ export class BeanSortComponent implements OnInit {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
   };
 
-  public segment: string = 'open';
+  @Input('bean_sort') public bean_sort: any;
+
+  public extendedSortActive: boolean = false;
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper
   ) {}
 
   public ngOnInit() {
-    this.segment = this.navParams.get('segment');
-    this.filter = this.uiHelper.copyData(this.navParams.get('bean_sort'));
+    this.filter = this.uiHelper.copyData(this.bean_sort);
     this.__reloadFilterSettings();
   }
 
@@ -63,6 +63,7 @@ export class BeanSortComponent implements OnInit {
 
   public setSortOrder(_order: any) {
     this.filter.sort_order = _order;
+    /**Preset the first sort if nothing is selected yet**/
     if (this.filter.sort_after === BEAN_SORT_AFTER.UNKOWN) {
       this.filter.sort_after = BEAN_SORT_AFTER.NAME;
     }
@@ -73,6 +74,10 @@ export class BeanSortComponent implements OnInit {
     if (this.filter.sort_order === BEAN_SORT_ORDER.UNKOWN) {
       this.filter.sort_order = BEAN_SORT_ORDER.ASCENDING;
     }
+  }
+
+  public toggleExtendSort() {
+    this.extendedSortActive = !this.extendedSortActive;
   }
 
   public isSortActive(_sort: any) {

@@ -45,7 +45,7 @@ export class PopsiclePressure extends PressureDevice {
         },
         () => {
           reject();
-        }
+        },
       );
     });
   }
@@ -64,7 +64,7 @@ export class PopsiclePressure extends PressureDevice {
         const psi = v[0];
         this.setPressure(psiToBar(psi), _data, v);
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -74,14 +74,15 @@ export class PopsiclePressure extends PressureDevice {
       PopsiclePressure.PRESSURE_SERVICE_UUID,
       PopsiclePressure.PRESSURE_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 
   public enableValueTransmission(): void {
     // not needed for this device
   }
-  public disableValueTransmission(): void {
+  public disableValueTransmission(): Promise<void> {
     // not needed for this device
+    return null;
   }
 }

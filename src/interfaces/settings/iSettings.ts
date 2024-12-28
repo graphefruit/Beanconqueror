@@ -16,8 +16,8 @@ import {
   ScaleType,
   TemperatureType,
 } from '../../classes/devices';
-import { BeanListViewParameter } from '../../classes/parameter/beanListViewParameter';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { IBrewPageSort } from '../brew/iBrewPageSort';
 
 export interface ISettings {
   // Properties
@@ -77,11 +77,30 @@ export interface ISettings {
   bean_filter: {
     OPEN: IBeanPageFilter;
     ARCHIVED: IBeanPageFilter;
+    FROZEN: IBeanPageFilter;
+  };
+
+  bean_filter_selection: {
+    OPEN: IBeanPageFilter;
+    ARCHIVED: IBeanPageFilter;
+    FROZEN: IBeanPageFilter;
   };
 
   bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
+    FROZEN: IBeanPageSort;
+  };
+
+  brew_sort: {
+    OPEN: IBrewPageSort;
+    ARCHIVED: IBrewPageSort;
+  };
+
+  bean_sort_selection: {
+    OPEN: IBeanPageSort;
+    ARCHIVED: IBeanPageSort;
+    FROZEN: IBeanPageSort;
   };
 
   bean_collapsed: {
@@ -166,6 +185,8 @@ export interface ISettings {
   bluetooth_scale_listening_threshold_active: boolean;
   bluetooth_scale_ignore_weight_button_active: boolean;
   bluetooth_scale_first_drip_threshold: number;
+
+  maximize_hide_value_cards_on_maximize_screen: boolean;
 
   pressure_id: string;
   pressure_type: PressureType;

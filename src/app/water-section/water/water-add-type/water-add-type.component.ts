@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import WATER_TRACKING from '../../../../data/tracking/waterTracking';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -21,21 +21,22 @@ export class WaterAddTypeComponent implements OnInit {
   public WATER_TYPES = WATER_TYPES;
   public data: Water = new Water();
 
+  @Input('type') public type: any;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly navParams: NavParams,
     private readonly translate: TranslateService
-  ) {
-    this.data.type = this.navParams.get('type');
+  ) {}
+
+  public ngOnInit() {
+    this.data.type = this.type;
     if (this.data.type !== WATER_TYPES.CUSTOM_WATER) {
       this.data.name = this.translate.instant('WATER_TYPE_' + this.data.type);
     }
   }
-
-  public ngOnInit() {}
   public async add() {
     if (this.data.name) {
       this.addWaterIngredientsInformation();

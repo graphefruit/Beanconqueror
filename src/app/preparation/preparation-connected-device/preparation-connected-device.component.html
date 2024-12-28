@@ -23,8 +23,7 @@
       </ion-item>
       <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.XENIA">
         <ion-item>
-          <ion-label id='preparationURL'>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
-          <ion-input aria-labelledby='preparationURL' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+          <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
                      tabIndex="1" type="text"></ion-input>
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
                       slot="end" style="margin-left:0px;" tabIndex="2" tappable>
@@ -41,7 +40,7 @@
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
             <h2>{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top;">{{uiHelper.toFixedIfNecessary(data.connectedPreparationDevice.customParams.residualLagTime,2)}}</ion-badge></h2>
+              style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
           </ion-label>
         </ion-item>
         <ion-item lines='none'>
@@ -50,7 +49,7 @@
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
-          <ion-range    [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0" snaps="true"
+          <ion-range    [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0.1" snaps="true"
                         [step]="0.05" >
           </ion-range>
         </ion-item>
@@ -64,8 +63,7 @@
 
       <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.METICULOUS">
       <ion-item>
-        <ion-label id='preparationURL'>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
-        <ion-input aria-labelledby='preparationURL' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+        <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
                    tabIndex="1" type="text"></ion-input>
         <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
                     slot="end" style="margin-left:0px;" tabIndex="2" tappable>
@@ -75,8 +73,7 @@
       </ng-container>
       <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.SANREMO_YOU">
       <ion-item>
-        <ion-label id='preparationURL'>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
-        <ion-input aria-labelledby='preparationURL' (ionBlur)="save();checkURL();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+        <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();checkURL();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
                    tabIndex="1" type="text"></ion-input>
         <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
                     slot="end" style="margin-left:0px;" tabIndex="2" tappable>
@@ -87,7 +84,7 @@
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
             <h2>{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top;">{{uiHelper.toFixedIfNecessary(data.connectedPreparationDevice.customParams.residualLagTime,2)}}</ion-badge></h2>
+              style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
           </ion-label>
         </ion-item>
         <ion-item lines='none'>

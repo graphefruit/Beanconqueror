@@ -20,7 +20,7 @@
 
     <ion-grid class="no-ion-col-vertical-padding">
       <ion-row class="ion-padding-bottom-half">
-        <ion-col [size]="mill.hasPhotos()?9:12" class="ion-no-padding-right">
+        <ion-col [size]="(mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_PHOTOS)?9:12" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
             <ion-row>
               <ion-col size="6">
@@ -56,7 +56,7 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        <ion-col class="ion-no-padding" size="3" *ngIf="mill.hasPhotos()" (click)="showPhoto($event)">
+        <ion-col class="ion-no-padding" size="3" *ngIf="(mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_PHOTOS)" (click)="showPhoto($event)">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
           </div>

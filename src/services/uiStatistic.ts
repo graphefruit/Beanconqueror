@@ -53,7 +53,13 @@ export class UIStatistic {
   }
 
   public getBeansCount(): number {
-    return this.uiBeanStorage.getAllEntries().length;
+    const allBeans = this.uiBeanStorage.getAllEntries();
+
+    const allBeansWithoutFrozenId = allBeans.filter((e) => !e.frozenGroupId);
+    const allBeansWithFrozenId = new Set(
+      allBeans.filter((e) => e.frozenGroupId).map((e) => e.frozenGroupId)
+    );
+    return allBeansWithoutFrozenId.length + allBeansWithFrozenId.size;
   }
 
   public getPreparationsCount(): number {

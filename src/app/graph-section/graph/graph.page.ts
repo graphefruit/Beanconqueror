@@ -42,7 +42,7 @@ export class GraphPage implements OnInit {
   public segment: string = 'open';
 
   public settings: Settings;
-
+  public segmentScrollHeight: string = undefined;
   constructor(
     public modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -87,6 +87,8 @@ export class GraphPage implements OnInit {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 250);
   }
 

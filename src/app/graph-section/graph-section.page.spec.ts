@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { GraphSectionPage } from './graph-section.page';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -9,7 +10,7 @@ describe('GraphSectionPage', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GraphSectionPage],
-      imports: [TranslateModule.forRoot()],
+      imports: [TranslateModule.forRoot(), FormsModule],
     }).compileComponents();
   }));
 

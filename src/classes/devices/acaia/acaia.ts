@@ -23,9 +23,9 @@ import { DEBUG } from '../common/constants';
 import { sleep, to128bitUUID } from '../common/util';
 import { Decoder } from './decoder';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Capacitor } from '@capacitor/core';
 
 declare var window: any;
-declare var device: any;
 export enum EventType {
   WEIGHT,
   TIMER_START,
@@ -127,6 +127,9 @@ export class AcaiaScale {
   private heartbeat_monitor_interval: ReturnType<typeof setInterval> | null =
     null;
 
+  private recievesNotifications: boolean = false;
+  private encodeNotificationRequestSend: boolean = false;
+
   constructor(device_id: string, characteristics: Characteristic[]) {
     /*For Pyxis-style devices, the UUIDs can be overridden.  char_uuid
                       is the command UUID, and weight_uuid is where the notify comes
@@ -192,7 +195,7 @@ export class AcaiaScale {
 
     this.callback = callback;
 
-    if (device !== null && device.platform === 'Android') {
+    if (Capacitor.getPlatform() === 'android') {
       try {
         await promisify(window.ble.requestMtu)(this.device_id, 247);
       } catch (e) {
@@ -221,6 +224,7 @@ export class AcaiaScale {
       this.weight_uuid,
       this.rx_char_uuid,
       async (_val: any) => {
+        this.recievesNotifications = true;
         this.handleNotification(_val);
       },
       async (err: any) => {
@@ -236,9 +240,12 @@ export class AcaiaScale {
      * After implementing this 150ms sleep, somehow the weight is always send afterwards - why? we don't know
      */
     await sleep(150);
-    await this.write(new Uint8Array([0, 1]).buffer);
+    /**
+     * We remove this line
+     *     await this.write(new Uint8Array([0, 1]).buffer);
+     */
 
-    await this.notificationsReady();
+    this.notificationsReady();
 
     this.startHeartbeatMonitor();
   }
@@ -374,7 +381,7 @@ export class AcaiaScale {
   private startHeartbeatMonitor() {
     this.heartbeat_monitor_interval = setInterval(async () => {
       if (Date.now() > this.last_heartbeat + HEARTBEAT_INTERVAL) {
-        await this.initScales();
+        this.initScales();
         this.logger.info('Sent heartbeat reviving request.');
       }
     }, HEARTBEAT_INTERVAL * 2);
@@ -437,12 +444,12 @@ export class AcaiaScale {
   }
 
   private async initScales() {
-    await this.ident();
+    this.ident();
     this.last_heartbeat = Date.now();
   }
 
   private async notificationsReady() {
-    await this.initScales();
+    this.initScales();
     this.logger.info('Scale Ready!');
   }
 
@@ -477,16 +484,19 @@ export class AcaiaScale {
     });
   }
 
-  private async ident() {
-    return new Promise((resolve) => {
+  private ident() {
+    if (this.recievesNotifications === false) {
       this.write(encodeId(this.isPyxisStyle), true);
+    }
+    if (
+      this.recievesNotifications === true &&
+      this.encodeNotificationRequestSend === false
+    ) {
+      this.encodeNotificationRequestSend = true;
       setTimeout(() => {
         this.write(encodeNotificationRequest(), true);
-        setTimeout(() => {
-          resolve(true);
-        }, 50);
       }, 100);
-    });
+    }
   }
 
   // @ts-ignore
@@ -634,7 +644,6 @@ function encode(msgType: number, payload: number[]): ArrayBuffer {
 }
 
 function promisify(fn: any) {
-  // tslint:disable-next-line:only-arrow-functions
   return function (...args: any) {
     return new Promise((resolve, reject) => {
       fn(...args, resolve, reject);

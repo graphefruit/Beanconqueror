@@ -6,7 +6,6 @@ import { ModalController } from '@ionic/angular';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 describe('BrewTimerComponent', () => {
   let component: BrewTimerComponent;
@@ -32,9 +31,6 @@ describe('BrewTimerComponent', () => {
               return {} as unknown as Settings;
             },
           },
-        },
-        {
-          provide: Device,
         },
       ],
     }).compileComponents();

@@ -32,7 +32,6 @@ export class Bean implements IBean {
   public roast_range: number;
   public beanMix: BEAN_MIX_ENUM;
 
-  // tslint:disable-next-line
   public roast_custom: string;
   public aromatics: string;
   public weight: number;
@@ -54,6 +53,10 @@ export class Bean implements IBean {
   public bean_roast_information: BeanRoastInformation;
 
   public qr_code: string;
+  /**
+   * This one is used for generating qr-codes / NFC tags to directly brew them or view them
+   */
+  public internal_share_code: string;
 
   public favourite: boolean;
   public shared: boolean;
@@ -98,6 +101,7 @@ export class Bean implements IBean {
     this.bean_roast_information = new BeanRoastInformation();
     this.rating = 0;
     this.qr_code = '';
+    this.internal_share_code = '';
     this.favourite = false;
     this.shared = false;
 
@@ -342,7 +346,6 @@ export class Bean implements IBean {
       ) as IRoastingMachine;
     const roastingMachine: RoastingMachine = new RoastingMachine();
     roastingMachine.initializeByObject(iRoastingMachine);
-
     return roastingMachine;
   }
 

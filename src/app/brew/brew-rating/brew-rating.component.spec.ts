@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { BrewRatingComponent } from './brew-rating.component';
@@ -14,7 +15,7 @@ describe('BrewRatingComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewRatingComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Storage },

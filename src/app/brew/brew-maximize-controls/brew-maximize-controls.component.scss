@@ -65,7 +65,11 @@
     top: 5px;
   }
 
-
+  .information-tile-no-overflow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   ion-card.flow-profile {
     margin: 0px;
@@ -73,16 +77,13 @@
     ion-card-header {
       color: #FFFFFF;
       background-color: var(--ion-color-accent) !important;
-      font-size: 30px;
+      font-size: 75px;
       padding: 2px;
-      display: flex;
-      justify-content: space-evenly;
-      flex-direction: column;
     }
     @media (max-width: 480px) {
       ion-card-header {
-        min-height:50px;
-        height:50px;
+        min-height:100px;
+
       }
     }
 

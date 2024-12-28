@@ -15,7 +15,6 @@ import { IFlavor } from '../interfaces/flavor/iFlavor';
 import { Brew } from '../classes/brew/brew';
 
 @Directive({
-  // tslint:disable-next-line:directive-selector
   selector: '[transform-date]',
 })
 export class TransformDateDirective implements AfterViewInit {

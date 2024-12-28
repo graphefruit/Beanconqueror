@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanPopoverFreezeComponent } from './bean-popover-freeze.component';
@@ -22,6 +23,7 @@ describe('BeanPopoverFreezeComponent', () => {
         TranslateModule.forChild(),
         TranslateModule.forRoot(),
         PipesModule,
+        FormsModule,
       ],
       providers: [{ provide: UIHelper, useClass: UIHelperMock }],
     }).compileComponents();

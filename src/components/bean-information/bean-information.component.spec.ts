@@ -7,9 +7,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock, UIImageMock } from '../../classes/mock';
 import { UIImage } from '../../services/uiImage';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Bean } from '../../classes/bean/bean';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('BeanInformationComponent', () => {
   let component: BeanInformationComponent;
@@ -18,11 +21,7 @@ describe('BeanInformationComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BeanInformationComponent],
-      imports: [
-        IonicModule.forRoot(),
-        TranslateModule.forRoot(),
-        HttpClientTestingModule,
-      ],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },
@@ -30,7 +29,8 @@ describe('BeanInformationComponent', () => {
           provide: UIImage,
           useClass: UIImageMock,
         },
-        { provide: SocialSharing },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   }));

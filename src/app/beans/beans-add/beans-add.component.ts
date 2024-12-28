@@ -138,7 +138,7 @@ export class BeansAddComponent implements OnInit {
     }
 
     // Download images after loading the bean, else they would be copied :O
-    if (this.server_bean && this.platform.is('cordova')) {
+    if (this.server_bean && this.platform.is('capacitor')) {
       if (this.server_bean.attachment.length > 0) {
         // await this.uiAlert.showLoadingSpinner();
         // this.uiAlert.setLoadingSpinnerMessage('QR.IMAGES_GETTING_DOWNLOADED');
@@ -243,7 +243,6 @@ export class BeansAddComponent implements OnInit {
     this.data.roast = _bean.roast;
     this.data.beanMix = _bean.beanMix;
 
-    // tslint:disable-next-line
     this.data.roast_custom = _bean.roast_custom;
     this.data.aromatics = _bean.aromatics;
     this.data.weight = _bean.weight;
@@ -264,7 +263,9 @@ export class BeansAddComponent implements OnInit {
     const copyAttachments = [];
     for (const attachment of _bean.attachments) {
       try {
-        const newPath: string = await this.uiFileHelper.copyFile(attachment);
+        const newPath: string = await this.uiFileHelper.duplicateInternalFile(
+          attachment
+        );
         copyAttachments.push(newPath);
       } catch (ex) {}
     }

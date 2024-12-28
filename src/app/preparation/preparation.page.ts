@@ -38,6 +38,7 @@ export class PreparationPage implements OnInit {
   public archivedScroll: AgVirtualSrollComponent;
   @ViewChild('preparationContent', { read: ElementRef })
   public preparationContent: ElementRef;
+  public segmentScrollHeight: string = undefined;
   constructor(
     public modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -47,13 +48,16 @@ export class PreparationPage implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper
+    private readonly uiPreparationHelper: UIPreparationHelper,
   ) {}
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
     this.__initializePreparations();
     this.retriggerScroll();
+    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
+      this.loadPreparations();
+    });
   }
 
   public loadPreparations(): void {
@@ -82,6 +86,8 @@ export class PreparationPage implements OnInit {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+
+      this.segmentScrollHeight = scrollComponent.el.style.height;
     }, 150);
   }
 
@@ -92,7 +98,7 @@ export class PreparationPage implements OnInit {
 
   public async preparationAction(
     action: PREPARATION_ACTION,
-    preparation: Preparation
+    preparation: Preparation,
   ): Promise<void> {
     this.loadPreparations();
   }
@@ -106,10 +112,10 @@ export class PreparationPage implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name));
 
     this.openPreparationsView = this.preparations.filter(
-      (e) => e.finished === false
+      (e) => e.finished === false,
     );
     this.archivePreparationsView = this.preparations.filter(
-      (e) => e.finished === true
+      (e) => e.finished === true,
     );
   }
 

@@ -8,6 +8,7 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
 
 @Component({
   selector: 'preparation-modal-select',
@@ -20,6 +21,11 @@ export class PreparationModalSelectComponent implements OnInit {
   public multipleSelection = {};
   public radioSelection: string;
   public preparation_segment: string = 'open';
+
+  public openPreparations: Array<Preparation> = [];
+  public archivedPreparations: Array<Preparation> = [];
+  public uiBrewsCountCache: any = {};
+  public uiLastUsedCountCache: any = {};
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
@@ -28,10 +34,12 @@ export class PreparationModalSelectComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
   ) {
     this.objs = this.uiPreparationStorage.getAllEntries();
     this.settings = this.uiSettings.getSettings();
+    this.openPreparations = this.getOpenPreparations();
+    this.archivedPreparations = this.getArchivedPreparations();
   }
 
   public ionViewDidEnter(): void {
@@ -110,7 +118,7 @@ export class PreparationModalSelectComponent implements OnInit {
         selected_text: selected_text,
       },
       undefined,
-      PreparationModalSelectComponent.COMPONENT_ID
+      PreparationModalSelectComponent.COMPONENT_ID,
     );
   }
 
@@ -118,27 +126,38 @@ export class PreparationModalSelectComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      PreparationModalSelectComponent.COMPONENT_ID
+      PreparationModalSelectComponent.COMPONENT_ID,
     );
   }
 
   public lastUsed(_preparation: Preparation): number {
-    let relatedBrews: Array<Brew> =
-      this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        _preparation.config.uuid
-      );
-    if (relatedBrews.length > 0) {
-      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].config.unix_timestamp;
+    if (this.uiLastUsedCountCache[_preparation.config.uuid] === undefined) {
+      let relatedBrews: Array<Brew> =
+        this.uiPreparationHelper.getAllBrewsForThisPreparation(
+          _preparation.config.uuid,
+        );
+      if (relatedBrews.length > 0) {
+        relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
+        this.uiLastUsedCountCache[_preparation.config.uuid] =
+          relatedBrews[0].config.unix_timestamp;
+      } else {
+        this.uiLastUsedCountCache[_preparation.config.uuid] = -1;
+      }
     }
-    return -1;
+    return this.uiLastUsedCountCache[_preparation.config.uuid];
   }
 
   public getBrewsCount(_preparation: Preparation): number {
-    const relatedBrews: Array<Brew> =
-      this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        _preparation.config.uuid
-      );
-    return relatedBrews.length;
+    if (this.uiBrewsCountCache[_preparation.config.uuid] === undefined) {
+      const relatedBrews: Array<Brew> =
+        this.uiPreparationHelper.getAllBrewsForThisPreparation(
+          _preparation.config.uuid,
+        );
+      this.uiBrewsCountCache[_preparation.config.uuid] = relatedBrews.length;
+    }
+    return this.uiBrewsCountCache[_preparation.config.uuid];
   }
+
+  protected readonly PREPARATION_FUNCTION_PIPE_ENUM =
+    PREPARATION_FUNCTION_PIPE_ENUM;
 }

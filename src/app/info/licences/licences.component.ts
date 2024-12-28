@@ -80,7 +80,7 @@ This isn't legal advice, please consider consulting a lawyer and see the full li
     },
     sheet_js: {
       TITLE: 'SheetJS js-xlsx',
-      LINK: 'https://github.com/SheetJS/sheetjs',
+      LINK: 'https://git.sheetjs.com/SheetJS/sheetjs',
       ACTIVE: false,
       DESCRIPTION: `        Apache License
                            Version 2.0, January 2004

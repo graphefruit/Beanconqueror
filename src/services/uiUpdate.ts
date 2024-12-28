@@ -14,18 +14,18 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { UILog } from './uiLog';
 import { UiVersionStorage } from './uiVersionStorage';
 import { Version } from '../classes/version/iVersion';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { ModalController, Platform } from '@ionic/angular';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UIFileHelper } from './uiFileHelper';
-import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import { UIAlert } from './uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 import { UIStorage } from './uiStorage';
 import { maxBy, keys } from 'lodash';
 import { UIHelper } from './uiHelper';
 import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
+import { App } from '@capacitor/app';
 
 @Injectable({
   providedIn: 'root',
@@ -39,15 +39,13 @@ export class UIUpdate {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiLog: UILog,
     private readonly uiVersionStorage: UiVersionStorage,
-    private readonly appVersion: AppVersion,
     private readonly platform: Platform,
     private readonly modalCtrl: ModalController,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly file: File,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
     private readonly uiStorage: UIStorage,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public async checkUpdate() {
@@ -67,6 +65,7 @@ export class UIUpdate {
         'UPDATE_9',
         'UPDATE_10',
         'UPDATE_11',
+        'UPDATE_12',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -91,6 +90,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_11', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_12', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -190,7 +190,8 @@ export class UIUpdate {
                   const preparationBrews: Array<any> = this.uiBrewStorage
                     .getAllEntries()
                     .filter(
-                      (e) => e.method_of_preparation === preparation.config.uuid
+                      (e) =>
+                        e.method_of_preparation === preparation.config.uuid,
                     );
                   if (
                     preparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO
@@ -229,7 +230,7 @@ export class UIUpdate {
               const settingsAfter = settings.brew_order.after;
               const maxKey = maxBy(
                 keys(settingsAfter),
-                (o) => settingsAfter[o]
+                (o) => settingsAfter[o],
               );
               const highestNumber = settingsAfter[maxKey];
               settings.brew_order.after.tds = highestNumber + 1;
@@ -242,7 +243,7 @@ export class UIUpdate {
               const settingsAfter = settings.brew_order.after;
               const maxKey = maxBy(
                 keys(settingsAfter),
-                (o) => settingsAfter[o]
+                (o) => settingsAfter[o],
               );
               const highestNumber = settingsAfter[maxKey];
               settings.brew_order.after.brew_beverage_quantity =
@@ -258,7 +259,7 @@ export class UIUpdate {
               const settingsBefore = settings.brew_order.before;
               const maxKey = maxBy(
                 keys(settingsBefore),
-                (o) => settingsBefore[o]
+                (o) => settingsBefore[o],
               );
               const highestNumber = settingsBefore[maxKey];
               settings.brew_order.before.method_of_preparation_tool =
@@ -346,7 +347,7 @@ export class UIUpdate {
             await this.uiSettingsStorage.saveSettings(settings_v3);
             break;
           case 'UPDATE_4':
-            if (this.platform.is('cordova') && this.platform.is('ios')) {
+            if (this.platform.is('capacitor') && this.platform.is('ios')) {
               // Greenbean and roasting machines just existing in this updated version then.
               const allEntries: Array<Brew | Mill | Preparation | Bean> = [
                 ...this.uiBrewStorage.getAllEntries(),
@@ -357,17 +358,16 @@ export class UIUpdate {
 
               if (allEntries.length > 0) {
                 this.uiLog.log(
-                  `${_version} - Check ${allEntries.length} entries`
+                  `${_version} - Check ${allEntries.length} entries`,
                 );
                 let entryIndex: number = -1;
                 for (const entry of allEntries) {
                   entryIndex++;
                   try {
                     this.uiLog.log(
-                      `${_version} - Check entry ${entryIndex} of ${allEntries.length}`
+                      `${_version} - Check entry ${entryIndex} of ${allEntries.length}`,
                     );
                     let entryNeedsUpdate: boolean = false;
-                    // tslint:disable-next-line
                     for (let i = 0; i < entry.attachments.length; i++) {
                       this.uiLog.log(`${_version} - Check attachments ${i}`);
                       // We don't have a real path here, just the name
@@ -377,17 +377,21 @@ export class UIUpdate {
                         oldPath = oldPath.substr(1);
                       }
                       this.uiLog.log(
-                        `${_version} - Move file from ${this.file.dataDirectory} to ${this.file.documentsDirectory}; Name: ${oldPath}`
+                        `${_version} - Move file from data directory to document directory; Name: ${oldPath}`,
                       );
-                      const newPath: string = await this.uiFileHelper.moveFile(
-                        this.file.dataDirectory,
-                        this.file.documentsDirectory,
-                        oldPath,
-                        oldPath
-                      );
+                      await Filesystem.rename({
+                        directory: Directory.Data,
+                        from: oldPath,
+                        to: oldPath,
+                        toDirectory: Directory.Documents,
+                      });
+                      const { uri: newPath } = await Filesystem.getUri({
+                        path: oldPath,
+                        directory: Directory.Documents,
+                      });
 
                       this.uiLog.log(
-                        `${_version} Update path from ${oldPath} to ${newPath}`
+                        `${_version} Update path from ${oldPath} to ${newPath}`,
                       );
                       entry.attachments[i] = newPath;
                       entryNeedsUpdate = true;
@@ -395,14 +399,14 @@ export class UIUpdate {
 
                     if (entryNeedsUpdate) {
                       this.uiLog.log(
-                        `${_version} - Update entry ${entryIndex} of ${allEntries.length}`
+                        `${_version} - Update entry ${entryIndex} of ${allEntries.length}`,
                       );
 
                       this.uiAlert.setLoadingSpinnerMessage(
                         this.translate.instant('UPDATE_ENTRY_OF', {
                           index: entryIndex,
                           count: allEntries.length,
-                        })
+                        }),
                       );
 
                       let storageToUpdate:
@@ -423,7 +427,7 @@ export class UIUpdate {
                     }
                   } catch (ex) {
                     this.uiLog.log(
-                      `${_version} - Update exception ${ex.message}`
+                      `${_version} - Update exception ${ex.message}`,
                     );
                   }
                 }
@@ -439,7 +443,7 @@ export class UIUpdate {
               const settings_v5Before = settings_v5.brew_order.before;
               const maxKey = maxBy(
                 keys(settings_v5Before),
-                (o) => settings_v5Before[o]
+                (o) => settings_v5Before[o],
               );
               const highestNumber = settings_v5Before[maxKey];
 
@@ -463,7 +467,7 @@ export class UIUpdate {
             for (const bean of beans_v6) {
               // We have issues with references, so we deep copy to remove them
               bean.bean_information = this.uiHelper.cloneData(
-                bean.bean_information
+                bean.bean_information,
               );
               await this.uiBeanStorage.update(bean);
             }
@@ -491,7 +495,7 @@ export class UIUpdate {
             const settings_v7: any = this.uiSettingsStorage.getSettings();
             // Convert to number, after we've missed out
             settings_v7.brew_rating_steps = Number(
-              settings_v7.brew_rating_steps
+              settings_v7.brew_rating_steps,
             );
             await this.uiSettingsStorage.saveSettings(settings_v7);
 
@@ -524,7 +528,7 @@ export class UIUpdate {
             const beansListV9: Array<Bean> = this.uiBeanStorage.getAllEntries();
             if (beansListV9.length > 0) {
               this.uiLog.info(
-                'Update 9 - We found more then zero beans, therefore its an existing instance, we need to update the beans, so the user will see all details again'
+                'Update 9 - We found more then zero beans, therefore its an existing instance, we need to update the beans, so the user will see all details again',
               );
 
               settings_v9.bean_manage_parameters.activateAll();
@@ -560,6 +564,17 @@ export class UIUpdate {
             settings_v11.resetBeanSort();
             await this.uiSettingsStorage.saveSettings(settings_v11);
             break;
+          case 'UPDATE_12':
+            const settings_v12: Settings = this.uiSettingsStorage.getSettings();
+            settings_v12.graph.FILTER.weightSecond = true;
+            settings_v12.graph.FILTER.realtime_flowSecond = true;
+
+            settings_v12.resetBrewSort();
+
+            settings_v12.bluetooth_ignore_anomaly_values = false;
+            settings_v12.bluetooth_ignore_negative_values = false;
+            await this.uiSettingsStorage.saveSettings(settings_v12);
+            break;
           default:
             break;
         }
@@ -574,7 +589,7 @@ export class UIUpdate {
 
   private async __checkUpdateForDataVersion(
     _dataVersion: string,
-    _silentUpdate: boolean
+    _silentUpdate: boolean,
   ) {
     const version: Version = this.uiVersionStorage.getVersion();
     let somethingUpdated: boolean = false;
@@ -590,12 +605,12 @@ export class UIUpdate {
           somethingUpdated = true;
         } else {
           this.uiLog.info(
-            'Data version ' + _dataVersion + ' - could not update'
+            'Data version ' + _dataVersion + ' - could not update',
           );
         }
       } catch (ex) {
         this.uiLog.error(
-          'Data version ' + _dataVersion + ' - could not update ' + ex.message
+          'Data version ' + _dataVersion + ' - could not update ' + ex.message,
         );
       }
     } else {
@@ -610,11 +625,11 @@ export class UIUpdate {
   public async checkUpdateScreen(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       let versionCode: string;
-      if (this.platform.is('cordova')) {
-        versionCode = await this.appVersion.getVersionNumber();
+      if (this.platform.is('capacitor')) {
+        versionCode = (await App.getInfo()).version;
       } else {
         // Hardcored for testing
-        versionCode = '7.5.0';
+        versionCode = '8.0.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

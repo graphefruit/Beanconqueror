@@ -7,7 +7,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { FormsModule } from '@angular/forms';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('PreparationAddTypeComponent', () => {
   let component: PreparationAddTypeComponent;
@@ -16,12 +20,7 @@ describe('PreparationAddTypeComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationAddTypeComponent],
-      imports: [
-        IonicModule.forRoot(),
-        TranslateModule.forRoot(),
-        FormsModule,
-        HttpClientTestingModule,
-      ],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         { provide: Storage },
         {
@@ -32,6 +31,8 @@ describe('PreparationAddTypeComponent', () => {
           provide: NavParams,
           useClass: NavParamsMock,
         },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   }));

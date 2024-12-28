@@ -31,51 +31,51 @@ import { ICustomInformationBrew } from '../../interfaces/brew/ICustomInformation
 import { CustomInformationBrew } from './customInformationBrew';
 import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
 import { ReferenceGraph } from './referenceGraph';
+import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+export class BrewInstanceHelper {
+  constructor() {}
 
+  public static preparations: any = {};
+  public static mills: any = {};
+  public static beans: any = {};
+  public static waters: any = {};
+
+  public static setEntryAmountBackToZero() {
+    this.preparations = {};
+    this.mills = {};
+    this.beans = {};
+    this.waters = {};
+  }
+}
 export class Brew implements IBrew {
-  // tslint:disable-next-line
   public grind_size: string;
-  // tslint:disable-next-line
   public grind_weight: number;
   // UUID
-  // tslint:disable-next-line
   public method_of_preparation: string;
   // UUID
   public mill: string;
-  // tslint:disable-next-line
   public mill_speed: number;
-  // tslint:disable-next-line
   public mill_timer: number;
-  // tslint:disable-next-line
   public mill_timer_milliseconds: number;
-  // tslint:disable-next-line
   public pressure_profile: string;
   // UUID
   public bean: string;
-  // tslint:disable-next-line
   public brew_temperature: number;
-  // tslint:disable-next-line
   public brew_temperature_time: number;
 
   public brew_temperature_time_milliseconds: number;
 
-  // tslint:disable-next-line
   public brew_time: number;
   public brew_time_milliseconds: number;
-  // tslint:disable-next-line
   public brew_quantity: number;
-  // tslint:disable-next-line
   public brew_quantity_type: BREW_QUANTITY_TYPES_ENUM;
   public note: string;
   public rating: number;
-  // tslint:disable-next-line
   public coffee_type: string;
-  // tslint:disable-next-line
   public coffee_concentration: string;
-  // tslint:disable-next-line
   public coffee_first_drip_time: number;
   public coffee_first_drip_time_milliseconds: number;
-  // tslint:disable-next-line
   public coffee_blooming_time: number;
   public coffee_blooming_time_milliseconds: number;
   public attachments: Array<string>;
@@ -230,44 +230,74 @@ export class Brew implements IBrew {
   }
 
   public getBean(): Bean {
-    const iBean: IBean = this.getBeanStorageInstance().getByUUID(
-      this.bean
-    ) as IBean;
-    const bean: Bean = new Bean();
-    bean.initializeByObject(iBean);
-
-    return bean;
+    const uniqueCachingID = this.config.uuid + '-' + this.bean;
+    if (
+      BrewInstanceHelper.beans[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.beans[uniqueCachingID].config.uuid !== this.bean
+    ) {
+      const iBean: IBean = this.getBeanStorageInstance().getByUUID(
+        this.bean
+      ) as IBean;
+      const bean: Bean = new Bean();
+      bean.initializeByObject(iBean);
+      BrewInstanceHelper.beans[uniqueCachingID] = bean;
+    }
+    return BrewInstanceHelper.beans[uniqueCachingID];
   }
 
-  public getPreparation(): Preparation {
-    const iPreparation: IPreparation =
-      this.getPreparationStorageInstance().getByUUID(
-        this.method_of_preparation
-      ) as IPreparation;
-    const preparation: Preparation = new Preparation();
-    preparation.initializeByObject(iPreparation);
+  /**We do this, else we get called all day and have performance downtimes **/
 
-    return preparation;
+  public getPreparation(): Preparation {
+    const uniqueCachingID = this.config.uuid + '-' + this.method_of_preparation;
+    if (
+      BrewInstanceHelper.preparations[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.preparations[uniqueCachingID].config.uuid !==
+        this.method_of_preparation
+    ) {
+      const iPreparation: IPreparation =
+        this.getPreparationStorageInstance().getByUUID(
+          this.method_of_preparation
+        ) as IPreparation;
+      const preparation: Preparation = new Preparation();
+      preparation.initializeByObject(iPreparation);
+
+      BrewInstanceHelper.preparations[uniqueCachingID] = preparation;
+    }
+
+    return BrewInstanceHelper.preparations[uniqueCachingID];
   }
 
   public getMill(): Mill {
-    const iMill: IMill = this.getMillStorageInstance().getByUUID(
-      this.mill
-    ) as IMill;
-    const mill: Mill = new Mill();
-    mill.initializeByObject(iMill);
-
-    return mill;
+    const uniqueCachingID = this.config.uuid + '-' + this.mill;
+    if (
+      BrewInstanceHelper.mills[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.mills[uniqueCachingID].config.uuid !== this.mill
+    ) {
+      const iMill: IMill = this.getMillStorageInstance().getByUUID(
+        this.mill
+      ) as IMill;
+      const mill: Mill = new Mill();
+      mill.initializeByObject(iMill);
+      BrewInstanceHelper.mills[uniqueCachingID] = mill;
+    }
+    return BrewInstanceHelper.mills[uniqueCachingID];
   }
 
   public getWater(): Water {
-    const iWater: IWater = this.getWaterStorageInstance().getByUUID(
-      this.water
-    ) as IWater;
-    const water: Water = new Water();
-    water.initializeByObject(iWater);
+    const uniqueCachingID = this.config.uuid + '-' + this.water;
+    if (
+      BrewInstanceHelper.waters[uniqueCachingID] === undefined ||
+      BrewInstanceHelper.waters[uniqueCachingID].config.uuid !== this.water
+    ) {
+      const iWater: IWater = this.getWaterStorageInstance().getByUUID(
+        this.water
+      ) as IWater;
+      const water: Water = new Water();
+      water.initializeByObject(iWater);
+      BrewInstanceHelper.waters[uniqueCachingID] = water;
+    }
 
-    return water;
+    return BrewInstanceHelper.waters[uniqueCachingID];
   }
 
   /**
@@ -275,9 +305,7 @@ export class Brew implements IBrew {
    * If no age could be calculated it returns -1
    */
   public getCalculatedBeanAge(): number {
-    const bean: IBean = this.getBeanStorageInstance().getByUUID(
-      this.bean
-    ) as IBean;
+    const bean: Bean = this.getBean();
     if (bean) {
       if (bean.roastingDate) {
         const roastingDate = moment(bean.roastingDate).startOf('day');
@@ -768,9 +796,19 @@ export class Brew implements IBrew {
 
     return fixNeeded;
   }
-  public getGraphPath() {
-    const savingPath = 'brews/' + this.config.uuid + '_flow_profile.json';
-    return savingPath;
+
+  public getGraphPath(_type: BREW_GRAPH_TYPE = BREW_GRAPH_TYPE.BREW) {
+    if (_type === BREW_GRAPH_TYPE.BREW) {
+      return 'brews/' + this.config.uuid + '_flow_profile.json';
+    } else if (_type === BREW_GRAPH_TYPE.IMPORTED_GRAPH) {
+      if (
+        this.reference_flow_profile?.type ===
+        REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        return 'importedGraph/' + this.config.uuid + '_flow_profile.json';
+      }
+    }
+    return '';
   }
 
   public getBeanAgeByBrewDate() {

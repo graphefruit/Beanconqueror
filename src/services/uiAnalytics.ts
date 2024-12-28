@@ -27,7 +27,7 @@ export class UIAnalytics {
     private readonly uiSettings: UISettingsStorage,
     private readonly uiAlert: UIAlert,
     private readonly uiLog: UILog,
-    private readonly router: Router
+    private readonly router: Router,
   ) {}
 
   public async initializeTracking(): Promise<any> {
@@ -37,7 +37,6 @@ export class UIAnalytics {
 
         await this.uiSettings.storageReady();
         this.matomoTracker = Matomo.getTracker();
-
         const settings: Settings = this.uiSettings.getSettings();
         if (settings.matomo_analytics === true) {
           this.enableTracking();
@@ -76,19 +75,19 @@ export class UIAnalytics {
       this.__trackPageFB(_pageName);
     } else {
       this.uiLog.info(
-        `ANALYTICS - DISABLED - But we would track page: Page:${_pageName}`
+        `ANALYTICS - DISABLED - But we would track page: Page:${_pageName}`,
       );
     }
   }
 
-  public trackEvent(_category, _action, _name?, _value?: number) {
+  public trackEvent(_category, _action, _name?) {
     if (this.canTrack) {
       try {
-        this.__trackEventFB(_category, _action, _name, _value);
+        this.__trackEventFB(_category, _action, _name);
       } catch (ex) {}
     } else {
       this.uiLog.info(
-        `ANALYTICS - DISABLED - But we would track event: Category:${_category}, Action: ${_action}`
+        `ANALYTICS - DISABLED - But we would track event: Category:${_category}, Action: ${_action}`,
       );
     }
   }
@@ -113,20 +112,18 @@ export class UIAnalytics {
     } catch (ex) {}
   }
 
-  private __trackEventFB(_category, _action, _name?, _value?) {
+  private __trackEventFB(_category, _action, _name?) {
     if (this.canTrack) {
       try {
-        if (_name && _value) {
-          this.matomoTracker.trackEvent(_category, _action, _name, _value);
+        if (_name) {
+          this.matomoTracker.trackEvent(_category, _action, _name);
           this.uiLog.log(
             'SUCCESS - Track event page - Category:' +
               _category +
               ' Action:' +
               _action +
               ' Name:' +
-              _name +
-              ' Value:' +
-              _value
+              _name,
           );
         } else {
           this.matomoTracker.trackEvent(_category, _action);
@@ -134,7 +131,7 @@ export class UIAnalytics {
             'SUCCESS - Track event page - Category:' +
               _category +
               ' Action:' +
-              _action
+              _action,
           );
         }
       } catch (ex) {}

@@ -60,7 +60,7 @@
     ion-card-header {
       color: #FFFFFF;
       background-color: var(--ion-color-accent) !important;
-      font-size: 20px;
+      font-size: 18px;
       padding: 2px;
       display: flex;
       justify-content: space-evenly;
@@ -73,6 +73,12 @@
         min-height:75px;
         height:75px;
       }
+    }
+
+    .information-tile-no-overflow {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     ion-card-content {
@@ -140,38 +146,4 @@
     }
   }
 
-  ion-chip.weight {
-    --background: #cdc2ac;
-    --color: black;
-    margin-right: 0px;
-    margin-left: 10px;
-  }
-
-  ion-chip.flowcalculated {
-    --background: #7F97A2;
-    --color: white;
-    margin-right: 0px;
-  }
-
-  ion-chip.chip-outline {
-    --color: black !important;
-  }
-
-  ion-chip.flowreal {
-    --background: #09485D;
-    --color: white;
-    margin-right: 0px;
-  }
-
-  ion-chip.pressure {
-    --background: #05C793;
-    --color: black;
-    margin-right: 0px;
-  }
-
-  ion-chip.temperature {
-    --background: #CC3311;
-    --color: white;
-    margin-right: 0px;
-  }
 }

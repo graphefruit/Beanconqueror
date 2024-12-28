@@ -17,13 +17,17 @@ export class DatetimePopoverComponent implements OnInit {
     MILLISECONDS: 0,
   };
 
+  public colSize: number = 3;
+
+  public maxMilliSecond: number = 999;
+
   @ViewChild('secondInput', { static: false }) public secondInput: IonInput;
 
   @Input() public displayingTime: string;
   public settings: Settings;
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {}
 
   public ngOnInit() {
@@ -34,6 +38,7 @@ export class DatetimePopoverComponent implements OnInit {
     this.timer.MINUTES = passedDisplayingTime.minutes();
     this.timer.SECONDS = passedDisplayingTime.seconds();
     this.timer.MILLISECONDS = passedDisplayingTime.milliseconds();
+    this.colSize = this.getColSize();
   }
   public ionViewDidEnter(): void {
     /**
@@ -93,7 +98,7 @@ export class DatetimePopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      'datetime-popover'
+      'datetime-popover',
     );
   }
 
@@ -116,7 +121,7 @@ export class DatetimePopoverComponent implements OnInit {
         displayingTime: newDisplayingTime.toISOString(),
       },
       undefined,
-      'datetime-popover'
+      'datetime-popover',
     );
   }
 }

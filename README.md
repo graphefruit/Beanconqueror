@@ -99,13 +99,14 @@ Different features are supported by this app, a brief overview you'll find here.
 - [Joan](https://github.com/Jglez3) - for Spanish translation
 - [Halil Portakal](https://www.kahvekulubu.net/sosyal/members/portakalhalil.3158/) for Turkish translation
 - [Jiageng Ding](https://github.com/JiagengDing) for Chinese translation
-- [Mimoja](https://github.com/Mimoja/) For supporting on Decent Scale integration & Eureka Scale support
+- [Mimoja](https://github.com/Mimoja/) For supporting on Decent Scale integration & Eureka Scale support & Making Combustion.inc Bytes
 - [Silas](https://github.com/silasg) - For supporting Hiroia Jimmy Scale
 - [Mehalter](https://github.com/mehalter) - For supporting Acaia Scales
 - [Mike](https://github.com/mike1808) - For supporting Acaia Scales & DIY Pressure Sensor
 - [Myles](https://github.com/mylesagray) - For supporting Thermo Bluetooth Devices
 - [Herman](https://github.com/hermanmak) - For supporting Felicita Arc
 - [Yannick](https://github.com/randomcoffeesnob) - For supporting DiFluid Microbalance & Smart Chef Scale, BlackCoffee.IO. Also for adding Lokalise
+- [Marius](https://github.com/RagingCactus) - For porting Cordova to Capacitor & Implementing Export & Import routine back to Android
 
 ## Getting the App
 
@@ -152,7 +153,7 @@ Therefore some users did third party apps, where I don't have any stakes in it.
 Important: Beanconqueror doesn't take any warranty here.
 
 Add beans to share directly from a webform:
-https://beanstats.vercel.app/beanconqueror/share/create
+https://beanstats.vercel.app/beanconqueror/create
 (Uses the minify-logic of the add.beanl.ink aswell)
 
 Minify your shared bean-link:
@@ -163,15 +164,9 @@ https://beanstats.vercel.app/
 
 ## Questions
 
-### Why is external storage not supported?
-
-Sadly there are some issues to read/use files from external storage
-https://github.com/apache/cordova-plugin-file/issues/350
-
 ### Why is image-export functionality not support on iOS?
 
-iOS filesystem is different then on Android, because of this images cannot just be exported.
-Thats why just Android is support by now.
+iOS filesystem is different then on Android. On iOS all image/graphs will be directly used from Files/on my device/Beanconqueror -> _._
 
 ### iOS - iCloud-Backup
 
@@ -199,76 +194,15 @@ The app needs access to your filesystem aswell as the camera
 
 # Develop on your own
 
-## Development & Building it yourself
-
-If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).
-To get started with anything you need [Node.js](https://nodejs.org/en/download/) installed
+Please look at [our development guide in DEVELOPING.md](DEVELOPING.md).
 
 ## Want to check the code quality?
 
 https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
-## Get Started
-
-```
-npm install -g cordova@12.0.0
-npm install -g @ionic/cli
-npm run prepare
-```
-
-## Build iOS
-
-Always use the .workspace-File to open in Xcode
-
-```
-ionic cordova build ios
-```
-
-## Build Android
-
-```
-ionic cordova build android
-```
-
-### Check outdated dependencies
-
-```
-npm outdated
-```
-
-### Check outdated plugins
-
-```
-cordova-check-plugins
-```
-
-### NPM-Version
-
-npm -v -> 9.6.4 - works
-
-### NodeJS-Version
-
-node -v -> v18.15.0 -> works
-
-### iOS-Version:
-
-`ionic cordova platform add ios@7.1.0`
-
-### Android-Version:
-
-`ionic cordova platform add android@13.0.0`
-`jdk 17 needed`
-
-You need to remove <config>WRITE_EXTERNAL_STORAGE</config> on the x-socialshare plugin.xml
-
 ### Github Page Hosting
 
 https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
-
-### Upgrade Ionic if needed:
-
-`npm install @ionic/angular@6.5.0`
--> Or the actual active version
 
 ### Installing AAB on your android (mac)
 
@@ -276,7 +210,3 @@ https://stackoverflow.com/questions/50419286/install-android-app-bundle-on-devic
 brew install bundletool
 bundletool build-apks --bundle=./app.aab --output=./app.apks
 bundletool install-apks --apks=app.apks
-
-Compile deson't work on android?
-Try:
-`cordova build android -- --jvmargs='-Xmx2048M -Dkotlin.daemon.jvm.options\="-Xmx2048M" --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED'`

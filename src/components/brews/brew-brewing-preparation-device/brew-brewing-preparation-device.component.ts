@@ -45,6 +45,7 @@ import {
   SanremoYOUParams,
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
@@ -67,6 +68,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     cssClass: 'xenia-script-chooser',
   };
 
+  public uiPreparationDeviceConnected: boolean = undefined;
+  public uiPreparationDeviceType: PreparationDeviceType = undefined;
+  public uiHasAPreparationDeviceSet: boolean = undefined;
   constructor(
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiAlert: UIAlert,
@@ -77,8 +81,15 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly modalController: ModalController,
-    public readonly uiBrewHelper: UIBrewHelper
+    public readonly uiBrewHelper: UIBrewHelper,
+    private readonly translate: TranslateService,
   ) {}
+
+  private async setUIParams() {
+    this.uiPreparationDeviceConnected = this.preparationDeviceConnected();
+    this.uiPreparationDeviceType = this.getDataPreparationDeviceType();
+    this.uiHasAPreparationDeviceSet = this.hasAPreparationDeviceSet();
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -89,9 +100,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   public async instance() {
-    if (this.isEdit) {
-      await this.instancePreparationDevice(this.data);
-    }
+    await this.instancePreparationDevice(this.data);
   }
 
   public hasTargetWeightActive() {
@@ -136,6 +145,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   public async instancePreparationDevice(_brew: Brew = null) {
+    /** If a user changes the preparation device, we need to unset the preparation device here firstly **/
+    this.preparationDevice = undefined;
     this.preparation = this.data.getPreparation();
     const connectedDevice: PreparationDevice =
       this.uiPreparationHelper.getConnectedDevice(this.preparation);
@@ -147,19 +158,21 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       } else if (connectedDevice instanceof SanremoYOUDevice) {
         await this.instanceSanremoYOUPreparationDevice(connectedDevice, _brew);
       }
+
       this.checkChanges();
     } else {
       this.preparationDevice = undefined;
     }
+    await this.setUIParams();
   }
   private async instanceXeniaPreparationDevice(
     connectedDevice: PreparationDevice,
-    _brew: Brew = null
+    _brew: Brew = null,
   ) {
     let preparationDeviceNotConnected: boolean = false;
     try {
       await this.uiAlert.showLoadingSpinner(
-        'PREPARATION_DEVICE.TYPE_XENIA.CHECKING_CONNECTION_TO_PORTAFILTER'
+        'PREPARATION_DEVICE.TYPE_XENIA.CHECKING_CONNECTION_TO_PORTAFILTER',
       );
       await connectedDevice.deviceConnected().then(
         () => {
@@ -171,9 +184,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             'PREPARATION_DEVICE.TYPE_XENIA.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
             'ERROR_OCCURED',
             undefined,
-            true
+            true,
           );
-        }
+        },
       );
       if (preparationDeviceNotConnected) {
         await this.uiAlert.hideLoadingSpinner();
@@ -189,7 +202,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     this.preparationDevice = connectedDevice as XeniaDevice;
     await this.uiAlert.setLoadingSpinnerMessage(
       'PREPARATION_DEVICE.TYPE_XENIA.GRABING_SCRIPTS',
-      true
+      true,
     );
     try {
       try {
@@ -198,7 +211,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       } catch (ex) {
         this.uiToast.showInfoToast(
           'We could not get scripts from xenia: ' + JSON.stringify(ex),
-          false
+          false,
         );
       }
       // We didn't set any data yet
@@ -211,7 +224,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
               _brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE
             ) {
               this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                _brew.preparationDeviceBrew
+                _brew.preparationDeviceBrew,
               );
               wasSomethingSet = true;
             }
@@ -226,11 +239,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (brews.length > 0) {
               const foundEntry = brews.find(
                 (b) =>
-                  b.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+                  b.preparationDeviceBrew.type !== PreparationDeviceType.NONE,
               );
               if (foundEntry) {
                 this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                  foundEntry.preparationDeviceBrew
+                  foundEntry.preparationDeviceBrew,
                 );
                 wasSomethingSet = true;
               }
@@ -252,7 +265,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (
               xeniaParams.scriptStartId > 2 &&
               this.preparationDevice.scriptList.findIndex(
-                (e) => e.INDEX === xeniaParams.scriptStartId
+                (e) => e.INDEX === xeniaParams.scriptStartId,
               ) === -1
             ) {
               // Script not found.
@@ -262,7 +275,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (
               xeniaParams.scriptAtFirstDripId > 2 &&
               this.preparationDevice.scriptList.findIndex(
-                (e) => e.INDEX === xeniaParams.scriptAtFirstDripId
+                (e) => e.INDEX === xeniaParams.scriptAtFirstDripId,
               ) === -1
             ) {
               // Script not found.
@@ -272,7 +285,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (
               xeniaParams.scriptAtWeightReachedId > 2 &&
               this.preparationDevice.scriptList.findIndex(
-                (e) => e.INDEX === xeniaParams.scriptAtWeightReachedId
+                (e) => e.INDEX === xeniaParams.scriptAtWeightReachedId,
               ) === -1
             ) {
               // Script not found.
@@ -284,7 +297,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
                 'PREPARATION_DEVICE.TYPE_XENIA.ERROR_NOT_ALL_SCRIPTS_FOUND',
                 'CARE',
                 undefined,
-                true
+                true,
               );
             }
           } else {
@@ -315,7 +328,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
   private async instanceMeticulousPreparationDevice(
     connectedDevice: MeticulousDevice,
-    _brew: Brew = null
+    _brew: Brew = null,
   ) {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.METICULOUS;
     this.data.preparationDeviceBrew.params = new MeticulousParams();
@@ -329,23 +342,80 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       },
       () => {
         //Should never trigger
-      }
+      },
     );
   }
 
   private async instanceSanremoYOUPreparationDevice(
     connectedDevice: SanremoYOUDevice,
-    _brew: Brew = null
+    _brew: Brew = null,
   ) {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
     this.data.preparationDeviceBrew.params = new SanremoYOUParams();
+
+    await this.uiAlert.showLoadingSpinner();
     await connectedDevice.deviceConnected().then(
-      () => {
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
         this.preparationDevice = connectedDevice as SanremoYOUDevice;
       },
-      () => {
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
         //Not connected
+        this.uiAlert.showMessage(
+          'PREPARATION_DEVICE.TYPE_SANREMO_YOU.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+          'CARE',
+          'OK',
+          true,
+        );
+      },
+    );
+
+    if (!this.preparationDevice) {
+      //Ignore the rest of this function
+      return;
+    }
+
+    /** Seccond call**/
+    await connectedDevice.deviceConnected().then(
+      () => {},
+      () => {},
+    );
+    /** Third call call**/
+
+    const apiThirdCallDelayStart = moment(); // create a moment with the current time
+    let apiDelayEnd;
+    const delayCallTimeout = setTimeout(() => {
+      let apiTakesToLong: boolean = false;
+      let delta;
+      if (apiDelayEnd === undefined) {
+        //After 2 seconds we didn't even hit the return
+        delta = 1000;
+      } else {
+        delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
       }
+      if (delta > 200) {
+        apiTakesToLong = true;
+      }
+
+      if (apiTakesToLong) {
+        this.uiAlert.showMessage(
+          this.translate.instant('SANREMO_API_RESPONSE_TAKE_TO_LONG', {
+            time: delta,
+          }),
+          this.translate.instant('CARE'),
+          this.translate.instant('OK'),
+          false,
+        );
+      }
+    }, 1000);
+    await connectedDevice.deviceConnected().then(
+      () => {
+        apiDelayEnd = moment(); // create a moment with the other time timestamp in seconds
+      },
+      () => {
+        clearTimeout(delayCallTimeout);
+      },
     );
   }
 

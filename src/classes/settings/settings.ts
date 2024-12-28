@@ -28,6 +28,9 @@ import {
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -82,12 +85,29 @@ export class Settings implements ISettings {
     ARCHIVED: IBeanPageFilter;
     FROZEN: IBeanPageFilter;
   };
+  public bean_filter_selection: {
+    OPEN: IBeanPageFilter;
+    ARCHIVED: IBeanPageFilter;
+    FROZEN: IBeanPageFilter;
+  };
 
   public bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
     FROZEN: IBeanPageSort;
   };
+
+  public brew_sort: {
+    OPEN: IBrewPageSort;
+    ARCHIVED: IBrewPageSort;
+  };
+
+  public bean_sort_selection = {
+    OPEN: {} as IBeanPageSort,
+    ARCHIVED: {} as IBeanPageSort,
+    FROZEN: {} as IBeanPageSort,
+  };
+
   public bean_collapsed: {
     OPEN: boolean;
     ARCHIVED: boolean;
@@ -175,6 +195,8 @@ export class Settings implements ISettings {
   public bluetooth_scale_listening_threshold_active: boolean;
   public bluetooth_scale_ignore_weight_button_active: boolean;
   public bluetooth_scale_first_drip_threshold: number;
+
+  public maximize_hide_value_cards_on_maximize_screen: boolean;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -264,6 +286,8 @@ export class Settings implements ISettings {
       realtime_flow: true,
       pressure: true,
       temperature: true,
+      weightSecond: true,
+      realtime_flowSecond: true,
     } as IBrewGraphs;
   }
 
@@ -324,8 +348,23 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter,
       FROZEN: {} as IBeanPageFilter,
     };
+    this.bean_filter_selection = {
+      OPEN: {} as IBeanPageFilter,
+      ARCHIVED: {} as IBeanPageFilter,
+      FROZEN: {} as IBeanPageFilter,
+    };
 
     this.bean_sort = {
+      OPEN: {} as IBeanPageSort,
+      ARCHIVED: {} as IBeanPageSort,
+      FROZEN: {} as IBeanPageSort,
+    };
+    this.brew_sort = {
+      OPEN: {} as IBrewPageSort,
+      ARCHIVED: {} as IBrewPageSort,
+    };
+
+    this.bean_sort_selection = {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort,
       FROZEN: {} as IBeanPageSort,
@@ -353,7 +392,6 @@ export class Settings implements ISettings {
     this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
     this.graph.FILTER = this.GET_BREW_GRAPHS();
     this.graph.FILTER.realtime_flow = false;
-
     this.graph_time = {
       ESPRESSO: {
         NORMAL_SCREEN: 20,
@@ -403,6 +441,10 @@ export class Settings implements ISettings {
     this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
     this.bean_filter.FROZEN = this.GET_BEAN_FILTER();
 
+    this.bean_filter_selection.OPEN = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.ARCHIVED = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.FROZEN = this.GET_BEAN_FILTER();
+
     this.bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -416,6 +458,19 @@ export class Settings implements ISettings {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
 
+    this.bean_sort_selection.OPEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.ARCHIVED = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.FROZEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+
     this.green_bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -424,6 +479,15 @@ export class Settings implements ISettings {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
+
+    this.brew_sort.OPEN = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
+    this.brew_sort.ARCHIVED = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
@@ -448,6 +512,8 @@ export class Settings implements ISettings {
     this.bluetooth_scale_listening_threshold_active = false;
     this.bluetooth_scale_ignore_weight_button_active = false;
     this.bluetooth_scale_first_drip_threshold = 0.1;
+
+    this.maximize_hide_value_cards_on_maximize_screen = false;
 
     this.scale_log = false;
 
@@ -539,9 +605,19 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter,
       FROZEN: {} as IBeanPageFilter,
     };
+    this.bean_filter_selection = {
+      OPEN: {} as IBeanPageFilter,
+      ARCHIVED: {} as IBeanPageFilter,
+      FROZEN: {} as IBeanPageFilter,
+    };
+
     this.bean_filter.OPEN = this.GET_BEAN_FILTER();
     this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
     this.bean_filter.FROZEN = this.GET_BEAN_FILTER();
+
+    this.bean_filter_selection.OPEN = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.ARCHIVED = this.GET_BEAN_FILTER();
+    this.bean_filter_selection.FROZEN = this.GET_BEAN_FILTER();
   }
 
   public resetBrewFilter() {
@@ -558,12 +634,33 @@ export class Settings implements ISettings {
     this.resetBeanFilter();
   }
 
+  public resetBrewSort() {
+    this.brew_sort = {
+      OPEN: {} as IBrewPageSort,
+      ARCHIVED: {} as IBrewPageSort,
+    };
+    this.brew_sort.OPEN = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
+    this.brew_sort.ARCHIVED = {
+      sort_after: BREW_SORT_AFTER.BREW_DATE,
+      sort_order: BREW_SORT_ORDER.DESCENDING,
+    } as IBrewPageSort;
+  }
   public resetBeanSort() {
     this.bean_sort = {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort,
       FROZEN: {} as IBeanPageSort,
     };
+
+    this.bean_sort_selection = {
+      OPEN: {} as IBeanPageSort,
+      ARCHIVED: {} as IBeanPageSort,
+      FROZEN: {} as IBeanPageSort,
+    };
+
     this.bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -573,6 +670,19 @@ export class Settings implements ISettings {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
     this.bean_sort.FROZEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+
+    this.bean_sort_selection.OPEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.ARCHIVED = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort_selection.FROZEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;

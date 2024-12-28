@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { Component, Input, ViewChild } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -31,12 +31,11 @@ export class BrewCuppingComponent {
   public settings: Settings;
 
   @ViewChild('radar', { static: false }) public radar: CuppingRadarComponent;
-  private brew: IBrew;
-  private bean: IBean;
+  @Input('brew') public brew: IBrew;
+  @Input('bean') public bean: IBean;
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     public uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -87,7 +86,6 @@ export class BrewCuppingComponent {
   }
 
   public ionViewWillEnter() {
-    this.brew = this.navParams.get('brew');
     if (this.brew) {
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
@@ -103,7 +101,6 @@ export class BrewCuppingComponent {
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.CUPPING
       );
-      this.bean = this.navParams.get('bean');
       this.data = new Bean();
       const copyBean: IBean = this.uiHelper.cloneData(
         this.uiBeanStorage.getByUUID(this.bean.config.uuid)

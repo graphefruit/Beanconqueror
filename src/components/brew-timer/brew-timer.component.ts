@@ -3,20 +3,24 @@ import {
   Component,
   EventEmitter,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 
+import { Device } from '@capacitor/device';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import { ModalController, Platform } from '@ionic/angular';
+import { IonInput, ModalController, Platform } from '@ionic/angular';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { Subscription } from 'rxjs';
+import { BluetoothScale } from '../../classes/devices';
 
 @Component({
   selector: 'brew-timer',
@@ -41,6 +45,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   @Output() public timerStartPressed = new EventEmitter();
   @Output() public timerResumedPressed = new EventEmitter();
 
+  public uiSmartScaleConnected: boolean = false;
+  public uiSmartScaleSupportsTaring: boolean = false;
+
   public displayingTime: string = moment().startOf('day').toISOString();
 
   private _dripTimerVisible: boolean;
@@ -49,6 +56,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   private startedTimer;
   private pausedTimer;
   private startedOffset;
+
+  @ViewChild('timerElement', { read: IonInput })
+  public timerElement: IonInput;
+
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }
@@ -100,29 +111,59 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public timer: ITimer;
   public settings: Settings;
+  private isIos16 = false;
+
+  public bluetoothSubscription: Subscription = undefined;
+
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly platform: Platform,
-    private readonly device: Device
+    private readonly zone: NgZone,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    Device.getInfo().then((deviceInfo) => {
+      this.isIos16 =
+        this.platform.is('ios') && deviceInfo.osVersion.indexOf('16.') >= 0;
+    });
+
+    this.bluetoothSubscription = this.bleManager
+      .attachOnEvent()
+      .subscribe((_type) => {
+        this.setUIParams();
+        this.checkChanges();
+      });
+    this.setUIParams();
+  }
+
+  private setUIParams() {
+    this.uiSmartScaleConnected = this.smartScaleConnected();
+    this.uiSmartScaleSupportsTaring = this.smartScaleSupportsTaring();
+    this.listeningButtonVisible =
+      this.uiSmartScaleConnected &&
+      this.settings.bluetooth_scale_listening_threshold_active;
+    this.ignoreScaleWeightButtonVisible =
+      this.uiSmartScaleConnected &&
+      this.settings.bluetooth_scale_ignore_weight_button_active;
   }
 
   public smartScaleConnected() {
-    try {
-      return this.bleManager.getScale() !== null;
-    } catch (ex) {
-      return false;
+    if (!this.platform.is('capacitor')) {
+      return true;
     }
+
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
   }
 
   public smartScaleSupportsTaring() {
     try {
       return this.bleManager.getScale().supportsTaring;
-    } catch (ex) {}
+    } catch (ex) {
+      return false;
+    }
   }
 
   public ngOnInit(): void {
@@ -166,6 +207,11 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.timer.runTimer = false;
+    // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
+    if (this.bluetoothSubscription) {
+      this.bluetoothSubscription.unsubscribe();
+      this.bluetoothSubscription = undefined;
+    }
   }
 
   public hasFinished(): boolean {
@@ -176,7 +222,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     /**
      * If Resetbuttons is false, we likely had the "listening" feature for the scale, so this button was presesd, but we don'T want to reset the buttons in the end
      */
-    // tslint:disable-next-line
     this.timer = {
       runTimer: false,
       hasStarted: false,
@@ -196,16 +241,15 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       .add('seconds', this.timer.seconds)
       .add('milliseconds', this.timer.milliseconds)
       .toISOString();
+    window.setTimeout(() => {
+      this.updateBrewTimerText();
+    }, 500);
   }
 
   private __preventEventClickOnIos(_event) {
     try {
       //Just do this on iOS 16.X...
-      if (
-        _event &&
-        this.platform.is('ios') &&
-        this.device.version.indexOf('16.') >= 0
-      ) {
+      if (_event && this.isIos16) {
         _event.cancelBubble = true;
         _event.preventDefault();
         _event.stopImmediatePropagation();
@@ -330,49 +374,57 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public millisecondTick(): void {
-    setTimeout(() => {
-      if (!this.timer.runTimer) {
-        return;
-      }
-      const milliSecondTimer = moment(moment().toDate()).subtract(
-        this.startedOffset
-      );
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        if (!this.timer.runTimer) {
+          return;
+        }
+        const milliSecondTimer = moment(moment().toDate()).subtract(
+          this.startedOffset,
+        );
 
-      this.timer.milliseconds = milliSecondTimer.milliseconds();
-      const passedSeconds = milliSecondTimer.diff(this.startingDay, 'seconds');
-      this.timer.seconds = passedSeconds;
+        this.timer.milliseconds = milliSecondTimer.milliseconds();
+        const passedSeconds = milliSecondTimer.diff(
+          this.startingDay,
+          'seconds',
+        );
+        this.timer.seconds = passedSeconds;
 
-      this.displayingTime = moment(this.displayingTime)
-        .startOf('day')
-        .add('seconds', this.timer.seconds)
-        .add('milliseconds', this.timer.milliseconds)
-        .toISOString();
-      this.millisecondTick();
-      this.changeEvent();
-    }, 10);
+        this.displayingTime = moment(this.displayingTime)
+          .startOf('day')
+          .add('seconds', this.timer.seconds)
+          .add('milliseconds', this.timer.milliseconds)
+          .toISOString();
+        this.updateBrewTimerText();
+        this.millisecondTick();
+        this.changeEvent();
+      }, 10);
+    });
   }
   public timerTick(): void {
-    setTimeout(() => {
-      if (!this.timer.runTimer) {
-        return;
-      }
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        if (!this.timer.runTimer) {
+          return;
+        }
 
-      const actualDate = moment().toDate();
+        const actualDate = moment().toDate();
 
-      const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
+        const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
 
-      const passedSeconds = actualTimerTick.diff(this.startingDay, 'seconds');
-      this.timer.seconds = passedSeconds;
+        const passedSeconds = actualTimerTick.diff(this.startingDay, 'seconds');
+        this.timer.seconds = passedSeconds;
 
-      this.displayingTime = moment(this.displayingTime)
-        .startOf('day')
-        .add('seconds', this.timer.seconds)
-        .add('milliseconds', this.timer.milliseconds)
-        .toISOString();
-
-      this.timerTick();
-      this.changeEvent();
-    }, 1000);
+        this.displayingTime = moment(this.displayingTime)
+          .startOf('day')
+          .add('seconds', this.timer.seconds)
+          .add('milliseconds', this.timer.milliseconds)
+          .toISOString();
+        this.updateBrewTimerText();
+        this.timerTick();
+        this.changeEvent();
+      }, 1000);
+    });
   }
 
   public getSeconds(): number {
@@ -414,6 +466,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       .add('seconds', this.timer.seconds)
       .add('milliseconds', this.timer.milliseconds)
       .toISOString();
+    this.updateBrewTimerText();
   }
 
   public getSecondsAsDigitalClock(inputSeconds: number): string {
@@ -428,24 +481,49 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return `${hoursString}:${minutesString}:${secondsString}`;
   }
 
+  private brewTimerElementRef = undefined;
+  private displayFormat = undefined;
+  public async updateBrewTimerText() {
+    if (this.brewTimerElementRef === undefined) {
+      await this.timerElement.getInputElement().then((_el) => {
+        this.brewTimerElementRef = _el;
+        this.displayFormat = this.returnWantedDisplayFormat();
+      });
+    } else {
+    }
+
+    this.zone.runOutsideAngular(() => {
+      const _date = moment(this.displayingTime);
+
+      if (_date.isValid()) {
+        window.requestAnimationFrame(() => {
+          this.brewTimerElementRef.value = _date.format(this.displayFormat);
+        });
+      }
+    });
+  }
+
   public changeDate(_event) {
     const durationPassed = moment.duration(
-      moment(_event).diff(moment(_event).startOf('day'))
+      moment(_event).diff(moment(_event).startOf('day')),
     );
     this.displayingTime = moment(_event).toISOString();
+    this.updateBrewTimerText();
     this.timer.seconds = durationPassed.asSeconds();
     // Emit event so parent page can do something
     this.changeEvent();
   }
 
+  /**Somehow on devices an double/tripple click is triggered, and we can't fix this somehow, so we check if the popover is already shown and else ignore the triple tap**/
+  private _overLaytimeShown: boolean = false;
   public async showTimeOverlay(_event) {
+    if (this._overLaytimeShown === true) {
+      return;
+    }
+    this._overLaytimeShown = true;
     try {
       //Just do this on iOS 16.X...
-      if (
-        _event &&
-        this.platform.is('ios') &&
-        this.device.version.indexOf('16.') >= 0
-      ) {
+      if (_event && this.isIos16) {
         if (_event.target.outerHTML.indexOf('<ion-input') >= 0) {
           /** If <ion-input is the start, the click was somehow done by the button, else just the "input" is clicked...
            * Thats why we return here, and ignore the click.
@@ -462,24 +540,26 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
-      animated: true,
+      animated: false,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.75,
       componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
+    this._overLaytimeShown = false;
     if (
       modalData !== undefined &&
       modalData.data &&
       modalData.data.displayingTime !== undefined
     ) {
       this.displayingTime = modalData.data.displayingTime;
+      this.updateBrewTimerText();
       this.timer.seconds = moment
         .duration(
           moment(this.displayingTime).diff(
-            moment(this.displayingTime).startOf('day')
-          )
+            moment(this.displayingTime).startOf('day'),
+          ),
         )
         .asSeconds();
       this.timer.milliseconds = moment(this.displayingTime)

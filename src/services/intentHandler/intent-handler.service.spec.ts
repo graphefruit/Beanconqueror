@@ -3,26 +3,26 @@ import { TestBed } from '@angular/core/testing';
 import { IntentHandlerService } from './intent-handler.service';
 import { UIHelper } from '../uiHelper';
 import { UIHelperMock } from '../../classes/mock';
-import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { IonicModule } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 describe('IntentHandlerService', () => {
   let service: IntentHandlerService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
       providers: [
         { provide: UIHelper, useClass: UIHelperMock },
-        { provide: Deeplinks },
         { provide: Storage },
-      ],
-      imports: [
-        HttpClientTestingModule,
-        IonicModule.forRoot(),
-        TranslateModule.forRoot(),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     });
     service = TestBed.inject(IntentHandlerService);

@@ -11,23 +11,23 @@ import { ModalController, Platform } from '@ionic/angular';
 import { Bean } from '../../classes/bean/bean';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
-import { BeanSortComponent } from './bean-sort/bean-sort.component';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { UILog } from '../../services/uiLog';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
-import { BeanFilterComponent } from './bean-filter/bean-filter.component';
-import moment from 'moment';
 import _ from 'lodash';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { Subscription } from 'rxjs';
+import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
+import { NfcService } from '../../services/nfcService/nfc-service.service';
 
 @Component({
   selector: 'beans',
@@ -87,8 +87,17 @@ export class BeansPage implements OnDestroy {
   public frozenBeansFilter: IBeanPageFilter;
 
   private beanStorageChangeSubscription: Subscription;
+  public segmentScrollHeight: string = undefined;
+
+  public uiIsSortActive: boolean = false;
+  public uiIsFilterActive: boolean = false;
+  public uiIsCollapseActive: boolean = false;
+  public uiShallBarBeDisplayed: boolean = false;
+  public uiIsTextSearchActive: boolean = false;
+  public uiSearchText: string = '';
+
   constructor(
-    private readonly modalCtrl: ModalController,
+    private readonly uiLog: UILog,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -97,7 +106,9 @@ export class BeansPage implements OnDestroy {
     private readonly intenthandler: IntentHandlerService,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly platform: Platform,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
+    private readonly nfcService: NfcService,
   ) {}
 
   public ionViewWillEnter(): void {
@@ -122,12 +133,22 @@ export class BeansPage implements OnDestroy {
         this.loadBeans();
       });
   }
+
+  private setUIParams() {
+    this.uiIsSortActive = this.isSortActive();
+    this.uiIsFilterActive = this.isFilterActive();
+    this.uiIsCollapseActive = this.isCollapseActive();
+    this.uiShallBarBeDisplayed = this.shallBarBeDisplayed();
+    this.uiIsTextSearchActive = this.isTextSearchActive();
+  }
+
   public async ngOnDestroy() {
     if (this.beanStorageChangeSubscription) {
       this.beanStorageChangeSubscription.unsubscribe();
       this.beanStorageChangeSubscription = undefined;
     }
   }
+
   public isCollapseActive() {
     let collapsed: boolean = false;
     if (this.bean_segment === 'open') {
@@ -153,7 +174,9 @@ export class BeansPage implements OnDestroy {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
+    this.setUIParams();
   }
+
   private async __saveCollapseFilter() {
     this.settings.bean_collapsed.OPEN = this.openBeansCollapsed;
     this.settings.bean_collapsed.ARCHIVED = this.archivedBeansCollapsed;
@@ -165,10 +188,13 @@ export class BeansPage implements OnDestroy {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
+    this.setUIParams();
   }
 
   public segmentChanged() {
+    this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
     this.retriggerScroll();
+    this.setUIParams();
   }
 
   public async beanAction(): Promise<void> {
@@ -182,130 +208,70 @@ export class BeansPage implements OnDestroy {
   }
 
   public async showSort() {
-    let beanSort: IBeanPageSort;
-    if (this.bean_segment === 'open') {
-      beanSort = { ...this.openBeansSort };
-    } else if (this.bean_segment === 'archive') {
-      beanSort = { ...this.archivedBeansSort };
-    } else if (this.bean_segment === 'frozen') {
-      beanSort = { ...this.frozenBeansSort };
-    }
-
-    const modal = await this.modalCtrl.create({
-      component: BeanSortComponent,
-      componentProps: { bean_sort: beanSort, segment: this.bean_segment },
-      id: BeanSortComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
-      breakpoints: [0, 0.75, 1],
-      initialBreakpoint: 1,
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    if (modalData?.data?.bean_sort !== undefined) {
+    const sortSegment = this.manageSortScope(this.bean_segment);
+    const newSort = await this.beanSortFilterHelper.showSort(sortSegment);
+    if (newSort) {
       if (this.bean_segment === 'open') {
-        this.openBeansSort = modalData.data.bean_sort;
+        this.openBeansSort = newSort;
       } else if (this.bean_segment === 'archive') {
-        this.archivedBeansSort = modalData.data.bean_sort;
+        this.archivedBeansSort = newSort;
       } else if (this.bean_segment === 'frozen') {
-        this.frozenBeansSort = modalData.data.bean_sort;
+        this.frozenBeansSort = newSort;
       }
-    }
-    await this.__saveBeanFilter();
 
-    this.loadBeans();
+      await this.__saveBeanFilter();
+
+      this.loadBeans();
+    }
   }
 
   public async showFilter() {
-    let beanFilter: IBeanPageFilter;
-    if (this.bean_segment === 'open') {
-      beanFilter = { ...this.openBeansFilter };
-    } else if (this.bean_segment === 'archive') {
-      beanFilter = { ...this.archivedBeansFilter };
-    } else if (this.bean_segment === 'frozen') {
-      beanFilter = { ...this.frozenBeansFilter };
-    }
+    const filterSegment = this.manageFilterScope(this.bean_segment);
+    const newFilter = await this.beanSortFilterHelper.showFilter(
+      filterSegment,
+      this.bean_segment,
+    );
+    if (newFilter) {
+      /**We got the filtersegment above, so we got the reference and overwrite it**/
 
-    const modal = await this.modalCtrl.create({
-      component: BeanFilterComponent,
-      cssClass: 'popover-actions',
-      id: BeanFilterComponent.COMPONENT_ID,
-      componentProps: { bean_filter: beanFilter, segment: this.bean_segment },
-      breakpoints: [0, 0.75, 1],
-      initialBreakpoint: 1,
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.bean_filter !== undefined
-    ) {
       if (this.bean_segment === 'open') {
-        this.openBeansFilter = modalData.data.bean_filter;
+        this.openBeansFilter = newFilter;
       } else if (this.bean_segment === 'archive') {
-        this.archivedBeansFilter = modalData.data.bean_filter;
+        this.archivedBeansFilter = newFilter;
       } else if (this.bean_segment === 'frozen') {
-        this.frozenBeansFilter = modalData.data.bean_filter;
+        this.frozenBeansFilter = newFilter;
       }
-    }
-    await this.__saveBeanFilter();
+      await this.__saveBeanFilter();
 
-    this.loadBeans();
+      this.loadBeans();
+    }
   }
 
   public isSortActive(): boolean {
-    if (this.bean_segment === 'open') {
-      return (
-        this.openBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-        this.openBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
-      );
-    } else if (this.bean_segment === 'archive') {
-      return (
-        this.archivedBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-        this.archivedBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
-      );
-    } else if (this.bean_segment === 'frozen') {
-      return (
-        this.frozenBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-        this.frozenBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
-      );
-    }
+    const sort = this.manageSortScope(this.bean_segment);
+    return (
+      sort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
+      sort.sort_after !== BEAN_SORT_AFTER.UNKOWN
+    );
   }
 
   public isTextSearchActive() {
-    if (this.bean_segment === 'open') {
-      return this.openBeansFilterText !== '';
-    } else if (this.bean_segment === 'archive') {
-      return this.archivedBeansFilterText !== '';
-    } else if (this.bean_segment === 'frozen') {
-      return this.frozenBeansFilterText !== '';
-    }
+    const searchText = this.manageSearchTextScope(this.bean_segment);
+    return searchText != '';
   }
 
   public isFilterActive(): boolean {
     let isFilterActive: boolean = false;
 
     if (this.settings) {
-      let checkingFilter: IBeanPageFilter;
-      if (this.bean_segment === 'open') {
-        checkingFilter = this.openBeansFilter;
-      } else if (this.bean_segment === 'archive') {
-        checkingFilter = this.archivedBeansFilter;
-      } else if (this.bean_segment === 'frozen') {
-        checkingFilter = this.frozenBeansFilter;
-      }
+      let checkingFilter: IBeanPageFilter = this.manageFilterScope(
+        this.bean_segment,
+      );
 
       isFilterActive = !_.isEqual(
         this.settings?.GET_BEAN_FILTER(),
-        checkingFilter
+        checkingFilter,
       );
-      /** let didRatingFilterChanged: boolean = false;
-       if (isFilterActive === false && checkingFilter.rating) {
-       didRatingFilterChanged = (checkingFilter.rating.upper !== this.settings?.bean_rating || checkingFilter.rating.lower !== -1);
-       }
-       if (didRatingFilterChanged === true) {
-       isFilterActive = true;
-       } **/
     }
 
     return isFilterActive;
@@ -326,7 +292,9 @@ export class BeansPage implements OnDestroy {
   }
 
   public research() {
+    this.setSearchTextScope(this.bean_segment, this.uiSearchText);
     this.__initializeBeansView(this.bean_segment);
+    this.setUIParams();
   }
 
   public async add() {
@@ -337,7 +305,7 @@ export class BeansPage implements OnDestroy {
   public async beanPopover() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS
+      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: BeanPopoverAddComponent,
@@ -361,14 +329,31 @@ export class BeansPage implements OnDestroy {
     }
   }
 
+  public async scanNFC() {
+    if (this.platform.is('capacitor')) {
+      try {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.NFC_SCAN,
+        );
+        await this.nfcService.readNFCTag();
+      } catch (error) {
+        // Just log and do nothing else, it's likely the user just cancelled
+        this.uiLog.warn('NFC scan error:', error);
+      }
+    } else {
+    }
+    this.loadBeans();
+  }
   public async scanBean() {
-    if (this.platform.is('cordova')) {
-      await this.qrScannerService.scan().then(
-        async (scannedCode) => {
-          await this.intenthandler.handleQRCodeLink(scannedCode);
-        },
-        () => {}
-      );
+    if (this.platform.is('capacitor')) {
+      try {
+        const scannedCode = await this.qrScannerService.scan();
+        await this.intenthandler.handleQRCodeLink(scannedCode);
+      } catch (error) {
+        // Just log and do nothing else, it's likely the user just cancelled
+        this.uiLog.warn('Bean QR code scan error:', error);
+      }
     } else {
       // Test sample for development
       // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=e7ada0a6');
@@ -398,6 +383,12 @@ export class BeansPage implements OnDestroy {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
+      setTimeout(() => {
+        /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
+        const elScroll = scrollComponent.el;
+        elScroll.dispatchEvent(new Event('scroll'));
+      }, 15);
     }, 250);
   }
 
@@ -413,258 +404,54 @@ export class BeansPage implements OnDestroy {
     await this.uiSettingsStorage.saveSettings(settings);
   }
 
+  private __initializeBeans(): void {
+    this.beans = this.uiBeanStorage
+      .getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.openBeansLength = this.beans.reduce(
+      (n, e) => (!e.finished && e.isFrozen() === false ? n + 1 : n),
+      0,
+    );
+    this.finishedBeansLength = this.beans.reduce(
+      (n, e) => (e.finished ? n + 1 : n),
+      0,
+    );
+    this.frozenBeansLength = this.beans.reduce(
+      (n, e) => (!e.finished && e.isFrozen() === true ? n + 1 : n),
+      0,
+    );
+
+    this.openBeans = [];
+    this.finishedBeans = [];
+    this.frozenBeans = [];
+    this.__initializeBeansView('open');
+    this.__initializeBeansView('archive');
+    this.__initializeBeansView('frozen');
+  }
+
   private __initializeBeansView(_type: string) {
-    // sort latest to top.
-    const beansCopy: Array<Bean> = [...this.beans];
-
-    let sort: IBeanPageSort;
-    let filterBeans: Array<Bean>;
-    sort = this.manageSortScope(_type);
-    filterBeans = this.manageFilterBeans(_type, beansCopy);
-
-    const filter: IBeanPageFilter = this.manageFilter(_type);
-
-    filterBeans = this.manageFavourites(filter, filterBeans);
-
-    // Rating filter is always active
-    filterBeans = this.manageRating(filterBeans, filter);
-
-    filterBeans = this.manageRoastingType(filter, filterBeans);
-
-    filterBeans = this.manageRoastRange(filterBeans, filter);
-
-    filterBeans = this.manageRoaster(filter, filterBeans);
-
-    filterBeans = this.manageRoastingDateStart(filter, filterBeans);
-
-    filterBeans = this.manageRoastingDateEnd(filter, filterBeans);
-
-    // Skip if something is unkown, because no filter is active then
-    filterBeans = this.manageSort(sort, filterBeans);
-
     const searchText = this.manageSearchTextScope(_type);
+    const sort = this.manageSortScope(_type);
+    const filters = this.manageFilterScope(_type);
 
-    filterBeans = this.manageSearchText(searchText, filterBeans);
-
+    const filteredBeans = this.beanSortFilterHelper.initializeBeansView(
+      _type,
+      this.beans,
+      searchText,
+      sort,
+      filters,
+    );
     if (_type === 'open') {
-      this.openBeans = filterBeans;
+      this.openBeans = filteredBeans;
     } else if (_type === 'archive') {
-      this.finishedBeans = filterBeans;
+      this.finishedBeans = filteredBeans;
     } else if (_type === 'frozen') {
-      this.frozenBeans = filterBeans;
+      this.frozenBeans = filteredBeans;
     }
-
     this.retriggerScroll();
   }
 
-  private manageSearchText(searchText: string, filterBeans: Bean[]) {
-    if (searchText) {
-      searchText = searchText.toLowerCase();
-      const splittingSearch = searchText.split(',');
-      filterBeans = filterBeans.filter((e) => {
-        return splittingSearch.find((sc) => {
-          const searchStr = sc.toLowerCase().trim();
-          return (
-            e.note?.toLowerCase().includes(searchStr) ||
-            e.name?.toLowerCase().includes(searchStr) ||
-            e.roaster?.toLowerCase().includes(searchStr) ||
-            e.aromatics?.toLowerCase().includes(searchStr) ||
-            e.bean_information?.find((bi) => {
-              return (
-                bi?.variety?.toLowerCase().includes(searchStr) ||
-                bi?.country?.toLowerCase().includes(searchStr) ||
-                bi?.region?.toLowerCase().includes(searchStr) ||
-                bi?.farm?.toLowerCase().includes(searchStr) ||
-                bi?.farmer?.toLowerCase().includes(searchStr) ||
-                bi?.harvest_time?.toLowerCase().includes(searchStr) ||
-                bi?.elevation?.toLowerCase().includes(searchStr) ||
-                bi?.processing?.toLowerCase().includes(searchStr)
-              );
-            }) ||
-            e.frozenId?.toLowerCase().includes(searchStr) ||
-            e.ean_article_number?.toLowerCase().includes(searchStr)
-          );
-        });
-      });
-    }
-    return filterBeans;
-  }
-
-  private manageSearchTextScope(_type: string) {
-    if (_type === 'open') {
-      return this.openBeansFilterText.toLowerCase();
-    } else if (_type === 'archive') {
-      return this.archivedBeansFilterText.toLowerCase();
-    } else if (_type === 'frozen') {
-      return this.frozenBeansFilterText.toLowerCase();
-    }
-  }
-
-  private manageSort(sort: IBeanPageSort, filterBeans: Bean[]): Bean[] {
-    if (
-      sort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-      sort.sort_after !== BEAN_SORT_AFTER.UNKOWN
-    ) {
-      switch (sort.sort_after) {
-        case BEAN_SORT_AFTER.NAME:
-          filterBeans = filterBeans.sort((a, b) => {
-            const nameA = a.name.toUpperCase();
-            const nameB = b.name.toUpperCase();
-
-            if (nameA < nameB) {
-              return -1;
-            }
-            if (nameA > nameB) {
-              return 1;
-            }
-
-            return 0;
-          });
-          break;
-        case BEAN_SORT_AFTER.ROASTER:
-          filterBeans = filterBeans.sort((a, b) => {
-            const roasterA = a.roaster.toUpperCase();
-            const roasterB = b.roaster.toUpperCase();
-            if (roasterA < roasterB) {
-              return -1;
-            }
-            if (roasterA > roasterB) {
-              return 1;
-            }
-
-            return 0;
-          });
-          break;
-        case BEAN_SORT_AFTER.ROASTING_DATE:
-          filterBeans = filterBeans.sort((a, b) => {
-            if (a.roastingDate < b.roastingDate) {
-              return -1;
-            }
-            if (a.roastingDate > b.roastingDate) {
-              return 1;
-            }
-            return 0;
-          });
-          break;
-        case BEAN_SORT_AFTER.RATING:
-          filterBeans = filterBeans.sort((a, b) => {
-            if (a.rating < b.rating) {
-              return -1;
-            }
-            if (a.rating > b.rating) {
-              return 1;
-            }
-            return 0;
-          });
-          break;
-        case BEAN_SORT_AFTER.BEAN_AGE:
-          filterBeans = filterBeans.sort((a, b) => {
-            if (a.beanAgeInDays() < b.beanAgeInDays()) {
-              return -1;
-            }
-            if (a.beanAgeInDays() > b.beanAgeInDays()) {
-              return 1;
-            }
-            return 0;
-          });
-          break;
-      }
-
-      if (sort.sort_order === BEAN_SORT_ORDER.DESCENDING) {
-        filterBeans.reverse();
-      }
-    }
-    return filterBeans;
-  }
-
-  private manageRoastingDateEnd(filter: IBeanPageFilter, filterBeans: Bean[]) {
-    if (filter.roastingDateEnd) {
-      const roastingDateEnd = moment(filter.roastingDateEnd)
-        .startOf('day')
-        .toDate();
-      filterBeans = filterBeans.filter((e: Bean) => {
-        if (e.roastingDate === undefined || e.roastingDate === '') {
-          return false;
-        }
-
-        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
-        return beanRoastingDate <= roastingDateEnd;
-      });
-    }
-    return filterBeans;
-  }
-
-  private manageRoastingDateStart(
-    filter: IBeanPageFilter,
-    filterBeans: Bean[]
-  ): Bean[] {
-    if (filter.roastingDateStart) {
-      const roastingStart = moment(filter.roastingDateStart)
-        .startOf('day')
-        .toDate();
-      filterBeans = filterBeans.filter((e: Bean) => {
-        if (e.roastingDate === undefined || e.roastingDate === '') {
-          return false;
-        }
-
-        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
-        return beanRoastingDate >= roastingStart;
-      });
-    }
-    return filterBeans;
-  }
-
-  private manageRoaster(filter: IBeanPageFilter, filterBeans: Bean[]) {
-    if (filter.bean_roaster) {
-      filterBeans = filterBeans.filter(
-        (e: Bean) => filter.bean_roaster.includes(e.roaster) === true
-      );
-    }
-    return filterBeans;
-  }
-
-  private manageRoastRange(
-    filterBeans: Bean[],
-    filter: IBeanPageFilter
-  ): Bean[] {
-    return filterBeans.filter(
-      (e: Bean) =>
-        e.roast_range >= filter.roast_range.lower &&
-        e.roast_range <= filter.roast_range.upper
-    );
-  }
-
-  private manageRoastingType(
-    filter: IBeanPageFilter,
-    filterBeans: Bean[]
-  ): Bean[] {
-    if (filter.bean_roasting_type.length > 0) {
-      return filterBeans.filter(
-        (e: Bean) =>
-          filter.bean_roasting_type.includes(e.bean_roasting_type) === true
-      );
-    }
-    return filterBeans;
-  }
-
-  private manageRating(filterBeans: Bean[], filter: IBeanPageFilter): Bean[] {
-    return filterBeans.filter(
-      (e: Bean) =>
-        e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
-    );
-  }
-
-  private manageFavourites(
-    filter: IBeanPageFilter,
-    filterBeans: Bean[]
-  ): Bean[] {
-    if (filter.favourite) {
-      return filterBeans.filter((e) => e.favourite === true);
-    }
-    return filterBeans;
-  }
-
-  private manageFilter(_type: string): IBeanPageFilter {
+  private manageFilterScope(_type: string): IBeanPageFilter {
     if (_type === 'open') {
       return this.openBeansFilter;
     } else if (_type === 'archive') {
@@ -683,42 +470,29 @@ export class BeansPage implements OnDestroy {
       return this.frozenBeansSort;
     }
   }
-  private manageFilterBeans(_type: string, beansCopy: Bean[]): Bean[] {
+
+  private manageSearchTextScope(_type: string, _toLowerCase: boolean = true) {
+    let searchText: string = '';
     if (_type === 'open') {
-      return beansCopy.filter(
-        (bean) => !bean.finished && bean.isFrozen() === false
-      );
+      searchText = this.openBeansFilterText;
     } else if (_type === 'archive') {
-      return beansCopy.filter((bean) => bean.finished);
+      searchText = this.archivedBeansFilterText;
     } else if (_type === 'frozen') {
-      return beansCopy.filter(
-        (bean) => !bean.finished && bean.isFrozen() === true
-      );
+      searchText = this.frozenBeansFilterText;
     }
+    if (_toLowerCase) {
+      searchText = searchText.toLowerCase();
+    }
+    return searchText;
   }
 
-  private __initializeBeans(): void {
-    this.beans = this.uiBeanStorage
-      .getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-    this.openBeansLength = this.beans.reduce(
-      (n, e) => (!e.finished && e.isFrozen() === false ? n + 1 : n),
-      0
-    );
-    this.finishedBeansLength = this.beans.reduce(
-      (n, e) => (e.finished ? n + 1 : n),
-      0
-    );
-    this.frozenBeansLength = this.beans.reduce(
-      (n, e) => (!e.finished && e.isFrozen() === true ? n + 1 : n),
-      0
-    );
-
-    this.openBeans = [];
-    this.finishedBeans = [];
-    this.frozenBeans = [];
-    this.__initializeBeansView('open');
-    this.__initializeBeansView('archive');
-    this.__initializeBeansView('frozen');
+  private setSearchTextScope(_type: string, _text: string) {
+    if (_type === 'open') {
+      this.openBeansFilterText = _text;
+    } else if (_type === 'archive') {
+      this.archivedBeansFilterText = _text;
+    } else if (_type === 'frozen') {
+      this.frozenBeansFilterText = _text;
+    }
   }
 }

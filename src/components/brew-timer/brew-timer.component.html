@@ -1,8 +1,5 @@
-
 <ion-item  class="no-bottom-border item" lines="none">
-
-
-  <ion-input label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
+  <ion-input #timerElement label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);"></ion-input>
 
   <ion-button (click)="startListening($event)" *ngIf="!timer.hasStarted && showListeningButton"
               class="big-icon-only" fill="clear" slot="end" tappable>
@@ -29,7 +26,7 @@
     <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
 
   </ion-button>
-  <ion-button (click)="reset(true,$event)" *ngIf="(!timer.hasStarted || !timer.runTimer && timer.hasStarted && !timer.hasFinished) && this.getSeconds()>0"
+  <ion-button (click)="reset(true,$event)" *ngIf="(!timer.hasStarted || !timer.runTimer && timer.hasStarted && !timer.hasFinished) && timer.seconds>0"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
   </ion-button>
@@ -38,10 +35,10 @@
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="__startTimer($event)" *ngIf="(showListeningButton === true && !timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (smartScaleConnected() === false && settings.bluetooth_scale_listening_threshold_active === true)) && !timer.hasStarted)" class="big-icon-only" fill="clear" slot="end" tappable>
+  <ion-button (click)="__startTimer($event)" *ngIf="(showListeningButton === true && !timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (uiSmartScaleConnected === false && settings.bluetooth_scale_listening_threshold_active === true)) && !timer.hasStarted)" class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="__tareScale($event)" *ngIf="smartScaleConnected() && smartScaleSupportsTaring()"  class="big-icon-only" fill="clear" slot="end" tappable>
+  <ion-button (click)="__tareScale($event)" *ngIf="uiSmartScaleConnected && uiSmartScaleSupportsTaring"  class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
   </ion-button>
 

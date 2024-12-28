@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UIStatistic } from '../../services/uiStatistic';
-import { ModalController } from '@ionic/angular';
 import { Brew } from '../../classes/brew/brew';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
@@ -12,6 +11,8 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UIMillStorage } from '../../services/uiMillStorage';
 
 @Component({
   selector: 'dashboard',
@@ -20,39 +21,71 @@ import { Settings } from '../../classes/settings/settings';
 })
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
-  private leftOverBeansWeight: number = undefined;
-  private leftOverFrozenBeansWeight: number = undefined;
+  public beans: Array<Bean> = [];
+  public leftOverBeansWeight: string = undefined;
+  public leftOverFrozenBeansWeight: string = undefined;
+  public getBeansCount: number = undefined;
+  public getBrewsDrunk: number = undefined;
+  public getTimePassedSinceLastBrew: string = undefined;
+  public getTimePassedSinceLastBrewMessage: string = undefined;
   public settings: Settings;
 
   constructor(
     public uiStatistic: UIStatistic,
-    private readonly modalCtrl: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiMillStorage: UIMillStorage,
   ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
-      // If an brew is deleted, we need to reset our array for the next call.
-      this.leftOverBeansWeight = undefined;
-      this.leftOverFrozenBeansWeight = undefined;
+      this.reloadBrews();
     });
 
     this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
-      // If an brew is deleted, we need to reset our array for the next call.
-      this.leftOverBeansWeight = undefined;
-      this.leftOverFrozenBeansWeight = undefined;
+      this.reloadBrews();
+    });
+    this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
+    });
+    this.uiMillStorage.attachOnEvent().subscribe((_val) => {
+      this.reloadBrews();
     });
   }
 
+  private reloadBrews() {
+    this.loadBeans();
+    // If an brew is deleted, we need to reset our array for the next call.
+    this.setOpenFrozenBeansLeftOverCount();
+    this.setOpenBeansLeftOverCount();
+    this.getBeansCount = this.uiStatistic.getBeansCount();
+    this.getBrewsDrunk = this.uiStatistic.getBrewsDrunk();
+    this.getTimePassedSinceLastBrew =
+      this.uiStatistic.getTimePassedSinceLastBrew();
+    this.getTimePassedSinceLastBrewMessage =
+      this.uiStatistic.getTimePassedSinceLastBrewMessage();
+
+    this.brews = [];
+    /**Short timeout needed, else the filter pipe is not working correctly**/
+    setTimeout(() => {
+      this.loadBrews();
+    }, 50);
+  }
+
   public async ionViewWillEnter() {
-    this.loadBrews();
+    this.loadBeans();
+    this.reloadBrews();
+  }
+  public loadBeans() {
+    this.beans = this.uiBeanStorage.getAllEntries();
   }
 
   public loadBrews() {
@@ -64,7 +97,7 @@ export class DashboardPage implements OnInit {
         (e) =>
           e.getBean().finished === false &&
           e.getMill().finished === false &&
-          e.getPreparation().finished === false
+          e.getPreparation().finished === false,
       );
     }
     this.brews = this.brews.slice(0, 10);
@@ -96,56 +129,51 @@ export class DashboardPage implements OnInit {
     this.loadBrews();
   }
 
-  public openBeansLeftOverCount(): string {
+  public setOpenBeansLeftOverCount() {
     // #183
-    if (this.leftOverBeansWeight === undefined) {
-      let leftOverCount: number = 0;
-      const openBeans: Array<Bean> = this.uiBeanStorage
-        .getAllEntries()
-        .filter((bean) => !bean.finished && bean.isFrozen() === false);
-      for (const bean of openBeans) {
-        if (bean.weight > 0) {
-          leftOverCount += bean.weight - this.getUsedWeightCount(bean);
-        }
+    let leftOverCount: number = 0;
+    const openBeans: Array<Bean> = this.beans.filter(
+      (bean) => !bean.finished && bean.isFrozen() === false,
+    );
+    for (const bean of openBeans) {
+      if (bean.weight > 0) {
+        leftOverCount += bean.weight - this.getUsedWeightCount(bean);
       }
-
-      this.leftOverBeansWeight = leftOverCount;
     }
-    if (this.leftOverBeansWeight < 1000) {
-      return Math.round(this.leftOverBeansWeight * 100) / 100 + ' g';
+
+    if (leftOverCount < 1000) {
+      this.leftOverBeansWeight = Math.round(leftOverCount * 100) / 100 + ' g';
     } else {
-      return Math.round((this.leftOverBeansWeight / 1000) * 100) / 100 + ' kg';
+      this.leftOverBeansWeight =
+        Math.round((leftOverCount / 1000) * 100) / 100 + ' kg';
     }
   }
 
-  public openFrozenBeansLeftOverCount(): string {
+  public setOpenFrozenBeansLeftOverCount() {
     // #183
-    if (this.leftOverFrozenBeansWeight === undefined) {
-      let leftOverCount: number = 0;
-      const openBeans: Array<Bean> = this.uiBeanStorage
-        .getAllEntries()
-        .filter((bean) => !bean.finished && bean.isFrozen() === true);
-      for (const bean of openBeans) {
-        if (bean.weight > 0) {
-          leftOverCount += bean.weight - this.getUsedWeightCount(bean);
-        }
-      }
 
-      this.leftOverFrozenBeansWeight = leftOverCount;
+    let leftOverCount: number = 0;
+    const openBeans: Array<Bean> = this.beans.filter(
+      (bean) => !bean.finished && bean.isFrozen() === true,
+    );
+    for (const bean of openBeans) {
+      if (bean.weight > 0) {
+        leftOverCount += bean.weight - this.getUsedWeightCount(bean);
+      }
     }
-    if (this.leftOverFrozenBeansWeight < 1000) {
-      return Math.round(this.leftOverFrozenBeansWeight * 100) / 100 + ' g';
+    if (leftOverCount < 1000) {
+      this.leftOverFrozenBeansWeight =
+        Math.round(leftOverCount * 100) / 100 + ' g';
     } else {
-      return (
-        Math.round((this.leftOverFrozenBeansWeight / 1000) * 100) / 100 + ' kg'
-      );
+      this.leftOverFrozenBeansWeight =
+        Math.round((leftOverCount / 1000) * 100) / 100 + ' kg';
     }
   }
 
   public getUsedWeightCount(_bean: Bean): number {
     let usedWeightCount: number = 0;
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      _bean.config.uuid
+      _bean.config.uuid,
     );
     for (const brew of relatedBrews) {
       if (brew?.bean_weight_in > 0) {

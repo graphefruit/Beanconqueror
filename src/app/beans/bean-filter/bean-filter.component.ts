@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -24,16 +24,20 @@ export class BeanFilterComponent implements OnInit {
   public filter: IBeanPageFilter;
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
+  public listBeans: Array<Bean> = [];
   public mills: Array<Mill> = [];
-  public segment: string = 'open';
+  @Input('segment') public segment: string = 'open';
+
+  @Input('bean_filter') public bean_filter: any;
 
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
 
   public roasteries: Array<string> = undefined;
 
+  public maxBeanRating: number = undefined;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
@@ -41,9 +45,13 @@ export class BeanFilterComponent implements OnInit {
     private readonly uiMillStorage: UIMillStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.filter = this.settings.GET_BEAN_FILTER();
-    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-    this.roasteries = [...new Set(beans.map((e: Bean) => e.roaster))];
+  }
+
+  public ngOnInit() {
+    this.filter = this.uiHelper.copyData(this.bean_filter);
+    this.__reloadFilterSettings();
+    this.maxBeanRating = this.getMaxBeanRating();
+    this.roasteries = [...new Set(this.listBeans.map((e: Bean) => e.roaster))];
     this.roasteries = this.roasteries
       .filter((name: string) => name !== '')
       .sort((a, b) => {
@@ -61,12 +69,6 @@ export class BeanFilterComponent implements OnInit {
       });
   }
 
-  public ngOnInit() {
-    this.segment = this.navParams.get('segment');
-    this.filter = this.uiHelper.copyData(this.navParams.get('bean_filter'));
-    this.__reloadFilterSettings();
-  }
-
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {
@@ -80,9 +82,7 @@ export class BeanFilterComponent implements OnInit {
     const isOpen = this.segment === 'open';
     let beansFiltered: Array<Bean>;
 
-    beansFiltered = this.uiBeanStorage
-      .getAllEntries()
-      .filter((e) => e.finished === !isOpen);
+    beansFiltered = this.listBeans.filter((e) => e.finished === !isOpen);
 
     let maxBeanRating = maxSettingsRating;
     if (beansFiltered.length > 0) {
@@ -125,21 +125,22 @@ export class BeanFilterComponent implements OnInit {
     this.method_of_preparations = this.uiPreparationStorage
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
-    this.beans = this.uiBeanStorage
-      .getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
     this.mills = this.uiMillStorage
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
+    this.listBeans = this.uiBeanStorage
+      .getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
 
-    if (this.segment === 'open') {
-      this.beans = this.beans.filter((e) => e.finished === false);
+    /** we accept open and frozen **/
+    if (this.segment !== 'archive') {
+      this.beans = this.listBeans.filter((e) => e.finished === false);
       this.mills = this.mills.filter((e) => e.finished === false);
       this.method_of_preparations = this.method_of_preparations.filter(
         (e) => e.finished === false
       );
     } else {
-      this.beans = this.beans.filter((e) => e.finished === true);
+      this.beans = this.listBeans.filter((e) => e.finished === true);
     }
   }
 }

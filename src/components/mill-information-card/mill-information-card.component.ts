@@ -8,8 +8,6 @@ import { MillPopoverActionsComponent } from '../../app/mill/mill-popover-actions
 import { Brew } from '../../classes/brew/brew';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { MillEditComponent } from '../../app/mill/mill-edit/mill-edit.component';
-import { MillDetailComponent } from '../../app/mill/mill-detail/mill-detail.component';
 import { UIToast } from '../../services/uiToast';
 import { UIAlert } from '../../services/uiAlert';
 import { UIMillStorage } from '../../services/uiMillStorage';
@@ -17,8 +15,8 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIImage } from '../../services/uiImage';
 import MILL_TRACKING from '../../data/tracking/millTracking';
-import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { UIHelper } from '../../services/uiHelper';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
@@ -48,7 +46,7 @@ export class MillInformationCardComponent implements OnInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiImage: UIImage,
     private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -68,14 +66,14 @@ export class MillInformationCardComponent implements OnInit {
 
   public getBrewsCount(): number {
     const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid
+      this.mill.config.uuid,
     );
     return relatedBrews.length;
   }
 
   public getWeightCount(): number {
     const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid
+      this.mill.config.uuid,
     );
     let grindWeight: number = 0;
     for (const brew of relatedBrews) {
@@ -86,7 +84,7 @@ export class MillInformationCardComponent implements OnInit {
 
   public getBeansCount(): number {
     const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid
+      this.mill.config.uuid,
     );
     const distinctBeans = relatedBrews.filter((bean, i, arr) => {
       return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
@@ -96,7 +94,7 @@ export class MillInformationCardComponent implements OnInit {
   }
   public getLastUsed(): number {
     let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid
+      this.mill.config.uuid,
     );
     if (relatedBrews.length > 0) {
       relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
@@ -107,7 +105,7 @@ export class MillInformationCardComponent implements OnInit {
 
   public getLastUsedGrindSizeForBrew(): string {
     let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid
+      this.mill.config.uuid,
     );
     if (relatedBrews.length > 0) {
       relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
@@ -121,7 +119,7 @@ export class MillInformationCardComponent implements OnInit {
   }
   public getLastUsedBean(): string {
     let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid
+      this.mill.config.uuid,
     );
     if (relatedBrews.length > 0) {
       relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
@@ -143,7 +141,7 @@ export class MillInformationCardComponent implements OnInit {
   private async viewPhotos() {
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,
-      MILL_TRACKING.ACTIONS.PHOTO_VIEW
+      MILL_TRACKING.ACTIONS.PHOTO_VIEW,
     );
     await this.uiImage.viewPhotos(this.mill);
   }
@@ -205,7 +203,7 @@ export class MillInformationCardComponent implements OnInit {
           // Yes
           this.uiAnalytics.trackEvent(
             MILL_TRACKING.TITLE,
-            MILL_TRACKING.ACTIONS.DELETE
+            MILL_TRACKING.ACTIONS.DELETE,
           );
           await this.__deleteMill();
           this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
@@ -213,7 +211,7 @@ export class MillInformationCardComponent implements OnInit {
         },
         () => {
           // No
-        }
+        },
       );
   }
   private async __deleteMill() {
@@ -226,7 +224,7 @@ export class MillInformationCardComponent implements OnInit {
     }
     for (let i = deletingBrewIndex.length; i--; ) {
       await this.uiBrewStorage.removeByUUID(
-        brews[deletingBrewIndex[i]].config.uuid
+        brews[deletingBrewIndex[i]].config.uuid,
       );
     }
 
@@ -236,7 +234,7 @@ export class MillInformationCardComponent implements OnInit {
   public async archive() {
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,
-      MILL_TRACKING.ACTIONS.ARCHIVE
+      MILL_TRACKING.ACTIONS.ARCHIVE,
     );
     this.mill.finished = true;
     await this.uiMillStorage.update(this.mill);
@@ -249,7 +247,7 @@ export class MillInformationCardComponent implements OnInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,
-      MILL_TRACKING.ACTIONS.POPOVER_ACTIONS
+      MILL_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: MillPopoverActionsComponent,
@@ -269,4 +267,6 @@ export class MillInformationCardComponent implements OnInit {
   public async showBrews() {
     await this.uiBrewHelper.showAssociatedBrews(this.mill.config.uuid, 'mill');
   }
+
+  protected readonly MILL_FUNCTION_PIPE_ENUM = MILL_FUNCTION_PIPE_ENUM;
 }

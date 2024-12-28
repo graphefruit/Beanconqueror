@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { UIHelper } from '../uiHelper';
-import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 
 import { UILog } from '../uiLog';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
@@ -9,9 +8,12 @@ import { ServerBean } from '../../models/bean/serverBean';
 import { UIAlert } from '../uiAlert';
 import QR_TRACKING from '../../data/tracking/qrTracking';
 import { UIAnalytics } from '../uiAnalytics';
+import { VisualizerService } from '../visualizerService/visualizer-service.service';
+import { App, URLOpenListenerEvent } from '@capacitor/app';
+import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
+import { UIBrewHelper } from '../uiBrewHelper';
+import IntentHandlerTracking from '../../data/tracking/intentHandlerTracking';
 
-declare var window;
-declare var IonicDeeplink;
 @Injectable({
   providedIn: 'root',
 })
@@ -22,84 +24,40 @@ export class IntentHandlerService {
   };
   constructor(
     private readonly uiHelper: UIHelper,
-    private readonly deeplinks: Deeplinks,
     private readonly uiLog: UILog,
     private readonly serverCommunicationService: ServerCommunicationService,
     private readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiAlert: UIAlert,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly visualizerService: VisualizerService,
+    private readonly zone: NgZone,
   ) {}
 
   public attachOnHandleOpenUrl() {
-    if (typeof IonicDeeplink !== 'undefined') {
-      IonicDeeplink.route(
-        {
-          '/NO_LINK_EVER_WILL_WORK_HERE/': '/NO_LINK_EVER_WILL_WORK_HERE/',
-        },
-        (match) => {
-          this.uiLog.log('Deeplink matched ' + JSON.stringify(match));
-          this.handleDeepLink(match.$link);
-        },
-        (nomatch) => {
-          this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch));
-          this.handleDeepLink(nomatch.$link);
-        }
-      );
-    }
-  }
-  private findGetParameter(_url: string, _parameterName: string) {
-    let result = null,
-      tmp = [];
-    _url.split('&').forEach((item) => {
-      tmp = item.split('=');
-      if (
-        tmp[0] === _parameterName ||
-        tmp[0] === _parameterName.replace('=', '')
-      ) {
-        result = decodeURIComponent(tmp[1]);
-      }
+    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+      this.zone.run(() => {
+        this.uiLog.log('Deeplink matched ' + JSON.stringify(event));
+        this.handleDeepLink(event.url);
+      });
     });
-    return result;
-  }
-
-  private findParameterByCompleteUrl(_url, _parameter) {
-    const urlObj: any = new window.URL(_url);
-    const val = urlObj.searchParams.get(_parameter);
-    return val;
   }
 
   public async handleQRCodeLink(_url) {
     await this.uiHelper.isBeanconqurorAppReady().then(async () => {
       const url: string = _url;
       this.uiLog.log('Handle QR Code Link: ' + url);
-      if (
-        url.indexOf('https://beanconqueror.com/?qr=') === 0 ||
-        url.indexOf('https://beanconqueror.com?qr=') === 0
-      ) {
-        this.uiAnalytics.trackEvent(
-          QR_TRACKING.TITLE,
-          QR_TRACKING.ACTIONS.SCAN
-        );
-        const qrCodeId: string = String(
-          this.findParameterByCompleteUrl(url, 'qr')
-        );
-        await this.addBeanFromServer(qrCodeId);
-      } else {
-        this.uiAlert.showMessage(
-          'QR.WRONG_QRCODE_DESCRIPTION',
-          'QR.WRONG_QRCODE_TITLE',
-          undefined,
-          true
-        );
-      }
+      await this.handleDeepLink(_url);
     });
   }
 
-  public async handleDeepLink(_matchLink) {
+  public async handleDeepLink(_url) {
     try {
-      if (_matchLink && _matchLink.url) {
+      if (_url) {
         await this.uiHelper.isBeanconqurorAppReady().then(async () => {
-          const url: string = _matchLink.url;
+          const url: string = _url;
+
+          const urlParams = new URLSearchParams(url.split('?')[1]);
 
           this.uiLog.log('Handle deeplink: ' + url);
           if (
@@ -107,14 +65,14 @@ export class IntentHandlerService {
             url.indexOf('https://beanconqueror.com?qr=') === 0 ||
             url.indexOf('?qr=') >= 0
           ) {
-            const qrCodeId: string = String(
-              this.findGetParameter(_matchLink.queryString, 'qr')
-            );
+            const qrCodeId: string = urlParams.get('qr');
             await this.addBeanFromServer(qrCodeId);
-          } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
-            const qrCodeId: string = String(
-              this.findGetParameter(_matchLink.queryString, 'id')
-            );
+          } else if (
+            url
+              .toLowerCase()
+              .indexOf('beanconqueror://ADD_BEAN_ONLINE'.toLowerCase()) === 0
+          ) {
+            const qrCodeId: string = urlParams.get('id');
             await this.addBeanFromServer(qrCodeId);
           } else if (
             url.indexOf('https://beanconqueror.com/?shareUserBean0=') === 0 ||
@@ -127,34 +85,92 @@ export class IntentHandlerService {
             const foundJSONParams = url.match(regex);
             try {
               for (const param of foundJSONParams) {
-                userBeanJSON += String(
-                  this.findGetParameter(_matchLink.queryString, param)
-                );
+                userBeanJSON += String(urlParams.get(param));
               }
             } catch (ex) {}
             this.uiLog.log('Found shared bean ' + userBeanJSON);
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
-          } else if (url.indexOf('beanconqueror://ADD_USER_BEAN?') === 0) {
+          } else if (
+            url
+              .toLowerCase()
+              .indexOf('beanconqueror://ADD_USER_BEAN'.toLowerCase()) === 0
+          ) {
             let userBeanJSON: string = '';
 
             const regex = /((shareUserBean)[0-9]+(?=\=))/gi;
             const foundJSONParams = url.match(regex);
             for (const param of foundJSONParams) {
-              userBeanJSON += String(
-                this.findGetParameter(_matchLink.queryString, param)
-              );
+              userBeanJSON += String(urlParams.get(param));
             }
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
+          } else if (
+            url
+              .toLowerCase()
+              .indexOf('beanconqueror://VISUALIZER_SHARE'.toLowerCase()) === 0
+          ) {
+            const visualizerShareCode = String(urlParams.get('code'));
+
+            this.importVisualizerShot(visualizerShareCode);
+          } else if (
+            url.indexOf('https://beanconqueror.com/?visualizerShare=') === 0 ||
+            url.indexOf('https://beanconqueror.com?visualizerShare=') === 0 ||
+            url.indexOf('?visualizerShare=') >= 0
+          ) {
+            /*e.g: "https://beanconqueror.com/app/visualizer/importVisualizer.html?visualizerShare=JRKJ"*/
+            const visualizerShareCode = String(
+              urlParams.get('visualizerShare'),
+            );
+
+            this.importVisualizerShot(visualizerShareCode);
+          } else if (url.indexOf('bean.html') >= 0) {
+            /**
+             * On Android the whole path is directly resolved, therefore its the new url used**/
+            const qrCodeId: string = urlParams.get('id');
+            await this.addBeanFromServer(qrCodeId);
+          } else if (url.indexOf('int/') > 0) {
+            //We got an internal call ihr right now :)
+            // Split into type, id, action ['bean', '3E95E1', 'START_BREW']
+            const data = url.split('int/')[1].split('/');
+            const actionType = data[0];
+            const id = data[1];
+            const action = data[2];
+            try {
+              this.uiAnalytics.trackEvent(
+                IntentHandlerTracking.TITLE,
+                IntentHandlerTracking.ACTIONS.INTERNAL_CALL,
+                action as BEAN_CODE_ACTION,
+              );
+            } catch (ex) {}
+            if (actionType === 'bean') {
+              if ((action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.DETAIL) {
+                await this.uiBeanHelper.detailBeanByInternalShareCode(id);
+              } else if (
+                (action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.EDIT
+              ) {
+                await this.uiBeanHelper.editBeanByInternalShareCode(id);
+              } else if (
+                (action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.START_BREW
+              ) {
+                await this.uiBrewHelper.startBrewForBeanByInternalShareCode(id);
+              } else if (
+                (action as BEAN_CODE_ACTION) ===
+                BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION
+              ) {
+                await this.uiBrewHelper.startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
+                  id,
+                );
+              }
+            }
           } else {
             this.uiAlert.showMessage(
-              'QR.WRONG_LINK_DESCRIPTION',
-              'QR.WRONG_LINK_TITLE',
+              'QR.WRONG_QRCODE_DESCRIPTION',
+              'QR.WRONG_QRCODE_TITLE',
               undefined,
-              true
+              true,
             );
           }
         });
@@ -166,49 +182,64 @@ export class IntentHandlerService {
     }
   }
 
+  private importVisualizerShot(_shareCode) {
+    this.uiAnalytics.trackEvent(
+      IntentHandlerTracking.TITLE,
+      IntentHandlerTracking.ACTIONS.VISUALIZER_IMPORT,
+    );
+    this.visualizerService.importShotWithSharedCode(_shareCode);
+  }
   private async addBeanFromServer(_qrCodeId: string) {
     this.uiLog.log('Load bean information from server: ' + _qrCodeId);
 
     try {
       await this.uiAlert.showLoadingSpinner();
+      this.uiAnalytics.trackEvent(
+        IntentHandlerTracking.TITLE,
+        IntentHandlerTracking.ACTIONS.IMPORT_ROASTER_BEAN,
+        _qrCodeId,
+      );
       const beanData: ServerBean =
         await this.serverCommunicationService.getBeanInformation(_qrCodeId);
       await this.uiBeanHelper.addScannedQRBean(beanData);
     } catch (ex) {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,
-        QR_TRACKING.ACTIONS.SCAN_FAILED
+        QR_TRACKING.ACTIONS.SCAN_FAILED,
       );
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         'QR.SERVER.ERROR_OCCURED',
         'ERROR_OCCURED',
         undefined,
-        true
+        true,
       );
     }
   }
 
   public async addBeanFromUser(_userBeanJSON: string) {
     this.uiLog.log(
-      'Load bean information from shared user context: ' + _userBeanJSON
+      'Load bean information from shared user context: ' + _userBeanJSON,
     );
 
     try {
       await this.uiAlert.showLoadingSpinner();
-
+      this.uiAnalytics.trackEvent(
+        IntentHandlerTracking.TITLE,
+        IntentHandlerTracking.ACTIONS.ADD_USER_SHARED_BEAN,
+      );
       await this.uiBeanHelper.addUserSharedBean(_userBeanJSON);
     } catch (ex) {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,
-        QR_TRACKING.ACTIONS.SCAN_FAILED
+        QR_TRACKING.ACTIONS.SCAN_FAILED,
       );
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         'QR.SERVER.ERROR_OCCURED',
         'ERROR_OCCURED',
         undefined,
-        true
+        true,
       );
     }
   }

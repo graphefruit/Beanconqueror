@@ -1,22 +1,21 @@
 import {
   AfterViewInit,
   Component,
+  ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { Settings } from '../../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { TranslateService } from '@ngx-translate/core';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-brew-maximize-controls',
@@ -28,24 +27,24 @@ export class BrewMaximizeControlsComponent
 {
   public static COMPONENT_ID: string = 'brew-maximize-controls';
 
-  public showBloomTimer: boolean = false;
-  public showDripTimer: boolean = false;
-
   @Input() public brew: Brew;
   @Input() public brewComponent: BrewBrewingComponent;
-
+  @Input() private brewTimerTickedEvent: EventEmitter<any>;
   public settings: Settings;
 
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
+  private brewTimerTickedSubscription: Subscription;
+  @ViewChild('timerElement', { static: false })
+  public timerElement: ElementRef;
+
   constructor(
     private readonly modalController: ModalController,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform
+
+    private readonly platform: Platform,
   ) {}
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -55,9 +54,42 @@ export class BrewMaximizeControlsComponent
         9999,
         (processNextHandler) => {
           this.dismiss();
-        }
+        },
       );
     } catch (ex) {}
+  }
+
+  public ionViewDidEnter() {
+    const wantedDisplayFormat = this.returnWantedDisplayFormat();
+    this.__writeTimeNative(wantedDisplayFormat);
+    this.brewTimerTickedSubscription = this.brewTimerTickedEvent.subscribe(
+      (_val) => {
+        this.__writeTimeNative(wantedDisplayFormat);
+      },
+    );
+  }
+
+  private __writeTimeNative(_wantedDisplayFormat) {
+    let writingVal = '';
+    if (this.settings.brew_milliseconds === false) {
+      writingVal = String(
+        this.uiHelper.formatSeconds(this.brew.brew_time, 'mm:ss'),
+      );
+    } else {
+      writingVal = String(
+        this.uiHelper.formatSecondsAndMilliseconds(
+          this.brew.brew_time,
+          this.brew.brew_time_milliseconds,
+          _wantedDisplayFormat,
+        ),
+      );
+    }
+
+    if (this.timerElement?.nativeElement) {
+      window.requestAnimationFrame(() => {
+        this.timerElement.nativeElement.innerHTML = writingVal;
+      });
+    }
   }
 
   public returnWantedDisplayFormat() {
@@ -91,32 +123,7 @@ export class BrewMaximizeControlsComponent
     }
   }
 
-  public async ngAfterViewInit() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-
-    this.showBloomTimer = this.uiBrewHelper.fieldVisible(
-      settings.manage_parameters.coffee_blooming_time,
-      this.brew.getPreparation().manage_parameters.coffee_blooming_time,
-      this.brew.getPreparation().use_custom_parameters
-    );
-
-    this.showDripTimer =
-      this.uiBrewHelper.fieldVisible(
-        settings.manage_parameters.coffee_first_drip_time,
-        this.brew.getPreparation().manage_parameters.coffee_first_drip_time,
-        this.brew.getPreparation().use_custom_parameters
-      ) &&
-      this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO;
-  }
-
-  public pressureDeviceConnected() {
-    if (!this.platform.is('cordova')) {
-      return true;
-    }
-
-    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
-    return !!pressureDevice;
-  }
+  public async ngAfterViewInit() {}
 
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
@@ -143,20 +150,12 @@ export class BrewMaximizeControlsComponent
     this.brewComponent.timerResumedPressed(undefined);
   }
 
-  public setCoffeeDripTime(): void {
-    this.brewComponent.setCoffeeDripTime(undefined);
-    // this.brew.coffee_first_drip_time = this.brew.brew_time;
-
-    this.showDripTimer = false;
+  public async ngOnDestroy() {
+    if (this.brewTimerTickedSubscription) {
+      this.brewTimerTickedSubscription.unsubscribe();
+      this.brewTimerTickedSubscription = undefined;
+    }
   }
-
-  public setCoffeeBloomingTime(): void {
-    this.brewComponent.setCoffeeBloomingTime(undefined);
-    // this.brew.coffee_blooming_time = this.brew.brew_time;
-    this.showBloomTimer = false;
-  }
-
-  public async ngOnDestroy() {}
 
   public dismiss() {
     try {
@@ -167,7 +166,7 @@ export class BrewMaximizeControlsComponent
         dismissed: true,
       },
       undefined,
-      BrewMaximizeControlsComponent.COMPONENT_ID
+      BrewMaximizeControlsComponent.COMPONENT_ID,
     );
   }
 }

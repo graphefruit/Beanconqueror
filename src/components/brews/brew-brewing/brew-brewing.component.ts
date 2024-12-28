@@ -45,7 +45,6 @@ import { UIExcel } from '../../../services/uiExcel';
 
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
@@ -75,6 +74,9 @@ import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { HapticService } from '../../../services/hapticService/haptic.service';
+import { BrewFlow } from '../../../classes/brew/brewFlow';
+import { Bean } from '../../../classes/bean/bean';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
 declare var cordova;
 
@@ -100,9 +102,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public brewStars: NgxStarsComponent;
   @ViewChild('brewMillTimer', { static: false })
   public brewMillTimer: TimerComponent;
+  @ViewChild('calculatedCoffeeBrewTime', { static: false })
+  public calculatedCoffeeBrewTime: ElementRef;
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
+  @Input() public brewFlowPreset: BrewFlow;
+
+  @Input() public beanPreset: Bean;
+
   @Input() public loadSpecificLastPreparation: Preparation;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
@@ -115,19 +123,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public maxBrewRating: number = 5;
 
-  public profileResultsAvailable: boolean = false;
-  public profileResults: string[] = [];
-  public profileFocused: boolean = false;
-
-  public vesselResultsAvailable: boolean = false;
-  public vesselResults: Array<any> = [];
-  public vesselFocused: boolean = false;
   public refractometerDeviceSubscription: Subscription = undefined;
   private preparationMethodFocusedSubscription: Subscription = undefined;
 
   public brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
+  public brewFlowGraphSecondSubject: EventEmitter<any> = new EventEmitter();
   public brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
   public brewTemperatureGraphSubject: EventEmitter<any> = new EventEmitter();
+  public brewTimerTickedSubject: EventEmitter<any> = new EventEmitter();
   public maximizeFlowGraphIsShown: boolean = false;
 
   public preparationDevice: XeniaDevice | MeticulousDevice = undefined;
@@ -136,6 +139,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public readonly PreparationDeviceType = PreparationDeviceType;
+
+  public typeaheadSearch = {};
+
+  public choosenPreparation: Preparation = undefined;
+
+  public uiShowSectionAfterBrew: boolean = false;
+  public uiShowSectionWhileBrew: boolean = false;
+  public uiShowSectionBeforeBrew: boolean = false;
+  public uiHasWaterEntries: boolean = false;
+  public uiHasActivePreparationTools: boolean = false;
+  public uiRefractometerConnected: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -154,16 +169,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly screenOrientation: ScreenOrientation,
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
     private readonly uiToast: UIToast,
     private readonly uiLog: UILog,
     private readonly eventQueue: EventQueueService,
-    private readonly hapticService: HapticService
+    private readonly hapticService: HapticService,
   ) {}
 
+  public openURL(_url) {
+    if (_url) {
+      this.uiHelper.openExternalWebpage(_url);
+    }
+  }
+  public setUIParams() {
+    this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
+    this.uiShowSectionWhileBrew = this.showSectionWhileBrew();
+    this.uiShowSectionBeforeBrew = this.showSectionBeforeBrew();
+    this.uiHasWaterEntries = this.hasWaterEntries();
+    this.uiHasActivePreparationTools =
+      this.getActivePreparationTools().length > 0;
+    this.uiRefractometerConnected = this.refractometerConnected();
+  }
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {
@@ -174,21 +202,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public getActivePreparationTools() {
-    return this.data.getPreparation().tools.filter((e) => e.archived === false);
-  }
-
-  public getChoosenPreparationToolsWhichAreArchived() {
-    const toolIds = this.data.method_of_preparation_tools;
-    const tools: Array<PreparationTool> = [];
-    for (const id of toolIds) {
-      const tool = this.data
-        .getPreparation()
-        .tools.find((e) => e.config.uuid === id);
-      if (tool?.archived === true) {
-        tools.push(tool);
-      }
-    }
-    return tools;
+    return this.choosenPreparation.tools.filter((e) => e.archived === false);
   }
 
   public async ngAfterViewInit() {
@@ -206,8 +220,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               .filter(
                 (e) =>
                   e.method_of_preparation ===
-                  this.loadSpecificLastPreparation.config.uuid
-              )
+                  this.loadSpecificLastPreparation.config.uuid,
+              ),
           );
           if (foundBrews.length > 0) {
             await this.__loadBrew(foundBrews[0], false);
@@ -223,11 +237,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         } else {
           await this.__loadLastBrew();
         }
+
+        this.setChoosenPreparation();
       } else {
+        this.setChoosenPreparation();
         if (this.timer) {
           this.timer.setTime(
             this.data.brew_time,
-            this.data.brew_time_milliseconds
+            this.data.brew_time_milliseconds,
           );
         }
 
@@ -243,7 +260,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.brewMillTimer && checkData.manage_parameters.mill_timer) {
           this.brewMillTimer.setTime(
             this.data.mill_timer,
-            this.data.mill_timer_milliseconds
+            this.data.mill_timer_milliseconds,
           );
         }
 
@@ -253,7 +270,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         ) {
           this.brewTemperatureTime.setTime(
             this.data.brew_temperature_time,
-            this.data.brew_temperature_time_milliseconds
+            this.data.brew_temperature_time_milliseconds,
           );
         }
         if (
@@ -262,7 +279,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         ) {
           this.brewCoffeeBloomingTime.setTime(
             this.data.coffee_blooming_time,
-            this.data.coffee_blooming_time_milliseconds
+            this.data.coffee_blooming_time_milliseconds,
           );
         }
         if (
@@ -271,16 +288,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         ) {
           this.brewFirstDripTime.setTime(
             this.data.coffee_first_drip_time,
-            this.data.coffee_first_drip_time_milliseconds
+            this.data.coffee_first_drip_time_milliseconds,
           );
         }
       }
 
-      if (this.brewBrewingPreparationDeviceEl) {
-        await this.brewBrewingPreparationDeviceEl?.instance();
+      if (this.beanPreset && this.beanPreset?.config?.uuid) {
+        /**We got called from an internal identifier to start a brew directly with this bean.**/
+        this.data.bean = this.beanPreset.config.uuid;
       }
 
+      /**
+       * We removed this line, because we loaded the preparation device element twice, because it was already loaded fron the last brew
+       */
+      /** if (this.brewBrewingPreparationDeviceEl && !this.brewBrewingPreparationDeviceEl.hasAPreparationDeviceSet()) {
+        await this.brewBrewingPreparationDeviceEl?.instance();
+      }**/
+
       if (this.brewBrewingGraphEl) {
+        if (this.isEdit === false && this.brewFlowPreset) {
+          this.brewBrewingGraphEl.reference_profile_raw =
+            this.uiHelper.cloneData(this.brewFlowPreset);
+        }
+
         await this.brewBrewingGraphEl?.instance();
       }
 
@@ -294,6 +324,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           ) {
             this.deattachToRefractometerChange();
           }
+          this.setUIParams();
+          this.checkChanges();
+          /**THe check changes is needed, else the values are not interpolated to all other components**/
+          this.timer.checkChanges();
         });
 
       if (this.refractometerConnected()) {
@@ -310,7 +344,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.method_of_preparation_tools = [];
 
       if (this.brewBrewingPreparationDeviceEl) {
-        this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+        this.brewBrewingPreparationDeviceEl.instancePreparationDevice().then(
+          () => {
+            this.checkChanges();
+          },
+          () => {
+            this.checkChanges();
+          },
+        );
       }
 
       if (this.timer?.isTimerRunning() === false) {
@@ -328,6 +369,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       componentProps: {
         brewComponent: this,
         brew: this.data,
+        brewTimerTickedEvent: this.brewTimerTickedSubject,
       },
     });
 
@@ -352,13 +394,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.maximizeFlowGraphIsShown = true;
 
-    let actualOrientation;
-    try {
-      if (this.platform.is('cordova')) {
-        actualOrientation = this.screenOrientation.type;
-      }
-    } catch (ex) {}
-
     const modal = await this.modalController.create({
       component: BrewFlowComponent,
 
@@ -368,8 +403,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         brewComponent: this,
         brew: this.data,
         brewFlowGraphEvent: this.brewFlowGraphSubject,
+        brewFlowGraphSecondEvent: this.brewFlowGraphSecondSubject,
         brewPressureGraphEvent: this.brewPressureGraphSubject,
         brewTemperatureGraphEvent: this.brewTemperatureGraphSubject,
+        brewTimerTickedEvent: this.brewTimerTickedSubject,
       },
     });
 
@@ -410,16 +447,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public preparationMethodFocused() {
     this.deattachToPreparationMethodFocused();
     const eventSubs = this.eventQueue.on(
-      AppEventType.PREPARATION_SELECTION_CHANGED
+      AppEventType.PREPARATION_SELECTION_CHANGED,
     );
     this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
+      this.setChoosenPreparation();
       this.resetPreparationTools();
       this.deattachToPreparationMethodFocused();
+      /**If we change the preparation method, we need to inform our graph-element, because we may need to disconnect the pressure device**/
+      this.brewBrewingGraphEl?.preparationChanged();
     });
   }
 
   public refractometerConnected() {
-    if (!this.platform.is('cordova')) {
+    if (!this.platform.is('capacitor')) {
       return true;
     }
 
@@ -437,7 +477,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.uiLog.log('Got Refractometer Read');
           this.data.tds = refractometerDevice.getLastReading().tds;
           this.uiLog.log(
-            'Got Refractometer Read - Set new value:' + this.data.tds
+            'Got Refractometer Read - Set new value:' + this.data.tds,
           );
           await this.uiAlert.hideLoadingSpinner();
           this.uiToast.showInfoToastBottom('REFRACTOMETER.READ_END');
@@ -454,7 +494,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.brewFirstDripTime.setTime(
       this.data.coffee_first_drip_time,
-      this.data.coffee_first_drip_time_milliseconds
+      this.data.coffee_first_drip_time_milliseconds,
     );
 
     this.brewBrewingGraphEl.setFirstDripFromMachine();
@@ -482,7 +522,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(
       this.getActualBluetoothWeight() - vesselWeight,
-      2
+      2,
     );
     this.checkChanges();
   }
@@ -516,6 +556,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     this.maxBrewRating = this.settings.brew_rating;
+    this.setChoosenPreparation();
   }
 
   public getTime(): number {
@@ -552,7 +593,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.brewCoffeeBloomingTime.setTime(
       this.data.coffee_blooming_time,
-      this.data.coffee_blooming_time_milliseconds
+      this.data.coffee_blooming_time_milliseconds,
     );
   }
 
@@ -568,6 +609,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.data.brew_time_milliseconds = 0;
       }
     }
+    this.writeCalculatedCoffeeBrewTime();
+    this.brewTimerTickedSubject.next(true);
+  }
+
+  private writeCalculatedCoffeeBrewTime() {
+    this.ngZone.runOutsideAngular(() => {
+      if (this.calculatedCoffeeBrewTime?.nativeElement) {
+        window.requestAnimationFrame(() => {
+          this.calculatedCoffeeBrewTime.nativeElement.innerHTML =
+            this.data.getFormattedCoffeeBrewTime();
+        });
+      }
+    });
   }
 
   public async timerStartPressed(_event) {
@@ -576,13 +630,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.brewBrewingGraphEl.smartScaleConnected() ||
         this.brewBrewingGraphEl.pressureDeviceConnected() ||
         this.brewBrewingGraphEl.temperatureDeviceConnected() ||
-        !this.platform.is('cordova')
+        !this.platform.is('capacitor')
       ) {
         this.uiAlert.showMessage(
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION',
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
           undefined,
-          true
+          true,
         );
         return;
       } else if (
@@ -594,7 +648,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION',
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
           undefined,
-          true
+          true,
         );
         return;
       }
@@ -612,7 +666,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.uiAlert.showLoadingSpinner(
             this.translate.instant('STARTING_IN', {
               time: delayCounter,
-            })
+            }),
           );
           const delayIntv = setInterval(() => {
             delayCounter = delayCounter - 1;
@@ -625,7 +679,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                 this.translate.instant('STARTING_IN', {
                   time: delayCounter,
                 }),
-                false
+                false,
               );
             }
           }, 1000);
@@ -711,6 +765,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.brew_temperature_time_milliseconds = 0;
     }
   }
+
   public millTimerChanged(_event): void {
     if (this.brewMillTimer) {
       this.data.mill_timer = this.brewMillTimer.getSeconds();
@@ -737,12 +792,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public setChoosenPreparation() {
+    this.choosenPreparation = this.data.getPreparation();
+    this.setUIParams();
+  }
   public getPreparation(): Preparation {
-    return this.data.getPreparation();
+    if (this.choosenPreparation === undefined) {
+      this.setChoosenPreparation();
+    }
+    return this.choosenPreparation;
   }
 
   public chooseDateTime(_event) {
-    if (this.platform.is('cordova')) {
+    if (this.platform.is('capacitor')) {
       _event.target.blur();
       _event.cancelBubble = true;
       _event.preventDefault();
@@ -796,7 +858,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
-      animated: true,
+      animated: false,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.75,
       componentProps: { displayingTime: this.displayingBrewTime },
@@ -812,8 +874,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.brew_time = moment
         .duration(
           moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day')
-          )
+            moment(modalData.data.displayingTime).startOf('day'),
+          ),
         )
         .asSeconds();
     }
@@ -824,25 +886,40 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
    * @param _uuid
    */
   public async saveFlowProfile(_uuid: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const savingPath = 'brews/' + _uuid + '_flow_profile.json';
-        await this.uiFileHelper.saveJSONFile(
-          savingPath,
-          JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw)
-        );
-        resolve(savingPath);
-      } catch (ex) {
-        resolve('');
-      }
-    });
+    try {
+      const savingPath = 'brews/' + _uuid + '_flow_profile.json';
+      await this.uiFileHelper.writeInternalFileFromText(
+        JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw),
+        savingPath,
+      );
+      return savingPath;
+    } catch (ex) {
+      return '';
+    }
+  }
+
+  /**
+   * This function is triggered outside of add/edit component, because the uuid is not existing on adding at start
+   * @param _uuid
+   */
+  public async saveReferenceFlowProfile(_uuid: string): Promise<string> {
+    try {
+      const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
+      await this.uiFileHelper.writeInternalFileFromText(
+        JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw),
+        savingPath,
+      );
+      return savingPath;
+    } catch (ex) {
+      return '';
+    }
   }
 
   public getActualScaleWeight() {
     try {
       return this.uiHelper.toFixedIfNecessary(
         this.bleManager.getScale().getWeight(),
-        1
+        1,
       );
     } catch (ex) {
       return 0;
@@ -851,121 +928,107 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async downloadFlowProfile() {
     await this.uiExcel.exportBrewFlowProfile(
-      this.brewBrewingGraphEl.flow_profile_raw
+      this.brewBrewingGraphEl.flow_profile_raw,
     );
   }
 
-  public onProfileSearchChange(event: any) {
-    if (!this.profileFocused) {
+  public onSearchChange(_type: string, event: any) {
+    if (!this.typeaheadSearch[_type + 'Focused']) {
       return;
     }
     let actualSearchValue = event.target.value;
-    this.profileResults = [];
-    this.profileResultsAvailable = false;
+    this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
+    this.typeaheadSearch[_type + 'Results'] = [];
     if (actualSearchValue === undefined || actualSearchValue === '') {
       return;
     }
 
     actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBrewStorage
-      .getAllEntries()
-      .filter((e) =>
-        e.pressure_profile.toLowerCase().includes(actualSearchValue)
-      );
+    let filteredEntries: Array<Brew>;
 
-    for (const entry of filteredEntries) {
-      this.profileResults.push(entry.pressure_profile);
-    }
-    // Distinct values
-    this.profileResults = Array.from(
-      new Set(this.profileResults.map((e) => e))
-    );
+    let distictedValues = [];
+    if (_type !== 'vessel') {
+      filteredEntries = this.uiBrewStorage
+        .getAllEntries()
+        .filter((e) => e[_type].toLowerCase().includes(actualSearchValue));
+      for (const entry of filteredEntries) {
+        this.typeaheadSearch[_type + 'Results'].push(entry[_type]);
+      }
 
-    if (this.profileResults.length > 0) {
-      this.profileResultsAvailable = true;
+      this.typeaheadSearch[_type + 'Results'].forEach((element) => {
+        if (!distictedValues.includes(element.trim())) {
+          distictedValues.push(element.trim());
+        }
+      });
     } else {
-      this.profileResultsAvailable = false;
-    }
-  }
-
-  public onProfileSearchLeave($event) {
-    setTimeout(() => {
-      this.profileResultsAvailable = false;
-      this.profileResults = [];
-      this.profileFocused = false;
-    }, 150);
-  }
-
-  public onProfileSearchFocus($event) {
-    this.profileFocused = true;
-  }
-
-  public profileSelected(selected: string): void {
-    this.data.pressure_profile = selected;
-    this.profileResults = [];
-    this.profileResultsAvailable = false;
-    this.profileFocused = false;
-  }
-
-  public onVesselSearchChange(event: any) {
-    if (!this.vesselFocused) {
-      return;
-    }
-    let actualSearchValue = event.target.value;
-    this.vesselResults = [];
-    this.vesselResultsAvailable = false;
-    if (actualSearchValue === undefined || actualSearchValue === '') {
-      return;
-    }
-
-    actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBrewStorage
-      .getAllEntries()
-      .filter(
-        (e) =>
-          e.vessel_name !== '' &&
-          e.vessel_name.toLowerCase().includes(actualSearchValue)
-      );
-
-    for (const entry of filteredEntries) {
-      if (
-        this.vesselResults.filter(
+      filteredEntries = this.uiBrewStorage
+        .getAllEntries()
+        .filter(
           (e) =>
-            e.name === entry.vessel_name && e.weight === entry.vessel_weight
-        ).length <= 0
-      ) {
-        this.vesselResults.push({
-          name: entry.vessel_name,
-          weight: entry.vessel_weight,
-        });
+            e.vessel_name !== '' &&
+            e.vessel_name.toLowerCase().includes(actualSearchValue),
+        );
+
+      for (const entry of filteredEntries) {
+        if (
+          distictedValues.filter(
+            (e) =>
+              e.name === entry.vessel_name && e.weight === entry.vessel_weight,
+          ).length <= 0
+        ) {
+          distictedValues.push({
+            name: entry.vessel_name,
+            weight: entry.vessel_weight,
+          });
+        }
       }
     }
+
     // Distinct values
-    if (this.vesselResults.length > 0) {
-      this.vesselResultsAvailable = true;
+    this.typeaheadSearch[_type + 'Results'] = distictedValues;
+
+    if (this.typeaheadSearch[_type + 'Results'].length > 0) {
+      this.typeaheadSearch[_type + 'ResultsAvailable'] = true;
     } else {
-      this.vesselResultsAvailable = false;
+      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
     }
   }
 
-  public onVesselSearchLeave($event) {
+  public searchResultsAvailable(_type): boolean {
+    if (this.typeaheadSearch[_type + 'Results']) {
+      return this.typeaheadSearch[_type + 'Results'].length > 0;
+    }
+    return false;
+  }
+
+  public getResults(_type: string) {
+    if (this.typeaheadSearch[_type + 'Results']) {
+      return this.typeaheadSearch[_type + 'Results'];
+    }
+    return [];
+  }
+
+  public onSearchLeave(_type: string) {
     setTimeout(() => {
-      this.vesselResults = [];
-      this.vesselResultsAvailable = false;
-      this.vesselFocused = false;
+      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
+      this.typeaheadSearch[_type + 'Results'] = [];
+      this.typeaheadSearch[_type + 'Focused'] = false;
     }, 150);
   }
 
-  public onVesselSearchFocus($event) {
-    this.vesselFocused = true;
+  public onSearchFocus(_type: string) {
+    this.typeaheadSearch[_type + 'Focused'] = true;
   }
 
-  public vesselSelected(selected: string): void {
-    this.data.vessel_name = selected['name'];
-    this.data.vessel_weight = selected['weight'];
-    this.vesselResults = [];
-    this.vesselResultsAvailable = false;
-    this.vesselFocused = false;
+  public searchResultSelected(_type: string, selected: any): void {
+    if (_type !== 'vessel') {
+      this.data[_type] = selected;
+    } else {
+      this.data.vessel_name = selected['name'];
+      this.data.vessel_weight = selected['weight'];
+    }
+
+    this.onSearchLeave(_type);
   }
 
   public hasWaterEntries(): boolean {
@@ -980,9 +1043,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async brewRatioCalculator() {
     let waterQuantity: number = 0;
-    if (
-      this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
-    ) {
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
       waterQuantity = this.data.brew_beverage_quantity;
     } else {
       waterQuantity = this.data.brew_quantity;
@@ -1039,7 +1100,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             refractometerSubscription.unsubscribe();
             await this.uiAlert.hideLoadingSpinner();
           } catch (ex) {}
-        }
+        },
       );
 
       // Changed to the bottom, subscribe first, and start the loading spinner.
@@ -1068,7 +1129,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (data !== undefined && data.brew_beverage_quantity > 0) {
       this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(
         data.brew_beverage_quantity,
-        1
+        1,
       );
     }
   }
@@ -1100,16 +1161,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // tslint:disable-next-line
   private async __loadLastBrew() {
     let wasAnythingLoaded: boolean = false;
     if (
       this.settings.manage_parameters.set_last_coffee_brew ||
-      this.data.getPreparation().manage_parameters.set_last_coffee_brew
+      this.getPreparation().manage_parameters.set_last_coffee_brew
     ) {
       const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
-        const lastBrew: Brew = brews[brews.length - 1];
+        const sortedBrews = UIBrewHelper.sortBrews(brews);
+        const lastBrew: Brew = sortedBrews[0];
         await this.__loadBrew(lastBrew, false);
         wasAnythingLoaded = true;
       }
@@ -1128,14 +1189,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       _template === true
     ) {
       const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(
-        brew.method_of_preparation
+        brew.method_of_preparation,
       );
       if (!brewPreparation.finished) {
         this.data.method_of_preparation = brewPreparation.config.uuid;
+        /**We need to set the choosen preparation here, else we get the wrong reference,
+         *  after we've changed the getPreparation to temporary store
+         *  to not always request the database**/
+        this.setChoosenPreparation();
       }
     }
     let checkData: Settings | Preparation;
-
     if (
       _template === true &&
       this.getPreparation().use_custom_parameters === true &&
@@ -1206,7 +1270,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           this.brewMillTimer.setTime(
             this.data.mill_timer,
-            this.data.mill_timer_milliseconds
+            this.data.mill_timer_milliseconds,
           );
         }, 250);
       }
@@ -1251,7 +1315,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           this.brewTemperatureTime.setTime(
             this.data.brew_temperature_time,
-            this.data.brew_temperature_time_milliseconds
+            this.data.brew_temperature_time_milliseconds,
           );
         }, 250);
       }
@@ -1270,7 +1334,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         setTimeout(() => {
           this.timer.setTime(
             this.data.brew_time,
-            this.data.brew_time_milliseconds
+            this.data.brew_time_milliseconds,
           );
         }, 250);
       }
@@ -1315,7 +1379,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.brewFirstDripTime) {
           this.brewFirstDripTime.setTime(
             this.data.coffee_first_drip_time,
-            this.data.coffee_first_drip_time_milliseconds
+            this.data.coffee_first_drip_time_milliseconds,
           );
         }
       }, 250);
@@ -1336,7 +1400,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.brewCoffeeBloomingTime) {
           this.brewCoffeeBloomingTime.setTime(
             this.data.coffee_blooming_time,
-            this.data.coffee_blooming_time_milliseconds
+            this.data.coffee_blooming_time_milliseconds,
           );
         }
       }, 250);
@@ -1423,7 +1487,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
+      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH,
     );
     //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
     const popover = await this.modalCtrl.create({
@@ -1437,4 +1501,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     await popover.present();
     const data = await popover.onWillDismiss();
   }
+
+  protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
 }

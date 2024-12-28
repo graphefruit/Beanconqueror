@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 
+import { Device } from '@capacitor/device';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
 import moment from 'moment';
@@ -14,7 +15,6 @@ import { ModalController, Platform } from '@ionic/angular';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 @Component({
   selector: 'timer',
@@ -40,24 +40,24 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   public timer: ITimer;
   public settings: Settings;
+  private isIos16 = false;
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly platform: Platform,
-    private readonly device: Device
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    Device.getInfo().then((deviceInfo) => {
+      this.isIos16 =
+        this.platform.is('ios') && deviceInfo.osVersion.indexOf('16.') >= 0;
+    });
   }
 
   private __preventEventClickOnIos(_event) {
     try {
       //Just do this on iOS 16.X...
-      if (
-        _event &&
-        this.platform.is('ios') &&
-        this.device.version.indexOf('16.') >= 0
-      ) {
+      if (_event && this.isIos16) {
         _event.target.blur();
         _event.cancelBubble = true;
         _event.preventDefault();
@@ -120,7 +120,6 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   public initTimer(): void {
-    // tslint:disable-next-line
     this.timer = {
       runTimer: false,
       hasStarted: false,
@@ -192,7 +191,7 @@ export class TimerComponent implements OnInit, OnDestroy {
         return;
       }
       const milliSecondTimer = moment(moment().toDate()).subtract(
-        this.startedOffset
+        this.startedOffset,
       );
 
       this.timer.milliseconds = milliSecondTimer.milliseconds();
@@ -269,7 +268,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   public changeDate(_event) {
     const durationPassed = moment.duration(
-      moment(_event).diff(moment(_event).startOf('day'))
+      moment(_event).diff(moment(_event).startOf('day')),
     );
     this.displayingTime = moment(_event).toISOString();
     this.timer.seconds = durationPassed.asSeconds();
@@ -277,14 +276,16 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.changeEvent();
   }
 
+  /**Somehow on devices an double/tripple click is triggered, and we can't fix this somehow, so we check if the popover is already shown and else ignore the triple tap**/
+  private _overLaytimeShown: boolean = false;
   public async showTimeOverlay(_event) {
+    if (this._overLaytimeShown === true) {
+      return;
+    }
+    this._overLaytimeShown = true;
     try {
       //Just do this on iOS 16.X...
-      if (
-        _event &&
-        this.platform.is('ios') &&
-        this.device.version.indexOf('16.') >= 0
-      ) {
+      if (_event && this.isIos16) {
         if (_event.target.outerHTML.indexOf('<ion-input') >= 0) {
           /** If <ion-input is the start, the click was somehow done by the button, else just the "input" is clicked...
            * Thats why we return here, and ignore the click.
@@ -300,12 +301,14 @@ export class TimerComponent implements OnInit, OnDestroy {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
+      animated: false,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.75,
       componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
+    this._overLaytimeShown = false;
     if (
       modalData !== undefined &&
       modalData.data &&
@@ -315,8 +318,8 @@ export class TimerComponent implements OnInit, OnDestroy {
       this.timer.seconds = moment
         .duration(
           moment(this.displayingTime).diff(
-            moment(this.displayingTime).startOf('day')
-          )
+            moment(this.displayingTime).startOf('day'),
+          ),
         )
         .asSeconds();
       this.timer.milliseconds = moment(this.displayingTime)

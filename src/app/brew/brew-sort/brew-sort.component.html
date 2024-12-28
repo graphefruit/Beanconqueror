@@ -1,0 +1,82 @@
+<ion-header translucent>
+
+</ion-header>
+<ion-content>
+  <ion-list class="ion-no-padding">
+    <ion-list-header>
+      <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" class="ion-margin-top" lines="none" tappable>
+        {{"SORT_ORDER" | translate}}
+      </ion-item>
+    </ion-list-header>
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col size="6">
+          <ion-item (click)="setSortOrder(brewSortOrderEnum.ASCENDING)" [class.active]="isOrderActive(brewSortOrderEnum.ASCENDING)" lines="none" tappable>
+            <ion-icon name="beanconqueror-order-asc" slot="start"></ion-icon>
+            <ion-label>{{"ASCENDING" | translate}}</ion-label>
+          </ion-item>
+
+        </ion-col>
+        <ion-col size="6">
+          <ion-item (click)="setSortOrder(brewSortOrderEnum.DESCENDING)" [class.active]="isOrderActive(brewSortOrderEnum.DESCENDING)" lines="none" tappable>
+            <ion-icon  name="beanconqueror-order-desc" slot="start"></ion-icon>
+            <ion-label>{{"DESCENDING" | translate}}</ion-label>
+          </ion-item>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-list-header>
+      <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" class="ion-margin-top" lines="none" tappable>
+        {{"SORT_AFTER" | translate}}
+      </ion-item>
+    </ion-list-header>
+    <ion-item (click)="setSortAfter(brewSortAfterEnum.BREW_DATE)" [class.active]="isSortActive(brewSortAfterEnum.BREW_DATE)" lines="none" tappable>
+      <ion-icon name="beanconqueror-clock" slot="start"></ion-icon>
+      <ion-label>{{"BREW_CREATION_DATE" | translate}}</ion-label>
+    </ion-item>
+    <ion-item (click)="setSortAfter(brewSortAfterEnum.RATING)" [class.active]="isSortActive(brewSortAfterEnum.RATING)" class="ion-margin-top" lines="none" tappable>
+      <ion-icon name="beanconqueror-brew-rating-empty" slot="start"></ion-icon>
+      <ion-label>{{"BREW_DATA_RATING" | translate}}</ion-label>
+    </ion-item>
+    <ion-item (click)="setSortAfter(brewSortAfterEnum.PREPARATION)" [class.active]="isSortActive(brewSortAfterEnum.PREPARATION)" class="ion-margin-top" lines="none" tappable>
+      <ion-icon name="beanconqueror-preparation" slot="start"></ion-icon>
+      <ion-label>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
+    </ion-item>
+    <ion-item (click)="setSortAfter(brewSortAfterEnum.GRINDER)" [class.active]="isSortActive(brewSortAfterEnum.GRINDER)" class="ion-margin-top" lines="none" tappable>
+      <ion-icon name="beanconqueror-pepper-mill" slot="start"></ion-icon>
+      <ion-label>{{"BREW_DATA_MILL" | translate}}</ion-label>
+    </ion-item>
+    <ion-item (click)="setSortAfter(brewSortAfterEnum.BEAN_NAME)" [class.active]="isSortActive(brewSortAfterEnum.BEAN_NAME)" class="ion-margin-top" lines="none" tappable>
+      <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
+      <ion-label>{{"BEAN_SORT_NAME_OF_BEAN" | translate}}</ion-label>
+    </ion-item>
+
+    <ion-list-header *ngIf="false">
+      <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" (click)="toggleExtendSort()" class="ion-margin-top" lines="none" tappable>
+        {{"EXTEND_SORT_AFTER" | translate}}
+        <ion-icon *ngIf="extendedSortActive!= true" name="chevron-down-outline" slot="end"></ion-icon>
+        <ion-icon *ngIf="extendedSortActive === true" name="chevron-up-outline" slot="end"></ion-icon>
+      </ion-item>
+    </ion-list-header>
+    <ng-container *ngIf="extendedSortActive">
+      <ion-item (click)="setSortAfter(brewSortAfterEnum.BREW_DATE)" [class.active]="isSortActive(brewSortAfterEnum.BREW_DATE)" class="ion-margin-top" lines="none" tappable>
+        <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
+        <ion-label>{{"BEAN_SORT_BEAN_ROASTING_TYPE" | translate}}</ion-label>
+      </ion-item>
+
+    </ng-container>
+
+  </ion-list>
+  <ion-list class="ion-no-padding ion-padding-top">
+
+    <ion-button class="ion-margin-horizontal" (click)="useFilter()" color="accent" expand="block" tappable
+                type="submit">{{"USE_FILTER" | translate}}</ion-button>
+
+
+    <ion-button class="ion-margin-horizontal" (click)="resetFilter()" color="dark" expand="block" fill="clear"
+                tappable>{{"RESET_FILTER" | translate}}</ion-button>
+
+  </ion-list>
+
+</ion-content>

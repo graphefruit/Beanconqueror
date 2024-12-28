@@ -72,7 +72,7 @@ export abstract class StorageClass {
     const promise = new Promise(async (resolve, reject) => {
       const newEntry = this.uiHelper.cloneData(_entry);
       try {
-        newEntry.config.uuid = this.uiHelper.generateUUID();
+        newEntry.config.uuid = crypto.randomUUID();
         newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
         this.storedData.push(newEntry);
         await this.__save();
