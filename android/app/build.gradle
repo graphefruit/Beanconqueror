@@ -44,21 +44,6 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
-
-    constraints {
-      // Work around https://github.com/ionic-team/capacitor-barcode-scanner/pull/40
-      // and https://github.com/ionic-team/capacitor-barcode-scanner/issues/41
-      // to make barcode scanner work. Remove this once the upstream issues are resolved.
-      implementation('androidx.camera:camera-camera2:1.4.0') {
-        because 'capacitor-barcode-scanner pulls in the wrong version. See https://github.com/ionic-team/capacitor-barcode-scanner/pull/40 and https://github.com/ionic-team/capacitor-barcode-scanner/issues/41'
-      }
-      implementation('androidx.camera:camera-lifecycle:1.4.0') {
-        because 'capacitor-barcode-scanner pulls in the wrong version. See https://github.com/ionic-team/capacitor-barcode-scanner/pull/40 and https://github.com/ionic-team/capacitor-barcode-scanner/issues/41'
-      }
-      implementation('androidx.camera:camera-view:1.4.0') {
-        because 'capacitor-barcode-scanner pulls in the wrong version. See https://github.com/ionic-team/capacitor-barcode-scanner/pull/40 and https://github.com/ionic-team/capacitor-barcode-scanner/issues/41'
-      }
-    }
 }
 
 apply from: 'capacitor.build.gradle'
