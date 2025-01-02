@@ -294,6 +294,7 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.log(`Manufacturer: ${deviceInfo.manufacturer}`);
         this.uiLog.log(`Platform: ${deviceInfo.platform}`);
         this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
+        this.uiLog.log(`WebView version: ${deviceInfo.webViewVersion}`);
         if (this.platform.is('capacitor')) {
           const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
