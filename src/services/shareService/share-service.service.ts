@@ -90,7 +90,6 @@ export class ShareService {
 
   public async shareBean(_bean: Bean) {
     // try {
-
     const protoBean: any = BeanProto.fromJSON(_bean);
     protoBean.config = new Config();
     protoBean.attachments = [];
@@ -143,9 +142,7 @@ export class ShareService {
     );
     try {
       await Share.share({
-        title: '',
         text: beanMessage,
-        url: '',
         dialogTitle: 'Share',
       });
     } catch (ex) {}
