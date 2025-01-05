@@ -2226,6 +2226,9 @@ export class BrewBrewingGraphComponent implements OnInit {
           });
       }
 
+      /** on iPad and connecting an acaia lunar 2021, the popup was display always, even so after it had values after 3 seconds
+       * thats why we update to 4 seconds
+       * **/
       setTimeout(() => {
         if (
           didWeReceiveAnyFlow === false &&
@@ -2238,7 +2241,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             true,
           );
         }
-      }, 2500);
+      }, 4000);
     }
   }
 
