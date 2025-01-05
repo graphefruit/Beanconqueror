@@ -161,7 +161,7 @@
           </ion-item>
           <ion-item style="top:-10px;" lines="none">
             <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="5" snaps="true" max="100"
-              step="1" (ngModelChange)="changeBrewRating()" [(ngModel)]="settings.brew_rating">
+              step="1" (ngModelChange)="changeBrewRating()" (ionBlur)="changedBrewRatingBlur()" [(ngModel)]="settings.brew_rating">
               <div class='ion-label' slot="end">{{settings.brew_rating}}</div>
             </ion-range>
 
@@ -196,7 +196,7 @@
           </ion-item>
           <ion-item style="top:-10px;" lines="none">
             <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="5" snaps="true" max="100"
-              step="1" (ngModelChange)="changeBeanRating()" [(ngModel)]="settings.bean_rating">
+              step="1" (ngModelChange)="changeBeanRating()" (ionBlur)="changeBeanRatingBlur()" [(ngModel)]="settings.bean_rating">
               <div class='ion-label' slot="end">{{settings.bean_rating}}</div>
             </ion-range>
 

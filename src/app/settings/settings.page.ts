@@ -405,6 +405,9 @@ export class SettingsPage {
     // #379 - First save then reset filter ;)
     await this.saveSettings();
     this.settings.resetFilter();
+  }
+
+  public async changedBrewRatingBlur() {
     setTimeout(() => {
       const newRating = this.settings.brew_rating;
 
@@ -424,6 +427,9 @@ export class SettingsPage {
   public async changeBeanRating() {
     await this.saveSettings();
     this.settings.resetFilter();
+  }
+
+  public async changeBeanRatingBlur() {
     setTimeout(() => {
       const newRating = this.settings.bean_rating;
 
