@@ -34,7 +34,7 @@ export class ShareService {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiFileHelper: UIFileHelper,
     private readonly platform: Platform,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
   ) {}
 
   public async shareImage(_dataUrl: string) {
@@ -60,12 +60,12 @@ export class ShareService {
         /** We need to save the file before we can share, because base64 share is not supported**/
         path = await this.uiFileHelper.writeExternalFileFromBase64ForSharing(
           _dataUrl,
-          'sharefile' + extensionEnding
+          'sharefile' + extensionEnding,
         );
       } else {
         path = await this.uiFileHelper.writeInternalFileFromBase64(
           _dataUrl,
-          'sharefile' + extensionEnding
+          'sharefile' + extensionEnding,
         );
       }
 
@@ -90,7 +90,6 @@ export class ShareService {
 
   public async shareBean(_bean: Bean) {
     // try {
-
     const protoBean: any = BeanProto.fromJSON(_bean);
     protoBean.config = new Config();
     protoBean.attachments = [];
@@ -139,13 +138,11 @@ export class ShareService {
     this.uiLog.debug(beanMessage);
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.SHARE
+      BEAN_TRACKING.ACTIONS.SHARE,
     );
     try {
       await Share.share({
-        title: '',
-        text: '',
-        url: beanMessage,
+        text: beanMessage,
         dialogTitle: 'Share',
       });
     } catch (ex) {}

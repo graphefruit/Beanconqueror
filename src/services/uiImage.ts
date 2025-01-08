@@ -25,7 +25,7 @@ import { Settings } from '../classes/settings/settings';
 import { Water } from '../classes/water/water';
 import { Mill } from '../classes/mill/mill';
 import { Preparation } from '../classes/preparation/preparation';
-import { UILog } from './uiLog';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +39,7 @@ export class UIImage {
     private readonly translate: TranslateService,
     private readonly uiAlert: UIAlert,
     private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {}
 
   private getImageQuality(): number {
@@ -50,11 +50,11 @@ export class UIImage {
   private async saveBase64Photo(base64: string): Promise<string> {
     const fileName = await this.uiFileHelper.generateInternalPath(
       'photo',
-      '.jpg'
+      '.jpg',
     );
     const fileUri = await this.uiFileHelper.writeInternalFileFromBase64(
       base64,
-      fileName
+      fileName,
     );
     return fileUri.path;
   }
@@ -78,22 +78,37 @@ export class UIImage {
       try {
         const fileurls: Array<string> = [];
 
-        const results = await Camera.pickImages({
-          quality: this.getImageQuality(),
-        });
+        let result;
+        if (this.platform.is('ios')) {
+          result = await FilePicker.pickImages();
+        } else {
+          result = await FilePicker.pickFiles({
+            types: ['image/png', 'image/jpeg', 'image/heic'],
+          });
+        }
 
         await this.uiAlert.showLoadingSpinner();
 
-        for await (const file of results.photos) {
+        for await (const file of result.files) {
           try {
-            const imageBase64 = await this.uiFileHelper.readFileAsBase64(
-              file.path
-            );
+            let imageBase64 = '';
+            if (this.platform.is('android')) {
+              /**Even so we set the type above, you could choose zip...**/
+              if (file.mimeType.indexOf('image') >= 0) {
+                imageBase64 = await this.uiFileHelper.readFileAsBase64(
+                  file.path,
+                );
+              }
+            } else {
+              imageBase64 = await this.uiFileHelper.readFileAsBase64(file.path);
+            }
 
-            try {
-              const newUri = await this.saveBase64Photo(imageBase64);
-              fileurls.push(newUri);
-            } catch (ex) {}
+            if (imageBase64 !== '') {
+              try {
+                const newUri = await this.saveBase64Photo(imageBase64);
+                fileurls.push(newUri);
+              } catch (ex) {}
+            }
           } catch (ex) {
             setTimeout(() => {
               this.uiAlert.hideLoadingSpinner();
@@ -153,7 +168,7 @@ export class UIImage {
       | RoastingMachine
       | Water
       | Mill
-      | Preparation
+      | Preparation,
   ) {
     const modal = await this.modalCtrl.create({
       component: PhotoPopoverComponent,

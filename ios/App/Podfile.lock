@@ -32,7 +32,7 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (6.0.1):
     - Capacitor
-  - CapawesomeCapacitorFilePicker (6.1.0):
+  - CapawesomeCapacitorFilePicker (6.2.0):
     - Capacitor
   - CordovaPlugins (6.1.2):
     - CapacitorCordova
@@ -119,7 +119,7 @@ SPEC CHECKSUMS:
   CapacitorShare: 591ae4693d85686ceb590db8e8b44aa014ec6490
   CapacitorSplashScreen: 250df9ef8014fac5c7c1fd231f0f8b1d8f0b5624
   CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
-  CapawesomeCapacitorFilePicker: abd66735806935246403855cbe62fee8e299cdc5
+  CapawesomeCapacitorFilePicker: c14df1f5a23226039e0cb82b171cf5a351470459
   CordovaPlugins: 485bd6f52506b4d35265ff6f50b73f4beefe2a5b
   OSBarcodeLib: 4bb4cc0b9850451fe71ba4953c1c934368e767df
   OSInAppBrowserLib: c3d0b21a0c8b6d81e69117ad08bb6b8a4849c4e1

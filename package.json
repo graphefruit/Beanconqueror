@@ -43,7 +43,7 @@
     "@capacitor/share": "^6.0.2",
     "@capacitor/splash-screen": "^6.0.2",
     "@capacitor/status-bar": "6.0.1",
-    "@capawesome/capacitor-file-picker": "^6.1.0",
+    "@capawesome/capacitor-file-picker": "^6.2.0",
     "@ionic/angular": "^8.4.1",
     "@ionic/cli": "7.2.0",
     "@ionic/storage": "^4.0.0",

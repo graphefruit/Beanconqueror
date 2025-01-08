@@ -149,14 +149,14 @@ export class AcaiaScale {
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
     this.logger.info(
       'received characteristics: ',
-      JSON.stringify(characteristics)
+      JSON.stringify(characteristics),
     );
     this.characteristics = characteristics;
     this.isPyxisStyle = false;
 
     if (!this.findBLEUUIDs()) {
       throw new Error(
-        'Cannot find weight service and characteristics on the scale'
+        'Cannot find weight service and characteristics on the scale',
       );
     }
 
@@ -229,10 +229,10 @@ export class AcaiaScale {
       },
       async (err: any) => {
         this.logger.error(
-          'failed to subscribe to notifications ' + JSON.stringify(err)
+          'failed to subscribe to notifications ' + JSON.stringify(err),
         );
         this.disconnect().catch(this.logger.error.bind(this.logger));
-      }
+      },
     );
 
     /**
@@ -240,12 +240,13 @@ export class AcaiaScale {
      * After implementing this 150ms sleep, somehow the weight is always send afterwards - why? we don't know
      */
     await sleep(150);
-    /**
-     * We remove this line
-     *     await this.write(new Uint8Array([0, 1]).buffer);
-     */
 
-    this.notificationsReady();
+    if (Capacitor.getPlatform() === 'android') {
+      await this.write(new Uint8Array([0, 1]).buffer);
+      await this.notificationsReady();
+    } else {
+      this.notificationsReady();
+    }
 
     this.startHeartbeatMonitor();
   }
@@ -273,7 +274,7 @@ export class AcaiaScale {
               device_id: this.device_id,
               weight: this.weight_uuid,
               char_uuid: this.tx_char_uuid,
-            })
+            }),
         );
       }
       this.connected = false;
@@ -381,7 +382,12 @@ export class AcaiaScale {
   private startHeartbeatMonitor() {
     this.heartbeat_monitor_interval = setInterval(async () => {
       if (Date.now() > this.last_heartbeat + HEARTBEAT_INTERVAL) {
-        this.initScales();
+        if (Capacitor.getPlatform() === 'android') {
+          await this.initScales();
+        } else {
+          this.initScales();
+        }
+
         this.logger.info('Sent heartbeat reviving request.');
       }
     }, HEARTBEAT_INTERVAL * 2);
@@ -444,12 +450,22 @@ export class AcaiaScale {
   }
 
   private async initScales() {
-    this.ident();
+    if (Capacitor.getPlatform() === 'android') {
+      await this.ident();
+    } else {
+      this.ident();
+    }
+
     this.last_heartbeat = Date.now();
   }
 
   private async notificationsReady() {
-    this.initScales();
+    if (Capacitor.getPlatform() === 'android') {
+      await this.initScales();
+    } else {
+      this.initScales();
+    }
+
     this.logger.info('Scale Ready!');
   }
 
@@ -470,32 +486,44 @@ export class AcaiaScale {
             this.logger.error(
               'failed to write to characteristic, but we are ignoring it',
               err,
-              withoutResponse
+              withoutResponse,
             );
             resolve(false); // resolve for both cases because sometimes write says it's an error but in reality it's fine
-          }
+          },
         );
       } else {
         this.logger.debug(
           "We didn't write, because scale wasn't connected anymore ",
-          new Uint8Array(data)
+          new Uint8Array(data),
         );
       }
     });
   }
 
-  private ident() {
-    if (this.recievesNotifications === false) {
-      this.write(encodeId(this.isPyxisStyle), true);
-    }
-    if (
-      this.recievesNotifications === true &&
-      this.encodeNotificationRequestSend === false
-    ) {
-      this.encodeNotificationRequestSend = true;
-      setTimeout(() => {
-        this.write(encodeNotificationRequest(), true);
-      }, 100);
+  private async ident() {
+    if (Capacitor.getPlatform() === 'android') {
+      return new Promise((resolve) => {
+        this.write(encodeId(this.isPyxisStyle), true);
+        setTimeout(() => {
+          this.write(encodeNotificationRequest(), true);
+          setTimeout(() => {
+            resolve(true);
+          }, 50);
+        }, 100);
+      });
+    } else {
+      if (this.recievesNotifications === false) {
+        this.write(encodeId(this.isPyxisStyle), true);
+      }
+      if (
+        this.recievesNotifications === true &&
+        this.encodeNotificationRequestSend === false
+      ) {
+        this.encodeNotificationRequestSend = true;
+        setTimeout(() => {
+          this.write(encodeNotificationRequest(), true);
+        }, 100);
+      }
     }
   }
 
@@ -520,11 +548,11 @@ export class AcaiaScale {
           this.last_heartbeat = Date.now();
           if (this.isPyxisStyle) {
             this.write(encodeId(this.isPyxisStyle)).catch(
-              this.logger.error.bind(this.logger)
+              this.logger.error.bind(this.logger),
             );
           }
           this.write(encodeHeartbeat(), false).catch(
-            this.logger.error.bind(this.logger)
+            this.logger.error.bind(this.logger),
           );
           this.logger.debug('Heartbeat success');
         }

@@ -282,7 +282,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     if (this._overLaytimeShown === true) {
       return;
     }
-    this._overLaytimeShown = true;
+
     try {
       //Just do this on iOS 16.X...
       if (_event && this.isIos16) {
@@ -296,7 +296,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     } catch (ex) {}
     _event.stopPropagation();
     _event.stopImmediatePropagation();
-
+    this._overLaytimeShown = true;
     const modal = await this.modalCtrl.create({
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
