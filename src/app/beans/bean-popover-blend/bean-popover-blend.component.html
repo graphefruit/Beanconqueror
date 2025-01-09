@@ -1,0 +1,55 @@
+<ion-header translucent>
+</ion-header>
+<ion-content>
+
+  <ion-card>
+    <ion-card-header>
+      Selected - Blend Bean 1
+    </ion-card-header>
+    <ion-item>
+      <ion-label position="stacked">{{ "BEAN_DATA_WEIGHT" | translate }}&nbsp;({{leftOverOriginalBeanBagWeight}}/{{originalBeanWeight}})</ion-label>
+      <ion-input legacy="true"  #weight="ngModel" [(ngModel)]="originalBeanWeight" autocapitalize="off" inputmode="decimal"
+                 name="weight" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_WEIGHT' | translate}}"
+                 prevent-characters remove-empty-number spellcheck="false"
+                 type="text" tabIndex="1">
+      </ion-input>
+    </ion-item>
+
+  </ion-card>
+  <ion-card>
+    <ion-card-header>
+      Choosen - Blend Bean 2
+    </ion-card-header>
+    <ion-item  lines="inset">
+      <ion-select label-placement="stacked" label='{{"BREW_DATA_BEAN_TYPE" | translate}}' [(ngModel)]="toBlendBean"  (ngModelChange)="toBlendBeanChanged()" bean-overlay [show-finished]="false"
+                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_TYPE' | translate}}">
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{ "BEAN_DATA_WEIGHT" | translate }}&nbsp;({{leftOverToBlendBeanBagWeight }}/{{toBlendBeanWeight}})</ion-label>
+      <ion-input legacy="true"  #weight="ngModel" [(ngModel)]="toBlendBeanWeight" autocapitalize="off" inputmode="decimal"
+                 name="weight" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_WEIGHT' | translate}}"
+                 prevent-characters remove-empty-number spellcheck="false"
+                 type="text" tabIndex="1">
+      </ion-input>
+    </ion-item>
+
+
+
+  </ion-card>
+
+
+</ion-content>
+<ion-footer #footerContent class='ion-no-border'>
+  <ion-row>
+    <ion-col size='6'>
+      <ion-button color='accent' expand='block' fill='outline'
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size='6'>
+      <ion-button [disabled]="isBlendDisabled()" (click)="createBlend()"  color='accent' expand='block' tappable
+                  type='submit'>{{"CREATE_FROZEN_BEANS" | translate}}</ion-button>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>
