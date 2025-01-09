@@ -90,6 +90,10 @@ export class IntentHandlerService {
             } catch (ex) {}
             this.uiLog.log('Found shared bean ' + userBeanJSON);
             if (userBeanJSON) {
+              /*
+               * Android import is replacing the "+" with spaces when using the params, therefore we need to revert it.
+               */
+              userBeanJSON = userBeanJSON.replace(/ /g, '+');
               await this.addBeanFromUser(userBeanJSON);
             }
           } else if (
@@ -105,6 +109,10 @@ export class IntentHandlerService {
               userBeanJSON += String(urlParams.get(param));
             }
             if (userBeanJSON) {
+              /*
+               * Android import is replacing the "+" with spaces when using the params, therefore we need to revert it.
+               */
+              userBeanJSON = userBeanJSON.replace(/ /g, '+');
               await this.addBeanFromUser(userBeanJSON);
             }
           } else if (
