@@ -14,7 +14,7 @@ import { UIAlert } from './uiAlert';
 import { cloneDeep } from 'lodash';
 import { UIToast } from './uiToast';
 import { UISettingsStorage } from './uiSettingsStorage';
-import { InAppBrowser } from '@capacitor/inappbrowser';
+import { AppLauncher } from '@capacitor/app-launcher';
 import { KeepAwake } from '@capacitor-community/keep-awake';
 /**
  * Handles every helping functionalities
@@ -281,9 +281,7 @@ export class UIHelper {
       url = 'http://' + url;
     }
 
-    InAppBrowser.openInExternalBrowser({
-      url: url,
-    });
+    AppLauncher.openUrl({ url });
   }
 
   public async exportJSON(
