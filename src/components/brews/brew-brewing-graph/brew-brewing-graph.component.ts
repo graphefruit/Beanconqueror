@@ -3633,7 +3633,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     } else {
       grindWeight = 5;
     }
-    const valFound = this.traces.weightTrace.y.find((v) => v >= grindWeight);
+
+    //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
+    const slicedTraceWeight = this.traces.weightTrace.y.slice(5);
+    const valFound = slicedTraceWeight.find((v) => v >= grindWeight);
     if (valFound === undefined || valFound === null) {
       return false; // We want to be atleast a ratio of 1:1
     }
