@@ -56,10 +56,8 @@ export class IntentHandlerService {
       if (_url) {
         await this.uiHelper.isBeanconqurorAppReady().then(async () => {
           const url: string = _url;
-
-          const urlParams = new URLSearchParams(url.split('?')[1]);
-
           this.uiLog.log('Handle deeplink: ' + url);
+          const urlParams = new URLSearchParams(url.split('?')[1]);
           if (
             url.indexOf('https://beanconqueror.com/?qr=') === 0 ||
             url.indexOf('https://beanconqueror.com?qr=') === 0 ||
@@ -187,6 +185,7 @@ export class IntentHandlerService {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         this.uiAlert.hideLoadingSpinner();
       }
+      this.uiLog.error('Handle Deep link failed: ' + ex.message);
     }
   }
 

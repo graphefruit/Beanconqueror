@@ -26,7 +26,8 @@ export class NfcService {
     private readonly uiAlert: UIAlert,
     private readonly intentHandler: IntentHandlerService,
     private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast
+    private readonly uiToast: UIToast,
+    private readonly uiLog: UILog,
   ) {
     if (this.platform.is('capacitor')) {
       this.uiHelper.isBeanconqurorAppReady().then(async () => {
@@ -50,7 +51,7 @@ export class NfcService {
         },
         (_error) => {
           resolve(false);
-        }
+        },
       );
     });
     return enabled;
@@ -60,13 +61,13 @@ export class NfcService {
     if (this.isNFCEnabled()) {
       if (this.platform.is('android')) {
         this.uiToast.showInfoToastBottom(
-          'NFC.SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER'
+          'NFC.SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER',
         );
         const nfcReadSubscription = this.attachOnNFCAndroid().subscribe(
           (_data) => {
             this.__handleNFCData(_data.tag);
             nfcReadSubscription.unsubscribe();
-          }
+          },
         );
       } else {
         //IOS
@@ -74,7 +75,8 @@ export class NfcService {
         try {
           let tag = await nfc.scanTag();
           this.__handleNFCData(tag);
-        } catch (err) {
+        } catch (ex) {
+          this.uiLog.error("We couldn't read NFC-Tag: " + ex.message);
           //console.log(err);
         }
       }
@@ -83,7 +85,7 @@ export class NfcService {
         'NFC.PLEASE_ENABLED_NFC_DESCRIPTION',
         'CARE',
         'OK',
-        true
+        true,
       );
     }
   }
@@ -104,29 +106,32 @@ export class NfcService {
         },
         () => {
           this.didAndroidAttachToListener = false;
-        }
+        },
       );
     }
   }
   private __handleNFCData(_tag) {
+    this.uiLog.log('We read NFC-Tag: ' + JSON.stringify(_tag));
     if (_tag) {
       let data = ndef.textHelper.decodePayload(_tag.ndefMessage[0].payload);
       /**We dont use bytes to string because somehow ascis came into play
       let data = nfc.bytesToString(_tag.ndefMessage[0].payload)**/
       this.intentHandler.handleDeepLink(data);
+    } else {
+      this.uiLog.error('No data found on NFC-Tag');
     }
   }
 
   public writeNFCData(_text: string) {
     if (this.platform.is('android')) {
       this.uiToast.showInfoToastBottom(
-        'NFC.SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER'
+        'NFC.SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER',
       );
       const nfcReadSubscription = this.attachOnNFCAndroid().subscribe(
         (_data) => {
           this.__writeInternal(_text);
           nfcReadSubscription.unsubscribe();
-        }
+        },
       );
     } else {
       this.__writeInternal(_text);
@@ -137,25 +142,27 @@ export class NfcService {
     nfc.write(
       record,
       (success) => {
+        this.uiLog.log('NFC-Date wrote successfully: ' + _text);
         if (this.platform.is('android')) {
           this.uiAlert.showMessage(
             'NFC.WRITE_COMPLETED_DESCRIPTION',
             'NFC.WRITE_COMPLETED_TITLE',
             'OK',
-            true
+            true,
           );
         }
       },
       (error) => {
+        this.uiLog.log('NFC-Date wrote unsuccessfully: ' + _text);
         if (this.platform.is('android')) {
           this.uiAlert.showMessage(
             'NFC.WRITE_UNCOMPLETED_DESCRIPTION',
             'NFC.WRITE_UNCOMPLETED_TITLE',
             'OK',
-            true
+            true,
           );
         }
-      }
+      },
     );
   }
 }
