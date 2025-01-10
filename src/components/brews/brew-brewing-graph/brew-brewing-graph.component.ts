@@ -2094,9 +2094,13 @@ export class BrewBrewingGraphComponent implements OnInit {
       await this.timerReset(undefined);
       await this.brewComponent.timer.resetWithoutEmit(false);
 
-      if (scale.getScaleType() === ScaleType.BOKOOSCALE) {
-        //const bookooScale: BookooScale = scale as BookooScale;
-        //await bookooScale.tareAndStartTimerModeAuto();
+      if (scale.getScaleType() === ScaleType.VARIA_AKU) {
+        //#878 When we start listening to the varia scale, somehow the tare is to slow/sensetive, and the timer directly starts when starting to listening.
+        await new Promise((resolve) => {
+          setTimeout(async () => {
+            resolve(undefined);
+          }, this.settings.bluetooth_command_delay + 500);
+        });
       }
 
       this.brewComponent.timer.checkChanges();
