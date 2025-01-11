@@ -56,10 +56,8 @@ export class IntentHandlerService {
       if (_url) {
         await this.uiHelper.isBeanconqurorAppReady().then(async () => {
           const url: string = _url;
-
-          const urlParams = new URLSearchParams(url.split('?')[1]);
-
           this.uiLog.log('Handle deeplink: ' + url);
+          const urlParams = new URLSearchParams(url.split('?')[1]);
           if (
             url.indexOf('https://beanconqueror.com/?qr=') === 0 ||
             url.indexOf('https://beanconqueror.com?qr=') === 0 ||
@@ -90,6 +88,10 @@ export class IntentHandlerService {
             } catch (ex) {}
             this.uiLog.log('Found shared bean ' + userBeanJSON);
             if (userBeanJSON) {
+              /*
+               * Android import is replacing the "+" with spaces when using the params, therefore we need to revert it.
+               */
+              userBeanJSON = userBeanJSON.replace(/ /g, '+');
               await this.addBeanFromUser(userBeanJSON);
             }
           } else if (
@@ -105,6 +107,10 @@ export class IntentHandlerService {
               userBeanJSON += String(urlParams.get(param));
             }
             if (userBeanJSON) {
+              /*
+               * Android import is replacing the "+" with spaces when using the params, therefore we need to revert it.
+               */
+              userBeanJSON = userBeanJSON.replace(/ /g, '+');
               await this.addBeanFromUser(userBeanJSON);
             }
           } else if (
@@ -179,6 +185,7 @@ export class IntentHandlerService {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         this.uiAlert.hideLoadingSpinner();
       }
+      this.uiLog.error('Handle Deep link failed: ' + ex.message);
     }
   }
 

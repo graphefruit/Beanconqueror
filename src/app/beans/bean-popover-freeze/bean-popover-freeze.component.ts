@@ -258,6 +258,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
     clonedBean.frozenGroupId = _groupBeanId;
     clonedBean.frozenStorageType = _freezingType;
     clonedBean.frozenNote = this.frozenNote;
+    clonedBean.internal_share_code = '';
+    clonedBean.shared = false;
+    clonedBean.qr_code = '';
 
     if (this.bean.cost !== 0) {
       try {

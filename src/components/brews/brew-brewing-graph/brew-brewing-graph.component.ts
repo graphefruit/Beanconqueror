@@ -2094,9 +2094,13 @@ export class BrewBrewingGraphComponent implements OnInit {
       await this.timerReset(undefined);
       await this.brewComponent.timer.resetWithoutEmit(false);
 
-      if (scale.getScaleType() === ScaleType.BOKOOSCALE) {
-        //const bookooScale: BookooScale = scale as BookooScale;
-        //await bookooScale.tareAndStartTimerModeAuto();
+      if (scale.getScaleType() === ScaleType.VARIA_AKU) {
+        //#878 When we start listening to the varia scale, somehow the tare is to slow/sensetive, and the timer directly starts when starting to listening.
+        await new Promise((resolve) => {
+          setTimeout(async () => {
+            resolve(undefined);
+          }, this.settings.bluetooth_command_delay + 500);
+        });
       }
 
       this.brewComponent.timer.checkChanges();
@@ -3633,7 +3637,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     } else {
       grindWeight = 5;
     }
-    const valFound = this.traces.weightTrace.y.find((v) => v >= grindWeight);
+
+    //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
+    const slicedTraceWeight = this.traces.weightTrace.y.slice(5);
+    const valFound = slicedTraceWeight.find((v) => v >= grindWeight);
     if (valFound === undefined || valFound === null) {
       return false; // We want to be atleast a ratio of 1:1
     }
