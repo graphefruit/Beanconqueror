@@ -8,9 +8,10 @@
        will add that attribute from the Bluetooth LE plugin. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:remove="android:maxSdkVersion" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:remove="android:maxSdkVersion" />
+    <!-- Capacitor Geolocation plugin end -->
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
       android:maxSdkVersion="32" />
-
 
 
     <!-- Request legacy Bluetooth permissions on older devices. -->
@@ -20,7 +21,18 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
-    <!-- Capacitor Geolocation plugin end -->
+
+    <!-- Remove health-related permissions and queries that are added by the Cordova Health plugin.
+         We don't use this plugin on Android, so we can remove these -->
+    <queries>
+      <package android:name="com.google.android.apps.fitness" tools:node="remove" />
+    </queries>
+
+    <uses-permission android:name="android.gms.permission.ACTIVITY_RECOGNITION" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" tools:node="remove" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" tools:node="remove" />
+    <!-- End of removed entries for Cordova Health plugin -->
+
 
     <!-- NFC Plugin its not required -->
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
