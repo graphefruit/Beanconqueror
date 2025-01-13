@@ -195,6 +195,7 @@ export class Settings implements ISettings {
   public bluetooth_scale_listening_threshold_active: boolean;
   public bluetooth_scale_ignore_weight_button_active: boolean;
   public bluetooth_scale_first_drip_threshold: number;
+  public bluetooth_scale_espresso_just_one_cup: boolean;
 
   public maximize_hide_value_cards_on_maximize_screen: boolean;
 
@@ -512,6 +513,7 @@ export class Settings implements ISettings {
     this.bluetooth_scale_listening_threshold_active = false;
     this.bluetooth_scale_ignore_weight_button_active = false;
     this.bluetooth_scale_first_drip_threshold = 0.1;
+    this.bluetooth_scale_espresso_just_one_cup = false;
 
     this.maximize_hide_value_cards_on_maximize_screen = false;
 
@@ -577,25 +579,25 @@ export class Settings implements ISettings {
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     Object.assign(
       this.default_last_coffee_parameters,
-      settingsObj.default_last_coffee_parameters
+      settingsObj.default_last_coffee_parameters,
     );
 
     this.repeat_coffee_parameters = new RepeatBrewParameter();
     Object.assign(
       this.repeat_coffee_parameters,
-      settingsObj.repeat_coffee_parameters
+      settingsObj.repeat_coffee_parameters,
     );
 
     this.bean_manage_parameters = new BeanManageParameter();
     Object.assign(
       this.bean_manage_parameters,
-      settingsObj.bean_manage_parameters
+      settingsObj.bean_manage_parameters,
     );
 
     this.bean_visible_list_view_parameters = new BeanListViewParameter();
     Object.assign(
       this.bean_visible_list_view_parameters,
-      settingsObj.bean_visible_list_view_parameters
+      settingsObj.bean_visible_list_view_parameters,
     );
   }
 

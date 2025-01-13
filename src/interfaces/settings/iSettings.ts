@@ -185,6 +185,7 @@ export interface ISettings {
   bluetooth_scale_listening_threshold_active: boolean;
   bluetooth_scale_ignore_weight_button_active: boolean;
   bluetooth_scale_first_drip_threshold: number;
+  bluetooth_scale_espresso_just_one_cup: boolean;
 
   maximize_hide_value_cards_on_maximize_screen: boolean;
 
