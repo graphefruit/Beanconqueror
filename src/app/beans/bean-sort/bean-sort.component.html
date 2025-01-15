@@ -68,6 +68,10 @@
         <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_WEIGHT" | translate}}</ion-label>
       </ion-item>
+      <ion-item (click)="setSortAfter(beanSortAfterEnum.WEIGHT_REMAINING)" [class.active]="isSortActive(beanSortAfterEnum.WEIGHT_REMAINING)" class="ion-margin-top" lines="none" tappable>
+        <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
+        <ion-label>{{"BEAN_SORT_WEIGHT_REMAINING" | translate}}</ion-label>
+      </ion-item>
       <ion-item (click)="setSortAfter(beanSortAfterEnum.AROMATICS)" [class.active]="isSortActive(beanSortAfterEnum.AROMATICS)" class="ion-margin-top" lines="none" tappable>
         <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_AROMATICS" | translate}}</ion-label>
