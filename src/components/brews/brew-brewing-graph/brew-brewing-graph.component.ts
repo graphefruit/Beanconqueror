@@ -170,6 +170,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public graphIconColSize: number = 2;
 
+  public espressoJustOneCup: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -2215,6 +2217,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.deattachToFlowChange();
 
       let didWeReceiveAnyFlow: boolean = false;
+
       this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
         this.setActualSmartInformation();
         didWeReceiveAnyFlow = true;
@@ -2741,7 +2744,19 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
+      let oneEspressoCup: boolean = false;
+      if (
+        this.espressoJustOneCup === true &&
+        this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO
+      ) {
+        oneEspressoCup = true;
+      }
+
       this.scaleFlowSubscription = scale.flowChange.subscribe((_valChange) => {
+        if (oneEspressoCup === true) {
+          _valChange.actual = _valChange.actual * 2;
+        }
         let _val;
         if (this.ignoreScaleWeight === false) {
           _val = this.mutateWeightAndSeeAnomalys(

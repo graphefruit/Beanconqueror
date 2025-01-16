@@ -1470,5 +1470,8 @@
     "EXPORT_CAUTION_IOS": "iOS: If you want to set up a new phone, the best and easiest way is using the iCloud Backup",
     "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": "Norwegian",
     "VISUALIZER_SHOT_IMPORT_FAILED": "Visualizer shot import failed",
-    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portuguese"
+    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portuguese",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": "Weight doubling - 1 of 2 cups on scale",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "If just one cups fits on your scale, you can enable this setting. This makes it possible that you can choose in the brew, to activate a checkbox, when you have two cups, but just one is on the scale. The weight will get when the settings is activated doubled, to behave like there would be two cups on the scale.",
+    "BEAN_SORT_WEIGHT_REMAINING": "Remaining weight"
 }

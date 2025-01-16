@@ -1,4 +1,20 @@
 @let shallProfileHidden = shallFlowProfileBeHidden();
+
+@if(settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO)
+{
+  <ion-grid class="ion-padding-horizontal ion-margin-bottom ion-no-padding brew-information-panel">
+    <ion-row>
+      <ion-col size="12">
+        <ion-checkbox label-placement='end'
+                      [(ngModel)]="espressoJustOneCup">
+          <div class='ion-label' style="white-space: normal;">
+            <h2>{{"SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE" | translate}}</h2>
+          </div>
+        </ion-checkbox>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+}
 <ion-item [hidden]="shallProfileHidden" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
                       brewComponent.choosenPreparation.brew_order.while.brew_time,
                       brewComponent.choosenPreparation.use_custom_parameters])" class="ion-padding-bottom-half" lines="none">
@@ -26,6 +42,11 @@
 </ion-item>
 <ion-item [hidden]="shallProfileHidden" *ngIf='isDetail ===false' lines="none">
   <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
+    <ion-row *ngIf="settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO">
+      <ion-col size="12">
+
+      </ion-col>
+    </ion-row>
     <ion-row style="padding-bottom:5px;">
       <ion-col *ngIf='(uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))' size="{{graphIconColSize}}"
                style="padding-right:5px;">

@@ -755,6 +755,16 @@
               </ion-range>
             </ion-item>
 
+            <ion-item [lines]="'full'">
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_espresso_just_one_cup">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE" | translate}}</h2>
+                  <p>{{"SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+
             <ion-item lines="none">
               <ion-label>
                 <h2>{{"SMART_SCALE_COMMAND_DELAY" | translate}}</h2>

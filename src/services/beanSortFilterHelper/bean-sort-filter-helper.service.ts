@@ -9,6 +9,8 @@ import { BeanSortComponent } from '../../app/beans/bean-sort/bean-sort.component
 import { BeanFilterComponent } from '../../app/beans/bean-filter/bean-filter.component';
 import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../uiHelper';
+import { Brew } from '../../classes/brew/brew';
+import { UIBeanHelper } from '../uiBeanHelper';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,8 @@ import { UIHelper } from '../uiHelper';
 export class BeanSortFilterHelperService {
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly uiBeanHelper: UIBeanHelper,
   ) {}
 
   public async showSort(_sort: IBeanPageSort) {
@@ -68,11 +71,11 @@ export class BeanSortFilterHelperService {
     _beans: Array<Bean>,
     _searchText: string,
     _sort: IBeanPageSort,
-    _filter: IBeanPageFilter
+    _filter: IBeanPageFilter,
   ) {
     let filterBeans: Array<Bean> = this.manageFilterBeans(
       _type,
-      this.uiHelper.cloneData(_beans)
+      this.uiHelper.cloneData(_beans),
     );
 
     filterBeans = this.manageFavourites(_filter, filterBeans);
@@ -100,13 +103,13 @@ export class BeanSortFilterHelperService {
   private manageFilterBeans(_type: string, beansCopy: Bean[]): Bean[] {
     if (_type === 'open') {
       return beansCopy.filter(
-        (bean) => !bean.finished && bean.isFrozen() === false
+        (bean) => !bean.finished && bean.isFrozen() === false,
       );
     } else if (_type === 'archive') {
       return beansCopy.filter((bean) => bean.finished);
     } else if (_type === 'frozen') {
       return beansCopy.filter(
-        (bean) => !bean.finished && bean.isFrozen() === true
+        (bean) => !bean.finished && bean.isFrozen() === true,
       );
     }
   }
@@ -237,6 +240,21 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
+        case BEAN_SORT_AFTER.WEIGHT_REMAINING:
+          filterBeans = filterBeans.sort((a, b) => {
+            const remainingWeightA =
+              a?.weight - this.getUsedWeightCount(a.config.uuid);
+            const remainingWeightB =
+              b?.weight - this.getUsedWeightCount(b.config.uuid);
+            if (remainingWeightA < remainingWeightB) {
+              return -1;
+            }
+            if (remainingWeightA > remainingWeightB) {
+              return 1;
+            }
+            return 0;
+          });
+          break;
         case BEAN_SORT_AFTER.AROMATICS:
           filterBeans = filterBeans.sort((a, b) => {
             const nameA = a.aromatics.toUpperCase();
@@ -325,6 +343,20 @@ export class BeanSortFilterHelperService {
     return filterBeans;
   }
 
+  public getUsedWeightCount(_uuid: string): number {
+    let usedWeightCount: number = 0;
+    const relatedBrews: Array<Brew> =
+      this.uiBeanHelper.getAllBrewsForThisBean(_uuid);
+    for (const brew of relatedBrews) {
+      if (brew.bean_weight_in > 0) {
+        usedWeightCount += brew.bean_weight_in;
+      } else {
+        usedWeightCount += brew.grind_weight;
+      }
+    }
+    return usedWeightCount;
+  }
+
   private manageRoastingDateEnd(filter: IBeanPageFilter, filterBeans: Bean[]) {
     if (filter.roastingDateEnd) {
       const roastingDateEnd = moment(filter.roastingDateEnd)
@@ -344,7 +376,7 @@ export class BeanSortFilterHelperService {
 
   private manageRoastingDateStart(
     filter: IBeanPageFilter,
-    filterBeans: Bean[]
+    filterBeans: Bean[],
   ): Bean[] {
     if (filter.roastingDateStart) {
       const roastingStart = moment(filter.roastingDateStart)
@@ -365,7 +397,7 @@ export class BeanSortFilterHelperService {
   private manageRoaster(filter: IBeanPageFilter, filterBeans: Bean[]) {
     if (filter.bean_roaster) {
       filterBeans = filterBeans.filter(
-        (e: Bean) => filter.bean_roaster.includes(e.roaster) === true
+        (e: Bean) => filter.bean_roaster.includes(e.roaster) === true,
       );
     }
     return filterBeans;
@@ -373,23 +405,23 @@ export class BeanSortFilterHelperService {
 
   private manageRoastRange(
     filterBeans: Bean[],
-    filter: IBeanPageFilter
+    filter: IBeanPageFilter,
   ): Bean[] {
     return filterBeans.filter(
       (e: Bean) =>
         e.roast_range >= filter.roast_range.lower &&
-        e.roast_range <= filter.roast_range.upper
+        e.roast_range <= filter.roast_range.upper,
     );
   }
 
   private manageRoastingType(
     filter: IBeanPageFilter,
-    filterBeans: Bean[]
+    filterBeans: Bean[],
   ): Bean[] {
     if (filter.bean_roasting_type.length > 0) {
       return filterBeans.filter(
         (e: Bean) =>
-          filter.bean_roasting_type.includes(e.bean_roasting_type) === true
+          filter.bean_roasting_type.includes(e.bean_roasting_type) === true,
       );
     }
     return filterBeans;
@@ -398,13 +430,13 @@ export class BeanSortFilterHelperService {
   private manageRating(filterBeans: Bean[], filter: IBeanPageFilter): Bean[] {
     return filterBeans.filter(
       (e: Bean) =>
-        e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
+        e.rating >= filter.rating.lower && e.rating <= filter.rating.upper,
     );
   }
 
   private manageFavourites(
     filter: IBeanPageFilter,
-    filterBeans: Bean[]
+    filterBeans: Bean[],
   ): Bean[] {
     if (filter.favourite) {
       return filterBeans.filter((e) => e.favourite === true);
