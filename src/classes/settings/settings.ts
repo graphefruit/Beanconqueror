@@ -196,6 +196,7 @@ export class Settings implements ISettings {
   public bluetooth_scale_ignore_weight_button_active: boolean;
   public bluetooth_scale_first_drip_threshold: number;
   public bluetooth_scale_espresso_just_one_cup: boolean;
+  public bluetooth_scale_acaia_connection_mode: string;
 
   public maximize_hide_value_cards_on_maximize_screen: boolean;
 
@@ -514,6 +515,7 @@ export class Settings implements ISettings {
     this.bluetooth_scale_ignore_weight_button_active = false;
     this.bluetooth_scale_first_drip_threshold = 0.1;
     this.bluetooth_scale_espresso_just_one_cup = false;
+    this.bluetooth_scale_acaia_connection_mode = 'V2';
 
     this.maximize_hide_value_cards_on_maximize_screen = false;
 

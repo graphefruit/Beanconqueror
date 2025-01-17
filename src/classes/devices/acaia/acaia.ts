@@ -92,6 +92,7 @@ class DecoderWorker {
 }
 
 let HEARTBEAT_INTERVAL = 1000;
+let CONNECTION_MODE: string = 'V2';
 
 export class AcaiaScale {
   private readonly device_id: string;
@@ -145,6 +146,7 @@ export class AcaiaScale {
       const uiSettingsStorage = UISettingsStorage.getInstance();
       const settingsInst = uiSettingsStorage.getSettings();
       HEARTBEAT_INTERVAL = settingsInst.acaia_heartbeat_command_delay;
+      CONNECTION_MODE = settingsInst.bluetooth_scale_acaia_connection_mode;
     } catch (ex) {}
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
     this.logger.info(
@@ -188,6 +190,10 @@ export class AcaiaScale {
 
   public async connect(callback: any) {
     this.logger.log('Connect scale');
+    try {
+      this.logger.log('Connect scale with mode' + CONNECTION_MODE);
+    } catch (ex) {}
+
     if (this.connected) {
       this.logger.log('Already connected, bail.');
       return;
@@ -241,7 +247,10 @@ export class AcaiaScale {
      */
     await sleep(150);
 
-    if (Capacitor.getPlatform() === 'android') {
+    if (
+      Capacitor.getPlatform() === 'android' ||
+      (CONNECTION_MODE === 'V1' && Capacitor.getPlatform() === 'ios')
+    ) {
       await this.write(new Uint8Array([0, 1]).buffer);
       await this.notificationsReady();
     } else {
@@ -382,7 +391,10 @@ export class AcaiaScale {
   private startHeartbeatMonitor() {
     this.heartbeat_monitor_interval = setInterval(async () => {
       if (Date.now() > this.last_heartbeat + HEARTBEAT_INTERVAL) {
-        if (Capacitor.getPlatform() === 'android') {
+        if (
+          Capacitor.getPlatform() === 'android' ||
+          (CONNECTION_MODE === 'V1' && Capacitor.getPlatform() === 'ios')
+        ) {
           await this.initScales();
         } else {
           this.initScales();
@@ -450,7 +462,10 @@ export class AcaiaScale {
   }
 
   private async initScales() {
-    if (Capacitor.getPlatform() === 'android') {
+    if (
+      Capacitor.getPlatform() === 'android' ||
+      (CONNECTION_MODE === 'V1' && Capacitor.getPlatform() === 'ios')
+    ) {
       await this.ident();
     } else {
       this.ident();
@@ -460,7 +475,10 @@ export class AcaiaScale {
   }
 
   private async notificationsReady() {
-    if (Capacitor.getPlatform() === 'android') {
+    if (
+      Capacitor.getPlatform() === 'android' ||
+      (CONNECTION_MODE === 'V1' && Capacitor.getPlatform() === 'ios')
+    ) {
       await this.initScales();
     } else {
       this.initScales();
@@ -501,7 +519,10 @@ export class AcaiaScale {
   }
 
   private async ident() {
-    if (Capacitor.getPlatform() === 'android') {
+    if (
+      Capacitor.getPlatform() === 'android' ||
+      (CONNECTION_MODE === 'V1' && Capacitor.getPlatform() === 'ios')
+    ) {
       return new Promise((resolve) => {
         this.write(encodeId(this.isPyxisStyle), true);
         setTimeout(() => {

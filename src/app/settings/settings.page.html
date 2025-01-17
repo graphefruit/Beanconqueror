@@ -779,6 +779,21 @@
               </ion-range>
             </ion-item>
 
+
+            <ion-item lines="none">
+              <ion-label>
+                <h2>{{"SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE" | translate}}</h2>
+                <p>{{"SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION" | translate}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item *ngIf="platform.is('ios')">
+              <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_acaia_connection_mode"
+                          cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
+                          okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
+                <ion-select-option value="V2">{{"SMART_SCALE_ACAIA_CONNECTION_MODE_V2" | translate}}</ion-select-option>
+                <ion-select-option value="V1">{{"SMART_SCALE_ACAIA_CONNECTION_MODE_V1" | translate}}</ion-select-option>
+              </ion-select>
+            </ion-item>
             <ion-item lines="none">
               <ion-label>
                 <h2>{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER" | translate}}</h2>
