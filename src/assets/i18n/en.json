@@ -1472,10 +1472,10 @@
     "VISUALIZER_SHOT_IMPORT_FAILED": "Visualizer shot import failed",
     "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portuguese",
     "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": "Weight doubling - 1 of 2 cups on scale",
-    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "If just one cups fits on your scale, you can enable this setting. This makes it possible that you can choose in the brew, to activate a checkbox, when you have two cups, but just one is on the scale. The weight will get when the settings is activated doubled, to behave like there would be two cups on the scale.",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "If only one cup fits on your scale, you can enable this setting. This allows you to activate a checkbox during brewing when you have two cups but only one is on the scale. When this setting is enabled, the weight will automatically double to simulate the presence of two cups on the scale.",
     "BEAN_SORT_WEIGHT_REMAINING": "Remaining weight",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia connection mode",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "If your scale keeps connecting and disconnecting, try to set the mode to V1 and change the heartbeat and the command timer, with this you'll take the old connection routine",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "If your scale keeps connecting and disconnecting, try setting the mode to V1 and adjusting the heartbeat and command timer. This will switch to the old connection routine.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - New connection mode",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Old connection mode"
 }
