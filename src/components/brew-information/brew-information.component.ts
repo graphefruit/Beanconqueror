@@ -500,7 +500,11 @@ export class BrewInformationComponent implements OnInit {
               .then(async (_dataURLSecond) => {
                 await this.uiAlert.hideLoadingSpinner();
                 setTimeout(() => {
-                  this.shareService.shareImage(_dataURLSecond);
+                  if (_dataURLSecond.length > 20) {
+                    this.shareService.shareImage(_dataURLSecond);
+                  } else {
+                    this.shareService.shareImage(_dataURL);
+                  }
                 }, 50);
               })
               .catch(async (error) => {

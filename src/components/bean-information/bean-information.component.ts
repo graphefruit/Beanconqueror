@@ -363,16 +363,20 @@ export class BeanInformationComponent implements OnInit {
     await this.uiAlert.showLoadingSpinner();
     if (this.platform.is('ios')) {
       htmlToImage
-        .toJpeg(this.cardEl.nativeElement)
+        .toPng(this.cardEl.nativeElement)
         .then((_dataURL) => {
           // On iOS we need to do this a second time, because the rendering doesn't render everything (strange thing)
           setTimeout(() => {
             htmlToImage
-              .toJpeg(this.cardEl.nativeElement)
+              .toPng(this.cardEl.nativeElement)
               .then(async (_dataURLSecond) => {
                 await this.uiAlert.hideLoadingSpinner();
                 setTimeout(() => {
-                  this.shareService.shareImage(_dataURLSecond);
+                  if (_dataURLSecond.length > 20) {
+                    this.shareService.shareImage(_dataURLSecond);
+                  } else {
+                    this.shareService.shareImage(_dataURL);
+                  }
                 }, 50);
               })
               .catch(async (error) => {
@@ -385,7 +389,7 @@ export class BeanInformationComponent implements OnInit {
         });
     } else {
       htmlToImage
-        .toJpeg(this.cardEl.nativeElement)
+        .toPng(this.cardEl.nativeElement)
         .then(async (_dataURL) => {
           await this.uiAlert.hideLoadingSpinner();
 
