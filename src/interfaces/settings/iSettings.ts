@@ -187,6 +187,8 @@ export interface ISettings {
   bluetooth_scale_first_drip_threshold: number;
   bluetooth_scale_espresso_just_one_cup: boolean;
   bluetooth_scale_acaia_connection_mode: string;
+  graph_threshold_frequency_update: boolean;
+  graph_threshold_frequency_interval: number;
 
   maximize_hide_value_cards_on_maximize_screen: boolean;
 

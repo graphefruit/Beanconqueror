@@ -807,6 +807,27 @@
                 <div class='ion-label' slot="end">{{settings.acaia_heartbeat_command_delay}} ms</div>
               </ion-range>
             </ion-item>
+
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.graph_threshold_frequency_update">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>Experimental Feature! Graph refresh interval</h2>
+                  <p>Just use this if your graph lags while streaming, this mainly is happening on old tablets / phones. If you don't have any issues, ignore this function.</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item *ngIf="settings.graph_threshold_frequency_update">
+              <div class='ion-label' style="white-space: normal;">
+                <h2>Graph frequence update interval</h2>
+                <p>Update every choosen milliseconds</p>
+              </div>
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="100" snaps="true" max="500"
+                         step="10" (ngModelChange)="saveSettings()" [(ngModel)]="settings.graph_threshold_frequency_interval">
+                <div class='ion-label'
+                     slot="end">{{settings.graph_threshold_frequency_interval| toFixed: 0}}</div>
+              </ion-range>
+            </ion-item>
+
             <ion-item>
               <ion-checkbox label-placement='start' (ionChange)="toggleLog();" [(ngModel)]="settings.scale_log">
                 <div class="ion-label" style="white-space: normal;">
