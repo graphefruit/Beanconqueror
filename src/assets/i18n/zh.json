@@ -1354,64 +1354,6 @@
     "PAGE_SETTINGS_LANGUAGE_DUTCH": "荷兰语",
     "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "下载导入模板",
     "SHOW_GRAPH": "显示图表",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.5.0": {
-            "DESCRIPTION": {
-                "27": "修复冷冻豆子的计算以解决舍入问题",
-                "28": "代码中的一些技术修改",
-                "29": "小调整"
-            }
-        },
-        "8.0.0": {
-            "TITLE": "版本8.0.0：新增内容",
-            "DESCRIPTION": [
-                "<b>APP层级<\/b>",
-                "APP层已经更改（从Cordova更改为Capacitor），如果遇到任何问题，请联系：info@beanconqueror.com",
-                "随之而来的是做了很多性能调整",
-                "在此，我要非常感谢RagingCactus，它在提升应用程序方面做了非常出色的工作！",
-              "",
-                "<b>新语言<\/b>",
-                "支持挪威语-非常感谢Mehlonious",
-              "",
-                "<b>蓝牙设备<\/b>",
-                "新的支持 Varia AKU Pro和Micro",
-                "支持另一个 Eureka 咖啡秤",
-                "将显示一个新的弹出窗口，其中可以选择蓝牙设备，而不是第一个发现已连接的设备",
-                "修复不同的连接和重量传输问题与Acaia秤-大感谢Mimoja",
-                "删除禁用异常 \/负值设置 - 如果需要，请使用当前的重量解决方案",
-                "为压力传感器增加了低功耗模式（重量只是在添加冲泡屏幕和浓缩咖啡类型中传输）",
-              "",
-                "<b>Visualizer<\/b>",
-                "从Visualizer导入一个Beanconqueror图形（您需要一个蓝牙设备）",
-              "",
-                "<b>NFC\/二维码<\/b>",
-                "使用预定义的操作为豆子创建和读取NFC或二维码",
-              "",
-                "<b>冲煮<\/b>",
-                "添加了冲煮的排序",
-                "增加了咖啡类型的自动补全",
-                "为最佳的冲煮和最喜欢的冲煮做了分界",
-              "",
-                "<b>豆子<\/b>",
-                "扩展豆子的排序",
-                "在激活参数时设置豆子的开启日期",
-              "",
-                "<b>设置<\/b>",
-                "您可以在最大化屏幕上隐藏值卡",
-                "",
-                "[ANDROID]<b>安卓<\/b>",
-                "[ANDROID]现在您可以在设置中进行完整的导出和导入",
-                "",
-                "<b>其他<\/b>",
-                "修复冷冻豆 \/烘焙豆的计算功能",
-                "修复混合图像",
-                "烘焙时不减少生豆数量",
-                "修复一些内边界和间距",
-                "代码中的一些技术修改",
-                "小调整"
-            ]
-        }
-    },
     "FULL_IMPORT_FROM_DIRECTORY": "从目录中全部导入",
     "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": "从所选目录中导入所有数据（包括所有图片和流速配置文件）。",
     "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": "在选定的目录中找不到{{fileName}}。请选择一个不同的目录。",
@@ -1468,5 +1410,12 @@
     "EXPORT_CAUTION_IOS": "iOS：如果你想设置一部新手机，最好和最简单的方法是使用iCloud备份",
     "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": "挪威语",
     "VISUALIZER_SHOT_IMPORT_FAILED": "Visualizer冲煮记录导入失败",
-    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "葡萄牙语"
+    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "葡萄牙语",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": "重量加倍-秤上2杯中的1杯",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "如果你的秤上只有一个杯子，你可以启用这个设置。这允许你在冲泡过程中激活一个复选框，当你有两个杯子，但只有一个在秤上。当启用此设置时，重量将自动加倍，以模拟秤上存在两个杯子。",
+    "BEAN_SORT_WEIGHT_REMAINING": "剩余的重量",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia连接方式",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "如果您的秤保持连接和断开，请尝试将模式设置为V1并调整心跳和命令计时器。这将切换到旧的连接例程。",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2—新的连接方式",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 -旧连接方式"
 }
