@@ -1071,13 +1071,13 @@
             "SELECT_MODE": "Modus auswählen",
             "MODE_LISTENING": "Hören",
             "MODE_CONTROL": "Steuern",
-            "MANUAL_CONTROLLING": "",
-            "PROFILE_P1_CONTROLLING": "",
-            "PROFILE_P2_CONTROLLING": "",
-            "PROFILE_P3_CONTROLLING": "",
-            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
-            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": ""
+            "MANUAL_CONTROLLING": "Manuelle Kontrolle",
+            "PROFILE_P1_CONTROLLING": "Profil P1-Steuerung",
+            "PROFILE_P2_CONTROLLING": "Profil P2-Steuerung",
+            "PROFILE_P3_CONTROLLING": "Profil P3-Steuerung",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "Du hast kein Zielgewicht festgelegt, das gewählte Profil wird vollständig ausgeführt.",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "Du hast kein Zielgewicht festgelegt, bitte stoppe die Extraktion manuell.",
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Sanremo YOU Maschine konnte nicht hergestellt werden. Bitte stelle sicher, dass du im richtigen Netzwerk (LAN) bist, die richtige IP-Adresse eingegeben hast, usw."
         }
     },
     "DEVICE_CONNECTION": "Geräteverbindung",
@@ -1354,64 +1354,6 @@
     "PAGE_SETTINGS_LANGUAGE_DUTCH": "Holländisch",
     "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Importvorlagen herunterladen",
     "SHOW_GRAPH": "Graph anzeigen",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.5.0": {
-            "DESCRIPTION": {
-                "27": "Korrektur der Berechnung von gefrorenen Bohnen - Behebung von Rundungsproblemen",
-                "28": "Einige technische Änderungen im Code",
-                "29": "Kleine Optimierungen"
-            }
-        },
-        "8.0.0": {
-            "TITLE": "Version 8.0.0: Das ist neu",
-            "DESCRIPTION": [
-                "<b>App-Schicht<\/b>",
-                "Die App-Schicht wurde geändert (von Cordova zu Capacitor), bei Problemen bitte info@beanconqueror.com kontaktieren",
-                "Damit einhergehend wurden viele Leistungsoptimierungen vorgenommen",
-                "Ich möchte hier ein großes Dankeschön an RagingCactus aussprechen, der eine phänomenale Arbeit geleistet hat!",
-                "",
-                "<b>Neue Sprache<\/b>",
-                "Norwegische Unterstützung - Dank an Mehlonious",
-                "",
-                "<b>Bluetooth-Geräte<\/b>",
-                "Neue Unterstützung für Varia AKU Pro & Micro",
-                "Neue Unterstützung für eine weitere eureka-typisierte Waage",
-                "Ein neues Popup wird angezeigt, in dem das Bluetooth-Gerät ausgewählt werden kann, anstatt dass das zuerst gefundene verbunden wird.",
-                "Behebung verschiedener Verbindungs- und Gewichtstransferprobleme mit Acaia-Waagen - Danke an Mimoja",
-                "Entfernung der Deaktivierung der Anomalie- \/ Negativwert-Einstellung - Bitte verwende die Lösung zum Ignorieren des aktuellen Gewichts, falls erforderlich",
-                "Hinzufügen eines Energiesparmodus für Drucksensoren (Gewicht wird nur übertragen, wenn sich der Bildschirm im Brühung-Hinzufügen\/Editieren Modus befindet und der Typ Espresso ist)",
-                "",
-                "<b>Visualizer<\/b>",
-                "Importiere ein Beanconqueror-Diagramm aus Visualizer (Bluetooth-Gerät benötigt)",
-                "",
-                "<b>NFC\/QR-Code<\/b>",
-                "Erstellen und Lesen von NFC-Tags oder QR-Codes für Bohnen mit vordefinierten Aktionen",
-                "",
-                "<b>Brühungen<\/b>",
-                "Sortierung für Brühungen hinzugefügt",
-                "Autovervollständigung für Kaffeesorte hinzugefügt",
-                "Rahmen für Beste oder Favorit Brühung hinzugefügt",
-                "",
-                "<b>Bohnen<\/b>",
-                "Erweiterte Sortierung für Bohnen",
-                "Das Öffnungsdatum für eine Bohne wird festgelegt, wenn der Parameter aktiviert ist.",
-                "",
-                "<b>Einstellungen<\/b>",
-                "Sie können die Wertkarten auf dem maximierten Bildschirm ausblenden",
-                "",
-                "[ANDROID]<b>Android<\/b>",
-                "[ANDROID]In den Einstellungen kann jetzt sowohl einen vollständigen Export als auch einen Import durchgeführt werden",
-                "",
-                "<b>Sonstiges<\/b>",
-                "Korrektur der Berechnungsfunktionen für gefrorene Bohnen \/ geröstete Bohnen",
-                "Reparieren von vertauschten Bildern",
-                "Das Gewicht der Rohbohnen wird nun beim Rösten reduziert",
-                "Einige Abstände und Sicherheitsabstände korrigiert",
-                "Einige technische Änderungen im Code",
-                "Kleine Anpassungen"
-            ]
-        }
-    },
     "FULL_IMPORT_FROM_DIRECTORY": "Vollständiger Import aus Ordner",
     "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": "Importiert alle Daten (inklusive Bilder und Flow-Profile) aus dem ausgewählten Ordner.",
     "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": "Die Datei {{fileName}} konnte im ausgewählten Ordner nicht gefunden werden. Bitte wähle einen anderen Ordner.",
@@ -1447,7 +1389,7 @@
     "NFC": {
         "PLEASE_ENABLED_NFC_DESCRIPTION": "Bitte aktivieren Sie NFC, sonst kann diese Funktion nicht genutzt werden",
         "WRITE_COMPLETED_DESCRIPTION": "NFC-Tag wurde erfolgreich geschrieben",
-        "WRITE_COMPLETED_TITLE": "Schreiben erfolgreich",
+        "WRITE_COMPLETED_TITLE": "Schreiben fehlgeschlagen",
         "WRITE_UNCOMPLETED_DESCRIPTION": "NFC-Tag konnte nicht geschrieben werden",
         "WRITE_UNCOMPLETED_TITLE": "Schreiben fehlgeschlagen",
         "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": "Bitte halten Sie Ihren Anhänger an das Lesegerät",
@@ -1468,5 +1410,12 @@
     "EXPORT_CAUTION_IOS": "iOS: Wenn Sie ein neues Telefon einrichten möchten, ist der beste und einfachste Weg die Verwendung der iCloud-Sicherung",
     "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": "Norwegisch",
     "VISUALIZER_SHOT_IMPORT_FAILED": "Visualizer importierung fehlgeschlagen",
-    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": ""
+    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portugiesisch",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": "Gewichtsverdopplung - 1 von 2 Tassen auf der Waage",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "Wenn nur eine Tasse auf die Waage passt, kann diese Einstellung aktiviert werden.\nDies erlaubt, dass während der Brühung ein Kontrollkästchen aktiviert werden kann, dass nur eine Tasse auf der Waage steht.\nWenn diese Einstellung dan aktiviert wurde, wird das übertragene Gewicht der Waage verdoppelt um zwei Tassen auf der Waage zu simulieren.",
+    "BEAN_SORT_WEIGHT_REMAINING": "Verbleibendes Gewicht",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia-Verbindungsmodus",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Wenn sich die Waage ständig verbindet und trennt, versuche den Modus auf V1 zu setzen und den Herzschlag- und Befehlstimer anzupassen. Dadurch wird auf die alte Verbindungsroutine umgeschaltet.",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Neuer Verbindungsmodus",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Alter Verbindungsmodus"
 }

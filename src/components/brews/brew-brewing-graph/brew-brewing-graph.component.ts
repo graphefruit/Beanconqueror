@@ -170,6 +170,11 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public graphIconColSize: number = 2;
 
+  public espressoJustOneCup: boolean = false;
+  public graphUpdateChartTimestamp = 0;
+  public graph_threshold_frequency_update_active: boolean = false;
+  public graph_frequency_update_interval: number = 150;
+
   constructor(
     private readonly platform: Platform,
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -197,6 +202,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (this.settings.text_to_speech_active) {
       this.textToSpeech.readAndSetTTLSettings();
     }
+    this.graph_threshold_frequency_update_active =
+      this.settings.graph_threshold_frequency_update;
+    this.graph_frequency_update_interval =
+      this.settings.graph_threshold_frequency_interval;
   }
 
   public async instance() {
@@ -1101,6 +1110,18 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public updateChart(_type: string = 'weight') {
+    /**
+     * This solution is specially for very poor performing devices.
+     */
+    if (this.graph_threshold_frequency_update_active === true) {
+      if (
+        Date.now() - this.graphUpdateChartTimestamp <
+        this.graph_frequency_update_interval
+      ) {
+        return;
+      }
+      this.graphUpdateChartTimestamp = Date.now();
+    }
     this.ngZone.runOutsideAngular(() => {
       try {
         const xData = [[]];
@@ -2215,6 +2236,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.deattachToFlowChange();
 
       let didWeReceiveAnyFlow: boolean = false;
+
       this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
         this.setActualSmartInformation();
         didWeReceiveAnyFlow = true;
@@ -2741,7 +2763,19 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
+      let oneEspressoCup: boolean = false;
+      if (
+        this.espressoJustOneCup === true &&
+        this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO
+      ) {
+        oneEspressoCup = true;
+      }
+
       this.scaleFlowSubscription = scale.flowChange.subscribe((_valChange) => {
+        if (oneEspressoCup === true) {
+          _valChange.actual = _valChange.actual * 2;
+        }
         let _val;
         if (this.ignoreScaleWeight === false) {
           _val = this.mutateWeightAndSeeAnomalys(
@@ -3298,7 +3332,8 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.flowProfileArrObjs = [];
       this.flowProfileArrCalculated = [];
 
-      this.updateChart();
+      /**We exclude the chart update because its update below aswell, after we've removed the ignore anomaly function**/
+      //this.updateChart();
     }
 
     this.flowProfileArr.push(weight);

@@ -755,6 +755,16 @@
               </ion-range>
             </ion-item>
 
+            <ion-item [lines]="'full'">
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_espresso_just_one_cup">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE" | translate}}</h2>
+                  <p>{{"SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+
             <ion-item lines="none">
               <ion-label>
                 <h2>{{"SMART_SCALE_COMMAND_DELAY" | translate}}</h2>
@@ -769,6 +779,21 @@
               </ion-range>
             </ion-item>
 
+
+            <ion-item lines="none">
+              <ion-label>
+                <h2>{{"SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE" | translate}}</h2>
+                <p>{{"SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION" | translate}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item *ngIf="platform.is('ios')">
+              <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_acaia_connection_mode"
+                          cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
+                          okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
+                <ion-select-option value="V2">{{"SMART_SCALE_ACAIA_CONNECTION_MODE_V2" | translate}}</ion-select-option>
+                <ion-select-option value="V1">{{"SMART_SCALE_ACAIA_CONNECTION_MODE_V1" | translate}}</ion-select-option>
+              </ion-select>
+            </ion-item>
             <ion-item lines="none">
               <ion-label>
                 <h2>{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER" | translate}}</h2>
@@ -782,6 +807,27 @@
                 <div class='ion-label' slot="end">{{settings.acaia_heartbeat_command_delay}} ms</div>
               </ion-range>
             </ion-item>
+
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.graph_threshold_frequency_update">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>Experimental Feature: Graph Update Interval</h2>
+                  <p>Use this only if your graph lags while streaming, which mainly occurs on older tablets or phones. If you're not experiencing any issues, you can ignore this function.</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item *ngIf="settings.graph_threshold_frequency_update">
+              <div class='ion-label' style="white-space: normal;">
+                <h2>Graph Update Frequency Interval</h2>
+                <p>Refresh at the selected millisecond interval</p>
+              </div>
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="100" snaps="true" max="500"
+                         step="10" (ngModelChange)="saveSettings()" [(ngModel)]="settings.graph_threshold_frequency_interval">
+                <div class='ion-label'
+                     slot="end">{{settings.graph_threshold_frequency_interval| toFixed: 0}}</div>
+              </ion-range>
+            </ion-item>
+
             <ion-item>
               <ion-checkbox label-placement='start' (ionChange)="toggleLog();" [(ngModel)]="settings.scale_log">
                 <div class="ion-label" style="white-space: normal;">
