@@ -1354,64 +1354,6 @@
     "PAGE_SETTINGS_LANGUAGE_DUTCH": "Neerlandés",
     "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Descargar plantilla Excel para importar datos",
     "SHOW_GRAPH": "Mostrar gráfica",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.5.0": {
-            "DESCRIPTION": {
-                "27": "Solucionados errores numéricos de redondeo al congelar cafés.",
-                "28": "Cambios técnicos en el código.",
-                "29": "Pequeñas mejoras."
-            }
-        },
-        "8.0.0": {
-            "TITLE": "Versión 8.0.0: Novedades",
-            "DESCRIPTION": [
-                "<b>Cambios internos<\/b>",
-                "El código de la aplicación se ha migrado de Cordova a Capacitor. Si encuentras algún fallo, por favor contacta con info@beanconqueror.com",
-                "Gracias a este cambio se han podido realizar mejoras funcionales y de rendimiento de la aplicación.",
-                "Muchas gracias a RagingCactus por el fantástico trabajo que ha hecho con esta migración.",
-                "",
-                "<b>Nuevo idioma<\/b>",
-                "Traducción al noruego - Muchas gracias a Mehlonious.",
-                "",
-                "<b>Dispositivos Bluetooth<\/b>",
-                "Añadida compatibilidad de básculas Varia AKU Pro & Micro.",
-                "Añadida compatibilidad para otras básculas Eureka.",
-                "Ahora se muestra una ventana para elegir el dispositivo Bluetooth al que conectarse.",
-                "Solucionados problemas de conexión y transferencia de peso con básculas Acaia - Muchas gracias a Mimoja",
-                "Los ajustes de ignorar valores anómalos y pesos negativos han sido eliminados. Por favor, usa la opción de ignorar temporalmente la transferencia de peso si es necesario.",
-                "Añadido soporte BLE para sensores de presión (el peso sólo se transfiere cuando se prepara un espresso).",
-                "",
-                "<b>Visualizer<\/b>",
-                "Importa un gráfico a Beanconqueror desde Visualizer (necesitas un dispositivo bluetooth)",
-                "",
-                "<b>NFC \/ Código QR<\/b>",
-                "Crea y lee acciones predefinidas para los cafés usando etiquetas NFC o códigos QR.",
-                "",
-                "<b>Preparaciones<\/b>",
-                "Añadida opciones para ordenar las preparaciones.",
-                "Añadido autocompletado para el tipo de café.",
-                "Añadido un borde a aquellas preparaciones marcadas como mejores o favoritas.",
-                "",
-                "<b>Cafés<\/b>",
-                "Añadidas más opciones para ordenar los cafés.",
-                "La fecha de apertura de un café se establece automáticamente si se ha activado dicho parámetro.",
-                "",
-                "<b>Configuración<\/b>",
-                "Añadida la opción de ocultar todos los datos y que se muestre únicamente el gráfico a pantalla completa.",
-                "",
-                "[ANDROID]<b>Android<\/b>",
-                "[ANDROID]Ahora se pueden importar y exportar todos los datos desde el menú Configuración.",
-                "",
-                "<b>Otros<\/b>",
-                "Corregidos errores de cálculo para cafés congelados y tostados.",
-                "Corregido un error que mostraba imágenes incorrectas.",
-                "Corregido un error de cálculo de peso al tostar un café.",
-                "Arreglados algunos márgenes y espacios",
-                "Cambios técnicos en el código",
-                "Pequeños cambios"
-            ]
-        }
-    },
     "FULL_IMPORT_FROM_DIRECTORY": "Importar todo desde una carpeta",
     "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": "Importa todos los datos (incluidos fotos y gráficas) desde la carpeta seleccionada.",
     "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": "No se ha encontrado {{fileName}} en la carpeta seleccionada. Por favor, elige otra carpeta.",
@@ -1468,5 +1410,12 @@
     "EXPORT_CAUTION_IOS": "iOS: Si quieres transferir los datos a un nuevo teléfono, se recomienda usar la copia de seguridad de iCloud.",
     "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": "Noruego",
     "VISUALIZER_SHOT_IMPORT_FAILED": "Importación desde Visualizer fallida",
-    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portugués"
+    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portugués",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": "Duplicar peso - 1 de 2 tazas en la báscula",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "Puedes activar esta opción si en tu báscula sólo cabe una taza. El tamaño de la bebida se duplicará automáticamente para simular que la extracción se ha hecho con dos tazas en la báscula en vez de una sola.",
+    "BEAN_SORT_WEIGHT_REMAINING": "Cantidad restante",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia - Modo de conexión",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Si tu báscula tiene problemas de conexión, prueba a usar el modo de conexión antiguo (V1) y a cambiar el tiempo de pulso y entre comandos.",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Modo de conexión nuevo",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Modo de conexión antiguo"
 }

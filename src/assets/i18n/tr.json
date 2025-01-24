@@ -1354,64 +1354,6 @@
     "PAGE_SETTINGS_LANGUAGE_DUTCH": "Hollandaca",
     "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "İçe aktarma şablonlarını indirin",
     "SHOW_GRAPH": "Grafiği göster",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.5.0": {
-            "DESCRIPTION": {
-                "27": "Yuvarlama sorunlarını gidermek için dondurulmuş çekirdek hesaplamasının düzeltilmesi",
-                "28": "Koddaki bazı teknik değişiklikler",
-                "29": "Küçük değişiklikler"
-            }
-        },
-        "8.0.0": {
-            "TITLE": "Sürüm 8.0.0: Yenilikler neler",
-            "DESCRIPTION": [
-                "<b>Uygulama Katmanı<\/b>",
-                "Uygulama katmanı değiştirildi (Cordova'dan Capacitor'a), herhangi bir sorunla karşılaşırsanız lütfen şu adrese başvurun: info@beanconqueror.com",
-                "Bununla birlikte birçok performans iyileştirmesi yapılmıştır",
-                "Burada uygulamayı yükseltmede olağanüstü bir iş çıkaran RagingCactus'a büyük bir teşekkür etmek istiyorum!",
-                "",
-                "<b>Yeni dil<\/b>",
-                "Norveçce desteği - Mehlonious'a büyük teşekkürler",
-                "",
-                "<b>Bluetooth Cihazları<\/b>",
-                "Varia AKU Pro & Micro için yeni destek",
-                "Başka bir eureka-tipi tartı için yeni destek",
-                "Bulunan ilk bluetooth cihazı yerine bağlanılan bluetooth cihazının seçilebileceği yeni bir açılır pencere gösterilir",
-                "Acaia tartıının farklı bağlantı ve ağırlık transferi sorunlarını düzeltme - Mimoja'ya büyük teşekkürler",
-                "Anomali \/ negatif değer ayarını devre dışı bırakma - Gerekirse lütfen mevcut ağırlığı yok say çözümünü kullanın",
-                "Basınç sensörleri için düşük enerji modu ekleme (Ağırlık sadece demleme-ekleme ekranında ve espresso türünde iletilir)",
-                "",
-                "<b>Görüntüleyici<\/b>",
-                "Visualizer'dan bir Beanconqueror grafiğini içe aktarın (bir bluetooth cihazına ihtiyacınız var)",
-                "",
-                "<b>NFC\/QR-Kodu <\/b>",
-                "Önceden tanımlanmış eylemlerle çekirdekler için NFC Etiketleri veya QR Kodları oluşturun ve okuyun",
-                "",
-                "<b>Demlemeler<\/b>",
-                "Demlemeler için sıralama eklendi",
-                "Kahve türü için otomatik tamamlama eklendi",
-                "En iyi demleme \/ favori demleme için sınır eklendi",
-                "",
-                "<b>Çekirdekler<\/b>",
-                "Çekirdekler için genişletilmiş sıralama",
-                "Parametre etkinleştirildiğinde bir çekirdek için açılış tarihi ayarlanır",
-                "",
-                "<b>Ayarlar <\/b>",
-                "Büyütülmüş bir ekranda değer kartlarını gizleyebilirsiniz",
-                "",
-                "[ANDROID]<b>Android<\/b>",
-                "[ANDROID]Artık Ayarlar'da tam bir dışa aktarma ve içe aktarma yapabilirsiniz",
-                "",
-                "<b>Diğerleri<\/b>",
-                "Dondurulmuş ve kavrulmuş çekirdekler için hesaplama işlevlerinin düzeltilmesi",
-                "Karışık resimleri düzeltme",
-                "Kavurma sırasında sabit yeşil çekirdek ağırlığı azalmaz",
-                "Bazı dolguların ve boşlukların düzeltilmesi",
-                "Koddaki bazı teknik değişiklikler",
-                "Küçük değişiklikler"
-            ]
-        }
-    },
     "FULL_IMPORT_FROM_DIRECTORY": "Dizinden tam içe aktarma",
     "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": "Seçilen dizinden tüm verileri (tüm resimler ve Flow profilleri dahil) içe aktarın.",
     "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": "Seçilen dizinde {{fileName}} bulunamadı. Lütfen farklı bir dizin seçin.",
@@ -1468,5 +1410,12 @@
     "EXPORT_CAUTION_IOS": "iOS: Yeni bir telefon kurmak istiyorsanız, en iyi ve en kolay yol iCloud Yedeklemesini kullanmaktır",
     "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": "Norveççe",
     "VISUALIZER_SHOT_IMPORT_FAILED": "Görüntüleyici shot'ı içe aktarma başarısız oldu",
-    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portekizce"
+    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Portekizce",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": "Ağırlık ikiye katlanıyor - tartıda 2 fincandan 1'i",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "Terazinize yalnızca bir fincan sığıyorsa, bu ayarı etkinleştirebilirsiniz. Bu, demleme sırasında iki fincanınız olduğunda ancak terazide yalnızca bir fincan bulunduğunda bir onay kutusunu etkinleştirmenizi sağlar. Bu ayar etkinleştirildiğinde, tartıda iki fincanın varlığını simüle etmek için ağırlık otomatik olarak iki katına çıkacaktır.",
+    "BEAN_SORT_WEIGHT_REMAINING": "Kalan ağırlık",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia bağlantı modu",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Tartınız sürekli olarak bağlanıyor ve bağlantısı kesiliyorsa, modu V1 olarak ayarlamayı ve kalp atışı ile komut zamanlayıcısını ayarlamayı deneyin. Bu, eski bağlantı rutinine geçecektir.",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Yeni bağlantı modu",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Eski bağlantı modu"
 }
