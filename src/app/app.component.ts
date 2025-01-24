@@ -845,6 +845,7 @@ export class AppComponent implements AfterViewInit {
   private __attachOnDeviceResume() {
     App.addListener('resume', async () => {
       this.uiHelper.setActualAppState(true);
+      this.uiLog.log('App resumed');
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (settings.bluetooth_scale_stay_connected === false) {
         this.__connectSmartScale();
