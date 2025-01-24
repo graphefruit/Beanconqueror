@@ -1354,64 +1354,6 @@
     "PAGE_SETTINGS_LANGUAGE_DUTCH": "Nederlands",
     "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Scarica i template di importazione",
     "SHOW_GRAPH": "Mostra grafico",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.5.0": {
-            "DESCRIPTION": {
-                "27": "Correzione del calcolo sui caffè congelati (problemi di arrotondamento)",
-                "28": "Piccole migliorie nel codice",
-                "29": "Migliorie minori"
-            }
-        },
-        "8.0.0": {
-            "TITLE": "Versione 8.0.0: Novità",
-            "DESCRIPTION": [
-                "<b>Stack applicativo<\/b>",
-                "Lo stack dell'app è stato migrato (da Cordova a Capacitor), se si riscontrano problemi, si prega di contattare: info@beanconqueror.com",
-                "Questo ha portato a molte migliorie di performance dell'app",
-                "Voglio ringraziare di cuore RagingCactus, che ha fatto un lavoro fenomenale per l'update dell'applicazione!",
-                "",
-                "<b>Nuova lingua<\/b>",
-                "Aggiunta lingua norvegese - Un grande ringraziamento a Mehlonious",
-                "",
-                "<b>Dispositivi Bluetooth<\/b>",
-                "Nuovo supporto per Varia AKU Pro e Micro",
-                "Aggiunto supporto per bilance Eureka",
-                "Viene visualizzata una nuova finestra di dialogo, in cui è possibile scegliere il dispositivo Bluetooth",
-                "Correzione di diversi problemi di connessione e trasferimento di peso con le bilance Acaia - Un grande ringraziamento a Mimoja",
-                "Rimozione dell'impostazione per aggirare le anomalie di peso con valore negativo - Preferire l'uso di \"Ignorare il peso in trasmissione\" come alternativa.",
-                "Aggiunta della modalità risparmio energetico per i sensori di pressione (i valori vengono trasmessi solo in una nuova preparazione di tipo espresso)",
-                "",
-                "<b>Visualizer<\/b>",
-                "Importare un grafico Beanconqueror da Visualizer (è necessario un dispositivo Bluetooth)",
-                "",
-                "<b>Codice NFC\/QR<\/b>",
-                "Crea e leggi tag NFC o codici QR con azioni predefinite per i tuoi caffè",
-                "",
-                "<b>Preparazioni<\/b>",
-                "Aggiunto l'ordinamento per le preparazioni",
-                "Aggiunto il completamento automatico per il tipo di caffè",
-                "Ora la preparazione migliore \/ preferita ha un bordo che la evidenzia all'interno della lista",
-                "",
-                "<b>Caffè<\/b>",
-                "Ordinamento caffè esteso ",
-                "È possibile impostare la data di apertura di un caffè",
-                "",
-                "<b>Impostazioni<\/b>",
-                "È possibile nascondere i valore su una schermata massimizzata",
-                "",
-                "[ANDROID]<b>Android<\/b>",
-                "[ANDROID]Ora puoi eseguire un'esportazione completa e anche un'importazione nelle Impostazioni",
-                "",
-                "<b>Altro<\/b>",
-                "Correzione delle funzioni di calcolo per i caffè congelati e tostati",
-                "Corretto l'ordine delle immagini",
-                "Il peso del verde si riduce con la tostatura",
-                "Correzione grafiche minori",
-                "Piccole migliorie nel codice",
-                "Migliorie minori"
-            ]
-        }
-    },
     "FULL_IMPORT_FROM_DIRECTORY": "Importazione completa da cartella",
     "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": "Importa tutti i dati (comprensivi di immagini e grafici) dalla cartella selezionata.",
     "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": "Impossibile trovare {{fileName}} nella cartella selezionata. Scegliere un'altra cartella.",
@@ -1468,5 +1410,12 @@
     "EXPORT_CAUTION_IOS": "iOS: se vuoi configurare un nuovo dispositivo, il modo migliore e più semplice è utilizzare il backup iCloud",
     "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": "Norsk",
     "VISUALIZER_SHOT_IMPORT_FAILED": "Importazione in Visualizer fallita",
-    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Português"
+    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": "Português",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": "Raddoppio del peso - 1 su 2 tazze sulla bilancia",
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": "Puoi abilitare una casella di controllo per indicare che solo una delle due tazze è sulla bilancia (ad esempio se non c'è spazio a sufficienza). Quando questa impostazione è abilitata, il peso raddoppierà automaticamente per simulare la presenza di due tazze sulla bilancia.",
+    "BEAN_SORT_WEIGHT_REMAINING": "Peso rimanente",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Modalità di connessione per Acaia",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Se la bilancia continua a connettersi e disconnettersi, prova a tornare alla versione precedente impostando la modalità V1. Ricordati di regolare l'heartbeat e il timer dei comandi.",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Nuova modalità di connessione",
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Vecchia modalità di connessione"
 }
