@@ -6,6 +6,7 @@ import { ScaleType } from './index';
 declare var ble: any;
 export class VariaAkuScale extends BluetoothScale {
   public static DEVICE_NAME = 'varia aku';
+  public static DEVICE_NAME_SECOND = 'aku mini';
   public static SERVICE_UUID = 'FFF0';
   public static CHAR_UUID = 'FFF1';
   public static CMD_UUID = 'FFF2';
@@ -30,7 +31,8 @@ export class VariaAkuScale extends BluetoothScale {
     return (
       device &&
       device.name &&
-      device.name.toLowerCase().includes(this.DEVICE_NAME)
+      (device.name.toLowerCase().includes(this.DEVICE_NAME) ||
+        device.name.toLowerCase().includes(this.DEVICE_NAME_SECOND))
     );
   }
 
@@ -88,7 +90,7 @@ export class VariaAkuScale extends BluetoothScale {
       VariaAkuScale.CMD_UUID,
       new Uint8Array(_bytes).buffer,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 
@@ -100,7 +102,7 @@ export class VariaAkuScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -122,7 +124,7 @@ export class VariaAkuScale extends BluetoothScale {
       VariaAkuScale.SERVICE_UUID,
       VariaAkuScale.CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }
