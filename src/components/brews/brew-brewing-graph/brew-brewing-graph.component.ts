@@ -1647,10 +1647,11 @@ export class BrewBrewingGraphComponent implements OnInit {
                 actual: shotData.pressure,
                 old: shotData.pressure,
               });
-              this.__setTemperatureFlow({
+
+              /** this.__setTemperatureFlow({
                 actual: shotData.temperature,
                 old: shotData.temperature,
-              });
+              });**/
 
               this.__setFlowProfile({
                 actual: shotData.weight,
@@ -2191,6 +2192,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (this.scaleFlowSecondSubscription) {
       this.scaleFlowSecondSubscription.unsubscribe();
       this.scaleFlowSecondSubscription = undefined;
+    }
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      scale.setDoubleWeight(false);
     }
   }
 
@@ -2763,19 +2768,17 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      let oneEspressoCup: boolean = false;
       if (
         this.espressoJustOneCup === true &&
         this.data.getPreparation().style_type ===
           PREPARATION_STYLE_TYPE.ESPRESSO
       ) {
-        oneEspressoCup = true;
+        scale.setDoubleWeight(true);
+      } else {
+        scale.setDoubleWeight(false);
       }
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_valChange) => {
-        if (oneEspressoCup === true) {
-          _valChange.actual = _valChange.actual * 2;
-        }
         let _val;
         if (this.ignoreScaleWeight === false) {
           _val = this.mutateWeightAndSeeAnomalys(

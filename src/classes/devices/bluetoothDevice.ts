@@ -54,6 +54,7 @@ export class BluetoothScale {
   protected blueToothParentlogger: Logger;
   private scaleType = undefined;
 
+  private doubleWeight: boolean = false;
   constructor(data: PeripheralData, type: ScaleType) {
     this.device_id = data.id;
     this.supportsTaring = true;
@@ -80,6 +81,10 @@ export class BluetoothScale {
   }
   public getSecondWeight(): number {
     return 0;
+  }
+
+  public setDoubleWeight(_doubleIt: boolean) {
+    this.doubleWeight = _doubleIt;
   }
 
   public resetSmoothedValue() {
@@ -109,26 +114,33 @@ export class BluetoothScale {
     // Each value effect the current weight bei 10%.
     // (A3 * 03 + b2 * 0.7)
     //  Actual value * 03 + smoothed value * 0.7
-
-    this.weight.notMutatedWeight = _newWeight;
+    let newWeight = _newWeight;
+    this.weight.notMutatedWeight = newWeight;
 
     this.blueToothParentlogger.log(
-      'Bluetooth Scale - New weight recieved ' + _newWeight
+      'Bluetooth Scale - New weight recieved ' + newWeight,
     );
+
+    if (this.doubleWeight) {
+      newWeight = newWeight * 2;
+      this.blueToothParentlogger.log(
+        'Bluetooth Scale - Weight doubled' + newWeight,
+      );
+    }
 
     this.weight.oldSmoothed = this.weight.smoothed;
     this.weight.smoothed = this.calculateSmoothedWeight(
-      _newWeight,
-      this.weight.smoothed
+      newWeight,
+      this.weight.smoothed,
     );
 
     // We passed every shake change, seems like everything correct, set the new weight.
-    this.weight.actual = _newWeight;
+    this.weight.actual = newWeight;
 
     try {
       this.blueToothParentlogger.log(
         'Bluetooth Scale - Are weight subscriptions existing? ' +
-          this.weightChange?.observers?.length
+          this.weightChange?.observers?.length,
       );
     } catch (ex) {}
     this.weightChange.emit({
@@ -140,12 +152,12 @@ export class BluetoothScale {
       notMutatedWeight: this.weight.notMutatedWeight,
     });
     this.triggerFlow(_stableWeight);
-    this.weight.old = _newWeight;
+    this.weight.old = newWeight;
   }
 
   protected setSecondWeight(
     _newWeight: number,
-    _stableWeight: boolean = false
+    _stableWeight: boolean = false,
   ) {
     // Allow negative weight
     // Each value effect the current weight bei 10%.
@@ -155,13 +167,13 @@ export class BluetoothScale {
     this.secondWeight.notMutatedWeight = _newWeight;
 
     this.blueToothParentlogger.log(
-      'Bluetooth Scale - New weight recieved ' + _newWeight
+      'Bluetooth Scale - New weight recieved ' + _newWeight,
     );
 
     this.secondWeight.oldSmoothed = this.secondWeight.smoothed;
     this.secondWeight.smoothed = this.calculateSmoothedWeight(
       _newWeight,
-      this.secondWeight.smoothed
+      this.secondWeight.smoothed,
     );
 
     // We passed every shake change, seems like everything correct, set the new weight.
@@ -170,7 +182,7 @@ export class BluetoothScale {
     try {
       this.blueToothParentlogger.log(
         'Bluetooth Scale - Are weight subscriptions existing? ' +
-          this.weightSecondChange?.observers?.length
+          this.weightSecondChange?.observers?.length,
       );
     } catch (ex) {}
     this.weightSecondChange.emit({
@@ -186,7 +198,7 @@ export class BluetoothScale {
   }
   protected calculateSmoothedWeight(
     _actualWeight: number,
-    _smoothedWeight: number
+    _smoothedWeight: number,
   ): number {
     return _actualWeight * 0.3 + _smoothedWeight * 0.7;
   }
@@ -197,7 +209,7 @@ export class BluetoothScale {
     try {
       this.blueToothParentlogger.log(
         'Bluetooth Scale - Are flow subscriptions existing? ' +
-          this.flowChange?.observers?.length
+          this.flowChange?.observers?.length,
       );
     } catch (ex) {}
     this.flowChange.emit({
@@ -217,7 +229,7 @@ export class BluetoothScale {
     try {
       this.blueToothParentlogger.log(
         'Bluetooth Scale - Are flow second subscriptions existing? ' +
-          this.flowSecondChange?.observers?.length
+          this.flowSecondChange?.observers?.length,
       );
     } catch (ex) {}
     this.flowSecondChange.emit({

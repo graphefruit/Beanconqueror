@@ -67,6 +67,19 @@
       flex-direction: column;
       min-height:50px;
       height:50px;
+      font-weight:bold;
+      .smartScaleRatio {
+        font-size:16px;
+      }
+    }
+    @media (min-width: 750px) and (min-height: 750px) {
+      ion-card-header {
+        height:90px;
+        font-size:30px;
+        .smartScaleRatio {
+          font-size:30px;
+        }
+      }
     }
     @media (max-width: 480px) {
       ion-card-header {

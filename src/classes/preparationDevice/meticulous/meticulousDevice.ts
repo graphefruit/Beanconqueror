@@ -68,22 +68,25 @@ export class MeticulousDevice extends PreparationDevice {
       pressureFlow.old_pressure = 0;
       newBrewFlow.pressureFlow.push(pressureFlow);
 
-      const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
+      /**const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
       temperatureFlow.timestamp = timestamp;
       temperatureFlow.brew_time = '';
       temperatureFlow.actual_temperature = shotEntry.temperature;
       temperatureFlow.old_temperature = 0;
-      newBrewFlow.temperatureFlow.push(temperatureFlow);
+      newBrewFlow.temperatureFlow.push(temperatureFlow);**/
     }
     return newBrewFlow;
   }
 
-  constructor(protected httpClient: HttpClient, _preparation: Preparation) {
+  constructor(
+    protected httpClient: HttpClient,
+    _preparation: Preparation,
+  ) {
     super(httpClient, _preparation);
     this.meticulousShotData = undefined;
     this.metApi = new Api(
       undefined,
-      _preparation.connectedPreparationDevice.url
+      _preparation.connectedPreparationDevice.url,
     );
     this.serverURL = _preparation.connectedPreparationDevice.url;
 
@@ -104,13 +107,13 @@ export class MeticulousDevice extends PreparationDevice {
             sort: 'desc',
             max_results: 20,
           },
-          httpOptions
+          httpOptions,
         )
         .pipe(
           timeout(10000),
           catchError((e) => {
             return of(null);
-          })
+          }),
         )
         .toPromise()
         .then(
@@ -123,7 +126,7 @@ export class MeticulousDevice extends PreparationDevice {
           (error) => {
             console.log(error);
             reject();
-          }
+          },
         )
         .catch((error) => {
           console.log(error);
@@ -231,9 +234,9 @@ export class MeticulousDevice extends PreparationDevice {
     return this.meticulousShotData.pressure;
   }
 
-  public getTemperature() {
+  /** public getTemperature() {
     return this.meticulousShotData.temperature;
-  }
+  }**/
 
   public getWeight() {
     return this.meticulousShotData.weight;
@@ -294,7 +297,7 @@ export class MeticulousDevice extends PreparationDevice {
           currentShotData.weight = data.sensors.w;
           currentShotData.pressure = data.sensors.p;
           currentShotData.shotTime = data.time;
-          currentShotData.temperature = data.sensors.t;
+          //currentShotData.temperature = data.sensors.t;
           currentShotData.extracting = data.extracting;
 
           this.meticulousShotData = currentShotData;
@@ -304,7 +307,7 @@ export class MeticulousDevice extends PreparationDevice {
           this.meticulousShotData.setWeight(data.sensors.w);
           this.meticulousShotData.pressure = data.sensors.p;
           this.meticulousShotData.shotTime = data.time;
-          this.meticulousShotData.temperature = data.sensors.t;
+          //this.meticulousShotData.temperature = data.sensors.t;
           this.meticulousShotData.extracting = data.extracting;
         }
       });
