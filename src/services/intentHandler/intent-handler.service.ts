@@ -196,7 +196,7 @@ export class IntentHandlerService {
     );
     this.visualizerService.importShotWithSharedCode(_shareCode);
   }
-  private async addBeanFromServer(_qrCodeId: string) {
+  public async addBeanFromServer(_qrCodeId: string) {
     this.uiLog.log('Load bean information from server: ' + _qrCodeId);
 
     try {

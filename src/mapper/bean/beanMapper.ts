@@ -1,19 +1,16 @@
-import {ServerBean} from '../../models/bean/serverBean';
-import {Bean} from '../../classes/bean/bean';
-import {BEAN_MIX_ENUM} from '../../enums/beans/mix';
-import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
-import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
-import {UIFileHelper} from '../../services/uiFileHelper';
-import {IAttachment} from '../../interfaces/server/iAttachment';
-import {ROASTS_ENUM} from '../../enums/beans/roasts';
+import { ServerBean } from '../../models/bean/serverBean';
+import { Bean } from '../../classes/bean/bean';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { IAttachment } from '../../interfaces/server/iAttachment';
+import { ROASTS_ENUM } from '../../enums/beans/roasts';
 
 export class BeanMapper {
+  constructor() {}
 
-  constructor() {
-
-  }
-
-  public async mapSharedUserBean(_userSharedBean: any): Promise<Bean>  {
+  public async mapSharedUserBean(_userSharedBean: any): Promise<Bean> {
     return new Promise<Bean>(async (resolve, reject) => {
       try {
         const newBean: Bean = new Bean();
@@ -29,20 +26,22 @@ export class BeanMapper {
         newBean.decaffeinated = _userSharedBean.decaffeinated;
         newBean.ean_article_number = _userSharedBean.ean_article_number;
         newBean.note = _userSharedBean.note;
-        if ( _userSharedBean.roastingDate !== null &&  _userSharedBean.roastingDate !== ''){
+        if (
+          _userSharedBean.roastingDate !== null &&
+          _userSharedBean.roastingDate !== ''
+        ) {
           newBean.roastingDate = _userSharedBean.roastingDate;
         }
         newBean.url = _userSharedBean.url;
 
-        newBean.beanMix =  _userSharedBean.beanMix;
+        newBean.beanMix = _userSharedBean.beanMix;
         newBean.roast = _userSharedBean.roast;
 
-        if (newBean.roast === 'CUSTOM_ROAST' as ROASTS_ENUM.CUSTOM_ROAST) {
+        if (newBean.roast === ('CUSTOM_ROAST' as ROASTS_ENUM.CUSTOM_ROAST)) {
           newBean.roast_custom = _userSharedBean.roast_custom;
         }
 
-
-        newBean.bean_roasting_type  = _userSharedBean.bean_roasting_type;
+        newBean.bean_roasting_type = _userSharedBean.bean_roasting_type;
 
         for (const information of _userSharedBean.bean_information) {
           const iInformation = {} as IBeanInformation;
@@ -63,18 +62,15 @@ export class BeanMapper {
 
         newBean.shared = true;
         resolve(newBean);
-
-      }
-      catch(ex) {
+      } catch (ex) {
         resolve(null);
       }
-
     });
   }
 
-
-
-  public async mapServerToClientBean(_serverResponse: ServerBean): Promise<Bean> {
+  public async mapServerToClientBean(
+    _serverResponse: ServerBean,
+  ): Promise<Bean> {
     return new Promise<Bean>(async (resolve, reject) => {
       try {
         const newBean: Bean = new Bean();
@@ -90,7 +86,14 @@ export class BeanMapper {
         newBean.decaffeinated = _serverResponse.decaffeinated;
         newBean.ean_article_number = _serverResponse.ean_article_number;
         newBean.note = _serverResponse.note;
-        if ( _serverResponse.roastingDate !== null &&  _serverResponse.roastingDate !== ''){
+
+        if ('co2e_kg' in _serverResponse) {
+          newBean.co2e_kg = _serverResponse.co2e_kg;
+        }
+        if (
+          _serverResponse.roastingDate !== null &&
+          _serverResponse.roastingDate !== ''
+        ) {
           newBean.roastingDate = _serverResponse.roastingDate;
         }
         newBean.url = _serverResponse.url;
@@ -101,9 +104,8 @@ export class BeanMapper {
           2: 'BLEND' as BEAN_MIX_ENUM,
         }[_serverResponse.beanMix];
 
-
         newBean.roast = {
-          0:'UNKNOWN' as ROASTS_ENUM,
+          0: 'UNKNOWN' as ROASTS_ENUM,
           1: 'CINNAMON_ROAST' as ROASTS_ENUM,
           2: 'AMERICAN_ROAST' as ROASTS_ENUM,
           3: 'NEW_ENGLAND_ROAST' as ROASTS_ENUM,
@@ -122,7 +124,6 @@ export class BeanMapper {
         if (newBean.roast === ROASTS_ENUM.CUSTOM_ROAST) {
           newBean.roast_custom = _serverResponse.roast_custom;
         }
-
 
         newBean.bean_roasting_type = {
           0: 'FILTER' as BEAN_ROASTING_TYPE_ENUM,
@@ -149,27 +150,26 @@ export class BeanMapper {
         }
 
         resolve(newBean);
-
-      }
-      catch(ex) {
+      } catch (ex) {
         resolve(null);
       }
-
     });
   }
 
-  public async downloadAndAttachAttachments(_bean: Bean, attachments: Array<IAttachment>) {
+  public async downloadAndAttachAttachments(
+    _bean: Bean,
+    attachments: Array<IAttachment>,
+  ) {
     try {
       const uiFileHelper: UIFileHelper = UIFileHelper.getInstance();
       for (const attachment of attachments) {
-
-        const entry: string = await uiFileHelper.downloadExternalFile(attachment.uri, undefined, attachment.extension);
+        const entry: string = await uiFileHelper.downloadExternalFile(
+          attachment.uri,
+          undefined,
+          attachment.extension,
+        );
         _bean.attachments.push(entry);
-
       }
-    }
-    catch(ex) {
-
-    }
+    } catch (ex) {}
   }
 }

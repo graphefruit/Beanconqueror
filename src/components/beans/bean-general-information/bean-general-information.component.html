@@ -140,6 +140,13 @@
                spellcheck="false" type="text">
     </ion-input>
   </ion-item>
+  <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.co2e_kg])">
+    <ion-input label-placement="stacked" label='{{"BEAN_DATA_CO2E_KG" | translate}}' #co2e_kg="ngModel" [(ngModel)]="data.co2e_kg" autocapitalize="off" inputmode="decimal"
+               name="cupping_points"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
   <ion-item *ngIf="data?.config.uuid !== ''" style='margin-bottom:5px;'>
 
     <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.finished">{{"FINISHED"|translate}}?</ion-checkbox>

@@ -74,6 +74,8 @@ export class Bean implements IBean {
   public bestDate: string;
   public openDate: string;
 
+  public co2e_kg: number;
+
   constructor() {
     this.name = '';
     this.buyDate = '';
@@ -134,6 +136,8 @@ export class Bean implements IBean {
 
     this.bestDate = '';
     this.openDate = '';
+
+    this.co2e_kg = 0;
   }
 
   public getRoastName(): string {
@@ -176,7 +180,7 @@ export class Bean implements IBean {
       this.bean_roast_information = new BeanRoastInformation();
       Object.assign(
         this.bean_roast_information,
-        beanObj.bean_roast_information
+        beanObj.bean_roast_information,
       );
     }
   }
@@ -188,7 +192,7 @@ export class Bean implements IBean {
       this.bean_roast_information = new BeanRoastInformation();
       Object.assign(
         this.bean_roast_information,
-        beanObj.bean_roast_information
+        beanObj.bean_roast_information,
       );
     }
 
@@ -342,7 +346,7 @@ export class Bean implements IBean {
   public getRoastingMachine(): RoastingMachine {
     const iRoastingMachine: IRoastingMachine =
       this.getRoastingMachineStorage().getByUUID(
-        this.bean_roast_information.roaster_machine
+        this.bean_roast_information.roaster_machine,
       ) as IRoastingMachine;
     const roastingMachine: RoastingMachine = new RoastingMachine();
     roastingMachine.initializeByObject(iRoastingMachine);

@@ -36,4 +36,6 @@ export interface IBeanParameter {
 
   bestDate: boolean;
   openDate: boolean;
+  /** Emission data **/
+  co2e_kg: boolean;
 }
