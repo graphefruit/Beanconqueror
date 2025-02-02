@@ -696,7 +696,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             this.flow_profile_raw.pressureFlow.length > 0 ||
             this.flow_profile_raw.temperatureFlow.length > 0
           ) {
-            this.updateChart();
+            this.updateChart(true);
           }
         }, 250);
       } catch (ex) {}
@@ -1109,17 +1109,22 @@ export class BrewBrewingGraphComponent implements OnInit {
     });
   }
 
-  public updateChart(_type: string = 'weight') {
+  public updateChart(_force: boolean = false) {
     /**
      * This solution is specially for very poor performing devices.
      */
     if (this.graph_threshold_frequency_update_active === true) {
-      if (
-        Date.now() - this.graphUpdateChartTimestamp <
-        this.graph_frequency_update_interval
-      ) {
-        return;
+      if (_force === true) {
+        //ignore this call, and just update the chart timestamp
+      } else {
+        if (
+          Date.now() - this.graphUpdateChartTimestamp <
+          this.graph_frequency_update_interval
+        ) {
+          return;
+        }
       }
+
       this.graphUpdateChartTimestamp = Date.now();
     }
     this.ngZone.runOutsideAngular(() => {
@@ -1435,7 +1440,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (temperatureDevice) {
         this.deattachToTemperatureChange();
       }
-      this.updateChart();
+      this.updateChart(true);
     }
 
     // If machineStopScriptWasTriggered would be true, we would already hit the weight mark, and therefore the stop was fired, and we don't fire it twice.
@@ -1531,7 +1536,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           .getTime();
       }
 
-      this.updateChart();
+      this.updateChart(true);
 
       if (scale) {
         this.attachToScaleWeightChange();
@@ -3007,7 +3012,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     if (!isSmartScaleConnected) {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
-      this.updateChart('pressure');
+      this.updateChart();
       this.flowSecondTick++;
     }
 
@@ -3061,7 +3066,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     if (!isSmartScaleConnected) {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
-      this.updateChart('temperature');
+      this.updateChart();
       this.flowSecondTick++;
     }
 
