@@ -192,6 +192,28 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
+        case BEAN_SORT_AFTER.BUY_DATE:
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.buyDate < b.buyDate) {
+              return -1;
+            }
+            if (a.buyDate > b.buyDate) {
+              return 1;
+            }
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.OPEN_DATE:
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.openDate < b.openDate) {
+              return -1;
+            }
+            if (a.openDate > b.openDate) {
+              return 1;
+            }
+            return 0;
+          });
+          break;
         case BEAN_SORT_AFTER.RATING:
           filterBeans = filterBeans.sort((a, b) => {
             if (a.rating < b.rating) {
