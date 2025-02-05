@@ -205,22 +205,14 @@ export class DecentScale extends BluetoothScale {
             this.apiVersion = '<1.3';
           }
         }
-        const scaleData = new Int8Array(_data);
         const uScaleData = new Uint8Array(_data);
         // console.log("Received: " + scaleData[1] + " - " + scaleData[2] + " - "+ scaleData[3]);
         if (uScaleData[1] === 0xce || uScaleData[1] === 0xca) {
           // Weight notification
-          let newWeight: number = ((uScaleData[2] << 8) + uScaleData[3]) / 10;
-
-          /** We've got the issue that the Uint doesn't pass us negative values, but if we used signed, when the scale shows
-           * 23 grams, the weight is -23 grams, therefore we cant make a good compromise.
-           * After the scale will go up to 3200 kilos, we check the weight and if its above, we take the signed int.
-           */
-          if (newWeight > 3200) {
-            newWeight = ((scaleData[2] << 8) + scaleData[3]) / 10;
-          }
+          const dataview = new DataView(uScaleData.buffer);
+          const newWeight = dataview.getInt16(2, false) ?? 0;
           const weightIsStable = uScaleData[1] === 0xce;
-          this.setWeight(newWeight, weightIsStable);
+          this.setWeight(newWeight / 10.0, weightIsStable);
         } else if (uScaleData[1] === 0xaa && uScaleData[2] === 0x01) {
           // Tare button pressed.
           //this.tareEvent.emit();
