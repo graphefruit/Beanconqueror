@@ -324,6 +324,7 @@ export class UIExcel {
     header.push(this.translate.instant('BEAN_DATA_ROASTING_DATE'));
     header.push(this.translate.instant('BEAN_DATA_ROASTING_TYPE'));
     header.push(this.translate.instant('BEAN_DATA_ROAST_NAME'));
+    header.push(this.translate.instant('BEAN_DATA_ROAST_NAME_TYPE'));
     header.push(this.translate.instant('BEAN_DATA_CUSTOM_ROAST_NAME'));
     header.push(this.translate.instant('BEAN_DATA_MIX'));
     header.push(this.translate.instant('BEAN_DATA_WEIGHT'));
@@ -350,6 +351,7 @@ export class UIExcel {
           this.settings.date_format,
         ),
         BEAN_ROASTING_TYPE_ENUM[bean.bean_roasting_type],
+        bean.roast_range,
         bean.getRoastName(),
         bean.getCustomRoastName(),
         BEAN_MIX_ENUM[bean.beanMix],
