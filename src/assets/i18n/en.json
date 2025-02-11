@@ -1383,7 +1383,8 @@
         "START_BREW": "Start brew",
         "START_BREW_CHOOSE_PREPARATION": "Start brew and choose preparation method",
         "DETAIL": "Detail view",
-        "EDIT": "Edit bean"
+        "EDIT": "Edit bean",
+        "CHOOSE_ACTION": "Choose action on scan"
     },
     "DOWNLOAD_QR_CODE": "Download QR code",
     "NFC": {
@@ -1420,5 +1421,6 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Old connection mode",
     "BEAN_DATA_CO2E_KG": "CO2e (kg) per kg roasted coffee",
    "BEAN_DATA_CO2E_KG_TOOLTIP": "The released CO2e (kg) released per kg roasted coffee",
-  "BEAN_SORT_RECENTLY_USED": "Last used"
+  "BEAN_SORT_RECENTLY_USED": "Last used",
+  "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Choose action"
 }
