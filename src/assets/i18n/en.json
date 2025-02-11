@@ -1419,5 +1419,6 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - New connection mode",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Old connection mode",
     "BEAN_DATA_CO2E_KG": "CO2e (kg) per kg roasted coffee",
-   "BEAN_DATA_CO2E_KG_TOOLTIP": "The released CO2e (kg) released per kg roasted coffee"
+   "BEAN_DATA_CO2E_KG_TOOLTIP": "The released CO2e (kg) released per kg roasted coffee",
+  "BEAN_SORT_RECENTLY_USED": "Last used"
 }

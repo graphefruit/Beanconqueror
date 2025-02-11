@@ -313,6 +313,16 @@ export class Bean implements IBean {
     return 0;
   }
 
+  public getLastUsed(): number {
+    const beanHelper: UIBeanHelper = UIBeanHelper.getInstance();
+    let relatedBrews = beanHelper.getAllBrewsForThisBean(this.config.uuid);
+    if (relatedBrews.length > 0) {
+      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
+      return relatedBrews[0].config.unix_timestamp;
+    }
+    return -1;
+  }
+
   /**
    * Get the calculated bean age for this brew
    */

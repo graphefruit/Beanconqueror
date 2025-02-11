@@ -236,6 +236,17 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
+        case BEAN_SORT_AFTER.RECENTLY_USED:
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.getLastUsed() < b.getLastUsed()) {
+              return -1;
+            }
+            if (a.getLastUsed() > b.getLastUsed()) {
+              return 1;
+            }
+            return 0;
+          });
+          break;
         case BEAN_SORT_AFTER.BEAN_ROASTING_TYPE:
           filterBeans = filterBeans.sort((a, b) => {
             const nameA = a.bean_roasting_type.toUpperCase();
