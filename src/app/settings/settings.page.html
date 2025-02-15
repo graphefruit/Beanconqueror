@@ -811,15 +811,15 @@
             <ion-item>
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.graph_threshold_frequency_update">
                 <div class='ion-label' style="white-space: normal;">
-                  <h2>Experimental Feature: Graph Update Interval</h2>
-                  <p>Use this only if your graph lags while streaming, which mainly occurs on older tablets or phones. If you're not experiencing any issues, you can ignore this function.</p>
+                  <h2>{{"GRAPH_UPDATE_INTERVAL_TITLE" | translate}}</h2>
+                  <p>{{"GRAPH_UPDATE_INTERVAL_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>
             <ion-item *ngIf="settings.graph_threshold_frequency_update">
               <div class='ion-label' style="white-space: normal;">
-                <h2>Graph Update Frequency Interval</h2>
-                <p>Refresh at the selected millisecond interval</p>
+                <h2>{{ "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE" | translate }}</h2>
+                <p>{{"GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION" | translate}}</p>
               </div>
               <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="100" snaps="true" max="500"
                          step="10" (ngModelChange)="saveSettings()" [(ngModel)]="settings.graph_threshold_frequency_interval">

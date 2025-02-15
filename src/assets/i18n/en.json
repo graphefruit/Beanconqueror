@@ -1422,5 +1422,9 @@
     "BEAN_DATA_CO2E_KG": "CO2e (kg) per kg roasted coffee",
    "BEAN_DATA_CO2E_KG_TOOLTIP": "The released CO2e (kg) released per kg roasted coffee",
   "BEAN_SORT_RECENTLY_USED": "Last used",
-  "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Choose action"
+  "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Choose action",
+  "GRAPH_UPDATE_INTERVAL_TITLE": "Graph Update Interval",
+  "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Use this only if your graph lags while streaming, which mainly occurs on older tablets or phones. If you're not experiencing any issues, you can ignore this function.",
+  "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Graph Update Frequency Interval",
+  "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Refresh at the selected millisecond interval"
 }
