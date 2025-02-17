@@ -356,6 +356,27 @@
                    slot="end">{{settings.brew_timer_start_delay_time | toFixed: 1}}</div>
             </ion-range>
           </ion-item>
+
+          <ion-item [lines]="settings.brew_save_automatic_active?'none':'full'">
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.brew_save_automatic_active">
+              <div class='ion-label' style="white-space: normal;">
+                <h2>{{"PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE" | translate}}</h2>
+              </div>
+            </ion-checkbox>
+          </ion-item>
+          <ion-item lines='none' *ngIf="settings.brew_save_automatic_active">
+            <ion-label class="ion-margin-end">
+              <p>{{"PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION" | translate}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="settings.brew_save_automatic_active">
+            <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="1" snaps="true" max="20"
+                       step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_save_automatic_active_delay">
+              <div class='ion-label'
+                   slot="end">{{settings.brew_save_automatic_active_delay | toFixed: 1}}</div>
+            </ion-range>
+          </ion-item>
         </ion-card-content>
       </ion-card>
 

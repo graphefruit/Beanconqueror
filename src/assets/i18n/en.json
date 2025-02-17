@@ -1426,5 +1426,9 @@
   "GRAPH_UPDATE_INTERVAL_TITLE": "Graph Update Interval",
   "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Use this only if your graph lags while streaming, which mainly occurs on older tablets or phones. If you're not experiencing any issues, you can ignore this function.",
   "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Graph Update Frequency Interval",
-  "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Refresh at the selected millisecond interval"
+  "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Refresh at the selected millisecond interval",
+  "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Save brew automatically",
+  "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Save the brew automatically after a specific time interval has passed. This action will be executed after you pause the brew-timer",
+  "SAVE_NOW": "Save now",
+  "SAVING_BREW_COUNTDOWN": "Saving brew in {{time}}"
 }

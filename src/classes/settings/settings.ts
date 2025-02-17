@@ -71,6 +71,9 @@ export class Settings implements ISettings {
   public brew_timer_start_delay_time: number;
   public brew_timer_start_delay_active: boolean;
 
+  public brew_save_automatic_active: boolean;
+  public brew_save_automatic_active_delay: number;
+
   public use_numeric_keyboard_for_grind_size: boolean;
 
   public welcome_page_showed: boolean;
@@ -330,6 +333,9 @@ export class Settings implements ISettings {
     this.show_archived_graphs = true;
     this.brew_timer_start_delay_time = 1;
     this.brew_timer_start_delay_active = false;
+
+    this.brew_save_automatic_active = false;
+    this.brew_save_automatic_active_delay = 5;
 
     this.track_caffeine_consumption = false;
 

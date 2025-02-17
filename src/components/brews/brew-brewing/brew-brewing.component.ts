@@ -77,6 +77,7 @@ import { HapticService } from '../../../services/hapticService/haptic.service';
 import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { Bean } from '../../../classes/bean/bean';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { AppEvent } from '../../../classes/appEvent/appEvent';
 
 declare var cordova;
 
@@ -728,11 +729,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerPaused(_event) {
     await this.brewBrewingGraphEl.timerPaused(_event);
+
     if (
       this.settings.haptic_feedback_active &&
       this.settings.haptic_feedback_brew_stopped
     ) {
       this.hapticService.vibrate();
+    }
+    if (this.settings.brew_save_automatic_active) {
+      const delayTimer = this.settings.brew_save_automatic_active_delay;
+      const response = await this.uiToast.showAutomaticSaveTimer(delayTimer);
+      if (response !== 'cancel') {
+        this.eventQueue.dispatch(
+          new AppEvent(AppEventType.BREW_AUTOMATIC_SAVE, undefined),
+        );
+      }
     }
   }
 

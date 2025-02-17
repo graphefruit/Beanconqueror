@@ -63,6 +63,9 @@ export interface ISettings {
   brew_timer_start_delay_time: number;
   brew_timer_start_delay_active: boolean;
 
+  brew_save_automatic_active: boolean;
+  brew_save_automatic_active_delay: number;
+
   show_roasting_section: boolean;
   show_water_section: boolean;
   show_cupping_section: boolean;
