@@ -1430,5 +1430,28 @@
   "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Save brew automatically",
   "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Save the brew automatically after a specific time interval has passed. This action will be executed after you pause the brew-timer",
   "SAVE_NOW": "Save now",
-  "SAVING_BREW_COUNTDOWN": "Saving brew in {{time}}"
+  "SAVING_BREW_COUNTDOWN": "Saving brew in {{time}}",
+  "UPDATE_TEXT_TITLE_TITLE": {
+    "8.1.0": {
+      "TITLE": "Version 8.1.0: What's new",
+      "DESCRIPTION": [
+        "<b>Beans<\/b>",
+        "Sort beans by last used, buy date and bag open date",
+        "Supporting a new parameter CO2e (kg) per kg roasted coffee, which is disabled by default",
+        "Excel export inherits now correctly the degree of roast",
+        "New NFC/QR-Code action: Choose action. When scanning the tag, you can choose the action you want to execute",
+        "",
+        "<b>Brew<\/b>",
+        "Information tiles for bluetooth devices are now bigger on tablet",
+        "Fixed weight doubling for espresso brews",
+        "",
+        "<b>Settings<\/b>",
+        "New feature: Save brew automatically which can be activated",
+        "New feature: Update graph interval, for older devices which my could freeze/lag while updating the graphs you can adjust the refresh rate",
+        "",
+        "<b>Other<\/b>",
+        "Small fixes"
+      ]
+    }
+  }
 }
