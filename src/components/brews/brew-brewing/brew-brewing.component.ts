@@ -743,6 +743,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.eventQueue.dispatch(
           new AppEvent(AppEventType.BREW_AUTOMATIC_SAVE, undefined),
         );
+
+        setTimeout(() => {
+          try {
+            this.modalController.dismiss(
+              null,
+              null,
+              BrewFlowComponent.COMPONENT_ID,
+            );
+            this.modalController.dismiss(
+              null,
+              null,
+              BrewMaximizeControlsComponent.COMPONENT_ID,
+            );
+          } catch (ex) {}
+        }, 250);
       }
     }
   }
