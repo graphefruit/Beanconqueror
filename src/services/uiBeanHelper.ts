@@ -380,7 +380,7 @@ export class UIBeanHelper {
         {
           text: this.translate.instant('BEAN_CODE_ACTION.START_BREW'),
           data: {
-            action: BEAN_CODE_ACTION.DETAIL,
+            action: BEAN_CODE_ACTION.START_BREW,
           },
         },
         {
@@ -392,15 +392,15 @@ export class UIBeanHelper {
           },
         },
         {
-          text: this.translate.instant('BEAN_CODE_ACTION.DETAIL'),
-          data: {
-            action: BEAN_CODE_ACTION.DETAIL,
-          },
-        },
-        {
           text: this.translate.instant('BEAN_CODE_ACTION.EDIT'),
           data: {
             action: BEAN_CODE_ACTION.EDIT,
+          },
+        },
+        {
+          text: this.translate.instant('BEAN_CODE_ACTION.DETAIL'),
+          data: {
+            action: BEAN_CODE_ACTION.DETAIL,
           },
         },
       ],
