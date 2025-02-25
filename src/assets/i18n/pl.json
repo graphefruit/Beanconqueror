@@ -1383,7 +1383,8 @@
         "START_BREW": "Rozpocznij parzenie",
         "START_BREW_CHOOSE_PREPARATION": "Rozpocznij parzenie i wybierz metodę przygotowania",
         "DETAIL": "Widok szczegółowy",
-        "EDIT": "Edytuj ziarno"
+        "EDIT": "Edytuj ziarno",
+        "CHOOSE_ACTION": "Wybierz działanie podczas skanowania"
     },
     "DOWNLOAD_QR_CODE": "Pobierz kod QR",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Tryb połączenia Acaia",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Jeśli waga ciągle się łączy i rozłącza, spróbuj ustawić tryb V1 i dostosować pulsometr i timer poleceń. Spowoduje to przełączenie na starą procedurę połączenia.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Nowy tryb połączenia",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Stary tryb połączenia"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Stary tryb połączenia",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) na kg palonej kawy",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "Uwolniony CO2e (kg) na kg palonej kawy",
+    "BEAN_SORT_RECENTLY_USED": "Ostatnio używany",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Wybierz działanie",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Interwał aktualizacji wykresu",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Użyj tej funkcji tylko wtedy, gdy wykres opóźnia się podczas przesyłania strumieniowego, co występuje głównie na starszych tabletach lub telefonach. Jeśli nie występują żadne problemy, możesz zignorować tę funkcję.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Częstotliwość aktualizacji wykresu",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Odświeżanie w wybranym interwale milisekundowym",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Automatyczne zapisywanie naparu",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Automatyczne zapisanie naparu po upływie określonego czasu. Ta czynność zostanie wykonana po wstrzymaniu timera parzenia",
+    "SAVE_NOW": "Zapisz teraz",
+    "SAVING_BREW_COUNTDOWN": "Zapisywanie naparu w {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Wersja 8.1.0: Co nowego",
+            "DESCRIPTION": [
+                "<b>Ziarna<\/b>",
+                "Sortuj ziarna według ostatniego użycia, daty zakupu i daty otwarcia worka",
+                "Obsługa nowego parametru CO2e (kg) na kg palonej kawy, który jest domyślnie wyłączony",
+                "Eksport do Excela dziedziczy teraz poprawnie stopień wypalenia",
+                "Nowe działanie NFC\/QR-Code: Wybierz akcję. Podczas skanowania tagu możesz wybrać akcję, którą chcesz wykonać",
+                "",
+                "<b>Napar<\/b>",
+                "Kafelki informacyjne dla urządzeń Bluetooth są teraz większe na tablecie",
+                "Stałe podwojenie wagi dla parzenia espresso",
+                "",
+                "<b> Ustawienia <\/b>",
+                "Nowa funkcja: Automatyczne zapisywanie naparu, które można aktywować",
+                "Nowa funkcja: Interwał aktualizacji wykresów, dla starszych urządzeń, które mogą zawieszać się \/ opóźniać podczas aktualizacji wykresów, można dostosować częstotliwość odświeżania",
+                "",
+                "<b>Inne<\/b>",
+                "Drobne poprawki"
+            ]
+        }
+    }
 }

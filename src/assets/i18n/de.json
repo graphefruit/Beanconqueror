@@ -1383,7 +1383,8 @@
         "START_BREW": "Brühung starten",
         "START_BREW_CHOOSE_PREPARATION": "Brühung starten und Zubereitungsmethode auswählen",
         "DETAIL": "Detailansicht",
-        "EDIT": "Bohne editieren"
+        "EDIT": "Bohne editieren",
+        "CHOOSE_ACTION": "Aktion beim Scannen wählen"
     },
     "DOWNLOAD_QR_CODE": "QR-Code herunterladen",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia-Verbindungsmodus",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Wenn sich die Waage ständig verbindet und trennt, versuche den Modus auf V1 zu setzen und den Herzschlag- und Befehlstimer anzupassen. Dadurch wird auf die alte Verbindungsroutine umgeschaltet.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Neuer Verbindungsmodus",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Alter Verbindungsmodus"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Alter Verbindungsmodus",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) pro kg Röstkaffee",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "Das freigesetzte CO2e (kg) pro kg geröstetem Kaffee",
+    "BEAN_SORT_RECENTLY_USED": "Zuletzt verwendet",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Aktion auswählen",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Intervall für die Aktualisierung des Diagramms",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Benutze dies nur, wenn dein Graph beim Streaming ruckelt, was hauptsächlich bei älteren Tablets oder Handys vorkommt. Wenn du keine Probleme hast, kannst du diese Funktion ignorieren.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Intervall für die Aktualisierung des Diagramms",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Aktualisieren im ausgewählten Millisekundenintervall",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Brühung automatisch speichern",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Automatisches Speichern des Brühvorgangs nach Ablauf einer bestimmten Zeitspanne. Diese Aktion wird ausgeführt, nachdem der Brühtimer angehalten wurde.",
+    "SAVE_NOW": "Jetzt speichern",
+    "SAVING_BREW_COUNTDOWN": "Brühung wird in {{time}} gespeichert",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Version 8.1.0: Das ist neu",
+            "DESCRIPTION": [
+                "<b>Bohnen<\/b>",
+                "Bohnen können nun nach letzter Verwendung, Kaufdatum oder Öffnungsdatum sortiert werden",
+                "Unterstützung eines neuen Parameters CO2e (kg) pro kg Röstkaffee, der standardmäßig deaktiviert ist",
+                "Excel-Export übernimmt jetzt korrekt den Röstgrad",
+                "Neue NFC\/QR-Code-Aktion: Aktion auswählen. Beim Scannen des Tags kann die Aktion ausgewählt werden, welche ausgeführt werden soll",
+                "",
+                "Brühungen",
+                "Kachelinformationen von Bluetooth Geräten sind nun größer auf Tablets",
+                "Behebung der Gewichtverdoppelung für Espressobrühungen",
+                "",
+                "<b>Einstellungen<\/b>",
+                "Neue Funktion: Automatisches Speichern des Brühvorgangs kann aktiviert werden",
+                "Neue Funktion: Aktualisierung des Diagrammintervalls, für ältere Geräte, die beim Aktualisieren der Diagramme einfrieren\/verzögert werden können, kann die Bildwiederholfrequenz anpasst werden",
+                "",
+                "<b>Sonstiges<\/b>",
+                "Kleinere Fehlerbehebungen"
+            ]
+        }
+    }
 }

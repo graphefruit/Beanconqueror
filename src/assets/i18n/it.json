@@ -1383,7 +1383,8 @@
         "START_BREW": "Inizia preparazione",
         "START_BREW_CHOOSE_PREPARATION": "Inizia preparazione e scegli il metodo",
         "DETAIL": "Dettaglio",
-        "EDIT": "Modifica caffè"
+        "EDIT": "Modifica caffè",
+        "CHOOSE_ACTION": "Scegli azione allo scan"
     },
     "DOWNLOAD_QR_CODE": "Scarica il codice QR",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Modalità di connessione per Acaia",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Se la bilancia continua a connettersi e disconnettersi, prova a tornare alla versione precedente impostando la modalità V1. Ricordati di regolare l'heartbeat e il timer dei comandi.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Nuova modalità di connessione",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Vecchia modalità di connessione"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Vecchia modalità di connessione",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) rilasciata",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "CO2e (kg) rilasciata",
+    "BEAN_SORT_RECENTLY_USED": "Ultimo uso",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Scegli azione",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Frequenza di aggiornamento del grafico",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Se il grafico è in ritardo durante la preparazione, in caso di dispositivi più vecchi, impostare questo valore. Se non si riscontrano problemi, si può ignorare questa funzione.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Frequenza di aggiornamento del grafico",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Aggiorna alla frequenza selezionata, in millisecondi",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Salvataggio automatico preparazione",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Salva automaticamente la preparazione nel tempo specificato. Questa azione verrà eseguita dopo aver messo in pausa la preparazione",
+    "SAVE_NOW": "Salva ora",
+    "SAVING_BREW_COUNTDOWN": "Salvataggio della preparazione tra {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Versione 8.1.0: Novità",
+            "DESCRIPTION": [
+                "<b>Caffè<\/b>",
+                "Ordina i caffè per ultimo utilizzo, data di acquisto o di apertura del sacchetto",
+                "Supporto di un nuovo parametro: CO2e (kg) per caffè tostato, di default è disattivato",
+                "L'esportazione Excel eredita correttamente il grado di tostatura",
+                "Nuova azione NFC\/QR-Code: Scegliere l'azione. Durante la scansione del tag, è possibile scegliere l'azione che si desidera eseguire",
+                "",
+                "<b>Preparazione<\/b>",
+                "I riquadri per i dispositivi Bluetooth sono più grandi sui tablet",
+                "Raddoppio del peso automatico per espresso",
+                "",
+                "<b>Impostazioni<\/b>",
+                "Nuova funzione: Salvataggio automatico della preparazione",
+                "Nuova funzione: è possibile regolare la frequenza di aggiornamento per i grafici, per i dispositivi più vecchi che potrebbero bloccarsi\/rallentarsi",
+                "",
+                "<b>Altro<\/b>",
+                "Migliorie minori"
+            ]
+        }
+    }
 }

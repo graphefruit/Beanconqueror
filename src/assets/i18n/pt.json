@@ -1383,7 +1383,8 @@
         "START_BREW": "Começar a extração",
         "START_BREW_CHOOSE_PREPARATION": "Iniciar a infusão e escolher o método de preparação",
         "DETAIL": "Exibição de detalhes",
-        "EDIT": "Editar Café"
+        "EDIT": "Editar Café",
+        "CHOOSE_ACTION": "Escolha a ação na verificação"
     },
     "DOWNLOAD_QR_CODE": "Baixar código QR",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Modo de conexão Acaia",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Se a sua balança continuar conectando e desconectando, tente definir o modo para V1 e ajustar a pulsação e o temporizador de comando. Isso mudará para a rotina de conexão antiga.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Novo modo de conexão",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Modo de conexão antigo"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Modo de conexão antigo",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) por kg de café torrado",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "O CO2e (kg) liberado por kg de café torrado",
+    "BEAN_SORT_RECENTLY_USED": "Último uso",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Escolher ação",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Intervalo de atualização do gráfico",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Utilize esta função apenas se o seu gráfico apresentar atrasos durante a transmissão, o que ocorre principalmente em tablets ou telemóveis mais antigos. Se não estiver a ter problemas, pode ignorar esta função.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Intervalo de frequência de atualização do gráfico",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Atualizar no intervalo de milissegundos selecionado",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Salvar extração automaticamente",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Armazenar automaticamente a extração após um determinado intervalo de tempo. Esta ação é executada após uma pausa no temporizador de extração",
+    "SAVE_NOW": "Armazenar agora",
+    "SAVING_BREW_COUNTDOWN": "Armazenando extração em {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Versão 8.1.0: O que há de novo",
+            "DESCRIPTION": [
+                "<b>Cafés<\/b>",
+                "Classifique os grãos pelo último uso, data de compra e data de abertura do saco",
+                "Suporte a um novo parâmetro CO2e (kg) por kg de café torrado, que é desabilitado por padrão",
+                "A exportação do Excel agora herda corretamente o grau de torra",
+                "Nova ação NFC\/QR-Code: Escolha a ação. Ao escanear a tag, você pode escolher a ação que deseja executar",
+                "",
+                "Extração",
+                "Os blocos de informações para dispositivos Bluetooth agora são maiores no tablet",
+                "Duplicação de peso fixo para extração de café expresso",
+                "",
+                "Configurações",
+                "Novo recurso: Salvar preparo automaticamente, que pode ser ativado",
+                "Novo recurso: Atualizar intervalo de gráfico, para dispositivos mais antigos que podem congelar \/ atrasar ao atualizar os gráficos, você pode ajustar a taxa de atualização",
+                "",
+                "<b> Outro <\/b>",
+                "Pequenas melhorias"
+            ]
+        }
+    }
 }

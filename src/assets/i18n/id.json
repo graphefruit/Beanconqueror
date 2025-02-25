@@ -1383,7 +1383,8 @@
         "START_BREW": "Mulai menyeduh",
         "START_BREW_CHOOSE_PREPARATION": "Mulai menyeduh dan pilih metode seduh",
         "DETAIL": "Lihat detil",
-        "EDIT": "Edit biji"
+        "EDIT": "Edit biji",
+        "CHOOSE_ACTION": "Pilih tindakan pada saat pemindaian"
     },
     "DOWNLOAD_QR_CODE": "Unduh kode QR",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Mode koneksi Acaia",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Jika timbangan Anda terus menerus terputus, cobalah mengatur mode ke V1 dan menyesuaikan fitur heartbeat dan pengatur waktu perintah. Ini akan beralih ke mode koneksi lama.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Mode koneksi baru",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Mode koneksi lama"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Mode koneksi lama",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) per kg kopi sangrai",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "CO2e yang dilepaskan (kg) yang dilepaskan per kg kopi sangrai",
+    "BEAN_SORT_RECENTLY_USED": "Terakhir digunakan",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Pilih tindakan",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Interval Pembaruan Grafik",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Gunakan ini hanya jika grafik Anda melambat saat streaming, yang umumnya terjadi pada tablet atau ponsel lawas. Jika Anda tidak mengalami masalah apa pun, Anda dapat mengabaikan fungsi ini.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Interval Frekuensi Pembaruan Grafik",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Segarkan pada interval milidetik yang dipilih",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Simpan seduhan secara otomatis",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Simpan seduhan secara otomatis setelah interval waktu tertentu berlalu. Tindakan ini akan dijalankan setelah Anda menjeda pengatur waktu minuman",
+    "SAVE_NOW": "Simpan sekarang",
+    "SAVING_BREW_COUNTDOWN": "Menyimpan seduhan dalam {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Versi 8.1.0: Apa yang baru?",
+            "DESCRIPTION": [
+                "<b>Biji Kopi<\/b>",
+                "Urutkan kopi berdasarkan terakhir digunakan, tanggal pembelian, dan tanggal dibukanya kantong",
+                "Mendukung parameter baru CO2e (kg) per kg kopi sangrai, yang dinonaktifkan secara default",
+                "Ekspor Excel sekarang mewarisi dengan benar tingkat roasting",
+                "Tindakan NFC\/Kode QR baru: Pilih tindakan. Saat memindai tag, Anda dapat memilih tindakan yang ingin Anda lakukan",
+                "",
+                "<b>Seduh<\/b>",
+                "Judul informasi untuk perangkat bluetooth kini lebih besar di tablet",
+                "Penggandaan berat tetap untuk seduhan espresso",
+                "",
+                "<b>Pengaturan<\/b>",
+                "Fitur baru: Menyimpan seduhan secara otomatis yang dapat diaktifkan",
+                "Fitur baru: Perbarui interval grafik, untuk perangkat lama yang mungkin bisa membeku\/lambat saat memperbarui grafik, Anda dapat menyesuaikan kecepatan refresh",
+                "",
+                "<b>Lainnya<\/b>",
+                "Perbaikan kecil"
+            ]
+        }
+    }
 }
