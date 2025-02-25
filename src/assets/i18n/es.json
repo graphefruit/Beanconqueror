@@ -1383,7 +1383,8 @@
         "START_BREW": "Iniciar preparación",
         "START_BREW_CHOOSE_PREPARATION": "Iniciar preparación y elegir método",
         "DETAIL": "Vista detallada",
-        "EDIT": "Editar café"
+        "EDIT": "Editar café",
+        "CHOOSE_ACTION": "Elegir acción al escanear"
     },
     "DOWNLOAD_QR_CODE": "Descargar código QR",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia - Modo de conexión",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Si tu báscula tiene problemas de conexión, prueba a usar el modo de conexión antiguo (V1) y a cambiar el tiempo de pulso y entre comandos.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Modo de conexión nuevo",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Modo de conexión antiguo"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Modo de conexión antiguo",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) por kg de café tostado",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "El CO2e (kg) liberado por kg de café tostado",
+    "BEAN_SORT_RECENTLY_USED": "Último uso",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Elegir acción",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Intervalo de actualización del gráfico",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Activa esta opción si el gráfico va un poco lento. Suele ocurrir en teléfonos o tablets antiguos. Si no estás experimentando este problema, ignora esta función.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Frecuencia de actualización del gráfico",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Actualizar el gráfico en el intervalo de milisegundos seleccionado",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Guardar preparación automáticamente",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Guarda automáticamente una preparación tras un intervalo de tiempo especificado. Esta acción se ejecutará una vez pausado el tiempo de preparación.",
+    "SAVE_NOW": "Guardar ahora",
+    "SAVING_BREW_COUNTDOWN": "Guardando preparación en {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Versión 8.1.0: Novedades",
+            "DESCRIPTION": [
+                "<b>Cafés<\/b>",
+                "Ahora puedes ordenar cafés por el último uso, fecha de compra y fecha de apertura.",
+                "Añadido el nuevo parámetro CO2e (kg) por kg de café tostado. Deshabilitado por defecto.",
+                "Corregido un error en la exportación a Excel que no tenía en cuenta el  tipo de tueste.",
+                "Nueva acción para NFC\/QR: Elegir acción. Al escanear una etiqueta, puedes elegir qué acción quieres ejecutar.",
+                "",
+                "<b>Preparaciones<\/b>",
+                "Adaptado el diseño de algunos iconos para pantallas más grandes como tablets.",
+                "Corregido un error en la función de duplicar peso en espressos.",
+                "",
+                "<b>Configuración<\/b>",
+                "Nueva función: Guardar preparación automáticamente.",
+                "Nueva función: Intervalo de actualización del gráfico. En dispositivos antiguos en los que el gráfico va un poco lento puedes ajustar el intervalo de actualización del mismo.",
+                "",
+                "<b>Otros<\/b>",
+                "Pequeñas correcciones."
+            ]
+        }
+    }
 }

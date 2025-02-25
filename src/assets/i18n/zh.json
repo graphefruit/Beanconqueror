@@ -1383,7 +1383,8 @@
         "START_BREW": "开始冲煮",
         "START_BREW_CHOOSE_PREPARATION": "开始冲煮并选择预浸泡的方法",
         "DETAIL": "详情页",
-        "EDIT": "编辑豆子"
+        "EDIT": "编辑豆子",
+        "CHOOSE_ACTION": "选择扫描"
     },
     "DOWNLOAD_QR_CODE": "下载二维码",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia连接方式",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "如果您的秤保持连接和断开，请尝试将模式设置为V1并调整心跳和命令计时器。这将切换到旧的连接例程。",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2—新的连接方式",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 -旧连接方式"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 -旧连接方式",
+    "BEAN_DATA_CO2E_KG": "每公斤烘焙咖啡的CO2e （公斤）",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "每千克烘焙咖啡所释放的 CO2e （kg）",
+    "BEAN_SORT_RECENTLY_USED": "上一次使用",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "选择操作",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "图表更新间隔",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "仅当流式传输时的图表滞后（主要发生在较旧的平板电脑或手机上）时，请使用此操作。如果您没有遇到任何问题，则可以忽略此功能。",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "图表更新频率间隔",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "以选定的毫秒间隔刷新",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "自动保存冲煮",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "在经过特定的时间间隔后自动保存冲煮。此操作将在暂停冲煮计时器后执行",
+    "SAVE_NOW": "当前保存",
+    "SAVING_BREW_COUNTDOWN": "在{{time}}保存冲煮",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "版本8.1.0：有什么新功能",
+            "DESCRIPTION": [
+                "<b>豆子<\/b>",
+                "按最后一次使用、购买日期和开袋日期对豆子进行分类",
+                "支持每公斤烘焙的新参数CO2E（kg），默认情况下是禁用的",
+                "Excel 导出继承现在正确的烘焙度",
+                "新的NFC\/QR-CODE操作：选择操作。扫描标签时，您可以选择要执行的操作。",
+                "空的",
+                "<b>冲煮<\/b>",
+                "蓝牙设备的信息栏现在在平板电脑上更大了",
+                "修复意式咖啡冲煮多杯重量问题",
+                "空的",
+                "<b>设置<\/b>",
+                "新功能：支持开启自动保存冲煮记录",
+                "新功能：更新图表间隔，，您可以在旧设备中调整图表的刷新率来解决更新图表时可能出现卡住\/滞后的问题",
+                "空的",
+                "<b>其他<\/b>",
+                "小补丁"
+            ]
+        }
+    }
 }

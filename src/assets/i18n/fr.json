@@ -1383,7 +1383,8 @@
         "START_BREW": "Démarrer l'infusion",
         "START_BREW_CHOOSE_PREPARATION": "Démarrer l'infusion et choisir une méthode de préparation",
         "DETAIL": "Vue détaillée",
-        "EDIT": "Modifier le café"
+        "EDIT": "Modifier le café",
+        "CHOOSE_ACTION": "Choisissez une action à effectuer lors du scan"
     },
     "DOWNLOAD_QR_CODE": "Télécharger un QR Code",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Mode de connexion Acaia",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Si votre balance se connecte et se déconnecte sans cesse, essayez de régler le mode sur V1 et d'ajuster le heartbeat et le command timer. Cela permettra de revenir à l'ancienne routine de connexion.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Nouveau mode de connexion",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Ancien mode de connexion"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Ancien mode de connexion",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) par kilo de café torréfié",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "Le CO2e (kg) rejeté par kilo de café torréfié",
+    "BEAN_SORT_RECENTLY_USED": "Dernière utilisation",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Choisissez une action",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Intervalle de mise à jour du graphe",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Utilisez ceci uniquement si votre graphe a du retard pendant la retransmission de celui-ci. Cela arrive en général sur de vieilles tablettes ou vieux téléphones. Si vous ne rencontrez aucun problème, vous pouvez ignorer cette fonctionnalité",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Intervalle de fréquence de mise à jour du graphe ",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Mise à jour à l'intervalle de millisecondes sélectionné",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Sauvegarde de l'infusion automatique",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Sauvegarde de l'infusion automatiquement après qu'un certain délai se soit écoulé. Cette action sera effectuée après que vous mettrez en pause le minuteur de l'infusion",
+    "SAVE_NOW": "Sauvegarde en cours",
+    "SAVING_BREW_COUNTDOWN": "Sauvegarde de l'infusion dans {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Version 8.1.0: Quoi de neuf",
+            "DESCRIPTION": [
+                "<b>Grains<\/b>",
+                "Trier les grains par dernière utilisation, date d'achat et date d'ouverture du sachet",
+                "Prise en charge du nouveau paramètre CO2e (kg) par kilo de café torréfié qui est désactivé par défaut",
+                "L'exportation Excel hérite désormais le degrés de torréfaction correctement",
+                "Nouvelle action NFC\/QR-Code : Choisir l'action à effectuer. Quand on scanne la puce\/code, vous pouvez choisir l'action que vous souhaitez effectuer",
+                "",
+                "<b>Infusion<\/b>",
+                "Les vignettes d'information pour  les appareils bluetooth sont désormais plus grande sur tablette",
+                "Problème de dédoublement du poids pour les expressos fixé",
+                "",
+                "<b>Paramètres<\/b>",
+                "Nouvelle fonctionnalité : La sauvegarde automatique de l'infusion peut être activée",
+                "Nouvelle fonctionnalité : Intervalle de rafraîchissement du graphe, pour les appareils plus anciens qui pourraient se figer\/décaler pendant la mise à jour des graphiques, vous pouvez désormais choisir la fréquence de mise à jour des graphes",
+                "",
+                "<b>Autre<\/b>",
+                "Petites corrections"
+            ]
+        }
+    }
 }

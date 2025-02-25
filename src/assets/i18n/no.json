@@ -451,7 +451,7 @@
             "BREW_DATA_BEAN_WEIGHT_IN": "Hvilken mengde bønner brukte du?"
         }
     },
-    "ROASTED_BEFORE": "Brent før",
+    "ROASTED_BEFORE": "Dager etter brenning",
     "DAY_OLD": "dag gammel",
     "DAYS_OLD": "dager gammel",
     "BEANS_AMOUNT_USED": "Konsumert",
@@ -1328,7 +1328,7 @@
     "BEAN_FREEZING_STORAGE_TYPE_ZIP_LOCK": "Lynlåspose",
     "BEAN_FREEZING_STORAGE_TYPE_VACUUM_SEALED": "Vakuumforseglet",
     "BEAN_FREEZING_STORAGE_TYPE_TUBE": "Tube",
-    "BEAN_DATA_FROZEN_STORAGE_TYPE": "Oppbevaringstype for nedfrysing",
+    "BEAN_DATA_FROZEN_STORAGE_TYPE": "Oppbevart i",
     "PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE": "Du har endret maksimumsvurderingen av bønnene, men du har allerede vurdert bønnene høyere enn den nye skalaen. De vil derfor ikke vises med de vanlige filterinnstillingene.",
     "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": "Du har endret maksimumsvurderingen av bønnene, men du har allerede vurdert bønnene høyere enn den nye skalaen, så de vil ikke vises med de vanlige filterinnstillingene.",
     "BEAN_DATA_FROZEN_NOTE": "Nedfrysingsmerknader",
@@ -1343,7 +1343,7 @@
     "IMPORT_GREEN_BEANS_EXCEL": "Importer grønne bønner via Excel",
     "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Det ser ut til at den valgte Excel-filen er ødelagt, har feil data, er feil strukturert eller er feilvalgt. På grunn av dette kunne ingen bønner importeres.",
     "OK": "Ok",
-    "BEAN_SORT_BEAN_AGE": "Dadger etter brenning",
+    "BEAN_SORT_BEAN_AGE": "Dager etter brenning",
     "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Alle oppdagede oppføringer i Excel-listen, er endret til nye grønne bønner. Lykke til med brenning!",
     "PREPARATION_TYPE_SANREMO_YOU": "",
     "PREPARATION_TYPE_XENIA": "Xenia",
@@ -1383,7 +1383,8 @@
         "START_BREW": "Start brygging",
         "START_BREW_CHOOSE_PREPARATION": "Start bryggingen og velg bryggemetode",
         "DETAIL": "Detaljvisning",
-        "EDIT": "Rediger bønner"
+        "EDIT": "Rediger bønner",
+        "CHOOSE_ACTION": "Velg handling ved skanning"
     },
     "DOWNLOAD_QR_CODE": "Last ned QR-kode",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia tilkoblingsmodus",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Hvis vekten fortsetter å koble seg av og på, kan du prøve å sette modusen til V1 og justere Heartbeat og kommandotimeren. Dette vil bytte til den gamle tilkoblingsrutinen.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Ny tilkoblingsmodus",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 -Gammel tilkoblingsmodus"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 -Gammel tilkoblingsmodus",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) per kg brent kaffe",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "Den frigjorte CO2e (kg) frigjort per kg brent kaffe",
+    "BEAN_SORT_RECENTLY_USED": "Sist brukte",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Velg handling",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Intervall for grafoppdatering",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Bruk dette bare hvis grafen din henger under strømming, noe som hovedsakelig skjer på eldre nettbrett eller telefoner. Hvis du ikke opplever noen problemer, kan du ignorere denne funksjonen.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Frekvensintervall for grafoppdatering",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Oppdater ved valgte millisekundintervall",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Lagre brygg automatisk",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Lagre brygget automatisk etter en bestemt tidsforsinkelse. Denne handlingen vil bli utført etter at du har satt bryggetimeren på pause",
+    "SAVE_NOW": "Lagre nå",
+    "SAVING_BREW_COUNTDOWN": "Lagre brygg etter {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Versjon 8.1.0: Hva er nytt?",
+            "DESCRIPTION": [
+                "<b>Bønner<\/b>",
+                "Sorter bønner etter sist brukte, kjøpsdato og åpningsdato for posen",
+                "Støtter et nytt parameter CO2e (kg) per kg brent kaffe. Denne er deaktivert som standard",
+                "Excel-eksport viser nå korrekt brennegrad",
+                "Ny NFC\/QR-kodehandling: Velg handling. Når du skanner taggen, kan du velge handlingen du vil utføre",
+                "",
+                "<b>Brygg<\/b>",
+                "Informasjonsflisene for blåtann-enheter er nå forstørret på nettbrett",
+                "Fikset vekt-dobling for espresso-brygg",
+                "",
+                "<b>Innstillinger<\/b>",
+                "Ny funksjon: Lagre brygg automatisk kan aktiveres",
+                "Ny funksjon: Oppdater grafintervallet. For eldre enheter som kan fryse eller hvor du opplever forsinkelse. Du kan nå justere oppdateringsfrekvensen.",
+                "",
+                "<b>Annet<\/b>",
+                "Småjusteringer"
+            ]
+        }
+    }
 }
