@@ -8,7 +8,11 @@ import { Bean } from '../classes/bean/bean';
 import BEAN_TRACKING from '../data/tracking/beanTracking';
 import { BeansAddComponent } from '../app/beans/beans-add/beans-add.component';
 import { UIAnalytics } from './uiAnalytics';
-import { ModalController, Platform } from '@ionic/angular';
+import {
+  ActionSheetController,
+  ModalController,
+  Platform,
+} from '@ionic/angular';
 import { BeanArchivePopoverComponent } from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 import { BeansEditComponent } from '../app/beans/beans-edit/beans-edit.component';
 import { BeansDetailComponent } from '../app/beans/beans-detail/beans-detail.component';
@@ -31,6 +35,8 @@ import { BeanPopoverFreezeComponent } from '../app/beans/bean-popover-freeze/bea
 
 import { BeanPopoverListComponent } from '../app/beans/bean-popover-list/bean-popover-list.component';
 import { BeanInternalShareCodeGeneratorComponent } from '../app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
+import { BEAN_CODE_ACTION } from '../enums/beans/beanCodeAction';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Handles every helping functionalities
@@ -52,7 +58,9 @@ export class UIBeanHelper {
     private readonly uiAlert: UIAlert,
     private readonly uiToast: UIToast,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly actionSheetCtrl: ActionSheetController,
+    private readonly translate: TranslateService,
   ) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
@@ -109,7 +117,8 @@ export class UIBeanHelper {
 
     const roastedBeans = this.allStoredBeans.filter(
       (e) =>
-        e.bean_roast_information && e.bean_roast_information.bean_uuid === _uuid
+        e.bean_roast_information &&
+        e.bean_roast_information.bean_uuid === _uuid,
     );
     return roastedBeans;
   }
@@ -123,7 +132,7 @@ export class UIBeanHelper {
     const roastedBeans = this.allStoredBeans.filter(
       (e) =>
         e.bean_roast_information &&
-        e.bean_roast_information.roaster_machine === _uuid
+        e.bean_roast_information.roaster_machine === _uuid,
     );
     return roastedBeans;
   }
@@ -145,7 +154,7 @@ export class UIBeanHelper {
     if (_scannedQRBean.error === null) {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,
-        QR_TRACKING.ACTIONS.SCAN_SUCCESSFULLY
+        QR_TRACKING.ACTIONS.SCAN_SUCCESSFULLY,
       );
       this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_SCANNED');
       await this.uiAlert.showLoadingSpinner();
@@ -169,13 +178,13 @@ export class UIBeanHelper {
           'QR.SERVER.ERROR_OCCURED',
           'ERROR_OCCURED',
           undefined,
-          true
+          true,
         );
       }
     } else {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,
-        QR_TRACKING.ACTIONS.SCAN_FAILED
+        QR_TRACKING.ACTIONS.SCAN_FAILED,
       );
       await this.uiAlert.hideLoadingSpinner();
       if (_scannedQRBean.error.errorCode === 'beannotapproved') {
@@ -183,14 +192,14 @@ export class UIBeanHelper {
           'QR.SERVER.BEAN_NOT_APPROVED',
           'ERROR_OCCURED',
           undefined,
-          true
+          true,
         );
       } else {
         this.uiAlert.showMessage(
           'QR.SERVER.ERROR_OCCURED',
           'ERROR_OCCURED',
           undefined,
-          true
+          true,
         );
       }
     }
@@ -311,7 +320,7 @@ export class UIBeanHelper {
           'USER_BEAN_SHARINGSHARING_ERROR',
           'ERROR_OCCURED',
           undefined,
-          true
+          true,
         );
       }
     } catch (ex) {
@@ -353,7 +362,7 @@ export class UIBeanHelper {
   private findBeanByInternalShareCode(internalShareCode: string) {
     const allEntries = this.uiBeanStorage.getAllEntries();
     const bean = allEntries.find(
-      (b) => b.internal_share_code === internalShareCode
+      (b) => b.internal_share_code === internalShareCode,
     );
     return bean;
   }
@@ -362,6 +371,48 @@ export class UIBeanHelper {
     if (bean) {
       await this.detailBean(bean);
     }
+  }
+
+  public async chooseNFCTagAction() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: this.translate.instant('BEAN_CODE_ON_ACTION_SCANNED_TITLE'),
+      buttons: [
+        {
+          text: this.translate.instant('BEAN_CODE_ACTION.START_BREW'),
+          data: {
+            action: BEAN_CODE_ACTION.START_BREW,
+          },
+        },
+        {
+          text: this.translate.instant(
+            'BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION',
+          ),
+          data: {
+            action: BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION,
+          },
+        },
+        {
+          text: this.translate.instant('BEAN_CODE_ACTION.EDIT'),
+          data: {
+            action: BEAN_CODE_ACTION.EDIT,
+          },
+        },
+        {
+          text: this.translate.instant('BEAN_CODE_ACTION.DETAIL'),
+          data: {
+            action: BEAN_CODE_ACTION.DETAIL,
+          },
+        },
+      ],
+    });
+
+    await actionSheet.present();
+
+    const data = await actionSheet.onWillDismiss();
+    if (data && data.data !== undefined) {
+      return data.data.action;
+    }
+    return undefined;
   }
   public async editBeanByInternalShareCode(internalShareCode: string) {
     const bean = this.findBeanByInternalShareCode(internalShareCode);
@@ -383,7 +434,7 @@ export class UIBeanHelper {
   public async archiveBeanWithRatingQuestion(_bean: Bean) {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.ARCHIVE
+      BEAN_TRACKING.ACTIONS.ARCHIVE,
     );
 
     const modal = await this.modalController.create({

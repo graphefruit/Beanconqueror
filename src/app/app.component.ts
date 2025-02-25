@@ -65,6 +65,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { BrewInstanceHelper } from '../classes/brew/brew';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import SettingsTracking from '../data/tracking/settingsTracking';
 
 declare var window;
 
@@ -573,6 +574,12 @@ export class AppComponent implements AfterViewInit {
           resolve(undefined);
         }
       }
+
+      this.uiAnalytics.trackEvent(
+        SettingsTracking.TITLE,
+        SettingsTracking.ACTIONS.USED_LANGUAGE,
+        settings.language,
+      );
     });
   }
 

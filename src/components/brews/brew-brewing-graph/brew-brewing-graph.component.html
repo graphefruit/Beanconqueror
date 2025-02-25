@@ -29,7 +29,7 @@
       <ion-chip (click)="toggleChartLines('pressure')"
                 [outline]="!this.traces.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
     }
-    @if(uiTemperatureConnected || ( uiPreparationDeviceConnected) || (isDetail === true && this.traces.temperatureTrace?.x?.length >0)) {
+    @if(uiTemperatureConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && this.traces.temperatureTrace?.x?.length >0)) {
       <ion-chip (click)="toggleChartLines('temperature')"
                 [outline]="!this.traces.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
         translate}}</ion-chip>
@@ -91,7 +91,7 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-      <ion-col *ngIf="uiTemperatureConnected ||  uiPreparationDeviceConnected"
+      <ion-col *ngIf="uiTemperatureConnected ||  (uiPreparationDeviceConnected &&  uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
                size="{{graphIconColSize}}">
         <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
           <ion-card-header>

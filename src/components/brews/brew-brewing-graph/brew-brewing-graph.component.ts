@@ -696,7 +696,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             this.flow_profile_raw.pressureFlow.length > 0 ||
             this.flow_profile_raw.temperatureFlow.length > 0
           ) {
-            this.updateChart();
+            this.updateChart(true);
           }
         }, 250);
       } catch (ex) {}
@@ -1109,17 +1109,22 @@ export class BrewBrewingGraphComponent implements OnInit {
     });
   }
 
-  public updateChart(_type: string = 'weight') {
+  public updateChart(_force: boolean = false) {
     /**
      * This solution is specially for very poor performing devices.
      */
     if (this.graph_threshold_frequency_update_active === true) {
-      if (
-        Date.now() - this.graphUpdateChartTimestamp <
-        this.graph_frequency_update_interval
-      ) {
-        return;
+      if (_force === true) {
+        //ignore this call, and just update the chart timestamp
+      } else {
+        if (
+          Date.now() - this.graphUpdateChartTimestamp <
+          this.graph_frequency_update_interval
+        ) {
+          return;
+        }
       }
+
       this.graphUpdateChartTimestamp = Date.now();
     }
     this.ngZone.runOutsideAngular(() => {
@@ -1435,7 +1440,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (temperatureDevice) {
         this.deattachToTemperatureChange();
       }
-      this.updateChart();
+      this.updateChart(true);
     }
 
     // If machineStopScriptWasTriggered would be true, we would already hit the weight mark, and therefore the stop was fired, and we don't fire it twice.
@@ -1531,7 +1536,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           .getTime();
       }
 
-      this.updateChart();
+      this.updateChart(true);
 
       if (scale) {
         this.attachToScaleWeightChange();
@@ -1647,10 +1652,11 @@ export class BrewBrewingGraphComponent implements OnInit {
                 actual: shotData.pressure,
                 old: shotData.pressure,
               });
-              this.__setTemperatureFlow({
+
+              /** this.__setTemperatureFlow({
                 actual: shotData.temperature,
                 old: shotData.temperature,
-              });
+              });**/
 
               this.__setFlowProfile({
                 actual: shotData.weight,
@@ -2191,6 +2197,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (this.scaleFlowSecondSubscription) {
       this.scaleFlowSecondSubscription.unsubscribe();
       this.scaleFlowSecondSubscription = undefined;
+    }
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      scale.setDoubleWeight(false);
     }
   }
 
@@ -2763,19 +2773,17 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      let oneEspressoCup: boolean = false;
       if (
         this.espressoJustOneCup === true &&
         this.data.getPreparation().style_type ===
           PREPARATION_STYLE_TYPE.ESPRESSO
       ) {
-        oneEspressoCup = true;
+        scale.setDoubleWeight(true);
+      } else {
+        scale.setDoubleWeight(false);
       }
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_valChange) => {
-        if (oneEspressoCup === true) {
-          _valChange.actual = _valChange.actual * 2;
-        }
         let _val;
         if (this.ignoreScaleWeight === false) {
           _val = this.mutateWeightAndSeeAnomalys(
@@ -3004,7 +3012,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     if (!isSmartScaleConnected) {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
-      this.updateChart('pressure');
+      this.updateChart();
       this.flowSecondTick++;
     }
 
@@ -3058,7 +3066,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     if (!isSmartScaleConnected) {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
-      this.updateChart('temperature');
+      this.updateChart();
       this.flowSecondTick++;
     }
 
@@ -3270,45 +3278,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      if (
-        this.settings.bluetooth_ignore_anomaly_values === true ||
-        this.settings.bluetooth_ignore_negative_values === true
-      ) {
-        for (const item of this.flowProfileArrObjs) {
-          let weightToAdd = item.weight;
-
-          if (this.settings.bluetooth_ignore_anomaly_values === true) {
-            if (wrongFlow === true) {
-              weightToAdd = null;
-            }
-          }
-          if (
-            flowHasSomeMinusValueInIt === true &&
-            this.settings.bluetooth_ignore_negative_values === true
-          ) {
-            weightToAdd = null;
-          }
-
-          if (weightToAdd === null) {
-            // Set the last right weight value
-            weightToAdd = lastFoundRightValue;
-          }
-
-          this.traces.weightTrace.x.push(item.dateUnixTime);
-          this.traces.weightTrace.y.push(weightToAdd);
-
-          this.pushFlowProfile(
-            item.flowTimestamp,
-            item.flowTimeSecond,
-            weightToAdd,
-            item.oldWeight,
-            item.smoothedWeight,
-            item.oldSmoothedWeight,
-            item.not_mutated_weight,
-          );
-        }
-      }
-
       for (const item of this.flowProfileArrObjs) {
         const waterFlow: IBrewWaterFlow = {} as IBrewWaterFlow;
 
@@ -3416,24 +3385,19 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
     }
 
-    if (
-      this.settings.bluetooth_ignore_anomaly_values === false &&
-      this.settings.bluetooth_ignore_negative_values === false
-    ) {
-      this.traces.weightTrace.x.push(flowObj.dateUnixTime);
-      this.traces.weightTrace.y.push(flowObj.weight);
+    this.traces.weightTrace.x.push(flowObj.dateUnixTime);
+    this.traces.weightTrace.y.push(flowObj.weight);
 
-      this.pushFlowProfile(
-        flowObj.flowTimestamp,
-        flowObj.flowTimeSecond,
-        flowObj.weight,
-        flowObj.oldWeight,
-        flowObj.smoothedWeight,
-        flowObj.oldSmoothedWeight,
-        flowObj.notMutatedWeight,
-      );
-      this.updateChart();
-    }
+    this.pushFlowProfile(
+      flowObj.flowTimestamp,
+      flowObj.flowTimeSecond,
+      flowObj.weight,
+      flowObj.oldWeight,
+      flowObj.smoothedWeight,
+      flowObj.oldSmoothedWeight,
+      flowObj.notMutatedWeight,
+    );
+    this.updateChart();
 
     if (this.hasEspressoShotEnded()) {
       if (

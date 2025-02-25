@@ -372,7 +372,10 @@ export class BeanInformationComponent implements OnInit {
               .then(async (_dataURLSecond) => {
                 await this.uiAlert.hideLoadingSpinner();
                 setTimeout(() => {
-                  if (_dataURLSecond.length > 20) {
+                  if (
+                    _dataURLSecond.length > 20 &&
+                    _dataURLSecond.length > _dataURL.length
+                  ) {
                     this.shareService.shareImage(_dataURLSecond);
                   } else {
                     this.shareService.shareImage(_dataURL);

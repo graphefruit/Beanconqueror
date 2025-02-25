@@ -1383,7 +1383,8 @@
         "START_BREW": "Start brouwen",
         "START_BREW_CHOOSE_PREPARATION": "Start brouwen en kies de bereidingsmethode",
         "DETAIL": "Detailweergave",
-        "EDIT": "Bewerk boon"
+        "EDIT": "Bewerk boon",
+        "CHOOSE_ACTION": "Kies actie bij scannen"
     },
     "DOWNLOAD_QR_CODE": "QR code downloaden",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia verbindingsmodus",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Als uw weegschaal blijft verbinden en  verbinding verbreken, probeer dan de modus in te stellen op V1 en de hartslag en opdrachttimer aan te passen. Dit schakelt over naar de oude verbindingsroutine.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Nieuwe verbindingsmodus",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Oude verbindingsmodus"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Oude verbindingsmodus",
+    "BEAN_DATA_CO2E_KG": "CO2e (kg) per kg gebrande koffie",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "De vrijgekomen CO2e (kg) per kg gebrande koffie",
+    "BEAN_SORT_RECENTLY_USED": "Laatst gebruikt",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Kies actie",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Grafiek Update Interval",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Gebruik dit alleen als uw grafiek hapert tijdens het streamen, wat vooral voorkomt op oudere tablets of telefoons. Als u geen problemen ondervindt, kunt u deze functie negeren.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Grafiek Update Interval Frequentie",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Verversen met de geselecteerde interval van milliseconden",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Brouwsel automatisch opslaan",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Bewaar het brouwsel automatisch nadat een bepaald tijdsinterval is verstreken. Deze actie wordt uitgevoerd nadat u de brouwtimer hebt gepauzeerd",
+    "SAVE_NOW": "Nu opslaan",
+    "SAVING_BREW_COUNTDOWN": "Brouwsel opslaan in {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Versie 8.1.0: Wat is er nieuw",
+            "DESCRIPTION": [
+                "<b> Bonen <\/b>",
+                "Sorteer bonen op laatste gebruik, aankoopdatum en datum waarop de zak is geopend",
+                "Ondersteuning van een nieuwe parameter CO2e (kg) per kg gebrande koffie, die standaard uitgeschakeld is",
+                "Excel-export neemt nu de correcte mate van branding over",
+                "Nieuwe NFC\/QR-Code actie: Kies actie. Bij het scannen van de tag kunt u de actie kiezen die u wilt uitvoeren",
+                "",
+                "<b> Brouwsel <\/b>",
+                "Informatietegels voor Bluetooth-apparaten zijn nu groter op tablets",
+                "Vaste gewichtsverdubbeling voor espressobrouwsels",
+                "",
+                "<b> Instellingen <\/b>",
+                "Nieuwe functie: Automatisch brouwsel opslaan, kan worden geactiveerd als optie",
+                "Nieuwe functie: Grafiekinterval bijwerken, voor oudere apparaten die mogelijk vastlopen\/vertragen tijdens het bijwerken van de grafieken, kunt u de vernieuwingsfrequentie aanpassen",
+                "",
+                "<b> Anders <\/b>",
+                "Kleine fixes"
+            ]
+        }
+    }
 }

@@ -253,6 +253,12 @@
             <h3>{{data.ean_article_number}}</h3>
           </ion-label>
         </ion-item>
+        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.co2e_kg])">
+          <ion-label>
+            <h2>{{"BEAN_DATA_CO2E_KG" | translate}}:</h2>
+            <h3>{{data.co2e_kg}}</h3>
+          </ion-label>
+        </ion-item>
         <ion-item>
           <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.finished" disabled="true">{{"FINISHED" | translate}}?:</ion-checkbox>
         </ion-item>

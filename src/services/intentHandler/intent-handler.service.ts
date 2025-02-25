@@ -143,7 +143,7 @@ export class IntentHandlerService {
             const data = url.split('int/')[1].split('/');
             const actionType = data[0];
             const id = data[1];
-            const action = data[2];
+            let action = data[2];
             try {
               this.uiAnalytics.trackEvent(
                 IntentHandlerTracking.TITLE,
@@ -152,6 +152,13 @@ export class IntentHandlerService {
               );
             } catch (ex) {}
             if (actionType === 'bean') {
+              if (
+                (action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.CHOOSE_ACTION
+              ) {
+                //We overwrite action here :)
+                action = await this.uiBeanHelper.chooseNFCTagAction();
+              }
+
               if ((action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.DETAIL) {
                 await this.uiBeanHelper.detailBeanByInternalShareCode(id);
               } else if (
@@ -196,7 +203,7 @@ export class IntentHandlerService {
     );
     this.visualizerService.importShotWithSharedCode(_shareCode);
   }
-  private async addBeanFromServer(_qrCodeId: string) {
+  public async addBeanFromServer(_qrCodeId: string) {
     this.uiLog.log('Load bean information from server: ' + _qrCodeId);
 
     try {

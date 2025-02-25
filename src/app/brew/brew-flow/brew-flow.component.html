@@ -14,7 +14,7 @@
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('pressure')"
                       [outline]="!brewComponent.brewBrewingGraphEl.traces.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
           }
-          @if(brewComponent.brewBrewingGraphEl.uiTemperatureConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.x?.length >0)) {
+          @if(brewComponent.brewBrewingGraphEl.uiTemperatureConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.x?.length >0)) {
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('temperature')"
                       [outline]="!brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
               translate}}</ion-chip>
@@ -45,9 +45,9 @@
                   <div #smartScaleWeightDetail>? g</div>
                   <div #smartScaleWeightSecondDetail *ngIf="brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights">?g</div>
                   @if(brewComponent.timer.timer.runTimer) {
-                    <span #smartScaleBrewRatio style='font-size:16px;'></span>
+                    <span class="smartScaleRatio" #smartScaleBrewRatio></span>
                   } @else {
-                    <span style='font-size:16px;'>({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
+                    <span class="smartScaleRatio" >({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
                   }
 
                 </ion-card-header>
@@ -81,7 +81,7 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col *ngIf="brewComponent?.brewBrewingGraphEl?.uiTemperatureConnected || brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected"
+          <ion-col *ngIf="brewComponent?.brewBrewingGraphEl?.uiTemperatureConnected || (brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
                    size="{{graphIconColSize}}"   style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
               <ion-card-header>

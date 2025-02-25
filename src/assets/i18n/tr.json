@@ -1383,7 +1383,8 @@
         "START_BREW": "Demlemeye başla",
         "START_BREW_CHOOSE_PREPARATION": "Demlemeye başlayın ve hazırlama yöntemini seçin",
         "DETAIL": "Ayrıntılı görünüm",
-        "EDIT": "Çekirdeği düzenle"
+        "EDIT": "Çekirdeği düzenle",
+        "CHOOSE_ACTION": "Tarama sırasında eylemi seçin"
     },
     "DOWNLOAD_QR_CODE": "QR kodunu indirin",
     "NFC": {
@@ -1417,5 +1418,40 @@
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": "Acaia bağlantı modu",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": "Tartınız sürekli olarak bağlanıyor ve bağlantısı kesiliyorsa, modu V1 olarak ayarlamayı ve kalp atışı ile komut zamanlayıcısını ayarlamayı deneyin. Bu, eski bağlantı rutinine geçecektir.",
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": "V2 - Yeni bağlantı modu",
-    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Eski bağlantı modu"
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": "V1 - Eski bağlantı modu",
+    "BEAN_DATA_CO2E_KG": "Kg kavrulmuş kahve başına CO2e (kg)",
+    "BEAN_DATA_CO2E_KG_TOOLTIP": "Kg kavrulmuş kahve başına salınan CO2e (kg)",
+    "BEAN_SORT_RECENTLY_USED": "Son kullanılan",
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Eylem seçin",
+    "GRAPH_UPDATE_INTERVAL_TITLE": "Grafik Güncelleme Aralığı",
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Bunu yalnızca akış sırasında grafiğiniz gecikiyorsa kullanın, bu genellikle eski tabletlerde veya telefonlarda meydana gelir. Herhangi bir sorun yaşamıyorsanız, bu işlevi yok sayabilirsiniz.",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Grafik Güncelleme Sıklık Aralığı",
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": "Seçilen milisaniye aralığında yenile",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": "Demlemeyi otomatik olarak kaydet",
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Belirli bir zaman aralığı geçtikten sonra demlemeyi otomatik olarak kaydedin. Bu eylem, demleme zamanlayıcısını duraklattıktan sonra gerçekleştirilecektir",
+    "SAVE_NOW": "Şimdi kaydet",
+    "SAVING_BREW_COUNTDOWN": "Demlemeyi kaydetme {{time}}",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Sürüm 8.1.0: Yenilikler",
+            "DESCRIPTION": [
+                "<b>Çekirdekler<\/b>",
+                "Çekirdekleri son kullanım, satın alma tarihi ve torba açılış tarihine göre sıralayın",
+                "Varsayılan olarak devre dışı bırakılan, kg kavrulmuş kahve başına yeni bir CO2e (kg) parametresinin desteklenmesi",
+                "Excel'e dışa aktarırken artık kavurma derecesini doğru şekilde algılıyor",
+                "Yeni NFC\/QR-Code eylemi: Eylem seçin. Etiketi tararken, yürütmek istediğiniz eylemi seçebilirsiniz",
+                "",
+                "<b>Demleme<\/b>",
+                "Bluetooth cihazları için bilgi kutucukları artık tabletlerde daha büyük",
+                "Espresso demlemeleri için sabit ağırlığı iki katına çıkarma",
+                "",
+                "<b> Ayarlar <\/b>",
+                "Yeni özellik: Etkinleştirdiğinde demlemeyi otomatik olarak kaydeder",
+                "Yeni özellik: Grafik aralığını güncelleyin, grafikleri güncellerken donabilecek\/gecikebilecek eski cihazlar için yenileme hızını ayarlayabilirsiniz",
+                "",
+                "<b> Diğer <\/b>",
+                "Küçük hata düzeltmeleri"
+            ]
+        }
+    }
 }

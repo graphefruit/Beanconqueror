@@ -88,7 +88,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
-  protected heightInformationBlock: number = 50;
 
   public graphIconColSize: number = 2.4;
   public bluetoothSubscription: Subscription = undefined;
@@ -286,8 +285,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         } catch (ex) {
           informationContainerHeight = 0;
         }
-
-        this.heightInformationBlock = informationContainerHeight;
 
         this.brewComponent.brewBrewingGraphEl.lastChartLayout.height =
           flowHeight - informationContainerHeight;

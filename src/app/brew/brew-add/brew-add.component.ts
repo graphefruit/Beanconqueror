@@ -48,6 +48,8 @@ import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { UIHelper } from '../../../services/uiHelper';
 import { Bean } from '../../../classes/bean/bean';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
 
 declare var Plotly;
 
@@ -77,6 +79,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private initialBeanData: string = '';
   private disableHardwareBack;
   public bluetoothSubscription: Subscription = undefined;
+  public automaticSaveSubscription: Subscription = undefined;
   public readonly PreparationDeviceType = PreparationDeviceType;
 
   constructor(
@@ -100,6 +103,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly hapticService: HapticService,
     private readonly uiHelper: UIHelper,
+    private readonly eventQueue: EventQueueService,
   ) {
     // Initialize to standard in drop down
     this.settings = this.uiSettingsStorage.getSettings();
@@ -119,6 +123,11 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       .getAllEntries()
       .filter((e) => !e.finished)
       .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
+
+    const eventSubs = this.eventQueue.on(AppEventType.BREW_AUTOMATIC_SAVE);
+    this.automaticSaveSubscription = eventSubs.subscribe((event) => {
+      this.finish(true);
+    });
   }
   @HostListener('window:keyboardWillShow')
   private hideFooter() {
@@ -292,7 +301,8 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  public async finish() {
+  public async finish(_automaticSave: boolean = false) {
+    this.deattachBrewAutoSave();
     await this.uiAlert.showLoadingMessage(undefined, undefined, true);
     await sleep(50);
     try {
@@ -325,10 +335,14 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       await this.uiAlert.hideLoadingSpinner();
       await sleep(100);
 
-      if (this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())) {
-        await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
-          this.data.getBean(),
-        );
+      if (_automaticSave === false) {
+        if (
+          this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())
+        ) {
+          await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
+            this.data.getBean(),
+          );
+        }
       }
 
       this.uiAnalytics.trackEvent(
@@ -518,11 +532,18 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       );
     }
   }
+  public deattachBrewAutoSave() {
+    if (this.automaticSaveSubscription) {
+      this.automaticSaveSubscription.unsubscribe();
+      this.automaticSaveSubscription = undefined;
+    }
+  }
 
   public ngOnDestroy() {
     if (this.bluetoothSubscription) {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;
     }
+    this.deattachBrewAutoSave();
   }
 }

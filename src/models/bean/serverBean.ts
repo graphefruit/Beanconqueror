@@ -1,7 +1,6 @@
-import {IAttachment} from '../../interfaces/server/iAttachment';
+import { IAttachment } from '../../interfaces/server/iAttachment';
 
-export class ServerBean
-{
+export class ServerBean {
   public name: string;
   public roast: number;
   public roast_custom: string;
@@ -16,37 +15,35 @@ export class ServerBean
   public decaffeinated: boolean;
   public url: string;
   public ean_article_number: string;
-  public bean_information: Array<
-      {
-        country: string,
-        region: string,
-        farm: string,
-        farmer: string,
-        elevation: string,
-        harvest_time: string,
-        variety: string,
-        processing: string,
-        certification: string,
-        percentage: number,
-        fob_price: number,
-        purchasing_price: number
-      }
-    >;
-    public bean_roasting_type: number;
-    public beanMix: number;
-    public beanNote: {
-        roasterDescription: string,
-        brewAdvices: string,
-        attachments: Array<string>
-      };
-    public attachment: Array<IAttachment>;
-    public qr_code: string;
+  public co2e_kg: number;
+  public bean_information: Array<{
+    country: string;
+    region: string;
+    farm: string;
+    farmer: string;
+    elevation: string;
+    harvest_time: string;
+    variety: string;
+    processing: string;
+    certification: string;
+    percentage: number;
+    fob_price: number;
+    purchasing_price: number;
+  }>;
+  public bean_roasting_type: number;
+  public beanMix: number;
+  public beanNote: {
+    roasterDescription: string;
+    brewAdvices: string;
+    attachments: Array<string>;
+  };
+  public attachment: Array<IAttachment>;
+  public qr_code: string;
 
-    public error: {
-      message: string,
-      errorCode: string,
-      messageDetail: string,
-      statusCode: number
-    };
-
+  public error: {
+    message: string;
+    errorCode: string;
+    messageDetail: string;
+    statusCode: number;
+  };
 }

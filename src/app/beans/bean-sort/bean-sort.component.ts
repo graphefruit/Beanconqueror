@@ -4,6 +4,8 @@ import { UIHelper } from '../../../services/uiHelper';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'app-bean-sort',
@@ -23,12 +25,16 @@ export class BeanSortComponent implements OnInit {
 
   public extendedSortActive: boolean = false;
 
+  public settings: Settings;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {}
 
   public ngOnInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.uiHelper.copyData(this.bean_sort);
     this.__reloadFilterSettings();
   }
@@ -39,7 +45,7 @@ export class BeanSortComponent implements OnInit {
         bean_sort: undefined,
       },
       undefined,
-      BeanSortComponent.COMPONENT_ID
+      BeanSortComponent.COMPONENT_ID,
     );
   }
 
@@ -49,7 +55,7 @@ export class BeanSortComponent implements OnInit {
         bean_sort: this.uiHelper.copyData(this.filter),
       },
       undefined,
-      BeanSortComponent.COMPONENT_ID
+      BeanSortComponent.COMPONENT_ID,
     );
   }
 

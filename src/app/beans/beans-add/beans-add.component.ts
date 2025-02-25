@@ -48,7 +48,7 @@ export class BeansAddComponent implements OnInit {
     private readonly uiAlert: UIAlert,
     private readonly platform: Platform,
     public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {}
 
   public ngOnInit() {
@@ -59,7 +59,7 @@ export class BeansAddComponent implements OnInit {
         (_processNextHandler) => {
           // Don't do anything.
           this.confirmDismiss();
-        }
+        },
       );
     }
   }
@@ -114,7 +114,7 @@ export class BeansAddComponent implements OnInit {
             const yes = await this.uiAlert.showConfirm(
               'BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION',
               'INFORMATION',
-              true
+              true,
             );
             this.settings.bean_manage_parameters.bean_information = true;
             await this.uiSettingsStorage.update(this.settings);
@@ -198,7 +198,7 @@ export class BeansAddComponent implements OnInit {
           },
           () => {
             // No
-          }
+          },
         );
     } else {
       this.dismiss();
@@ -212,7 +212,7 @@ export class BeansAddComponent implements OnInit {
     await this.uiBeanStorage.add(this.data);
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.ADD_FINISH
+      BEAN_TRACKING.ACTIONS.ADD_FINISH,
     );
     this.dismiss();
     if (!this.hide_toast_message) {
@@ -231,7 +231,7 @@ export class BeansAddComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BeansAddComponent.COMPONENT_ID
+      BeansAddComponent.COMPONENT_ID,
     );
   }
 
@@ -253,9 +253,10 @@ export class BeansAddComponent implements OnInit {
     this.data.decaffeinated = _bean.decaffeinated;
     this.data.url = _bean.url;
     this.data.ean_article_number = _bean.ean_article_number;
+    this.data.co2e_kg = _bean.co2e_kg;
 
     this.data.bean_information = this.uiHelper.cloneData(
-      _bean.bean_information
+      _bean.bean_information,
     );
     this.data.cupping_points = _bean.cupping_points;
     this.data.roast_range = _bean.roast_range;
@@ -263,9 +264,8 @@ export class BeansAddComponent implements OnInit {
     const copyAttachments = [];
     for (const attachment of _bean.attachments) {
       try {
-        const newPath: string = await this.uiFileHelper.duplicateInternalFile(
-          attachment
-        );
+        const newPath: string =
+          await this.uiFileHelper.duplicateInternalFile(attachment);
         copyAttachments.push(newPath);
       } catch (ex) {}
     }

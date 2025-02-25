@@ -1,6 +1,5 @@
 export default {
-
-  TITLE:'SETTINGS',
+  TITLE: 'SETTINGS',
   ACTIONS: {
     SET_LANGUAGE: {
       CATEGORY: 'SET_LANGUAGE',
@@ -10,10 +9,9 @@ export default {
     FORCE_TOUCH: 'FORCE_TOUCH',
     REORDER_BREW: 'REORDER_BREW',
     STARTUP_VIEW: 'STARTUP_VIEW',
-    SCALE:{
+    SCALE: {
       CATEGORY: 'CONNECTED_SCALE',
-
     },
-  }
-
+    USED_LANGUAGE: 'USED_LANGUAGE',
+  },
 };

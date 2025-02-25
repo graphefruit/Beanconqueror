@@ -67,4 +67,9 @@ export interface IBean {
 
   bestDate: string;
   openDate: string;
+
+  /**
+   * kg CO2e /kg for emission data.
+   */
+  co2e_kg: number;
 }
