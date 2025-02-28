@@ -1031,7 +1031,8 @@
             "NONE": "None",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": "Sanremo YOU"
+            "SANREMO_YOU": "Sanremo YOU",
+            "GAGGIUINO": "Gaggiuino"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1453,5 +1454,6 @@
                 "Small fixes"
             ]
         }
-    }
+    },
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino"
 }

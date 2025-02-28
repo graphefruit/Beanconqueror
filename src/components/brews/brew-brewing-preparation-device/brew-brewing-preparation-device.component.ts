@@ -46,6 +46,11 @@ import {
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  GaggiuinoDevice,
+  GaggiuinoParams,
+} from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
+import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
@@ -57,8 +62,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
   @Input() public brewComponent: BrewBrewingComponent;
-  public preparationDevice: XeniaDevice | MeticulousDevice | SanremoYOUDevice =
-    undefined;
+  public preparationDevice:
+    | XeniaDevice
+    | MeticulousDevice
+    | SanremoYOUDevice
+    | GaggiuinoDevice = undefined;
 
   public preparation: Preparation = undefined;
   public settings: Settings = undefined;
@@ -157,6 +165,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
         await this.instanceMeticulousPreparationDevice(connectedDevice, _brew);
       } else if (connectedDevice instanceof SanremoYOUDevice) {
         await this.instanceSanremoYOUPreparationDevice(connectedDevice, _brew);
+      } else if (connectedDevice instanceof GaggiuinoDevice) {
+        await this.instanceGaggiuinoPreparationDevice(connectedDevice, _brew);
       }
 
       this.checkChanges();
@@ -346,6 +356,37 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     );
   }
 
+  private async instanceGaggiuinoPreparationDevice(
+    connectedDevice: GaggiuinoDevice,
+    _brew: Brew = null,
+  ) {
+    this.data.preparationDeviceBrew.type = PreparationDeviceType.GAGGIUINO;
+    this.data.preparationDeviceBrew.params = new GaggiuinoParams();
+
+    await this.uiAlert.showLoadingSpinner();
+    await connectedDevice.deviceConnected().then(
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
+        this.preparationDevice = connectedDevice as GaggiuinoDevice;
+      },
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
+        //Not connected
+        this.uiAlert.showMessage(
+          'PREPARATION_DEVICE.TYPE_GAGGIUINO_YOU.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+          'CARE',
+          'OK',
+          true,
+        );
+      },
+    );
+
+    if (!this.preparationDevice) {
+      //Ignore the rest of this function
+      return;
+    }
+  }
+
   private async instanceSanremoYOUPreparationDevice(
     connectedDevice: SanremoYOUDevice,
     _brew: Brew = null,
@@ -425,6 +466,24 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       id: BrewModalImportShotMeticulousComponent.COMPONENT_ID,
       componentProps: {
         meticulousDevice: this.preparationDevice as MeticulousDevice,
+      },
+    });
+
+    await modal.present();
+    const rData = await modal.onWillDismiss();
+
+    if (rData && rData.data && rData.data.choosenHistory) {
+      const chosenEntry = rData.data.choosenHistory as HistoryListingEntry;
+      this.generateShotFlowProfileFromMeticulousData(chosenEntry);
+    }
+  }
+
+  public async importShotFromGaggiuino() {
+    const modal = await this.modalController.create({
+      component: BrewModalImportShotGaggiuinoComponent,
+      id: BrewModalImportShotGaggiuinoComponent.COMPONENT_ID,
+      componentProps: {
+        gaggiuinoDevice: this.preparationDevice as GaggiuinoDevice,
       },
     });
 
