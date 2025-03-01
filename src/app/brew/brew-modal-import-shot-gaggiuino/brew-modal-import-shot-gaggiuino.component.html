@@ -10,27 +10,23 @@
   </ion-toolbar>
 </ion-header>
 <ion-content #historyShotContent>
+  @if(history) {
   <ion-radio-group [(ngModel)]="radioSelection">
     <ion-card>
-
-
-      <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='history[0]'></graph-display-card>
-      <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" min-row-height="240">
-
-        <ion-item #ionItemEl *ngFor="let entry of shotDataScroll.items" tappable lines='full'>
-          hallo
-          <ion-radio justify="start" label-placement="end"  value='{{entry.id}}'>
-            <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
-
-            </ion-grid>
-            <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry'></graph-display-card>
-          </ion-radio>
-        </ion-item>
-      </ag-virtual-scroll>
-    </ion-card>
-
-
-  </ion-radio-group>
+        <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" min-row-height="300">
+          <ion-item #ionItemEl *ngFor="let entry of shotDataScroll.items" tappable lines='full'>
+            <ion-radio justify="start" label-placement="end" [value]='entry.id'>
+              <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+                <h2>{{entry.profileName}}</h2>
+                <div class='font-size-16'>{{this.uiHelper.formatTimeNumber(entry.timestamp * 1000)}}</div>
+              </ion-grid>
+              <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow'></graph-display-card>
+            </ion-radio>
+          </ion-item>
+        </ag-virtual-scroll>
+      </ion-card>
+    </ion-radio-group>
+  }
 </ion-content>
 <ion-footer #footerContent class="ion-no-border">
   <ion-row>

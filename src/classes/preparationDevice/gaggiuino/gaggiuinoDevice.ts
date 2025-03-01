@@ -38,7 +38,7 @@ export class GaggiuinoDevice extends PreparationDevice {
       realtimeWaterFlow.brew_time = '';
       realtimeWaterFlow.timestamp = timestamp;
       realtimeWaterFlow.smoothed_weight = 0;
-      realtimeWaterFlow.flow_value = shotEntry.weightFlow[i];
+      realtimeWaterFlow.flow_value = shotEntry.pumpFlow[i];
       realtimeWaterFlow.timestampdelta = 0;
 
       newBrewFlow.realtimeFlow.push(realtimeWaterFlow);

@@ -1,8 +1,9 @@
+import { BrewFlow } from '../../../classes/brew/brewFlow';
+
 export interface IGaggiuinoShotData {
-  status: string;
-  shotTime: number;
-  pressure: number;
-  flow: number;
-  weight: number;
-  temperature: number;
+  id: number;
+  timestamp: number;
+  profileName: string;
+  brewFlow: BrewFlow;
+  rawData: any;
 }
