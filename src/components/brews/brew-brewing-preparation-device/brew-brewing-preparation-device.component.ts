@@ -574,6 +574,15 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
     this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
     this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+
+    (
+      this.data.preparationDeviceBrew.params as GaggiuinoParams
+    ).chosenProfileName = shotData.rawData.profile.name;
+    (
+      this.data.preparationDeviceBrew.params as GaggiuinoParams
+    ).chosenProfileId = shotData.rawData.profile.id;
+    (this.data.preparationDeviceBrew.params as GaggiuinoParams).shotId =
+      shotData.rawData.id;
   }
 
   private generateShotFlowProfileFromMeticulousData(_historyData) {

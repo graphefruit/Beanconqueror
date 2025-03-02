@@ -71,22 +71,16 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
         const gaggiuinoShotDataEntry = new GaggiuinoShotData();
         const data = await this.gaggiuinoDevice.getShotData(id);
 
-        gaggiuinoShotDataEntry.id = id;
-        gaggiuinoShotDataEntry.timestamp = data.timestamp;
-        gaggiuinoShotDataEntry.profileName = data.profile.name;
-        gaggiuinoShotDataEntry.brewFlow =
-          GaggiuinoDevice.returnBrewFlowForShotData(data);
-        gaggiuinoShotDataEntry.rawData = data;
-        /**
-         * TODO: Loop here for all other shots...
-         */
+        if (data !== null) {
+          gaggiuinoShotDataEntry.id = id;
+          gaggiuinoShotDataEntry.timestamp = data.timestamp;
+          gaggiuinoShotDataEntry.profileName = data.profile.name;
+          gaggiuinoShotDataEntry.brewFlow =
+            GaggiuinoDevice.returnBrewFlowForShotData(data);
+          gaggiuinoShotDataEntry.rawData = data;
 
-        alldatatoPush.push(gaggiuinoShotDataEntry);
-
-        // const response = await fetch(http://gaggiuino.local/api/shots/${id});
-        // const shotDetail: ShotDetail = await response.json();
-        // Verarbeite die Shot-Details
-        //console.log(shotDetail);
+          alldatatoPush.push(gaggiuinoShotDataEntry);
+        }
       } catch (error) {
         // console.error(There was a problem with the fetch operation for id ${id}:, error);
       }

@@ -106,6 +106,9 @@ export class GaggiuinoDevice extends PreparationDevice {
       };
       const response: HttpResponse = await CapacitorHttp.get(options);
       const responseJSON = await response.data;
+      if (response.status === 404) {
+        return null;
+      }
       return responseJSON;
       //return Number(responseJSON[0].lastShotId);
 
@@ -142,5 +145,12 @@ export class GaggiuinoDevice extends PreparationDevice {
 }
 
 export class GaggiuinoParams implements IGaggiuinoParams {
-  constructor() {}
+  public chosenProfileId: number;
+  public chosenProfileName: string;
+  public shotId: number;
+  constructor() {
+    this.chosenProfileId = 0;
+    this.chosenProfileName = '';
+    this.shotId = 0;
+  }
 }

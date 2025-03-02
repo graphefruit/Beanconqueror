@@ -1079,8 +1079,11 @@
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, the chosen profile will be fully executed",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, please stop extraction manually",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the Sanremo YOU machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc."
+        },
+        "TYPE_GAGGIUINO": {
+          "TITLE": "Gaggiuino Machine"
         }
-    },
+       },
     "DEVICE_CONNECTION": "Device connection",
     "PREPARATION_DEVICE_CONNECTION": "Device connection",
     "MANUAL_EXPORT_TO_VISUALIZER": "Export to Visualizer",
@@ -1455,5 +1458,6 @@
             ]
         }
     },
-    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino"
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino"
 }
