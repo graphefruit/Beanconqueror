@@ -555,16 +555,19 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       pressureFlow.old_pressure = 0;
       newBrewFlow.pressureFlow.push(pressureFlow);
 
-      /**const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
-         temperatureFlow.timestamp = timestamp;
-         temperatureFlow.brew_time = '';
-         temperatureFlow.actual_temperature = shotEntry.temperature;
-         temperatureFlow.old_temperature = 0;
-         newBrewFlow.temperatureFlow.push(temperatureFlow);**/
+      const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
+      temperatureFlow.timestamp = timestamp;
+      temperatureFlow.brew_time = '';
+      temperatureFlow.actual_temperature = shotEntry.temperature[i] / 10;
+      temperatureFlow.old_temperature = 0;
+      newBrewFlow.temperatureFlow.push(temperatureFlow);
     }
 
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
     this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
+    this.brewComponent.data.brew_temperature =
+      shotData.rawData.profile.waterTemperature;
+    this.brewComponent.data.pressure_profile = shotData.rawData.profile.name;
 
     this.brewComponent.timer?.setTime(seconds, milliseconds);
     this.brewComponent.timer?.changeEvent();

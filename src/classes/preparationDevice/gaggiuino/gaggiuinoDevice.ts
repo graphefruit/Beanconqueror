@@ -38,7 +38,7 @@ export class GaggiuinoDevice extends PreparationDevice {
       realtimeWaterFlow.brew_time = '';
       realtimeWaterFlow.timestamp = timestamp;
       realtimeWaterFlow.smoothed_weight = 0;
-      realtimeWaterFlow.flow_value = shotEntry.pumpFlow[i];
+      realtimeWaterFlow.flow_value = shotEntry.pumpFlow[i] / 10;
       realtimeWaterFlow.timestampdelta = 0;
 
       newBrewFlow.realtimeFlow.push(realtimeWaterFlow);
@@ -46,7 +46,7 @@ export class GaggiuinoDevice extends PreparationDevice {
       const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
       brewFlow.timestamp = timestamp;
       brewFlow.brew_time = '';
-      brewFlow.actual_weight = shotEntry.shotWeight[i];
+      brewFlow.actual_weight = shotEntry.shotWeight[i] / 10;
       brewFlow.old_weight = 0;
       brewFlow.actual_smoothed_weight = 0;
       brewFlow.old_smoothed_weight = 0;
@@ -56,16 +56,16 @@ export class GaggiuinoDevice extends PreparationDevice {
       const pressureFlow: IBrewPressureFlow = {} as IBrewPressureFlow;
       pressureFlow.timestamp = timestamp;
       pressureFlow.brew_time = '';
-      pressureFlow.actual_pressure = shotEntry.pressure[i];
+      pressureFlow.actual_pressure = shotEntry.pressure[i] / 10;
       pressureFlow.old_pressure = 0;
       newBrewFlow.pressureFlow.push(pressureFlow);
 
-      /**const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
+      const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
       temperatureFlow.timestamp = timestamp;
       temperatureFlow.brew_time = '';
-      temperatureFlow.actual_temperature = shotEntry.temperature;
+      temperatureFlow.actual_temperature = shotEntry.temperature[i] / 10;
       temperatureFlow.old_temperature = 0;
-      newBrewFlow.temperatureFlow.push(temperatureFlow);**/
+      newBrewFlow.temperatureFlow.push(temperatureFlow);
     }
     return newBrewFlow;
   }
