@@ -28,6 +28,7 @@ export class GraphDisplayCardComponent implements OnInit {
   @Input() public flowProfilePath: any;
 
   @Input() public meticulousHistoryData: HistoryListingEntry;
+  @Input() public gaggiuinoHistoryData: BrewFlow;
 
   @Input() public chartWidth: number;
   @Input() public chartHeight: number;
@@ -60,6 +61,12 @@ export class GraphDisplayCardComponent implements OnInit {
       this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
         this.meticulousHistoryData.data,
       );
+    } else if (this.gaggiuinoHistoryData) {
+      //ebugger;
+      this.flow_profile_raw = this
+        .gaggiuinoHistoryData as BrewFlow; /**GaggiuinoDevice.returnBrewFlowForShotData(
+        this.gaggiuinoHistoryData.data,
+      );**/
     }
     setTimeout(() => {
       this.initializeFlowChart();

@@ -175,6 +175,7 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
 import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
+import { BrewModalImportShotGaggiuinoComponent } from '../brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 
 @NgModule({
   declarations: [
@@ -201,6 +202,7 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
     BrewModalImportShotMeticulousComponent,
+    BrewModalImportShotGaggiuinoComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BeansDetailComponent,
@@ -392,6 +394,7 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
     BrewModalImportShotMeticulousComponent,
+    BrewModalImportShotGaggiuinoComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BrewRatingComponent,

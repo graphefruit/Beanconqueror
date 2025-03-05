@@ -46,6 +46,12 @@ import {
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  GaggiuinoDevice,
+  GaggiuinoParams,
+} from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
+import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
+import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
@@ -57,8 +63,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
   @Input() public brewComponent: BrewBrewingComponent;
-  public preparationDevice: XeniaDevice | MeticulousDevice | SanremoYOUDevice =
-    undefined;
+  public preparationDevice:
+    | XeniaDevice
+    | MeticulousDevice
+    | SanremoYOUDevice
+    | GaggiuinoDevice = undefined;
 
   public preparation: Preparation = undefined;
   public settings: Settings = undefined;
@@ -157,6 +166,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
         await this.instanceMeticulousPreparationDevice(connectedDevice, _brew);
       } else if (connectedDevice instanceof SanremoYOUDevice) {
         await this.instanceSanremoYOUPreparationDevice(connectedDevice, _brew);
+      } else if (connectedDevice instanceof GaggiuinoDevice) {
+        await this.instanceGaggiuinoPreparationDevice(connectedDevice, _brew);
       }
 
       this.checkChanges();
@@ -346,6 +357,37 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     );
   }
 
+  private async instanceGaggiuinoPreparationDevice(
+    connectedDevice: GaggiuinoDevice,
+    _brew: Brew = null,
+  ) {
+    this.data.preparationDeviceBrew.type = PreparationDeviceType.GAGGIUINO;
+    this.data.preparationDeviceBrew.params = new GaggiuinoParams();
+
+    await this.uiAlert.showLoadingSpinner();
+    await connectedDevice.deviceConnected().then(
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
+        this.preparationDevice = connectedDevice as GaggiuinoDevice;
+      },
+      async () => {
+        await this.uiAlert.hideLoadingSpinner();
+        //Not connected
+        this.uiAlert.showMessage(
+          'PREPARATION_DEVICE.TYPE_GAGGIUINO_YOU.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+          'CARE',
+          'OK',
+          true,
+        );
+      },
+    );
+
+    if (!this.preparationDevice) {
+      //Ignore the rest of this function
+      return;
+    }
+  }
+
   private async instanceSanremoYOUPreparationDevice(
     connectedDevice: SanremoYOUDevice,
     _brew: Brew = null,
@@ -435,6 +477,111 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       const chosenEntry = rData.data.choosenHistory as HistoryListingEntry;
       this.generateShotFlowProfileFromMeticulousData(chosenEntry);
     }
+  }
+
+  public async importShotFromGaggiuino() {
+    const modal = await this.modalController.create({
+      component: BrewModalImportShotGaggiuinoComponent,
+      id: BrewModalImportShotGaggiuinoComponent.COMPONENT_ID,
+      componentProps: {
+        gaggiuinoDevice: this.preparationDevice as GaggiuinoDevice,
+      },
+    });
+
+    await modal.present();
+    const rData = await modal.onWillDismiss();
+    if (rData && rData.data && rData.data.choosenData) {
+      const chosenEntry = rData.data.choosenData as GaggiuinoShotData;
+      this.generateShotFlowProfileFromGaggiuinoData(chosenEntry);
+    }
+  }
+
+  private generateShotFlowProfileFromGaggiuinoData(
+    shotData: GaggiuinoShotData,
+  ) {
+    const newMoment = moment(new Date()).startOf('day');
+
+    let firstDripTimeSet: boolean = false;
+    const newBrewFlow = new BrewFlow();
+
+    let seconds: number = 0;
+    let milliseconds: number = 0;
+
+    const datapoints = shotData.rawData.datapoints;
+
+    for (let i = 0; i < datapoints.timeInShot.length; i++) {
+      const shotEntry: any = datapoints;
+      const shotEntryTime = newMoment
+        .clone()
+        .add('seconds', shotEntry.timeInShot[i] / 10);
+      const timestamp = shotEntryTime.format('HH:mm:ss.SSS');
+
+      seconds = shotEntryTime.diff(newMoment, 'seconds');
+      milliseconds = shotEntryTime.get('milliseconds');
+
+      const realtimeWaterFlow: IBrewRealtimeWaterFlow =
+        {} as IBrewRealtimeWaterFlow;
+
+      realtimeWaterFlow.brew_time = '';
+      realtimeWaterFlow.timestamp = timestamp;
+      realtimeWaterFlow.smoothed_weight = 0;
+      realtimeWaterFlow.flow_value = shotEntry.pumpFlow[i];
+      realtimeWaterFlow.timestampdelta = 0;
+
+      newBrewFlow.realtimeFlow.push(realtimeWaterFlow);
+
+      const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
+      brewFlow.timestamp = timestamp;
+      brewFlow.brew_time = '';
+      brewFlow.actual_weight = shotEntry.shotWeight[i];
+      brewFlow.old_weight = 0;
+      brewFlow.actual_smoothed_weight = 0;
+      brewFlow.old_smoothed_weight = 0;
+      brewFlow.not_mutated_weight = 0;
+      newBrewFlow.weight.push(brewFlow);
+
+      if (brewFlow.actual_weight > 0 && firstDripTimeSet === false) {
+        firstDripTimeSet = true;
+
+        this.brewComponent.brewFirstDripTime?.setTime(seconds, milliseconds);
+        this.brewComponent.brewFirstDripTime?.changeEvent();
+      }
+
+      const pressureFlow: IBrewPressureFlow = {} as IBrewPressureFlow;
+      pressureFlow.timestamp = timestamp;
+      pressureFlow.brew_time = '';
+      pressureFlow.actual_pressure = shotEntry.pressure[i];
+      pressureFlow.old_pressure = 0;
+      newBrewFlow.pressureFlow.push(pressureFlow);
+
+      const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
+      temperatureFlow.timestamp = timestamp;
+      temperatureFlow.brew_time = '';
+      temperatureFlow.actual_temperature = shotEntry.temperature[i] / 10;
+      temperatureFlow.old_temperature = 0;
+      newBrewFlow.temperatureFlow.push(temperatureFlow);
+    }
+
+    const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
+    this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
+    this.brewComponent.data.brew_temperature =
+      shotData.rawData.profile.waterTemperature;
+    this.brewComponent.data.pressure_profile = shotData.rawData.profile.name;
+
+    this.brewComponent.timer?.setTime(seconds, milliseconds);
+    this.brewComponent.timer?.changeEvent();
+
+    this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
+    this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+
+    (
+      this.data.preparationDeviceBrew.params as GaggiuinoParams
+    ).chosenProfileName = shotData.rawData.profile.name;
+    (
+      this.data.preparationDeviceBrew.params as GaggiuinoParams
+    ).chosenProfileId = shotData.rawData.profile.id;
+    (this.data.preparationDeviceBrew.params as GaggiuinoParams).shotId =
+      shotData.rawData.id;
   }
 
   private generateShotFlowProfileFromMeticulousData(_historyData) {
