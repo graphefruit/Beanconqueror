@@ -490,7 +490,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
     await modal.present();
     const rData = await modal.onWillDismiss();
-    debugger;
     if (rData && rData.data && rData.data.choosenData) {
       const chosenEntry = rData.data.choosenData as GaggiuinoShotData;
       this.generateShotFlowProfileFromGaggiuinoData(chosenEntry);

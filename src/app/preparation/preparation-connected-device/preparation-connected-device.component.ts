@@ -93,6 +93,10 @@ export class PreparationConnectedDeviceComponent {
 
   public async save() {
     setTimeout(async () => {
+      if (this.data.connectedPreparationDevice.url) {
+        this.data.connectedPreparationDevice.url =
+          this.data.connectedPreparationDevice.url.trim();
+      }
       if (
         this.data.connectedPreparationDevice.type ===
         PreparationDeviceType.XENIA

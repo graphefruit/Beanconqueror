@@ -17,7 +17,7 @@
           <ion-item #ionItemEl *ngFor="let entry of shotDataScroll.items" tappable lines='full'>
             <ion-radio justify="start" label-placement="end" [value]='entry.id'>
               <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
-                <h2>{{entry.profileName}}</h2>
+                <h2>{{entry.profileName}}&nbsp;({{entry.id}})</h2>
                 <div class='font-size-16'>{{this.uiHelper.formatTimeNumber(entry.timestamp * 1000)}}</div>
               </ion-grid>
               <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow'></graph-display-card>
