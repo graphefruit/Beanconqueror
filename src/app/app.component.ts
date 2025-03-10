@@ -66,6 +66,7 @@ import { BrewInstanceHelper } from '../classes/brew/brew';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import SettingsTracking from '../data/tracking/settingsTracking';
+import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
 
 declare var window;
 
@@ -103,6 +104,12 @@ export class AppComponent implements AfterViewInit {
       title: 'NAV_GRAPH_SECTION',
       url: '/graph-section',
       active: false,
+    },
+    baristamode: {
+      title: 'NAV_BARISTAMODE_SECTION',
+      url: '/baristamode',
+      active: false,
+      visible: false,
     },
     settings: {
       title: 'NAV_SETTINGS',
@@ -296,6 +303,7 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.log(`Platform: ${deviceInfo.platform}`);
         this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
         this.uiLog.log(`WebView version: ${deviceInfo.webViewVersion}`);
+
         if (this.platform.is('capacitor')) {
           const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
@@ -673,6 +681,8 @@ export class AppComponent implements AfterViewInit {
     //this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
+
+    this.checkAndActivateTheBaristaModeIfNeeded();
     /**If Anything changes, we reset**/
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
@@ -682,6 +692,7 @@ export class AppComponent implements AfterViewInit {
     });
     this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
+      this.checkAndActivateTheBaristaModeIfNeeded();
     });
     this.uiMillStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
@@ -689,6 +700,20 @@ export class AppComponent implements AfterViewInit {
     this.uiSettingsStorage.attachOnEvent().subscribe(() => {
       this.setUIParams();
     });
+  }
+
+  private checkAndActivateTheBaristaModeIfNeeded() {
+    if (this.pages.baristamode.visible === false) {
+      const settings = this.uiSettingsStorage.getSettings();
+      /** If we find a sanremo you preparation device, we enable the baristamode**/
+      if (
+        this.uiPreparationStorage
+          .getAllEntries()
+          .find((e) => !e.finished && e.type === PREPARATION_TYPES.SANREMO_YOU)
+      ) {
+        this.pages.baristamode.visible = true;
+      }
+    }
   }
 
   private async __checkBluetoothDevices() {

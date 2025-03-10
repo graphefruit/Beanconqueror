@@ -63,6 +63,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
   @Input() public brewComponent: BrewBrewingComponent;
+
+  @Input() public baristamode: boolean = false;
+
   public preparationDevice:
     | XeniaDevice
     | MeticulousDevice

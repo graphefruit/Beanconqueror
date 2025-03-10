@@ -107,6 +107,8 @@ export class BrewBrewingGraphComponent implements OnInit {
   @Input() public isEdit: boolean = false;
   @Input() public isDetail: boolean = false;
 
+  @Input() public baristamode: boolean = false;
+
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
@@ -477,7 +479,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.METICULOUS
     ) {
-      return 3;
+      return 4;
     }
 
     let bluetoothDeviceConnections = 0;
@@ -824,7 +826,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           pressureDevice.updateZero();
         }
       }
-      pressureDevice.enableValueTransmission();
+      pressureDevice?.enableValueTransmission();
       if (
         this.brewComponent?.timer?.isTimerRunning() === true &&
         _firstStart === false

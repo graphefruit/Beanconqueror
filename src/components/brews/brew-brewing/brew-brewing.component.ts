@@ -45,7 +45,6 @@ import { UIExcel } from '../../../services/uiExcel';
 
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
 import {
@@ -115,6 +114,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @Input() public loadSpecificLastPreparation: Preparation;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
+
+  @Input('baristamode') public baristamode: boolean = false;
 
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
@@ -208,37 +209,43 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async ngAfterViewInit() {
     setTimeout(async () => {
+      console.log(this.baristamode);
       // If we wouldn't wait in the timeout, the components wouldnt be existing
       if (this.isEdit === false) {
         // We need a short timeout because of ViewChild, else we get an exception
 
-        if (this.brewTemplate) {
-          await this.__loadBrew(this.brewTemplate, true);
-        } else if (this.loadSpecificLastPreparation) {
-          const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(
-            this.uiBrewStorage
-              .getAllEntries()
-              .filter(
-                (e) =>
-                  e.method_of_preparation ===
-                  this.loadSpecificLastPreparation.config.uuid,
-              ),
-          );
-          if (foundBrews.length > 0) {
-            await this.__loadBrew(foundBrews[0], false);
+        if (this.baristamode === false) {
+          if (this.brewTemplate) {
+            await this.__loadBrew(this.brewTemplate, true);
+          } else if (this.loadSpecificLastPreparation) {
+            const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(
+              this.uiBrewStorage
+                .getAllEntries()
+                .filter(
+                  (e) =>
+                    e.method_of_preparation ===
+                    this.loadSpecificLastPreparation.config.uuid,
+                ),
+            );
+            if (foundBrews.length > 0) {
+              await this.__loadBrew(foundBrews[0], false);
+            } else {
+              /** We start an empty new brew, and set the preparation method for it
+               * so when the next brew will come, data can or will be preset
+               * **/
+              const newBrew = new Brew();
+              newBrew.method_of_preparation =
+                this.loadSpecificLastPreparation.config.uuid;
+              await this.__loadBrew(newBrew, false);
+            }
           } else {
-            /** We start an empty new brew, and set the preparation method for it
-             * so when the next brew will come, data can or will be preset
-             * **/
-            const newBrew = new Brew();
-            newBrew.method_of_preparation =
-              this.loadSpecificLastPreparation.config.uuid;
-            await this.__loadBrew(newBrew, false);
+            await this.__loadLastBrew();
           }
         } else {
-          await this.__loadLastBrew();
+          if (this.brewBrewingPreparationDeviceEl) {
+            await this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+          }
         }
-
         this.setChoosenPreparation();
       } else {
         this.setChoosenPreparation();
@@ -493,7 +500,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.coffee_first_drip_time_milliseconds =
         this.timer.getMilliseconds();
     }
-    this.brewFirstDripTime.setTime(
+    this.brewFirstDripTime?.setTime(
       this.data.coffee_first_drip_time,
       this.data.coffee_first_drip_time_milliseconds,
     );

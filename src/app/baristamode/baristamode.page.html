@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar with-add-button>
+    <ion-buttons slot="start">
+      <ion-menu-button show="back"></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+
+    </ion-buttons>
+    <ion-title>
+      {{"BARISTAMODE_SECTION.NAV_GRAPH" | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+<ion-card>
+  <brew-brewing #brewBrewing [baristamode]="true"
+  [(data)]="data"></brew-brewing>
+</ion-card>
+</ion-content>

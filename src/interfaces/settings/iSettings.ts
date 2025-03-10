@@ -35,6 +35,7 @@ export interface ISettings {
   bean_manage_parameters: IBeanParameter;
   bean_visible_list_view_parameters: IBeanParameter;
   matomo_analytics: boolean;
+  matomo_analytics_id: string;
   meticulous_help_was_shown: boolean;
   qr_scanner_information: boolean;
   track_brew_coordinates: boolean;

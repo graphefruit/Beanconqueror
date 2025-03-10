@@ -151,7 +151,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.METICULOUS
     ) {
-      return 2.4;
+      return 3;
     }
 
     //One is the timer ;)
