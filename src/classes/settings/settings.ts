@@ -276,6 +276,7 @@ export class Settings implements ISettings {
       bean: [],
       method_of_preparation: [],
       method_of_preparation_tools: [],
+      water: [],
       favourite: false,
       best_brew: false,
       chart_data: false,
