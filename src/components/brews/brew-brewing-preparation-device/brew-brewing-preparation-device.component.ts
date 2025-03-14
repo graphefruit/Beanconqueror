@@ -571,6 +571,15 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       shotData.rawData.profile.waterTemperature;
     this.brewComponent.data.pressure_profile = shotData.rawData.profile.name;
 
+    try {
+      /**Set the custom creation date, the user needs to activate the parameter for custom creation date**/
+      this.brewComponent.customCreationDate = moment
+        .unix(shotData.timestamp)
+        .toISOString();
+    } catch (e) {
+      this.brewComponent.customCreationDate = '';
+    }
+
     this.brewComponent.timer?.setTime(seconds, milliseconds);
     this.brewComponent.timer?.changeEvent();
 
