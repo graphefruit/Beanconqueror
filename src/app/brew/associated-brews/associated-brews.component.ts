@@ -16,6 +16,7 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIWaterHelper } from '../../../services/uiWaterHelper';
 
 @Component({
   selector: 'app-bean-associated-brews',
@@ -48,13 +49,14 @@ export class AssociatedBrewsComponent {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiMillHelper: UIMillHelper,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
+    private readonly uiWaterHelper: UIWaterHelper,
   ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.SHOW_BREWS
+      BEAN_TRACKING.ACTIONS.SHOW_BREWS,
     );
 
     this.loadBrews();
@@ -91,10 +93,12 @@ export class AssociatedBrewsComponent {
 
     if (this.type === 'preparation') {
       relatedBrews = this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.uuid
+        this.uuid,
       );
     } else if (this.type === 'mill') {
       relatedBrews = this.uiMillHelper.getAllBrewsForThisMill(this.uuid);
+    } else if (this.type === 'water') {
+      relatedBrews = this.uiWaterHelper.getAllBrewsForThisWater(this.uuid);
     } else {
       relatedBrews = this.uiBeanHelper.getAllBrewsForThisBean(this.uuid);
     }
@@ -113,7 +117,7 @@ export class AssociatedBrewsComponent {
         dismissed: true,
       },
       undefined,
-      AssociatedBrewsComponent.COMPONENT_ID
+      AssociatedBrewsComponent.COMPONENT_ID,
     );
   }
 }
