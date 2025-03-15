@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
 import { RefractometerDevice } from './refractometerBluetoothDevice';
+import { diFluid } from './diFluid/protocol';
 
 declare var ble: any;
 export class DiFluidR2Refractometer extends RefractometerDevice {
@@ -28,10 +29,10 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
     this.logger.log('connecting...');
     this.attachNotification();
     await setTimeout(async () => {
-      await this.enableAutoNotifications();
+      await this.setDeviceAutoNotification(diFluid.R2.settings.autoTest.Off);
     }, 100);
     await setTimeout(async () => {
-      await this.setDeviceToCelsius();
+      await this.setDeviceTemperatureUnit(diFluid.R2.settings.temperatureUnit.C);
     }, 100);
   }
 
@@ -46,20 +47,40 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
   }
 
   public override async requestRead() {
-    await this.write(new Uint8Array([0xdf, 0xdf, 0x03, 0x00, 0x00, 0xc1]));
-  }
-
-  public async enableAutoNotifications() {
-    this.logger.log('enabling auto notifications');
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x01, 0x01, 0x00, 0xc1])
+      diFluid.buildRawCmd(
+        {
+          func: diFluid.func.DEVICE_ACTION,
+          cmd: diFluid.R2.action.SINGLE_TEST,
+          data: new Uint8Array([])
+        }
+      )
     );
   }
 
-  public async setDeviceToCelsius() {
+  public async setDeviceAutoNotification(notifications: diFluid.R2.settings.autoTest) {
+    this.logger.log('enabling auto notifications');
+    await this.write(
+      diFluid.buildRawCmd(
+        {
+          func: diFluid.func.DEVICE_SETTINGS,
+          cmd: diFluid.R2.settings.AUTO_TEST_STATUS,
+          data: new Uint8Array([notifications])
+        }
+      )
+    );
+  }
+
+  public async setDeviceTemperatureUnit(unit: diFluid.R2.settings.temperatureUnit) {
     this.logger.log('set R2 to celsius');
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x00, 0xc0])
+      diFluid.buildRawCmd(
+        {
+          func: diFluid.func.DEVICE_SETTINGS,
+          cmd: diFluid.R2.settings.TEMPERATURE_UNIT,
+          data: new Uint8Array([unit])
+        }
+      )
     );
   }
 
@@ -91,41 +112,168 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
       (_data: any) => {}
     );
   }
-  private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
-    if (difluidRawStatus[3] === 254) {
-      this.logger.log('no liquid');
+
+  /**
+   * @param rawStatus - Uint8Array bytes from device
+   * 
+   * @see {@link https://github.com/DiFluid/difluid-sdk-demo/blob/master/docs/protocolR2.md | Protocol Documentation}
+   */
+  private async parseStatusUpdate(rawStatus: Uint8Array) {
+    let status = null;
+    try {
+      status = diFluid.parseRawStatus(rawStatus);
+    } catch (err) {
+      this.logger.error("Could not parse raw status message. Err: " + err.message);
+      return;
     }
-    if (difluidRawStatus[4] === 3 && difluidRawStatus[5] === 0) {
-      if (difluidRawStatus[6] === 11) {
-        this.logger.log('test started');
-      } else if (difluidRawStatus[6] === 0) {
-        this.logger.log('test finished');
+
+    if (status.func === diFluid.func.DEVICE_INFO) {
+      if (status.cmd === diFluid.R2.info.SERIAL_NUMBER) {
+        this.logger.log(
+          "Serial Number (" + (status.data[0] + 1).toString() + "/3): "
+          + diFluid.parseString(status.data.slice(1))
+        );
+      } else if (status.cmd === diFluid.R2.info.DEVICE_MODEL) {
+        this.logger.log("Device Model: " + diFluid.parseString(status.data));
+      } else if (status.cmd === diFluid.R2.info.FIRMWARE_VERSION) {
+        this.logger.log("Firmware version: " + diFluid.parseString(status.data));
       }
-    } else if (difluidRawStatus[4] === 6 && difluidRawStatus[5] === 1) {
-      this.logger.log('temp result received');
-      const tempTank = await this.getInt(difluidRawStatus.slice(9, 11));
-      this.setTempReading(tempTank / 10);
-    } else if (difluidRawStatus[4] === 7 && difluidRawStatus[5] === 2) {
-      this.logger.log('tds result received');
-      const tds = await this.getInt(difluidRawStatus.slice(6, 8));
-      this.setTdsReading(tds / 100);
-      this.resultEvent.emit(null);
+    } else if (status.func === diFluid.func.DEVICE_SETTINGS) {
+      if (status.cmd === diFluid.R2.settings.TEMPERATURE_UNIT) {
+        if (status.data[0] === diFluid.R2.settings.temperatureUnit.C) {
+          this.logger.log("Temperature Unit: C");
+        } else if (status.data[0] === diFluid.R2.settings.temperatureUnit.F) {
+          this.logger.log("Temperature Unit: F");
+        }
+      } else if (status.cmd === diFluid.R2.settings.AUTO_TEST_STATUS) {
+        if (status.data[0] === diFluid.R2.settings.autoTest.Off) {
+          this.logger.log("Auto Test: Off");
+        } else if (status.data[0] === diFluid.R2.settings.autoTest.On) {
+          this.logger.log("Auto Test: On");
+        }
+      } else if (status.cmd === diFluid.R2.settings.SCREEN_BRIGHTNESS) {
+        this.logger.log("Screen Brightness: " + status.data[0].toString() + "%");
+      } else if (status.cmd === diFluid.R2.settings.NUMBER_OF_TESTS) {
+        this.logger.log("Number of Tests: " + status.data[0].toString());
+      }
+    } else if (status.func === diFluid.func.DEVICE_ACTION) {
+      if (
+        status.cmd === diFluid.R2.action.SINGLE_TEST
+        || status.cmd === diFluid.R2.action.AVERAGE_TEST
+      ) {
+        if (status.data[0] === diFluid.R2.action.test.TEST_STATUS) {
+          switch (status.data[1]) {
+            case diFluid.R2.action.test.status.AVERAGE_TEST_FINISHED:
+              this.logger.log('Test Finished');
+              break;
+            case diFluid.R2.action.test.status.AVERAGE_TEST_START:
+              this.logger.log('Average Test Started');
+              break;
+            case diFluid.R2.action.test.status.AVERAGE_TEST_ONGOING:
+              this.logger.log('Average Test Ongoing');
+              break;
+            case diFluid.R2.action.test.status.AVERAGE_TEST_FINISHED:
+              this.logger.log('Average Test Finished');
+              break;
+            case diFluid.R2.action.test.status.LOOP_TEST_START:
+              this.logger.log('Loop Test Started');
+              break;
+            case diFluid.R2.action.test.status.LOOP_TEST_ONGOING:
+              this.logger.log('Loop Test Ongoing');
+              break;
+            case diFluid.R2.action.test.status.LOOP_TEST_FINISHED:
+              this.logger.log('Loop Test Finished');
+              break;
+            case diFluid.R2.action.test.status.AVERAGE_TEST_ONGOING_INVALID:
+              this.logger.log('Average Test Ongoing, but taking longer than expected');
+              break;
+            case diFluid.R2.action.test.status.TEST_START:
+              this.logger.log('Test Started');
+              break;
+          }
+        } else if (
+          status.data[0] === diFluid.R2.action.test.TEMPERATURE_INFO
+          || status.data[0] === diFluid.R2.action.test.AVERAGE_TEMPERATURE_INFO
+        ) {
+          if (status.data[0] === diFluid.R2.action.test.AVERAGE_TEMPERATURE_INFO) {
+            this.logger.log('Average Temperature Received');
+            this.logger.log(
+              'Recieved Average Test (' +
+              status.data[5].toString() + '/' +
+              status.data[6].toString() + ')'
+            )
+          } else {
+            this.logger.log('Temperature Received');
+            // ToDo: use temperature unit `data[5]` to ensure data integrity
+          }
+          // Setting based on average of prism and tank, adjusted to remove 10* multiplier
+          this.setTempReading(
+            (
+              this.getInt(status.data.slice(1, 3)) +
+              this.getInt(status.data.slice(3, 5))
+            ) / 20
+          );
+        } else if (
+          status.data[0] === diFluid.R2.action.test.TEST_RESULT
+          || status.data[0] === diFluid.R2.action.test.AVERAGE_RESULT
+        ) {
+          if (status.data[0] === diFluid.R2.action.test.AVERAGE_RESULT) {
+            this.logger.log('Average TDS Received');
+          } else {
+            this.logger.log('TDS Received');
+          }
+
+          this.setTdsReading(
+            this.getInt(status.data.slice(1, 3)) / 100
+          );
+          this.resultEvent.emit(null);
+        }
+      } else if (status.cmd === diFluid.R2.action.CALIBRATION_RESULT) {
+        if (status.data[0] === diFluid.R2.action.test.TEST_STATUS) {
+          switch (status.data[1]) {
+            case diFluid.R2.action.test.status.CALIBRATION_FINISHED:
+              this.logger.log('Calibration Finished');
+              break;
+            case diFluid.R2.action.test.status.CALIBRATION_START:
+              this.logger.log('Calibration Started');
+              break;
+          }
+        }
+        // Not going to read TDS values, when they will always be zeroed.
+      } else if (status.cmd === diFluid.R2.action.ERROR) {
+        if (rawStatus[6] === diFluid.R2.action.errorClass.GENERAL) {
+          if (rawStatus[7] === diFluid.R2.action.error.general.TEST_ERROR) {
+            this.logger.log('Test Error');
+          } else if (rawStatus[7] === diFluid.R2.action.error.general.CALIBRATION_FAILED) {
+            this.logger.log('Calibration Failed');
+          } else if (rawStatus[7] === diFluid.R2.action.error.general.NO_LIQUID) {
+            this.logger.log('No Liquid');
+          } else if (rawStatus[7] === diFluid.R2.action.error.general.BEYOND_RANGE) {
+            this.logger.log('Beyond Range');
+          }
+        } else if (rawStatus[6] === diFluid.R2.action.errorClass.HARDWARE) {
+          this.logger.log('Hardware Error');
+        }
+      } else if (status.cmd === diFluid.R2.action.ERROR_UNKNOWN) {
+        this.logger.log('Unknown Error');
+      }
     }
   }
 
-  public async getInt(buffer: Uint8Array) {
-    const bytes = new DataView(new ArrayBuffer(buffer.length));
-    let i = 0;
-    const list = new Uint8Array(bytes.buffer);
-    for (const value of buffer) {
-      list[i] = buffer[i];
-      i++;
+  /**
+   * @param buffer - A Uint8Array to be parsed as a single integer
+   * supports up to a 64bit int
+   * 
+   * @returns a `number`
+   */
+  public getInt(buffer: Uint8Array): number {
+    let sum = 0;
+    buffer = buffer.reverse();
+    for (let idx = 0; idx < buffer.length && idx <= 4; idx++) {
+      sum += (buffer[idx] << (8 * idx));
     }
-    if (buffer.length === 2) {
-      return bytes.getInt16(0, false);
-    } else {
-      return bytes.getInt32(0, false);
-    }
+
+    return sum;
   }
 
   private async deattachNotification() {
