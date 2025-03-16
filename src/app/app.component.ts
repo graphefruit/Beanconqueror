@@ -67,6 +67,7 @@ import { AndroidPlatformService } from '../services/androidPlatform/android-plat
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import SettingsTracking from '../data/tracking/settingsTracking';
 import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
+import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 
 declare var window;
 
@@ -641,6 +642,8 @@ export class AppComponent implements AfterViewInit {
 
     await this.__checkMeticulousHelpPage();
 
+    await this.__checkPleaseActivateAnalyticsPage();
+
     // #281 - Connect smartscale before checking the startup view
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
@@ -962,6 +965,41 @@ export class AppComponent implements AfterViewInit {
         });
         await modal.present();
         await modal.onWillDismiss();
+      }
+    }
+  }
+
+  private async __checkPleaseActivateAnalyticsPage() {
+    return;
+    const settings = this.uiSettingsStorage.getSettings();
+
+    if (settings.matomo_analytics === false) {
+      if (
+        this.uiBrewStorage.getAllEntries().length >= 100 ||
+        this.uiBeanStorage.getAllEntries().length >= 20
+      ) {
+        let pleaseAsk: boolean = false;
+        if (settings.matomo_analytics_last_question === 0) {
+          pleaseAsk = true;
+        } else {
+          if (
+            moment(new Date()).diff(
+              moment.unix(settings.matomo_analytics_last_question),
+              'days',
+            ) >= 30
+          ) {
+            pleaseAsk = true;
+          }
+        }
+
+        if (pleaseAsk) {
+          const modal = await this.modalCtrl.create({
+            component: PleaseActivateAnalyticsPopoverComponent,
+            id: PleaseActivateAnalyticsPopoverComponent.POPOVER_ID,
+          });
+          await modal.present();
+          await modal.onWillDismiss();
+        }
       }
     }
   }

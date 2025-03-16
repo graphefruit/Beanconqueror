@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-title class="ion-text-center ion-margin-top">{{"PLEASE_ACTIVATE_ANALYTICS_TITLE" | translate}}</ion-title>
+
+</ion-header>
+<ion-content>
+  <div class="ion-padding-top ion-margin-horizontal">
+    <div class="welcome-content-text">
+     Please activate analytics...
+
+    </div>
+  </div>
+</ion-content>
+<ion-footer class="ion-no-border">
+
+  <ion-row class="ion-padding-top">
+
+    <ion-col size="6">
+      <ion-button [disabled]='finishButtonDisabled' (click)="dontActivateAnalytics()" color="accent" fill="outline" expand="block" tappable>{{"DO_NOT_ACTIVE" | translate}}<span *ngIf='delayCounter>0'>&nbsp;-&nbsp;{{delayCounter}}</span></ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="understoodAnalytics()" color="accent"
+                  expand="block">{{"ACTIVATE" | translate}}</ion-button>
+    </ion-col>
+
+  </ion-row>
+
+
+</ion-footer>

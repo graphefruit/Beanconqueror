@@ -177,6 +177,7 @@ import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-
 import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
 import { BrewModalImportShotGaggiuinoComponent } from '../brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { BaristamodePage } from '../baristamode/baristamode.page';
+import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 
 @NgModule({
   declarations: [
@@ -221,6 +222,7 @@ import { BaristamodePage } from '../baristamode/baristamode.page';
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
     MeticulousHelpPopoverComponent,
+    PleaseActivateAnalyticsPopoverComponent,
     DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
@@ -419,6 +421,7 @@ import { BaristamodePage } from '../baristamode/baristamode.page';
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
     MeticulousHelpPopoverComponent,
+    PleaseActivateAnalyticsPopoverComponent,
     DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,

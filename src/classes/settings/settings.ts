@@ -39,6 +39,7 @@ export class Settings implements ISettings {
 
   public matomo_analytics: boolean;
   public matomo_analytics_id: string;
+  public matomo_analytics_last_question: number;
   public meticulous_help_was_shown: boolean;
   public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
@@ -213,6 +214,9 @@ export class Settings implements ISettings {
   public pressure_threshold_bar: number;
   public pressure_stay_connected: boolean;
 
+  public pressure_threshold_stop_shot_active: boolean;
+  public pressure_threshold_stop_shot_bar: number;
+
   public temperature_id: string;
   public temperature_type: TemperatureType;
   public temperature_log: boolean;
@@ -319,6 +323,7 @@ export class Settings implements ISettings {
     this.language = '';
     this.matomo_analytics = undefined;
     this.matomo_analytics_id = '';
+    this.matomo_analytics_last_question = 0;
     this.meticulous_help_was_shown = false;
 
     this.qr_scanner_information = false;
@@ -541,6 +546,8 @@ export class Settings implements ISettings {
     this.pressure_threshold_active = false;
     this.pressure_threshold_bar = 0.5;
     this.pressure_stay_connected = false;
+    this.pressure_threshold_stop_shot_active = false;
+    this.pressure_threshold_stop_shot_bar = 0.1;
 
     this.temperature_id = '';
     this.temperature_type = null;

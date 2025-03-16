@@ -1450,5 +1450,8 @@
     },
     "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
     "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
-    "NAV_BARISTAMODE_SECTION": "Baristamode"
+    "NAV_BARISTAMODE_SECTION": "Baristamode",
+  "PLEASE_ACTIVATE_ANALYTICS_TITLE": "Please activate analytics",
+  "PRESSURE_THRESHOLD_STOP_ACTIVE": "Pressure threshold stop automatic active",
+  "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected."
 }
