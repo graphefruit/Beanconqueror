@@ -3022,6 +3022,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.brewComponent.timer.pauseTimer('shot_ended');
         this.changeDetectorRef.markForCheck();
         this.brewComponent.timer.checkChanges();
+        this.checkChanges();
       }
     }
 
@@ -3681,7 +3682,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       return false; // Not enough readings or start time not set yet, or we didn't elapse 5 seconds
     }
 
-    const barFoundAboveOne = this.traces.pressureTrace.find((v) => v >= 1);
+    const barFoundAboveOne = this.traces.pressureTrace.y.find((v) => v >= 1);
     if (barFoundAboveOne !== undefined) {
       //User minimum got up to 1 bar
 
