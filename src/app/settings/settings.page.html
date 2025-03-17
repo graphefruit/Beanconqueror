@@ -1066,9 +1066,6 @@
                   slot="end">{{settings.pressure_threshold_bar| toFixed: 1}}</div>
               </ion-range>
             </ion-item>
-
-            <hr>
-
             <ion-item [lines]="settings.pressure_threshold_stop_shot_active?'none':'full'">
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
                             [(ngModel)]="settings.pressure_threshold_stop_shot_active">
@@ -1089,7 +1086,6 @@
                 <div class='ion-label' slot="end"><=&nbsp;{{settings.pressure_threshold_stop_shot_bar | number : '.0-1'}}</div>
               </ion-range>
             </ion-item>
-            <hr>
             <ion-item>
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
                 [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer">
