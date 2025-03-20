@@ -6,6 +6,82 @@ export namespace diFluid {
   }
 
   /**
+   * @see {@link https://github.com/DiFluid/difluid-sdk-demo/blob/master/docs/protocolMicrobalance.md | Microbalance Protocol Documentation}
+   */
+  export namespace Microbalance {
+    export enum info {
+      SERIAL_NUMBER,
+      DEVICE_MODEL,
+      FIRMWARE_VERSION,
+    }
+
+    export enum settings {
+      SENSOR_DATA_AUTO_SEND,
+      AUTO_DETECT_TIMING,
+      AUTO_STOP_TIMING,
+      WEIGHT_UNIT_SWITCH_LOCK,
+      WEIGHT_UNIT,
+    }
+
+    export namespace settings {
+      export enum sensorDataAutoSend {
+        Off,
+        On,
+      }
+
+      export enum autoDetectTiming {
+        Off,
+        On,
+      }
+
+      export enum autoStopTiming {
+        Off,
+        On,
+      }
+
+      export enum weightUnitSwitchLock {
+        Off,
+        On,
+      }
+
+      export enum weightUnit {
+        GRAM,
+        OUNCE,
+        GERING,
+      }
+    }
+
+    export enum action {
+      SENSOR_DATA,
+      DLINK_BUTTON_PRESS,
+      CONTROL_BUTTON_SINGLE_PRESS,
+      CONTROL_BUTTON_DOUBLE_PRESS,
+      CONTROL_BUTTON_LONG_PRESS,
+      DEVICE_STATUS,
+    }
+
+    export namespace action {
+      export enum deviceStatus {
+        POWER_DOWN,
+        CHARGING,
+        LOW_POWER_MODE_1,
+        LOW_BATTERY_SHUTDOWN,
+        STARTUP,
+        IDLE,
+        SHOW_DEVICE_INFORMATION,
+        TARE_IN_PROGRESS,
+        OTA_IN_PROGRESS,
+        OTA_FAILED,
+        TIMING_IN_PROGRESS,
+        TIMER_PAUSE,
+        RESERVED,
+        LOW_POWER_MODE_2,
+        AUTO_STOP_TIMING_TRIGGER,
+      }
+    }
+  }
+
+  /**
    * @see {@link https://github.com/DiFluid/difluid-sdk-demo/blob/master/docs/protocolR2.md | R2 Protocol Documentation}
    */
   export namespace R2 {
