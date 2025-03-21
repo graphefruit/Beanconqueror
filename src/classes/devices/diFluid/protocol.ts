@@ -184,7 +184,7 @@ export namespace diFluid {
     for (let idx = 0; idx < rawStatus.length; idx++) {
       checksum += rawStatus[idx];
     }
-    return checksum % 0xff;
+    return checksum & 0xff;
   }
 
   /**
@@ -196,7 +196,7 @@ export namespace diFluid {
    * @returns a `Uint8Array` of bytes to send to the device
    */
   export function buildRawCmd(status: diFluid.status): Uint8Array {
-    let rawStatus = new Uint8Array(status.data.length);
+    let rawStatus = new Uint8Array(status.data.length + 6);
 
     rawStatus.set([0xdf, 0xdf, status.func, status.cmd, status.data.length]);
     rawStatus.set(status.data, 5);
