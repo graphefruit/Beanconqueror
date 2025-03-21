@@ -66,7 +66,7 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
 
   public async fetchShotDetails(lastShotId: number) {
     const alldatatoPush = [];
-    for (let id = lastShotId; id >= Math.max(1, lastShotId - 10); id--) {
+    for (let id = lastShotId; id >= Math.max(1, lastShotId - 5); id--) {
       try {
         const gaggiuinoShotDataEntry = new GaggiuinoShotData();
         const data = await this.gaggiuinoDevice.getShotData(id);
