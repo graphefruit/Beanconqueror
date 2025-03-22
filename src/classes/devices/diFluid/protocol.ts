@@ -86,71 +86,127 @@ export namespace diFluid {
    */
   export namespace R2 {
     export enum info {
+      /** Serial Number of device */
       SERIAL_NUMBER,
+      /** Should always be 'DFT-R102' */
       DEVICE_MODEL,
+      /** Current firmware Version */
       FIRMWARE_VERSION,
     }
 
     export enum settings {
+      /**
+       * Celsius or Fahrenheit -
+       * {@link DiFluid.R2.settings.temperatureUnit}
+       */
       TEMPERATURE_UNIT,
+      /**
+       * Automatically start test on temperature change of tank/prism -
+       * {@link DiFluid.R2.settings.autoTest}
+       */
       AUTO_TEST_STATUS,
+      /** Can be between 30-100% */
       SCREEN_BRIGHTNESS,
+      /** Number of tests to perform */
       NUMBER_OF_TESTS,
     }
     export namespace settings {
       export enum temperatureUnit {
+        /** Celsius */
         C,
+        /** Fahrenheit */
         F,
       }
       export enum autoTest {
+        /** Do not start test on temperature change of tank/prism */
         Off,
+        /** Start test on temperature change of tank/prism */
         On,
       }
     }
 
     export enum action {
+      /** Perform a single test */
       SINGLE_TEST,
+      /** Perform multiple tests and average the results */
       AVERAGE_TEST,
+      /** Calibrate the device */
       CALIBRATION_RESULT,
+      /**
+       * Known Errors -
+       * {@link DiFluid.R2.action.errorClass}
+       */
       ERROR = 254,
+      /** Unknown Errors */
       ERROR_UNKNOWN,
     }
     export namespace action {
       export enum test {
+        /**
+         * Status code of current test -
+         * {@link diFluid.R2.action.test.status}
+         */
         TEST_STATUS,
+        /** Prism and Tank temperatures as well as temperature unit */
         TEMPERATURE_INFO,
+        /** Concentration (TDS) and Refractive Index */
         TEST_RESULT,
+        /** Averaged Concentration (TDS) and Refractive Index */
         AVERAGE_RESULT,
+        /** Averaged Prism and Tank temperatures, Current and Total test counts */
         AVERAGE_TEMPERATURE_INFO,
       }
 
       export namespace test {
         export enum status {
+          /** Test completed */
           TEST_FINISHED,
+          /** Calibration completed */
           CALIBRATION_FINISHED,
           RESERVED_0,
           RESERVED_1,
+          /** Average Test started */
           AVERAGE_TEST_START,
+          /** Average Test in progress */
           AVERAGE_TEST_ONGOING,
+          /** Average Test completed */
           AVERAGE_TEST_FINISHED,
+          /** Loop Test started */
           LOOP_TEST_START,
+          /** Loop Test in progress */
           LOOP_TEST_ONGOING,
+          /** Loop Test completed */
           LOOP_TEST_FINISHED,
-          AVERAGE_TEST_ONGOING_INVALID, // only appears when a test time is too long
+          /**
+           * Average Test in progress
+           *
+           * Only appears when a test time is too long
+           */
+          AVERAGE_TEST_ONGOING_INVALID,
+          /** Test started */
           TEST_START,
+          /** Calibration started */
           CALIBRATION_START,
         }
       }
 
       export enum errorClass {
+        /**
+         *
+         */
         GENERAL = 2,
+        /** This is the same as the number displaying on the device screen */
         HARDWARE,
       }
       export namespace error {
         export enum general {
+          /** Generic test error */
           TEST_ERROR = 1,
+          /** Calibration Failed */
           CALIBRATION_FAILED,
+          /** Cannot detect liquid to refract */
           NO_LIQUID,
+          /** TDS is either too high or too low to  */
           BEYOND_RANGE,
         }
       }

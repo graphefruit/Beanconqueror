@@ -280,7 +280,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
               break;
           }
         }
-        // Not going to read TDS values, when they will always be zeroed.
+        // Not going to read TDS values when they will always be zeroed
       } else if (status.cmd === diFluid.R2.action.ERROR) {
         if (rawStatus[6] === diFluid.R2.action.errorClass.GENERAL) {
           if (rawStatus[7] === diFluid.R2.action.error.general.TEST_ERROR) {
