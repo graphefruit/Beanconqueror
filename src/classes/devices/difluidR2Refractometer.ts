@@ -257,15 +257,20 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
               20,
           );
         } else if (
-          status.data[0] === diFluid.R2.action.test.TEST_RESULT ||
+          status.cmd === diFluid.R2.action.AVERAGE_TEST &&
           status.data[0] === diFluid.R2.action.test.AVERAGE_RESULT
         ) {
-          if (status.data[0] === diFluid.R2.action.test.AVERAGE_RESULT) {
-            this.logger.log('Average TDS Received');
-          } else {
-            this.logger.log('TDS Received');
-          }
-
+          this.logger.log('Average TDS Received');
+        } else if (
+          status.cmd === diFluid.R2.action.SINGLE_TEST &&
+          status.data[0] === diFluid.R2.action.test.TEST_RESULT
+        ) {
+          this.logger.log('TDS Received');
+          this.setTdsReading(this.getInt(status.data.slice(1, 3)) / 100);
+          this.resultEvent.emit(null);
+        } else {
+          // Possibly Loop test
+          this.logger.log('Unexpected data: ' + status.data);
           this.setTdsReading(this.getInt(status.data.slice(1, 3)) / 100);
           this.resultEvent.emit(null);
         }
