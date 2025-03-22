@@ -16,6 +16,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
   public TEMPERATURE_UNIT = 'C';
   public SCREEN_BRIGHTNESS = 0;
   public TEST_COUNT = 0;
+  public CURRENT_TEST = null;
 
   private logger: Logger;
 
@@ -186,32 +187,41 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
         if (status.data[0] === diFluid.R2.action.test.TEST_STATUS) {
           switch (status.data[1]) {
             case diFluid.R2.action.test.status.AVERAGE_TEST_FINISHED:
+              this.CURRENT_TEST = null;
               this.logger.log('Test Finished');
               break;
             case diFluid.R2.action.test.status.AVERAGE_TEST_START:
+              this.CURRENT_TEST = 'Average';
               this.logger.log('Average Test Started');
               break;
             case diFluid.R2.action.test.status.AVERAGE_TEST_ONGOING:
+              this.CURRENT_TEST = 'Average';
               this.logger.log('Average Test Ongoing');
               break;
             case diFluid.R2.action.test.status.AVERAGE_TEST_FINISHED:
+              this.CURRENT_TEST = null;
               this.logger.log('Average Test Finished');
               break;
             case diFluid.R2.action.test.status.LOOP_TEST_START:
+              this.CURRENT_TEST = 'Loop';
               this.logger.log('Loop Test Started');
               break;
             case diFluid.R2.action.test.status.LOOP_TEST_ONGOING:
+              this.CURRENT_TEST = 'Loop';
               this.logger.log('Loop Test Ongoing');
               break;
             case diFluid.R2.action.test.status.LOOP_TEST_FINISHED:
+              this.CURRENT_TEST = null;
               this.logger.log('Loop Test Finished');
               break;
             case diFluid.R2.action.test.status.AVERAGE_TEST_ONGOING_INVALID:
+              this.CURRENT_TEST = 'Average';
               this.logger.log(
                 'Average Test Ongoing, but taking longer than expected',
               );
               break;
             case diFluid.R2.action.test.status.TEST_START:
+              this.CURRENT_TEST = 'Single';
               this.logger.log('Test Started');
               break;
           }
