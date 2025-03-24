@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Sauvegarde en cours",
     "SAVING_BREW_COUNTDOWN": "Sauvegarde de l'infusion dans {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Version 8.1.0: Quoi de neuf",
-            "DESCRIPTION": [
-                "<b>Grains<\/b>",
-                "Trier les grains par dernière utilisation, date d'achat et date d'ouverture du sachet",
-                "Prise en charge du nouveau paramètre CO2e (kg) par kilo de café torréfié qui est désactivé par défaut",
-                "L'exportation Excel hérite désormais le degrés de torréfaction correctement",
-                "Nouvelle action NFC\/QR-Code : Choisir l'action à effectuer. Quand on scanne la puce\/code, vous pouvez choisir l'action que vous souhaitez effectuer",
-                "",
-                "<b>Infusion<\/b>",
-                "Les vignettes d'information pour  les appareils bluetooth sont désormais plus grande sur tablette",
-                "Problème de dédoublement du poids pour les expressos fixé",
-                "",
-                "<b>Paramètres<\/b>",
-                "Nouvelle fonctionnalité : La sauvegarde automatique de l'infusion peut être activée",
-                "Nouvelle fonctionnalité : Intervalle de rafraîchissement du graphe, pour les appareils plus anciens qui pourraient se figer\/décaler pendant la mise à jour des graphiques, vous pouvez désormais choisir la fréquence de mise à jour des graphes",
-                "",
-                "<b>Autre<\/b>",
-                "Petites corrections"
-            ]
-        },
         "8.2.0": {
             "TITLE": "",
             "DESCRIPTION": [
