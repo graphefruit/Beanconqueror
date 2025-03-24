@@ -1071,7 +1071,6 @@
             "STOP_AT_WEIGHT": "Stop at weight",
             "SELECT_MODE": "Select mode",
             "MODE_LISTENING": "Listening",
-            "MODE_LISTENING_AND_CONTROLLING": "Listening and Controlling",
             "MODE_CONTROL": "Control",
             "MANUAL_CONTROLLING": "Manual Control",
             "PROFILE_P1_CONTROLLING": "Profile P1 Control",
@@ -1079,12 +1078,13 @@
             "PROFILE_P3_CONTROLLING": "Profile P3 Control",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, the chosen profile will be fully executed",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, please stop extraction manually",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the Sanremo YOU machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc."
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the Sanremo YOU machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
+            "MODE_LISTENING_AND_CONTROLLING": "Listening and Controlling"
         },
         "TYPE_GAGGIUINO": {
-          "TITLE": "Gaggiuino Machine"
+            "TITLE": "Gaggiuino Machine"
         }
-       },
+    },
     "DEVICE_CONNECTION": "Device connection",
     "PREPARATION_DEVICE_CONNECTION": "Device connection",
     "MANUAL_EXPORT_TO_VISUALIZER": "Export to Visualizer",
@@ -1437,6 +1437,27 @@
     "SAVE_NOW": "Save now",
     "SAVING_BREW_COUNTDOWN": "Saving brew in {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
+        "8.1.0": {
+            "TITLE": "Version 8.1.0: What's new",
+            "DESCRIPTION": [
+                "<b>Beans<\/b>",
+                "Sort beans by last used, buy date and bag open date",
+                "Supporting a new parameter CO2e (kg) per kg roasted coffee, which is disabled by default",
+                "Excel export inherits now correctly the degree of roast",
+                "New NFC\/QR-Code action: Choose action. When scanning the tag, you can choose the action you want to execute",
+                "",
+                "<b>Brew<\/b>",
+                "Information tiles for bluetooth devices are now bigger on tablet",
+                "Fixed weight doubling for espresso brews",
+                "",
+                "<b>Settings<\/b>",
+                "New feature: Save brew automatically which can be activated",
+                "New feature: Update graph interval, for older devices which might could freeze\/lag while updating the graphs you can adjust the refresh rate",
+                "",
+                "<b>Other<\/b>",
+                "Small fixes"
+            ]
+        },
         "8.2.0": {
             "TITLE": "Version 8.2.0: What's new",
             "DESCRIPTION": [
@@ -1459,6 +1480,6 @@
     "NAV_BARISTAMODE_SECTION": "Baristamode",
     "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
     "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
-    "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror</h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}</b> beans and brewed <b>{{BREWS_COUNT}}</b> delicious cups of coffee from them. That makes you a true coffee explorer!</p><h2>Shaping the Future of Coffee Together</h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.</p><h3>Together, we can:</h3><ul><li>Decode the ideal parameters for each coffee bean variety</li><li>Develop scientifically backed guides for getting started in the coffee world</li><li>Map the complex relationships between brewing variables and flavor profiles</li><li>Make BeanConqueror an even more intuitive companion for your coffee journey</li></ul><h2>Your Contribution is Valuable:</h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!</p><h2>Your Privacy Matters to Us</h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.</p><h2>Become Part of the BeanConqueror Evolution!</h2>",
+    "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible."
 }
