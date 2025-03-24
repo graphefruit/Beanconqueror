@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Zapisz teraz",
     "SAVING_BREW_COUNTDOWN": "Zapisywanie naparu w {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Wersja 8.1.0: Co nowego",
-            "DESCRIPTION": [
-                "<b>Ziarna<\/b>",
-                "Sortuj ziarna według ostatniego użycia, daty zakupu i daty otwarcia worka",
-                "Obsługa nowego parametru CO2e (kg) na kg palonej kawy, który jest domyślnie wyłączony",
-                "Eksport do Excela dziedziczy teraz poprawnie stopień wypalenia",
-                "Nowe działanie NFC\/QR-Code: Wybierz akcję. Podczas skanowania tagu możesz wybrać akcję, którą chcesz wykonać",
-                "",
-                "<b>Napar<\/b>",
-                "Kafelki informacyjne dla urządzeń Bluetooth są teraz większe na tablecie",
-                "Stałe podwojenie wagi dla parzenia espresso",
-                "",
-                "<b> Ustawienia <\/b>",
-                "Nowa funkcja: Automatyczne zapisywanie naparu, które można aktywować",
-                "Nowa funkcja: Interwał aktualizacji wykresów, dla starszych urządzeń, które mogą zawieszać się \/ opóźniać podczas aktualizacji wykresów, można dostosować częstotliwość odświeżania",
-                "",
-                "<b>Inne<\/b>",
-                "Drobne poprawki"
-            ]
-        },
         "8.2.0": {
             "TITLE": "",
             "DESCRIPTION": [

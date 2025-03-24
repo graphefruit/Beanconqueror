@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Armazenar agora",
     "SAVING_BREW_COUNTDOWN": "Armazenando extração em {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Versão 8.1.0: O que há de novo",
-            "DESCRIPTION": [
-                "<b>Cafés<\/b>",
-                "Classifique os grãos pelo último uso, data de compra e data de abertura do saco",
-                "Suporte a um novo parâmetro CO2e (kg) por kg de café torrado, que é desabilitado por padrão",
-                "A exportação do Excel agora herda corretamente o grau de torra",
-                "Nova ação NFC\/QR-Code: Escolha a ação. Ao escanear a tag, você pode escolher a ação que deseja executar",
-                "",
-                "Extração",
-                "Os blocos de informações para dispositivos Bluetooth agora são maiores no tablet",
-                "Duplicação de peso fixo para extração de café expresso",
-                "",
-                "Configurações",
-                "Novo recurso: Salvar preparo automaticamente, que pode ser ativado",
-                "Novo recurso: Atualizar intervalo de gráfico, para dispositivos mais antigos que podem congelar \/ atrasar ao atualizar os gráficos, você pode ajustar a taxa de atualização",
-                "",
-                "<b> Outro <\/b>",
-                "Pequenas melhorias"
-            ]
-        },
         "8.2.0": {
             "TITLE": "",
             "DESCRIPTION": [

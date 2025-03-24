@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Guardar ahora",
     "SAVING_BREW_COUNTDOWN": "Guardando preparación en {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Versión 8.1.0: Novedades",
-            "DESCRIPTION": [
-                "<b>Cafés<\/b>",
-                "Ahora puedes ordenar cafés por el último uso, fecha de compra y fecha de apertura.",
-                "Añadido el nuevo parámetro CO2e (kg) por kg de café tostado. Deshabilitado por defecto.",
-                "Corregido un error en la exportación a Excel que no tenía en cuenta el  tipo de tueste.",
-                "Nueva acción para NFC\/QR: Elegir acción. Al escanear una etiqueta, puedes elegir qué acción quieres ejecutar.",
-                "",
-                "<b>Preparaciones<\/b>",
-                "Adaptado el diseño de algunos iconos para pantallas más grandes como tablets.",
-                "Corregido un error en la función de duplicar peso en espressos.",
-                "",
-                "<b>Configuración<\/b>",
-                "Nueva función: Guardar preparación automáticamente.",
-                "Nueva función: Intervalo de actualización del gráfico. En dispositivos antiguos en los que el gráfico va un poco lento puedes ajustar el intervalo de actualización del mismo.",
-                "",
-                "<b>Otros<\/b>",
-                "Pequeñas correcciones."
-            ]
-        },
         "8.2.0": {
             "TITLE": "",
             "DESCRIPTION": [

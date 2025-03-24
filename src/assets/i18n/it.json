@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Salva ora",
     "SAVING_BREW_COUNTDOWN": "Salvataggio della preparazione tra {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Versione 8.1.0: Novità",
-            "DESCRIPTION": [
-                "<b>Caffè<\/b>",
-                "Ordina i caffè per ultimo utilizzo, data di acquisto o di apertura del sacchetto",
-                "Supporto di un nuovo parametro: CO2e (kg) per caffè tostato, di default è disattivato",
-                "L'esportazione Excel eredita correttamente il grado di tostatura",
-                "Nuova azione NFC\/QR-Code: Scegliere l'azione. Durante la scansione del tag, è possibile scegliere l'azione che si desidera eseguire",
-                "",
-                "<b>Preparazione<\/b>",
-                "I riquadri per i dispositivi Bluetooth sono più grandi sui tablet",
-                "Raddoppio del peso automatico per espresso",
-                "",
-                "<b>Impostazioni<\/b>",
-                "Nuova funzione: Salvataggio automatico della preparazione",
-                "Nuova funzione: è possibile regolare la frequenza di aggiornamento per i grafici, per i dispositivi più vecchi che potrebbero bloccarsi\/rallentarsi",
-                "",
-                "<b>Altro<\/b>",
-                "Migliorie minori"
-            ]
-        },
         "8.2.0": {
             "TITLE": "",
             "DESCRIPTION": [

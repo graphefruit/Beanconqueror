@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Jetzt speichern",
     "SAVING_BREW_COUNTDOWN": "Brühung wird in {{time}} gespeichert",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Version 8.1.0: Das ist neu",
-            "DESCRIPTION": [
-                "<b>Bohnen<\/b>",
-                "Bohnen können nun nach letzter Verwendung, Kaufdatum oder Öffnungsdatum sortiert werden",
-                "Unterstützung eines neuen Parameters CO2e (kg) pro kg Röstkaffee, der standardmäßig deaktiviert ist",
-                "Excel-Export übernimmt jetzt korrekt den Röstgrad",
-                "Neue NFC\/QR-Code-Aktion: Aktion auswählen. Beim Scannen des Tags kann die Aktion ausgewählt werden, welche ausgeführt werden soll",
-                "",
-                "Brühungen",
-                "Kachelinformationen von Bluetooth Geräten sind nun größer auf Tablets",
-                "Behebung der Gewichtverdoppelung für Espressobrühungen",
-                "",
-                "<b>Einstellungen<\/b>",
-                "Neue Funktion: Automatisches Speichern des Brühvorgangs kann aktiviert werden",
-                "Neue Funktion: Aktualisierung des Diagrammintervalls, für ältere Geräte, die beim Aktualisieren der Diagramme einfrieren\/verzögert werden können, kann die Bildwiederholfrequenz anpasst werden",
-                "",
-                "<b>Sonstiges<\/b>",
-                "Kleinere Fehlerbehebungen"
-            ]
-        },
         "8.2.0": {
             "TITLE": "Version 8.2.0: Das ist neu",
             "DESCRIPTION": [

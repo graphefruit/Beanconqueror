@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Simpan sekarang",
     "SAVING_BREW_COUNTDOWN": "Menyimpan seduhan dalam {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Versi 8.1.0: Apa yang baru?",
-            "DESCRIPTION": [
-                "<b>Biji Kopi<\/b>",
-                "Urutkan kopi berdasarkan terakhir digunakan, tanggal pembelian, dan tanggal dibukanya kantong",
-                "Mendukung parameter baru CO2e (kg) per kg kopi sangrai, yang dinonaktifkan secara default",
-                "Ekspor Excel sekarang mewarisi dengan benar tingkat roasting",
-                "Tindakan NFC\/Kode QR baru: Pilih tindakan. Saat memindai tag, Anda dapat memilih tindakan yang ingin Anda lakukan",
-                "",
-                "<b>Seduh<\/b>",
-                "Judul informasi untuk perangkat bluetooth kini lebih besar di tablet",
-                "Penggandaan berat tetap untuk seduhan espresso",
-                "",
-                "<b>Pengaturan<\/b>",
-                "Fitur baru: Menyimpan seduhan secara otomatis yang dapat diaktifkan",
-                "Fitur baru: Perbarui interval grafik, untuk perangkat lama yang mungkin bisa membeku\/lambat saat memperbarui grafik, Anda dapat menyesuaikan kecepatan refresh",
-                "",
-                "<b>Lainnya<\/b>",
-                "Perbaikan kecil"
-            ]
-        },
         "8.2.0": {
             "TITLE": "",
             "DESCRIPTION": [

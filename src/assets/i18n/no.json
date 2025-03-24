@@ -1437,27 +1437,6 @@
     "SAVE_NOW": "Lagre nå",
     "SAVING_BREW_COUNTDOWN": "Lagre brygg etter {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Versjon 8.1.0: Hva er nytt?",
-            "DESCRIPTION": [
-                "<b>Bønner<\/b>",
-                "Sorter bønner etter sist brukte, kjøpsdato og åpningsdato for posen",
-                "Støtter et nytt parameter CO2e (kg) per kg brent kaffe. Denne er deaktivert som standard",
-                "Excel-eksport viser nå korrekt brennegrad",
-                "Ny NFC\/QR-kodehandling: Velg handling. Når du skanner taggen, kan du velge handlingen du vil utføre",
-                "",
-                "<b>Brygg<\/b>",
-                "Informasjonsflisene for blåtann-enheter er nå forstørret på nettbrett",
-                "Fikset vekt-dobling for espresso-brygg",
-                "",
-                "<b>Innstillinger<\/b>",
-                "Ny funksjon: Lagre brygg automatisk kan aktiveres",
-                "Ny funksjon: Oppdater grafintervallet. For eldre enheter som kan fryse eller hvor du opplever forsinkelse. Du kan nå justere oppdateringsfrekvensen.",
-                "",
-                "<b>Annet<\/b>",
-                "Småjusteringer"
-            ]
-        },
         "8.2.0": {
             "TITLE": "",
             "DESCRIPTION": [
