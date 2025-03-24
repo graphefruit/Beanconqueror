@@ -1031,7 +1031,8 @@
             "NONE": "None",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": ""
+            "SANREMO_YOU": "",
+            "GAGGIUINO": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "选择设备",
@@ -1077,7 +1078,11 @@
             "PROFILE_P3_CONTROLLING": "",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": ""
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "",
+            "MODE_LISTENING_AND_CONTROLLING": ""
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": "Gaggiuino Machine"
         }
     },
     "DEVICE_CONNECTION": "设备连接",
@@ -1440,18 +1445,41 @@
                 "支持每公斤烘焙的新参数CO2E（kg），默认情况下是禁用的",
                 "Excel 导出继承现在正确的烘焙度",
                 "新的NFC\/QR-CODE操作：选择操作。扫描标签时，您可以选择要执行的操作。",
-                "",
+                "空的",
                 "<b>冲煮<\/b>",
                 "蓝牙设备的信息栏现在在平板电脑上更大了",
                 "修复意式咖啡冲煮多杯重量问题",
-                "",
+                "空的",
                 "<b>设置<\/b>",
                 "新功能：支持开启自动保存冲煮记录",
                 "新功能：更新图表间隔，，您可以在旧设备中调整图表的刷新率来解决更新图表时可能出现卡住\/滞后的问题",
-                "",
+                "空的",
                 "<b>其他<\/b>",
                 "小补丁"
             ]
+        },
+        "8.2.0": {
+            "TITLE": "",
+            "DESCRIPTION": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
         }
-    }
+    },
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
+    "NAV_BARISTAMODE_SECTION": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "",
+    "ANALYTICS_INFORMATION": "",
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id 未与个人数据相关联；无法进行个人身份识别。"
 }

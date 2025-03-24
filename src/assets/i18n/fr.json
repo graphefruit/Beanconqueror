@@ -1031,7 +1031,8 @@
             "NONE": "Aucun",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": "Sanremo YOU"
+            "SANREMO_YOU": "Sanremo YOU",
+            "GAGGIUINO": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choisir l'appareil",
@@ -1077,7 +1078,11 @@
             "PROFILE_P3_CONTROLLING": "Profil P3 Contrôle",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "Tu n'as pas défini de poids cible, le profil choisi sera entièrement exécuté",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "Tu n'as pas défini de poids cible, arrête l'extraction manuellement s'il te plaît",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "La connexion à la machine à Sanremo YOU n'a pas pu être établie. Assure-toi que tu es sur le bon réseau (LAN), si tu as entré la bonne adresse IP, etc."
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "La connexion à la machine à Sanremo YOU n'a pas pu être établie. Assure-toi que tu es sur le bon réseau (LAN), si tu as entré la bonne adresse IP, etc.",
+            "MODE_LISTENING_AND_CONTROLLING": ""
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": "Gaggiuino Machine"
         }
     },
     "DEVICE_CONNECTION": "Connexion de l'appareil",
@@ -1452,6 +1457,29 @@
                 "<b>Autre<\/b>",
                 "Petites corrections"
             ]
+        },
+        "8.2.0": {
+            "TITLE": "",
+            "DESCRIPTION": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
         }
-    }
+    },
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
+    "NAV_BARISTAMODE_SECTION": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "",
+    "ANALYTICS_INFORMATION": "",
+    "ANALYTICS_INFORMATION_ABOUT": ""
 }

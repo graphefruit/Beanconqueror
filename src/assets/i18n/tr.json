@@ -1031,7 +1031,8 @@
             "NONE": "Hiçbiri",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": ""
+            "SANREMO_YOU": "",
+            "GAGGIUINO": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Cihaz seç",
@@ -1077,7 +1078,11 @@
             "PROFILE_P3_CONTROLLING": "",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": ""
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "",
+            "MODE_LISTENING_AND_CONTROLLING": ""
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": "Gaggiuino Machine"
         }
     },
     "DEVICE_CONNECTION": "Cihaz bağlantısı",
@@ -1452,6 +1457,29 @@
                 "<b> Diğer <\/b>",
                 "Küçük hata düzeltmeleri"
             ]
+        },
+        "8.2.0": {
+            "TITLE": "",
+            "DESCRIPTION": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
         }
-    }
+    },
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
+    "NAV_BARISTAMODE_SECTION": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "",
+    "ANALYTICS_INFORMATION": "",
+    "ANALYTICS_INFORMATION_ABOUT": ""
 }
