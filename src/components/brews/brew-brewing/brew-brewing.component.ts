@@ -209,7 +209,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async ngAfterViewInit() {
     setTimeout(async () => {
-      console.log(this.baristamode);
       // If we wouldn't wait in the timeout, the components wouldnt be existing
       if (this.isEdit === false) {
         // We need a short timeout because of ViewChild, else we get an exception
