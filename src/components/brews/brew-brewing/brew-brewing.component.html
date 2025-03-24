@@ -1,4 +1,4 @@
-@if(choosenPreparation) {
+@if(choosenPreparation && baristamode === false) {
 <ion-card *ngIf="uiShowSectionBeforeBrew" class="popover" style="display:flex; flex-direction: column;">
 
   <ion-item lines="none">
@@ -486,4 +486,20 @@
   <div class="last-item"></div>
 
 </ion-card>
+}
+@if(choosenPreparation && baristamode === true) {
+  <brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [baristamode]="baristamode" [brewComponent]='this' [(data)]='data'></brew-brewing-preparation-device>
+  <brew-brewing-graph  [baristamode]="baristamode" #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
+
+  <ion-item  lines="inset">
+    <brew-timer [baristamode]="baristamode" #timer (bloomTimer)="setCoffeeBloomingTime($event)" (dripTimer)="setCoffeeDripTime($event)" (listeningToScaleChange)='startListeningToScaleChange($event)'
+                (timerTicked)="brewTimeTicked($event)" (timerStartPressed)="timerStartPressed($event)"
+                (timerResumedPressed)="timerResumedPressed($event)" (timerStarted)="timerStarted($event)"
+                (timerResumed)="timerResumed($event)" (timerPaused)="timerPaused($event)" (timerReset)="timerReset($event)"
+                (ignoreWeight)="ignoreWeightClicked($event)"
+                (unignoreWeight)="unignoreWeightClicked($event)"
+                (tareScale)="tareScale($event)" [bloomTimerVisible]="false"
+                [dripTimerVisible]="false"
+                label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>
+  </ion-item>
 }

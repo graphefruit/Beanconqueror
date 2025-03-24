@@ -63,6 +63,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
   @Input() public brewComponent: BrewBrewingComponent;
+
+  @Input() public baristamode: boolean = false;
+
   public preparationDevice:
     | XeniaDevice
     | MeticulousDevice
@@ -525,7 +528,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       realtimeWaterFlow.brew_time = '';
       realtimeWaterFlow.timestamp = timestamp;
       realtimeWaterFlow.smoothed_weight = 0;
-      realtimeWaterFlow.flow_value = shotEntry.pumpFlow[i];
+      realtimeWaterFlow.flow_value = shotEntry.pumpFlow[i] / 10;
       realtimeWaterFlow.timestampdelta = 0;
 
       newBrewFlow.realtimeFlow.push(realtimeWaterFlow);
@@ -533,7 +536,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
       brewFlow.timestamp = timestamp;
       brewFlow.brew_time = '';
-      brewFlow.actual_weight = shotEntry.shotWeight[i];
+      brewFlow.actual_weight = shotEntry.shotWeight[i] / 10;
       brewFlow.old_weight = 0;
       brewFlow.actual_smoothed_weight = 0;
       brewFlow.old_smoothed_weight = 0;
@@ -550,7 +553,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       const pressureFlow: IBrewPressureFlow = {} as IBrewPressureFlow;
       pressureFlow.timestamp = timestamp;
       pressureFlow.brew_time = '';
-      pressureFlow.actual_pressure = shotEntry.pressure[i];
+      pressureFlow.actual_pressure = shotEntry.pressure[i] / 10;
       pressureFlow.old_pressure = 0;
       newBrewFlow.pressureFlow.push(pressureFlow);
 
@@ -563,10 +566,27 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     }
 
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
-    this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
+
+    try {
+      const globalStopWeight: number =
+        shotData.rawData.profile.globalStopConditions.weight;
+      this.brewComponent.data.brew_beverage_quantity = globalStopWeight;
+    } catch (ex) {
+      this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
+    }
+
     this.brewComponent.data.brew_temperature =
       shotData.rawData.profile.waterTemperature;
     this.brewComponent.data.pressure_profile = shotData.rawData.profile.name;
+
+    try {
+      /**Set the custom creation date, the user needs to activate the parameter for custom creation date**/
+      this.brewComponent.customCreationDate = moment
+        .unix(shotData.timestamp)
+        .toISOString();
+    } catch (e) {
+      this.brewComponent.customCreationDate = '';
+    }
 
     this.brewComponent.timer?.setTime(seconds, milliseconds);
     this.brewComponent.timer?.changeEvent();

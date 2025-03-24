@@ -311,6 +311,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
       this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
+      this.uiBrewHelper.logUsedBrewParameters(this.data);
 
       this.uiLog.log('Brew add - Step 3');
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);

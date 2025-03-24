@@ -26,7 +26,7 @@ const routes: Routes = [
     },
     loadChildren: () =>
       import('./roasting-section/roasting-section.module').then(
-        (m) => m.RoastingSectionPageModule
+        (m) => m.RoastingSectionPageModule,
       ),
   },
   {
@@ -36,7 +36,7 @@ const routes: Routes = [
     },
     loadChildren: () =>
       import('./water-section/water-section.module').then(
-        (m) => m.WaterSectionPageModule
+        (m) => m.WaterSectionPageModule,
       ),
   },
   {
@@ -80,7 +80,7 @@ const routes: Routes = [
     },
     loadChildren: () =>
       import('./preparation/preparation.module').then(
-        (m) => m.PreparationPageModule
+        (m) => m.PreparationPageModule,
       ),
     pathMatch: 'full',
   },
@@ -117,21 +117,28 @@ const routes: Routes = [
     },
     loadChildren: () =>
       import('./brew-parameter/brew-parameter.module').then(
-        (m) => m.BrewParameterPageModule
+        (m) => m.BrewParameterPageModule,
       ),
   },
   {
     path: 'bean-parameter',
     loadChildren: () =>
       import('./bean-parameter/bean-parameter.module').then(
-        (m) => m.BeanParameterPageModule
+        (m) => m.BeanParameterPageModule,
       ),
   },
   {
     path: 'graph-section',
     loadChildren: () =>
       import('./graph-section/graph-section.module').then(
-        (m) => m.GraphSectionPageModule
+        (m) => m.GraphSectionPageModule,
+      ),
+  },
+  {
+    path: 'baristamode',
+    loadChildren: () =>
+      import('./baristamode/baristamode.module').then(
+        (m) => m.BaristamodePageModule,
       ),
   },
 ];

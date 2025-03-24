@@ -107,6 +107,8 @@ export class BrewBrewingGraphComponent implements OnInit {
   @Input() public isEdit: boolean = false;
   @Input() public isDetail: boolean = false;
 
+  @Input() public baristamode: boolean = false;
+
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
@@ -477,7 +479,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.METICULOUS
     ) {
-      return 3;
+      return 4;
     }
 
     let bluetoothDeviceConnections = 0;
@@ -824,7 +826,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           pressureDevice.updateZero();
         }
       }
-      pressureDevice.enableValueTransmission();
+      pressureDevice?.enableValueTransmission();
       if (
         this.brewComponent?.timer?.isTimerRunning() === true &&
         _firstStart === false
@@ -3014,6 +3016,14 @@ export class BrewBrewingGraphComponent implements OnInit {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
       this.updateChart();
       this.flowSecondTick++;
+
+      /** We just support the end by pressure if no smart scale is connected, because the smart scale will be the master **/
+      if (this.hasEspressoShotEndedWithPressure()) {
+        this.brewComponent.timer.pauseTimer('shot_ended');
+        this.changeDetectorRef.markForCheck();
+        this.brewComponent.timer.checkChanges();
+        this.checkChanges();
+      }
     }
 
     this.setActualPressureInformation(pressureObj.actual);
@@ -3654,6 +3664,40 @@ export class BrewBrewingGraphComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  private hasEspressoShotEndedWithPressure(): boolean {
+    // Minimum 50 scale values which means atleast 5 seconds
+    if (
+      this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO
+    ) {
+      return false;
+    }
+
+    if (
+      this.settings.pressure_threshold_stop_shot_active === false ||
+      this.traces.pressureTrace.y.length < 100 ||
+      this.data.brew_time <= 10
+    ) {
+      return false; // Not enough readings or start time not set yet, or we didn't elapse 5 seconds
+    }
+
+    const barFoundAboveOne = this.traces.pressureTrace.y.find((v) => v >= 1);
+    if (barFoundAboveOne !== undefined) {
+      //User minimum got up to 1 bar
+
+      const pressureStopThreshold: number =
+        this.settings.pressure_threshold_stop_shot_bar;
+      if (
+        this.traces.pressureTrace.y[this.traces.pressureTrace.y.length - 1] <=
+        pressureStopThreshold
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
 
   private pushFlowProfile(

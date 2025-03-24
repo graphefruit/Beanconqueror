@@ -66,6 +66,7 @@ export class UIUpdate {
         'UPDATE_10',
         'UPDATE_11',
         'UPDATE_12',
+        'UPDATE_13',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -91,6 +92,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_11', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_12', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_13', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -575,6 +577,10 @@ export class UIUpdate {
             settings_v12.bluetooth_ignore_negative_values = false;
             await this.uiSettingsStorage.saveSettings(settings_v12);
             break;
+          case 'UPDATE_13':
+            const settings_v13: Settings = this.uiSettingsStorage.getSettings();
+            settings_v13.resetBrewFilter();
+            await this.uiSettingsStorage.saveSettings(settings_v13);
           default:
             break;
         }

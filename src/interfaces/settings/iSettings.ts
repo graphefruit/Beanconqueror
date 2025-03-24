@@ -35,6 +35,8 @@ export interface ISettings {
   bean_manage_parameters: IBeanParameter;
   bean_visible_list_view_parameters: IBeanParameter;
   matomo_analytics: boolean;
+  matomo_analytics_id: string;
+  matomo_analytics_last_question: number;
   meticulous_help_was_shown: boolean;
   qr_scanner_information: boolean;
   track_brew_coordinates: boolean;
@@ -201,6 +203,8 @@ export interface ISettings {
   pressure_threshold_active: boolean;
   pressure_threshold_bar: number;
   pressure_stay_connected: boolean;
+  pressure_threshold_stop_shot_active: boolean;
+  pressure_threshold_stop_shot_bar: number;
 
   temperature_id: string;
   temperature_type: TemperatureType;
