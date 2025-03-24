@@ -1442,7 +1442,13 @@
             "DESCRIPTION": [
                 "<b>Preparations<\/b>",
                 "Supporting connection to Gaggiuino and shot importing",
-
+                "",
+                "<b>Brews<\/b>",
+                "Brews can now be filtered with the used water",
+                "",
+                "<b>Settings<\/b>",
+                "Stop brew with predefined pressure threshold - Activate in the settings",
+                "",
                 "<b>Other<\/b>",
                 "Small fixes"
             ]
@@ -1451,8 +1457,8 @@
     "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
     "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
     "NAV_BARISTAMODE_SECTION": "Baristamode",
-  "PLEASE_ACTIVATE_ANALYTICS_TITLE": "Please activate analytics",
-  "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
-  "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
-  "ANALYTICS_INFORMATION": "<h1>Deine Kaffee-Reise mit BeanConqueror</h1><br><p>Wow! Du hast bereits <b>[Variable-Bohnen-Anzahl]</b> Bohnen entdeckt und dir daraus <b>[Variable-Brühungen-Anzahl]</b> köstliche Tassen Kaffee gezaubert. Das macht dich zu einem echten Kaffee-Entdecker!</p><h2>Gemeinsam die Zukunft des Kaffees gestalten</h2><p>Stell dir vor: Nur 4% unserer Community teilen ihre Erfahrungen mit uns. Das ist, als würden wir ein Rezept mit nur einer Zutat perfektionieren wollen! Deine Brühdaten sind wie kleine Schätze, die uns helfen, BeanConqueror zu dem Werkzeug zu machen, das du dir wünschst.</p><h3>Gemeinsam können wir:</h3><ul><li>Die idealen Parameter für jede Bohnenvarietät entschlüsseln</li><li>Wissenschaftlich fundierte Guides für die ersten Schritte in der Kaffeewelt entwickeln</li><li>Die komplexen Beziehungen zwischen Brühvariablen und Geschmacksprofilen kartieren</li><li>BeanConqueror zu einem noch intuitiveren Begleiter für deine Kaffee-Reise machen</li></ul><h2>Dein Beitrag ist wertvoll:</h2><p>Aktiviere die Datenspende jetzt oder später in den Einstellungen. Jede geteilte Erfahrung bereichert unser kollektives Kaffee-Wissen und ist ein Baustein für die Zukunft von BeanConqueror!</p><h2>Dein Datenschutz liegt uns am Herzen</h2><p>Als deutsches Team im Herzen Europas nehmen wir deine Privatsphäre sehr ernst. Wir übertragen nur anonymisierte Daten, welche keine Rückschlüsse auf deine Person ermöglichen. Alle Details findest du hier: <a href=\"#\" class=\"button\">Data & Tracking</a></p><h2>Werde Teil der BeanConqueror-Evolution!</h2>"
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
+    "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror</h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}</b> beans and brewed <b>{{BREWS_COUNT}}</b> delicious cups of coffee from them. That makes you a true coffee explorer!</p><h2>Shaping the Future of Coffee Together</h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.</p><h3>Together, we can:</h3><ul><li>Decode the ideal parameters for each coffee bean variety</li><li>Develop scientifically backed guides for getting started in the coffee world</li><li>Map the complex relationships between brewing variables and flavor profiles</li><li>Make BeanConqueror an even more intuitive companion for your coffee journey</li></ul><h2>Your Contribution is Valuable:</h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!</p><h2>Your Privacy Matters to Us</h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.</p><h2>Become Part of the BeanConqueror Evolution!</h2>",
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible."
 }

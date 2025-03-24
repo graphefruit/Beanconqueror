@@ -4,6 +4,8 @@ import { ModalController, Platform } from '@ionic/angular';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import moment from 'moment/moment';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
 
 @Component({
   selector: 'app-please-activate-analytics-popover',
@@ -16,14 +18,20 @@ export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
 
   private disableHardwareBack;
   public finishButtonDisabled: boolean = true;
-  public delayCounter: number = 30;
+  public delayCounter: number = 20;
+  public brewsCount: number = 0;
+  public beansCount: number = 0;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly platform: Platform,
     private readonly uiAnalytics: UIAnalytics,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiBrewStorage: UIBrewStorage,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    this.beansCount = this.uiBeanStorage.getAllEntries().length;
+    this.brewsCount = this.uiBrewStorage.getAllEntries().length;
   }
 
   public ngOnInit() {
