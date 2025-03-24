@@ -566,7 +566,15 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     }
 
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
-    this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
+
+    try {
+      const globalStopWeight: number =
+        shotData.rawData.profile.globalStopConditions.weight;
+      this.brewComponent.data.brew_beverage_quantity = globalStopWeight;
+    } catch (ex) {
+      this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
+    }
+
     this.brewComponent.data.brew_temperature =
       shotData.rawData.profile.waterTemperature;
     this.brewComponent.data.pressure_profile = shotData.rawData.profile.name;
