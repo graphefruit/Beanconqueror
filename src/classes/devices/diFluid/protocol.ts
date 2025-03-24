@@ -1,8 +1,8 @@
 export namespace diFluid {
   export enum func {
-    DEVICE_INFO = 0,
-    DEVICE_SETTINGS = 1,
-    DEVICE_ACTION = 3,
+    'Device Info',
+    'Device Settings',
+    'Device Action' = 3,
   }
 
   /**
@@ -10,17 +10,40 @@ export namespace diFluid {
    */
   export namespace Microbalance {
     export enum info {
-      SERIAL_NUMBER,
-      DEVICE_MODEL,
-      FIRMWARE_VERSION,
+      /** Serial Number of device */
+      'Serial Number',
+      /** Should always be 'DFT-R102' */
+      'Device Model',
+      /** Current firmware Version */
+      'Firmware Version',
     }
 
     export enum settings {
-      SENSOR_DATA_AUTO_SEND,
-      AUTO_DETECT_TIMING,
-      AUTO_STOP_TIMING,
-      WEIGHT_UNIT_SWITCH_LOCK,
-      WEIGHT_UNIT,
+      /**
+       * Automatically send data -
+       * {@link diFluid.Microbalance.settings.sensorDataAutoSend}
+       */
+      'Sensor Data Auto Send',
+      /**
+       * Automatically start timer on consistent pour -
+       * {@link diFluid.Microbalance.settings.autoDetectTiming}
+       */
+      'Auto Detect Timing',
+      /**
+       * Automatically pause timer when weight is removed
+       * {@link diFluid.Microbalance.settings.autoStopTiming}
+       */
+      'Auto Stop Timing',
+      /**
+       * Lock weight unit -
+       * {@link diFluid.Microbalance.settings.weightUnitSwitchLock}
+       */
+      'Weight Unit Switch Lock',
+      /**
+       * weight unit -
+       * {@link diFluid.Microbalance.settings.weightUnit}
+       */
+      'Weight Unit',
     }
 
     export namespace settings {
@@ -45,38 +68,38 @@ export namespace diFluid {
       }
 
       export enum weightUnit {
-        GRAM,
-        OUNCE,
-        GERING,
+        Gram,
+        Ounce,
+        Gering,
       }
     }
 
     export enum action {
-      SENSOR_DATA,
-      DLINK_BUTTON_PRESS,
-      CONTROL_BUTTON_SINGLE_PRESS,
-      CONTROL_BUTTON_DOUBLE_PRESS,
-      CONTROL_BUTTON_LONG_PRESS,
-      DEVICE_STATUS,
+      'Sensor Data',
+      'DLink Button Press',
+      'Control Button Single Press',
+      'Control Button Double Press',
+      'Control Button Long Press',
+      'Device Status',
     }
 
     export namespace action {
       export enum deviceStatus {
-        POWER_DOWN,
-        CHARGING,
-        LOW_POWER_MODE_1,
-        LOW_BATTERY_SHUTDOWN,
-        STARTUP,
-        IDLE,
-        SHOW_DEVICE_INFORMATION,
-        TARE_IN_PROGRESS,
-        OTA_IN_PROGRESS,
-        OTA_FAILED,
-        TIMING_IN_PROGRESS,
-        TIMER_PAUSE,
+        'Power Down',
+        'Charging',
+        'Low Power Mode 1',
+        'Low Battery Shutdown',
+        'Startup',
+        'Idle',
+        'Show Device Information',
+        'Tare In Progress',
+        'OTA In Progress',
+        'OTA Failed',
+        'Timing In Progress',
+        'Timer Paused',
         RESERVED,
-        LOW_POWER_MODE_2,
-        AUTO_STOP_TIMING_TRIGGER,
+        'Low Power Mode 2',
+        'Auto Stop Timing Trigger',
       }
     }
   }
@@ -87,28 +110,28 @@ export namespace diFluid {
   export namespace R2 {
     export enum info {
       /** Serial Number of device */
-      SERIAL_NUMBER,
+      'Serial Number',
       /** Should always be 'DFT-R102' */
-      DEVICE_MODEL,
+      'Device Model',
       /** Current firmware Version */
-      FIRMWARE_VERSION,
+      'Firmware Version',
     }
 
     export enum settings {
       /**
        * Celsius or Fahrenheit -
-       * {@link DiFluid.R2.settings.temperatureUnit}
+       * {@link diFluid.R2.settings.temperatureUnit}
        */
-      TEMPERATURE_UNIT,
+      'Temperature Unit',
       /**
        * Automatically start test on temperature change of tank/prism -
-       * {@link DiFluid.R2.settings.autoTest}
+       * {@link diFluid.R2.settings.autoTest}
        */
-      AUTO_TEST_STATUS,
+      'Auto Test Status',
       /** Can be between 30-100% */
-      SCREEN_BRIGHTNESS,
+      'Screen Brightness',
       /** Number of tests to perform */
-      NUMBER_OF_TESTS,
+      'Number of Tests',
     }
     export namespace settings {
       export enum temperatureUnit {
@@ -127,18 +150,18 @@ export namespace diFluid {
 
     export enum action {
       /** Perform a single test */
-      SINGLE_TEST,
+      'Single Test',
       /** Perform multiple tests and average the results */
-      AVERAGE_TEST,
+      'Average Test',
       /** Calibrate the device */
-      CALIBRATION_RESULT,
+      'Calibration Result',
       /**
        * Known Errors -
-       * {@link DiFluid.R2.action.errorClass}
+       * {@link diFluid.R2.action.errorClass}
        */
-      ERROR = 254,
+      'Error' = 254,
       /** Unknown Errors */
-      ERROR_UNKNOWN,
+      'Error Unknown',
     }
     export namespace action {
       export enum test {
@@ -146,68 +169,69 @@ export namespace diFluid {
          * Status code of current test -
          * {@link diFluid.R2.action.test.status}
          */
-        TEST_STATUS,
+        'Test Status',
         /** Prism and Tank temperatures as well as temperature unit */
-        TEMPERATURE_INFO,
+        'Temperature Info',
         /** Concentration (TDS) and Refractive Index */
-        TEST_RESULT,
+        'Test Result',
         /** Averaged Concentration (TDS) and Refractive Index */
-        AVERAGE_RESULT,
+        'Average Result',
         /** Averaged Prism and Tank temperatures, Current and Total test counts */
-        AVERAGE_TEMPERATURE_INFO,
+        'Average Temperature and Info',
       }
 
       export namespace test {
         export enum status {
           /** Test completed */
-          TEST_FINISHED,
+          'Test Finished',
           /** Calibration completed */
-          CALIBRATION_FINISHED,
+          'Calibration Finished',
           RESERVED_0,
           RESERVED_1,
           /** Average Test started */
-          AVERAGE_TEST_START,
+          'Average Test Started',
           /** Average Test in progress */
-          AVERAGE_TEST_ONGOING,
+          'Average Test Ongoing',
           /** Average Test completed */
-          AVERAGE_TEST_FINISHED,
+          'Average Test Finished',
           /** Loop Test started */
-          LOOP_TEST_START,
+          'Loop Test Started',
           /** Loop Test in progress */
-          LOOP_TEST_ONGOING,
+          'Loop Test Ongoing',
           /** Loop Test completed */
-          LOOP_TEST_FINISHED,
+          'Loop Test Finished',
           /**
            * Average Test in progress
            *
            * Only appears when a test time is too long
            */
-          AVERAGE_TEST_ONGOING_INVALID,
+          'Average Test Ongoing: Timout',
           /** Test started */
-          TEST_START,
+          'Test Started',
           /** Calibration started */
-          CALIBRATION_START,
+          'Calibration Started',
         }
       }
 
       export enum errorClass {
         /**
-         *
+         * Known Software Errors -
+         * {@link diFluid.R2.action.error.general}
          */
-        GENERAL = 2,
+        General = 2,
         /** This is the same as the number displaying on the device screen */
-        HARDWARE,
+        Hardware,
       }
       export namespace error {
         export enum general {
           /** Generic test error */
-          TEST_ERROR = 1,
+          'Test Error' = 1,
           /** Calibration Failed */
-          CALIBRATION_FAILED,
+          'Calibration Failed',
           /** Cannot detect liquid to refract */
-          NO_LIQUID,
+          'No Liquid',
           /** TDS is either too high or too low to  */
-          BEYOND_RANGE,
+          'Beyond Range',
         }
       }
     }
