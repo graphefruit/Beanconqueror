@@ -58,6 +58,7 @@ export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
     this.settings.matomo_analytics = false;
     this.uiAnalytics.disableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
+    this.finish();
   }
 
   public async understoodAnalytics() {
