@@ -970,9 +970,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkPleaseActivateAnalyticsPage() {
-    return;
     const settings = this.uiSettingsStorage.getSettings();
-
     if (settings.matomo_analytics === false) {
       if (
         this.uiBrewStorage.getAllEntries().length >= 100 ||

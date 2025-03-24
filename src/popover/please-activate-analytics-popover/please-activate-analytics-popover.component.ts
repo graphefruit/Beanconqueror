@@ -62,9 +62,11 @@ export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
   }
 
   public async understoodAnalytics() {
-    this.settings.matomo_analytics = true;
-    this.uiAnalytics.enableTracking();
-    await this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiAnalytics.enableTracking();
+    /**Enable link tracking will generate a new tracking id, thats why we need to get the settings here again and set the matomo analtics to true**/
+    const tmpSettings = this.uiSettingsStorage.getSettings();
+    tmpSettings.matomo_analytics = true;
+    await this.uiSettingsStorage.saveSettings(tmpSettings);
     this.finish();
   }
 
