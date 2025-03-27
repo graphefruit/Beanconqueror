@@ -1201,6 +1201,15 @@
                 </div>
               </ion-checkbox>
             </ion-item>
+						<ion-item>
+							<ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.refractometer_test_type"
+								cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+								<div slot="label">{{"REFRACTOMETER.TEST_TYPE" | translate}}</div>
+								<ion-select-option value="{{REFRACTOMETER_TEST_TYPE.SINGLE}}">{{"REFRACTOMETER.TEST_TYPES.SINGLE" | translate}}</ion-select-option>
+								<ion-select-option value="{{REFRACTOMETER_TEST_TYPE.AVERAGE}}">{{"REFRACTOMETER.TEST_TYPES.AVERAGE" | translate}}</ion-select-option>
+								<ion-select-option value="{{REFRACTOMETER_TEST_TYPE.AUTO}}">{{"REFRACTOMETER.TEST_TYPES.AUTO" | translate}}</ion-select-option>
+							</ion-select>
+						</ion-item>
 
             <ion-item>
               <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.refractometer_log">

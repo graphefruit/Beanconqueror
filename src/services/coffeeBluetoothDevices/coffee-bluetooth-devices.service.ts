@@ -49,6 +49,7 @@ import { VariaAkuScale } from '../../classes/devices/variaAku';
 import { UIHelper } from '../uiHelper';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
+import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
 
 declare var ble: any;
 declare var cordova: any;
@@ -326,7 +327,7 @@ export class CoffeeBluetoothDevicesService {
                   checkIds[scanDevice.id.toLowerCase()] = true;
                   this.logger.log(
                     'findDeviceWithDirectIds - we found the exact searched device  ' +
-                      JSON.stringify(scanDevice),
+                    JSON.stringify(scanDevice),
                   );
 
                   let areAllDevicesFound: boolean = true;
@@ -364,7 +365,7 @@ export class CoffeeBluetoothDevicesService {
         } catch (ex) {
           this.logger.log(
             'findDeviceWithDirectId - Bluetooth error occured ' +
-              JSON.stringify(ex),
+            JSON.stringify(ex),
           );
         }
         counter++;
@@ -402,7 +403,7 @@ export class CoffeeBluetoothDevicesService {
         } catch (ex) {
           this.logger.log(
             'findDeviceWithDirectId - Bluetooth error occured ' +
-              JSON.stringify(ex),
+            JSON.stringify(ex),
           );
         }
         counter++;
@@ -442,7 +443,7 @@ export class CoffeeBluetoothDevicesService {
                 ) {
                   this.logger.log(
                     'findDeviceWithDirectId - we found the exact searched device  ' +
-                      JSON.stringify(scanDevice),
+                    JSON.stringify(scanDevice),
                   );
                   // We found all needed devices.
                   promiseResolved = true;
@@ -467,7 +468,7 @@ export class CoffeeBluetoothDevicesService {
         } catch (ex) {
           this.logger.log(
             'findDeviceWithDirectId - Bluetooth error occured ' +
-              JSON.stringify(ex),
+            JSON.stringify(ex),
           );
         }
         counter++;
@@ -913,9 +914,9 @@ export class CoffeeBluetoothDevicesService {
 
     this.logger.log(
       'AutoConnectScale - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
-        deviceType,
+      deviceId +
+      ' and type ' +
+      deviceType,
     );
     try {
       ble.connect(
@@ -934,10 +935,10 @@ export class CoffeeBluetoothDevicesService {
           try {
             this.uiToast.showInfoToast(
               this.translate.instant('SCALE.CONNECTED_SUCCESSFULLY') +
-                ' - ' +
-                this.getScale().device_name +
-                ' / ' +
-                this.getScale().device_id,
+              ' - ' +
+              this.getScale().device_name +
+              ' / ' +
+              this.getScale().device_id,
               false,
             );
           } catch (ex) {}
@@ -1021,9 +1022,9 @@ export class CoffeeBluetoothDevicesService {
 
     this.logger.log(
       'AutoConnectPressureDevice - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
-        pressureType,
+      deviceId +
+      ' and type ' +
+      pressureType,
     );
     try {
     } catch (ex) {}
@@ -1047,10 +1048,10 @@ export class CoffeeBluetoothDevicesService {
           try {
             this.uiToast.showInfoToast(
               this.translate.instant('PRESSURE.CONNECTED_SUCCESSFULLY') +
-                ' - ' +
-                this.getPressureDevice().device_name +
-                ' / ' +
-                this.getPressureDevice().device_id,
+              ' - ' +
+              this.getPressureDevice().device_name +
+              ' / ' +
+              this.getPressureDevice().device_id,
               false,
             );
           } catch (ex) {}
@@ -1125,9 +1126,9 @@ export class CoffeeBluetoothDevicesService {
 
     this.logger.log(
       'AutoConnectTemperatureDevice - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
-        temperatureType,
+      deviceId +
+      ' and type ' +
+      temperatureType,
     );
     try {
       ble.autoConnect(
@@ -1147,10 +1148,10 @@ export class CoffeeBluetoothDevicesService {
           try {
             this.uiToast.showInfoToast(
               this.translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
-                ' - ' +
-                this.getTemperatureDevice().device_name +
-                ' / ' +
-                this.getTemperatureDevice().device_id,
+              ' - ' +
+              this.getTemperatureDevice().device_name +
+              ' / ' +
+              this.getTemperatureDevice().device_id,
               false,
             );
           } catch (ex) {}
@@ -1184,9 +1185,9 @@ export class CoffeeBluetoothDevicesService {
 
     this.logger.log(
       'AutoConnectRefractometerDevice - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
-        refractometerType,
+      deviceId +
+      ' and type ' +
+      refractometerType,
     );
     try {
       ble.autoConnect(
@@ -1205,12 +1206,15 @@ export class CoffeeBluetoothDevicesService {
           successCallback();
 
           try {
+            this.getRefractometerDevice().setTestType(
+              this.uiStettingsStorage.getSettings().refractometer_test_type,
+            );
             this.uiToast.showInfoToast(
               this.translate.instant('REFRACTOMETER.CONNECTED_SUCCESSFULLY') +
-                ' - ' +
-                this.getRefractometerDevice().device_name +
-                ' / ' +
-                this.getRefractometerDevice().device_id,
+              ' - ' +
+              this.getRefractometerDevice().device_name +
+              ' / ' +
+              this.getRefractometerDevice().device_id,
               false,
             );
           } catch (ex) {}

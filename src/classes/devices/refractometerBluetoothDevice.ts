@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { EventEmitter } from '@angular/core';
 import { Logger } from './common/logger';
+import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
 
 export interface RefractometerReading {
   tds: number;
@@ -18,6 +19,7 @@ export abstract class RefractometerDevice {
   protected reading: RefractometerReading;
   public resultEvent: EventEmitter<RefractionResultEvent> = new EventEmitter();
   protected bluetoothParentLogger: Logger;
+  protected TestType: TEST_TYPE_ENUM;
 
   constructor(data: PeripheralData) {
     this.device_id = data.id;
@@ -40,17 +42,33 @@ export abstract class RefractometerDevice {
 
   public abstract requestRead(): void;
 
+  public getTestType(): TEST_TYPE_ENUM {
+    return this.TestType;
+  }
+
+  /**
+   * This is handled by each implementation of `RefractometerDevice`.
+   *
+   * Each device can implement one of the following:
+   * - native functionality
+   * - custom implementations not supported by hardware
+   * - safe fallbacks if test types are not supported
+   *
+   * @param testType
+   */
+  public abstract setTestType(testType: TEST_TYPE_ENUM);
+
   public disconnectTriggered(): void {}
 
   public setTdsReading(_tds: number) {
     this.bluetoothParentLogger.log(
-      'Bluetooth Refractometer - New tds reading recieved ' + _tds
+      'Bluetooth Refractometer - New tds reading recieved ' + _tds,
     );
     this.reading.tds = _tds;
   }
   public setTempReading(_temp: number) {
     this.bluetoothParentLogger.log(
-      'Bluetooth Refractometer - New temp reading recieved '
+      'Bluetooth Refractometer - New temp reading recieved ',
     );
     this.reading.temp = _temp;
   }

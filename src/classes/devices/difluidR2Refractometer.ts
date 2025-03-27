@@ -2,6 +2,7 @@ import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
 import { RefractometerDevice } from './refractometerBluetoothDevice';
 import { diFluid } from './diFluid/protocol';
+import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
 
 declare var ble: any;
 export class DiFluidR2Refractometer extends RefractometerDevice {
@@ -39,7 +40,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
     this.logger.log('connecting...');
     this.attachNotification();
     await setTimeout(async () => {
-      await this.setDeviceAutoNotification(diFluid.R2.settings.autoTest.Off);
+      await this.setDeviceAutoTest(diFluid.R2.settings.autoTest.Off);
     }, 100);
     await setTimeout(async () => {
       await this.setDeviceTemperatureUnit(
@@ -60,24 +61,52 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
 
   public override async requestRead() {
     this.logger.log('requesting TDS reading');
+    let cmd = null;
+    switch (this.TestType) {
+      case TEST_TYPE_ENUM.AVERAGE:
+        cmd = diFluid.R2.action['Average Test'];
+        break;
+      case TEST_TYPE_ENUM.SINGLE:
+      // If auto, auto behavior will take place on it's own,
+      // but allow the button to perform manual follow-up tests as single.
+      case TEST_TYPE_ENUM.AUTO:
+      // In case `setTestType` was not called on device connection
+      default:
+        cmd = diFluid.R2.action['Single Test'];
+        break;
+    }
     await this.write(
       diFluid.buildRawCmd({
         func: diFluid.func['Device Action'],
-        cmd: diFluid.R2.action['Single Test'],
+        cmd: cmd,
         data: new Uint8Array([]),
       }),
     );
   }
 
-  public async setDeviceAutoNotification(
-    notifications: diFluid.R2.settings.autoTest,
-  ) {
-    this.logger.log('enabling auto notifications');
+  /**
+   * All test types are supported
+   */
+  public override async setTestType(testType: TEST_TYPE_ENUM) {
+    // Because all test types are supported, we can directly set
+    this.TestType = testType;
+    if (this.TestType === TEST_TYPE_ENUM.AUTO) {
+      this.AutoTest = true;
+      this.setDeviceAutoTest(diFluid.R2.settings.autoTest.On);
+    } else {
+      this.AutoTest = false;
+    }
+  }
+
+  public async setDeviceAutoTest(status: diFluid.R2.settings.autoTest) {
+    this.logger.log(
+      'setting auto test status: ' + diFluid.R2.settings.autoTest[status],
+    );
     await this.write(
       diFluid.buildRawCmd({
         func: diFluid.func['Device Settings'],
         cmd: diFluid.R2.settings['Auto Test Status'],
-        data: new Uint8Array([notifications]),
+        data: new Uint8Array([status]),
       }),
     );
   }
@@ -134,9 +163,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
     try {
       status = diFluid.parseRawStatus(rawStatus);
     } catch (err) {
-      this.logger.error(
-        'Could not parse raw status message. Err: ' + err.message,
-      );
+      this.logger.error('Could not parse raw status message. Err: ' + err.message);
       return;
     }
 
@@ -149,9 +176,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
               this.SERIAL_NUMBER.substring(0, part * 5) +
               diFluid.parseString(status.data.slice(1)) +
               this.SERIAL_NUMBER.substring(part * 5 + 5);
-            this.logger.log(
-              'Serial Number (' + (status.data[0] + 1).toString() + '/3)',
-            );
+            this.logger.log('Serial Number (' + (status.data[0] + 1).toString() + '/3)');
             break;
           case 'Device Model':
             this.MODEL_NAME = diFluid.parseString(status.data);
@@ -179,9 +204,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
             break;
           case 'Screen Brightness':
             this.ScreenBrightness = status.data[0];
-            this.logger.log(
-              'Screen Brightness: ' + this.ScreenBrightness.toString() + '%',
-            );
+            this.logger.log('Screen Brightness: ' + this.ScreenBrightness.toString() + '%');
             break;
           case 'Number of Tests':
             this.TestCount = status.data[0];
@@ -225,10 +248,10 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
                   this.logger.log('Average Temperature Received');
                   this.logger.log(
                     'Recieved Average Test (' +
-                      status.data[5].toString() +
-                      '/' +
-                      status.data[6].toString() +
-                      ')',
+                    status.data[5].toString() +
+                    '/' +
+                    status.data[6].toString() +
+                    ')',
                   );
                 } else {
                   this.logger.log('Temperature Received');
@@ -239,25 +262,19 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
                 this.setTempReading(
                   (this.getInt(status.data.slice(1, 3)) +
                     this.getInt(status.data.slice(3, 5))) /
-                    20,
+                  20,
                 );
                 break;
               case 'Average Result':
               case 'Test Result':
                 if (
                   (diFluid.R2.action[status.cmd] === 'Average Test' &&
-                    diFluid.R2.action.test[status.data[0]] ===
-                      'Average Result') ||
+                    diFluid.R2.action.test[status.data[0]] === 'Average Result') ||
                   (diFluid.R2.action[status.cmd] === 'Single Test' &&
                     diFluid.R2.action.test[status.data[0]] === 'Test Result')
                 ) {
-                  this.logger.log(
-                    diFluid.R2.action[status.cmd].slice(0, -5) +
-                      ' TDS Received',
-                  );
-                  this.setTdsReading(
-                    this.getInt(status.data.slice(1, 3)) / 100,
-                  );
+                  this.logger.log(diFluid.R2.action[status.cmd].slice(0, -5) + ' TDS Received');
+                  this.setTdsReading(this.getInt(status.data.slice(1, 3)) / 100);
                   this.resultEvent.emit(null);
                 }
                 break;

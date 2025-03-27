@@ -25,6 +25,7 @@ import {
   ScaleType,
   TemperatureType,
 } from '../devices';
+import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
@@ -221,6 +222,7 @@ export class Settings implements ISettings {
 
   public refractometer_id: string;
   public refractometer_type: RefractometerType;
+  public refractometer_test_type: TEST_TYPE_ENUM;
   public refractometer_stay_connected: boolean;
   public refractometer_log: boolean;
 
@@ -548,6 +550,7 @@ export class Settings implements ISettings {
 
     this.refractometer_id = '';
     this.refractometer_type = null;
+    this.refractometer_test_type = TEST_TYPE_ENUM.SINGLE;
     this.refractometer_stay_connected = false;
     this.refractometer_log = false;
 
