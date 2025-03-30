@@ -13,14 +13,7 @@ export enum TEST_TYPE_ENUM {
    * Performs multiple tests, getting the average value
    *
    * supported by:
-   * - R2
+   * - all devices
    */
   AVERAGE,
-  /**
-   * Automatically performs a test when a temperature change is detected, looping until a stable temperature and TDS are reached
-   *
-   * supported by:
-   * - R2
-   */
-  AUTO,
 }

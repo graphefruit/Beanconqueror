@@ -1129,9 +1129,9 @@
         "TEST_TYPE": "Test type",
         "TEST_TYPES": {
             "SINGLE": "Single",
-            "AVERAGE": "Average",
-            "AUTO": "Automatic"
+            "AVERAGE": "Average"
         },
+        "AUTO_TEST": "Automatically perform a looping test when temperature change is detected until a stable TDS if found",
         "INFORMATION_DESCRIPTION": "Supported devices are: DiFluid R2",
         "BLUETOOTH_SCAN_RUNNING": "Searching for refractometer device for up to 60s",
         "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",

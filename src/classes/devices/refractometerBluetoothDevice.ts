@@ -56,7 +56,9 @@ export abstract class RefractometerDevice {
    *
    * @param testType
    */
-  public abstract setTestType(testType: TEST_TYPE_ENUM);
+  public abstract setTestType(testType: TEST_TYPE_ENUM): void;
+
+  public abstract setAutoTest(doAutoTest: boolean): void;
 
   public disconnectTriggered(): void {}
 

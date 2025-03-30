@@ -223,6 +223,7 @@ export class Settings implements ISettings {
   public refractometer_id: string;
   public refractometer_type: RefractometerType;
   public refractometer_test_type: TEST_TYPE_ENUM;
+  public refractometer_auto_test: boolean;
   public refractometer_stay_connected: boolean;
   public refractometer_log: boolean;
 
