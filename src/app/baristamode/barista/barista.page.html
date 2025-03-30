@@ -1,0 +1,46 @@
+<ion-header #ionHeader>
+  <ion-toolbar with-add-button>
+    <ion-buttons slot="start">
+      <ion-menu-button show="back"></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+
+    </ion-buttons>
+    <ion-title>
+      {{"NAV_BARISTAMODE_SECTION" | translate }}
+    </ion-title>
+    <ion-buttons slot="end">
+
+      @if (isWebSocketConnected() ) {
+        <ion-chip outline='true' class='machine-connected'>
+
+          <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+          <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+
+        </ion-chip>
+      } @else {
+        <ion-chip outline='true' class='machine-disconnected'>
+
+          <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+          <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+
+
+        </ion-chip>
+      }
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content #ionContent [fullscreen]="true">
+  @if (!isWebSocketConnected() ) {
+    <ion-button (click)="checkIfSanremoIsStillConnectedElseShowUpAReconnectButton()">Reconnect</ion-button>
+  }
+
+
+  <ion-card>
+    <brew-brewing #brewBrewing [baristamode]="true"
+                  [(data)]="data"></brew-brewing>
+  </ion-card>
+</ion-content>

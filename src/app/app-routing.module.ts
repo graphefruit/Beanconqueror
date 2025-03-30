@@ -136,6 +136,9 @@ const routes: Routes = [
   },
   {
     path: 'baristamode',
+    resolve: {
+      resolver: RouteResolver,
+    },
     loadChildren: () =>
       import('./baristamode/baristamode.module').then(
         (m) => m.BaristamodePageModule,

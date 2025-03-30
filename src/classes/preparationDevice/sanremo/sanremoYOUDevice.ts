@@ -6,12 +6,21 @@ import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanrem
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
+import { SanremoShotData } from './sanremoShotData';
+import { BluetoothScale } from '../../devices';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
-
+  private socket: any = undefined;
+  private sanremoShotData: SanremoShotData = new SanremoShotData();
+  private _isConnected: boolean = false;
   private connectionURL: string = '';
-  private statusPhase: number = 0;
+  private websocketURL: string = '';
+  /**
+   * This timestamp makes sure that we just send all 250ms the weight and flow data to the machine
+   */
+  public sendingWeightAndFlowTimestamp = 0;
+  public receivingDataFromWebsocketTimestamp = 0;
   constructor(
     protected httpClient: HttpClient,
     _preparation: Preparation,
@@ -19,10 +28,24 @@ export class SanremoYOUDevice extends PreparationDevice {
     super(httpClient, _preparation);
 
     this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
+    this.websocketURL = this.getPreparation().connectedPreparationDevice.url;
+    if (this.websocketURL.indexOf('https:') >= 0) {
+      this.websocketURL = this.websocketURL.replace('https', 'ws');
+    } else {
+      this.websocketURL = this.websocketURL.replace('http', 'ws');
+    }
+    this.websocketURL = this.websocketURL + ':81';
   }
 
   private logError(...args: any[]) {
     UILog.getInstance().error('SanremoYOUDevice:', ...args);
+  }
+  private logInfo(...args: any[]) {
+    UILog.getInstance().info('SanremoYOUDevice:', ...args);
+  }
+
+  public getActualShotData() {
+    return this.sanremoShotData;
   }
 
   public async deviceConnected(): Promise<boolean> {
@@ -111,11 +134,9 @@ export class SanremoYOUDevice extends PreparationDevice {
           const responseJSON = _response.data;
           const temp = responseJSON.tempBoilerCoffe;
           const press = responseJSON.pumpPress * 10;
-          const statusPhase = responseJSON.statusPhase;
 
           this.temperature = temp;
           this.pressure = press;
-          this.statusPhase = statusPhase;
           if (_callback) {
             _callback();
           }
@@ -166,12 +187,168 @@ export class SanremoYOUDevice extends PreparationDevice {
       this.logError('Error in stopShot():', error);
     }
   }
+
+  public disconnectSocket() {
+    if (this.socket !== undefined) {
+      this.logInfo('Disconnecting from socket');
+      this.socket.onclose = (event) => {};
+      this.socket.close();
+      this.socket = undefined;
+    }
+    this._isConnected = false;
+  }
+
+  public reconnectToSocket() {
+    this.logInfo('Reconnecting from socket');
+    this.socket = undefined;
+    this.connectToSocket();
+  }
+  public connectToSocket(): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+      if (this.socket !== undefined) {
+        resolve(true);
+        return;
+      }
+
+      this.socket = new WebSocket(this.websocketURL);
+      window['socket'] = this.socket;
+
+      // Connection opened
+      this.socket.onopen = (event) => {
+        this.logInfo('Socket opened');
+        if (this.socket.disconnected) {
+          this.disconnectSocket();
+        } else {
+          this._isConnected = true;
+          resolve(true);
+        }
+
+        let sendData = {
+          key: 221,
+          appScaleConnection: 1,
+          recipeWeightSetPoint: 0,
+          cupWeightFromExtScale: 0,
+          realTimeFlowCalcByTheScale: 0,
+        };
+
+        this.socket.send(JSON.stringify(sendData));
+
+        let keepAliveInterval = setInterval(() => {
+          if (this.isConnected()) {
+            if (
+              this.receivingDataFromWebsocketTimestamp > 0 &&
+              Date.now() - this.receivingDataFromWebsocketTimestamp > 5000
+            ) {
+              this.logError(
+                'No data from machine, seems like another instance has been connecting, disconnect',
+              );
+              this.disconnectSocket();
+            } else {
+              this.logInfo('Sending keep alive to machine');
+              this.socket.send(JSON.stringify({}));
+            }
+          } else {
+            if (keepAliveInterval) {
+              window.clearInterval(keepAliveInterval);
+              keepAliveInterval = undefined;
+            } else {
+            }
+          }
+        }, 5000);
+      };
+
+      // Listen for messages
+      this.socket.onmessage = (event) => {
+        this.logInfo('Message from server:', event.data);
+        const responseJSON = JSON.parse(event.data);
+        if ('status' in responseJSON) {
+          //Valid sanremo shot data
+          let currentShotData = new SanremoShotData();
+          currentShotData = responseJSON;
+          currentShotData.pumpPress = currentShotData.pumpPress * 10;
+          this.sanremoShotData = currentShotData;
+          window['sanremoShotData'] = this.sanremoShotData;
+        }
+        this.receivingDataFromWebsocketTimestamp = Date.now();
+      };
+
+      // Handle errors
+      this.socket.onError = (event) => {
+        resolve(false);
+        this.reconnectToSocket();
+      };
+
+      // Handle connection close
+      this.socket.onclose = (event) => {
+        this.logInfo('WebSocket closed:', event);
+        resolve(false);
+        this.reconnectToSocket();
+      };
+    });
+    return promise;
+  }
+
+  public stopActualShot() {
+    if (this.isConnected()) {
+      //ID -> The actual running profile
+      //VALUE -> 0 -> stop, 1-> start
+      if (this.sanremoShotData.groupStatus !== 0) {
+        /**
+         * Groupstatus 0 would shut of the machine ;) so we don't want that
+         */
+        this.socket.send(
+          JSON.stringify({
+            key: 220,
+            id: this.sanremoShotData.groupStatus,
+            value: 0,
+          }),
+        );
+      }
+    }
+  }
+
+  public sendJustAppConnectionToMachine() {}
+
+  public sendActualWeightAndFlowDataToMachine(
+    _weight: number,
+    _flow: number,
+    _targetBrewByWeight: number,
+  ) {
+    if (Date.now() - this.sendingWeightAndFlowTimestamp < 250) {
+      return;
+    } else {
+    }
+    this.sendingWeightAndFlowTimestamp = Date.now();
+
+    /**
+     * This data shall just be sent to the machine, when the brew-by-weight is active, else use the sendJustAppConnectionToMachine
+     */
+    let sendData = {
+      key: 221,
+      appScaleConnection: 2,
+      recipeWeightSetPoint: _targetBrewByWeight,
+      cupWeightFromExtScale: _weight,
+      realTimeFlowCalcByTheScale: _flow,
+    };
+    this.logInfo('Sending weight data to machine:', sendData);
+    if (this.isConnected()) {
+      this.socket.send(JSON.stringify(sendData));
+    }
+  }
+  public isConnected() {
+    return this._isConnected;
+  }
 }
 
 export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeight: number = 0;
   public residualLagTime: number = 0.9;
   public selectedMode: SanremoYOUMode = SanremoYOUMode.LISTENING;
+
+  public stopAtWeightP1: number = 0;
+  public stopAtWeightP2: number = 0;
+  public stopAtWeightP3: number = 0;
+  public stopAtWeightM: number = 0;
   constructor() {
     this.residualLagTime = 0.9;
     this.selectedMode = SanremoYOUMode.LISTENING;

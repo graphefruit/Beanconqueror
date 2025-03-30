@@ -742,7 +742,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     ) {
       this.hapticService.vibrate();
     }
-    if (this.settings.brew_save_automatic_active) {
+    if (this.settings.brew_save_automatic_active && !this.baristamode) {
       const delayTimer = this.settings.brew_save_automatic_active_delay;
       const response = await this.uiToast.showAutomaticSaveTimer(delayTimer);
       if (response !== 'cancel') {

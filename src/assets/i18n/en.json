@@ -1076,6 +1076,8 @@
             "PROFILE_P1_CONTROLLING": "Profile P1 Control",
             "PROFILE_P2_CONTROLLING": "Profile P2 Control",
             "PROFILE_P3_CONTROLLING": "Profile P3 Control",
+            "SHOT_STARTED": "Shot started",
+            "SHOT_ENDED": "Shot ended",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, the chosen profile will be fully executed",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, please stop extraction manually",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the Sanremo YOU machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",

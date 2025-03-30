@@ -1,20 +1,13 @@
-<ion-header>
-  <ion-toolbar with-add-button>
-    <ion-buttons slot="start">
-      <ion-menu-button show="back"></ion-menu-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
+<ion-content>
+  <ion-tabs>
 
-    </ion-buttons>
-    <ion-title>
-      {{"NAV_BARISTAMODE_SECTION" | translate }}
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+    <ion-tab-bar slot="bottom" style="box-shadow: 0px -2px 10px #00000021;padding-top: 12px;">
+      <ion-tab-button tab="water" tappable>
+        <ion-icon class="menu-icon" name="water-outline"></ion-icon>
+        <ion-label>{{"NAV_BARISTAMODE_SECTION" | translate}}</ion-label>
+      </ion-tab-button>
 
-<ion-content [fullscreen]="true">
-<ion-card>
-  <brew-brewing #brewBrewing [baristamode]="true"
-  [(data)]="data"></brew-brewing>
-</ion-card>
+    </ion-tab-bar>
+
+  </ion-tabs>
 </ion-content>

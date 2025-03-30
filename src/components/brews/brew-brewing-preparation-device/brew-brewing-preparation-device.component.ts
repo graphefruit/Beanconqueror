@@ -140,10 +140,15 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       ).stopAtWeight = 0;
       this.drawTargetWeight(0);
     }
+    this.sanremoYOUModeSelected();
   }
 
   public drawTargetWeight(_weight: number) {
     this.brewComponent.brewBrewingGraphEl?.drawTargetWeight(_weight);
+  }
+
+  public sanremoYOUModeSelected() {
+    this.brewComponent.brewBrewingGraphEl?.sanremoYOUModeSelected();
   }
   public hasAPreparationDeviceSet() {
     return (
@@ -419,6 +424,12 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     if (!this.preparationDevice) {
       //Ignore the rest of this function
       return;
+    } else {
+      if (this.baristamode === true) {
+        this.data.preparationDeviceBrew.params.selectedMode =
+          SanremoYOUMode.LISTENING_AND_CONTROLLING;
+        this.sanremoYOUModeSelected();
+      }
     }
 
     /** Seccond call**/
