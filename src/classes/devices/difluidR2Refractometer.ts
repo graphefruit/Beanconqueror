@@ -91,6 +91,24 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
     );
   }
 
+  public override async setTestNumber(count: number) {
+    this.logger.log('setting number of tests: ' + count.toString());
+    // Validating `count` is within acceptable range
+    if (count < 1) {
+      count = 1;
+    } else if (count > 10) {
+      count = 10;
+    }
+
+    await this.write(
+      diFluid.buildRawCmd({
+        func: diFluid.func['Device Settings'],
+        cmd: diFluid.R2.settings['Number of Tests'],
+        data: new Uint8Array([count]),
+      }),
+    );
+  }
+
   public async setDeviceAutoTest(status: diFluid.R2.settings.autoTest) {
     this.logger.log(
       'setting auto test status: ' + diFluid.R2.settings.autoTest[status],

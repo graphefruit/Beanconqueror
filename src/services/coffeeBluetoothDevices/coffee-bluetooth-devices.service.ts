@@ -1210,6 +1210,7 @@ export class CoffeeBluetoothDevicesService {
             let device = this.getRefractometerDevice();
             device.setTestType(settings.refractometer_test_type);
             device.setAutoTest(settings.refractometer_auto_test);
+            device.setTestNumber(settings.refractometer_test_number);
 
             this.uiToast.showInfoToast(
               this.translate.instant('REFRACTOMETER.CONNECTED_SUCCESSFULLY') +

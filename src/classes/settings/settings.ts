@@ -224,6 +224,7 @@ export class Settings implements ISettings {
   public refractometer_type: RefractometerType;
   public refractometer_test_type: TEST_TYPE_ENUM;
   public refractometer_auto_test: boolean;
+  public refractometer_test_number: number;
   public refractometer_stay_connected: boolean;
   public refractometer_log: boolean;
 
@@ -552,6 +553,8 @@ export class Settings implements ISettings {
     this.refractometer_id = '';
     this.refractometer_type = null;
     this.refractometer_test_type = TEST_TYPE_ENUM.SINGLE;
+    this.refractometer_auto_test = false;
+    this.refractometer_test_number = 4;
     this.refractometer_stay_connected = false;
     this.refractometer_log = false;
 

@@ -58,7 +58,27 @@ export abstract class RefractometerDevice {
    */
   public abstract setTestType(testType: TEST_TYPE_ENUM): void;
 
+  /**
+   * This is handled by each implementation of `RefractometerDevice`.
+   *
+   * Each device can implement one of the following:
+   * - native functionality
+   * - safe fallbacks if test types are not supported
+   *
+   * @param doAutoTest
+   */
   public abstract setAutoTest(doAutoTest: boolean): void;
+
+  /**
+   * This is handled by each implementation of `RefractometerDevice`.
+   *
+   * Each device can implement one of the following:
+   * - native functionality
+   * - custom implementations not supported by hardware
+   *
+   * @param testType - each implementation should validate data is within range
+   */
+  public abstract setTestNumber(count: number): void;
 
   public disconnectTriggered(): void {}
 
