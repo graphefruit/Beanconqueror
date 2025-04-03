@@ -432,12 +432,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       }
     }
 
-    /** Seccond call**/
+    return;
+    /**
+    // Seccond call
     await connectedDevice.deviceConnected().then(
       () => {},
       () => {},
     );
-    /** Third call call**/
+    //Third call call
 
     const apiThirdCallDelayStart = moment(); // create a moment with the current time
     let apiDelayEnd;
@@ -472,7 +474,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       () => {
         clearTimeout(delayCallTimeout);
       },
-    );
+    );**/
   }
 
   public async importShotFromMeticulous() {

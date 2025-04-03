@@ -43,7 +43,7 @@ export class BaristaPage implements OnInit {
   private scaleFlowChangeSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
 
-  private settings: Settings;
+  private memIntv = undefined;
 
   constructor(
     private readonly uiBeanStorage: UIBeanStorage,
@@ -75,11 +75,20 @@ export class BaristaPage implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
     this.__attachOnDeviceResume();
+
+    this.memIntv = setInterval(() => {
+      if (window['sanremoShotData']) {
+        var freeMem = window['sanremoShotData'].freeMem;
+        if (freeMem < 28000) {
+          console.error(freeMem);
+        } else {
+          console.log(freeMem);
+        }
+      }
+    }, 100);
   }
 
   ngOnInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
-
     this.uiHelper.deviceKeepAwake();
 
     this.__connectSmartScale(false);
@@ -110,6 +119,13 @@ export class BaristaPage implements OnInit {
         ?.preparationDevice as SanremoYOUDevice
     )?.isConnected();
   }
+
+  public isSanremoConnected() {
+    return (
+      (this.brewBrewing?.brewBrewingPreparationDeviceEl
+        ?.preparationDevice as SanremoYOUDevice) !== undefined
+    );
+  }
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange(event) {
@@ -118,26 +134,28 @@ export class BaristaPage implements OnInit {
     }, 150);
   }
   public resizeGraph() {
-    const totalHeight = this.ionContent.nativeElement.offsetHeight;
-    const offsetTopOfGraph =
-      this.brewBrewing.brewBrewingGraphEl.canvaContainer.nativeElement
-        .offsetTop;
+    try {
+      const totalHeight = this.ionContent.nativeElement.offsetHeight;
+      const offsetTopOfGraph =
+        this.brewBrewing.brewBrewingGraphEl.canvaContainer.nativeElement
+          .offsetTop;
 
-    const chartWidth =
-      this.brewBrewing.brewBrewingGraphEl.canvaContainer.nativeElement
-        .offsetWidth;
-    let chartHeight = totalHeight - (offsetTopOfGraph + 75 + 75);
-    if (chartHeight <= 100) {
-      chartHeight = 100;
-    }
-    this.brewBrewing.brewBrewingGraphEl.lastChartLayout.height = chartHeight;
+      const chartWidth =
+        this.brewBrewing.brewBrewingGraphEl.canvaContainer.nativeElement
+          .offsetWidth;
+      let chartHeight = totalHeight - (offsetTopOfGraph + 75 + 75 + 75);
+      if (chartHeight <= 100) {
+        chartHeight = 100;
+      }
+      this.brewBrewing.brewBrewingGraphEl.lastChartLayout.height = chartHeight;
 
-    this.brewBrewing.brewBrewingGraphEl.lastChartLayout.width = chartWidth;
-    Plotly.relayout(
-      this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
-      this.brewBrewing.brewBrewingGraphEl.lastChartLayout,
-    );
-    // Re render, else the lines would not be hidden/shown when having references graphs
+      this.brewBrewing.brewBrewingGraphEl.lastChartLayout.width = chartWidth;
+      Plotly.relayout(
+        this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
+        this.brewBrewing.brewBrewingGraphEl.lastChartLayout,
+      );
+      // Re render, else the lines would not be hidden/shown when having references graphs
+    } catch (ex) {}
   }
 
   public smartScaleConnected() {
@@ -151,9 +169,12 @@ export class BaristaPage implements OnInit {
 
   private async __connectSmartScale(_firstStart: boolean) {
     if (this.smartScaleConnected()) {
-      const scale: BluetoothScale = this.bleManager.getScale();
       // Always attach flow.
       this.attachToFlowChange();
+
+      setTimeout(() => {
+        this.resizeGraph();
+      }, 350);
     }
   }
   public attachToFlowChange() {
@@ -231,16 +252,30 @@ export class BaristaPage implements OnInit {
   }
 
   public ngOnDestroy() {
+    if (this.memIntv) {
+      window.clearInterval(this.memIntv);
+    }
+
     this.uiHelper.deviceAllowSleepAgain();
+
+    (
+      this.brewBrewing?.brewBrewingPreparationDeviceEl
+        ?.preparationDevice as SanremoYOUDevice
+    )?.disconnectSocket();
   }
   private __attachOnDeviceResume() {
     App.addListener('resume', async () => {
-      this.checkIfSanremoIsStillConnectedElseShowUpAReconnectButton();
+      /** setTimeout(() => {
+        this.checkIfSanremoIsStillConnectedElseShowUpAReconnectButton();
+      },5000);**/
     });
   }
 
-  public checkIfSanremoIsStillConnectedElseShowUpAReconnectButton() {
-    if (this.isWebSocketConnected() == false) {
+  public async checkIfSanremoIsStillConnectedElseShowUpAReconnectButton() {
+    if (this.isSanremoConnected() === false) {
+      await this.brewBrewing?.brewBrewingPreparationDeviceEl?.instancePreparationDevice();
+    }
+    if (this.isWebSocketConnected() !== true) {
       return (
         this.brewBrewing?.brewBrewingPreparationDeviceEl
           ?.preparationDevice as SanremoYOUDevice

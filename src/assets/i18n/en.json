@@ -1081,7 +1081,11 @@
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, the chosen profile will be fully executed",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, please stop extraction manually",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the Sanremo YOU machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
-            "MODE_LISTENING_AND_CONTROLLING": "Listening and Controlling"
+            "MODE_LISTENING_AND_CONTROLLING": "Listening and Controlling",
+            "CONNECTION_LOST_PLEASE_RECONNECT": "Sadly the connection to the Sanremo YOU has been lost, please reconnect with the button.",
+            "RECONNECT_NEEDED": "Reconnect needed",
+            "RECONNECT": "Reconnect"
+
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"

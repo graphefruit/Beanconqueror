@@ -2118,7 +2118,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
-        this.brewComponent.maximizeFlowGraphIsShown === false
+        this.brewComponent.maximizeFlowGraphIsShown === false &&
+        !this.baristamode
       ) {
         this.brewComponent.maximizeFlowGraph();
       }
@@ -2151,7 +2152,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
-        this.brewComponent.maximizeFlowGraphIsShown === false
+        this.brewComponent.maximizeFlowGraphIsShown === false &&
+        !this.baristamode
       ) {
         this.brewComponent.maximizeFlowGraph();
       }

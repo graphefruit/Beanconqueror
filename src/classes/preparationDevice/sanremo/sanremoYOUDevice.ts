@@ -7,7 +7,7 @@ import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremo
 import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import { SanremoShotData } from './sanremoShotData';
-import { BluetoothScale } from '../../devices';
+import { UIAlert } from '../../../services/uiAlert';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -39,6 +39,15 @@ export class SanremoYOUDevice extends PreparationDevice {
 
   private logError(...args: any[]) {
     UILog.getInstance().error('SanremoYOUDevice:', ...args);
+  }
+  private raiseMessage(): Promise<any> {
+    return UIAlert.getInstance().showConfirmWithYesNoTranslation(
+      'PREPARATION_DEVICE.TYPE_SANREMO_YOU.CONNECTION_LOST_PLEASE_RECONNECT',
+      'ERROR',
+      'RECONNECT',
+      'NO',
+      true,
+    );
   }
   private logInfo(...args: any[]) {
     UILog.getInstance().info('SanremoYOUDevice:', ...args);
@@ -192,15 +201,29 @@ export class SanremoYOUDevice extends PreparationDevice {
     if (this.socket !== undefined) {
       this.logInfo('Disconnecting from socket');
       this.socket.onclose = (event) => {};
+      this.socket.onerror = (event) => {};
+      this.socket.onopen = (event) => {};
       this.socket.close();
       this.socket = undefined;
     }
+    this.receivingDataFromWebsocketTimestamp = 0;
     this._isConnected = false;
+  }
+
+  private disconnectSocketInternal() {
+    this.disconnectSocket();
+    this.raiseMessage().then(
+      () => {
+        this.reconnectToSocket();
+      },
+      () => {},
+    );
   }
 
   public reconnectToSocket() {
     this.logInfo('Reconnecting from socket');
     this.socket = undefined;
+    this._isConnected = false;
     this.connectToSocket();
   }
   public connectToSocket(): Promise<boolean> {
@@ -216,33 +239,36 @@ export class SanremoYOUDevice extends PreparationDevice {
       // Connection opened
       this.socket.onopen = (event) => {
         this.logInfo('Socket opened');
-        if (this.socket.disconnected) {
-          this.disconnectSocket();
-        } else {
-          this._isConnected = true;
-          resolve(true);
-        }
 
-        let sendData = {
-          key: 221,
-          appScaleConnection: 1,
-          recipeWeightSetPoint: 0,
-          cupWeightFromExtScale: 0,
-          realTimeFlowCalcByTheScale: 0,
-        };
+        this._isConnected = true;
 
-        this.socket.send(JSON.stringify(sendData));
+        setTimeout(() => {
+          /**
+           * We wait one second, because we want to give the machine some short delay, after initial connecting
+           */
+          let sendData = {
+            key: 221,
+            appScaleConnection: 1,
+            recipeWeightSetPoint: 0,
+            cupWeightFromExtScale: 0,
+            realTimeFlowCalcByTheScale: 0,
+          };
+
+          if (this.isConnected()) {
+            this.socket.send(JSON.stringify(sendData));
+          }
+        }, 1000);
 
         let keepAliveInterval = setInterval(() => {
           if (this.isConnected()) {
             if (
               this.receivingDataFromWebsocketTimestamp > 0 &&
-              Date.now() - this.receivingDataFromWebsocketTimestamp > 5000
+              Date.now() - this.receivingDataFromWebsocketTimestamp >= 4000
             ) {
               this.logError(
                 'No data from machine, seems like another instance has been connecting, disconnect',
               );
-              this.disconnectSocket();
+              this.disconnectSocketInternal();
             } else {
               this.logInfo('Sending keep alive to machine');
               this.socket.send(JSON.stringify({}));
@@ -255,11 +281,12 @@ export class SanremoYOUDevice extends PreparationDevice {
             }
           }
         }, 5000);
+        resolve(true);
       };
 
       // Listen for messages
       this.socket.onmessage = (event) => {
-        this.logInfo('Message from server:', event.data);
+        //this.logInfo('Message from server:', event.data);
         const responseJSON = JSON.parse(event.data);
         if ('status' in responseJSON) {
           //Valid sanremo shot data
@@ -273,16 +300,16 @@ export class SanremoYOUDevice extends PreparationDevice {
       };
 
       // Handle errors
-      this.socket.onError = (event) => {
+      this.socket.onerror = (event) => {
         resolve(false);
-        this.reconnectToSocket();
+        this.disconnectSocketInternal();
       };
 
       // Handle connection close
       this.socket.onclose = (event) => {
         this.logInfo('WebSocket closed:', event);
         resolve(false);
-        this.reconnectToSocket();
+        this.disconnectSocketInternal();
       };
     });
     return promise;
@@ -335,8 +362,16 @@ export class SanremoYOUDevice extends PreparationDevice {
       this.socket.send(JSON.stringify(sendData));
     }
   }
-  public isConnected() {
-    return this._isConnected;
+  public isConnected(): boolean {
+    if (this.socket) {
+      if (this.socket.readyState === 0 || this.socket.readyState === 1) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 }
 

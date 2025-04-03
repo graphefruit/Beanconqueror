@@ -11,7 +11,7 @@
     </ion-title>
     <ion-buttons slot="end">
 
-      @if (isWebSocketConnected() ) {
+      @if (isWebSocketConnected() === true ) {
         <ion-chip outline='true' class='machine-connected'>
 
           <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
@@ -32,14 +32,25 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content #ionContent [fullscreen]="true">
   @if (!isWebSocketConnected() ) {
-    <ion-button (click)="checkIfSanremoIsStillConnectedElseShowUpAReconnectButton()">Reconnect</ion-button>
+    <ion-card color="danger">
+      <ion-card-header>
+        <ion-card-title>{{ 'PREPARATION_DEVICE.TYPE_SANREMO_YOU.RECONNECT_NEEDED' | translate}}</ion-card-title>
+        <ion-card-subtitle>{{ 'PREPARATION_DEVICE.TYPE_SANREMO_YOU.CONNECTION_LOST_PLEASE_RECONNECT' | translate }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-button expand="full" color="success" (click)="checkIfSanremoIsStillConnectedElseShowUpAReconnectButton()">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.RECONNECT" | translate}}</ion-button></ion-card-content>
+    </ion-card>
+    <ion-card>
+
+    </ion-card>
+
   }
 
 
-  <ion-card>
+  <ion-card [hidden]="!isWebSocketConnected()">
     <brew-brewing #brewBrewing [baristamode]="true"
                   [(data)]="data"></brew-brewing>
   </ion-card>
