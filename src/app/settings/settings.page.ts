@@ -447,6 +447,12 @@ export class SettingsPage {
     }, 500);
   }
 
+  /**
+   * @remarks
+   * calls {@link saveSettings()}, then will attempt to update a connected device.
+   *
+   * @param update - the setting to update on the refractometer
+   */
   public async attemptRefractometerUpdate(update: string) {
     await this.saveSettings();
 
