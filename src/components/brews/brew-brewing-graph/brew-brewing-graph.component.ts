@@ -1597,6 +1597,18 @@ export class BrewBrewingGraphComponent implements OnInit {
             const shotData: SanremoShotData =
               prepDeviceCall.getActualShotData();
 
+            if (shotData.groupStatus > 4) {
+              //Ignore everything above 4
+              /**
+               * 1 = p1
+               * 2 = p2
+               * 3 = p3
+               * 4 = m
+               * 5 = purge
+               * 6 = paddeling
+               */
+              return;
+            }
             if (shotData.statusPhase != 0 && hasShotStarted === false) {
               this.uiAlert.hideLoadingSpinner();
               this.uiToast.showInfoToast(
@@ -1621,6 +1633,18 @@ export class BrewBrewingGraphComponent implements OnInit {
               this.lastChartRenderingInstance = -1;
               this.updateChart();
               this.changeDetectorRef.detectChanges();
+            } else if (shotData.statusPhase == 0 && hasShotStarted === true) {
+              //The shot has been finished
+              if (this.baristamode && this.smartScaleConnected() === false) {
+                //If the barista mode is running and a smartscale is not connected, the timer would run endless, so we stop if there is no smart scale connected at all.
+                this.brewComponent.timer.pauseTimer('sanremo_you');
+                this.stopFetchingDataFromSanremoYOU();
+                this.updateChart();
+                this.uiToast.showInfoToast(
+                  'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_ENDED',
+                );
+                return;
+              }
             }
 
             if (hasShotStarted) {

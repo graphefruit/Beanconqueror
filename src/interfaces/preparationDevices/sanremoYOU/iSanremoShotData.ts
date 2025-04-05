@@ -12,4 +12,5 @@ export interface ISanremoShotData {
   counterVol: number;
   realtimeFlow: number;
   setPressPaddle: number;
+  localTimeString: string;
 }

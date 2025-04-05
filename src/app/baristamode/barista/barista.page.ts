@@ -1,8 +1,11 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   HostListener,
+  NgZone,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
@@ -34,6 +37,16 @@ declare var Plotly;
 export class BaristaPage implements OnInit {
   public data: Brew = new Brew();
 
+  @ViewChild('lastShotFlow', { read: ElementRef, static: true })
+  public lastShotFlow: ElementRef;
+  @ViewChild('lastShotWeight', { read: ElementRef, static: true })
+  public lastShotWeight: ElementRef;
+  @ViewChild('lastShotBrewTime', { read: ElementRef, static: true })
+  public lastShotBrewTime: ElementRef;
+
+  @ViewChild('memoryInformation', { read: ElementRef, static: true })
+  public memoryInformation: ElementRef;
+
   @ViewChild('ionHeader', { read: ElementRef, static: true })
   public ionHeader: ElementRef;
   @ViewChild('ionContent', { read: ElementRef, static: true })
@@ -43,7 +56,9 @@ export class BaristaPage implements OnInit {
   private scaleFlowChangeSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
 
-  private memIntv = undefined;
+  private timestampIntv = undefined;
+
+  @Output() public lastShot = new EventEmitter();
 
   constructor(
     private readonly uiBeanStorage: UIBeanStorage,
@@ -53,6 +68,7 @@ export class BaristaPage implements OnInit {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiHelper: UIHelper,
+    private readonly ngZone: NgZone,
   ) {
     // Get first entry
     this.data.bean = this.uiBeanStorage
@@ -75,17 +91,6 @@ export class BaristaPage implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
     this.__attachOnDeviceResume();
-
-    this.memIntv = setInterval(() => {
-      if (window['sanremoShotData']) {
-        var freeMem = window['sanremoShotData'].freeMem;
-        if (freeMem < 28000) {
-          console.error(freeMem);
-        } else {
-          console.log(freeMem);
-        }
-      }
-    }, 100);
   }
 
   ngOnInit() {
@@ -111,6 +116,17 @@ export class BaristaPage implements OnInit {
     setTimeout(() => {
       this.resizeGraph();
     }, 1000);
+
+    this.ngZone.runOutsideAngular(() => {
+      this.timestampIntv = setInterval(() => {
+        if (window['sanremoShotData']) {
+          this.memoryInformation.nativeElement.innerHTML =
+            window['sanremoShotData'].localTimeString +
+            ' / ' +
+            window['sanremoShotData'].freeMem;
+        }
+      }, 100);
+    });
   }
 
   public isWebSocketConnected() {
@@ -252,8 +268,8 @@ export class BaristaPage implements OnInit {
   }
 
   public ngOnDestroy() {
-    if (this.memIntv) {
-      window.clearInterval(this.memIntv);
+    if (this.timestampIntv) {
+      window.clearInterval(this.timestampIntv);
     }
 
     this.uiHelper.deviceAllowSleepAgain();
@@ -281,6 +297,13 @@ export class BaristaPage implements OnInit {
           ?.preparationDevice as SanremoYOUDevice
       )?.reconnectToSocket();
     }
+  }
+
+  public lastShotInformation(_data) {
+    console.log(_data);
+    this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
+    this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
+    this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;
   }
 
   protected readonly PreparationDeviceType = PreparationDeviceType;

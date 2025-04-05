@@ -294,6 +294,8 @@ export class SanremoYOUDevice extends PreparationDevice {
           currentShotData = responseJSON;
           currentShotData.pumpPress = currentShotData.pumpPress * 10;
           this.sanremoShotData = currentShotData;
+          this.sanremoShotData.localTimeString =
+            new Date().toLocaleTimeString();
           window['sanremoShotData'] = this.sanremoShotData;
         }
         this.receivingDataFromWebsocketTimestamp = Date.now();

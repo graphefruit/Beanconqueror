@@ -33,6 +33,35 @@
 </ion-header>
 
 <ion-content #ionContent [fullscreen]="true">
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col size="3">
+        <ion-chip>
+          <ion-icon name="timer-outline"></ion-icon>
+          <ion-label style="font-size:12px" #lastShotBrewTime>-</ion-label>
+        </ion-chip>
+      </ion-col>
+      <ion-col size="3">
+        <ion-chip>
+          <ion-icon name="beanconqueror-scale-outline"></ion-icon>
+          <ion-label style="font-size:12px" #lastShotWeight>-</ion-label>
+        </ion-chip>
+      </ion-col>
+      <ion-col size="3">
+        <ion-chip>
+          <ion-icon name="water-outline"></ion-icon>
+          <ion-label style="font-size:12px" #lastShotFlow>-</ion-label>
+        </ion-chip>
+      </ion-col>
+      <ion-col size="3">
+        <ion-chip>
+          <ion-icon name="construct-outline"></ion-icon>
+          <ion-label class="no-overflow-ellipsis" style="font-size:8px;" #memoryInformation>-</ion-label>
+        </ion-chip>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
   @if (!isWebSocketConnected() ) {
     <ion-card color="danger">
       <ion-card-header>
@@ -51,7 +80,7 @@
 
 
   <ion-card [hidden]="!isWebSocketConnected()">
-    <brew-brewing #brewBrewing [baristamode]="true"
+    <brew-brewing #brewBrewing [baristamode]="true" (lastShotInformation)="lastShotInformation($event)"
                   [(data)]="data"></brew-brewing>
   </ion-card>
 </ion-content>

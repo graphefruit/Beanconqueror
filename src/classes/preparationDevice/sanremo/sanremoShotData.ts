@@ -15,6 +15,8 @@ export class SanremoShotData implements ISanremoShotData {
   public realtimeFlow: number;
   public setPressPaddle: number;
 
+  public localTimeString: string;
+
   constructor() {
     this.status = 0;
     this.description = 'OFF';
@@ -29,5 +31,6 @@ export class SanremoShotData implements ISanremoShotData {
     this.counterVol = 0;
     this.realtimeFlow = 0;
     this.setPressPaddle = 0;
+    this.localTimeString = '';
   }
 }
