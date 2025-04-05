@@ -90,7 +90,7 @@ export abstract class RefractometerDevice {
   }
   public setTempReading(_temp: number) {
     this.bluetoothParentLogger.log(
-      'Bluetooth Refractometer - New temp reading recieved ',
+      'Bluetooth Refractometer - New temp reading recieved ' + _temp,
     );
     this.reading.temp = _temp;
   }

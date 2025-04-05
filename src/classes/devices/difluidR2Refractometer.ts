@@ -257,7 +257,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
                 this.logger.log(diFluid.R2.action.test.status[status.data[1]]);
                 break;
               case 'Temperature Info':
-              case 'Average Temperature Info':
+              case 'Average Temperature and Info':
                 if (
                   diFluid.R2.action.test[status.data[0]] ===
                   'Average Temperature and Info'

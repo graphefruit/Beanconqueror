@@ -66,6 +66,7 @@ import {
 } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
@@ -444,6 +445,27 @@ export class SettingsPage {
         );
       }
     }, 500);
+  }
+
+  public async attemptRefractometerUpdate(update: string) {
+    await this.saveSettings();
+
+    const refractometer: RefractometerDevice =
+      this.bleManager.getRefractometerDevice();
+
+    if (refractometer) {
+      switch (update) {
+        case 'test_type':
+          refractometer.setTestType(this.settings.refractometer_test_type);
+          break;
+        case 'auto_test':
+          refractometer.setAutoTest(this.settings.refractometer_auto_test);
+          break;
+        case 'test_number':
+          refractometer.setTestNumber(this.settings.refractometer_test_number);
+          break;
+      }
+    }
   }
 
   public async saveSettings() {

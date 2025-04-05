@@ -1202,7 +1202,7 @@
               </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.refractometer_auto_test">
+              <ion-checkbox label-placement='start' (ngModelChange)="attemptRefractometerUpdate('auto_test')" [(ngModel)]="settings.refractometer_auto_test">
                 <div class="ion-label" style="white-space: normal;">
                   <h2>{{"REFRACTOMETER.AUTO_TEST" | translate}}</h2>
                   <p>{{"REFRACTOMETER.AUTO_TEST_DESCRIPTION" | translate}}</p>
@@ -1210,7 +1210,7 @@
               </ion-checkbox>
             </ion-item>
 						<ion-item>
-							<ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.refractometer_test_type"
+							<ion-select (ngModelChange)="attemptRefractometerUpdate('test_type')" [(ngModel)]="settings.refractometer_test_type"
 								cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
 								<div slot="label">{{"REFRACTOMETER.TEST_TYPE" | translate}}</div>
 								<ion-select-option value=0>{{"REFRACTOMETER.TEST_TYPES.SINGLE" | translate}}</ion-select-option>
@@ -1224,7 +1224,7 @@
             </ion-item>
             <ion-item style="top:-10px;">
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="1" snaps="true" max="10"
-                         step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.refractometer_test_number">
+                         step="1" (ngModelChange)="attemptRefractometerUpdate('test_number')" [(ngModel)]="settings.refractometer_test_number">
                 <div class='ion-label' slot="end">{{settings.refractometer_test_number}}</div>
               </ion-range>
             </ion-item>
