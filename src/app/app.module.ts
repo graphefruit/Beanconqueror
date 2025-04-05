@@ -20,6 +20,11 @@ import {
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { UILog } from '../services/uiLog';
+
+// Import the tracking services
+import { MatomoTrackingService } from './data/tracking/matomo-tracking.service';
+import { StatisticsTrackingService } from './data/tracking/statistics-tracking.service';
+
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -28,9 +33,17 @@ export function HttpLoaderFactory(http: HttpClient) {
 class MyErrorHandler implements ErrorHandler {
   private ERROR_ORIGINAL_ERROR = 'ngOriginalError';
   private _console;
+  private matomoTracking: MatomoTrackingService;
+
   constructor() {
     this._console = console;
+
+    // We need to get the service this way since the ErrorHandler is instantiated before DI
+    setTimeout(() => {
+      this.matomoTracking = window['injector'].get(MatomoTrackingService);
+    });
   }
+
   public handleError(error) {
     // do something with the exception
     const originalError = this._findOriginalError(error);
@@ -38,6 +51,34 @@ class MyErrorHandler implements ErrorHandler {
     if (originalError) {
       this._console.error('ORIGINAL ERROR', originalError);
     }
+
+    // Track error in Matomo if service is available
+    if (this.matomoTracking) {
+      try {
+        const errorMessage =
+          error instanceof Error ? error.message : JSON.stringify(error);
+        this.matomoTracking.trackEvent(
+          'ApplicationError',
+          'UnhandledError',
+          errorMessage,
+        );
+
+        if (originalError) {
+          const originalErrorMessage =
+            originalError instanceof Error
+              ? originalError.message
+              : JSON.stringify(originalError);
+          this.matomoTracking.trackEvent(
+            'ApplicationError',
+            'OriginalError',
+            originalErrorMessage,
+          );
+        }
+      } catch (e) {
+        // Fail silently - don't let error tracking cause more issues
+      }
+    }
+
     try {
       try {
         UILog.getInstance().unhandledError(JSON.stringify(error));
@@ -114,7 +155,15 @@ class MyErrorHandler implements ErrorHandler {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: MyErrorHandler },
+    // Add the tracking services
+    MatomoTrackingService,
+    StatisticsTrackingService,
     provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private injector: Injector) {
+    // Store injector for access in ErrorHandler
+    window['injector'] = injector;
+  }
+}

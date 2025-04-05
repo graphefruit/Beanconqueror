@@ -4,7 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
@@ -66,6 +66,11 @@ import { BrewInstanceHelper } from '../classes/brew/brew';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import SettingsTracking from '../data/tracking/settingsTracking';
+import { filter } from 'rxjs/operators';
+
+// Import the Matomo tracking service
+import { MatomoTrackingService } from '../data/tracking/matomo-tracking.service';
+import { StatisticsTrackingService } from '../data/tracking/statistics-tracking.service';
 
 declare var window;
 
@@ -159,7 +164,6 @@ export class AppComponent implements AfterViewInit {
       icon: 'copy-outline',
       active: false,
     },
-
     statistic: {
       title: 'NAV_STATISTICS',
       url: '/statistic',
@@ -241,6 +245,9 @@ export class AppComponent implements AfterViewInit {
     private readonly uiStorage: UIStorage,
     private readonly androidPlatformService: AndroidPlatformService,
     private readonly iosPlatformService: IosPlatformService,
+    // Add Matomo tracking service
+    private readonly matomoTracking: MatomoTrackingService,
+    private readonly statisticsTracking: StatisticsTrackingService,
   ) {
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
@@ -296,12 +303,21 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.log(`Platform: ${deviceInfo.platform}`);
         this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
         this.uiLog.log(`WebView version: ${deviceInfo.webViewVersion}`);
+
+        // Set custom dimensions for Matomo tracking
+        this.matomoTracking.setCustomDimension(1, deviceInfo.platform);
+        this.matomoTracking.setCustomDimension(2, deviceInfo.model);
+        this.matomoTracking.setCustomDimension(3, deviceInfo.osVersion);
+
         if (this.platform.is('capacitor')) {
           const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
           this.uiLog.log(
             `Storage-Driver: ${this.uiStorage.getStorage().driver}`,
           );
+
+          // Track app version in Matomo
+          this.matomoTracking.setCustomDimension(4, versionCode);
         }
       } catch (ex) {}
 
@@ -315,6 +331,12 @@ export class AppComponent implements AfterViewInit {
           }
           if (_msg.type === 'ERROR') {
             this.uiLog.error(_msg.log);
+            // Track errors in Matomo
+            this.matomoTracking.trackEvent(
+              'ApplicationError',
+              'LogError',
+              _msg.log,
+            );
           }
           if (_msg.type === 'DEBUG') {
             this.uiLog.debug(_msg.log);
@@ -339,6 +361,15 @@ export class AppComponent implements AfterViewInit {
       }
       Logger.disableLog();
 
+      // Initialize Matomo tracking
+      await this.matomoTracking.initializeTracking();
+
+      // Setup router tracking for page views
+      this.setupRouterTracking();
+
+      // Track app startup event
+      this.matomoTracking.trackEvent('Application', 'Startup');
+
       if (this.platform.is('ios')) {
         this.uiLog.log(`iOS Device - attach to home icon pressed`);
         // Thanks to the solution here: https://forum.ionicframework.com/t/how-to-implement-quick-actions-home-screen-for-ionic-capacitor-app/235690/2
@@ -349,6 +380,12 @@ export class AppComponent implements AfterViewInit {
               this.uiAnalytics.trackEvent(
                 STARTUP_TRACKING.TITLE,
                 STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
+                payloadType.toUpperCase(),
+              );
+              // Also track in Matomo
+              this.matomoTracking.trackEvent(
+                'Application',
+                'QuickAction',
                 payloadType.toUpperCase(),
               );
               this.uiLog.log(`iOS Device - Home icon was pressed`);
@@ -428,17 +465,111 @@ export class AppComponent implements AfterViewInit {
             await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);
+
+            // Track initial statistics after app is ready
+            this.trackInitialStatistics();
           },
           async () => {
             await this.uiAlert.showAppShetItSelfMessage();
             this.uiLog.error('App finished loading, but errors occured');
+            // Track error in Matomo
+            this.matomoTracking.trackEvent(
+              'Application',
+              'StartupError',
+              'Storage initialization failed',
+            );
           },
         );
       } catch (ex) {
         await this.uiAlert.showAppShetItSelfMessage();
         this.uiLog.error('App finished loading, but errors occured');
+        // Track error in Matomo
+        this.matomoTracking.trackEvent(
+          'Application',
+          'StartupError',
+          ex.toString(),
+        );
       }
     });
+  }
+
+  /**
+   * Track initial statistics to Matomo for cumulative data
+   */
+  private trackInitialStatistics(): void {
+    try {
+      // Track counts of beans, brews and mills
+      const beansCount = this.uiBeanStorage.getAllEntries().length;
+      const brewsCount = this.uiBrewStorage.getAllEntries().length;
+      const millsCount = this.uiMillStorage.getAllEntries().length;
+
+      this.statisticsTracking.trackUserStatistic('bean', beansCount);
+      this.statisticsTracking.trackUserStatistic('brew', brewsCount);
+      this.statisticsTracking.trackUserStatistic('mill', millsCount);
+
+      // Track settings information
+      const settings = this.uiSettingsStorage.getSettings();
+      this.matomoTracking.trackEvent('Settings', 'Language', settings.language);
+
+      if (settings.show_roasting_section) {
+        this.matomoTracking.trackEvent(
+          'Settings',
+          'Feature',
+          'RoastingSection',
+        );
+      }
+
+      if (settings.show_water_section) {
+        this.matomoTracking.trackEvent('Settings', 'Feature', 'WaterSection');
+      }
+
+      if (settings.show_graph_section) {
+        this.matomoTracking.trackEvent('Settings', 'Feature', 'GraphSection');
+      }
+    } catch (ex) {
+      this.uiLog.error('Failed to track initial statistics');
+    }
+  }
+
+  /**
+   * Setup tracking for router navigation events
+   */
+  private setupRouterTracking(): void {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        const pageName = this.getPageNameFromUrl(event.urlAfterRedirects);
+        this.matomoTracking.trackPageView(pageName);
+      });
+  }
+
+  /**
+   * Extract page name from URL for tracking
+   * @param url The URL to process
+   * @returns Formatted page name
+   */
+  private getPageNameFromUrl(url: string): string {
+    // Remove leading slash and query parameters
+    let pageName = url.split('?')[0];
+    if (pageName.startsWith('/')) {
+      pageName = pageName.substring(1);
+    }
+
+    // Format empty path as 'Home'
+    if (!pageName) {
+      return 'Home';
+    }
+
+    // Convert kebab-case to readable format with capitalization
+    return pageName
+      .split('/')
+      .map((segment) =>
+        segment
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+      )
+      .join(' - ');
   }
 
   private async __checkUpdate() {
@@ -580,6 +711,9 @@ export class AppComponent implements AfterViewInit {
         SettingsTracking.ACTIONS.USED_LANGUAGE,
         settings.language,
       );
+
+      // Track language in Matomo
+      this.matomoTracking.trackEvent('Settings', 'Language', settings.language);
     });
   }
 
@@ -589,6 +723,13 @@ export class AppComponent implements AfterViewInit {
       this.uiAnalytics.trackEvent(
         STARTUP_TRACKING.TITLE,
         STARTUP_TRACKING.ACTIONS.STARTUP_VIEW.CATEGORY,
+        settings.startup_view,
+      );
+
+      // Track startup view in Matomo
+      this.matomoTracking.trackEvent(
+        'Application',
+        'StartupView',
         settings.startup_view,
       );
     }
@@ -630,7 +771,6 @@ export class AppComponent implements AfterViewInit {
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
-
     await this.__checkMeticulousHelpPage();
 
     // #281 - Connect smartscale before checking the startup view
@@ -751,7 +891,6 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const pressure_id: string = settings.pressure_id;
     const pressure_type: PressureType = settings.pressure_type;
-
     this.uiLog.log(`Connect pressure device? ${pressure_id}`);
     if (pressure_id !== undefined && pressure_id !== '') {
       this.bleManager.autoConnectPressureDevice(
@@ -846,6 +985,9 @@ export class AppComponent implements AfterViewInit {
         }
       }
       BrewInstanceHelper.setEntryAmountBackToZero();
+
+      // Track app pause in Matomo
+      this.matomoTracking.trackEvent('Application', 'Lifecycle', 'Pause');
     });
   }
 
@@ -877,6 +1019,9 @@ export class AppComponent implements AfterViewInit {
           () => {},
         );
       }
+
+      // Track app resume in Matomo
+      this.matomoTracking.trackEvent('Application', 'Lifecycle', 'Resume');
     });
   }
 
@@ -896,7 +1041,6 @@ export class AppComponent implements AfterViewInit {
        },
        useLanguage: appLanguage,
        });
-
        AppRate.promptForRating(false);**/
     }
   }
@@ -904,6 +1048,14 @@ export class AppComponent implements AfterViewInit {
   private async __trackNewBrew() {
     if (this.uiBrewHelper.canBrew()) {
       await this.uiBrewHelper.addBrew();
+
+      // Track new brew in Matomo
+      this.matomoTracking.trackEvent('Brew', 'Create', 'New Brew');
+
+      // Update brew statistics in Matomo
+      const brewsCount = this.uiBrewStorage.getAllEntries().length;
+      this.statisticsTracking.trackUserStatistic('brew', brewsCount);
+
       this.router.navigate(['/home/brews'], { replaceUrl: true });
     }
   }
@@ -919,6 +1071,9 @@ export class AppComponent implements AfterViewInit {
       });
       await modal.present();
       await modal.onWillDismiss();
+
+      // Track welcome page shown in Matomo
+      this.matomoTracking.trackEvent('Application', 'Welcome', 'Shown');
     }
   }
 
@@ -937,6 +1092,13 @@ export class AppComponent implements AfterViewInit {
         });
         await modal.present();
         await modal.onWillDismiss();
+
+        // Track meticulous help shown in Matomo
+        this.matomoTracking.trackEvent(
+          'Application',
+          'Help',
+          'MeticulousHelpShown',
+        );
       }
     }
   }
@@ -951,21 +1113,46 @@ export class AppComponent implements AfterViewInit {
       });
       await modal.present();
       await modal.onWillDismiss();
+
+      // Track analytics popover shown in Matomo if allowed
+      if (settings.matomo_analytics === true) {
+        this.matomoTracking.trackEvent('Application', 'Analytics', 'Allowed');
+      }
     }
   }
 
   private async __trackNewBean() {
     await this.uiBeanHelper.addBean();
+
+    // Track new bean in Matomo
+    this.matomoTracking.trackEvent('Bean', 'Create', 'New Bean');
+
+    // Update bean statistics in Matomo
+    const beansCount = this.uiBeanStorage.getAllEntries().length;
+    this.statisticsTracking.trackUserStatistic('bean', beansCount);
+
     this.router.navigate(['/'], { replaceUrl: true });
   }
 
   private async __trackNewPreparation() {
     await this.uiPreparationHelper.addPreparation();
+
+    // Track new preparation in Matomo
+    this.matomoTracking.trackEvent('Preparation', 'Create', 'New Preparation');
+
     this.router.navigate(['/'], { replaceUrl: true });
   }
 
   private async __trackNewMill() {
     await this.uiMillHelper.addMill();
+
+    // Track new mill in Matomo
+    this.matomoTracking.trackEvent('Mill', 'Create', 'New Mill');
+
+    // Update mill statistics in Matomo
+    const millsCount = this.uiMillStorage.getAllEntries().length;
+    this.statisticsTracking.trackUserStatistic('mill', millsCount);
+
     this.router.navigate(['/'], { replaceUrl: true });
   }
 
@@ -992,6 +1179,10 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.GITHUB,
     );
+
+    // Track in Matomo
+    this.matomoTracking.trackEvent('Link', 'Open', 'GitHub');
+
     this.uiHelper.openExternalWebpage(
       'https://github.com/graphefruit/Beanconqueror',
     );
@@ -1002,6 +1193,10 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.DISCORD,
     );
+
+    // Track in Matomo
+    this.matomoTracking.trackEvent('Link', 'Open', 'Discord');
+
     this.uiHelper.openExternalWebpage('https://discord.gg/vDzA5dZjG8');
   }
 
@@ -1010,6 +1205,10 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.INSTAGRAM,
     );
+
+    // Track in Matomo
+    this.matomoTracking.trackEvent('Link', 'Open', 'Instagram');
+
     this.uiHelper.openExternalWebpage(
       'https://www.instagram.com/beanconqueror/',
     );
@@ -1020,14 +1219,27 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.FACEBOOK,
     );
+
+    // Track in Matomo
+    this.matomoTracking.trackEvent('Link', 'Open', 'Facebook');
+
     this.uiHelper.openExternalWebpage(
       'https://www.facebook.com/Beanconqueror/',
     );
   }
 
-  public openPaypal() {}
+  public openPaypal() {
+    // Track in Matomo
+    this.matomoTracking.trackEvent('Link', 'Open', 'PayPal');
+  }
 
-  public openGithubSponsor() {}
+  public openGithubSponsor() {
+    // Track in Matomo
+    this.matomoTracking.trackEvent('Link', 'Open', 'GitHubSponsor');
+  }
 
-  public openDonatePage() {}
+  public openDonatePage() {
+    // Track in Matomo
+    this.matomoTracking.trackEvent('Link', 'Open', 'Donate');
+  }
 }
