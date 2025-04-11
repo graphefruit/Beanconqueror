@@ -240,7 +240,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           let wasSomethingSet: boolean = false;
           if (_brew) {
             if (
-              _brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+              _brew.preparationDeviceBrew.type === PreparationDeviceType.XENIA
             ) {
               this.data.preparationDeviceBrew = this.uiHelper.cloneData(
                 _brew.preparationDeviceBrew,
@@ -258,7 +258,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (brews.length > 0) {
               const foundEntry = brews.find(
                 (b) =>
-                  b.preparationDeviceBrew.type !== PreparationDeviceType.NONE,
+                  b.preparationDeviceBrew.type === PreparationDeviceType.XENIA,
               );
               if (foundEntry) {
                 this.data.preparationDeviceBrew = this.uiHelper.cloneData(
@@ -429,6 +429,41 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
         this.data.preparationDeviceBrew.params.selectedMode =
           SanremoYOUMode.LISTENING_AND_CONTROLLING;
         this.sanremoYOUModeSelected();
+      }
+    }
+
+    if (this.baristamode === false) {
+      if (!this.isEdit) {
+        // If a brew was passed, we came from loading, else we just swapped the preparation toolings
+        let wasSomethingSet: boolean = false;
+        if (_brew) {
+          if (_brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE) {
+            this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+              _brew.preparationDeviceBrew,
+            );
+            wasSomethingSet = true;
+          }
+        }
+
+        if (wasSomethingSet === false) {
+          // maybe the passed brew, didn't had any params in it - why ever?!
+          // Is add
+          const brews: Array<Brew> = this.uiHelper
+            .cloneData(this.uiBrewStorage.getAllEntries())
+            .reverse();
+          if (brews.length > 0) {
+            const foundEntry = brews.find(
+              (b) =>
+                b.preparationDeviceBrew.type ===
+                PreparationDeviceType.SANREMO_YOU,
+            );
+            if (foundEntry) {
+              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                foundEntry.preparationDeviceBrew,
+              );
+            }
+          }
+        }
       }
     }
 
