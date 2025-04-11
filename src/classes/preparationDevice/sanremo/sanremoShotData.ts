@@ -16,6 +16,7 @@ export class SanremoShotData implements ISanremoShotData {
   public setPressPaddle: number;
 
   public localTimeString: string;
+  public reconnectionCounter: number;
 
   constructor() {
     this.status = 0;
@@ -32,5 +33,6 @@ export class SanremoShotData implements ISanremoShotData {
     this.realtimeFlow = 0;
     this.setPressPaddle = 0;
     this.localTimeString = '';
+    this.reconnectionCounter = 0;
   }
 }

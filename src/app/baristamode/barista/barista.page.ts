@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -57,6 +58,7 @@ export class BaristaPage implements OnInit {
   public bluetoothSubscription: Subscription = undefined;
 
   private timestampIntv = undefined;
+  private sendDataIntv = undefined;
 
   @Output() public lastShot = new EventEmitter();
 
@@ -69,6 +71,7 @@ export class BaristaPage implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiHelper: UIHelper,
     private readonly ngZone: NgZone,
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {
     // Get first entry
     this.data.bean = this.uiBeanStorage
@@ -106,10 +109,12 @@ export class BaristaPage implements OnInit {
         if (_type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE) {
           connectTriggered = true;
           this.__connectSmartScale(false);
+          this.changeDetectorRef.detectChanges();
         } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE) {
           this.deattachToFlowChange();
 
           disconnectTriggered = true;
+          this.changeDetectorRef.detectChanges();
         }
       });
 
@@ -121,11 +126,22 @@ export class BaristaPage implements OnInit {
       this.timestampIntv = setInterval(() => {
         if (window['sanremoShotData']) {
           this.memoryInformation.nativeElement.innerHTML =
+            window['sanremoShotData'].reconnectionCounter +
+            ';' +
             window['sanremoShotData'].localTimeString +
             ' / ' +
             window['sanremoShotData'].freeMem;
         }
       }, 100);
+
+      /**this.sendDataIntv = setInterval(() => {
+        if (this.isWebSocketConnected() === true) {
+          return (
+            this.brewBrewing?.brewBrewingPreparationDeviceEl
+              ?.preparationDevice as SanremoYOUDevice
+          )?.sendActualWeightAndFlowDataToMachine(20,2,60);
+        }
+      },250);**/
     });
   }
 
@@ -201,49 +217,52 @@ export class BaristaPage implements OnInit {
       let lastScaleValues: number[] = [];
       let maxHistory: number = 4;
       this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
+        const actualScaleValue: number = _val.actual;
+        lastScaleValues.push(actualScaleValue);
+        if (lastScaleValues.length > maxHistory) {
+          lastScaleValues.shift(); // Keep only the last 4 values
+        }
+
         if (this.brewBrewing?.timer) {
           let actualSeconds = this.brewBrewing.timer.getSeconds();
           if (this.brewBrewing.timer.isTimerRunning() === true) {
             // We are brewing
 
             if (actualSeconds >= 0 && actualSeconds <= 6) {
-              if (_val.actual < 0 || _val.actual > 100) {
-                // Cup was lifted
-                this.checkTimeframeTare(scale);
+              if (lastScaleValues.length === maxHistory) {
+                const thresholdChange = lastScaleValues[3] - lastScaleValues[0];
+                if (
+                  thresholdChange >= -0.5 &&
+                  thresholdChange <= 0.5 &&
+                  (lastScaleValues[3] < 0 || lastScaleValues[3] > 100)
+                ) {
+                  // Cup was lifted
+
+                  this.checkTimeframeTare(scale);
+                }
               }
             }
           } else {
-            let actualScaleValue: number = _val.actual;
-            lastScaleValues.push(actualScaleValue);
-            if (lastScaleValues.length > maxHistory) {
-              lastScaleValues.shift(); // Keep only the last 4 values
-            }
-
             if (lastScaleValues.length === maxHistory) {
-              const allSame = lastScaleValues.every(
-                (v) => v === lastScaleValues[0],
-              );
-              if (this.brewBrewing.timer.getSeconds() > 0) {
-                //We did a shot, check when the cup gets lifted.
-                if (lastScaleValues[0] < 0) {
-                  //Cup was lifted
-                  this.checkTimeframeTare(scale);
-
-                  this.brewBrewing.timer.reset();
-                }
+              if (actualSeconds > 0) {
+                //Don't do anything here, stop will be done somewhere else.
               } else {
+                const thresholdChange = lastScaleValues[3] - lastScaleValues[0];
                 //We are in the preparation phase
-                if (lastScaleValues[0] !== 0) {
-                  //Just tare if scale is not zero
-                  if (allSame) {
-                    this.checkTimeframeTare(scale);
-                  }
+                //Just tare if scale is not zero
+                if (
+                  thresholdChange >= -0.5 &&
+                  thresholdChange <= 0.5 &&
+                  lastScaleValues[3] !== 0
+                ) {
+                  this.checkTimeframeTare(scale);
                 }
               }
-
-              lastScaleValues = []; // Reset after taring
             }
           }
+        }
+        if (lastScaleValues.length === maxHistory) {
+          lastScaleValues = []; // Reset after taring
         }
       });
     }
@@ -270,6 +289,10 @@ export class BaristaPage implements OnInit {
   public ngOnDestroy() {
     if (this.timestampIntv) {
       window.clearInterval(this.timestampIntv);
+    }
+
+    if (this.sendDataIntv) {
+      window.clearInterval(this.sendDataIntv);
     }
 
     this.uiHelper.deviceAllowSleepAgain();
