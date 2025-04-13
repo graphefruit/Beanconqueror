@@ -34,13 +34,13 @@ export class BeansEditComponent implements OnInit {
     public readonly uiBeanHelper: UIBeanHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiAlert: UIAlert,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.EDIT
+      BEAN_TRACKING.ACTIONS.EDIT,
     );
     this.data = new Bean();
     this.data.initializeByObject(this.bean);
@@ -67,7 +67,7 @@ export class BeansEditComponent implements OnInit {
           },
           () => {
             // No
-          }
+          },
         );
     } else {
       this.dismiss();
@@ -85,7 +85,7 @@ export class BeansEditComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BeansEditComponent.COMPONENT_ID
+      BeansEditComponent.COMPONENT_ID,
     );
   }
 
@@ -107,7 +107,12 @@ export class BeansEditComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.EDIT_FINISH
+      BEAN_TRACKING.ACTIONS.EDIT_FINISH,
+    );
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.EDIT_ROASTER + '_' + this.data.roaster,
+      this.data.name,
     );
     this.dismiss();
   }
@@ -120,7 +125,7 @@ export class BeansEditComponent implements OnInit {
         (processNextHandler) => {
           // Don't do anything.
           this.confirmDismiss();
-        }
+        },
       );
     }
   }

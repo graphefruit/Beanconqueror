@@ -293,7 +293,11 @@ export class UIBrewHelper {
 
     for (const key of keys) {
       if (checkData.manage_parameters[key] === true) {
-        this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, preparationName, key);
+        this.uiAnalytics.trackEvent(
+          BREW_TRACKING.TITLE,
+          BREW_TRACKING.ACTIONS.PREPARATION_TRACK + '_' + preparationName,
+          key,
+        );
       }
     }
   }

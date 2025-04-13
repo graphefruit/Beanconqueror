@@ -20,5 +20,7 @@ export default {
     UNARCHIVE: 'UNARCHIVE',
     NFC_SCAN: 'NFC_SCAN',
     NFC_WRITE: 'NFC_WRITE',
+    ADD_ROASTER: 'ADD_ROASTER',
+    EDIT_ROASTER: 'EDIT_ROASTER',
   },
 };
