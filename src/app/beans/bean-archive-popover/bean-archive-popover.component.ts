@@ -8,6 +8,7 @@ import { NgxStarsComponent } from 'ngx-stars';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIHelper } from '../../../services/uiHelper';
+import { Brew } from '../../../classes/brew/brew';
 
 @Component({
   selector: 'app-bean-archive-popover',
@@ -28,7 +29,7 @@ export class BeanArchivePopoverComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiToast: UIToast,
     private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiHelper: UIHelper
+    public readonly uiHelper: UIHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.maxBeanRating = this.settings.bean_rating;
@@ -46,6 +47,7 @@ export class BeanArchivePopoverComponent implements OnInit {
 
   public async archive() {
     this.data.finished = true;
+    this.data.rating = this.calculateAverageBeanRating(this.data.getBrews());
     await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
     this.dismiss();
@@ -57,12 +59,20 @@ export class BeanArchivePopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BeanArchivePopoverComponent.COMPONENT_ID
+      BeanArchivePopoverComponent.COMPONENT_ID,
     );
   }
   public changedRating() {
     if (typeof this.beanRating !== 'undefined') {
       this.beanRating.setRating(this.data.rating);
     }
+  }
+
+  private calculateAverageBeanRating(brews: Brew[]): number {
+    var sum = 0;
+    brews.forEach((currentBrew, _index, _arr) => {
+      sum += currentBrew.rating;
+    });
+    return Math.round(sum / brews.length);
   }
 }
