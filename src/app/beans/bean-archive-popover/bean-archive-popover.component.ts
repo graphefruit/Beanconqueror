@@ -39,6 +39,7 @@ export class BeanArchivePopoverComponent implements OnInit {
   public ionViewWillEnter(): void {
     if (this.bean !== undefined) {
       this.data.initializeByObject(this.bean);
+      this.data.rating = this.calculateAverageBeanRating(this.data.getBrews());
       if (this.data.rating > 0) {
         this.changedRating();
       }
@@ -47,7 +48,6 @@ export class BeanArchivePopoverComponent implements OnInit {
 
   public async archive() {
     this.data.finished = true;
-    this.data.rating = this.calculateAverageBeanRating(this.data.getBrews());
     await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
     this.dismiss();
@@ -68,12 +68,14 @@ export class BeanArchivePopoverComponent implements OnInit {
     }
   }
 
-  private calculateAverageBeanRating(brews: Brew[]): number {
+  public calculateAverageBeanRating(brews: Brew[]): number {
     var sum = 0;
     const ratio = this.settings.bean_rating / this.settings.brew_rating;
     brews.forEach((currentBrew, _index, _arr) => {
-      sum += currentBrew.rating * ratio;
+      if (currentBrew.rating > 0) {
+        sum += currentBrew.rating * ratio;
+      }
     });
-    return Math.round(sum / brews.length);
+    return Math.round(sum / brews.filter((brew) => brew.rating > 0).length);
   }
 }
