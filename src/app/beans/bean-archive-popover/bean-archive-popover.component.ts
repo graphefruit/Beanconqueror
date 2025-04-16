@@ -70,7 +70,7 @@ export class BeanArchivePopoverComponent implements OnInit {
   }
 
   public calculateAverageBeanRating(): number {
-    var sum = 0;
+    let sum = 0;
     const brewsWithRatings = this.brewsWithRatings();
     const ratio = this.settings.bean_rating / this.settings.brew_rating;
     brewsWithRatings.forEach((currentBrew, _index, _arr) => {
