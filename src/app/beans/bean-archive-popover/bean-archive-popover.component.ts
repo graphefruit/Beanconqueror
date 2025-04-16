@@ -39,7 +39,7 @@ export class BeanArchivePopoverComponent implements OnInit {
   public ionViewWillEnter(): void {
     if (this.bean !== undefined) {
       this.data.initializeByObject(this.bean);
-      this.data.rating = this.calculateAverageBeanRating(this.data.getBrews());
+      this.data.rating = this.calculateAverageBeanRating();
       if (this.data.rating > 0) {
         this.changedRating();
       }
@@ -68,7 +68,7 @@ export class BeanArchivePopoverComponent implements OnInit {
     }
   }
 
-  public calculateAverageBeanRating(brews: Brew[]): number {
+  public calculateAverageBeanRating(): number {
     var sum = 0;
     const brewsWithRatings = this.brewsWithRatings();
     const ratio = this.settings.bean_rating / this.settings.brew_rating;
