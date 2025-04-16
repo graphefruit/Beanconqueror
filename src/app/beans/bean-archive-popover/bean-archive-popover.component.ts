@@ -70,12 +70,15 @@ export class BeanArchivePopoverComponent implements OnInit {
 
   public calculateAverageBeanRating(brews: Brew[]): number {
     var sum = 0;
+    const brewsWithRatings = this.brewsWithRatings();
     const ratio = this.settings.bean_rating / this.settings.brew_rating;
-    brews.forEach((currentBrew, _index, _arr) => {
-      if (currentBrew.rating > 0) {
-        sum += currentBrew.rating * ratio;
-      }
+    brewsWithRatings.forEach((currentBrew, _index, _arr) => {
+      sum += currentBrew.rating * ratio;
     });
-    return Math.round(sum / brews.filter((brew) => brew.rating > 0).length);
+    return Math.round(sum / brewsWithRatings.length);
+  }
+
+  public brewsWithRatings(): Brew[] {
+    return this.data.getBrews().filter((brew) => brew.rating > 0);
   }
 }
