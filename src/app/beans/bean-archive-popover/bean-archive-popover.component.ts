@@ -39,7 +39,8 @@ export class BeanArchivePopoverComponent implements OnInit {
   public ionViewWillEnter(): void {
     if (this.bean !== undefined) {
       this.data.initializeByObject(this.bean);
-      this.data.rating = this.calculateAverageBeanRating();
+      if (this.data.rating === 0)
+        this.data.rating = this.calculateAverageBeanRating();
       if (this.data.rating > 0) {
         this.changedRating();
       }
