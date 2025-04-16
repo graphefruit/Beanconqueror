@@ -63,6 +63,50 @@
     }
   }
 
+
+  .brew-information-panel-barista {
+
+    ion-card-header {
+      min-height: 30px!important;
+      height: 40px!important;
+      padding: 0!important;
+      margin: 0!important;
+    }
+    .weight-card {
+      ion-card-header {
+        background-color: white !important;
+        border: 2px #cdc2ac solid;
+      }
+      ion-icon {
+        color: #cdc2ac !important;
+      }
+    }
+
+    .flow-card {
+      ion-card-header {
+        background-color: white !important;
+        border: 2px #09485D solid;
+      }
+      ion-icon {
+        color: #09485D !important;
+      }
+    }
+
+    .time-card {
+      ion-card-header {
+        background-color: white !important;
+        border: 2px #5b7391 solid;
+      }
+      ion-icon {
+        color: #5b7391 !important;
+      }
+    }
+
+    span {
+      color:black;
+    }
+  }
+
   ion-card.flow-profile.weight-card {
     ion-card-header {
       background-color: #cdc2ac !important;

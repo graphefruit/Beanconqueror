@@ -15,6 +15,7 @@
     </ion-row>
   </ion-grid>
 }
+@if(!baristamode) {
 <ion-item [hidden]="shallProfileHidden" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
                       brewComponent.choosenPreparation.brew_order.while.brew_time,
                       brewComponent.choosenPreparation.use_custom_parameters])" class="ion-padding-bottom-half" lines="none">
@@ -40,6 +41,41 @@
     }
   </div>
 </ion-item>
+} @else {
+  <ion-item lines="none">
+  <!-- Barista mode goes here-->
+  <ion-grid class="ion-no-padding brew-information-panel-barista" style="margin-bottom:5px;padding-bottom:5px;border-bottom: 3px #CDC2AC solid;">
+  <ion-row>
+    <ion-col size="12">
+      <h2>Last shot<ion-chip style="background-color: #CDC2AC;border-radius: 6px;"><span #lastShot></span></ion-chip></h2>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col size="4" style="padding-right:5px;">
+      <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
+        <ion-card-header>
+          <div><ion-icon name="beanconqueror-scale-outline"></ion-icon><span #smartScaleWeightPerSecondBarista>? g</span></div>
+        </ion-card-header>
+      </ion-card>
+    </ion-col>
+    <ion-col size="4" style="padding-right:5px;">
+      <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
+        <ion-card-header>
+          <div><ion-icon name="water-outline"></ion-icon><span #smartScaleAvgFlowPerSecondBarista>? g/s</span></div>
+        </ion-card-header>
+      </ion-card>
+    </ion-col>
+    <ion-col size="4">
+      <ion-card class="flow-profile ion-text-center time-card" style="height: 100%;">
+        <ion-card-header>
+          <div><ion-icon name="timer-outline"></ion-icon><span #timerBarista>? g</span></div>
+        </ion-card-header>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+  </ion-item>
+}
 <ion-item [hidden]="shallProfileHidden" *ngIf='isDetail ===false' lines="none">
   <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
     <ion-row *ngIf="settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO">

@@ -85,6 +85,19 @@ export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('smartScaleAvgFlowPerSecond', { read: ElementRef })
   public smartScaleAvgFlowPerSecondEl: ElementRef;
 
+  /** Barista mode **/
+
+  @ViewChild('smartScaleWeightPerSecondBarista', { read: ElementRef })
+  public smartScaleWeightPerSecondBaristaEl: ElementRef;
+  @ViewChild('smartScaleAvgFlowPerSecondBarista', { read: ElementRef })
+  public smartScaleAvgFlowPerSecondBaristaEl: ElementRef;
+  @ViewChild('timerBarista', { read: ElementRef })
+  public timerBaristaEl: ElementRef;
+  @ViewChild('lastShot', { read: ElementRef })
+  public lastShotEl: ElementRef;
+
+  /** Barista mode end **/
+
   @ViewChild('smartScaleSecondWeight', { read: ElementRef })
   public smartScaleSecondWeightEl: ElementRef;
 
@@ -2948,6 +2961,19 @@ export class BrewBrewingGraphComponent implements OnInit {
 
                     //We overwrite for this shot the target weight, because we have a barista mode target weight
                     targetWeight = baristaModeTargetWeight;
+                    if (
+                      document
+                        .getElementById('statusPhase' + groupStatus)
+                        .classList.contains('active') === false
+                    ) {
+                      document
+                        .getElementById('statusPhase' + groupStatus)
+                        .classList.add('active');
+                    } else {
+                      document
+                        .getElementById('statusPhase' + groupStatus)
+                        .classList.remove('active');
+                    }
                   }
                 } catch (ex) {}
               }
@@ -4161,6 +4187,48 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  public setLastShotInformation(
+    shotWeight: number,
+    avgFlow: number,
+    brewtime: number,
+  ) {
+    const prepDeviceCall: SanremoYOUDevice = this.brewComponent
+      ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
+
+    this.smartScaleWeightPerSecondBaristaEl.nativeElement.innerText =
+      shotWeight;
+    this.smartScaleAvgFlowPerSecondBaristaEl.nativeElement.innerText = avgFlow;
+    this.timerBaristaEl.nativeElement.innerText = brewtime;
+    this.lastShotEl.nativeElement.innerText =
+      prepDeviceCall?.lastRunnedProgramm;
+    if (prepDeviceCall.lastRunnedProgramm === 1) {
+      this.lastShotEl.nativeElement.innerText = 'P1';
+    }
+    if (prepDeviceCall.lastRunnedProgramm === 2) {
+      this.lastShotEl.nativeElement.innerText = 'P2';
+    }
+    if (prepDeviceCall.lastRunnedProgramm === 3) {
+      this.lastShotEl.nativeElement.innerText = 'P3';
+    }
+    if (prepDeviceCall.lastRunnedProgramm === 4) {
+      this.lastShotEl.nativeElement.innerText = 'M';
+    }
+
+    if (
+      document
+        .getElementById('statusPhase' + prepDeviceCall?.lastRunnedProgramm)
+        .classList.contains('active') === false
+    ) {
+      document
+        .getElementById('statusPhase' + prepDeviceCall?.lastRunnedProgramm)
+        .classList.add('active');
+    } else {
+      document
+        .getElementById('statusPhase' + prepDeviceCall?.lastRunnedProgramm)
+        .classList.remove('active');
+    }
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;

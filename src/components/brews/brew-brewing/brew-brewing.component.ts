@@ -743,6 +743,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.brewBrewingGraphEl.getAvgFlow(),
           2,
         );
+
+        this.brewBrewingGraphEl.setLastShotInformation(
+          shotWeight,
+          avgFlow,
+          this.data.brew_time,
+        );
         this.lastShotInformation.emit({
           shotWeight: shotWeight,
           avgFlow: avgFlow,

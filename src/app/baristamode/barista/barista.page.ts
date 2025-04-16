@@ -12,7 +12,7 @@ import {
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { Subscription } from 'rxjs';
-import { Settings } from '../../../classes/settings/settings';
+
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
@@ -37,16 +37,6 @@ declare var Plotly;
 })
 export class BaristaPage implements OnInit {
   public data: Brew = new Brew();
-
-  @ViewChild('lastShotFlow', { read: ElementRef, static: true })
-  public lastShotFlow: ElementRef;
-  @ViewChild('lastShotWeight', { read: ElementRef, static: true })
-  public lastShotWeight: ElementRef;
-  @ViewChild('lastShotBrewTime', { read: ElementRef, static: true })
-  public lastShotBrewTime: ElementRef;
-
-  @ViewChild('memoryInformation', { read: ElementRef, static: true })
-  public memoryInformation: ElementRef;
 
   @ViewChild('ionHeader', { read: ElementRef, static: true })
   public ionHeader: ElementRef;
@@ -121,28 +111,6 @@ export class BaristaPage implements OnInit {
     setTimeout(() => {
       this.resizeGraph();
     }, 1000);
-
-    this.ngZone.runOutsideAngular(() => {
-      this.timestampIntv = setInterval(() => {
-        if (window['sanremoShotData']) {
-          this.memoryInformation.nativeElement.innerHTML =
-            window['sanremoShotData'].reconnectionCounter +
-            ';' +
-            window['sanremoShotData'].localTimeString +
-            ' / ' +
-            window['sanremoShotData'].freeMem;
-        }
-      }, 100);
-
-      /**this.sendDataIntv = setInterval(() => {
-        if (this.isWebSocketConnected() === true) {
-          return (
-            this.brewBrewing?.brewBrewingPreparationDeviceEl
-              ?.preparationDevice as SanremoYOUDevice
-          )?.sendActualWeightAndFlowDataToMachine(20,2,60);
-        }
-      },250);**/
-    });
   }
 
   public isWebSocketConnected() {
@@ -323,10 +291,10 @@ export class BaristaPage implements OnInit {
   }
 
   public lastShotInformation(_data) {
-    console.log(_data);
+    /**
     this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
     this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
-    this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;
+    this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;**/
   }
 
   protected readonly PreparationDeviceType = PreparationDeviceType;

@@ -25,6 +25,8 @@ export class SanremoYOUDevice extends PreparationDevice {
   public keepAliveInterval = undefined;
   public reconnectionCounter = 0;
 
+  public lastRunnedProgramm: number = 0;
+
   constructor(
     protected httpClient: HttpClient,
     _preparation: Preparation,
@@ -324,6 +326,13 @@ export class SanremoYOUDevice extends PreparationDevice {
               new Date().toLocaleTimeString();
             this.sanremoShotData.reconnectionCounter = this.reconnectionCounter;
             window['sanremoShotData'] = this.sanremoShotData;
+
+            if (
+              this.sanremoShotData.groupStatus !== 0 &&
+              this.sanremoShotData.groupStatus <= 4
+            ) {
+              this.lastRunnedProgramm = this.sanremoShotData.groupStatus;
+            }
           }
           this.receivingDataFromWebsocketTimestamp = Date.now();
         };
