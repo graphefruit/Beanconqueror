@@ -148,7 +148,7 @@ export class BaristaPage implements OnInit {
       const chartWidth =
         this.brewBrewing.brewBrewingGraphEl.canvaContainer.nativeElement
           .offsetWidth;
-      let chartHeight = totalHeight - (offsetTopOfGraph + 75 + 75 + 75);
+      let chartHeight = totalHeight - (offsetTopOfGraph + 85);
       if (chartHeight <= 100) {
         chartHeight = 100;
       }
@@ -226,8 +226,9 @@ export class BaristaPage implements OnInit {
                 if (
                   thresholdChange >= -0.5 &&
                   thresholdChange <= 0.5 &&
-                  (lastScaleValues[3] <= -0.2 || lastScaleValues[3] >= 0.2)
+                  (lastScaleValues[3] <= -0.2 || lastScaleValues[3] >= 5)
                 ) {
+                  //Why we go with >= 5, because when we start the timer and the shot has already started, the information from the sanremo is 300ms later maybe, and this could result that we already have some drops in the cup with water...
                   this.checkTimeframeTare(scale);
                   lastScaleValues = []; // Reset after taring
                 }

@@ -53,7 +53,7 @@
   }
 
 
-  <ion-card [hidden]="!isWebSocketConnected()">
+  <ion-card [hidden]="!isWebSocketConnected()" style="margin-top:0px;margin-bottom:0px;">
     <brew-brewing #brewBrewing [baristamode]="true" (lastShotInformation)="lastShotInformation($event)"
                   [(data)]="data"></brew-brewing>
   </ion-card>
