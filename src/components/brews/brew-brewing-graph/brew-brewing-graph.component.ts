@@ -1648,7 +1648,8 @@ export class BrewBrewingGraphComponent implements OnInit {
               this.changeDetectorRef.detectChanges();
             } else if (shotData.statusPhase == 0 && hasShotStarted === true) {
               //The shot has been finished
-              if (this.baristamode && this.smartScaleConnected() === false) {
+              const smartScaleConnected: boolean = this.smartScaleConnected();
+              if (this.baristamode && smartScaleConnected === false) {
                 //If the barista mode is running and a smartscale is not connected, the timer would run endless, so we stop if there is no smart scale connected at all.
                 this.brewComponent.timer.pauseTimer('sanremo_you');
                 this.stopFetchingDataFromSanremoYOU();
@@ -1657,6 +1658,27 @@ export class BrewBrewingGraphComponent implements OnInit {
                   'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_ENDED',
                 );
                 return;
+              } else if (this.baristamode) {
+                if (this.brewComponent.timer.isTimerRunning() === true) {
+                  if (
+                    this.traces.weightTrace.y.length > 40 &&
+                    ((this.traces.weightTrace.y[
+                      this.traces.weightTrace.y.length - 1
+                    ] >= 0 &&
+                      this.traces.weightTrace.y[
+                        this.traces.weightTrace.y.length - 1
+                      ] <= 0.5) ||
+                      this.traces.weightTrace.y[
+                        this.traces.weightTrace.y.length - 1
+                      ] <= -2)
+                  ) {
+                    //Something happend, we tared... so we stop the timer
+                    this.brewComponent.timer.pauseTimer('sanremo_you');
+                    this.stopFetchingDataFromSanremoYOU();
+                    this.updateChart();
+                    return;
+                  }
+                }
               }
             }
 
@@ -3830,6 +3852,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     } else {
       grindWeight = 5;
     }
+    if (this.baristamode) {
+      /**A bit more threshold for preinfusion**/
+      grindWeight = 10;
+    }
 
     //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
     const slicedTraceWeight = this.traces.weightTrace.y.slice(5);
@@ -4194,41 +4220,34 @@ export class BrewBrewingGraphComponent implements OnInit {
     avgFlow: number,
     brewtime: number,
   ) {
-    const prepDeviceCall: SanremoYOUDevice = this.brewComponent
-      ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
+    try {
+      const prepDeviceCall: SanremoYOUDevice = this.brewComponent
+        ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
 
-    this.smartScaleWeightPerSecondBaristaEl.nativeElement.innerText =
-      shotWeight;
-    this.smartScaleAvgFlowPerSecondBaristaEl.nativeElement.innerText = avgFlow;
-    this.timerBaristaEl.nativeElement.innerText = brewtime;
-    this.lastShotEl.nativeElement.innerText =
-      prepDeviceCall?.lastRunnedProgramm;
-    if (prepDeviceCall.lastRunnedProgramm === 1) {
-      this.lastShotEl.nativeElement.innerText = 'P1';
-    }
-    if (prepDeviceCall.lastRunnedProgramm === 2) {
-      this.lastShotEl.nativeElement.innerText = 'P2';
-    }
-    if (prepDeviceCall.lastRunnedProgramm === 3) {
-      this.lastShotEl.nativeElement.innerText = 'P3';
-    }
-    if (prepDeviceCall.lastRunnedProgramm === 4) {
-      this.lastShotEl.nativeElement.innerText = 'M';
-    }
+      this.smartScaleWeightPerSecondBaristaEl.nativeElement.innerText =
+        shotWeight;
+      this.smartScaleAvgFlowPerSecondBaristaEl.nativeElement.innerText =
+        avgFlow;
+      this.timerBaristaEl.nativeElement.innerText = brewtime;
+      this.lastShotEl.nativeElement.innerText =
+        prepDeviceCall?.lastRunnedProgramm;
+      if (prepDeviceCall.lastRunnedProgramm === 1) {
+        this.lastShotEl.nativeElement.innerText = 'P1';
+      }
+      if (prepDeviceCall.lastRunnedProgramm === 2) {
+        this.lastShotEl.nativeElement.innerText = 'P2';
+      }
+      if (prepDeviceCall.lastRunnedProgramm === 3) {
+        this.lastShotEl.nativeElement.innerText = 'P3';
+      }
+      if (prepDeviceCall.lastRunnedProgramm === 4) {
+        this.lastShotEl.nativeElement.innerText = 'M';
+      }
 
-    if (
-      document
-        .getElementById('statusPhase' + prepDeviceCall?.lastRunnedProgramm)
-        .classList.contains('active') === false
-    ) {
-      document
-        .getElementById('statusPhase' + prepDeviceCall?.lastRunnedProgramm)
-        .classList.add('active');
-    } else {
-      document
-        .getElementById('statusPhase' + prepDeviceCall?.lastRunnedProgramm)
-        .classList.remove('active');
-    }
+      for (let i = 1; i++; i < 5) {
+        document.getElementById('statusPhase' + i).classList.remove('active');
+      }
+    } catch (ex) {}
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;

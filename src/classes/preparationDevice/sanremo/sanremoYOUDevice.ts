@@ -314,7 +314,7 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Listen for messages
         this.socket.onmessage = (event) => {
-          //this.logInfo('Message from server:', event.data);
+          //          this.logInfo('Message from server:', event.data);
           const responseJSON = JSON.parse(event.data);
           if ('status' in responseJSON) {
             //Valid sanremo shot data
