@@ -83,7 +83,13 @@
   <ion-card *ngIf="uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU" class="popover" style="display:flex; flex-direction: column;">
   <ion-item lines="none">
     <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
+
   </ion-item>
+@if(baristamode) {
+    <ion-item lines="none" style="margin-top:-30px;">
+        <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.ENTER_TARGET_BREW_WEIGHT" | translate}}</span>
+    </ion-item>
+}
     @if(!baristamode) {
 
   <ion-item lines="inset">
@@ -117,7 +123,6 @@
 
     <ng-container *ngIf='data.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.LISTENING'>
       @if(!baristamode) {
-
 
       <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="none">
         <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}' (ionBlur)='drawTargetWeight(data.preparationDeviceBrew?.params.stopAtWeight)' [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeight" inputmode="decimal" prevent-characters

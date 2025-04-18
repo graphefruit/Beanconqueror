@@ -4225,10 +4225,10 @@ export class BrewBrewingGraphComponent implements OnInit {
         ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
 
       this.smartScaleWeightPerSecondBaristaEl.nativeElement.innerText =
-        shotWeight;
+        shotWeight + 'g';
       this.smartScaleAvgFlowPerSecondBaristaEl.nativeElement.innerText =
-        avgFlow;
-      this.timerBaristaEl.nativeElement.innerText = brewtime;
+        'Ø ' + avgFlow + ' g/s';
+      this.timerBaristaEl.nativeElement.innerText = brewtime + 's';
       this.lastShotEl.nativeElement.innerText =
         prepDeviceCall?.lastRunnedProgramm;
       if (prepDeviceCall.lastRunnedProgramm === 1) {

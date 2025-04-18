@@ -66,11 +66,18 @@
 
   .brew-information-panel-barista {
 
+    ion-icon {
+      position:relative;
+      top: 2px;
+    }
     ion-card-header {
       min-height: 30px!important;
       height: 40px!important;
       padding: 0!important;
       margin: 0!important;
+      span {
+        margin-left:3px;
+      }
     }
     .weight-card {
       ion-card-header {

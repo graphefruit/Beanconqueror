@@ -1084,8 +1084,9 @@
             "MODE_LISTENING_AND_CONTROLLING": "Listening and Controlling",
             "CONNECTION_LOST_PLEASE_RECONNECT": "Sadly the connection to the Sanremo YOU has been lost, please reconnect with the button.",
             "RECONNECT_NEEDED": "Reconnect needed",
-            "RECONNECT": "Reconnect"
-
+            "RECONNECT": "Reconnect",
+            "ENTER_TARGET_BREW_WEIGHT": "Enter target brew weight in grams",
+            "LAST_SHOT": "Last shot"
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
