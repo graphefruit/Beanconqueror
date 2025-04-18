@@ -366,4 +366,9 @@ export class Bean implements IBean {
   public hasPhotos() {
     return this.attachments && this.attachments.length > 0;
   }
+
+  public getBrews(): Brew[] {
+    const beanHelper: UIBeanHelper = UIBeanHelper.getInstance();
+    return beanHelper.getAllBrewsForThisBean(this.config.uuid);
+  }
 }
