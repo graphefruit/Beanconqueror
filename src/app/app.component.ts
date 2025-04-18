@@ -4,7 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
@@ -68,6 +68,7 @@ import { IosPlatformService } from '../services/iosPlatform/ios-platform.service
 import SettingsTracking from '../data/tracking/settingsTracking';
 import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
+import { filter } from 'rxjs/operators';
 
 declare var window;
 
@@ -314,6 +315,16 @@ export class AppComponent implements AfterViewInit {
         }
       } catch (ex) {}
 
+      // Track page views on route changes
+      this.router.events
+        .pipe(filter((event) => event instanceof NavigationEnd))
+        .subscribe((event: NavigationEnd) => {
+          try {
+            const pageName = this.getPageNameFromUrl(event.urlAfterRedirects);
+            this.uiAnalytics.trackPage(pageName);
+          } catch (ex) {}
+        });
+
       try {
         Logger.attachOnLog().subscribe((_msg) => {
           if (_msg.type === 'LOG') {
@@ -448,6 +459,35 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.error('App finished loading, but errors occured');
       }
     });
+  }
+
+  /**
+   * Extract page name from URL for tracking
+   * @param url The URL to process
+   * @returns Formatted page name
+   */
+  private getPageNameFromUrl(url: string): string {
+    // Remove leading slash and query parameters
+    let pageName = url.split('?')[0];
+    if (pageName.startsWith('/')) {
+      pageName = pageName.substring(1);
+    }
+
+    // Format empty path as 'Home'
+    if (!pageName) {
+      return 'Home';
+    }
+
+    // Convert kebab-case to readable format with capitalization
+    return pageName
+      .split('/')
+      .map((segment) =>
+        segment
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+      )
+      .join(' - ');
   }
 
   private async __checkUpdate() {
