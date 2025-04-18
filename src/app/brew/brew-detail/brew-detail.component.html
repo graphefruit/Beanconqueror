@@ -185,6 +185,52 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
+  @if(data?.preparationDeviceBrew?.type === PreparationDeviceType.SANREMO_YOU) {
+    <ion-card class="popover" style="display:flex; flex-direction: column;">
+      <ion-item lines="none">
+        <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h3>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}</h3>
+
+        @switch(data?.preparationDeviceBrew?.params.selectedMode) {
+          @case (SanremoYOUMode.LISTENING) {
+            <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate}}</span>
+          }
+          @case (SanremoYOUMode.MANUAL_CONTROLLING) {
+            <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MANUAL_CONTROLLING" | translate}}</span>
+          }
+          @case (SanremoYOUMode.PROFILE_P1_CONTROLLING) {
+            <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P1_CONTROLLING" | translate}}</span>
+          }
+          @case (SanremoYOUMode.PROFILE_P2_CONTROLLING) {
+            <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P2_CONTROLLING" | translate}}</span>
+          }
+          @case (SanremoYOUMode.PROFILE_P3_CONTROLLING) {
+            <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P3_CONTROLLING" | translate}}</span>
+          }
+        }
+        </ion-label>
+      </ion-item>
+      @if(data?.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.LISTENING) {
+      <ion-item  lines="none">
+        <ion-label>
+          <h3>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}</h3>
+          <span>{{data?.preparationDeviceBrew?.params.stopAtWeight}}</span>
+        </ion-label>
+
+
+      </ion-item>
+      }
+
+
+
+
+
+    </ion-card>
+  }
   <ion-card *ngIf="uiShowSectionWhileBrew" class="popover"
     style="display:flex; flex-direction: column;">
 

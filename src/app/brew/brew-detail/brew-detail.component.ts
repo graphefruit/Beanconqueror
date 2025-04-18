@@ -31,6 +31,8 @@ import { ShareService } from '../../../services/shareService/share-service.servi
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 
 declare var Plotly;
 @Component({
@@ -400,4 +402,7 @@ export class BrewDetailComponent {
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
+  protected readonly PreparationDeviceType = PreparationDeviceType;
+  protected readonly PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
+  protected readonly SanremoYOUMode = SanremoYOUMode;
 }
