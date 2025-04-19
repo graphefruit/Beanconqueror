@@ -1471,5 +1471,7 @@
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Choose brew displaying image type",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Preparation",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Bean",
-    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": "Brew"
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": "Brew",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "Bluetooth device connection information",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Displays the connecting and disconnecting information of the bluetooth device(s)."
 }

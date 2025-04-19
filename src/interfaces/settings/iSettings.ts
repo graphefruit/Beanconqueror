@@ -243,4 +243,6 @@ export interface ISettings {
 
   brew_timer_show_hours: boolean;
   brew_timer_show_minutes: boolean;
+
+  bluetooth_devices_show_connection_messages: boolean;
 }

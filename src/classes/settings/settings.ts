@@ -255,6 +255,7 @@ export class Settings implements ISettings {
 
   public brew_timer_show_hours: boolean;
   public brew_timer_show_minutes: boolean;
+  public bluetooth_devices_show_connection_messages: boolean;
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -587,6 +588,8 @@ export class Settings implements ISettings {
 
     this.brew_timer_show_hours = true;
     this.brew_timer_show_minutes = true;
+
+    this.bluetooth_devices_show_connection_messages = true;
 
     this.brew_display_image_type = BREW_DISPLAY_IMAGE_TYPE.PREPARATION;
   }

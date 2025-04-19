@@ -786,6 +786,15 @@
                 </div>
               </ion-checkbox>
             </ion-item>
+            <ion-item [lines]="'full'">
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_devices_show_connection_messages">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE" | translate}}</h2>
+                  <p>{{"BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
 
             <ion-item lines="none">
               <ion-label>
