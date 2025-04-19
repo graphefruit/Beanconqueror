@@ -26,6 +26,7 @@ import { maxBy, keys } from 'lodash';
 import { UIHelper } from './uiHelper';
 import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
 import { App } from '@capacitor/app';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../enums/brews/brewDisplayImageType';
 
 @Injectable({
   providedIn: 'root',
@@ -67,6 +68,7 @@ export class UIUpdate {
         'UPDATE_11',
         'UPDATE_12',
         'UPDATE_13',
+        'UPDATE_14',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -93,6 +95,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_11', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_12', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_13', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_14', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -581,6 +584,16 @@ export class UIUpdate {
             const settings_v13: Settings = this.uiSettingsStorage.getSettings();
             settings_v13.resetBrewFilter();
             await this.uiSettingsStorage.saveSettings(settings_v13);
+            break;
+          case 'UPDATE_14':
+            const settings_v14: any = this.uiSettingsStorage.getSettings();
+            if (settings_v14.brew_display_bean_image === true) {
+              settings_v14.brew_display_image_type =
+                BREW_DISPLAY_IMAGE_TYPE.BEAN;
+            }
+            delete settings_v14.brew_display_bean_image;
+            await this.uiSettingsStorage.saveSettings(settings_v14);
+            break;
           default:
             break;
         }

@@ -31,6 +31,7 @@ import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -230,7 +231,7 @@ export class Settings implements ISettings {
   public refractometer_log: boolean;
 
   public currency: string;
-  public brew_display_bean_image: boolean;
+  public brew_display_image_type: BREW_DISPLAY_IMAGE_TYPE;
   public best_brew: boolean;
 
   public visualizer_active: boolean;
@@ -563,7 +564,6 @@ export class Settings implements ISettings {
 
     this.currency = 'EUR';
     this.brew_milliseconds_leading_digits = 3;
-    this.brew_display_bean_image = false;
     this.best_brew = false;
 
     this.visualizer_active = false;
@@ -587,6 +587,8 @@ export class Settings implements ISettings {
 
     this.brew_timer_show_hours = true;
     this.brew_timer_show_minutes = true;
+
+    this.brew_display_image_type = BREW_DISPLAY_IMAGE_TYPE.PREPARATION;
   }
 
   public initializeByObject(settingsObj: ISettings): void {
