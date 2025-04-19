@@ -4227,7 +4227,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.smartScaleWeightPerSecondBaristaEl.nativeElement.innerText =
         shotWeight + 'g';
       this.smartScaleAvgFlowPerSecondBaristaEl.nativeElement.innerText =
-        'Ø ' + avgFlow + ' g/s';
+        avgFlow + ' g/s';
       this.timerBaristaEl.nativeElement.innerText = brewtime + 's';
       this.lastShotEl.nativeElement.innerText =
         prepDeviceCall?.lastRunnedProgramm;
