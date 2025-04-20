@@ -125,7 +125,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
-    console.log('muhhahaha');
   }
 
   public getPreparation(): Preparation {
