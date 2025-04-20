@@ -259,7 +259,8 @@
 
             <ion-card class="flow-profile ion-text-center" style="height: 100%;">
               <ion-card-header>
-                <div>{{getAvgFlow()| toFixed: 2}} g/s</div>
+                <div>Ø&nbsp;{{getAvgFlow()| toFixed: 2}} g/s</div>
+                <div>^&nbsp;{{getPeakFlow() | toFixed: 2}}&nbsp;g/s</div>
               </ion-card-header>
               <ion-card-content>
                 {{"BREW_AVG_FLOW_WEIGHT_PER_SECOND" | translate}}

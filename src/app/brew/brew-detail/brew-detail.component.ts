@@ -16,7 +16,10 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
 import { TranslateService } from '@ngx-translate/core';
-import { IBrewWaterFlow } from '../../../classes/brew/brewFlow';
+import {
+  IBrewRealtimeWaterFlow,
+  IBrewWaterFlow,
+} from '../../../classes/brew/brewFlow';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIAlert } from '../../../services/uiAlert';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
@@ -380,6 +383,18 @@ export class BrewDetailComponent {
       }
 
       return 0;
+    }
+  }
+
+  public getPeakFlow() {
+    if (
+      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow &&
+      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow.length > 0
+    ) {
+      const waterFlows: Array<IBrewRealtimeWaterFlow> =
+        this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow;
+      const maxWaterFlow = Math.max(...waterFlows.map((obj) => obj.flow_value));
+      return maxWaterFlow;
     }
   }
   public async showExtractionChart(event): Promise<void> {
