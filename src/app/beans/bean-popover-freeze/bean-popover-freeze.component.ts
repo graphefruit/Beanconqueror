@@ -14,7 +14,7 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIAlert } from '../../../services/uiAlert';
 import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
-import {UIFileHelper} from '../../../services/uiFileHelper';
+import { UIFileHelper } from '../../../services/uiFileHelper';
 
 declare var cordova;
 @Component({
@@ -55,7 +55,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     public readonly uiHelper: UIHelper,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiAlert: UIAlert,
-    private readonly uiFileHelper: UIFileHelper
+    private readonly uiFileHelper: UIFileHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
@@ -130,18 +130,18 @@ export class BeanPopoverFreezeComponent implements OnInit {
     const copyAttachments: Array<string> = [];
     if (this.copyAttachments) {
       for await (let attachment of this.bean.attachments) {
-
         try {
           const filePath = attachment;
           if (filePath) {
             // Read the attachment file as base64 string for later copying
-            let fileBase64 = await this.uiFileHelper.readInternalFileAsBase64(filePath);
+            let fileBase64 =
+              await this.uiFileHelper.readInternalFileAsBase64(filePath);
             let type = 'image/jpeg';
-            if (filePath.indexOf(".png") > -1) {
+            if (filePath.indexOf('.png') > -1) {
               // If the file is a jpg, we need to convert it to a png
               type = 'image/png';
             }
-            fileBase64 = "data:" + type +";base64," + fileBase64
+            fileBase64 = 'data:' + type + ';base64,' + fileBase64;
 
             await new Promise(async (resolve) => {
               const img = new Image();
@@ -158,13 +158,15 @@ export class BeanPopoverFreezeComponent implements OnInit {
                 canvas.width = newWidth;
                 canvas.height = newHeight;
                 ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                const imageQuality = this.quality/10;
-                const newFileBase = canvas.toDataURL('image/jpeg', imageQuality);
+                const imageQuality = this.quality / 10;
+                const newFileBase = canvas.toDataURL(
+                  'image/jpeg',
+                  imageQuality,
+                );
                 copyAttachments.push(newFileBase);
                 resolve(undefined);
               };
               img.onerror = () => {
-
                 const newFileBase = fileBase64?.toString() || '';
                 if (newFileBase) {
                   copyAttachments.push(newFileBase);
@@ -172,13 +174,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
                 resolve(undefined);
               };
-              img.src= fileBase64;
+              img.src = fileBase64;
             });
-
           }
-        } catch (error) {
-
-        }
+        } catch (error) {}
       }
     }
 
@@ -196,7 +195,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
         burnInPercentage,
         totalActualBeanWeight,
         totalGreenBeanWeight,
-        copyAttachments
+        copyAttachments,
       );
       index = index + 1;
     }
@@ -308,9 +307,8 @@ export class BeanPopoverFreezeComponent implements OnInit {
   }
 
   private async saveBase64Photo(base64: string): Promise<string> {
-
     let ending = '.jpg';
-    if (base64.indexOf("data:image/png;base64,") > -1) {
+    if (base64.indexOf('data:image/png;base64,') > -1) {
       ending = '.png';
     }
     const fileName = await this.uiFileHelper.generateInternalPath(
