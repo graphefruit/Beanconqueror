@@ -1,6 +1,6 @@
 @let shallProfileHidden = shallFlowProfileBeHidden();
 
-@if(settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO)
+@if(isDetail === false && settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO)
 {
   <ion-grid class="ion-padding-horizontal ion-margin-bottom ion-no-padding brew-information-panel">
     <ion-row>
