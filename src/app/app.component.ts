@@ -69,6 +69,7 @@ import SettingsTracking from '../data/tracking/settingsTracking';
 import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { filter } from 'rxjs/operators';
+import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
 
 declare var window;
 
@@ -743,6 +744,8 @@ export class AppComponent implements AfterViewInit {
     this.uiSettingsStorage.attachOnEvent().subscribe(() => {
       this.setUIParams();
     });
+
+    this.trackStartInformation();
   }
 
   private checkAndActivateTheBaristaModeIfNeeded() {
@@ -1131,4 +1134,18 @@ export class AppComponent implements AfterViewInit {
   public openGithubSponsor() {}
 
   public openDonatePage() {}
+
+  public trackStartInformation() {
+    debugger;
+    const brewsCount = this.uiBrewStorage.getAllEntries().length;
+    const beansCount = this.uiBeanStorage.getAllEntries().length;
+    this.uiAnalytics.trackCustomDimension(
+      CustomDimensionsTracking.STATISTICS_BREWS_COUNT,
+      brewsCount.toString(),
+    );
+    this.uiAnalytics.trackCustomDimension(
+      CustomDimensionsTracking.STATISTICS_BEANS_COUNT,
+      beansCount.toString(),
+    );
+  }
 }

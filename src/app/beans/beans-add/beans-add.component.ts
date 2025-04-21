@@ -219,6 +219,8 @@ export class BeansAddComponent implements OnInit {
       BEAN_TRACKING.ACTIONS.ADD_ROASTER + '_' + this.data.roaster,
       this.data.name,
     );
+
+    this.uiBeanHelper.logUsedBeanParameters();
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');

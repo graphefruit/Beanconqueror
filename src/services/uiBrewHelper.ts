@@ -295,7 +295,7 @@ export class UIBrewHelper {
       if (checkData.manage_parameters[key] === true) {
         this.uiAnalytics.trackEvent(
           BREW_TRACKING.TITLE,
-          BREW_TRACKING.ACTIONS.PREPARATION_TRACK + '_' + preparationName,
+          BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
           key,
         );
       }

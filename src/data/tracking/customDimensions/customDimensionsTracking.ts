@@ -1,0 +1,4 @@
+export default {
+  STATISTICS_BREWS_COUNT: 1,
+  STATISTICS_BEANS_COUNT: 2,
+};

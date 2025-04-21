@@ -22,5 +22,6 @@ export default {
     NFC_WRITE: 'NFC_WRITE',
     ADD_ROASTER: 'ADD_ROASTER',
     EDIT_ROASTER: 'EDIT_ROASTER',
+    PARAMETER_USED: 'PARAMETER_USED',
   },
 };
