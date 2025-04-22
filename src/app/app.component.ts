@@ -1136,7 +1136,6 @@ export class AppComponent implements AfterViewInit {
   public openDonatePage() {}
 
   public trackStartInformation() {
-    debugger;
     const brewsCount = this.uiBrewStorage.getAllEntries().length;
     const beansCount = this.uiBeanStorage.getAllEntries().length;
     this.uiAnalytics.trackCustomDimension(
