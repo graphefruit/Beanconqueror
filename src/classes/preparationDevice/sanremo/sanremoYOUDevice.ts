@@ -370,38 +370,48 @@ export class SanremoYOUDevice extends PreparationDevice {
   }
 
   public stopActualShot() {
-    if (this.isConnected()) {
-      //ID -> The actual running profile
-      //VALUE -> 0 -> stop, 1-> start
-      if (this.sanremoShotData.groupStatus !== 0) {
-        /**
-         * Groupstatus 0 would shut of the machine ;) so we don't want that
-         */
-        this.socket.send(
-          JSON.stringify({
-            key: 220,
-            id: this.sanremoShotData.groupStatus,
-            value: 0,
-          }),
-        );
+    try {
+      if (this.isConnected()) {
+        //ID -> The actual running profile
+        //VALUE -> 0 -> stop, 1-> start
+        const groupStatus = this.sanremoShotData.groupStatus;
+        if (groupStatus !== 0) {
+          this.logInfo('Send shot end.');
+          /**
+           * Groupstatus 0 would shut of the machine ;) so we don't want that
+           */
+          this.socket.send(
+            JSON.stringify({
+              key: 220,
+              id: groupStatus,
+              value: 0,
+            }),
+          );
+        } else {
+          this.logInfo(
+            'Send shot end not possible, because groupStatus is already 0 ',
+          );
+        }
       }
-    }
+    } catch (ex) {}
   }
 
   public sendJustAppConnectionToMachine() {
-    if (this.isConnected()) {
-      /**
-       * We wait one second, because we want to give the machine some short delay, after initial connecting
-       */
-      const sendData = {
-        key: 221,
-        appScaleConnection: 1,
-        recipeWeightSetPoint: 0,
-        cupWeightFromExtScale: 0,
-        realTimeFlowCalcByTheScale: 0,
-      };
-      this.socket.send(JSON.stringify(sendData));
-    }
+    try {
+      if (this.isConnected()) {
+        /**
+         * We wait one second, because we want to give the machine some short delay, after initial connecting
+         */
+        const sendData = {
+          key: 221,
+          appScaleConnection: 1,
+          recipeWeightSetPoint: 0,
+          cupWeightFromExtScale: 0,
+          realTimeFlowCalcByTheScale: 0,
+        };
+        this.socket.send(JSON.stringify(sendData));
+      }
+    } catch (ex) {}
   }
 
   public sendActualWeightAndFlowDataToMachine(

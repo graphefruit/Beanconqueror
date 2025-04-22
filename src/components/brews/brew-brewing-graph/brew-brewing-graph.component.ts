@@ -1637,10 +1637,11 @@ export class BrewBrewingGraphComponent implements OnInit {
               this.data.coffee_first_drip_time_milliseconds = 0;
               this.data.coffee_blooming_time = 0;
               this.data.coffee_blooming_time_milliseconds = 0;
+              this.brewComponent.timer.initTimer(false);
               if (this.baristamode === true) {
                 this.timerStarted('sanremo_barista_mode');
               }
-              this.brewComponent.timer.initTimer(false);
+
               this.brewComponent.timer.startTimer(false, false);
 
               this.lastChartRenderingInstance = -1;
@@ -1673,6 +1674,12 @@ export class BrewBrewingGraphComponent implements OnInit {
                       ] <= -2)
                   ) {
                     //Something happend, we tared... so we stop the timer
+                    this.brewComponent.timer.pauseTimer('sanremo_you');
+                    this.stopFetchingDataFromSanremoYOU();
+                    this.updateChart();
+                    return;
+                  } else if (this.traces.weightTrace.y.length == 0) {
+                    //Something happend, it looked like  that we already paused, so we stop the timer again
                     this.brewComponent.timer.pauseTimer('sanremo_you');
                     this.stopFetchingDataFromSanremoYOU();
                     this.updateChart();
@@ -2851,6 +2858,9 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     this.uiLog.log(`Sanremo YOU Stop: ${_actualScaleWeight}`);
     prepDeviceCall.stopActualShot();
+    this.uiToast.showInfoToast(
+      'PREPARATION_DEVICE.TYPE_SANREMO_YOU.SHOT_ENDED',
+    );
 
     // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
     if (
@@ -2991,10 +3001,6 @@ export class BrewBrewingGraphComponent implements OnInit {
                       document
                         .getElementById('statusPhase' + groupStatus)
                         .classList.add('active');
-                    } else {
-                      document
-                        .getElementById('statusPhase' + groupStatus)
-                        .classList.remove('active');
                     }
                   }
                 } catch (ex) {}
@@ -3861,7 +3867,20 @@ export class BrewBrewingGraphComponent implements OnInit {
     const slicedTraceWeight = this.traces.weightTrace.y.slice(5);
     const valFound = slicedTraceWeight.find((v) => v >= grindWeight);
     if (valFound === undefined || valFound === null) {
-      return false; // We want to be atleast a ratio of 1:1
+      if (this.baristamode) {
+        if (
+          (
+            this.brewComponent.brewBrewingPreparationDeviceEl
+              .preparationDevice as SanremoYOUDevice
+          ).getActualShotData().statusPhase === 0
+        ) {
+          //Means we stopped and we didn't find the right grindweight...
+        } else {
+          return false; // We want to be atleast a ratio of 1:1
+        }
+      } else {
+        return false; // We want to be atleast a ratio of 1:1
+      }
     }
     const flowThreshold: number =
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow;
@@ -4220,6 +4239,9 @@ export class BrewBrewingGraphComponent implements OnInit {
     avgFlow: number,
     brewtime: number,
   ) {
+    this.uiLog.log(
+      `Setting last shot information: shotWeight=${shotWeight}, avgFlow=${avgFlow}, brewtime=${brewtime}`,
+    );
     try {
       const prepDeviceCall: SanremoYOUDevice = this.brewComponent
         ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
@@ -4244,7 +4266,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.lastShotEl.nativeElement.innerText = 'M';
       }
 
-      for (let i = 1; i++; i < 5) {
+      for (let i = 1; i < 5; i++) {
         document.getElementById('statusPhase' + i).classList.remove('active');
       }
     } catch (ex) {}

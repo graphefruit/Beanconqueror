@@ -273,6 +273,12 @@ export class BaristaPage implements OnInit {
       this.brewBrewing?.brewBrewingPreparationDeviceEl
         ?.preparationDevice as SanremoYOUDevice
     )?.disconnectSocket();
+
+    /**Ok, this is a very strange issue, somehow if we swapped out
+     *  from the barista mode and swapped in again, the timer was not destroyed and kept running... so we delete the whole element with the references...
+     *  This may even come from, because I wrote a for loop wrongly...*/
+    this.brewBrewing.ngOnDestroy();
+    delete this.brewBrewing;
   }
   private __attachOnDeviceResume() {
     App.addListener('resume', async () => {
