@@ -98,7 +98,7 @@ export class DecentScale extends BluetoothScale {
     bytes[2] = 0xfd;
     bytes[3] = this.tareCounter;
     bytes[4] = 0x00;
-    bytes[5] = 0x00;
+    bytes[5] = 0x01;
     bytes[6] = this.getXOR(bytes);
 
     this.tareCounter++;
@@ -108,6 +108,8 @@ export class DecentScale extends BluetoothScale {
 
     return bytes;
   }
+
+  private sendKeepAlive() {}
 
   private buildLedOnOffCommand(_weightLedOn: boolean, _timerLedOn: boolean) {
     const buf = new ArrayBuffer(7);

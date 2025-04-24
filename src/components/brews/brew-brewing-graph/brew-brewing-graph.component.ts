@@ -1620,7 +1620,15 @@ export class BrewBrewingGraphComponent implements OnInit {
                * 5 = purge
                * 6 = paddeling
                */
-              return;
+              if (this.baristamode) {
+                return;
+              } else {
+                if (shotData.groupStatus === 6) {
+                  //Accept this one, because user is doing a paddel
+                } else {
+                  return;
+                }
+              }
             }
             if (shotData.statusPhase != 0 && hasShotStarted === false) {
               this.uiAlert.hideLoadingSpinner();
