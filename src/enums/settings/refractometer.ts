@@ -8,7 +8,7 @@ export enum TEST_TYPE_ENUM {
    * supported by:
    * - all devices
    */
-  SINGLE,
+  SINGLE = 0,
   /**
    * Performs multiple tests, getting the average value
    *

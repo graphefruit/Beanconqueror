@@ -1,7 +1,7 @@
 export namespace diFluid {
   export enum func {
-    'Device Info',
-    'Device Settings',
+    'Device Info' = 0,
+    'Device Settings' = 1,
     'Device Action' = 3,
   }
 
@@ -11,7 +11,7 @@ export namespace diFluid {
   export namespace Microbalance {
     export enum info {
       /** Serial Number of device */
-      'Serial Number',
+      'Serial Number' = 0,
       /** Should always be 'DFT-R102' */
       'Device Model',
       /** Current firmware Version */
@@ -23,7 +23,7 @@ export namespace diFluid {
        * Automatically send data -
        * {@link diFluid.Microbalance.settings.sensorDataAutoSend}
        */
-      'Sensor Data Auto Send',
+      'Sensor Data Auto Send' = 0,
       /**
        * Automatically start timer on consistent pour -
        * {@link diFluid.Microbalance.settings.autoDetectTiming}
@@ -48,34 +48,34 @@ export namespace diFluid {
 
     export namespace settings {
       export enum sensorDataAutoSend {
-        Off,
+        Off = 0,
         On,
       }
 
       export enum autoDetectTiming {
-        Off,
+        Off = 0,
         On,
       }
 
       export enum autoStopTiming {
-        Off,
+        Off = 0,
         On,
       }
 
       export enum weightUnitSwitchLock {
-        Off,
+        Off = 0,
         On,
       }
 
       export enum weightUnit {
-        Gram,
+        Gram = 0,
         Ounce,
         Gering,
       }
     }
 
     export enum action {
-      'Sensor Data',
+      'Sensor Data' = 0,
       'DLink Button Press',
       'Control Button Single Press',
       'Control Button Double Press',
@@ -85,7 +85,7 @@ export namespace diFluid {
 
     export namespace action {
       export enum deviceStatus {
-        'Power Down',
+        'Power Down' = 0,
         'Charging',
         'Low Power Mode 1',
         'Low Battery Shutdown',
@@ -110,7 +110,7 @@ export namespace diFluid {
   export namespace R2 {
     export enum info {
       /** Serial Number of device */
-      'Serial Number',
+      'Serial Number' = 0,
       /** Should always be 'DFT-R102' */
       'Device Model',
       /** Current firmware Version */
@@ -122,7 +122,7 @@ export namespace diFluid {
        * Celsius or Fahrenheit -
        * {@link diFluid.R2.settings.temperatureUnit}
        */
-      'Temperature Unit',
+      'Temperature Unit' = 0,
       /**
        * Automatically start test on temperature change of tank/prism -
        * {@link diFluid.R2.settings.autoTest}
@@ -136,13 +136,13 @@ export namespace diFluid {
     export namespace settings {
       export enum temperatureUnit {
         /** Celsius */
-        C,
+        C = 0,
         /** Fahrenheit */
         F,
       }
       export enum autoTest {
         /** Do not start test on temperature change of tank/prism */
-        Off,
+        Off = 0,
         /** Start test on temperature change of tank/prism */
         On,
       }
@@ -150,7 +150,7 @@ export namespace diFluid {
 
     export enum action {
       /** Perform a single test */
-      'Single Test',
+      'Single Test' = 0,
       /** Perform multiple tests and average the results */
       'Average Test',
       /** Calibrate the device */
@@ -169,7 +169,7 @@ export namespace diFluid {
          * Status code of current test -
          * {@link diFluid.R2.action.test.status}
          */
-        'Test Status',
+        'Test Status' = 0,
         /** Prism and Tank temperatures as well as temperature unit */
         'Temperature Info',
         /** Concentration (TDS) and Refractive Index */
@@ -183,7 +183,7 @@ export namespace diFluid {
       export namespace test {
         export enum status {
           /** Test completed */
-          'Test Finished',
+          'Test Finished' = 0,
           /** Calibration completed */
           'Calibration Finished',
           RESERVED_0,

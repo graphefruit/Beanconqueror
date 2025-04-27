@@ -1206,7 +1206,7 @@ export class CoffeeBluetoothDevicesService {
           successCallback();
 
           try {
-            let settings = this.uiStettingsStorage.getSettings();
+            const settings = this.uiStettingsStorage.getSettings();
             let device = this.getRefractometerDevice();
             device.setTestType(settings.refractometer_test_type);
             device.setAutoTest(settings.refractometer_auto_test);
