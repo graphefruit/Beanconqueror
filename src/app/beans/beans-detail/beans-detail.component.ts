@@ -14,6 +14,7 @@ import moment from 'moment';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
 
 @Component({
   selector: 'app-beans-detail',
@@ -43,15 +44,20 @@ export class BeansDetailComponent implements OnInit {
     public uiHelper: UIHelper,
     private readonly uiAnalytics: UIAnalytics,
     public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiBeanStorage: UIBeanStorage,
   ) {}
 
   public ionViewDidEnter() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.DETAIL
+      BEAN_TRACKING.ACTIONS.DETAIL,
     );
 
+    this.loadBean();
+  }
+
+  public loadBean() {
     if (this.bean) {
       const copy: IBean = this.uiHelper.copyData(this.bean);
       this.data.initializeByObject(copy);
@@ -73,13 +79,20 @@ export class BeansDetailComponent implements OnInit {
     this.maxBeanRating = this.settings.bean_rating;
   }
 
+  public async edit() {
+    await this.uiBeanHelper.editBean(this.data);
+
+    this.bean = this.uiBeanStorage.getByUUID(this.data.config.uuid);
+    this.loadBean();
+  }
+
   public dismiss(): void {
     this.modalController.dismiss(
       {
         dismissed: true,
       },
       undefined,
-      BeansDetailComponent.COMPONENT_ID
+      BeansDetailComponent.COMPONENT_ID,
     );
   }
   public getRoastEnum(_key: ROASTS_ENUM) {
