@@ -1475,5 +1475,6 @@
     "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "Bluetooth device connection information",
     "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Displays the connecting and disconnecting information of the bluetooth device(s).",
     "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": "Image quality in percentage",
-    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Maximum image size in Megabytes"
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Maximum image size in Megabytes",
+    "POPOVER_COPY_FROZEN_ID": "Copy frozen id"
 }

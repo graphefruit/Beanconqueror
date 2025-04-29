@@ -223,13 +223,13 @@ export class BeansAddComponent implements OnInit {
 
     if (this.data.roaster) {
       this.uiAnalytics.trackCustomDimension(
-        CustomDimensionsTracking.STATISTICS_BEANS_COUNT,
+        CustomDimensionsTracking.STATISTICS_ROASTER_NAME,
         this.data.roaster,
       );
     } else {
       this.uiAnalytics.trackCustomDimension(
-        CustomDimensionsTracking.STATISTICS_BEANS_COUNT,
-        'null',
+        CustomDimensionsTracking.STATISTICS_ROASTER_NAME,
+        '-',
       );
     }
 

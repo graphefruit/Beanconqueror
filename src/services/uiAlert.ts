@@ -185,13 +185,6 @@ export class UIAlert {
               return false;
             },
           },
-          {
-            text: this.translate.instant('SEND_LOGS'),
-            handler: () => {
-              this.copyLogfiles();
-              return false;
-            },
-          },
         ],
       });
       await alert.present();
