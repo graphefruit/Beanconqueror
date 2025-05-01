@@ -216,24 +216,7 @@ export class BaristaPage implements OnInit {
               }
             }
           } else {
-            if (lastScaleValues.length >= maxHistory) {
-              if (actualSeconds > 0) {
-                //Don't do anything here, stop will be done somewhere else.
-              } else {
-                const thresholdChange = lastScaleValues[3] - lastScaleValues[0];
-                //We are in the preparation phase
-                //Just tare if scale is not zero
-                if (
-                  thresholdChange >= -0.5 &&
-                  thresholdChange <= 0.5 &&
-                  (lastScaleValues[3] <= -0.2 || lastScaleValues[3] >= 5)
-                ) {
-                  //Why we go with >= 5, because when we start the timer and the shot has already started, the information from the sanremo is 300ms later maybe, and this could result that we already have some drops in the cup with water...
-                  this.checkTimeframeTare(scale);
-                  lastScaleValues = []; // Reset after taring
-                }
-              }
-            }
+            //We don't tare anymore if a shot is stopped, so users can weight beans or something like this.
           }
         }
       });

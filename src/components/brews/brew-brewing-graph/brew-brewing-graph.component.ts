@@ -1631,6 +1631,15 @@ export class BrewBrewingGraphComponent implements OnInit {
               }
             }
             if (shotData.statusPhase != 0 && hasShotStarted === false) {
+              if (this.baristamode) {
+                if (this.smartScaleConnected()) {
+                  const scale: BluetoothScale = this.bleManager.getScale();
+                  if (scale.getWeight() !== 0) {
+                    //Just tare if the scale is not zero yet.
+                    scale.tare();
+                  }
+                }
+              }
               this.uiAlert.hideLoadingSpinner();
               this.uiToast.showInfoToast(
                 'PREPARATION_DEVICE.TYPE_SANREMO_YOU.SHOT_STARTED',
