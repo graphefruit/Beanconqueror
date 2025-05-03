@@ -21,6 +21,7 @@ export class BeanArchivePopoverComponent implements OnInit {
   @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
   public beanRating: NgxStarsComponent;
   public data: Bean = new Bean();
+  public calculateAverageBrewRating: number;
 
   public maxBeanRating: number = 5;
   public settings: Settings = undefined;
@@ -76,7 +77,11 @@ export class BeanArchivePopoverComponent implements OnInit {
     brewsWithRatings.forEach((currentBrew, _index, _arr) => {
       sum += currentBrew.rating * ratio;
     });
-    return Math.round(sum / brewsWithRatings.length);
+    const averageRating = sum / brewsWithRatings.length;
+    const numberOfSteps = Math.round(
+      averageRating / this.settings.bean_rating_steps,
+    );
+    return numberOfSteps * this.settings.bean_rating_steps;
   }
 
   public brewsWithRatings(): Brew[] {
