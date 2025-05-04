@@ -21,7 +21,7 @@ export class BeanArchivePopoverComponent implements OnInit {
   @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
   public beanRating: NgxStarsComponent;
   public data: Bean = new Bean();
-  public calculateAverageBrewRating: number;
+  public averageBrewRating: number | undefined;
 
   public maxBeanRating: number = 5;
   public settings: Settings = undefined;
@@ -40,11 +40,14 @@ export class BeanArchivePopoverComponent implements OnInit {
   public ionViewWillEnter(): void {
     if (this.bean !== undefined) {
       this.data.initializeByObject(this.bean);
-      if (this.data.rating === 0)
-        this.data.rating = this.calculateAverageBeanRating();
+      this.tryCalcuatingAverageBrewRating();
+      if (this.averageBrewRating) {
+        this.data.rating = this.averageBrewRating;
+      }
       if (this.data.rating > 0) {
         this.changedRating();
       }
+      console.log('this.data.rating = ', this.data.rating);
     }
   }
 
@@ -70,9 +73,21 @@ export class BeanArchivePopoverComponent implements OnInit {
     }
   }
 
-  public calculateAverageBeanRating(): number {
+  private tryCalcuatingAverageBrewRating() {
+    if (this.data.rating !== 0) {
+      return;
+    }
+    const brewsWithRatings = this.data
+      .getBrews()
+      .filter((brew) => brew.rating > 0);
+    if (brewsWithRatings.length === 0) {
+      return;
+    }
+    this.averageBrewRating = this.calculateAverageBeanRating(brewsWithRatings);
+  }
+
+  private calculateAverageBeanRating(brewsWithRatings: Brew[]): number {
     let sum = 0;
-    const brewsWithRatings = this.brewsWithRatings();
     const ratio = this.settings.bean_rating / this.settings.brew_rating;
     brewsWithRatings.forEach((currentBrew, _index, _arr) => {
       sum += currentBrew.rating * ratio;
@@ -82,9 +97,5 @@ export class BeanArchivePopoverComponent implements OnInit {
       averageRating / this.settings.bean_rating_steps,
     );
     return numberOfSteps * this.settings.bean_rating_steps;
-  }
-
-  public brewsWithRatings(): Brew[] {
-    return this.data.getBrews().filter((brew) => brew.rating > 0);
   }
 }
