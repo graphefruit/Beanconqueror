@@ -47,7 +47,6 @@ export class BeanArchivePopoverComponent implements OnInit {
       if (this.data.rating > 0) {
         this.changedRating();
       }
-      console.log('this.data.rating = ', this.data.rating);
     }
   }
 
@@ -74,12 +73,15 @@ export class BeanArchivePopoverComponent implements OnInit {
   }
 
   private tryCalcuatingAverageBrewRating() {
+    // An existing rating on the bean exists. Don't attempt to calculate average rating.
     if (this.data.rating !== 0) {
       return;
     }
+
     const brewsWithRatings = this.data
       .getBrews()
       .filter((brew) => brew.rating > 0);
+    // No brews with ratings found. Don't attempt to calculate average rating.
     if (brewsWithRatings.length === 0) {
       return;
     }
