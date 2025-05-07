@@ -2697,7 +2697,7 @@ export class BrewBrewingGraphComponent implements OnInit {
              * When we're in barista mode with the sanremo you, we don't support turbo shots actually, so having an increase of 3grams is plausible for each step
              * specially when using high precisioning scales and no poor scales
              */
-            plausibleEspressoWeightIncreaseBound = 3;
+            plausibleEspressoWeightIncreaseBound = 5;
           }
           risingFactorOK =
             entryBeforeVal + plausibleEspressoWeightIncreaseBound >= weight;
@@ -2739,6 +2739,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     _brewByWeightActive: boolean,
     _scale: BluetoothScale,
   ) {
+    if (this.baristamode && this.brewComponent.timer.getSeconds() <= 6) {
+      // We don't want to calculcate the brew by weight in the first 6 seconds, because the scale can still reset
+      return false;
+    }
     let weight: number = this.uiHelper.toFixedIfNecessary(
       _currentWeightValue,
       1,

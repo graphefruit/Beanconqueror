@@ -70,9 +70,27 @@ export class SanremoYOUDevice extends PreparationDevice {
         connectTimeout: 5000,
       };
       const response: HttpResponse = await CapacitorHttp.get(options);
+
+      return response.status === 200;
+      // TODO Capacitor migration: The code before the migration didn't do
+      // anything else, but there was unreachable code below it.
+      // Please double check.
+    } catch (error) {
+      this.logError('Error in deviceConnected():', error);
+      throw error;
+    }
+  }
+
+  public async isMachineTurnedOn(): Promise<boolean> {
+    try {
+      const options = {
+        url: this.connectionURL + '/api/runtime',
+        connectTimeout: 5000,
+      };
+      const response: HttpResponse = await CapacitorHttp.get(options);
       const responseJSON = await response.data;
 
-      return responseJSON.status === 200;
+      return responseJSON.status === 1;
       // TODO Capacitor migration: The code before the migration didn't do
       // anything else, but there was unreachable code below it.
       // Please double check.
@@ -394,6 +412,40 @@ export class SanremoYOUDevice extends PreparationDevice {
         }
       }
     } catch (ex) {}
+  }
+
+  public async turnOnMachine() {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          '/api/action/on',
+      };
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+      return responseJSON.result;
+    } catch (error) {
+      this.logError('Error in turnOnMachine():', error);
+      return false;
+    }
+  }
+
+  public async turnOffMachine() {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          '/api/action/standby',
+      };
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+      return responseJSON.result;
+    } catch (error) {
+      this.logError('Error in turnOnMachine():', error);
+      return false;
+    }
   }
 
   public sendJustAppConnectionToMachine() {

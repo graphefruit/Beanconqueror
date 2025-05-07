@@ -1476,5 +1476,12 @@
     "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Displays the connecting and disconnecting information of the bluetooth device(s).",
     "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": "Image quality in percentage",
     "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Maximum image size in Megabytes",
-    "POPOVER_COPY_FROZEN_ID": "Copy frozen id"
+    "POPOVER_COPY_FROZEN_ID": "Copy frozen id",
+  "MACHINE_ACTIONS": "Machine actions",
+  "MACHINE_POWER_ON": "Power on",
+  "MACHINE_POWER_OFF": "Power off",
+  "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": "Machine turned on successfully",
+  "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": "Machine turned off successfully",
+  "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": "Machine could not be turned on",
+  "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Machine could not be turned off"
 }
