@@ -100,20 +100,6 @@ export class BeanArchivePopoverComponent implements OnInit {
     );
     const roundedRating = numberOfSteps * this.settings.bean_rating_steps;
 
-    // In certain scenarios floating point arithmetic in JS can lead to unexpected results.
-    // For example if numberOfSteps = 12 and rating_steps = .1 then the result will be
-    // 12 * .1 = 1.2000000000000002. To avoid this we truncate the result based on the number of decimals in the rating_steps.
-    const numberOfDecimals = this.numberOfDecimalsToTruncate(
-      this.settings.bean_rating_steps,
-    );
-    return parseFloat(roundedRating.toFixed(numberOfDecimals));
-  }
-
-  private numberOfDecimalsToTruncate(rating_steps: number): number {
-    const rating_steps_str = rating_steps.toString();
-    if (rating_steps_str.indexOf('.') === -1) {
-      return 0;
-    }
-    return rating_steps_str.split('.')[1].length;
+    return this.uiHelper.toFixedIfNecessary(roundedRating, 2);
   }
 }
