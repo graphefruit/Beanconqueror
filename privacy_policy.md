@@ -1,1 +1,1 @@
--> https://beanconqueror.com/legal-policies.html
+-> https://beanconqueror.com/privacy-policy/

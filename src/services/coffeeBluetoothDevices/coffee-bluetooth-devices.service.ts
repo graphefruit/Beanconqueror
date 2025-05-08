@@ -49,6 +49,7 @@ import { VariaAkuScale } from '../../classes/devices/variaAku';
 import { UIHelper } from '../uiHelper';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
+import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
 
 declare var ble: any;
 declare var cordova: any;
@@ -1222,16 +1223,20 @@ export class CoffeeBluetoothDevicesService {
 
           try {
             const settings = this.uiStettingsStorage.getSettings();
-            if (settings.bluetooth_devices_show_connection_messages === true) {
-              this.uiToast.showInfoToast(
-                this.translate.instant('REFRACTOMETER.CONNECTED_SUCCESSFULLY') +
-                  ' - ' +
-                  this.getRefractometerDevice().device_name +
-                  ' / ' +
-                  this.getRefractometerDevice().device_id,
-                false,
-              );
-            }
+            let device = this.getRefractometerDevice();
+            device.setTestType(settings.refractometer_test_type);
+            device.setAutoTest(settings.refractometer_auto_test);
+            device.setTestNumber(settings.refractometer_test_number);
+
+            this.uiToast.showInfoToast(
+              this.translate.instant('REFRACTOMETER.CONNECTED_SUCCESSFULLY') +
+                ' - ' +
+                this.getRefractometerDevice().device_name +
+                ' / ' +
+                this.getRefractometerDevice().device_id,
+              false,
+            );
+
           } catch (ex) {}
         },
         () => {
