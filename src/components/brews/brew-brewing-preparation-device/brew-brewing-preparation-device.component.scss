@@ -5,4 +5,11 @@
     margin-left: 16px;
     margin-right: 16px;
   }
+
+  ion-col.active {
+    background-color: #90EE90;
+    ion-item{
+      --background:#90EE90;
+    }
+  }
 }

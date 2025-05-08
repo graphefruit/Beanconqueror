@@ -19,6 +19,7 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIHelper } from '../../services/uiHelper';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
+import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 
 @Component({
   selector: 'preparation-information-card',
@@ -122,6 +123,46 @@ export class PreparationInformationCardComponent implements OnInit {
     await this.detail();
   }
 
+  public async turnOnMachine() {
+    const device: SanremoYOUDevice =
+      this.preparation.getConnectedDevice() as SanremoYOUDevice;
+    const result = await device.turnOnMachine();
+    if (result) {
+      this.uiToast.showInfoToast(
+        'TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY',
+      );
+    } else {
+      this.uiToast.showInfoToast(
+        'TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY',
+      );
+    }
+  }
+
+  public async turnOffMachine() {
+    const device: SanremoYOUDevice =
+      this.preparation.getConnectedDevice() as SanremoYOUDevice;
+
+    const result = await device.turnOffMachine();
+    if (result) {
+      this.uiToast.showInfoToast(
+        'TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY',
+      );
+    } else {
+      this.uiToast.showInfoToast(
+        'TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY',
+      );
+    }
+
+    //All events need to be canceled, else the detail page is shown
+  }
+  public toggleTurnOnOffMachine(_event: any) {
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+
+    this.preparation.getConnectedDevice();
+    //All events need to be canceled, else the detail page is shown
+  }
   public async showPreparationActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -196,6 +237,12 @@ export class PreparationInformationCardComponent implements OnInit {
         break;
       case PREPARATION_ACTION.SHOW_BREWS:
         await this.showBrews();
+        break;
+      case PREPARATION_ACTION.TURN_MACHINE_ON:
+        this.turnOnMachine();
+        break;
+      case PREPARATION_ACTION.TURN_MACHINE_OFF:
+        this.turnOffMachine();
         break;
       default:
         break;

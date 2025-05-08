@@ -178,6 +178,7 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
 import { BrewModalImportShotGaggiuinoComponent } from '../brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { BaristamodePage } from '../baristamode/baristamode.page';
 import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
+import { BaristaPage } from '../baristamode/barista/barista.page';
 
 @NgModule({
   declarations: [
@@ -191,6 +192,7 @@ import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-ac
     WaterSectionPage,
     GraphSectionPage,
     WaterPage,
+    BaristaPage,
     GraphPage,
     BaristamodePage,
     GreenBeansPage,
@@ -392,6 +394,7 @@ import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-ac
     WaterSectionPage,
     GraphSectionPage,
     WaterPage,
+    BaristaPage,
     GraphPage,
     BaristamodePage,
     GreenBeansPage,

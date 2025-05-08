@@ -2,7 +2,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
-
 @Pipe({ name: 'brewFunctionPipe' })
 export class BrewFunction implements PipeTransform {
   public transform(
@@ -57,6 +56,8 @@ export class BrewFunction implements PipeTransform {
           return value.hasPredefinedFlavors();
         case BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL:
           return value.pressure_profile?.toLowerCase().startsWith('http');
+        case BREW_FUNCTION_PIPE_ENUM.HAS_PHOTOS:
+          return value.hasPhotos();
       }
     } catch (ex) {}
   }

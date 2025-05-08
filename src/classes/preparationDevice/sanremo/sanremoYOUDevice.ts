@@ -6,12 +6,27 @@ import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanrem
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
+import { SanremoShotData } from './sanremoShotData';
+import { UIAlert } from '../../../services/uiAlert';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
-
+  private socket: any = undefined;
+  private sanremoShotData: SanremoShotData = new SanremoShotData();
+  private _isConnected: boolean = false;
   private connectionURL: string = '';
-  private statusPhase: number = 0;
+  private websocketURL: string = '';
+  /**
+   * This timestamp makes sure that we just send all 250ms the weight and flow data to the machine
+   */
+  public sendingWeightAndFlowTimestamp = 0;
+  public receivingDataFromWebsocketTimestamp = 0;
+  public reconnectTries = 0;
+  public keepAliveInterval = undefined;
+  public reconnectionCounter = 0;
+
+  public lastRunnedProgramm: number = 0;
+
   constructor(
     protected httpClient: HttpClient,
     _preparation: Preparation,
@@ -19,10 +34,33 @@ export class SanremoYOUDevice extends PreparationDevice {
     super(httpClient, _preparation);
 
     this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
+    this.websocketURL = this.getPreparation().connectedPreparationDevice.url;
+    if (this.websocketURL.indexOf('https:') >= 0) {
+      this.websocketURL = this.websocketURL.replace('https', 'ws');
+    } else {
+      this.websocketURL = this.websocketURL.replace('http', 'ws');
+    }
+    this.websocketURL = this.websocketURL + ':81';
   }
 
   private logError(...args: any[]) {
     UILog.getInstance().error('SanremoYOUDevice:', ...args);
+  }
+  private raiseMessage(): Promise<any> {
+    return UIAlert.getInstance().showConfirmWithYesNoTranslation(
+      'PREPARATION_DEVICE.TYPE_SANREMO_YOU.CONNECTION_LOST_PLEASE_RECONNECT',
+      'ERROR',
+      'RECONNECT',
+      'NO',
+      true,
+    );
+  }
+  private logInfo(...args: any[]) {
+    UILog.getInstance().info('SanremoYOUDevice:', ...args);
+  }
+
+  public getActualShotData() {
+    return this.sanremoShotData;
   }
 
   public async deviceConnected(): Promise<boolean> {
@@ -32,9 +70,27 @@ export class SanremoYOUDevice extends PreparationDevice {
         connectTimeout: 5000,
       };
       const response: HttpResponse = await CapacitorHttp.get(options);
+
+      return response.status === 200;
+      // TODO Capacitor migration: The code before the migration didn't do
+      // anything else, but there was unreachable code below it.
+      // Please double check.
+    } catch (error) {
+      this.logError('Error in deviceConnected():', error);
+      throw error;
+    }
+  }
+
+  public async isMachineTurnedOn(): Promise<boolean> {
+    try {
+      const options = {
+        url: this.connectionURL + '/api/runtime',
+        connectTimeout: 5000,
+      };
+      const response: HttpResponse = await CapacitorHttp.get(options);
       const responseJSON = await response.data;
 
-      return responseJSON.status === 200;
+      return responseJSON.status === 1;
       // TODO Capacitor migration: The code before the migration didn't do
       // anything else, but there was unreachable code below it.
       // Please double check.
@@ -111,11 +167,9 @@ export class SanremoYOUDevice extends PreparationDevice {
           const responseJSON = _response.data;
           const temp = responseJSON.tempBoilerCoffe;
           const press = responseJSON.pumpPress * 10;
-          const statusPhase = responseJSON.statusPhase;
 
           this.temperature = temp;
           this.pressure = press;
-          this.statusPhase = statusPhase;
           if (_callback) {
             _callback();
           }
@@ -166,12 +220,313 @@ export class SanremoYOUDevice extends PreparationDevice {
       this.logError('Error in stopShot():', error);
     }
   }
+
+  public disconnectSocket() {
+    if (this.socket !== undefined) {
+      try {
+        this.logInfo('Disconnecting from socket');
+        this.socket.onclose = (event) => {};
+        this.socket.onerror = (event) => {};
+        this.socket.onopen = (event) => {};
+        this.socket.close();
+        this.socket = undefined;
+      } catch (ex) {}
+    }
+    this.receivingDataFromWebsocketTimestamp = 0;
+    this._isConnected = false;
+    this.clearKeepAliveInterval();
+  }
+  private clearKeepAliveInterval() {
+    if (this.keepAliveInterval) {
+      window.clearInterval(this.keepAliveInterval);
+      this.keepAliveInterval = undefined;
+    }
+  }
+
+  private disconnectSocketInternal() {
+    this.disconnectSocket();
+    if (this.reconnectTries <= 10) {
+      this.reconnectTries = this.reconnectTries + 1;
+      this.logInfo('Reconnect tries: ', this.reconnectTries);
+      let timeout = 500;
+      if (this.reconnectTries >= 6 && this.reconnectTries <= 8) {
+        timeout = 1000;
+      } else if (this.reconnectTries === 9) {
+        timeout = 2000;
+      } else if (this.reconnectTries === 10) {
+        timeout = 4000;
+      }
+      setTimeout(() => {
+        this.reconnectToSocket();
+      }, timeout);
+    } else {
+      this.reconnectTries = this.reconnectTries + 1;
+      this.raiseMessage().then(
+        () => {
+          this.reconnectToSocket();
+        },
+        () => {},
+      );
+    }
+  }
+
+  public reconnectToSocket() {
+    this.logInfo('Reconnecting from socket');
+    this.socket = undefined;
+    this._isConnected = false;
+    this.connectToSocket();
+  }
+  public connectToSocket(): Promise<boolean> {
+    this.logInfo('Connect to socket');
+    let hasPromiseBeenCalled: boolean = false;
+    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+      if (this.socket !== undefined) {
+        if (hasPromiseBeenCalled === false) {
+          resolve(true);
+          hasPromiseBeenCalled = true;
+        }
+
+        return;
+      }
+
+      try {
+        this.socket = new WebSocket(this.websocketURL);
+        window['socket'] = this.socket;
+
+        // Connection opened
+        this.socket.onopen = (event) => {
+          this.reconnectionCounter = this.reconnectionCounter + 1;
+          this.reconnectTries = 0;
+          this.logInfo('Socket opened');
+
+          this._isConnected = true;
+
+          setTimeout(() => {
+            this.sendJustAppConnectionToMachine();
+          }, 1000);
+
+          this.clearKeepAliveInterval();
+          this.keepAliveInterval = setInterval(() => {
+            if (this.isConnected()) {
+              if (
+                this.receivingDataFromWebsocketTimestamp > 0 &&
+                Date.now() - this.receivingDataFromWebsocketTimestamp >= 4000
+              ) {
+                this.logError(
+                  'No data from machine, seems like another instance has been connecting, disconnect',
+                );
+                this.disconnectSocketInternal();
+              } else {
+                this.logInfo('Sending keep alive to machine');
+                this.socket.send(JSON.stringify({}));
+              }
+            } else {
+              this.clearKeepAliveInterval();
+            }
+          }, 5000);
+          if (hasPromiseBeenCalled === false) {
+            resolve(true);
+            hasPromiseBeenCalled = true;
+          }
+        };
+
+        // Listen for messages
+        this.socket.onmessage = (event) => {
+          //          this.logInfo('Message from server:', event.data);
+          const responseJSON = JSON.parse(event.data);
+          if ('status' in responseJSON) {
+            //Valid sanremo shot data
+            let currentShotData = new SanremoShotData();
+            currentShotData = responseJSON;
+            currentShotData.pumpPress = currentShotData.pumpPress * 10;
+            this.sanremoShotData = currentShotData;
+            this.sanremoShotData.localTimeString =
+              new Date().toLocaleTimeString();
+            this.sanremoShotData.reconnectionCounter = this.reconnectionCounter;
+            window['sanremoShotData'] = this.sanremoShotData;
+
+            if (
+              this.sanremoShotData.groupStatus !== 0 &&
+              this.sanremoShotData.groupStatus <= 4
+            ) {
+              this.lastRunnedProgramm = this.sanremoShotData.groupStatus;
+            }
+          }
+          this.receivingDataFromWebsocketTimestamp = Date.now();
+        };
+
+        // Handle errors
+        this.socket.onerror = (event) => {
+          this.logInfo('WebSocket error: ', event);
+          if (hasPromiseBeenCalled === false) {
+            resolve(false);
+            hasPromiseBeenCalled = true;
+          }
+
+          this.disconnectSocketInternal();
+        };
+
+        // Handle connection close
+        this.socket.onclose = (event) => {
+          this.logInfo('WebSocket closed:', event);
+          if (hasPromiseBeenCalled === false) {
+            resolve(false);
+            hasPromiseBeenCalled = true;
+          }
+          this.disconnectSocketInternal();
+        };
+      } catch (ex) {
+        this.logInfo('Error in connectToSocket():', ex.message);
+        if (hasPromiseBeenCalled === false) {
+          resolve(false);
+          hasPromiseBeenCalled = true;
+        }
+        this.disconnectSocketInternal();
+      }
+    });
+    return promise;
+  }
+
+  public stopActualShot() {
+    try {
+      if (this.isConnected()) {
+        //ID -> The actual running profile
+        //VALUE -> 0 -> stop, 1-> start
+        const groupStatus = this.sanremoShotData.groupStatus;
+        if (groupStatus !== 0) {
+          this.logInfo('Send shot end.');
+          /**
+           * Groupstatus 0 would shut of the machine ;) so we don't want that
+           */
+          this.socket.send(
+            JSON.stringify({
+              key: 220,
+              id: groupStatus,
+              value: 0,
+            }),
+          );
+        } else {
+          this.logInfo(
+            'Send shot end not possible, because groupStatus is already 0 ',
+          );
+        }
+      }
+    } catch (ex) {}
+  }
+
+  public async turnOnMachine() {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          '/api/action/on',
+      };
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+      return responseJSON.result;
+    } catch (error) {
+      this.logError('Error in turnOnMachine():', error);
+      return false;
+    }
+  }
+
+  public async turnOffMachine() {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          '/api/action/standby',
+      };
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+      return responseJSON.result;
+    } catch (error) {
+      this.logError('Error in turnOnMachine():', error);
+      return false;
+    }
+  }
+
+  public sendJustAppConnectionToMachine() {
+    try {
+      if (this.isConnected()) {
+        /**
+         * We wait one second, because we want to give the machine some short delay, after initial connecting
+         */
+        const sendData = {
+          key: 221,
+          appScaleConnection: 1,
+          recipeWeightSetPoint: 0,
+          cupWeightFromExtScale: 0,
+          realTimeFlowCalcByTheScale: 0,
+        };
+        this.socket.send(JSON.stringify(sendData));
+      }
+    } catch (ex) {}
+  }
+
+  public sendActualWeightAndFlowDataToMachine(
+    _weight: number,
+    _flow: number,
+    _targetBrewByWeight: number,
+  ) {
+    if (Date.now() - this.sendingWeightAndFlowTimestamp < 200) {
+      return;
+    } else {
+    }
+    this.sendingWeightAndFlowTimestamp = Date.now();
+
+    if (this.isConnected()) {
+      if (this.sanremoShotData?.statusPhase !== 0) {
+        //this.logInfo('Sending weight data to machine:', sendData);
+        //When we try to reconnect could be that we send in the sequence while disconnected and get an error.
+        try {
+          if (this.socket) {
+            /**
+             * This data shall just be sent to the machine, when the brew-by-weight is active, else use the sendJustAppConnectionToMachine
+             */
+            const sendData = {
+              key: 221,
+              appScaleConnection: 2,
+              recipeWeightSetPoint: _targetBrewByWeight,
+              cupWeightFromExtScale: _weight,
+              realTimeFlowCalcByTheScale: _flow,
+            };
+            this.socket.send(JSON.stringify(sendData));
+          }
+        } catch (ex) {}
+      } else {
+        this.sendJustAppConnectionToMachine();
+      }
+    }
+  }
+  public isConnected(): boolean {
+    if (this.socket) {
+      if (this.socket.readyState === 0 || this.socket.readyState === 1) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (this.reconnectTries <= 10) {
+        //We're trying to reconnect again, so fake to be connected that long, else the reconnectTries will go up to 10.
+        return true;
+      }
+      return false;
+    }
+  }
 }
 
 export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeight: number = 0;
   public residualLagTime: number = 0.9;
   public selectedMode: SanremoYOUMode = SanremoYOUMode.LISTENING;
+
+  public stopAtWeightP1: number = 0;
+  public stopAtWeightP2: number = 0;
+  public stopAtWeightP3: number = 0;
+  public stopAtWeightM: number = 0;
   constructor() {
     this.residualLagTime = 0.9;
     this.selectedMode = SanremoYOUMode.LISTENING;

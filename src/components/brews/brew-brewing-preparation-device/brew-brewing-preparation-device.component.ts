@@ -97,6 +97,26 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     private readonly translate: TranslateService,
   ) {}
 
+  public async baristaModeWeightChanged(_type: string) {
+    if (_type === 'P1') {
+      this.preparation.connectedPreparationDevice.customParams.stopAtWeightP1 =
+        this.data.preparationDeviceBrew?.params.stopAtWeightP1;
+    }
+    if (_type === 'P2') {
+      this.preparation.connectedPreparationDevice.customParams.stopAtWeightP2 =
+        this.data.preparationDeviceBrew?.params.stopAtWeightP2;
+    }
+    if (_type === 'P3') {
+      this.preparation.connectedPreparationDevice.customParams.stopAtWeightP3 =
+        this.data.preparationDeviceBrew?.params.stopAtWeightP3;
+    }
+    if (_type === 'M') {
+      this.preparation.connectedPreparationDevice.customParams.stopAtWeightM =
+        this.data.preparationDeviceBrew?.params.stopAtWeightM;
+    }
+    await this.uiPreparationStorage.update(this.preparation);
+  }
+
   private async setUIParams() {
     this.uiPreparationDeviceConnected = this.preparationDeviceConnected();
     this.uiPreparationDeviceType = this.getDataPreparationDeviceType();
@@ -140,10 +160,15 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       ).stopAtWeight = 0;
       this.drawTargetWeight(0);
     }
+    this.sanremoYOUModeSelected();
   }
 
   public drawTargetWeight(_weight: number) {
     this.brewComponent.brewBrewingGraphEl?.drawTargetWeight(_weight);
+  }
+
+  public sanremoYOUModeSelected() {
+    this.brewComponent.brewBrewingGraphEl?.sanremoYOUModeSelected();
   }
   public hasAPreparationDeviceSet() {
     return (
@@ -235,7 +260,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           let wasSomethingSet: boolean = false;
           if (_brew) {
             if (
-              _brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+              _brew.preparationDeviceBrew.type === PreparationDeviceType.XENIA
             ) {
               this.data.preparationDeviceBrew = this.uiHelper.cloneData(
                 _brew.preparationDeviceBrew,
@@ -253,7 +278,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
             if (brews.length > 0) {
               const foundEntry = brews.find(
                 (b) =>
-                  b.preparationDeviceBrew.type !== PreparationDeviceType.NONE,
+                  b.preparationDeviceBrew.type === PreparationDeviceType.XENIA,
               );
               if (foundEntry) {
                 this.data.preparationDeviceBrew = this.uiHelper.cloneData(
@@ -419,14 +444,88 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     if (!this.preparationDevice) {
       //Ignore the rest of this function
       return;
+    } else {
+      if (this.baristamode === true) {
+        this.data.preparationDeviceBrew.params.selectedMode =
+          SanremoYOUMode.LISTENING_AND_CONTROLLING;
+        this.sanremoYOUModeSelected();
+
+        if (this.baristamode) {
+          if (
+            this.preparation.connectedPreparationDevice.customParams
+              .stopAtWeightP1
+          ) {
+            this.data.preparationDeviceBrew.params.stopAtWeightP1 =
+              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP1;
+          }
+          if (
+            this.preparation.connectedPreparationDevice.customParams
+              .stopAtWeightP2
+          ) {
+            this.data.preparationDeviceBrew.params.stopAtWeightP2 =
+              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP2;
+          }
+          if (
+            this.preparation.connectedPreparationDevice.customParams
+              .stopAtWeightP3
+          ) {
+            this.data.preparationDeviceBrew.params.stopAtWeightP3 =
+              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP3;
+          }
+          if (
+            this.preparation.connectedPreparationDevice.customParams
+              .stopAtWeightM
+          ) {
+            this.data.preparationDeviceBrew.params.stopAtWeightM =
+              this.preparation.connectedPreparationDevice.customParams.stopAtWeightM;
+          }
+        }
+      }
     }
 
-    /** Seccond call**/
+    if (this.baristamode === false) {
+      if (!this.isEdit) {
+        // If a brew was passed, we came from loading, else we just swapped the preparation toolings
+        let wasSomethingSet: boolean = false;
+        if (_brew) {
+          if (_brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE) {
+            this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+              _brew.preparationDeviceBrew,
+            );
+            wasSomethingSet = true;
+          }
+        }
+
+        if (wasSomethingSet === false) {
+          // maybe the passed brew, didn't had any params in it - why ever?!
+          // Is add
+          const brews: Array<Brew> = this.uiHelper
+            .cloneData(this.uiBrewStorage.getAllEntries())
+            .reverse();
+          if (brews.length > 0) {
+            const foundEntry = brews.find(
+              (b) =>
+                b.preparationDeviceBrew.type ===
+                PreparationDeviceType.SANREMO_YOU,
+            );
+            if (foundEntry) {
+              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                foundEntry.preparationDeviceBrew,
+              );
+            }
+          }
+        }
+      }
+    }
+
+    return;
+    /**
+    // Seccond call
     await connectedDevice.deviceConnected().then(
       () => {},
       () => {},
     );
-    /** Third call call**/
+    //Third call call
 
     const apiThirdCallDelayStart = moment(); // create a moment with the current time
     let apiDelayEnd;
@@ -461,7 +560,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       () => {
         clearTimeout(delayCallTimeout);
       },
-    );
+    );**/
   }
 
   public async importShotFromMeticulous() {

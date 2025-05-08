@@ -35,6 +35,17 @@ import { UIAnalytics } from './uiAnalytics';
 })
 export class UIPreparationHelper {
   private allStoredBrews: Array<Brew> = [];
+
+  public static instance: UIPreparationHelper;
+
+  public static getInstance(): UIPreparationHelper {
+    if (UIPreparationHelper.instance) {
+      return UIPreparationHelper.instance;
+    }
+
+    return undefined;
+  }
+
   constructor(
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly modalController: ModalController,
@@ -42,8 +53,12 @@ export class UIPreparationHelper {
     private readonly translate: TranslateService,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly httpClient: HttpClient,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {
+    if (UIPreparationHelper.instance === undefined) {
+      UIPreparationHelper.instance = this;
+    }
+
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -90,7 +105,7 @@ export class UIPreparationHelper {
   public async connectDevice(_preparation: Preparation) {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.CONNECT_DEVICE
+      PREPARATION_TRACKING.ACTIONS.CONNECT_DEVICE,
     );
     const modal = await this.modalController.create({
       component: PreparationConnectedDeviceComponent,
@@ -103,7 +118,7 @@ export class UIPreparationHelper {
 
   public async editPreparationTool(
     _preparation: Preparation,
-    _preparationTool: PreparationTool
+    _preparationTool: PreparationTool,
   ) {
     const modal = await this.modalController.create({
       component: PreparationEditToolComponent,
@@ -149,7 +164,7 @@ export class UIPreparationHelper {
       this.translate.instant('COPY') + ' ' + clonedPreparation.name;
 
     const newTools: Array<PreparationTool> = this.uiHelper.cloneData(
-      clonedPreparation.tools
+      clonedPreparation.tools,
     );
     clonedPreparation.tools = [];
     for (const tool of newTools) {
@@ -171,7 +186,7 @@ export class UIPreparationHelper {
       return makePreparationDevice(
         _preparation.connectedPreparationDevice.type,
         this.httpClient,
-        _preparation
+        _preparation,
       );
     }
     return null;

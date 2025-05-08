@@ -18,6 +18,7 @@ import {
 } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBrewPageSort } from '../brew/iBrewPageSort';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 
 export interface ISettings {
   // Properties
@@ -219,7 +220,7 @@ export interface ISettings {
   refractometer_log: boolean;
 
   currency: string;
-  brew_display_bean_image: boolean;
+  brew_display_image_type: BREW_DISPLAY_IMAGE_TYPE;
   best_brew: boolean;
 
   visualizer_active: boolean;
@@ -242,4 +243,6 @@ export interface ISettings {
 
   brew_timer_show_hours: boolean;
   brew_timer_show_minutes: boolean;
+
+  bluetooth_devices_show_connection_messages: boolean;
 }

@@ -13,6 +13,8 @@ import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
 import { PreparationDeviceType } from '../preparationDevice';
+import { PreparationDevice } from '../preparationDevice/preparationDevice';
+import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 
 export class Preparation implements IPreparation {
   public name: string;
@@ -320,5 +322,18 @@ export class Preparation implements IPreparation {
   }
   public hasDeviceConnection(): boolean {
     return this.connectedPreparationDevice?.type !== PreparationDeviceType.NONE;
+  }
+
+  private getUIPreparationHelperInstance(): UIPreparationHelper {
+    let uiPreparationHelper: UIPreparationHelper;
+    uiPreparationHelper = UIPreparationHelper.getInstance();
+
+    return uiPreparationHelper;
+  }
+
+  public getConnectedDevice(): PreparationDevice {
+    const connectedDevice: PreparationDevice =
+      this.getUIPreparationHelperInstance().getConnectedDevice(this);
+    return connectedDevice;
   }
 }

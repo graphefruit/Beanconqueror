@@ -285,13 +285,14 @@
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.brew_display_bean_image">
-              <div class="ion-label">
-                <h2>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE" | translate}}</h2>
-                <p>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION" | translate}}</p>
-              </div>
-            </ion-checkbox>
+            <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_display_image_type"
+                        cancelText="{{'CANCEL'| translate }}"
+                        okText="{{'CHOOSE'| translate }}"
+                        label-placement="stacked" label='{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE" | translate}}'>
+              <ion-select-option value="{{BREW_DISPLAY_IMAGE_TYPE.PREPARATION}}">{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION" | translate}}</ion-select-option>
+              <ion-select-option value="{{BREW_DISPLAY_IMAGE_TYPE.BEAN}}">{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN" | translate}}</ion-select-option>
+              <ion-select-option value="{{BREW_DISPLAY_IMAGE_TYPE.BREW}}">{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW" | translate}}</ion-select-option>
+            </ion-select>
           </ion-item>
           <ion-item>
             <ion-checkbox (ngModelChange)="saveSettings();"
@@ -782,6 +783,15 @@
                 <div class='ion-label' style="white-space: normal;">
                   <h2>{{"SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE" | translate}}</h2>
                   <p>{{"SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item [lines]="'full'">
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_devices_show_connection_messages">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE" | translate}}</h2>
+                  <p>{{"BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>

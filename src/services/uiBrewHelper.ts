@@ -34,6 +34,10 @@ import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associate
 import { BrewFlow } from '../classes/brew/brewFlow';
 import { IBrewPageSort } from '../interfaces/brew/iBrewPageSort';
 import { BrewSortComponent } from '../app/brew/brew-sort/brew-sort.component';
+import { CoffeeBluetoothDevicesService } from './coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { BluetoothScale } from '../classes/devices';
+import { PressureDevice } from '../classes/devices/pressureBluetoothDevice';
+import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTypes';
 
 /**
  * Handles every helping functionalities
@@ -94,6 +98,7 @@ export class UIBrewHelper {
     private readonly uiAnalytics: UIAnalytics,
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
   ) {
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
       this.canBrewBoolean = undefined;
@@ -289,11 +294,35 @@ export class UIBrewHelper {
       checkData = settingsObj;
     }
 
+    const scaleDevice: BluetoothScale = this.bleManager.getScale();
+    if (!!scaleDevice) {
+      this.uiAnalytics.trackEvent(
+        BREW_TRACKING.TITLE,
+        BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + 'SCALE',
+        scaleDevice.device_name,
+      );
+    }
+    if (_brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+      const pressureDevice: PressureDevice =
+        this.bleManager.getPressureDevice();
+      if (!!pressureDevice) {
+        this.uiAnalytics.trackEvent(
+          BREW_TRACKING.TITLE,
+          BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + 'PRESSURE',
+          pressureDevice.device_name,
+        );
+      }
+    }
+
     const keys = Object.keys(checkData.manage_parameters);
 
     for (const key of keys) {
       if (checkData.manage_parameters[key] === true) {
-        this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, preparationName, key);
+        this.uiAnalytics.trackEvent(
+          BREW_TRACKING.TITLE,
+          BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+          key,
+        );
       }
     }
   }

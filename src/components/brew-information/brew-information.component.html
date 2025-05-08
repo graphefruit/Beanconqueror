@@ -96,25 +96,34 @@
 }
 
 <ng-template #brewCardTemplate>
+  @let choosenImageDisplayingType = settings?.brew_display_image_type;
   <ion-card class='long-card brew-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'>
     <ion-card-content #card class='no-ion-col-vertical-padding ion-padding-top' [ngClass]="brew.flow_profile?'add-bottom-spacing':''">
       <ion-grid class='no-padding-bottom' style='padding-top:0px;'>
         <ion-row style='height:60px;'>
-          <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' class='ion-no-padding'
-                   *ngIf='(settings?.brew_display_bean_image != true || (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) === false) &&  ((preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS) === false)'>
-            <ion-icon class='full-sized-icon' name='{{preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}'></ion-icon>
-          </ion-col>
-          <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' class='ion-no-padding' size='1'
-                   *ngIf='(settings?.brew_display_bean_image != true || (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) === false) && (preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)'>
-            <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-              <async-image [filePath]='preparation?.attachments[0]' class='bean-slider'></async-image>
-            </div>
-          </ion-col>
-          <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' class='ion-no-padding' size='1'
-                   *ngIf='settings?.brew_display_bean_image == true && (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)'>
-            <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-              <async-image [filePath]='bean?.attachments[0]' class='bean-slider'></async-image>
-            </div>
+
+          <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' size="1" class='ion-no-padding'>
+            @if (choosenImageDisplayingType === BREW_DISPLAY_IMAGE_TYPE.PREPARATION) {
+              <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
+            } @else if  (choosenImageDisplayingType === BREW_DISPLAY_IMAGE_TYPE.BEAN) {
+              @let hasBeanPhoto = (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
+              @if (hasBeanPhoto) {
+                <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
+                  <async-image [filePath]='bean?.attachments[0]' class='bean-slider'></async-image>
+                </div>
+              } @else {
+                <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
+              }
+            } @else if  (choosenImageDisplayingType === BREW_DISPLAY_IMAGE_TYPE.BREW) {
+              @let hasBrewPhoto = (brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
+              @if (hasBrewPhoto) {
+                <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
+                  <async-image [filePath]='brew?.attachments[0]' class='bean-slider'></async-image>
+                </div>
+              } @else {
+                <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
+              }
+            }
           </ion-col>
           <ion-col size-xs='9' size-xl='11' size-sm='11' size-md='11' size-lg='11' style='margin: auto 0;'>
             <ion-grid class='ion-no-padding'>
@@ -337,4 +346,16 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
+</ng-template>
+
+
+<ng-template #preparationImage>
+  @let hasPreparationPhoto = (preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
+  @if(hasPreparationPhoto === false) {
+    <ion-icon class='full-sized-icon' name='{{preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}'></ion-icon>
+  } @else {
+    <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
+      <async-image [filePath]='preparation?.attachments[0]' class='bean-slider'></async-image>
+    </div>
+  }
 </ng-template>

@@ -116,6 +116,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @Output() public dataChange = new EventEmitter<Brew>();
 
   @Input('baristamode') public baristamode: boolean = false;
+  @Output() public lastShotInformation = new EventEmitter();
 
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
@@ -735,14 +736,33 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerPaused(_event) {
     await this.brewBrewingGraphEl.timerPaused(_event);
+    if (this.baristamode) {
+      try {
+        const shotWeight = this.data.brew_beverage_quantity;
+        const avgFlow = this.uiHelper.toFixedIfNecessary(
+          this.brewBrewingGraphEl.getAvgFlow(),
+          2,
+        );
 
+        this.brewBrewingGraphEl.setLastShotInformation(
+          shotWeight,
+          avgFlow,
+          this.data.brew_time,
+        );
+        this.lastShotInformation.emit({
+          shotWeight: shotWeight,
+          avgFlow: avgFlow,
+          brewtime: this.data.brew_time,
+        });
+      } catch (ex) {}
+    }
     if (
       this.settings.haptic_feedback_active &&
       this.settings.haptic_feedback_brew_stopped
     ) {
       this.hapticService.vibrate();
     }
-    if (this.settings.brew_save_automatic_active) {
+    if (this.settings.brew_save_automatic_active && !this.baristamode) {
       const delayTimer = this.settings.brew_save_automatic_active_delay;
       const response = await this.uiToast.showAutomaticSaveTimer(delayTimer);
       if (response !== 'cancel') {

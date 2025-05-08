@@ -68,6 +68,9 @@ const createConfig = () => {
     ios: {
       // Will be set in platform section below
     },
+    android: {
+      allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
+    },
     plugins: {
       CapacitorHttp: {
         // Enabling this will patch fetch() to use CapacitorHttp instead of the

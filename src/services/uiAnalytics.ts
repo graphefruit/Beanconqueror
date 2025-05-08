@@ -105,6 +105,18 @@ export class UIAnalytics {
     }
   }
 
+  public trackCustomDimension(_segmentId: number, _value: string) {
+    if (this.canTrack) {
+      try {
+        this.matomoTracker.setCustomDimension(_segmentId, _value);
+      } catch (ex) {}
+    } else {
+      this.uiLog.info(
+        `ANALYTICS - DISABLED - But we would track event: Custom Dimension :${_segmentId}, Value: ${_value}`,
+      );
+    }
+  }
+
   private __attachToRoutingEvents() {
     this.router.events.subscribe((val) => {
       // see also

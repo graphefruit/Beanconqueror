@@ -22,6 +22,7 @@ export class DecentScale extends BluetoothScale {
   private buffer: Uint8Array;
 
   private apiVersion: string = undefined;
+  private heartbeatTimer: any = undefined;
 
   constructor(data: PeripheralData, type: ScaleType) {
     super(data, type);
@@ -41,6 +42,14 @@ export class DecentScale extends BluetoothScale {
   public override async connect() {
     await this.setLed(true, true);
     await this.attachNotification();
+
+    this.startHeartbeatMonitor();
+  }
+
+  private startHeartbeatMonitor() {
+    this.heartbeatTimer = setInterval(() => {
+      this.sendKeepAlive();
+    }, 2000);
   }
 
   public override async tare() {
@@ -98,7 +107,7 @@ export class DecentScale extends BluetoothScale {
     bytes[2] = 0xfd;
     bytes[3] = this.tareCounter;
     bytes[4] = 0x00;
-    bytes[5] = 0x00;
+    bytes[5] = 0x01;
     bytes[6] = this.getXOR(bytes);
 
     this.tareCounter++;
@@ -107,6 +116,11 @@ export class DecentScale extends BluetoothScale {
     }
 
     return bytes;
+  }
+
+  private sendKeepAlive() {
+    const bytes = new Uint8Array([0x03, 0x0a, 0x03, 0xff, 0xff, 0x00, 0x0a]);
+    this.write(bytes);
   }
 
   private buildLedOnOffCommand(_weightLedOn: boolean, _timerLedOn: boolean) {
@@ -234,5 +248,14 @@ export class DecentScale extends BluetoothScale {
       (e: any) => {},
       (e: any) => {},
     );
+  }
+  private stopHeartbeatMonitor() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = undefined;
+    }
+  }
+  public disconnectTriggered() {
+    this.stopHeartbeatMonitor();
   }
 }
