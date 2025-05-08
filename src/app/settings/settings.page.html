@@ -1246,8 +1246,8 @@
 							<ion-select (ngModelChange)="attemptRefractometerUpdate('test_type')" [(ngModel)]="settings.refractometer_test_type"
 								cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
 								<div slot="label">{{"REFRACTOMETER.TEST_TYPE" | translate}}</div>
-								<ion-select-option value=0>{{"REFRACTOMETER.TEST_TYPES.SINGLE" | translate}}</ion-select-option>
-								<ion-select-option value=1>{{"REFRACTOMETER.TEST_TYPES.AVERAGE" | translate}}</ion-select-option>
+								<ion-select-option [value]="TEST_TYPE_ENUM.SINGLE">{{"REFRACTOMETER.TEST_TYPES.SINGLE" | translate}}</ion-select-option>
+								<ion-select-option [value]="TEST_TYPE_ENUM.AVERAGE">{{"REFRACTOMETER.TEST_TYPES.AVERAGE" | translate}}</ion-select-option>
 							</ion-select>
 						</ion-item>
             <ion-item lines="none">

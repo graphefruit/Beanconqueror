@@ -80,6 +80,7 @@ import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 
 @Component({
   selector: 'settings',
@@ -1562,4 +1563,5 @@ export class SettingsPage {
 
   protected readonly BluetoothTypes = BluetoothTypes;
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
+  protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
 }
