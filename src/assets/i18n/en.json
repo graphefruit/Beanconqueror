@@ -109,6 +109,7 @@
     "BEAN_DATA_PURCHASING_PRICE": "Purchase price",
     "BEAN_DATA_FOB_PRICE": "FOB price",
     "BEAN_DATA_CUPPING_POINTS": "Cupping points",
+    "BEAN_DATA_AVERAGE_BREW_RATING": "Average Brew Rating",
     "BREW_DATA_CUSTOM_BREW_TIME": "Custom brewing time",
     "BREW_CREATION_DATE": "Creation Date",
     "REPEAT": "Repeat",
