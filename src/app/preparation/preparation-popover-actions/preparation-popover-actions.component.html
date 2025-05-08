@@ -3,6 +3,20 @@
 <ion-content>
 
 <ion-list lines="full">
+  @if (isMachineConnected) {
+    <ion-item lines="none">
+      <h4>{{"MACHINE_ACTIONS" | translate }}</h4>
+    </ion-item>
+    <ion-item lines="none"  *ngIf='!isMachineTurnedOn' (click)="choose(getStaticActions().TURN_MACHINE_ON)" button tappable>
+      <ion-icon name="power-outline" slot="start"></ion-icon>
+      <span>{{"MACHINE_POWER_ON" | translate}}</span>
+    </ion-item>
+    <ion-item lines="none" *ngIf='isMachineTurnedOn' (click)="choose(getStaticActions().TURN_MACHINE_OFF)" button tappable>
+      <ion-icon name="power-outline" style="color:#CC3311;" slot="start"></ion-icon>
+      <span>{{"MACHINE_POWER_OFF" | translate}}</span>
+    </ion-item>
+    <hr>
+  }
     <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
       <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
       <span>{{"DETAIL" | translate}}</span>

@@ -19,20 +19,32 @@ declare var window;
   providedIn: 'root',
 })
 export class UIAlert {
+  private static instance: UIAlert;
+  public static getInstance(): UIAlert {
+    if (UIAlert.instance) {
+      return UIAlert.instance;
+    }
+
+    return undefined;
+  }
   constructor(
     private readonly alertController: AlertController,
     private readonly translate: TranslateService,
     private readonly modalController: ModalController,
     private readonly loadingController: LoadingController,
     private readonly uiLog: UILog,
-    private eventQueue: EventQueueService
-  ) {}
+    private eventQueue: EventQueueService,
+  ) {
+    if (UIAlert.instance === undefined) {
+      UIAlert.instance = this;
+    }
+  }
 
   private existingLoadingSpinners = [];
 
   public async showLoadingSpinner(
     message: string = 'PLEASE_WAIT',
-    translate: boolean = true
+    translate: boolean = true,
   ) {
     await this.showLoadingMessage(message, translate, false);
     /**if (this.existingLoadingSpinners.length > 0) {
@@ -59,7 +71,10 @@ export class UIAlert {
         internMessage = this.translate.instant(message);
       }
       this.eventQueue.dispatch(
-        new AppEvent(AppEventType.UPDATE_LOADING_SPINNER_MESSAGE, internMessage)
+        new AppEvent(
+          AppEventType.UPDATE_LOADING_SPINNER_MESSAGE,
+          internMessage,
+        ),
       );
     }
   }
@@ -101,7 +116,7 @@ export class UIAlert {
     _message: string,
     _title?: string,
     _ok?: string,
-    _translate?: boolean
+    _translate?: boolean,
   ): Promise<any> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
@@ -146,7 +161,7 @@ export class UIAlert {
   public async showIOSIndexedDBIssues(
     _message: string,
     _title?: string,
-    _translate?: boolean
+    _translate?: boolean,
   ): Promise<any> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
@@ -170,13 +185,6 @@ export class UIAlert {
               return false;
             },
           },
-          {
-            text: this.translate.instant('SEND_LOGS'),
-            handler: () => {
-              this.copyLogfiles();
-              return false;
-            },
-          },
         ],
       });
       await alert.present();
@@ -187,7 +195,7 @@ export class UIAlert {
   public async showConfirm(
     _message: string,
     _title?: string,
-    _translate?: boolean
+    _translate?: boolean,
   ): Promise<any> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
@@ -221,11 +229,58 @@ export class UIAlert {
       await alert.present();
     });
   }
+  public async showConfirmWithYesNoTranslation(
+    _message: string,
+    _title?: string,
+    _yesText?: string,
+    _noText?: string,
+    _translate?: boolean,
+  ): Promise<any> {
+    let yesText = this.translate.instant('YES');
+    let noText = this.translate.instant('NO');
+    if (_translate === true) {
+      _message = this.translate.instant(_message);
+
+      if (_title) {
+        _title = this.translate.instant(_title);
+      }
+      if (_yesText) {
+        yesText = this.translate.instant(_yesText);
+      }
+      if (_noText) {
+        noText = this.translate.instant(_noText);
+      }
+    }
+
+    return new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: _title,
+        subHeader: _message,
+        backdropDismiss: false,
+        buttons: [
+          {
+            text: noText,
+            role: 'cancel',
+            handler: () => {
+              reject();
+            },
+          },
+          {
+            text: yesText,
+            handler: () => {
+              resolve(undefined);
+            },
+          },
+        ],
+      });
+      await alert.present();
+    });
+  }
 
   public async presentCustomPopover(
     _title: string,
     _description: string,
-    _okText: string
+    _okText: string,
   ) {
     await this.showMessage(_description, _title, _okText, true);
   }
@@ -233,7 +288,7 @@ export class UIAlert {
   public async showLoadingMessage(
     message: string = 'PLEASE_WAIT',
     translate: boolean = true,
-    showDismissAfterSpecificTimeout: boolean = false
+    showDismissAfterSpecificTimeout: boolean = false,
   ) {
     // this.uiLog.generateExceptionLineMessage('Loading-Spinner');
     if (this.existingLoadingSpinners.length > 0) {

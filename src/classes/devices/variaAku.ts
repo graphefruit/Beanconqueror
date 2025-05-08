@@ -67,7 +67,7 @@ export class VariaAkuScale extends BluetoothScale {
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
       this.write([0xfa, 0x89, 0x01, 0x01, this.getXOR([0x89, 0x01, 0x01])]);
     } else if (_timer === SCALE_TIMER_COMMAND.RESET) {
-      this.write([0xfa, 0x8a, 0x01, 0x01, this.getXOR([0x8a, 0x01, 0x01])]);
+      this.write([0xfa, 0x8a, 0x01, 0x01, this.getXOR([0x8a, 0x01, 0x02])]);
     }
   }
 

@@ -1031,7 +1031,8 @@
             "NONE": "Ingen",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": ""
+            "SANREMO_YOU": "",
+            "GAGGIUINO": "Gaggiuino"
         },
         "URL": "URL",
         "CHOOSE_DEVICE": "Velg enhet",
@@ -1077,7 +1078,11 @@
             "PROFILE_P3_CONTROLLING": "",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": ""
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "",
+            "MODE_LISTENING_AND_CONTROLLING": ""
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": "Gaggiuino Machine"
         }
     },
     "DEVICE_CONNECTION": "Enhetstilkobling",
@@ -1432,26 +1437,28 @@
     "SAVE_NOW": "Lagre nå",
     "SAVING_BREW_COUNTDOWN": "Lagre brygg etter {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Versjon 8.1.0: Hva er nytt?",
-            "DESCRIPTION": [
-                "<b>Bønner<\/b>",
-                "Sorter bønner etter sist brukte, kjøpsdato og åpningsdato for posen",
-                "Støtter et nytt parameter CO2e (kg) per kg brent kaffe. Denne er deaktivert som standard",
-                "Excel-eksport viser nå korrekt brennegrad",
-                "Ny NFC\/QR-kodehandling: Velg handling. Når du skanner taggen, kan du velge handlingen du vil utføre",
-                "",
-                "<b>Brygg<\/b>",
-                "Informasjonsflisene for blåtann-enheter er nå forstørret på nettbrett",
-                "Fikset vekt-dobling for espresso-brygg",
-                "",
-                "<b>Innstillinger<\/b>",
-                "Ny funksjon: Lagre brygg automatisk kan aktiveres",
-                "Ny funksjon: Oppdater grafintervallet. For eldre enheter som kan fryse eller hvor du opplever forsinkelse. Du kan nå justere oppdateringsfrekvensen.",
-                "",
-                "<b>Annet<\/b>",
-                "Småjusteringer"
-            ]
-        }
-    }
+      "8.2.0": {
+        "TITLE": "Version 8.2.0: What's new",
+        "DESCRIPTION": [
+          "<b>Preparations<\/b>",
+          "Supporting connection to Gaggiuino and shot importing",
+          "",
+          "<b>Brews<\/b>",
+          "Brews can now be filtered with the used water",
+          "",
+          "<b>Settings<\/b>",
+          "Stop brew with predefined pressure threshold - Activate in the settings",
+          "",
+          "<b>Other<\/b>",
+          "Small fixes"
+        ]
+      }
+    },
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
+    "NAV_BARISTAMODE_SECTION": "Baristamode",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
+    "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible."
 }

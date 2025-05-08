@@ -18,6 +18,7 @@ import {
 } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBrewPageSort } from '../brew/iBrewPageSort';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 
 export interface ISettings {
   // Properties
@@ -35,6 +36,8 @@ export interface ISettings {
   bean_manage_parameters: IBeanParameter;
   bean_visible_list_view_parameters: IBeanParameter;
   matomo_analytics: boolean;
+  matomo_analytics_id: string;
+  matomo_analytics_last_question: number;
   meticulous_help_was_shown: boolean;
   qr_scanner_information: boolean;
   track_brew_coordinates: boolean;
@@ -201,6 +204,8 @@ export interface ISettings {
   pressure_threshold_active: boolean;
   pressure_threshold_bar: number;
   pressure_stay_connected: boolean;
+  pressure_threshold_stop_shot_active: boolean;
+  pressure_threshold_stop_shot_bar: number;
 
   temperature_id: string;
   temperature_type: TemperatureType;
@@ -215,7 +220,7 @@ export interface ISettings {
   refractometer_log: boolean;
 
   currency: string;
-  brew_display_bean_image: boolean;
+  brew_display_image_type: BREW_DISPLAY_IMAGE_TYPE;
   best_brew: boolean;
 
   visualizer_active: boolean;
@@ -238,4 +243,6 @@ export interface ISettings {
 
   brew_timer_show_hours: boolean;
   brew_timer_show_minutes: boolean;
+
+  bluetooth_devices_show_connection_messages: boolean;
 }

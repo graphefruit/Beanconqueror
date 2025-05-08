@@ -30,6 +30,16 @@ export class PreparationFunction implements PipeTransform {
             value.connectedPreparationDevice?.type !==
             PreparationDeviceType.NONE
           );
+        case PREPARATION_FUNCTION_PIPE_ENUM.IS_SANREMO_CONNECTION:
+          return (
+            value.connectedPreparationDevice?.type ===
+            PreparationDeviceType.SANREMO_YOU
+          );
+        case PREPARATION_FUNCTION_PIPE_ENUM.IS_XENIA_CONNECTION:
+          return (
+            value.connectedPreparationDevice?.type ===
+            PreparationDeviceType.XENIA
+          );
       }
     } catch (ex) {}
   }

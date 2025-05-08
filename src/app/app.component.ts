@@ -4,7 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
@@ -66,6 +66,10 @@ import { BrewInstanceHelper } from '../classes/brew/brew';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import SettingsTracking from '../data/tracking/settingsTracking';
+import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
+import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
+import { filter } from 'rxjs/operators';
+import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
 
 declare var window;
 
@@ -103,6 +107,12 @@ export class AppComponent implements AfterViewInit {
       title: 'NAV_GRAPH_SECTION',
       url: '/graph-section',
       active: false,
+    },
+    baristamode: {
+      title: 'NAV_BARISTAMODE_SECTION',
+      url: '/baristamode',
+      active: false,
+      visible: false,
     },
     settings: {
       title: 'NAV_SETTINGS',
@@ -296,6 +306,7 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.log(`Platform: ${deviceInfo.platform}`);
         this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
         this.uiLog.log(`WebView version: ${deviceInfo.webViewVersion}`);
+
         if (this.platform.is('capacitor')) {
           const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
@@ -304,6 +315,16 @@ export class AppComponent implements AfterViewInit {
           );
         }
       } catch (ex) {}
+
+      // Track page views on route changes
+      this.router.events
+        .pipe(filter((event) => event instanceof NavigationEnd))
+        .subscribe((event: NavigationEnd) => {
+          try {
+            const pageName = this.getPageNameFromUrl(event.urlAfterRedirects);
+            this.uiAnalytics.trackPage(pageName);
+          } catch (ex) {}
+        });
 
       try {
         Logger.attachOnLog().subscribe((_msg) => {
@@ -439,6 +460,35 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.error('App finished loading, but errors occured');
       }
     });
+  }
+
+  /**
+   * Extract page name from URL for tracking
+   * @param url The URL to process
+   * @returns Formatted page name
+   */
+  private getPageNameFromUrl(url: string): string {
+    // Remove leading slash and query parameters
+    let pageName = url.split('?')[0];
+    if (pageName.startsWith('/')) {
+      pageName = pageName.substring(1);
+    }
+
+    // Format empty path as 'Home'
+    if (!pageName) {
+      return 'Home';
+    }
+
+    // Convert kebab-case to readable format with capitalization
+    return pageName
+      .split('/')
+      .map((segment) =>
+        segment
+          .split('-')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' '),
+      )
+      .join(' - ');
   }
 
   private async __checkUpdate() {
@@ -633,6 +683,8 @@ export class AppComponent implements AfterViewInit {
 
     await this.__checkMeticulousHelpPage();
 
+    await this.__checkPleaseActivateAnalyticsPage();
+
     // #281 - Connect smartscale before checking the startup view
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
@@ -673,6 +725,8 @@ export class AppComponent implements AfterViewInit {
     //this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
+
+    this.checkAndActivateTheBaristaModeIfNeeded();
     /**If Anything changes, we reset**/
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
@@ -682,6 +736,7 @@ export class AppComponent implements AfterViewInit {
     });
     this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
+      this.checkAndActivateTheBaristaModeIfNeeded();
     });
     this.uiMillStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
@@ -689,6 +744,22 @@ export class AppComponent implements AfterViewInit {
     this.uiSettingsStorage.attachOnEvent().subscribe(() => {
       this.setUIParams();
     });
+
+    this.trackStartInformation();
+  }
+
+  private checkAndActivateTheBaristaModeIfNeeded() {
+    if (this.pages.baristamode.visible === false) {
+      const settings = this.uiSettingsStorage.getSettings();
+      /** If we find a sanremo you preparation device, we enable the baristamode**/
+      if (
+        this.uiPreparationStorage
+          .getAllEntries()
+          .find((e) => !e.finished && e.type === PREPARATION_TYPES.SANREMO_YOU)
+      ) {
+        this.pages.baristamode.visible = true;
+      }
+    }
   }
 
   private async __checkBluetoothDevices() {
@@ -941,6 +1012,39 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  private async __checkPleaseActivateAnalyticsPage() {
+    const settings = this.uiSettingsStorage.getSettings();
+    if (settings.matomo_analytics === false) {
+      if (
+        this.uiBrewStorage.getAllEntries().length >= 100 ||
+        this.uiBeanStorage.getAllEntries().length >= 20
+      ) {
+        let pleaseAsk: boolean = false;
+        if (settings.matomo_analytics_last_question === 0) {
+          pleaseAsk = true;
+        } else {
+          if (
+            moment(new Date()).diff(
+              moment.unix(settings.matomo_analytics_last_question),
+              'days',
+            ) >= 30
+          ) {
+            pleaseAsk = true;
+          }
+        }
+
+        if (pleaseAsk) {
+          const modal = await this.modalCtrl.create({
+            component: PleaseActivateAnalyticsPopoverComponent,
+            id: PleaseActivateAnalyticsPopoverComponent.POPOVER_ID,
+          });
+          await modal.present();
+          await modal.onWillDismiss();
+        }
+      }
+    }
+  }
+
   private async __checkAnalyticsInformationPage() {
     const settings = this.uiSettingsStorage.getSettings();
     const matomo_analytics: boolean = settings.matomo_analytics;
@@ -1030,4 +1134,17 @@ export class AppComponent implements AfterViewInit {
   public openGithubSponsor() {}
 
   public openDonatePage() {}
+
+  public trackStartInformation() {
+    const brewsCount = this.uiBrewStorage.getAllEntries().length;
+    const beansCount = this.uiBeanStorage.getAllEntries().length;
+    this.uiAnalytics.trackCustomDimension(
+      CustomDimensionsTracking.STATISTICS_BREWS_COUNT,
+      brewsCount.toString(),
+    );
+    this.uiAnalytics.trackCustomDimension(
+      CustomDimensionsTracking.STATISTICS_BEANS_COUNT,
+      beansCount.toString(),
+    );
+  }
 }

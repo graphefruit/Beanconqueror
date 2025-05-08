@@ -1031,7 +1031,8 @@
             "NONE": "Κενό",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": ""
+            "SANREMO_YOU": "",
+            "GAGGIUINO": "Gaggiuino"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Επιλέξτε συσκευή",
@@ -1077,7 +1078,11 @@
             "PROFILE_P3_CONTROLLING": "",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": ""
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "",
+            "MODE_LISTENING_AND_CONTROLLING": ""
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": "Gaggiuino Machine"
         }
     },
     "DEVICE_CONNECTION": "Σύνδεση συσκευής",
@@ -1432,26 +1437,28 @@
     "SAVE_NOW": "Αποθήκευση τώρα",
     "SAVING_BREW_COUNTDOWN": "Αποθήκευση παρασκευής σε {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Έκδοση 8.1.0: Τι νέο υπάρχει",
+        "8.2.0": {
+            "TITLE": "",
             "DESCRIPTION": [
-                "<b>Κόκκοι<\/b>",
-                "Ταξινομήστε τους κόκκους κατά την τελευταία χρήση, την ημερομηνία αγοράς και την ημερομηνία ανοίγματος της σακούλας",
-                "Υποστήριξη νέας παραμέτρου CO2e (kg) ανά κιλό καβουρδισμένου καφέ, η οποία είναι απενεργοποιημένη από προεπιλογή",
-                "Το Excel εξαγωγής παίρνει πλέον σωστά τον βαθμό καβουρδίσματος",
-                "Νέα ενέργεια NFC\/QR-Code: Επιλέξτε ενέργεια. Κατά τη σάρωση της ετικέτας, μπορείτε να επιλέξετε την ενέργεια που θέλετε να εκτελέσετε",
                 "",
-                "Παρασκευή ",
-                "Τα πλακίδια πληροφοριών για συσκευές Bluetooth είναι πλέον μεγαλύτερα στο tablet",
-                "Διόρθωση του διπλασιασμού βάρους για τις παρασκευές εσπρέσο",
                 "",
-                "<b>Ρυθμίσεις<\/b>",
-                "Νέα δυνατότητα: Αποθήκευση παρασκευής αυτόματα η οποία μπορεί να ενεργοποιηθεί",
-                "Νέα δυνατότητα: Ενημέρωση διαστήματος γραφήματος, για παλαιότερες συσκευές που ενδέχεται να παγώσουν\/υστερούν κατά την ενημέρωση των γραφημάτων, μπορείτε να προσαρμόσετε τον ρυθμό ανανέωσης",
                 "",
-                "<b>Άλλα<\/b>",
-                "Μικρές διορθώσεις"
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
             ]
         }
-    }
+    },
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
+    "NAV_BARISTAMODE_SECTION": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "",
+    "ANALYTICS_INFORMATION": "",
+    "ANALYTICS_INFORMATION_ABOUT": ""
 }

@@ -1,0 +1,5 @@
+export enum BREW_DISPLAY_IMAGE_TYPE {
+  PREPARATION = 'PREPARATION',
+  BEAN = 'BEAN',
+  BREW = 'BREW',
+}

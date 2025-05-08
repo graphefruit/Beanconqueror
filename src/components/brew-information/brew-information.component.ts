@@ -43,6 +43,7 @@ import { UIGraphHelper } from '../../services/uiGraphHelper';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -575,4 +576,5 @@ export class BrewInformationComponent implements OnInit {
   protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
   protected readonly PREPARATION_FUNCTION_PIPE_ENUM =
     PREPARATION_FUNCTION_PIPE_ENUM;
+  protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
 }

@@ -16,6 +16,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import CustomDimensionsTracking from '../../../data/tracking/customDimensions/customDimensionsTracking';
 
 @Component({
   selector: 'beans-add',
@@ -214,6 +215,25 @@ export class BeansAddComponent implements OnInit {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.ADD_FINISH,
     );
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.ADD_ROASTER + '_' + this.data.roaster,
+      this.data.name,
+    );
+
+    if (this.data.roaster) {
+      this.uiAnalytics.trackCustomDimension(
+        CustomDimensionsTracking.STATISTICS_ROASTER_NAME,
+        this.data.roaster,
+      );
+    } else {
+      this.uiAnalytics.trackCustomDimension(
+        CustomDimensionsTracking.STATISTICS_ROASTER_NAME,
+        '-',
+      );
+    }
+
+    this.uiBeanHelper.logUsedBeanParameters();
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');

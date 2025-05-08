@@ -1031,7 +1031,8 @@
             "NONE": "Keins",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": "Sanremo YOU"
+            "SANREMO_YOU": "Sanremo YOU",
+            "GAGGIUINO": "Gaggiuino"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Gerät auswählen",
@@ -1077,7 +1078,11 @@
             "PROFILE_P3_CONTROLLING": "Profil P3-Steuerung",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "Du hast kein Zielgewicht festgelegt, das gewählte Profil wird vollständig ausgeführt.",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "Du hast kein Zielgewicht festgelegt, bitte stoppe die Extraktion manuell.",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Sanremo YOU Maschine konnte nicht hergestellt werden. Bitte stelle sicher, dass du im richtigen Netzwerk (LAN) bist, die richtige IP-Adresse eingegeben hast, usw."
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Sanremo YOU Maschine konnte nicht hergestellt werden. Bitte stelle sicher, dass du im richtigen Netzwerk (LAN) bist, die richtige IP-Adresse eingegeben hast, usw.",
+            "MODE_LISTENING_AND_CONTROLLING": ""
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": "Gaggiuino Maschine"
         }
     },
     "DEVICE_CONNECTION": "Geräteverbindung",
@@ -1432,26 +1437,28 @@
     "SAVE_NOW": "Jetzt speichern",
     "SAVING_BREW_COUNTDOWN": "Brühung wird in {{time}} gespeichert",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Version 8.1.0: Das ist neu",
+        "8.2.0": {
+            "TITLE": "Version 8.2.0: Das ist neu",
             "DESCRIPTION": [
-                "<b>Bohnen<\/b>",
-                "Bohnen können nun nach letzter Verwendung, Kaufdatum oder Öffnungsdatum sortiert werden",
-                "Unterstützung eines neuen Parameters CO2e (kg) pro kg Röstkaffee, der standardmäßig deaktiviert ist",
-                "Excel-Export übernimmt jetzt korrekt den Röstgrad",
-                "Neue NFC\/QR-Code-Aktion: Aktion auswählen. Beim Scannen des Tags kann die Aktion ausgewählt werden, welche ausgeführt werden soll",
+                "<b>Zubereitungen<\/b>",
+                "Unterstützt die Verbindung zu Gaggiuino und dem Importierung von Brühungen",
                 "",
-                "Brühungen",
-                "Kachelinformationen von Bluetooth Geräten sind nun größer auf Tablets",
-                "Behebung der Gewichtverdoppelung für Espressobrühungen",
+                "<b>Brühungen<\/b>",
+                "Brühungen können jetzt mit dem verwendeten Wasser gefiltert werden",
                 "",
                 "<b>Einstellungen<\/b>",
-                "Neue Funktion: Automatisches Speichern des Brühvorgangs kann aktiviert werden",
-                "Neue Funktion: Aktualisierung des Diagrammintervalls, für ältere Geräte, die beim Aktualisieren der Diagramme einfrieren\/verzögert werden können, kann die Bildwiederholfrequenz anpasst werden",
+                "Zeit mit vordefiniertem Druck stoppen",
                 "",
                 "<b>Sonstiges<\/b>",
                 "Kleinere Fehlerbehebungen"
             ]
         }
-    }
+    },
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Importieren einer Aufnahme aus Gaggiuino",
+    "NAV_BARISTAMODE_SECTION": "Baristamode",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "Zeit mit vordefiniertem Druck stoppen",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "Diese Einstellung wird nur für Brühungen vom Typ 'Espresso' verwendet. Die Brühung wird erst gestoppt, wenn mindestens 10 Sekunden vergangen sind und mindestens einmal 1 bar Druck erreicht wurde. Nachdem diese Bedingungen erfüllt sind, wird der hier eingestellte minimale Druckschwellenwert überprüft und bei Erreichen die Brühung gestoppt. ACHTUNG: Dies hat keine Auswirkung, wenn eine Smart-Waage verwendet wird",
+    "ANALYTICS_INFORMATION": "<h1>Deine Kaffee-Reise mit BeanConqueror<\/h1><p>Wow! Du hast bereits <b>{{BEANS_COUNT}}<\/b> Bohnen entdeckt und dir daraus <b>{{BREWS_COUNT}}<\/b> köstliche Tassen Kaffee gezaubert. Das macht dich zu einem echten Kaffee-Entdecker!<\/p><h2>Gemeinsam die Zukunft des Kaffees gestalten<\/h2><p>Stell dir vor: Nur 4% unserer Community teilen ihre Erfahrungen mit uns. Das ist, als würden wir ein Rezept mit nur einer Zutat perfektionieren wollen! Deine Brühdaten sind wie kleine Schätze, die uns helfen, BeanConqueror zu dem Werkzeug zu machen, das du dir wünschst.<\/p><h3>Gemeinsam können wir:<\/h3><ul><li>Die idealen Parameter für jede Bohnenvarietät entschlüsseln<\/li><li>Wissenschaftlich fundierte Guides für die ersten Schritte in der Kaffeewelt entwickeln<\/li><li>Die komplexen Beziehungen zwischen Brühvariablen und Geschmacksprofilen kartieren<\/li><li>BeanConqueror zu einem noch intuitiveren Begleiter für deine Kaffee-Reise machen<\/li><\/ul><h2>Dein Beitrag ist wertvoll:<\/h2><p>Aktiviere die Datenspende jetzt oder später in den Einstellungen. Jede geteilte Erfahrung bereichert unser kollektives Kaffee-Wissen und ist ein Baustein für die Zukunft von BeanConqueror!<\/p><h2>Dein Datenschutz liegt uns am Herzen<\/h2><p>Als deutsches Team im Herzen Europas nehmen wir deine Privatsphäre sehr ernst. Wir übertragen nur anonymisierte Daten, welche keine Rückschlüsse auf deine Person ermöglichen. Alle Details findest du auf der Beanconqueror Webseite.<\/p><h2>Werde Teil der BeanConqueror-Evolution!<\/h2>",
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} – Die Analytics-ID ist nicht mit personenbezogenen Daten verknüpft; keine persönliche Identifizierung möglich."
 }

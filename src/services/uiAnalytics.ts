@@ -39,7 +39,7 @@ export class UIAnalytics {
         this.matomoTracker = Matomo.getTracker();
         const settings: Settings = this.uiSettings.getSettings();
         if (settings.matomo_analytics === true) {
-          this.enableTracking();
+          await this.enableTracking();
         } else {
           this.disableTracking();
         }
@@ -48,15 +48,28 @@ export class UIAnalytics {
     });
   }
 
-  public enableTracking() {
+  public async enableTracking() {
     this.canTrack = true;
     this.uiLog.log('Tracking enabled');
     try {
       this.matomoTracker.setConsentGiven();
+      await this._setUserId();
+
       this.canTrack = true;
     } catch (ex) {
       this.uiLog.error(ex.message);
     }
+  }
+  private async _setUserId() {
+    try {
+      const settings: Settings = this.uiSettings.getSettings();
+      if (settings.matomo_analytics_id) {
+      } else {
+        settings.matomo_analytics_id = UIHelper.generateUUID();
+        await this.uiSettings.saveSettings(settings);
+      }
+      this.matomoTracker.setUserId(settings.matomo_analytics_id);
+    } catch (ex) {}
   }
 
   public disableTracking() {
@@ -88,6 +101,18 @@ export class UIAnalytics {
     } else {
       this.uiLog.info(
         `ANALYTICS - DISABLED - But we would track event: Category:${_category}, Action: ${_action}`,
+      );
+    }
+  }
+
+  public trackCustomDimension(_segmentId: number, _value: string) {
+    if (this.canTrack) {
+      try {
+        this.matomoTracker.setCustomDimension(_segmentId, _value);
+      } catch (ex) {}
+    } else {
+      this.uiLog.info(
+        `ANALYTICS - DISABLED - But we would track event: Custom Dimension :${_segmentId}, Value: ${_value}`,
       );
     }
   }

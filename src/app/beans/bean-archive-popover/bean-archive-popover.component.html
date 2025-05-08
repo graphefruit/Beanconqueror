@@ -7,6 +7,12 @@
       <h3>{{data.name}}</h3>
     </ion-label>
   </ion-item>
+  <ion-item *ngIf="averageBrewRating !== undefined">
+    <ion-label>
+      <h2>{{"BEAN_DATA_AVERAGE_BREW_RATING" | translate}}</h2>
+      <h3>{{averageBrewRating}}</h3>
+    </ion-label>
+  </ion-item>
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{data.rating | toFixed: 2}}</ion-badge>

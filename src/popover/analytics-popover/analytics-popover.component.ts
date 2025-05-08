@@ -3,6 +3,7 @@ import { Settings } from '../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import moment from 'moment/moment';
 
 @Component({
   selector: 'analytics-popover',
@@ -18,7 +19,7 @@ export class AnalyticsPopoverComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -29,7 +30,7 @@ export class AnalyticsPopoverComponent implements OnInit {
         9999,
         (processNextHandler) => {
           // Don't do anything.
-        }
+        },
       );
     } catch (ex) {}
   }
@@ -39,6 +40,7 @@ export class AnalyticsPopoverComponent implements OnInit {
       this.disableHardwareBack.unsubscribe();
     } catch (ex) {}
     this.settings.matomo_analytics = false;
+    this.settings.matomo_analytics_last_question = moment().unix();
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.uiAnalytics.disableTracking();
     this.modalController.dismiss(
@@ -46,7 +48,7 @@ export class AnalyticsPopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      AnalyticsPopoverComponent.POPOVER_ID
+      AnalyticsPopoverComponent.POPOVER_ID,
     );
   }
 
@@ -55,6 +57,7 @@ export class AnalyticsPopoverComponent implements OnInit {
       this.disableHardwareBack.unsubscribe();
     } catch (ex) {}
     this.settings.matomo_analytics = true;
+    this.settings.matomo_analytics_last_question = moment().unix();
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.uiAnalytics.enableTracking();
     this.modalController.dismiss(
@@ -62,7 +65,7 @@ export class AnalyticsPopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      AnalyticsPopoverComponent.POPOVER_ID
+      AnalyticsPopoverComponent.POPOVER_ID,
     );
   }
 }

@@ -45,6 +45,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   @Output() public timerStartPressed = new EventEmitter();
   @Output() public timerResumedPressed = new EventEmitter();
 
+  @Input() public baristamode: boolean = false;
+
   public uiSmartScaleConnected: boolean = false;
   public uiSmartScaleSupportsTaring: boolean = false;
 

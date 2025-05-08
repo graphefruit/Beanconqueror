@@ -13,6 +13,8 @@ import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
 import { PreparationDeviceType } from '../preparationDevice';
+import { PreparationDevice } from '../preparationDevice/preparationDevice';
+import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 
 export class Preparation implements IPreparation {
   public name: string;
@@ -67,14 +69,14 @@ export class Preparation implements IPreparation {
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     Object.assign(
       this.default_last_coffee_parameters,
-      preparationObj.default_last_coffee_parameters
+      preparationObj.default_last_coffee_parameters,
     );
 
     // Maybe the connectedPreparationDevice is not existing as parameter, so we cant assign it.
     if ('connectedPreparationDevice' in preparationObj) {
       Object.assign(
         this.connectedPreparationDevice,
-        preparationObj.connectedPreparationDevice
+        preparationObj.connectedPreparationDevice,
       );
     } else {
       this.connectedPreparationDevice = new ConnectedPreparationDevice();
@@ -168,6 +170,8 @@ export class Preparation implements IPreparation {
         return PREPARATION_STYLE_TYPE.ESPRESSO;
       case PREPARATION_TYPES.SANREMO_YOU:
         return PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.GAGGIUINO:
+        return PREPARATION_STYLE_TYPE.ESPRESSO;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
     }
@@ -258,6 +262,8 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-sanremo-you';
       case PREPARATION_TYPES.XENIA:
         return 'beanconqueror-preparation-xenia';
+      case PREPARATION_TYPES.GAGGIUINO:
+        return 'beanconqueror-preparation-gaggiuino';
       default:
         return 'beanconqueror-preparation-custom';
     }
@@ -316,5 +322,18 @@ export class Preparation implements IPreparation {
   }
   public hasDeviceConnection(): boolean {
     return this.connectedPreparationDevice?.type !== PreparationDeviceType.NONE;
+  }
+
+  private getUIPreparationHelperInstance(): UIPreparationHelper {
+    let uiPreparationHelper: UIPreparationHelper;
+    uiPreparationHelper = UIPreparationHelper.getInstance();
+
+    return uiPreparationHelper;
+  }
+
+  public getConnectedDevice(): PreparationDevice {
+    const connectedDevice: PreparationDevice =
+      this.getUIPreparationHelperInstance().getConnectedDevice(this);
+    return connectedDevice;
   }
 }
