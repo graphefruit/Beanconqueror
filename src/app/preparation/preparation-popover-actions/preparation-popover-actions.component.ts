@@ -8,6 +8,7 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 
 @Component({
   selector: 'preparation-popover-actions',
@@ -44,6 +45,24 @@ export class PreparationPopoverActionsComponent implements OnInit {
       ) {
         const device: SanremoYOUDevice =
           this.data.getConnectedDevice() as SanremoYOUDevice;
+        try {
+          if (device.deviceConnected()) {
+            this.isMachineConnected = true;
+            device.isMachineTurnedOn().then((isTurnedOn) => {
+              this.isMachineTurnedOn = isTurnedOn;
+            });
+          } else {
+            this.isMachineConnected = false;
+          }
+        } catch (ex) {
+          this.isMachineConnected = false;
+        }
+      } else if (
+        this.data.connectedPreparationDevice?.type ===
+        PreparationDeviceType.XENIA
+      ) {
+        const device: XeniaDevice =
+          this.data.getConnectedDevice() as XeniaDevice;
         try {
           if (device.deviceConnected()) {
             this.isMachineConnected = true;

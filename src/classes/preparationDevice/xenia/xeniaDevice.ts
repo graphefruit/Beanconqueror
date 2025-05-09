@@ -5,7 +5,7 @@ import { Preparation } from '../../preparation/preparation';
 import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
 import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
-import moment from 'moment';
+import { sleep } from '../../devices';
 
 export class XeniaDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -159,6 +159,94 @@ export class XeniaDevice extends PreparationDevice {
     } catch (error) {
       this.logError('Error in getOverview():', error);
       throw error;
+    }
+  }
+
+  public async isMachineTurnedOn(): Promise<boolean> {
+    try {
+      let url = this.getPreparation().connectedPreparationDevice.url;
+      if (this.apiVersion === 1) {
+        url += '/overview';
+      } else {
+        url += '/api/v2/overview';
+      }
+
+      const options = {
+        url: url,
+        connectTimeout: 5000,
+      };
+
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = await response.data;
+
+      return responseJSON.MA_STATUS === 1;
+      // TODO Capacitor migration: The code before the migration didn't do
+      // anything else, but there was unreachable code below it.
+      // Please double check.
+    } catch (error) {
+      this.logError('Error in isMachineTurnedOn():', error);
+      return false;
+    }
+  }
+
+  public async turnOnMachine() {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    let options: any;
+
+    // TODO Capacitor migration: It's very likely that this will be broken by
+    // the migration, please test again.
+    if (this.apiVersion === 1) {
+      return;
+    } else {
+      url += '/api/v2/machine/control/';
+      options = {
+        url: url,
+        data: JSON.stringify({ action: '1' }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+      };
+    }
+
+    try {
+      const response = await CapacitorHttp.post(options);
+      const responseJSON = await response.data;
+      await sleep(500);
+      const isTurnedOn = await this.isMachineTurnedOn();
+      return isTurnedOn;
+    } catch (error) {
+      this.logError('Error in turnOnMachine():', error);
+      return false;
+    }
+  }
+  public async turnOffMachine() {
+    let url = this.getPreparation().connectedPreparationDevice.url;
+    let options: any;
+
+    // TODO Capacitor migration: It's very likely that this will be broken by
+    // the migration, please test again.
+    if (this.apiVersion === 1) {
+      return;
+    } else {
+      url += '/api/v2/machine/control/';
+      options = {
+        url: url,
+        data: JSON.stringify({ action: '0' }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+      };
+    }
+
+    try {
+      const response = await CapacitorHttp.post(options);
+      const responseJSON = await response.data;
+      await sleep(500);
+      const isTurnedOn = await this.isMachineTurnedOn();
+      return !isTurnedOn;
+    } catch (error) {
+      this.logError('Error in turnOffMachine():', error);
+      return false;
     }
   }
 

@@ -725,7 +725,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       realtimeWaterFlow.brew_time = '';
       realtimeWaterFlow.timestamp = timestamp;
       realtimeWaterFlow.smoothed_weight = 0;
-      realtimeWaterFlow.flow_value = shotEntry.flow;
+
+      realtimeWaterFlow.flow_value = shotEntry.gravimetric_flow;
       realtimeWaterFlow.timestampdelta = 0;
 
       newBrewFlow.realtimeFlow.push(realtimeWaterFlow);
