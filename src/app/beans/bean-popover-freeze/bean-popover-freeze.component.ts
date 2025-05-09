@@ -15,6 +15,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIToast } from '../../../services/uiToast';
 
 declare var cordova;
 @Component({
@@ -56,6 +57,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiAlert: UIAlert,
     private readonly uiFileHelper: UIFileHelper,
+    private readonly uiToast: UIToast,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
@@ -97,6 +99,20 @@ export class BeanPopoverFreezeComponent implements OnInit {
       undefined,
       BeanPopoverFreezeComponent.COMPONENT_ID,
     );
+  }
+
+  public async saveWholePackage() {
+    if (this.bean.frozenId == undefined || this.bean.frozenId == '') {
+      this.bean.frozenId = this.uiBeanHelper.generateFrozenId();
+    }
+    this.bean.frozenDate = this.frozenDate;
+    if (this.frozenNote) {
+      this.bean.frozenNote = this.frozenNote;
+    }
+
+    await this.uiBeanStorage.update(this.bean);
+    this.uiToast.showInfoToast('BEAN_HAS_BEEN_FROZEN', true);
+    this.dismiss();
   }
 
   public async save() {

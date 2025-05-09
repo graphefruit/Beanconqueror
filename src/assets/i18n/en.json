@@ -1492,5 +1492,7 @@
   "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": "Machine turned on successfully",
   "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": "Machine turned off successfully",
   "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": "Machine could not be turned on",
-  "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Machine could not be turned off"
+  "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Machine could not be turned off",
+  "FREEZE_BEAN": "Freeze bean",
+  "BEAN_HAS_BEEN_FROZEN": "Bean has been frozen"
 }
