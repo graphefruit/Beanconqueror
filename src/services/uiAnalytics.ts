@@ -117,6 +117,18 @@ export class UIAnalytics {
     }
   }
 
+  public trackContentImpression(_contentName: string, _contentPiece: string) {
+    if (this.canTrack) {
+      try {
+        this.matomoTracker.trackContentImpression(_contentName, _contentPiece);
+      } catch (ex) {}
+    } else {
+      this.uiLog.info(
+        `ANALYTICS - DISABLED - But we would track event: Content Impression :${_contentName}, Piece: ${_contentPiece}`,
+      );
+    }
+  }
+
   private __attachToRoutingEvents() {
     this.router.events.subscribe((val) => {
       // see also

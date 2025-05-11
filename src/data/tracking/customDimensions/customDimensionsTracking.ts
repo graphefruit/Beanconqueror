@@ -1,5 +1,1 @@
-export default {
-  STATISTICS_BREWS_COUNT: 1,
-  STATISTICS_BEANS_COUNT: 2,
-  STATISTICS_ROASTER_NAME: 3,
-};
+export default {};

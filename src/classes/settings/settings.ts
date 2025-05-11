@@ -42,6 +42,7 @@ export class Settings implements ISettings {
   public matomo_analytics: boolean;
   public matomo_analytics_id: string;
   public matomo_analytics_last_question: number;
+  public matomo_initial_data_tracked: boolean;
   public meticulous_help_was_shown: boolean;
   public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
@@ -330,6 +331,7 @@ export class Settings implements ISettings {
     this.matomo_analytics = undefined;
     this.matomo_analytics_id = '';
     this.matomo_analytics_last_question = 0;
+    this.matomo_initial_data_tracked = false;
     this.meticulous_help_was_shown = false;
 
     this.qr_scanner_information = false;

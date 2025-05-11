@@ -10,6 +10,7 @@ import { Water } from '../../../../classes/water/water';
 import { TranslateService } from '@ngx-translate/core';
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
+import TrackContentImpression from '../../../../data/tracking/trackContentImpression/trackContentImpression';
 
 @Component({
   selector: 'water-add-type',
@@ -28,7 +29,7 @@ export class WaterAddTypeComponent implements OnInit {
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {}
 
   public ngOnInit() {
@@ -364,7 +365,11 @@ export class WaterAddTypeComponent implements OnInit {
     await this.uiWaterStorage.add(this.data);
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
-      WATER_TRACKING.ACTIONS.ADD_FINISH
+      WATER_TRACKING.ACTIONS.ADD_FINISH,
+    );
+    this.uiAnalytics.trackContentImpression(
+      TrackContentImpression.STATISTICS_WATER_NAME,
+      this.data.name,
     );
     this.uiToast.showInfoToast('TOAST_WATER_ADDED_SUCCESSFULLY');
     this.dismiss(true);
@@ -377,7 +382,7 @@ export class WaterAddTypeComponent implements OnInit {
         added: _added,
       },
       undefined,
-      WaterAddTypeComponent.COMPONENT_ID
+      WaterAddTypeComponent.COMPONENT_ID,
     );
   }
 }

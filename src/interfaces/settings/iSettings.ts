@@ -38,6 +38,7 @@ export interface ISettings {
   matomo_analytics: boolean;
   matomo_analytics_id: string;
   matomo_analytics_last_question: number;
+  matomo_initial_data_tracked: boolean;
   meticulous_help_was_shown: boolean;
   qr_scanner_information: boolean;
   track_brew_coordinates: boolean;

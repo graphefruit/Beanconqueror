@@ -70,6 +70,11 @@ import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { filter } from 'rxjs/operators';
 import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
+import { Mill } from '../classes/mill/mill';
+import { Preparation } from '../classes/preparation/preparation';
+import { Bean } from '../classes/bean/bean';
+import { Water } from '../classes/water/water';
+import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
 
 declare var window;
 
@@ -624,12 +629,6 @@ export class AppComponent implements AfterViewInit {
           resolve(undefined);
         }
       }
-
-      this.uiAnalytics.trackEvent(
-        SettingsTracking.TITLE,
-        SettingsTracking.ACTIONS.USED_LANGUAGE,
-        settings.language,
-      );
     });
   }
 
@@ -710,6 +709,11 @@ export class AppComponent implements AfterViewInit {
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
+    this.uiAnalytics.trackEvent(
+      SettingsTracking.TITLE,
+      SettingsTracking.ACTIONS.USED_LANGUAGE,
+      settings.language,
+    );
     if (
       settings.scale_log === true ||
       settings.pressure_log === true ||
@@ -745,7 +749,7 @@ export class AppComponent implements AfterViewInit {
       this.setUIParams();
     });
 
-    this.trackStartInformation();
+    await this.initialDataTrackings();
   }
 
   private checkAndActivateTheBaristaModeIfNeeded() {
@@ -1135,15 +1139,63 @@ export class AppComponent implements AfterViewInit {
 
   public openDonatePage() {}
 
-  public trackStartInformation() {
+  public async initialDataTrackings() {
+    debugger;
+    const settings = this.uiSettingsStorage.getSettings();
+    if (settings.matomo_analytics === true) {
+      try {
+        await this.uiAlert.showLoadingSpinner();
+        const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+        for (let bean of beans) {
+          if (bean.roaster) {
+            this.uiAnalytics.trackContentImpression(
+              TrackContentImpression.STATISTICS_ROASTER_NAME,
+              bean.roaster,
+            );
+          }
+        }
+        const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
+
+        for (let mill of mills) {
+          this.uiAnalytics.trackContentImpression(
+            TrackContentImpression.STATISTICS_GRINDER_NAME,
+            mill.name,
+          );
+        }
+
+        const preparations: Array<Preparation> =
+          this.uiPreparationStorage.getAllEntries();
+        for (let preparation of preparations) {
+          console.log(preparation.name);
+          this.uiAnalytics.trackContentImpression(
+            TrackContentImpression.STATISTICS_PREPARATION_NAME,
+            preparation.name,
+          );
+        }
+
+        const waters: Array<Water> = this.uiWaterStorage.getAllEntries();
+        for (let water of waters) {
+          this.uiAnalytics.trackContentImpression(
+            TrackContentImpression.STATISTICS_WATER_NAME,
+            water.name,
+          );
+        }
+
+        settings.matomo_initial_data_tracked = true;
+        await this.uiSettingsStorage.update(settings);
+      } catch (ex) {}
+
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const brewsCount = this.uiBrewStorage.getAllEntries().length;
     const beansCount = this.uiBeanStorage.getAllEntries().length;
-    this.uiAnalytics.trackCustomDimension(
-      CustomDimensionsTracking.STATISTICS_BREWS_COUNT,
+    this.uiAnalytics.trackContentImpression(
+      TrackContentImpression.STATISTICS_BREWS_COUNT,
       brewsCount.toString(),
     );
-    this.uiAnalytics.trackCustomDimension(
-      CustomDimensionsTracking.STATISTICS_BEANS_COUNT,
+    this.uiAnalytics.trackContentImpression(
+      TrackContentImpression.STATISTICS_BEANS_COUNT,
       beansCount.toString(),
     );
   }

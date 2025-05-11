@@ -16,7 +16,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
-import CustomDimensionsTracking from '../../../data/tracking/customDimensions/customDimensionsTracking';
+import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 
 @Component({
   selector: 'beans-add',
@@ -222,14 +222,9 @@ export class BeansAddComponent implements OnInit {
     );
 
     if (this.data.roaster) {
-      this.uiAnalytics.trackCustomDimension(
-        CustomDimensionsTracking.STATISTICS_ROASTER_NAME,
+      this.uiAnalytics.trackContentImpression(
+        TrackContentImpression.STATISTICS_ROASTER_NAME,
         this.data.roaster,
-      );
-    } else {
-      this.uiAnalytics.trackCustomDimension(
-        CustomDimensionsTracking.STATISTICS_ROASTER_NAME,
-        '-',
       );
     }
 
