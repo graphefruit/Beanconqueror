@@ -42,6 +42,7 @@ export class MillAddComponent implements OnInit {
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,
       MILL_TRACKING.ACTIONS.ADD_FINISH,
+      this.data.name,
     );
     this.dismiss();
     if (!this.hide_toast_message) {

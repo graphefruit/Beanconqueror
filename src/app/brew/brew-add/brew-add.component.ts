@@ -50,6 +50,8 @@ import { UIHelper } from '../../../services/uiHelper';
 import { Bean } from '../../../classes/bean/bean';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { Mill } from '../../../classes/mill/mill';
 
 declare var Plotly;
 
@@ -360,6 +362,73 @@ export class BrewAddComponent implements OnInit, OnDestroy {
         BREW_TRACKING.ACTIONS.ADD_FINISH_PREPARATION_STYLE,
         addedBrewObj.getPreparation().style_type,
       );
+
+      const bean: Bean = this.data.getBean();
+      if (bean.roaster) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.BREW_TRACKED.TITLE +
+            '_' +
+            bean.roaster +
+            '_' +
+            bean.name,
+          BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.PREPARATION_NAME +
+            '_' +
+            addedBrewObj.getPreparation().name,
+        );
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.BREW_TRACKED.TITLE +
+            '_' +
+            bean.roaster +
+            '_' +
+            bean.name,
+          BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.PREPARATION_TYPE +
+            '_' +
+            addedBrewObj.getPreparation().type,
+        );
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.BREW_TRACKED +
+            '_' +
+            bean.roaster +
+            '_' +
+            bean.name,
+          BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.PREPARATION_STYLE +
+            '_' +
+            addedBrewObj.getPreparation().style_type,
+        );
+
+        const water = this.data.getWater();
+        if (water && water.name) {
+          this.uiAnalytics.trackEvent(
+            BEAN_TRACKING.TITLE,
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED +
+              '_' +
+              bean.roaster +
+              '_' +
+              bean.name,
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.WATER_NAME +
+              '_' +
+              water.name,
+          );
+        }
+
+        const grinder: Mill = this.data.getMill();
+        if (grinder && grinder.name) {
+          this.uiAnalytics.trackEvent(
+            BEAN_TRACKING.TITLE,
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED +
+              '_' +
+              bean.roaster +
+              '_' +
+              bean.name,
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.GRINDER_NAME +
+              '_' +
+              grinder.name,
+          );
+        }
+      }
 
       if (
         this.brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() ===

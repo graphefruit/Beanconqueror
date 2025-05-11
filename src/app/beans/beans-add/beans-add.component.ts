@@ -211,10 +211,21 @@ export class BeansAddComponent implements OnInit {
       this.data.frozenId = this.uiBeanHelper.generateFrozenId();
     }
     await this.uiBeanStorage.add(this.data);
-    this.uiAnalytics.trackEvent(
-      BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.ADD_FINISH,
-    );
+
+    if (this.data.roaster) {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.ADD_FINISH,
+        this.data.name + '_' + this.data.roaster,
+      );
+    } else {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.ADD_FINISH,
+        this.data.name + '_-',
+      );
+    }
+
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.ADD_ROASTER + '_' + this.data.roaster,
