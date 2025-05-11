@@ -383,13 +383,33 @@ export class BrewDetailComponent {
       }
 
       return 0;
+    } else if (
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow &&
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow.length > 0
+    ) {
+      /** E.g. on the meticulous we don't have the calculcated water flow, so take the realtime flow **/
+      const waterFlows: Array<IBrewRealtimeWaterFlow> =
+        this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow;
+      let calculatedFlow: number = 0;
+      let foundEntries: number = 0;
+      for (const water of waterFlows) {
+        if (water.flow_value > 0) {
+          calculatedFlow += water.flow_value;
+          foundEntries += 1;
+        }
+      }
+      if (calculatedFlow > 0) {
+        return calculatedFlow / foundEntries;
+      }
+
+      return 0;
     }
   }
 
   public getPeakFlow() {
     if (
-      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow &&
-      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow.length > 0
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow &&
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow.length > 0
     ) {
       const waterFlows: Array<IBrewRealtimeWaterFlow> =
         this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow;
