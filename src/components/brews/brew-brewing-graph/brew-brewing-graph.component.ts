@@ -2644,7 +2644,12 @@ export class BrewBrewingGraphComponent implements OnInit {
         weight = notMutatedWeight;
       }
     }
-    if (weight <= 0 && isEspresso) {
+    /**
+     * 11.05.25 - we've changed from weight<=0 to weight<0, to check the decrease.
+     * Some scales need longer for a tare, so if you put something on, and you have a tare on new brew, it wouldn't trigger rightly here.
+     * This was specialy on a varia scale, because the taring process takes like 1 sec actually, when you put like 60grams on the scale, the tared weight was zero, but the weight was <=0, and the decrease mechanismn thought that there is an issue
+     */
+    if (weight < 0 && isEspresso) {
       if (this.flowProfileTempAll.length >= 3) {
         let weAreDecreasing: boolean = false;
         for (
@@ -2663,7 +2668,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             break;
           }
         }
-        // We checked that we're not going to degreese
+        // We checked that we're not going to decrease
         if (weAreDecreasing === false) {
           const entryBefore =
             this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
@@ -2961,7 +2966,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         } else {
           _val = _valChange;
         }
-
         if (this.brewComponent.timer.isTimerRunning() && prepDeviceConnected) {
           if (
             preparationDeviceType === PreparationDeviceType.XENIA &&
@@ -3885,7 +3889,11 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
 
     //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
-    const slicedTraceWeight = this.traces.weightTrace.y.slice(5);
+    /**
+     * Edit - we don't take the last 5 entries, we take the last 15 entries, even the slowest scale with 3 values, would mean 5 seconds
+     * But some scales need longer to tare, so 15 weights are a saftey threshold
+     */
+    const slicedTraceWeight = this.traces.weightTrace.y.slice(15);
     const valFound = slicedTraceWeight.find((v) => v >= grindWeight);
     if (valFound === undefined || valFound === null) {
       if (this.baristamode) {
@@ -3905,11 +3913,8 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
     const flowThreshold: number =
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow;
-    if (
-      this.traces.realtimeFlowTrace.y[
-        this.traces.realtimeFlowTrace.y.length - 1
-      ] <= flowThreshold
-    ) {
+    const slicedFlowTrace = this.traces.realtimeFlowTrace.y.slice(25);
+    if (slicedFlowTrace[slicedFlowTrace.length - 1] <= flowThreshold) {
       return true;
     } else {
       return false;
