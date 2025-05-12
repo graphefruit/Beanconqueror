@@ -30,7 +30,7 @@ export class PreparationPopoverActionsComponent implements OnInit {
 
   public ionViewDidEnter(): void {}
 
-  public ngOnInit() {
+  public async ngOnInit() {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const preparation: IPreparation = this.uiHelper.copyData(this.preparation);
 
@@ -46,7 +46,8 @@ export class PreparationPopoverActionsComponent implements OnInit {
         const device: SanremoYOUDevice =
           this.data.getConnectedDevice() as SanremoYOUDevice;
         try {
-          if (device.deviceConnected()) {
+          const deviceConnected = await device.deviceConnected();
+          if (deviceConnected) {
             this.isMachineConnected = true;
             device.isMachineTurnedOn().then((isTurnedOn) => {
               this.isMachineTurnedOn = isTurnedOn;
@@ -64,7 +65,8 @@ export class PreparationPopoverActionsComponent implements OnInit {
         const device: XeniaDevice =
           this.data.getConnectedDevice() as XeniaDevice;
         try {
-          if (device.deviceConnected()) {
+          const deviceConnected = await device.deviceConnected();
+          if (deviceConnected) {
             this.isMachineConnected = true;
             device.isMachineTurnedOn().then((isTurnedOn) => {
               this.isMachineTurnedOn = isTurnedOn;

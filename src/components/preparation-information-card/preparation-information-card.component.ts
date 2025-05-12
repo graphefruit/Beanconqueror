@@ -20,6 +20,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIHelper } from '../../services/uiHelper';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { PreparationDevice } from '../../classes/preparationDevice/preparationDevice';
 
 @Component({
   selector: 'preparation-information-card',
@@ -124,8 +125,8 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public async turnOnMachine() {
-    const device: SanremoYOUDevice =
-      this.preparation.getConnectedDevice() as SanremoYOUDevice;
+    const device: PreparationDevice =
+      this.preparation.getConnectedDevice() as PreparationDevice;
     const result = await device.turnOnMachine();
     if (result) {
       this.uiToast.showInfoToast(
@@ -139,8 +140,8 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public async turnOffMachine() {
-    const device: SanremoYOUDevice =
-      this.preparation.getConnectedDevice() as SanremoYOUDevice;
+    const device: PreparationDevice =
+      this.preparation.getConnectedDevice() as PreparationDevice;
 
     const result = await device.turnOffMachine();
     if (result) {

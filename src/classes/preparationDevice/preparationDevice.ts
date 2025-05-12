@@ -13,7 +13,10 @@ export class PreparationDevice {
   protected pressure: number;
   protected deviceTemperature: number;
 
-  constructor(protected _http: HttpClient, _preparation: Preparation) {
+  constructor(
+    protected _http: HttpClient,
+    _preparation: Preparation,
+  ) {
     this.blueToothParentlogger = new Logger();
     this.preparation = _preparation;
     this.http = _http;
@@ -25,5 +28,11 @@ export class PreparationDevice {
 
   public async deviceConnected(): Promise<boolean> {
     return null;
+  }
+  public async turnOnMachine() {
+    return false;
+  }
+  public async turnOffMachine() {
+    return false;
   }
 }
