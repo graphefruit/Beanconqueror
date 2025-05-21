@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center ion-margin-top">{{"IMPORT_AUTOMATIC_BACKUP_FILE" | translate}}</ion-title>
+  </ion-toolbar>
+
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+
+      <ng-container *ngIf='foundBackupFiles.length <=0'>
+        <h2>{{'NO_AUTOMATIC_BACKUPS_FOUND' |translate}}</h2>
+        <p>{{'NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION' |translate}}</p>
+      </ng-container>
+
+
+  <ion-radio-group [(ngModel)]="importChoosenURI">
+
+  <ion-item *ngFor="let file of foundBackupFiles">
+    <ion-radio [value]="file.uri" slot="start"></ion-radio>
+    <ion-label>
+      <h2>{{ file.name }}</h2>
+      <p>{{ this.uiHelper.toFixedIfNecessary((file.size / 1024)/1024,2) }}Mb - {{ file.ctime | formatDate:[settings?.date_format]}}</p>
+    </ion-label>
+  </ion-item>
+  </ion-radio-group>
+    </ion-card-content>
+  </ion-card>
+
+
+</ion-content>
+
+<ion-footer class="ion-no-border">
+
+  <ion-row class="ion-padding-top">
+    <ion-col size="6">
+      <ion-button (click)="close()" fill="outline" color="accent" expand="block" tappable>{{"CLOSE" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="finish()" [disabled]='importChoosenURI === ""' color="accent" expand="block" tappable>{{"IMPORT" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+
+
+</ion-footer>

@@ -81,6 +81,7 @@ import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 
 @Component({
   selector: 'settings',
@@ -774,6 +775,40 @@ export class SettingsPage {
         // ignore
       }
       await this.uiAlert.hideLoadingSpinner();
+    }
+  }
+
+  public async findAndImportAutomaticBackupFile() {
+    const modal = await this.modalCtrl.create({
+      component: SettingsChooseAutomaticBackupToImportComponent,
+      id: SettingsChooseAutomaticBackupToImportComponent.POPOVER_ID,
+      componentProps: {},
+    });
+    await modal.present();
+    const modalData = await modal.onWillDismiss();
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.choosenURI !== ''
+    ) {
+      const path = modalData.data.choosenURI;
+      // path/uri post-processing
+      let directoryUri = path.substring(0, path.lastIndexOf('/'));
+      if (this.platform.is('android')) {
+        // Until we package the additional files into the ZIP file, we just have
+        // to always import from the external storage directory,
+        // i.e. /sdcard/Android/com.beanconqueror.app/files/
+        //
+        // As an alternative, importFromDirectoryAndroid can be used, which
+        // uses SAF to get all the other files as well.
+        const result = await Filesystem.getUri({
+          path: 'Download/Beanconqueror_export/',
+          directory: Directory.External,
+        });
+        directoryUri = result.uri;
+      }
+
+      await this.doImport('zip', path, directoryUri);
     }
   }
 

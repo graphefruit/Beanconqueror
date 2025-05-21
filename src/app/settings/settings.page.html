@@ -66,6 +66,13 @@
             </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
+          <ion-item (click)="findAndImportAutomaticBackupFile()" button tappable>
+            <ion-label>
+              <h2>{{"FIND_AUTOMATIC_BACKUP_FILES" | translate}}</h2>
+              <p>{{"FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION" | translate}}</p>
+            </ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
           <ion-item *ngIf="doWeHaveBrewByWeights('xenia')" (click)="exportBrewByWeight('xenia')"  button tappable>
             <ion-label>Temp: Export Brew By Weight - Xenia</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>

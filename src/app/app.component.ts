@@ -397,10 +397,14 @@ export class AppComponent implements AfterViewInit {
       await this._translate.use('en').toPromise();
 
       await SplashScreen.hide();
-
       if (this.platform.is('capacitor')) {
         try {
-          await this.uiExportImportHelper.checkBackup();
+          await new Promise(async (resolve, _reject) => {
+            setTimeout(async () => {
+              await this.uiExportImportHelper.checkBackup();
+              resolve(undefined);
+            }, 2000);
+          });
         } catch (ex) {}
         if (this.uiAlert.isLoadingSpinnerShown()) {
           this.uiAlert.hideLoadingSpinner();
@@ -1140,7 +1144,6 @@ export class AppComponent implements AfterViewInit {
   public openDonatePage() {}
 
   public async initialDataTrackings() {
-    debugger;
     const settings = this.uiSettingsStorage.getSettings();
     if (settings.matomo_analytics === true) {
       try {

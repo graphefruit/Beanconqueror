@@ -1494,5 +1494,10 @@
   "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": "Machine could not be turned on",
   "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Machine could not be turned off",
   "FREEZE_BEAN": "Freeze bean",
-  "BEAN_HAS_BEEN_FROZEN": "Bean has been frozen"
+  "BEAN_HAS_BEEN_FROZEN": "Bean has been frozen",
+  "FIND_AUTOMATIC_BACKUP_FILES": "Find and import an automatic backup file",
+  "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Search through the internal device storage for automatic backup files, choose one and import it",
+  "NO_AUTOMATIC_BACKUPS_FOUND": "No automatic backups found",
+  "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "If you suffered a data loss, and you didn't find any data here, please use the official support ways on https://beanconqueror.com/contact/",
+  "IMPORT_AUTOMATIC_BACKUP_FILE": "Import automatic backup file"
 }

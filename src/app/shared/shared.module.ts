@@ -179,6 +179,7 @@ import { BrewModalImportShotGaggiuinoComponent } from '../brew/brew-modal-import
 import { BaristamodePage } from '../baristamode/baristamode.page';
 import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { BaristaPage } from '../baristamode/barista/barista.page';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 
 @NgModule({
   declarations: [
@@ -223,6 +224,7 @@ import { BaristaPage } from '../baristamode/barista/barista.page';
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    SettingsChooseAutomaticBackupToImportComponent,
     MeticulousHelpPopoverComponent,
     PleaseActivateAnalyticsPopoverComponent,
     DataCorruptionFoundComponent,
@@ -423,6 +425,7 @@ import { BaristaPage } from '../baristamode/barista/barista.page';
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    SettingsChooseAutomaticBackupToImportComponent,
     MeticulousHelpPopoverComponent,
     PleaseActivateAnalyticsPopoverComponent,
     DataCorruptionFoundComponent,
