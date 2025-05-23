@@ -1169,7 +1169,6 @@ export class AppComponent implements AfterViewInit {
         const preparations: Array<Preparation> =
           this.uiPreparationStorage.getAllEntries();
         for (let preparation of preparations) {
-          console.log(preparation.name);
           this.uiAnalytics.trackContentImpression(
             TrackContentImpression.STATISTICS_PREPARATION_NAME,
             preparation.name,

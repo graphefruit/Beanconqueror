@@ -118,7 +118,6 @@ export class MeticulousDevice extends PreparationDevice {
         .toPromise()
         .then(
           (data: any) => {
-            console.log(data);
             if (data && data.history) {
               resolve(data.history);
             }

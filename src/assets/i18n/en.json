@@ -1453,20 +1453,32 @@
     "SAVE_NOW": "Save now",
     "SAVING_BREW_COUNTDOWN": "Saving brew in {{time}}",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.2.0": {
-            "TITLE": "Version 8.2.0: What's new",
+        "8.3.0": {
+            "TITLE": "Version 8.3.0: What's new",
             "DESCRIPTION": [
-                "<b>Preparations<\/b>",
-                "Supporting connection to Gaggiuino and shot importing",
-                "",
                 "<b>Brews<\/b>",
-                "Brews can now be filtered with the used water",
+                "Choose in settings which photo to display: bean, brew, or preparation",
+                "The water flow peak rate is now shown in the brew detail view",
+                "Resolved an issue caused by a slow taring speed on Varia scales, when starting with pressure-threshold",
+                "",
+                "<b>Beans<\/b>",
+                "Frozen beans are now selected automatically when no unfrozen beans are available",
+                "You can now freeze an entire bean from the action menu, as well as copy attachments to portions",
+                "It is now possible to copy the frozen ID via the action popup",
+                "Edit your bean directly from the detail view",
+                "Automatic bean rating is now calculated once all brews are completed - Thanks to danielzsandberg",
+                "",
+                "<b>Preparations<\/b>",
+                "You can now turn the Xenia machine on or off",
+                "",
+                "<b>DiFluid R2-Refractometer<\/b>",
+                "Whole rework - Thanks to AV-IO",
                 "",
                 "<b>Settings<\/b>",
-                "Stop brew with predefined pressure threshold - Activate in the settings",
+                "Option to disable the connect/disconnect popup for Bluetooth devices",
                 "",
                 "<b>Other<\/b>",
-                "Small fixes"
+                "Minor fixes"
             ]
         }
     },
