@@ -399,12 +399,7 @@ export class AppComponent implements AfterViewInit {
       await SplashScreen.hide();
       if (this.platform.is('capacitor')) {
         try {
-          await new Promise(async (resolve, _reject) => {
-            setTimeout(async () => {
-              await this.uiExportImportHelper.checkBackup();
-              resolve(undefined);
-            }, 2000);
-          });
+          await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}
         if (this.uiAlert.isLoadingSpinnerShown()) {
           this.uiAlert.hideLoadingSpinner();

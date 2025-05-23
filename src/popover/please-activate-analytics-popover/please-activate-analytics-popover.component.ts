@@ -6,6 +6,7 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import moment from 'moment/moment';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIAlert } from '../../services/uiAlert';
 
 @Component({
   selector: 'app-please-activate-analytics-popover',
@@ -28,6 +29,7 @@ export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiAlert: UIAlert,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.beansCount = this.uiBeanStorage.getAllEntries().length;
@@ -55,18 +57,22 @@ export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
   }
 
   public async dontActivateAnalytics() {
+    await this.uiAlert.showLoadingSpinner();
     this.settings.matomo_analytics = false;
     this.uiAnalytics.disableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
+    this.uiAlert.hideLoadingSpinner();
     this.finish();
   }
 
   public async understoodAnalytics() {
+    await this.uiAlert.showLoadingSpinner();
     await this.uiAnalytics.enableTracking();
     /**Enable link tracking will generate a new tracking id, thats why we need to get the settings here again and set the matomo analtics to true**/
     const tmpSettings = this.uiSettingsStorage.getSettings();
     tmpSettings.matomo_analytics = true;
     await this.uiSettingsStorage.saveSettings(tmpSettings);
+    this.uiAlert.hideLoadingSpinner();
     this.finish();
   }
 
