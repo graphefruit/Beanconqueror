@@ -77,6 +77,7 @@ import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { Bean } from '../../../classes/bean/bean';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
+import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 
 declare var cordova;
 
@@ -179,6 +180,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiLog: UILog,
     private readonly eventQueue: EventQueueService,
     private readonly hapticService: HapticService,
+    private readonly textToSpeech: TextToSpeechService,
   ) {}
 
   public openURL(_url) {
@@ -508,18 +510,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.brewBrewingGraphEl.setFirstDripFromMachine();
   }
 
+  private speakCurrentScaleWeight(_value: number) {
+    if (this.settings.text_to_speech_active) {
+      this.textToSpeech.speak(
+        this.translate.instant('BREW_FLOW_WEIGHT') + ' ' + _value.toString(),
+        true,
+      );
+    }
+  }
+
   public bluetoothScaleSetGrindWeight() {
     this.data.grind_weight = this.getActualBluetoothWeight();
+    this.speakCurrentScaleWeight(this.data.grind_weight);
     this.checkChanges();
   }
 
   public bluetoothScaleSetBeanWeightIn() {
     this.data.bean_weight_in = this.getActualBluetoothWeight();
+    this.speakCurrentScaleWeight(this.data.bean_weight_in);
     this.checkChanges();
   }
 
   public bluetoothScaleSetBrewQuantityWeight() {
     this.data.brew_quantity = this.getActualBluetoothWeight();
+    this.speakCurrentScaleWeight(this.data.brew_quantity);
     this.checkChanges();
   }
 
