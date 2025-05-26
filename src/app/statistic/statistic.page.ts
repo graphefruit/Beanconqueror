@@ -86,6 +86,20 @@ export class StatisticPage implements OnInit {
 
   public ngOnInit() {}
 
+  private __whiteColor = '#fff';
+  private __coffeeColor = 'rgb(159,140,111)';
+  private __coffeeBgColor = 'rgb(205,194,172)';
+  private __baseGradientColors = ['#CDC2AC', '#607D8B', '#BF658F', '#E0A29A'];
+
+  private __getGradientArray(length: number): string[] {
+    const gradient = new Gradient();
+
+    gradient.setGradient(...this.__baseGradientColors);
+    gradient.setMidpoint(length);
+
+    return gradient.getArray() as string[];
+  }
+
   private __getBrewsSortedForMonth(): Array<BrewView> {
     const brewViews: Array<BrewView> = [];
     const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
@@ -206,16 +220,7 @@ export class StatisticPage implements OnInit {
       }
     }
 
-    const colorGradient = new Gradient();
-    const color1 = '#CDC2AC';
-    const color2 = '#607D8B';
-    const color3 = '#BF658F';
-    const color4 = '#E0A29A';
-
-    colorGradient.setMidpoint(datasets.length);
-    colorGradient.setGradient(color1, color2, color3, color4);
-
-    const colorArray = colorGradient.getArray();
+    const colorArray = this.__getGradientArray(datasets.length);
     for (let i = 0; i < datasets.length; i++) {
       const prepObj: any = {
         label: datasets[i].LABEL,
@@ -290,16 +295,7 @@ export class StatisticPage implements OnInit {
       }
     }
 
-    const colorGradient = new Gradient();
-    const color1 = '#CDC2AC';
-    const color2 = '#607D8B';
-    const color3 = '#BF658F';
-    const color4 = '#E0A29A';
-
-    colorGradient.setMidpoint(datasets.length);
-    colorGradient.setGradient(color1, color2, color3, color4);
-
-    const colorArray = colorGradient.getArray();
+    const colorArray = this.__getGradientArray(datasets.length);
     for (let i = 0; i < datasets.length; i++) {
       const prepObj: any = {
         label: datasets[i].LABEL,
@@ -346,8 +342,8 @@ export class StatisticPage implements OnInit {
             this.translate.instant('PAGE_STATISTICS_DRUNKEN_QUANTITY') +
             ' (kg/l)',
           data: [],
-          borderColor: 'rgb(159,140,111)',
-          backgroundColor: 'rgb(205,194,172)',
+          borderColor: this.__coffeeColor,
+          backgroundColor: this.__coffeeBgColor,
         },
       ],
     };
@@ -392,8 +388,8 @@ export class StatisticPage implements OnInit {
         {
           label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
           data: [],
-          borderColor: 'rgb(159,140,111)',
-          backgroundColor: 'rgb(205,194,172)',
+          borderColor: this.__coffeeColor,
+          backgroundColor: this.__coffeeBgColor,
         },
       ],
     };
@@ -428,8 +424,8 @@ export class StatisticPage implements OnInit {
         {
           label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
           data: [],
-          borderColor: 'rgb(159,140,111)',
-          backgroundColor: 'rgb(205,194,172)',
+          borderColor: this.__coffeeColor,
+          backgroundColor: this.__coffeeBgColor,
         },
       ],
     };
@@ -465,8 +461,8 @@ export class StatisticPage implements OnInit {
         {
           label: this.translate.instant('PAGE_STATISTICS_BEAN_WEIGHT_USED'),
           data: [],
-          borderColor: 'rgb(159,140,111)',
-          backgroundColor: 'rgb(205,194,172)',
+          borderColor: this.__coffeeColor,
+          backgroundColor: this.__coffeeBgColor,
         },
       ],
     };
@@ -517,22 +513,14 @@ export class StatisticPage implements OnInit {
       datasets: [
         {
           data: Object.values(countedCountries),
-          backgroundColor: [],
-          borderColor: '#fff',
+          backgroundColor: this.__getGradientArray(
+            Object.values(countedCountries).length,
+          ),
+          borderColor: this.__whiteColor,
         },
       ],
       labels: Object.keys(countedCountries),
     };
-
-    const colorGradient = new Gradient();
-    const color1 = '#CDC2AC';
-    const color2 = '#607D8B';
-    const color3 = '#BF658F';
-    const color4 = '#E0A29A';
-
-    colorGradient.setMidpoint(data.labels.length);
-    colorGradient.setGradient(color1, color2, color3, color4);
-    data.datasets[0].backgroundColor = colorGradient.getArray();
 
     const options = {
       legend: {
@@ -559,7 +547,7 @@ export class StatisticPage implements OnInit {
         data: [],
         labels: [],
         backgroundColor: [],
-        borderColor: '#fff',
+        borderColor: this.__whiteColor,
       },
     ];
     const labels: Array<string> = [];
@@ -573,16 +561,7 @@ export class StatisticPage implements OnInit {
       labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
     }
 
-    const colorGradient = new Gradient();
-    const color1 = '#CDC2AC';
-    const color2 = '#607D8B';
-    const color3 = '#BF658F';
-    const color4 = '#E0A29A';
-
-    colorGradient.setMidpoint(data[0].labels.length);
-
-    colorGradient.setGradient(color1, color2, color3, color4);
-    data[0].backgroundColor = colorGradient.getArray();
+    data[0].backgroundColor = this.__getGradientArray(data[0].labels.length);
 
     const drinkingData = {
       labels: labels,
