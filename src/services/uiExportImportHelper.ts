@@ -279,6 +279,7 @@ export class UIExportImportHelper {
           this.uiLog.log(
             "checkBackupAndSeeIfDataAreCorrupted - We didn't find any data, so import the backup file directly.",
           );
+          importBackup = true;
         } else {
           const dataObj = actualUIStorageDataObj?.DATA;
           let somethingCorrupted = false;
