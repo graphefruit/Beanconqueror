@@ -294,6 +294,7 @@ export class UIExportImportHelper {
               somethingCorrupted = true;
             }
           } else {
+            //We got no data object, so we assume that the data is corrupted, and its likely to be now and automatic backup, else the first if would be jumped
             somethingCorrupted = true;
           }
 
