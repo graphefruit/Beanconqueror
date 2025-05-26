@@ -2437,7 +2437,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             true,
           );
         }
-      }, 4000);
+      }, 5000);
     }
   }
 
