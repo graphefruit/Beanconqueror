@@ -145,6 +145,14 @@
           <canvas #beansByCountryChart></canvas>
         </ion-card-content>
       </ion-card>
+      <ion-card>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEANS_BY_PROCESSING" | translate}}
+        </ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #beansByProcessingChart></canvas>
+        </ion-card-content>
+      </ion-card>
     </div>
     <div *ngSwitchCase="'PREPARATIONS'">
       <ion-card>

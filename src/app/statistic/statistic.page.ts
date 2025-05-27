@@ -36,6 +36,8 @@ export class StatisticPage implements OnInit {
   public grinderUsageTimelineChart;
   @ViewChild('beansByCountryChart', { static: false })
   public beansByCountryChart;
+  @ViewChild('beansByProcessingChart', { static: false })
+  public beansByProcessingChart;
 
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
@@ -67,6 +69,7 @@ export class StatisticPage implements OnInit {
   public loadBeanCharts() {
     setTimeout(() => {
       this.__loadBeansByCountryChart();
+      this.__loadBeansByProcessing();
     }, 250);
   }
 
@@ -530,6 +533,46 @@ export class StatisticPage implements OnInit {
     };
 
     new Chart(this.beansByCountryChart.nativeElement, {
+      type: 'pie',
+      data,
+      options,
+    } as any);
+  }
+
+  private __loadBeansByProcessing(): void {
+    const brewView = this.uiBrewStorage.getAllEntries();
+    const usedBeans = this.__getBeansFromBrews(brewView);
+    const allProcessing: string[] = usedBeans.map(
+      (bean) =>
+        bean.bean_information
+          .map((beanInfo) => beanInfo.processing)
+          .sort((a, b) => a.localeCompare(b))
+          .join(' + ')
+          .replace(/^$/, 'No processing method'), // TODO: Use translatable const
+    );
+    const countedProcessing: Record<string, number> = countBy(allProcessing);
+
+    const data = {
+      datasets: [
+        {
+          data: Object.values(countedProcessing),
+          backgroundColor: this.__getGradientArray(
+            Object.values(countedProcessing).length,
+          ),
+          borderColor: this.__whiteColor,
+        },
+      ],
+      labels: Object.keys(countedProcessing),
+    };
+
+    const options = {
+      legend: {
+        display: true,
+        position: 'top',
+      },
+    };
+
+    new Chart(this.beansByProcessingChart.nativeElement, {
       type: 'pie',
       data,
       options,
