@@ -38,6 +38,8 @@ export class StatisticPage implements OnInit {
   public beansByCountryChart;
   @ViewChild('beansByProcessingChart', { static: false })
   public beansByProcessingChart;
+  @ViewChild('beansByRoasterChart', { static: false })
+  public beansByRoasterChart;
 
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
@@ -70,6 +72,7 @@ export class StatisticPage implements OnInit {
     setTimeout(() => {
       this.__loadBeansByCountryChart();
       this.__loadBeansByProcessing();
+      this.__loadBeansByRoaster();
     }, 250);
   }
 
@@ -573,6 +576,41 @@ export class StatisticPage implements OnInit {
     };
 
     new Chart(this.beansByProcessingChart.nativeElement, {
+      type: 'pie',
+      data,
+      options,
+    } as any);
+  }
+
+  private __loadBeansByRoaster(): void {
+    const brewView = this.uiBrewStorage.getAllEntries();
+    const usedBeans = this.__getBeansFromBrews(brewView);
+    const allRoasters: string[] = usedBeans.map((bean) =>
+      bean.roaster.replace(/^$/, 'No roaster method'),
+    ); // TODO: Use translatable const
+    const countedRoasters: Record<string, number> = countBy(allRoasters);
+
+    const data = {
+      datasets: [
+        {
+          data: Object.values(countedRoasters),
+          backgroundColor: this.__getGradientArray(
+            Object.values(countedRoasters).length,
+          ),
+          borderColor: this.__whiteColor,
+        },
+      ],
+      labels: Object.keys(countedRoasters),
+    };
+
+    const options = {
+      legend: {
+        display: true,
+        position: 'top',
+      },
+    };
+
+    new Chart(this.beansByRoasterChart.nativeElement, {
       type: 'pie',
       data,
       options,
