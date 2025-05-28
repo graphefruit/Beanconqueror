@@ -13,6 +13,10 @@ import Gradient from 'javascript-color-gradient';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { Bean } from '../../classes/bean/bean';
+import { countBy } from 'lodash';
+
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
@@ -30,12 +34,15 @@ export class StatisticPage implements OnInit {
   public preparationUsageTimelineChart;
   @ViewChild('grinderUsageTimelineChart', { static: false })
   public grinderUsageTimelineChart;
+  @ViewChild('beansByCountryChart', { static: false })
+  public beansByCountryChart;
 
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
   constructor(
     public uiStatistic: UIStatistic,
     private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiMillStorage: UIMillStorage,
@@ -57,7 +64,11 @@ export class StatisticPage implements OnInit {
     }, 250);
   }
 
-  public loadBeanCharts() {}
+  public loadBeanCharts() {
+    setTimeout(() => {
+      this.__loadBeansByCountryChart();
+    }, 250);
+  }
 
   public loadPreparationCharts() {
     setTimeout(() => {
@@ -483,6 +494,60 @@ export class StatisticPage implements OnInit {
       options: chartOptions,
     } as any);
   }
+
+  private __getBeansFromBrews(brews: Brew[]): Bean[] {
+    return brews.map((brew) => this.uiBeanStorage.getByUUID(brew.bean) as Bean);
+  }
+
+  private __loadBeansByCountryChart(): void {
+    const brewView = this.uiBrewStorage.getAllEntries();
+    const usedBeans = this.__getBeansFromBrews(brewView);
+    const allCountriesByBrews: string[] = usedBeans.map(
+      (bean) =>
+        bean.bean_information
+          .map((beanInfo) => beanInfo.country)
+          .sort((a, b) => a.localeCompare(b))
+          .join(' + ')
+          .replace(/^$/, 'No country'), // TODO: Use translatable const
+    );
+    const countedCountries: Record<string, number> =
+      countBy(allCountriesByBrews);
+
+    const data = {
+      datasets: [
+        {
+          data: Object.values(countedCountries),
+          backgroundColor: [],
+          borderColor: '#fff',
+        },
+      ],
+      labels: Object.keys(countedCountries),
+    };
+
+    const colorGradient = new Gradient();
+    const color1 = '#CDC2AC';
+    const color2 = '#607D8B';
+    const color3 = '#BF658F';
+    const color4 = '#E0A29A';
+
+    colorGradient.setMidpoint(data.labels.length);
+    colorGradient.setGradient(color1, color2, color3, color4);
+    data.datasets[0].backgroundColor = colorGradient.getArray();
+
+    const options = {
+      legend: {
+        display: true,
+        position: 'top',
+      },
+    };
+
+    new Chart(this.beansByCountryChart.nativeElement, {
+      type: 'pie',
+      data,
+      options,
+    } as any);
+  }
+
   private __loadPreparationUsageChart(): void {
     const brewView: Array<Brew> = this.uiBrewStorage.getAllEntries();
     const preparationMethodIds: Array<string> = Array.from(

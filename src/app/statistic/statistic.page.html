@@ -18,7 +18,7 @@
       <ion-label>{{"STATISTIC_TAB_BREWS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="false" value="BEANS" (click)="loadBeanCharts()">
+    <ion-segment-button value="BEANS" (click)="loadBeanCharts()">
       <ion-label>{{"STATISTIC_TAB_BEANS" | translate }}
       </ion-label>
     </ion-segment-button>
@@ -137,6 +137,14 @@
       </ion-card>
     </div>
     <div *ngSwitchCase="'BEANS'">
+      <ion-card>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEANS_BY_COUNTRY" | translate}}
+        </ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #beansByCountryChart></canvas>
+        </ion-card-content>
+      </ion-card>
     </div>
     <div *ngSwitchCase="'PREPARATIONS'">
       <ion-card>
