@@ -40,6 +40,8 @@ export class StatisticPage implements OnInit {
   public beansByProcessingChart;
   @ViewChild('beansByRoasterChart', { static: false })
   public beansByRoasterChart;
+  @ViewChild('avgRatingByCountryChart', { static: false })
+  public avgRatingByCountryChart;
 
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
@@ -73,6 +75,7 @@ export class StatisticPage implements OnInit {
       this.__loadBeansByCountryChart();
       this.__loadBeansByProcessing();
       this.__loadBeansByRoaster();
+      this.__loadAvgRatingByOriginChart();
     }, 250);
   }
 
@@ -612,6 +615,112 @@ export class StatisticPage implements OnInit {
 
     new Chart(this.beansByRoasterChart.nativeElement, {
       type: 'pie',
+      data,
+      options,
+    } as any);
+  }
+
+  private __loadAvgRatingByOriginChart(): void {
+    const brewView = this.uiBrewStorage.getAllEntries();
+    const usedBeans = this.__getBeansFromBrews(brewView);
+    const sumOfRatings: Record<
+      string,
+      {
+        rating: number;
+        ratingCount: number;
+        favouriteRating: number;
+        favouriteRatingCount: number;
+        bestRating: number;
+        bestRatingCount: number;
+      }
+    > = {};
+
+    for (let i = 0; i < brewView.length; i++) {
+      const currentCountry = usedBeans[i].bean_information
+        .map((beanInfo) => beanInfo.country)
+        .sort((a, b) => a.localeCompare(b))
+        .join(' + ')
+        .replace(/^$/, 'No country');
+
+      if (!(currentCountry in sumOfRatings)) {
+        sumOfRatings[currentCountry] = {
+          rating: 0,
+          ratingCount: 0,
+          favouriteRating: 0,
+          favouriteRatingCount: 0,
+          bestRating: 0,
+          bestRatingCount: 0,
+        };
+      }
+
+      sumOfRatings[currentCountry].rating += brewView[i].rating;
+      sumOfRatings[currentCountry].ratingCount++;
+
+      if (brewView[i].favourite) {
+        sumOfRatings[currentCountry].favouriteRating += brewView[i].rating;
+        sumOfRatings[currentCountry].favouriteRatingCount++;
+      }
+
+      if (brewView[i].best_brew) {
+        sumOfRatings[currentCountry].bestRating += brewView[i].rating;
+        sumOfRatings[currentCountry].bestRatingCount++;
+      }
+    }
+
+    const avgRatingByCountry = {};
+    const avgFavouriteRatingByCountry = {};
+    const avgBestRatingByCountry = {};
+
+    Object.entries(sumOfRatings).forEach(([country, data]) => {
+      avgRatingByCountry[country] = data.ratingCount
+        ? data.rating / data.ratingCount
+        : null;
+      avgFavouriteRatingByCountry[country] = data.favouriteRatingCount
+        ? data.favouriteRating / data.favouriteRatingCount
+        : null;
+      avgBestRatingByCountry[country] = data.bestRatingCount
+        ? data.bestRatingCount / data.bestRatingCount
+        : null;
+    });
+
+    const gradient = this.__getGradientArray(3);
+
+    const data = {
+      datasets: [
+        {
+          data: Object.values(avgRatingByCountry),
+          backgroundColor: gradient[0] + '40',
+          borderColor: gradient[0],
+          pointBackgroundColor: gradient[0],
+          label: 'avg rating',
+        },
+        {
+          data: Object.values(avgFavouriteRatingByCountry),
+          backgroundColor: gradient[1] + '40',
+          borderColor: gradient[1],
+          pointBackgroundColor: gradient[1],
+          label: 'avg fav rating',
+        },
+        {
+          data: Object.values(avgBestRatingByCountry),
+          backgroundColor: gradient[2] + '40',
+          borderColor: gradient[2],
+          pointBackgroundColor: gradient[2],
+          label: 'avg best rating',
+        },
+      ],
+      labels: Object.keys(sumOfRatings),
+    };
+
+    const options = {
+      legend: {
+        display: true,
+        position: 'top',
+      },
+    };
+
+    new Chart(this.avgRatingByCountryChart.nativeElement, {
+      type: 'radar',
       data,
       options,
     } as any);
