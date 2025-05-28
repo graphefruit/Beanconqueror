@@ -36,3 +36,9 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 /android/app/release/
 
+.cursor/rules/
+.clinerules/
+.roo/
+.windsurf/
+.github/copilot-instructions.md
+
