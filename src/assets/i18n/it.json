@@ -215,7 +215,7 @@
     "PAGE_PREPARATION_INFORMATION_BREWED_QUANTITY": "Quantità preparata",
     "PAGE_PREPARATION_INFORMATION_GRIND_WEIGHT": "Peso del macinato usato",
     "PAGE_PREPARATION_INFORMATION_TIME_SPENT_BREWING": "Durata totale",
-    "PAGE_PREPARATION_INFORMATION": "",
+    "PAGE_PREPARATION_INFORMATION": "Informazioni sulla preparazione",
     "SECONDS": "secondi",
     "PAGE_MILL_INFORMATION": "",
     "PAGE_MILL_INFORMATION_BREWS_DONE": "Preparazioni per questo macinacaffè",
@@ -1031,8 +1031,8 @@
             "NONE": "Nessuno",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": "",
-            "GAGGIUINO": ""
+            "SANREMO_YOU": "Sanremo YOU",
+            "GAGGIUINO": "Gaggiuino"
         },
         "URL": "URL",
         "CHOOSE_DEVICE": "Scegli dispositivo",
@@ -1067,22 +1067,29 @@
             "SHOT_ENDED": "Estrazione terminata"
         },
         "TYPE_SANREMO_YOU": {
-            "TITLE": "",
-            "STOP_AT_WEIGHT": "",
-            "SELECT_MODE": "",
-            "MODE_LISTENING": "",
-            "MODE_CONTROL": "",
-            "MANUAL_CONTROLLING": "",
-            "PROFILE_P1_CONTROLLING": "",
-            "PROFILE_P2_CONTROLLING": "",
-            "PROFILE_P3_CONTROLLING": "",
-            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
-            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "",
-            "MODE_LISTENING_AND_CONTROLLING": ""
+            "TITLE": "Sanremo YOU",
+            "STOP_AT_WEIGHT": "Arresto al peso",
+            "SELECT_MODE": "Seleziona modalità",
+            "MODE_LISTENING": "Ascolto",
+            "MODE_CONTROL": "Controllo",
+            "MANUAL_CONTROLLING": "Controllo manuale",
+            "PROFILE_P1_CONTROLLING": "Controllo del profilo P1",
+            "PROFILE_P2_CONTROLLING": "Controllo del profilo P2",
+            "PROFILE_P3_CONTROLLING": "Controllo del profilo P3",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "Non hai definito un obiettivo di peso, il profilo verrà eseguito interamente",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "Non hai definito un obiettivo di peso, interrompi l'estrazione manualmente",
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Impossibile stabilire la connessione al dispositivo Sanremo YOU. Assicurati di essere sulla rete (LAN) corretta, di aver inserito l'indirizzo IP corretto, ecc.",
+            "MODE_LISTENING_AND_CONTROLLING": "Ascolto e controllo",
+            "SHOT_STARTED": "Estrazione iniziata",
+            "SHOT_ENDED": "Estrazione terminata",
+            "CONNECTION_LOST_PLEASE_RECONNECT": "Purtroppo la connessione con Sanremo YOU è persa, riprovare.",
+            "RECONNECT_NEEDED": "Riconnessione necessaria",
+            "RECONNECT": "Riconnetti",
+            "ENTER_TARGET_BREW_WEIGHT": "Inserisci il peso finale dell'estrazione",
+            "LAST_SHOT": "Ultimo caffè"
         },
         "TYPE_GAGGIUINO": {
-            "TITLE": ""
+            "TITLE": "Gaggiuino"
         }
     },
     "DEVICE_CONNECTION": "Connessione dispositivi",
@@ -1139,7 +1146,15 @@
             "BLUETOOTH": "Per trovare i rifrattometri, l'app deve avere accesso al Bluetooth."
         },
         "LOG": "Attiva i file di log per il rifrattometro",
-        "READ_END": "Test terminato - risultato ricevuto"
+        "READ_END": "Test terminato - risultato ricevuto",
+        "TEST_TYPE": "Tipo di test",
+        "TEST_TYPES": {
+            "SINGLE": "Singolo",
+            "AVERAGE": "Media"
+        },
+        "AUTO_TEST": "Auto Test",
+        "AUTO_TEST_DESCRIPTION": "Esegue automaticamente un test in loop quando viene rilevata una variazione di temperatura finchè non si stabilizza TDS o temperatura",
+        "TEST_NUMBER": "Numero di test"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Copiata negli appunti",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Impossibile copiare negli appunti",
@@ -1350,7 +1365,7 @@
     "OK": "Ok",
     "BEAN_SORT_BEAN_AGE": "Giorni dalla tostatura",
     "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Tutte le voci dell'excel, sono state importate, buona tostatura!",
-    "PREPARATION_TYPE_SANREMO_YOU": "",
+    "PREPARATION_TYPE_SANREMO_YOU": "Sanremo YOU",
     "PREPARATION_TYPE_XENIA": "Xenia",
     "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Si sta aggiungendo un caffè che contiene informazioni sulla varietà, ma questi parametri non sono attivi. Vuoi attivarla?",
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Imposta gli assi per il grafico della pressione",
@@ -1436,29 +1451,65 @@
     "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Salva automaticamente la preparazione nel tempo specificato. Questa azione verrà eseguita dopo aver messo in pausa la preparazione",
     "SAVE_NOW": "Salva ora",
     "SAVING_BREW_COUNTDOWN": "Salvataggio della preparazione tra {{time}}",
-    "UPDATE_TEXT_TITLE_TITLE": {
-      "8.2.0": {
-        "TITLE": "Version 8.2.0: What's new",
-        "DESCRIPTION": [
-          "<b>Preparations<\/b>",
-          "Supporting connection to Gaggiuino and shot importing",
-          "",
-          "<b>Brews<\/b>",
-          "Brews can now be filtered with the used water",
-          "",
-          "<b>Settings<\/b>",
-          "Stop brew with predefined pressure threshold - Activate in the settings",
-          "",
-          "<b>Other<\/b>",
-          "Small fixes"
-        ]
-      }
-    },
     "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
     "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
     "NAV_BARISTAMODE_SECTION": "Baristamode",
     "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
     "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
     "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
-    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible."
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible.",
+    "BEAN_DATA_AVERAGE_BREW_RATING": "Valutazione media della preparazione",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.3.0": {
+            "TITLE": "Versione 8.3.0: Novità",
+            "DESCRIPTION": [
+                "<b>Preparazioni<\/b>",
+                "Scegli nelle impostazioni quale foto visualizzare: caffè, infusione o preparazione",
+                "La velocità di picco del flusso d'acqua viene ora mostrata nel dettaglio della preparazione",
+                "Risolto un problema causato dalla taratura lenta delle bilance Varia, quando si inizia una preparazone con limite di pressione",
+                "",
+                "<b>Caffè<\/b>",
+                "I caffè congelati vengono ora selezionati automaticamente quando non sono disponibili non congelati",
+                "Ora puoi congelare un caffè dal menu delle azioni, anche copiando gli allegati nelle porzioni",
+                "Ora è possibile copiare l'ID del caffè congelato tramite il popup azione",
+                "Modifica il tuo caffè direttamente dal dettaglio",
+                "La valutazione automatica dei caffè viene ora calcolata una volta completate tutte le preparazioni - Grazie a danielzsandberg",
+                "",
+                "<b>Preparazioni<\/b>",
+                "Ora puoi accendere o spegnere la macchina Xenia",
+                "",
+                "<b> Rifrattometro DiFluid R2 <\/b>",
+                "Rielaborazione completa - Grazie ad AV-IO",
+                "",
+                "<b>Impostazioni<\/b>",
+                "Opzione per disabilitare il popup di connessione\/disconnessione dei dispositivi Bluetooth",
+                "",
+                "<b>Altro<\/b>",
+                "Correzioni di bug minori"
+            ]
+        }
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Scegli il tipo di immagine da visualizzare",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Preparazione",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Caffè",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": "Infusione",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "Informazioni di connessione dei dispositivi Bluetooth",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Visualizza le informazioni di connessione e disconnessione dei dispositivi Bluetooth.",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": "Qualità dell'immagine in %",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Dimensione massima dell'immagine in Megabyte",
+    "POPOVER_COPY_FROZEN_ID": "Copia ID caffè congelato",
+    "MACHINE_ACTIONS": "Azioni della macchina",
+    "MACHINE_POWER_ON": "Accendi",
+    "MACHINE_POWER_OFF": "Spegni",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": "La macchina si è accesa correttamente",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": "La macchina si è spenta correttamente",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": "Impossibile accendere la macchina",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Impossibile spegnere la macchina",
+    "FREEZE_BEAN": "Congela caffè",
+    "BEAN_HAS_BEEN_FROZEN": "Caffè congelato correttamente",
+    "FIND_AUTOMATIC_BACKUP_FILES": "Trova e importa un file di backup automatico",
+    "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Cerca nella memoria interna del dispositivo i file di backup automatici, scegline uno e importalo",
+    "NO_AUTOMATIC_BACKUPS_FOUND": "Nessun backup automatico trovato",
+    "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Se hai subito una perdita di dati e non hai trovato alcun dato qui, utilizza i metodi di backup ufficiali",
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Importazione del file di backup automatico"
 }

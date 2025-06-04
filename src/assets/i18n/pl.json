@@ -1031,8 +1031,8 @@
             "NONE": "Nic",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": "",
-            "GAGGIUINO": ""
+            "SANREMO_YOU": "Sanremo YOU",
+            "GAGGIUINO": "Gaggiuino"
         },
         "URL": "Adres URL",
         "CHOOSE_DEVICE": "Wybierz urządzenie",
@@ -1067,22 +1067,29 @@
             "SHOT_ENDED": "Strzał zakończony"
         },
         "TYPE_SANREMO_YOU": {
-            "TITLE": "",
-            "STOP_AT_WEIGHT": "",
-            "SELECT_MODE": "",
-            "MODE_LISTENING": "",
-            "MODE_CONTROL": "",
-            "MANUAL_CONTROLLING": "",
-            "PROFILE_P1_CONTROLLING": "",
-            "PROFILE_P2_CONTROLLING": "",
-            "PROFILE_P3_CONTROLLING": "",
-            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
-            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "",
-            "MODE_LISTENING_AND_CONTROLLING": ""
+            "TITLE": "Sanremo YOU Machine",
+            "STOP_AT_WEIGHT": "Zatrzymaj się na wadze",
+            "SELECT_MODE": "Wybierz tryb",
+            "MODE_LISTENING": "Słuchanie",
+            "MODE_CONTROL": "Kontrola",
+            "MANUAL_CONTROLLING": "Sterowanie ręczne",
+            "PROFILE_P1_CONTROLLING": "Profil P1 Control",
+            "PROFILE_P2_CONTROLLING": "Profil P2 Control",
+            "PROFILE_P3_CONTROLLING": "Profil P3 Control",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "Nie zdefiniowano wagi docelowej, wybrany profil zostanie w pełni wykonany",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "Nie zdefiniowałeś wagi docelowej, zatrzymaj ekstrakcję ręcznie",
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Nie można nawiązać połączenia z urządzeniem Sanremo YOU. Upewnij się, że jesteś we właściwej sieci (LAN), czy wprowadziłeś właściwy adres IP itp.",
+            "MODE_LISTENING_AND_CONTROLLING": "Słuchanie i kontrolowanie",
+            "SHOT_STARTED": "Strzał rozpoczęty",
+            "SHOT_ENDED": "Strzał zakończony",
+            "CONNECTION_LOST_PLEASE_RECONNECT": "Niestety połączenie z Sanremo YOU zostało utracone, prosimy o ponowne połączenie za pomocą przycisku.",
+            "RECONNECT_NEEDED": "Wymagane ponowne połączenie",
+            "RECONNECT": "Na nowo połączyć",
+            "ENTER_TARGET_BREW_WEIGHT": "Wprowadź docelową wagę naparu w gramach",
+            "LAST_SHOT": "Ostatni strzał"
         },
         "TYPE_GAGGIUINO": {
-            "TITLE": ""
+            "TITLE": "Maszyna Gaggiuino"
         }
     },
     "DEVICE_CONNECTION": "Połączenie urządzenia",
@@ -1139,7 +1146,15 @@
             "BLUETOOTH": "Aby znaleźć urządzenia refraktometryczne, aplikacja potrzebuje dostępu do Bluetooth"
         },
         "LOG": "Aktywacja plików dziennika dla refraktometru",
-        "READ_END": "Test zakończony – otrzymano wynik"
+        "READ_END": "Test zakończony – otrzymano wynik",
+        "TEST_TYPE": "Typ testu",
+        "TEST_TYPES": {
+            "SINGLE": "Pojedynczy",
+            "AVERAGE": "Średnia"
+        },
+        "AUTO_TEST": "Test automatyczny",
+        "AUTO_TEST_DESCRIPTION": "Automatycznie wykonuje test w pętli po wykryciu zmiany temperatury, aż do znalezienia stabilnej wartości TDS\/temperatury",
+        "TEST_NUMBER": "Liczba testów"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Dodano do schowka",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Nie można dodać do schowka",
@@ -1350,7 +1365,7 @@
     "OK": "Ok",
     "BEAN_SORT_BEAN_AGE": "Wiek ziarna",
     "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Wszystkie znalezione pozycje na liście excel, zostały przekształcone w nowe zielone ziarna, mają świetne pieczenie!",
-    "PREPARATION_TYPE_SANREMO_YOU": "",
+    "PREPARATION_TYPE_SANREMO_YOU": "Sanremo YOU",
     "PREPARATION_TYPE_XENIA": "Xenia",
     "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Dodajesz ziarno, które zawiera informacje o odmianie, ale te parametry nie są aktywowane. Czy chcesz je teraz aktywować?",
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Zdefiniuj osie wykresu ciśnienia",
@@ -1436,29 +1451,65 @@
     "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Automatyczne zapisanie naparu po upływie określonego czasu. Ta czynność zostanie wykonana po wstrzymaniu timera parzenia",
     "SAVE_NOW": "Zapisz teraz",
     "SAVING_BREW_COUNTDOWN": "Zapisywanie naparu w {{time}}",
-    "UPDATE_TEXT_TITLE_TITLE": {
-      "8.2.0": {
-        "TITLE": "Version 8.2.0: What's new",
-        "DESCRIPTION": [
-          "<b>Preparations<\/b>",
-          "Supporting connection to Gaggiuino and shot importing",
-          "",
-          "<b>Brews<\/b>",
-          "Brews can now be filtered with the used water",
-          "",
-          "<b>Settings<\/b>",
-          "Stop brew with predefined pressure threshold - Activate in the settings",
-          "",
-          "<b>Other<\/b>",
-          "Small fixes"
-        ]
-      }
-    },
     "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
     "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
     "NAV_BARISTAMODE_SECTION": "Baristamode",
     "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
     "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
     "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
-    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible."
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible.",
+    "BEAN_DATA_AVERAGE_BREW_RATING": "Średnia ocena naparu",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.3.0": {
+            "TITLE": "Wersja 8.3.0: Co nowego",
+            "DESCRIPTION": [
+                "<b>Napary<\/b>",
+                "Wybierz w ustawieniach, które zdjęcie ma być wyświetlane: ziarna kawy, naparu lub przygotowania",
+                "Szczytowe natężenie przepływu wody jest teraz wyświetlane w widoku szczegółów naparu",
+                "Rozwiązano problem powodujący niską prędkość tarowania na wagach Varia podczas uruchamiania z progiem nacisku",
+                "",
+                "<b>Ziarna<\/b>",
+                "Mrożone ziarna są teraz wybierane automatycznie, gdy nie są dostępne niezamrożone ziarna",
+                "Możesz teraz zamrozić całą fasolę z menu akcji, a także skopiować załączniki do porcji",
+                "Możliwe jest teraz skopiowanie zamrożonego identyfikatora za pomocą wyskakującego okienka akcji",
+                "Edytuj ziarno bezpośrednio z widoku szczegółów",
+                "Automatyczna ocena ziaren jest teraz obliczana po zakończeniu wszystkich warzeń - podziękowania dla danielzsandberg",
+                "",
+                "<b>Przygotowania<\/b>",
+                "Teraz można włączyć lub wyłączyć urządzenie Xenia",
+                "",
+                "<b>Refraktometr DiFluid R2<\/b>",
+                "Cała przeróbka - podziękowania dla AV-IO",
+                "",
+                "<b>Ustawienia<\/b>",
+                "Opcja wyłączenia wyskakującego okienka połączenia\/rozłączenia dla urządzeń Bluetooth",
+                "",
+                "<b>Inne<\/b>",
+                "Drobne poprawki"
+            ]
+        }
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Wybierz typ obrazu wyświetlającego napar",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Przygotowanie",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Ziarno",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": "Napar",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "Informacje o połączeniu z urządzeniem Bluetooth",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Wyświetla informacje o podłączaniu i odłączaniu urządzeń Bluetooth.",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": "Jakość obrazu w procentach",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Maksymalny rozmiar obrazu w megabajtach",
+    "POPOVER_COPY_FROZEN_ID": "Kopiowanie zamrożonego identyfikatora",
+    "MACHINE_ACTIONS": "Działania maszyny",
+    "MACHINE_POWER_ON": "Zasilanie włączone",
+    "MACHINE_POWER_OFF": "Wyłączenie zasilania",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": "Maszyna włączyła się pomyślnie",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": "Maszyna została pomyślnie wyłączona",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": "Nie można włączyć urządzenia",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Nie można wyłączyć urządzenia",
+    "FREEZE_BEAN": "Zamroź ziarno",
+    "BEAN_HAS_BEEN_FROZEN": "Ziarno zostało zamrożone",
+    "FIND_AUTOMATIC_BACKUP_FILES": "Znajdź i zaimportuj plik automatycznej kopii zapasowej",
+    "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Przeszukaj pamięć wewnętrzną urządzenia w poszukiwaniu plików automatycznych kopii zapasowych, wybierz jeden z nich i zaimportuj go",
+    "NO_AUTOMATIC_BACKUPS_FOUND": "Nie znaleziono automatycznych kopii zapasowych",
+    "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Jeśli utraciłeś dane i nie znalazłeś tutaj żadnych danych, skorzystaj z oficjalnych sposobów wsparcia",
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Importuj plik automatycznej kopii zapasowej"
 }
