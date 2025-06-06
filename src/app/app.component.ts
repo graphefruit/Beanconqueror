@@ -1150,6 +1150,15 @@ export class AppComponent implements AfterViewInit {
               TrackContentImpression.STATISTICS_ROASTER_NAME,
               bean.roaster,
             );
+            this.uiAnalytics.trackContentImpression(
+              TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+              bean.roaster + ' | ' + bean.name,
+            );
+          } else {
+            this.uiAnalytics.trackContentImpression(
+              TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+              ' | ' + bean.name,
+            );
           }
         }
         const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
