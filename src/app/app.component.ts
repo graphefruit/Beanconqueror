@@ -1140,7 +1140,10 @@ export class AppComponent implements AfterViewInit {
 
   public async initialDataTrackings() {
     const settings = this.uiSettingsStorage.getSettings();
-    if (settings.matomo_analytics === true) {
+    if (
+      settings.matomo_analytics === true &&
+      settings.matomo_initial_data_tracked === false
+    ) {
       try {
         await this.uiAlert.showLoadingSpinner();
         const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
