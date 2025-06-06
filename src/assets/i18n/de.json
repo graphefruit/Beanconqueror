@@ -1079,7 +1079,14 @@
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "Du hast kein Zielgewicht festgelegt, das gewählte Profil wird vollständig ausgeführt.",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "Du hast kein Zielgewicht festgelegt, bitte stoppe die Extraktion manuell.",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Sanremo YOU Maschine konnte nicht hergestellt werden. Bitte stelle sicher, dass du im richtigen Netzwerk (LAN) bist, die richtige IP-Adresse eingegeben hast, usw.",
-            "MODE_LISTENING_AND_CONTROLLING": ""
+            "MODE_LISTENING_AND_CONTROLLING": "Zuhören und Steuern",
+            "SHOT_STARTED": "Bezug gestartet",
+            "SHOT_ENDED": "Bezug beendet",
+            "CONNECTION_LOST_PLEASE_RECONNECT": "Leider ist die Verbindung zur Sanremo YOU verloren gegangen, bitte stelle die Verbindung mit dem Button wieder her.",
+            "RECONNECT_NEEDED": "Erneute Verbindung erforderlich",
+            "RECONNECT": "Erneut verbinden",
+            "ENTER_TARGET_BREW_WEIGHT": "Gebe das gewünschte Brühgewicht in Gramm ein",
+            "LAST_SHOT": "Letzte Brühung"
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Maschine"
@@ -1139,7 +1146,15 @@
             "BLUETOOTH": "Um Bluetooth Refraktometer zu finden, muss Bluetooth freigegeben werden"
         },
         "LOG": "Logfiles für Refraktometer aktivieren",
-        "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen"
+        "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen",
+        "TEST_TYPE": "Testtyp",
+        "TEST_TYPES": {
+            "SINGLE": "Einzel",
+            "AVERAGE": "Durchschnitt"
+        },
+        "AUTO_TEST": "Auto-Test",
+        "AUTO_TEST_DESCRIPTION": "Führt automatisch eine Testschleife durch, wenn eine Temperaturänderung festgestellt wird, bis ein stabiler TDS\/Temperaturwert gefunden wird",
+        "TEST_NUMBER": "Anzahl der Tests"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Zum Clipboard hinzugefügt",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden",
@@ -1436,29 +1451,65 @@
     "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Automatisches Speichern des Brühvorgangs nach Ablauf einer bestimmten Zeitspanne. Diese Aktion wird ausgeführt, nachdem der Brühtimer angehalten wurde.",
     "SAVE_NOW": "Jetzt speichern",
     "SAVING_BREW_COUNTDOWN": "Brühung wird in {{time}} gespeichert",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.2.0": {
-            "TITLE": "Version 8.2.0: Das ist neu",
-            "DESCRIPTION": [
-                "<b>Zubereitungen<\/b>",
-                "Unterstützt die Verbindung zu Gaggiuino und dem Importierung von Brühungen",
-                "",
-                "<b>Brühungen<\/b>",
-                "Brühungen können jetzt mit dem verwendeten Wasser gefiltert werden",
-                "",
-                "<b>Einstellungen<\/b>",
-                "Zeit mit vordefiniertem Druck stoppen",
-                "",
-                "<b>Sonstiges<\/b>",
-                "Kleinere Fehlerbehebungen"
-            ]
-        }
-    },
     "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
     "IMPORT_SHOT_FROM_GAGGIUINO": "Importieren einer Aufnahme aus Gaggiuino",
     "NAV_BARISTAMODE_SECTION": "Baristamode",
     "PRESSURE_THRESHOLD_STOP_ACTIVE": "Zeit mit vordefiniertem Druck stoppen",
     "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "Diese Einstellung wird nur für Brühungen vom Typ 'Espresso' verwendet. Die Brühung wird erst gestoppt, wenn mindestens 10 Sekunden vergangen sind und mindestens einmal 1 bar Druck erreicht wurde. Nachdem diese Bedingungen erfüllt sind, wird der hier eingestellte minimale Druckschwellenwert überprüft und bei Erreichen die Brühung gestoppt. ACHTUNG: Dies hat keine Auswirkung, wenn eine Smart-Waage verwendet wird",
     "ANALYTICS_INFORMATION": "<h1>Deine Kaffee-Reise mit BeanConqueror<\/h1><p>Wow! Du hast bereits <b>{{BEANS_COUNT}}<\/b> Bohnen entdeckt und dir daraus <b>{{BREWS_COUNT}}<\/b> köstliche Tassen Kaffee gezaubert. Das macht dich zu einem echten Kaffee-Entdecker!<\/p><h2>Gemeinsam die Zukunft des Kaffees gestalten<\/h2><p>Stell dir vor: Nur 4% unserer Community teilen ihre Erfahrungen mit uns. Das ist, als würden wir ein Rezept mit nur einer Zutat perfektionieren wollen! Deine Brühdaten sind wie kleine Schätze, die uns helfen, BeanConqueror zu dem Werkzeug zu machen, das du dir wünschst.<\/p><h3>Gemeinsam können wir:<\/h3><ul><li>Die idealen Parameter für jede Bohnenvarietät entschlüsseln<\/li><li>Wissenschaftlich fundierte Guides für die ersten Schritte in der Kaffeewelt entwickeln<\/li><li>Die komplexen Beziehungen zwischen Brühvariablen und Geschmacksprofilen kartieren<\/li><li>BeanConqueror zu einem noch intuitiveren Begleiter für deine Kaffee-Reise machen<\/li><\/ul><h2>Dein Beitrag ist wertvoll:<\/h2><p>Aktiviere die Datenspende jetzt oder später in den Einstellungen. Jede geteilte Erfahrung bereichert unser kollektives Kaffee-Wissen und ist ein Baustein für die Zukunft von BeanConqueror!<\/p><h2>Dein Datenschutz liegt uns am Herzen<\/h2><p>Als deutsches Team im Herzen Europas nehmen wir deine Privatsphäre sehr ernst. Wir übertragen nur anonymisierte Daten, welche keine Rückschlüsse auf deine Person ermöglichen. Alle Details findest du auf der Beanconqueror Webseite.<\/p><h2>Werde Teil der BeanConqueror-Evolution!<\/h2>",
-    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} – Die Analytics-ID ist nicht mit personenbezogenen Daten verknüpft; keine persönliche Identifizierung möglich."
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} – Die Analytics-ID ist nicht mit personenbezogenen Daten verknüpft; keine persönliche Identifizierung möglich.",
+    "BEAN_DATA_AVERAGE_BREW_RATING": "Durchschnittliche Brühbewertung",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.3.0": {
+            "TITLE": "Version 8.3.0: Das ist neu",
+            "DESCRIPTION": [
+                "<b>Brühungen<\/b>",
+                "Wähle in den Einstellungen, welches Foto angezeigt werden soll: Bohne, Brühung oder Zubereitungsmethodik",
+                "Der Spitzenwert des Wasserdurchflusses wird jetzt in der Detailansicht der Brühe angezeigt",
+                "Ein Problem wurde behoben, das durch eine langsame Tariergeschwindigkeit bei Varia-Waagen beim Starten mit Druckschwelle verursacht wurde.",
+                "",
+                "<b>Bohnen<\/b>",
+                "Gefrorene Bohnen werden jetzt automatisch ausgewählt, wenn keine ungefrorenen Bohnen verfügbar sind",
+                "Es kann nun über die Bohneneinfrier aktion auch die Anhänge kopiert werden",
+                "Es ist nun möglich, die eingefrorene ID über das Aktions-Popup zu kopieren",
+                "Bearbeitung der Bohne direkt in der Detailansicht",
+                "Die Bohnenbewertung wird jetzt automatisch berechnet, sobald alle Brühvorgänge abgeschlossen sind – Danke an danielzsandberg",
+                "",
+                "<b>Zubereitungsmethodiken<\/b>",
+                "Die Xenia Maschine kann nun an und ausgeschaltet werden",
+                "",
+                "<b>DiFluid R2-Refraktometer<\/b>",
+                "Komplette Überarbeitung – Danke an AV-IO",
+                "",
+                "<b>Einstellungen<\/b>",
+                "Option zum Deaktivieren des Verbinden\/Trennen-Popups für Bluetooth-Geräte",
+                "",
+                "<b> Sonstiges <\/b>",
+                "Kleinere Korrekturen"
+            ]
+        }
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Wählen Sie den Bildtyp für die Brühanzeige",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Zubereitungsmethodik",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Bohne",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": "Brühung",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "Informationen zur Bluetooth-Geräteverbindung",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Zeige die Verbindungs- und Trennungsinformationen des Bluetooth-Geräts an.",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": "Bildqualität in Prozent",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Maximale Bildgröße in Megabyte",
+    "POPOVER_COPY_FROZEN_ID": "Eingefrorene ID kopieren",
+    "MACHINE_ACTIONS": "Maschinenaktionen",
+    "MACHINE_POWER_ON": "Einschalten",
+    "MACHINE_POWER_OFF": "Ausschalten",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": "Maschine erfolgreich eingeschaltet",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": "Maschine erfolgreich ausgeschaltet",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": "Maschine konnte nicht eingeschaltet werden",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Maschine konnte nicht ausgeschaltet werden",
+    "FREEZE_BEAN": "Bohne einfrieren",
+    "BEAN_HAS_BEEN_FROZEN": "Bohne wurde eingefroren",
+    "FIND_AUTOMATIC_BACKUP_FILES": "Suchen und Importieren einer automatischen Sicherungsdatei",
+    "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Suche im internen Gerätespeicher nach automatischen Sicherungsdateien, wähle eine aus und importiere diese",
+    "NO_AUTOMATIC_BACKUPS_FOUND": "Keine automatischen Backups gefunden",
+    "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Wenn du einen Datenverlust erlitten hast und hier keine Daten gefunden hast, nutze bitte die offiziellen Support-Wege",
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Automatische Sicherungsdatei importieren"
 }
