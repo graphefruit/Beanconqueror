@@ -1160,7 +1160,7 @@ export class AppComponent implements AfterViewInit {
           } else {
             this.uiAnalytics.trackContentImpression(
               TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
-              ' | ' + bean.name,
+              ' - | ' + bean.name,
             );
           }
         }

@@ -237,6 +237,15 @@ export class BeansAddComponent implements OnInit {
         TrackContentImpression.STATISTICS_ROASTER_NAME,
         this.data.roaster,
       );
+      this.uiAnalytics.trackContentImpression(
+        TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+        this.data.roaster + ' | ' + this.data.name,
+      );
+    } else {
+      this.uiAnalytics.trackContentImpression(
+        TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+        ' - | ' + this.data.name,
+      );
     }
 
     this.uiBeanHelper.logUsedBeanParameters();
