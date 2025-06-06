@@ -253,22 +253,22 @@ export class WaterAddTypeComponent implements OnInit {
          * Total Dissolved Solids (TDS): 110 mg/l
          */
         this.data.general_hardness = 65;
-        this.data.general_hardness_type = 'UNKNOWN' as WATER_UNIT;
+        this.data.general_hardness_type = 'MG_L' as WATER_UNIT;
 
         this.data.total_alkalinity = 45;
-        this.data.total_alkalinity_type = 'UNKNOWN' as WATER_UNIT;
+        this.data.total_alkalinity_type = 'MG_L' as WATER_UNIT;
 
         this.data.calcium = 0;
-        this.data.calcium_type = 'UNKNOWN' as WATER_UNIT;
+        this.data.calcium_type = 'MG_L' as WATER_UNIT;
 
-        this.data.magnesium = 0;
-        this.data.magnesium_type = 'UNKNOWN' as WATER_UNIT;
+        this.data.magnesium = 16;
+        this.data.magnesium_type = 'MG_L' as WATER_UNIT;
 
-        this.data.sodium = 0;
-        this.data.sodium_type = 'UNKNOWN' as WATER_UNIT;
+        this.data.sodium = 21;
+        this.data.sodium_type = 'MG_L' as WATER_UNIT;
 
         this.data.potassium = 0;
-        this.data.potassium_type = 'UNKNOWN' as WATER_UNIT;
+        this.data.potassium_type = 'MG_L' as WATER_UNIT;
 
         this.data.tds = 110;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
