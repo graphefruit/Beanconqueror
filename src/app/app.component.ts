@@ -1140,72 +1140,104 @@ export class AppComponent implements AfterViewInit {
 
   public async initialDataTrackings() {
     const settings = this.uiSettingsStorage.getSettings();
+    const impressionsToTrack: Array<{
+      contentName: string;
+      contentPiece: string;
+      contentTarget?: string;
+    }> = [];
     if (
       settings.matomo_analytics === true &&
       settings.matomo_initial_data_tracked === false
     ) {
       try {
         await this.uiAlert.showLoadingSpinner();
+
         const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-        for (let bean of beans) {
-          if (bean.roaster) {
-            this.uiAnalytics.trackContentImpression(
-              TrackContentImpression.STATISTICS_ROASTER_NAME,
-              bean.roaster,
-            );
-            this.uiAnalytics.trackContentImpression(
-              TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
-              bean.roaster + ' | ' + bean.name,
-            );
-          } else {
-            this.uiAnalytics.trackContentImpression(
-              TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
-              ' - | ' + bean.name,
-            );
-          }
-        }
         const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
-
-        for (let mill of mills) {
-          this.uiAnalytics.trackContentImpression(
-            TrackContentImpression.STATISTICS_GRINDER_NAME,
-            mill.name,
-          );
-        }
-
         const preparations: Array<Preparation> =
           this.uiPreparationStorage.getAllEntries();
-        for (let preparation of preparations) {
-          this.uiAnalytics.trackContentImpression(
-            TrackContentImpression.STATISTICS_PREPARATION_NAME,
-            preparation.name,
-          );
-        }
-
         const waters: Array<Water> = this.uiWaterStorage.getAllEntries();
-        for (let water of waters) {
-          this.uiAnalytics.trackContentImpression(
-            TrackContentImpression.STATISTICS_WATER_NAME,
-            water.name,
-          );
+        const brewsCount = this.uiBrewStorage.getAllEntries().length;
+        const beansCountFromStorage = this.uiBeanStorage.getAllEntries().length;
+
+        for (const bean of beans) {
+          if (bean.roaster) {
+            impressionsToTrack.push({
+              contentName: TrackContentImpression.STATISTICS_ROASTER_NAME,
+              contentPiece: bean.roaster,
+            });
+            impressionsToTrack.push({
+              contentName: TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+              contentPiece: `${bean.roaster} | ${bean.name}`,
+            });
+          } else {
+            impressionsToTrack.push({
+              contentName: TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+              contentPiece: ` - | ${bean.name}`,
+            });
+          }
         }
 
-        settings.matomo_initial_data_tracked = true;
-        await this.uiSettingsStorage.update(settings);
-      } catch (ex) {}
+        for (const mill of mills) {
+          impressionsToTrack.push({
+            contentName: TrackContentImpression.STATISTICS_GRINDER_NAME,
+            contentPiece: mill.name,
+          });
+        }
 
-      await this.uiAlert.hideLoadingSpinner();
+        for (const preparation of preparations) {
+          impressionsToTrack.push({
+            contentName: TrackContentImpression.STATISTICS_PREPARATION_NAME,
+            contentPiece: preparation.name,
+          });
+        }
+
+        for (const water of waters) {
+          impressionsToTrack.push({
+            contentName: TrackContentImpression.STATISTICS_WATER_NAME,
+            contentPiece: water.name,
+          });
+        }
+
+        impressionsToTrack.push({
+          contentName: TrackContentImpression.STATISTICS_BREWS_COUNT,
+          contentPiece: brewsCount.toString(),
+        });
+        impressionsToTrack.push({
+          contentName: TrackContentImpression.STATISTICS_BEANS_COUNT,
+          contentPiece: beansCountFromStorage.toString(),
+        });
+
+        if (impressionsToTrack.length > 0) {
+          await this.uiAnalytics.trackBulkContentImpressions(
+            impressionsToTrack,
+          );
+          const currentSettings = this.uiSettingsStorage.getSettings();
+          currentSettings.matomo_initial_data_tracked = true;
+          await this.uiSettingsStorage.update(currentSettings);
+        } else {
+          // If there's nothing to track, still mark as tracked
+          const currentSettings = this.uiSettingsStorage.getSettings();
+          currentSettings.matomo_initial_data_tracked = true;
+          await this.uiSettingsStorage.update(currentSettings);
+        }
+      } catch (ex) {
+        this.uiLog.error('Error during initial bulk data trackings: ', ex);
+      } finally {
+        await this.uiAlert.hideLoadingSpinner();
+      }
+    } else if (settings.matomo_analytics === true) {
+      const brewsCount = this.uiBrewStorage.getAllEntries().length;
+      const beansCountFromStorage = this.uiBeanStorage.getAllEntries().length;
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_BREWS_COUNT,
+        contentPiece: brewsCount.toString(),
+      });
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_BEANS_COUNT,
+        contentPiece: beansCountFromStorage.toString(),
+      });
+      await this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
     }
-
-    const brewsCount = this.uiBrewStorage.getAllEntries().length;
-    const beansCount = this.uiBeanStorage.getAllEntries().length;
-    this.uiAnalytics.trackContentImpression(
-      TrackContentImpression.STATISTICS_BREWS_COUNT,
-      brewsCount.toString(),
-    );
-    this.uiAnalytics.trackContentImpression(
-      TrackContentImpression.STATISTICS_BEANS_COUNT,
-      beansCount.toString(),
-    );
   }
 }
