@@ -307,8 +307,8 @@ export class UIBrewHelper {
     if (!!scaleDevice) {
       eventsToTrack.push({
         category: BREW_TRACKING.TITLE,
-        action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + 'SCALE',
-        name: scaleDevice.device_name,
+        action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+        name: 'SCALE_DEVICE' + '_' + scaleDevice.device_name,
       });
     }
 
@@ -318,8 +318,8 @@ export class UIBrewHelper {
       if (!!pressureDevice) {
         eventsToTrack.push({
           category: BREW_TRACKING.TITLE,
-          action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + 'PRESSURE',
-          name: pressureDevice.device_name,
+          action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+          name: 'PRESSURE_DEVICE' + '_' + pressureDevice.device_name,
         });
       }
     }

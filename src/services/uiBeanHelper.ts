@@ -479,7 +479,7 @@ export class UIBeanHelper {
       if (settings.bean_manage_parameters[key] === true) {
         events.push({
           category: BEAN_TRACKING.TITLE,
-          action: BEAN_TRACKING.ACTIONS.PARAMETER_USED,
+          action: BEAN_TRACKING.ACTIONS.BEAN_PARAMETER_USED,
           name: key,
         });
       }
