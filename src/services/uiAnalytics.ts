@@ -286,7 +286,7 @@ export class UIAnalytics {
       const requests = events.map((event) => {
         // Define action_name for the event. Using a combination of category and action.
         const actionName = `Event: ${event.category} / ${event.action}`;
-        let requestString = `?idsite=${this.siteId}&rec=1&action_name=${encodeURIComponent(actionName)}`;
+        let requestString = `?idsite=${this.siteId}&rec=1`;
 
         // Event parameters
         requestString += `&e_c=${encodeURIComponent(event.category)}`;
