@@ -176,7 +176,7 @@ export class UIAnalytics {
       contentPiece: string;
       contentTarget?: string;
     }>,
-  ): Promise<void> {
+  ): Promise<boolean | void> {
     if (!this.canTrack) {
       this.uiLog.info(
         `ANALYTICS - DISABLED - Not sending ${impressions?.length || 0} bulk content impressions.`,
@@ -241,6 +241,7 @@ export class UIAnalytics {
             'Matomo Bulk Tracking API response data (content impressions):',
             responseData,
           );
+          return true;
         } catch (e) {
           if (response.status !== 204) {
             this.uiLog.warn(
@@ -262,6 +263,7 @@ export class UIAnalytics {
         ex,
       );
     }
+    return false;
   }
 
   public async trackBulkEvents(events: Array<IEventPayload>): Promise<void> {

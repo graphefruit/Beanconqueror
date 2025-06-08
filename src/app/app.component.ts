@@ -1209,12 +1209,15 @@ export class AppComponent implements AfterViewInit {
         });
 
         if (impressionsToTrack.length > 0) {
-          await this.uiAnalytics.trackBulkContentImpressions(
-            impressionsToTrack,
-          );
-          const currentSettings = this.uiSettingsStorage.getSettings();
-          currentSettings.matomo_initial_data_tracked = true;
-          await this.uiSettingsStorage.update(currentSettings);
+          const didTrack =
+            await this.uiAnalytics.trackBulkContentImpressions(
+              impressionsToTrack,
+            );
+          if (didTrack) {
+            const currentSettings = this.uiSettingsStorage.getSettings();
+            currentSettings.matomo_initial_data_tracked = true;
+            await this.uiSettingsStorage.update(currentSettings);
+          }
         } else {
           // If there's nothing to track, still mark as tracked
           const currentSettings = this.uiSettingsStorage.getSettings();
