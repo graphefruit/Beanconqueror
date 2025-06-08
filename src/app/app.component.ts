@@ -1240,7 +1240,7 @@ export class AppComponent implements AfterViewInit {
         contentName: TrackContentImpression.STATISTICS_BEANS_COUNT,
         contentPiece: beansCountFromStorage.toString(),
       });
-      await this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
+      this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
     }
   }
 }
