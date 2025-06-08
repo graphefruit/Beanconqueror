@@ -27,7 +27,7 @@ export class UIAnalytics {
   private canTrack: boolean = false;
   private matomoTracker: any = undefined;
   private matomoUrl: string = 'https://analytics-beanconqueror.com/matomo.php'; // Extracted from index.html
-  private siteId: string = '6'; // Extracted from index.html
+  private siteId: string = '7'; // Extracted from index.html
 
   constructor(
     private readonly alertController: AlertController,
@@ -194,7 +194,7 @@ export class UIAnalytics {
 
     try {
       const requests = impressions.map((imp) => {
-        let requestString = `?idsite=${this.siteId}&rec=1`;
+        let requestString = `?idsite=${this.siteId}&rec=1&action_name=BulkRequestImpressions`;
         requestString += `&c_n=${encodeURIComponent(imp.contentName)}`;
         requestString += `&c_p=${encodeURIComponent(imp.contentPiece)}`;
         if (imp.contentTarget) {
@@ -286,7 +286,7 @@ export class UIAnalytics {
       const requests = events.map((event) => {
         // Define action_name for the event. Using a combination of category and action.
         const actionName = `Event: ${event.category} / ${event.action}`;
-        let requestString = `?idsite=${this.siteId}&rec=1`;
+        let requestString = `?idsite=${this.siteId}&rec=1&action_name=BulkRequestEvents`;
 
         // Event parameters
         requestString += `&e_c=${encodeURIComponent(event.category)}`;
