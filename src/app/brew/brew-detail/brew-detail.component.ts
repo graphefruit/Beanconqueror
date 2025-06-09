@@ -16,7 +16,10 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
 import { TranslateService } from '@ngx-translate/core';
-import { IBrewWaterFlow } from '../../../classes/brew/brewFlow';
+import {
+  IBrewRealtimeWaterFlow,
+  IBrewWaterFlow,
+} from '../../../classes/brew/brewFlow';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIAlert } from '../../../services/uiAlert';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
@@ -31,6 +34,8 @@ import { ShareService } from '../../../services/shareService/share-service.servi
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 
 declare var Plotly;
 @Component({
@@ -378,6 +383,38 @@ export class BrewDetailComponent {
       }
 
       return 0;
+    } else if (
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow &&
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow.length > 0
+    ) {
+      /** E.g. on the meticulous we don't have the calculcated water flow, so take the realtime flow **/
+      const waterFlows: Array<IBrewRealtimeWaterFlow> =
+        this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow;
+      let calculatedFlow: number = 0;
+      let foundEntries: number = 0;
+      for (const water of waterFlows) {
+        if (water.flow_value > 0) {
+          calculatedFlow += water.flow_value;
+          foundEntries += 1;
+        }
+      }
+      if (calculatedFlow > 0) {
+        return calculatedFlow / foundEntries;
+      }
+
+      return 0;
+    }
+  }
+
+  public getPeakFlow() {
+    if (
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow &&
+      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow.length > 0
+    ) {
+      const waterFlows: Array<IBrewRealtimeWaterFlow> =
+        this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow;
+      const maxWaterFlow = Math.max(...waterFlows.map((obj) => obj.flow_value));
+      return maxWaterFlow;
     }
   }
   public async showExtractionChart(event): Promise<void> {
@@ -400,4 +437,7 @@ export class BrewDetailComponent {
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
+  protected readonly PreparationDeviceType = PreparationDeviceType;
+  protected readonly PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
+  protected readonly SanremoYOUMode = SanremoYOUMode;
 }

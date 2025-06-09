@@ -49,6 +49,7 @@ import { VariaAkuScale } from '../../classes/devices/variaAku';
 import { UIHelper } from '../uiHelper';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
+import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
 
 declare var ble: any;
 declare var cordova: any;
@@ -932,14 +933,17 @@ export class CoffeeBluetoothDevicesService {
           successCallback();
 
           try {
-            this.uiToast.showInfoToast(
-              this.translate.instant('SCALE.CONNECTED_SUCCESSFULLY') +
-                ' - ' +
-                this.getScale().device_name +
-                ' / ' +
-                this.getScale().device_id,
-              false,
-            );
+            const settings = this.uiStettingsStorage.getSettings();
+            if (settings.bluetooth_devices_show_connection_messages === true) {
+              this.uiToast.showInfoToast(
+                this.translate.instant('SCALE.CONNECTED_SUCCESSFULLY') +
+                  ' - ' +
+                  this.getScale().device_name +
+                  ' / ' +
+                  this.getScale().device_id,
+                false,
+              );
+            }
           } catch (ex) {}
         },
         async () => {
@@ -953,7 +957,9 @@ export class CoffeeBluetoothDevicesService {
           }
           this.logger.log('AutoConnectScale - Scale device disconnected.');
           if (_wasConnected === true && settings.scale_id) {
-            this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
+            if (settings.bluetooth_devices_show_connection_messages === true) {
+              this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
+            }
             _wasConnected = false;
           }
 
@@ -1045,14 +1051,17 @@ export class CoffeeBluetoothDevicesService {
           successCallback();
 
           try {
-            this.uiToast.showInfoToast(
-              this.translate.instant('PRESSURE.CONNECTED_SUCCESSFULLY') +
-                ' - ' +
-                this.getPressureDevice().device_name +
-                ' / ' +
-                this.getPressureDevice().device_id,
-              false,
-            );
+            const settings = this.uiStettingsStorage.getSettings();
+            if (settings.bluetooth_devices_show_connection_messages === true) {
+              this.uiToast.showInfoToast(
+                this.translate.instant('PRESSURE.CONNECTED_SUCCESSFULLY') +
+                  ' - ' +
+                  this.getPressureDevice().device_name +
+                  ' / ' +
+                  this.getPressureDevice().device_id,
+                false,
+              );
+            }
           } catch (ex) {}
         },
         async (e) => {
@@ -1068,7 +1077,9 @@ export class CoffeeBluetoothDevicesService {
             'AutoConnectPressureDevice - Pressure device disconnected.',
           );
           if (_wasConnected === true && settings.pressure_id) {
-            this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
+            if (settings.bluetooth_devices_show_connection_messages === true) {
+              this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
+            }
             _wasConnected = false;
           }
 
@@ -1145,21 +1156,27 @@ export class CoffeeBluetoothDevicesService {
           successCallback();
 
           try {
-            this.uiToast.showInfoToast(
-              this.translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
-                ' - ' +
-                this.getTemperatureDevice().device_name +
-                ' / ' +
-                this.getTemperatureDevice().device_id,
-              false,
-            );
+            const settings = this.uiStettingsStorage.getSettings();
+            if (settings.bluetooth_devices_show_connection_messages === true) {
+              this.uiToast.showInfoToast(
+                this.translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
+                  ' - ' +
+                  this.getTemperatureDevice().device_name +
+                  ' / ' +
+                  this.getTemperatureDevice().device_id,
+                false,
+              );
+            }
           } catch (ex) {}
         },
         () => {
           this.logger.log(
             'AutoConnectTemperatureDevice - Temperature device disconnected.',
           );
-          this.uiToast.showInfoToast('TEMPERATURE.DISCONNECTED_UNPLANNED');
+          const settings = this.uiStettingsStorage.getSettings();
+          if (settings.bluetooth_devices_show_connection_messages === true) {
+            this.uiToast.showInfoToast('TEMPERATURE.DISCONNECTED_UNPLANNED');
+          }
           this.disconnectTemperatureCallback();
           errorCallback();
         },
@@ -1205,6 +1222,12 @@ export class CoffeeBluetoothDevicesService {
           successCallback();
 
           try {
+            const settings = this.uiStettingsStorage.getSettings();
+            let device = this.getRefractometerDevice();
+            device.setTestType(settings.refractometer_test_type);
+            device.setAutoTest(settings.refractometer_auto_test);
+            device.setTestNumber(settings.refractometer_test_number);
+
             this.uiToast.showInfoToast(
               this.translate.instant('REFRACTOMETER.CONNECTED_SUCCESSFULLY') +
                 ' - ' +
@@ -1213,13 +1236,17 @@ export class CoffeeBluetoothDevicesService {
                 this.getRefractometerDevice().device_id,
               false,
             );
+
           } catch (ex) {}
         },
         () => {
           this.logger.log(
             'AutoConnectRefractometerDevice - Refractometer device disconnected.',
           );
-          this.uiToast.showInfoToast('REFRACTOMETER.DISCONNECTED_UNPLANNED');
+          const settings = this.uiStettingsStorage.getSettings();
+          if (settings.bluetooth_devices_show_connection_messages === true) {
+            this.uiToast.showInfoToast('REFRACTOMETER.DISCONNECTED_UNPLANNED');
+          }
           this.disconnectRefractometerCallback();
           errorCallback();
         },

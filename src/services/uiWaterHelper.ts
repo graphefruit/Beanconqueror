@@ -7,6 +7,8 @@ import { WaterAddComponent } from '../app/water-section/water/water-add/water-ad
 import { WaterEditComponent } from '../app/water-section/water/water-edit/water-edit.component';
 import { Water } from '../classes/water/water';
 import { WaterDetailComponent } from '../app/water-section/water/water-detail/water-detail.component';
+import { Brew } from '../classes/brew/brew';
+import { UIBrewStorage } from './uiBrewStorage';
 
 /**
  * Handles every helping functionalities
@@ -16,10 +18,17 @@ import { WaterDetailComponent } from '../app/water-section/water/water-detail/wa
   providedIn: 'root',
 })
 export class UIWaterHelper {
+  private allStoredBrews: Array<Brew> = [];
   constructor(
     private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController
-  ) {}
+    private readonly modalController: ModalController,
+    private readonly uiBrewStorage: UIBrewStorage,
+  ) {
+    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
+      // If an brew is deleted, we need to reset our array for the next call.
+      this.allStoredBrews = [];
+    });
+  }
 
   public async addWater() {
     const modal = await this.modalController.create({
@@ -48,5 +57,23 @@ export class UIWaterHelper {
     });
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public getAllBrewsForThisWater(_uuid: string): Array<Brew> {
+    if (this.allStoredBrews.length <= 0) {
+      // Load just if needed, performance reasons
+      this.allStoredBrews = this.uiBrewStorage.getAllEntries();
+    }
+
+    const brewsForWater: Array<Brew> = [];
+    const brews: Array<Brew> = this.allStoredBrews;
+
+    const waterUUID: string = _uuid;
+    for (const brew of brews) {
+      if (brew.water === waterUUID) {
+        brewsForWater.push(brew);
+      }
+    }
+    return brewsForWater;
   }
 }

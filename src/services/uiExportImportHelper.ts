@@ -15,7 +15,7 @@ import {
   ZipWriter,
 } from '@zip.js/zip.js';
 import * as zip from '@zip.js/zip.js';
-import { Directory } from '@capacitor/filesystem';
+import { Directory, FileInfo } from '@capacitor/filesystem';
 import { UILog } from './uiLog';
 import { ModalController, Platform } from '@ionic/angular';
 import { UIFileHelper } from './uiFileHelper';
@@ -163,41 +163,159 @@ export class UIExportImportHelper {
     return importJSONData;
   }
 
-  private async checkBackupAndSeeIfDataAreCorrupted(_actualUIStorageDataObj) {
+  private async __getBiggerFileBackupOrAutomatic(): Promise<{
+    fileData: any;
+    isAutomaticBackup: boolean;
+  }> {
+    const parsedJSON: any = await this.readBackupZIPFile();
+
+    const biggestAutomaticBackupFileContent =
+      await this.__getBiggestAutomaticBackupFileContent();
+    let isAutomaticBackup: boolean = false;
+    let fileData: any;
+    this.uiLog.log(
+      '__getBiggerFileBackupOrAutomatic - Get backup and automatic backup and check besides',
+    );
+    /** If an app is completely new, there is no BREWS entry, because we just start with settings and version **/
+    if (parsedJSON && 'BREWS' in parsedJSON) {
+      this.uiLog.log(
+        '__getBiggerFileBackupOrAutomatic - We found an normal backup',
+      );
+      if (
+        biggestAutomaticBackupFileContent &&
+        'BREWS' in biggestAutomaticBackupFileContent
+      ) {
+        this.uiLog.log(
+          '__getBiggerFileBackupOrAutomatic - We found an automatic backup',
+        );
+        if (
+          biggestAutomaticBackupFileContent.BEANS.length >
+          parsedJSON.BEANS.length
+        ) {
+          this.uiLog.log('__getBiggerFileBackupOrAutomatic - Beans');
+          isAutomaticBackup = true;
+        }
+        if (
+          biggestAutomaticBackupFileContent.BREWS.length >
+          parsedJSON.BREWS.length
+        ) {
+          this.uiLog.log(
+            'We found a bigger automatic backup file, so we import it',
+          );
+          isAutomaticBackup = true;
+        }
+        if (
+          biggestAutomaticBackupFileContent.PREPARATION.length >
+          parsedJSON.PREPARATION.length
+        ) {
+          this.uiLog.log(
+            'We found a bigger automatic backup file, so we import it',
+          );
+          isAutomaticBackup = true;
+        }
+        if (
+          biggestAutomaticBackupFileContent.MILL.length > parsedJSON.MILL.length
+        ) {
+          this.uiLog.log(
+            'We found a bigger automatic backup file, so we import it',
+          );
+          isAutomaticBackup = true;
+        }
+      } else {
+        this.uiLog.log(
+          '__getBiggerFileBackupOrAutomatic - We didnt found an automatic backup',
+        );
+      }
+      if (isAutomaticBackup) {
+        this.uiLog.log(
+          '__getBiggerFileBackupOrAutomatic - Automatic file is bigger then normal zip',
+        );
+        fileData = biggestAutomaticBackupFileContent;
+        return { fileData, isAutomaticBackup };
+      }
+      this.uiLog.log(
+        '__getBiggerFileBackupOrAutomatic - Normal file is bigger then automatic file',
+      );
+      fileData = parsedJSON;
+      return { fileData, isAutomaticBackup };
+    } else {
+      this.uiLog.log(
+        '__getBiggerFileBackupOrAutomatic - We didnt find any normal backup, check automatic backup',
+      );
+      if (
+        biggestAutomaticBackupFileContent &&
+        'BREWS' in biggestAutomaticBackupFileContent
+      ) {
+        isAutomaticBackup = true;
+        this.uiLog.log(
+          '__getBiggerFileBackupOrAutomatic - We didnt find any normal backup, automatic backup found',
+        );
+        fileData = biggestAutomaticBackupFileContent;
+        return { fileData, isAutomaticBackup };
+      }
+    }
+  }
+  private async checkBackupAndSeeIfDataAreCorrupted() {
     try {
       this.uiLog.log(
-        'checkBackupAndSeeIfDataAreCorrupted - Check if we got a deep corruption',
+        'checkBackupAndSeeIfDataAreCorrupted - Check if we got a corruption',
       );
-      const dataObj = _actualUIStorageDataObj.DATA;
-      const parsedJSON: any = await this.readBackupZIPFile();
-      if (parsedJSON) {
-        let somethingCorrupted = false;
-        if (parsedJSON.BEANS?.length > dataObj.BEANS) {
-          somethingCorrupted = true;
-        } else if (parsedJSON.BREWS?.length > dataObj.BREWS) {
-          somethingCorrupted = true;
-        } else if (parsedJSON.PREPARATION?.length > dataObj.PREPARATION) {
-          somethingCorrupted = true;
-        } else if (parsedJSON.MILL?.length > dataObj.MILL) {
-          somethingCorrupted = true;
-        }
+      const hasData = await this.uiStorage.hasData();
 
-        this.uiLog.log(
-          'checkBackupAndSeeIfDataAreCorrupted- Check over - if we got a deep corruption - Result: ' +
-            somethingCorrupted,
-        );
-        if (somethingCorrupted) {
-          const importBackup = await this.showDataCorruptionPopover(
-            dataObj,
-            parsedJSON,
-          );
-          if (importBackup) {
-            await this.importBackupJSON(parsedJSON);
-          }
-        } else {
+      let actualUIStorageDataObj;
+      if (hasData) {
+        actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
+      }
+
+      const { fileData, isAutomaticBackup }: any =
+        await this.__getBiggerFileBackupOrAutomatic();
+
+      if (fileData) {
+        let importBackup: boolean = false;
+        if (!hasData && isAutomaticBackup === false) {
+          /**We don't have any data, so we import the latest file data
+           * But we just import the latest backup file data, and not the latest automatic backup, because we sort by biggest size.
+           */
           this.uiLog.log(
-            "checkBackupAndSeeIfDataAreCorrupted - Check over - we didn't find any corrupted data",
+            "checkBackupAndSeeIfDataAreCorrupted - We didn't find any data, so import the backup file directly.",
           );
+          importBackup = true;
+        } else {
+          const dataObj = actualUIStorageDataObj?.DATA;
+          let somethingCorrupted = false;
+          if (dataObj) {
+            if (fileData.BEANS?.length > dataObj.BEANS) {
+              somethingCorrupted = true;
+            } else if (fileData.BREWS?.length > dataObj.BREWS) {
+              somethingCorrupted = true;
+            } else if (fileData.PREPARATION?.length > dataObj.PREPARATION) {
+              somethingCorrupted = true;
+            } else if (fileData.MILL?.length > dataObj.MILL) {
+              somethingCorrupted = true;
+            }
+          } else {
+            //We got no data object, so we assume that the data is corrupted, and its likely to be now and automatic backup, else the first if would be jumped
+            somethingCorrupted = true;
+          }
+
+          this.uiLog.log(
+            'checkBackupAndSeeIfDataAreCorrupted- Check over - if we got a deep corruption - Result: ' +
+              somethingCorrupted,
+          );
+          if (somethingCorrupted) {
+            importBackup = await this.showDataCorruptionPopover(
+              dataObj,
+              fileData,
+              isAutomaticBackup,
+            );
+          } else {
+            this.uiLog.log(
+              "checkBackupAndSeeIfDataAreCorrupted - Check over - we didn't find any corrupted data, don't import",
+            );
+          }
+        }
+        if (importBackup) {
+          await this.importBackupJSON(fileData);
         }
       } else {
         this.uiLog.log(
@@ -212,9 +330,30 @@ export class UIExportImportHelper {
     }
   }
 
+  private async __getBiggestAutomaticBackupFileContent() {
+    try {
+      let files = await this.uiFileHelper.listAutomaticBackupFiles();
+      if (files.length > 0) {
+        files = files.sort((a: FileInfo, b: FileInfo) => {
+          return b.size - a.size;
+        });
+        const biggestFile = files[0];
+
+        const zipContent = await this.uiFileHelper.readFileAsUint8Array(
+          biggestFile.uri,
+        );
+        const parsedJSON =
+          await this.getJSONFromZIPArrayBufferContent(zipContent);
+        return parsedJSON;
+      }
+    } catch (ex) {}
+    return null;
+  }
+
   public async showDataCorruptionPopover(
     _actualUIStorageDataObj: any,
     _backupDataObj: any,
+    _isAutomaticBackup: boolean = false,
   ) {
     const modal = await this.modalController.create({
       component: DataCorruptionFoundComponent,
@@ -222,6 +361,7 @@ export class UIExportImportHelper {
       componentProps: {
         actualUIStorageDataObj: _actualUIStorageDataObj,
         backupDataObj: _backupDataObj,
+        isAutomaticBackup: _isAutomaticBackup,
       },
     });
     await modal.present();
@@ -243,34 +383,8 @@ export class UIExportImportHelper {
 
     try {
       this.uiLog.log('Check Backup');
-      const hasData = await this.uiStorage.hasData();
 
-      let actualUIStorageDataObj;
-      if (hasData) {
-        actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
-      }
-
-      this.uiLog.log('Check Backup - Has data ' + hasData);
-      if (!hasData || actualUIStorageDataObj.CORRUPTED) {
-        if (!hasData) {
-          this.uiLog.log(
-            'Check  Backup - We did not find any data inside the app, so try to find a backup and import it',
-          );
-        } else {
-          this.uiLog.log(
-            'Check  Backup - We found data but they where corrupted, so try to import a backup',
-          );
-        }
-
-        const parsedJSON = await this.readBackupZIPFile();
-        if (parsedJSON) {
-          await this.importBackupJSON(parsedJSON);
-        }
-        return;
-      }
-
-      // hasData == true && actualUIStorageDataObj.CORRUPTED == false
-      await this.checkBackupAndSeeIfDataAreCorrupted(actualUIStorageDataObj);
+      await this.checkBackupAndSeeIfDataAreCorrupted();
     } catch (error) {
       this.uiLog.error('Error while checking for backup data:', error);
     }
@@ -339,17 +453,35 @@ export class UIExportImportHelper {
   private getAutomatedBackupFilename(): string {
     return moment().format('DD_MM_YYYY').toString();
   }
-  private getAutomatedBackupFilenameHours(): string {
-    return moment().format('DD_MM_YYYY_HH_mm').toString();
-  }
 
   public async saveAutomaticBackups() {
     this.buildExportZIP().then(
       async (_blob) => {
         try {
-          this.uiLog.debug('Start writing automatic backups');
-          this.__saveInternalBeanconquerorDump(_blob);
-          this.__saveAutomaticBeanconquerorDump(_blob);
+          const hasData = await this.uiStorage.hasData();
+
+          let actualUIStorageDataObj;
+          if (hasData) {
+            actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
+          }
+          if (hasData && !actualUIStorageDataObj.CORRUPTED) {
+            this.uiLog.debug('Start writing automatic backups');
+            this.__saveInternalBeanconquerorDump(_blob);
+            this.__saveAutomaticBeanconquerorDump(_blob);
+          } else if (hasData && actualUIStorageDataObj.CORRUPTED) {
+            this.uiLog.error(
+              'Data inside the database seems like corrupted / no data',
+            );
+            const settings = this.uiSettingsStorage.getSettings();
+            if (settings.show_backup_issues) {
+              this.uiAlert.showMessage(
+                'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
+                'CARE',
+                'OK',
+                true,
+              );
+            }
+          }
         } catch (ex) {
           this.uiLog.error('ZIP file could not be saved');
           const settings = this.uiSettingsStorage.getSettings();

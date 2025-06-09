@@ -122,6 +122,14 @@ export class BeanModalSelectComponent implements OnInit {
 
     this.__initializeBeans();
     this.setUIParams();
+
+    if (
+      this.openBeansLength <= 0 &&
+      this.settings.freeze_coffee_beans &&
+      this.frozenBeansLength > 0
+    ) {
+      this.bean_segment = 'frozen';
+    }
   }
 
   public __initializeBeans() {

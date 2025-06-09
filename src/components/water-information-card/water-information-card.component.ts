@@ -13,6 +13,7 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { Brew } from '../../classes/brew/brew';
 import { UIWaterHelper } from '../../services/uiWaterHelper';
 import { WATER_TYPES } from '../../enums/water/waterTypes';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'water-information-card',
@@ -32,7 +33,8 @@ export class WaterInformationCardComponent implements OnInit {
     private readonly uiImage: UIImage,
     private readonly modalCtrl: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiWaterHelper: UIWaterHelper
+    private readonly uiWaterHelper: UIWaterHelper,
+    private readonly uiBrewHelper: UIBrewHelper,
   ) {}
 
   public ngOnInit() {}
@@ -46,7 +48,7 @@ export class WaterInformationCardComponent implements OnInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
-      WATER_TRACKING.ACTIONS.POPOVER_ACTIONS
+      WATER_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: WaterPopoverActionsComponent,
@@ -84,14 +86,25 @@ export class WaterInformationCardComponent implements OnInit {
       case WATER_ACTION.ARCHIVE:
         await this.archive();
         break;
+      case WATER_ACTION.SHOW_BREWS:
+        await this.showBrews();
+        break;
       default:
         break;
     }
   }
+
+  public async showBrews() {
+    await this.uiBrewHelper.showAssociatedBrews(
+      this.water.config.uuid,
+      'water',
+    );
+  }
+
   public async archive() {
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
-      WATER_TRACKING.ACTIONS.ARCHIVE
+      WATER_TRACKING.ACTIONS.ARCHIVE,
     );
     this.water.finished = true;
     await this.uiWaterStorage.update(this.water);
@@ -121,7 +134,7 @@ export class WaterInformationCardComponent implements OnInit {
   public async viewPhotos() {
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
-      WATER_TRACKING.ACTIONS.PHOTO_VIEW
+      WATER_TRACKING.ACTIONS.PHOTO_VIEW,
     );
     await this.uiImage.viewPhotos(this.water);
   }
@@ -136,7 +149,7 @@ export class WaterInformationCardComponent implements OnInit {
             // Yes
             this.uiAnalytics.trackEvent(
               WATER_TRACKING.TITLE,
-              WATER_TRACKING.ACTIONS.DELETE
+              WATER_TRACKING.ACTIONS.DELETE,
             );
             await this.__delete();
             this.uiToast.showInfoToast('TOAST_WATER_DELETED_SUCCESSFULLY');
@@ -145,7 +158,7 @@ export class WaterInformationCardComponent implements OnInit {
           () => {
             // No
             reject();
-          }
+          },
         );
     });
   }

@@ -66,6 +66,13 @@
             </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
+          <ion-item (click)="findAndImportAutomaticBackupFile()" button tappable>
+            <ion-label>
+              <h2>{{"FIND_AUTOMATIC_BACKUP_FILES" | translate}}</h2>
+              <p>{{"FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION" | translate}}</p>
+            </ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
           <ion-item *ngIf="doWeHaveBrewByWeights('xenia')" (click)="exportBrewByWeight('xenia')"  button tappable>
             <ion-label>Temp: Export Brew By Weight - Xenia</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
@@ -285,13 +292,14 @@
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.brew_display_bean_image">
-              <div class="ion-label">
-                <h2>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE" | translate}}</h2>
-                <p>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION" | translate}}</p>
-              </div>
-            </ion-checkbox>
+            <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_display_image_type"
+                        cancelText="{{'CANCEL'| translate }}"
+                        okText="{{'CHOOSE'| translate }}"
+                        label-placement="stacked" label='{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE" | translate}}'>
+              <ion-select-option value="{{BREW_DISPLAY_IMAGE_TYPE.PREPARATION}}">{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION" | translate}}</ion-select-option>
+              <ion-select-option value="{{BREW_DISPLAY_IMAGE_TYPE.BEAN}}">{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN" | translate}}</ion-select-option>
+              <ion-select-option value="{{BREW_DISPLAY_IMAGE_TYPE.BREW}}">{{"PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW" | translate}}</ion-select-option>
+            </ion-select>
           </ion-item>
           <ion-item>
             <ion-checkbox (ngModelChange)="saveSettings();"
@@ -374,7 +382,7 @@
             <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="1" snaps="true" max="20"
                        step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_save_automatic_active_delay">
               <div class='ion-label'
-                   slot="end">{{settings.brew_save_automatic_active_delay | toFixed: 1}}</div>
+                   slot="end">{{settings.brew_save_automatic_active_delay | toFixed: 1}}s</div>
             </ion-range>
           </ion-item>
         </ion-card-content>
@@ -785,6 +793,15 @@
                 </div>
               </ion-checkbox>
             </ion-item>
+            <ion-item [lines]="'full'">
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_devices_show_connection_messages">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE" | translate}}</h2>
+                  <p>{{"BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
 
             <ion-item lines="none">
               <ion-label>
@@ -1063,7 +1080,30 @@
               <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
                 step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
                 <div class='ion-label'
-                  slot="end">{{settings.pressure_threshold_bar| toFixed: 1}}</div>
+                  slot="end">>={{settings.pressure_threshold_bar| toFixed: 1}}</div>
+              </ion-range>
+            </ion-item>
+            <ion-item [lines]="settings.pressure_threshold_stop_shot_active?'none':'full'">
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.pressure_threshold_stop_shot_active">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"PRESSURE_THRESHOLD_STOP_ACTIVE" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+
+            <ion-item lines='none' *ngIf="settings?.pressure_threshold_stop_shot_active===true">
+              <ion-label class="ion-margin-end">
+                <p>{{"PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION" | translate}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item style="" *ngIf="settings?.pressure_threshold_stop_shot_active===true">
+              <div class='ion-label' style="white-space: normal;">
+                <h2>{{"PRESSURE_THRESHOLD_BAR" | translate}}</h2>
+              </div>
+              <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-bottom:0px;padding-right:0px;" min="0" snaps="true" max="9"  [pinFormatter]="pinFormatter" [pin]="true"
+                         step="0.1" (ngModelChange)="fixWeightChangeMinFlowNumber();saveSettings()" [(ngModel)]="settings.pressure_threshold_stop_shot_bar">
+                <div class='ion-label' slot="end"><=&nbsp;{{settings.pressure_threshold_stop_shot_bar | number : '.0-1'}}</div>
               </ion-range>
             </ion-item>
             <ion-item>
@@ -1201,7 +1241,35 @@
                 </div>
               </ion-checkbox>
             </ion-item>
-
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="attemptRefractometerUpdate('auto_test')" [(ngModel)]="settings.refractometer_auto_test">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"REFRACTOMETER.AUTO_TEST" | translate}}</h2>
+                  <p>{{"REFRACTOMETER.AUTO_TEST_DESCRIPTION" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+						<ion-item>
+							<ion-select (ngModelChange)="attemptRefractometerUpdate('test_type')" [(ngModel)]="settings.refractometer_test_type"
+								cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+								<div slot="label">{{"REFRACTOMETER.TEST_TYPE" | translate}}</div>
+								<ion-select-option [value]="TEST_TYPE_ENUM.SINGLE">{{"REFRACTOMETER.TEST_TYPES.SINGLE" | translate}}</ion-select-option>
+								<ion-select-option *ngIf="false" [value]="TEST_TYPE_ENUM.AVERAGE">{{"REFRACTOMETER.TEST_TYPES.AVERAGE" | translate}}</ion-select-option>
+							</ion-select>
+						</ion-item>
+            @if(settings.refractometer_test_type === TEST_TYPE_ENUM.AVERAGE) {
+              <ion-item lines="none">
+                <ion-label>
+                  <h2>{{"REFRACTOMETER.TEST_NUMBER" | translate}}</h2>
+                </ion-label>
+              </ion-item>
+              <ion-item style="top:-10px;">
+                <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="1" snaps="true" max="10"
+                           step="1" (ngModelChange)="attemptRefractometerUpdate('test_number')" [(ngModel)]="settings.refractometer_test_number">
+                  <div class='ion-label' slot="end">{{settings.refractometer_test_number}}</div>
+                </ion-range>
+              </ion-item>
+            }
             <ion-item>
               <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.refractometer_log">
                 <div class="ion-label" style="white-space: normal;">

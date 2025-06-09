@@ -27,14 +27,14 @@
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getOpen().length > 0">
           <ion-item *ngFor="let water of getOpen()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6>{{water.name}}</h6></ion-checkbox>
+            <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <ion-item *ngFor="let water of getFinished()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6>{{water.name}}</h6></ion-checkbox>
+            <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
@@ -47,14 +47,14 @@
         <div *ngSwitchCase="'open'">
           <ion-card *ngIf="getOpen().length > 0">
             <ion-item *ngFor="let water of getOpen()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6>{{water.name}}</h6></ion-radio>
+              <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
             </ion-item>
           </ion-card>
         </div>
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <ion-item *ngFor="let water of getFinished()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6>{{water.name}}</h6></ion-radio>
+              <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
             </ion-item>
           </ion-card>
         </div>

@@ -16,6 +16,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 
 @Component({
   selector: 'beans-add',
@@ -210,10 +211,56 @@ export class BeansAddComponent implements OnInit {
       this.data.frozenId = this.uiBeanHelper.generateFrozenId();
     }
     await this.uiBeanStorage.add(this.data);
-    this.uiAnalytics.trackEvent(
-      BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.ADD_FINISH,
-    );
+
+    const eventsToTrack = [];
+    const impressionsToTrack = [];
+
+    if (this.data.roaster) {
+      eventsToTrack.push({
+        category: BEAN_TRACKING.TITLE,
+        action: BEAN_TRACKING.ACTIONS.ADD_FINISH,
+        name: this.data.name + '_' + this.data.roaster,
+      });
+    } else {
+      eventsToTrack.push({
+        category: BEAN_TRACKING.TITLE,
+        action: BEAN_TRACKING.ACTIONS.ADD_FINISH,
+        name: this.data.name + '_-',
+      });
+    }
+
+    eventsToTrack.push({
+      category: BEAN_TRACKING.TITLE,
+      action:
+        BEAN_TRACKING.ACTIONS.ADD_ROASTER + '_' + (this.data.roaster || '-'),
+      name: this.data.name,
+    });
+
+    if (this.data.roaster) {
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_ROASTER_NAME,
+        contentPiece: this.data.roaster,
+      });
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+        contentPiece: this.data.roaster + ' | ' + this.data.name,
+      });
+    } else {
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+        contentPiece: ' - | ' + this.data.name,
+      });
+    }
+
+    if (eventsToTrack.length > 0) {
+      this.uiAnalytics.trackBulkEvents(eventsToTrack);
+    }
+
+    if (impressionsToTrack.length > 0) {
+      this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
+    }
+
+    this.uiBeanHelper.logUsedBeanParameters();
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');

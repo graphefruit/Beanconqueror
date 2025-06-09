@@ -87,19 +87,53 @@ export class PreparationConnectedDeviceComponent {
     );
   }
 
-  public async setUrl() {
-    // IDK why this async method 'setUrl' is empty
-  }
-
-  public async save() {
+  public async save(_checkURL: boolean = true) {
     setTimeout(async () => {
-      if (
-        this.data.connectedPreparationDevice.type ===
-        PreparationDeviceType.XENIA
-      ) {
-        if (this.data.connectedPreparationDevice.url === '') {
-          this.data.connectedPreparationDevice.url = 'http://xenia.local';
-        } else {
+      if (_checkURL === true) {
+        if (this.data.connectedPreparationDevice.url) {
+          this.data.connectedPreparationDevice.url =
+            this.data.connectedPreparationDevice.url.trim();
+        }
+        if (
+          this.data.connectedPreparationDevice.type ===
+          PreparationDeviceType.XENIA
+        ) {
+          if (this.data.connectedPreparationDevice.url === '') {
+            this.data.connectedPreparationDevice.url = 'http://xenia.local';
+          } else {
+            if (
+              this.data.connectedPreparationDevice.url.endsWith('/') === true
+            ) {
+              this.data.connectedPreparationDevice.url =
+                this.data.connectedPreparationDevice.url.slice(0, -1);
+            }
+            if (
+              this.data.connectedPreparationDevice.url.startsWith('http') ===
+              false
+            ) {
+              this.data.connectedPreparationDevice.url =
+                'http://' + this.data.connectedPreparationDevice.url;
+            }
+          }
+          if (
+            this.data.connectedPreparationDevice.customParams.apiVersion ===
+            undefined
+          ) {
+            this.data.connectedPreparationDevice.customParams.apiVersion = 'V2';
+          }
+          if (
+            this.data.connectedPreparationDevice.customParams
+              .residualLagTime === undefined ||
+            this.data.connectedPreparationDevice.customParams
+              .residualLagTime === 0
+          ) {
+            this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
+          }
+        }
+        if (
+          this.data.connectedPreparationDevice.type ===
+          PreparationDeviceType.METICULOUS
+        ) {
           if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
             this.data.connectedPreparationDevice.url =
               this.data.connectedPreparationDevice.url.slice(0, -1);
@@ -113,48 +147,36 @@ export class PreparationConnectedDeviceComponent {
           }
         }
         if (
-          this.data.connectedPreparationDevice.customParams.apiVersion ===
-          undefined
+          this.data.connectedPreparationDevice.type ===
+          PreparationDeviceType.SANREMO_YOU
         ) {
-          this.data.connectedPreparationDevice.customParams.apiVersion = 'V2';
+          if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+            this.data.connectedPreparationDevice.url =
+              this.data.connectedPreparationDevice.url.slice(0, -1);
+          }
+          if (
+            this.data.connectedPreparationDevice.url.startsWith('http') ===
+            false
+          ) {
+            this.data.connectedPreparationDevice.url =
+              'http://' + this.data.connectedPreparationDevice.url;
+          }
         }
         if (
-          this.data.connectedPreparationDevice.customParams.residualLagTime ===
-            undefined ||
-          this.data.connectedPreparationDevice.customParams.residualLagTime ===
-            0
+          this.data.connectedPreparationDevice.type ===
+          PreparationDeviceType.GAGGIUINO
         ) {
-          this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
-        }
-      }
-      if (
-        this.data.connectedPreparationDevice.type ===
-        PreparationDeviceType.METICULOUS
-      ) {
-        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
-          this.data.connectedPreparationDevice.url =
-            this.data.connectedPreparationDevice.url.slice(0, -1);
-        }
-        if (
-          this.data.connectedPreparationDevice.url.startsWith('http') === false
-        ) {
-          this.data.connectedPreparationDevice.url =
-            'http://' + this.data.connectedPreparationDevice.url;
-        }
-      }
-      if (
-        this.data.connectedPreparationDevice.type ===
-        PreparationDeviceType.SANREMO_YOU
-      ) {
-        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
-          this.data.connectedPreparationDevice.url =
-            this.data.connectedPreparationDevice.url.slice(0, -1);
-        }
-        if (
-          this.data.connectedPreparationDevice.url.startsWith('http') === false
-        ) {
-          this.data.connectedPreparationDevice.url =
-            'http://' + this.data.connectedPreparationDevice.url;
+          if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+            this.data.connectedPreparationDevice.url =
+              this.data.connectedPreparationDevice.url.slice(0, -1);
+          }
+          if (
+            this.data.connectedPreparationDevice.url.startsWith('http') ===
+            false
+          ) {
+            this.data.connectedPreparationDevice.url =
+              'http://' + this.data.connectedPreparationDevice.url;
+          }
         }
       }
       if (

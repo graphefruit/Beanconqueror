@@ -27,6 +27,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes'; // Added import
 
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import {
@@ -50,8 +51,18 @@ import { UIHelper } from '../../../services/uiHelper';
 import { Bean } from '../../../classes/bean/bean';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { Mill } from '../../../classes/mill/mill';
 
 declare var Plotly;
+
+// Define this interface if not already globally available or imported
+interface IEventPayload {
+  category: string;
+  action: string;
+  name?: string;
+  value?: number;
+}
 
 @Component({
   selector: 'brew-add',
@@ -311,6 +322,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
       this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
+      this.uiBrewHelper.logUsedBrewParameters(this.data);
 
       this.uiLog.log('Brew add - Step 3');
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
@@ -344,21 +356,104 @@ export class BrewAddComponent implements OnInit, OnDestroy {
           );
         }
       }
+      const eventsToTrack: IEventPayload[] = [];
+      // Add subsequent events to the same eventsToTrack array
+      eventsToTrack.push({
+        category: BREW_TRACKING.TITLE,
+        action: BREW_TRACKING.ACTIONS.ADD_FINISH,
+      });
+      eventsToTrack.push({
+        category: BREW_TRACKING.TITLE,
+        action: BREW_TRACKING.ACTIONS.ADD_FINISH_PREPARATION_TYPE,
+        name: addedBrewObj.getPreparation().type,
+      });
+      eventsToTrack.push({
+        category: BREW_TRACKING.TITLE,
+        action: BREW_TRACKING.ACTIONS.ADD_FINISH_PREPARATION_STYLE,
+        name: addedBrewObj.getPreparation().style_type,
+      });
 
-      this.uiAnalytics.trackEvent(
-        BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.ADD_FINISH,
-      );
-      this.uiAnalytics.trackEvent(
-        BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.ADD_FINISH_PREPARATION_TYPE,
-        addedBrewObj.getPreparation().type,
-      );
-      this.uiAnalytics.trackEvent(
-        BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.ADD_FINISH_PREPARATION_STYLE,
-        addedBrewObj.getPreparation().style_type,
-      );
+      const bean: Bean = this.data.getBean();
+      if (bean.roaster) {
+        eventsToTrack.push({
+          category: BEAN_TRACKING.TITLE,
+          action:
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.TITLE +
+            '_' +
+            bean.roaster +
+            '_' +
+            bean.name,
+          name:
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.PREPARATION_NAME +
+            '_' +
+            addedBrewObj.getPreparation().name,
+        });
+        eventsToTrack.push({
+          category: BEAN_TRACKING.TITLE,
+          action:
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.TITLE +
+            '_' +
+            bean.roaster +
+            '_' +
+            bean.name,
+          name:
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.PREPARATION_TYPE +
+            '_' +
+            addedBrewObj.getPreparation().type,
+        });
+        eventsToTrack.push({
+          category: BEAN_TRACKING.TITLE,
+          action:
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED +
+            '_' +
+            bean.roaster +
+            '_' +
+            bean.name,
+          name:
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.PREPARATION_STYLE +
+            '_' +
+            addedBrewObj.getPreparation().style_type,
+        });
+
+        const water = this.data.getWater();
+        if (water && water.name) {
+          eventsToTrack.push({
+            category: BEAN_TRACKING.TITLE,
+            action:
+              BEAN_TRACKING.ACTIONS.BREW_TRACKED +
+              '_' +
+              bean.roaster +
+              '_' +
+              bean.name,
+            name:
+              BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.WATER_NAME +
+              '_' +
+              water.name,
+          });
+        }
+
+        const grinder: Mill = this.data.getMill();
+        if (grinder && grinder.name) {
+          eventsToTrack.push({
+            category: BEAN_TRACKING.TITLE,
+            action:
+              BEAN_TRACKING.ACTIONS.BREW_TRACKED +
+              '_' +
+              bean.roaster +
+              '_' +
+              bean.name,
+            name:
+              BEAN_TRACKING.ACTIONS.BREW_TRACKED.PARAMETER.GRINDER_NAME +
+              '_' +
+              grinder.name,
+          });
+        }
+      }
+
+      // Single call to trackBulkEvents after all events are collected
+      if (eventsToTrack.length > 0) {
+        this.uiAnalytics.trackBulkEvents(eventsToTrack);
+      }
 
       if (
         this.brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() ===

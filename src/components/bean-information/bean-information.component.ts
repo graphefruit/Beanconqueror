@@ -262,6 +262,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.GENERATE_INTERNAL_SHARE_CODE:
         await this.generateQrCode();
         break;
+      case BEAN_ACTION.COPY_FROZEN_ID:
+        await this.copyFrozenId();
+        break;
       default:
         break;
     }
@@ -302,6 +305,9 @@ export class BeanInformationComponent implements OnInit {
     await this.resetSettings();
   }
 
+  public async copyFrozenId() {
+    this.uiHelper.copyToClipboard(this.bean.frozenId);
+  }
   public async generateQrCode() {
     await this.uiBeanHelper.generateQRCode(this.bean);
   }

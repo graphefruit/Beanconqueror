@@ -12,6 +12,7 @@ import { ModalController } from '@ionic/angular';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { UIHelper } from '../../../services/uiHelper';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { UIAlert } from '../../../services/uiAlert';
 
 @Component({
   selector: 'app-brew-modal-import-shot-meticulous',
@@ -42,7 +43,8 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   public segmentScrollHeight: string = undefined;
   constructor(
     private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper
+    public readonly uiHelper: UIHelper,
+    private readonly uiAlert: UIAlert,
   ) {}
 
   public ngOnInit() {
@@ -50,7 +52,9 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   }
 
   private async readHistory() {
+    await this.uiAlert.showLoadingSpinner();
     this.history = await this.meticulousDevice?.getHistory();
+    await this.uiAlert.hideLoadingSpinner();
     this.retriggerScroll();
   }
   @HostListener('window:resize')
@@ -84,7 +88,7 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewModalImportShotMeticulousComponent.COMPONENT_ID
+      BrewModalImportShotMeticulousComponent.COMPONENT_ID,
     );
   }
   public choose(): void {
@@ -102,7 +106,7 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewModalImportShotMeticulousComponent.COMPONENT_ID
+      BrewModalImportShotMeticulousComponent.COMPONENT_ID,
     );
   }
 }

@@ -12,6 +12,7 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 
 @Component({
   selector: 'preparation-add-type',
@@ -66,6 +67,11 @@ export class PreparationAddTypeComponent implements OnInit {
     }
     const newPreparation = await this.uiPreparationStorage.add(this.data);
     this.dismiss(true);
+
+    this.uiAnalytics.trackContentImpression(
+      TrackContentImpression.STATISTICS_PREPARATION_NAME,
+      this.data.name,
+    );
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_PREPARATION_ADDED_SUCCESSFULLY');
     }
@@ -73,7 +79,8 @@ export class PreparationAddTypeComponent implements OnInit {
     if (
       this.data.type === PREPARATION_TYPES.METICULOUS ||
       this.data.type === PREPARATION_TYPES.XENIA ||
-      this.data.type === PREPARATION_TYPES.SANREMO_YOU
+      this.data.type === PREPARATION_TYPES.SANREMO_YOU ||
+      this.data.type === PREPARATION_TYPES.GAGGIUINO
     ) {
       await this.uiPreparationHelper.connectDevice(newPreparation);
     }

@@ -11,12 +11,13 @@ export class DataCorruptionFoundComponent implements OnInit {
 
   @Input() public actualUIStorageDataObj: any = undefined;
   @Input() public backupDataObj: any = undefined;
+  @Input() public isAutomaticBackup: boolean = false;
 
   private disableHardwareBack;
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {}
 
   public ngOnInit() {
@@ -25,7 +26,7 @@ export class DataCorruptionFoundComponent implements OnInit {
         9999,
         (processNextHandler) => {
           // Don't do anything.
-        }
+        },
       );
     } catch (ex) {}
   }
@@ -40,7 +41,7 @@ export class DataCorruptionFoundComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      DataCorruptionFoundComponent.POPOVER_ID
+      DataCorruptionFoundComponent.POPOVER_ID,
     );
   }
 
@@ -55,7 +56,7 @@ export class DataCorruptionFoundComponent implements OnInit {
         import: true,
       },
       undefined,
-      DataCorruptionFoundComponent.POPOVER_ID
+      DataCorruptionFoundComponent.POPOVER_ID,
     );
   }
 }

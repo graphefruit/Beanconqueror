@@ -34,11 +34,22 @@ import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associate
 import { BrewFlow } from '../classes/brew/brewFlow';
 import { IBrewPageSort } from '../interfaces/brew/iBrewPageSort';
 import { BrewSortComponent } from '../app/brew/brew-sort/brew-sort.component';
+import { CoffeeBluetoothDevicesService } from './coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { BluetoothScale } from '../classes/devices';
+import { PressureDevice } from '../classes/devices/pressureBluetoothDevice';
+import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTypes';
 
 /**
  * Handles every helping functionalities
  */
 
+interface IEventPayload {
+  // Define this interface if not already globally available or imported
+  category: string;
+  action: string;
+  name?: string;
+  value?: number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -93,7 +104,8 @@ export class UIBrewHelper {
     private readonly translate: TranslateService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
   ) {
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
       this.canBrewBoolean = undefined;
@@ -118,7 +130,7 @@ export class UIBrewHelper {
   public fieldVisible(
     _settingsField: boolean,
     _preparationField: boolean,
-    _useCustomPreparation: boolean
+    _useCustomPreparation: boolean,
   ) {
     return _useCustomPreparation ? _preparationField : _settingsField;
   }
@@ -126,7 +138,7 @@ export class UIBrewHelper {
   public fieldOrder(
     _settingsOrder: number,
     _preparationOrder: number,
-    _useCustomPreparation: boolean
+    _useCustomPreparation: boolean,
   ) {
     return _useCustomPreparation ? _preparationOrder : _settingsOrder;
   }
@@ -155,7 +167,7 @@ export class UIBrewHelper {
       this.uiAlert.presentCustomPopover(
         'CANT_START_NEW_BREW_TITLE',
         'CANT_START_NEW_BREW_DESCRIPTION',
-        'UNDERSTOOD'
+        'UNDERSTOOD',
       );
       return false;
     }
@@ -193,7 +205,7 @@ export class UIBrewHelper {
         await this.uiAlert.showConfirm(
           'BEAN_LOOKS_LIKE_CONSUMED',
           undefined,
-          true
+          true,
         );
         // He said yes
         await UIBeanHelper.getInstance().archiveBeanWithRatingQuestion(_bean);
@@ -212,7 +224,7 @@ export class UIBrewHelper {
     repeatBrew.grind_weight = _brewToCopy.grind_weight;
 
     const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(
-      _brewToCopy.method_of_preparation
+      _brewToCopy.method_of_preparation,
     );
     if (!brewPreparation.finished) {
       repeatBrew.method_of_preparation = brewPreparation.config.uuid;
@@ -272,11 +284,60 @@ export class UIBrewHelper {
       _brewToCopy.preparationDeviceBrew.type !== PreparationDeviceType.NONE
     ) {
       repeatBrew.preparationDeviceBrew = this.uiHelper.cloneData(
-        _brewToCopy.preparationDeviceBrew
+        _brewToCopy.preparationDeviceBrew,
       );
     }
 
     return repeatBrew;
+  }
+
+  public logUsedBrewParameters(_brew: Brew) {
+    const eventsToTrack: IEventPayload[] = [];
+    const settingsObj: Settings = this.uiSettingsStorage.getSettings();
+    let checkData: Settings | Preparation;
+    const preparationName = _brew.getPreparation().name;
+
+    if (_brew.getPreparation().use_custom_parameters === true) {
+      checkData = _brew.getPreparation();
+    } else {
+      checkData = settingsObj;
+    }
+
+    const scaleDevice: BluetoothScale = this.bleManager.getScale();
+    if (!!scaleDevice) {
+      eventsToTrack.push({
+        category: BREW_TRACKING.TITLE,
+        action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+        name: 'SCALE_DEVICE' + '_' + scaleDevice.device_name,
+      });
+    }
+
+    if (_brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+      const pressureDevice: PressureDevice =
+        this.bleManager.getPressureDevice();
+      if (!!pressureDevice) {
+        eventsToTrack.push({
+          category: BREW_TRACKING.TITLE,
+          action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+          name: 'PRESSURE_DEVICE' + '_' + pressureDevice.device_name,
+        });
+      }
+    }
+
+    const keys = Object.keys(checkData.manage_parameters);
+    for (const key of keys) {
+      if (checkData.manage_parameters[key] === true) {
+        eventsToTrack.push({
+          category: BREW_TRACKING.TITLE,
+          action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+          name: key,
+        });
+      }
+    }
+
+    if (eventsToTrack.length > 0) {
+      this.uiAnalytics.trackBulkEvents(eventsToTrack);
+    }
   }
 
   public cleanInvisibleBrewData(brew: Brew) {
@@ -553,12 +614,12 @@ export class UIBrewHelper {
   private findBeanByInternalShareCode(internalBeanShareCode: string) {
     const allEntries = this.uiBeanStorage.getAllEntries();
     const bean = allEntries.find(
-      (b) => b.internal_share_code === internalBeanShareCode
+      (b) => b.internal_share_code === internalBeanShareCode,
     );
     return bean;
   }
   public async startBrewForBeanByInternalShareCode(
-    internalBeanShareCode: string
+    internalBeanShareCode: string,
   ) {
     const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
     if (bean) {
@@ -567,7 +628,7 @@ export class UIBrewHelper {
   }
 
   public async startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
-    internalBeanShareCode: string
+    internalBeanShareCode: string,
   ) {
     const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
     if (bean) {
@@ -591,11 +652,11 @@ export class UIBrewHelper {
   }
 
   public async choosePreparationMethodAndStartBrew(
-    _presetBean: Bean = undefined
+    _presetBean: Bean = undefined,
   ) {
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.LONG_PRESS_ADD
+      BREW_TRACKING.ACTIONS.LONG_PRESS_ADD,
     );
     const modal = await this.modalController.create({
       component: BrewChoosePreparationToBrewComponent,

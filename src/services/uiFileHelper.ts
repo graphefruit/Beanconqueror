@@ -4,6 +4,7 @@ import { Capacitor, CapacitorException } from '@capacitor/core';
 import {
   Directory,
   Encoding,
+  FileInfo,
   Filesystem,
   StatOptions,
 } from '@capacitor/filesystem';
@@ -34,7 +35,7 @@ export class UIFileHelper extends InstanceClass {
   constructor(
     private readonly uiLog: UILog,
     private readonly platform: Platform,
-    private readonly domSanitizer: DomSanitizer
+    private readonly domSanitizer: DomSanitizer,
   ) {
     super();
   }
@@ -46,7 +47,7 @@ export class UIFileHelper extends InstanceClass {
       return Directory.Data;
     } else {
       throw new Error(
-        `Unsupported platform: ${JSON.stringify(this.platform.platforms())}`
+        `Unsupported platform: ${JSON.stringify(this.platform.platforms())}`,
       );
     }
   }
@@ -60,18 +61,18 @@ export class UIFileHelper extends InstanceClass {
 
   public async readFileAsText(
     path: string,
-    directory?: Directory
+    directory?: Directory,
   ): Promise<string> {
     this.uiLog.debug(
       'readFileAsText for path',
       path,
       'in directory',
-      directory
+      directory,
     );
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
-        'File system operations are only supported on native platforms.'
+        'File system operations are only supported on native platforms.',
       );
     }
 
@@ -85,7 +86,7 @@ export class UIFileHelper extends InstanceClass {
       throw new Error(
         'Filesystem.readFile() returned a Blob, this is not ' +
           'supposed to happen on Capacitor platforms according to the ' +
-          'documentation!'
+          'documentation!',
       );
     }
     // returned data is a plain text string because we set the encoding
@@ -96,24 +97,24 @@ export class UIFileHelper extends InstanceClass {
     this.uiLog.debug('readInternalFileAsText for fileName', fileName);
     return this.readFileAsText(
       this.normalizeFileName(fileName),
-      this.getDataDirectory()
+      this.getDataDirectory(),
     );
   }
 
   public async readFileAsBase64(
     path: string,
-    directory?: Directory
+    directory?: Directory,
   ): Promise<string> {
     this.uiLog.debug(
       'readFileAsBase64 for path',
       path,
       'in directory',
-      directory
+      directory,
     );
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
-        'File system operations are only supported on native platforms.'
+        'File system operations are only supported on native platforms.',
       );
     }
 
@@ -126,7 +127,7 @@ export class UIFileHelper extends InstanceClass {
       throw new Error(
         'Filesystem.readFile() returned a Blob, this is not ' +
           'supposed to happen on Capacitor platforms according to the ' +
-          'documentation!'
+          'documentation!',
       );
     }
     // returned data is a base64 string of the file contents
@@ -137,19 +138,19 @@ export class UIFileHelper extends InstanceClass {
     this.uiLog.debug('readInternalFileAsBase64 for fileName:', fileName);
     return this.readFileAsBase64(
       this.normalizeFileName(fileName),
-      this.getDataDirectory()
+      this.getDataDirectory(),
     );
   }
 
   public async readFileAsUint8Array(
     path: string,
-    directory?: Directory
+    directory?: Directory,
   ): Promise<Uint8Array> {
     this.uiLog.debug(
       'readFileAsUint8Array for path',
       path,
       'in directory',
-      directory
+      directory,
     );
 
     const base64 = await this.readFileAsBase64(path, directory);
@@ -157,13 +158,13 @@ export class UIFileHelper extends InstanceClass {
   }
 
   public async readInternalFileAsUint8Array(
-    fileName: string
+    fileName: string,
   ): Promise<Uint8Array> {
     this.uiLog.debug('readInternalFileAsUint8Array for fileName:', fileName);
 
     return this.readFileAsUint8Array(
       this.normalizeFileName(fileName),
-      this.getDataDirectory()
+      this.getDataDirectory(),
     );
   }
 
@@ -180,7 +181,7 @@ export class UIFileHelper extends InstanceClass {
         'in directory',
         directory,
         '; Error: ',
-        error
+        error,
       );
       throw error;
     }
@@ -194,18 +195,18 @@ export class UIFileHelper extends InstanceClass {
   public async writeFileFromBase64(
     base64: string,
     path: string,
-    directory?: Directory
+    directory?: Directory,
   ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug(
       'writeFileFromBase64 for path',
       path,
       'in directory',
-      directory
+      directory,
     );
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
-        'File system operations are only supported on native platforms.'
+        'File system operations are only supported on native platforms.',
       );
     }
 
@@ -222,7 +223,7 @@ export class UIFileHelper extends InstanceClass {
       'in directory',
       directory,
       '; Result URI is',
-      writeResult.uri
+      writeResult.uri,
     );
 
     // return the relative path we used to write the file instead of the
@@ -233,7 +234,7 @@ export class UIFileHelper extends InstanceClass {
 
   public async writeInternalFileFromBase64(
     base64: string,
-    path: string
+    path: string,
   ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug('writeInternalFileFromBase64 for path', path);
     return this.writeFileFromBase64(base64, path, this.getDataDirectory());
@@ -247,7 +248,7 @@ export class UIFileHelper extends InstanceClass {
    */
   public async writeExternalFileFromBase64ForSharing(
     base64: string,
-    path: string
+    path: string,
   ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug('writeExternalFileFromBase64 for path', path);
     return this.writeFileFromBase64(base64, path, Directory.External);
@@ -256,13 +257,13 @@ export class UIFileHelper extends InstanceClass {
   public async writeFileFromBlob(
     blob: Blob,
     path: string,
-    directory?: Directory
+    directory?: Directory,
   ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug(
       'writeFileFromBlob for path',
       path,
       'in directory',
-      directory
+      directory,
     );
 
     const base64 = await this.blobToBase64(blob);
@@ -271,7 +272,7 @@ export class UIFileHelper extends InstanceClass {
 
   public async writeInternalFileFromBlob(
     blob: Blob,
-    path: string
+    path: string,
   ): Promise<{ path: string; fullpath: string }> {
     this.uiLog.debug('writeInternalFileFromBlob for path', path);
     return this.writeFileFromBlob(blob, path, this.getDataDirectory());
@@ -280,18 +281,18 @@ export class UIFileHelper extends InstanceClass {
   public async writeFileFromText(
     text: string,
     path: string,
-    directory?: Directory
+    directory?: Directory,
   ): Promise<string> {
     this.uiLog.debug(
       'writeFileFromText for path',
       path,
       'in directory',
-      directory
+      directory,
     );
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
-        'File system operations are only supported on native platforms.'
+        'File system operations are only supported on native platforms.',
       );
     }
 
@@ -309,7 +310,7 @@ export class UIFileHelper extends InstanceClass {
       'in directory',
       directory,
       '; Result URI is',
-      writeResult.uri
+      writeResult.uri,
     );
 
     // return the relative path we used to write the file instead of the
@@ -320,7 +321,7 @@ export class UIFileHelper extends InstanceClass {
 
   public async writeInternalFileFromText(
     text: string,
-    path: string
+    path: string,
   ): Promise<string> {
     this.uiLog.debug('writeInternalFileFromText for path', path);
     return this.writeFileFromText(text, path, this.getDataDirectory());
@@ -328,13 +329,13 @@ export class UIFileHelper extends InstanceClass {
 
   public async generateInternalPath(
     prefix: string,
-    fileExtension: string
+    fileExtension: string,
   ): Promise<string> {
     this.uiLog.debug(
       'generateInternalPath for prefix',
       prefix,
       'and extension',
-      fileExtension
+      fileExtension,
     );
     let generatedFileName: string;
     while (true) {
@@ -351,7 +352,7 @@ export class UIFileHelper extends InstanceClass {
       this.uiLog.debug(
         generatedFileName,
         'already exists. This is VERY unlucky, ' +
-          'but re-rolling the UUID should fix that.'
+          'but re-rolling the UUID should fix that.',
       );
     }
   }
@@ -361,7 +362,7 @@ export class UIFileHelper extends InstanceClass {
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
-        'File system operations are only supported on native platforms.'
+        'File system operations are only supported on native platforms.',
       );
     }
 
@@ -385,12 +386,56 @@ export class UIFileHelper extends InstanceClass {
     await this.deleteFile(path, Directory.External);
   }
 
+  public async listAutomaticBackupFiles(): Promise<FileInfo[]> {
+    this.uiLog.debug('listAutomaticBackupFiles starting');
+
+    if (!this.platform.is('capacitor')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.',
+      );
+    }
+
+    const backupFiles: FileInfo[] = [];
+
+    try {
+      const exportDir = await Filesystem.readdir({
+        path: 'Download/Beanconqueror_export/',
+        directory: Directory.External,
+      });
+
+      for (const directoryEntry of exportDir.files) {
+        if (directoryEntry.type !== 'file') {
+          continue;
+        }
+
+        if (directoryEntry.name.startsWith('Beanconqueror_automatic_export_')) {
+          backupFiles.push(directoryEntry);
+        }
+      }
+      this.uiLog.debug('Found automatic backup files:', backupFiles);
+      return backupFiles;
+    } catch (error) {
+      if (
+        error instanceof CapacitorException &&
+        error.message === 'Directory does not exist.'
+      ) {
+        // If the directory doesn't exist, it means there are no backup files.
+        this.uiLog.info(
+          'Automatic backup directory does not exist, returning empty list.',
+        );
+        return [];
+      }
+      this.uiLog.error('Error occurred in listAutomaticBackupFiles', error);
+      throw error;
+    }
+  }
+
   public async deleteZIPBackupsOlderThanSevenDays(): Promise<void> {
     this.uiLog.debug('deleteZIPBackupsOlderThanSevenDays starting');
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
-        'File system operations are only supported on native platforms.'
+        'File system operations are only supported on native platforms.',
       );
     }
 
@@ -424,7 +469,7 @@ export class UIFileHelper extends InstanceClass {
           this.uiLog.info(
             'Backup file ',
             directoryEntry.name,
-            'is not older than 7 days, so we will keep it'
+            'is not older than 7 days, so we will keep it',
           );
           continue;
         }
@@ -434,7 +479,7 @@ export class UIFileHelper extends InstanceClass {
             'Deleting outdated backup file',
             directoryEntry.name,
             'at URI',
-            directoryEntry.uri
+            directoryEntry.uri,
           );
           await Filesystem.deleteFile({ path: directoryEntry.uri });
         } catch (error) {
@@ -442,7 +487,7 @@ export class UIFileHelper extends InstanceClass {
             'Could not remove automated backup file at',
             directoryEntry.uri,
             '; Error:',
-            error
+            error,
           );
           // don't rethrow, continue with all the other files instead
           continue;
@@ -451,7 +496,7 @@ export class UIFileHelper extends InstanceClass {
     } catch (error) {
       this.uiLog.error(
         'Error occured in deleteZIPBackupsOlderThanSevenDays',
-        error
+        error,
       );
       throw error;
     }
@@ -460,7 +505,7 @@ export class UIFileHelper extends InstanceClass {
   public async downloadExternalFile(
     url: string,
     prefix = 'download_image',
-    fileExtension = '.png'
+    fileExtension = '.png',
   ): Promise<string> {
     const path = await this.generateInternalPath(prefix, fileExtension);
     const directory = this.getDataDirectory();
@@ -474,7 +519,7 @@ export class UIFileHelper extends InstanceClass {
       'in directory',
       directory,
       '; Result path is',
-      result.path
+      result.path,
     );
 
     // return the relative path we used to write the file instead of the
@@ -487,14 +532,14 @@ export class UIFileHelper extends InstanceClass {
   public async exportFileToDefaultDirectory(
     fileName: string,
     blob: Blob,
-    share = true
+    share = true,
   ): Promise<string | undefined> {
     if (this.platform.is('capacitor')) {
       const path = 'Download/Beanconqueror_export';
       return this.exportFile(
         { fileName, path, directory: Directory.External },
         blob,
-        share
+        share,
       );
     } else {
       this.exportFileInBrowser(fileName, blob);
@@ -505,7 +550,7 @@ export class UIFileHelper extends InstanceClass {
   public async exportFile(
     exportPath: { fileName: string; path: string; directory: Directory },
     blob: Blob,
-    share = true
+    share = true,
   ): Promise<string | undefined> {
     if (this.platform.is('capacitor')) {
       const fullpath = `${exportPath.path}/${exportPath.fileName}`;
@@ -549,13 +594,13 @@ export class UIFileHelper extends InstanceClass {
 
   public async makeParentDirs(
     path: string,
-    directory?: Directory
+    directory?: Directory,
   ): Promise<void> {
     this.uiLog.debug(
       'makeParentDirs for path',
       path,
       'in directory',
-      directory
+      directory,
     );
 
     const parts = this.splitFilePath(path);
@@ -564,7 +609,7 @@ export class UIFileHelper extends InstanceClass {
       'Calling mkdir() with path',
       path,
       'in directory',
-      directory
+      directory,
     );
     try {
       await Filesystem.mkdir({
@@ -593,14 +638,14 @@ export class UIFileHelper extends InstanceClass {
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
-        'File system operations are only supported on native platforms.'
+        'File system operations are only supported on native platforms.',
       );
     }
 
     const fileObj = this.splitFilePath(path);
     const newPath = await this.generateInternalPath(
       'duplicate',
-      fileObj.EXTENSION
+      fileObj.EXTENSION,
     );
     await this.makeParentDirsInternal(newPath);
     const result = await Filesystem.copy({
@@ -616,7 +661,7 @@ export class UIFileHelper extends InstanceClass {
       'duplicated to new path',
       newPath,
       '; Result uri is',
-      result.uri
+      result.uri,
     );
 
     // return the relative path we used to write the file instead of the
@@ -639,7 +684,7 @@ export class UIFileHelper extends InstanceClass {
       }
       const fileName: string = _filePath.substr(
         _filePath.lastIndexOf('/') + 1,
-        _filePath.lastIndexOf('.') - _filePath.lastIndexOf('/') - 1
+        _filePath.lastIndexOf('.') - _filePath.lastIndexOf('/') - 1,
       );
       const exstension: string = _filePath.substr(_filePath.lastIndexOf('.'));
 
@@ -686,7 +731,7 @@ export class UIFileHelper extends InstanceClass {
         'Error in getInternalFileSrc for path',
         filePath,
         ':',
-        error
+        error,
       );
       // still reject after logging
       throw error;
@@ -703,7 +748,7 @@ export class UIFileHelper extends InstanceClass {
   }
 
   public async createTempCacheDirectory(
-    prefix: string
+    prefix: string,
   ): Promise<CreateTempCacheDirectoryResult> {
     const cacheDirPath = 'tempDir' + prefix + Date.now();
     this.uiLog.info('createTempCacheDirectory: Creating', cacheDirPath);

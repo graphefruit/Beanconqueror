@@ -45,7 +45,6 @@ import { UIExcel } from '../../../services/uiExcel';
 
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
 import {
@@ -78,6 +77,7 @@ import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { Bean } from '../../../classes/bean/bean';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
+import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 
 declare var cordova;
 
@@ -115,6 +115,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @Input() public loadSpecificLastPreparation: Preparation;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
+
+  @Input('baristamode') public baristamode: boolean = false;
+  @Output() public lastShotInformation = new EventEmitter();
 
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
@@ -177,6 +180,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiLog: UILog,
     private readonly eventQueue: EventQueueService,
     private readonly hapticService: HapticService,
+    private readonly textToSpeech: TextToSpeechService,
   ) {}
 
   public openURL(_url) {
@@ -212,33 +216,38 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (this.isEdit === false) {
         // We need a short timeout because of ViewChild, else we get an exception
 
-        if (this.brewTemplate) {
-          await this.__loadBrew(this.brewTemplate, true);
-        } else if (this.loadSpecificLastPreparation) {
-          const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(
-            this.uiBrewStorage
-              .getAllEntries()
-              .filter(
-                (e) =>
-                  e.method_of_preparation ===
-                  this.loadSpecificLastPreparation.config.uuid,
-              ),
-          );
-          if (foundBrews.length > 0) {
-            await this.__loadBrew(foundBrews[0], false);
+        if (this.baristamode === false) {
+          if (this.brewTemplate) {
+            await this.__loadBrew(this.brewTemplate, true);
+          } else if (this.loadSpecificLastPreparation) {
+            const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(
+              this.uiBrewStorage
+                .getAllEntries()
+                .filter(
+                  (e) =>
+                    e.method_of_preparation ===
+                    this.loadSpecificLastPreparation.config.uuid,
+                ),
+            );
+            if (foundBrews.length > 0) {
+              await this.__loadBrew(foundBrews[0], false);
+            } else {
+              /** We start an empty new brew, and set the preparation method for it
+               * so when the next brew will come, data can or will be preset
+               * **/
+              const newBrew = new Brew();
+              newBrew.method_of_preparation =
+                this.loadSpecificLastPreparation.config.uuid;
+              await this.__loadBrew(newBrew, false);
+            }
           } else {
-            /** We start an empty new brew, and set the preparation method for it
-             * so when the next brew will come, data can or will be preset
-             * **/
-            const newBrew = new Brew();
-            newBrew.method_of_preparation =
-              this.loadSpecificLastPreparation.config.uuid;
-            await this.__loadBrew(newBrew, false);
+            await this.__loadLastBrew();
           }
         } else {
-          await this.__loadLastBrew();
+          if (this.brewBrewingPreparationDeviceEl) {
+            await this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+          }
         }
-
         this.setChoosenPreparation();
       } else {
         this.setChoosenPreparation();
@@ -493,7 +502,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.coffee_first_drip_time_milliseconds =
         this.timer.getMilliseconds();
     }
-    this.brewFirstDripTime.setTime(
+    this.brewFirstDripTime?.setTime(
       this.data.coffee_first_drip_time,
       this.data.coffee_first_drip_time_milliseconds,
     );
@@ -501,18 +510,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.brewBrewingGraphEl.setFirstDripFromMachine();
   }
 
+  private speakCurrentScaleWeight(_value: number) {
+    if (this.settings.text_to_speech_active) {
+      this.textToSpeech.speak(
+        this.translate.instant('BREW_FLOW_WEIGHT') + ' ' + _value.toString(),
+        true,
+      );
+    }
+  }
+
   public bluetoothScaleSetGrindWeight() {
     this.data.grind_weight = this.getActualBluetoothWeight();
+    this.speakCurrentScaleWeight(this.data.grind_weight);
     this.checkChanges();
   }
 
   public bluetoothScaleSetBeanWeightIn() {
     this.data.bean_weight_in = this.getActualBluetoothWeight();
+    this.speakCurrentScaleWeight(this.data.bean_weight_in);
     this.checkChanges();
   }
 
   public bluetoothScaleSetBrewQuantityWeight() {
     this.data.brew_quantity = this.getActualBluetoothWeight();
+    this.speakCurrentScaleWeight(this.data.brew_quantity);
     this.checkChanges();
   }
 
@@ -729,14 +750,33 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerPaused(_event) {
     await this.brewBrewingGraphEl.timerPaused(_event);
+    if (this.baristamode) {
+      try {
+        const shotWeight = this.data.brew_beverage_quantity;
+        const avgFlow = this.uiHelper.toFixedIfNecessary(
+          this.brewBrewingGraphEl.getAvgFlow(),
+          2,
+        );
 
+        this.brewBrewingGraphEl.setLastShotInformation(
+          shotWeight,
+          avgFlow,
+          this.data.brew_time,
+        );
+        this.lastShotInformation.emit({
+          shotWeight: shotWeight,
+          avgFlow: avgFlow,
+          brewtime: this.data.brew_time,
+        });
+      } catch (ex) {}
+    }
     if (
       this.settings.haptic_feedback_active &&
       this.settings.haptic_feedback_brew_stopped
     ) {
       this.hapticService.vibrate();
     }
-    if (this.settings.brew_save_automatic_active) {
+    if (this.settings.brew_save_automatic_active && !this.baristamode) {
       const delayTimer = this.settings.brew_save_automatic_active_delay;
       const response = await this.uiToast.showAutomaticSaveTimer(delayTimer);
       if (response !== 'cancel') {

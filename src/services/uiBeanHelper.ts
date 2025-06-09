@@ -464,4 +464,29 @@ export class UIBeanHelper {
   public generateFrozenId() {
     return Math.random().toString(20).substr(2, 6);
   }
+
+  public logUsedBeanParameters() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const keys = Object.keys(settings.bean_manage_parameters);
+    const events: Array<{
+      category: string;
+      action: string;
+      name?: string;
+      value?: number;
+    }> = [];
+
+    for (const key of keys) {
+      if (settings.bean_manage_parameters[key] === true) {
+        events.push({
+          category: BEAN_TRACKING.TITLE,
+          action: BEAN_TRACKING.ACTIONS.BEAN_PARAMETER_USED,
+          name: key,
+        });
+      }
+    }
+
+    if (events.length > 0) {
+      this.uiAnalytics.trackBulkEvents(events);
+    }
+  }
 }

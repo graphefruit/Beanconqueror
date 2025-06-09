@@ -36,7 +36,7 @@
   <ion-radio-group [(ngModel)]='radioSelection'>
     <div [ngSwitch]='bean_segment'>
       <div *ngSwitchCase="'open'">
-        <ion-card *ngIf='openBeansLength > 0'>
+        <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (openBeans.length > 0) {
             <ag-virtual-scroll #openScroll [items]='openBeans' [height]="'100vh'" min-row-height='60'>

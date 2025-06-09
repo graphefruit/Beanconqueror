@@ -175,6 +175,11 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { BeanInternalShareCodeGeneratorComponent } from '../beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
 import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
+import { BrewModalImportShotGaggiuinoComponent } from '../brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
+import { BaristamodePage } from '../baristamode/baristamode.page';
+import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
+import { BaristaPage } from '../baristamode/barista/barista.page';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 
 @NgModule({
   declarations: [
@@ -188,7 +193,9 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
     WaterSectionPage,
     GraphSectionPage,
     WaterPage,
+    BaristaPage,
     GraphPage,
+    BaristamodePage,
     GreenBeansPage,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
@@ -201,6 +208,7 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
     BrewModalImportShotMeticulousComponent,
+    BrewModalImportShotGaggiuinoComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BeansDetailComponent,
@@ -216,7 +224,9 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    SettingsChooseAutomaticBackupToImportComponent,
     MeticulousHelpPopoverComponent,
+    PleaseActivateAnalyticsPopoverComponent,
     DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
@@ -386,12 +396,15 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
     WaterSectionPage,
     GraphSectionPage,
     WaterPage,
+    BaristaPage,
     GraphPage,
+    BaristamodePage,
     GreenBeansPage,
     BeansAddComponent,
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
     BrewModalImportShotMeticulousComponent,
+    BrewModalImportShotGaggiuinoComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BrewRatingComponent,
@@ -412,7 +425,9 @@ import { BrewSortComponent } from '../brew/brew-sort/brew-sort.component';
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    SettingsChooseAutomaticBackupToImportComponent,
     MeticulousHelpPopoverComponent,
+    PleaseActivateAnalyticsPopoverComponent,
     DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,

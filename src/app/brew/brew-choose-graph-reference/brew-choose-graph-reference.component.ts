@@ -78,7 +78,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     private readonly uiGraphHelper: UIGraphHelper,
     private readonly uiAlert: UIAlert,
     private readonly uiHelper: UIHelper,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -91,10 +91,10 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       this.brew_segment = 'graphs-open';
     }
     this.openBrewsFilter.method_of_preparation.push(
-      this.brew.method_of_preparation
+      this.brew.method_of_preparation,
     );
     this.archivedBrewsFilter.method_of_preparation.push(
-      this.brew.method_of_preparation
+      this.brew.method_of_preparation,
     );
   }
 
@@ -124,7 +124,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
           'GRAPH_SECTION.SECTION_HAS_BEEN_ACTIVATED',
           undefined,
           undefined,
-          true
+          true,
         );
       }
     }
@@ -236,6 +236,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     }
     return (
       checkingFilter.bean.length > 0 ||
+      checkingFilter.water.length > 0 ||
       checkingFilter.method_of_preparation.length > 0 ||
       checkingFilter.mill.length > 0 ||
       checkingFilter.favourite ||
@@ -275,7 +276,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         (e) =>
           e.getBean().finished === !isOpen &&
           e.getMill().finished === !isOpen &&
-          e.getPreparation().finished === !isOpen
+          e.getPreparation().finished === !isOpen,
       );
 
       this.openBrewsLength = brewsFilters.length;
@@ -285,7 +286,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         (e) =>
           e.getBean().finished === !isOpen ||
           e.getMill().finished === !isOpen ||
-          e.getPreparation().finished === !isOpen
+          e.getPreparation().finished === !isOpen,
       );
     }
 
@@ -294,7 +295,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         (b) =>
           b.flow_profile !== undefined &&
           b.flow_profile !== null &&
-          b.flow_profile !== ''
+          b.flow_profile !== '',
       );
     }
 
@@ -313,26 +314,26 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
 
     if (filter.mill.length > 0) {
       brewsFilters = brewsFilters.filter(
-        (e) => filter.mill.filter((z) => z === e.mill).length > 0
+        (e) => filter.mill.filter((z) => z === e.mill).length > 0,
       );
     }
     if (filter.bean.length > 0) {
       brewsFilters = brewsFilters.filter(
-        (e) => filter.bean.filter((z) => z === e.bean).length > 0
+        (e) => filter.bean.filter((z) => z === e.bean).length > 0,
       );
     }
     if (filter.profiles.length > 0) {
       brewsFilters = brewsFilters.filter(
         (e) =>
-          filter.profiles.filter((z) => z === e.pressure_profile).length > 0
+          filter.profiles.filter((z) => z === e.pressure_profile).length > 0,
       );
     }
     if (filter.method_of_preparation.length > 0) {
       brewsFilters = brewsFilters.filter(
         (e) =>
           filter.method_of_preparation.filter(
-            (z) => z === e.method_of_preparation
-          ).length > 0
+            (z) => z === e.method_of_preparation,
+          ).length > 0,
       );
 
       // Tools just can be selected when a preparation method was selected
@@ -340,8 +341,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         brewsFilters = brewsFilters.filter(
           (e) =>
             filter.method_of_preparation_tools.filter((z) =>
-              e.method_of_preparation_tools.includes(z)
-            ).length > 0
+              e.method_of_preparation_tools.includes(z),
+            ).length > 0,
         );
       }
     }
@@ -353,13 +354,18 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     }
     if (filter.chart_data) {
       brewsFilters = brewsFilters.filter(
-        (e) => e.flow_profile !== '' && e.flow_profile !== undefined
+        (e) => e.flow_profile !== '' && e.flow_profile !== undefined,
       );
     }
     if (filter.rating) {
       brewsFilters = brewsFilters.filter(
         (e: Brew) =>
-          e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
+          e.rating >= filter.rating.lower && e.rating <= filter.rating.upper,
+      );
+    }
+    if (filter.water.length > 0) {
+      brewsFilters = brewsFilters.filter(
+        (e) => filter.water.filter((z) => z === e.water).length > 0,
       );
     }
 
@@ -376,7 +382,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
           e.note.toLowerCase().includes(searchText) ||
           e.getPreparation().name.toLowerCase().includes(searchText) ||
           e.getBean().name.toLowerCase().includes(searchText) ||
-          e.getBean().roaster.toLowerCase().includes(searchText)
+          e.getBean().roaster.toLowerCase().includes(searchText),
       );
     }
 
@@ -394,7 +400,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         graph: _graph,
       },
       undefined,
-      BrewChooseGraphReferenceComponent.COMPONENT_ID
+      BrewChooseGraphReferenceComponent.COMPONENT_ID,
     );
   }
   public choose() {
@@ -416,7 +422,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         reset: true,
       },
       undefined,
-      BrewChooseGraphReferenceComponent.COMPONENT_ID
+      BrewChooseGraphReferenceComponent.COMPONENT_ID,
     );
   }
   public dismiss(): void {
@@ -425,7 +431,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewChooseGraphReferenceComponent.COMPONENT_ID
+      BrewChooseGraphReferenceComponent.COMPONENT_ID,
     );
   }
 }

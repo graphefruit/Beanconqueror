@@ -1,0 +1,60 @@
+<ion-header #ionHeader>
+  <ion-toolbar with-add-button>
+    <ion-buttons slot="start">
+      <ion-menu-button show="back"></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+
+    </ion-buttons>
+    <ion-title>
+      {{"NAV_BARISTAMODE_SECTION" | translate }}
+    </ion-title>
+    <ion-buttons slot="end">
+
+      @if (isWebSocketConnected() === true ) {
+        <ion-chip (click)="showPreparationEdit()" outline='true' class='machine-connected'>
+
+          <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+          <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+
+        </ion-chip>
+      } @else {
+        <ion-chip (click)="showPreparationEdit()" outline='true' class='machine-disconnected'>
+
+          <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+          <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+
+
+        </ion-chip>
+      }
+      <ion-button
+        (click)="popoverActionsBrew()" tappable>
+        <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #ionContent >
+    @if (!isWebSocketConnected() ) {
+    <ion-card color="danger">
+      <ion-card-header>
+        <ion-card-title>{{ 'PREPARATION_DEVICE.TYPE_SANREMO_YOU.RECONNECT_NEEDED' | translate}}</ion-card-title>
+        <ion-card-subtitle>{{ 'PREPARATION_DEVICE.TYPE_SANREMO_YOU.CONNECTION_LOST_PLEASE_RECONNECT' | translate }}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-button expand="full" color="success" (click)="checkIfSanremoIsStillConnectedElseShowUpAReconnectButton()">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.RECONNECT" | translate}}</ion-button></ion-card-content>
+    </ion-card>
+    <ion-card>
+
+    </ion-card>
+
+  }
+
+
+  <ion-card [hidden]="!isWebSocketConnected()" style="margin-top:0px;margin-bottom:0px;">
+    <brew-brewing #brewBrewing [baristamode]="true" (lastShotInformation)="lastShotInformation($event)"
+                  [(data)]="data"></brew-brewing>
+  </ion-card>
+</ion-content>

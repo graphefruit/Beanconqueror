@@ -66,6 +66,7 @@ import {
 } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
@@ -78,6 +79,9 @@ import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 
 @Component({
   selector: 'settings',
@@ -446,6 +450,33 @@ export class SettingsPage {
     }, 500);
   }
 
+  /**
+   * @remarks
+   * calls {@link saveSettings()}, then will attempt to update a connected device.
+   *
+   * @param update - the setting to update on the refractometer
+   */
+  public async attemptRefractometerUpdate(update: string) {
+    await this.saveSettings();
+
+    const refractometer: RefractometerDevice =
+      this.bleManager.getRefractometerDevice();
+
+    if (refractometer) {
+      switch (update) {
+        case 'test_type':
+          refractometer.setTestType(this.settings.refractometer_test_type);
+          break;
+        case 'auto_test':
+          refractometer.setAutoTest(this.settings.refractometer_auto_test);
+          break;
+        case 'test_number':
+          refractometer.setTestNumber(this.settings.refractometer_test_number);
+          break;
+      }
+    }
+  }
+
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
@@ -744,6 +775,40 @@ export class SettingsPage {
         // ignore
       }
       await this.uiAlert.hideLoadingSpinner();
+    }
+  }
+
+  public async findAndImportAutomaticBackupFile() {
+    const modal = await this.modalCtrl.create({
+      component: SettingsChooseAutomaticBackupToImportComponent,
+      id: SettingsChooseAutomaticBackupToImportComponent.POPOVER_ID,
+      componentProps: {},
+    });
+    await modal.present();
+    const modalData = await modal.onWillDismiss();
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.choosenURI !== ''
+    ) {
+      const path = modalData.data.choosenURI;
+      // path/uri post-processing
+      let directoryUri = path.substring(0, path.lastIndexOf('/'));
+      if (this.platform.is('android')) {
+        // Until we package the additional files into the ZIP file, we just have
+        // to always import from the external storage directory,
+        // i.e. /sdcard/Android/com.beanconqueror.app/files/
+        //
+        // As an alternative, importFromDirectoryAndroid can be used, which
+        // uses SAF to get all the other files as well.
+        const result = await Filesystem.getUri({
+          path: 'Download/Beanconqueror_export/',
+          directory: Directory.External,
+        });
+        directoryUri = result.uri;
+      }
+
+      await this.doImport('zip', path, directoryUri);
     }
   }
 
@@ -1532,4 +1597,6 @@ export class SettingsPage {
   }
 
   protected readonly BluetoothTypes = BluetoothTypes;
+  protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
+  protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
 }

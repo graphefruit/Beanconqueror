@@ -1031,7 +1031,8 @@
             "NONE": "None",
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
-            "SANREMO_YOU": ""
+            "SANREMO_YOU": "",
+            "GAGGIUINO": "Gaggiuino"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1077,7 +1078,18 @@
             "PROFILE_P3_CONTROLLING": "",
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": ""
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "",
+            "MODE_LISTENING_AND_CONTROLLING": "",
+            "SHOT_STARTED": "",
+            "SHOT_ENDED": "",
+            "CONNECTION_LOST_PLEASE_RECONNECT": "",
+            "RECONNECT_NEEDED": "",
+            "RECONNECT": "",
+            "ENTER_TARGET_BREW_WEIGHT": "",
+            "LAST_SHOT": ""
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": "Gaggiuino Machine"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1134,7 +1146,15 @@
             "BLUETOOTH": "Untuk mendeteksi refractometer, aplikasi membutuhkan akases bluetooth"
         },
         "LOG": "Aktifkan file log untuk refractometer",
-        "READ_END": "Tes selesai - hasil diperoleh"
+        "READ_END": "Tes selesai - hasil diperoleh",
+        "TEST_TYPE": "Test type",
+        "TEST_TYPES": {
+            "SINGLE": "Single",
+            "AVERAGE": "Average"
+        },
+        "AUTO_TEST": "Auto Test",
+        "AUTO_TEST_DESCRIPTION": "Automatically perform a looping test when temperature change is detected until a stable TDS \/ Temperature is found",
+        "TEST_NUMBER": "Number of tests"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Ditambahkan ke clipboard",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Tidak dapat ditambahkan ke clipboard",
@@ -1431,27 +1451,65 @@
     "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": "Simpan seduhan secara otomatis setelah interval waktu tertentu berlalu. Tindakan ini akan dijalankan setelah Anda menjeda pengatur waktu minuman",
     "SAVE_NOW": "Simpan sekarang",
     "SAVING_BREW_COUNTDOWN": "Menyimpan seduhan dalam {{time}}",
+    "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
+    "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
+    "NAV_BARISTAMODE_SECTION": "Baristamode",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
+    "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
+    "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible.",
+    "BEAN_DATA_AVERAGE_BREW_RATING": "Average Brew Rating",
     "UPDATE_TEXT_TITLE_TITLE": {
-        "8.1.0": {
-            "TITLE": "Versi 8.1.0: Apa yang baru?",
+        "8.3.0": {
+            "TITLE": "Version 8.3.0: What's new",
             "DESCRIPTION": [
-                "<b>Biji Kopi<\/b>",
-                "Urutkan kopi berdasarkan terakhir digunakan, tanggal pembelian, dan tanggal dibukanya kantong",
-                "Mendukung parameter baru CO2e (kg) per kg kopi sangrai, yang dinonaktifkan secara default",
-                "Ekspor Excel sekarang mewarisi dengan benar tingkat roasting",
-                "Tindakan NFC\/Kode QR baru: Pilih tindakan. Saat memindai tag, Anda dapat memilih tindakan yang ingin Anda lakukan",
+                "<b>Brews<\/b>",
+                "Choose in settings which photo to display: bean, brew, or preparation",
+                "The water flow peak rate is now shown in the brew detail view",
+                "Resolved an issue caused by a slow taring speed on Varia scales, when starting with pressure-threshold",
                 "",
-                "<b>Seduh<\/b>",
-                "Judul informasi untuk perangkat bluetooth kini lebih besar di tablet",
-                "Penggandaan berat tetap untuk seduhan espresso",
+                "<b>Beans<\/b>",
+                "Frozen beans are now selected automatically when no unfrozen beans are available",
+                "You can now freeze an entire bean from the action menu, as well as copy attachments to portions",
+                "It is now possible to copy the frozen ID via the action popup",
+                "Edit your bean directly from the detail view",
+                "Automatic bean rating is now calculated once all brews are completed - Thanks to danielzsandberg",
                 "",
-                "<b>Pengaturan<\/b>",
-                "Fitur baru: Menyimpan seduhan secara otomatis yang dapat diaktifkan",
-                "Fitur baru: Perbarui interval grafik, untuk perangkat lama yang mungkin bisa membeku\/lambat saat memperbarui grafik, Anda dapat menyesuaikan kecepatan refresh",
+                "<b>Preparations<\/b>",
+                "You can now turn the Xenia machine on or off",
                 "",
-                "<b>Lainnya<\/b>",
-                "Perbaikan kecil"
+                "<b>DiFluid R2-Refractometer<\/b>",
+                "Whole rework - Thanks to AV-IO",
+                "",
+                "<b>Settings<\/b>",
+                "Option to disable the connect\/disconnect popup for Bluetooth devices",
+                "",
+                "<b>Other<\/b>",
+                "Minor fixes"
             ]
         }
-    }
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Choose brew displaying image type",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Preparation",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Bean",
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": "Brew",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "Bluetooth device connection information",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Displays the connecting and disconnecting information of the bluetooth device(s).",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": "Image quality in percentage",
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Maximum image size in Megabytes",
+    "POPOVER_COPY_FROZEN_ID": "Copy frozen id",
+    "MACHINE_ACTIONS": "Machine actions",
+    "MACHINE_POWER_ON": "Power on",
+    "MACHINE_POWER_OFF": "Power off",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": "Machine turned on successfully",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": "Machine turned off successfully",
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": "Machine could not be turned on",
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Machine could not be turned off",
+    "FREEZE_BEAN": "Freeze bean",
+    "BEAN_HAS_BEEN_FROZEN": "Bean has been frozen",
+    "FIND_AUTOMATIC_BACKUP_FILES": "Find and import an automatic backup file",
+    "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Search through the internal device storage for automatic backup files, choose one and import it",
+    "NO_AUTOMATIC_BACKUPS_FOUND": "No automatic backups found",
+    "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "If you suffered a data loss, and you didn't find any data here, please use the official support ways",
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Import automatic backup file"
 }

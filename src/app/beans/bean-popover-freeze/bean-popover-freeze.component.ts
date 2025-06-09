@@ -14,6 +14,8 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIAlert } from '../../../services/uiAlert';
 import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIToast } from '../../../services/uiToast';
 
 declare var cordova;
 @Component({
@@ -38,6 +40,8 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
   public leftOverBeanBagWeight: number = 0;
   public copyAttachments: boolean = false;
+  public quality: number = 80;
+  public maxMB: number = 0.5;
 
   public allNewCreatedBeans: Array<Bean> = [];
   public readonly beanFreezingStorageEnum = BEAN_FREEZING_STORAGE_ENUM;
@@ -52,11 +56,20 @@ export class BeanPopoverFreezeComponent implements OnInit {
     public readonly uiHelper: UIHelper,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiAlert: UIAlert,
+    private readonly uiFileHelper: UIFileHelper,
+    private readonly uiToast: UIToast,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
   }
-
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   public ngOnInit() {
     // cant be done in constructor, else the bean object is not known
     this.leftOverBeanBagWeight = this.uiHelper.toFixedIfNecessary(
@@ -88,6 +101,20 @@ export class BeanPopoverFreezeComponent implements OnInit {
     );
   }
 
+  public async saveWholePackage() {
+    if (this.bean.frozenId == undefined || this.bean.frozenId == '') {
+      this.bean.frozenId = this.uiBeanHelper.generateFrozenId();
+    }
+    this.bean.frozenDate = this.frozenDate;
+    if (this.frozenNote) {
+      this.bean.frozenNote = this.frozenNote;
+    }
+
+    await this.uiBeanStorage.update(this.bean);
+    this.uiToast.showInfoToast('BEAN_HAS_BEEN_FROZEN', true);
+    this.dismiss();
+  }
+
   public async save() {
     await this.uiAlert.showLoadingSpinner();
     const spillOver = this.uiHelper.toFixedIfNecessary(
@@ -116,6 +143,60 @@ export class BeanPopoverFreezeComponent implements OnInit {
       totalGreenBeanWeight = this.bean.bean_roast_information.green_bean_weight;
     }
 
+    const copyAttachments: Array<string> = [];
+    if (this.copyAttachments) {
+      for await (let attachment of this.bean.attachments) {
+        try {
+          const filePath = attachment;
+          if (filePath) {
+            // Read the attachment file as base64 string for later copying
+            let fileBase64 =
+              await this.uiFileHelper.readInternalFileAsBase64(filePath);
+            let type = 'image/jpeg';
+            if (filePath.indexOf('.png') > -1) {
+              // If the file is a jpg, we need to convert it to a png
+              type = 'image/png';
+            }
+            fileBase64 = 'data:' + type + ';base64,' + fileBase64;
+
+            await new Promise(async (resolve) => {
+              const img = new Image();
+              const maxSizeInMB = this.maxMB;
+              const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+              img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const width = img.width;
+                const height = img.height;
+                const aspectRatio = width / height;
+                const newWidth = Math.sqrt(maxSizeInBytes * aspectRatio);
+                const newHeight = Math.sqrt(maxSizeInBytes / aspectRatio);
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                const imageQuality = this.quality / 10;
+                const newFileBase = canvas.toDataURL(
+                  'image/jpeg',
+                  imageQuality,
+                );
+                copyAttachments.push(newFileBase);
+                resolve(undefined);
+              };
+              img.onerror = () => {
+                const newFileBase = fileBase64?.toString() || '';
+                if (newFileBase) {
+                  copyAttachments.push(newFileBase);
+                }
+
+                resolve(undefined);
+              };
+              img.src = fileBase64;
+            });
+          }
+        } catch (error) {}
+      }
+    }
+
     let groupBeanId: string = crypto.randomUUID();
     if (this.bean.frozenGroupId) {
       //If we froze the initial bean already, we use this as the reference again.
@@ -130,6 +211,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
         burnInPercentage,
         totalActualBeanWeight,
         totalGreenBeanWeight,
+        copyAttachments,
       );
       index = index + 1;
     }
@@ -239,6 +321,23 @@ export class BeanPopoverFreezeComponent implements OnInit {
     await modal.present();
     await modal.onWillDismiss();
   }
+
+  private async saveBase64Photo(base64: string): Promise<string> {
+    let ending = '.jpg';
+    if (base64.indexOf('data:image/png;base64,') > -1) {
+      ending = '.png';
+    }
+    const fileName = await this.uiFileHelper.generateInternalPath(
+      'photo',
+      ending,
+    );
+    const fileUri = await this.uiFileHelper.writeInternalFileFromBase64(
+      base64,
+      fileName,
+    );
+    return fileUri.path;
+  }
+
   private async __createNewFrozenBean(
     _freezingWeight: number,
     _freezingType: BEAN_FREEZING_STORAGE_ENUM,
@@ -247,6 +346,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     _burnInPercentage: number,
     _totalBeanWeight: number,
     _totalGreenBeanWeight: number,
+    _copyAttachments: Array<string>,
   ) {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
 
@@ -261,6 +361,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
     clonedBean.internal_share_code = '';
     clonedBean.shared = false;
     clonedBean.qr_code = '';
+
+    if (_copyAttachments && _copyAttachments.length > 0) {
+      for await (let attachment of _copyAttachments) {
+        const fileUri = await this.saveBase64Photo(attachment);
+        clonedBean.attachments.push(fileUri);
+      }
+    }
 
     if (this.bean.cost !== 0) {
       try {

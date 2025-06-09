@@ -68,6 +68,7 @@ import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremo
 import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
+import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 
 declare var Plotly;
 
@@ -83,6 +84,19 @@ export class BrewBrewingGraphComponent implements OnInit {
   public smartScaleWeightPerSecondEl: ElementRef;
   @ViewChild('smartScaleAvgFlowPerSecond', { read: ElementRef })
   public smartScaleAvgFlowPerSecondEl: ElementRef;
+
+  /** Barista mode **/
+
+  @ViewChild('smartScaleWeightPerSecondBarista', { read: ElementRef })
+  public smartScaleWeightPerSecondBaristaEl: ElementRef;
+  @ViewChild('smartScaleAvgFlowPerSecondBarista', { read: ElementRef })
+  public smartScaleAvgFlowPerSecondBaristaEl: ElementRef;
+  @ViewChild('timerBarista', { read: ElementRef })
+  public timerBaristaEl: ElementRef;
+  @ViewChild('lastShot', { read: ElementRef })
+  public lastShotEl: ElementRef;
+
+  /** Barista mode end **/
 
   @ViewChild('smartScaleSecondWeight', { read: ElementRef })
   public smartScaleSecondWeightEl: ElementRef;
@@ -106,6 +120,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   @Input() public isEdit: boolean = false;
   @Input() public isDetail: boolean = false;
+
+  @Input() public baristamode: boolean = false;
 
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -477,7 +493,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.METICULOUS
     ) {
-      return 3;
+      return 4;
     }
 
     let bluetoothDeviceConnections = 0;
@@ -824,7 +840,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           pressureDevice.updateZero();
         }
       }
-      pressureDevice.enableValueTransmission();
+      pressureDevice?.enableValueTransmission();
       if (
         this.brewComponent?.timer?.isTimerRunning() === true &&
         _firstStart === false
@@ -1305,6 +1321,13 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.stopFetchingDataFromMeticulous();
       } else if (deviceType === PreparationDeviceType.SANREMO_YOU) {
         this.stopFetchingDataFromSanremoYOU();
+
+        if (
+          this.data.preparationDeviceBrew.params.selectedMode ===
+          SanremoYOUMode.LISTENING_AND_CONTROLLING
+        ) {
+          this.startFetchingDataFromSanremoYOU();
+        }
       }
     }
 
@@ -1487,16 +1510,19 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.uiLog.log(`Sanremo YOU - Pause button pressed, stop shot`);
       const prepDeviceCall: SanremoYOUDevice = this.brewComponent
         ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
-      prepDeviceCall
-        .stopShot(this.data.preparationDeviceBrew.params.selectedMode)
-        .catch((_msg) => {
-          this.uiToast.showInfoToast(
-            'We could not stop - manual triggered: ' + _msg,
-            false,
-          );
-          this.uiLog.log('We could not stop - manual triggered: ' + _msg);
-        });
+      prepDeviceCall.stopActualShot();
       this.stopFetchingDataFromSanremoYOU();
+    }
+
+    if (
+      this.baristamode === true &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.SANREMO_YOU
+    ) {
+      setTimeout(() => {
+        this.brewComponent.timer.reset();
+      }, 1000);
     }
 
     if (
@@ -1551,31 +1577,156 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
+  /**Called from the preparation device**/
+  public sanremoYOUModeSelected() {
+    if (
+      this.data.preparationDeviceBrew?.params.selectedMode ===
+      SanremoYOUMode.LISTENING_AND_CONTROLLING
+    ) {
+      this.startFetchingDataFromSanremoYOU();
+    }
+  }
+
   public startFetchingDataFromSanremoYOU() {
     const prepDeviceCall: SanremoYOUDevice = this.brewComponent
       .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
 
     this.stopFetchingDataFromSanremoYOU();
 
-    const setSanremoData = () => {
+    /**const setSanremoData = () => {
       this.ngZone.runOutsideAngular(() => {
         const temp = prepDeviceCall.getTemperature();
         const press = prepDeviceCall.getPressure();
         this.__setPressureFlow({ actual: press, old: press });
         this.__setTemperatureFlow({ actual: temp, old: temp });
       });
-    };
+    };**/
+
+    let hasShotStarted: boolean = false;
+    prepDeviceCall.connectToSocket().then((_connected) => {
+      if (_connected) {
+        this.ngZone.runOutsideAngular(() => {
+          this.sanremoYOUFetchingInterval = setInterval(() => {
+            const shotData: SanremoShotData =
+              prepDeviceCall.getActualShotData();
+
+            if (shotData.groupStatus > 4) {
+              //Ignore everything above 4
+              /**
+               * 1 = p1
+               * 2 = p2
+               * 3 = p3
+               * 4 = m
+               * 5 = purge
+               * 6 = paddeling
+               */
+              if (this.baristamode) {
+                return;
+              } else {
+                if (shotData.groupStatus === 6) {
+                  //Accept this one, because user is doing a paddel
+                } else {
+                  return;
+                }
+              }
+            }
+            if (shotData.statusPhase != 0 && hasShotStarted === false) {
+              if (this.baristamode) {
+                if (this.smartScaleConnected()) {
+                  const scale: BluetoothScale = this.bleManager.getScale();
+                  if (scale.getWeight() !== 0) {
+                    //Just tare if the scale is not zero yet.
+                    scale.tare();
+                  }
+                }
+              }
+              this.uiAlert.hideLoadingSpinner();
+              this.uiToast.showInfoToast(
+                'PREPARATION_DEVICE.TYPE_SANREMO_YOU.SHOT_STARTED',
+              );
+              hasShotStarted = true;
+              this.startingFlowTime = Date.now();
+              // IF brewtime has some seconds, we add this to the delay directly.
+              this.data.brew_time = 0;
+              this.data.brew_time_milliseconds = 0;
+
+              this.data.coffee_first_drip_time = 0;
+              this.data.coffee_first_drip_time_milliseconds = 0;
+              this.data.coffee_blooming_time = 0;
+              this.data.coffee_blooming_time_milliseconds = 0;
+              this.brewComponent.timer.initTimer(false);
+              if (this.baristamode === true) {
+                this.timerStarted('sanremo_barista_mode');
+              }
+
+              this.brewComponent.timer.startTimer(false, false);
+
+              this.lastChartRenderingInstance = -1;
+              this.updateChart();
+              this.changeDetectorRef.detectChanges();
+            } else if (shotData.statusPhase == 0 && hasShotStarted === true) {
+              //The shot has been finished
+              const smartScaleConnected: boolean = this.smartScaleConnected();
+              if (this.baristamode && smartScaleConnected === false) {
+                //If the barista mode is running and a smartscale is not connected, the timer would run endless, so we stop if there is no smart scale connected at all.
+                this.brewComponent.timer.pauseTimer('sanremo_you');
+                this.stopFetchingDataFromSanremoYOU();
+                this.updateChart();
+                this.uiToast.showInfoToast(
+                  'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_ENDED',
+                );
+                return;
+              } else if (this.baristamode) {
+                if (this.brewComponent.timer.isTimerRunning() === true) {
+                  if (
+                    this.traces.weightTrace.y.length > 40 &&
+                    ((this.traces.weightTrace.y[
+                      this.traces.weightTrace.y.length - 1
+                    ] >= 0 &&
+                      this.traces.weightTrace.y[
+                        this.traces.weightTrace.y.length - 1
+                      ] <= 0.5) ||
+                      this.traces.weightTrace.y[
+                        this.traces.weightTrace.y.length - 1
+                      ] <= -2)
+                  ) {
+                    //Something happend, we tared... so we stop the timer
+                    this.brewComponent.timer.pauseTimer('sanremo_you');
+                    this.stopFetchingDataFromSanremoYOU();
+                    this.updateChart();
+                    return;
+                  } else if (this.traces.weightTrace.y.length == 0) {
+                    //Something happend, it looked like  that we already paused, so we stop the timer again
+                    this.brewComponent.timer.pauseTimer('sanremo_you');
+                    this.stopFetchingDataFromSanremoYOU();
+                    this.updateChart();
+                    return;
+                  }
+                }
+              }
+            }
+
+            if (hasShotStarted) {
+              const temp = prepDeviceCall.getActualShotData().tempBoilerCoffe;
+              const press = prepDeviceCall.getActualShotData().pumpPress;
+              this.__setPressureFlow({ actual: press, old: press });
+              this.__setTemperatureFlow({ actual: temp, old: temp });
+            }
+          }, 100);
+        });
+      }
+    });
 
     /**
      * This doesn't need to be awaited, we get the data from the device when it happens.
      * When we would await it we would maybe build in very big lag potential
      */
-    prepDeviceCall.fetchRuntimeData(() => {
+    /**prepDeviceCall.fetchRuntimeData(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.
       setSanremoData();
-    });
+    });**/
 
-    this.ngZone.runOutsideAngular(() => {
+    /**this.ngZone.runOutsideAngular(() => {
       this.sanremoYOUFetchingInterval = setInterval(async () => {
         try {
           //const apiThirdCallDelayStart = moment(); // create a moment with the current time
@@ -1592,7 +1743,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           });
         } catch (ex) {}
       }, 250);
-    });
+    });**/
   }
 
   public startFetchingDataFromMeticulous() {
@@ -1889,17 +2040,20 @@ export class BrewBrewingGraphComponent implements OnInit {
         // If maximizeFlowGraphIsShown===true, we already started once and resetted, don't show overlay again
         // First maximize, then go on with the timer, else it will lag hard.
 
-        if (scale || temperatureDevice) {
-          this.brewComponent.maximizeFlowGraph();
-        } else {
-          if (
-            this.data.getPreparation().style_type ===
-              PREPARATION_STYLE_TYPE.ESPRESSO &&
-            pressureDevice
-          ) {
+        if (!this.baristamode) {
+          //Just show overlay if not in barista mode
+          if (scale || temperatureDevice) {
             this.brewComponent.maximizeFlowGraph();
           } else {
-            //Don't maximize because pressure is connected, but preparation is not right
+            if (
+              this.data.getPreparation().style_type ===
+                PREPARATION_STYLE_TYPE.ESPRESSO &&
+              pressureDevice
+            ) {
+              this.brewComponent.maximizeFlowGraph();
+            } else {
+              //Don't maximize because pressure is connected, but preparation is not right
+            }
           }
         }
       }
@@ -2047,7 +2201,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
-        this.brewComponent.maximizeFlowGraphIsShown === false
+        this.brewComponent.maximizeFlowGraphIsShown === false &&
+        !this.baristamode
       ) {
         this.brewComponent.maximizeFlowGraph();
       }
@@ -2063,7 +2218,9 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (
         this.data.preparationDeviceBrew?.params.selectedMode !==
-        SanremoYOUMode.LISTENING
+          SanremoYOUMode.LISTENING &&
+        this.data.preparationDeviceBrew?.params.selectedMode !==
+          SanremoYOUMode.LISTENING_AND_CONTROLLING
       ) {
         prepDeviceCall
           .startShot(this.data.preparationDeviceBrew?.params.selectedMode)
@@ -2078,12 +2235,15 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
-        this.brewComponent.maximizeFlowGraphIsShown === false
+        this.brewComponent.maximizeFlowGraphIsShown === false &&
+        !this.baristamode
       ) {
         this.brewComponent.maximizeFlowGraph();
       }
 
-      this.startFetchingDataFromSanremoYOU();
+      if (this.baristamode === false) {
+        this.startFetchingDataFromSanremoYOU();
+      }
     }
   }
 
@@ -2277,7 +2437,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             true,
           );
         }
-      }, 4000);
+      }, 5000);
     }
   }
 
@@ -2484,7 +2644,12 @@ export class BrewBrewingGraphComponent implements OnInit {
         weight = notMutatedWeight;
       }
     }
-    if (weight <= 0 && isEspresso) {
+    /**
+     * 11.05.25 - we've changed from weight<=0 to weight<0, to check the decrease.
+     * Some scales need longer for a tare, so if you put something on, and you have a tare on new brew, it wouldn't trigger rightly here.
+     * This was specialy on a varia scale, because the taring process takes like 1 sec actually, when you put like 60grams on the scale, the tared weight was zero, but the weight was <=0, and the decrease mechanismn thought that there is an issue
+     */
+    if (weight < 0 && isEspresso) {
       if (this.flowProfileTempAll.length >= 3) {
         let weAreDecreasing: boolean = false;
         for (
@@ -2503,7 +2668,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             break;
           }
         }
-        // We checked that we're not going to degreese
+        // We checked that we're not going to decrease
         if (weAreDecreasing === false) {
           const entryBefore =
             this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
@@ -2531,7 +2696,14 @@ export class BrewBrewingGraphComponent implements OnInit {
            * So we won't get jump from like 1 to 10 gram, then to like 40 grams
            * Update 26.08.24 - We change from 5 to 10, because we had one shot where the value jumped from 0 to 5,5 and we didn't track anymore
            */
-          const plausibleEspressoWeightIncreaseBound: number = 10;
+          let plausibleEspressoWeightIncreaseBound: number = 10;
+          if (this.baristamode) {
+            /**
+             * When we're in barista mode with the sanremo you, we don't support turbo shots actually, so having an increase of 3grams is plausible for each step
+             * specially when using high precisioning scales and no poor scales
+             */
+            plausibleEspressoWeightIncreaseBound = 5;
+          }
           risingFactorOK =
             entryBeforeVal + plausibleEspressoWeightIncreaseBound >= weight;
 
@@ -2572,6 +2744,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     _brewByWeightActive: boolean,
     _scale: BluetoothScale,
   ) {
+    if (this.baristamode && this.brewComponent.timer.getSeconds() <= 6) {
+      // We don't want to calculcate the brew by weight in the first 6 seconds, because the scale can still reset
+      return false;
+    }
     let weight: number = this.uiHelper.toFixedIfNecessary(
       _currentWeightValue,
       1,
@@ -2707,15 +2883,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
 
     this.uiLog.log(`Sanremo YOU Stop: ${_actualScaleWeight}`);
-    prepDeviceCall
-      .stopShot(this.data.preparationDeviceBrew.params.selectedMode)
-      .catch((_msg) => {
-        this.uiToast.showInfoToast(
-          'We could not stop at weight: ' + _msg,
-          false,
-        );
-        this.uiLog.log('We could not stop script at weight: ' + _msg);
-      });
+    prepDeviceCall.stopActualShot();
+    this.uiToast.showInfoToast(
+      'PREPARATION_DEVICE.TYPE_SANREMO_YOU.SHOT_ENDED',
+    );
 
     // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
     if (
@@ -2745,6 +2916,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected();
       let residual_lag_time = 1.35;
       let targetWeight = 0;
+      let baristaModeTargetWeight = undefined;
       let brewByWeightActive: boolean = false;
       let preparationDeviceType: PreparationDeviceType;
 
@@ -2794,7 +2966,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         } else {
           _val = _valChange;
         }
-
         if (this.brewComponent.timer.isTimerRunning() && prepDeviceConnected) {
           if (
             preparationDeviceType === PreparationDeviceType.XENIA &&
@@ -2823,6 +2994,43 @@ export class BrewBrewingGraphComponent implements OnInit {
             this.data.preparationDeviceBrew.params.selectedMode !==
               SanremoYOUMode.LISTENING
           ) {
+            if (this.baristamode) {
+              if (baristaModeTargetWeight === undefined) {
+                try {
+                  let groupStatus = (
+                    this.brewComponent.brewBrewingPreparationDeviceEl
+                      .preparationDevice as SanremoYOUDevice
+                  ).getActualShotData().groupStatus;
+                  if (groupStatus !== 0) {
+                    if (groupStatus === 1) {
+                      baristaModeTargetWeight =
+                        this.data.preparationDeviceBrew.params.stopAtWeightP1;
+                    } else if (groupStatus === 2) {
+                      baristaModeTargetWeight =
+                        this.data.preparationDeviceBrew.params.stopAtWeightP2;
+                    } else if (groupStatus === 3) {
+                      baristaModeTargetWeight =
+                        this.data.preparationDeviceBrew.params.stopAtWeightP3;
+                    } else if (groupStatus === 4) {
+                      baristaModeTargetWeight =
+                        this.data.preparationDeviceBrew.params.stopAtWeightM;
+                    }
+
+                    //We overwrite for this shot the target weight, because we have a barista mode target weight
+                    targetWeight = baristaModeTargetWeight;
+                    if (
+                      document
+                        .getElementById('statusPhase' + groupStatus)
+                        .classList.contains('active') === false
+                    ) {
+                      document
+                        .getElementById('statusPhase' + groupStatus)
+                        .classList.add('active');
+                    }
+                  }
+                } catch (ex) {}
+              }
+            }
             /**We call this function before the if, because we still log the data**/
             const thresholdHit = this.calculateBrewByWeight(
               _val.actual,
@@ -2855,6 +3063,24 @@ export class BrewBrewingGraphComponent implements OnInit {
             };
             this.__setFlowProfile(passVal);
           }
+        }
+        if (this.baristamode) {
+          //sendActualWeightAndFlowDataToMachine
+
+          let lastFlowEntry =
+            this.traces.realtimeFlowTrace.y[
+              this.traces.realtimeFlowTrace.y.length - 1
+            ];
+          let lastWeightEntry =
+            this.traces.weightTrace.y[this.traces.weightTrace.y.length - 1];
+          (
+            this.brewComponent.brewBrewingPreparationDeviceEl
+              .preparationDevice as SanremoYOUDevice
+          ).sendActualWeightAndFlowDataToMachine(
+            lastWeightEntry,
+            lastFlowEntry,
+            baristaModeTargetWeight,
+          );
         }
       });
 
@@ -2920,6 +3146,18 @@ export class BrewBrewingGraphComponent implements OnInit {
       const pressureDevice: PressureDevice =
         this.bleManager.getPressureDevice();
       pressureDevice?.disableValueTransmission();
+    }
+
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.SANREMO_YOU
+    ) {
+      try {
+        const prepDeviceCall: SanremoYOUDevice = this.brewComponent
+          .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
+        prepDeviceCall.disconnectSocket();
+      } catch (ex) {}
     }
   }
 
@@ -3014,6 +3252,14 @@ export class BrewBrewingGraphComponent implements OnInit {
       //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
       this.updateChart();
       this.flowSecondTick++;
+
+      /** We just support the end by pressure if no smart scale is connected, because the smart scale will be the master **/
+      if (this.hasEspressoShotEndedWithPressure()) {
+        this.brewComponent.timer.pauseTimer('shot_ended');
+        this.changeDetectorRef.markForCheck();
+        this.brewComponent.timer.checkChanges();
+        this.checkChanges();
+      }
     }
 
     this.setActualPressureInformation(pressureObj.actual);
@@ -3397,6 +3643,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       flowObj.oldSmoothedWeight,
       flowObj.notMutatedWeight,
     );
+
     this.updateChart();
 
     if (this.hasEspressoShotEnded()) {
@@ -3636,24 +3883,76 @@ export class BrewBrewingGraphComponent implements OnInit {
     } else {
       grindWeight = 5;
     }
+    if (this.baristamode) {
+      /**A bit more threshold for preinfusion**/
+      grindWeight = 10;
+    }
 
     //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
-    const slicedTraceWeight = this.traces.weightTrace.y.slice(5);
+    /**
+     * Edit - we don't take the last 5 entries, we take the last 15 entries, even the slowest scale with 3 values, would mean 5 seconds
+     * But some scales need longer to tare, so 15 weights are a saftey threshold
+     */
+    const slicedTraceWeight = this.traces.weightTrace.y.slice(15);
     const valFound = slicedTraceWeight.find((v) => v >= grindWeight);
     if (valFound === undefined || valFound === null) {
-      return false; // We want to be atleast a ratio of 1:1
+      if (this.baristamode) {
+        if (
+          (
+            this.brewComponent.brewBrewingPreparationDeviceEl
+              .preparationDevice as SanremoYOUDevice
+          ).getActualShotData().statusPhase === 0
+        ) {
+          //Means we stopped and we didn't find the right grindweight...
+        } else {
+          return false; // We want to be atleast a ratio of 1:1
+        }
+      } else {
+        return false; // We want to be atleast a ratio of 1:1
+      }
     }
     const flowThreshold: number =
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow;
-    if (
-      this.traces.realtimeFlowTrace.y[
-        this.traces.realtimeFlowTrace.y.length - 1
-      ] <= flowThreshold
-    ) {
+    const slicedFlowTrace = this.traces.realtimeFlowTrace.y.slice(25);
+    if (slicedFlowTrace[slicedFlowTrace.length - 1] <= flowThreshold) {
       return true;
     } else {
       return false;
     }
+  }
+
+  private hasEspressoShotEndedWithPressure(): boolean {
+    // Minimum 50 scale values which means atleast 5 seconds
+    if (
+      this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO
+    ) {
+      return false;
+    }
+
+    if (
+      this.settings.pressure_threshold_stop_shot_active === false ||
+      this.traces.pressureTrace.y.length < 100 ||
+      this.data.brew_time <= 10
+    ) {
+      return false; // Not enough readings or start time not set yet, or we didn't elapse 5 seconds
+    }
+
+    const barFoundAboveOne = this.traces.pressureTrace.y.find((v) => v >= 1);
+    if (barFoundAboveOne !== undefined) {
+      //User minimum got up to 1 bar
+
+      const pressureStopThreshold: number =
+        this.settings.pressure_threshold_stop_shot_bar;
+      if (
+        this.traces.pressureTrace.y[this.traces.pressureTrace.y.length - 1] <=
+        pressureStopThreshold
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
 
   private pushFlowProfile(
@@ -3758,10 +4057,11 @@ export class BrewBrewingGraphComponent implements OnInit {
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange() {
     if (
-      this.smartScaleConnected() ||
-      this.pressureDeviceConnected() ||
-      this.temperatureDeviceConnected() ||
-      this.isDetail
+      (this.smartScaleConnected() ||
+        this.pressureDeviceConnected() ||
+        this.temperatureDeviceConnected() ||
+        this.isDetail) &&
+      this.baristamode === false
     ) {
       setTimeout(() => {
         try {
@@ -3958,6 +4258,44 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  public setLastShotInformation(
+    shotWeight: number,
+    avgFlow: number,
+    brewtime: number,
+  ) {
+    this.uiLog.log(
+      `Setting last shot information: shotWeight=${shotWeight}, avgFlow=${avgFlow}, brewtime=${brewtime}`,
+    );
+    try {
+      const prepDeviceCall: SanremoYOUDevice = this.brewComponent
+        ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
+
+      this.smartScaleWeightPerSecondBaristaEl.nativeElement.innerText =
+        shotWeight + 'g';
+      this.smartScaleAvgFlowPerSecondBaristaEl.nativeElement.innerText =
+        avgFlow + ' g/s';
+      this.timerBaristaEl.nativeElement.innerText = brewtime + 's';
+      this.lastShotEl.nativeElement.innerText =
+        prepDeviceCall?.lastRunnedProgramm;
+      if (prepDeviceCall.lastRunnedProgramm === 1) {
+        this.lastShotEl.nativeElement.innerText = 'P1';
+      }
+      if (prepDeviceCall.lastRunnedProgramm === 2) {
+        this.lastShotEl.nativeElement.innerText = 'P2';
+      }
+      if (prepDeviceCall.lastRunnedProgramm === 3) {
+        this.lastShotEl.nativeElement.innerText = 'P3';
+      }
+      if (prepDeviceCall.lastRunnedProgramm === 4) {
+        this.lastShotEl.nativeElement.innerText = 'M';
+      }
+
+      for (let i = 1; i < 5; i++) {
+        document.getElementById('statusPhase' + i).classList.remove('active');
+      }
+    } catch (ex) {}
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;

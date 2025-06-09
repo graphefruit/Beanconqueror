@@ -25,12 +25,14 @@ import {
   ScaleType,
   TemperatureType,
 } from '../devices';
+import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -38,6 +40,9 @@ export class Settings implements ISettings {
   public date_format: string;
 
   public matomo_analytics: boolean;
+  public matomo_analytics_id: string;
+  public matomo_analytics_last_question: number;
+  public matomo_initial_data_tracked: boolean;
   public meticulous_help_was_shown: boolean;
   public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
@@ -212,6 +217,9 @@ export class Settings implements ISettings {
   public pressure_threshold_bar: number;
   public pressure_stay_connected: boolean;
 
+  public pressure_threshold_stop_shot_active: boolean;
+  public pressure_threshold_stop_shot_bar: number;
+
   public temperature_id: string;
   public temperature_type: TemperatureType;
   public temperature_log: boolean;
@@ -221,11 +229,14 @@ export class Settings implements ISettings {
 
   public refractometer_id: string;
   public refractometer_type: RefractometerType;
+  public refractometer_test_type: TEST_TYPE_ENUM;
+  public refractometer_auto_test: boolean;
+  public refractometer_test_number: number;
   public refractometer_stay_connected: boolean;
   public refractometer_log: boolean;
 
   public currency: string;
-  public brew_display_bean_image: boolean;
+  public brew_display_image_type: BREW_DISPLAY_IMAGE_TYPE;
   public best_brew: boolean;
 
   public visualizer_active: boolean;
@@ -249,6 +260,7 @@ export class Settings implements ISettings {
 
   public brew_timer_show_hours: boolean;
   public brew_timer_show_minutes: boolean;
+  public bluetooth_devices_show_connection_messages: boolean;
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -275,6 +287,7 @@ export class Settings implements ISettings {
       bean: [],
       method_of_preparation: [],
       method_of_preparation_tools: [],
+      water: [],
       favourite: false,
       best_brew: false,
       chart_data: false,
@@ -316,6 +329,9 @@ export class Settings implements ISettings {
 
     this.language = '';
     this.matomo_analytics = undefined;
+    this.matomo_analytics_id = '';
+    this.matomo_analytics_last_question = 0;
+    this.matomo_initial_data_tracked = false;
     this.meticulous_help_was_shown = false;
 
     this.qr_scanner_information = false;
@@ -538,6 +554,8 @@ export class Settings implements ISettings {
     this.pressure_threshold_active = false;
     this.pressure_threshold_bar = 0.5;
     this.pressure_stay_connected = false;
+    this.pressure_threshold_stop_shot_active = false;
+    this.pressure_threshold_stop_shot_bar = 0.1;
 
     this.temperature_id = '';
     this.temperature_type = null;
@@ -548,12 +566,14 @@ export class Settings implements ISettings {
 
     this.refractometer_id = '';
     this.refractometer_type = null;
+    this.refractometer_test_type = TEST_TYPE_ENUM.SINGLE;
+    this.refractometer_auto_test = false;
+    this.refractometer_test_number = 4;
     this.refractometer_stay_connected = false;
     this.refractometer_log = false;
 
     this.currency = 'EUR';
     this.brew_milliseconds_leading_digits = 3;
-    this.brew_display_bean_image = false;
     this.best_brew = false;
 
     this.visualizer_active = false;
@@ -577,6 +597,10 @@ export class Settings implements ISettings {
 
     this.brew_timer_show_hours = true;
     this.brew_timer_show_minutes = true;
+
+    this.bluetooth_devices_show_connection_messages = true;
+
+    this.brew_display_image_type = BREW_DISPLAY_IMAGE_TYPE.PREPARATION;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

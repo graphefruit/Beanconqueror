@@ -236,7 +236,7 @@ export class Brew implements IBrew {
       BrewInstanceHelper.beans[uniqueCachingID].config.uuid !== this.bean
     ) {
       const iBean: IBean = this.getBeanStorageInstance().getByUUID(
-        this.bean
+        this.bean,
       ) as IBean;
       const bean: Bean = new Bean();
       bean.initializeByObject(iBean);
@@ -256,7 +256,7 @@ export class Brew implements IBrew {
     ) {
       const iPreparation: IPreparation =
         this.getPreparationStorageInstance().getByUUID(
-          this.method_of_preparation
+          this.method_of_preparation,
         ) as IPreparation;
       const preparation: Preparation = new Preparation();
       preparation.initializeByObject(iPreparation);
@@ -274,7 +274,7 @@ export class Brew implements IBrew {
       BrewInstanceHelper.mills[uniqueCachingID].config.uuid !== this.mill
     ) {
       const iMill: IMill = this.getMillStorageInstance().getByUUID(
-        this.mill
+        this.mill,
       ) as IMill;
       const mill: Mill = new Mill();
       mill.initializeByObject(iMill);
@@ -290,7 +290,7 @@ export class Brew implements IBrew {
       BrewInstanceHelper.waters[uniqueCachingID].config.uuid !== this.water
     ) {
       const iWater: IWater = this.getWaterStorageInstance().getByUUID(
-        this.water
+        this.water,
       ) as IWater;
       const water: Water = new Water();
       water.initializeByObject(iWater);
@@ -378,13 +378,13 @@ export class Brew implements IBrew {
       // ey=(tds*total water)/dose
       return this.toFixedIfNecessary(
         (brewQuantity * tds) / grindWeight,
-        2
+        2,
       ).toString();
     }
 
     return this.toFixedIfNecessary(
       (brewBeverageQuantity * tds) / grindWeight,
-      2
+      2,
     ).toString();
   }
 
@@ -441,7 +441,7 @@ export class Brew implements IBrew {
 
   public getPreparationToolName(_uuid: string): string {
     const tool: PreparationTool = this.getPreparation().tools.find(
-      (e) => e.config.uuid === _uuid
+      (e) => e.config.uuid === _uuid,
     );
     if (tool) {
       return tool.name;
@@ -813,7 +813,7 @@ export class Brew implements IBrew {
 
   public getBeanAgeByBrewDate() {
     const bean: IBean = this.getBeanStorageInstance().getByUUID(
-      this.bean
+      this.bean,
     ) as IBean;
     if (bean) {
       if (bean.roastingDate) {
@@ -825,5 +825,9 @@ export class Brew implements IBrew {
     }
 
     return -1;
+  }
+
+  public hasPhotos() {
+    return this.attachments && this.attachments.length > 0;
   }
 }

@@ -23,6 +23,10 @@
               <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
             }
+            @case (PreparationDeviceType.GAGGIUINO) {
+              <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+            }
           }
           </ion-chip>
         } @else {
@@ -38,6 +42,10 @@
               }
               @case (PreparationDeviceType.XENIA) {
                 <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
+                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+              }
+              @case (PreparationDeviceType.GAGGIUINO) {
+                <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
                 <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
               }
             }

@@ -43,6 +43,7 @@ export class BrewFilterComponent implements OnInit {
 
   public preparationToolsExist: boolean;
   public maxBrewRating: number;
+  public filterParameterActive: boolean = false;
   constructor(
     private readonly modalController: ModalController,
     public readonly uiHelper: UIHelper,
@@ -51,11 +52,12 @@ export class BrewFilterComponent implements OnInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly eventQueue: EventQueueService
+    private readonly eventQueue: EventQueueService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.settings.GET_BREW_FILTER();
     this.brews = this.uiBrewStorage.getAllEntries();
+    this.filterParameterActive = this.settings.show_water_section;
   }
 
   public ngOnInit() {
@@ -91,20 +93,20 @@ export class BrewFilterComponent implements OnInit {
         (e) =>
           e.getBean().finished === !isOpen &&
           e.getMill().finished === !isOpen &&
-          e.getPreparation().finished === !isOpen
+          e.getPreparation().finished === !isOpen,
       );
     } else {
       brewsFiltered = this.brews.filter(
         (e) =>
           e.getBean().finished === !isOpen ||
           e.getMill().finished === !isOpen ||
-          e.getPreparation().finished === !isOpen
+          e.getPreparation().finished === !isOpen,
       );
     }
     let maxBrewRating = maxSettingsRating;
     if (brewsFiltered.length > 0) {
       const maxRating = brewsFiltered.reduce((p, c) =>
-        p.rating > c.rating ? p : c
+        p.rating > c.rating ? p : c,
       );
       maxBrewRating = maxRating.rating;
     }
@@ -133,7 +135,7 @@ export class BrewFilterComponent implements OnInit {
   public preparationMethodFocused() {
     this.deattachToPreparationMethodFocused();
     const eventSubs = this.eventQueue.on(
-      AppEventType.PREPARATION_SELECTION_CHANGED
+      AppEventType.PREPARATION_SELECTION_CHANGED,
     );
     this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
       this.resetPreparationTools();
@@ -150,7 +152,7 @@ export class BrewFilterComponent implements OnInit {
 
   public getProfiles() {
     const brews: Array<Brew> = this.brews.filter(
-      (e) => e.pressure_profile !== ''
+      (e) => e.pressure_profile !== '',
     );
     const profiles = [];
     for (const brew of brews) {
@@ -189,7 +191,7 @@ export class BrewFilterComponent implements OnInit {
         brew_filter: this.uiHelper.copyData(this.filter),
       },
       undefined,
-      BrewFilterComponent.COMPONENT_ID
+      BrewFilterComponent.COMPONENT_ID,
     );
   }
 
@@ -208,7 +210,7 @@ export class BrewFilterComponent implements OnInit {
       this.beans = this.beans.filter((e) => e.finished === false);
       this.mills = this.mills.filter((e) => e.finished === false);
       this.method_of_preparations = this.method_of_preparations.filter(
-        (e) => e.finished === false
+        (e) => e.finished === false,
       );
     } else {
       this.beans = this.beans.filter((e) => e.finished === true);

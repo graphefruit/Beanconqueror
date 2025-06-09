@@ -19,6 +19,11 @@
           GNU General Public License v3.0
         </div>
       </ion-item>
+    <ion-item *ngIf="analyticsEnabled">
+      <ion-icon name="analytics-outline" slot="start"></ion-icon>
+      <div [innerHTML]="'ANALYTICS_INFORMATION_ABOUT' | translate:{analyticsId: analyticsId}"></div>
+      <div></div>
+    </ion-item>
     <ion-item lines="none">
       <ion-icon name="help-buoy-outline" slot="start"></ion-icon>
         <div>{{versionStr}}</div>
