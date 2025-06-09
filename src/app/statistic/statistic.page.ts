@@ -683,7 +683,7 @@ export class StatisticPage implements OnInit {
         ? data.favouriteRating / data.favouriteRatingCount
         : null;
       avgBestRatingByCountry[country] = data.bestRatingCount
-        ? data.bestRatingCount / data.bestRatingCount
+        ? data.bestRating / data.bestRatingCount
         : null;
     });
 
