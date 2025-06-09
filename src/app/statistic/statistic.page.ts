@@ -512,8 +512,8 @@ export class StatisticPage implements OnInit {
         bean.bean_information
           .map((beanInfo) => beanInfo.country)
           .sort((a, b) => a.localeCompare(b))
-          .join(' + ')
-          .replace(/^$/, 'No country'), // TODO: Use translatable const
+          .join(' + ') ||
+        (this.translate.instant('PAGE_STATISTICS_NO_COUNTRY_LABEL') as string),
     );
     const countedCountries: Record<string, number> =
       countBy(allCountriesByBrews);
@@ -553,8 +553,10 @@ export class StatisticPage implements OnInit {
         bean.bean_information
           .map((beanInfo) => beanInfo.processing)
           .sort((a, b) => a.localeCompare(b))
-          .join(' + ')
-          .replace(/^$/, 'No processing method'), // TODO: Use translatable const
+          .join(' + ') ||
+        (this.translate.instant(
+          'PAGE_STATISTICS_NO_PROCESSING_LABEL',
+        ) as string),
     );
     const countedProcessing: Record<string, number> = countBy(allProcessing);
 
@@ -588,9 +590,11 @@ export class StatisticPage implements OnInit {
   private __loadBeansByRoaster(): void {
     const brewView = this.uiBrewStorage.getAllEntries();
     const usedBeans = this.__getBeansFromBrews(brewView);
-    const allRoasters: string[] = usedBeans.map((bean) =>
-      bean.roaster.replace(/^$/, 'No roaster method'),
-    ); // TODO: Use translatable const
+    const allRoasters: string[] = usedBeans.map(
+      (bean) =>
+        bean.roaster ||
+        (this.translate.instant('PAGE_STATISTICS_NO_ROASTER_LABEL') as string),
+    );
     const countedRoasters: Record<string, number> = countBy(allRoasters);
 
     const data = {
@@ -635,11 +639,12 @@ export class StatisticPage implements OnInit {
     const countryRatings: Record<string, RatingSum> = {};
 
     for (let i = 0; i < brewView.length; i++) {
-      const currentCountry = usedBeans[i].bean_information
-        .map((beanInfo) => beanInfo.country)
-        .sort((a, b) => a.localeCompare(b))
-        .join(' + ')
-        .replace(/^$/, 'No country');
+      const currentCountry =
+        usedBeans[i].bean_information
+          .map((beanInfo) => beanInfo.country)
+          .sort((a, b) => a.localeCompare(b))
+          .join(' + ') ||
+        (this.translate.instant('PAGE_STATISTICS_NO_COUNTRY_LABEL') as string);
 
       if (!(currentCountry in countryRatings)) {
         countryRatings[currentCountry] = {
@@ -692,21 +697,27 @@ export class StatisticPage implements OnInit {
           backgroundColor: gradient[0] + transparencyValue,
           borderColor: gradient[0],
           pointBackgroundColor: gradient[0],
-          label: 'avg rating',
+          label: this.translate.instant(
+            'PAGE_STATISTICS_AVG_RATING_BY_COUNTRY_AVG_RATING',
+          ),
         },
         {
           data: Object.values(avgFavouriteRatingByCountry),
           backgroundColor: gradient[1] + transparencyValue,
           borderColor: gradient[1],
           pointBackgroundColor: gradient[1],
-          label: 'avg fav rating',
+          label: this.translate.instant(
+            'PAGE_STATISTICS_AVG_RATING_BY_COUNTRY_AVG_FAV_RATING',
+          ),
         },
         {
           data: Object.values(avgBestRatingByCountry),
           backgroundColor: gradient[2] + transparencyValue,
           borderColor: gradient[2],
           pointBackgroundColor: gradient[2],
-          label: 'avg best rating',
+          label: this.translate.instant(
+            'PAGE_STATISTICS_AVG_RATING_BY_COUNTRY_AVG_BEST_RATING',
+          ),
         },
       ],
       labels: Object.keys(countryRatings),
