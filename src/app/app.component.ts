@@ -1230,17 +1230,19 @@ export class AppComponent implements AfterViewInit {
         await this.uiAlert.hideLoadingSpinner();
       }
     } else if (settings.matomo_analytics === true) {
-      const brewsCount = this.uiBrewStorage.getAllEntries().length;
-      const beansCountFromStorage = this.uiBeanStorage.getAllEntries().length;
-      impressionsToTrack.push({
-        contentName: TrackContentImpression.STATISTICS_BREWS_COUNT,
-        contentPiece: brewsCount.toString(),
-      });
-      impressionsToTrack.push({
-        contentName: TrackContentImpression.STATISTICS_BEANS_COUNT,
-        contentPiece: beansCountFromStorage.toString(),
-      });
-      this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
+      setTimeout(() => {
+        const brewsCount = this.uiBrewStorage.getAllEntries().length;
+        const beansCountFromStorage = this.uiBeanStorage.getAllEntries().length;
+        impressionsToTrack.push({
+          contentName: TrackContentImpression.STATISTICS_BREWS_COUNT,
+          contentPiece: brewsCount.toString(),
+        });
+        impressionsToTrack.push({
+          contentName: TrackContentImpression.STATISTICS_BEANS_COUNT,
+          contentPiece: beansCountFromStorage.toString(),
+        });
+        this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
+      }, 5000);
     }
   }
 }
