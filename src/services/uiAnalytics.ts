@@ -27,7 +27,7 @@ export class UIAnalytics {
   private canTrack: boolean = false;
   private matomoTracker: any = undefined;
   private matomoUrl: string = 'https://analytics-beanconqueror.com/matomo.php'; // Extracted from index.html
-  private siteId: string = '7'; // Extracted from index.html
+  private siteId: string = '2'; // Extracted from index.html
 
   constructor(
     private readonly alertController: AlertController,
