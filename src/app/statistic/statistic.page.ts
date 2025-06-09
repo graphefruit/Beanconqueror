@@ -538,11 +538,14 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    new Chart(this.beansByCountryChart.nativeElement, {
-      type: 'pie',
-      data,
-      options,
-    } as any);
+    const beandByCountryChartToDismiss = new Chart(
+      this.beansByCountryChart.nativeElement,
+      {
+        type: 'pie',
+        data,
+        options,
+      } as any,
+    );
   }
 
   private __loadBeansByProcessing(): void {
@@ -580,11 +583,14 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    new Chart(this.beansByProcessingChart.nativeElement, {
-      type: 'pie',
-      data,
-      options,
-    } as any);
+    const beansByProcessingChartToDismiss = new Chart(
+      this.beansByProcessingChart.nativeElement,
+      {
+        type: 'pie',
+        data,
+        options,
+      } as any,
+    );
   }
 
   private __loadBeansByRoaster(): void {
@@ -617,11 +623,14 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    new Chart(this.beansByRoasterChart.nativeElement, {
-      type: 'pie',
-      data,
-      options,
-    } as any);
+    const beansByRoasterChartToDismiss = new Chart(
+      this.beansByRoasterChart.nativeElement,
+      {
+        type: 'pie',
+        data,
+        options,
+      } as any,
+    );
   }
 
   private __loadAvgRatingByOriginChart(): void {
@@ -730,11 +739,14 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    new Chart(this.avgRatingByCountryChart.nativeElement, {
-      type: 'radar',
-      data,
-      options,
-    } as any);
+    const avgRatingByCountryChartToDismiss = new Chart(
+      this.avgRatingByCountryChart.nativeElement,
+      {
+        type: 'radar',
+        data,
+        options,
+      } as any,
+    );
   }
 
   private __loadPreparationUsageChart(): void {
