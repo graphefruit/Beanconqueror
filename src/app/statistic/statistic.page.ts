@@ -623,17 +623,16 @@ export class StatisticPage implements OnInit {
   private __loadAvgRatingByOriginChart(): void {
     const brewView = this.uiBrewStorage.getAllEntries();
     const usedBeans = this.__getBeansFromBrews(brewView);
-    const sumOfRatings: Record<
-      string,
-      {
-        rating: number;
-        ratingCount: number;
-        favouriteRating: number;
-        favouriteRatingCount: number;
-        bestRating: number;
-        bestRatingCount: number;
-      }
-    > = {};
+
+    interface RatingSum {
+      rating: number;
+      ratingCount: number;
+      favouriteRating: number;
+      favouriteRatingCount: number;
+      bestRating: number;
+      bestRatingCount: number;
+    }
+    const countryRatings: Record<string, RatingSum> = {};
 
     for (let i = 0; i < brewView.length; i++) {
       const currentCountry = usedBeans[i].bean_information
@@ -642,8 +641,8 @@ export class StatisticPage implements OnInit {
         .join(' + ')
         .replace(/^$/, 'No country');
 
-      if (!(currentCountry in sumOfRatings)) {
-        sumOfRatings[currentCountry] = {
+      if (!(currentCountry in countryRatings)) {
+        countryRatings[currentCountry] = {
           rating: 0,
           ratingCount: 0,
           favouriteRating: 0,
@@ -653,17 +652,17 @@ export class StatisticPage implements OnInit {
         };
       }
 
-      sumOfRatings[currentCountry].rating += brewView[i].rating;
-      sumOfRatings[currentCountry].ratingCount++;
+      countryRatings[currentCountry].rating += brewView[i].rating;
+      countryRatings[currentCountry].ratingCount++;
 
       if (brewView[i].favourite) {
-        sumOfRatings[currentCountry].favouriteRating += brewView[i].rating;
-        sumOfRatings[currentCountry].favouriteRatingCount++;
+        countryRatings[currentCountry].favouriteRating += brewView[i].rating;
+        countryRatings[currentCountry].favouriteRatingCount++;
       }
 
       if (brewView[i].best_brew) {
-        sumOfRatings[currentCountry].bestRating += brewView[i].rating;
-        sumOfRatings[currentCountry].bestRatingCount++;
+        countryRatings[currentCountry].bestRating += brewView[i].rating;
+        countryRatings[currentCountry].bestRatingCount++;
       }
     }
 
@@ -671,7 +670,7 @@ export class StatisticPage implements OnInit {
     const avgFavouriteRatingByCountry = {};
     const avgBestRatingByCountry = {};
 
-    Object.entries(sumOfRatings).forEach(([country, data]) => {
+    Object.entries(countryRatings).forEach(([country, data]) => {
       avgRatingByCountry[country] = data.ratingCount
         ? data.rating / data.ratingCount
         : null;
@@ -709,7 +708,7 @@ export class StatisticPage implements OnInit {
           label: 'avg best rating',
         },
       ],
-      labels: Object.keys(sumOfRatings),
+      labels: Object.keys(countryRatings),
     };
 
     const options = {
