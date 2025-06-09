@@ -468,15 +468,25 @@ export class UIBeanHelper {
   public logUsedBeanParameters() {
     const settings = this.uiSettingsStorage.getSettings();
     const keys = Object.keys(settings.bean_manage_parameters);
+    const events: Array<{
+      category: string;
+      action: string;
+      name?: string;
+      value?: number;
+    }> = [];
 
     for (const key of keys) {
       if (settings.bean_manage_parameters[key] === true) {
-        this.uiAnalytics.trackEvent(
-          BEAN_TRACKING.TITLE,
-          BEAN_TRACKING.ACTIONS.PARAMETER_USED,
-          key,
-        );
+        events.push({
+          category: BEAN_TRACKING.TITLE,
+          action: BEAN_TRACKING.ACTIONS.BEAN_PARAMETER_USED,
+          name: key,
+        });
       }
+    }
+
+    if (events.length > 0) {
+      this.uiAnalytics.trackBulkEvents(events);
     }
   }
 }

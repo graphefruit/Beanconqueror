@@ -43,6 +43,13 @@ import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTy
  * Handles every helping functionalities
  */
 
+interface IEventPayload {
+  // Define this interface if not already globally available or imported
+  category: string;
+  action: string;
+  name?: string;
+  value?: number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -285,9 +292,11 @@ export class UIBrewHelper {
   }
 
   public logUsedBrewParameters(_brew: Brew) {
+    const eventsToTrack: IEventPayload[] = [];
     const settingsObj: Settings = this.uiSettingsStorage.getSettings();
     let checkData: Settings | Preparation;
-    let preparationName = _brew.getPreparation().name;
+    const preparationName = _brew.getPreparation().name;
+
     if (_brew.getPreparation().use_custom_parameters === true) {
       checkData = _brew.getPreparation();
     } else {
@@ -296,34 +305,38 @@ export class UIBrewHelper {
 
     const scaleDevice: BluetoothScale = this.bleManager.getScale();
     if (!!scaleDevice) {
-      this.uiAnalytics.trackEvent(
-        BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + 'SCALE',
-        scaleDevice.device_name,
-      );
+      eventsToTrack.push({
+        category: BREW_TRACKING.TITLE,
+        action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+        name: 'SCALE_DEVICE' + '_' + scaleDevice.device_name,
+      });
     }
+
     if (_brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
       const pressureDevice: PressureDevice =
         this.bleManager.getPressureDevice();
       if (!!pressureDevice) {
-        this.uiAnalytics.trackEvent(
-          BREW_TRACKING.TITLE,
-          BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + 'PRESSURE',
-          pressureDevice.device_name,
-        );
+        eventsToTrack.push({
+          category: BREW_TRACKING.TITLE,
+          action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+          name: 'PRESSURE_DEVICE' + '_' + pressureDevice.device_name,
+        });
       }
     }
 
     const keys = Object.keys(checkData.manage_parameters);
-
     for (const key of keys) {
       if (checkData.manage_parameters[key] === true) {
-        this.uiAnalytics.trackEvent(
-          BREW_TRACKING.TITLE,
-          BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
-          key,
-        );
+        eventsToTrack.push({
+          category: BREW_TRACKING.TITLE,
+          action: BREW_TRACKING.ACTIONS.PARAMETER_USED + '_' + preparationName,
+          name: key,
+        });
       }
+    }
+
+    if (eventsToTrack.length > 0) {
+      this.uiAnalytics.trackBulkEvents(eventsToTrack);
     }
   }
 

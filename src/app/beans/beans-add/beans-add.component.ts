@@ -212,31 +212,52 @@ export class BeansAddComponent implements OnInit {
     }
     await this.uiBeanStorage.add(this.data);
 
+    const eventsToTrack = [];
+    const impressionsToTrack = [];
+
     if (this.data.roaster) {
-      this.uiAnalytics.trackEvent(
-        BEAN_TRACKING.TITLE,
-        BEAN_TRACKING.ACTIONS.ADD_FINISH,
-        this.data.name + '_' + this.data.roaster,
-      );
+      eventsToTrack.push({
+        category: BEAN_TRACKING.TITLE,
+        action: BEAN_TRACKING.ACTIONS.ADD_FINISH,
+        name: this.data.name + '_' + this.data.roaster,
+      });
     } else {
-      this.uiAnalytics.trackEvent(
-        BEAN_TRACKING.TITLE,
-        BEAN_TRACKING.ACTIONS.ADD_FINISH,
-        this.data.name + '_-',
-      );
+      eventsToTrack.push({
+        category: BEAN_TRACKING.TITLE,
+        action: BEAN_TRACKING.ACTIONS.ADD_FINISH,
+        name: this.data.name + '_-',
+      });
     }
 
-    this.uiAnalytics.trackEvent(
-      BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.ADD_ROASTER + '_' + this.data.roaster,
-      this.data.name,
-    );
+    eventsToTrack.push({
+      category: BEAN_TRACKING.TITLE,
+      action:
+        BEAN_TRACKING.ACTIONS.ADD_ROASTER + '_' + (this.data.roaster || '-'),
+      name: this.data.name,
+    });
 
     if (this.data.roaster) {
-      this.uiAnalytics.trackContentImpression(
-        TrackContentImpression.STATISTICS_ROASTER_NAME,
-        this.data.roaster,
-      );
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_ROASTER_NAME,
+        contentPiece: this.data.roaster,
+      });
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+        contentPiece: this.data.roaster + ' | ' + this.data.name,
+      });
+    } else {
+      impressionsToTrack.push({
+        contentName: TrackContentImpression.STATISTICS_BEAN_ROASTER_NAME,
+        contentPiece: ' - | ' + this.data.name,
+      });
+    }
+
+    if (eventsToTrack.length > 0) {
+      this.uiAnalytics.trackBulkEvents(eventsToTrack);
+    }
+
+    if (impressionsToTrack.length > 0) {
+      this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
     }
 
     this.uiBeanHelper.logUsedBeanParameters();

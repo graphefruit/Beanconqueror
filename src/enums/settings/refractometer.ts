@@ -15,5 +15,5 @@ export enum TEST_TYPE_ENUM {
    * supported by:
    * - all devices
    */
-  AVERAGE,
+  AVERAGE = 1,
 }
