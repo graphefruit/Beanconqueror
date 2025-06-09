@@ -683,26 +683,27 @@ export class StatisticPage implements OnInit {
     });
 
     const gradient = this.__getGradientArray(3);
+    const transparencyValue = '40';
 
     const data = {
       datasets: [
         {
           data: Object.values(avgRatingByCountry),
-          backgroundColor: gradient[0] + '40',
+          backgroundColor: gradient[0] + transparencyValue,
           borderColor: gradient[0],
           pointBackgroundColor: gradient[0],
           label: 'avg rating',
         },
         {
           data: Object.values(avgFavouriteRatingByCountry),
-          backgroundColor: gradient[1] + '40',
+          backgroundColor: gradient[1] + transparencyValue,
           borderColor: gradient[1],
           pointBackgroundColor: gradient[1],
           label: 'avg fav rating',
         },
         {
           data: Object.values(avgBestRatingByCountry),
-          backgroundColor: gradient[2] + '40',
+          backgroundColor: gradient[2] + transparencyValue,
           borderColor: gradient[2],
           pointBackgroundColor: gradient[2],
           label: 'avg best rating',
