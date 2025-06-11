@@ -169,8 +169,7 @@ export class UIExportImportHelper {
   }> {
     const parsedJSON: any = await this.readBackupZIPFile();
 
-    const biggestAutomaticBackupFileContent =
-      await this.__getBiggestAutomaticBackupFileContent();
+    //const biggestAutomaticBackupFileContent = await this.__getBiggestAutomaticBackupFileContent();
     let isAutomaticBackup: boolean = false;
     let fileData: any;
     this.uiLog.log(
@@ -178,81 +177,8 @@ export class UIExportImportHelper {
     );
     /** If an app is completely new, there is no BREWS entry, because we just start with settings and version **/
     if (parsedJSON && 'BREWS' in parsedJSON) {
-      this.uiLog.log(
-        '__getBiggerFileBackupOrAutomatic - We found an normal backup',
-      );
-      if (
-        biggestAutomaticBackupFileContent &&
-        'BREWS' in biggestAutomaticBackupFileContent
-      ) {
-        this.uiLog.log(
-          '__getBiggerFileBackupOrAutomatic - We found an automatic backup',
-        );
-        if (
-          biggestAutomaticBackupFileContent.BEANS.length >
-          parsedJSON.BEANS.length
-        ) {
-          this.uiLog.log('__getBiggerFileBackupOrAutomatic - Beans');
-          isAutomaticBackup = true;
-        }
-        if (
-          biggestAutomaticBackupFileContent.BREWS.length >
-          parsedJSON.BREWS.length
-        ) {
-          this.uiLog.log(
-            'We found a bigger automatic backup file, so we import it',
-          );
-          isAutomaticBackup = true;
-        }
-        if (
-          biggestAutomaticBackupFileContent.PREPARATION.length >
-          parsedJSON.PREPARATION.length
-        ) {
-          this.uiLog.log(
-            'We found a bigger automatic backup file, so we import it',
-          );
-          isAutomaticBackup = true;
-        }
-        if (
-          biggestAutomaticBackupFileContent.MILL.length > parsedJSON.MILL.length
-        ) {
-          this.uiLog.log(
-            'We found a bigger automatic backup file, so we import it',
-          );
-          isAutomaticBackup = true;
-        }
-      } else {
-        this.uiLog.log(
-          '__getBiggerFileBackupOrAutomatic - We didnt found an automatic backup',
-        );
-      }
-      if (isAutomaticBackup) {
-        this.uiLog.log(
-          '__getBiggerFileBackupOrAutomatic - Automatic file is bigger then normal zip',
-        );
-        fileData = biggestAutomaticBackupFileContent;
-        return { fileData, isAutomaticBackup };
-      }
-      this.uiLog.log(
-        '__getBiggerFileBackupOrAutomatic - Normal file is bigger then automatic file',
-      );
       fileData = parsedJSON;
       return { fileData, isAutomaticBackup };
-    } else {
-      this.uiLog.log(
-        '__getBiggerFileBackupOrAutomatic - We didnt find any normal backup, check automatic backup',
-      );
-      if (
-        biggestAutomaticBackupFileContent &&
-        'BREWS' in biggestAutomaticBackupFileContent
-      ) {
-        isAutomaticBackup = true;
-        this.uiLog.log(
-          '__getBiggerFileBackupOrAutomatic - We didnt find any normal backup, automatic backup found',
-        );
-        fileData = biggestAutomaticBackupFileContent;
-        return { fileData, isAutomaticBackup };
-      }
     }
   }
   private async checkBackupAndSeeIfDataAreCorrupted() {
