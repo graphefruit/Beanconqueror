@@ -1150,8 +1150,6 @@ export class AppComponent implements AfterViewInit {
       settings.matomo_initial_data_tracked === false
     ) {
       try {
-        await this.uiAlert.showLoadingSpinner();
-
         const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
         const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
         const preparations: Array<Preparation> =
@@ -1208,26 +1206,20 @@ export class AppComponent implements AfterViewInit {
           contentPiece: beansCountFromStorage.toString(),
         });
 
+        const currentSettings = this.uiSettingsStorage.getSettings();
+        currentSettings.matomo_initial_data_tracked = true;
+        await this.uiSettingsStorage.update(currentSettings);
+
         if (impressionsToTrack.length > 0) {
-          const didTrack =
-            await this.uiAnalytics.trackBulkContentImpressions(
-              impressionsToTrack,
-            );
-          if (didTrack) {
-            const currentSettings = this.uiSettingsStorage.getSettings();
-            currentSettings.matomo_initial_data_tracked = true;
-            await this.uiSettingsStorage.update(currentSettings);
-          }
-        } else {
-          // If there's nothing to track, still mark as tracked
-          const currentSettings = this.uiSettingsStorage.getSettings();
-          currentSettings.matomo_initial_data_tracked = true;
-          await this.uiSettingsStorage.update(currentSettings);
+          this.uiAnalytics.trackBulkContentImpressions(impressionsToTrack);
+          //If we got WIFI issues, or the WIFI blocks the request, the app get stucks until the error gets resolved, thats why we don't await here anymore.
         }
       } catch (ex) {
         this.uiLog.error('Error during initial bulk data trackings: ', ex);
       } finally {
-        await this.uiAlert.hideLoadingSpinner();
+        if (this.uiAlert.isLoadingSpinnerShown()) {
+          this.uiAlert.hideLoadingSpinner();
+        }
       }
     } else if (settings.matomo_analytics === true) {
       setTimeout(() => {
