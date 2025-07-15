@@ -128,3 +128,15 @@ npm run cap sync android && npm cap sync ios
 ```
 
 After this, you can use the native IDEs to create a production-ready build of the application.
+
+Normal debug builds can be created using the following command:
+
+```shell
+npm run -- build  && npm run capsync
+```
+
+Normal production builds can be created using the following command:
+
+```shell
+npm run -- build --configuration 'production' && npm run capsync
+```
