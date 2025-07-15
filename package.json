@@ -93,7 +93,7 @@
     "@types/node": "^20.12.7",
     "angular-eslint": "18.3.1",
     "cordova-plugin-android-permissions": "^1.1.5",
-    "cordova-plugin-ble-central": "^1.7.8",
+    "cordova-plugin-ble-central": "^2.0.0",
     "cordova-plugin-health": "^2.1.0",
     "cordova-sqlite-storage": "^5.1.0",
     "elliptic": ">=6.5.4",
