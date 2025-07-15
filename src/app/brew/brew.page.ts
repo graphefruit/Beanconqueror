@@ -211,7 +211,7 @@ export class BrewPage implements OnInit {
     }
     return (
       checkingFilter.bean.length > 0 ||
-      checkingFilter.water.length > 0 ||
+      checkingFilter.water?.length > 0 ||
       checkingFilter.method_of_preparation.length > 0 ||
       checkingFilter.mill.length > 0 ||
       checkingFilter.favourite ||
@@ -442,7 +442,7 @@ export class BrewPage implements OnInit {
           e.rating >= filter.rating.lower && e.rating <= filter.rating.upper,
       );
     }
-    if (filter.water.length > 0) {
+    if (filter.water?.length > 0) {
       brewsFilters = brewsFilters.filter(
         (e) => filter.water.filter((z) => z === e.water).length > 0,
       );
