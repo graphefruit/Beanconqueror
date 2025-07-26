@@ -25,6 +25,7 @@ import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
   selector: 'brew',
   templateUrl: './brew.page.html',
   styleUrls: ['./brew.page.scss'],
+  standalone: false,
 })
 export class BrewPage implements OnInit {
   public brews: Array<Brew> = [];

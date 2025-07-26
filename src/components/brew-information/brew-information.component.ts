@@ -49,6 +49,7 @@ declare var window;
   selector: 'brew-information',
   templateUrl: './brew-information.component.html',
   styleUrls: ['./brew-information.component.scss'],
+  standalone: false,
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;

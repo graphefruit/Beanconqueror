@@ -13,6 +13,7 @@ import { Settings } from '../../../classes/settings/settings';
   selector: 'bean-popover-actions',
   templateUrl: './bean-popover-actions.component.html',
   styleUrls: ['./bean-popover-actions.component.scss'],
+  standalone: false,
 })
 export class BeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-actions';
@@ -25,7 +26,7 @@ export class BeanPopoverActionsComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
   }
@@ -45,13 +46,13 @@ export class BeanPopoverActionsComponent implements OnInit {
   public hasBrews(): boolean {
     try {
       let allBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-        this.data.config.uuid
+        this.data.config.uuid,
       );
       allBrews = allBrews.filter(
         (e) =>
           e.getBean().finished === false &&
           e.getMill().finished === false &&
-          e.getPreparation().finished === false
+          e.getPreparation().finished === false,
       );
       return allBrews.length > 0;
     } catch {
@@ -67,14 +68,14 @@ export class BeanPopoverActionsComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       _type,
-      BeanPopoverActionsComponent.COMPONENT_ID
+      BeanPopoverActionsComponent.COMPONENT_ID,
     );
   }
   public async dismiss() {
     this.modalController.dismiss(
       undefined,
       undefined,
-      BeanPopoverActionsComponent.COMPONENT_ID
+      BeanPopoverActionsComponent.COMPONENT_ID,
     );
   }
 }

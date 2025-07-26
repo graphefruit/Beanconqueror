@@ -12,6 +12,7 @@ import { environment } from '../../../environments/environment';
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
   styleUrls: ['./preparation-add.component.scss'],
+  standalone: false,
 })
 export class PreparationAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-add';
@@ -28,13 +29,13 @@ export class PreparationAddComponent implements OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.ADD
+      PREPARATION_TRACKING.ACTIONS.ADD,
     );
   }
 
@@ -67,7 +68,7 @@ export class PreparationAddComponent implements OnInit {
     if (data && data.added === true) {
       this.uiAnalytics.trackEvent(
         PREPARATION_TRACKING.TITLE,
-        PREPARATION_TRACKING.ACTIONS.ADD_FINISH
+        PREPARATION_TRACKING.ACTIONS.ADD_FINISH,
       );
       await this.dismiss();
     }
@@ -79,7 +80,7 @@ export class PreparationAddComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      PreparationAddComponent.COMPONENT_ID
+      PreparationAddComponent.COMPONENT_ID,
     );
   }
 

@@ -11,6 +11,7 @@ import { Settings } from '../../../classes/settings/settings';
   selector: 'app-bean-sort',
   templateUrl: './bean-sort.component.html',
   styleUrls: ['./bean-sort.component.scss'],
+  standalone: false,
 })
 export class BeanSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-sort';

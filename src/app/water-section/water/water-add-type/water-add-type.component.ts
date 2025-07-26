@@ -16,6 +16,7 @@ import TrackContentImpression from '../../../../data/tracking/trackContentImpres
   selector: 'water-add-type',
   templateUrl: './water-add-type.component.html',
   styleUrls: ['./water-add-type.component.scss'],
+  standalone: false,
 })
 export class WaterAddTypeComponent implements OnInit {
   public static COMPONENT_ID = 'water-add-type';

@@ -10,6 +10,7 @@ import { GreenBean } from '../../../../classes/green-bean/green-bean';
   selector: 'green-bean-popover-actions',
   templateUrl: './green-bean-popover-actions.component.html',
   styleUrls: ['./green-bean-popover-actions.component.scss'],
+  standalone: false,
 })
 export class GreenBeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-popover-actions';
@@ -17,7 +18,7 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
   @Input('greenbean') public greenbean: IGreenBean;
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ionViewDidEnter(): void {}
@@ -41,14 +42,14 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       _type,
-      GreenBeanPopoverActionsComponent.COMPONENT_ID
+      GreenBeanPopoverActionsComponent.COMPONENT_ID,
     );
   }
   public async dismiss() {
     this.modalController.dismiss(
       undefined,
       undefined,
-      GreenBeanPopoverActionsComponent.COMPONENT_ID
+      GreenBeanPopoverActionsComponent.COMPONENT_ID,
     );
   }
 }

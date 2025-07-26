@@ -10,6 +10,7 @@ import { UIPreparationHelper } from '../../services/uiPreparationHelper';
   selector: 'welcome-popover',
   templateUrl: './welcome-popover.component.html',
   styleUrls: ['./welcome-popover.component.scss'],
+  standalone: false,
 })
 export class WelcomePopoverComponent implements OnInit {
   public slide: number = 1;
@@ -27,7 +28,7 @@ export class WelcomePopoverComponent implements OnInit {
     private readonly platform: Platform,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiMillHelper: UIMillHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper
+    private readonly uiPreparationHelper: UIPreparationHelper,
   ) {}
 
   public ngOnInit() {
@@ -46,7 +47,7 @@ export class WelcomePopoverComponent implements OnInit {
         9999,
         (processNextHandler) => {
           // Don't do anything.
-        }
+        },
       );
     } catch (ex) {}
   }
@@ -105,7 +106,7 @@ export class WelcomePopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      'welcome-popover'
+      'welcome-popover',
     );
   }
 }

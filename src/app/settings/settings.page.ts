@@ -87,6 +87,7 @@ import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/se
   selector: 'settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
+  standalone: false,
 })
 export class SettingsPage {
   public settings: Settings;

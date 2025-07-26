@@ -9,6 +9,7 @@ import { Mill } from '../../../classes/mill/mill';
   selector: 'mill-popover-actions',
   templateUrl: './mill-popover-actions.component.html',
   styleUrls: ['./mill-popover-actions.component.scss'],
+  standalone: false,
 })
 export class MillPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'mill-popover-actions';
@@ -16,7 +17,7 @@ export class MillPopoverActionsComponent implements OnInit {
   @Input('mill') public mill: IMill;
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ionViewDidEnter(): void {}
@@ -40,14 +41,14 @@ export class MillPopoverActionsComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       _type,
-      MillPopoverActionsComponent.COMPONENT_ID
+      MillPopoverActionsComponent.COMPONENT_ID,
     );
   }
   public async dismiss() {
     this.modalController.dismiss(
       undefined,
       undefined,
-      MillPopoverActionsComponent.COMPONENT_ID
+      MillPopoverActionsComponent.COMPONENT_ID,
     );
   }
 }

@@ -13,6 +13,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'log',
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.scss'],
+  standalone: false,
 })
 export class LogComponent implements OnInit {
   public logs: Array<ILogInterface> = [];
@@ -22,7 +23,7 @@ export class LogComponent implements OnInit {
     private readonly uiLog: UILog,
     private readonly modalCtrl: ModalController,
     private shareService: ShareService,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ngOnInit() {

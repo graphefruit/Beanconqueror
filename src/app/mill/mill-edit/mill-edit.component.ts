@@ -12,6 +12,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
   selector: 'mill-edit',
   templateUrl: './mill-edit.component.html',
   styleUrls: ['./mill-edit.component.scss'],
+  standalone: false,
 })
 export class MillEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'mill-edit';
@@ -24,13 +25,13 @@ export class MillEditComponent implements OnInit {
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,
-      MILL_TRACKING.ACTIONS.EDIT
+      MILL_TRACKING.ACTIONS.EDIT,
     );
     this.data = this.uiHelper.copyData(this.mill);
   }
@@ -46,7 +47,7 @@ export class MillEditComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_MILL_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,
-      MILL_TRACKING.ACTIONS.EDIT_FINISH
+      MILL_TRACKING.ACTIONS.EDIT_FINISH,
     );
     this.dismiss();
   }
@@ -57,7 +58,7 @@ export class MillEditComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      MillEditComponent.COMPONENT_ID
+      MillEditComponent.COMPONENT_ID,
     );
   }
   public ngOnInit() {}

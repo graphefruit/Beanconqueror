@@ -15,6 +15,7 @@ import { distinct } from 'rxjs/operators';
   selector: 'bean-sort-information',
   templateUrl: './bean-sort-information.component.html',
   styleUrls: ['./bean-sort-information.component.scss'],
+  standalone: false,
 })
 export class BeanSortInformationComponent implements OnInit {
   @Input() public data: Bean | GreenBean;
@@ -27,7 +28,7 @@ export class BeanSortInformationComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBeanHelper: UIBeanHelper,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ngOnInit() {
@@ -45,7 +46,7 @@ export class BeanSortInformationComponent implements OnInit {
 
   public copyInformation(_index: number) {
     const clonedData = this.uiHelper.cloneData(
-      this.data.bean_information[_index]
+      this.data.bean_information[_index],
     );
     this.data.bean_information.push(clonedData);
     // this.data.bean_information.splice(_index, 1);
@@ -77,7 +78,7 @@ export class BeanSortInformationComponent implements OnInit {
           if (be && be.hasOwnProperty(_type) && be[_type]) {
             return be[_type].toLowerCase().includes(actualSearchValue);
           }
-        })
+        }),
       );
 
     for (const entry of filteredEntries) {
@@ -99,7 +100,7 @@ export class BeanSortInformationComponent implements OnInit {
           });
 
           this.typeaheadSearch[_type + 'Results'].push(
-            ...new Set(filterSplittedInfos)
+            ...new Set(filterSplittedInfos),
           );
         }
       }
@@ -148,7 +149,7 @@ export class BeanSortInformationComponent implements OnInit {
   public searchResultSelected(
     _index: number,
     _type: string,
-    selected: string
+    selected: string,
   ): void {
     this.data.bean_information[_index][_type] = selected;
     this.onSearchLeave(_type);

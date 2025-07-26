@@ -33,6 +33,7 @@ import { NfcService } from '../../services/nfcService/nfc-service.service';
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
+  standalone: false,
 })
 export class BeansPage implements OnDestroy {
   public beans: Array<Bean> = [];

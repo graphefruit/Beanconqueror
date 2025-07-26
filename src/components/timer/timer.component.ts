@@ -20,6 +20,7 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
   selector: 'timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss'],
+  standalone: false,
 })
 export class TimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;

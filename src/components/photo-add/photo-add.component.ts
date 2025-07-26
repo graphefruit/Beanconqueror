@@ -24,6 +24,7 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'photo-add',
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
+  standalone: false,
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
@@ -39,7 +40,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiToast: UIToast,
     private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {}
 
   public ngOnInit() {
@@ -66,9 +67,9 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
           (_error) => {
             this.uiAlert.showMessage(
               JSON.stringify(_error),
-              this.translate.instant('ERROR_OCCURED')
+              this.translate.instant('ERROR_OCCURED'),
             );
-          }
+          },
         );
       } else {
         // TAKE
@@ -80,9 +81,9 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
           (_error) => {
             this.uiAlert.showMessage(
               _error.toString(),
-              this.translate.instant('ERROR_OCCURED')
+              this.translate.instant('ERROR_OCCURED'),
             );
-          }
+          },
         );
       }
     });

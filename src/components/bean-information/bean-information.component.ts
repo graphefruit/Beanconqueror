@@ -47,6 +47,7 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
   styleUrls: ['./bean-information.component.scss'],
+  standalone: false,
 })
 export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;

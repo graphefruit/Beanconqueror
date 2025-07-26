@@ -1,33 +1,42 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {Settings} from '../../../classes/settings/settings';
-import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {UIAnalytics} from '../../../services/uiAnalytics';
-import {Preparation} from '../../../classes/preparation/preparation';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Settings } from '../../../classes/settings/settings';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
 @Component({
   selector: 'sort-custom-parameter',
   templateUrl: './sort-custom-parameter.component.html',
   styleUrls: ['./sort-custom-parameter.component.scss'],
+  standalone: false,
 })
 export class SortCustomParameterComponent implements OnInit {
+  public brewOrdersBefore: Array<{
+    number: number;
+    label: string;
+    enum: string;
+  }> = [];
 
-  public brewOrdersBefore: Array<{ number: number, label: string, enum: string }> = [];
-
-  public brewOrdersWhile: Array<{ number: number, label: string, enum: string }> = [];
-  public brewOrdersAfter: Array<{ number: number, label: string, enum: string }> = [];
-
-
+  public brewOrdersWhile: Array<{
+    number: number;
+    label: string;
+    enum: string;
+  }> = [];
+  public brewOrdersAfter: Array<{
+    number: number;
+    label: string;
+    enum: string;
+  }> = [];
 
   @Input() public data: Settings | Preparation;
-  constructor(public uiSettingsStorage: UISettingsStorage,
-              private readonly uiPreparationStorage: UIPreparationStorage,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly changeDetectorRef: ChangeDetectorRef) {
-
-
-  }
+  constructor(
+    public uiSettingsStorage: UISettingsStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+  ) {}
 
   public ngOnInit() {
     this.__initializeData();
@@ -44,9 +53,15 @@ export class SortCustomParameterComponent implements OnInit {
 
   public reorder_brew(ev: any, _type: string) {
     if (this.data instanceof Settings) {
-      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.REORDER_BREW);
+      this.uiAnalytics.trackEvent(
+        SETTINGS_TRACKING.TITLE,
+        SETTINGS_TRACKING.ACTIONS.REORDER_BREW,
+      );
     } else {
-      this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.REORDER_BREW);
+      this.uiAnalytics.trackEvent(
+        PREPARATION_TRACKING.TITLE,
+        PREPARATION_TRACKING.ACTIONS.REORDER_BREW,
+      );
     }
 
     // The `from` and `to` properties contain the index of the item
@@ -77,15 +92,13 @@ export class SortCustomParameterComponent implements OnInit {
   }
 
   private __initializeData(): void {
-
     this.__initializeBrewOrders('before');
     this.__initializeBrewOrders('while');
     this.__initializeBrewOrders('after');
   }
 
   private __initializeBrewOrders(_type: string) {
-
-    let initializeOrder: Array<{ number: number, label: string, enum: string }>;
+    let initializeOrder: Array<{ number: number; label: string; enum: string }>;
     // Copy the reference here :)
     switch (_type) {
       case 'before':
@@ -98,8 +111,6 @@ export class SortCustomParameterComponent implements OnInit {
         initializeOrder = this.brewOrdersAfter;
         break;
     }
-
-
 
     for (const key in this.data.brew_order[_type]) {
       if (this.data.brew_order[_type].hasOwnProperty(key)) {
@@ -122,5 +133,4 @@ export class SortCustomParameterComponent implements OnInit {
       return 0;
     });
   }
-
 }

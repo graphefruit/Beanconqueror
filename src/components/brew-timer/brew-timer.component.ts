@@ -26,6 +26,7 @@ import { BluetoothScale } from '../../classes/devices';
   selector: 'brew-timer',
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
+  standalone: false,
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;

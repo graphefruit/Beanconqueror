@@ -84,6 +84,7 @@ register();
   selector: 'app-root',
   templateUrl: 'app.component.html',
   encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;

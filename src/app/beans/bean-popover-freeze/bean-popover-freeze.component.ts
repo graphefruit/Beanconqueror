@@ -22,6 +22,7 @@ declare var cordova;
   selector: 'app-bean-popover-freeze',
   templateUrl: './bean-popover-freeze.component.html',
   styleUrls: ['./bean-popover-freeze.component.scss'],
+  standalone: false,
 })
 export class BeanPopoverFreezeComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-freeze';

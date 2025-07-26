@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
   selector: 'app-bean-parameter',
   templateUrl: './bean-parameter.page.html',
   styleUrls: ['./bean-parameter.page.scss'],
+  standalone: false,
 })
 export class BeanParameterPage {
   constructor(private readonly router: Router) {}

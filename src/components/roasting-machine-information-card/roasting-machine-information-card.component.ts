@@ -18,6 +18,7 @@ import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper'
   selector: 'roasting-machine-information-card',
   templateUrl: './roasting-machine-information-card.component.html',
   styleUrls: ['./roasting-machine-information-card.component.scss'],
+  standalone: false,
 })
 export class RoastingMachineInformationCardComponent {
   @Input() public roastingMachine: RoastingMachine;
@@ -34,7 +35,7 @@ export class RoastingMachineInformationCardComponent {
     private readonly modalCtrl: ModalController,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiRoastingMachineHelper: UIRoastingMachineHelper
+    private readonly uiRoastingMachineHelper: UIRoastingMachineHelper,
   ) {}
 
   public async show() {
@@ -46,7 +47,7 @@ export class RoastingMachineInformationCardComponent {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,
-      ROASTING_MACHINE_TRACKING.ACTIONS.POPOVER_ACTIONS
+      ROASTING_MACHINE_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: RoastingMachinePopoverActionsComponent,
@@ -94,7 +95,7 @@ export class RoastingMachineInformationCardComponent {
   public async archive() {
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,
-      ROASTING_MACHINE_TRACKING.ACTIONS.ARCHIVE
+      ROASTING_MACHINE_TRACKING.ACTIONS.ARCHIVE,
     );
     this.roastingMachine.finished = true;
     await this.uiRoastingMachineStorage.update(this.roastingMachine);
@@ -113,13 +114,13 @@ export class RoastingMachineInformationCardComponent {
 
   public async edit() {
     await this.uiRoastingMachineHelper.editRoastingMachine(
-      this.roastingMachine
+      this.roastingMachine,
     );
   }
 
   public async detail() {
     await this.uiRoastingMachineHelper.detailRoastingMachine(
-      this.roastingMachine
+      this.roastingMachine,
     );
   }
 
@@ -131,7 +132,7 @@ export class RoastingMachineInformationCardComponent {
   public async viewPhotos() {
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,
-      ROASTING_MACHINE_TRACKING.ACTIONS.PHOTO_VIEW
+      ROASTING_MACHINE_TRACKING.ACTIONS.PHOTO_VIEW,
     );
     await this.uiImage.viewPhotos(this.roastingMachine);
   }
@@ -146,18 +147,18 @@ export class RoastingMachineInformationCardComponent {
             // Yes
             this.uiAnalytics.trackEvent(
               ROASTING_MACHINE_TRACKING.TITLE,
-              ROASTING_MACHINE_TRACKING.ACTIONS.DELETE
+              ROASTING_MACHINE_TRACKING.ACTIONS.DELETE,
             );
             await this.__delete();
             this.uiToast.showInfoToast(
-              'TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY'
+              'TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY',
             );
             resolve(undefined);
           },
           () => {
             // No
             reject();
-          }
+          },
         );
     });
   }
@@ -165,7 +166,7 @@ export class RoastingMachineInformationCardComponent {
   private async __delete() {
     const beans: Array<Bean> =
       this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(
-        this.roastingMachine.config.uuid
+        this.roastingMachine.config.uuid,
       );
     for (const bean of beans) {
       bean.bean_roast_information.roaster_machine = '';
@@ -176,7 +177,7 @@ export class RoastingMachineInformationCardComponent {
   public getRoastQuantity(): number {
     const beans: Array<Bean> =
       this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(
-        this.roastingMachine.config.uuid
+        this.roastingMachine.config.uuid,
       );
     let quantity: number = 0;
     for (const bean of beans) {
@@ -187,7 +188,7 @@ export class RoastingMachineInformationCardComponent {
   public getRoastCount(): number {
     const beans: Array<Bean> =
       this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(
-        this.roastingMachine.config.uuid
+        this.roastingMachine.config.uuid,
       );
     return beans.length;
   }

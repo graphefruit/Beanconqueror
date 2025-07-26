@@ -26,6 +26,7 @@ import { PreparationDevice } from '../../classes/preparationDevice/preparationDe
   selector: 'preparation-information-card',
   templateUrl: './preparation-information-card.component.html',
   styleUrls: ['./preparation-information-card.component.scss'],
+  standalone: false,
 })
 export class PreparationInformationCardComponent implements OnInit {
   @Input() public preparation: Preparation;

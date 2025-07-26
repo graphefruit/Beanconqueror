@@ -14,6 +14,7 @@ import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/prep
   selector: 'preparation-modal-select',
   templateUrl: './preparation-modal-select.component.html',
   styleUrls: ['./preparation-modal-select.component.scss'],
+  standalone: false,
 })
 export class PreparationModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'preparation-modal-select';

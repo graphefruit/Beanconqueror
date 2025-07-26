@@ -21,6 +21,7 @@ declare var cordova;
   selector: 'green-bean-general-information',
   templateUrl: './green-bean-general-information.component.html',
   styleUrls: ['./green-bean-general-information.component.scss'],
+  standalone: false,
 })
 export class GreenBeanGeneralInformationComponent implements OnInit {
   @Input() public data: GreenBean;
@@ -33,7 +34,7 @@ export class GreenBeanGeneralInformationComponent implements OnInit {
     private readonly platform: Platform,
     private readonly translate: TranslateService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
   ) {
     this.settings = this.uiSettings.getSettings();
   }

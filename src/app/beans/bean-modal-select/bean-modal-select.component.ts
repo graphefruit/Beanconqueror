@@ -28,6 +28,7 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
   selector: 'bean-modal-select',
   templateUrl: './bean-modal-select.component.html',
   styleUrls: ['./bean-modal-select.component.scss'],
+  standalone: false,
 })
 export class BeanModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'bean-modal-select';

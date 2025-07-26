@@ -10,6 +10,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
   selector: 'app-preparation-custom-parameters',
   templateUrl: './preparation-custom-parameters.component.html',
   styleUrls: ['./preparation-custom-parameters.component.scss'],
+  standalone: false,
 })
 export class PreparationCustomParametersComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-custom-parameters';
@@ -21,7 +22,7 @@ export class PreparationCustomParametersComponent implements OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage
+    private readonly uiPreparationStorage: UIPreparationStorage,
   ) {}
 
   public ionViewWillEnter(): void {
@@ -36,7 +37,7 @@ export class PreparationCustomParametersComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      PreparationCustomParametersComponent.COMPONENT_ID
+      PreparationCustomParametersComponent.COMPONENT_ID,
     );
   }
 

@@ -8,6 +8,7 @@ import { Brew } from '../../../classes/brew/brew';
   selector: 'app-brew-ratio-calculator',
   templateUrl: './brew-ratio-calculator.component.html',
   styleUrls: ['./brew-ratio-calculator.component.scss'],
+  standalone: false,
 })
 export class BrewRatioCalculatorComponent implements OnInit {
   public static COMPONENT_ID = 'brew-ratio-calculator';
@@ -16,13 +17,13 @@ export class BrewRatioCalculatorComponent implements OnInit {
   @Input('waterQuantity') public waterQuantity: number = 0;
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.RATIO_CALCULATION
+      BREW_TRACKING.ACTIONS.RATIO_CALCULATION,
     );
   }
 
@@ -32,7 +33,7 @@ export class BrewRatioCalculatorComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewRatioCalculatorComponent.COMPONENT_ID
+      BrewRatioCalculatorComponent.COMPONENT_ID,
     );
   }
   public ngOnInit() {}

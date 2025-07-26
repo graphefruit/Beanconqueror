@@ -21,6 +21,7 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
   selector: 'brew-cupping',
   templateUrl: './brew-cupping.component.html',
   styleUrls: ['./brew-cupping.component.scss'],
+  standalone: false,
 })
 export class BrewCuppingComponent {
   public static readonly COMPONENT_ID = 'brew-cup';
@@ -41,7 +42,7 @@ export class BrewCuppingComponent {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiBeanStorage: UIBeanStorage
+    private readonly uiBeanStorage: UIBeanStorage,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
 
@@ -89,21 +90,21 @@ export class BrewCuppingComponent {
     if (this.brew) {
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
-        BREW_TRACKING.ACTIONS.CUPPING
+        BREW_TRACKING.ACTIONS.CUPPING,
       );
       this.data = new Brew();
       const copy: IBrew = this.uiHelper.cloneData(
-        this.uiBrewStorage.getByUUID(this.brew.config.uuid)
+        this.uiBrewStorage.getByUUID(this.brew.config.uuid),
       );
       this.data.initializeByObject(copy);
     } else {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
-        BEAN_TRACKING.ACTIONS.CUPPING
+        BEAN_TRACKING.ACTIONS.CUPPING,
       );
       this.data = new Bean();
       const copyBean: IBean = this.uiHelper.cloneData(
-        this.uiBeanStorage.getByUUID(this.bean.config.uuid)
+        this.uiBeanStorage.getByUUID(this.bean.config.uuid),
       );
       this.data.initializeByObject(copyBean);
     }
@@ -126,7 +127,7 @@ export class BrewCuppingComponent {
         dismissed: true,
       },
       undefined,
-      BrewCuppingComponent.COMPONENT_ID
+      BrewCuppingComponent.COMPONENT_ID,
     );
   }
 }

@@ -13,6 +13,7 @@ import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
   selector: 'app-green-bean-detail',
   templateUrl: './green-bean-detail.component.html',
   styleUrls: ['./green-bean-detail.component.scss'],
+  standalone: false,
 })
 export class GreenBeanDetailComponent {
   public static readonly COMPONENT_ID = 'green-bean-detail';
@@ -30,7 +31,7 @@ export class GreenBeanDetailComponent {
     private readonly modalController: ModalController,
     private uiBeanHelper: UIBeanHelper,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
   ) {
     this.settings = this.uiSettings.getSettings();
   }
@@ -38,7 +39,7 @@ export class GreenBeanDetailComponent {
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
       GREEN_BEAN_TRACKING.TITLE,
-      GREEN_BEAN_TRACKING.ACTIONS.DETAIL
+      GREEN_BEAN_TRACKING.ACTIONS.DETAIL,
     );
     this.data = new GreenBean();
     this.data.initializeByObject(this.greenBean);
@@ -52,7 +53,7 @@ export class GreenBeanDetailComponent {
 
   private getRelatedRoastedBeans(): Array<Bean> {
     return this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(
-      this.greenBean.config.uuid
+      this.greenBean.config.uuid,
     );
   }
 
@@ -66,7 +67,7 @@ export class GreenBeanDetailComponent {
         dismissed: true,
       },
       undefined,
-      GreenBeanDetailComponent.COMPONENT_ID
+      GreenBeanDetailComponent.COMPONENT_ID,
     );
   }
 }

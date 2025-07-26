@@ -8,6 +8,7 @@ import {
 
 @Directive({
   selector: '[short-press]',
+  standalone: false,
 })
 export class ShortPressDirective {
   @Input('short-press-delay') public delay?: number = 250;
@@ -25,28 +26,28 @@ export class ShortPressDirective {
       (ev) => {
         this.onMouseDown(ev);
       },
-      { passive: true }
+      { passive: true },
     );
     element.addEventListener(
       'ontouchstart',
       (ev) => {
         this.onMouseDown(ev);
       },
-      { passive: true }
+      { passive: true },
     );
     element.addEventListener(
       'touchstart',
       (ev) => {
         this.onMouseDown(ev);
       },
-      { passive: true }
+      { passive: true },
     );
     element.addEventListener(
       'mousedown',
       (ev) => {
         this.onMouseDown(ev);
       },
-      { passive: true }
+      { passive: true },
     );
 
     element.addEventListener(
@@ -54,35 +55,35 @@ export class ShortPressDirective {
       (ev) => {
         this.onMouseUp(ev);
       },
-      { passive: true }
+      { passive: true },
     );
     element.addEventListener(
       'touchcancel',
       (ev) => {
         this.onMouseUp(ev);
       },
-      { passive: true }
+      { passive: true },
     );
     element.addEventListener(
       'mouseup',
       (ev) => {
         this.onMouseUp(ev);
       },
-      { passive: true }
+      { passive: true },
     );
     element.addEventListener(
       'mouseleave',
       (ev) => {
         this.clearTimeout();
       },
-      { passive: true }
+      { passive: true },
     );
     element.addEventListener(
       'touchmove',
       (ev) => {
         this.clearTimeout();
       },
-      { passive: true }
+      { passive: true },
     );
   }
   public ngOnDestroy() {}

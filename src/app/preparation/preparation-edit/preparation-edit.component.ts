@@ -18,6 +18,7 @@ import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
   selector: 'preparation-edit',
   templateUrl: './preparation-edit.component.html',
   styleUrls: ['./preparation-edit.component.scss'],
+  standalone: false,
 })
 export class PreparationEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-edit';
@@ -34,13 +35,13 @@ export class PreparationEditComponent implements OnInit {
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.EDIT
+      PREPARATION_TRACKING.ACTIONS.EDIT,
     );
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
@@ -82,7 +83,7 @@ export class PreparationEditComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_PREPARATION_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.EDIT_FINISH
+      PREPARATION_TRACKING.ACTIONS.EDIT_FINISH,
     );
     this.dismiss();
   }
@@ -93,7 +94,7 @@ export class PreparationEditComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      PreparationEditComponent.COMPONENT_ID
+      PreparationEditComponent.COMPONENT_ID,
     );
   }
   public addTool() {

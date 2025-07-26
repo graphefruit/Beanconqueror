@@ -85,6 +85,7 @@ declare var cordova;
   selector: 'brew-brewing',
   templateUrl: './brew-brewing.component.html',
   styleUrls: ['./brew-brewing.component.scss'],
+  standalone: false,
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;

@@ -57,6 +57,7 @@ import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
   styleUrls: ['./brew-brewing-preparation-device.component.scss'],
+  standalone: false,
 })
 export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public data: Brew;

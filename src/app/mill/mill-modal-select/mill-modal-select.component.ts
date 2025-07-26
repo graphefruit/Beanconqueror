@@ -13,6 +13,7 @@ import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
   selector: 'mill-modal-select',
   templateUrl: './mill-modal-select.component.html',
   styleUrls: ['./mill-modal-select.component.scss'],
+  standalone: false,
 })
 export class MillModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'mill-modal-select';

@@ -9,6 +9,7 @@ import { UIBeanHelper } from '../../../../services/uiBeanHelper';
   selector: 'bean-detail-sort-information',
   templateUrl: './bean-detail-sort-information.component.html',
   styleUrls: ['./bean-detail-sort-information.component.scss'],
+  standalone: false,
 })
 export class BeanDetailSortInformationComponent implements OnInit {
   @Input() public data: GreenBean | Bean;
@@ -18,7 +19,7 @@ export class BeanDetailSortInformationComponent implements OnInit {
 
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBeanHelper: UIBeanHelper
+    public readonly uiBeanHelper: UIBeanHelper,
   ) {}
 
   public ngOnInit() {

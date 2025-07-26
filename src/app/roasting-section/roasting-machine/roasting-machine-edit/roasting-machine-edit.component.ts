@@ -12,6 +12,7 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
   selector: 'app-roasting-machine-edit',
   templateUrl: './roasting-machine-edit.component.html',
   styleUrls: ['./roasting-machine-edit.component.scss'],
+  standalone: false,
 })
 export class RoastingMachineEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-edit';
@@ -25,13 +26,13 @@ export class RoastingMachineEditComponent implements OnInit {
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,
-      ROASTING_MACHINE_TRACKING.ACTIONS.EDIT
+      ROASTING_MACHINE_TRACKING.ACTIONS.EDIT,
     );
     this.data = this.uiHelper.copyData(this.roastingMachine);
   }
@@ -47,7 +48,7 @@ export class RoastingMachineEditComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,
-      ROASTING_MACHINE_TRACKING.ACTIONS.EDIT_FINISH
+      ROASTING_MACHINE_TRACKING.ACTIONS.EDIT_FINISH,
     );
     this.dismiss();
   }
@@ -58,7 +59,7 @@ export class RoastingMachineEditComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      RoastingMachineEditComponent.COMPONENT_ID
+      RoastingMachineEditComponent.COMPONENT_ID,
     );
   }
   public ngOnInit() {}

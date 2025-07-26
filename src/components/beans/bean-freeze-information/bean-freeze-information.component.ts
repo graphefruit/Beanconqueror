@@ -21,6 +21,7 @@ declare var cordova;
   selector: 'bean-freeze-information',
   templateUrl: './bean-freeze-information.component.html',
   styleUrls: ['./bean-freeze-information.component.scss'],
+  standalone: false,
 })
 export class BeanFreezeInformationComponent implements OnInit {
   @Input() public data: Bean;
@@ -32,7 +33,7 @@ export class BeanFreezeInformationComponent implements OnInit {
     public readonly uiBeanHelper: UIBeanHelper,
     private readonly platform: Platform,
     private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   public ngOnInit() {

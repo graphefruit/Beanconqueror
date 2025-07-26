@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   selector: 'app-bean-list-view-parameter',
   templateUrl: './bean-list-view-parameter.component.html',
   styleUrls: ['./bean-list-view-parameter.component.scss'],
+  standalone: false,
 })
 export class BeanListViewParameterComponent {
   public bean_segment = 'general';
@@ -17,7 +18,7 @@ export class BeanListViewParameterComponent {
 
   constructor(
     public uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {
     this.debounceChanges
       .pipe(debounceTime(500), distinctUntilChanged())

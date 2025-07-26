@@ -19,6 +19,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
   selector: 'water-information-card',
   templateUrl: './water-information-card.component.html',
   styleUrls: ['./water-information-card.component.scss'],
+  standalone: false,
 })
 export class WaterInformationCardComponent implements OnInit {
   @Input() public water: Water;

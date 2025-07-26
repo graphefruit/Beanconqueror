@@ -22,6 +22,7 @@ import TrackContentImpression from '../../../data/tracking/trackContentImpressio
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
   styleUrls: ['./beans-add.component.scss'],
+  standalone: false,
 })
 export class BeansAddComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-add';

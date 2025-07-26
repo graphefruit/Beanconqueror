@@ -20,6 +20,7 @@ import { IPreparation } from '../../../interfaces/preparation/iPreparation';
   selector: 'app-preparation-edit-tool',
   templateUrl: './preparation-edit-tool.component.html',
   styleUrls: ['./preparation-edit-tool.component.scss'],
+  standalone: false,
 })
 export class PreparationEditToolComponent {
   public static readonly COMPONENT_ID: string = 'preparation-edit-tool';
@@ -39,13 +40,13 @@ export class PreparationEditToolComponent {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiAlert: UIAlert,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.EDIT_TOOL
+      PREPARATION_TRACKING.ACTIONS.EDIT_TOOL,
     );
     // This is a bug reported on discord, when editing a preparation tool, it resetted the default params
     // I Don't know why, but making a copy of the object helped.
@@ -59,7 +60,7 @@ export class PreparationEditToolComponent {
     const relatedBrews: Array<Brew> = this.uiPreparationHelper
       .getAllBrewsForThisPreparation(this.preparation.config.uuid)
       .filter((e) =>
-        e.method_of_preparation_tools.includes(this.data.config.uuid)
+        e.method_of_preparation_tools.includes(this.data.config.uuid),
       );
     await this.uiAlert
       .showConfirm('DELETE_PREPARATION_TOOL_QUESTION', 'SURE_QUESTION', true)
@@ -67,7 +68,7 @@ export class PreparationEditToolComponent {
         async () => {
           this.uiAnalytics.trackEvent(
             PREPARATION_TRACKING.TITLE,
-            PREPARATION_TRACKING.ACTIONS.TOOL_DELETED
+            PREPARATION_TRACKING.ACTIONS.TOOL_DELETED,
           );
           if (relatedBrews.length > 0) {
             for (const brew of relatedBrews) {
@@ -99,7 +100,7 @@ export class PreparationEditToolComponent {
         },
         () => {
           // No
-        }
+        },
       );
   }
 
@@ -120,7 +121,7 @@ export class PreparationEditToolComponent {
       this.uiToast.showInfoToast('TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY');
       this.uiAnalytics.trackEvent(
         PREPARATION_TRACKING.TITLE,
-        PREPARATION_TRACKING.ACTIONS.EDIT_TOOL_FINISH
+        PREPARATION_TRACKING.ACTIONS.EDIT_TOOL_FINISH,
       );
       this.dismiss();
     }
@@ -132,7 +133,7 @@ export class PreparationEditToolComponent {
         dismissed: true,
       },
       undefined,
-      PreparationEditToolComponent.COMPONENT_ID
+      PreparationEditToolComponent.COMPONENT_ID,
     );
   }
 }

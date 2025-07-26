@@ -9,6 +9,7 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
   selector: 'preparation-tool-modal-select',
   templateUrl: './preparation-tool-modal-select.component.html',
   styleUrls: ['./preparation-tool-modal-select.component.scss'],
+  standalone: false,
 })
 export class PreparationToolModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'preparation-tool-modal-select';
@@ -30,7 +31,7 @@ export class PreparationToolModalSelectComponent implements OnInit {
   @Input() private preparationIds: Array<string>;
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage
+    private readonly uiPreparationStorage: UIPreparationStorage,
   ) {}
 
   public ionViewDidEnter(): void {
@@ -68,7 +69,7 @@ export class PreparationToolModalSelectComponent implements OnInit {
 
     if (searchText) {
       filterTools = filterTools.filter((e) =>
-        e.name?.toLowerCase().includes(searchText)
+        e.name?.toLowerCase().includes(searchText),
       );
     }
     if (isOpen) {
@@ -158,14 +159,14 @@ export class PreparationToolModalSelectComponent implements OnInit {
         selected_text: selected_text,
       },
       undefined,
-      PreparationToolModalSelectComponent.COMPONENT_ID
+      PreparationToolModalSelectComponent.COMPONENT_ID,
     );
   }
 
   private getToolName(_uuid: string) {
     if (this.data) {
       const preparation: Preparation = this.uiPreparationStorage.getByUUID(
-        this.preparationId
+        this.preparationId,
       );
       return preparation.tools.find((e) => e.config.uuid === _uuid).name;
     } else {
@@ -183,7 +184,7 @@ export class PreparationToolModalSelectComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      PreparationToolModalSelectComponent.COMPONENT_ID
+      PreparationToolModalSelectComponent.COMPONENT_ID,
     );
   }
 }

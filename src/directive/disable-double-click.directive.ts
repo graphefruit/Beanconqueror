@@ -1,13 +1,11 @@
-import {Directive, HostListener} from '@angular/core';
-
+import { Directive, HostListener } from '@angular/core';
 
 @Directive({
   selector: '[disable-double-click]',
+  standalone: false,
 })
 export class DisableDoubleClickDirective {
-
-  constructor() {
-  }
+  constructor() {}
 
   @HostListener('click', ['$event'])
   public clickEvent(_event) {
@@ -16,6 +14,4 @@ export class DisableDoubleClickDirective {
       _event.srcElement.removeAttribute('disabled');
     }, 500);
   }
-
-
 }

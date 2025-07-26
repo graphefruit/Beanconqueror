@@ -18,6 +18,7 @@ import { UIMillStorage } from '../../services/uiMillStorage';
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
+  standalone: false,
 })
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];

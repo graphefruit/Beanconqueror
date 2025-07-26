@@ -16,6 +16,7 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
   selector: 'app-water-edit',
   templateUrl: './water-edit.component.html',
   styleUrls: ['./water-edit.component.scss'],
+  standalone: false,
 })
 export class WaterEditComponent {
   public static readonly COMPONENT_ID = 'water-edit';
@@ -30,13 +31,13 @@ export class WaterEditComponent {
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
-      WATER_TRACKING.ACTIONS.EDIT
+      WATER_TRACKING.ACTIONS.EDIT,
     );
     this.data = this.uiHelper.copyData(this.water);
   }
@@ -52,7 +53,7 @@ export class WaterEditComponent {
     this.uiToast.showInfoToast('TOAST_WATER_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
-      WATER_TRACKING.ACTIONS.EDIT_FINISH
+      WATER_TRACKING.ACTIONS.EDIT_FINISH,
     );
     this.dismiss();
   }
@@ -63,7 +64,7 @@ export class WaterEditComponent {
         dismissed: true,
       },
       undefined,
-      WaterEditComponent.COMPONENT_ID
+      WaterEditComponent.COMPONENT_ID,
     );
   }
 }

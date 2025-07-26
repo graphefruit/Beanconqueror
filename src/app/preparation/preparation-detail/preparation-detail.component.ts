@@ -15,6 +15,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
   selector: 'app-preparation-detail',
   templateUrl: './preparation-detail.component.html',
   styleUrls: ['./preparation-detail.component.scss'],
+  standalone: false,
 })
 export class PreparationDetailComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-detail';
@@ -27,13 +28,13 @@ export class PreparationDetailComponent implements OnInit {
     private readonly modalController: ModalController,
     public uiHelper: UIHelper,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.DETAIL
+      PREPARATION_TRACKING.ACTIONS.DETAIL,
     );
     if (this.preparation) {
       const copy: IPreparation = this.uiHelper.copyData(this.preparation);
@@ -46,7 +47,7 @@ export class PreparationDetailComponent implements OnInit {
     return this.brews.filter(
       (e) =>
         e.method_of_preparation === this.data.config.uuid &&
-        e.method_of_preparation_tools.includes(_tool.config.uuid)
+        e.method_of_preparation_tools.includes(_tool.config.uuid),
     ).length;
   }
 
@@ -57,7 +58,7 @@ export class PreparationDetailComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      PreparationDetailComponent.COMPONENT_ID
+      PreparationDetailComponent.COMPONENT_ID,
     );
   }
 }

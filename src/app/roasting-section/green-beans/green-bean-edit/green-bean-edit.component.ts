@@ -15,6 +15,7 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
   selector: 'green-bean-edit',
   templateUrl: './green-bean-edit.component.html',
   styleUrls: ['./green-bean-edit.component.scss'],
+  standalone: false,
 })
 export class GreenBeanEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'green-bean-edit';
@@ -30,13 +31,13 @@ export class GreenBeanEditComponent implements OnInit {
     public uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
       GREEN_BEAN_TRACKING.TITLE,
-      GREEN_BEAN_TRACKING.ACTIONS.EDIT
+      GREEN_BEAN_TRACKING.ACTIONS.EDIT,
     );
     this.data = new GreenBean();
     this.data.initializeByObject(this.greenBean);
@@ -62,7 +63,7 @@ export class GreenBeanEditComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       GREEN_BEAN_TRACKING.TITLE,
-      GREEN_BEAN_TRACKING.ACTIONS.EDIT_FINISH
+      GREEN_BEAN_TRACKING.ACTIONS.EDIT_FINISH,
     );
     this.dismiss();
   }
@@ -73,7 +74,7 @@ export class GreenBeanEditComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      GreenBeanEditComponent.COMPONENT_ID
+      GreenBeanEditComponent.COMPONENT_ID,
     );
   }
 

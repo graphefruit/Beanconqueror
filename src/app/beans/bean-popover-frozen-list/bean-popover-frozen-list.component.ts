@@ -15,6 +15,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
   selector: 'app-bean-popover-frozen-list',
   templateUrl: './bean-popover-frozen-list.component.html',
   styleUrls: ['./bean-popover-frozen-list.component.scss'],
+  standalone: false,
 })
 export class BeanPopoverFrozenListComponent {
   public static readonly COMPONENT_ID = 'bean-popover-frozen-list';
@@ -29,7 +30,7 @@ export class BeanPopoverFrozenListComponent {
   public segmentScrollHeight: string = undefined;
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper
+    private readonly uiBeanHelper: UIBeanHelper,
   ) {}
 
   public async ionViewWillEnter() {
@@ -67,7 +68,7 @@ export class BeanPopoverFrozenListComponent {
         dismissed: true,
       },
       undefined,
-      BeanPopoverFrozenListComponent.COMPONENT_ID
+      BeanPopoverFrozenListComponent.COMPONENT_ID,
     );
   }
 }

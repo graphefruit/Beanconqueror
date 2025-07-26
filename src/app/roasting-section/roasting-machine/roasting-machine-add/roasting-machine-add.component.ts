@@ -1,32 +1,34 @@
-import {Component, OnInit} from '@angular/core';
-import {ModalController} from '@ionic/angular';
-import {UIToast} from '../../../../services/uiToast';
-import {UIRoastingMachineStorage} from '../../../../services/uiRoastingMachineStorage';
-import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-machine';
+import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { UIToast } from '../../../../services/uiToast';
+import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
+import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-roasting-machine-add',
   templateUrl: './roasting-machine-add.component.html',
   styleUrls: ['./roasting-machine-add.component.scss'],
+  standalone: false,
 })
 export class RoastingMachineAddComponent implements OnInit {
-
-  public static COMPONENT_ID:string = 'roasting-machine-add';
+  public static COMPONENT_ID: string = 'roasting-machine-add';
   public data: RoastingMachine = new RoastingMachine();
-  constructor(private readonly modalController: ModalController,
-              private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-              private readonly uiToast: UIToast,
-              private readonly uiAnalytics: UIAnalytics) {
-
-  }
+  constructor(
+    private readonly modalController: ModalController,
+    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
+    private readonly uiToast: UIToast,
+    private readonly uiAnalytics: UIAnalytics,
+  ) {}
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ADD);
+    this.uiAnalytics.trackEvent(
+      ROASTING_MACHINE_TRACKING.TITLE,
+      ROASTING_MACHINE_TRACKING.ACTIONS.ADD,
+    );
   }
   public async add() {
-
     if (this.data.name) {
       await this.__add();
     }
@@ -34,19 +36,22 @@ export class RoastingMachineAddComponent implements OnInit {
 
   public async __add() {
     await this.uiRoastingMachineStorage.add(this.data);
-    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ADD_FINISH);
+    this.uiAnalytics.trackEvent(
+      ROASTING_MACHINE_TRACKING.TITLE,
+      ROASTING_MACHINE_TRACKING.ACTIONS.ADD_FINISH,
+    );
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY');
     this.dismiss();
-
   }
 
   public dismiss(): void {
-    this.modalController.dismiss({
-      dismissed: true
-    },undefined, RoastingMachineAddComponent.COMPONENT_ID)
-
+    this.modalController.dismiss(
+      {
+        dismissed: true,
+      },
+      undefined,
+      RoastingMachineAddComponent.COMPONENT_ID,
+    );
   }
   public ngOnInit() {}
-
-
 }

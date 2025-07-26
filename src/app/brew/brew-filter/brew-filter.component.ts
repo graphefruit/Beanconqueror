@@ -20,6 +20,7 @@ import { EventQueueService } from '../../../services/queueService/queue-service.
   selector: 'brew-filter',
   templateUrl: './brew-filter.component.html',
   styleUrls: ['./brew-filter.component.scss'],
+  standalone: false,
 })
 export class BrewFilterComponent implements OnInit {
   public static COMPONENT_ID = 'brew-filter';
