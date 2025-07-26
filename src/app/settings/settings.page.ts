@@ -1076,7 +1076,7 @@ export class SettingsPage {
         }
       }
 
-      this.uiExcel.exportBrewByWeights(allBrewFlows);
+      this.uiExcel.exportBrewByWeightsSmall(allBrewFlows);
     } catch (ex) {
       this.uiAlert.hideLoadingSpinner();
     }

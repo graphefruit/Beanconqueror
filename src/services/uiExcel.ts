@@ -593,6 +593,103 @@ export class UIExcel {
     await this.uiAlert.hideLoadingSpinner();
   }
 
+  public async exportBrewByWeightsSmall(
+    _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>,
+  ) {
+    await this.uiAlert.showLoadingSpinner();
+
+    let counter: number = 0;
+
+    const wb: WorkBook = XLSX.utils.book_new();
+    for (const exportEntry of _entry) {
+      /**The wait time is important, because on more data, like 50, it can be like more then 10mb, and it somehow seems that to fast the RAM is used and not cleared again, and therefore the app reboots**/
+      await sleep(50);
+      const avgFlow: number = this.getAvgFlow(exportEntry.FLOW);
+      if (exportEntry.FLOW.hasOwnProperty('brewbyweight')) {
+        if (
+          exportEntry.FLOW.brewbyweight &&
+          (exportEntry.FLOW.brewbyweight.length === 0 ||
+            exportEntry.FLOW.brewbyweight[0].timestamp === undefined)
+        ) {
+          continue;
+        }
+        const header_final_weight: Array<string> = [];
+        header_final_weight.push('timestamp');
+        header_final_weight.push('average_flow_rate');
+        header_final_weight.push('avgFlow');
+
+        const wsDatafinalWeightFlow: any[][] = [header_final_weight];
+        const startingDay = moment(new Date()).startOf('day');
+        const delay =
+          moment(exportEntry.FLOW.brewbyweight[0].timestamp, 'HH:mm:ss.SSS')
+            .toDate()
+            .getTime() - startingDay.toDate().getTime();
+        for (const entry of exportEntry.FLOW.brewbyweight) {
+          const newfloat = moment(
+            new Date(
+              moment(entry.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                delay,
+            ),
+          ).format('ss.SSS');
+          const wbEntry: Array<any> = [
+            newfloat,
+            entry.average_flow_rate,
+            avgFlow,
+          ];
+          wsDatafinalWeightFlow.push(wbEntry);
+        }
+        const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
+          wsDatafinalWeightFlow,
+        );
+        XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'S-' + counter);
+        counter = counter + 1;
+      }
+    }
+
+    const filename: string =
+      'Beanconqueror_All_Brew_ByWeights_' +
+      moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
+      '.xlsx';
+    try {
+      /* generate Blob */
+      const wbout: ArrayBuffer = XLSX.write(wb, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      const blob: Blob = new Blob([wbout], {
+        type: 'application/octet-stream',
+      });
+      try {
+        await this.uiFileHelper.exportFileToDefaultDirectory(
+          filename,
+          blob,
+          true,
+        );
+        await this.uiAlert.hideLoadingSpinner();
+        // We share directly, so we don'T download into download folders.
+        /**if (this.platform.is('android')) {
+         const alert = await this.alertCtrl.create({
+         header: this.translate.instant('DOWNLOADED'),
+         subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+         fileName: filename,
+         }),
+         buttons: ['OK'],
+         });
+         await alert.present();
+         }**/
+      } catch (ex) {}
+    } catch (e) {
+      if (e.message.match(/It was determined/)) {
+        /* in the browser, use writeFile */
+        XLSX.writeFile(wb, filename);
+      } else {
+        this.uiAlert.showMessage(e.message);
+        this.uiLog.log(`Excel export - Error occured: ${e.message}`);
+      }
+    }
+    await this.uiAlert.hideLoadingSpinner();
+  }
+
   public async exportBrewByWeights(
     _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>,
   ) {
