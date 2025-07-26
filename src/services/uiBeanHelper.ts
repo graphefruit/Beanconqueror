@@ -37,6 +37,8 @@ import { BeanPopoverListComponent } from '../app/beans/bean-popover-list/bean-po
 import { BeanInternalShareCodeGeneratorComponent } from '../app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
 import { BEAN_CODE_ACTION } from '../enums/beans/beanCodeAction';
 import { TranslateService } from '@ngx-translate/core';
+import { Config } from '../classes/objectConfig/objectConfig';
+import { UILog } from './uiLog';
 
 /**
  * Handles every helping functionalities
@@ -61,6 +63,7 @@ export class UIBeanHelper {
     private readonly uiHelper: UIHelper,
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly translate: TranslateService,
+    private readonly uiLog: UILog,
   ) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
@@ -257,13 +260,14 @@ export class UIBeanHelper {
       bean.attachments = [];
       bean.favourite = false;
       bean.rating = 0;
+      bean.config = new Config();
 
       // Empty it.
       const newPredefinedFlavors = {};
       if (
         'cupped_flavor' in protoBean &&
         'predefined_flavors' in protoBean.cupped_flavor &&
-        protoBean.cupped_flavor.predefined_flavors.length > 0
+        protoBean.cupped_flavor?.predefined_flavors?.length > 0
       ) {
         for (const flavKey of protoBean.cupped_flavor.predefined_flavors) {
           newPredefinedFlavors[flavKey] = true;
@@ -324,6 +328,7 @@ export class UIBeanHelper {
         );
       }
     } catch (ex) {
+      this.uiLog.error(ex.message);
     } finally {
       this.uiAlert.hideLoadingSpinner();
     }
