@@ -72,7 +72,7 @@ export class BookooScale extends BluetoothScale {
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
       await this.write(new Uint8Array([0x03, 0x0a, 0x05, 0x00, 0x00, 0x0d]));
     } else if (_timer === SCALE_TIMER_COMMAND.RESET) {
-      await this.write(new Uint8Array([0x03, 0x0a, 0x06, 0x00, 0x00, 0x0d]));
+      await this.write(new Uint8Array([0x03, 0x0a, 0x06, 0x00, 0x00, 0x0c]));
     }
   }
 
