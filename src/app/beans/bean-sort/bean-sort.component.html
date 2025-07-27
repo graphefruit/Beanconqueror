@@ -80,6 +80,10 @@
         <ion-icon name="beanconqueror-clock" slot="start"></ion-icon>
         <ion-label>{{"BEAN_DATA_OPEN_DATE" | translate}}</ion-label>
       </ion-item>
+      <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bestDate])" (click)="setSortAfter(beanSortAfterEnum.BEST_DATE)" [class.active]="isSortActive(beanSortAfterEnum.BEST_DATE)" class="ion-margin-top" lines="none" tappable>
+        <ion-icon name="beanconqueror-clock" slot="start"></ion-icon>
+        <ion-label>{{"BEAN_DATA_BEST_DATE" | translate}}</ion-label>
+      </ion-item>
       <ion-item (click)="setSortAfter(beanSortAfterEnum.WEIGHT_REMAINING)" [class.active]="isSortActive(beanSortAfterEnum.WEIGHT_REMAINING)" class="ion-margin-top" lines="none" tappable>
         <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_WEIGHT_REMAINING" | translate}}</ion-label>
