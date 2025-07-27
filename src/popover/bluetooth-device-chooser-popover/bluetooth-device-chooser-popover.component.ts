@@ -135,8 +135,9 @@ export class BluetoothDeviceChooserPopoverComponent
           }
         }
         if (skipDevice === false) {
-          this.foundDevices.push(_device);
-          this.checkChanges();
+          this.ngZone.run(() => {
+            this.foundDevices = [...this.foundDevices, _device];
+          });
         }
       });
   }
