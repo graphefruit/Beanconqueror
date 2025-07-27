@@ -140,3 +140,9 @@ Normal production builds can be created using the following command:
 ```shell
 npm run -- build --configuration 'production' && npm run capsync
 ```
+
+Generate from the bean.proto:
+
+```shell
+ npm run generate_proto
+```

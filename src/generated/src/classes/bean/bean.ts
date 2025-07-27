@@ -1,6 +1,6 @@
 /* eslint-disable */
 import Long from 'long';
-import * as _m0 from 'protobufjs/minimal';
+import _m0 from 'protobufjs/minimal';
 
 export const protobufPackage = 'beanconqueror';
 
@@ -226,6 +226,7 @@ export interface BeanProto {
   shared?: boolean | undefined;
   cupping?: ICupping | undefined;
   cupped_flavor?: IFlavor | undefined;
+  external_images: string[];
 }
 
 export interface Config {
@@ -311,13 +312,14 @@ function createBaseBeanProto(): BeanProto {
     shared: undefined,
     cupping: undefined,
     cupped_flavor: undefined,
+    external_images: [],
   };
 }
 
 export const BeanProto = {
   encode(
     message: BeanProto,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.name !== '') {
       writer.uint32(10).string(message.name);
@@ -388,7 +390,7 @@ export const BeanProto = {
     if (message.bean_roast_information !== undefined) {
       BeanRoastInformation.encode(
         message.bean_roast_information,
-        writer.uint32(186).fork()
+        writer.uint32(186).fork(),
       ).ldelim();
     }
     if (message.qr_code !== undefined) {
@@ -406,11 +408,15 @@ export const BeanProto = {
     if (message.cupped_flavor !== undefined) {
       IFlavor.encode(message.cupped_flavor, writer.uint32(226).fork()).ldelim();
     }
+    for (const v of message.external_images) {
+      writer.uint32(234).string(v!);
+    }
     return writer;
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BeanProto {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBeanProto();
     while (reader.pos < end) {
@@ -478,7 +484,7 @@ export const BeanProto = {
           break;
         case 21:
           message.bean_information.push(
-            BeanInformation.decode(reader, reader.uint32())
+            BeanInformation.decode(reader, reader.uint32()),
           );
           break;
         case 22:
@@ -487,7 +493,7 @@ export const BeanProto = {
         case 23:
           message.bean_roast_information = BeanRoastInformation.decode(
             reader,
-            reader.uint32()
+            reader.uint32(),
           );
           break;
         case 24:
@@ -504,6 +510,9 @@ export const BeanProto = {
           break;
         case 28:
           message.cupped_flavor = IFlavor.decode(reader, reader.uint32());
+          break;
+        case 29:
+          message.external_images.push(reader.string());
           break;
         default:
           reader.skipType(tag & 7);
@@ -571,6 +580,9 @@ export const BeanProto = {
       cupped_flavor: isSet(object.cupped_flavor)
         ? IFlavor.fromJSON(object.cupped_flavor)
         : undefined,
+      external_images: Array.isArray(object?.external_images)
+        ? object.external_images.map((e: any) => String(e))
+        : [],
     };
   },
 
@@ -615,7 +627,7 @@ export const BeanProto = {
     message.rating !== undefined && (obj.rating = Math.round(message.rating));
     if (message.bean_information) {
       obj.bean_information = message.bean_information.map((e) =>
-        e ? BeanInformation.toJSON(e) : undefined
+        e ? BeanInformation.toJSON(e) : undefined,
       );
     } else {
       obj.bean_information = [];
@@ -640,11 +652,20 @@ export const BeanProto = {
       (obj.cupped_flavor = message.cupped_flavor
         ? IFlavor.toJSON(message.cupped_flavor)
         : undefined);
+    if (message.external_images) {
+      obj.external_images = message.external_images.map((e) => e);
+    } else {
+      obj.external_images = [];
+    }
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BeanProto>, I>>(base?: I): BeanProto {
+    return BeanProto.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<BeanProto>, I>>(
-    object: I
+    object: I,
   ): BeanProto {
     const message = createBaseBeanProto();
     message.name = object.name ?? '';
@@ -689,6 +710,7 @@ export const BeanProto = {
       object.cupped_flavor !== undefined && object.cupped_flavor !== null
         ? IFlavor.fromPartial(object.cupped_flavor)
         : undefined;
+    message.external_images = object.external_images?.map((e) => e) || [];
     return message;
   },
 };
@@ -700,7 +722,7 @@ function createBaseConfig(): Config {
 export const Config = {
   encode(
     message: Config,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.uuid !== '') {
       writer.uint32(10).string(message.uuid);
@@ -712,7 +734,8 @@ export const Config = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): Config {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseConfig();
     while (reader.pos < end) {
@@ -749,6 +772,10 @@ export const Config = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<Config>, I>>(base?: I): Config {
+    return Config.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<Config>, I>>(object: I): Config {
     const message = createBaseConfig();
     message.uuid = object.uuid ?? '';
@@ -777,7 +804,7 @@ function createBaseBeanInformation(): BeanInformation {
 export const BeanInformation = {
   encode(
     message: BeanInformation,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.country !== undefined) {
       writer.uint32(10).string(message.country);
@@ -819,7 +846,8 @@ export const BeanInformation = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): BeanInformation {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBeanInformation();
     while (reader.pos < end) {
@@ -918,8 +946,14 @@ export const BeanInformation = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BeanInformation>, I>>(
+    base?: I,
+  ): BeanInformation {
+    return BeanInformation.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<BeanInformation>, I>>(
-    object: I
+    object: I,
   ): BeanInformation {
     const message = createBaseBeanInformation();
     message.country = object.country ?? undefined;
@@ -957,7 +991,7 @@ function createBaseBeanRoastInformation(): BeanRoastInformation {
 export const BeanRoastInformation = {
   encode(
     message: BeanRoastInformation,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.drop_temperature !== undefined) {
       writer.uint32(8).uint32(message.drop_temperature);
@@ -997,9 +1031,10 @@ export const BeanRoastInformation = {
 
   decode(
     input: _m0.Reader | Uint8Array,
-    length?: number
+    length?: number,
   ): BeanRoastInformation {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseBeanRoastInformation();
     while (reader.pos < end) {
@@ -1099,19 +1134,25 @@ export const BeanRoastInformation = {
       (obj.first_crack_minute = Math.round(message.first_crack_minute));
     message.first_crack_temperature !== undefined &&
       (obj.first_crack_temperature = Math.round(
-        message.first_crack_temperature
+        message.first_crack_temperature,
       ));
     message.second_crack_minute !== undefined &&
       (obj.second_crack_minute = Math.round(message.second_crack_minute));
     message.second_crack_temperature !== undefined &&
       (obj.second_crack_temperature = Math.round(
-        message.second_crack_temperature
+        message.second_crack_temperature,
       ));
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<BeanRoastInformation>, I>>(
+    base?: I,
+  ): BeanRoastInformation {
+    return BeanRoastInformation.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<BeanRoastInformation>, I>>(
-    object: I
+    object: I,
   ): BeanRoastInformation {
     const message = createBaseBeanRoastInformation();
     message.drop_temperature = object.drop_temperature ?? undefined;
@@ -1150,7 +1191,7 @@ function createBaseICupping(): ICupping {
 export const ICupping = {
   encode(
     message: ICupping,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     if (message.dry_fragrance !== undefined) {
       writer.uint32(8).uint64(message.dry_fragrance);
@@ -1189,7 +1230,8 @@ export const ICupping = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): ICupping {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseICupping();
     while (reader.pos < end) {
@@ -1286,6 +1328,10 @@ export const ICupping = {
     return obj;
   },
 
+  create<I extends Exact<DeepPartial<ICupping>, I>>(base?: I): ICupping {
+    return ICupping.fromPartial(base ?? {});
+  },
+
   fromPartial<I extends Exact<DeepPartial<ICupping>, I>>(object: I): ICupping {
     const message = createBaseICupping();
     message.dry_fragrance = object.dry_fragrance ?? undefined;
@@ -1310,7 +1356,7 @@ function createBaseIFlavor(): IFlavor {
 export const IFlavor = {
   encode(
     message: IFlavor,
-    writer: _m0.Writer = _m0.Writer.create()
+    writer: _m0.Writer = _m0.Writer.create(),
   ): _m0.Writer {
     writer.uint32(10).fork();
     for (const v of message.predefined_flavors) {
@@ -1324,7 +1370,8 @@ export const IFlavor = {
   },
 
   decode(input: _m0.Reader | Uint8Array, length?: number): IFlavor {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    const reader =
+      input instanceof _m0.Reader ? input : _m0.Reader.create(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = createBaseIFlavor();
     while (reader.pos < end) {
@@ -1335,12 +1382,12 @@ export const IFlavor = {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
               message.predefined_flavors.push(
-                longToNumber(reader.uint64() as Long)
+                longToNumber(reader.uint64() as Long),
               );
             }
           } else {
             message.predefined_flavors.push(
-              longToNumber(reader.uint64() as Long)
+              longToNumber(reader.uint64() as Long),
             );
           }
           break;
@@ -1370,7 +1417,7 @@ export const IFlavor = {
     const obj: any = {};
     if (message.predefined_flavors) {
       obj.predefined_flavors = message.predefined_flavors.map((e) =>
-        Math.round(e)
+        Math.round(e),
       );
     } else {
       obj.predefined_flavors = [];
@@ -1381,6 +1428,10 @@ export const IFlavor = {
       obj.custom_flavors = [];
     }
     return obj;
+  },
+
+  create<I extends Exact<DeepPartial<IFlavor>, I>>(base?: I): IFlavor {
+    return IFlavor.fromPartial(base ?? {});
   },
 
   fromPartial<I extends Exact<DeepPartial<IFlavor>, I>>(object: I): IFlavor {
@@ -1394,11 +1445,19 @@ export const IFlavor = {
 declare var self: any | undefined;
 declare var window: any | undefined;
 declare var global: any | undefined;
-var globalThis: any = (() => {
-  if (typeof globalThis !== 'undefined') return globalThis;
-  if (typeof self !== 'undefined') return self;
-  if (typeof window !== 'undefined') return window;
-  if (typeof global !== 'undefined') return global;
+var tsProtoGlobalThis: any = (() => {
+  if (typeof globalThis !== 'undefined') {
+    return globalThis;
+  }
+  if (typeof self !== 'undefined') {
+    return self;
+  }
+  if (typeof window !== 'undefined') {
+    return window;
+  }
+  if (typeof global !== 'undefined') {
+    return global;
+  }
   throw 'Unable to locate global object';
 })();
 
@@ -1414,12 +1473,12 @@ type Builtin =
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+    ? Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin
@@ -1430,13 +1489,13 @@ export type Exact<P, I extends P> = P extends Builtin
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    throw new tsProtoGlobalThis.Error(
+      'Value is larger than Number.MAX_SAFE_INTEGER',
+    );
   }
   return long.toNumber();
 }
 
-// If you get a compile-error about 'Constructor<Long> and ... have no overlap',
-// add '--ts_proto_opt=esModuleInterop=true' as a flag when calling 'protoc'.
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
