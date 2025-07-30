@@ -19,24 +19,34 @@
       </ion-label>
     </ion-segment-button>
   </ion-segment>
-  <div [ngSwitch]="bean_segment">
-    <div *ngSwitchCase="'general'">
-      <green-bean-general-information *ngIf="data" [(data)]="data"></green-bean-general-information>
-    </div>
-    <div *ngSwitchCase="'sortinformation'">
-      <bean-sort-information *ngIf="data" [(data)]="data"></bean-sort-information>
-    </div>
+  <div>
+    @switch (bean_segment) {
+      @case ('general') {
+        <div>
+          @if (data) {
+            <green-bean-general-information [(data)]="data"></green-bean-general-information>
+          }
+        </div>
+      }
+      @case ('sortinformation') {
+        <div>
+          @if (data) {
+            <bean-sort-information [(data)]="data"></bean-sort-information>
+          }
+        </div>
+      }
+    }
   </div>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
       <ion-button (click)="editBean()" color="accent" disable-double-click expand="block" tappable
-                  type="submit">{{"SAVE" | translate}}</ion-button>
+      type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

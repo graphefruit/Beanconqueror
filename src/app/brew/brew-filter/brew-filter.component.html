@@ -8,14 +8,16 @@
                 preparation-overlay (click)="preparationMethodFocused();">
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="preparationToolsExist">
-    <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}' [(ngModel)]="filter.method_of_preparation_tools"
-                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}"
+  @if(preparationToolsExist) {
+    <ion-item>
+      <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}' [(ngModel)]="filter.method_of_preparation_tools"
+                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}"
                 [show-finished]="true"
                 multiple="true"
                 [preparation-ids]="filter.method_of_preparation"
                 preparation-tool-overlay></ion-select>
-  </ion-item>
+    </ion-item>
+  }
   <ion-item>
     <ion-select label-placement="stacked" label='{{"BREW_DATA_BEAN_TYPE" | translate}}' [(ngModel)]="filter.bean"
                 [multiple]="true"
@@ -44,21 +46,25 @@
       </div>
     </ion-toggle>
   </ion-item>
-  <ion-item *ngIf='settings.best_brew'>
-    <ion-toggle label-placement='start' [(ngModel)]="filter.best_brew">
-      <div class="ion-label">
+  @if(settings.best_brew) {
+    <ion-item>
+      <ion-toggle label-placement='start' [(ngModel)]="filter.best_brew">
+        <div class="ion-label">
         <p>{{"ONLY_BEST_BREWS" | translate}}</p>
-      </div>
-    </ion-toggle>
-  </ion-item>
-  <ion-item *ngIf="showOption('chart_data')">
-    <ion-toggle label-placement='start' [(ngModel)]="filter.chart_data">
-      <div class="ion-label">
+        </div>
+      </ion-toggle>
+    </ion-item>
+  }
+  @if(showOption('chart_data')) {
+    <ion-item>
+      <ion-toggle label-placement='start' [(ngModel)]="filter.chart_data">
+        <div class="ion-label">
         <p>{{"BREW_FILTER_JUST_CHART_DATA" | translate}}</p>
-      </div>
-    </ion-toggle>
-  </ion-item>
-    <ion-item lines="none">
+        </div>
+      </ion-toggle>
+    </ion-item>
+  }
+  <ion-item lines="none">
       <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
         style="vertical-align: top;">{{filter.rating.lower| toFixed: 2}}&nbsp;-&nbsp;{{filter.rating.upper| toFixed: 2}} </ion-badge>
       </ion-label>
@@ -70,11 +76,15 @@
     </ion-range>
   </ion-item>
 
-  <ion-item *ngIf='profiles?.length>0'>
-    <ion-select label-placement="stacked" label='{{"BREW_DATA_PRESSURE_PROFILE" | translate}}' placeholder='{{"BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE"| translate}}' [interfaceOptions]="selectOptions" [(ngModel)]="filter.profiles" [multiple]='true' >
-      <ion-select-option *ngFor="let data of profiles" value="{{data}}">{{data}}</ion-select-option>
-    </ion-select>
-  </ion-item>
+  @if(profiles?.length>0) {
+    <ion-item>
+      <ion-select label-placement="stacked" label='{{"BREW_DATA_PRESSURE_PROFILE" | translate}}' placeholder='{{"BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE"| translate}}' [interfaceOptions]="selectOptions" [(ngModel)]="filter.profiles" [multiple]='true' >
+        @for(data of profiles; track data) {
+          <ion-select-option value="{{data}}">{{data}}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  }
   <ion-list class="ion-no-padding ion-padding-top ion-margin-horizontal">
       <ion-button (click)="useFilter()" color="accent" expand="block" tappable
                   type="submit">{{"USE_FILTER" | translate}}</ion-button>
@@ -83,4 +93,3 @@
 
   </ion-list>
 </ion-content>
-

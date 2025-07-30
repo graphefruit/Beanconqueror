@@ -52,20 +52,24 @@
       <ion-label>{{"BEAN_SORT_NAME_OF_BEAN" | translate}}</ion-label>
     </ion-item>
 
-    <ion-list-header *ngIf="false">
+    @if (false) {
+<ion-list-header>
       <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" (click)="toggleExtendSort()" class="ion-margin-top" lines="none" tappable>
         {{"EXTEND_SORT_AFTER" | translate}}
-        <ion-icon *ngIf="extendedSortActive!= true" name="chevron-down-outline" slot="end"></ion-icon>
-        <ion-icon *ngIf="extendedSortActive === true" name="chevron-up-outline" slot="end"></ion-icon>
+        @if (extendedSortActive) {
+<ion-icon name="chevron-up-outline" slot="end"></ion-icon>
+} @else {
+<ion-icon name="chevron-down-outline" slot="end"></ion-icon>
+}
       </ion-item>
     </ion-list-header>
-    <ng-container *ngIf="extendedSortActive">
-      <ion-item (click)="setSortAfter(brewSortAfterEnum.BREW_DATE)" [class.active]="isSortActive(brewSortAfterEnum.BREW_DATE)" class="ion-margin-top" lines="none" tappable>
+}
+    @if (extendedSortActive) {
+<ion-item (click)="setSortAfter(brewSortAfterEnum.BREW_DATE)" [class.active]="isSortActive(brewSortAfterEnum.BREW_DATE)" class="ion-margin-top" lines="none" tappable>
         <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_BEAN_ROASTING_TYPE" | translate}}</ion-label>
       </ion-item>
-
-    </ng-container>
+}
 
   </ion-list>
   <ion-list class="ion-no-padding ion-padding-top">

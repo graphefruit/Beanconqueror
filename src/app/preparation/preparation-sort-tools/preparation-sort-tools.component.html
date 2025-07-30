@@ -9,14 +9,18 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-<ion-card class="ion-padding" style="margin-top:30px;">
-<ion-reorder-group (ionItemReorder)="reorder_tool($event)" disabled="false">
-  <ion-item *ngFor="let index of toolsOrders; let last = last" lines="{{last?'none':''}}" tappable>
-    <ion-label>
-      <span *ngIf='index.archived'><i>({{"ARCHIVED" | translate}})</i>&nbsp;-&nbsp;</span>{{index.label}}
-    </ion-label>
-    <ion-reorder slot="end"></ion-reorder>
-  </ion-item>
-</ion-reorder-group>
-</ion-card>
-</ion-content>
+  <ion-card class="ion-padding" style="margin-top:30px;">
+    <ion-reorder-group (ionItemReorder)="reorder_tool($event)" disabled="false">
+      @for (index of toolsOrders; track index; let last = $last) {
+        <ion-item lines="{{last?'none':''}}" tappable>
+          <ion-label>
+            @if (index.archived) {
+              <span><i>({{"ARCHIVED" | translate}})</i>&nbsp;-&nbsp;</span>
+              }{{index.label}}
+            </ion-label>
+            <ion-reorder slot="end"></ion-reorder>
+          </ion-item>
+        }
+      </ion-reorder-group>
+    </ion-card>
+  </ion-content>

@@ -12,31 +12,34 @@
 
   <ion-grid>
     <ion-row>
-      <ng-container  *ngFor="let key of preparation_types_enum | keys">
-
-        <ion-col *ngIf='individualPreparationVisible(key)' size="6">
-          <ion-card (click)="choosePreparation(key)" class="preparation-add-card" tappable>
-            <ion-card-content *ngIf="key !== 'CUSTOM_PREPARATION'">
-
-                <div class="ion-text-center">
-                  <ion-icon name="{{data.getIcon(key)}}" slot="icon-only"></ion-icon>
-                </div>
-
-              <div class="ion-text-center">
-                {{'PREPARATION_TYPE_' + key | translate}}
-              </div>
-            </ion-card-content>
-            <ion-card-content *ngIf="key === 'CUSTOM_PREPARATION'">
-                <div class="ion-text-center">
-                  <ion-icon  name="beanconqueror-preparation-custom" slot="icon-only"></ion-icon>
-                </div>
-              <div class="ion-text-center" style="line-height:initial;">
-                {{'PREPARATION_TYPE_ADD_CUSTOM' | translate}}
-              </div>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ng-container>
+      @for (key of preparation_types_enum | keys; track key) {
+        @if (individualPreparationVisible(key)) {
+          <ion-col size="6">
+            <ion-card (click)="choosePreparation(key)" class="preparation-add-card" tappable>
+              @if (key !== 'CUSTOM_PREPARATION') {
+                <ion-card-content>
+                  <div class="ion-text-center">
+                    <ion-icon name="{{data.getIcon(key)}}" slot="icon-only"></ion-icon>
+                  </div>
+                  <div class="ion-text-center">
+                    {{'PREPARATION_TYPE_' + key | translate}}
+                  </div>
+                </ion-card-content>
+              }
+              @if (key === 'CUSTOM_PREPARATION') {
+                <ion-card-content>
+                  <div class="ion-text-center">
+                    <ion-icon  name="beanconqueror-preparation-custom" slot="icon-only"></ion-icon>
+                  </div>
+                  <div class="ion-text-center" style="line-height:initial;">
+                    {{'PREPARATION_TYPE_ADD_CUSTOM' | translate}}
+                  </div>
+                </ion-card-content>
+              }
+            </ion-card>
+          </ion-col>
+        }
+      }
     </ion-row>
   </ion-grid>
 </ion-content>

@@ -9,7 +9,9 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <cupping-flavors *ngIf="this.flavor !== undefined" [(data)]="this.data"  #flavorEl></cupping-flavors>
+  @if(this.flavor !== undefined) {
+    <cupping-flavors [(data)]="this.data" #flavorEl></cupping-flavors>
+  }
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>

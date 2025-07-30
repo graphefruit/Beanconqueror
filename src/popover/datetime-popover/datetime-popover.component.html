@@ -27,31 +27,43 @@
 
   <ion-grid class="ion-no-padding ion-margin-top">
     <ion-row>
-      <ion-col  *ngIf="settings?.brew_timer_show_hours" size="{{colSize}}">{{"TIMER_HOUR" | translate}}</ion-col>
-      <ion-col  *ngIf="settings?.brew_timer_show_minutes" size="{{colSize}}">{{"TIMER_MINUTES" | translate}}</ion-col>
+      @if (settings?.brew_timer_show_hours) {
+        <ion-col  size="{{colSize}}">{{"TIMER_HOUR" | translate}}</ion-col>
+      }
+      @if (settings?.brew_timer_show_minutes) {
+        <ion-col  size="{{colSize}}">{{"TIMER_MINUTES" | translate}}</ion-col>
+      }
       <ion-col size="{{colSize}}">{{"TIMER_SECONDS" | translate}}</ion-col>
-      <ion-col *ngIf="settings?.brew_milliseconds" size="{{colSize}}">{{"TIMER_MILLISECONDS" | translate}}</ion-col>
+      @if (settings?.brew_milliseconds) {
+        <ion-col size="{{colSize}}">{{"TIMER_MILLISECONDS" | translate}}</ion-col>
+      }
     </ion-row>
     <ion-row>
-      <ion-col *ngIf="settings?.brew_timer_show_hours" size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col  *ngIf="settings?.brew_timer_show_minutes" size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      @if (settings?.brew_timer_show_hours) {
+        <ion-col size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      }
+      @if (settings?.brew_timer_show_minutes) {
+        <ion-col  size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      }
       <ion-col size="{{colSize}}"><ion-input #secondInput maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col  *ngIf="settings?.brew_milliseconds" size="{{colSize}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" [max-number-value]="maxMilliSecond" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      @if (settings?.brew_milliseconds) {
+        <ion-col  size="{{colSize}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" [max-number-value]="maxMilliSecond" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      }
     </ion-row>
 
-  <ion-row>
-    <ion-col size="6">
-      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
-    </ion-col>
-    <ion-col size="6">
-      <ion-button (click)="reset()" color="danger" expand="block" fill="outline"
-                  tappable>{{"CLEAR" | translate}}</ion-button>
-    </ion-col>
-    <ion-col size="12">
-      <ion-button (click)="choose()" color="accent" disable-double-click expand="block" tappable
-                  type="submit">{{"CHOOSE" | translate}}</ion-button>
-    </ion-col>
-  </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+        tappable>{{"CANCEL" | translate}}</ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button (click)="reset()" color="danger" expand="block" fill="outline"
+        tappable>{{"CLEAR" | translate}}</ion-button>
+      </ion-col>
+      <ion-col size="12">
+        <ion-button (click)="choose()" color="accent" disable-double-click expand="block" tappable
+        type="submit">{{"CHOOSE" | translate}}</ion-button>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 

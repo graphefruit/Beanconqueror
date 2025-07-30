@@ -11,10 +11,12 @@
     <ion-range  [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
                [step]="settings.brew_rating_steps">
 
-      <div slot="end" *ngIf="maxBrewRating=== 5 && settings.brew_rating_steps === 1">
+      @if (maxBrewRating=== 5 && settings.brew_rating_steps === 1) {
+<div slot="end">
         <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
                    [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
       </div>
+}
     </ion-range>
 
   </ion-item>

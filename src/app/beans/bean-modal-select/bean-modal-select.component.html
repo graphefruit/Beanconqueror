@@ -1,7 +1,10 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title *ngIf='multiple'>{{ "CHOOSE_BEANS" | translate }}</ion-title>
-    <ion-title *ngIf='!multiple'>{{ "CHOOSE_BEAN" | translate }}</ion-title>
+    @if (multiple) {
+      <ion-title>{{ "CHOOSE_BEANS" | translate }}</ion-title>
+    } @else {
+      <ion-title>{{ "CHOOSE_BEAN" | translate }}</ion-title>
+    }
     <ion-buttons slot='start'>
       <ion-button (click)='dismiss()' class='big-icon-only'>
         <ion-icon name='beanconqueror-back' slot='icon-only'></ion-icon>
@@ -21,21 +24,23 @@
       <ion-label>{{ "CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf='settings.freeze_coffee_beans && frozenBeansLength' value='frozen'>
-      <ion-label>{{ "FROZEN_BEANS" | translate }}
-      </ion-label>
-
-    </ion-segment-button>
-    <ion-segment-button *ngIf='showFinished===true && finishedBeansLength > 0' value='archive'>
-      <ion-label>{{ "TAB_ARCHIVE" | translate }}
-      </ion-label>
-
-    </ion-segment-button>
+    @if (settings.freeze_coffee_beans && frozenBeansLength) {
+      <ion-segment-button value='frozen'>
+        <ion-label>{{ "FROZEN_BEANS" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
+    @if (showFinished===true && finishedBeansLength > 0) {
+      <ion-segment-button value='archive'>
+        <ion-label>{{ "TAB_ARCHIVE" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>
 
   <ion-radio-group [(ngModel)]='radioSelection'>
-    <div [ngSwitch]='bean_segment'>
-      <div *ngSwitchCase="'open'">
+    @switch (bean_segment) {
+      @case ('open') {
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (openBeans.length > 0) {
@@ -71,8 +76,8 @@
             </div>
           }
         </ion-card>
-      </div>
-      <div *ngSwitchCase="'frozen'">
+      }
+      @case ('frozen') {
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (frozenBeans.length > 0) {
@@ -108,8 +113,8 @@
             </div>
           }
         </ion-card>
-      </div>
-      <div *ngSwitchCase="'archive'">
+      }
+      @case ('archive') {
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (finishedBeans.length > 0) {
@@ -146,8 +151,8 @@
             </div>
           }
         </ion-card>
-      </div>
-    </div>
+      }
+    }
   </ion-radio-group>
 </ion-content>
 <ion-footer #footerContent class='ion-no-border'>
@@ -177,40 +182,61 @@
       }&nbsp;
     }{{ bean.name }}
   </h6>
-  <p *ngIf='bean?.frozenId'>{{ "BEAN_DATA_FROZEN_ID" | translate }}: {{ bean.frozenId }}</p>
-  <p *ngIf='bean?.frozenDate'>{{ "BEAN_DATA_FROZEN_DATE" | translate }}
-    : {{ bean.frozenDate  | formatDate:[settings?.date_format] }}</p>
-  <p *ngIf='bean?.unfrozenDate'>{{ "BEAN_DATA_UNFROZEN_DATE" | translate }}
-    : {{ bean.unfrozenDate  | formatDate:[settings?.date_format] }}</p>
-  <p
-    *ngIf='bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN'>{{ "BEAN_DATA_FROZEN_STORAGE_TYPE" | translate }}
-    : {{ "BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate }}</p>
-  <div *ngIf='bean?.frozenNote'>{{ "BEAN_DATA_FROZEN_NOTE" | translate }}:
-    <pre style='margin-top:3px!important'>{{ bean?.frozenNote }}</pre>
-  </div>
-  <p *ngIf='bean?.roastingDate'>{{ "BEAN_DATA_ROASTING_DATE" | translate }}
-    : {{ bean.roastingDate | formatDate:[settings?.date_format] }}&nbsp;
-    ({{ bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS }}
-    <span
-      *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1'>{{ "DAY" | translate }}</span>
-    <span
-      *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) !== 1'>{{ "DAYS" | translate }}</span>)
-  </p>
-  <p *ngIf='bean?.roaster'>{{ "BEAN_DATA_ROASTER" | translate }}: {{ bean.roaster }}</p>
-  <p *ngIf='bean && !isBeanRoastUnknown(bean)'>{{ "BEAN_DATA_ROASTING_TYPE" | translate }}
-    : {{ "BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate }}</p>
-  <p *ngIf='bean?.weight > 0'>
-    {{ "BEANS_AMOUNT_USED" | translate }}:&nbsp;<span
-    [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"
-    style='margin: 0;padding: 0;display: inline;'></span>
-  </p>
-</ng-template>
-<ng-template #beanThumbnailCard let-bean='bean'>
-  <ion-thumbnail slot="end" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
-    <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-      <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+  @if (bean?.frozenId) {
+    <p>{{ "BEAN_DATA_FROZEN_ID" | translate }}: {{ bean.frozenId }}</p>
+  }
+  @if (bean?.frozenDate) {
+    <p>{{ "BEAN_DATA_FROZEN_DATE" | translate }}
+      : {{ bean.frozenDate  | formatDate:[settings?.date_format] }}</p>
+  }
+  @if (bean?.unfrozenDate) {
+    <p>{{ "BEAN_DATA_UNFROZEN_DATE" | translate }}
+      : {{ bean.unfrozenDate  | formatDate:[settings?.date_format] }}</p>
+  }
+  @if (bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN) {
+    <p>{{ "BEAN_DATA_FROZEN_STORAGE_TYPE" | translate }}
+      : {{ "BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate }}</p>
+  }
+  @if (bean?.frozenNote) {
+    <div>{{ "BEAN_DATA_FROZEN_NOTE" | translate }}:
+      <pre style='margin-top:3px!important'>{{ bean?.frozenNote }}</pre>
     </div>
-  </ion-thumbnail>
+  }
+  @if (bean?.roastingDate) {
+    <p>{{ "BEAN_DATA_ROASTING_DATE" | translate }}
+      : {{ bean.roastingDate | formatDate:[settings?.date_format] }}&nbsp;
+      ({{ bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS }}
+      @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1) {
+        <span>{{ "DAY" | translate }}</span>
+      } @else {
+        <span>{{ "DAYS" | translate }}</span>
+      })
+    </p>
+  }
+  @if (bean?.roaster) {
+    <p>{{ "BEAN_DATA_ROASTER" | translate }}: {{ bean.roaster }}</p>
+  }
+  @if (bean && !isBeanRoastUnknown(bean)) {
+    <p>{{ "BEAN_DATA_ROASTING_TYPE" | translate }}
+      : {{ "BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate }}</p>
+  }
+  @if (bean?.weight > 0) {
+    <p>
+      {{ "BEANS_AMOUNT_USED" | translate }}:&nbsp;<span
+      [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"
+      style='margin: 0;padding: 0;display: inline;'></span>
+    </p>
+  }
+</ng-template>
+
+<ng-template #beanThumbnailCard let-bean='bean'>
+  @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
+    <ion-thumbnail slot="end">
+      <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+        <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+      </div>
+    </ion-thumbnail>
+  }
 </ng-template>
 
 <ng-template #beanSearchToolbar>
@@ -219,16 +245,22 @@
                    class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                    search-icon='beanconqueror-detail' showCancelButton='never'></ion-searchbar>
     <ion-button (click)="showFilter()" fill='clear' size='small' tappable>
-      <ion-icon *ngIf="uiIsFilterActive" name='beanconqueror-filter-active'
-                slot='icon-only'></ion-icon>
-      <ion-icon *ngIf="!uiIsFilterActive" name='beanconqueror-filter-inactive'
-                slot='icon-only'></ion-icon>
+      @if (uiIsFilterActive) {
+        <ion-icon name='beanconqueror-filter-active'
+                  slot='icon-only'></ion-icon>
+      } @else {
+        <ion-icon name='beanconqueror-filter-inactive'
+                  slot='icon-only'></ion-icon>
+      }
     </ion-button>
     <ion-button class="margin-right-5" (click)="showSort()" fill="clear" size="small" tappable>
-      <ion-icon *ngIf="uiIsSortActive" name="beanconqueror-sort-active"
-                slot="icon-only"></ion-icon>
-      <ion-icon *ngIf="!uiIsSortActive" name="beanconqueror-sort-inactive"
-                slot="icon-only"></ion-icon>
+      @if (uiIsSortActive) {
+        <ion-icon name="beanconqueror-sort-active"
+                  slot="icon-only"></ion-icon>
+      } @else {
+        <ion-icon name="beanconqueror-sort-inactive"
+                  slot="icon-only"></ion-icon>
+      }
     </ion-button>
   </div>
   <hr/>

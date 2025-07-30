@@ -27,37 +27,42 @@
           <ion-col size='12'>
 
 
-            <ion-button (click)="brewComponent.timer.bloomTime()"
-                        *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer"
-                        class="big-control-icon" fill="clear" tappable>
-              <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
-            </ion-button>
-            <ion-button (click)="brewComponent.timer.dripTime()"
-                        *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer"
-                        class="big-control-icon" fill="clear" tappable>
-              <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
-            </ion-button>
-            <ion-button (click)="pauseTimer()"
-                        *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
-                        class="big-control-icon" fill="clear" tappable>
-              <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
-
-            </ion-button>
-            <ion-button (click)="resetTimer()"
-                        *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0"
-                        class="big-control-icon" fill="clear" tappable>
-              <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
-            </ion-button>
-
-            <ion-button (click)="resumeTimer()"
-                        *ngIf="!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
-                        class="big-control-icon" fill="clear" tappable>
-              <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
-            </ion-button>
-            <ion-button (click)="startTimer()" *ngIf="!brewComponent.timer.timer.hasStarted" class="big-control-icon" fill="clear"
-                        tappable>
-              <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
-            </ion-button>
+            @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer) {
+              <ion-button (click)="brewComponent.timer.bloomTime()"
+                          class="big-control-icon" fill="clear" tappable>
+                <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
+            @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer) {
+              <ion-button (click)="brewComponent.timer.dripTime()"
+                          class="big-control-icon" fill="clear" tappable>
+                <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
+            @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
+              <ion-button (click)="pauseTimer()"
+                          class="big-control-icon" fill="clear" tappable>
+                <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
+            @if((!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0) {
+              <ion-button (click)="resetTimer()"
+                          class="big-control-icon" fill="clear" tappable>
+                <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
+            @if(!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
+              <ion-button (click)="resumeTimer()"
+                          class="big-control-icon" fill="clear" tappable>
+                <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
+            @if(!brewComponent.timer.timer.hasStarted) {
+              <ion-button (click)="startTimer()" class="big-control-icon" fill="clear"
+                          tappable>
+                <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
+              </ion-button>
+            }
           </ion-col>
         </ion-row>
       </ion-grid>

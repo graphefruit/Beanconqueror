@@ -15,7 +15,9 @@
                 placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
                 style="padding-left:0px!important;width: 100%; min-width: 100%;"
                 multiple="true">
-      <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
+      @for (key of beanRoastingTypeEnum | keys; track key) {
+        <ion-select-option value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
+      }
     </ion-select>
   </ion-item>
   <ion-item>
@@ -24,7 +26,9 @@
                 placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                 style="padding-left:0px!important;width: 100%; min-width: 100%;"
                 multiple="true">
-      <ion-select-option *ngFor="let key of roasteries" value="{{key}}">{{key}}</ion-select-option>
+      @for (key of roasteries; track key) {
+        <ion-select-option value="{{key}}">{{key}}</ion-select-option>
+      }
     </ion-select>
   </ion-item>
   <div class='ion-label' style='margin-left: 16px;margin-top: 5px;'>{{"BEAN_DATA_ROASTING_DATE" | translate}}</div>
@@ -73,4 +77,3 @@
 
   </ion-list>
 </ion-content>
-

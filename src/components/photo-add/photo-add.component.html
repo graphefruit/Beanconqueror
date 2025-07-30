@@ -1,19 +1,23 @@
 <ion-item (click)="addImage()" button tappable>
   <ion-icon class="icon-16" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
 </ion-item>
-<div *ngIf="data?.attachments && data.attachments.length > 0">
-  <swiper-container class='swiper'  [pagination]="{ clickable: true, dragable:true }"  #photoSlides pager="true">
-    <swiper-slide *ngFor="let attachment of data.attachments;let i = index">
-      <ion-button [disabled]='i===0' (click)="sortLeft(i)" class="position-absolute-button-sort-left" tappable color="accent" fill="clear">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-      <ion-button [disabled]='i===data.attachments.length-1'  (click)="sortRight(i)" class="position-absolute-button-sort-right" tappable color="accent" fill="clear">
-        <ion-icon slot="icon-only" name="arrow-forward-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="deleteImage(i)" class="position-absolute-button" tappable color="accent" fill="clear">
-        <ion-icon slot="icon-only" name="trash"></ion-icon>
-      </ion-button>
-      <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-    </swiper-slide>
-  </swiper-container>
-</div>
+@if (data?.attachments && data.attachments.length > 0) {
+  <div>
+    <swiper-container class='swiper'  [pagination]="{ clickable: true, dragable:true }"  #photoSlides pager="true">
+      @for (attachment of data.attachments; track attachment; let i = $index) {
+        <swiper-slide>
+          <ion-button [disabled]='i===0' (click)="sortLeft(i)" class="position-absolute-button-sort-left" tappable color="accent" fill="clear">
+            <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+          </ion-button>
+          <ion-button [disabled]='i===data.attachments.length-1'  (click)="sortRight(i)" class="position-absolute-button-sort-right" tappable color="accent" fill="clear">
+            <ion-icon slot="icon-only" name="arrow-forward-outline"></ion-icon>
+          </ion-button>
+          <ion-button (click)="deleteImage(i)" class="position-absolute-button" tappable color="accent" fill="clear">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+          <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+}

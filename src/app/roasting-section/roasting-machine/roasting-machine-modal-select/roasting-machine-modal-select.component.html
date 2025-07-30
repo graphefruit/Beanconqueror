@@ -1,7 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title *ngIf="multiple">{{"CHOOSE_ROASTING_MACHINES" | translate}}</ion-title>
-    <ion-title *ngIf="!multiple">{{"CHOOSE_ROASTING_MACHINE" | translate}}</ion-title>
+    @if (multiple) {
+      <ion-title>{{"CHOOSE_ROASTING_MACHINES" | translate}}</ion-title>
+    }
+    @if (!multiple) {
+      <ion-title>{{"CHOOSE_ROASTING_MACHINE" | translate}}</ion-title>
+    }
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -16,92 +20,133 @@
       <ion-label>{{"CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="showFinished===true && getArchivedEntries().length > 0" value="archive">
-      <ion-label>{{"TAB_ARCHIVE" | translate }}
-      </ion-label>
-
-    </ion-segment-button>
+    @if (showFinished===true && getArchivedEntries().length > 0) {
+      <ion-segment-button value="archive">
+        <ion-label>{{"TAB_ARCHIVE" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>
-  <div  *ngIf="multiple">
-    <div [ngSwitch]="segment">
-      <div *ngSwitchCase="'open'">
-        <div *ngIf="getOpenEntries()?.length == 0" class="ion-padding ion-text-center">
-          <div>
-            <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
-          </div>
-          <div class="text-color-inactive ion-margin-top">
-            {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
-          </div>
-        </div>
-        <ion-card *ngIf="getOpenEntries().length > 0">
-          <ion-item *ngFor="let data of getOpenEntries()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><h6>{{data.name}}</h6></ion-checkbox>
-          </ion-item>
-        </ion-card>
-      </div>
-      <div *ngSwitchCase="'archive'">
-        <div *ngIf="getArchivedEntries()?.length == 0" class="ion-padding ion-text-center">
-          <div>
-            <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
-          </div>
-          <div class="text-color-inactive ion-margin-top">
-            {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}
-          </div>
-        </div>
-        <ion-card *ngIf="getArchivedEntries().length > 0">
-          <ion-item *ngFor="let data of getArchivedEntries()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><h6>{{data.name}}</h6></ion-checkbox>
-          </ion-item>
-        </ion-card>
+  @if (multiple) {
+    <div >
+      <div>
+        @switch (segment) {
+          @case ('open') {
+            <div>
+              @if (getOpenEntries()?.length == 0) {
+                <div class="ion-padding ion-text-center">
+                  <div>
+                    <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+                  </div>
+                  <div class="text-color-inactive ion-margin-top">
+                    {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
+                  </div>
+                </div>
+              }
+              @if (getOpenEntries().length > 0) {
+                <ion-card>
+                  @for (data of getOpenEntries(); track data) {
+                    <ion-item lines="none" tappable>
+                      <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><h6>{{data.name}}</h6></ion-checkbox>
+                    </ion-item>
+                  }
+                </ion-card>
+              }
+            </div>
+          }
+          @case ('archive') {
+            <div>
+              @if (getArchivedEntries()?.length == 0) {
+                <div class="ion-padding ion-text-center">
+                  <div>
+                    <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+                  </div>
+                  <div class="text-color-inactive ion-margin-top">
+                    {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}
+                  </div>
+                </div>
+              }
+              @if (getArchivedEntries().length > 0) {
+                <ion-card>
+                  @for (data of getArchivedEntries(); track data) {
+                    <ion-item lines="none" tappable>
+                      <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><h6>{{data.name}}</h6></ion-checkbox>
+                    </ion-item>
+                  }
+                </ion-card>
+              }
+            </div>
+          }
+        }
       </div>
     </div>
-  </div>
-  <div  *ngIf="!multiple">
-    <ion-radio-group [(ngModel)]="radioSelection">
-      <div [ngSwitch]="segment">
-        <div *ngSwitchCase="'open'">
-          <div *ngIf="getOpenEntries()?.length == 0" class="ion-padding ion-text-center">
-            <div>
-              <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
-            </div>
-            <div class="text-color-inactive ion-margin-top">
-              {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
-            </div>
-          </div>
-          <ion-card *ngIf="getOpenEntries().length > 0">
-            <ion-item *ngFor="let data of getOpenEntries()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><h6>{{data.name}}</h6></ion-radio>
-            </ion-item>
-          </ion-card>
+  }
+  @if (!multiple) {
+    <div >
+      <ion-radio-group [(ngModel)]="radioSelection">
+        <div>
+          @switch (segment) {
+            @case ('open') {
+              <div>
+                @if (getOpenEntries()?.length == 0) {
+                  <div class="ion-padding ion-text-center">
+                    <div>
+                      <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+                    </div>
+                    <div class="text-color-inactive ion-margin-top">
+                      {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
+                    </div>
+                  </div>
+                }
+                @if (getOpenEntries().length > 0) {
+                  <ion-card>
+                    @for (data of getOpenEntries(); track data) {
+                      <ion-item lines="none" tappable>
+                        <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><h6>{{data.name}}</h6></ion-radio>
+                      </ion-item>
+                    }
+                  </ion-card>
+                }
+              </div>
+            }
+            @case ('archive') {
+              <div>
+                @if (getArchivedEntries()?.length == 0) {
+                  <div class="ion-padding ion-text-center">
+                    <div>
+                      <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+                    </div>
+                    <div class="text-color-inactive ion-margin-top">
+                      {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}
+                    </div>
+                  </div>
+                }
+                @if (getArchivedEntries().length > 0) {
+                  <ion-card>
+                    @for (data of getArchivedEntries(); track data) {
+                      <ion-item lines="none" tappable>
+                        <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><h6>{{data.name}}</h6></ion-radio>
+                      </ion-item>
+                    }
+                  </ion-card>
+                }
+              </div>
+            }
+          }
         </div>
-        <div *ngSwitchCase="'archive'">
-          <div *ngIf="getArchivedEntries()?.length == 0" class="ion-padding ion-text-center">
-            <div>
-              <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
-            </div>
-            <div class="text-color-inactive ion-margin-top">
-              {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}
-            </div>
-          </div>
-          <ion-card *ngIf="getArchivedEntries().length > 0">
-            <ion-item *ngFor="let data of getArchivedEntries()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><h6>{{data.name}}</h6></ion-radio>
-            </ion-item>
-          </ion-card>
-        </div>
-      </div>
-    </ion-radio-group>
-  </div>
+      </ion-radio-group>
+    </div>
+  }
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size="6">
       <ion-button (click)="choose()" color="accent" expand="block" tappable
-                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+      type="submit">{{"CHOOSE" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

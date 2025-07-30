@@ -19,6 +19,7 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 import { UIAlert } from '../../services/uiAlert';
 import { TranslateService } from '@ngx-translate/core';
+import { Clipboard } from '@capacitor/clipboard';
 
 @Component({
   selector: 'photo-add',
@@ -50,6 +51,34 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     }, 250);
   }
   public ngOnDestroy() {}
+
+  public async addBase64ImageFromClipboard() {
+    const currentData = await Clipboard.read();
+
+    if (
+      currentData.value === undefined ||
+      currentData.value === '' ||
+      currentData.value === null ||
+      currentData.value.indexOf('data:image/') === -1
+    ) {
+      this.uiAlert.showMessage(this.translate.instant('NO_IMAGE_IN_CLIPBOARD'));
+      return;
+    }
+
+    let ending = '.jpg';
+    if (currentData.value.indexOf('data:image/png;base64,') > -1) {
+      ending = '.png';
+    }
+    const fileName = await this.uiFileHelper.generateInternalPath(
+      'photo',
+      ending,
+    );
+    const fileUri = await this.uiFileHelper.writeInternalFileFromBase64(
+      currentData.value,
+      fileName,
+    );
+    this.data.attachments.push(fileUri.path);
+  }
   public addImage(): void {
     this.uiImage.showOptionChooser().then((_option) => {
       if (_option === 'CHOOSE') {
@@ -71,6 +100,8 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
             );
           },
         );
+      } else if (_option === 'CLIPBOARD') {
+        this.addBase64ImageFromClipboard();
       } else {
         // TAKE
         this.uiImage.takePhoto().then(

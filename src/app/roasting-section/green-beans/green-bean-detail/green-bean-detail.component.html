@@ -24,95 +24,114 @@
       </ion-label>
     </ion-segment-button>
   </ion-segment>
-  <div [ngSwitch]="bean_segment">
-    <div *ngSwitchCase="'general'">
-      <ion-card class="popover" style="display:flex; flex-direction: column;">
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_NAME" | translate}}:</h2>
-            <h3>{{data.name}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
-            <h3 *ngIf="data.date">{{data.date | formatDate:[settings?.date_format]}}</h3>
-            <h3 *ngIf="!data.date">-</h3>
-          </ion-label>
-        </ion-item>
-      </ion-card>
-      <ion-card style="display:flex; flex-direction: column;">
-        <ion-item lines="none">
-          <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"BEAN_SORT_MORE_INFORMATION" | translate }}</span>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_WEIGHT" | translate}}:</h2>
-            <h3>{{data.weight}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_COST" | translate}}:</h2>
-            <h3>{{data.cost}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_AROMATICS" | translate}}:</h2>
-            <h3>{{data.aromatics}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_CUPPING_POINTS" | translate}}:</h2>
-            <h3>{{data.cupping_points}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.decaffeinated" disabled="true">{{"BEAN_DATA_DECAFFEINATED" | translate}}:</ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_URL" | translate}}:</h2>
-            <h3>{{data.url}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_EAN" | translate}}:</h2>
-            <h3>{{data.ean_article_number}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.finished" disabled="true">{{"FINISHED" | translate}}?:</ion-checkbox>
-        </ion-item>
-        <ion-item  class="ion-margin-bottom">
-          <ion-label>
-            <h2>{{"NOTES" | translate}}?:</h2>
-            <pre>{{data.note}}</pre>
-          </ion-label>
-        </ion-item>
-      </ion-card>
-    </div>
-    <div *ngSwitchCase="'sortinformation'">
-      <bean-detail-sort-information *ngIf="data" [(data)]="data"></bean-detail-sort-information>
-    </div>
-    <div *ngSwitchCase="'linked'">
-      <div *ngIf="linkedRoasts.length <=0"  class="ion-padding ion-text-center">
+  <div>
+    @switch (bean_segment) {
+      @case ('general') {
         <div>
-          <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+          <ion-card class="popover" style="display:flex; flex-direction: column;">
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_NAME" | translate}}:</h2>
+                <h3>{{data.name}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
+                @if (data.date) {
+                  <h3>{{data.date | formatDate:[settings?.date_format]}}</h3>
+                }
+                @if (!data.date) {
+                  <h3>-</h3>
+                }
+              </ion-label>
+            </ion-item>
+          </ion-card>
+          <ion-card style="display:flex; flex-direction: column;">
+            <ion-item lines="none">
+              <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"BEAN_SORT_MORE_INFORMATION" | translate }}</span>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_WEIGHT" | translate}}:</h2>
+                <h3>{{data.weight}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_COST" | translate}}:</h2>
+                <h3>{{data.cost}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_AROMATICS" | translate}}:</h2>
+                <h3>{{data.aromatics}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_CUPPING_POINTS" | translate}}:</h2>
+                <h3>{{data.cupping_points}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.decaffeinated" disabled="true">{{"BEAN_DATA_DECAFFEINATED" | translate}}:</ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_URL" | translate}}:</h2>
+                <h3>{{data.url}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_EAN" | translate}}:</h2>
+                <h3>{{data.ean_article_number}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.finished" disabled="true">{{"FINISHED" | translate}}?:</ion-checkbox>
+            </ion-item>
+            <ion-item  class="ion-margin-bottom">
+              <ion-label>
+                <h2>{{"NOTES" | translate}}?:</h2>
+                <pre>{{data.note}}</pre>
+              </ion-label>
+            </ion-item>
+          </ion-card>
         </div>
-        <div class="text-color-inactive ion-margin-top">
-          {{"ROASTING_SECTION.GREEN_BEAN.NO_ROASTS_YET" | translate}}
+      }
+      @case ('sortinformation') {
+        <div>
+          @if (data) {
+            <bean-detail-sort-information [(data)]="data"></bean-detail-sort-information>
+          }
         </div>
-      </div>
-      <div *ngIf="linkedRoasts.length > 0">
-          <bean-information (beanAction)="beanAction()" [showActions]="false" *ngFor="let bean of linkedRoasts"
-                            [bean]="bean"></bean-information>
-      </div>
-
-    </div>
+      }
+      @case ('linked') {
+        <div>
+          @if (linkedRoasts.length <=0) {
+            <div  class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"ROASTING_SECTION.GREEN_BEAN.NO_ROASTS_YET" | translate}}
+              </div>
+            </div>
+          }
+          @if (linkedRoasts.length > 0) {
+            <div>
+              @for (bean of linkedRoasts; track bean) {
+                <bean-information (beanAction)="beanAction()" [showActions]="false"
+                [bean]="bean"></bean-information>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
   </div>
 
 </ion-content>
@@ -120,7 +139,7 @@
   <ion-row>
     <ion-col size="12">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

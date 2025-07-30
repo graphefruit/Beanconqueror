@@ -7,12 +7,20 @@
     <span class="ion-title ion-padding-top">{{"PRESET_BREW_TITLE" | translate }}</span>
   </ion-item>
 
-  <ion-item  *ngFor="let prep of preparationMethods;let last = last" detail="true" (click)="choosePreparation(prep)" lines="{{last?'none':''}}" tappable>
-    <ion-icon style="position: relative;margin-right:5px;" name="wifi-outline"
-              *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}<span style='font-size: 12px; margin-top: 2px;'>&nbsp;({{"LAST_USE" | translate}}:
-    <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
-    <span *ngIf="getBrewsCount(prep) <= 0">-</span>)
-  </span>
-  </ion-item>
+  @for(prep of preparationMethods; track prep.config.uuid; let last = $last) {
+    <ion-item detail="true" (click)="choosePreparation(prep)" lines="{{last?'none':''}}" tappable>
+      @if(prep.hasDeviceConnection()) {
+        <ion-icon style="position: relative;margin-right:5px;" name="wifi-outline"></ion-icon>
+      }
+      {{prep.name}}<span style='font-size: 12px; margin-top: 2px;'>&nbsp;({{"LAST_USE" | translate}}:
+      @if(getBrewsCount(prep)> 0) {
+        <span>{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
+      } @else {
+        <span>-</span>
+      }
+      )
+    </span>
+    </ion-item>
+  }
   </div>
 </ion-content>

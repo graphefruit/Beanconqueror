@@ -15,104 +15,106 @@
   </ion-toolbar>
 </ion-header>
 <ion-content #brewContent>
-  <ion-segment scrollable="true"  (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
-    <ion-segment-button value="graphs-open" *ngIf='graphOpenView?.length > 0'>
-      <ion-label>{{"GRAPHS" | translate }}
-      </ion-label>
-    </ion-segment-button>
+  <ion-segment scrollable="true" (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
+    @if(graphOpenView?.length > 0) {
+      <ion-segment-button value="graphs-open">
+        <ion-label>{{"GRAPHS" | translate }}</ion-label>
+      </ion-segment-button>
+    }
     <ion-segment-button value="brews-open">
-      <ion-label>{{"BREWS_ACTIVE" | translate }}
-      </ion-label>
+      <ion-label>{{"BREWS_ACTIVE" | translate }}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="brews-archive">
-      <ion-label>{{"BREWS_ARCHIVED" | translate }}
-      </ion-label>
-
+      <ion-label>{{"BREWS_ARCHIVED" | translate }}</ion-label>
     </ion-segment-button>
   </ion-segment>
-    <ion-radio-group [(ngModel)]="radioSelection">
-      <div [ngSwitch]="brew_segment">
-        <div *ngSwitchCase="'graphs-open'">
-          @if (graphOpenView?.length > 0) {
-            <ion-card>
-              <ng-container>
-                <ion-radio-group  [(ngModel)]="radioSelection">
-                  <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="'100vh'" min-row-height="180">
-                    <brew-graph-reference-card *ngFor="let graph of graphOpenScroll.items" [graph]="graph"></brew-graph-reference-card>
-                  </ag-virtual-scroll>
-                </ion-radio-group>
-              </ng-container>
-            </ion-card>
+  <ion-radio-group [(ngModel)]="radioSelection">
+    @switch (brew_segment) {
+      @case ('graphs-open') {
+        @if (graphOpenView?.length > 0) {
+          <ion-card>
+            <ion-radio-group [(ngModel)]="radioSelection">
+              <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="'100vh'" min-row-height="180">
+                @for (graph of graphOpenScroll.items; track graph.config.uuid) {
+                  <brew-graph-reference-card [graph]="graph"></brew-graph-reference-card>
+                }
+              </ag-virtual-scroll>
+            </ion-radio-group>
+          </ion-card>
+        }
+      }
+      @case ('brews-open') {
+        <ion-card>
+          @if (brewsOpen?.length > 0) {
+            <div class="ion-justify-content-end container">
+              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-button class="margin-right-5" (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
+                @if (isFilterActive('brews-open')) {
+                  <ion-icon name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
+                } @else {
+                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only"></ion-icon>
+                }
+              </ion-button>
+            </div>
+            <hr />
           }
-        </div>
-
-        <div *ngSwitchCase="'brews-open'">
-          <ion-card>
-            @if (brewsOpen?.length > 0) {
-              <div class="ion-justify-content-end container">
-                <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-                <ion-button class="margin-right-5" (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
-                  <ion-icon *ngIf="isFilterActive('brews-open')"  name="beanconqueror-filter-active"
-                            slot="icon-only"></ion-icon>
-                  <ion-icon  *ngIf="!isFilterActive('brews-open')"  name="beanconqueror-filter-inactive"
-                            slot="icon-only"></ion-icon>
-                </ion-button>
+          @if (openBrewsView?.length > 0) {
+            <ion-radio-group [(ngModel)]="radioSelection">
+              <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'" min-row-height="180">
+                @for (brew of openScroll.items; track brew.config.uuid) {
+                  <brew-graph-reference-card [brew]="brew"></brew-graph-reference-card>
+                }
+              </ag-virtual-scroll>
+            </ion-radio-group>
+          } @else {
+            <div class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
               </div>
-              <hr  />
-            }
-            @if (openBrewsView?.length >0) {
-              <ion-radio-group  [(ngModel)]="radioSelection">
-                <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'" min-row-height="180">
-                  <brew-graph-reference-card  *ngFor="let brew of openScroll.items" [brew]="brew"></brew-graph-reference-card>
-                </ag-virtual-scroll>
-              </ion-radio-group>
-            } @else {
-              <div class="ion-padding ion-text-center">
-                <div>
-                  <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
-                </div>
-                <div class="text-color-inactive ion-margin-top">
-                  {{"NO_BREWS_FOUND" | translate}}
-                </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"NO_BREWS_FOUND" | translate}}
               </div>
-            }
-          </ion-card>
-        </div>
-        <div *ngSwitchCase="'brews-archive'">
-          <ion-card>
-            @if(brewsArchived.length > 0) {
-              <div class="ion-justify-content-end container">
-                <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-                <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" fill="clear" size="small" tappable>
-                  <ion-icon *ngIf="isFilterActive('brews-archive')"  name="beanconqueror-filter-active"
-                            slot="icon-only"></ion-icon>
-                  <ion-icon *ngIf="!isFilterActive('brews-archive')"  name="beanconqueror-filter-inactive"
-                            slot="icon-only"></ion-icon>
-                </ion-button>
+            </div>
+          }
+        </ion-card>
+      }
+      @case ('brews-archive') {
+        <ion-card>
+          @if(brewsArchived.length > 0) {
+            <div class="ion-justify-content-end container">
+              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" fill="clear" size="small" tappable>
+                @if (isFilterActive('brews-archive')) {
+                  <ion-icon name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
+                } @else {
+                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only"></ion-icon>
+                }
+              </ion-button>
+            </div>
+            <hr />
+          }
+          @if (archiveBrewsView?.length > 0) {
+            <ion-radio-group [(ngModel)]="radioSelection">
+              <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'" min-row-height="385">
+                @for (brew of archivedScroll.items; track brew.config.uuid) {
+                  <brew-graph-reference-card [brew]="brew"></brew-graph-reference-card>
+                }
+              </ag-virtual-scroll>
+            </ion-radio-group>
+          } @else {
+            <div class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
               </div>
-              <hr />
-            }
-
-           @if (archiveBrewsView?.length > 0) {
-             <ion-radio-group  [(ngModel)]="radioSelection">
-               <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'" min-row-height="385">
-                 <brew-graph-reference-card  *ngFor="let brew of archivedScroll.items" [brew]="brew"></brew-graph-reference-card>
-               </ag-virtual-scroll>
-             </ion-radio-group>
-           } @else {
-             <div  class="ion-padding ion-text-center">
-               <div>
-                 <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
-               </div>
-               <div class="text-color-inactive ion-margin-top">
-                 {{"NO_BREWS_FOUND" | translate}}
-               </div>
-             </div>
-           }
-          </ion-card>
-        </div>
-      </div>
-    </ion-radio-group>
+              <div class="text-color-inactive ion-margin-top">
+                {{"NO_BREWS_FOUND" | translate}}
+              </div>
+            </div>
+          }
+        </ion-card>
+      }
+    }
+  </ion-radio-group>
 </ion-content>
 <ion-footer #footerContent class="ion-no-border">
   <ion-row>

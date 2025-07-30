@@ -1,7 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title *ngIf="multiple">{{"CHOOSE_WATERS" | translate}}</ion-title>
-    <ion-title *ngIf="!multiple">{{"CHOOSE_WATER" | translate}}</ion-title>
+    @if (multiple) {
+      <ion-title>{{"CHOOSE_WATERS" | translate}}</ion-title>
+    }
+    @if (!multiple) {
+      <ion-title>{{"CHOOSE_WATER" | translate}}</ion-title>
+    }
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -16,61 +20,90 @@
       <ion-label>{{"CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="showFinished===true && getFinished().length > 0" value="archive">
-      <ion-label>{{"TAB_ARCHIVE" | translate }}
-      </ion-label>
-
-    </ion-segment-button>
+    @if (showFinished===true && getFinished().length > 0) {
+      <ion-segment-button value="archive">
+        <ion-label>{{"TAB_ARCHIVE" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>
-  <div  *ngIf="multiple">
-    <div [ngSwitch]="segment">
-      <div *ngSwitchCase="'open'">
-        <ion-card *ngIf="getOpen().length > 0">
-          <ion-item *ngFor="let water of getOpen()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
-          </ion-item>
-        </ion-card>
-      </div>
-      <div *ngSwitchCase="'archive'">
-        <ion-card>
-          <ion-item *ngFor="let water of getFinished()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
-          </ion-item>
-        </ion-card>
+  @if (multiple) {
+    <div >
+      <div>
+        @switch (segment) {
+          @case ('open') {
+            <div>
+              @if (getOpen().length > 0) {
+                <ion-card>
+                  @for (water of getOpen(); track water) {
+                    <ion-item lines="none" tappable>
+                      <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
+                    </ion-item>
+                  }
+                </ion-card>
+              }
+            </div>
+          }
+          @case ('archive') {
+            <div>
+              <ion-card>
+                @for (water of getFinished(); track water) {
+                  <ion-item lines="none" tappable>
+                    <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
+                  </ion-item>
+                }
+              </ion-card>
+            </div>
+          }
+        }
       </div>
     </div>
-  </div>
+  }
 
-  <div  *ngIf="!multiple">
-    <ion-radio-group [(ngModel)]="radioSelection">
-      <div [ngSwitch]="segment">
-        <div *ngSwitchCase="'open'">
-          <ion-card *ngIf="getOpen().length > 0">
-            <ion-item *ngFor="let water of getOpen()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
-            </ion-item>
-          </ion-card>
+  @if (!multiple) {
+    <div >
+      <ion-radio-group [(ngModel)]="radioSelection">
+        <div>
+          @switch (segment) {
+            @case ('open') {
+              <div>
+                @if (getOpen().length > 0) {
+                  <ion-card>
+                    @for (water of getOpen(); track water) {
+                      <ion-item lines="none" tappable>
+                        <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
+                      </ion-item>
+                    }
+                  </ion-card>
+                }
+              </div>
+            }
+            @case ('archive') {
+              <div>
+                <ion-card>
+                  @for (water of getFinished(); track water) {
+                    <ion-item lines="none" tappable>
+                      <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
+                    </ion-item>
+                  }
+                </ion-card>
+              </div>
+            }
+          }
         </div>
-        <div *ngSwitchCase="'archive'">
-          <ion-card>
-            <ion-item *ngFor="let water of getFinished()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
-            </ion-item>
-          </ion-card>
-        </div>
-      </div>
-    </ion-radio-group>
-  </div>
+      </ion-radio-group>
+    </div>
+  }
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size="6">
       <ion-button (click)="choose()" color="accent" expand="block" tappable
-                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+      type="submit">{{"CHOOSE" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

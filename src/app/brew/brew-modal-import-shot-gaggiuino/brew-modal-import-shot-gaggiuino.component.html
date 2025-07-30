@@ -14,15 +14,17 @@
   <ion-radio-group [(ngModel)]="radioSelection">
     <ion-card>
         <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" min-row-height="300">
-          <ion-item #ionItemEl *ngFor="let entry of shotDataScroll.items" tappable lines='full'>
-            <ion-radio justify="start" label-placement="end" [value]='entry.id'>
-              <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+          @for(entry of shotDataScroll.items; track entry.id) {
+            <ion-item #ionItemEl tappable lines='full'>
+              <ion-radio justify="start" label-placement="end" [value]='entry.id'>
+                <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
                 <h2>{{entry.profileName}}&nbsp;({{entry.id}})</h2>
                 <div class='font-size-16'>{{this.uiHelper.formateDate(entry.timestamp)}}</div>
-              </ion-grid>
-              <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow'></graph-display-card>
-            </ion-radio>
-          </ion-item>
+                </ion-grid>
+                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow'></graph-display-card>
+              </ion-radio>
+            </ion-item>
+          }
         </ag-virtual-scroll>
       </ion-card>
     </ion-radio-group>

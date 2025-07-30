@@ -20,45 +20,60 @@
         {{"CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="settings?.show_archived_preparations" value="archive">
-      <ion-label>
-        {{"TAB_ARCHIVE" | translate }}
-      </ion-label>
-    </ion-segment-button>
+    @if (settings?.show_archived_preparations) {
+      <ion-segment-button value="archive">
+        <ion-label>
+          {{"TAB_ARCHIVE" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>
 
-  <div [ngSwitch]="segment">
-    <div *ngSwitchCase="'open'">
-      <div *ngIf="openPreparationsView?.length == 0" class="ion-padding ion-text-center">
+  <div>
+    @switch (segment) {
+      @case ('open') {
         <div>
-          <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
+          @if (openPreparationsView?.length == 0) {
+            <div class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
+              </div>
+            </div>
+          }
+          <ag-virtual-scroll #openScroll [items]="openPreparationsView" [height]="'100vh'" min-row-height="186">
+            @for (preparation of openScroll.items; track preparation) {
+              <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
+                [preparation]="preparation"
+              ></preparation-information-card>
+            }
+          </ag-virtual-scroll>
         </div>
-        <div class="text-color-inactive ion-margin-top">
-          {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
+      }
+      @case ('archive') {
+        <div >
+          @if (archivePreparationsView?.length == 0) {
+            <div class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING" | translate}}
+              </div>
+            </div>
+          }
+          <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" [height]="'100vh'" min-row-height="186">
+            @for (preparation of archivedScroll.items; track preparation) {
+              <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
+                [preparation]="preparation"
+              ></preparation-information-card>
+            }
+          </ag-virtual-scroll>
         </div>
-      </div>
-      <ag-virtual-scroll #openScroll [items]="openPreparationsView" [height]="'100vh'" min-row-height="186">
-        <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
-                                      [preparation]="preparation"
-                                      *ngFor="let preparation of openScroll.items"></preparation-information-card>
-      </ag-virtual-scroll>
-    </div>
-    <div *ngSwitchCase="'archive'" >
-      <div *ngIf="archivePreparationsView?.length == 0" class="ion-padding ion-text-center">
-        <div>
-          <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
-        </div>
-        <div class="text-color-inactive ion-margin-top">
-          {{"PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING" | translate}}
-        </div>
-      </div>
-
-      <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" [height]="'100vh'" min-row-height="186">
-        <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
-                                      [preparation]="preparation"
-                                      *ngFor="let preparation of archivedScroll.items"></preparation-information-card>
-      </ag-virtual-scroll>
-    </div>
+      }
+    }
   </div>
 
 
