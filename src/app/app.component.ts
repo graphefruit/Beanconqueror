@@ -75,6 +75,7 @@ import { Preparation } from '../classes/preparation/preparation';
 import { Bean } from '../classes/bean/bean';
 import { Water } from '../classes/water/water';
 import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
+import { ThemeService } from '../services/theme/theme.service';
 
 declare var window;
 
@@ -257,6 +258,7 @@ export class AppComponent implements AfterViewInit {
     private readonly uiStorage: UIStorage,
     private readonly androidPlatformService: AndroidPlatformService,
     private readonly iosPlatformService: IosPlatformService,
+    private readonly themeService: ThemeService,
   ) {
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
@@ -674,6 +676,14 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
+    this.themeService.getTheme().then(theme => {
+      if (theme) {
+        this.themeService.setTheme(theme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        this.themeService.setTheme(prefersDark.matches ? 'dark' : 'light');
+      }
+    });
 
     await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();

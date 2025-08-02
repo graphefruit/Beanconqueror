@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar>
     @if (multiple) {
-<ion-title>{{ "CHOOSE_MILLS" | translate }}</ion-title>
-}
+      <ion-title>{{ "CHOOSE_MILLS" | translate }}</ion-title>
+    }
     @if (!multiple) {
-<ion-title>{{ "CHOOSE_MILL" | translate }}</ion-title>
-}
+      <ion-title>{{ "CHOOSE_MILL" | translate }}</ion-title>
+    }
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -20,65 +20,66 @@
       <ion-label>{{ "CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    @if (showFinished===true && archivedMills.length > 0) {
-<ion-segment-button value="archive">
-      <ion-label>{{ "TAB_ARCHIVE" | translate }}
-      </ion-label>
+    @if (showFinished === true && archivedMills.length > 0) {
+      <ion-segment-button value="archive">
+        <ion-label>{{ "TAB_ARCHIVE" | translate }}
+        </ion-label>
 
-    </ion-segment-button>
-}
+      </ion-segment-button>
+    }
   </ion-segment>
-  <ion-radio-group [(ngModel)]="radioSelection">
-  @switch (mill_segment) {
+    @switch (mill_segment) {
 
-    @case ('open') {
-      @if (openMills.length > 0) {
-<ion-card>
-        @for (mill of openMills; track mill.config.uuid) {
-<ion-item lines="none" tappable>
-          @if (multiple) {
-            <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
-              <ng-container [ngTemplateOutlet]="millInformationCard"
-                            [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+      @case ('open') {
+        @if (openMills.length > 0) {
+          <ion-radio-group [(ngModel)]="radioSelection">
+          <ion-card>
+            @for (mill of openMills; track mill.config.uuid) {
+              <ion-item lines="none" tappable>
+                @if (multiple) {
+                  <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
+                    <ng-container [ngTemplateOutlet]="millInformationCard"
+                                  [ngTemplateOutletContext]="{mill:mill}"></ng-container>
 
-            </ion-checkbox>
-          } @else {
-            <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
-              <ng-container [ngTemplateOutlet]="millInformationCard"
+                  </ion-checkbox>
+                } @else {
+                  <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
+                    <ng-container [ngTemplateOutlet]="millInformationCard"
+                                  [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                  </ion-radio>
+                }
+                <ng-container [ngTemplateOutlet]="millThumbnailCard"
+                              [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+              </ion-item>
+            }
+          </ion-card>
+          </ion-radio-group>
+        }
+      }
+      @case ('archive') {
+        <ion-radio-group [(ngModel)]="radioSelection">
+        <ion-card>
+          @for (mill of archivedMills; track mill.config.uuid) {
+            <ion-item lines="none" tappable>
+              @if (multiple) {
+                <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
+                  <ng-container [ngTemplateOutlet]="millInformationCard"
+                                [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                </ion-checkbox>
+              } @else {
+                <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
+                  <ng-container [ngTemplateOutlet]="millInformationCard"
+                                [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                </ion-radio>
+              }
+              <ng-container [ngTemplateOutlet]="millThumbnailCard"
                             [ngTemplateOutletContext]="{mill:mill}"></ng-container>
-            </ion-radio>
+            </ion-item>
           }
-          <ng-container [ngTemplateOutlet]="millThumbnailCard"
-                        [ngTemplateOutletContext]="{mill:mill}"></ng-container>
-        </ion-item>
-}
-      </ion-card>
-}
+        </ion-card>
+        </ion-radio-group>
+      }
     }
-    @case ('archive') {
-      <ion-card>
-        @for (mill of archivedMills; track mill.config.uuid) {
-<ion-item lines="none" tappable>
-          @if (multiple) {
-            <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
-              <ng-container [ngTemplateOutlet]="millInformationCard"
-                            [ngTemplateOutletContext]="{mill:mill}"></ng-container>
-            </ion-checkbox>
-          } @else {
-            <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
-              <ng-container [ngTemplateOutlet]="millInformationCard"
-                            [ngTemplateOutletContext]="{mill:mill}"></ng-container>
-            </ion-radio>
-          }
-          <ng-container [ngTemplateOutlet]="millThumbnailCard"
-                        [ngTemplateOutletContext]="{mill:mill}"></ng-container>
-        </ion-item>
-}
-      </ion-card>
-    }
-
-  }
-  </ion-radio-group>
 
 </ion-content>
 <ion-footer class="ion-no-border">
@@ -99,12 +100,12 @@
 <ng-template #millInformationCard let-mill='mill'>
   <h6>{{ mill.name }}</h6>
   <p>{{ "LAST_USE" | translate }}:
-    @if (getBrewsCount(mill)> 0) {
-<span>{{ lastUsed(mill) | formatDate:[settings?.date_format] }}</span>
-}
+    @if (getBrewsCount(mill) > 0) {
+      <span>{{ lastUsed(mill) | formatDate:[settings?.date_format] }}</span>
+    }
     @if (getBrewsCount(mill) <= 0) {
-<span>-</span>
-}
+      <span>-</span>
+    }
   </p>
   <p>
     {{ "LAST_USED_GRIND_SIZE_SETTING" | translate }}:
@@ -115,10 +116,10 @@
 </ng-template>
 <ng-template #millThumbnailCard let-mill='mill'>
   @if ((mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
-<ion-thumbnail slot="end">
-    <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-      <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
-    </div>
-  </ion-thumbnail>
-}
+    <ion-thumbnail slot="end">
+      <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+        <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
+      </div>
+    </ion-thumbnail>
+  }
 </ng-template>

@@ -82,6 +82,7 @@ import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { ThemeService } from 'src/services/theme/theme.service';
 
 @Component({
   selector: 'settings',
@@ -102,6 +103,8 @@ export class SettingsPage {
   public currencies = {};
 
   public settings_segment: string = 'general';
+
+  public isDarkMode: boolean;
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
@@ -169,6 +172,7 @@ export class SettingsPage {
     private readonly uiExportImportHelper: UIExportImportHelper,
     private readonly visualizerService: VisualizerService,
     private readonly textToSpeech: TextToSpeechService,
+    private readonly themeService: ThemeService,
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -197,6 +201,10 @@ export class SettingsPage {
     this.isAndroid =
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
+
+    this.themeService.getTheme().then(theme => {
+      this.isDarkMode = theme === 'dark';
+    });
   }
 
   public handleScrollStart() {
@@ -1600,4 +1608,9 @@ export class SettingsPage {
   protected readonly BluetoothTypes = BluetoothTypes;
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
+
+  toggleTheme(event) {
+    const theme = event.detail.checked ? 'dark' : 'light';
+    this.themeService.setTheme(theme);
+  }
 }

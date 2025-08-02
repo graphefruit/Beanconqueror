@@ -89,10 +89,10 @@
     }
     @if (!multiple) {
       <div >
-        <ion-radio-group [(ngModel)]="radioSelection">
           <div>
             @switch (preparation_segment) {
               @case ('open') {
+                <ion-radio-group [(ngModel)]="radioSelection">
                 <div>
                   <ion-card>
                     <div class="ion-justify-content-end container">
@@ -118,8 +118,10 @@
                     }
                   </ion-card>
                 </div>
+                </ion-radio-group>
               }
               @case ('archive') {
+                <ion-radio-group [(ngModel)]="radioSelection">
                 <div>
                   <ion-card>
                     <div class="ion-justify-content-end container">
@@ -143,10 +145,10 @@
                     }
                   </ion-card>
                 </div>
+                </ion-radio-group>
               }
             }
           </div>
-        </ion-radio-group>
       </div>
     }
   </ion-content>

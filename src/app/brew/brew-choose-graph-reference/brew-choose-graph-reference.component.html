@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"CHOOSE_REFERENCE_GRAPH" | translate}}</ion-title>
+    <ion-title>{{ "CHOOSE_REFERENCE_GRAPH" | translate }}</ion-title>
 
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
@@ -16,22 +16,22 @@
 </ion-header>
 <ion-content #brewContent>
   <ion-segment scrollable="true" (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
-    @if(graphOpenView?.length > 0) {
+    @if (graphOpenView?.length > 0) {
       <ion-segment-button value="graphs-open">
-        <ion-label>{{"GRAPHS" | translate }}</ion-label>
+        <ion-label>{{ "GRAPHS" | translate }}</ion-label>
       </ion-segment-button>
     }
     <ion-segment-button value="brews-open">
-      <ion-label>{{"BREWS_ACTIVE" | translate }}</ion-label>
+      <ion-label>{{ "BREWS_ACTIVE" | translate }}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="brews-archive">
-      <ion-label>{{"BREWS_ARCHIVED" | translate }}</ion-label>
+      <ion-label>{{ "BREWS_ARCHIVED" | translate }}</ion-label>
     </ion-segment-button>
   </ion-segment>
-  <ion-radio-group [(ngModel)]="radioSelection">
-    @switch (brew_segment) {
-      @case ('graphs-open') {
-        @if (graphOpenView?.length > 0) {
+  @switch (brew_segment) {
+    @case ('graphs-open') {
+      @if (graphOpenView?.length > 0) {
+        <ion-radio-group [(ngModel)]="radioSelection">
           <ion-card>
             <ion-radio-group [(ngModel)]="radioSelection">
               <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="'100vh'" min-row-height="180">
@@ -41,13 +41,17 @@
               </ag-virtual-scroll>
             </ion-radio-group>
           </ion-card>
-        }
+        </ion-radio-group>
       }
-      @case ('brews-open') {
+    }
+    @case ('brews-open') {
+      <ion-radio-group [(ngModel)]="radioSelection">
         <ion-card>
           @if (brewsOpen?.length > 0) {
             <div class="ion-justify-content-end container">
-              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText"
+                             class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
+                             search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
               <ion-button class="margin-right-5" (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
                 @if (isFilterActive('brews-open')) {
                   <ion-icon name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
@@ -56,7 +60,7 @@
                 }
               </ion-button>
             </div>
-            <hr />
+            <hr/>
           }
           @if (openBrewsView?.length > 0) {
             <ion-radio-group [(ngModel)]="radioSelection">
@@ -72,18 +76,23 @@
                 <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
               </div>
               <div class="text-color-inactive ion-margin-top">
-                {{"NO_BREWS_FOUND" | translate}}
+                {{ "NO_BREWS_FOUND" | translate }}
               </div>
             </div>
           }
         </ion-card>
-      }
-      @case ('brews-archive') {
+      </ion-radio-group>
+    }
+    @case ('brews-archive') {
+      <ion-radio-group [(ngModel)]="radioSelection">
         <ion-card>
-          @if(brewsArchived.length > 0) {
+          @if (brewsArchived.length > 0) {
             <div class="ion-justify-content-end container">
-              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-              <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" fill="clear" size="small" tappable>
+              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText"
+                             class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
+                             search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" fill="clear" size="small"
+                          tappable>
                 @if (isFilterActive('brews-archive')) {
                   <ion-icon name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
                 } @else {
@@ -91,7 +100,7 @@
                 }
               </ion-button>
             </div>
-            <hr />
+            <hr/>
           }
           @if (archiveBrewsView?.length > 0) {
             <ion-radio-group [(ngModel)]="radioSelection">
@@ -107,24 +116,26 @@
                 <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
               </div>
               <div class="text-color-inactive ion-margin-top">
-                {{"NO_BREWS_FOUND" | translate}}
+                {{ "NO_BREWS_FOUND" | translate }}
               </div>
             </div>
           }
         </ion-card>
-      }
+      </ion-radio-group>
     }
-  </ion-radio-group>
+  }
 </ion-content>
 <ion-footer #footerContent class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="reset()" color="danger" expand="block" fill="outline"
-                  tappable>{{"RESET" | translate}}</ion-button>
+                  tappable>{{ "RESET" | translate }}
+      </ion-button>
     </ion-col>
     <ion-col size="6">
       <ion-button (click)="choose()" [disabled]='!radioSelection' color="accent" expand="block" tappable
-                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+                  type="submit">{{ "CHOOSE" | translate }}
+      </ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

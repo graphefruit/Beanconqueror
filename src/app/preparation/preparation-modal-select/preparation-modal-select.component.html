@@ -27,10 +27,10 @@
       </ion-segment-button>
     }
   </ion-segment>
-  <ion-radio-group [(ngModel)]="radioSelection">
-    <div>
+
       @switch (preparation_segment) {
         @case ('open') {
+          <ion-radio-group [(ngModel)]="radioSelection">
           <div>
             @if (openPreparations.length > 0) {
               <ion-card>
@@ -54,8 +54,10 @@
               </ion-card>
             }
           </div>
+          </ion-radio-group>
         }
         @case ('archive') {
+          <ion-radio-group [(ngModel)]="radioSelection">
           <div>
             <ion-card>
               @for (prep of archivedPreparations; track prep) {
@@ -77,11 +79,9 @@
               }
             </ion-card>
           </div>
+          </ion-radio-group>
         }
       }
-    </div>
-  </ion-radio-group>
-
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>

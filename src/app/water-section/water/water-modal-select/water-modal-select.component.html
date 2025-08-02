@@ -61,11 +61,11 @@
   }
 
   @if (!multiple) {
-    <div >
-      <ion-radio-group [(ngModel)]="radioSelection">
+    <div>
         <div>
           @switch (segment) {
             @case ('open') {
+              <ion-radio-group [(ngModel)]="radioSelection">
               <div>
                 @if (getOpen().length > 0) {
                   <ion-card>
@@ -77,8 +77,10 @@
                   </ion-card>
                 }
               </div>
+              </ion-radio-group>
             }
             @case ('archive') {
+              <ion-radio-group [(ngModel)]="radioSelection">
               <div>
                 <ion-card>
                   @for (water of getFinished(); track water) {
@@ -88,10 +90,10 @@
                   }
                 </ion-card>
               </div>
+              </ion-radio-group>
             }
           }
         </div>
-      </ion-radio-group>
     </div>
   }
 </ion-content>

@@ -38,9 +38,10 @@
     }
   </ion-segment>
 
-  <ion-radio-group [(ngModel)]='radioSelection'>
+
     @switch (bean_segment) {
       @case ('open') {
+        <ion-radio-group [(ngModel)]='radioSelection'>
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (openBeans.length > 0) {
@@ -76,8 +77,10 @@
             </div>
           }
         </ion-card>
+        </ion-radio-group>
       }
       @case ('frozen') {
+        <ion-radio-group [(ngModel)]='radioSelection'>
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (frozenBeans.length > 0) {
@@ -113,8 +116,10 @@
             </div>
           }
         </ion-card>
+        </ion-radio-group>
       }
       @case ('archive') {
+        <ion-radio-group [(ngModel)]='radioSelection'>
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (finishedBeans.length > 0) {
@@ -151,9 +156,10 @@
             </div>
           }
         </ion-card>
+        </ion-radio-group>
       }
     }
-  </ion-radio-group>
+
 </ion-content>
 <ion-footer #footerContent class='ion-no-border'>
   <ion-row>

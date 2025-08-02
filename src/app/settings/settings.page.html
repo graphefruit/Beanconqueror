@@ -117,6 +117,11 @@
         <ion-card-content>
           <ion-card-title>{{ "PAGE_SETTINGS_GENERAL" | translate }}</ion-card-title>
           <ion-item>
+            <ion-toggle (ionChange)="toggleTheme($event)" [(ngModel)]="isDarkMode">
+              <div class='ion-label'>{{ "DARK_MODE" | translate }}</div>
+            </ion-toggle>
+          </ion-item>
+          <ion-item>
             <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language"
                         cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
                         okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
