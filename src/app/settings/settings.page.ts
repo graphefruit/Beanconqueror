@@ -202,7 +202,7 @@ export class SettingsPage {
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
 
-    this.themeService.getTheme().then(theme => {
+    this.themeService.getTheme().then((theme) => {
       this.isDarkMode = theme === 'dark';
     });
   }

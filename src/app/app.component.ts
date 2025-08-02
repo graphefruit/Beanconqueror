@@ -676,7 +676,7 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
-    this.themeService.getTheme().then(theme => {
+    this.themeService.getTheme().then((theme) => {
       if (theme) {
         this.themeService.setTheme(theme);
       } else {

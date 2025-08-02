@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
-
   private readonly THEME_KEY = 'theme';
 
   constructor(private storage: Storage) {
