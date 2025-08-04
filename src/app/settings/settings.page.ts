@@ -81,8 +81,9 @@ import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
-import { ThemeService } from 'src/services/theme/theme.service';
+import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
   selector: 'settings',
@@ -96,6 +97,7 @@ export class SettingsPage {
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
+  public THEME_MODE = THEME_MODE_ENUM;
 
   public isHealthSectionAvailable: boolean = false;
   public isTextToSpeechSectionAvailable: boolean = false;
@@ -103,8 +105,6 @@ export class SettingsPage {
   public currencies = {};
 
   public settings_segment: string = 'general';
-
-  public isDarkMode: boolean;
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
@@ -201,10 +201,6 @@ export class SettingsPage {
     this.isAndroid =
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
-
-    this.themeService.getTheme().then((theme) => {
-      this.isDarkMode = theme === 'dark';
-    });
   }
 
   public handleScrollStart() {
@@ -619,6 +615,13 @@ export class SettingsPage {
 
   public languageChanged(_query): void {
     this.debounceLanguageFilter.next(_query);
+  }
+
+  public themeModeChanged(event: any): void {
+    setTimeout(() => {
+      this.themeService.setTheme(this.settings);
+      this.saveSettings();
+    }, 500);
   }
 
   public setLanguage(): void {
@@ -1608,9 +1611,4 @@ export class SettingsPage {
   protected readonly BluetoothTypes = BluetoothTypes;
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
-
-  toggleTheme(event) {
-    const theme = event.detail.checked ? 'dark' : 'light';
-    this.themeService.setTheme(theme);
-  }
 }

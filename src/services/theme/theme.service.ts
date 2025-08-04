@@ -1,26 +1,41 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage-angular';
+import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
+import { Settings } from '../../classes/settings/settings';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
-  private readonly THEME_KEY = 'theme';
+  private prefersDark: MediaQueryList;
 
-  constructor(private storage: Storage) {
-    this.storage.create();
+  constructor() {
+    this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
   }
 
-  async getTheme(): Promise<string> {
-    return await this.storage.get(this.THEME_KEY);
+  public initTheme(settings: Settings) {
+    this.setTheme(settings);
+    this.prefersDark.addEventListener('change', (mediaQuery) => {
+      if (settings.theme_mode === THEME_MODE_ENUM.DEVICE) {
+        this.toggleDarkPalette(mediaQuery.matches);
+      }
+    });
   }
 
-  async setTheme(theme: string) {
-    await this.storage.set(this.THEME_KEY, theme);
-    this.toggleDarkPalette(theme === 'dark');
+  public setTheme(settings: Settings) {
+    switch (settings.theme_mode) {
+      case THEME_MODE_ENUM.LIGHT:
+        this.toggleDarkPalette(false);
+        break;
+      case THEME_MODE_ENUM.DARK:
+        this.toggleDarkPalette(true);
+        break;
+      case THEME_MODE_ENUM.DEVICE:
+        this.toggleDarkPalette(this.prefersDark.matches);
+        break;
+    }
   }
 
-  toggleDarkPalette(shouldAdd: boolean) {
+  private toggleDarkPalette(shouldAdd: boolean) {
     document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
   }
 }

@@ -1513,5 +1513,8 @@
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "If you suffered a data loss, and you didn't find any data here, please use the official support ways",
     "IMPORT_AUTOMATIC_BACKUP_FILE": "Import automatic backup file",
     "CLIPBOARD": "Clipboard",
-    "NO_IMAGE_IN_CLIPBOARD": "No image in clipboard"
+    "NO_IMAGE_IN_CLIPBOARD": "No image in clipboard",
+  "PAGE_SETTINGS_THEME_MODE_LIGHT": "Light mode",
+  "PAGE_SETTINGS_THEME_MODE_DARK": "Dark mode",
+  "PAGE_SETTINGS_THEME_MODE_DEVICE": "System default"
 }

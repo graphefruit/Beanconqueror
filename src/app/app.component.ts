@@ -676,14 +676,6 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
-    this.themeService.getTheme().then((theme) => {
-      if (theme) {
-        this.themeService.setTheme(theme);
-      } else {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-        this.themeService.setTheme(prefersDark.matches ? 'dark' : 'light');
-      }
-    });
 
     await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();
@@ -719,6 +711,7 @@ export class AppComponent implements AfterViewInit {
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
+    this.themeService.initTheme(settings);
     this.uiAnalytics.trackEvent(
       SettingsTracking.TITLE,
       SettingsTracking.ACTIONS.USED_LANGUAGE,

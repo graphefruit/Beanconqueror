@@ -117,11 +117,6 @@
         <ion-card-content>
           <ion-card-title>{{ "PAGE_SETTINGS_GENERAL" | translate }}</ion-card-title>
           <ion-item>
-            <ion-toggle (ionChange)="toggleTheme($event)" [(ngModel)]="isDarkMode">
-              <div class='ion-label'>{{ "DARK_MODE" | translate }}</div>
-            </ion-toggle>
-          </ion-item>
-          <ion-item>
             <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language"
                         cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
                         okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
@@ -138,6 +133,15 @@
               <ion-select-option value="nl">{{ "PAGE_SETTINGS_LANGUAGE_DUTCH" | translate }}</ion-select-option>
               <ion-select-option value="no">{{ "PAGE_SETTINGS_LANGUAGE_NORWEGIAN" | translate }}</ion-select-option>
               <ion-select-option value="pt">{{ "PAGE_SETTINGS_LANGUAGE_PORTUGUESE" | translate }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select (ngModelChange)="themeModeChanged($event)" [(ngModel)]="settings.theme_mode"
+                        cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{ "PAGE_SETTINGS_THEME_MODE" | translate }}</div>
+              <ion-select-option value="light">{{ "PAGE_SETTINGS_THEME_MODE_LIGHT" | translate }}</ion-select-option>
+              <ion-select-option value="dark">{{ "PAGE_SETTINGS_THEME_MODE_DARK" | translate }}</ion-select-option>
+              <ion-select-option value="device">{{ "PAGE_SETTINGS_THEME_MODE_DEVICE" | translate }}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
