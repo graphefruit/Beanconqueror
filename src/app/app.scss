@@ -135,6 +135,11 @@ ion-segment-button::part(indicator) {
   margin: 0 auto;
   width: 35%;
 }
+ion-segment-button::part(indicator-background) {
+  /* Applies to the dash below the tab */
+ background:var(--ion-color-accent)!important;
+}
+
 
 ion-segment-button {
   letter-spacing: -0.63px;
