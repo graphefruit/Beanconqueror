@@ -196,16 +196,12 @@ export class StatisticPage implements OnInit {
       }
     }
 
-    const colorGradient = new Gradient();
-    const color1 = '#CDC2AC';
-    const color2 = '#607D8B';
-    const color3 = '#BF658F';
-    const color4 = '#E0A29A';
+    const colorGradient = new Gradient()
+      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
+      .setMidpoint(datasets.length)
+      .getColors();
 
-    colorGradient.setMidpoint(datasets.length);
-    colorGradient.setGradient(color1, color2, color3, color4);
-
-    const colorArray = colorGradient.getArray();
+    const colorArray = colorGradient;
     for (let i = 0; i < datasets.length; i++) {
       const prepObj: any = {
         label: datasets[i].LABEL,
@@ -280,16 +276,11 @@ export class StatisticPage implements OnInit {
       }
     }
 
-    const colorGradient = new Gradient();
-    const color1 = '#CDC2AC';
-    const color2 = '#607D8B';
-    const color3 = '#BF658F';
-    const color4 = '#E0A29A';
-
-    colorGradient.setMidpoint(datasets.length);
-    colorGradient.setGradient(color1, color2, color3, color4);
-
-    const colorArray = colorGradient.getArray();
+    const colorGradient = new Gradient()
+      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
+      .setMidpoint(datasets.length)
+      .getColors();
+    const colorArray = colorGradient;
     for (let i = 0; i < datasets.length; i++) {
       const prepObj: any = {
         label: datasets[i].LABEL,
@@ -509,16 +500,12 @@ export class StatisticPage implements OnInit {
       labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
     }
 
-    const colorGradient = new Gradient();
-    const color1 = '#CDC2AC';
-    const color2 = '#607D8B';
-    const color3 = '#BF658F';
-    const color4 = '#E0A29A';
+    const colorGradient = new Gradient()
+      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
+      .setMidpoint(data[0].labels.length)
+      .getColors();
 
-    colorGradient.setMidpoint(data[0].labels.length);
-
-    colorGradient.setGradient(color1, color2, color3, color4);
-    data[0].backgroundColor = colorGradient.getArray();
+    data[0].backgroundColor = colorGradient;
 
     const drinkingData = {
       labels: labels,
