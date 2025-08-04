@@ -49,6 +49,9 @@ export class Logger {
       Logger.__sendLog('DEBUG', `${this.prefix}: ${JSON.stringify(args)}`);
     }
   }
+  public logDirect(...args: any) {
+    Logger.__sendLog('DEBUG', `${this.prefix}: ${JSON.stringify(args)}`);
+  }
 
   private isLogEnabled(): boolean {
     try {

@@ -301,7 +301,17 @@ ion-tab-button.tab-selected {
   left: 70px;
   background: rgba(255, 255, 255, 0.8);
 }
+ion-alert {
+  .alert-wrapper {
+    .alert-radio-icon {
+      border-color: var(--ion-color-accent) !important;
+    }
+    .alert-radio-inner{
+      background-color: var(--ion-color-accent) !important;
+    }
 
+  }
+}
 
 ion-alert.select-full-screen {
   .alert-wrapper {
@@ -310,6 +320,7 @@ ion-alert.select-full-screen {
     height: 100%;
     width: 100%;
   }
+
 
   .alert-radio-label {
     white-space: normal !important;
@@ -520,9 +531,6 @@ ion-menu:host .menu-inner {
       width: 128px!important;
       height: 128px!important;
     }
-  }
-  ion-alert {
-    --background: var(--ion-color-light);
   }
 
   ion-card {
@@ -1113,7 +1121,8 @@ ion-chip.flowcalculated {
 }
 
 ion-chip.chip-outline {
-  --color: black !important;
+  /**Make it for darkmode accessable**/
+  --color: var(--ion-text-color)!important;
 }
 
 ion-chip.flowreal {
@@ -1187,4 +1196,7 @@ Somehow i've found out that ionic is rendering this media-tags and setting box-s
 
 .svg-container>svg:first-child {
   background:var(--ion-color-graph-background)!important;
+}
+:root ion-alert .alert-button {
+  color: var(--ion-text-color);
 }
