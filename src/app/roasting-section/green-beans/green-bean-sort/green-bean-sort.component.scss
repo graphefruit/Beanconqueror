@@ -5,7 +5,8 @@
   }
   ion-item {
     border-radius: 10px;
-    --background: #F0F0F0;
+    --background: var(--ion-color-list);
+    border: 1px solid var(--ion-color-accent-contrast);
 
     ion-icon{
       padding-left: 16px;
