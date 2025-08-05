@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 
 import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
+import { Logger } from './common';
 
 declare var ble: any;
 export class BookooPressure extends PressureDevice {
@@ -9,9 +10,10 @@ export class BookooPressure extends PressureDevice {
   public static PRESSURE_CMD_UUID = 'FF01';
   public static PRESSURE_PRESSURE_UUID = 'FF02';
   public static PRESSURE_POWER_UUID = 'FF03';
-
+  private logger: Logger;
   constructor(data: PeripheralData) {
     super(data);
+    this.logger = new Logger('Bookoo Pressure');
     this.connect();
   }
 
@@ -47,7 +49,7 @@ export class BookooPressure extends PressureDevice {
         },
         () => {
           reject();
-        }
+        },
       );
     });
   }
@@ -66,7 +68,7 @@ export class BookooPressure extends PressureDevice {
         },
         () => {
           reject();
-        }
+        },
       );
     });
   }
@@ -85,6 +87,7 @@ export class BookooPressure extends PressureDevice {
   }
 
   private attachNotification() {
+    this.logger.logDirect('Attaching notification...');
     ble.startNotification(
       this.device_id,
       BookooPressure.PRESSURE_SERVICE_UUID,
@@ -98,7 +101,9 @@ export class BookooPressure extends PressureDevice {
           this.setPressure(actualPressure / 100, _data, val);
         }
       },
-      (_data: any) => {}
+      (_data: any) => {
+        this.logger.logDirect('Attaching notification, error', _data);
+      },
     );
   }
 
@@ -108,8 +113,12 @@ export class BookooPressure extends PressureDevice {
       this.device_id,
       BookooPressure.PRESSURE_SERVICE_UUID,
       BookooPressure.PRESSURE_PRESSURE_UUID,
-      (e: any) => {},
-      (e: any) => {}
+      (e: any) => {
+        this.logger.logDirect('Deattaching notification, success', e);
+      },
+      (e: any) => {
+        this.logger.logDirect('Deattaching notification, error', e);
+      },
     );
   }
 }

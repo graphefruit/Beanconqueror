@@ -139,9 +139,9 @@
             <ion-select (ngModelChange)="themeModeChanged($event)" [(ngModel)]="settings.theme_mode"
                         cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
               <div slot="label">{{ "PAGE_SETTINGS_THEME_MODE" | translate }}</div>
-              <ion-select-option value="light">{{ "PAGE_SETTINGS_THEME_MODE_LIGHT" | translate }}</ion-select-option>
-              <ion-select-option value="dark">{{ "PAGE_SETTINGS_THEME_MODE_DARK" | translate }}</ion-select-option>
-              <ion-select-option value="device">{{ "PAGE_SETTINGS_THEME_MODE_DEVICE" | translate }}</ion-select-option>
+              <ion-select-option value="{{THEME_MODE_ENUM.LIGHT}}">{{ "PAGE_SETTINGS_THEME_MODE_LIGHT" | translate }}</ion-select-option>
+              <ion-select-option value="{{THEME_MODE_ENUM.DARK}}">{{ "PAGE_SETTINGS_THEME_MODE_DARK" | translate }}</ion-select-option>
+              <ion-select-option value="{{THEME_MODE_ENUM.DEVICE}}">{{ "PAGE_SETTINGS_THEME_MODE_DEVICE" | translate }}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>

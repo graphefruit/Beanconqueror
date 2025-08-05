@@ -100,12 +100,13 @@ export class BookooScale extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
 
   private async attachNotification() {
+    this.logger.logDirect('Attaching notification...');
     ble.startNotification(
       this.device_id,
       BookooScale.SERVICE_UUID,
@@ -113,7 +114,9 @@ export class BookooScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {
+        this.logger.logDirect('Attaching notification, error', _data);
+      },
     );
   }
 
@@ -136,8 +139,12 @@ export class BookooScale extends BluetoothScale {
       this.device_id,
       BookooScale.SERVICE_UUID,
       BookooScale.CHAR_UUID,
-      (e: any) => {},
-      (e: any) => {}
+      (e: any) => {
+        this.logger.logDirect('Deattaching notification, success', e);
+      },
+      (e: any) => {
+        this.logger.logDirect('Deattaching notification, error', e);
+      },
     );
   }
 }

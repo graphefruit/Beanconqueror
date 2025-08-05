@@ -1,4 +1,6 @@
 PODS:
+  - AparajitaCapacitorDarkMode (5.0.2):
+    - Capacitor
   - Capacitor (7.4.2):
     - CapacitorCordova
   - CapacitorApp (7.0.1):
@@ -42,6 +44,7 @@ PODS:
   - OSBarcodeLib (1.1.3)
 
 DEPENDENCIES:
+  - "AparajitaCapacitorDarkMode (from `../../node_modules/@aparajita/capacitor-dark-mode`)"
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorAppLauncher (from `../../node_modules/@capacitor/app-launcher`)"
@@ -68,6 +71,8 @@ SPEC REPOS:
     - OSBarcodeLib
 
 EXTERNAL SOURCES:
+  AparajitaCapacitorDarkMode:
+    :path: "../../node_modules/@aparajita/capacitor-dark-mode"
   Capacitor:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
@@ -106,6 +111,7 @@ EXTERNAL SOURCES:
     :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
+  AparajitaCapacitorDarkMode: 00dc018a8537d45654afbea7a8535074c08973ef
   Capacitor: 9d9e481b79ffaeacaf7a85d6a11adec32bd33b59
   CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
   CapacitorAppLauncher: bab4ca931a308252d2bafcb78ca6a364bd1d4c4e
@@ -128,6 +134,6 @@ SPEC CHECKSUMS:
   IONGeolocationLib: 81f33f88d025846946de2cf63b0c7628e7c6bc9d
   OSBarcodeLib: f2e981270a64faf476cb790864262b29ab8cd68a
 
-PODFILE CHECKSUM: d8e06be126a1b5d60f128b63b1238d0c99ceb481
+PODFILE CHECKSUM: fd9a0bef7bbf070d815e7d654019f4e345baef23
 
 COCOAPODS: 1.16.2

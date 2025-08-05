@@ -618,10 +618,10 @@ export class SettingsPage {
   }
 
   public themeModeChanged(event: any): void {
-    setTimeout(() => {
-      this.themeService.setTheme(this.settings);
-      this.saveSettings();
-    }, 500);
+    setTimeout(async () => {
+      await this.saveSettings();
+      this.themeService.adjustTheme();
+    }, 150);
   }
 
   public setLanguage(): void {
@@ -1611,4 +1611,5 @@ export class SettingsPage {
   protected readonly BluetoothTypes = BluetoothTypes;
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
+  protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
 }

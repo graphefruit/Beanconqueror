@@ -711,7 +711,7 @@ export class AppComponent implements AfterViewInit {
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
-    this.themeService.initTheme(settings);
+    await this.themeService.initialize();
     this.uiAnalytics.trackEvent(
       SettingsTracking.TITLE,
       SettingsTracking.ACTIONS.USED_LANGUAGE,

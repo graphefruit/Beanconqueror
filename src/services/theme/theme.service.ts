@@ -1,27 +1,33 @@
 import { Injectable } from '@angular/core';
 import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
 import { Settings } from '../../classes/settings/settings';
-
+import { DarkMode } from '@aparajita/capacitor-dark-mode';
+import { Capacitor } from '@capacitor/core';
+import { UISettingsStorage } from '../uiSettingsStorage';
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
   private prefersDark: MediaQueryList;
 
-  constructor() {
+  constructor(private readonly uiSettingsStorage: UISettingsStorage) {}
+  public async initialize() {
     this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-  }
 
-  public initTheme(settings: Settings) {
-    this.setTheme(settings);
     this.prefersDark.addEventListener('change', (mediaQuery) => {
-      if (settings.theme_mode === THEME_MODE_ENUM.DEVICE) {
-        this.toggleDarkPalette(mediaQuery.matches);
-      }
+      this.adjustTheme();
     });
+
+    await DarkMode.init();
+    const listener = await DarkMode.addAppearanceListener(({ dark }) => {
+      this.adjustTheme();
+    });
+
+    this.adjustTheme();
   }
 
-  public setTheme(settings: Settings) {
+  public async adjustTheme() {
+    const settings = await this.uiSettingsStorage.getSettings();
     switch (settings.theme_mode) {
       case THEME_MODE_ENUM.LIGHT:
         this.toggleDarkPalette(false);
@@ -30,7 +36,16 @@ export class ThemeService {
         this.toggleDarkPalette(true);
         break;
       case THEME_MODE_ENUM.DEVICE:
-        this.toggleDarkPalette(this.prefersDark.matches);
+        if (Capacitor.getPlatform() === 'web') {
+          this.toggleDarkPalette(this.prefersDark.matches);
+        } else {
+          const { dark } = await DarkMode.isDarkMode();
+          if (dark) {
+            this.toggleDarkPalette(true);
+          } else {
+            this.toggleDarkPalette(false);
+          }
+        }
         break;
     }
   }
