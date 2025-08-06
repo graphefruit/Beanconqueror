@@ -2,14 +2,17 @@
   ion-item {
     margin-left: 16px;
     margin-right: 16px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
   .container {
     display: flex;
   }
   ion-list {
-    background: #FFFFFF;
+    background: var(--app-card-background);
   }
   ion-label {
     line-height:18px;
+    color: var(--app-text);
   }
 }

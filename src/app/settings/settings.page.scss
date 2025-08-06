@@ -7,16 +7,18 @@
     ion-list-header {
       padding-left: 10px;
       font-size: 16px;
+      color: var(--app-text);
 
     }
 
     ion-item {
-      --background: none;
+      --background: var(--app-item-background);
       --padding-start: 0px;
       --padding-end: 0px;
       --inner-padding-end: 0px;
       font-size: 14px;
       --min-height: 0px;
+      color: var(--app-text);
 
       ion-icon {
         top: 4px;
@@ -25,6 +27,7 @@
         margin-right: 0px;
         margin-top: 0px;
         margin-bottom: 0px;
+        color: var(--app-text);
       }
     }
 
@@ -32,10 +35,12 @@
 
   .ion-label {
     white-space: break-spaces;
+    color: var(--app-text);
 
     h2 {
       text-overflow: clip;
       white-space: break-spaces;
+      color: var(--app-text);
     }
   }
 }

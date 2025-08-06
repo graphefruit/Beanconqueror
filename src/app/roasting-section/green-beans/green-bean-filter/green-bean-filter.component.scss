@@ -4,21 +4,23 @@
 
 
   ion-list{
-    background:#ffffff;
+    background: var(--app-card-background);
   }
   ion-item.active {
     border: 1px solid var(--ion-color-accent-secondary);
   }
   ion-item {
     border-radius: 10px;
-    --background: #F0F0F0;
+    --background: var(--app-item-background);
+    color: var(--app-text);
 
     ion-icon{
       padding-left: 16px;
       margin-right: 8px;
+      color: var(--app-text);
     }
   }
   ion-footer{
-    background:#ffffff;
+    background: var(--app-card-background);
   }
 }

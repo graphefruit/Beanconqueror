@@ -75,6 +75,7 @@ import { Preparation } from '../classes/preparation/preparation';
 import { Bean } from '../classes/bean/bean';
 import { Water } from '../classes/water/water';
 import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
+import { UIThemeService } from '../services/uiTheme';
 
 declare var window;
 
@@ -256,6 +257,7 @@ export class AppComponent implements AfterViewInit {
     private readonly uiStorage: UIStorage,
     private readonly androidPlatformService: AndroidPlatformService,
     private readonly iosPlatformService: IosPlatformService,
+    private readonly uiThemeService: UIThemeService,
   ) {
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
@@ -673,6 +675,10 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
+
+    // Initialize and apply theme
+    await this.uiThemeService.applyTheme();
+    this.uiThemeService.setupSystemThemeListener();
 
     await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();

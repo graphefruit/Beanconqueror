@@ -82,6 +82,8 @@ import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { UIThemeService } from '../../services/uiTheme';
+import { THEME_ENUM } from '../../enums/settings/theme';
 
 @Component({
   selector: 'settings',
@@ -168,6 +170,7 @@ export class SettingsPage {
     private readonly uiExportImportHelper: UIExportImportHelper,
     private readonly visualizerService: VisualizerService,
     private readonly textToSpeech: TextToSpeechService,
+    private readonly uiThemeService: UIThemeService,
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -480,6 +483,30 @@ export class SettingsPage {
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  /**
+   * Changes the theme and applies it immediately
+   * This method is called when the user selects a different theme in the settings
+   * @param newTheme - The new theme to apply
+   */
+  public async changeTheme(newTheme: string): Promise<void> {
+    try {
+      // Convert string to enum
+      const themeEnum = newTheme as THEME_ENUM;
+
+      // Change the theme using the theme service
+      await this.uiThemeService.changeTheme(themeEnum);
+
+      // Save the settings to persist the theme choice
+      await this.saveSettings();
+
+      // Show a toast message to confirm the theme change
+      this.uiToast.showInfoToast('THEME_CHANGED_SUCCESSFULLY');
+    } catch (error) {
+      console.error('Error changing theme:', error);
+      this.uiToast.showInfoToast('THEME_CHANGE_ERROR');
+    }
   }
 
   public async visualizerServerHasChanged() {

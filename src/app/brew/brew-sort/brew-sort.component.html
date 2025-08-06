@@ -4,8 +4,9 @@
 <ion-content>
   <ion-list class="ion-no-padding">
     <ion-list-header>
-      <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" class="ion-margin-top" lines="none" tappable>
-        {{"SORT_ORDER" | translate}}
+      <ion-item  style="width: 100%;margin-left: 0px;--background: var(--app-item-background);" class="ion-margin-top" lines="none" tappable>
+        <ion-label>{{"BREW_SORT_BY_DATE" | translate}}</ion-label>
+        <ion-icon name="chevron-forward" slot="end"></ion-icon>
       </ion-item>
     </ion-list-header>
     <ion-grid class="ion-no-padding">
@@ -27,8 +28,9 @@
       </ion-row>
     </ion-grid>
     <ion-list-header>
-      <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" class="ion-margin-top" lines="none" tappable>
-        {{"SORT_AFTER" | translate}}
+      <ion-item  style="width: 100%;margin-left: 0px;--background: var(--app-item-background);" class="ion-margin-top" lines="none" tappable>
+        <ion-label>{{"BREW_SORT_BY_BEAN" | translate}}</ion-label>
+        <ion-icon name="chevron-forward" slot="end"></ion-icon>
       </ion-item>
     </ion-list-header>
     <ion-item (click)="setSortAfter(brewSortAfterEnum.BREW_DATE)" [class.active]="isSortActive(brewSortAfterEnum.BREW_DATE)" lines="none" tappable>
@@ -53,9 +55,9 @@
     </ion-item>
 
     <ion-list-header *ngIf="false">
-      <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" (click)="toggleExtendSort()" class="ion-margin-top" lines="none" tappable>
+      <ion-item  style="width: 100%;margin-left: 0px;--background: var(--app-item-background);" (click)="toggleExtendSort()" class="ion-margin-top" lines="none" tappable>
         {{"EXTEND_SORT_AFTER" | translate}}
-        <ion-icon *ngIf="extendedSortActive!= true" name="chevron-down-outline" slot="end"></ion-icon>
+        <ion-icon *ngIf="extendedSortActive !== true" name="chevron-down-outline" slot="end"></ion-icon>
         <ion-icon *ngIf="extendedSortActive === true" name="chevron-up-outline" slot="end"></ion-icon>
       </ion-item>
     </ion-list-header>

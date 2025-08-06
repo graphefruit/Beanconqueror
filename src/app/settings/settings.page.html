@@ -146,6 +146,15 @@
 
             </ion-select>
           </ion-item>
+          <ion-item>
+            <ion-select (ngModelChange)="changeTheme($event)" [(ngModel)]="settings.theme"
+                        cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_THEME" | translate}}</div>
+              <ion-select-option value="light">{{"PAGE_SETTINGS_THEME_LIGHT" | translate}}</ion-select-option>
+              <ion-select-option value="dark">{{"PAGE_SETTINGS_THEME_DARK" | translate}}</ion-select-option>
+              <ion-select-option value="system">{{"PAGE_SETTINGS_THEME_SYSTEM" | translate}}</ion-select-option>
+            </ion-select>
+          </ion-item>
           <ion-item lines="none">
             <ion-label>
               <h2>{{"PAGE_SETTINGS_IMAGE_QUALITY" | translate}}</h2>

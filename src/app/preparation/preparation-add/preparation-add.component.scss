@@ -2,15 +2,19 @@
 
   ion-label {
     font-family: 'Baloo', sans-serif;
+    color: var(--app-text);
   }
 
   ion-card {
     min-height: 185px;
+    background: var(--app-card-background);
+    color: var(--app-text);
 
     ion-icon {
       width: 128px;
       height: 128px;
       font-size: 128px;
+      color: var(--app-text);
 
     }
 
@@ -23,12 +27,13 @@
         width: 96px;
         height: 96px;
         font-size: 96px;
+        color: var(--app-text);
 
       }
     }
   }
   .preparation-add-card {
-    background-color: #ffffff;
+    background-color: var(--app-card-background);
   }
 
 

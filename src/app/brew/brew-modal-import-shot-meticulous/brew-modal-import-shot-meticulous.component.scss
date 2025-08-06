@@ -4,8 +4,10 @@
     margin-right: 0px;
     line-height: 12px;
     font-size: 12px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
   ion-card-content {
-    background:#FFFFFF;
+    background: var(--app-card-background);
   }
 }

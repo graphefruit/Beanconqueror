@@ -3,14 +3,15 @@
 
   ul {
     text-align:left;
+    color: var(--app-text);
     li {
       word-break: break-word;
     }
   }
   ion-slides { height: initial; }
   ion-header, ion-content, ion-footer{
-    background:#ffffff;
-    --background:#ffffff;
+    background: var(--app-card-background);
+    --background: var(--app-card-background);
   }
   swiper-slide {
     div {
@@ -21,11 +22,11 @@
 }
 :root {
   .swiper-pagination-bullet {
-    background-color: #282013;
+    background-color: var(--app-text);
   }
   .swiper-pagination-bullet active-bullet {
 
-    background-color: #AE9F87;
+    background-color: var(--ion-color-accent);
   }
 
   swiper-slide {
@@ -44,6 +45,7 @@
 
     text-align: center;
     box-sizing: border-box;
+    color: var(--app-text);
   }
 
   swiper-slide img {
@@ -53,10 +55,10 @@
     max-height: 100%;
   }
   .swiper-pagination-bullet {
-    background-color: #282013;
+    background-color: var(--app-text);
   }
   .swiper-pagination-bullet.active-bullet {
 
-    background-color: #AE9F87!important;
+    background-color: var(--ion-color-accent) !important;
   }
 }

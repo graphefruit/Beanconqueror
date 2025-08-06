@@ -4,10 +4,15 @@
     --border-width: 0px;
     margin-left: 16px;
     margin-right: 16px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
 
 
   ion-card {
+    background: var(--app-card-background);
+    color: var(--app-text);
+    
     div.last-item {
       margin-bottom: 16px;
       /*Last one*/
@@ -19,9 +24,11 @@
 
   ion-card.flow-profile {
     margin: 0px;
+    background: var(--app-card-background);
+    color: var(--app-text);
 
     ion-card-header {
-      color: #FFFFFF;
+      color: var(--app-text);
       background-color: var(--ion-color-accent) !important;
       font-size: 18px;
       min-height: 60px;
@@ -33,7 +40,7 @@
 
     ion-card-content {
       padding-top: 8px;
-      color: #000000;
+      color: var(--app-text);
       padding-bottom: 4px;
     }
 
@@ -41,51 +48,52 @@
 
   ion-card.flow-profile.temperature-card {
     ion-card-header {
-      background-color: #CC3311 !important;
+      background-color: var(--app-brew-temperature) !important;
     }
 
     ion-icon {
-      color: #CC3311 !important;
+      color: var(--app-brew-temperature) !important;
     }
   }
 
   ion-card.flow-profile.pressure-card {
     ion-card-header {
-      background-color: #05C793 !important;
+      background-color: var(--app-brew-pressure) !important;
     }
 
     ion-icon {
-      color: #05C793 !important;
+      color: var(--app-brew-pressure) !important;
     }
 
     ion-icon>div.icon-inner>svg.s-ion-icon>g {
-      fill: #05C793 !important;
+      fill: var(--app-brew-pressure) !important;
     }
   }
 
   ion-card.flow-profile.flow-card {
     ion-card-header {
-      background-color: #09485D !important;
+      background-color: var(--app-brew-flow) !important;
     }
 
     ion-icon {
-      color: #09485D !important;
+      color: var(--app-brew-flow) !important;
     }
   }
 
   ion-card.flow-profile.weight-card {
     ion-card-header {
-      background-color: #cdc2ac !important;
+      background-color: var(--app-brew-weight) !important;
     }
 
     ion-icon {
-      color: #cdc2ac !important;
+      color: var(--app-brew-weight) !important;
     }
   }
 
   .brew-information-panel {
     ion-icon {
       font-size: 30px;
+      color: var(--app-text);
     }
   }
 }

@@ -4,6 +4,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: var(--app-text);
 
   }
   ion-item {
@@ -11,9 +12,11 @@
     margin-right: 0px;
     line-height: 12px;
     font-size: 12px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
   ion-card-content {
-    background:#FFFFFF;
+    background: var(--app-card-background);
   }
   .full-sized-icon {
     width: 100%;
@@ -27,6 +30,8 @@
     margin-bottom:0px;
     margin-left:0px;
     margin-right:0px;
+    background: var(--app-card-background);
+    color: var(--app-text);
 
   }
 }

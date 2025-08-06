@@ -15,12 +15,15 @@
   }
   #customFlavorInput {
     --padding-start:16px;
+    color: var(--app-text);
   }
 
     ion-searchbar{
       padding-left:16px;
       padding-right:16px;
       --border-radius: 0px;
+      --background: var(--app-item-background);
+      --color: var(--app-text);
     }
 
 

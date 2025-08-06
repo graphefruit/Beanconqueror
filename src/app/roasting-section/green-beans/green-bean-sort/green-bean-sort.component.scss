@@ -5,15 +5,17 @@
   }
   ion-item {
     border-radius: 10px;
-    --background: #F0F0F0;
+    --background: var(--app-item-background);
+    color: var(--app-text);
 
     ion-icon{
       padding-left: 16px;
       margin-right: 8px;
+      color: var(--app-text);
     }
   }
   ion-header {
     height:40px;
-    background-color: #ffffff;
+    background-color: var(--app-card-background);
   }
 }

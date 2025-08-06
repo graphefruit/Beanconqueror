@@ -19,6 +19,7 @@ import {
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBrewPageSort } from '../brew/iBrewPageSort';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { THEME_ENUM } from '../../enums/settings/theme';
 
 export interface ISettings {
   // Properties
@@ -246,4 +247,7 @@ export interface ISettings {
   brew_timer_show_minutes: boolean;
 
   bluetooth_devices_show_connection_messages: boolean;
+
+  // Theme settings
+  theme: THEME_ENUM;
 }

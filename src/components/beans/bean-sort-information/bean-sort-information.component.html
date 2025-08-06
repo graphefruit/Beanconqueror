@@ -26,8 +26,8 @@
       </ion-input>
     </ion-item>
     <ion-item *ngIf="searchResultsAvailable('country')" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-        <ion-item (click)="searchResultSelected(i,'country',result)" *ngFor="let result of getResults('country');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+        <ion-item (click)="searchResultSelected(i,'country',result)" *ngFor="let result of getResults('country');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>
@@ -43,8 +43,8 @@
       </ion-input>
     </ion-item>
     <ion-item *ngIf="searchResultsAvailable('region')" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-        <ion-item (click)="searchResultSelected(i,'region',result)" *ngFor="let result of getResults('region');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+        <ion-item (click)="searchResultSelected(i,'region',result)" *ngFor="let result of getResults('region');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>
@@ -60,8 +60,8 @@
       </ion-input>
     </ion-item>
     <ion-item *ngIf="searchResultsAvailable('farm')" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-        <ion-item (click)="searchResultSelected(i,'farm',result)" *ngFor="let result of getResults('farm');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+        <ion-item (click)="searchResultSelected(i,'farm',result)" *ngFor="let result of getResults('farm');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>
@@ -77,8 +77,8 @@
       </ion-input>
     </ion-item>
     <ion-item *ngIf="searchResultsAvailable('farmer')" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-        <ion-item (click)="searchResultSelected(i,'farmer',result)" *ngFor="let result of getResults('farmer');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+        <ion-item (click)="searchResultSelected(i,'farmer',result)" *ngFor="let result of getResults('farmer');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>
@@ -100,8 +100,8 @@
       </ion-input>
     </ion-item>
     <ion-item *ngIf="searchResultsAvailable('variety')" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-        <ion-item (click)="searchResultSelected(i,'variety',result)" *ngFor="let result of getResults('variety');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+        <ion-item (click)="searchResultSelected(i,'variety',result)" *ngFor="let result of getResults('variety');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>
@@ -117,8 +117,8 @@
       </ion-input>
     </ion-item>
     <ion-item *ngIf="searchResultsAvailable('processing')" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-        <ion-item (click)="searchResultSelected(i,'processing',result)" *ngFor="let result of getResults('processing');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+        <ion-item (click)="searchResultSelected(i,'processing',result)" *ngFor="let result of getResults('processing');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>
@@ -146,8 +146,8 @@
       </ion-input>
     </ion-item>
     <ion-item *ngIf="searchResultsAvailable('certification')" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-        <ion-item (click)="searchResultSelected(i,'certification',result)" *ngFor="let result of getResults('certification');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+        <ion-item (click)="searchResultSelected(i,'certification',result)" *ngFor="let result of getResults('certification');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>

@@ -198,7 +198,7 @@
           <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="settings?.bean_rating_steps" debounce="500s"  disabled="true" min="0" snaps="true">
 
             <div slot="end">
-              <ngx-stars *ngIf="bean?.rating !== 0 && hasCustomRatingRange() === false"  #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+              <ngx-stars *ngIf="bean?.rating !== 0 && hasCustomRatingRange() === false"  #beanRating [color]="'var(--ion-color-accent)'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
               <div  *ngIf="bean?.rating > 0  && hasCustomRatingRange() === true" class="ion-text-right">
                 <ion-badge>{{bean.rating| toFixed: 2}}</ion-badge>
               </div>

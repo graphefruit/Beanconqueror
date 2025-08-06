@@ -2,12 +2,14 @@
   ion-item {
     margin-left: 16px;
     margin-right: 16px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
 
   .label-item {
     max-height: 35px;
     ion-icon {
-
+      color: var(--app-text);
     }
   }
 

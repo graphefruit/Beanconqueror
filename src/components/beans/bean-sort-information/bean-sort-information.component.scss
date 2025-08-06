@@ -2,6 +2,8 @@
   ion-item {
     margin-left: 16px;
     margin-right: 16px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
 
 
@@ -14,18 +16,21 @@
     height: 45px;
     margin-left:10px;
     margin-right:10px;
+    color: var(--app-text);
   }
 
   ion-button[add-next-sort] ion-icon {
     left: 20px;
     position: absolute;
     height: 30px;
+    color: var(--app-text);
   }
 
   @media (max-width:320px) {
     ion-button[toggle]   {
       right: 20px;
       position: fixed;
+      color: var(--app-text);
     }
 
   }

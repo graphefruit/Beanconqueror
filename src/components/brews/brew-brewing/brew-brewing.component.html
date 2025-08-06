@@ -108,8 +108,8 @@
   <ion-item *ngIf="searchResultsAvailable('pressure_profile')" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.pressure_profile,
                       choosenPreparation.brew_order.before.pressure_profile,
                       choosenPreparation.use_custom_parameters])" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-      <ion-item (click)="searchResultSelected('pressure_profile',result)" *ngFor="let result of getResults('pressure_profile');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+      <ion-item (click)="searchResultSelected('pressure_profile',result)" *ngFor="let result of getResults('pressure_profile');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
         <ion-label>{{result}}</ion-label>
       </ion-item>
     </ion-list>
@@ -178,8 +178,8 @@
   <ion-item *ngIf="searchResultsAvailable('vessel')" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.vessel,
                       choosenPreparation.brew_order.before.vessel,
                       choosenPreparation.use_custom_parameters])" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-      <ion-item (click)="searchResultSelected('vessel',result)" *ngFor="let result of getResults('vessel');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+      <ion-item (click)="searchResultSelected('vessel',result)" *ngFor="let result of getResults('vessel');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
         <ion-label>{{result.name}} - {{result.weight}}</ion-label>
       </ion-item>
     </ion-list>
@@ -340,8 +340,8 @@
   <ion-item *ngIf="searchResultsAvailable('coffee_type')" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.coffee_type,
                       choosenPreparation.brew_order.after.coffee_type,
                       choosenPreparation.use_custom_parameters])" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-      <ion-item (click)="searchResultSelected('coffee_type',result)" *ngFor="let result of getResults('coffee_type');let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+      <ion-item (click)="searchResultSelected('coffee_type',result)" *ngFor="let result of getResults('coffee_type');let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
         <ion-label>{{result}}</ion-label>
       </ion-item>
     </ion-list>
@@ -375,7 +375,7 @@
     <ion-range  [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;ppadding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
                 [step]="settings.brew_rating_steps" >
       <div slot="end" *ngIf="maxBrewRating=== 5 && settings.brew_rating_steps === 1">
-        <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
+        <ngx-stars #brewStars [color]="'var(--ion-color-accent)'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
                    [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
       </div>
     </ion-range>

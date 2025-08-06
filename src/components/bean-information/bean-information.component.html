@@ -31,7 +31,7 @@
           </div>
           <ngx-stars #beanStars *ngIf="bean?.roast_range !== 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roast_range])" [initialStars]="bean.roast_range" [readonly]="true"
                      [size]="1" class="bean-display ion-float-right"></ngx-stars>
-          <ngx-stars #beanRating *ngIf="bean?.rating !== 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === false" [color]="'#BFB9B0'" [initialStars]="bean.rating"
+          <ngx-stars #beanRating *ngIf="bean?.rating !== 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === false" [color]="'var(--ion-color-accent)'" [initialStars]="bean.rating"
                      [maxStars]="5" [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
           <div *ngIf="bean?.rating > 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.rating])  && hasCustomRatingRange() === true" class="ion-text-right">
               <ion-badge>{{bean.rating| toFixed: 2}}</ion-badge>

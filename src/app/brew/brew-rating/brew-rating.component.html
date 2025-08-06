@@ -12,7 +12,7 @@
                [step]="settings.brew_rating_steps">
 
       <div slot="end" *ngIf="maxBrewRating=== 5 && settings.brew_rating_steps === 1">
-        <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
+        <ngx-stars #brewStars [color]="'var(--ion-color-accent)'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
                    [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
       </div>
     </ion-range>

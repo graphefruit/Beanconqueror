@@ -33,6 +33,7 @@ import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { THEME_ENUM } from '../../enums/settings/theme';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -261,6 +262,9 @@ export class Settings implements ISettings {
   public brew_timer_show_hours: boolean;
   public brew_timer_show_minutes: boolean;
   public bluetooth_devices_show_connection_messages: boolean;
+
+  // Theme settings
+  public theme: THEME_ENUM;
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -601,6 +605,9 @@ export class Settings implements ISettings {
     this.bluetooth_devices_show_connection_messages = true;
 
     this.brew_display_image_type = BREW_DISPLAY_IMAGE_TYPE.PREPARATION;
+
+    // Initialize theme to light mode by default
+    this.theme = THEME_ENUM.LIGHT;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

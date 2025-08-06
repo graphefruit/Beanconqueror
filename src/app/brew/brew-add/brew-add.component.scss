@@ -1,12 +1,16 @@
 :host {
 
+  ion-toolbar {
+    ion-title {
+      color: var(--app-text);
+    }
+  }
 
   ion-item {
     --border-width: 0px;
     margin-left: 16px;
     margin-right: 16px;
   }
-
 
   ion-card
   {
@@ -18,5 +22,18 @@
 
   }
 
+  // Fix footer buttons for dark mode
+  ion-footer {
+    ion-button {
+      --background: var(--app-card-background);
+      --color: var(--app-text);
+      --border-color: var(--app-border);
+      
+      &[fill="outline"] {
+        --color: var(--app-text);
+        --border-color: var(--app-border);
+      }
+    }
+  }
 
 }

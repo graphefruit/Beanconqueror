@@ -10,4 +10,18 @@
     height: 100%;
     max-height:60px!important;
   }
+  
+  // Fix footer buttons for dark mode
+  ion-footer {
+    ion-button {
+      --background: var(--app-card-background);
+      --color: var(--app-text);
+      --border-color: var(--app-border);
+      
+      &[fill="outline"] {
+        --color: var(--app-text);
+        --border-color: var(--app-border);
+      }
+    }
+  }
 }

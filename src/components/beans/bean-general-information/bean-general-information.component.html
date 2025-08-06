@@ -11,8 +11,8 @@
     </ion-input>
   </ion-item>
   <ion-item *ngIf="roasterResultsAvailable" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-      <ion-item (click)="roasterSelected(result)" *ngFor="let result of roasterResults;let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
+    <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--app-surface);">
+      <ion-item (click)="roasterSelected(result)" *ngFor="let result of roasterResults;let last = last" button lines="{{last?'none':''}}" style="--background:var(--app-surface)">
         <ion-label>{{result}}</ion-label>
       </ion-item>
     </ion-list>
@@ -62,7 +62,7 @@
       <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{"ROAST_TYPE_" + key | translate}}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="data?.roast?.toString() =='CUSTOM_ROAST'">
+  <ion-item *ngIf="data?.roast?.toString() ==='CUSTOM_ROAST'">
     <ion-input label-placement="stacked" label='{{"BEAN_DATA_CUSTOM_ROAST_NAME" | translate}}' #roast_custom="ngModel" [(ngModel)]="data.roast_custom" autocapitalize="off"
                name="roast_custom" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}" spellcheck="false"
                type="text">
@@ -79,7 +79,7 @@
     <ion-range [pinFormatter]="pinFormatter" style="padding-left:20px;padding-bottom:0px;padding-right:10px;" [pin]="true" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="settings?.bean_rating_steps">
 
       <div slot="end" *ngIf="maxBeanRating === 5 && settings?.bean_rating_steps === 1">
-        <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+        <ngx-stars #beanRating [color]="'var(--ion-color-accent)'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
       </div>
     </ion-range>
   </ion-item>

@@ -1,6 +1,6 @@
 :host {
   ion-header {
-    background-color: #ffffff;
+    background-color: var(--app-card-background);
   }
 
   ion-toolbar {
@@ -9,7 +9,7 @@
   }
 
   ion-footer {
-    background: #FFFFFF;
+    background: var(--app-card-background);
     box-shadow: none;
   }
 
@@ -20,20 +20,23 @@
     font-size: 24px;
     margin-left: 5px;
     overflow: scroll;
+    color: var(--app-text);
 
     ion-icon {
       margin-right: 2px;
       margin-left: 5px;
       margin-top: 5px;
+      color: var(--app-text);
     }
 
     span {
       vertical-align: top;
+      color: var(--app-text);
     }
   }
 
   ion-label {
-    color: #938F89;
+    color: var(--app-text-secondary);
     display: block;
     position: relative;
     top: 5px;
@@ -41,6 +44,7 @@
 
   ion-text {
     display: block;
+    color: var(--app-text);
   }
 
   .flow-icon-buttons {
@@ -50,15 +54,18 @@
       --padding-end: 0px;
       --padding-start: 0px;
       --padding-top: 0px;
+      color: var(--app-text);
     }
 
   }
 
   ion-card.flow-profile {
     margin: 0px;
+    background: var(--app-card-background);
+    color: var(--app-text);
 
     ion-card-header {
-      color: #FFFFFF;
+      color: var(--app-text);
       background-color: var(--ion-color-accent) !important;
       font-size: 18px;
       padding: 2px;
@@ -92,14 +99,16 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--app-text);
     }
 
     ion-card-content {
-      color: #000000;
+      color: var(--app-text);
       padding: 0px 2px;
 
       ion-icon {
         font-size: 20px;
+        color: var(--app-text);
       }
     }
 
@@ -107,55 +116,55 @@
 
   ion-card.flow-profile.temperature-card {
     ion-card-header {
-      background-color: #CC3311 !important;
+      background-color: var(--app-brew-temperature) !important;
     }
 
     ion-icon {
-      color: #CC3311 !important;
+      color: var(--app-brew-temperature) !important;
     }
   }
 
   ion-card.flow-profile.pressure-card {
     ion-card-header {
-      background-color: #05C793 !important;
+      background-color: var(--app-brew-pressure) !important;
     }
 
     ion-icon {
-      color: #05C793 !important;
+      color: var(--app-brew-pressure) !important;
     }
 
     ion-icon>div.icon-inner>svg.s-ion-icon>g {
-      fill: #05C793 !important;
+      fill: var(--app-brew-pressure) !important;
     }
   }
 
   ion-card.flow-profile.flow-card {
     ion-card-header {
-      background-color: #09485D !important;
+      background-color: var(--app-brew-flow) !important;
     }
 
     ion-icon {
-      color: #09485D !important;
+      color: var(--app-brew-flow) !important;
     }
   }
 
   ion-card.flow-profile.flow-avg-card {
     ion-card-header {
-      background-color: #7F97A2 !important;
+      background-color: var(--app-brew-avg) !important;
     }
 
     ion-icon {
-      color: #7F97A2 !important;
+      color: var(--app-brew-avg) !important;
     }
   }
 
   ion-card.flow-profile.weight-card {
     ion-card-header {
-      background-color: #cdc2ac !important;
+      background-color: var(--app-brew-weight) !important;
     }
 
     ion-icon {
-      color: #cdc2ac !important;
+      color: var(--app-brew-weight) !important;
     }
   }
 

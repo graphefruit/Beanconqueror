@@ -4,7 +4,7 @@
       <ion-row>
         <ion-col [size]="greenBean?.rating!== 0?8:11" size="11"><div class="ion-no-padding font-size-20 ion-title bean-title">{{greenBean.name}}</div></ion-col>
         <ion-col *ngIf="greenBean?.rating !== 0" size="3">
-                    <ngx-stars #greenBeanRating [color]="'#BFB9B0'" [initialStars]="greenBean.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
+                    <ngx-stars #greenBeanRating [color]="'var(--ion-color-accent)'" [initialStars]="greenBean.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
           </ngx-stars>
         </ion-col>
         <ion-col size="1">

@@ -1,18 +1,25 @@
 :host {
 
+  ion-toolbar {
+    ion-title {
+      color: var(--app-text);
+    }
+  }
 
   ion-card.dashboard {
     text-align:center;
     padding: 12px;
     height:100%;
+    background: var(--app-card-background);
+    color: var(--app-text);
 
     ion-card-title {
-      color: var(--ion-color-accent-secondary);
+      color: var(--app-text);
       font-size:24px;
       font-weight: bold;
     }
     ion-card-subtitle {
-      color: var(--ion-text-color);
+      color: var(--app-text-secondary);
       font-size:14px;
       margin-top:0px;
     }
@@ -41,11 +48,18 @@
 
   ion-list {
     padding-top: 0px;
+    background: var(--app-background);
 
     ion-list-header {
       padding-left: 10px;
       font-size: 16px;
-
+      background: var(--app-card-background);
+      color: var(--app-text);
+      
+      h4 {
+        color: var(--app-text);
+        font-weight: bold;
+      }
     }
   }
 

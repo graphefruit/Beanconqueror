@@ -11,6 +11,7 @@
   ion-icon {
     width: 100%;
     height: 100%;
+    color: var(--app-text);
   }
 
   .welcome-bubble {
@@ -26,16 +27,18 @@
 
   ion-title {
     padding: 0px;
+    color: var(--app-text);
   }
 
   .welcome-content-text {
     text-align: left;
     padding-inline-start: var(--padding-start, 16px);
     padding-inline-end: var(--padding-end, 16px);
+    color: var(--app-text);
   }
 
   ion-header, ion-content, ion-footer{
-    background:#ffffff;
-    --background:#ffffff;
+    background: var(--app-card-background);
+    --background: var(--app-card-background);
   }
 }

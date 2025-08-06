@@ -22,7 +22,7 @@
     <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="settings?.bean_rating_steps">
 
       <div slot="end" *ngIf="maxBeanRating === 5 && settings.bean_rating_steps === 1">
-        <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+        <ngx-stars #beanRating [color]="'var(--ion-color-accent)'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
       </div>
 
     </ion-range>

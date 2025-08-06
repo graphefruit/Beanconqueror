@@ -112,8 +112,26 @@
   --ion-color-inactive-shade: #CCCCCC;
   --ion-color-inactive-tint: #CCCCCC;
 
-
-
+  // Dark theme variables
+  --ion-color-dark-background: #121212;
+  --ion-color-dark-surface: #1e1e1e;
+  --ion-color-dark-text: #ffffff;
+  --ion-color-dark-text-secondary: #b0b0b0;
+  --ion-color-dark-text-muted: #888888;
+  --ion-color-dark-border: #333333;
+  --ion-color-dark-card-background: #1e1e1e;
+  --ion-color-dark-toolbar-background: #1e1e1e;
+  --ion-color-dark-item-background: #1e1e1e;
+  --ion-color-dark-segment-background: #2d2d2d;
+  --ion-color-dark-segment-button-background: #404040;
+  --ion-color-dark-segment-button-text: #ffffff;
+  --ion-color-dark-segment-button-text-activated: #ffffff;
+  --ion-color-dark-segment-button-background-activated: #555555;
+  --ion-color-dark-segment-button-border-color-activated: #666666;
+  --ion-color-dark-tab-bar-background: #1e1e1e;
+  --ion-color-dark-tab-bar-border: #333333;
+  --ion-color-dark-menu-background: #1e1e1e;
+  --ion-color-dark-overlay-background: rgba(0, 0, 0, 0.8);
 
 }
 
@@ -146,6 +164,410 @@
   color: var(--ion-color-inactive);
 }
 
+// Light theme variables (default)
+:root {
+  // Base colors
+  --app-background: #F0F0F0;
+  --app-surface: #FFFFFF;
+  --app-text: #000000;
+  --app-text-secondary: #666666;
+  --app-border: #E0E0E0;
+  
+  // Component specific colors
+  --app-card-background: #FFFFFF;
+  --app-toolbar-background: #F0F0F0;
+  --app-item-background: #FFFFFF;
+  --app-segment-background: #F0F0F0;
+  --app-segment-button-background: #FFFFFF;
+  --app-segment-button-text: #000000;
+  --app-segment-button-background-activated: #007AFF;
+  --app-segment-button-text-activated: #FFFFFF;
+  --app-segment-button-border-color-activated: #007AFF;
+  
+  // Menu specific colors
+  --app-menu-background: #F0F0F0;
+  --app-menu-item-background: #F0F0F0;
+  --app-menu-text: #000000;
+  
+  // Status colors
+  --app-success: #28A745;
+  --app-warning: #FFC107;
+  --app-danger: #DC3545;
+  --app-info: #17A2B8;
+  
+  // Brew semantic colors
+  --app-brew-temperature: #CC3311;
+  --app-brew-pressure: #05C793;
+  --app-brew-flow: #09485D;
+  --app-brew-weight: #cdc2ac;
+  --app-brew-time: #5b7391;
+  --app-brew-avg: #7F97A2;
+}
+
+// Dark theme variables
+.dark-theme {
+  // Base colors
+  --app-background: #121212;
+  --app-surface: #1E1E1E;
+  --app-text: #FFFFFF;
+  --app-text-secondary: #B0B0B0;
+  --app-border: #404040;
+  
+  // Component specific colors
+  --app-card-background: #2D2D2D;
+  --app-toolbar-background: #1E1E1E;
+  --app-item-background: #2D2D2D;
+  --app-segment-background: #404040;
+  --app-segment-button-background: #555555;
+  --app-segment-button-text: #FFFFFF;
+  --app-segment-button-background-activated: #666666;
+  --app-segment-button-text-activated: #FFFFFF;
+  --app-segment-button-border-color-activated: #888888;
+  
+  // Menu specific colors
+  --app-menu-background: #121212;
+  --app-menu-item-background: #2D2D2D;
+  --app-menu-text: #FFFFFF;
+  
+  // Status colors (same for both themes)
+  --app-success: #28A745;
+  --app-warning: #FFC107;
+  --app-danger: #DC3545;
+  --app-info: #17A2B8;
+  
+  // Brew semantic colors (same for both themes)
+  --app-brew-temperature: #CC3311;
+  --app-brew-pressure: #05C793;
+  --app-brew-flow: #09485D;
+  --app-brew-weight: #D4A574;
+  --app-brew-time: #D4A574;
+  --app-brew-avg: #7F97A2;
+}
+
+// Global component styling using CSS custom properties
+ion-app {
+  --background: var(--app-background);
+  --color: var(--app-text);
+}
+
+ion-content {
+  --background: var(--app-background);
+  --color: var(--app-text);
+}
+
+ion-header {
+  background-color: var(--app-toolbar-background);
+}
+
+ion-toolbar {
+  --background: var(--app-toolbar-background);
+  --color: var(--app-text);
+  --border-color: var(--app-border);
+}
+
+ion-card {
+  --background: var(--app-card-background);
+  --color: var(--app-text);
+}
+
+ion-item {
+  --background: var(--app-item-background);
+  --color: var(--app-text);
+  --border-color: var(--app-border);
+}
+
+ion-segment {
+  --background: var(--app-segment-background);
+}
+
+ion-segment-button {
+  --background: var(--app-segment-button-background);
+  --color: var(--app-segment-button-text);
+  --color-activated: var(--app-segment-button-text-activated);
+  --background-activated: var(--app-segment-button-background-activated);
+  --border-color-activated: var(--app-segment-button-border-color-activated);
+}
+
+// Menu styling
+ion-split-pane ion-menu {
+  background-color: var(--app-menu-background);
+  border: none;
+  
+  ion-content {
+    --background: var(--app-menu-background);
+    border: none;
+    
+    ion-item {
+      --background: var(--app-menu-item-background);
+      --color: var(--app-menu-text);
+      --border-width: 0px;
+      --inner-border-width: 0px;
+      text-align: center;
+      border: none;
+      
+      &::part(native) {
+        border: none;
+      }
+    }
+    
+    ion-list {
+      background: var(--app-menu-background);
+      border: none;
+      
+      &::part(native) {
+        border: none;
+      }
+    }
+  }
+  
+  ion-footer {
+    background: var(--app-menu-background);
+    border: none;
+    
+    ion-item {
+      --background: var(--app-menu-item-background);
+      --color: var(--app-menu-text);
+      --border-width: 0px;
+      --inner-border-width: 0px;
+      text-align: center;
+      font-size: 12px;
+      border: none;
+      
+      &::part(native) {
+        border: none;
+      }
+    }
+    
+    ion-list {
+      background: var(--app-menu-background);
+      border: none;
+      
+      &::part(native) {
+        border: none;
+      }
+    }
+  }
+}
+
+ion-menu ion-header {
+  background-color: var(--app-toolbar-background);
+  border: none;
+  
+  ion-toolbar {
+    --background: var(--app-toolbar-background);
+    --color: var(--app-text);
+    --border-style: none;
+    border: none;
+    
+    ion-button {
+      --color: var(--app-text);
+      
+      ion-icon {
+        color: var(--app-text);
+      }
+    }
+  }
+  
+  ion-title {
+    color: var(--app-text);
+    font-weight: bold;
+  }
+}
+
+ion-menu:host .menu-inner {
+  background-color: var(--app-menu-background);
+  border: none;
+  box-shadow: none;
+  
+  &::part(native) {
+    border: none;
+  }
+}
+
+// Active states
+ion-menu ion-item.active {
+  --background: var(--ion-color-accent);
+  --color: var(--app-text);
+  font-weight: bold;
+  
+  ion-label {
+    color: var(--app-text);
+    font-weight: bold;
+  }
+}
+
+// Social media buttons
+ion-menu ion-footer ion-button {
+  --color: var(--app-text);
+  
+  ion-icon {
+    color: var(--app-text);
+  }
+  
+  &:hover {
+    --color: var(--ion-color-accent);
+    
+    ion-icon {
+      color: var(--ion-color-accent);
+    }
+  }
+}
+
+// Icon overrides
+.icon-black {
+  color: var(--app-text);
+}
+
+// Override hardcoded backgrounds
+ion-toolbar[with-add-button] {
+  --background: var(--app-toolbar-background) !important;
+  --color: var(--app-text) !important;
+  --border-style: none;
+  padding-top: 19px !important;
+}
+
+// Override any remaining hardcoded colors
+[style*="background-color: white"],
+[style*="background-color: #fff"],
+[style*="background-color: #ffffff"],
+[style*="background-color: #F0F0F0"] {
+  background-color: var(--app-card-background) !important;
+  color: var(--app-text) !important;
+}
+
+[style*="color: black"],
+[style*="color: #000"],
+[style*="color: #000000"] {
+  color: var(--app-text) !important;
+}
+
+// Component specific overrides
+.dashboard,
+.long-card,
+.dashboard-layout,
+.brew-layout,
+.statistic-card,
+.data-card,
+.overview-card,
+.metric-card {
+  background-color: var(--app-card-background) !important;
+  color: var(--app-text) !important;
+  border-color: var(--app-border) !important;
+}
+
+// Brew information components
+brew-information {
+  background-color: var(--app-card-background) !important;
+  color: var(--app-text) !important;
+}
+
+// Small card styling
+ion-card.small-card {
+  background: var(--app-card-background) !important;
+}
+
+// Tab bar styling
+ion-tab-bar {
+  --background: var(--app-surface);
+  --border: 0px;
+  padding-bottom: 12px;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// Font sizes (unchanged)
+.font-size-12 {
+  font-size: 12px!important;
+  line-height: 12px!important;
+}
+
+.font-size-14 {
+  font-size: 14px!important;
+  line-height: 14px!important;
+}
+
+.font-size-16 {
+  font-size: 16px!important;
+  line-height: 16px!important;
+}
+
+.font-size-18 {
+  font-size: 18px!important;
+  line-height: 18px!important;
+}
+
+.font-size-20 {
+  font-size: 20px!important;
+  line-height: 26px!important;
+}
+
+.font-size-24{
+  font-size:24px!important;
+  line-height:24px!important;
+}
+
+// Text color utilities
+.text-color-inactive {
+  color: var(--ion-color-inactive);
+}
+
+// Global alert styling overrides
+.alert-title,
+.alert-title.sc-ion-alert-md,
+.alert-title.sc-ion-alert-ios {
+  color: var(--app-text) !important;
+}
+
+.alert-sub-title,
+.alert-sub-title.sc-ion-alert-md,
+.alert-sub-title.sc-ion-alert-ios {
+  color: var(--app-text-secondary) !important;
+}
+
+.alert-message,
+.alert-message.sc-ion-alert-md,
+.alert-message.sc-ion-alert-ios {
+  color: var(--app-text) !important;
+}
+
+.alert-wrapper,
+.alert-wrapper.sc-ion-alert-md,
+.alert-wrapper.sc-ion-alert-ios {
+  background: var(--app-card-background) !important;
+}
+
+.alert-head,
+.alert-head.sc-ion-alert-md,
+.alert-head.sc-ion-alert-ios {
+  background: var(--app-card-background) !important;
+}
+
+.alert-button,
+.alert-button.sc-ion-alert-md,
+.alert-button.sc-ion-alert-ios {
+  color: var(--app-text) !important;
+}
+
+.alert-radio-group,
+.alert-radio-group.sc-ion-alert-md,
+.alert-radio-group.sc-ion-alert-ios {
+  background: var(--app-card-background) !important;
+}
+
+.alert-radio-label,
+.alert-radio-label.sc-ion-alert-md,
+.alert-radio-label.sc-ion-alert-ios {
+  color: var(--app-text) !important;
+}
+
+// Global ion-title override for proper contrast
+ion-title,
+ion-title.sc-ion-title-md,
+ion-title.sc-ion-title-ios {
+  color: var(--app-text) !important;
+}
+
+// Card border radius
 $card-md-border-radius: 5px;
 $card-md-header-color: rgba(8, 66, 138, 0.77);
 $toolbar-background: #7189a7;
@@ -157,5 +579,48 @@ $list-md-header-color: rgb(160, 176, 196);
 $button-md-text-color: white;
 $button-md-background-color: rgb(160, 176, 196);
 $button-md-outline-text-color: rgb(160, 176, 196);
+
+// Global menu border overrides
+ion-menu,
+ion-menu.sc-ion-menu-md,
+ion-menu.sc-ion-menu-ios {
+  border: none !important;
+  
+  &::part(native) {
+    border: none !important;
+  }
+}
+
+ion-menu ion-content,
+ion-menu ion-content.sc-ion-content-md,
+ion-menu ion-content.sc-ion-content-ios {
+  border: none !important;
+  
+  &::part(native) {
+    border: none !important;
+  }
+}
+
+ion-menu ion-list,
+ion-menu ion-list.sc-ion-list-md,
+ion-menu ion-list.sc-ion-list-ios {
+  border: none !important;
+  
+  &::part(native) {
+    border: none !important;
+  }
+}
+
+ion-menu ion-item,
+ion-menu ion-item.sc-ion-item-md,
+ion-menu ion-item.sc-ion-item-ios {
+  border: none !important;
+  --border-width: 0px !important;
+  --inner-border-width: 0px !important;
+  
+  &::part(native) {
+    border: none !important;
+  }
+}
 
 

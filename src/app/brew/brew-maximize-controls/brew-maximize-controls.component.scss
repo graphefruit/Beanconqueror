@@ -1,6 +1,6 @@
 :host {
   ion-header {
-    background-color: #ffffff;
+    background-color: var(--app-card-background);
   }
 
   .big-control-icon {
@@ -8,6 +8,7 @@
     ion-icon {
       font-size:100px;
       width:80px;
+      color: var(--app-text);
     }
   }
   @media (max-width: 375px) {
@@ -16,6 +17,7 @@
       ion-icon {
         font-size:100px;
         width:75px;
+        color: var(--app-text);
       }
     }
   }
@@ -25,6 +27,7 @@
       ion-icon {
         font-size: 140px;
         width: 160px;
+        color: var(--app-text);
       }
     }
   }
@@ -35,7 +38,7 @@
   }
 
   ion-footer {
-    background: #FFFFFF;
+    background: var(--app-card-background);
     box-shadow: none;
   }
 
@@ -46,20 +49,23 @@
     font-size: 24px;
     margin-left: 5px;
     overflow: scroll;
+    color: var(--app-text);
 
     ion-icon {
       margin-right: 2px;
       margin-left: 5px;
       margin-top: 5px;
+      color: var(--app-text);
     }
 
     span {
       vertical-align: top;
+      color: var(--app-text);
     }
   }
 
   ion-label {
-    color: #938F89;
+    color: var(--app-text-secondary);
     display: block;
     position: relative;
     top: 5px;
@@ -69,13 +75,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--app-text);
   }
 
   ion-card.flow-profile {
     margin: 0px;
+    background: var(--app-card-background);
+    color: var(--app-text);
 
     ion-card-header {
-      color: #FFFFFF;
+      color: var(--app-text);
       background-color: var(--ion-color-accent) !important;
       font-size: 75px;
       padding: 2px;
@@ -88,11 +97,12 @@
     }
 
     ion-card-content {
-      color: #000000;
+      color: var(--app-text);
       padding: 0px 2px;
 
       ion-icon {
         font-size: 24px;
+        color: var(--app-text);
       }
     }
 

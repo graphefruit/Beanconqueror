@@ -4,12 +4,15 @@
     --border-width: 0px;
     margin-left: 16px;
     margin-right: 16px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
 
   ion-col.active {
-    background-color: #90EE90;
+    background-color: var(--app-success);
     ion-item{
-      --background:#90EE90;
+      --background: var(--app-success);
+      color: var(--app-text);
     }
   }
 }

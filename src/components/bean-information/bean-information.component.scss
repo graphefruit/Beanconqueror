@@ -1,16 +1,20 @@
 :host {
   ion-card-content {
-    background:#FFFFFF;
+    background: var(--app-card-background);
   }
   ion-card {
     margin-top:0px;
     margin-bottom:0px;
     margin-left:10px;
     margin-right:10px;
+    background: var(--app-card-background);
+    color: var(--app-text);
+    
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
       padding-top: var(--padding-top);
+      background: var(--app-card-background);
     }
   }
   .no-overflow {
@@ -21,6 +25,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: var(--app-text);
   }
 
   .add-child-margin {
@@ -33,6 +38,7 @@
     display: flex;
     ion-icon {
       flex: none;
+      color: var(--app-text);
     }
   }
 
@@ -57,6 +63,7 @@
     align-items: center;
     flex-wrap: wrap;
     text-align: right;
+    color: var(--app-text);
     > *:only-child {
       margin-top: 12px;
     }
@@ -87,6 +94,7 @@
       font-size: 18px!important;
       width: 18px!important;
       height: 18px!important;
+      color: var(--app-text);
     }
   }
 
@@ -100,6 +108,7 @@
   ion-text {
     position: relative;
     top: -5px;
+    color: var(--app-text);
   }
   .limit-grid-overflow {
     padding-top:0px;
@@ -109,6 +118,7 @@
       display: block;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--app-text);
     }
   }
   ::ng-deep img {

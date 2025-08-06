@@ -5,10 +5,14 @@
     margin-bottom:0px;
     margin-left:10px;
     margin-right:10px;
+    background: var(--app-card-background);
+    color: var(--app-text);
+    
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
       padding-top: var(--padding-top);
+      background: var(--app-card-background);
     }
   }
 
@@ -16,6 +20,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: var(--app-text);
   }
   // Overwrite
   .button-top-absolute {
@@ -27,6 +32,7 @@
       font-size: 18px!important;
       width: 18px!important;
       height: 18px!important;
+      color: var(--app-text);
     }
   }
 
@@ -40,6 +46,7 @@
   ion-text {
     position: relative;
     top: -5px;
+    color: var(--app-text);
   }
   .limit-grid-overflow {
     padding-top:0px;
@@ -49,6 +56,7 @@
       display: block;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--app-text);
     }
   }
   ::ng-deep img {

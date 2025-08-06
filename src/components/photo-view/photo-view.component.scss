@@ -3,6 +3,8 @@
     --border-width: 0px;
     margin-left: 16px;
     margin-right: 16px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
   .swiper-pagination.swiper-pagination-bullets {
     position: relative;

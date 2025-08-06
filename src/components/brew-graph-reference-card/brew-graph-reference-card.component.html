@@ -16,7 +16,7 @@
       <ion-col *ngIf="(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
                       preparation?.visible_list_view_parameters.rating,
                       preparation?.use_custom_parameters]) && (brew?.rating > 0 && isCustomRatingRange === false)" size="4">
-        <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
+        <ngx-stars #brewStars [color]="'var(--ion-color-accent)'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
         </ngx-stars>
       </ion-col>
       <ion-col *ngIf="(settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,

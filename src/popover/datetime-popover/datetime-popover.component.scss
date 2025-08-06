@@ -1,13 +1,15 @@
 :host {
     ion-header {
       height:40px;
-      background-color: #ffffff;
+      background-color: var(--app-card-background);
     }
 
   ion-col {
     text-align:center;
+    color: var(--app-text);
   }
   ion-input {
     --padding-start:0px;
+    color: var(--app-text);
   }
 }

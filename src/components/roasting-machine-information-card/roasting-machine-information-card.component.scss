@@ -1,9 +1,13 @@
 :host {
   ion-card {
+    background: var(--app-card-background);
+    color: var(--app-text);
+    
     ion-card-content {
       padding: 8px;
       padding-bottom: var(--padding-bottom);
       padding-top: var(--padding-top);
+      background: var(--app-card-background);
     }
   }
 
@@ -17,6 +21,7 @@
       font-size: 18px!important;
       width: 18px!important;
       height: 18px!important;
+      color: var(--app-text);
     }
   }
 
@@ -30,6 +35,7 @@
   ion-text {
     position: relative;
     top: -5px;
+    color: var(--app-text);
   }
   ::ng-deep img {
     width: 100%;

@@ -4,6 +4,8 @@
     --border-width: 0px;
     margin-left: 16px;
     margin-right: 16px;
+    --background: var(--app-item-background);
+    color: var(--app-text);
   }
 
   ion-button:focus {
@@ -18,6 +20,9 @@
   }
 
   ion-card {
+    background: var(--app-card-background);
+    color: var(--app-text);
+    
     div.last-item {
       margin-bottom: 16px;
       /*Last one*/
@@ -26,9 +31,11 @@
 
   }
 
-
-
-
+  // Fix section headers for dark mode
+  .ion-title {
+    color: var(--app-text);
+    font-weight: bold;
+  }
 
 }
 

@@ -1,7 +1,7 @@
 :host {
 
   ion-card-content {
-    background:#FFFFFF;
+    background: var(--app-card-background);
   }
   .full-sized-icon {
     width: 100%;
@@ -14,21 +14,27 @@
     margin-bottom:0px;
     margin-left:0px;
     margin-right:0px;
+    background: var(--app-card-background);
+    color: var(--app-text);
+    
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
       padding-top: var(--padding-top);
+      background: var(--app-card-background);
     }
     .brew-title {
 
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+      color: var(--app-text);
 
     }
     ion-label{
       line-height: 14px!important;
       display: inline-block;
+      color: var(--app-text);
     }
     // Overwrite
     .button-top-absolute {
@@ -40,6 +46,7 @@
         font-size: 18px!important;
         width: 18px!important;
         height: 18px!important;
+        color: var(--app-text);
       }
     }
 
@@ -53,11 +60,13 @@
     ion-text {
       position: relative;
       top: -5px;
+      color: var(--app-text);
     }
   }
 
   ion-card.dashboard-layout {
-
+    background: var(--app-card-background);
+    color: var(--app-text);
 
     .vr {
       border-right: 2px solid var(--ion-color-accent);
@@ -78,6 +87,7 @@
         font-size: 18px!important;
         width: 18px!important;
         height: 18px!important;
+        color: var(--app-text);
       }
     }
 
@@ -87,6 +97,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      color: var(--app-text);
     }
 
     ion-col.center-col {
@@ -104,6 +115,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        color: var(--app-text);
       }
       ion-item {
         --background: none;
@@ -112,6 +124,7 @@
         --inner-padding-end: 0px;
         font-size: 14px;
         --min-height: 0px;
+        color: var(--app-text);
 
         ion-icon {
           top: 4px;
@@ -120,6 +133,7 @@
           margin-right: 0px;
           margin-top: 0px;
           margin-bottom: 0px;
+          color: var(--app-text);
         }
       }
 
@@ -134,6 +148,7 @@
       display: block;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--app-text);
     }
   }
 
@@ -160,10 +175,10 @@
   }
 
   .favourite-brew {
-    border: 2px solid #05C793;
+    border: 2px solid var(--app-brew-pressure);
   }
   .best-brew {
-    border: 2px solid #AE9F87;
+    border: 2px solid var(--ion-color-accent);
   }
 
 
