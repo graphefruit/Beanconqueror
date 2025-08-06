@@ -82,7 +82,7 @@ const createConfig = () => {
       },
       SplashScreen: {
         launchAutoHide: false, // we will hide the splashcreen inside the app
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#000000',
         androidScaleType: 'CENTER_CROP',
         useDialog: false, // required to set the correct scale type
       },
