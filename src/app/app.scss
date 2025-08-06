@@ -135,10 +135,6 @@ ion-segment-button::part(indicator) {
   margin: 0 auto;
   width: 35%;
 }
-ion-segment-button::part(indicator-background) {
-  /* Applies to the dash below the tab */
- background:var(--ion-color-accent)!important;
-}
 
 
 ion-segment-button {
@@ -149,6 +145,11 @@ ion-segment-button {
   max-height: 50px;
   min-height: 30px;
   margin:auto;
+
+
+  --color: var(--ion-text-color);
+  --color-checked: var(--ion-color-accent);
+  --indicator-color:var(--ion-color-accent);
 
   ion-label, .ion-label {
     font-size: 18px !important;
