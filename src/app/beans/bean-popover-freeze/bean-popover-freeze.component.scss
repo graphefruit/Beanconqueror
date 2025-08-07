@@ -7,7 +7,7 @@
     display: flex;
   }
   ion-list {
-    background: #FFFFFF;
+    background: var(--ion-color-light);
   }
   ion-label {
     line-height:18px;

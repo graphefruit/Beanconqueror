@@ -18,7 +18,7 @@
 ion-title {
   font-family: 'Baloo', sans-serif;
   font-size: 24px;
-  color: var(--ion-text-color);
+  color: var(--beanconqueror-text-color);
 }
 .font-size-12 {
   font-size: 12px!important;
@@ -147,17 +147,25 @@ ion-segment-button {
   margin:auto;
 
 
-  --color: var(--ion-text-color);
-  --color-checked: var(--ion-color-accent);
-  --indicator-color:var(--ion-color-accent);
+  --color: var(--beanconqueror-text-color);
+  --color-checked: var(--ion-color-accent-secondary);
+  --indicator-color:var(--ion-color-accent-secondary);
 
   ion-label, .ion-label {
     font-size: 18px !important;
   }
 
-
 }
-
+.ion-palette-dark {
+  ion-segment-button {
+    --color: var(--beanconqueror-text-color);
+    --color-checked: var(--ion-color-accent);
+    --indicator-color:var(--ion-color-accent);
+  }
+  ion-card {
+    border: 1px solid var(--ion-color-medium)!important;
+  }
+}
 
 .heading-20 {
   font-size: 20px;
@@ -546,9 +554,11 @@ ion-menu:host .menu-inner {
     /*box-shadow: 0px 0px 10px #0000001F;*/
     box-shadow:none;
     -webkit-box-shadow: none;
-    color: var(--ion-text-color);
+    color: var(--beanconqueror-text-color);
     outline: none;
   }
+
+
 
   ion-item {
     --background: var(--ion-color-light);
@@ -747,7 +757,7 @@ ion-menu:host .menu-inner {
   .ion-title {
     font-family: 'Baloo', sans-serif;
     font-size: 24px;
-    color: var(--ion-text-color);
+    color: var(--beanconqueror-text-color);
     padding-bottom: var(--ion-padding, 16px);
   }
 
@@ -988,9 +998,9 @@ ion-segment.tabs {
 swiper-container {
   --swiper-pagination-bullet-inactive-color: var(--ion-color-step-200, #cccccc);
   --swiper-pagination-color: #AE9F87;
-  --swiper-pagination-progressbar-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.25);
-  --swiper-scrollbar-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.1);
-  --swiper-scrollbar-drag-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.5);
+  --swiper-pagination-progressbar-bg-color: rgba(var(--beanconqueror-text-color-rgb, 0, 0, 0), 0.25);
+  --swiper-scrollbar-bg-color: rgba(var(--beanconqueror-text-color-rgb, 0, 0, 0), 0.1);
+  --swiper-scrollbar-drag-bg-color: rgba(var(--beanconqueror-text-color-rgb, 0, 0, 0), 0.5);
 }
 
 swiper-container.swiper {
@@ -1128,7 +1138,7 @@ ion-chip.flowcalculated {
 
 ion-chip.chip-outline {
   /**Make it for darkmode accessable**/
-  --color: var(--ion-text-color)!important;
+  --color: var(--beanconqueror-text-color)!important;
 }
 
 ion-chip.flowreal {
@@ -1204,5 +1214,5 @@ Somehow i've found out that ionic is rendering this media-tags and setting box-s
   background:var(--ion-color-graph-background)!important;
 }
 :root ion-alert .alert-button {
-  color: var(--ion-text-color);
+  color: var(--beanconqueror-text-color);
 }
