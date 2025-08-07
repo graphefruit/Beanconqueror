@@ -1,12 +1,17 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/theming/
 
-
+/**Ion-text-color was overwritten by ionic to always #ffffff, thats why we introduce our own variable **/
+:root.md {
+  --ion-text-color: #282013;
+}
+:root.md.ion-palette-dark
+{
+  --ion-text-color: #D3D3D3;
+}
 /** Ionic CSS Variables **/
 :root {
 
-  --ion-text-color: #282013;
-  --beanconqueror-text-color:#282013;
   --ion-background-color: #F0F0F0;
   --ion-background-color-textarea: #F2F2F2;
   --ion-color-graph-background: #FFFFFF;
@@ -151,9 +156,9 @@
 }
 
 .ion-palette-dark {
-  --ion-text-color: #D3D3D3;
-  /**Ion-text-color was overwritten by ionic to always #ffffff, thats why we introduce our own variable **/
-  --beanconqueror-text-color:#D3D3D3;
+
+
+
   --ion-background-color: #121212;
   --ion-background-color-textarea: #222428;
   --ion-color-graph-background: #222428;
@@ -227,7 +232,7 @@
   --beanconqueror-icon-color: #AE9F87;
   --beanconqueror-background-highlight-color: #FFACAB;
 
-  --ion-color-accent: #CDC2AC;
+  --ion-color-accent: #8b7e6a;
   --ion-color-accent-secondary: #B88265;
   --ion-color-inactive: #555555;
 }
