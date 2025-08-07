@@ -4,10 +4,12 @@
 /**Ion-text-color was overwritten by ionic to always #ffffff, thats why we introduce our own variable **/
 :root.md {
   --ion-text-color: #282013;
+  --beanconqueror-text-color-light: #FFFFFF;
 }
 :root.md.ion-palette-dark
 {
   --ion-text-color: #D3D3D3;
+  --beanconqueror-text-color-light: #FFFFFF;
 }
 /** Ionic CSS Variables **/
 :root {
