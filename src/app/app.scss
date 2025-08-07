@@ -774,12 +774,16 @@ ion-menu:host .menu-inner {
   }
 
   ion-toast {
-    --background: #474747;
+    --background: var(--ion-color-light);
+    --color: var(--beanconqueror-text-color);
     font-family: 'Baloo', sans-serif;
     font-weight: bold;
     letter-spacing: 0.5px;
 
     --height:75px;
+  }
+  ion-toast::part(button cancel){
+color:var(--beanconqueror-text-color);
   }
 
   .ion-no-margin-important {
