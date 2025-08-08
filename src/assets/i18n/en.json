@@ -1516,5 +1516,7 @@
     "NO_IMAGE_IN_CLIPBOARD": "No image in clipboard",
   "PAGE_SETTINGS_THEME_MODE_LIGHT": "Light mode",
   "PAGE_SETTINGS_THEME_MODE_DARK": "Dark mode",
-  "PAGE_SETTINGS_THEME_MODE_DEVICE": "System default"
+  "PAGE_SETTINGS_THEME_MODE_DEVICE": "System default",
+  "PAGE_SETTINGS_THEME_MODE": "Theme mode"
+
 }
