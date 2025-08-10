@@ -817,31 +817,25 @@ color:var(--ion-text-color);
 
 
   .star-half {
-    background: url('../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg');
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
-    background-color: inherit !important;
-    background-repeat: no-repeat;
+    -webkit-mask-image: url('../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg');
+    mask-image: url('../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg');
+    background-color: var(--beanconqueror-icon-star-full-color) !important;
     height: 22px !important;
     width: 22px !important;
   }
 
   .star-full {
-    background: url('../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg');
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
-    background-color: inherit !important;
-    background-repeat: no-repeat;
+    -webkit-mask-image: url('../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg');
+    mask-image: url('../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg');
+    background-color: var(--beanconqueror-icon-star-full-color) !important;
     height: 22px !important;
     width: 22px !important;
   }
 
   .star-empty {
-    background: url('../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg');
-    -webkit-mask-image: none !important;
-    mask-image: none !important;
-    background-color: inherit !important;
-    background-repeat: no-repeat;
+    -webkit-mask-image: url('../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg');
+    mask-image: url('../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg');
+    background-color: var(--beanconqueror-icon-star-empty-color) !important;
     height: 22px !important;
     width: 22px !important;
   }
@@ -849,22 +843,16 @@ color:var(--ion-text-color);
 
 
     .star-full {
-      background: url('../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg')!important;
-      -webkit-mask-image: none !important;
-      mask-image: none !important;
-      background-color: inherit !important;
-      background-repeat: no-repeat;
+      -webkit-mask-image: url('../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg');
+      mask-image: url('../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg');
       height: 15px!important;
       width: 16px!important;
       margin-left: -3px;
     }
 
     .star-empty {
-      background: url('../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg')!important;
-      -webkit-mask-image: none !important;
-      mask-image: none !important;
-      background-color: inherit !important;
-      background-repeat: no-repeat;
+      -webkit-mask-image: url('../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg');
+      mask-image: url('../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg');
       height: 15px!important;
       width: 16px!important;
 
