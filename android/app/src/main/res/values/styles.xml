@@ -17,7 +17,6 @@
     <!-- Use a black navigation bar on API levels where you can't tell android that your
     navigation bar has a light color -->
     <item name="android:navigationBarColor">#000000</item>
-    <item name="android:windowOptOutEdgeToEdgeEnforcement">false</item>
   </style>
 
 
