@@ -18,12 +18,21 @@ export class ThemeService {
       this.adjustTheme();
     });
 
-    await DarkMode.init();
     const listener = await DarkMode.addAppearanceListener(({ dark }) => {
       this.adjustTheme();
     });
 
     this.adjustTheme();
+  }
+
+  public async initializeBeforeAppReady() {
+    await DarkMode.init();
+    const { dark } = await DarkMode.isDarkMode();
+    if (dark) {
+      this.toggleDarkPalette(true);
+    } else {
+      this.toggleDarkPalette(false);
+    }
   }
 
   public async adjustTheme() {

@@ -276,7 +276,9 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.themeService.initializeBeforeAppReady();
+  }
 
   public ngAfterViewInit(): void {
     this.uiLog.log('Platform ready, init app');
@@ -399,7 +401,6 @@ export class AppComponent implements AfterViewInit {
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();
 
-      await SplashScreen.hide();
       if (this.platform.is('capacitor')) {
         try {
           await this.uiExportImportHelper.checkBackup();
