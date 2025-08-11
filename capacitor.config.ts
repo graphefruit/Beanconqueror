@@ -87,6 +87,9 @@ const createConfig = () => {
         androidScaleType: 'CENTER_CROP',
         useDialog: false, // required to set the correct scale type
       },
+      StatusBar: {
+        overlaysWebView: false,
+      },
     },
   };
 
