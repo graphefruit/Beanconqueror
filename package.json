@@ -47,7 +47,7 @@
     "@capawesome/capacitor-file-picker": "^7.2.0",
     "@ionic/angular": "^8.6.5",
     "@ionic/cli": "^7.2.1",
-    "@ionic/core": "^8.6.5",
+    "@ionic/core": "^8.7.2",
     "@ionic/storage": "^4.0.0",
     "@ionic/storage-angular": "^4.0.0",
     "@meticulous-home/espresso-api": "^0.3.1",

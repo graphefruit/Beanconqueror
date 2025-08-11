@@ -70,6 +70,7 @@ const createConfig = () => {
     },
     android: {
       allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
+      adjustMarginsForEdgeToEdge: 'auto', // Needed to fix safe area / edge to edge
     },
     plugins: {
       CapacitorHttp: {
