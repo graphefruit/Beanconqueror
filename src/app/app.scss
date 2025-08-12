@@ -368,6 +368,17 @@ ion-alert.select-break-text {
 
 }
 
+ion-alert{
+  [aria-checked=true] {
+    .alert-checkbox-icon
+    {
+      background-color:var(--ion-color-accent-secondary)!important;
+      border-color:var(--ion-color-accent-secondary)!important;
+    }
+  }
+
+}
+
 
 ion-split-pane {
   --border: none !important;
