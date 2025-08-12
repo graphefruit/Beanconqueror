@@ -8,8 +8,8 @@
   }
   ion-item {
     border-radius: 10px;
-    --background: var(--ion-color-list);
-    border: 1px solid var(--ion-color-accent-contrast);
+    --background: var(--ion-item-sort-background);
+    border: 1px solid var(--ion-color-accent);
 
     ion-icon{
       padding-left: 16px;
@@ -18,3 +18,5 @@
   }
 
 }
+
+
