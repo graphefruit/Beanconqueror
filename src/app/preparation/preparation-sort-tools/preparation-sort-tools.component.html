@@ -10,7 +10,7 @@
 </ion-header>
 <ion-content>
   <ion-card class="ion-padding" style="margin-top:30px;">
-    <ion-reorder-group (ionItemReorder)="reorder_tool($event)" disabled="false">
+    <ion-reorder-group (ionReorderEnd)="reorder_tool($event)" disabled="false">
       @for (index of toolsOrders; track index; let last = $last) {
         <ion-item lines="{{last?'none':''}}" tappable>
           <ion-label>

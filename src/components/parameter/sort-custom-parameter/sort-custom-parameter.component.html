@@ -1,6 +1,6 @@
 <ion-card class="ion-padding">
   <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
-  <ion-reorder-group (ionItemReorder)="reorder_brew($event,'before')" disabled="false">
+  <ion-reorder-group (ionReorderEnd)="reorder_brew($event,'before')" disabled="false">
     @for (index of brewOrdersBefore; track index; let last = $last) {
       <ion-item lines="{{last?'none':''}}" tappable>
         <ion-label>
@@ -14,7 +14,7 @@
 
 <ion-card class="ion-padding" style="margin-top:30px;">
   <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
-  <ion-reorder-group (ionItemReorder)="reorder_brew($event,'while')" disabled="false">
+  <ion-reorder-group (ionReorderEnd)="reorder_brew($event,'while')" disabled="false">
     @for (index of brewOrdersWhile; track index; let last = $last) {
       <ion-item lines="{{last?'none':''}}" tappable>
         <ion-label>
@@ -28,7 +28,7 @@
 
 <ion-card class="ion-padding" style="margin-top:30px;">
   <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
-  <ion-reorder-group (ionItemReorder)="reorder_brew($event,'after')" disabled="false">
+  <ion-reorder-group (ionReorderEnd)="reorder_brew($event,'after')" disabled="false">
     @for (index of brewOrdersAfter; track index; let last = $last) {
       <ion-item lines="{{last?'none':''}}" tappable>
         <ion-label>
