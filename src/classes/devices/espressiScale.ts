@@ -1,6 +1,6 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { ScaleType } from './index';
+import { Logger, ScaleType } from './index';
 
 declare var ble: any;
 export class EspressiScale extends BluetoothScale {
@@ -15,6 +15,7 @@ export class EspressiScale extends BluetoothScale {
   public static READ_SERVICE_UUID = 'fff0';
   public static READ_CHAR_UUID = 'fff4';
   public static HEADER = 0x03;
+  private logger: Logger;
   protected override weight: Weight = {
     actual: 0,
     old: 0,
@@ -27,6 +28,7 @@ export class EspressiScale extends BluetoothScale {
   constructor(data: PeripheralData, type: ScaleType) {
     super(data, type);
     this.batteryLevel = 0;
+    this.logger = new Logger('Espressi Scale');
     this.connect();
   }
 
@@ -41,7 +43,6 @@ export class EspressiScale extends BluetoothScale {
   }
 
   public override async connect() {
-    await this.setLed(true, true);
     await this.attachNotification();
   }
 
@@ -55,14 +56,6 @@ export class EspressiScale extends BluetoothScale {
     await this.write(this.buildTareCommand());
     await setTimeout(async () => {
       await this.write(this.buildTareCommand());
-    }, 200);
-  }
-
-  public override async setLed(_weightOn: boolean, _timerOn: boolean) {
-    await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
-
-    await setTimeout(async () => {
-      await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
     }, 200);
   }
 
@@ -111,32 +104,6 @@ export class EspressiScale extends BluetoothScale {
     return bytes;
   }
 
-  p;
-  private buildLedOnOffCommand(_weightLedOn: boolean, _timerLedOn: boolean) {
-    const buf = new ArrayBuffer(7);
-    const bytes = new Uint8Array(buf);
-    bytes[0] = EspressiScale.HEADER;
-
-    bytes[1] = 0x0a;
-
-    if (_weightLedOn) {
-      bytes[2] = 0x01;
-    } else {
-      bytes[2] = 0x00;
-    }
-
-    if (_timerLedOn) {
-      bytes[3] = 0x01;
-    } else {
-      bytes[3] = 0x00;
-    }
-    bytes[4] = 0x00;
-    bytes[5] = 0x00;
-    bytes[6] = this.getXOR(bytes);
-
-    return bytes;
-  }
-
   private buildTimerCommand(
     _timer: SCALE_TIMER_COMMAND = SCALE_TIMER_COMMAND.START,
   ) {
@@ -163,6 +130,7 @@ export class EspressiScale extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
+    this.logger.logDirect('Writing starting');
     return new Promise((resolve, reject) => {
       ble.write(
         this.device_id,
@@ -173,6 +141,7 @@ export class EspressiScale extends BluetoothScale {
           resolve(true);
         },
         (e: any) => {
+          this.logger.logDirect('Writing error', e);
           resolve(false);
         },
       );
@@ -180,6 +149,7 @@ export class EspressiScale extends BluetoothScale {
   }
 
   private async attachNotification() {
+    this.logger.logDirect('Attaching notification...');
     ble.startNotification(
       this.device_id,
       EspressiScale.READ_SERVICE_UUID,
@@ -202,7 +172,9 @@ export class EspressiScale extends BluetoothScale {
           this.timerEvent.emit(null);
         }
       },
-      (_data: any) => {},
+      (_data: any) => {
+        this.logger.logDirect('Attaching notification, error', _data);
+      },
     );
   }
 
@@ -211,8 +183,12 @@ export class EspressiScale extends BluetoothScale {
       this.device_id,
       EspressiScale.READ_SERVICE_UUID,
       EspressiScale.READ_CHAR_UUID,
-      (e: any) => {},
-      (e: any) => {},
+      (e: any) => {
+        this.logger.logDirect('Deattaching notification, success', e);
+      },
+      (e: any) => {
+        this.logger.logDirect('Deattaching notification, error', e);
+      },
     );
   }
 
