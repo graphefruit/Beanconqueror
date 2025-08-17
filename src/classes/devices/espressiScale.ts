@@ -4,16 +4,12 @@ import { Logger, ScaleType } from './index';
 
 declare var ble: any;
 export class EspressiScale extends BluetoothScale {
-  // public static WRITE_SERVICE_UUID = '0000FFF0-0000-1000-8000-00805F9B34FB';
-  //public static WRITE_CHAR_UUID = '000036F5-0000-1000-8000-00805F9B34FB';
+  public static WRITE_SERVICE_UUID = '0000FFF0-0000-1000-8000-00805F9B34FB';
+  public static WRITE_CHAR_UUID = '000036F5-0000-1000-8000-00805F9B34FB';
 
-  //  public static READ_SERVICE_UUID = '0000FFF0-0000-1000-8000-00805F9B34FB';
-  //public static READ_CHAR_UUID = '0000FFF4-0000-1000-8000-00805F9B34FB';
-  public static WRITE_SERVICE_UUID = 'fff0';
-  public static WRITE_CHAR_UUID = '36f5';
+  public static READ_SERVICE_UUID = '0000FFF0-0000-1000-8000-00805F9B34FB';
+  public static READ_CHAR_UUID = '0000FFF4-0000-1000-8000-00805F9B34FB';
 
-  public static READ_SERVICE_UUID = 'fff0';
-  public static READ_CHAR_UUID = 'fff4';
   public static HEADER = 0x03;
   private logger: Logger;
   protected override weight: Weight = {
