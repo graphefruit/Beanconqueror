@@ -1511,5 +1511,10 @@
     "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Search through the internal device storage for automatic backup files, choose one and import it",
     "NO_AUTOMATIC_BACKUPS_FOUND": "No automatic backups found",
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "If you suffered a data loss, and you didn't find any data here, please use the official support ways",
-    "IMPORT_AUTOMATIC_BACKUP_FILE": "Import automatic backup file"
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Import automatic backup file",
+    "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
+    "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
+    "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
+    "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
+    "PAGE_STATISTICS_AVG_RATING": "Average Rating"
 }

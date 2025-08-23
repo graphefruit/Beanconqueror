@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-segment scrollable="true" [(ngModel)]="segment" class="ion-padding-vertical" style="width:100%;padding-top:0px;">
+  <ion-segment scrollable="true" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="GENERAL">
       <ion-label>{{"STATISTIC_TAB_GENERAL" | translate }}
       </ion-label>
@@ -18,12 +18,10 @@
       <ion-label>{{"STATISTIC_TAB_BREWS" | translate }}
       </ion-label>
     </ion-segment-button>
-    @if (false) {
-      <ion-segment-button value="BEANS" (click)="loadBeanCharts()">
-        <ion-label>{{"STATISTIC_TAB_BEANS" | translate }}
-        </ion-label>
-      </ion-segment-button>
-    }
+    <ion-segment-button value="BEANS" (click)="loadBeanCharts()">
+      <ion-label>{{"STATISTIC_TAB_BEANS" | translate }}
+      </ion-label>
+    </ion-segment-button>
     <ion-segment-button value="PREPARATIONS" (click)="loadPreparationCharts()">
       <ion-label>{{"STATISTIC_TAB_PREPARATIONS" | translate }}
       </ion-label>
@@ -144,6 +142,38 @@
       }
       @case ('BEANS') {
         <div>
+          <ion-card>
+            <ion-card-header class="card-background"
+              style="font-size: 1.2em;text-align:center;">{{"STATISTICS_BEANS_BY_COUNTRY" | translate}}
+            </ion-card-header>
+            <ion-card-content class="ion-margin-top">
+              <canvas #beansByCountryChart></canvas>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-header class="card-background"
+              style="font-size: 1.2em;text-align:center;">{{"STATISTICS_BEANS_BY_PROCESSING" | translate}}
+            </ion-card-header>
+            <ion-card-content class="ion-margin-top">
+              <canvas #beansByProcessingChart></canvas>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-header class="card-background"
+              style="font-size: 1.2em;text-align:center;">{{"STATISTICS_BEANS_BY_ROASTER" | translate}}
+            </ion-card-header>
+            <ion-card-content class="ion-margin-top">
+              <canvas #beansByRoasterChart></canvas>
+            </ion-card-content>
+          </ion-card>
+          <ion-card>
+            <ion-card-header class="card-background"
+              style="font-size: 1.2em;text-align:center;">{{"STATISTICS_BEANS_AVG_RATING_BY_COUNTRY" | translate}}
+            </ion-card-header>
+            <ion-card-content class="ion-margin-top">
+              <canvas #beansAvgRatingByCountryChart></canvas>
+            </ion-card-content>
+          </ion-card>
         </div>
       }
       @case ('PREPARATIONS') {

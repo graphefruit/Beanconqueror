@@ -1512,4 +1512,22 @@
     "NO_AUTOMATIC_BACKUPS_FOUND": "Ingen automatiske sikkerhetskopier funnet",
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Hvis du har opplevd datatap og ikke finner noen data her, kan du bruke de offisielle kundeservice-kanalene.",
     "IMPORT_AUTOMATIC_BACKUP_FILE": "Importer automatisk sikkerhetskopifil"
+,
+, "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
+"STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
+"STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
+"STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
+"PAGE_STATISTICS_AVG_RATING": "Average Rating"
+
+}  "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
+  "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
+  "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
+  "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
+  "PAGE_STATISTICS_AVG_RATING": "Average Rating"
+, "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
+"STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
+"STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
+"STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
+"PAGE_STATISTICS_AVG_RATING": "Average Rating"
+
 }
