@@ -49,7 +49,7 @@ import { VariaAkuScale } from '../../classes/devices/variaAku';
 import { UIHelper } from '../uiHelper';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
-import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
+import { EspressiScale } from '../../classes/devices/espressiScale';
 
 declare var ble: any;
 declare var cordova: any;
@@ -657,6 +657,10 @@ export class CoffeeBluetoothDevicesService {
       this.logger.log('BleManager - We found a decent scale');
       return { id: deviceScale.id, type: ScaleType.DECENT };
     }
+    if (EspressiScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a espressiscale scale');
+      return { id: deviceScale.id, type: ScaleType.ESPRESSI };
+    }
     if (LunarScale.test(deviceScale)) {
       this.logger.log('BleManager - We found a lunar/acaia scale');
       return { id: deviceScale.id, type: ScaleType.LUNAR };
@@ -1236,7 +1240,6 @@ export class CoffeeBluetoothDevicesService {
                 this.getRefractometerDevice().device_id,
               false,
             );
-
           } catch (ex) {}
         },
         () => {

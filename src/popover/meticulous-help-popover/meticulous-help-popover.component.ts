@@ -8,6 +8,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'app-meticulous-help-popover',
   templateUrl: './meticulous-help-popover.component.html',
   styleUrls: ['./meticulous-help-popover.component.scss'],
+  standalone: false,
 })
 export class MeticulousHelpPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'meticulous-help-popover';
@@ -19,7 +20,7 @@ export class MeticulousHelpPopoverComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -30,7 +31,7 @@ export class MeticulousHelpPopoverComponent implements OnInit {
         9999,
         (processNextHandler) => {
           // Don't do anything.
-        }
+        },
       );
 
       const delayIntv = setInterval(() => {
@@ -57,7 +58,7 @@ export class MeticulousHelpPopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      MeticulousHelpPopoverComponent.POPOVER_ID
+      MeticulousHelpPopoverComponent.POPOVER_ID,
     );
   }
 }

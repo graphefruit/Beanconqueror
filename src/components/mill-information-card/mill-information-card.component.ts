@@ -21,6 +21,7 @@ import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
   styleUrls: ['./mill-information-card.component.scss'],
+  standalone: false,
 })
 export class MillInformationCardComponent implements OnInit {
   @Input() public mill: Mill;

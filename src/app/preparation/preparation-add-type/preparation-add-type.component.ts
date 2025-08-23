@@ -18,6 +18,7 @@ import TrackContentImpression from '../../../data/tracking/trackContentImpressio
   selector: 'preparation-add-type',
   templateUrl: './preparation-add-type.component.html',
   styleUrls: ['./preparation-add-type.component.scss'],
+  standalone: false,
 })
 export class PreparationAddTypeComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-add-type';

@@ -8,6 +8,7 @@ import { BEAN_POPOVER_ADD_ACTION } from '../../../enums/beans/beanPopoverAddActi
   selector: 'app-bean-popover-add',
   templateUrl: './bean-popover-add.component.html',
   styleUrls: ['./bean-popover-add.component.scss'],
+  standalone: false,
 })
 export class BeanPopoverAddComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-add';
@@ -26,14 +27,14 @@ export class BeanPopoverAddComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       _type,
-      BeanPopoverAddComponent.COMPONENT_ID
+      BeanPopoverAddComponent.COMPONENT_ID,
     );
   }
   public async dismiss() {
     this.modalController.dismiss(
       undefined,
       undefined,
-      BeanPopoverAddComponent.COMPONENT_ID
+      BeanPopoverAddComponent.COMPONENT_ID,
     );
   }
 }

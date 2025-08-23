@@ -9,6 +9,7 @@ import { IGraph } from '../../../../interfaces/graph/iGraph';
   selector: 'app-graph-popover-actions',
   templateUrl: './graph-popover-actions.component.html',
   styleUrls: ['./graph-popover-actions.component.scss'],
+  standalone: false,
 })
 export class GraphPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'graph-popover-actions';
@@ -31,14 +32,14 @@ export class GraphPopoverActionsComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       _type,
-      GraphPopoverActionsComponent.COMPONENT_ID
+      GraphPopoverActionsComponent.COMPONENT_ID,
     );
   }
   public async dismiss() {
     this.modalController.dismiss(
       undefined,
       undefined,
-      GraphPopoverActionsComponent.COMPONENT_ID
+      GraphPopoverActionsComponent.COMPONENT_ID,
     );
   }
 }

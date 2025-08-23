@@ -21,16 +21,19 @@
         {{"CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="settings?.show_archived_mills" value="archive">
+    @if (settings?.show_archived_mills) {
+<ion-segment-button value="archive">
       <ion-label>
         {{"TAB_ARCHIVE" | translate }}
       </ion-label>
     </ion-segment-button>
+}
   </ion-segment>
 
-  <div [ngSwitch]="segment">
-    <div *ngSwitchCase="'open'">
-      <div *ngIf="openMillsView?.length == 0" class="ion-padding ion-text-center">
+  @switch (segment) {
+    @case ('open') {
+      @if (openMillsView?.length == 0) {
+<div class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
         </div>
@@ -38,12 +41,16 @@
           {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
         </div>
       </div>
+}
       <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" min-row-height="263">
-        <mill-information-card *ngFor="let mill of openScroll.items" (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+        @for (mill of openScroll.items; track mill) {
+<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+}
       </ag-virtual-scroll>
-    </div>
-    <div *ngSwitchCase="'archive'">
-      <div *ngIf="archiveMillsView?.length == 0" class="ion-padding ion-text-center">
+    }
+    @case ('archive') {
+      @if (archiveMillsView?.length == 0) {
+<div class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
         </div>
@@ -51,12 +58,15 @@
           {{"PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING" | translate}}
         </div>
       </div>
+}
 
       <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" min-row-height="263">
-        <mill-information-card *ngFor="let mill of archivedScroll.items" (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+        @for (mill of archivedScroll.items; track mill) {
+<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+}
       </ag-virtual-scroll>
-    </div>
-  </div>
+    }
+  }
 
 
 </ion-content>

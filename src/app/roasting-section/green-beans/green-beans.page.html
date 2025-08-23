@@ -20,60 +20,76 @@
       <ion-label>{{"ROASTING_SECTION.GREEN_BEAN.ROASTABLE" | translate}}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="settings?.show_archived_green_beans" value="archiv">
-      <ion-label>{{"TAB_ARCHIVE" | translate}}
-      </ion-label>
-    </ion-segment-button>
+    @if (settings?.show_archived_green_beans) {
+      <ion-segment-button value="archiv">
+        <ion-label>{{"TAB_ARCHIVE" | translate}}
+        </ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>
-  <div [ngSwitch]="bean_segment">
-    <div *ngSwitchCase="'open'">
-      <div *ngIf="openBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+  @switch (bean_segment) {
+    @case ('open') {
+      @if (openBeans?.length > 0 || isFilterActive()) {
+        <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-        <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-        <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-          <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
-                    slot="icon-only"></ion-icon>
-          <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-sort-inactive"
-                    slot="icon-only"></ion-icon>
-        </ion-button>
-      </div>
-      <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
-        <div>
-          <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
-        </div>
-        <div class="text-color-inactive ion-margin-top">
-          {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
-        </div>
-      </div>
-      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" min-row-height="165">
-        <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of openScroll.items" [greenBean]="bean"></green-bean-information>
-      </ag-virtual-scroll>
-    </div>
-    <div *ngIf="settings?.show_archived_beans">
-      <div *ngSwitchCase="'archiv'">
-        <div *ngIf="finishedBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-
-          <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-            <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
-                      slot="icon-only"></ion-icon>
-            <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-sort-inactive"
-                      slot="icon-only"></ion-icon>
+            @if (isFilterActive()) {
+              <ion-icon name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+            } @else {
+              <ion-icon name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+            }
           </ion-button>
         </div>
-        <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
+      }
+      @if (openBeans.length == 0) {
+        <div class="ion-padding ion-text-center">
           <div>
             <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
           </div>
           <div class="text-color-inactive ion-margin-top">
-            {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
+            {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
           </div>
         </div>
+      }
+      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" min-row-height="165">
+        @for (bean of openScroll.items; track bean) {
+          <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean"></green-bean-information>
+        }
+      </ag-virtual-scroll>
+    }
+    @case ('archiv') {
+      @if (settings?.show_archived_beans) {
+        @if (finishedBeans?.length > 0 || isFilterActive()) {
+          <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+
+            <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
+              @if (isFilterActive()) {
+                <ion-icon name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+              } @else {
+                <ion-icon name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+              }
+            </ion-button>
+          </div>
+        }
+        @if (finishedBeans.length == 0) {
+          <div class="ion-padding ion-text-center">
+            <div>
+              <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+            </div>
+            <div class="text-color-inactive ion-margin-top">
+              {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
+            </div>
+          </div>
+        }
 
         <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="'100vh'" min-row-height="165">
-          <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of archivedScroll.items" [greenBean]="bean"></green-bean-information>
+          @for (bean of archivedScroll.items; track bean) {
+            <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean"></green-bean-information>
+          }
         </ag-virtual-scroll>
-      </div>
-    </div>
-  </div>
+      }
+    }
+  }
 </ion-content>

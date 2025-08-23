@@ -18,6 +18,7 @@ import { UIAlert } from '../../../services/uiAlert';
   selector: 'app-brew-modal-import-shot-meticulous',
   templateUrl: './brew-modal-import-shot-meticulous.component.html',
   styleUrls: ['./brew-modal-import-shot-meticulous.component.scss'],
+  standalone: false,
 })
 export class BrewModalImportShotMeticulousComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-meticulous';

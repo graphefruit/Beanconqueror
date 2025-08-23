@@ -11,29 +11,37 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col *ngFor="let key of water_type_enums | keys" size="6">
-        <ion-card (click)="chooseWater(key)" class="water-add-card" tappable>
-          <ion-card-content *ngIf="key !== 'CUSTOM_WATER'">
-
-            <div class="ion-text-center">
-              <ion-icon *ngIf="key.startsWith('EMPIRICAL') === false" name="{{data.getIcon(key)}}" slot="icon-only"></ion-icon>
-              <img src='assets/img/{{key.toLowerCase()}}.png' class='empirical-water' *ngIf="key.startsWith('EMPIRICAL') === true" />
-            </div>
-
-            <div class="ion-text-center">
-              {{'WATER_TYPE_' + key | translate}}
-            </div>
-          </ion-card-content>
-          <ion-card-content *ngIf="key === 'CUSTOM_WATER'">
-            <div class="ion-text-center">
-              <ion-icon name="water-outline" slot="icon-only" style='width:64px!important;'></ion-icon>
-            </div>
-            <div class="ion-text-center" style="line-height:initial;">
-              {{'WATER_TYPE_ADD_CUSTOM' | translate}}
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+      @for (key of water_type_enums | keys; track key) {
+        <ion-col size="6">
+          <ion-card (click)="chooseWater(key)" class="water-add-card" tappable>
+            @if (key !== 'CUSTOM_WATER') {
+              <ion-card-content>
+                <div class="ion-text-center">
+                  @if (key.startsWith('EMPIRICAL') === false) {
+                    <ion-icon name="{{data.getIcon(key)}}" slot="icon-only"></ion-icon>
+                  }
+                  @if (key.startsWith('EMPIRICAL') === true) {
+                    <img src='assets/img/{{key.toLowerCase()}}.png' class='empirical-water' />
+                  }
+                </div>
+                <div class="ion-text-center">
+                  {{'WATER_TYPE_' + key | translate}}
+                </div>
+              </ion-card-content>
+            }
+            @if (key === 'CUSTOM_WATER') {
+              <ion-card-content>
+                <div class="ion-text-center">
+                  <ion-icon name="water-outline" slot="icon-only" style='width:64px!important;'></ion-icon>
+                </div>
+                <div class="ion-text-center" style="line-height:initial;">
+                  {{'WATER_TYPE_ADD_CUSTOM' | translate}}
+                </div>
+              </ion-card-content>
+            }
+          </ion-card>
+        </ion-col>
+      }
     </ion-row>
   </ion-grid>
 </ion-content>

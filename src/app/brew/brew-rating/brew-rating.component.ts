@@ -12,6 +12,7 @@ import { UIBrewStorage } from '../../../services/uiBrewStorage';
   selector: 'app-brew-rating',
   templateUrl: './brew-rating.component.html',
   styleUrls: ['./brew-rating.component.scss'],
+  standalone: false,
 })
 export class BrewRatingComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-rating';
@@ -27,7 +28,7 @@ export class BrewRatingComponent implements OnInit {
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage
+    private readonly uiBrewStorage: UIBrewStorage,
   ) {}
 
   public pinFormatter(value: any) {
@@ -64,7 +65,7 @@ export class BrewRatingComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewRatingComponent.COMPONENT_ID
+      BrewRatingComponent.COMPONENT_ID,
     );
   }
 }

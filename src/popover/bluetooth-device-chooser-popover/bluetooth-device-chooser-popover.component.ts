@@ -23,6 +23,7 @@ import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
   selector: 'app-bluetooth-device-chooser-popover',
   templateUrl: './bluetooth-device-chooser-popover.component.html',
   styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
+  standalone: false,
 })
 export class BluetoothDeviceChooserPopoverComponent
   implements OnInit, OnDestroy
@@ -134,8 +135,9 @@ export class BluetoothDeviceChooserPopoverComponent
           }
         }
         if (skipDevice === false) {
-          this.foundDevices.push(_device);
-          this.checkChanges();
+          this.ngZone.run(() => {
+            this.foundDevices = [...this.foundDevices, _device];
+          });
         }
       });
   }

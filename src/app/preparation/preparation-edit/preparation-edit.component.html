@@ -10,65 +10,75 @@
 </ion-header>
 <ion-content>
 
-    <form #editBeanForm="ngForm" novalidate>
-      <ion-card class="popover">
-        <ion-item>
-          <ion-select label-placement="stacked" label='{{"PREPARATION_TYPE" | translate}}' #type="ngModel" [(ngModel)]="data.type" cancelText="{{'CANCEL'| translate }}" name="type"
-                      (ngModelChange)="typeChanged()"  okText="{{'CHOOSE'| translate }}">
-            <ion-select-option *ngFor="let key of preparationTypeEnum | keys"
-                               value="{{key}}">{{'PREPARATION_TYPE_' + key | translate}}</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-input label-placement="stacked" label='{{"PREPARATION_TYPE_NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
-                     placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
-                     spellcheck="false" type="text">
-          </ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-select label-placement="stacked" label='{{"PREPARATION_TYPE_STYLE" | translate}}' #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
-                      name="style_type" okText="{{'CHOOSE'| translate }}">
-            <ion-select-option value="{{PREPARATION_STYLE_TYPE.POUR_OVER}}">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</ion-select-option>
-            <ion-select-option value="{{PREPARATION_STYLE_TYPE.ESPRESSO}}">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</ion-select-option>
-            <ion-select-option value="{{PREPARATION_STYLE_TYPE.FULL_IMMERSION}}">{{"PREPARATION_STYLE_FULL_IMMERSION" | translate}}</ion-select-option>
-            <ion-select-option value="{{PREPARATION_STYLE_TYPE.PERCOLATION}}">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</ion-select-option>
-          </ion-select>
-        </ion-item>
+  <form #editBeanForm="ngForm" novalidate>
+    <ion-card class="popover">
+      <ion-item>
+        <ion-select label-placement="stacked" label='{{"PREPARATION_TYPE" | translate}}' #type="ngModel" [(ngModel)]="data.type" cancelText="{{'CANCEL'| translate }}" name="type"
+          (ngModelChange)="typeChanged()"  okText="{{'CHOOSE'| translate }}">
+          @for (key of preparationTypeEnum | keys; track key) {
+            <ion-select-option
+            value="{{key}}">{{'PREPARATION_TYPE_' + key | translate}}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-input label-placement="stacked" label='{{"PREPARATION_TYPE_NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
+          placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
+          spellcheck="false" type="text">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label-placement="stacked" label='{{"PREPARATION_TYPE_STYLE" | translate}}' #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
+          name="style_type" okText="{{'CHOOSE'| translate }}">
+          <ion-select-option value="{{PREPARATION_STYLE_TYPE.POUR_OVER}}">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</ion-select-option>
+          <ion-select-option value="{{PREPARATION_STYLE_TYPE.ESPRESSO}}">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</ion-select-option>
+          <ion-select-option value="{{PREPARATION_STYLE_TYPE.FULL_IMMERSION}}">{{"PREPARATION_STYLE_FULL_IMMERSION" | translate}}</ion-select-option>
+          <ion-select-option value="{{PREPARATION_STYLE_TYPE.PERCOLATION}}">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label id='preparationTools'>{{"PREPARATION_TOOLS" | translate}}</ion-label>
+        <ion-button [disabled]='data.tools.length <= 0' (click)="sortPreparationTools()" fill="clear" tappable>
+          <ion-icon class="font-size-24" color="accent" name="swap-vertical-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-icon name="information-outline" slot="end"
+        tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'></ion-icon>
+      </ion-item>
+      <ion-item style="margin-top: -10px;">
+        <ion-input aria-labelledby='preparationTools' (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
+        <ion-button (click)="addTool()" fill="clear" tappable>
+          <ion-icon class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <div class="ion-padding-horizontal">
+        @for (tool of getActiveTools(); track tool; let i = $index) {
+          <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
+        }
+      </div>
+      @if (getArchivedTools().length > 0) {
         <ion-item lines="none">
-          <ion-label id='preparationTools'>{{"PREPARATION_TOOLS" | translate}}</ion-label>
-          <ion-button [disabled]='data.tools.length <= 0' (click)="sortPreparationTools()" fill="clear" tappable>
-            <ion-icon class="font-size-24" color="accent" name="swap-vertical-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-          <ion-icon name="information-outline" slot="end"
-                    tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'></ion-icon>
-        </ion-item>
-        <ion-item style="margin-top: -10px;">
-          <ion-input aria-labelledby='preparationTools' (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
-          <ion-button (click)="addTool()" fill="clear" tappable>
-            <ion-icon class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-item>
-        <div class="ion-padding-horizontal">
-          <ion-chip (click)="editTool(tool)" *ngFor="let tool of getActiveTools();let i=index;">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
-        </div>
-        <ion-item lines="none" *ngIf="getArchivedTools().length > 0">
           <ion-label>{{"ARCHIVED_TOOLS" | translate}}</ion-label>
         </ion-item>
-        <div *ngIf="getArchivedTools().length > 0" class="ion-padding-horizontal">
-          <ion-chip (click)="editTool(tool)" *ngFor="let tool of getArchivedTools();let i=index;">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
+      }
+      @if (getArchivedTools().length > 0) {
+        <div class="ion-padding-horizontal">
+          @for (tool of getArchivedTools(); track tool; let i = $index) {
+            <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
+          }
         </div>
-        <ion-item>
-          <ion-checkbox  justify="start" label-placement="start" #finished="ngModel" [(ngModel)]="data.finished" name="finished">{{"ARCHIVED"|translate}}?</ion-checkbox>
-        </ion-item>
-        <ion-item lines="none">
-          <ion-label id='notes' position="stacked">{{"NOTES" | translate}}</ion-label>
-          <ion-textarea style='margin-top:20px;' aria-labelledby='notes' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
-                        placeholder="{{'PREPARATION.PLACE_HOLDER.NOTES' | translate}}"
-                        autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
-        </ion-item>
-        <photo-add [(data)]="data" ></photo-add>
-      </ion-card>
-    </form>
+      }
+      <ion-item>
+        <ion-checkbox  justify="start" label-placement="start" #finished="ngModel" [(ngModel)]="data.finished" name="finished">{{"ARCHIVED"|translate}}?</ion-checkbox>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label id='notes' position="stacked">{{"NOTES" | translate}}</ion-label>
+        <ion-textarea style='margin-top:20px;' aria-labelledby='notes' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+          placeholder="{{'PREPARATION.PLACE_HOLDER.NOTES' | translate}}"
+        autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
+      </ion-item>
+      <photo-add [(data)]="data" ></photo-add>
+    </ion-card>
+  </form>
 
 </ion-content>
 <ion-footer class="ion-no-border">
@@ -78,7 +88,7 @@
     </ion-col>
     <ion-col>
       <ion-button (click)="edit(editBeanForm)" color="accent" expand="block"
-                  type="submit">{{"SAVE" | translate}}</ion-button>
+      type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

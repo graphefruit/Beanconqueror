@@ -1,32 +1,52 @@
 <ion-header>
-  <ion-title *ngIf="slide ===1" class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_TITLE" | translate}}</ion-title>
-  <ion-title *ngIf="slide ===2"
-             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_BEAN_HEADLINE" | translate}}</ion-title>
-  <ion-title *ngIf="slide ===3"
-             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_PREPARATION_HEADLINE" | translate}}</ion-title>
-  <ion-title *ngIf="slide === 4"
-             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_MILL_HEADLINE" | translate}}</ion-title>
-  <ion-title *ngIf="slide === 5"
-             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_LETS_START_HEADLINE" | translate}}</ion-title>
+  @if (slide ===1) {
+    <ion-title class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_TITLE" | translate}}</ion-title>
+  }
+  @if (slide ===2) {
+    <ion-title
+    class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_BEAN_HEADLINE" | translate}}</ion-title>
+  }
+  @if (slide ===3) {
+    <ion-title
+    class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_PREPARATION_HEADLINE" | translate}}</ion-title>
+  }
+  @if (slide === 4) {
+    <ion-title
+    class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_MILL_HEADLINE" | translate}}</ion-title>
+  }
+  @if (slide === 5) {
+    <ion-title
+    class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_LETS_START_HEADLINE" | translate}}</ion-title>
+  }
 
 </ion-header>
 <ion-content>
 
-  <div *ngIf="slide === 1" class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
-    <ion-icon name="beanconqueror-welcome-start"></ion-icon>
-  </div>
-  <div *ngIf="slide === 2" class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
-    <ion-icon name="beanconqueror-welcome-bean-package"></ion-icon>
-  </div>
-  <div *ngIf="slide === 3" class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
-    <ion-icon name="beanconqueror-welcome-preparation"></ion-icon>
-  </div>
-  <div *ngIf="slide === 4" class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
-    <ion-icon name="beanconqueror-welcome-grinder"></ion-icon>
-  </div>
-  <div *ngIf="slide === 5" class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
-    <ion-icon name="beanconqueror-welcome-start-last-page"></ion-icon>
-  </div>
+  @if (slide === 1) {
+    <div class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
+      <ion-icon name="beanconqueror-welcome-start"></ion-icon>
+    </div>
+  }
+  @if (slide === 2) {
+    <div class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
+      <ion-icon name="beanconqueror-welcome-bean-package"></ion-icon>
+    </div>
+  }
+  @if (slide === 3) {
+    <div class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
+      <ion-icon name="beanconqueror-welcome-preparation"></ion-icon>
+    </div>
+  }
+  @if (slide === 4) {
+    <div class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
+      <ion-icon name="beanconqueror-welcome-grinder"></ion-icon>
+    </div>
+  }
+  @if (slide === 5) {
+    <div class="ion-text-center" style="padding-top:35px;height:100%;position:relative;">
+      <ion-icon name="beanconqueror-welcome-start-last-page"></ion-icon>
+    </div>
+  }
 </ion-content>
 <!--We just add 50% height for first slide of analytics, else the image wouldn't be displayed -->
 <ion-footer  class="ion-no-border" [style.maxHeight]="slide===1 ? '50%' : 'inherit'" style="overflow:auto;">
@@ -47,7 +67,7 @@
           </ion-col>
           <ion-col size="6">
             <ion-button (click)="understoodAnalytics()" color="accent"
-                        expand="block">{{"ACTIVATE" | translate}}</ion-button>
+            expand="block">{{"ACTIVATE" | translate}}</ion-button>
           </ion-col>
         </ion-row>
       </div>
@@ -65,13 +85,13 @@
         <ion-row class="ion-padding-top">
           <ion-col size="12">
             <ion-button (click)="addBean()" color="accent"
-                        expand="block">{{"WELCOME_PAGE_BEAN_ADD" | translate}}</ion-button>
+            expand="block">{{"WELCOME_PAGE_BEAN_ADD" | translate}}</ion-button>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col size="12">
             <ion-button (click)="skip()" color="dark" expand="block"
-                        fill="clear">{{"SKIP" | translate}}</ion-button>
+            fill="clear">{{"SKIP" | translate}}</ion-button>
           </ion-col>
         </ion-row>
       </div>
@@ -89,13 +109,13 @@
         <ion-row class="ion-padding-top">
           <ion-col size="12">
             <ion-button (click)="addPreparation()" color="accent"
-                        expand="block">{{"WELCOME_PAGE_PREPARATION_ADD" | translate}}</ion-button>
+            expand="block">{{"WELCOME_PAGE_PREPARATION_ADD" | translate}}</ion-button>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col size="12">
             <ion-button (click)="skip()" color="dark" expand="block"
-                        fill="clear">{{"SKIP" | translate}}</ion-button>
+            fill="clear">{{"SKIP" | translate}}</ion-button>
           </ion-col>
         </ion-row>
       </div>
@@ -113,13 +133,13 @@
         <ion-row class="ion-padding-top">
           <ion-col size="12">
             <ion-button (click)="addMill()" color="accent"
-                        expand="block">{{"WELCOME_PAGE_MILL_ADD" | translate}}</ion-button>
+            expand="block">{{"WELCOME_PAGE_MILL_ADD" | translate}}</ion-button>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col size="12">
             <ion-button (click)="skip()" color="dark" expand="block"
-                        fill="clear">{{"SKIP" | translate}}</ion-button>
+            fill="clear">{{"SKIP" | translate}}</ion-button>
           </ion-col>
         </ion-row>
       </div>

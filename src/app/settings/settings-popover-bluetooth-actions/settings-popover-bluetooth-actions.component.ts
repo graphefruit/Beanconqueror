@@ -18,6 +18,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetoo
   selector: 'app-settings-popover-bluetooth-actions',
   templateUrl: './settings-popover-bluetooth-actions.component.html',
   styleUrls: ['./settings-popover-bluetooth-actions.component.scss'],
+  standalone: false,
 })
 export class SettingsPopoverBluetoothActionsComponent implements OnInit {
   public static COMPONENT_ID = 'settings-popover-bluetooth-actions';
@@ -30,7 +31,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
     private readonly uiSettings: UISettingsStorage,
     private readonly bluetoothService: CoffeeBluetoothDevicesService,
     private readonly uiAlert: UIAlert,
-    private readonly eventQueue: EventQueueService
+    private readonly eventQueue: EventQueueService,
   ) {
     this.settings = this.uiSettings.getSettings();
   }
@@ -54,11 +55,11 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
 
     if (_type === BluetoothTypes.SCALE) {
       this.eventQueue.dispatch(
-        new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
+        new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined),
       );
       if (this.settings.scale_id !== '' && this.bluetoothService.getScale()) {
         disconnected = await this.bluetoothService.disconnect(
-          this.settings.scale_id
+          this.settings.scale_id,
         );
       }
       if (disconnected) {
@@ -69,15 +70,15 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
       this.eventQueue.dispatch(
         new AppEvent(
           AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT,
-          undefined
-        )
+          undefined,
+        ),
       );
       if (
         this.settings.pressure_id !== '' &&
         this.bluetoothService.getPressureDevice()
       ) {
         disconnected = await this.bluetoothService.disconnectPressureDevice(
-          this.settings.pressure_id
+          this.settings.pressure_id,
         );
       }
 
@@ -89,15 +90,15 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
       this.eventQueue.dispatch(
         new AppEvent(
           AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
-          undefined
-        )
+          undefined,
+        ),
       );
       if (
         this.settings.temperature_id !== '' &&
         this.bluetoothService.getTemperatureDevice()
       ) {
         disconnected = await this.bluetoothService.disconnectTemperatureDevice(
-          this.settings.temperature_id
+          this.settings.temperature_id,
         );
       }
 
@@ -109,8 +110,8 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
       this.eventQueue.dispatch(
         new AppEvent(
           AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
-          undefined
-        )
+          undefined,
+        ),
       );
 
       if (
@@ -119,7 +120,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
       ) {
         disconnected =
           await this.bluetoothService.disconnectRefractometerDevice(
-            this.settings.refractometer_id
+            this.settings.refractometer_id,
           );
       }
 
@@ -175,7 +176,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
-        }
+        },
       );
       timeoutVar = setTimeout(async () => {
         this.uiAlert.hideLoadingSpinner();
@@ -219,7 +220,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
-        }
+        },
       );
       timeoutVar = setTimeout(async () => {
         if (subscrip) {
@@ -267,7 +268,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
-        }
+        },
       );
 
       timeoutVar = setTimeout(async () => {
@@ -317,7 +318,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
-        }
+        },
       );
 
       timeoutVar = setTimeout(async () => {

@@ -11,6 +11,7 @@ import TrackContentImpression from '../../../data/tracking/trackContentImpressio
   selector: 'mill-add',
   templateUrl: './mill-add.component.html',
   styleUrls: ['./mill-add.component.scss'],
+  standalone: false,
 })
 export class MillAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'mill-add';

@@ -1,6 +1,6 @@
 :host {
   ion-header {
-    background-color: #ffffff;
+    background-color: var(--ion-header-background-color);
   }
 
   .big-control-icon {
@@ -35,7 +35,7 @@
   }
 
   ion-footer {
-    background: #FFFFFF;
+    background: var(--ion-color-light);
     box-shadow: none;
   }
 
@@ -75,7 +75,7 @@
     margin: 0px;
 
     ion-card-header {
-      color: #FFFFFF;
+      color: var(--ion-text-color);
       background-color: var(--ion-color-accent) !important;
       font-size: 75px;
       padding: 2px;

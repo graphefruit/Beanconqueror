@@ -9,6 +9,7 @@ import { IBrewPageSort } from '../../../interfaces/brew/iBrewPageSort';
   selector: 'app-brew-sort',
   templateUrl: './brew-sort.component.html',
   styleUrls: ['./brew-sort.component.scss'],
+  standalone: false,
 })
 export class BrewSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'brew-sort';
@@ -25,7 +26,7 @@ export class BrewSortComponent implements OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ngOnInit() {
@@ -39,7 +40,7 @@ export class BrewSortComponent implements OnInit {
         bean_sort: undefined,
       },
       undefined,
-      BrewSortComponent.COMPONENT_ID
+      BrewSortComponent.COMPONENT_ID,
     );
   }
 
@@ -49,7 +50,7 @@ export class BrewSortComponent implements OnInit {
         brew_sort: this.uiHelper.copyData(this.filter),
       },
       undefined,
-      BrewSortComponent.COMPONENT_ID
+      BrewSortComponent.COMPONENT_ID,
     );
   }
 

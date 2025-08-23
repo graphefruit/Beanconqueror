@@ -113,8 +113,6 @@
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is used when enabled in settings, default off. Used for track your location where you brewed your coffee</string>
-	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>

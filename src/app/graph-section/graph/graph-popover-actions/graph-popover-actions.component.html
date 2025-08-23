@@ -14,10 +14,12 @@
       <ion-icon name="share-social-outline" slot="start"></ion-icon>
       <span>{{"SHARE" | translate}}</span>
     </ion-item>
-    <ion-item (click)="choose(getStaticActions().ARCHIVE)" *ngIf="data.finished === false" button tappable>
-      <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
-      <span>{{"ARCHIVE" | translate}}</span>
-    </ion-item>
+    @if (data.finished === false) {
+      <ion-item (click)="choose(getStaticActions().ARCHIVE)" button tappable>
+        <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
+        <span>{{"ARCHIVE" | translate}}</span>
+      </ion-item>
+    }
     <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
       <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
       <span>{{"DELETE" | translate}}</span>

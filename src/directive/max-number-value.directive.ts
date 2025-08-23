@@ -3,6 +3,7 @@ import { NgModel } from '@angular/forms';
 
 @Directive({
   selector: '[ngModel][max-number-value]',
+  standalone: false,
 })
 export class MaxNumberValueDirective {
   @Input('max-number-value') public value: string;

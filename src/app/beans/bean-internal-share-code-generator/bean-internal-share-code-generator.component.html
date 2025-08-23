@@ -1,49 +1,57 @@
 <ion-header translucent>
 </ion-header>
 <ion-content>
-  <ion-card *ngIf="bean?.internal_share_code">
-    <ion-item>
-      <ion-select label-placement="stacked" label='{{"BEAN_CODE_ACTION.TITLE" | translate}}*' #name="ngModel" [(ngModel)]="action" cancelText="{{'CANCEL'| translate }}"
-                  name="style_type" (ngModelChange)="generateQRCode()" okText="{{'CHOOSE'| translate }}">
-        <ion-select-option value="{{BEAN_CODE_ACTION.START_BREW}}">{{"BEAN_CODE_ACTION.START_BREW" | translate}}</ion-select-option>
-        <ion-select-option value="{{BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION}}">{{"BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION" | translate}}</ion-select-option>
-        <ion-select-option value="{{BEAN_CODE_ACTION.DETAIL}}">{{"BEAN_CODE_ACTION.DETAIL" | translate}}</ion-select-option>
-        <ion-select-option value="{{BEAN_CODE_ACTION.EDIT}}">{{"BEAN_CODE_ACTION.EDIT" | translate}}</ion-select-option>
-        <ion-select-option value="{{BEAN_CODE_ACTION.CHOOSE_ACTION}}">{{"BEAN_CODE_ACTION.CHOOSE_ACTION" | translate}}</ion-select-option>
-      </ion-select>
-    </ion-item>
+  @if (bean?.internal_share_code) {
+    <ion-card>
+      <ion-item>
+        <ion-select label-placement="stacked" label='{{"BEAN_CODE_ACTION.TITLE" | translate}}*' #name="ngModel" [(ngModel)]="action" cancelText="{{'CANCEL'| translate }}"
+                    name="style_type" (ngModelChange)="generateQRCode()" okText="{{'CHOOSE'| translate }}">
+          <ion-select-option value="{{BEAN_CODE_ACTION.START_BREW}}">{{"BEAN_CODE_ACTION.START_BREW" | translate}}</ion-select-option>
+          <ion-select-option value="{{BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION}}">{{"BEAN_CODE_ACTION.START_BREW_CHOOSE_PREPARATION" | translate}}</ion-select-option>
+          <ion-select-option value="{{BEAN_CODE_ACTION.DETAIL}}">{{"BEAN_CODE_ACTION.DETAIL" | translate}}</ion-select-option>
+          <ion-select-option value="{{BEAN_CODE_ACTION.EDIT}}">{{"BEAN_CODE_ACTION.EDIT" | translate}}</ion-select-option>
+          <ion-select-option value="{{BEAN_CODE_ACTION.CHOOSE_ACTION}}">{{"BEAN_CODE_ACTION.CHOOSE_ACTION" | translate}}</ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <div class="qrcodeImage center">
-      <img [src]="imageSrc" />
-    </div>
+      <div class="qrcodeImage center">
+        <img [src]="imageSrc" />
+      </div>
 
-    <ion-item *ngIf="qrData" (click)="download()">
-      <ion-label>
-        {{ 'DOWNLOAD_QR_CODE' | translate}}
-      </ion-label>
-      <ion-button
-                  tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-        <ion-icon class="ion-color-accent" name="download" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-item>
-    <ion-item *ngIf="qrData" (click)="writeNFC()">
-      <ion-label>
-        {{ 'NFC.WRITE_NFC_TAG' | translate}}
-      </ion-label>
-      <ion-button
-        tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-nfc-logo" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-item>
-    <ion-item *ngIf="qrData" (click)='copyNotesToClipboard()'>
-    <ion-label>
-      {{qrData}}
-    </ion-label>
-    <ion-button tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-      <ion-icon class="ion-color-accent" name="clipboard-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-    </ion-item>
-  </ion-card>
+      @if (qrData) {
+        <ion-item (click)="download()">
+          <ion-label>
+            {{ 'DOWNLOAD_QR_CODE' | translate}}
+          </ion-label>
+          <ion-button
+                      tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+            <ion-icon class="ion-color-accent" name="download" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+      }
+      @if (qrData) {
+        <ion-item (click)="writeNFC()">
+          <ion-label>
+            {{ 'NFC.WRITE_NFC_TAG' | translate}}
+          </ion-label>
+          <ion-button
+            tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+            <ion-icon class="ion-color-accent" name="beanconqueror-nfc-logo" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+      }
+      @if (qrData) {
+        <ion-item (click)='copyNotesToClipboard()'>
+        <ion-label>
+          {{qrData}}
+        </ion-label>
+        <ion-button tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+          <ion-icon class="ion-color-accent" name="clipboard-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        </ion-item>
+      }
+    </ion-card>
+  }
 </ion-content>
 <ion-footer class='ion-no-border'>
   <ion-row>

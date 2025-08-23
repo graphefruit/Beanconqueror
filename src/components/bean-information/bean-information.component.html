@@ -4,253 +4,373 @@
       <ion-row>
         <ion-col class="expand-fill-space" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
-            <ion-icon name="snow-outline" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)">&nbsp;</ion-icon>
-            <div *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN) === false && bean.frozenId' style="display: flex;">
-              (<ion-icon name="snow-outline"></ion-icon>)
-            </div>
-            <ion-icon name="flame-outline" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SELF_ROASTED) "></ion-icon>
-            <ion-icon name="qr-code-outline" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SCANNED_BEAN) "></ion-icon>
-            <ion-icon name="share-social-outline" *ngIf="bean.shared"></ion-icon>
-            <ion-icon name="heart" *ngIf="bean.favourite"></ion-icon>
+            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
+              <ion-icon name="snow-outline">&nbsp;</ion-icon>
+            }
+            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN) === false && bean.frozenId) {
+              <div style="display: flex;">
+                (<ion-icon name="snow-outline"></ion-icon>)
+              </div>
+            }
+            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SELF_ROASTED) ) {
+              <ion-icon name="flame-outline"></ion-icon>
+            }
+            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SCANNED_BEAN) ) {
+              <ion-icon name="qr-code-outline"></ion-icon>
+            }
+            @if (bean.shared) {
+              <ion-icon name="share-social-outline"></ion-icon>
+            }
+            @if (bean.favourite) {
+              <ion-icon name="heart"></ion-icon>
+            }
             <div class="ion-justify-content-start center-icons-to-text expand-fill-space">
               <div class="expand-fill-space no-overflow-ellipsis" style="margin-right:-5px;">
                 {{bean.name}}&nbsp;
-                <span *ngIf="!isBeanRoastUnknown() && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.bean_roasting_type])">
-                  ({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})
-                </span>
+                @if (!isBeanRoastUnknown() && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.bean_roasting_type])) {
+                  <span>
+                    ({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})
+                  </span>
+                }
               </div>
             </div>
           </div>
         </ion-col>
         <ion-col size="auto" class="stacked-info children-force-newline hide-if-empty">
-          <div *ngIf='bean.frozenId' class="ion-justify-content-end center-icons-to-text frozen-id-label">
-            <ion-icon name="pricetag-outline"></ion-icon>
-            <div>
-              {{bean.frozenId}}
+          @if (bean.frozenId) {
+            <div class="ion-justify-content-end center-icons-to-text frozen-id-label">
+              <ion-icon name="pricetag-outline"></ion-icon>
+              <div>
+                {{bean.frozenId}}
+              </div>
             </div>
-          </div>
-          <ngx-stars #beanStars *ngIf="bean?.roast_range !== 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roast_range])" [initialStars]="bean.roast_range" [readonly]="true"
-                     [size]="1" class="bean-display ion-float-right"></ngx-stars>
-          <ngx-stars #beanRating *ngIf="bean?.rating !== 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === false" [color]="'#BFB9B0'" [initialStars]="bean.rating"
-                     [maxStars]="5" [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
-          <div *ngIf="bean?.rating > 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.rating])  && hasCustomRatingRange() === true" class="ion-text-right">
+          }
+          @if (bean?.roast_range !== 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roast_range])) {
+            <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true"
+            [size]="1" class="bean-display ion-float-right"></ngx-stars>
+          }
+          @if (bean?.rating !== 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === false) {
+            <ngx-stars #beanRating [color]="'#BFB9B0'" [initialStars]="bean.rating"
+            [maxStars]="5" [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
+          }
+          @if (bean?.rating > 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.rating])  && hasCustomRatingRange() === true) {
+            <div class="ion-text-right">
               <ion-badge>{{bean.rating| toFixed: 2}}</ion-badge>
-          </div>
+            </div>
+          }
         </ion-col>
-        <ion-col size="1" *ngIf="showActions">
-          <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
-            <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-col>
+        @if (showActions) {
+          <ion-col size="1">
+            <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
+              <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-col>
+        }
       </ion-row>
-      <div *ngIf="collapsed" style='height:10px;'></div>
-      <ion-row *ngIf='!collapsed'>
-        <ion-col>
-          <hr/>
-        </ion-col>
-      </ion-row>
+      @if (collapsed) {
+        <div style='height:10px;'></div>
+      }
+      @if (!collapsed) {
+        <ion-row>
+          <ion-col>
+            <hr/>
+          </ion-col>
+        </ion-row>
+      }
     </ion-grid>
 
-    <ion-grid  *ngIf="!collapsed" class="no-ion-col-vertical-padding limit-grid-overflow">
-      <ion-row class="ion-padding-bottom-half">
-        <ion-col [size]="((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments]))?9:12" class="ion-no-padding-right">
-          <ion-grid class="ion-no-padding">
-            <ion-row *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_FROZEN_INFORMATION)'>
-              <ion-col *ngIf="bean.frozenDate" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_DATE" | translate}}</ion-label>
-                <ion-text>{{bean.frozenDate | formatDate:[settings?.date_format]}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean.unfrozenDate" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_UNFROZEN_DATE" | translate}}</ion-label>
-                <ion-text>{{bean.unfrozenDate | formatDate:[settings?.date_format]}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean.frozenStorageType && bean.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}</ion-label>
-                <ion-text>{{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.frozenNote !== ''" size="12">
-                <ion-label class="card-headline">{{'BEAN_DATA_FROZEN_NOTE' | translate}}</ion-label><br/>
-                <ion-text><pre>{{bean?.frozenNote}}</pre></ion-text>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roastingDate])" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
-                <br/>
-
-                <ion-text *ngIf="bean?.roastingDate">
-                  {{bean.roastingDate | formatDate:[settings?.date_format]}}</ion-text>
-                <ion-text *ngIf="!bean?.roastingDate">
-                  -
-                </ion-text>
-              </ion-col>
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.bestDate])" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_BEST_DATE" | translate}}</ion-label>
-                <br/>
-
-                <ion-text *ngIf="bean?.bestDate">
-                  {{bean.bestDate | formatDate:[settings?.date_format]}}</ion-text>
-                <ion-text *ngIf="!bean?.bestDate">
-                  -
-                </ion-text>
-              </ion-col>
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.openDate])" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_OPEN_DATE" | translate}}</ion-label>
-                <br/>
-
-                <ion-text *ngIf="bean?.openDate">
-                  {{bean.openDate | formatDate:[settings?.date_format]}}</ion-text>
-                <ion-text *ngIf="!bean?.openDate">
-                  -
-                </ion-text>
-              </ion-col>
-
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roaster])" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
-                <br/>
-
-                <ion-text *ngIf="bean.roaster">
-                  {{bean.roaster}}</ion-text>
-                <ion-text *ngIf="!bean.roaster">
-                  -
-                </ion-text>
-              </ion-col>
-
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roast])" size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME_TYPE" | translate}}</ion-label>
-                <br/>
-
-                <ion-text
-                  *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
-                  {{bean.roast_custom}}</ion-text>
-                <ion-text
-                  *ngIf="bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
-                  {{roast_enum[bean.roast]}}
-                </ion-text>
-                <ion-text *ngIf=" bean.roast === getRoastEnum(roast_enum.UNKNOWN)">
-                  -
-                </ion-text>
-              </ion-col>
-              <ion-col size="6">
-                <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label>
-                <br/>
-                <ion-text>{{uiBrewsCount}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roastingDate])" size="6">
-                <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label>
-                <br/>
-                <ion-text *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)  === 1">{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
-                <ion-text *ngIf="!((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1)">{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAYS_OLD" | translate}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.weight])" size="6">
-                <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
-                <br/>
-                <ion-text class='break-whitespaces'
-                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: uiUsedWeightCount | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - uiUsedWeightCount | number : '.0-2'}">{{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_CUSTOM_FLAVORS) || (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS))" size="12">
-                <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
-                <ion-text class="ion-text-wrap">{{uiCuppedBrewFlavors}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.buyDate !== '' &&(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.buyDate])" size="6">
-                <ion-label class="card-headline">{{'BEAN_DATA_BUY_DATE' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.buyDate | formatDate:[settings?.date_format]}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.beanMix])" size="6">
-                <ion-label class="card-headline">{{'BEAN_SORT_MIX' | translate}}</ion-label><br/>
-                <ion-text>{{"BEAN_MIX_" + bean.beanMix | translate}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.cost > 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.cost])" size="6">
-                <ion-label class="card-headline">{{'BEAN_DATA_COST' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.cost}}<span *ngIf='(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.SHOW_COST_PER_KG)'>&nbsp;({{uiCalculatedCostPerKG}}&nbsp;{{uiCurrencySymbol}}/kg)</span></ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.cupping_points !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.cupping_points])" size="6">
-                <ion-label class="card-headline">{{'BEAN_DATA_CUPPING_POINTS' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.cupping_points}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.decaffeinated])" size="6">
-                <ion-label class="card-headline">{{'BEAN_DATA_DECAFFEINATED' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.decaffeinated?('YES' | translate):('NO' | translate)}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.url !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.url])" size="6">
-                <ion-label class="card-headline">{{'BEAN_DATA_URL' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.url}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.ean_article_number !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.ean_article_number])" size="6">
-                <ion-label class="card-headline">{{'BEAN_DATA_EAN' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.ean_article_number}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.aromatics !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.aromatics])" size="12">
-                <ion-label class="card-headline">{{'BEAN_DATA_AROMATICS' | translate}}</ion-label><br/>
-                <ion-text class="ion-text-wrap">{{bean?.aromatics}}</ion-text>
-              </ion-col>
-              <ion-col *ngIf="bean?.note !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.note])" size="12">
-                <ion-label class="card-headline">{{'NOTES' | translate}}</ion-label><br/>
-                <ion-text><pre>{{bean?.note}}</pre></ion-text>
-              </ion-col>
-              <ng-container *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.bean_information])">
-                <ng-container *ngFor="let info of bean?.bean_information;let i = index;">
-
-                  <ion-col *ngIf="info?.country  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.country])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_COUNTRY' | translate}}</ion-label><br/>
-                    <ion-text>{{info.country}}</ion-text>
+    @if (!collapsed) {
+      <ion-grid  class="no-ion-col-vertical-padding limit-grid-overflow">
+        <ion-row class="ion-padding-bottom-half">
+          <ion-col [size]="((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments]))?9:12" class="ion-no-padding-right">
+            <ion-grid class="ion-no-padding">
+              @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_FROZEN_INFORMATION)) {
+                <ion-row>
+                  @if (bean.frozenDate) {
+                    <ion-col size="6">
+                      <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_DATE" | translate}}</ion-label>
+                      <ion-text>{{bean.frozenDate | formatDate:[settings?.date_format]}}</ion-text>
+                    </ion-col>
+                  }
+                  @if (bean.unfrozenDate) {
+                    <ion-col size="6">
+                      <ion-label class="card-headline">{{"BEAN_DATA_UNFROZEN_DATE" | translate}}</ion-label>
+                      <ion-text>{{bean.unfrozenDate | formatDate:[settings?.date_format]}}</ion-text>
+                    </ion-col>
+                  }
+                  @if (bean.frozenStorageType && bean.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN) {
+                    <ion-col size="6">
+                      <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}</ion-label>
+                      <ion-text>{{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</ion-text>
+                    </ion-col>
+                  }
+                  @if (bean?.frozenNote !== '') {
+                    <ion-col size="12">
+                      <ion-label class="card-headline">{{'BEAN_DATA_FROZEN_NOTE' | translate}}</ion-label><br/>
+                      <ion-text><pre>{{bean?.frozenNote}}</pre></ion-text>
+                    </ion-col>
+                  }
+                </ion-row>
+              }
+              <ion-row>
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roastingDate])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
+                    <br/>
+                    @if (bean?.roastingDate) {
+                      <ion-text>
+                      {{bean.roastingDate | formatDate:[settings?.date_format]}}</ion-text>
+                    }
+                    @if (!bean?.roastingDate) {
+                      <ion-text>
+                        -
+                      </ion-text>
+                    }
                   </ion-col>
-                  <ion-col *ngIf="info?.region && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.region])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_REGION' | translate}}</ion-label><br/>
-                    <ion-text>{{info.region}}</ion-text>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.bestDate])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{"BEAN_DATA_BEST_DATE" | translate}}</ion-label>
+                    <br/>
+                    @if (bean?.bestDate) {
+                      <ion-text>
+                      {{bean.bestDate | formatDate:[settings?.date_format]}}</ion-text>
+                    }
+                    @if (!bean?.bestDate) {
+                      <ion-text>
+                        -
+                      </ion-text>
+                    }
                   </ion-col>
-                  <ion-col *ngIf="info?.farm && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.farm])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_FARM' | translate}}</ion-label><br/>
-                    <ion-text>{{info.farm}}</ion-text>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.openDate])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{"BEAN_DATA_OPEN_DATE" | translate}}</ion-label>
+                    <br/>
+                    @if (bean?.openDate) {
+                      <ion-text>
+                      {{bean.openDate | formatDate:[settings?.date_format]}}</ion-text>
+                    }
+                    @if (!bean?.openDate) {
+                      <ion-text>
+                        -
+                      </ion-text>
+                    }
                   </ion-col>
-                  <ion-col *ngIf="info?.farmer && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.farmer])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_FARMER' | translate}}</ion-label><br/>
-                    <ion-text>{{info.farmer}}</ion-text>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roaster])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
+                    <br/>
+                    @if (bean.roaster) {
+                      <ion-text>
+                      {{bean.roaster}}</ion-text>
+                    }
+                    @if (!bean.roaster) {
+                      <ion-text>
+                        -
+                      </ion-text>
+                    }
                   </ion-col>
-                  <ion-col *ngIf="info?.elevation && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.elevation])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_ELEVATION' | translate}}</ion-label><br/>
-                    <ion-text>{{info.elevation}}</ion-text>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roast])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME_TYPE" | translate}}</ion-label>
+                    <br/>
+                    @if (bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)) {
+                      <ion-text
+                        >
+                      {{bean.roast_custom}}</ion-text>
+                    }
+                    @if (bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)) {
+                      <ion-text
+                        >
+                        {{roast_enum[bean.roast]}}
+                      </ion-text>
+                    }
+                    @if ( bean.roast === getRoastEnum(roast_enum.UNKNOWN)) {
+                      <ion-text>
+                        -
+                      </ion-text>
+                    }
                   </ion-col>
-                  <ion-col *ngIf="info?.variety  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.variety])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_VARIETY' | translate}}</ion-label><br/>
-                    <ion-text>{{info.variety}}</ion-text>
+                }
+                <ion-col size="6">
+                  <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label>
+                  <br/>
+                  <ion-text>{{uiBrewsCount}}</ion-text>
+                </ion-col>
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roastingDate])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label>
+                    <br/>
+                    @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)  === 1) {
+                      <ion-text>{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
+                    }
+                    @if (!((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1)) {
+                      <ion-text>{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAYS_OLD" | translate}}</ion-text>
+                    }
                   </ion-col>
-                  <ion-col *ngIf="info?.processing  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.processing])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_PROCESSING' | translate}}</ion-label><br/>
-                    <ion-text>{{info.processing}}</ion-text>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.weight])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
+                    <br/>
+                    <ion-text class='break-whitespaces'
+                    [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: uiUsedWeightCount | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - uiUsedWeightCount | number : '.0-2'}">{{bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}</ion-text>
                   </ion-col>
-                  <ion-col *ngIf="info?.harvest_time  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.harvest_time])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_HARVEST_TIME' | translate}}</ion-label><br/>
-                    <ion-text>{{info.harvest_time}}</ion-text>
+                }
+                @if (((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_CUSTOM_FLAVORS) || (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS))) {
+                  <ion-col size="12">
+                    <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
+                    <ion-text class="ion-text-wrap">{{uiCuppedBrewFlavors}}</ion-text>
                   </ion-col>
-                  <ion-col *ngIf="info?.percentage  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.percentage])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_PERCENTAGE' | translate}}</ion-label><br/>
-                    <ion-text>{{info.percentage}}</ion-text>
+                }
+                @if (bean?.buyDate !== '' &&(settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.buyDate])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{'BEAN_DATA_BUY_DATE' | translate}}</ion-label><br/>
+                    <ion-text>{{bean?.buyDate | formatDate:[settings?.date_format]}}</ion-text>
                   </ion-col>
-                  <ion-col *ngIf="info?.certification && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.certification])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_CERTIFICATION' | translate}}</ion-label><br/>
-                    <ion-text>{{info.certification}}</ion-text>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.beanMix])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{'BEAN_SORT_MIX' | translate}}</ion-label><br/>
+                    <ion-text>{{"BEAN_MIX_" + bean.beanMix | translate}}</ion-text>
                   </ion-col>
-                  <ion-col *ngIf="info?.purchasing_price && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.purchasing_price])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_PURCHASING_PRICE' | translate}}</ion-label><br/>
-                    <ion-text>{{info.purchasing_price}}</ion-text>
+                }
+                @if (bean?.cost > 0 && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.cost])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{'BEAN_DATA_COST' | translate}}</ion-label><br/>
+                    <ion-text>{{bean?.cost}}@if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.SHOW_COST_PER_KG)) {
+                      <span>&nbsp;({{uiCalculatedCostPerKG}}&nbsp;{{uiCurrencySymbol}}/kg)</span>
+                    }</ion-text>
                   </ion-col>
-                  <ion-col *ngIf="info?.fob_price  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.fob_price])" size="6">
-                    <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_FOB_PRICE' | translate}}</ion-label><br/>
-                    <ion-text>{{info.fob_price}}</ion-text>
+                }
+                @if (bean?.cupping_points !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.cupping_points])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{'BEAN_DATA_CUPPING_POINTS' | translate}}</ion-label><br/>
+                    <ion-text>{{bean?.cupping_points}}</ion-text>
                   </ion-col>
-                </ng-container>
-              </ng-container>
-            </ion-row>
-          </ion-grid>
-        </ion-col>
-        <ion-col  (click)="showPhoto($event)" *ngIf="(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments])" class="ion-no-padding" size="3">
-          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-            <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.decaffeinated])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{'BEAN_DATA_DECAFFEINATED' | translate}}</ion-label><br/>
+                    <ion-text>{{bean?.decaffeinated?('YES' | translate):('NO' | translate)}}</ion-text>
+                  </ion-col>
+                }
+                @if (bean?.url !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.url])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{'BEAN_DATA_URL' | translate}}</ion-label><br/>
+                    <ion-text>{{bean?.url}}</ion-text>
+                  </ion-col>
+                }
+                @if (bean?.ean_article_number !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.ean_article_number])) {
+                  <ion-col size="6">
+                    <ion-label class="card-headline">{{'BEAN_DATA_EAN' | translate}}</ion-label><br/>
+                    <ion-text>{{bean?.ean_article_number}}</ion-text>
+                  </ion-col>
+                }
+                @if (bean?.aromatics !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.aromatics])) {
+                  <ion-col size="12">
+                    <ion-label class="card-headline">{{'BEAN_DATA_AROMATICS' | translate}}</ion-label><br/>
+                    <ion-text class="ion-text-wrap">{{bean?.aromatics}}</ion-text>
+                  </ion-col>
+                }
+                @if (bean?.note !== '' && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.note])) {
+                  <ion-col size="12">
+                    <ion-label class="card-headline">{{'NOTES' | translate}}</ion-label><br/>
+                    <ion-text><pre>{{bean?.note}}</pre></ion-text>
+                  </ion-col>
+                }
+                @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.bean_information])) {
+                  @for (info of bean?.bean_information; track info; let i = $index) {
+                    @if (info?.country  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.country])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_COUNTRY' | translate}}</ion-label><br/>
+                        <ion-text>{{info.country}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.region && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.region])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_REGION' | translate}}</ion-label><br/>
+                        <ion-text>{{info.region}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.farm && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.farm])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_FARM' | translate}}</ion-label><br/>
+                        <ion-text>{{info.farm}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.farmer && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.farmer])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_FARMER' | translate}}</ion-label><br/>
+                        <ion-text>{{info.farmer}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.elevation && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.elevation])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_ELEVATION' | translate}}</ion-label><br/>
+                        <ion-text>{{info.elevation}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.variety  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.variety])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_VARIETY' | translate}}</ion-label><br/>
+                        <ion-text>{{info.variety}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.processing  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.processing])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_PROCESSING' | translate}}</ion-label><br/>
+                        <ion-text>{{info.processing}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.harvest_time  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.harvest_time])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_HARVEST_TIME' | translate}}</ion-label><br/>
+                        <ion-text>{{info.harvest_time}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.percentage  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.percentage])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_PERCENTAGE' | translate}}</ion-label><br/>
+                        <ion-text>{{info.percentage}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.certification && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.certification])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_CERTIFICATION' | translate}}</ion-label><br/>
+                        <ion-text>{{info.certification}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.purchasing_price && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.purchasing_price])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_PURCHASING_PRICE' | translate}}</ion-label><br/>
+                        <ion-text>{{info.purchasing_price}}</ion-text>
+                      </ion-col>
+                    }
+                    @if (info?.fob_price  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.fob_price])) {
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{bean?.beanMix?.toString() === 'BLEND'?i+1+'. ':''}}{{'BEAN_DATA_FOB_PRICE' | translate}}</ion-label><br/>
+                        <ion-text>{{info.fob_price}}</ion-text>
+                      </ion-col>
+                    }
+                  }
+                }
+              </ion-row>
+            </ion-grid>
+          </ion-col>
+          @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments])) {
+            <ion-col  (click)="showPhoto($event)" class="ion-no-padding" size="3">
+              <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+              </div>
+            </ion-col>
+          }
+        </ion-row>
+      </ion-grid>
+    }
   </ion-card-content>
 </ion-card>
 <div style="height:10px;"></div>

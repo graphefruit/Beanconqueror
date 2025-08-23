@@ -6,9 +6,13 @@ import { Router } from '@angular/router';
   selector: 'brew-parameter',
   templateUrl: './brew-parameter.page.html',
   styleUrls: ['./brew-parameter.page.scss'],
+  standalone: false,
 })
 export class BrewParameterPage implements OnInit {
-  constructor(public navCtrl: NavController, private readonly router: Router) {}
+  constructor(
+    public navCtrl: NavController,
+    private readonly router: Router,
+  ) {}
 
   public ngOnInit() {}
 

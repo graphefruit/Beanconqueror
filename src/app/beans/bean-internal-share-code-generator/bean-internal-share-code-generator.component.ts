@@ -19,6 +19,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
   selector: 'app-bean-internal-share-code-generator.',
   templateUrl: './bean-internal-share-code-generator.component.html',
   styleUrls: ['./bean-internal-share-code-generator.component.scss'],
+  standalone: false,
 })
 export class BeanInternalShareCodeGeneratorComponent implements OnInit {
   public static COMPONENT_ID = 'bean-internal-share-code-generator-popover';

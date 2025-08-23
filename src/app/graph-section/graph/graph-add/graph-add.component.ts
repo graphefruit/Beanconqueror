@@ -16,6 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-graph-add',
   templateUrl: './graph-add.component.html',
   styleUrls: ['./graph-add.component.scss'],
+  standalone: false,
 })
 export class GraphAddComponent {
   public static readonly COMPONENT_ID = 'graph-add';
@@ -30,13 +31,13 @@ export class GraphAddComponent {
     private readonly uiGraphHelper: UIGraphHelper,
     private readonly platform: Platform,
     private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.ADD
+      GRAPH_TRACKING.ACTIONS.ADD,
     );
   }
 
@@ -81,7 +82,7 @@ export class GraphAddComponent {
             }
           } else {
             this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
+              this.translate.instant('INVALID_FILE_FORMAT'),
             );
           }
         }
@@ -104,14 +105,14 @@ export class GraphAddComponent {
     try {
       addedGraphObj.flow_profile = await this.uiGraphHelper.saveGraph(
         addedGraphObj.config.uuid,
-        this.flowData
+        this.flowData,
       );
       await this.uiGraphStorage.update(addedGraphObj);
     } catch (ex) {}
     this.uiToast.showInfoToast('TOAST_GRAPH_ADD_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.ADD_FINISH
+      GRAPH_TRACKING.ACTIONS.ADD_FINISH,
     );
     this.dismiss();
   }
@@ -122,7 +123,7 @@ export class GraphAddComponent {
         dismissed: true,
       },
       undefined,
-      GraphAddComponent.COMPONENT_ID
+      GraphAddComponent.COMPONENT_ID,
     );
   }
 }

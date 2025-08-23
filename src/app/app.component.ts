@@ -75,6 +75,7 @@ import { Preparation } from '../classes/preparation/preparation';
 import { Bean } from '../classes/bean/bean';
 import { Water } from '../classes/water/water';
 import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
+import { ThemeService } from '../services/theme/theme.service';
 
 declare var window;
 
@@ -84,6 +85,7 @@ register();
   selector: 'app-root',
   templateUrl: 'app.component.html',
   encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;
@@ -256,6 +258,7 @@ export class AppComponent implements AfterViewInit {
     private readonly uiStorage: UIStorage,
     private readonly androidPlatformService: AndroidPlatformService,
     private readonly iosPlatformService: IosPlatformService,
+    private readonly themeService: ThemeService,
   ) {
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
@@ -273,7 +276,9 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.themeService.initializeBeforeAppReady();
+  }
 
   public ngAfterViewInit(): void {
     this.uiLog.log('Platform ready, init app');
@@ -396,7 +401,6 @@ export class AppComponent implements AfterViewInit {
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();
 
-      await SplashScreen.hide();
       if (this.platform.is('capacitor')) {
         try {
           await this.uiExportImportHelper.checkBackup();
@@ -708,6 +712,7 @@ export class AppComponent implements AfterViewInit {
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
+    await this.themeService.initialize();
     this.uiAnalytics.trackEvent(
       SettingsTracking.TITLE,
       SettingsTracking.ACTIONS.USED_LANGUAGE,

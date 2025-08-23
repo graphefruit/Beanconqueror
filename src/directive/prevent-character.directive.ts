@@ -3,6 +3,7 @@ import { NgModel } from '@angular/forms';
 
 @Directive({
   selector: '[ngModel][prevent-characters]',
+  standalone: false,
 })
 export class PreventCharacterDirective {
   constructor(private readonly model: NgModel) {}

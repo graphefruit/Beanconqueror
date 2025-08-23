@@ -23,212 +23,212 @@
       </ion-label>
     </ion-segment-button>
   </ion-segment>
-  <div [ngSwitch]='bean_segment'>
-    <div *ngSwitchCase="'general'">
+@switch (bean_segment) {
+  @case ('general') {
+    <ion-card class='ion-padding'>
+      <ion-title class='ion-no-padding'>{{"BEAN_TAB_GENERAL_INFORMATION" | translate  }}</ion-title>
+      <ion-item [disabled]='true' tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.name'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_NAME" | translate}}</h2>
+            <p>{{"BEAN_DATA_NAME_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.roaster'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_ROASTER" | translate}}</h2>
+            <p>{{"BEAN_DATA_ROASTER_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.buyDate'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_BUY_DATE" | translate}}</h2>
+            <p>{{"BEAN_DATA_BUY_DATE_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.bestDate'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_BEST_DATE" | translate}}</h2>
+            <p>{{"BEAN_DATA_BEST_DATE_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.openDate'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_OPEN_DATE" | translate}}</h2>
+            <p>{{"BEAN_DATA_OPEN_DATE_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.roastingDate'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}</h2>
+            <p>{{"BEAN_DATA_ROASTING_DATE_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.bean_roasting_type'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_ROASTING_TYPE" | translate}}</h2>
+            <p>{{"BEAN_DATA_ROASTING_TYPE_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.roast_range'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_ROAST_NAME" | translate}}</h2>
+            <p>{{"BEAN_DATA_ROAST_NAME_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.roast'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_ROAST_NAME_TYPE" | translate}}</h2>
+            <p>{{"BEAN_DATA_ROAST_NAME_TYPE_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.rating'>
+          <div class='ion-label'>
+            <h2>{{"BREW_DATA_RATING" | translate}}</h2>
+            <p>{{"BREW_DATA_RATING_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.beanMix'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_SORT_MIX" | translate}}</h2>
+            <p>{{"BEAN_SORT_MIX_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+    </ion-card>
+
+    <ion-card class='ion-padding' style='margin-top:30px;'>
+      <ion-title class='ion-no-padding'>{{"BEAN_SORT_MORE_INFORMATION" | translate  }}</ion-title>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.weight'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_WEIGHT" | translate}}</h2>
+            <p>{{"BEAN_DATA_WEIGHT_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.cost'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_COST" | translate}}</h2>
+            <p>{{"BEAN_DATA_COST_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.aromatics'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_AROMATICS" | translate}}</h2>
+            <p>{{"BEAN_DATA_AROMATICS_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.cupping_points'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_CUPPING_POINTS" | translate}}</h2>
+            <p>{{"BEAN_DATA_CUPPING_POINTS_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.decaffeinated'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_DECAFFEINATED" | translate}}</h2>
+            <p>{{"BEAN_DATA_DECAFFEINATED_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.url'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_URL" | translate}}</h2>
+            <p>{{"BEAN_DATA_URL_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.ean_article_number'>
+          <div class='ion-label'>
+            <h2>{{"BEAN_DATA_EAN" | translate}}</h2>
+            <p>{{"BEAN_DATA_EAN_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.note'>
+          <div class='ion-label'>
+            <h2>{{"NOTES" | translate}}</h2>
+            <p>{{"NOTES_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item lines='none' tappable>
+        <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                      [(ngModel)]='data.bean_visible_list_view_parameters.attachments'>
+          <div class='ion-label'>
+            <h2>{{"BREW_DATA_ATTACHMENTS" | translate}}</h2>
+            <p>{{"BREW_DATA_ATTACHMENTS_TOOLTIP" | translate}}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+    </ion-card>
+  }
+  @case ('sortinformation') {
+    <ion-card>
+      <ion-card-content>
+        <ion-item lines='none'>
+          <ion-checkbox label-placement='start' (ionChange)='save()'
+                        [(ngModel)]='data.bean_visible_list_view_parameters.bean_information'>
+            <div class='ion-label'>
+              <h2>{{"ENABLE_BEAN_SORT_INFORMATION" | translate}}</h2>
+              <p>{{"ENABLE_BEAN_SORT_INFORMATION_TOOLTIP" | translate}}</p>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+    @if (data.bean_visible_list_view_parameters.bean_information) {
       <ion-card class='ion-padding'>
-        <ion-title class='ion-no-padding'>{{"BEAN_TAB_GENERAL_INFORMATION" | translate  }}</ion-title>
-        <ion-item [disabled]='true' tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.name'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_NAME" | translate}}</h2>
-              <p>{{"BEAN_DATA_NAME_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.roaster'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_ROASTER" | translate}}</h2>
-              <p>{{"BEAN_DATA_ROASTER_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.buyDate'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_BUY_DATE" | translate}}</h2>
-              <p>{{"BEAN_DATA_BUY_DATE_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.bestDate'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_BEST_DATE" | translate}}</h2>
-              <p>{{"BEAN_DATA_BEST_DATE_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.openDate'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_OPEN_DATE" | translate}}</h2>
-              <p>{{"BEAN_DATA_OPEN_DATE_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.roastingDate'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}</h2>
-              <p>{{"BEAN_DATA_ROASTING_DATE_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.bean_roasting_type'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_ROASTING_TYPE" | translate}}</h2>
-              <p>{{"BEAN_DATA_ROASTING_TYPE_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.roast_range'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_ROAST_NAME" | translate}}</h2>
-              <p>{{"BEAN_DATA_ROAST_NAME_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.roast'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_ROAST_NAME_TYPE" | translate}}</h2>
-              <p>{{"BEAN_DATA_ROAST_NAME_TYPE_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.rating'>
-            <div class='ion-label'>
-              <h2>{{"BREW_DATA_RATING" | translate}}</h2>
-              <p>{{"BREW_DATA_RATING_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.beanMix'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_SORT_MIX" | translate}}</h2>
-              <p>{{"BEAN_SORT_MIX_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-      </ion-card>
-
-      <ion-card class='ion-padding' style='margin-top:30px;'>
-        <ion-title class='ion-no-padding'>{{"BEAN_SORT_MORE_INFORMATION" | translate  }}</ion-title>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.weight'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_WEIGHT" | translate}}</h2>
-              <p>{{"BEAN_DATA_WEIGHT_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.cost'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_COST" | translate}}</h2>
-              <p>{{"BEAN_DATA_COST_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.aromatics'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_AROMATICS" | translate}}</h2>
-              <p>{{"BEAN_DATA_AROMATICS_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.cupping_points'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_CUPPING_POINTS" | translate}}</h2>
-              <p>{{"BEAN_DATA_CUPPING_POINTS_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.decaffeinated'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_DECAFFEINATED" | translate}}</h2>
-              <p>{{"BEAN_DATA_DECAFFEINATED_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.url'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_URL" | translate}}</h2>
-              <p>{{"BEAN_DATA_URL_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.ean_article_number'>
-            <div class='ion-label'>
-              <h2>{{"BEAN_DATA_EAN" | translate}}</h2>
-              <p>{{"BEAN_DATA_EAN_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.note'>
-            <div class='ion-label'>
-              <h2>{{"NOTES" | translate}}</h2>
-              <p>{{"NOTES_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        <ion-item lines='none' tappable>
-          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
-                        [(ngModel)]='data.bean_visible_list_view_parameters.attachments'>
-            <div class='ion-label'>
-              <h2>{{"BREW_DATA_ATTACHMENTS" | translate}}</h2>
-              <p>{{"BREW_DATA_ATTACHMENTS_TOOLTIP" | translate}}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-      </ion-card>
-
-    </div>
-    <div *ngSwitchCase="'sortinformation'">
-      <ion-card>
-        <ion-card-content>
-          <ion-item lines='none'>
-            <ion-checkbox label-placement='start' (ionChange)='save()'
-                          [(ngModel)]='data.bean_visible_list_view_parameters.bean_information'>
-              <div class='ion-label'>
-                <h2>{{"ENABLE_BEAN_SORT_INFORMATION" | translate}}</h2>
-                <p>{{"ENABLE_BEAN_SORT_INFORMATION_TOOLTIP" | translate}}</p>
-              </div>
-            </ion-checkbox>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
-      <ion-card *ngIf='data.bean_visible_list_view_parameters.bean_information' class='ion-padding'>
         <ion-title class='ion-no-padding'>{{"BEAN_SORT_INFORMATION" | translate  }}</ion-title>
         <ion-item tappable>
           <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
@@ -339,8 +339,9 @@
           </ion-checkbox>
         </ion-item>
       </ion-card>
-    </div>
-  </div>
+    }
+  }
+}
 
 
 </ion-content>

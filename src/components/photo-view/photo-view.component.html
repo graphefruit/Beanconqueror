@@ -1,7 +1,11 @@
-<div *ngIf="data?.attachments && data.attachments.length > 0">
-  <swiper-container  class='swiper' [pagination]="{ clickable: true, dragable:true }" #photoSlides pager="true">
-    <swiper-slide *ngFor="let attachment of data.attachments;let i = index">
-      <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-    </swiper-slide>
-  </swiper-container>
-</div>
+@if (data?.attachments && data.attachments.length > 0) {
+  <div>
+    <swiper-container  class='swiper' [pagination]="{ clickable: true, dragable:true }" #photoSlides pager="true">
+      @for (attachment of data.attachments; track attachment; let i = $index) {
+        <swiper-slide>
+          <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+        </swiper-slide>
+      }
+    </swiper-container>
+  </div>
+}

@@ -11,13 +11,14 @@ import { TranslateService } from '@ngx-translate/core';
 declare var cordova;
 @Directive({
   selector: '[choose-date-overlay]',
+  standalone: false,
 })
 export class ChooseDateOverlayDirective {
   @Input('data') public data: string;
   @Output() public dataChange = new EventEmitter<any>();
   constructor(
     private readonly platform: Platform,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {}
 
   @HostListener('click', ['$event', '$event.target'])

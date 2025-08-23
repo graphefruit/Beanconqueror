@@ -17,6 +17,7 @@ import { AppEventType } from '../enums/appEvent/appEvent';
 
 @Directive({
   selector: '[ngModel][preparation-overlay]',
+  standalone: false,
 })
 export class PreparationOverlayDirective {
   @Output() public ngModelChange = new EventEmitter();
@@ -28,7 +29,7 @@ export class PreparationOverlayDirective {
     private readonly modalController: ModalController,
     private el: ElementRef,
     private uiPreparationStorage: UIPreparationStorage,
-    private readonly eventQueue: EventQueueService
+    private readonly eventQueue: EventQueueService,
   ) {}
 
   @HostListener('click', ['$event', '$event.target'])
@@ -74,7 +75,7 @@ export class PreparationOverlayDirective {
 
       _event.target.selectedText = data.selected_text;
       this.eventQueue.dispatch(
-        new AppEvent(AppEventType.PREPARATION_SELECTION_CHANGED, undefined)
+        new AppEvent(AppEventType.PREPARATION_SELECTION_CHANGED, undefined),
       );
     }
   }

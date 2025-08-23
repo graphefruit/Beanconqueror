@@ -12,6 +12,7 @@ import { UIAlert } from '../../services/uiAlert';
   selector: 'app-please-activate-analytics-popover',
   templateUrl: './please-activate-analytics-popover.component.html',
   styleUrls: ['./please-activate-analytics-popover.component.scss'],
+  standalone: false,
 })
 export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'please-activate-analytics-popover';

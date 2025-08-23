@@ -1,11 +1,12 @@
 :host {
   ion-item {
+    --background: var(--ion-color-light);
     margin-left: 16px;
     margin-right: 0px;
     line-height: 12px;
     font-size: 12px;
   }
   ion-card-content {
-    background:#FFFFFF;
+    background: var(--ion-color-light);
   }
 }

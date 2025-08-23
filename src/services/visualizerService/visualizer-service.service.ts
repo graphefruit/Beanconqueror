@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CapacitorHttp } from '@capacitor/core';
+import { CapacitorCookies, CapacitorHttp } from '@capacitor/core';
 import { UIFileHelper } from '../uiFileHelper';
 import { Visualizer } from '../../classes/visualizer/visualizer';
 import { Brew } from '../../classes/brew/brew';
@@ -179,6 +179,9 @@ export class VisualizerService {
     const settings: Settings = this.uiSettingsStorage.getSettings();
 
     try {
+      await CapacitorCookies.clearCookies({
+        url: settings.visualizer_url,
+      });
       const response = await CapacitorHttp.get({
         url: settings.visualizer_url + 'api/me', // https://visualizer.coffee/api/me
         headers: this.getAuthHeaders(settings),

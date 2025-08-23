@@ -37,6 +37,7 @@ message BeanProto {
   optional bool shared = 26;
   optional ICupping cupping = 27;
   optional IFlavor cupped_flavor = 28;
+  repeated string external_images = 29;
 }
 
 message Config {

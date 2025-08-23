@@ -12,6 +12,7 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
   selector: 'manage-custom-parameter',
   templateUrl: './manage-custom-parameter.component.html',
   styleUrls: ['./manage-custom-parameter.component.scss'],
+  standalone: false,
 })
 export class ManageCustomParameterComponent implements OnInit {
   public debounceChanges: Subject<string> = new Subject<string>();
@@ -22,7 +23,7 @@ export class ManageCustomParameterComponent implements OnInit {
     public uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {
     this.debounceChanges
       .pipe(debounceTime(500), distinctUntilChanged())

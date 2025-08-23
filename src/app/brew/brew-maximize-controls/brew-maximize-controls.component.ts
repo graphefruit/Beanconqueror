@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-brew-maximize-controls',
   templateUrl: './brew-maximize-controls.component.html',
   styleUrls: ['./brew-maximize-controls.component.scss'],
+  standalone: false,
 })
 export class BrewMaximizeControlsComponent
   implements AfterViewInit, OnDestroy, OnInit

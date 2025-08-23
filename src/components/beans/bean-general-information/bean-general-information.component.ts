@@ -30,6 +30,7 @@ declare var cordova;
   selector: 'bean-general-information',
   templateUrl: './bean-general-information.component.html',
   styleUrls: ['./bean-general-information.component.scss'],
+  standalone: false,
 })
 export class BeanGeneralInformationComponent implements OnInit {
   @Input() public data: Bean;
@@ -59,7 +60,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiHelper: UIHelper,
-    public readonly uiBeanHelper: UIBeanHelper
+    public readonly uiBeanHelper: UIBeanHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -117,7 +118,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     }
     // Distinct values
     this.roasterResults = Array.from(
-      new Set(this.roasterResults.map((e) => e))
+      new Set(this.roasterResults.map((e) => e)),
     );
 
     if (this.roasterResults.length > 0) {

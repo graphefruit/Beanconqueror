@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
   selector: 'loading-popover',
   templateUrl: './loading-popover.component.html',
   styleUrls: ['./loading-popover.component.scss'],
+  standalone: false,
 })
 export class LoadingPopoverComponent implements OnInit {
   public __showDismissButton: boolean = false;
@@ -24,7 +25,7 @@ export class LoadingPopoverComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiLog: UILog,
     private shareService: ShareService,
-    private eventQueue: EventQueueService
+    private eventQueue: EventQueueService,
   ) {}
 
   public ngOnInit() {
@@ -34,12 +35,12 @@ export class LoadingPopoverComponent implements OnInit {
       }, 10000);
     }
     const eventSubs = this.eventQueue.on(
-      AppEventType.UPDATE_LOADING_SPINNER_MESSAGE
+      AppEventType.UPDATE_LOADING_SPINNER_MESSAGE,
     );
     this.updatingLoadingSpinnerMessageSubscription = eventSubs.subscribe(
       (event) => {
         this.message = event.payload;
-      }
+      },
     );
   }
   public deattachTouUdatingLoadingSpinnerMessageSubscription() {

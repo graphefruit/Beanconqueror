@@ -2,27 +2,31 @@
 </ion-header>
 <ion-content>
   <ion-item class="ion-margin-top">
-        <ion-input label-placement="stacked" label='{{"NAME" | translate}}' #name="ngModel" [(ngModel)]="data.name" name="name"
-                   placeholder="{{'MILL.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-                   autocapitalize="sentences" required>
-        </ion-input>
-      </ion-item>
+    <ion-input label-placement="stacked" label='{{"NAME" | translate}}' #name="ngModel" [(ngModel)]="data.name" name="name"
+      placeholder="{{'MILL.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
+      autocapitalize="sentences" required>
+    </ion-input>
+  </ion-item>
   <ion-row>
     <ion-col size="12">
       <ion-button (click)="deleteTool()" color="danger" expand="block" fill="outline"
-                  tappable>{{"DELETE" | translate}}</ion-button>
+      tappable>{{"DELETE" | translate}}</ion-button>
     </ion-col>
-    <ion-col size="12" *ngIf="data.archived === false">
-      <ion-button (click)="archiveTool()" color="info" expand="block" fill="outline"
-                  tappable>{{"ARCHIVE" | translate}}</ion-button>
-    </ion-col>
-    <ion-col size="12" *ngIf="data.archived === true">
-      <ion-button (click)="archiveTool()" color="info" expand="block" fill="outline"
-                  tappable>{{"UNARCHIVE" | translate}}</ion-button>
-    </ion-col>
+    @if (data.archived === false) {
+      <ion-col size="12">
+        <ion-button (click)="archiveTool()" color="info" expand="block" fill="outline"
+        tappable>{{"ARCHIVE" | translate}}</ion-button>
+      </ion-col>
+    }
+    @if (data.archived === true) {
+      <ion-col size="12">
+        <ion-button (click)="archiveTool()" color="info" expand="block" fill="outline"
+        tappable>{{"UNARCHIVE" | translate}}</ion-button>
+      </ion-col>
+    }
     <ion-col size="12">
       <ion-button (click)="editTool()" color="accent" expand="block" tappable
-                  type="submit">{{"SAVE" | translate}}</ion-button>
+      type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-content>

@@ -6,7 +6,7 @@
     "sourceMap": true,
     "declaration": false,
     "module": "es2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
     "importHelpers": true,
@@ -20,7 +20,6 @@
     ],
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "useDefineForClassFields": false,
-
+    "useDefineForClassFields": false
   }
 }

@@ -12,8 +12,10 @@
 
   <!--- We changed back to 100vh because of rendering issues somehow...-->
   <ag-virtual-scroll #openScroll [items]="frozenBeansList" [height]="'100vh'" min-row-height="180">
-    <bean-information [disabled]='true' [showActions]='false' *ngFor="let bean of openScroll.items"
-                      [bean]="bean"></bean-information>
+    @for (bean of openScroll.items; track bean) {
+      <bean-information [disabled]='true' [showActions]='false'
+      [bean]="bean"></bean-information>
+    }
 
   </ag-virtual-scroll>
 

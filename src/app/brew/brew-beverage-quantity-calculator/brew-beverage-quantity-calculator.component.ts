@@ -6,6 +6,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-brew-beverage-quantity-calculator',
   templateUrl: './brew-beverage-quantity-calculator.component.html',
   styleUrls: ['./brew-beverage-quantity-calculator.component.scss'],
+  standalone: false,
 })
 export class BrewBeverageQuantityCalculatorComponent {
   public static readonly COMPONENT_ID = 'brew-beverage-quantity-calculator';
@@ -16,7 +17,7 @@ export class BrewBeverageQuantityCalculatorComponent {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public calculateWeight() {
@@ -24,7 +25,7 @@ export class BrewBeverageQuantityCalculatorComponent {
     if (this.calculatedWeight && this.calculatedWeight > 0) {
       this.calculatedWeight = this.uiHelper.toFixedIfNecessary(
         this.calculatedWeight,
-        1
+        1,
       );
     }
   }
@@ -40,7 +41,7 @@ export class BrewBeverageQuantityCalculatorComponent {
         dismissed: true,
       },
       undefined,
-      BrewBeverageQuantityCalculatorComponent.COMPONENT_ID
+      BrewBeverageQuantityCalculatorComponent.COMPONENT_ID,
     );
   }
 
@@ -50,7 +51,7 @@ export class BrewBeverageQuantityCalculatorComponent {
         dismissed: true,
       },
       undefined,
-      BrewBeverageQuantityCalculatorComponent.COMPONENT_ID
+      BrewBeverageQuantityCalculatorComponent.COMPONENT_ID,
     );
   }
 }

@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-update-popover',
   templateUrl: './update-popover.component.html',
   styleUrls: ['./update-popover.component.scss'],
+  standalone: false,
 })
 export class UpdatePopoverComponent implements OnInit {
   @Input() public versions: Array<string>;
@@ -20,7 +21,7 @@ export class UpdatePopoverComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     private translate: TranslateService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
   ) {}
 
   public isAndroid() {
@@ -57,13 +58,13 @@ export class UpdatePopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      'update-popover'
+      'update-popover',
     );
   }
 
   public getDescription(_version: string): Array<string> {
     const translatedStr: any = this.translate.instant(
-      'UPDATE_TEXT_TITLE_TITLE.' + _version + '.DESCRIPTION'
+      'UPDATE_TEXT_TITLE_TITLE.' + _version + '.DESCRIPTION',
     );
     return [...translatedStr];
   }

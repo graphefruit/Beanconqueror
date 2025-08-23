@@ -16,6 +16,7 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
   selector: 'app-bean-filter',
   templateUrl: './bean-filter.component.html',
   styleUrls: ['./bean-filter.component.scss'],
+  standalone: false,
 })
 export class BeanFilterComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-filter';
@@ -42,7 +43,7 @@ export class BeanFilterComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage
+    private readonly uiMillStorage: UIMillStorage,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -87,7 +88,7 @@ export class BeanFilterComponent implements OnInit {
     let maxBeanRating = maxSettingsRating;
     if (beansFiltered.length > 0) {
       const maxRating = beansFiltered.reduce((p, c) =>
-        p.rating > c.rating ? p : c
+        p.rating > c.rating ? p : c,
       );
       maxBeanRating = maxRating.rating;
     }
@@ -117,7 +118,7 @@ export class BeanFilterComponent implements OnInit {
         bean_filter: this.uiHelper.copyData(this.filter),
       },
       undefined,
-      BeanFilterComponent.COMPONENT_ID
+      BeanFilterComponent.COMPONENT_ID,
     );
   }
 
@@ -137,7 +138,7 @@ export class BeanFilterComponent implements OnInit {
       this.beans = this.listBeans.filter((e) => e.finished === false);
       this.mills = this.mills.filter((e) => e.finished === false);
       this.method_of_preparations = this.method_of_preparations.filter(
-        (e) => e.finished === false
+        (e) => e.finished === false,
       );
     } else {
       this.beans = this.listBeans.filter((e) => e.finished === true);

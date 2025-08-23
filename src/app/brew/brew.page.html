@@ -13,100 +13,125 @@
       </ion-button>
     </ion-buttons>
     <ion-title>
-      {{"NAV_BREWS" | translate }}
+      {{ "NAV_BREWS" | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content #brewContent>
-    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs" >
-      <ion-segment-button value="open">
-        <ion-label>
-          {{"CURRENT" | translate }}
-          <br/>
-          <span class="value" *ngIf="openBrewsView?.length !== openBrewsLength ; else openCountSimplified">
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs">
+    <ion-segment-button value="open">
+      <ion-label>
+        {{ "CURRENT" | translate }}
+        <br/>
+        @if (openBrewsView?.length !== openBrewsLength) {
+          <span class="value">
             ( {{ openBrewsView?.length }} / {{ openBrewsLength }} )
           </span>
-          <ng-template #openCountSimplified>
-            <span class="value">( {{ openBrewsLength }} )</span>
-          </ng-template>
-        </ion-label>
-      </ion-segment-button>
-      <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">
+        } @else {
+          <span class="value">( {{ openBrewsLength }} )</span>
+        }
+      </ion-label>
+    </ion-segment-button>
+    @if (settings?.show_archived_brews) {
+      <ion-segment-button value="archive">
         <ion-label>
-          {{"TAB_ARCHIVE" | translate }}
+          {{ "TAB_ARCHIVE" | translate }}
           <br/>
-          <span class="value" *ngIf="archiveBrewsView?.length !== archiveBrewsLength ; else archiveCountSimplified">
+          @if (archiveBrewsView?.length !== archiveBrewsLength) {
+            <span class="value">
             ( {{ archiveBrewsView?.length }} / {{ archiveBrewsLength }} )
           </span>
-          <ng-template #archiveCountSimplified>
+          } @else {
             <span class="value">( {{ archiveBrewsLength }} )</span>
-          </ng-template>
+          }
         </ion-label>
       </ion-segment-button>
-    </ion-segment>
-  <div [ngSwitch]="brew_segment">
-    <div *ngSwitchCase="'open'">
-      <div *ngIf="openBrewsView?.length > 0  || uiShallBarBeDisplayed || uiIsFilterActive === true" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-        <ng-container [ngTemplateOutlet]="brewSearchToolbar"></ng-container>
-
-      </div>
-      <div *ngIf="openBrewsView?.length == 0" class="ion-padding ion-text-center">
-        <div>
-          <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
-        </div>
-        <div class="text-color-inactive ion-margin-top">
-          {{"PAGE_BREWS_NO_ENTRIES" | translate}}
-        </div>
-      </div>
-
-      <ag-virtual-scroll #openScroll [items]="openBrewsView"  [height]="'100vh'"  [min-row-height]="uiIsCollapseActive?86:180">
-        <brew-information [collapsed]='uiIsCollapseActive' (brewAction)="brewAction()" *ngFor="let brew of openScroll.items"
-                          [brew]="brew"></brew-information>
-
-      </ag-virtual-scroll>
-
-    </div>
-    @if(settings?.show_archived_brews) {
-
-      <div *ngSwitchCase="'archive'">
-
-        <div *ngIf="archiveBrewsView?.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+    }
+  </ion-segment>
+  @switch (brew_segment) {
+    @case ('open') {
+      @if (openBrewsView?.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true) {
+        <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
           <ng-container [ngTemplateOutlet]="brewSearchToolbar"></ng-container>
+
         </div>
-        <div *ngIf="archiveBrewsView?.length == 0" class="ion-padding ion-text-center">
+      }
+      @if (openBrewsView?.length == 0) {
+        <div class="ion-padding ion-text-center">
           <div>
             <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
           </div>
           <div class="text-color-inactive ion-margin-top">
-            {{"PAGE_BREWS_NO_ARCHIVED_ENTRIES" | translate}}
+            {{ "PAGE_BREWS_NO_ENTRIES" | translate }}
           </div>
         </div>
-
-        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'"  [min-row-height]="uiIsCollapseActive?86:180">
-          <brew-information  [collapsed]='uiIsCollapseActive'  (brewAction)="brewAction()" *ngFor="let brew of archivedScroll.items"
-                            [brew]="brew"></brew-information>
-
-        </ag-virtual-scroll>
-      </div>
       }
-  </div>
+
+      <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'"
+                         [min-row-height]="uiIsCollapseActive?86:180">
+        @for (brew of openScroll.items; track brew) {
+          <brew-information [collapsed]='uiIsCollapseActive' (brewAction)="brewAction()"
+                            [brew]="brew"></brew-information>
+        }
+      </ag-virtual-scroll>
+
+    }
+    @case ('archive') {
+      @if (settings?.show_archived_brews) {
+        @if (archiveBrewsView?.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true) {
+          <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+            <ng-container [ngTemplateOutlet]="brewSearchToolbar"></ng-container>
+          </div>
+        }
+        @if (archiveBrewsView?.length == 0) {
+          <div class="ion-padding ion-text-center">
+            <div>
+              <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+            </div>
+            <div class="text-color-inactive ion-margin-top">
+              {{ "PAGE_BREWS_NO_ARCHIVED_ENTRIES" | translate }}
+            </div>
+          </div>
+        }
+
+        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'"
+                           [min-row-height]="uiIsCollapseActive?86:180">
+          @for (brew of archivedScroll.items; track brew) {
+            <brew-information [collapsed]='uiIsCollapseActive' (brewAction)="brewAction()"
+                              [brew]="brew"></brew-information>
+          }
+        </ag-virtual-scroll>
+      }
+    }
+  }
 </ion-content>
 <ng-template #brewSearchToolbar>
-  <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="uiSearchText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+  <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="uiSearchText"
+                 class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
+                 search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
   <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-    <ion-icon *ngIf="uiIsFilterActive"  name="beanconqueror-filter-active"
-              slot="icon-only"></ion-icon>
-    <ion-icon *ngIf="!uiIsFilterActive"  name="beanconqueror-filter-inactive"
-              slot="icon-only"></ion-icon>
+    @if (uiIsFilterActive) {
+      <ion-icon name="beanconqueror-filter-active"
+                slot="icon-only"></ion-icon>
+    } @else {
+      <ion-icon name="beanconqueror-filter-inactive"
+                slot="icon-only"></ion-icon>
+    }
   </ion-button>
   <ion-button (click)="showSort()" fill="clear" size="small" tappable>
-    <ion-icon *ngIf="uiIsSortActive"  name="beanconqueror-sort-active"
-              slot="icon-only"></ion-icon>
-    <ion-icon *ngIf="!uiIsSortActive"  name="beanconqueror-sort-inactive"
-              slot="icon-only"></ion-icon>
+    @if (uiIsSortActive) {
+      <ion-icon name="beanconqueror-sort-active"
+                slot="icon-only"></ion-icon>
+    } @else {
+      <ion-icon name="beanconqueror-sort-inactive"
+                slot="icon-only"></ion-icon>
+    }
   </ion-button>
   <ion-button (click)="toggleCollapseBrews()" fill="clear" size="small" tappable>
-    <ion-icon *ngIf="uiIsCollapseActive" name="beanconqueror-expand-active"  slot="icon-only"></ion-icon>
-    <ion-icon *ngIf="!uiIsCollapseActive"  name="beanconqueror-expand-inactive"  slot="icon-only"></ion-icon>
+    @if (uiIsCollapseActive) {
+      <ion-icon name="beanconqueror-expand-active" slot="icon-only"></ion-icon>
+    } @else {
+      <ion-icon name="beanconqueror-expand-inactive" slot="icon-only"></ion-icon>
+    }
   </ion-button>
 </ng-template>

@@ -12,6 +12,7 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
   selector: 'brew-popover-actions',
   templateUrl: './brew-popover-actions.component.html',
   styleUrls: ['./brew-popover-actions.component.scss'],
+  standalone: false,
 })
 export class BrewPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'brew-popover-actions';
@@ -24,7 +25,7 @@ export class BrewPopoverActionsComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
     private readonly uiSettings: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper
+    private readonly uiBrewHelper: UIBrewHelper,
   ) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
 
@@ -58,7 +59,7 @@ export class BrewPopoverActionsComponent implements OnInit {
     return this.uiBrewHelper.fieldVisible(
       this.settings.manage_parameters.rating,
       this.data.getPreparation().manage_parameters.rating,
-      this.data.getPreparation().use_custom_parameters
+      this.data.getPreparation().use_custom_parameters,
     );
   }
 
@@ -74,14 +75,14 @@ export class BrewPopoverActionsComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       _type,
-      BrewPopoverActionsComponent.COMPONENT_ID
+      BrewPopoverActionsComponent.COMPONENT_ID,
     );
   }
   public async dismiss() {
     this.modalController.dismiss(
       undefined,
       undefined,
-      BrewPopoverActionsComponent.COMPONENT_ID
+      BrewPopoverActionsComponent.COMPONENT_ID,
     );
   }
 }

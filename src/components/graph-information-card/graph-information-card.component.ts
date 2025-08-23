@@ -36,6 +36,7 @@ declare var Plotly;
   selector: 'graph-information-card',
   templateUrl: './graph-information-card.component.html',
   styleUrls: ['./graph-information-card.component.scss'],
+  standalone: false,
 })
 export class GraphInformationCardComponent implements OnInit {
   @Input() public graph: Graph;
@@ -57,7 +58,7 @@ export class GraphInformationCardComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly uiSettingsStorage: UISettingsStorage,
     protected readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public async ngOnInit() {
@@ -73,7 +74,7 @@ export class GraphInformationCardComponent implements OnInit {
     event.stopImmediatePropagation();
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.POPOVER_ACTIONS
+      GRAPH_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
     const popover = await this.modalController.create({
       component: GraphPopoverActionsComponent,
@@ -119,7 +120,7 @@ export class GraphInformationCardComponent implements OnInit {
   public async archive() {
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.ARCHIVE
+      GRAPH_TRACKING.ACTIONS.ARCHIVE,
     );
     this.graph.finished = true;
     await this.uiGraphStorage.update(this.graph);
@@ -129,11 +130,11 @@ export class GraphInformationCardComponent implements OnInit {
   public async share() {
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.SHARE
+      GRAPH_TRACKING.ACTIONS.SHARE,
     );
     try {
       const flowData: BrewFlow = (await this.uiGraphHelper.readFlowProfile(
-        this.graph.flow_profile
+        this.graph.flow_profile,
       )) as BrewFlow;
       const exportData = {
         NAME: this.graph.name,
@@ -144,7 +145,7 @@ export class GraphInformationCardComponent implements OnInit {
         await this.uiHelper.exportJSON(
           this.graph.config.uuid + '_export.json',
           JSON.stringify(exportData),
-          true
+          true,
         );
       } catch (ex) {}
     } catch (ex) {}
@@ -175,7 +176,7 @@ export class GraphInformationCardComponent implements OnInit {
             // Yes
             this.uiAnalytics.trackEvent(
               GRAPH_TRACKING.TITLE,
-              GRAPH_TRACKING.ACTIONS.DELETE
+              GRAPH_TRACKING.ACTIONS.DELETE,
             );
             await this.__delete();
             this.uiToast.showInfoToast('TOAST_GRAPH_DELETED_SUCCESSFULLY');
@@ -184,7 +185,7 @@ export class GraphInformationCardComponent implements OnInit {
           () => {
             // No
             reject();
-          }
+          },
         );
     });
   }

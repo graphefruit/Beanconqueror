@@ -28,6 +28,7 @@ import { CombustionThermometer } from './combustionThermometer';
 import { ArgosThermometer } from './argosThermometer';
 import { TimemoreScale } from './timemoreScale';
 import { VariaAkuScale } from './variaAku';
+import { EspressiScale } from './espressiScale';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 
@@ -54,6 +55,7 @@ export enum ScaleType {
   BOKOOSCALE = 'BOOKOOSCALE',
   TIMEMORESCALE = 'TIMEMORESCALE',
   VARIA_AKU = 'VARIA_AKU',
+  ESPRESSI = 'ESPRESSI',
 }
 
 export enum PressureType {
@@ -77,7 +79,7 @@ export enum RefractometerType {
 
 export function makeDevice(
   type: ScaleType,
-  data: PeripheralData
+  data: PeripheralData,
 ): BluetoothScale | null {
   switch (type) {
     case ScaleType.DECENT:
@@ -110,6 +112,8 @@ export function makeDevice(
       return new TimemoreScale(data, type);
     case ScaleType.VARIA_AKU:
       return new VariaAkuScale(data, type);
+    case ScaleType.ESPRESSI:
+      return new EspressiScale(data, type);
     default:
       return null;
   }
@@ -117,7 +121,7 @@ export function makeDevice(
 
 export function makePressureDevice(
   type: PressureType,
-  data: PeripheralData
+  data: PeripheralData,
 ): PressureDevice | null {
   switch (type) {
     case PressureType.POPSICLE:
@@ -135,7 +139,7 @@ export function makePressureDevice(
 
 export function makeTemperatureDevice(
   type: TemperatureType,
-  data: PeripheralData
+  data: PeripheralData,
 ): TemperatureDevice | null {
   switch (type) {
     case TemperatureType.ETI:
@@ -155,7 +159,7 @@ export function makeTemperatureDevice(
 
 export function makeRefractometerDevice(
   type: RefractometerType,
-  data: PeripheralData
+  data: PeripheralData,
 ): RefractometerDevice | null {
   if (type === RefractometerType.R2) return new DiFluidR2Refractometer(data);
   return null;

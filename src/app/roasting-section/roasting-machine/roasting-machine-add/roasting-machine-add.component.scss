@@ -1,9 +1,9 @@
 :host {
   ion-footer{
-    background:#ffffff;
+    background:var(--ion-color-light);
   }
   ion-header {
     height:40px;
-    background-color: #ffffff;
+    background-color: var(--ion-color-light);
   }
 }

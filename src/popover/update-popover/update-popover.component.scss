@@ -9,8 +9,8 @@
   }
   ion-slides { height: initial; }
   ion-header, ion-content, ion-footer{
-    background:#ffffff;
-    --background:#ffffff;
+    background:var(--ion-color-light);
+    --background:var(--ion-color-light);
   }
   swiper-slide {
     div {

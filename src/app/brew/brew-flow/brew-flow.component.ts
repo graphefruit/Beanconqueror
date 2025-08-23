@@ -31,6 +31,7 @@ declare var Plotly;
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
+  standalone: false,
 })
 export class BrewFlowComponent implements OnDestroy, OnInit {
   public static readonly COMPONENT_ID: string = 'brew-flow';

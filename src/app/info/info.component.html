@@ -40,10 +40,12 @@
       <ion-label>{{"NAV_CONTACT" | translate}}</ion-label>
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>
-    <ion-item *ngIf="false" [routerLink]="['/info/thanks']" lines="none">
-      <ion-label>{{"NAV_THANKS" | translate}}</ion-label>
-      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-    </ion-item>
+    @if (false) {
+      <ion-item [routerLink]="['/info/thanks']" lines="none">
+        <ion-label>{{"NAV_THANKS" | translate}}</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+    }
   </ion-card>
 
 
@@ -53,10 +55,12 @@
       <ion-label>{{"NAV_LICENCES" | translate}}</ion-label>
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>
-    <ion-item *ngIf="false" [routerLink]="['/info/credits']">
-      <ion-label>{{"NAV_CREDITS" | translate}}</ion-label>
-      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-    </ion-item>
+    @if (false) {
+      <ion-item [routerLink]="['/info/credits']">
+        <ion-label>{{"NAV_CREDITS" | translate}}</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+    }
     <ion-item [routerLink]="['/info/logs']" lines="none">
       <ion-label>{{"NAV_LOGS" | translate}}</ion-label>
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>

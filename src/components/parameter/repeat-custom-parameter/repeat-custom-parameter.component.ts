@@ -10,6 +10,7 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
   selector: 'repeat-custom-parameter',
   templateUrl: './repeat-custom-parameter.component.html',
   styleUrls: ['./repeat-custom-parameter.component.scss'],
+  standalone: false,
 })
 export class RepeatCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;
@@ -17,7 +18,7 @@ export class RepeatCustomParameterComponent implements OnInit {
     public uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   public ngOnInit() {}

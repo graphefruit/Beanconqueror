@@ -20,45 +20,49 @@
       <ion-label>{{"CURRENT" | translate}}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="settings?.show_archived_waters" value="archiv">
-      <ion-label>{{"TAB_ARCHIVE" | translate}}
-      </ion-label>
-    </ion-segment-button>
+    @if (settings?.show_archived_waters) {
+      <ion-segment-button value="archiv">
+        <ion-label>{{"TAB_ARCHIVE" | translate}}
+        </ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>
-  <div [ngSwitch]="segment">
-    <div *ngSwitchCase="'open'">
-
-      <div *ngIf="openWaters.length == 0" class="ion-padding ion-text-center">
-        <div>
-          <ion-icon color="inactive" name="water-outline" size="large"></ion-icon>
-        </div>
-        <div class="text-color-inactive ion-margin-top">
-          {{"WATER_SECTION.YOU_GOT_NO_WATER" | translate}}
-        </div>
-      </div>
-      <ag-virtual-scroll #openScroll [items]="openWaters" [height]="'100vh'" min-row-height="165">
-        <water-information-card (waterAction)="triggerAction($event[0],$event[1])" *ngFor="let water of openScroll.items" [water]="water"></water-information-card>
-      </ag-virtual-scroll>
-    </div>
-    <div *ngIf="settings?.show_archived_beans">
-      <div *ngSwitchCase="'archiv'">
-
-
-        <div *ngIf="finishedWaters.length == 0" class="ion-padding ion-text-center">
+  @switch (segment) {
+    @case ('open') {
+      @if (openWaters.length == 0) {
+        <div class="ion-padding ion-text-center">
           <div>
             <ion-icon color="inactive" name="water-outline" size="large"></ion-icon>
           </div>
           <div class="text-color-inactive ion-margin-top">
-            {{"WATER_SECTION.YOU_GOT_NO_ARCHIVED_WATER" | translate}}
+            {{"WATER_SECTION.YOU_GOT_NO_WATER" | translate}}
           </div>
         </div>
-
-
-
+      }
+      <ag-virtual-scroll #openScroll [items]="openWaters" [height]="'100vh'" min-row-height="165">
+        @for (water of openScroll.items; track water) {
+          <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water"></water-information-card>
+        }
+      </ag-virtual-scroll>
+    }
+    @case ('archiv') {
+      @if (settings?.show_archived_beans) {
+        @if (finishedWaters.length == 0) {
+          <div class="ion-padding ion-text-center">
+            <div>
+              <ion-icon color="inactive" name="water-outline" size="large"></ion-icon>
+            </div>
+            <div class="text-color-inactive ion-margin-top">
+              {{"WATER_SECTION.YOU_GOT_NO_ARCHIVED_WATER" | translate}}
+            </div>
+          </div>
+        }
         <ag-virtual-scroll #archivedScroll [items]="finishedWaters" [height]="'100vh'" min-row-height="165">
-          <water-information-card (waterAction)="triggerAction($event[0],$event[1])" *ngFor="let water of archivedScroll.items" [water]="water"></water-information-card>
+          @for (water of archivedScroll.items; track water) {
+            <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water"></water-information-card>
+          }
         </ag-virtual-scroll>
-      </div>
-    </div>
-  </div>
+      }
+    }
+  }
 </ion-content>

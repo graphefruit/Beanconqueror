@@ -5,7 +5,7 @@
         <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">{{roastingMachine.name}}</div></ion-col>
         <ion-col size="1">
           <ion-button (click)="showActions($event)" class="button-top-absolute" tappable
-                      color="accent" fill="clear">
+            color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>
@@ -35,11 +35,13 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        <ion-col class="ion-no-padding" size="3" *ngIf="hasPhotos()" (click)="showPhoto($event)">
-          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-            <async-image [filePath]="roastingMachine.attachments[0]" class="bean-slider"></async-image>
-          </div>
-        </ion-col>
+        @if (hasPhotos()) {
+          <ion-col class="ion-no-padding" size="3" (click)="showPhoto($event)">
+            <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+              <async-image [filePath]="roastingMachine.attachments[0]" class="bean-slider"></async-image>
+            </div>
+          </ion-col>
+        }
       </ion-row>
     </ion-grid>
   </ion-card-content>

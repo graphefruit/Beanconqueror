@@ -18,6 +18,7 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
   selector: 'green-bean-add',
   templateUrl: './green-bean-add.component.html',
   styleUrls: ['./green-bean-add.component.scss'],
+  standalone: false,
 })
 export class GreenBeanAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'green-bean-add';
@@ -32,13 +33,13 @@ export class GreenBeanAddComponent implements OnInit {
     public uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
       GREEN_BEAN_TRACKING.TITLE,
-      GREEN_BEAN_TRACKING.ACTIONS.ADD
+      GREEN_BEAN_TRACKING.ACTIONS.ADD,
     );
     if (this.green_bean_template) {
       await this.__loadBean(this.green_bean_template);
@@ -63,7 +64,7 @@ export class GreenBeanAddComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       GREEN_BEAN_TRACKING.TITLE,
-      GREEN_BEAN_TRACKING.ACTIONS.ADD_FINISH
+      GREEN_BEAN_TRACKING.ACTIONS.ADD_FINISH,
     );
     this.dismiss();
   }
@@ -74,7 +75,7 @@ export class GreenBeanAddComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      GreenBeanAddComponent.COMPONENT_ID
+      GreenBeanAddComponent.COMPONENT_ID,
     );
   }
 
@@ -96,9 +97,8 @@ export class GreenBeanAddComponent implements OnInit {
     const copyAttachments = [];
     for (const attachment of _bean.attachments) {
       try {
-        const newPath: string = await this.uiFileHelper.duplicateInternalFile(
-          attachment
-        );
+        const newPath: string =
+          await this.uiFileHelper.duplicateInternalFile(attachment);
         copyAttachments.push(newPath);
       } catch (ex) {}
     }

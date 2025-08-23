@@ -26,6 +26,7 @@ import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
   selector: 'app-green-beans',
   templateUrl: './green-beans.page.html',
   styleUrls: ['./green-beans.page.scss'],
+  standalone: false,
 })
 export class GreenBeansPage implements OnInit {
   private beans: Array<GreenBean> = [];
@@ -64,7 +65,7 @@ export class GreenBeansPage implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGreenBeanHelper: UIGreenBeanHelper
+    private readonly uiGreenBeanHelper: UIGreenBeanHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -110,7 +111,7 @@ export class GreenBeansPage implements OnInit {
 
   public async beanAction(
     action: GREEN_BEAN_ACTION,
-    bean: GreenBean
+    bean: GreenBean,
   ): Promise<void> {
     this.loadBeans();
   }
@@ -253,7 +254,7 @@ export class GreenBeansPage implements OnInit {
           e.note?.toLowerCase().includes(searchText) ||
           e.name?.toLowerCase().includes(searchText) ||
           e.aromatics?.toLowerCase().includes(searchText) ||
-          e.ean_article_number?.toLowerCase().includes(searchText)
+          e.ean_article_number?.toLowerCase().includes(searchText),
       );
     }
     if (isOpen) {

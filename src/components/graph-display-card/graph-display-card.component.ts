@@ -22,6 +22,7 @@ declare var Plotly;
   selector: 'graph-display-card',
   templateUrl: './graph-display-card.component.html',
   styleUrls: ['./graph-display-card.component.scss'],
+  standalone: false,
 })
 export class GraphDisplayCardComponent implements OnInit {
   @Input() public flowProfileData: any;

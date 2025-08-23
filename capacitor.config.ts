@@ -70,6 +70,7 @@ const createConfig = () => {
     },
     android: {
       allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
+      adjustMarginsForEdgeToEdge: 'auto', // Needed to fix safe area / edge to edge
     },
     plugins: {
       CapacitorHttp: {
@@ -82,9 +83,12 @@ const createConfig = () => {
       },
       SplashScreen: {
         launchAutoHide: false, // we will hide the splashcreen inside the app
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#000000',
         androidScaleType: 'CENTER_CROP',
         useDialog: false, // required to set the correct scale type
+      },
+      StatusBar: {
+        overlaysWebView: false,
       },
     },
   };

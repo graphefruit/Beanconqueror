@@ -33,8 +33,10 @@ import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 
 export class Settings implements ISettings {
+  public theme_mode: THEME_MODE_ENUM;
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
   public date_format: string;
@@ -601,6 +603,7 @@ export class Settings implements ISettings {
     this.bluetooth_devices_show_connection_messages = true;
 
     this.brew_display_image_type = BREW_DISPLAY_IMAGE_TYPE.PREPARATION;
+    this.theme_mode = THEME_MODE_ENUM.LIGHT;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

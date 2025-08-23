@@ -1,15 +1,17 @@
-import {Directive, ElementRef, HostListener, Input} from '@angular/core';
-import {UIAlert} from '../services/uiAlert';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { UIAlert } from '../services/uiAlert';
 
 @Directive({
   selector: '[tooltip]',
+  standalone: false,
 })
 export class TooltipDirective {
-
   @Input('tooltip') public tooltip: string;
 
-  constructor(el: ElementRef,
-              private readonly uiAlert: UIAlert) {
+  constructor(
+    el: ElementRef,
+    private readonly uiAlert: UIAlert,
+  ) {
     // el.nativeElement.style.backgroundColor = 'yellow';
   }
 
@@ -17,6 +19,4 @@ export class TooltipDirective {
   public onClick($event) {
     this.uiAlert.showMessage(this.tooltip);
   }
-
-
 }

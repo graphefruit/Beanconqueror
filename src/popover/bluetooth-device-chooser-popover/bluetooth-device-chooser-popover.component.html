@@ -14,20 +14,28 @@
   <ion-card>
     <ion-card-content>
 
-      <ng-container *ngIf='foundDevices.length <=0 && searchRunning === false'>
+      @if(foundDevices.length <=0 && searchRunning === false) {
         <h2>{{'NO_DEVICES_FOUND_PLEASE_TRY_AGAIN' |translate}}</h2>
-      </ng-container>
-      <ion-radio-group [(ngModel)]="deviceSelection" (ngModelChange)='checkChanges()'>
-        <ion-item lines='none' *ngFor='let device of foundDevices' tappable>
-          <ion-radio justify='start' label-placement='end' value='{{device.id}}'>
-            <span *ngIf='device.name'>{{device.name}}</span>
-            <span *ngIf='!device.name'>?&nbsp;&nbsp;{{device.type}}</span>
-          </ion-radio>
-        </ion-item>
-      </ion-radio-group>
-      <ng-container *ngIf='searchRunning === true'>
+      }
+      @if(foundDevices.length > 0) {
+        <ion-radio-group [(ngModel)]="deviceSelection" (ngModelChange)='checkChanges()'>
+        @for(device of foundDevices; track $index) {
+          <ion-item lines='none' tappable>
+            <ion-radio justify='start' label-placement='end' value='{{device.id}}'>
+              @if(device.name) {
+                <span>{{device.name}}</span>
+              }
+              @if(!device.name) {
+                <span>?&nbsp;&nbsp;{{device.type}}</span>
+              }
+            </ion-radio>
+          </ion-item>
+        }
+        </ion-radio-group>
+      }
+      @if(searchRunning === true) {
         <ion-spinner name="dots"></ion-spinner>
-      </ng-container>
+      }
     </ion-card-content>
   </ion-card>
 

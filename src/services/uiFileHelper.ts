@@ -612,11 +612,14 @@ export class UIFileHelper extends InstanceClass {
       directory,
     );
     try {
-      await Filesystem.mkdir({
-        path: parts.FILE_PATH,
-        recursive: true,
-        directory: directory,
-      });
+      //Just make it when its not the root directory
+      if (parts.FILE_PATH !== '/') {
+        await Filesystem.mkdir({
+          path: parts.FILE_PATH,
+          recursive: true,
+          directory: directory,
+        });
+      }
     } catch (error) {
       if (
         error instanceof CapacitorException &&

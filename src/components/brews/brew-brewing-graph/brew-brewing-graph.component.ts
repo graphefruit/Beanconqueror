@@ -76,6 +76,7 @@ declare var Plotly;
   selector: 'brew-brewing-graph',
   templateUrl: './brew-brewing-graph.component.html',
   styleUrls: ['./brew-brewing-graph.component.scss'],
+  standalone: false,
 })
 export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('smartScaleWeight', { read: ElementRef })

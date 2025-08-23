@@ -5,6 +5,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'licences',
   templateUrl: './licences.component.html',
   styleUrls: ['./licences.component.scss'],
+  standalone: false,
 })
 export class LicencesComponent implements OnInit {
   public licences: any = {

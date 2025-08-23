@@ -24,6 +24,7 @@ import { UIWaterHelper } from '../../../services/uiWaterHelper';
   selector: 'app-water',
   templateUrl: './water.page.html',
   styleUrls: ['./water.page.scss'],
+  standalone: false,
 })
 export class WaterPage implements OnInit {
   private waters: Array<Water> = [];
@@ -51,7 +52,7 @@ export class WaterPage implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiWaterHelper: UIWaterHelper
+    private readonly uiWaterHelper: UIWaterHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -93,7 +94,7 @@ export class WaterPage implements OnInit {
 
   public async triggerAction(
     action: GREEN_BEAN_ACTION,
-    bean: GreenBean
+    bean: GreenBean,
   ): Promise<void> {
     this.load();
   }
