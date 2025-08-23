@@ -50,6 +50,7 @@ import { UIHelper } from '../uiHelper';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
 import { EspressiScale } from '../../classes/devices/espressiScale';
+import { WeighMyBruScale } from 'src/classes/devices/weighMyBruScale';
 
 declare var ble: any;
 declare var cordova: any;
@@ -736,6 +737,13 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceScale.id,
         type: ScaleType.VARIA_AKU,
+      };
+    }
+    if (WeighMyBruScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a WeighMyBru scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.WEIGHMYBRUSCALE,
       };
     }
 

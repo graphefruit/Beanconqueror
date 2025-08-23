@@ -29,6 +29,7 @@ import { ArgosThermometer } from './argosThermometer';
 import { TimemoreScale } from './timemoreScale';
 import { VariaAkuScale } from './variaAku';
 import { EspressiScale } from './espressiScale';
+import { WeighMyBruScale } from './weighMyBruScale';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 
@@ -56,6 +57,7 @@ export enum ScaleType {
   TIMEMORESCALE = 'TIMEMORESCALE',
   VARIA_AKU = 'VARIA_AKU',
   ESPRESSI = 'ESPRESSI',
+  WEIGHMYBRUSCALE = 'WEIGHMYBRUSCALE',
 }
 
 export enum PressureType {
@@ -114,6 +116,8 @@ export function makeDevice(
       return new VariaAkuScale(data, type);
     case ScaleType.ESPRESSI:
       return new EspressiScale(data, type);
+    case ScaleType.WEIGHMYBRUSCALE:
+      return new WeighMyBruScale(data, type);
     default:
       return null;
   }
