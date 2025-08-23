@@ -1511,5 +1511,10 @@
     "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Suche im internen Gerätespeicher nach automatischen Sicherungsdateien, wähle eine aus und importiere diese",
     "NO_AUTOMATIC_BACKUPS_FOUND": "Keine automatischen Backups gefunden",
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Wenn du einen Datenverlust erlitten hast und hier keine Daten gefunden hast, nutze bitte die offiziellen Support-Wege",
-    "IMPORT_AUTOMATIC_BACKUP_FILE": "Automatische Sicherungsdatei importieren"
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Automatische Sicherungsdatei importieren",
+    "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
+    "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
+    "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
+    "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
+    "PAGE_STATISTICS_AVG_RATING": "Average Rating"
 }

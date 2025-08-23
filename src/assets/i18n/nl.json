@@ -1511,5 +1511,10 @@
     "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Zoek in de interne apparaatopslag naar automatische back-upbestanden, kies er een en importeer deze",
     "NO_AUTOMATIC_BACKUPS_FOUND": "Geen automatische back-ups gevonden",
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Als u gegevens bent verloren en hier geen gegevens hebt gevonden, kunt u de officiële ondersteuningsmethoden gebruiken",
-    "IMPORT_AUTOMATIC_BACKUP_FILE": "Automatisch back-upbestand importeren"
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Automatisch back-upbestand importeren",
+    "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
+    "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
+    "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
+    "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
+    "PAGE_STATISTICS_AVG_RATING": "Average Rating"
 }

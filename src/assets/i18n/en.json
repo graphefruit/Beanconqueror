@@ -1517,6 +1517,10 @@
   "PAGE_SETTINGS_THEME_MODE_LIGHT": "Light mode",
   "PAGE_SETTINGS_THEME_MODE_DARK": "Dark mode",
   "PAGE_SETTINGS_THEME_MODE_DEVICE": "System default",
-  "PAGE_SETTINGS_THEME_MODE": "Theme mode"
-
+  "PAGE_SETTINGS_THEME_MODE": "Theme mode",
+  "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
+  "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
+  "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
+  "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
+  "PAGE_STATISTICS_AVG_RATING": "Average Rating"
 }

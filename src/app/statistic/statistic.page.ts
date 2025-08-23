@@ -3,6 +3,7 @@ import { BrewView } from '../../classes/brew/brewView';
 import { UIStatistic } from '../../services/uiStatistic';
 import { UIHelper } from '../../services/uiHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { Brew } from '../../classes/brew/brew';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { Chart } from 'chart.js';
@@ -22,7 +23,6 @@ import { CurrencyService } from '../../services/currencyService/currency.service
 export class StatisticPage implements OnInit {
   @ViewChild('brewChart', { static: false }) public brewChart;
   @ViewChild('brewsPerDayChart', { static: false }) public brewsPerDayChart;
-
   @ViewChild('drinkingChart', { static: false }) public drinkingChart;
   @ViewChild('preparationUsageChart', { static: false })
   public preparationUsageChart;
@@ -32,11 +32,21 @@ export class StatisticPage implements OnInit {
   @ViewChild('grinderUsageTimelineChart', { static: false })
   public grinderUsageTimelineChart;
 
+  @ViewChild('beansByCountryChart', { static: false })
+  public beansByCountryChart;
+  @ViewChild('beansByProcessingChart', { static: false })
+  public beansByProcessingChart;
+  @ViewChild('beansByRoasterChart', { static: false })
+  public beansByRoasterChart;
+  @ViewChild('beansAvgRatingByCountryChart', { static: false })
+  public beansAvgRatingByCountryChart;
+
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
   constructor(
     public uiStatistic: UIStatistic,
     private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiMillStorage: UIMillStorage,
@@ -58,7 +68,235 @@ export class StatisticPage implements OnInit {
     }, 250);
   }
 
-  public loadBeanCharts() {}
+  public loadBeanCharts() {
+    setTimeout(() => {
+      this.__loadBeansByCountryChart();
+      this.__loadBeansByProcessingChart();
+      this.__loadBeansByRoasterChart();
+      this.__loadAvgBeanRatingByCountryChart();
+    }, 250);
+  }
+
+  private __loadAvgBeanRatingByCountryChart(): void {
+    const brews = this.uiBrewStorage.getAllEntries();
+    const beans = this.__getBeansFromBrews(brews);
+    const countries = Array.from(
+      new Set(
+        beans
+          .map((b) => b.bean_information.map((info) => info.country))
+          .reduce((acc, val) => acc.concat(val), [])
+          .filter((c) => c),
+      ),
+    );
+    const data = {
+      labels: [],
+      datasets: [
+        {
+          label: this.translate.instant('PAGE_STATISTICS_AVG_RATING'),
+          data: [],
+          borderColor: 'rgb(159,140,111)',
+          backgroundColor: 'rgb(205,194,172)',
+        },
+      ],
+    };
+    for (const country of countries) {
+      const beansForCountry = beans.filter((b) =>
+        b.bean_information.some((info) => info.country === country),
+      );
+      const brewsForCountry = brews.filter((b) =>
+        beansForCountry.some((bean) => bean.config.uuid === b.bean),
+      );
+      const totalRating = brewsForCountry.reduce(
+        (acc, brew) => acc + brew.rating,
+        0,
+      );
+      const avgRating = totalRating / brewsForCountry.length;
+      if (!country) continue;
+      data.labels.push(country);
+      data.datasets[0].data.push(avgRating);
+    }
+
+    new Chart(this.beansAvgRatingByCountryChart.nativeElement, {
+      type: 'radar',
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+        },
+      },
+    } as any);
+  }
+
+  private __loadBeansByRoasterChart(): void {
+    const brews = this.uiBrewStorage.getAllEntries();
+    const beans = this.__getBeansFromBrews(brews);
+    const roasters = Array.from(
+      new Set(beans.map((b) => b.roaster).filter((r) => r)),
+    );
+
+    const data = {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: '#fff',
+        },
+      ],
+    };
+
+    for (const roaster of roasters) {
+      if (!roaster) continue;
+      data.labels.push(roaster);
+      data.datasets[0].data.push(
+        beans.filter((b) => b.roaster === roaster).length,
+      );
+    }
+
+    const colorGradient = new Gradient()
+      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
+      .setMidpoint(Math.max(4, data.labels.length))
+      .getColors();
+    data.datasets[0].backgroundColor = colorGradient;
+
+    new Chart(this.beansByRoasterChart.nativeElement, {
+      type: 'pie',
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+        },
+      },
+    } as any);
+  }
+
+  private __loadBeansByProcessingChart(): void {
+    const brews = this.uiBrewStorage.getAllEntries();
+    const beans = this.__getBeansFromBrews(brews);
+    const processings = Array.from(
+      new Set(
+        beans
+          .map((b) => b.bean_information.map((info) => info.processing))
+          .reduce((acc, val) => acc.concat(val), [])
+          .filter((p) => p),
+      ),
+    );
+
+    const data = {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: '#fff',
+        },
+      ],
+    };
+
+    for (const processing of processings) {
+      if (!processing) continue;
+      data.labels.push(processing);
+      data.datasets[0].data.push(
+        beans.filter((b) =>
+          b.bean_information.some((info) => info.processing === processing),
+        ).length,
+      );
+    }
+
+    const colorGradient = new Gradient()
+      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
+      .setMidpoint(Math.max(4, data.labels.length))
+      .getColors();
+    data.datasets[0].backgroundColor = colorGradient;
+
+    new Chart(this.beansByProcessingChart.nativeElement, {
+      type: 'pie',
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+        },
+      },
+    } as any);
+  }
+
+  private __loadBeansByCountryChart(): void {
+    const brews = this.uiBrewStorage.getAllEntries();
+    const beans = this.__getBeansFromBrews(brews);
+    const countries = Array.from(
+      new Set(
+        beans
+          .map((b) => b.bean_information.map((info) => info.country))
+          .reduce((acc, val) => acc.concat(val), [])
+          .filter((c) => c),
+      ),
+    );
+
+    const data = {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: '#fff',
+        },
+      ],
+    };
+
+    for (const country of countries) {
+      if (!country) continue;
+      data.labels.push(country);
+      data.datasets[0].data.push(
+        beans.filter((b) =>
+          b.bean_information.some((info) => info.country === country),
+        ).length,
+      );
+    }
+
+    const colorGradient = new Gradient()
+      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
+      .setMidpoint(Math.max(4, data.labels.length))
+      .getColors();
+    data.datasets[0].backgroundColor = colorGradient;
+
+    new Chart(this.beansByCountryChart.nativeElement, {
+      type: 'pie',
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+        },
+      },
+    } as any);
+  }
+
+  private __getBeansFromBrews(brews: Brew[]): any[] {
+    const brewedBeanUuids = new Set(brews.map((b) => b.bean));
+    const beans = [];
+    for (const uuid of brewedBeanUuids) {
+      const bean = this.uiBeanStorage.getByUUID(uuid);
+      if (bean) {
+        beans.push(bean);
+      }
+    }
+    return beans;
+  }
 
   public loadPreparationCharts() {
     setTimeout(() => {
