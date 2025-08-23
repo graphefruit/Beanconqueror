@@ -80,7 +80,14 @@ export class StatisticPage implements OnInit {
   private __loadAvgBeanRatingByCountryChart(): void {
     const brews = this.uiBrewStorage.getAllEntries();
     const beans = this.__getBeansFromBrews(brews);
-    const countries = Array.from(new Set(beans.map((b) => b.country).flat()));
+    const countries = Array.from(
+      new Set(
+        beans
+          .map((b) => b.bean_information.map((info) => info.country))
+          .reduce((acc, val) => acc.concat(val), [])
+          .filter((c) => c),
+      ),
+    );
     const data = {
       labels: [],
       datasets: [
@@ -93,7 +100,9 @@ export class StatisticPage implements OnInit {
       ],
     };
     for (const country of countries) {
-      const beansForCountry = beans.filter((b) => b.country === country);
+      const beansForCountry = beans.filter((b) =>
+        b.bean_information.some((info) => info.country === country),
+      );
       const brewsForCountry = brews.filter((b) =>
         beansForCountry.some((bean) => bean.config.uuid === b.bean),
       );
@@ -125,7 +134,9 @@ export class StatisticPage implements OnInit {
   private __loadBeansByRoasterChart(): void {
     const brews = this.uiBrewStorage.getAllEntries();
     const beans = this.__getBeansFromBrews(brews);
-    const roasters = Array.from(new Set(beans.map((b) => b.roaster).flat()));
+    const roasters = Array.from(
+      new Set(beans.map((b) => b.roaster).filter((r) => r)),
+    );
 
     const data = {
       labels: [],
@@ -171,7 +182,12 @@ export class StatisticPage implements OnInit {
     const brews = this.uiBrewStorage.getAllEntries();
     const beans = this.__getBeansFromBrews(brews);
     const processings = Array.from(
-      new Set(beans.map((b) => b.processing).flat()),
+      new Set(
+        beans
+          .map((b) => b.bean_information.map((info) => info.processing))
+          .reduce((acc, val) => acc.concat(val), [])
+          .filter((p) => p),
+      ),
     );
 
     const data = {
@@ -189,7 +205,9 @@ export class StatisticPage implements OnInit {
       if (!processing) continue;
       data.labels.push(processing);
       data.datasets[0].data.push(
-        beans.filter((b) => b.processing === processing).length,
+        beans.filter((b) =>
+          b.bean_information.some((info) => info.processing === processing),
+        ).length,
       );
     }
 
@@ -217,7 +235,14 @@ export class StatisticPage implements OnInit {
   private __loadBeansByCountryChart(): void {
     const brews = this.uiBrewStorage.getAllEntries();
     const beans = this.__getBeansFromBrews(brews);
-    const countries = Array.from(new Set(beans.map((b) => b.country).flat()));
+    const countries = Array.from(
+      new Set(
+        beans
+          .map((b) => b.bean_information.map((info) => info.country))
+          .reduce((acc, val) => acc.concat(val), [])
+          .filter((c) => c),
+      ),
+    );
 
     const data = {
       labels: [],
@@ -234,7 +259,9 @@ export class StatisticPage implements OnInit {
       if (!country) continue;
       data.labels.push(country);
       data.datasets[0].data.push(
-        beans.filter((b) => b.country === country).length,
+        beans.filter((b) =>
+          b.bean_information.some((info) => info.country === country),
+        ).length,
       );
     }
 
