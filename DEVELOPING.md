@@ -23,6 +23,14 @@ After cloning the repository, you need to install `npm` dependencies:
 npm install
 ```
 
+## Running tests
+
+Run unit tests through npm. These are run automatically in CI.
+
+```shell
+npm test
+```
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.
