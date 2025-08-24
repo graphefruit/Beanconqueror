@@ -147,7 +147,10 @@
               style="font-size: 1.2em;text-align:center;">{{"STATISTICS_BEANS_BY_COUNTRY" | translate}}
             </ion-card-header>
             <ion-card-content class="ion-margin-top">
-              <canvas #beansByCountryChart></canvas>
+              <div class="chart-container">
+                <canvas #beansByCountryChart></canvas>
+              </div>
+              <div #beansByCountryChartLegend class="chart-legend"></div>
             </ion-card-content>
           </ion-card>
           <ion-card>
@@ -155,7 +158,10 @@
               style="font-size: 1.2em;text-align:center;">{{"STATISTICS_BEANS_BY_PROCESSING" | translate}}
             </ion-card-header>
             <ion-card-content class="ion-margin-top">
-              <canvas #beansByProcessingChart></canvas>
+              <div class="chart-container">
+                <canvas #beansByProcessingChart></canvas>
+              </div>
+              <div #beansByProcessingChartLegend class="chart-legend"></div>
             </ion-card-content>
           </ion-card>
           <ion-card>
@@ -163,7 +169,10 @@
               style="font-size: 1.2em;text-align:center;">{{"STATISTICS_BEANS_BY_ROASTER" | translate}}
             </ion-card-header>
             <ion-card-content class="ion-margin-top">
-              <canvas #beansByRoasterChart></canvas>
+              <div class="chart-container">
+                <canvas #beansByRoasterChart></canvas>
+              </div>
+              <div #beansByRoasterChartLegend class="chart-legend"></div>
             </ion-card-content>
           </ion-card>
           <ion-card>
@@ -183,7 +192,10 @@
               style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_USAGES" | translate}}
             </ion-card-header>
             <ion-card-content class="ion-margin-top">
-              <canvas #preparationUsageChart></canvas>
+              <div class="chart-container">
+                <canvas #preparationUsageChart></canvas>
+              </div>
+              <div #preparationUsageChartLegend class="chart-legend"></div>
             </ion-card-content>
           </ion-card>
           <ion-card>

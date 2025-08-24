@@ -40,9 +40,19 @@ export class StatisticPage implements OnInit {
   public beansByRoasterChart;
   @ViewChild('beansAvgRatingByCountryChart', { static: false })
   public beansAvgRatingByCountryChart;
+  @ViewChild('beansByCountryChartLegend', { static: false })
+  public beansByCountryChartLegend;
+  @ViewChild('beansByProcessingChartLegend', { static: false })
+  public beansByProcessingChartLegend;
+  @ViewChild('beansByRoasterChartLegend', { static: false })
+  public beansByRoasterChartLegend;
+  @ViewChild('preparationUsageChartLegend', { static: false })
+  public preparationUsageChartLegend;
 
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
+  private charts: Chart[] = [];
+
   constructor(
     public uiStatistic: UIStatistic,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -75,6 +85,56 @@ export class StatisticPage implements OnInit {
       this.__loadBeansByRoasterChart();
       this.__loadAvgBeanRatingByCountryChart();
     }, 250);
+  }
+
+  private __createPieChart(
+    canvas: any,
+    legend: any,
+    data: any,
+    maintainAspectRatio: boolean = false,
+  ) {
+    const colorGradient = new Gradient()
+      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
+      .setMidpoint(Math.max(4, data.labels.length))
+      .getColors();
+    data.datasets[0].backgroundColor = colorGradient;
+
+    const chart = new Chart(canvas.nativeElement, {
+      type: 'pie',
+      data,
+      options: {
+        responsive: true,
+        maintainAspectRatio,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+      },
+    } as any);
+    this.__generateLegend(chart, legend.nativeElement);
+    this.charts.push(chart);
+  }
+
+  private __generateLegend(chart: Chart, legendContainer: HTMLElement) {
+    if (!chart.legend) return;
+    const labels = (chart.legend as any).labels;
+    let html = '<ul>';
+    labels.forEach((label, index) => {
+      html += `<li (click)="${() => this.__toggleData(chart, index)}">
+                      <span class="legend-color-box" style="background-color:${
+                        label.fillStyle
+                      }"></span>
+                      ${label.text}
+                   </li>`;
+    });
+    html += '</ul>';
+    legendContainer.innerHTML = html;
+  }
+
+  private __toggleData(chart: Chart, index: number) {
+    chart.toggleDataVisibility(index);
+    chart.update();
   }
 
   private __loadAvgBeanRatingByCountryChart(): void {
@@ -157,25 +217,11 @@ export class StatisticPage implements OnInit {
       );
     }
 
-    const colorGradient = new Gradient()
-      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
-      .setMidpoint(Math.max(4, data.labels.length))
-      .getColors();
-    data.datasets[0].backgroundColor = colorGradient;
-
-    new Chart(this.beansByRoasterChart.nativeElement, {
-      type: 'pie',
+    this.__createPieChart(
+      this.beansByRoasterChart,
+      this.beansByRoasterChartLegend,
       data,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-        },
-      },
-    } as any);
+    );
   }
 
   private __loadBeansByProcessingChart(): void {
@@ -211,25 +257,11 @@ export class StatisticPage implements OnInit {
       );
     }
 
-    const colorGradient = new Gradient()
-      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
-      .setMidpoint(Math.max(4, data.labels.length))
-      .getColors();
-    data.datasets[0].backgroundColor = colorGradient;
-
-    new Chart(this.beansByProcessingChart.nativeElement, {
-      type: 'pie',
+    this.__createPieChart(
+      this.beansByProcessingChart,
+      this.beansByProcessingChartLegend,
       data,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-        },
-      },
-    } as any);
+    );
   }
 
   private __loadBeansByCountryChart(): void {
@@ -265,25 +297,11 @@ export class StatisticPage implements OnInit {
       );
     }
 
-    const colorGradient = new Gradient()
-      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
-      .setMidpoint(Math.max(4, data.labels.length))
-      .getColors();
-    data.datasets[0].backgroundColor = colorGradient;
-
-    new Chart(this.beansByCountryChart.nativeElement, {
-      type: 'pie',
+    this.__createPieChart(
+      this.beansByCountryChart,
+      this.beansByCountryChartLegend,
       data,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-        },
-      },
-    } as any);
+    );
   }
 
   private __getBeansFromBrews(brews: Brew[]): any[] {
@@ -719,83 +737,28 @@ export class StatisticPage implements OnInit {
       new Set(brewView.map((e: Brew) => e.method_of_preparation)),
     );
 
-    const data = [
-      {
-        data: [],
-        labels: [],
-        backgroundColor: [],
-        borderColor: '#fff',
-      },
-    ];
-    const labels: Array<string> = [];
+    const data = {
+      labels: [],
+      datasets: [
+        {
+          data: [],
+          backgroundColor: [],
+          borderColor: '#fff',
+        },
+      ],
+    };
+
     for (const id of preparationMethodIds) {
-      data[0].data.push(
+      data.datasets[0].data.push(
         brewView.filter((e: Brew) => e.method_of_preparation === id).length,
       );
-      data[0].labels.push(
-        this.uiPreparationStorage.getPreparationNameByUUID(id),
-      );
-      labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
+      data.labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
     }
-
-    const colorGradient = new Gradient()
-      .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
-      .setMidpoint(data[0].labels.length)
-      .getColors();
-
-    data[0].backgroundColor = colorGradient;
-
-    const drinkingData = {
-      labels: labels,
-      datasets: data,
-      titel: '',
-    };
-
-    const chartOptions = {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-      plugins: {
-        labels: {
-          render: 'value',
-        },
-      },
-      tooltips: {
-        callbacks: {
-          label: (tooltipItem, mapData) => {
-            try {
-              let label = ' ' + mapData.labels[tooltipItem.index] || '';
-
-              if (label) {
-                label += ': ';
-              }
-
-              const sum = mapData.datasets[0].data.reduce(
-                (accumulator, curValue) => {
-                  return accumulator + curValue;
-                },
-              );
-              const value =
-                mapData.datasets[tooltipItem.datasetIndex].data[
-                  tooltipItem.index
-                ];
-
-              label += Number((value / sum) * 100).toFixed(2) + '%';
-              return label;
-            } catch (error) {}
-          },
-        },
-      },
-    };
-
-    const preparationChartToDismiss = new Chart(
-      this.preparationUsageChart.nativeElement,
-      {
-        type: 'pie',
-        data: drinkingData,
-        options: chartOptions,
-      } as any,
+    this.__createPieChart(
+      this.preparationUsageChart,
+      this.preparationUsageChartLegend,
+      data,
+      true,
     );
   }
 }
