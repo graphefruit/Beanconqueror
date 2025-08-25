@@ -25,6 +25,7 @@ import { BluetoothScale } from '../../../classes/devices';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from 'src/services/uiHelper';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { CameraPreview } from '@capgo/camera-preview';
 
 declare var Plotly;
 @Component({
@@ -39,6 +40,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @ViewChild('brewFlowContent', { read: ElementRef })
   public brewFlowContent: ElementRef;
 
+  public cameraIsVisible: boolean = false;
   public gaugeVisible: boolean = false;
   @Input() public flowChart: any;
   @Input() public flowChartEl: any;
@@ -442,7 +444,26 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     });
   }
 
+  public async toggleCamera() {
+    if (this.cameraIsVisible) {
+      await CameraPreview.stop();
+      this.cameraIsVisible = false;
+    } else {
+      const cameraPreviewOptions = {
+        parent: 'cameraPreview',
+        position: 'front' as const,
+        className: 'camera-preview',
+      };
+      await CameraPreview.start(cameraPreviewOptions);
+      this.cameraIsVisible = true;
+    }
+    this.onOrientationChange();
+  }
+
   public async ngOnDestroy() {
+    if (this.cameraIsVisible) {
+      await CameraPreview.stop();
+    }
     if (this.bluetoothSubscription) {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;

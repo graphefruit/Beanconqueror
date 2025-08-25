@@ -23,6 +23,9 @@
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weightSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.visible" class="weightsecond">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtimeFlowSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.visible" class="flowrealsecond">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
           }
+          <ion-button (click)="toggleCamera()" fill="clear">
+            <ion-icon name="camera-outline" slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
       </ion-col>
       <ion-col class="ion-text-right" size="1">
@@ -33,92 +36,92 @@
     </ion-row>
   </ion-grid>
 </ion-header>
-<ion-content #brewFlowContent>
-  @if(isDetail===false) {
-    <div id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
-      <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
-        <ion-row style="padding-bottom:5px;">
-          @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected || ( brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected && brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
-            <ion-col size="{{graphIconColSize}}" style="padding-right:5px;">
-              <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
-                <ion-card-header>
-                  <div #smartScaleWeightDetail>? g</div>
-                  @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
-                    <div #smartScaleWeightSecondDetail>?g</div>
-                  }
-                  @if(brewComponent.timer.timer.runTimer) {
-                    <span class="smartScaleRatio" #smartScaleBrewRatio></span>
-                  } @else {
-                    <span class="smartScaleRatio" >({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
-                  }
+<ion-content #brewFlowContent [class.camera-visible]="cameraIsVisible" class="brew-flow-content">
+  <div id="cameraPreview" [hidden]="!cameraIsVisible"></div>
+  <div id="main-content">
+    @if(isDetail===false) {
+      <div id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
+        <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
+          <ion-row style="padding-bottom:5px;">
+            @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected || ( brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected && brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+              <ion-col size="{{graphIconColSize}}" style="padding-right:5px;">
+                <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
+                  <ion-card-header>
+                    <div #smartScaleWeightDetail>? g</div>
+                    @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
+                      <div #smartScaleWeightSecondDetail>?g</div>
+                    }
+                    @if(brewComponent.timer.timer.runTimer) {
+                      <span class="smartScaleRatio" #smartScaleBrewRatio></span>
+                    } @else {
+                      <span class="smartScaleRatio" >({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
+                    }
 
-                </ion-card-header>
-                <ion-card-content>
-                  <ion-icon name="beanconqueror-scale-outline"></ion-icon>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <ion-icon name="beanconqueror-scale-outline"></ion-icon>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+              <ion-col
+                size="{{graphIconColSize}}" style="padding-right:5px;">
+                <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
+                  <ion-card-header>
+                    <div class='information-tile-no-overflow'><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
+                    <div class='information-tile-no-overflow'><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
+                    @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
+                      <div class='information-tile-no-overflow'><span #smartScaleRealtimeFlowSecondDetail>?</span> g/s</div>
+                    }
+                  </ion-card-header>
+                  <ion-card-content>
+                    <ion-icon name="water-outline"></ion-icon>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+            }
+            @if((brewComponent?.brewBrewingGraphEl?.uiPressureConnected || brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+              <ion-col (click)="resetPressure()"
+                       size="{{graphIconColSize}}" style="padding-right:5px;">
+                <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
+                  <ion-card-header>
+                  <div #pressureDetail>? bar</div>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <ion-icon name="beanconqueror-pressure"></ion-icon>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+            }
+            @if(brewComponent?.brewBrewingGraphEl?.uiTemperatureConnected || (brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+              <ion-col
+                size="{{graphIconColSize}}" style="padding-right:5px;">
+                <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
+                  <ion-card-header>
+                  <div #temperatureDetail>? °C</div>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <ion-icon name="thermometer-outline"></ion-icon>
+                  </ion-card-content>
+                </ion-card>
+              </ion-col>
+            }
             <ion-col
               size="{{graphIconColSize}}" style="padding-right:5px;">
-              <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
+              <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
                 <ion-card-header>
-                  <div class='information-tile-no-overflow'><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
-                  <div class='information-tile-no-overflow'><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
-                  @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
-                    <div class='information-tile-no-overflow'><span #smartScaleRealtimeFlowSecondDetail>?</span> g/s</div>
-                  }
+                  <span class='information-tile-no-overflow' #timerElement></span>
                 </ion-card-header>
                 <ion-card-content>
-                  <ion-icon name="water-outline"></ion-icon>
+                  <ion-icon name="time-outline"></ion-icon>
                 </ion-card-content>
               </ion-card>
             </ion-col>
-          }
-          @if((brewComponent?.brewBrewingGraphEl?.uiPressureConnected || brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
-            <ion-col (click)="resetPressure()"
-                     size="{{graphIconColSize}}" style="padding-right:5px;">
-              <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
-                <ion-card-header>
-                <div #pressureDetail>? bar</div>
-                </ion-card-header>
-                <ion-card-content>
-                  <ion-icon name="beanconqueror-pressure"></ion-icon>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
-          }
-          @if(brewComponent?.brewBrewingGraphEl?.uiTemperatureConnected || (brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
-            <ion-col
-              size="{{graphIconColSize}}" style="padding-right:5px;">
-              <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
-                <ion-card-header>
-                <div #temperatureDetail>? °C</div>
-                </ion-card-header>
-                <ion-card-content>
-                  <ion-icon name="thermometer-outline"></ion-icon>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
-          }
-          <ion-col
-            size="{{graphIconColSize}}" style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
-              <ion-card-header>
-                <span class='information-tile-no-overflow' #timerElement></span>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon name="time-outline"></ion-icon>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
-  }
-
+          </ion-row>
+        </ion-grid>
+      </div>
+    }
     <div id="brewFlowContainer"></div>
-
-
+  </div>
 </ion-content>
 <!--The footer is min-height 72px, because if a scale e.g. doesn't support taring, the whole bar would disappear, and if the timer would start then, the graph is wrongly displayed-->
 @if(isDetail===false) {

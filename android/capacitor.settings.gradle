@@ -49,3 +49,6 @@ project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacit
 
 include ':capawesome-capacitor-file-picker'
 project(':capawesome-capacitor-file-picker').projectDir = new File('../node_modules/@capawesome/capacitor-file-picker/android')
+
+include ':capgo-camera-preview'
+project(':capgo-camera-preview').projectDir = new File('../node_modules/@capgo/camera-preview/android')
