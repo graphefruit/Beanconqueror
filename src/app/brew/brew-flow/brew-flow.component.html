@@ -196,10 +196,13 @@
           <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
         </ion-button>
       }
-      <ion-button (click)="toggleCamera()" class="big-icon-only" fill="clear"
-                  tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-camera" slot="icon-only"></ion-icon>
-      </ion-button>
+      @if(isiOS()) {
+
+        <ion-button (click)="toggleCamera()" class="big-icon-only" fill="clear"
+                    tappable>
+          <ion-icon class="ion-color-accent" name="beanconqueror-camera" slot="icon-only"></ion-icon>
+        </ion-button>
+      }
     </div>
   </ion-footer>
 }

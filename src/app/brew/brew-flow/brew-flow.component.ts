@@ -447,6 +447,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     });
   }
 
+  public isIOS() {
+    return Capacitor.getPlatform() === 'ios';
+  }
+
   private async __resizeCamera() {
     if (this.cameraIsVisible && Capacitor.getPlatform() !== 'web') {
       setTimeout(async () => {
