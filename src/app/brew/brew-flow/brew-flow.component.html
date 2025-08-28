@@ -23,9 +23,6 @@
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weightSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.visible" class="weightsecond">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtimeFlowSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.visible" class="flowrealsecond">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
           }
-          <ion-button (click)="toggleCamera()" fill="clear">
-            <ion-icon name="camera-outline" slot="icon-only"></ion-icon>
-          </ion-button>
         </div>
       </ion-col>
       <ion-col class="ion-text-right" size="1">
@@ -37,7 +34,7 @@
   </ion-grid>
 </ion-header>
 <ion-content #brewFlowContent [class.camera-visible]="cameraIsVisible" class="brew-flow-content">
-  <div id="cameraPreview" [hidden]="!cameraIsVisible"></div>
+
   <div id="main-content">
     @if(isDetail===false) {
       <div id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
@@ -120,7 +117,19 @@
         </ion-grid>
       </div>
     }
-    <div id="brewFlowContainer"></div>
+    <ion-grid class="ion-no-padding ion-no-margin-important">
+
+      <ion-row>
+        <ion-col [size]="cameraIsVisible?7:12"><div id="brewFlowContainer"></div></ion-col>
+        @if(cameraIsVisible) {
+          <ion-col size="5"> <div style="width:100%;height:100%" id="camerapreview"></div></ion-col>
+        }
+
+
+      </ion-row>
+
+
+    </ion-grid>
   </div>
 </ion-content>
 <!--The footer is min-height 72px, because if a scale e.g. doesn't support taring, the whole bar would disappear, and if the timer would start then, the graph is wrongly displayed-->
@@ -187,6 +196,10 @@
           <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
         </ion-button>
       }
+      <ion-button (click)="toggleCamera()" class="big-icon-only" fill="clear"
+                  tappable>
+        <ion-icon class="ion-color-accent" name="beanconqueror-camera" slot="icon-only"></ion-icon>
+      </ion-button>
     </div>
   </ion-footer>
 }

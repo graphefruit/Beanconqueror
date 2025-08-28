@@ -159,28 +159,4 @@
     }
   }
 
-  .brew-flow-content {
-    display: flex;
-    flex-direction: row;
-
-    #main-content {
-      width: 100%;
-      height: 100%;
-    }
-
-    #cameraPreview {
-      width: 0;
-      height: 100%;
-    }
-
-    &.camera-visible {
-      #main-content {
-        width: 50%;
-      }
-
-      #cameraPreview {
-        width: 50%;
-      }
-    }
-  }
 }

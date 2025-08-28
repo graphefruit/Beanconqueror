@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
-import { Settings } from '../../classes/settings/settings';
+
 import { DarkMode } from '@aparajita/capacitor-dark-mode';
 import { Capacitor } from '@capacitor/core';
 import { UISettingsStorage } from '../uiSettingsStorage';
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { NavigationBar } from '@capgo/capacitor-navigation-bar';
 @Injectable({
   providedIn: 'root',
 })
@@ -60,6 +62,21 @@ export class ThemeService {
   }
 
   private toggleDarkPalette(shouldAdd: boolean) {
+    if (shouldAdd) {
+      StatusBar.setStyle({ style: Style.Dark });
+      StatusBar.setBackgroundColor({ color: '#121212' });
+      NavigationBar.setNavigationBarColor({
+        color: '#121212',
+        darkButtons: false,
+      });
+    } else {
+      StatusBar.setStyle({ style: Style.Light });
+      StatusBar.setBackgroundColor({ color: '#F0F0F0' });
+      NavigationBar.setNavigationBarColor({
+        color: '#F0F0F0',
+        darkButtons: true,
+      });
+    }
     document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
   }
 }
