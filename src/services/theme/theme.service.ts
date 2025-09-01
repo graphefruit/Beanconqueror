@@ -12,6 +12,11 @@ import { NavigationBar } from '@capgo/capacitor-navigation-bar';
 export class ThemeService {
   private prefersDark: MediaQueryList;
 
+  private _darkMode: boolean = false;
+  public isDarkMode() {
+    return this._darkMode;
+  }
+
   constructor(private readonly uiSettingsStorage: UISettingsStorage) {}
   public async initialize() {
     this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -77,6 +82,7 @@ export class ThemeService {
         darkButtons: true,
       });
     }
+    this._darkMode = shouldAdd;
     document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
   }
 }
