@@ -1126,11 +1126,11 @@ ion-chip.machine-disconnected {
 
 }
 ion-chip.weight {
-  --background: #cdc2ac;
+  --background:  var(--beanconqueror-icon-color);
   --color: black;
   margin-right: 2px;
   margin-left: 0px;
-  border: 1px solid #cdc2ac;
+  border: 1px solid var(--beanconqueror-icon-color);
 }
 
 ion-chip.flowcalculated {

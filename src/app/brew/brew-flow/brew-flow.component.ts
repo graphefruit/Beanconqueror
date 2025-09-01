@@ -26,6 +26,9 @@ import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from 'src/services/uiHelper';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
+import { CameraPreview } from '@capgo/camera-preview';
+import { Capacitor } from '@capacitor/core';
+
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
@@ -39,6 +42,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @ViewChild('brewFlowContent', { read: ElementRef })
   public brewFlowContent: ElementRef;
 
+  public cameraIsVisible: boolean = false;
   public gaugeVisible: boolean = false;
   @Input() public flowChart: any;
   @Input() public flowChartEl: any;
@@ -105,6 +109,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public ngOnInit() {
+    window['bla'] = CameraPreview;
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
@@ -442,7 +447,82 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     });
   }
 
+  public isIOS() {
+    return Capacitor.getPlatform() === 'ios';
+  }
+
+  private async __resizeCamera() {
+    if (this.cameraIsVisible && Capacitor.getPlatform() !== 'web') {
+      setTimeout(async () => {
+        const rect = document
+          .getElementById('cameraPreview')
+          .getBoundingClientRect();
+        await CameraPreview.setPreviewSize({
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+          y: Math.round(rect.y),
+          x: Math.round(rect.x),
+        });
+      }, 500);
+    }
+  }
+
+  private async stopCamera() {
+    if (this.cameraIsVisible) {
+      await CameraPreview.stop();
+      await CameraPreview.removeAllListeners();
+      this.cameraIsVisible = false;
+    }
+  }
+  public async toggleCamera() {
+    if (this.cameraIsVisible) {
+      await this.stopCamera();
+    } else {
+      this.cameraIsVisible = true;
+      setTimeout(async () => {
+        let cameraPreviewOptions;
+        let rect = document
+          .getElementById('cameraPreview')
+          .getBoundingClientRect();
+        if (Capacitor.getPlatform() !== 'web') {
+          cameraPreviewOptions = {
+            disableAudio: true,
+            width: Math.round(rect.width),
+            height: Math.round(rect.height),
+            y: Math.round(rect.y),
+            x: Math.round(rect.x),
+            parent: 'cameraPreview',
+            position: 'front' as const,
+            toBack: false,
+          };
+        } else {
+          cameraPreviewOptions = {
+            disableAudio: true,
+            parent: 'cameraPreview',
+            position: 'front' as const,
+            toBack: false,
+          };
+        }
+
+        await CameraPreview.start(cameraPreviewOptions);
+
+        await CameraPreview.addListener(
+          'screenResize',
+          this.__resizeCamera.bind(this),
+        );
+
+        setTimeout(async () => {
+          this.__resizeCamera();
+        }, 250);
+      }, 1000);
+    }
+    this.onOrientationChange();
+  }
+
   public async ngOnDestroy() {
+    if (this.cameraIsVisible) {
+      await CameraPreview.stop();
+    }
     if (this.bluetoothSubscription) {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;
@@ -486,6 +566,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     );
     try {
       this.disableHardwareBack.unsubscribe();
+      this.stopCamera();
     } catch (ex) {}
     this.modalController.dismiss(
       {
