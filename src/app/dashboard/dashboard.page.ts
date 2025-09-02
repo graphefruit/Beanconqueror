@@ -13,6 +13,8 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
+import { Capacitor } from '@capacitor/core';
+import { CameraPreview } from '@capgo/camera-preview';
 
 @Component({
   selector: 'dashboard',
@@ -43,6 +45,74 @@ export class DashboardPage implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiMillStorage: UIMillStorage,
   ) {}
+
+  private async __resizeCamera() {
+    if (this.cameraIsVisible && Capacitor.getPlatform() !== 'web') {
+      setTimeout(async () => {
+        const rect = document
+          .getElementById('cameraPreview')
+          .getBoundingClientRect();
+        await CameraPreview.setPreviewSize({
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+          y: Math.round(rect.y),
+          x: Math.round(rect.x),
+        });
+      }, 500);
+    }
+  }
+  public cameraIsVisible: boolean = false;
+
+  private async stopCamera() {
+    if (this.cameraIsVisible) {
+      await CameraPreview.stop();
+      await CameraPreview.removeAllListeners();
+      this.cameraIsVisible = false;
+    }
+  }
+  public async toggleCamera() {
+    if (this.cameraIsVisible) {
+      await this.stopCamera();
+    } else {
+      this.cameraIsVisible = true;
+      setTimeout(async () => {
+        let cameraPreviewOptions;
+        let rect = document
+          .getElementById('cameraPreview')
+          .getBoundingClientRect();
+        if (Capacitor.getPlatform() !== 'web') {
+          cameraPreviewOptions = {
+            disableAudio: true,
+            width: Math.round(rect.width),
+            height: Math.round(rect.height),
+            y: Math.round(rect.y),
+            x: Math.round(rect.x),
+            parent: 'cameraPreview',
+            position: 'front' as const,
+            toBack: false,
+          };
+        } else {
+          cameraPreviewOptions = {
+            disableAudio: true,
+            parent: 'cameraPreview',
+            position: 'front' as const,
+            toBack: false,
+          };
+        }
+
+        await CameraPreview.start(cameraPreviewOptions);
+
+        await CameraPreview.addListener(
+          'screenResize',
+          this.__resizeCamera.bind(this),
+        );
+
+        setTimeout(async () => {
+          this.__resizeCamera();
+        }, 250);
+      }, 1000);
+    }
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

@@ -4,7 +4,10 @@
 // styles are for the entire app and not just one component. Additionally, this
 // file can hold Sass mixins, functions, and placeholder classes to be imported
 // and used throughout the application.
-
+*{
+  background-color:transparent!important;
+  --background:transparent!important;
+}
 @font-face {
   font-family: 'Baloo' ;
   src: url('../assets/fonts/BalooTamma2-Regular.ttf') format('truetype');
