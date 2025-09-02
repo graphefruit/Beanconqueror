@@ -67,20 +67,22 @@ export class ThemeService {
   }
 
   private toggleDarkPalette(shouldAdd: boolean) {
-    if (shouldAdd) {
-      StatusBar.setStyle({ style: Style.Dark });
-      StatusBar.setBackgroundColor({ color: '#121212' });
-      NavigationBar.setNavigationBarColor({
-        color: '#121212',
-        darkButtons: false,
-      });
-    } else {
-      StatusBar.setStyle({ style: Style.Light });
-      StatusBar.setBackgroundColor({ color: '#F0F0F0' });
-      NavigationBar.setNavigationBarColor({
-        color: '#F0F0F0',
-        darkButtons: true,
-      });
+    if (Capacitor.getPlatform() !== 'web') {
+      if (shouldAdd) {
+        StatusBar.setStyle({ style: Style.Dark });
+        StatusBar.setBackgroundColor({ color: '#121212' });
+        NavigationBar.setNavigationBarColor({
+          color: '#121212',
+          darkButtons: false,
+        });
+      } else {
+        StatusBar.setStyle({ style: Style.Light });
+        StatusBar.setBackgroundColor({ color: '#F0F0F0' });
+        NavigationBar.setNavigationBarColor({
+          color: '#F0F0F0',
+          darkButtons: true,
+        });
+      }
     }
     this._darkMode = shouldAdd;
     document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
