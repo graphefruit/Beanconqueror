@@ -4,7 +4,7 @@
 // styles are for the entire app and not just one component. Additionally, this
 // file can hold Sass mixins, functions, and placeholder classes to be imported
 // and used throughout the application.
-*{
+*, ion-content, ion-header, ion-toolbar, ion-title, ion-footer, ion-item, ion-card, ion-card-content, ion-card-header, ion-label, ion-chip, ion-button, ion-segment-button, ion-segment, ion-badge, ion-input, ion-textarea, ion-list, ion-radio, ion-checkbox, ion-back-button, ion-range, ion-toggle,body {
   background-color:transparent!important;
   --background:transparent!important;
 }
