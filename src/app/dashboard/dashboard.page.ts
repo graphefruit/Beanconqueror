@@ -46,21 +46,6 @@ export class DashboardPage implements OnInit {
     private readonly uiMillStorage: UIMillStorage,
   ) {}
 
-  private async __resizeCamera() {
-    if (this.cameraIsVisible && Capacitor.getPlatform() !== 'web') {
-      setTimeout(async () => {
-        const rect = document
-          .getElementById('cameraPreview')
-          .getBoundingClientRect();
-        await CameraPreview.setPreviewSize({
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          y: Math.round(rect.y),
-          x: Math.round(rect.x),
-        });
-      }, 500);
-    }
-  }
   public cameraIsVisible: boolean = false;
 
   private async stopCamera() {
@@ -83,10 +68,7 @@ export class DashboardPage implements OnInit {
         if (Capacitor.getPlatform() !== 'web') {
           cameraPreviewOptions = {
             disableAudio: true,
-            width: Math.round(rect.width),
-            height: Math.round(rect.height),
-            y: Math.round(rect.y),
-            x: Math.round(rect.x),
+
             parent: 'cameraPreview',
             position: 'front' as const,
             toBack: false,
@@ -101,15 +83,6 @@ export class DashboardPage implements OnInit {
         }
 
         await CameraPreview.start(cameraPreviewOptions);
-
-        await CameraPreview.addListener(
-          'screenResize',
-          this.__resizeCamera.bind(this),
-        );
-
-        setTimeout(async () => {
-          this.__resizeCamera();
-        }, 250);
       }, 1000);
     }
   }
