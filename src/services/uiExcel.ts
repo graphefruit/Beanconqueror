@@ -615,8 +615,8 @@ export class UIExcel {
         }
         const header_final_weight: Array<string> = [];
         header_final_weight.push('timestamp');
+        header_final_weight.push('actual_scale_weight');
         header_final_weight.push('average_flow_rate');
-        header_final_weight.push('avgFlow');
 
         const wsDatafinalWeightFlow: any[][] = [header_final_weight];
         const startingDay = moment(new Date()).startOf('day');
@@ -633,8 +633,8 @@ export class UIExcel {
           ).format('ss.SSS');
           const wbEntry: Array<any> = [
             newfloat,
-            entry.average_flow_rate,
-            avgFlow,
+            String(entry.actual_scale_weight).replace(',', '.'),
+            String(entry.average_flow_rate).replace(',', '.'),
           ];
           wsDatafinalWeightFlow.push(wbEntry);
         }

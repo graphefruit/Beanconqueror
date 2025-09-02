@@ -37,7 +37,7 @@ PODS:
     - Capacitor
   - CapawesomeCapacitorFilePicker (7.2.0):
     - Capacitor
-  - CapgoCameraPreview (7.6.1-alpha.3):
+  - CapgoCameraPreview (7.8.2):
     - Capacitor
   - CapgoCapacitorNavigationBar (7.1.27):
     - Capacitor
@@ -139,7 +139,7 @@ SPEC CHECKSUMS:
   CapacitorSplashScreen: 1d67815a422a9b61539c94f283c08ed56667c0fc
   CapacitorStatusBar: 6e7af040d8fc4dd655999819625cae9c2d74c36f
   CapawesomeCapacitorFilePicker: 0f4a913a00e39dd77213449f0d917e92f35a5ca9
-  CapgoCameraPreview: 4eb37bb8b7e2cc11b95897a7dface22dd94d4c9f
+  CapgoCameraPreview: cecdc34ff8e2948f777b79459ae8d635b50be2ba
   CapgoCapacitorNavigationBar: dfa5f03c60a92e5cfdd67768e4a4f0c86a0b1c04
   CordovaPlugins: b02dd62282839c828983e64748fb6531503c92b1
   IONFilesystemLib: ceacae793975039530458eabab0c495c70515a0d

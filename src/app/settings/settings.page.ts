@@ -1072,9 +1072,12 @@ export class SettingsPage {
           );
       }
 
+      let maxEntries = 200;
       // Just take 60, else the excel will be exploding.
-      if (allBrewsWithProfiles.length > 60) {
-        allBrewsWithProfiles = allBrewsWithProfiles.reverse().slice(0, 60);
+      if (allBrewsWithProfiles.length > maxEntries) {
+        allBrewsWithProfiles = allBrewsWithProfiles
+          .reverse()
+          .slice(0, maxEntries);
       }
 
       const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];

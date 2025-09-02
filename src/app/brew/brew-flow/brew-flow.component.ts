@@ -448,6 +448,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public isIOS() {
+    return true;
     return Capacitor.getPlatform() === 'ios';
   }
 
