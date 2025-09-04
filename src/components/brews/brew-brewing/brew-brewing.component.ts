@@ -51,7 +51,7 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothScale } from '../../../classes/devices';
+import { BluetoothScale, sleep } from '../../../classes/devices';
 
 import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
 
@@ -190,9 +190,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
   public setUIParams() {
-    this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
-    this.uiShowSectionWhileBrew = this.showSectionWhileBrew();
-    this.uiShowSectionBeforeBrew = this.showSectionBeforeBrew();
+    const _uiShowSectionAfterBrew = this.showSectionAfterBrew();
+    const _uiShowSectionWhileBrew = this.showSectionWhileBrew();
+    const _uiShowSectionBeforeBrew = this.showSectionBeforeBrew();
+    this.uiShowSectionAfterBrew = _uiShowSectionAfterBrew;
+    this.uiShowSectionWhileBrew = _uiShowSectionWhileBrew;
+    this.uiShowSectionBeforeBrew = _uiShowSectionBeforeBrew;
     this.uiHasWaterEntries = this.hasWaterEntries();
     this.uiHasActivePreparationTools =
       this.getActivePreparationTools().length > 0;
@@ -213,6 +216,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async ngAfterViewInit() {
     setTimeout(async () => {
+      /**We need to track the state if the brewing was visible on start, because if not we need to give some time for the graph to start**/
+      const uiSectionWhileBrewingVisibleOnStart = this.uiShowSectionWhileBrew;
       // If we wouldn't wait in the timeout, the components wouldnt be existing
       if (this.isEdit === false) {
         // We need a short timeout because of ViewChild, else we get an exception
@@ -315,6 +320,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       /** if (this.brewBrewingPreparationDeviceEl && !this.brewBrewingPreparationDeviceEl.hasAPreparationDeviceSet()) {
         await this.brewBrewingPreparationDeviceEl?.instance();
       }**/
+
+      const uiSectionWhileBrewingVisibleOnEnd = this.uiShowSectionWhileBrew;
+      if (
+        uiSectionWhileBrewingVisibleOnStart === false &&
+        uiSectionWhileBrewingVisibleOnEnd === true
+      ) {
+        //Ok we need to wait 250ms, because else the brewGraph won't be visible
+        /**
+         * This happens, when a preparation was customized and is on top to load, where the while brewing was not visible.
+         * if you swap then to another preparation method, the graph will never be loaded.
+         */
+        await sleep(250);
+      }
 
       if (this.brewBrewingGraphEl) {
         if (this.isEdit === false && this.brewFlowPreset) {
@@ -579,6 +597,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     this.maxBrewRating = this.settings.brew_rating;
+    /** if (this.loadSpecificLastPreparation) {
+      this.forceSetPreparation(this.loadSpecificLastPreparation);
+    } else {
+      this.setChoosenPreparation();
+    }**/
     this.setChoosenPreparation();
   }
 
@@ -859,6 +882,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public forceSetPreparation(_preparation: Preparation) {
+    this.choosenPreparation = this.loadSpecificLastPreparation;
+    this.data.method_of_preparation = this.choosenPreparation.config.uuid;
+    this.setUIParams();
+  }
   public setChoosenPreparation() {
     this.choosenPreparation = this.data.getPreparation();
     this.setUIParams();
