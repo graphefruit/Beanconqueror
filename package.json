@@ -46,7 +46,7 @@
     "@capacitor/splash-screen": "^7.0.1",
     "@capacitor/status-bar": "^7.0.1",
     "@capawesome/capacitor-file-picker": "^7.2.0",
-    "@capgo/camera-preview": "^7.8.2",
+    "@capgo/camera-preview": "^7.13.7",
     "@capgo/capacitor-navigation-bar": "^7.1.27",
     "@ionic/angular": "^8.7.3",
     "@ionic/cli": "^7.2.1",
