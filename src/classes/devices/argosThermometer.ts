@@ -7,9 +7,16 @@ declare var ble: any;
 
 export class ArgosThermometer extends TemperatureDevice {
   public static DEVICE_NAME = 'ARGOS';
-  public static TEMPERATURE_SERVICE_UUID =
-    '6a521c59-55b5-4384-85c0-6534e63fb09e';
-  public static TEMPERATURE_CHAR_UUID = '6a521c62-55b5-4384-85c0-6534e63fb09e';
+
+  // Should Argos be a seperate preperationDevice, so we can track all these?
+  // - setpoint would be handy to set on the shot as it doesn't change 
+  // - group head & boiler could be tracked in graphs
+  // - how would these line up to Visualizer fields of target temp goal, temp basket, temp mix etc 
+  public static TEMPERATURE_SERVICE_UUID ='6a521c59-55b5-4384-85c0-6534e63fb09e';
+  public static TEMPERATURE_SETPOINT_CHAR_UUID = '6a521c60-55b5-4384-85c0-6534e63fb09e';
+  public static TEMPERATURE_GROUPHEAD_CHAR_UUID = '6a521c62-55b5-4384-85c0-6534e63fb09e';
+  public static TEMPERATURE_BOILER_CURRENT_CHAR_UUID = '6a521c61-55b5-4384-85c0-6534e63fb09e';
+  public static TEMPERATURE_BOILER_TARGET_CHAR_UUID = '6a521c66-55b5-4384-85c0-6534e63fb09e';
 
   private logger: Logger;
 
@@ -41,28 +48,29 @@ export class ArgosThermometer extends TemperatureDevice {
     ble.startNotification(
       this.device_id,
       ArgosThermometer.TEMPERATURE_SERVICE_UUID,
-      ArgosThermometer.TEMPERATURE_CHAR_UUID,
+      ArgosThermometer.TEMPERATURE_SETPOINT_CHAR_UUID,
 
-      async (_data: any) => {
-        const rawData = _data; //new Uint8Array(_data.slice(0, -1));
-        this.parseStatusUpdate(rawData);
+      async (_data: any) => {;
+        this.parseStatusUpdate(_data);
       },
 
       (_data: any) => {}
     );
   }
 
-  private parseStatusUpdate(temperatureRawStatus: any) {
+  private parseStatusUpdate(temperatureRawStatus: ArrayBuffer) {
     this.logger.log(
       'temperatureRawStatus received is: ' + temperatureRawStatus
     );
+
+    const temperatureDataview = new DataView(temperatureRawStatus);
+    const temperature = temperatureDataview.getFloat64(0, true);
+      
     const formatNumber = new Intl.NumberFormat(undefined, {
       minimumIntegerDigits: 2,
     }).format;
 
-    const setPoint =
-      ((temperatureRawStatus.getUint16(5, true) / 127) * 5) / 9 - 32; // Convert from F to C
-    const data = formatNumber(setPoint);
+    const data = formatNumber(temperature);
 
     this.setTemperature(Number(data), temperatureRawStatus);
   }
@@ -71,7 +79,7 @@ export class ArgosThermometer extends TemperatureDevice {
     ble.stopNotification(
       this.device_id,
       ArgosThermometer.TEMPERATURE_SERVICE_UUID,
-      ArgosThermometer.TEMPERATURE_CHAR_UUID,
+      ArgosThermometer.TEMPERATURE_SETPOINT_CHAR_UUID,
       (e: any) => {},
       (e: any) => {}
     );
