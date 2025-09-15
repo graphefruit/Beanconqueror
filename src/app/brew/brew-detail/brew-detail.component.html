@@ -500,6 +500,9 @@
           }
         </ion-item>
       }
+      <ion-item [style.order]="9999" lines="none">
+        <ion-label><h2>{{"BREW_CREATION_DATE" | translate}}</h2><h3>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}</h3></ion-label>
+      </ion-item>
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.attachments,
         choosenPreparation.manage_parameters.attachments,
         choosenPreparation.use_custom_parameters]) && data?.attachments?.length>0) {
