@@ -126,7 +126,6 @@ export class EspressiScale extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
-    this.logger.logDirect('Writing starting');
     return new Promise((resolve, reject) => {
       ble.write(
         this.device_id,
@@ -137,7 +136,6 @@ export class EspressiScale extends BluetoothScale {
           resolve(true);
         },
         (e: any) => {
-          this.logger.logDirect('Writing error', e);
           resolve(false);
         },
       );
