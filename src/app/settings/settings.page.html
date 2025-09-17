@@ -1603,7 +1603,13 @@
             </div>
           </ion-checkbox>
         </ion-item>
-
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.temperature_show_before_timer">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"TEMPERATURE.SHOW_BEFORE_TIMER" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+        </ion-item>
       </ion-list>
 
       <ion-label>
@@ -1611,7 +1617,6 @@
         <p style="display: inline;">{{ "TEMPERATURE.INFORMATION_DESCRIPTION" | translate }}</p>
       </ion-label>
     </ion-card-content>
-
   </ion-card>
   }
   @case ('bluetoothrefractometer') {
