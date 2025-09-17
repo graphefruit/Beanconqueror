@@ -355,6 +355,8 @@ export class BluetoothDeviceChooserPopoverComponent
       await this.uiAlert.hideLoadingSpinner();
       this.settings.temperature_id = temperatureDevice.id;
       this.settings.temperature_type = temperatureDevice.type;
+      this.settings.temperature_supported_sources =
+        temperatureDevice.supportedSources();
       this.uiAnalytics.trackEvent(
         BLUETOOTH_TRACKING.TITLE,
         BLUETOOTH_TRACKING.ACTIONS.TEMPERATURE_CONNECTED,

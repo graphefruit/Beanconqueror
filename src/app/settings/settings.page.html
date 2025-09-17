@@ -1410,13 +1410,19 @@
               </ion-item>
             }
             <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.temperature_show_before_timer">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"TEMPERATURE.SHOW_BEFORE_TIMER" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
               <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.temperature_log">
                 <div class="ion-label" style="white-space: normal;">
                   <h2>{{ "TEMPERATURE.LOG" | translate }}</h2>
                 </div>
               </ion-checkbox>
             </ion-item>
-
           </ion-list>
 
           <ion-label>

@@ -23,7 +23,10 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { TemperatureDevice } from '../../../classes/devices/temperatureBluetoothDevice';
+import {
+  TemperatureDevice,
+  TemperatureSource,
+} from '../../../classes/devices/temperatureBluetoothDevice';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { Brew } from '../../../classes/brew/brew';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
@@ -868,7 +871,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         _firstStart === false
       ) {
         this.attachToTemperatureChange();
-      } else if (this.settings.temperature_threshold_active) {
+      } else if (this.settings.temperature_threshold_active === true || this.settings.temperature_show_before_timer === true) {
         this.attachToTemperatureChange();
       }
 
@@ -1015,7 +1018,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public setActualTemperatureInformation(_temperature) {
     this.ngZone.runOutsideAngular(() => {
-      if (this.brewComponent.maximizeFlowGraphIsShown === true) {
+       if (this.brewComponent.maximizeFlowGraphIsShown === true) {
         this.brewComponent.brewTemperatureGraphSubject.next({
           temperature: _temperature,
         });
@@ -1023,8 +1026,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       try {
         const temperatureEl = this.temperatureEl.nativeElement;
-
-        temperatureEl.textContent = _temperature;
+        const temperatureFormatted = _temperature.toFixed(2);
+        temperatureEl.textContent = temperatureFormatted;
       } catch (ex) {}
     });
   }
@@ -1379,7 +1382,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (temperatureDevice) {
         this.deattachToTemperatureChange();
-        if (this.settings.temperature_threshold_active === true) {
+        if (this.settings.temperature_threshold_active === true || this.settings.temperature_show_before_timer === true ) {
           // After attaching attach again
           this.attachToTemperatureChange();
         }
@@ -2103,7 +2106,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
       if (
         temperatureDevice &&
-        (this.settings.temperature_threshold_active === false ||
+        ((this.settings.temperature_threshold_active === false && this.settings.temperature_show_before_timer === false) ||
           _event !== 'AUTO_START_TEMPERATURE')
       ) {
         this.attachToTemperatureChange();
@@ -2548,7 +2551,6 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (temperatureDevice) {
       this.temperatureThresholdWasHit = false;
       this.deattachToTemperatureChange();
-
       this.temperatureDeviceSubscription =
         temperatureDevice.temperatureChange.subscribe((_val) => {
           if (this.brewComponent.timer.isTimerRunning()) {
@@ -2584,6 +2586,9 @@ export class BrewBrewingGraphComponent implements OnInit {
                   this.checkChanges();
                 });
               });
+            } else if(_val.source == this.settings.temperature_graph_source) {
+              // if timer isn't running yet, we can still update temperature information 
+              this.setActualTemperatureInformation(_val.actual);
             }
           }
         });
@@ -3292,12 +3297,22 @@ export class BrewBrewingGraphComponent implements OnInit {
       2,
     );
     const old: number = this.uiHelper.toFixedIfNecessary(_temperature.old, 2);
-
-    // If no smartscale is connected, the set temperature flow needs to be the master to set flowtime and flowtime seconds, else we just retrieve from the scale.
     const isSmartScaleConnected = this.smartScaleConnected();
-    if (this.flowTime === undefined) {
-      this.flowTime = this.brewComponent.getTime();
-      this.flowSecondTick = 0;
+
+    // only graph the source defined in settings
+    if (_temperature.source == this.settings.temperature_graph_source) {
+      if (this.flowTime === undefined) {
+        this.flowTime = this.brewComponent.getTime();
+        this.flowSecondTick = 0;
+      }
+
+      // If no smartscale is connected, the set temperature flow needs to be the master to set flowtime and flowtime seconds, else we just retrieve from the scale.
+      if (!isSmartScaleConnected) {
+        if (this.flowTime !== this.brewComponent.getTime()) {
+          this.flowTime = this.brewComponent.getTime();
+          this.flowSecondTick = 0;
+        }
+      }
     }
 
     const actualUnixTime: number = moment(new Date())
@@ -3314,29 +3329,26 @@ export class BrewBrewingGraphComponent implements OnInit {
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
     };
 
-    if (!isSmartScaleConnected) {
-      if (this.flowTime !== this.brewComponent.getTime()) {
-        this.flowTime = this.brewComponent.getTime();
-        this.flowSecondTick = 0;
-      }
-    }
-
-    this.traces.temperatureTrace.x.push(new Date(temperatureObj.unixTime));
-    this.traces.temperatureTrace.y.push(temperatureObj.actual);
-
     this.pushTemperatureProfile(
       temperatureObj.flowTimeSecond,
       temperatureObj.actual,
       temperatureObj.old,
+      _temperature.source,
     );
 
-    if (!isSmartScaleConnected) {
-      //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
-      this.updateChart();
-      this.flowSecondTick++;
+    if (_temperature.source == this.settings.temperature_graph_source) {
+      this.traces.temperatureTrace.x.push(new Date(temperatureObj.unixTime));
+      this.traces.temperatureTrace.y.push(temperatureObj.actual);
+
+      if (!isSmartScaleConnected) {
+        //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
+        this.updateChart();
+        this.flowSecondTick++;
+      }
+      this.setActualTemperatureInformation(temperatureObj.actual);
     }
 
-    this.setActualTemperatureInformation(temperatureObj.actual);
+   
   }
 
   private __setFlowProfile(_scaleChange: any) {
@@ -4063,6 +4075,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     _brewTime: string,
     _actualTemperature: number,
     _oldTemperature: number,
+    _source: TemperatureSource,
   ) {
     const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
     temperatureFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
@@ -4070,7 +4083,17 @@ export class BrewBrewingGraphComponent implements OnInit {
     temperatureFlow.actual_temperature = _actualTemperature;
     temperatureFlow.old_temperature = _oldTemperature;
 
-    this.flow_profile_raw.temperatureFlow.push(temperatureFlow);
+    switch (_source) {
+      case TemperatureSource.SET_POINT:
+        this.flow_profile_raw.targetTemperatureFlow.push(temperatureFlow);
+        break;
+      case TemperatureSource.BASKET_PROBE:
+        this.flow_profile_raw.basketTemperatureFlow.push(temperatureFlow);
+        break;
+      case TemperatureSource.WATER_PROBE:
+        this.flow_profile_raw.temperatureFlow.push(temperatureFlow);
+        break;
+    }
   }
 
   @HostListener('window:resize')

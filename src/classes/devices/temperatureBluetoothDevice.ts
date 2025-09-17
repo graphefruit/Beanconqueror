@@ -5,9 +5,16 @@ import { to128bitUUID } from './common/util';
 
 declare var ble: any;
 
+export enum TemperatureSource {
+  SET_POINT = 'SetPoint', // set point or goal for the shot
+  WATER_PROBE = 'WaterProbe', // last measured water temp before group (mix)
+  BASKET_PROBE = 'BasketProbe', // measured temp at group/basket, may or may not be in water path
+}
+
 export interface Temperature {
   actual: number;
   old: number;
+  source: TemperatureSource;
 }
 
 export interface TemperatureChangeEvent extends Temperature {
@@ -25,32 +32,49 @@ export abstract class TemperatureDevice {
   public batteryLevel: number;
   public temperatureChange: EventEmitter<TemperatureChangeEvent> =
     new EventEmitter();
-  protected temperature: Temperature;
+  protected temperatures = new Map<TemperatureSource, number>();
   protected temperatureParentLogger: Logger;
-
+  private defaultTemperatureSource;
   private lastTemperatureSetTime: number = 0;
 
-  protected constructor(data: PeripheralData) {
+  protected constructor(
+    data: PeripheralData,
+    defaultTemperatureSource: TemperatureSource = TemperatureSource.WATER_PROBE,
+  ) {
     this.device_id = data.id;
     try {
       this.device_name = data.name;
     } catch (ex) {}
-    this.temperature = {
-      actual: 0,
-      old: 0,
-    };
     this.temperatureParentLogger = new Logger();
+    this.defaultTemperatureSource = defaultTemperatureSource;
   }
 
   public abstract connect(): void;
   public abstract disconnect(): void;
 
-  public getTemperature() {
-    return this.temperature.actual;
+  public getDefaultTempeatureSource() {
+    return TemperatureSource.WATER_PROBE;
   }
 
-  public getOldTemperature() {
-    return this.temperature.old;
+  public getTemperature(
+    _source: TemperatureSource = this.defaultTemperatureSource,
+  ) {
+    return this.dataFor(_source).actual;
+  }
+
+  public getOldTemperature(
+    _source: TemperatureSource = this.defaultTemperatureSource,
+  ) {
+    return this.dataFor(_source).old;
+  }
+
+  private dataFor(_source: TemperatureSource) {
+    return (this.temperatures[_source] ??= {
+      actual: 0,
+      old: 0,
+      source: _source,
+      lastSetTime: 0,
+    });
   }
 
   /**
@@ -73,39 +97,46 @@ export abstract class TemperatureDevice {
             err = new Error(JSON.stringify(err));
           }
           reject(err);
-        }
+        },
       );
     });
   }
-
-  protected setTemperature(_newTemperature: number, _rawData: any) {
-    if (Date.now() - this.lastTemperatureSetTime < UPDATE_EVERY_MS) {
+  protected setTemperature(
+    _newTemperature: number,
+    _rawData: any,
+    _source: TemperatureSource = this.defaultTemperatureSource,
+  ) {
+    const temperatureData = this.dataFor(_source);
+    if (Date.now() - temperatureData.lastSetTime < UPDATE_EVERY_MS) {
       return;
     }
-    this.lastTemperatureSetTime = Date.now();
+    temperatureData.lastSetTime = Date.now();
 
     this.temperatureParentLogger.log(
       'Bluetooth Temperature Device - New temperature recieved ' +
         _newTemperature +
+        '- source ' +
+        _source +
         ' - raw data ' +
-        JSON.stringify(_rawData)
+        JSON.stringify(_rawData),
     );
 
-    this.temperature.actual = _newTemperature;
+    temperatureData.actual = _newTemperature;
     const actualDate = new Date();
     try {
       this.temperatureParentLogger.log(
-        'Bluetooth Pressure Device - Are subscriptions existing? ' +
-          this.temperatureChange?.observers?.length
+        'Bluetooth Temperature Device - Are subscriptions existing? ' +
+          this.temperatureChange?.observers?.length,
       );
     } catch (ex) {}
     this.temperatureChange.emit({
-      actual: this.temperature.actual,
-      old: this.temperature.old,
+      actual: temperatureData.actual,
+      old: temperatureData.old,
       date: actualDate,
+      source: temperatureData.source,
     });
 
-    this.temperature.old = _newTemperature;
+    temperatureData.old = _newTemperature;
   }
 }
 
