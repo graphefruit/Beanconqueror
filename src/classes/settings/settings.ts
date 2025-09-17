@@ -33,6 +33,7 @@ import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { TemperatureSource } from '../devices/temperatureBluetoothDevice';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -226,6 +227,9 @@ export class Settings implements ISettings {
   public temperature_threshold_active: boolean;
   public temperature_threshold_temp: number;
   public temperature_stay_connected: boolean;
+  public temperature_supported_sources: [TemperatureSource];
+  public temperature_graph_source: TemperatureSource;
+  public temperature_show_before_timer: boolean;
 
   public refractometer_id: string;
   public refractometer_type: RefractometerType;
@@ -563,6 +567,8 @@ export class Settings implements ISettings {
     this.temperature_threshold_active = false;
     this.temperature_threshold_temp = 92;
     this.temperature_stay_connected = false;
+    this.temperature_graph_source = TemperatureSource.WATER_PROBE;
+    this.temperature_show_before_timer = false;
 
     this.refractometer_id = '';
     this.refractometer_type = null;
