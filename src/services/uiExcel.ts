@@ -617,6 +617,7 @@ export class UIExcel {
         header_final_weight.push('timestamp');
         header_final_weight.push('actual_scale_weight');
         header_final_weight.push('average_flow_rate');
+        header_final_weight.push('calc_exceeds_weight');
 
         const wsDatafinalWeightFlow: any[][] = [header_final_weight];
         const startingDay = moment(new Date()).startOf('day');
@@ -635,6 +636,7 @@ export class UIExcel {
             newfloat,
             String(entry.actual_scale_weight).replace(',', '.'),
             String(entry.average_flow_rate).replace(',', '.'),
+            entry.calc_exceeds_weight,
           ];
           wsDatafinalWeightFlow.push(wbEntry);
         }
