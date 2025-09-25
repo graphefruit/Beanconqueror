@@ -647,7 +647,12 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       brewFlow.not_mutated_weight = 0;
       newBrewFlow.weight.push(brewFlow);
 
-      if (brewFlow.actual_weight > 0 && firstDripTimeSet === false) {
+      if (
+        brewFlow.actual_weight > 0 &&
+        firstDripTimeSet === false &&
+        brewFlow.actual_weight >=
+          this.settings.bluetooth_scale_first_drip_threshold
+      ) {
         firstDripTimeSet = true;
 
         this.brewComponent.brewFirstDripTime?.setTime(seconds, milliseconds);
@@ -746,7 +751,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       brewFlow.not_mutated_weight = 0;
       newBrewFlow.weight.push(brewFlow);
 
-      if (shotEntry.weight > 0 && firstDripTimeSet === false) {
+      if (
+        shotEntry.weight > 0 &&
+        firstDripTimeSet === false &&
+        shotEntry.weight >= this.settings.bluetooth_scale_first_drip_threshold
+      ) {
         firstDripTimeSet = true;
 
         this.brewComponent.brewFirstDripTime?.setTime(seconds, milliseconds);
