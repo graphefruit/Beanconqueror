@@ -1025,7 +1025,7 @@
     "CUSTOM_REPEAT_PARAMETERS": "Wiederholen",
     "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Individuelle Wiederholung aktivieren?",
     "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numerische Tastatur für Mahlgrad?",
-    "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die Numerische Tastatur angezeigt bekommen, anstatt der normalen?",
+    "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die numerische Tastatur angezeigt bekommen, anstatt der normalen?",
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Keins",
@@ -1461,30 +1461,44 @@
     "BEAN_DATA_AVERAGE_BREW_RATING": "Durchschnittliche Brühbewertung",
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.3.0": {
-            "TITLE": "Version 8.3.0: Das ist neu",
+            "DESCRIPTION": {
+                "19": "Option zum Deaktivieren des Verbinden\/Trennen-Popups für Bluetooth-Geräte"
+            }
+        },
+        "8.4.0": {
+            "TITLE": "Version 8.4.0: Das ist neu",
             "DESCRIPTION": [
-                "<b>Brühungen<\/b>",
-                "Wähle in den Einstellungen, welches Foto angezeigt werden soll: Bohne, Brühung oder Zubereitungsmethodik",
-                "Der Spitzenwert des Wasserdurchflusses wird jetzt in der Detailansicht der Brühe angezeigt",
-                "Ein Problem wurde behoben, das durch eine langsame Tariergeschwindigkeit bei Varia-Waagen beim Starten mit Druckschwelle verursacht wurde.",
+                "<b>Experimentell: Dunkler Modus<\/b>",
+                "Wähle zwischen hellem und dunklem Modus oder lass die App deinen Systemeinstellungen folgen, aktiviere es in den Einstellungen. Standard: Heller Modus",
                 "",
-                "<b>Bohnen<\/b>",
-                "Gefrorene Bohnen werden jetzt automatisch ausgewählt, wenn keine ungefrorenen Bohnen verfügbar sind",
-                "Es kann nun über die Bohneneinfrier aktion auch die Anhänge kopiert werden",
-                "Es ist nun möglich, die eingefrorene ID über das Aktions-Popup zu kopieren",
-                "Bearbeitung der Bohne direkt in der Detailansicht",
-                "Die Bohnenbewertung wird jetzt automatisch berechnet, sobald alle Brühvorgänge abgeschlossen sind – Danke an danielzsandberg",
+                "<b>Bluetooth-Waagen<\/b>",
+                "Unterstützung von Half Decent Scale",
+                "Unterstützung der DIY-WeightMyBruh Waage",
+                "Unterstützung von EspressiScale",
                 "",
                 "<b>Zubereitungsmethodiken<\/b>",
                 "Die Xenia Maschine kann nun an und ausgeschaltet werden",
                 "",
-                "<b>DiFluid R2-Refraktometer<\/b>",
-                "Komplette Überarbeitung – Danke an AV-IO",
+                "<b>Brühungen<\/b>",
+                "[IOS]Aktiviere die Kamera für den Espresso-Zug auf dem maximiertem Bildschirm",
+                "Behebung eines Fehlers, der dazu führte, dass Bluetooth-Geräte nicht funktionierten, wenn bei der ersten Zubereitungsmethode der Abschnitt \"Während des Brühens\" deaktiviert war",
+                "Das Brühdatum wird jetzt in der Detailansicht angezeigt",
                 "",
-                "<b>Einstellungen<\/b>",
-                "Option zum Deaktivieren des Verbinden\/Trennen-Popups für Bluetooth-Geräte",
+                "<b>Bohnen<\/b>",
+                "Bohnen nach dem Datum dem besten Bohnenalter sortieren",
+                "Benutzerimport von Bohnen unterstützt jetzt auch Bilder",
                 "",
-                "<b> Sonstiges <\/b>",
+                "<b>Bilder<\/b>",
+                "Importieren von Bildern über die Zwischenablage",
+                "",
+                "<b>Statistik<\/b>",
+                "Einige Bohnenstatistiken hinzugefügt",
+                "",
+                "<b>Aktualisierungen der Bibliotheken<\/b>",
+                "Aktualisierung auf Capacitor 7 sowie auf Angular 20",
+                "Wenn du  irgendwelche Fehler findest, wende dich bitte an info@beanconqueror.com, denn dieses Update hat sehr viele Code Änderungen zufolge gehabt",
+                "",
+                "<b>Sonstiges<\/b>",
                 "Kleinere Korrekturen"
             ]
         }
@@ -1512,9 +1526,16 @@
     "NO_AUTOMATIC_BACKUPS_FOUND": "Keine automatischen Backups gefunden",
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Wenn du einen Datenverlust erlitten hast und hier keine Daten gefunden hast, nutze bitte die offiziellen Support-Wege",
     "IMPORT_AUTOMATIC_BACKUP_FILE": "Automatische Sicherungsdatei importieren",
+    "CLIPBOARD": "Zwischenablage",
+    "NO_IMAGE_IN_CLIPBOARD": "Kein Bild in der Zwischenablage",
+    "PAGE_SETTINGS_THEME_MODE_LIGHT": "Heller Modus",
+    "PAGE_SETTINGS_THEME_MODE_DARK": "Dunkler Modus",
+    "PAGE_SETTINGS_THEME_MODE_DEVICE": "Systemstandard",
+    "PAGE_SETTINGS_THEME_MODE": "Thema-Modus",
     "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
     "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
     "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
-    "PAGE_STATISTICS_AVG_RATING": "Average Rating"
+    "PAGE_STATISTICS_AVG_RATING": "Average Rating",
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Griechisch"
 }

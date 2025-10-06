@@ -207,7 +207,7 @@
     "PAGE_BEAN_INFORMATION_BAD_BREWS": "",
     "PAGE_BEAN_INFORMATION_COUNT_BREWS": "Totale preparazioni",
     "INFORMATION": "",
-    "PAGE_BEAN_BREW_CHART_TITLE": "",
+    "PAGE_BEAN_BREW_CHART_TITLE": "Panoramica della preparazione di questo caffè",
     "PAGE_BEAN_INFORMATION_AWESOME_BREWS": "Eccezionale",
     "PAGE_BEAN_INFORMATION_NORMAL_BREWS": "Normale",
     "PAGE_BEAN_INFORMATION_NOT_RATED_BREWS": "Non valutato",
@@ -1461,31 +1461,45 @@
     "BEAN_DATA_AVERAGE_BREW_RATING": "Valutazione media della preparazione",
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.3.0": {
-            "TITLE": "Versione 8.3.0: Novità",
+            "DESCRIPTION": {
+                "19": "Opzione per disabilitare il popup di connessione\/disconnessione dei dispositivi Bluetooth"
+            }
+        },
+        "8.4.0": {
+            "TITLE": "Versione 8.4.0: Novità",
             "DESCRIPTION": [
+                "<b>Sperimentale: Modalità oscura<\/b>",
+                "Scegli tra la modalità chiara e scura o lascia che l'app segua le impostazioni di sistema: attivala nelle Impostazioni. Impostazione predefinita: modalità chiara",
+                "",
+                "<b>Bilance Bluetooth<\/b>",
+                "Supporto per Half Decent Scale",
+                "Supporto per DIY-WeightMyBruhScale",
+                "Supporto per EspressiScale",
+                "",
+                "Preparazioni",
+                "Ora puoi accendere o spegnere la Xenia",
+                "",
                 "<b>Preparazioni<\/b>",
-                "Scegli nelle impostazioni quale foto visualizzare: caffè, infusione o preparazione",
-                "La velocità di picco del flusso d'acqua viene ora mostrata nel dettaglio della preparazione",
-                "Risolto un problema causato dalla taratura lenta delle bilance Varia, quando si inizia una preparazone con limite di pressione",
+                "[IOS]Attiva la fotocamera a schermo intero per il tuo espresso",
+                "Se trovi dei bug, contatta info@beanconqueror.com",
+                "La data di preparazione è ora visualizzata nella vista dettagliata",
                 "",
                 "<b>Caffè<\/b>",
-                "I caffè congelati vengono ora selezionati automaticamente quando non sono disponibili non congelati",
-                "Ora puoi congelare un caffè dal menu delle azioni, anche copiando gli allegati nelle porzioni",
-                "Ora è possibile copiare l'ID del caffè congelato tramite il popup azione",
-                "Modifica il tuo caffè direttamente dal dettaglio",
-                "La valutazione automatica dei caffè viene ora calcolata una volta completate tutte le preparazioni - Grazie a danielzsandberg",
+                "Ordina i caffè in base alla data migliore",
+                "L'importazione dei caffè supporta anche le immagini",
                 "",
-                "<b>Preparazioni<\/b>",
-                "Ora puoi accendere o spegnere la macchina Xenia",
+                "<b>Immagini<\/b>",
+                "Importa immagini dagli appunti",
                 "",
-                "<b> Rifrattometro DiFluid R2 <\/b>",
-                "Rielaborazione completa - Grazie ad AV-IO",
+                "<b>Statistiche<\/b>",
+                "Aggiunte alcune statistiche sui caffè",
                 "",
-                "<b>Impostazioni<\/b>",
-                "Opzione per disabilitare il popup di connessione\/disconnessione dei dispositivi Bluetooth",
+                "<b>Aggiornamenti delle librerie<\/b>",
+                "Aggiornamento a Capacitor 7 e Angular 20",
+                "Se trovi dei bug, contatta info@beanconqueror.com",
                 "",
                 "<b>Altro<\/b>",
-                "Correzioni di bug minori"
+                "Correzioni minori"
             ]
         }
     },
@@ -1512,9 +1526,16 @@
     "NO_AUTOMATIC_BACKUPS_FOUND": "Nessun backup automatico trovato",
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Se hai subito una perdita di dati e non hai trovato alcun dato qui, utilizza i metodi di backup ufficiali",
     "IMPORT_AUTOMATIC_BACKUP_FILE": "Importazione del file di backup automatico",
+    "CLIPBOARD": "Appunti",
+    "NO_IMAGE_IN_CLIPBOARD": "Nessuna immagine negli appunti",
+    "PAGE_SETTINGS_THEME_MODE_LIGHT": "Modalità chiara",
+    "PAGE_SETTINGS_THEME_MODE_DARK": "Modalità scura",
+    "PAGE_SETTINGS_THEME_MODE_DEVICE": "Predefinito del sistema",
+    "PAGE_SETTINGS_THEME_MODE": "Tema",
     "STATISTICS_BEANS_BY_COUNTRY": "Beans by Country",
     "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
     "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
-    "PAGE_STATISTICS_AVG_RATING": "Average Rating"
+    "PAGE_STATISTICS_AVG_RATING": "Average Rating",
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Greco"
 }
