@@ -483,7 +483,7 @@ export class SanremoYOUDevice extends PreparationDevice {
     this.sendingWeightAndFlowTimestamp = Date.now();
 
     if (this.isConnected()) {
-      if (true || this.sanremoShotData?.statusPhase !== 0) {
+      if (this.sanremoShotData?.statusPhase !== 0) {
         //this.logInfo('Sending weight data to machine:', sendData);
         //When we try to reconnect could be that we send in the sequence while disconnected and get an error.
         try {
