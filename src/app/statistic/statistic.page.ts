@@ -132,8 +132,7 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByRoasterChart(): void {
-    const brews = this.uiBrewStorage.getAllEntries();
-    const beans = this.__getBeansFromBrews(brews);
+    const beans = this.uiBeanStorage.getAllEntries();
     const roasters = Array.from(
       new Set(beans.map((b) => b.roaster).filter((r) => r)),
     );
@@ -179,8 +178,7 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByProcessingChart(): void {
-    const brews = this.uiBrewStorage.getAllEntries();
-    const beans = this.__getBeansFromBrews(brews);
+    const beans = this.uiBeanStorage.getAllEntries();
     const processings = Array.from(
       new Set(
         beans
@@ -233,8 +231,8 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByCountryChart(): void {
-    const brews = this.uiBrewStorage.getAllEntries();
-    const beans = this.__getBeansFromBrews(brews);
+    const beans = this.uiBeanStorage.getAllEntries();
+    debugger;
     const countries = Array.from(
       new Set(
         beans

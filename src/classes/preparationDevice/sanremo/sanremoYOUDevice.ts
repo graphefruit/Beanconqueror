@@ -324,6 +324,7 @@ export class SanremoYOUDevice extends PreparationDevice {
               this.clearKeepAliveInterval();
             }
           }, 5000);
+
           if (hasPromiseBeenCalled === false) {
             resolve(true);
             hasPromiseBeenCalled = true;
@@ -343,7 +344,7 @@ export class SanremoYOUDevice extends PreparationDevice {
             this.sanremoShotData.localTimeString =
               new Date().toLocaleTimeString();
             this.sanremoShotData.reconnectionCounter = this.reconnectionCounter;
-            window['sanremoShotData'] = this.sanremoShotData;
+            //window['sanremoShotData'] = this.sanremoShotData;
 
             if (
               this.sanremoShotData.groupStatus !== 0 &&
@@ -450,6 +451,8 @@ export class SanremoYOUDevice extends PreparationDevice {
 
   public sendJustAppConnectionToMachine() {
     try {
+      /**Sending data to the WIFI module currently makes issues, so we disable it for now **/
+      return;
       if (this.isConnected()) {
         /**
          * We wait one second, because we want to give the machine some short delay, after initial connecting
@@ -471,6 +474,8 @@ export class SanremoYOUDevice extends PreparationDevice {
     _flow: number,
     _targetBrewByWeight: number,
   ) {
+    /**Sending data to the WIFI module currently makes issues, so we disable it for now **/
+    return;
     if (Date.now() - this.sendingWeightAndFlowTimestamp < 200) {
       return;
     } else {
@@ -478,7 +483,7 @@ export class SanremoYOUDevice extends PreparationDevice {
     this.sendingWeightAndFlowTimestamp = Date.now();
 
     if (this.isConnected()) {
-      if (this.sanremoShotData?.statusPhase !== 0) {
+      if (true || this.sanremoShotData?.statusPhase !== 0) {
         //this.logInfo('Sending weight data to machine:', sendData);
         //When we try to reconnect could be that we send in the sequence while disconnected and get an error.
         try {
