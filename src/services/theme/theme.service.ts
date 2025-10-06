@@ -66,6 +66,10 @@ export class ThemeService {
     }
   }
 
+  public async setLightMode() {
+    this.toggleDarkPalette(false);
+  }
+
   private toggleDarkPalette(shouldAdd: boolean) {
     if (Capacitor.getPlatform() !== 'web') {
       if (shouldAdd) {
