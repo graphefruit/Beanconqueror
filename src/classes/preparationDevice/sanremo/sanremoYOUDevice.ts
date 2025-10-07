@@ -291,7 +291,7 @@ export class SanremoYOUDevice extends PreparationDevice {
 
       try {
         this.socket = new WebSocket(this.websocketURL);
-        window['socket'] = this.socket;
+        //window['socket'] = this.socket;
 
         // Connection opened
         this.socket.onopen = (event) => {
