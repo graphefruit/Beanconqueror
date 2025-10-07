@@ -232,7 +232,6 @@ export class StatisticPage implements OnInit {
 
   private __loadBeansByCountryChart(): void {
     const beans = this.uiBeanStorage.getAllEntries();
-    debugger;
     const countries = Array.from(
       new Set(
         beans
