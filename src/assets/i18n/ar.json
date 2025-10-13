@@ -1533,7 +1533,8 @@
         },
         "LOG": "",
         "THRESHOLD_ACTIVE": "",
-        "THRESHOLD_TEMP": ""
+        "THRESHOLD_TEMP": "",
+        "SHOW_BEFORE_TIMER": ""
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "",
     "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "",
