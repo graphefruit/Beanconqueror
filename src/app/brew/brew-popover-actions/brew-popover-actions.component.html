@@ -50,10 +50,12 @@
       <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
     </ion-item>
+  @if(false) {
   <ion-item (click)="choose(getStaticActions().SHARE)" button tappable>
     <ion-icon name="share-social-outline" slot="start"></ion-icon>
     <span>{{"SHARE" | translate}}</span>
   </ion-item>
+  }
     @if (hasCoordinates()) {
 <ion-item (click)="choose(getStaticActions().SHOW_MAP_COORDINATES)" button tappable>
       <ion-icon name="beanconqueror-map" slot="start"></ion-icon>
