@@ -22,6 +22,7 @@ import { UIWaterHelper } from '../../../services/uiWaterHelper';
   selector: 'app-bean-associated-brews',
   templateUrl: './associated-brews.component.html',
   styleUrls: ['./associated-brews.component.scss'],
+  standalone: false,
 })
 export class AssociatedBrewsComponent {
   public static readonly COMPONENT_ID = 'associated-brews';

@@ -214,6 +214,17 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
+        case BEAN_SORT_AFTER.BEST_DATE:
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.bestDate < b.bestDate) {
+              return -1;
+            }
+            if (a.bestDate > b.bestDate) {
+              return 1;
+            }
+            return 0;
+          });
+          break;
         case BEAN_SORT_AFTER.RATING:
           filterBeans = filterBeans.sort((a, b) => {
             if (a.rating < b.rating) {

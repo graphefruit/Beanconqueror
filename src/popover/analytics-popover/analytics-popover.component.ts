@@ -9,6 +9,7 @@ import moment from 'moment/moment';
   selector: 'analytics-popover',
   templateUrl: './analytics-popover.component.html',
   styleUrls: ['./analytics-popover.component.scss'],
+  standalone: false,
 })
 export class AnalyticsPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'analytics-popover';

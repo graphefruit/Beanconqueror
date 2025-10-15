@@ -18,6 +18,7 @@ import { UIAlert } from '../../../services/uiAlert';
   selector: 'app-brew-modal-import-shot-gaggiuino',
   templateUrl: './brew-modal-import-shot-gaggiuino.component.html',
   styleUrls: ['./brew-modal-import-shot-gaggiuino.component.scss'],
+  standalone: false,
 })
 export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-gaggiuino';

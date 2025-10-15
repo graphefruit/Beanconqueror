@@ -5,7 +5,7 @@
         <ion-toolbar class="ion-text-center">
           <ion-buttons slot="start">
             <ion-button (click)="dismiss()">
-              <ion-icon class="icon-black" name="close-outline" slot="icon-only"></ion-icon>
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
             </ion-button>
           </ion-buttons>
           <ion-title>
@@ -26,18 +26,28 @@
               <ion-item [class.active]="pages.home.active" [routerLink]="[pages.home.url]" replaceUrl="true">
                 <ion-label>{{pages.home.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [class.active]="pages.baristamode.active" [routerLink]="[pages.baristamode.url]" replaceUrl="true">
-                <ion-label>{{pages.baristamode.title | translate}}</ion-label>
-              </ion-item>
-              <ion-item *ngIf="uiRoastingSectionVisible" [class.active]="pages.roasting_section.active" [routerLink]="[pages.roasting_section.url]" replaceUrl="true">
+
+              @if(pages.baristamode.visible === true)
+              {
+                <ion-item [class.active]="pages.baristamode.active" [routerLink]="[pages.baristamode.url]" replaceUrl="true">
+                  <ion-label>{{pages.baristamode.title | translate}}</ion-label>
+                </ion-item>
+              }
+              @if(uiRoastingSectionVisible){
+<ion-item [class.active]="pages.roasting_section.active" [routerLink]="[pages.roasting_section.url]" replaceUrl="true">
                 <ion-label>{{pages.roasting_section.title | translate}}</ion-label>
               </ion-item>
-              <ion-item *ngIf="uiWaterSectionVisible" [class.active]="pages.water_section.active" [routerLink]="[pages.water_section.url]" replaceUrl="true">
+}
+@if(uiWaterSectionVisible){
+<ion-item [class.active]="pages.water_section.active" [routerLink]="[pages.water_section.url]" replaceUrl="true">
                 <ion-label>{{pages.water_section.title | translate}}</ion-label>
               </ion-item>
-              <ion-item *ngIf="uiGraphSectionVisible" [class.active]="pages.graph_section.active" [routerLink]="[pages.graph_section.url]" replaceUrl="true">
+}
+@if(uiGraphSectionVisible){
+<ion-item [class.active]="pages.graph_section.active" [routerLink]="[pages.graph_section.url]" replaceUrl="true">
               <ion-label>{{pages.graph_section.title | translate}}</ion-label>
             </ion-item>
+}
               <ion-item [class.active]="pages.brew_parameter.active" [routerLink]="[pages.brew_parameter.url]"
                         replaceUrl="true">
                 <ion-label> {{pages.brew_parameter.title | translate}}</ion-label>

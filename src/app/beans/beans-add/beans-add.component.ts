@@ -22,6 +22,7 @@ import TrackContentImpression from '../../../data/tracking/trackContentImpressio
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
   styleUrls: ['./beans-add.component.scss'],
+  standalone: false,
 })
 export class BeansAddComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-add';
@@ -308,15 +309,21 @@ export class BeansAddComponent implements OnInit {
     this.data.cupping_points = _bean.cupping_points;
     this.data.roast_range = _bean.roast_range;
 
-    const copyAttachments = [];
-    for (const attachment of _bean.attachments) {
-      try {
-        const newPath: string =
-          await this.uiFileHelper.duplicateInternalFile(attachment);
-        copyAttachments.push(newPath);
-      } catch (ex) {}
+    if (!this.user_shared_bean) {
+      const copyAttachments = [];
+      for (const attachment of _bean.attachments) {
+        try {
+          const newPath: string =
+            await this.uiFileHelper.duplicateInternalFile(attachment);
+          copyAttachments.push(newPath);
+        } catch (ex) {}
+      }
+      this.data.attachments = copyAttachments;
+    } else {
+      //We already downloaded the attachments in the uiBeanHelper, so duplicating it internaly wouldn't be a good idea
+      this.data.attachments = _bean.attachments;
     }
-    this.data.attachments = copyAttachments;
+
     if (_bean.cupped_flavor) {
       this.data.cupped_flavor = _bean.cupped_flavor;
     }

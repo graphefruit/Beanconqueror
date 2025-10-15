@@ -3,10 +3,12 @@
     <ion-grid class="no-padding-bottom">
       <ion-row>
         <ion-col [size]="greenBean?.rating!== 0?8:11" size="11"><div class="ion-no-padding font-size-20 ion-title bean-title">{{greenBean.name}}</div></ion-col>
-        <ion-col *ngIf="greenBean?.rating !== 0" size="3">
-                    <ngx-stars #greenBeanRating [color]="'#BFB9B0'" [initialStars]="greenBean.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
-          </ngx-stars>
-        </ion-col>
+        @if (greenBean?.rating !== 0) {
+          <ion-col size="3">
+            <ngx-stars #greenBeanRating [color]="'#BFB9B0'" [initialStars]="greenBean.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
+            </ngx-stars>
+          </ion-col>
+        }
         <ion-col size="1">
           <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
@@ -28,25 +30,33 @@
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label><br/>
 
-                <ion-text *ngIf="greenBean?.date">
+                @if (greenBean?.date) {
+                  <ion-text>
                   {{greenBean.date | formatDate:[settings?.date_format]}}</ion-text>
-                <ion-text *ngIf="!greenBean?.date">
-                  -
-                </ion-text>
+                }
+                @if (!greenBean?.date) {
+                  <ion-text>
+                    -
+                  </ion-text>
+                }
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_COST" | translate}}</ion-label><br/>
 
-                <ion-text *ngIf="greenBean.cost">
+                @if (greenBean.cost) {
+                  <ion-text>
                   {{greenBean.cost}}</ion-text>
-                <ion-text  *ngIf="!greenBean.cost">
-                  -
-                </ion-text>
+                }
+                @if (!greenBean.cost) {
+                  <ion-text >
+                    -
+                  </ion-text>
+                }
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEAN_ROAST_COUNT" | translate}}</ion-label><br/>
                 <ion-text>
-                  {{roastCount()}}</ion-text>
+                {{roastCount()}}</ion-text>
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label><br/>
@@ -55,11 +65,13 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        <ion-col class="ion-no-padding" size="3" *ngIf="hasPhotos()" (click)="showPhoto($event)">
-          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-            <async-image [filePath]="greenBean.attachments[0]" class="bean-slider"></async-image>
-          </div>
-        </ion-col>
+        @if (hasPhotos()) {
+          <ion-col class="ion-no-padding" size="3" (click)="showPhoto($event)">
+            <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+              <async-image [filePath]="greenBean.attachments[0]" class="bean-slider"></async-image>
+            </div>
+          </ion-col>
+        }
       </ion-row>
     </ion-grid>
   </ion-card-content>

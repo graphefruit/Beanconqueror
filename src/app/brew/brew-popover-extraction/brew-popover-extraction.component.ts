@@ -18,6 +18,7 @@ declare var Plotly;
   selector: 'app-brew-popover-extraction',
   templateUrl: './brew-popover-extraction.component.html',
   styleUrls: ['./brew-popover-extraction.component.scss'],
+  standalone: false,
 })
 export class BrewPopoverExtractionComponent implements OnInit {
   public static COMPONENT_ID = 'brew-extraction';
@@ -31,7 +32,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   public ngOnInit() {}
@@ -72,7 +73,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
           mode: 'text',
           text: [
             this.translate.instant(
-              'EXTRACTION_CHART_LABEL_STRONG_UNDEREXTRACTED'
+              'EXTRACTION_CHART_LABEL_STRONG_UNDEREXTRACTED',
             ),
             this.translate.instant('EXTRACTION_CHART_LABEL_STRONG'),
             this.translate.instant('EXTRACTION_CHART_LABEL_STRONG_HARSH'),
@@ -80,7 +81,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
             this.translate.instant('EXTRACTION_CHART_LABEL_IDEAL'),
             this.translate.instant('EXTRACTION_CHART_LABEL_HARSH'),
             this.translate.instant(
-              'EXTRACTION_CHART_LABEL_WEAK_UNDEREXTRACTED'
+              'EXTRACTION_CHART_LABEL_WEAK_UNDEREXTRACTED',
             ),
             this.translate.instant('EXTRACTION_CHART_LABEL_WEAK'),
             this.translate.instant('EXTRACTION_CHART_LABEL_WEAK_HARSH'),
@@ -116,7 +117,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
         xaxis: {
           title: {
             text: this.translate.instant(
-              'BREW_DATA_CALCULATED_EXTRACTION_YIELD'
+              'BREW_DATA_CALCULATED_EXTRACTION_YIELD',
             ),
           },
           fixedrange: true,
@@ -151,7 +152,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
         'extractionChart',
         extractionChartData,
         extractionChartLayout,
-        this.getChartConfig()
+        this.getChartConfig(),
       );
     } catch (ex) {}
   }
@@ -174,7 +175,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewPopoverExtractionComponent.COMPONENT_ID
+      BrewPopoverExtractionComponent.COMPONENT_ID,
     );
   }
 }

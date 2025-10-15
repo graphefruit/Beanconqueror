@@ -6,6 +6,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
   selector: 'async-image',
   templateUrl: './async-image.component.html',
   styleUrls: ['./async-image.component.scss'],
+  standalone: false,
 })
 export class AsyncImageComponent implements OnChanges {
   @Input() public filePath: string;

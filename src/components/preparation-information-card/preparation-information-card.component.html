@@ -1,17 +1,21 @@
 <div>
-<ion-card class="long-card" tappable (click)="show()" (long-press)="longPressEditPreparation($event)">
-  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
-    <ion-grid class="no-padding-bottom">
-      <ion-row>
-        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">
-          <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="wifi-outline"
-                    *ngIf='(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)'></ion-icon>
+  <ion-card class="long-card" tappable (click)="show()" (long-press)="longPressEditPreparation($event)">
+    <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
+      <ion-grid class="no-padding-bottom">
+        <ion-row>
+          <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">
+            @if ((preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)) {
+              <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="wifi-outline"
+              ></ion-icon>
+            }
           {{preparation.name}}</div>
-          <span *ngIf="preparation.use_custom_parameters" class="ion-color-accent-secondary">{{"PREPARATION_PARAMETERS_CUSTOMIZED" | translate}}</span>
+          @if (preparation.use_custom_parameters) {
+            <span class="ion-color-accent-secondary">{{"PREPARATION_PARAMETERS_CUSTOMIZED" | translate}}</span>
+          }
         </ion-col>
         <ion-col size="1">
           <ion-button (click)="showPreparationActions($event)" class="button-top-absolute" tappable
-                      color="accent" fill="clear">
+            color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>
@@ -48,14 +52,18 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        <ion-col class="ion-justify-content-center ion-no-padding" size="3" *ngIf="!(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)">
-          <ion-icon class="full-sized-icon" name="{{(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON)}}"></ion-icon>
-        </ion-col>
-        <ion-col class="ion-no-padding" size="3" *ngIf="(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)" (click)="showPhoto($event)">
-          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-            <async-image [filePath]="preparation.attachments[0]" class="bean-slider"></async-image>
-          </div>
-        </ion-col>
+        @if (!(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
+          <ion-col class="ion-justify-content-center ion-no-padding" size="3">
+            <ion-icon class="full-sized-icon" name="{{(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON)}}"></ion-icon>
+          </ion-col>
+        }
+        @if ((preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
+          <ion-col class="ion-no-padding" size="3" (click)="showPhoto($event)">
+            <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+              <async-image [filePath]="preparation.attachments[0]" class="bean-slider"></async-image>
+            </div>
+          </ion-col>
+        }
       </ion-row>
 
     </ion-grid>
@@ -63,5 +71,5 @@
 
   </ion-card-content>
 </ion-card>
-  <div style="height:10px;"></div>
+<div style="height:10px;"></div>
 </div>

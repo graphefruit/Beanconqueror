@@ -37,6 +37,7 @@ declare var Plotly;
   selector: 'app-barista',
   templateUrl: './barista.page.html',
   styleUrls: ['./barista.page.scss'],
+  standalone: false,
 })
 export class BaristaPage implements OnInit {
   public data: Brew = new Brew();

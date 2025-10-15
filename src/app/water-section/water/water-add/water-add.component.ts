@@ -13,6 +13,7 @@ import { WaterAddTypeComponent } from '../water-add-type/water-add-type.componen
   selector: 'app-water-add',
   templateUrl: './water-add.component.html',
   styleUrls: ['./water-add.component.scss'],
+  standalone: false,
 })
 export class WaterAddComponent implements OnInit {
   public static COMPONENT_ID = 'water-add';
@@ -24,13 +25,13 @@ export class WaterAddComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
-      WATER_TRACKING.ACTIONS.ADD
+      WATER_TRACKING.ACTIONS.ADD,
     );
   }
 
@@ -51,7 +52,7 @@ export class WaterAddComponent implements OnInit {
     if (data && data.added === true) {
       this.uiAnalytics.trackEvent(
         WATER_TRACKING.TITLE,
-        WATER_TRACKING.ACTIONS.ADD_FINISH
+        WATER_TRACKING.ACTIONS.ADD_FINISH,
       );
       await this.dismiss();
     }
@@ -63,7 +64,7 @@ export class WaterAddComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      WaterAddComponent.COMPONENT_ID
+      WaterAddComponent.COMPONENT_ID,
     );
   }
   public ngOnInit() {}

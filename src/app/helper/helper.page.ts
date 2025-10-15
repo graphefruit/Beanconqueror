@@ -4,5 +4,6 @@ import { Component } from '@angular/core';
   selector: 'helper',
   templateUrl: './helper.page.html',
   styleUrls: ['./helper.page.scss'],
+  standalone: false,
 })
 export class HelperPage {}

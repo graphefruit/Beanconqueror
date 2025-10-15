@@ -1,14 +1,15 @@
 :host {
   ion-header {
     height:40px;
-    background-color: #ffffff;
+    background-color: var(--ion-color-light);
   }
   ion-item.active {
     border: 1px solid var(--ion-color-accent-secondary);
   }
   ion-item {
     border-radius: 10px;
-    --background: #F0F0F0;
+    --background: var(--ion-item-sort-background);
+    border: 1px solid var(--ion-color-accent);
 
     ion-icon{
       padding-left: 16px;

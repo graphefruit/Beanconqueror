@@ -10,6 +10,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
   selector: 'app-mill-detail',
   templateUrl: './mill-detail.component.html',
   styleUrls: ['./mill-detail.component.scss'],
+  standalone: false,
 })
 export class MillDetailComponent implements OnInit {
   public static COMPONENT_ID: string = 'mill-detail';
@@ -19,13 +20,13 @@ export class MillDetailComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     public uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
   ) {}
 
   public ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,
-      MILL_TRACKING.ACTIONS.DETAIL
+      MILL_TRACKING.ACTIONS.DETAIL,
     );
 
     if (this.mill) {
@@ -41,7 +42,7 @@ export class MillDetailComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      MillDetailComponent.COMPONENT_ID
+      MillDetailComponent.COMPONENT_ID,
     );
   }
 }

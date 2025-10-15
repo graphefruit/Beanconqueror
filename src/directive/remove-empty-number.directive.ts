@@ -3,6 +3,7 @@ import { NgModel } from '@angular/forms';
 
 @Directive({
   selector: '[ngModel][remove-empty-number]',
+  standalone: false,
 })
 export class RemoveEmptyNumberDirective {
   // @Output() ngModelChange:EventEmitter<any> = new EventEmitter();

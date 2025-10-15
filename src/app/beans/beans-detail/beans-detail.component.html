@@ -16,306 +16,376 @@
 <ion-content>
 
   <ion-segment scrollable="true" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
-    <ion-segment-button value="roastinformation" *ngIf="data?.bean_roast_information?.bean_uuid != ''">
-      <ion-label>{{"BEAN_TAB_ROAST_INFORMATION" | translate }}
-      </ion-label>
-    </ion-segment-button>
+    @if (data?.bean_roast_information?.bean_uuid != '') {
+      <ion-segment-button value="roastinformation">
+        <ion-label>{{"BEAN_TAB_ROAST_INFORMATION" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
     <ion-segment-button value="general">
       <ion-label>{{"BEAN_TAB_GENERAL_INFORMATION" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="frozen" *ngIf='settings.freeze_coffee_beans'>
-      <ion-label>{{"BEAN_TAB_FROZEN_INFORMATION" | translate }}
-      </ion-label>
-    </ion-segment-button>
-    <ion-segment-button *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bean_information)" value="sortinformation">
-      <ion-label>{{"BEAN_TAB_SORT_INFORMATION" | translate }}
-      </ion-label>
-    </ion-segment-button>
+    @if (settings.freeze_coffee_beans) {
+      <ion-segment-button value="frozen">
+        <ion-label>{{"BEAN_TAB_FROZEN_INFORMATION" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
+    @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bean_information)) {
+      <ion-segment-button value="sortinformation">
+        <ion-label>{{"BEAN_TAB_SORT_INFORMATION" | translate }}
+        </ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>
-  <div [ngSwitch]="bean_segment">
-    <div *ngSwitchCase="'roastinformation'">
-      <ion-card class="popover" style="display:flex; flex-direction: column;">
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.DROP_TEMPERATURE" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.drop_temperature}}</h3>
-          </ion-label>
-        </ion-item>
-
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.ROAST_LENGTH" | translate}}:</h2>
-            <h3>{{getRoastLengthFormat()}}</h3>
-          </ion-label>
-        </ion-item>
-
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.ROASTER_MACHINE" | translate}}:</h2>
-            <h3>{{data.getRoastingMachine().name}}</h3>
-          </ion-label>
-        </ion-item>
-
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.GREEN_BEAN_WEIGHT" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.green_bean_weight}}</h3>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_WEIGHT_AFTER_ROASTING" | translate}}:</h2>
-            <h3>{{data.weight}}</h3>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.FIRST_CRACK_MINUTE" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.first_crack_minute}}</h3>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.FIRST_CRACK_TEMPERATURE" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.first_crack_temperature}}</h3>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.SECOND_CRACK_MINUTE" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.second_crack_minute}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.SECOND_CRACK_TEMPERATURE" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.second_crack_temperature}}</h3>
-          </ion-label>
-        </ion-item>
-
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.OUTSIDE_TEMPERATURE" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.outside_temperature}}</h3>
-          </ion-label>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>
-            <h2>{{"ROASTING_SECTION.BEAN.HUMIDITY" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.humidity}}</h3>
-          </ion-label>
-        </ion-item>
-      </ion-card>
-    </div>
-    <div *ngSwitchCase="'general'">
-      <ion-card class="popover" style="display:flex; flex-direction: column;">
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.name])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_NAME" | translate}}:</h2>
-            <h3>{{data.name}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roaster])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_ROASTER" | translate}}:</h2>
-            <h3>{{data.roaster}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.buyDate])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
-            <h3 *ngIf="data.buyDate">{{data.buyDate | formatDate:[settings?.date_format]}}</h3>
-            <h3 *ngIf="!data.buyDate">-</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bestDate])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_BEST_DATE" | translate}}:</h2>
-            <h3 *ngIf="data.bestDate">{{data.bestDate | formatDate:[settings?.date_format]}}</h3>
-            <h3 *ngIf="!data.bestDate">-</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.openDate])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_OPEN_DATE" | translate}}:</h2>
-            <h3 *ngIf="data.openDate">{{data.openDate | formatDate:[settings?.date_format]}}</h3>
-            <h3 *ngIf="!data.openDate">-</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roastingDate])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}:</h2>
-            <h3>{{data.roastingDate | formatDate:[settings?.date_format]}}</h3>
-          </ion-label>
-        </ion-item>
-
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bean_roasting_type])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_ROASTING_TYPE" | translate}}:</h2>
-            <h3>{{"BEAN_ROASTING_TYPE_" + data.bean_roasting_type | translate}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast_range])">
-          <ion-label  position="stacked" style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
-        </ion-item>
-        <ion-item style='margin-top:-10px;' *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast_range])">
-          <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" disabled="true" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
-            <div slot="end">
-              <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top"></ngx-stars>
-            </div>
-          </ion-range>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_ROAST_NAME" | translate}}:</h2>
-            <h3 *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
-              {{bean.roast_custom}}</h3>
-            <h3 *ngIf="bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
-              {{"ROAST_TYPE_" + bean.roast | translate}}
-            </h3>
-            <h3 *ngIf=" bean.roast === getRoastEnum(roast_enum.UNKNOWN)">
-              -
-            </h3>
-          </ion-label>
-        </ion-item>
-        <ion-item  *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])">
-          <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-            style="vertical-align: top;">{{data.rating}}</ion-badge>
-          </ion-label>
-        </ion-item>
-        <ion-item style='margin-top:-10px;' *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])">
-
-          <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="settings?.bean_rating_steps" debounce="500s"  disabled="true" min="0" snaps="true">
-
-            <div slot="end">
-              <ngx-stars *ngIf="bean?.rating !== 0 && hasCustomRatingRange() === false"  #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
-              <div  *ngIf="bean?.rating > 0  && hasCustomRatingRange() === true" class="ion-text-right">
-                <ion-badge>{{bean.rating| toFixed: 2}}</ion-badge>
-              </div>
-            </div>
-          </ion-range>
-        </ion-item>
-
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.beanMix])" class="ion-margin-bottom">
-          <ion-label>
-            <h2>{{"BEAN_DATA_MIX" | translate}}:</h2>
-            <h3>{{"BEAN_MIX_" + data.beanMix | translate}}</h3>
-          </ion-label>
-        </ion-item>
-
-      </ion-card>
-      <ion-card style="display:flex; flex-direction: column;">
-        <ion-item lines="none">
-          <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"BEAN_SORT_MORE_INFORMATION" | translate }}</span>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.weight])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_WEIGHT" | translate}}:</h2>
-            <h3>{{data.weight}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.cost])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_COST" | translate}}:</h2>
-            <h3>{{data.cost}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.aromatics])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_AROMATICS" | translate}}:</h2>
-            <h3>{{data.aromatics}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.cupping_points])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_CUPPING_POINTS" | translate}}:</h2>
-            <h3>{{data.cupping_points}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.decaffeinated])">
-          <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.decaffeinated" disabled="true">{{"BEAN_DATA_DECAFFEINATED" | translate}}:</ion-checkbox>
-        </ion-item>
-        <ion-item (click)="openURL()" tappable *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.url])" button lines="inset">
-          <ion-label >
-            <h2>{{"BEAN_DATA_URL" | translate}}:</h2>
-            <h3>{{data.url}}</h3>
-          </ion-label>
-            <ion-icon *ngIf="data.url" style="position: relative; top: 5px;" name="globe-outline" slot="end"></ion-icon>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.ean_article_number])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_EAN" | translate}}:</h2>
-            <h3>{{data.ean_article_number}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.co2e_kg])">
-          <ion-label>
-            <h2>{{"BEAN_DATA_CO2E_KG" | translate}}:</h2>
-            <h3>{{data.co2e_kg}}</h3>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.finished" disabled="true">{{"FINISHED" | translate}}?:</ion-checkbox>
-        </ion-item>
-        <ion-item *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.note])"  class="ion-margin-bottom">
-          <ion-label>
-            <h2>{{"NOTES" | translate}}:</h2>
-            <pre>{{data.note}}</pre>
-          </ion-label>
-        </ion-item>
-        <div *ngIf="(settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.attachments]) && data?.attachments?.length > 0">
-          <photo-view [(data)]="data"></photo-view>
+  <div>
+    @switch (bean_segment) {
+      @case ('roastinformation') {
+        <div>
+          <ion-card class="popover" style="display:flex; flex-direction: column;">
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.DROP_TEMPERATURE" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.drop_temperature}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.ROAST_LENGTH" | translate}}:</h2>
+                <h3>{{getRoastLengthFormat()}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.ROASTER_MACHINE" | translate}}:</h2>
+                <h3>{{data.getRoastingMachine().name}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.GREEN_BEAN_WEIGHT" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.green_bean_weight}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_WEIGHT_AFTER_ROASTING" | translate}}:</h2>
+                <h3>{{data.weight}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.FIRST_CRACK_MINUTE" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.first_crack_minute}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.FIRST_CRACK_TEMPERATURE" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.first_crack_temperature}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.SECOND_CRACK_MINUTE" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.second_crack_minute}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.SECOND_CRACK_TEMPERATURE" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.second_crack_temperature}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.OUTSIDE_TEMPERATURE" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.outside_temperature}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h2>{{"ROASTING_SECTION.BEAN.HUMIDITY" | translate}}:</h2>
+                <h3>{{data.bean_roast_information.humidity}}</h3>
+              </ion-label>
+            </ion-item>
+          </ion-card>
         </div>
-      </ion-card>
-    </div>
-    <div *ngSwitchCase="'frozen'">
-      <ion-card class="popover" style="display:flex; flex-direction: column;">
-      <ion-item >
-        <ion-label>
-          <h2>{{"BEAN_DATA_FROZEN_DATE" | translate}}:</h2>
-          <h3>{{data.frozenDate | formatDate:[settings?.date_format]}}</h3>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h2>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}:</h2>
-          <h3>{{data.unfrozenDate | formatDate:[settings?.date_format]}}</h3>
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          <h2>{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}:</h2>
-          <h3>{{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</h3>
-        </ion-label>
-      </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{"BEAN_DATA_FROZEN_NOTE" | translate}}:</h2>
-            <pre>{{data.frozenNote}}</pre>
-          </ion-label>
-        </ion-item>
-      </ion-card>
-    </div>
-    <div *ngSwitchCase="'sortinformation'">
-      <bean-detail-sort-information  *ngIf="data" [(data)]="data"></bean-detail-sort-information>
-    </div>
-  </div>
+      }
+      @case ('general') {
+        <div>
+          <ion-card class="popover" style="display:flex; flex-direction: column;">
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.name])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_NAME" | translate}}:</h2>
+                  <h3>{{data.name}}</h3>
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roaster])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_ROASTER" | translate}}:</h2>
+                  <h3>{{data.roaster}}</h3>
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.buyDate])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
+                  @if (data.buyDate) {
+                    <h3>{{data.buyDate | formatDate:[settings?.date_format]}}</h3>
+                  }
+                  @if (!data.buyDate) {
+                    <h3>-</h3>
+                  }
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bestDate])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_BEST_DATE" | translate}}:</h2>
+                  @if (data.bestDate) {
+                    <h3>{{data.bestDate | formatDate:[settings?.date_format]}}</h3>
+                  }
+                  @if (!data.bestDate) {
+                    <h3>-</h3>
+                  }
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.openDate])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_OPEN_DATE" | translate}}:</h2>
+                  @if (data.openDate) {
+                    <h3>{{data.openDate | formatDate:[settings?.date_format]}}</h3>
+                  }
+                  @if (!data.openDate) {
+                    <h3>-</h3>
+                  }
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roastingDate])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}:</h2>
+                  <h3>{{data.roastingDate | formatDate:[settings?.date_format]}}</h3>
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bean_roasting_type])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_ROASTING_TYPE" | translate}}:</h2>
+                  <h3>{{"BEAN_ROASTING_TYPE_" + data.bean_roasting_type | translate}}</h3>
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast_range])) {
+              <ion-item>
+                <ion-label  position="stacked" style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast_range])) {
+              <ion-item style='margin-top:-10px;'>
+                <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" disabled="true" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
+                  <div slot="end">
+                    <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top"></ngx-stars>
+                  </div>
+                </ion-range>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_ROAST_NAME" | translate}}:</h2>
+                  @if (bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)) {
+                    <h3>
+                    {{bean.roast_custom}}</h3>
+                  }
+                  @if (bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)) {
+                    <h3>
+                      {{"ROAST_TYPE_" + bean.roast | translate}}
+                    </h3>
+                  }
+                  @if ( bean.roast === getRoastEnum(roast_enum.UNKNOWN)) {
+                    <h3>
+                      -
+                    </h3>
+                  }
+                </ion-label>
+              </ion-item>
+            }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])) {
+              <ion-item >
+                <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
+                style="vertical-align: top;">{{data.rating}}</ion-badge>
+              </ion-label>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])) {
+            <ion-item style='margin-top:-10px;'>
+              <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="settings?.bean_rating_steps" debounce="500s"  disabled="true" min="0" snaps="true">
+                <div slot="end">
+                  @if (bean?.rating !== 0 && hasCustomRatingRange() === false) {
+                    <ngx-stars  #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+                  }
+                  @if (bean?.rating > 0  && hasCustomRatingRange() === true) {
+                    <div  class="ion-text-right">
+                      <ion-badge>{{bean.rating| toFixed: 2}}</ion-badge>
+                    </div>
+                  }
+                </div>
+              </ion-range>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.beanMix])) {
+            <ion-item class="ion-margin-bottom">
+              <ion-label>
+                <h2>{{"BEAN_DATA_MIX" | translate}}:</h2>
+                <h3>{{"BEAN_MIX_" + data.beanMix | translate}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-card>
+        <ion-card style="display:flex; flex-direction: column;">
+          <ion-item lines="none">
+            <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"BEAN_SORT_MORE_INFORMATION" | translate }}</span>
+          </ion-item>
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.weight])) {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_WEIGHT" | translate}}:</h2>
+                <h3>{{data.weight}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.cost])) {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_COST" | translate}}:</h2>
+                <h3>{{data.cost}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.aromatics])) {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_AROMATICS" | translate}}:</h2>
+                <h3>{{data.aromatics}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.cupping_points])) {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_CUPPING_POINTS" | translate}}:</h2>
+                <h3>{{data.cupping_points}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.decaffeinated])) {
+            <ion-item>
+              <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.decaffeinated" disabled="true">{{"BEAN_DATA_DECAFFEINATED" | translate}}:</ion-checkbox>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.url])) {
+            <ion-item (click)="openURL()" tappable button lines="inset">
+              <ion-label >
+                <h2>{{"BEAN_DATA_URL" | translate}}:</h2>
+                <h3>{{data.url}}</h3>
+              </ion-label>
+              @if (data.url) {
+                <ion-icon style="position: relative; top: 5px;" name="globe-outline" slot="end"></ion-icon>
+              }
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.ean_article_number])) {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_EAN" | translate}}:</h2>
+                <h3>{{data.ean_article_number}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.co2e_kg])) {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BEAN_DATA_CO2E_KG" | translate}}:</h2>
+                <h3>{{data.co2e_kg}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          <ion-item>
+            <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.finished" disabled="true">{{"FINISHED" | translate}}?:</ion-checkbox>
+          </ion-item>
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.note])) {
+            <ion-item  class="ion-margin-bottom">
+              <ion-label>
+                <h2>{{"NOTES" | translate}}:</h2>
+                <pre>{{data.note}}</pre>
+              </ion-label>
+            </ion-item>
+          }
+          @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.attachments]) && data?.attachments?.length > 0) {
+            <div>
+              <photo-view [(data)]="data"></photo-view>
+            </div>
+          }
+        </ion-card>
+      </div>
+    }
+    @case ('frozen') {
+      <div>
+        <ion-card class="popover" style="display:flex; flex-direction: column;">
+          <ion-item >
+            <ion-label>
+              <h2>{{"BEAN_DATA_FROZEN_DATE" | translate}}:</h2>
+              <h3>{{data.frozenDate | formatDate:[settings?.date_format]}}</h3>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h2>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}:</h2>
+              <h3>{{data.unfrozenDate | formatDate:[settings?.date_format]}}</h3>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h2>{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}:</h2>
+              <h3>{{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</h3>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              <h2>{{"BEAN_DATA_FROZEN_NOTE" | translate}}:</h2>
+              <pre>{{data.frozenNote}}</pre>
+            </ion-label>
+          </ion-item>
+        </ion-card>
+      </div>
+    }
+    @case ('sortinformation') {
+      <div>
+        @if (data) {
+          <bean-detail-sort-information  [(data)]="data"></bean-detail-sort-information>
+        }
+      </div>
+    }
+  }
+</div>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="12">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

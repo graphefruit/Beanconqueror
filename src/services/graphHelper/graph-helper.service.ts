@@ -8,6 +8,7 @@ import { Settings } from '../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { CoffeeBluetoothDevicesService } from '../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Platform } from '@ionic/angular';
+import { ThemeService } from '../theme/theme.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,8 @@ export class GraphHelperService {
     private readonly translate: TranslateService,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly themeService: ThemeService,
   ) {}
 
   public initializeTraces() {
@@ -36,10 +38,14 @@ export class GraphHelperService {
     _traces: any,
     _graphSettings: IBrewGraphs,
     _isDetail: boolean = false,
-    _isReference: boolean = false
+    _isReference: boolean = false,
   ) {
     const traces = _traces;
 
+    let weightColor = '#cdc2ac';
+    if (this.themeService.isDarkMode() === true) {
+      weightColor = '#8b7e6a';
+    }
     traces.weightTrace = {
       x: [],
       y: [],
@@ -49,7 +55,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#ebe6dd' : '#cdc2ac',
+        color: _isReference ? '#ebe6dd' : weightColor,
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.weight,
@@ -184,16 +190,16 @@ export class GraphHelperService {
         for (const data of _rawData.weight) {
           _traces.weightTrace.x.push(
             new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
           );
           _traces.weightTrace.y.push(data.actual_weight);
         }
         for (const data of _rawData.waterFlow) {
           _traces.flowPerSecondTrace.x.push(
             new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
           );
           _traces.flowPerSecondTrace.y.push(data.value);
         }
@@ -202,8 +208,8 @@ export class GraphHelperService {
             _traces.realtimeFlowTrace.x.push(
               new Date(
                 moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                  delay
-              )
+                  delay,
+              ),
             );
             _traces.realtimeFlowTrace.y.push(data.flow_value);
           }
@@ -213,8 +219,8 @@ export class GraphHelperService {
         for (const data of _rawData.weightSecond) {
           _traces.weightTraceSecond.x.push(
             new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
           );
           _traces.weightTraceSecond.y.push(data.actual_weight);
         }
@@ -224,8 +230,8 @@ export class GraphHelperService {
             _traces.realtimeFlowTraceSecond.x.push(
               new Date(
                 moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                  delay
-              )
+                  delay,
+              ),
             );
             _traces.realtimeFlowTraceSecond.y.push(data.flow_value);
           }
@@ -236,8 +242,8 @@ export class GraphHelperService {
         for (const data of _rawData.pressureFlow) {
           _traces.pressureTrace.x.push(
             new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
           );
           _traces.pressureTrace.y.push(data.actual_pressure);
         }
@@ -246,8 +252,8 @@ export class GraphHelperService {
         for (const data of _rawData.temperatureFlow) {
           _traces.temperatureTrace.x.push(
             new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
           );
           _traces.temperatureTrace.y.push(data.actual_temperature);
         }
@@ -263,7 +269,7 @@ export class GraphHelperService {
     _isDetail: boolean = false,
     _chartWidth: number = undefined,
     _chartHeight: number = undefined,
-    _disableClick: boolean = false
+    _disableClick: boolean = false,
   ) {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     const isEspressoBrew: boolean =
@@ -597,6 +603,11 @@ export class GraphHelperService {
         layout['yaxisWeightSecond'].visible = false;
         layout['yaxisRealtimeFlowSecond'].visible = false;
       }
+    }
+
+    if (this.themeService.isDarkMode() === true) {
+      layout.xaxis.gridcolor = '#8e8e8e';
+      layout.yaxis.gridcolor = '#8e8e8e';
     }
 
     return layout;

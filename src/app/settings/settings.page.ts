@@ -81,12 +81,15 @@ import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
+  standalone: false,
 })
 export class SettingsPage {
   public settings: Settings;
@@ -94,6 +97,7 @@ export class SettingsPage {
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
+  public THEME_MODE = THEME_MODE_ENUM;
 
   public isHealthSectionAvailable: boolean = false;
   public isTextToSpeechSectionAvailable: boolean = false;
@@ -168,6 +172,7 @@ export class SettingsPage {
     private readonly uiExportImportHelper: UIExportImportHelper,
     private readonly visualizerService: VisualizerService,
     private readonly textToSpeech: TextToSpeechService,
+    private readonly themeService: ThemeService,
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -610,6 +615,13 @@ export class SettingsPage {
 
   public languageChanged(_query): void {
     this.debounceLanguageFilter.next(_query);
+  }
+
+  public themeModeChanged(event: any): void {
+    setTimeout(async () => {
+      await this.saveSettings();
+      this.themeService.adjustTheme();
+    }, 150);
   }
 
   public setLanguage(): void {
@@ -1060,9 +1072,12 @@ export class SettingsPage {
           );
       }
 
+      let maxEntries = 200;
       // Just take 60, else the excel will be exploding.
-      if (allBrewsWithProfiles.length > 60) {
-        allBrewsWithProfiles = allBrewsWithProfiles.reverse().slice(0, 60);
+      if (allBrewsWithProfiles.length > maxEntries) {
+        allBrewsWithProfiles = allBrewsWithProfiles
+          .reverse()
+          .slice(0, maxEntries);
       }
 
       const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
@@ -1076,7 +1091,7 @@ export class SettingsPage {
         }
       }
 
-      this.uiExcel.exportBrewByWeights(allBrewFlows);
+      this.uiExcel.exportBrewByWeightsSmall(allBrewFlows);
     } catch (ex) {
       this.uiAlert.hideLoadingSpinner();
     }
@@ -1599,4 +1614,5 @@ export class SettingsPage {
   protected readonly BluetoothTypes = BluetoothTypes;
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
+  protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
 }

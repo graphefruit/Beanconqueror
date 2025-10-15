@@ -36,6 +36,7 @@ declare var window;
   selector: 'brew-edit',
   templateUrl: './brew-edit.component.html',
   styleUrls: ['./brew-edit.component.scss'],
+  standalone: false,
 })
 export class BrewEditComponent implements OnInit {
   public static readonly COMPONENT_ID: string = 'brew-edit';

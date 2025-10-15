@@ -14,6 +14,7 @@ import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevic
   selector: 'preparation-popover-actions',
   templateUrl: './preparation-popover-actions.component.html',
   styleUrls: ['./preparation-popover-actions.component.scss'],
+  standalone: false,
 })
 export class PreparationPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-popover-actions';

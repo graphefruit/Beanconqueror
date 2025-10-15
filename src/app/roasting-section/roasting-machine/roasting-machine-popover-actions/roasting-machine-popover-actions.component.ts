@@ -9,6 +9,7 @@ import { ROASTING_MACHINE_ACTION } from '../../../../enums/roasting-machine/roas
   selector: 'app-roasting-machine-popover-actions',
   templateUrl: './roasting-machine-popover-actions.component.html',
   styleUrls: ['./roasting-machine-popover-actions.component.scss'],
+  standalone: false,
 })
 export class RoastingMachinePopoverActionsComponent {
   public static readonly COMPONENT_ID = 'roasting-machine-popover-actions';
@@ -18,12 +19,12 @@ export class RoastingMachinePopoverActionsComponent {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
   public ngOnInit() {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const roastingMachine: IRoastingMachine = this.uiHelper.copyData(
-      this.roastingMachine
+      this.roastingMachine,
     );
 
     this.data.initializeByObject(roastingMachine);
@@ -41,14 +42,14 @@ export class RoastingMachinePopoverActionsComponent {
     this.modalController.dismiss(
       undefined,
       _type,
-      RoastingMachinePopoverActionsComponent.COMPONENT_ID
+      RoastingMachinePopoverActionsComponent.COMPONENT_ID,
     );
   }
   public async dismiss() {
     this.modalController.dismiss(
       undefined,
       undefined,
-      RoastingMachinePopoverActionsComponent.COMPONENT_ID
+      RoastingMachinePopoverActionsComponent.COMPONENT_ID,
     );
   }
 }

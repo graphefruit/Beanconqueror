@@ -37,6 +37,12 @@ import { BeanPopoverListComponent } from '../app/beans/bean-popover-list/bean-po
 import { BeanInternalShareCodeGeneratorComponent } from '../app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
 import { BEAN_CODE_ACTION } from '../enums/beans/beanCodeAction';
 import { TranslateService } from '@ngx-translate/core';
+import { Config } from '../classes/objectConfig/objectConfig';
+import { UILog } from './uiLog';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { IAttachment } from '../interfaces/server/iAttachment';
+import { UIFileHelper } from './uiFileHelper';
 
 /**
  * Handles every helping functionalities
@@ -61,6 +67,9 @@ export class UIBeanHelper {
     private readonly uiHelper: UIHelper,
     private readonly actionSheetCtrl: ActionSheetController,
     private readonly translate: TranslateService,
+    private readonly uiLog: UILog,
+    private readonly uiFileHelper: UIFileHelper,
+    private readonly http: HttpClient,
   ) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
@@ -253,17 +262,25 @@ export class UIBeanHelper {
 
       const bean: Bean = new Bean();
       bean.initializeBySharedProtoBean(protoBean);
+      /**we don't want this property to be saved**/
+      delete bean['external_images'];
       bean.shared = true;
       bean.attachments = [];
       bean.favourite = false;
       bean.rating = 0;
+      bean.config = new Config();
+
+      await this.downloadAndAddAttachAttachments(
+        bean,
+        protoBean.external_images,
+      );
 
       // Empty it.
       const newPredefinedFlavors = {};
       if (
         'cupped_flavor' in protoBean &&
         'predefined_flavors' in protoBean.cupped_flavor &&
-        protoBean.cupped_flavor.predefined_flavors.length > 0
+        protoBean.cupped_flavor?.predefined_flavors?.length > 0
       ) {
         for (const flavKey of protoBean.cupped_flavor.predefined_flavors) {
           newPredefinedFlavors[flavKey] = true;
@@ -324,8 +341,41 @@ export class UIBeanHelper {
         );
       }
     } catch (ex) {
+      this.uiLog.error(ex.message);
     } finally {
       this.uiAlert.hideLoadingSpinner();
+    }
+  }
+
+  public async downloadAndAddAttachAttachments(
+    _bean: Bean,
+    attachments: Array<string>,
+  ) {
+    for (const url of attachments) {
+      try {
+        const response = await firstValueFrom(
+          this.http.head(url, { observe: 'response' }),
+        );
+        const contentType = response.headers.get('Content-Type');
+        let fileExtension = '';
+
+        if (contentType === 'image/jpeg' || contentType === 'image/jpg') {
+          fileExtension = '.jpg';
+        } else if (contentType === 'image/png') {
+          fileExtension = '.png';
+        }
+
+        if (fileExtension) {
+          const entry: string = await this.uiFileHelper.downloadExternalFile(
+            url,
+            undefined,
+            fileExtension,
+          );
+          _bean.attachments.push(entry);
+        }
+      } catch (ex) {
+        this.uiLog.error('Error downloading attachments', ex);
+      }
     }
   }
 

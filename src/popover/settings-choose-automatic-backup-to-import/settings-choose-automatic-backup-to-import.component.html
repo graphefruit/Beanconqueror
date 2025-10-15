@@ -8,23 +8,25 @@
   <ion-card>
     <ion-card-content>
 
-      <ng-container *ngIf='foundBackupFiles.length <=0'>
+      @if (foundBackupFiles.length <=0) {
         <h2>{{'NO_AUTOMATIC_BACKUPS_FOUND' |translate}}</h2>
         <p>{{'NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION' |translate}}</p>
-      </ng-container>
+      }
 
 
-  <ion-radio-group [(ngModel)]="importChoosenURI">
+      <ion-radio-group [(ngModel)]="importChoosenURI">
 
-  <ion-item *ngFor="let file of foundBackupFiles" tappable>
-    <ion-radio [value]="file.uri" justify='start' label-placement='end'>
-      <ion-label>
-        <h2>{{ file.name }}</h2>
-        <p>{{ this.uiHelper.toFixedIfNecessary((file.size / 1024)/1024,2) }}Mb - {{ (file.ctime / 1000) | formatDate:[settings?.date_format]}}</p>
-      </ion-label>
-    </ion-radio>
-  </ion-item>
-  </ion-radio-group>
+        @for (file of foundBackupFiles; track file) {
+          <ion-item tappable>
+            <ion-radio [value]="file.uri" justify='start' label-placement='end'>
+              <ion-label>
+                <h2>{{ file.name }}</h2>
+                <p>{{ this.uiHelper.toFixedIfNecessary((file.size / 1024)/1024,2) }}Mb - {{ (file.ctime / 1000) | formatDate:[settings?.date_format]}}</p>
+              </ion-label>
+            </ion-radio>
+          </ion-item>
+        }
+      </ion-radio-group>
     </ion-card-content>
   </ion-card>
 

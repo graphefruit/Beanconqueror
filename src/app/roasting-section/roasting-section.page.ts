@@ -4,12 +4,10 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-roasting-section',
   templateUrl: './roasting-section.page.html',
   styleUrls: ['./roasting-section.page.scss'],
+  standalone: false,
 })
 export class RoastingSectionPage implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  public ngOnInit() {
-  }
-
+  public ngOnInit() {}
 }

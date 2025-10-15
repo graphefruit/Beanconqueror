@@ -1,7 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title *ngIf="multiple">{{"BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-title>
-    <ion-title *ngIf="!multiple">{{"BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-title>
+    @if (multiple) {
+      <ion-title>{{"BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-title>
+    }
+    @if (!multiple) {
+      <ion-title>{{"BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-title>
+    }
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -9,120 +13,155 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content *ngIf="data !== null || datas.length > 0">
-
-  <ion-segment [(ngModel)]="preparation_segment">
-    <ion-segment-button value="open">
-      <ion-label>{{"CURRENT" | translate }}
-      </ion-label>
-    </ion-segment-button>
-    <ion-segment-button *ngIf="showFinished===true" value="archive">
-      <ion-label>{{"TAB_ARCHIVE" | translate }}
-      </ion-label>
-
-    </ion-segment-button>
-  </ion-segment>
-  <div  *ngIf="multiple">
-    <div [ngSwitch]="preparation_segment">
-      <div *ngSwitchCase="'open'">
-        <ion-card>
-          <div class="ion-justify-content-end container">
-            <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-          </div>
-          <hr />
-          <ng-container *ngIf="openTools.length > 0">
-            <ion-item *ngFor="let prep of openTools" lines="none" tappable>
-              <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end"><h6>{{prep.name}}</h6></ion-checkbox>
-            </ion-item>
-          </ng-container>
-          <div *ngIf="openTools.length == 0" class="ion-padding ion-text-center">
-            <div>
-              <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
-            </div>
-            <div class="text-color-inactive ion-margin-top">
-              {{"NO_ENTRIES_FOUND" | translate}}
-            </div>
-          </div>
-        </ion-card>
-      </div>
-      <div *ngSwitchCase="'archive'">
-        <ion-card>
-          <div class="ion-justify-content-end container">
-            <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-          </div>
-          <hr />
-          <ion-item *ngFor="let prep of archivedTools" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end"><h6>{{prep.name}}</h6></ion-checkbox>
-          </ion-item>
-          <div *ngIf="archivedTools.length == 0" class="ion-padding ion-text-center">
-            <div>
-              <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
-            </div>
-            <div class="text-color-inactive ion-margin-top">
-              {{"NO_ENTRIES_FOUND" | translate}}
-            </div>
-          </div>
-        </ion-card>
-      </div>
-    </div>
-  </div>
-
-  <div  *ngIf="!multiple">
-    <ion-radio-group [(ngModel)]="radioSelection">
-      <div [ngSwitch]="preparation_segment">
-        <div *ngSwitchCase="'open'">
-          <ion-card>
-            <div class="ion-justify-content-end container">
-              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-            </div>
-            <hr />
-            <ng-container *ngIf="openTools.length > 0">
-              <ion-item *ngFor="let prep of openTools" lines="none" tappable>
-                <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6>{{prep.name}}</h6></ion-radio>
-              </ion-item>
-            </ng-container>
-            <div *ngIf="openTools.length == 0" class="ion-padding ion-text-center">
+@if (data !== null || datas.length > 0) {
+  <ion-content>
+    <ion-segment [(ngModel)]="preparation_segment">
+      <ion-segment-button value="open">
+        <ion-label>{{"CURRENT" | translate }}
+        </ion-label>
+      </ion-segment-button>
+      @if (showFinished===true) {
+        <ion-segment-button value="archive">
+          <ion-label>{{"TAB_ARCHIVE" | translate }}
+          </ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+    @if (multiple) {
+      <div >
+        <div>
+          @switch (preparation_segment) {
+            @case ('open') {
               <div>
-                <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                <ion-card>
+                  <div class="ion-justify-content-end container">
+                    <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                  </div>
+                  <hr />
+                  @if (openTools.length > 0) {
+                    @for (prep of openTools; track prep) {
+                      <ion-item lines="none" tappable>
+                        <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end"><h6>{{prep.name}}</h6></ion-checkbox>
+                      </ion-item>
+                    }
+                  }
+                  @if (openTools.length == 0) {
+                    <div class="ion-padding ion-text-center">
+                      <div>
+                        <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                      </div>
+                      <div class="text-color-inactive ion-margin-top">
+                        {{"NO_ENTRIES_FOUND" | translate}}
+                      </div>
+                    </div>
+                  }
+                </ion-card>
               </div>
-              <div class="text-color-inactive ion-margin-top">
-                {{"NO_ENTRIES_FOUND" | translate}}
-              </div>
-            </div>
-          </ion-card>
-        </div>
-        <div *ngSwitchCase="'archive'">
-          <ion-card>
-            <div class="ion-justify-content-end container">
-              <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-            </div>
-            <hr />
-            <ion-item *ngFor="let prep of archivedTools" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6>{{prep.name}}</h6></ion-radio>
-            </ion-item>
-            <div *ngIf="archivedTools.length == 0" class="ion-padding ion-text-center">
+            }
+            @case ('archive') {
               <div>
-                <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                <ion-card>
+                  <div class="ion-justify-content-end container">
+                    <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                  </div>
+                  <hr />
+                  @for (prep of archivedTools; track prep) {
+                    <ion-item lines="none" tappable>
+                      <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end"><h6>{{prep.name}}</h6></ion-checkbox>
+                    </ion-item>
+                  }
+                  @if (archivedTools.length == 0) {
+                    <div class="ion-padding ion-text-center">
+                      <div>
+                        <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                      </div>
+                      <div class="text-color-inactive ion-margin-top">
+                        {{"NO_ENTRIES_FOUND" | translate}}
+                      </div>
+                    </div>
+                  }
+                </ion-card>
               </div>
-              <div class="text-color-inactive ion-margin-top">
-                {{"NO_ENTRIES_FOUND" | translate}}
-              </div>
-            </div>
-          </ion-card>
+            }
+          }
         </div>
       </div>
-    </ion-radio-group>
-  </div>
-</ion-content>
+    }
+    @if (!multiple) {
+      <div >
+          <div>
+            @switch (preparation_segment) {
+              @case ('open') {
+                <ion-radio-group [(ngModel)]="radioSelection">
+                <div>
+                  <ion-card>
+                    <div class="ion-justify-content-end container">
+                      <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                    </div>
+                    <hr />
+                    @if (openTools.length > 0) {
+                      @for (prep of openTools; track prep) {
+                        <ion-item lines="none" tappable>
+                          <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6>{{prep.name}}</h6></ion-radio>
+                        </ion-item>
+                      }
+                    }
+                    @if (openTools.length == 0) {
+                      <div class="ion-padding ion-text-center">
+                        <div>
+                          <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                        </div>
+                        <div class="text-color-inactive ion-margin-top">
+                          {{"NO_ENTRIES_FOUND" | translate}}
+                        </div>
+                      </div>
+                    }
+                  </ion-card>
+                </div>
+                </ion-radio-group>
+              }
+              @case ('archive') {
+                <ion-radio-group [(ngModel)]="radioSelection">
+                <div>
+                  <ion-card>
+                    <div class="ion-justify-content-end container">
+                      <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                    </div>
+                    <hr />
+                    @for (prep of archivedTools; track prep) {
+                      <ion-item lines="none" tappable>
+                        <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6>{{prep.name}}</h6></ion-radio>
+                      </ion-item>
+                    }
+                    @if (archivedTools.length == 0) {
+                      <div class="ion-padding ion-text-center">
+                        <div>
+                          <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                        </div>
+                        <div class="text-color-inactive ion-margin-top">
+                          {{"NO_ENTRIES_FOUND" | translate}}
+                        </div>
+                      </div>
+                    }
+                  </ion-card>
+                </div>
+                </ion-radio-group>
+              }
+            }
+          </div>
+      </div>
+    }
+  </ion-content>
+}
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size="6">
       <ion-button (click)="choose()" color="accent" expand="block" tappable
-                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+      type="submit">{{"CHOOSE" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

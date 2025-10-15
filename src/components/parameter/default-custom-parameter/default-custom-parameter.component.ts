@@ -11,6 +11,7 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
   selector: 'default-custom-parameter',
   templateUrl: './default-custom-parameter.component.html',
   styleUrls: ['./default-custom-parameter.component.scss'],
+  standalone: false,
 })
 export class DefaultCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;
@@ -18,7 +19,7 @@ export class DefaultCustomParameterComponent implements OnInit {
     public uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   public ngOnInit() {}

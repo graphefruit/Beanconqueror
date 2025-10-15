@@ -1461,31 +1461,45 @@
     "BEAN_DATA_AVERAGE_BREW_RATING": "Średnia ocena naparu",
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.3.0": {
-            "TITLE": "Wersja 8.3.0: Co nowego",
+            "DESCRIPTION": {
+                "19": "Opcja wyłączenia wyskakującego okienka połączenia\/rozłączenia dla urządzeń Bluetooth"
+            }
+        },
+        "8.4.0": {
+            "TITLE": "Wersja 8.4.0: Co nowego",
             "DESCRIPTION": [
-                "<b>Napary<\/b>",
-                "Wybierz w ustawieniach, które zdjęcie ma być wyświetlane: ziarna kawy, naparu lub przygotowania",
-                "Szczytowe natężenie przepływu wody jest teraz wyświetlane w widoku szczegółów naparu",
-                "Rozwiązano problem powodujący niską prędkość tarowania na wagach Varia podczas uruchamiania z progiem nacisku",
+                "<b>Eksperymentalny: Tryb ciemny<\/b>",
+                "Wybierz między trybem jasnym i ciemnym lub pozwól aplikacji postępować zgodnie z ustawieniami systemowymi - aktywuj ją w Ustawieniach. Domyślnie: Tryb jasny",
                 "",
-                "<b>Ziarna<\/b>",
-                "Mrożone ziarna są teraz wybierane automatycznie, gdy nie są dostępne niezamrożone ziarna",
-                "Możesz teraz zamrozić całą fasolę z menu akcji, a także skopiować załączniki do porcji",
-                "Możliwe jest teraz skopiowanie zamrożonego identyfikatora za pomocą wyskakującego okienka akcji",
-                "Edytuj ziarno bezpośrednio z widoku szczegółów",
-                "Automatyczna ocena ziaren jest teraz obliczana po zakończeniu wszystkich warzeń - podziękowania dla danielzsandberg",
+                "<b>Wagi Bluetooth<\/b>",
+                "Wsparcie dla skali Half Decent",
+                "Wsparcie dla DIY-WeightMyBruh Scale",
+                "Wsparcie dla EspressiScale",
                 "",
                 "<b>Przygotowania<\/b>",
-                "Teraz można włączyć lub wyłączyć urządzenie Xenia",
+                "Możesz teraz włączyć lub wyłączyć maszynę Xenia",
                 "",
-                "<b>Refraktometr DiFluid R2<\/b>",
-                "Cała przeróbka - podziękowania dla AV-IO",
+                "<b> Napary <\/b>",
+                "[IOS]Aktywuj kamerę do robienia espresso na zmaksymalizowanym ekranie",
+                "Naprawiono błąd, który powodował, że urządzenia Bluetooth nie działały, jeśli pierwsza metoda przygotowania miała wyłączoną sekcję parzenia",
+                "Data parzenia jest teraz wyświetlana w widoku szczegółowym",
                 "",
-                "<b>Ustawienia<\/b>",
-                "Opcja wyłączenia wyskakującego okienka połączenia\/rozłączenia dla urządzeń Bluetooth",
+                "<b>Ziarna<\/b>",
+                "Sortuj ziarna według najlepszej daty",
+                "Import ziaren przez użytkownika obsługuje teraz również obrazy",
+                "",
+                "<b>Obrazy<\/b>",
+                "Importowanie obrazów ze schowka",
+                "",
+                "<b>Statystyki<\/b>",
+                "Dodano kilka statystyk ziaren",
+                "",
+                "<b>Aktualizacje bibliotek<\/b>",
+                "Aktualizacja do Capacitor 7 oraz Angular 20",
+                "Jeśli po wprowadzeniu zmian w całym kodzie znajdziesz jakiekolwiek błędy, skontaktuj się z nami pod adresem info@beanconqueror.com",
                 "",
                 "<b>Inne<\/b>",
-                "Drobne poprawki"
+                "Drobne poprawki błędów"
             ]
         }
     },
@@ -1511,5 +1525,17 @@
     "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Przeszukaj pamięć wewnętrzną urządzenia w poszukiwaniu plików automatycznych kopii zapasowych, wybierz jeden z nich i zaimportuj go",
     "NO_AUTOMATIC_BACKUPS_FOUND": "Nie znaleziono automatycznych kopii zapasowych",
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": "Jeśli utraciłeś dane i nie znalazłeś tutaj żadnych danych, skorzystaj z oficjalnych sposobów wsparcia",
-    "IMPORT_AUTOMATIC_BACKUP_FILE": "Importuj plik automatycznej kopii zapasowej"
+    "IMPORT_AUTOMATIC_BACKUP_FILE": "Importuj plik automatycznej kopii zapasowej",
+    "CLIPBOARD": "Schowek",
+    "NO_IMAGE_IN_CLIPBOARD": "Brak obrazu w schowku",
+    "PAGE_SETTINGS_THEME_MODE_LIGHT": "Tryb jasny",
+    "PAGE_SETTINGS_THEME_MODE_DARK": "Tryb ciemny",
+    "PAGE_SETTINGS_THEME_MODE_DEVICE": "Domyślne ustawienia systemu",
+    "PAGE_SETTINGS_THEME_MODE": "Tryb motywu",
+    "STATISTICS_BEANS_BY_COUNTRY": "Ziarna według kraju",
+    "STATISTICS_BEANS_BY_PROCESSING": "Ziarna według procesu",
+    "STATISTICS_BEANS_BY_ROASTER": "Ziarna według palarni",
+    "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Średnia ocena ziarna według kraju",
+    "PAGE_STATISTICS_AVG_RATING": "Średnia ocena",
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Grecki"
 }

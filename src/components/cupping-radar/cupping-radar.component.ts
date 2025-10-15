@@ -16,6 +16,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
   selector: 'cupping-radar',
   templateUrl: './cupping-radar.component.html',
   styleUrls: ['./cupping-radar.component.scss'],
+  standalone: false,
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
   public chartEl: any = undefined;
@@ -115,7 +116,7 @@ export class CuppingRadarComponent implements AfterViewInit, OnInit {
     } else {
       this.chartEl = new Chart(
         this.cuppingChart.nativeElement,
-        this.uiBrewHelper.getCuppingChartData(this.model) as any
+        this.uiBrewHelper.getCuppingChartData(this.model) as any,
       );
     }
   }

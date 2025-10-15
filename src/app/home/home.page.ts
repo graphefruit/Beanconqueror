@@ -11,6 +11,7 @@ import { Mill } from '../../classes/mill/mill';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  standalone: false,
 })
 export class HomePage {
   /** Needed app minimize for android */
@@ -23,7 +24,7 @@ export class HomePage {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage
+    private readonly uiMillStorage: UIMillStorage,
   ) {}
 
   public ngOnInit() {

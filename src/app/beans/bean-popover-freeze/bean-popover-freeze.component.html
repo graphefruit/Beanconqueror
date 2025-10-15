@@ -13,17 +13,17 @@
       </ion-checkbox>
     </ion-item>
     @if(copyAttachments) {
-    <ion-item lines="none">
-      <ion-label>
-        <h2>{{"BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE" | translate}}</h2>
-      </ion-label>
-    </ion-item>
-    <ion-item style="top:-10px;">
-      <ion-range style="padding-left:20px;padding-bottom:15px;padding-right:0px;" min="20" snaps="true" max="100"
-                 step="1" pin="true" [(ngModel)]="quality">
-        <div class='ion-label' slot="end">{{quality}}&nbsp;%</div>
-      </ion-range>
-    </ion-item>
+      <ion-item lines="none">
+        <ion-label>
+          <h2>{{"BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE" | translate}}</h2>
+        </ion-label>
+      </ion-item>
+      <ion-item style="top:-10px;">
+        <ion-range style="padding-left:20px;padding-bottom:15px;padding-right:0px;" min="20" snaps="true" max="100"
+          step="1" pin="true" [(ngModel)]="quality">
+          <div class='ion-label' slot="end">{{quality}}&nbsp;%</div>
+        </ion-range>
+      </ion-item>
       <ion-item lines="none">
         <ion-label>
           <h2>{{"BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB" | translate}}</h2>
@@ -31,74 +31,82 @@
       </ion-item>
       <ion-item style="top:-10px;">
         <ion-range [pinFormatter]='pinFormatter' style="padding-left:20px;padding-bottom:15px;padding-right:0px;" min="0.1" snaps="true" max="4"
-                   step="0.1" pin="true" [(ngModel)]="maxMB">
+          step="0.1" pin="true" [(ngModel)]="maxMB">
           <div class='ion-label' slot="end">{{maxMB}}&nbsp;MB</div>
         </ion-range>
       </ion-item>
     }
     <ion-item >
       <ion-select label-placement='stacked' label='{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}'
-                  [(ngModel)]='frozenStorage' cancelText="{{'CANCEL'| translate }}"
-                  name='frozenStorage'
-                  okText="{{'CHOOSE'| translate }}"
-                  style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                  multiple='false'>
-        <ion-select-option *ngFor='let key of beanFreezingStorageEnum | keys'
-                           value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
+        [(ngModel)]='frozenStorage' cancelText="{{'CANCEL'| translate }}"
+        name='frozenStorage'
+        okText="{{'CHOOSE'| translate }}"
+        style='padding-left:0px!important;width: 100%; min-width: 100%;'
+        multiple='false'>
+        @for (key of beanFreezingStorageEnum | keys; track key) {
+          <ion-select-option
+          value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
+        }
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label id='frozenNote' position="stacked">{{"BEAN_DATA_FROZEN_NOTE" | translate }}</ion-label>
       <ion-textarea style='margin-top:20px;' aria-labelledby='frozenNote'  [(ngModel)]="frozenNote" autocapitalize="sentences" autocomplete="true"
-                    autocorrect="true" [autoGrow]="true"
-                    name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+        autocorrect="true" [autoGrow]="true"
+      name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
     </ion-item>
     <ion-item [lines]="leftOverBeanBagWeight<=0?'none':'full'">
       <ion-label>{{"BEAN_POPOVER_LEFT_UNFROZEN" | translate}}: {{leftOverBeanBagWeight| toFixed: 2}}g / {{ getActualFreezingQuantity() | toFixed: 2 }}g</ion-label>
     </ion-item>
-    <ion-item lines='full' style='margin-top:-15px;' *ngIf='leftOverBeanBagWeight<=0'>
-      <ion-icon color='warning' aria-hidden="true" name="warning-outline" slot="start"></ion-icon>
-      <ion-label class='break-whitespaces'>{{"BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT" | translate}}</ion-label>
-    </ion-item>
+    @if (leftOverBeanBagWeight<=0) {
+      <ion-item lines='full' style='margin-top:-15px;'>
+        <ion-icon color='warning' aria-hidden="true" name="warning-outline" slot="start"></ion-icon>
+        <ion-label class='break-whitespaces'>{{"BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT" | translate}}</ion-label>
+      </ion-item>
+    }
     <ion-item [disabled]='getActualFreezingQuantity()>bean.weight'>
       <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_FREEZE_PARTIAL_BAG" | translate}}'  [(ngModel)]="freezePartialBagGrams" autocapitalize="off" inputmode="decimal"
-                 name="weight"
-                 prevent-characters remove-empty-number spellcheck="false"
-                 type="text" tabIndex="2">
+        name="weight"
+        prevent-characters remove-empty-number spellcheck="false"
+        type="text" tabIndex="2">
       </ion-input>
       <ion-button style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="1" (click)='addOnePartialBag()'
-                  class="big-icon-only" fill="clear" slot="end" tappable>
+        class="big-icon-only" fill="clear" slot="end" tappable>
         <ion-icon  name="beanconqueror-add-single-entry" slot='icon-only'></ion-icon>
       </ion-button>
       <ion-button  style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="3" (click)='addMaxPartialBags()'
-                  class="big-icon-only"  fill="clear" slot="end" tappable>
+        class="big-icon-only"  fill="clear" slot="end" tappable>
         <ion-icon  name="beanconqueror-add-list" slot='icon-only'></ion-icon>
       </ion-button>
     </ion-item>
   </ion-card>
   <ion-card>
-    <ion-list *ngIf='addedBags?.length > 0'>
-      <ion-list-header>
-        <h4>{{"BEAN_POPOVER_FROZEN_BAGS" | translate}}</h4>
-      </ion-list-header>
-
-      <ion-item *ngFor='let bag of addedBags;let i=index;'>
-        <div>{{bag.weight}}g</div>
-        <ion-select slot='end'   tabIndex="1"
-                    [(ngModel)]='bag.type' cancelText="{{'CANCEL'| translate }}"
-                    name='frozenStorage'
-                    okText="{{'CHOOSE'| translate }}"
-                    multiple='false'>
-          <ion-select-option *ngFor='let key of beanFreezingStorageEnum | keys'
-                             value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
-        </ion-select>
-        <ion-button (click)="deleteBag(i)" fill="clear" size="small" slot="end" tappable>
-          <ion-icon  name="trash-outline"
-                    slot="icon-only"></ion-icon>
-        </ion-button>
-
-      </ion-item>
-    </ion-list>
+    @if (addedBags?.length > 0) {
+      <ion-list>
+        <ion-list-header>
+          <h4>{{"BEAN_POPOVER_FROZEN_BAGS" | translate}}</h4>
+        </ion-list-header>
+        @for (bag of addedBags; track bag; let i = $index) {
+          <ion-item>
+            <div>{{bag.weight}}g</div>
+            <ion-select slot='end'   tabIndex="1"
+              [(ngModel)]='bag.type' cancelText="{{'CANCEL'| translate }}"
+              name='frozenStorage'
+              okText="{{'CHOOSE'| translate }}"
+              multiple='false'>
+              @for (key of beanFreezingStorageEnum | keys; track key) {
+                <ion-select-option
+                value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
+              }
+            </ion-select>
+            <ion-button (click)="deleteBag(i)" fill="clear" size="small" slot="end" tappable>
+              <ion-icon  name="trash-outline"
+              slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+        }
+      </ion-list>
+    }
   </ion-card>
 
 
@@ -107,15 +115,15 @@
   <ion-row>
     <ion-col size='6'>
       <ion-button (click)='dismiss()' color='accent' expand='block' fill='outline'
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size='6'>
       @if(addedBags.length<=0) {
         <ion-button [disabled]='this.frozenDate === ""' (click)='saveWholePackage()' color='accent' expand='block' tappable
-                    type='submit'>{{"FREEZE_BEAN" | translate}}</ion-button>
+        type='submit'>{{"FREEZE_BEAN" | translate}}</ion-button>
       } @else {
         <ion-button [disabled]='this.frozenDate === ""' (click)='save()' color='accent' expand='block' tappable
-                    type='submit'>{{"CREATE_FROZEN_BEANS" | translate}}</ion-button>
+        type='submit'>{{"CREATE_FROZEN_BEANS" | translate}}</ion-button>
       }
 
     </ion-col>

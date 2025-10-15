@@ -1,18 +1,19 @@
 :host {
   .card-background {
     background-color: var(--ion-color-accent) !important;
-    color: #ffffff;
+    color: var(--ion-text-color);
   }
 
   .small-card ion-card-content {
     padding-top: 16px !important;
   }
 
+
   ion-card {
-    background: #FFFFFF;
+    background: var(--ion-color-light);
 
     ion-item {
-      --background: white;
+      --background: var(--ion-color-light);
 
       ion-label {
         font-family: 'Baloo', sans-serif;

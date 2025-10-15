@@ -14,6 +14,7 @@ import { Settings } from '../../../classes/settings/settings';
   selector: 'app-brew-choose-preparation-to-brew',
   templateUrl: './brew-choose-preparation-to-brew.component.html',
   styleUrls: ['./brew-choose-preparation-to-brew.component.scss'],
+  standalone: false,
 })
 export class BrewChoosePreparationToBrewComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-preparation-to-brew';
@@ -27,7 +28,7 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
   ) {
     this.settings = this.uiSettings.getSettings();
   }
@@ -68,7 +69,7 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
         preparation: _prep,
       },
       undefined,
-      BrewChoosePreparationToBrewComponent.COMPONENT_ID
+      BrewChoosePreparationToBrewComponent.COMPONENT_ID,
     );
   }
   public dismiss(): void {
@@ -77,14 +78,14 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BrewChoosePreparationToBrewComponent.COMPONENT_ID
+      BrewChoosePreparationToBrewComponent.COMPONENT_ID,
     );
   }
 
   public lastUsed(_preparation: Preparation): number {
     let relatedBrews: Array<Brew> =
       this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        _preparation.config.uuid
+        _preparation.config.uuid,
       );
     if (relatedBrews.length > 0) {
       relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
@@ -96,7 +97,7 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
   public getBrewsCount(_preparation: Preparation): number {
     const relatedBrews: Array<Brew> =
       this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        _preparation.config.uuid
+        _preparation.config.uuid,
       );
     return relatedBrews.length;
   }

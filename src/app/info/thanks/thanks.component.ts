@@ -4,11 +4,10 @@ import { Component, OnInit } from '@angular/core';
   selector: 'thanks',
   templateUrl: './thanks.component.html',
   styleUrls: ['./thanks.component.scss'],
+  standalone: false,
 })
 export class ThanksComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
- public ngOnInit() {}
-
+  public ngOnInit() {}
 }

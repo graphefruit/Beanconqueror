@@ -9,6 +9,7 @@ import { UIHelper } from '../../../../services/uiHelper';
   selector: 'app-green-bean-sort',
   templateUrl: './green-bean-sort.component.html',
   styleUrls: ['./green-bean-sort.component.scss'],
+  standalone: false,
 })
 export class GreenBeanSortComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-sort';
@@ -24,7 +25,7 @@ export class GreenBeanSortComponent implements OnInit {
   @Input('bean_filter') public bean_filter: any;
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ngOnInit() {
@@ -53,7 +54,7 @@ export class GreenBeanSortComponent implements OnInit {
         bean_filter: this.uiHelper.copyData(this.filter),
       },
       undefined,
-      GreenBeanSortComponent.COMPONENT_ID
+      GreenBeanSortComponent.COMPONENT_ID,
     );
   }
 

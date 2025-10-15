@@ -1,185 +1,198 @@
 @if(uiPreparationDeviceConnected) {
-  <ion-card *ngIf="uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.XENIA" class="popover" style="display:flex; flex-direction: column;">
-    <ion-item lines="none">
-      <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}&nbsp;-&nbsp;{{"PREPARATION_DEVICE.API_VERSION" | translate }}:&nbsp;{{this.brewComponent.choosenPreparation.connectedPreparationDevice.customParams.apiVersion}} </span>
-    </ion-item>
-    <ion-item lines="inset">
-      <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId" (ionChange)='checkXeniaScripts()'
-                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-        <ion-select-option [value]="0">
-          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="1">
-          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="2">
-          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
-        </ion-select-option>
-        <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
-          {{script.TITLE}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item lines="inset"
-              [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
-                        brewComponent.choosenPreparation.manage_parameters.coffee_first_drip_time,
-                        brewComponent.choosenPreparation.use_custom_parameters) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
-      <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtFirstDripId"
-                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-        <ion-select-option [value]="0">
-          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="1">
-          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="2">
-          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
-        </ion-select-option>
-        <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
-          {{script.TITLE}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="none">
-      <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}' [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber" (ionBlur)='drawTargetWeight(data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber)' inputmode="decimal" prevent-characters
-                 remove-empty-number tabIndex="1" type="text"></ion-input>
-    </ion-item>
-    <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected && data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber>0)" lines="inset">
-      <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.CHOOSE_SCRIPT_AT_WEIGHT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedId"
-                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-        <ion-select-option [value]="0">
-          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP" | translate}}
-        </ion-select-option>
-        <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
-          {{script.TITLE}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected && data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber>0)" lines="inset">
-      <ion-checkbox [(ngModel)]="data.preparationDeviceBrew?.params.brew_by_weight_active">{{"PREPARATION_DEVICE.TYPE_XENIA.BREW_BY_WEIGHT_ACTIVE" | translate}}</ion-checkbox>
-    </ion-item>
-  </ion-card>
-  <ion-card *ngIf="uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS" class="popover" style="display:flex; flex-direction: column;">
-    <ion-item lines="none">
-      <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_METICULOUS.TITLE" | translate }}</span>
-    </ion-item>
-    <ion-item lines="inset">
-      <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_METICULOUS.CHOOSE_PROFILE" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.chosenProfileId"
-                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-        <ion-select-option [value]="''">
-          {{"PREPARATION_DEVICE.TYPE_METICULOUS.NO_PROFILE" | translate}}
-        </ion-select-option>
-        <ion-select-option *ngFor='let profiles of preparationDevice?.getProfiles()' [value]='profiles.id'>
-          {{profiles.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <hr/>
-    <ion-item (click)="importShotFromMeticulous()" button tappable>
-      <ion-icon name="cloud-download-outline" slot='start'></ion-icon>
-      <span>{{"IMPORT_SHOT_FROM_METICULOUS" | translate}}</span>
-    </ion-item>
-  </ion-card>
-  <ion-card *ngIf="uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU" class="popover" style="display:flex; flex-direction: column;">
-  <ion-item lines="none">
-    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
-
-  </ion-item>
-@if(baristamode) {
-    <ion-item lines="none" style="margin-top:-30px;">
-        <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.ENTER_TARGET_BREW_WEIGHT" | translate}}</span>
-    </ion-item>
-}
-    @if(!baristamode) {
-
-  <ion-item lines="inset">
-    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}' (ionChange)='sanremoSelectedModeChange()' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.selectedMode"
-                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-      @if(baristamode) {
-        <ion-select-option [value]="SanremoYOUMode.LISTENING_AND_CONTROLLING">
-          {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING_AND_CONTROLLING" | translate}}
-        </ion-select-option>
-      }
-      @if(!baristamode) {
-        <ion-select-option [value]="SanremoYOUMode.LISTENING">
-          {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="SanremoYOUMode.MANUAL_CONTROLLING">
-          {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MANUAL_CONTROLLING" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="SanremoYOUMode.PROFILE_P1_CONTROLLING">
-          {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P1_CONTROLLING" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="SanremoYOUMode.PROFILE_P2_CONTROLLING">
-          {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P2_CONTROLLING" | translate}}
-        </ion-select-option>
-        <ion-select-option [value]="SanremoYOUMode.PROFILE_P3_CONTROLLING">
-          {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P3_CONTROLLING" | translate}}
-        </ion-select-option>
-      }
-    </ion-select>
-  </ion-item>
+  @switch (uiPreparationDeviceType) {
+    @case(PREPARATION_DEVICE_TYPE_ENUM.XENIA) {
+      <ion-card class="popover" style="display:flex; flex-direction: column;">
+        <ion-item lines="none">
+          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}&nbsp;-&nbsp;{{ "PREPARATION_DEVICE.API_VERSION" | translate }}:&nbsp;{{ this.brewComponent.choosenPreparation.connectedPreparationDevice.customParams.apiVersion }}</span>
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-select [label]='"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate' label-placement="stacked" [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew.params.scriptStartId" (ionChange)='checkXeniaScripts()'
+                      [placeholder]="'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate">
+            <ion-select-option [value]="0">
+              {{ "PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate }}
+            </ion-select-option>
+            <ion-select-option [value]="1">
+              {{ "PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate }}
+            </ion-select-option>
+            <ion-select-option [value]="2">
+              {{ "PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate }}
+            </ion-select-option>
+            @for(script of preparationDevice?.scriptList; track script.INDEX) {
+              <ion-select-option [value]='script.INDEX'>
+                {{ script.TITLE }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item lines="inset"
+                  [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
+                            brewComponent.choosenPreparation.manage_parameters.coffee_first_drip_time,
+                            brewComponent.choosenPreparation.use_custom_parameters) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
+          <ion-select [label]='"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate' label-placement="stacked" [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew.params.scriptAtFirstDripId"
+                      [placeholder]="'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate">
+            <ion-select-option [value]="0">
+              {{ "PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate }}
+            </ion-select-option>
+            <ion-select-option [value]="1">
+              {{ "PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate }}
+            </ion-select-option>
+            <ion-select-option [value]="2">
+              {{ "PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate }}
+            </ion-select-option>
+            @for(script of preparationDevice?.scriptList; track script.INDEX) {
+              <ion-select-option [value]='script.INDEX'>
+                {{ script.TITLE }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="none">
+          <ion-input [label]='"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate' label-placement="stacked" [(ngModel)]="data.preparationDeviceBrew.params.scriptAtWeightReachedNumber" (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.scriptAtWeightReachedNumber)' inputmode="decimal" prevent-characters
+                     remove-empty-number tabIndex="1" type="text"></ion-input>
+        </ion-item>
+        <ion-item [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected && data.preparationDeviceBrew.params.scriptAtWeightReachedNumber>0)" lines="inset">
+          <ion-select [label]='"PREPARATION_DEVICE.TYPE_XENIA.CHOOSE_SCRIPT_AT_WEIGHT" | translate' label-placement="stacked" [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew.params.scriptAtWeightReachedId"
+                      [placeholder]="'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate">
+            <ion-select-option [value]="0">
+              {{ "PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP" | translate }}
+            </ion-select-option>
+            @for(script of preparationDevice?.scriptList; track script.INDEX) {
+              <ion-select-option [value]='script.INDEX'>
+                {{ script.TITLE }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected && data.preparationDeviceBrew.params.scriptAtWeightReachedNumber>0)" lines="inset">
+          <ion-checkbox [(ngModel)]="data.preparationDeviceBrew.params.brew_by_weight_active">{{ "PREPARATION_DEVICE.TYPE_XENIA.BREW_BY_WEIGHT_ACTIVE" | translate }}</ion-checkbox>
+        </ion-item>
+      </ion-card>
     }
+    @case(PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) {
+      <ion-card class="popover" style="display:flex; flex-direction: column;">
+        <ion-item lines="none">
+          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_METICULOUS.TITLE" | translate }}</span>
+        </ion-item>
+        <ion-item lines="inset">
+          <ion-select [label]='"PREPARATION_DEVICE.TYPE_METICULOUS.CHOOSE_PROFILE" | translate' label-placement="stacked" [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew.params.chosenProfileId"
+                      [placeholder]="'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate">
+            <ion-select-option [value]="''">
+              {{ "PREPARATION_DEVICE.TYPE_METICULOUS.NO_PROFILE" | translate }}
+            </ion-select-option>
+            @for(profiles of preparationDevice?.getProfiles(); track profiles.id) {
+              <ion-select-option [value]='profiles.id'>
+                {{ profiles.name }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <hr/>
+        <ion-item (click)="importShotFromMeticulous()" button tappable>
+          <ion-icon name="cloud-download-outline" slot='start'></ion-icon>
+          <span>{{ "IMPORT_SHOT_FROM_METICULOUS" | translate }}</span>
+        </ion-item>
+      </ion-card>
+    }
+    @case(PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) {
+      <ion-card class="popover" style="display:flex; flex-direction: column;">
+        <ion-item lines="none">
+          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
+        </ion-item>
+        @if(baristamode) {
+          <ion-item lines="none" style="margin-top:-30px;">
+            <span>{{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.ENTER_TARGET_BREW_WEIGHT" | translate }}</span>
+          </ion-item>
+        }
+        @if(!baristamode) {
+          <ion-item lines="inset">
+            <ion-select [label]='"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate' label-placement="stacked" (ionChange)='sanremoSelectedModeChange()' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew.params.selectedMode"
+                        [placeholder]="'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate">
+              @if(baristamode) {
+                <ion-select-option [value]="SanremoYOUMode.LISTENING_AND_CONTROLLING">
+                  {{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING_AND_CONTROLLING" | translate }}
+                </ion-select-option>
+              }
+              @if(!baristamode) {
+                <ion-select-option [value]="SanremoYOUMode.LISTENING">
+                  {{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate }}
+                </ion-select-option>
+                <ion-select-option [value]="SanremoYOUMode.MANUAL_CONTROLLING">
+                  {{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.MANUAL_CONTROLLING" | translate }}
+                </ion-select-option>
+                <ion-select-option [value]="SanremoYOUMode.PROFILE_P1_CONTROLLING">
+                  {{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P1_CONTROLLING" | translate }}
+                </ion-select-option>
+                <ion-select-option [value]="SanremoYOUMode.PROFILE_P2_CONTROLLING">
+                  {{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P2_CONTROLLING" | translate }}
+                </ion-select-option>
+                <ion-select-option [value]="SanremoYOUMode.PROFILE_P3_CONTROLLING">
+                  {{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P3_CONTROLLING" | translate }}
+                </ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        }
 
-    <ng-container *ngIf='data.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.LISTENING'>
-      @if(!baristamode) {
-
-      <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="none">
-        <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}' (ionBlur)='drawTargetWeight(data.preparationDeviceBrew?.params.stopAtWeight)' [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeight" inputmode="decimal" prevent-characters
-                   remove-empty-number tabIndex="1" type="text"></ion-input>
-      </ion-item>
-
-        <ion-label class='ion-padding-horizontal' color="danger" *ngIf='!data.preparationDeviceBrew?.params.stopAtWeight'>
-          <ion-icon color='danger' style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
-          <span style="display: inline;" *ngIf='data.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.MANUAL_CONTROLLING'>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.NO_PROFILE_TARGET_WEIGHT_INFORMATION" | translate}}</span>
-          <span style="display: inline;" *ngIf='data.preparationDeviceBrew?.params.selectedMode === SanremoYOUMode.MANUAL_CONTROLLING'>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.NO_MANUAL_TARGET_WEIGHT_INFORMATION" | translate}}</span>
-        </ion-label>
-      } @else{
-        <ion-grid>
-          <ion-row>
-            <ion-col size="3" id="statusPhase1">
-              <ion-item lines="none">
-                <ion-input label-placement="stacked" label='P1' (ionBlur)="baristaModeWeightChanged('P1')" [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeightP1" inputmode="decimal" prevent-characters
-                           remove-empty-number tabIndex="1" type="text"></ion-input>
-              </ion-item>
-            </ion-col>
-            <ion-col size="3" id="statusPhase2">
-              <ion-item lines="none">
-                <ion-input label-placement="stacked" label='P2'  (ionBlur)="baristaModeWeightChanged('P2')" [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeightP2" inputmode="decimal" prevent-characters
-                           remove-empty-number tabIndex="1" type="text"></ion-input>
-              </ion-item>
-            </ion-col>
-            <ion-col size="3" id="statusPhase3">
-              <ion-item lines="none">
-                <ion-input label-placement="stacked" label='P3'  (ionBlur)="baristaModeWeightChanged('P3')" [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeightP3" inputmode="decimal" prevent-characters
-                           remove-empty-number tabIndex="1" type="text"></ion-input>
-              </ion-item>
-            </ion-col>
-            <ion-col size="3" id="statusPhase4">
-              <ion-item lines="none">
-                <ion-input label-placement="stacked" label='M'  (ionBlur)="baristaModeWeightChanged('M')" [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeightM" inputmode="decimal" prevent-characters
-                           remove-empty-number tabIndex="1" type="text"></ion-input>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-
-      }
-
-    </ng-container>
-
-
-</ion-card>
-  <ion-card *ngIf="uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.GAGGIUINO" class="popover" style="display:flex; flex-direction: column;">
-    <ion-item lines="none">
-      <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_GAGGIUINO.TITLE" | translate }}</span>
-    </ion-item>
-    <ion-item (click)="importShotFromGaggiuino()" button tappable>
-      <ion-icon name="cloud-download-outline" slot='start'></ion-icon>
-      <span>{{"IMPORT_SHOT_FROM_GAGGIUINO" | translate}}</span>
-    </ion-item>
-  </ion-card>
+        @if(data.preparationDeviceBrew.params.selectedMode !== SanremoYOUMode.LISTENING) {
+          @if(!baristamode) {
+            <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="none">
+              <ion-input [label]='"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate' label-placement="stacked" (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.stopAtWeight)' [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeight" inputmode="decimal" prevent-characters
+                         remove-empty-number tabIndex="1" type="text"></ion-input>
+            </ion-item>
+            @if(!data.preparationDeviceBrew.params.stopAtWeight) {
+              <ion-label class='ion-padding-horizontal' color="danger">
+                <ion-icon color='danger' style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+                @if(data.preparationDeviceBrew.params.selectedMode !== SanremoYOUMode.MANUAL_CONTROLLING) {
+                  <span style="display: inline;">{{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.NO_PROFILE_TARGET_WEIGHT_INFORMATION" | translate }}</span>
+                }
+                @if(data.preparationDeviceBrew.params.selectedMode === SanremoYOUMode.MANUAL_CONTROLLING) {
+                  <span style="display: inline;">{{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.NO_MANUAL_TARGET_WEIGHT_INFORMATION" | translate }}</span>
+                }
+              </ion-label>
+            }
+          } @else {
+            <ion-grid>
+              <ion-row>
+                <ion-col size="3" id="statusPhase1">
+                  <ion-item lines="none">
+                    <ion-input label='P1' label-placement="stacked" (ionBlur)="baristaModeWeightChanged('P1')" [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP1" inputmode="decimal" prevent-characters
+                               remove-empty-number tabIndex="1" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="3" id="statusPhase2">
+                  <ion-item lines="none">
+                    <ion-input label='P2' label-placement="stacked" (ionBlur)="baristaModeWeightChanged('P2')" [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP2" inputmode="decimal" prevent-characters
+                               remove-empty-number tabIndex="1" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="3" id="statusPhase3">
+                  <ion-item lines="none">
+                    <ion-input label='P3' label-placement="stacked" (ionBlur)="baristaModeWeightChanged('P3')" [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP3" inputmode="decimal" prevent-characters
+                               remove-empty-number tabIndex="1" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="3" id="statusPhase4">
+                  <ion-item lines="none">
+                    <ion-input label='M' label-placement="stacked" (ionBlur)="baristaModeWeightChanged('M')" [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightM" inputmode="decimal" prevent-characters
+                               remove-empty-number tabIndex="1" type="text"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          }
+        }
+      </ion-card>
+    }
+    @case(PREPARATION_DEVICE_TYPE_ENUM.GAGGIUINO) {
+      <ion-card class="popover" style="display:flex; flex-direction: column;">
+        <ion-item lines="none">
+          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_GAGGIUINO.TITLE" | translate }}</span>
+        </ion-item>
+        <ion-item (click)="importShotFromGaggiuino()" button tappable>
+          <ion-icon name="cloud-download-outline" slot='start'></ion-icon>
+          <span>{{ "IMPORT_SHOT_FROM_GAGGIUINO" | translate }}</span>
+        </ion-item>
+      </ion-card>
+    }
+  }
 }
-
-
-

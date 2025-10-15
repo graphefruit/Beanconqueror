@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-graph-edit',
   templateUrl: './graph-edit.component.html',
   styleUrls: ['./graph-edit.component.scss'],
+  standalone: false,
 })
 export class GraphEditComponent implements OnInit {
   public static COMPONENT_ID = 'graph-edit';
@@ -39,13 +40,13 @@ export class GraphEditComponent implements OnInit {
     private readonly uiGraphHelper: UIGraphHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.EDIT
+      GRAPH_TRACKING.ACTIONS.EDIT,
     );
     this.data = this.uiHelper.copyData(this.graph);
     this.readFlowProfile();
@@ -74,7 +75,7 @@ export class GraphEditComponent implements OnInit {
       try {
         const flowPath: string = await this.uiGraphHelper.saveGraph(
           this.data.config.uuid,
-          this.flowData
+          this.flowData,
         );
         this.data.flow_profile = flowPath;
       } catch (ex) {}
@@ -83,7 +84,7 @@ export class GraphEditComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_GRAPH_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.EDIT_FINISH
+      GRAPH_TRACKING.ACTIONS.EDIT_FINISH,
     );
     this.dismiss();
   }
@@ -96,7 +97,7 @@ export class GraphEditComponent implements OnInit {
       if (this.data.flow_profile !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-            this.data.flow_profile
+            this.data.flow_profile,
           );
           this.flowData = jsonParsed;
         } catch (ex) {}
@@ -133,7 +134,7 @@ export class GraphEditComponent implements OnInit {
             }
           } else {
             this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
+              this.translate.instant('INVALID_FILE_FORMAT'),
             );
           }
         }
@@ -153,7 +154,7 @@ export class GraphEditComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      GraphEditComponent.COMPONENT_ID
+      GraphEditComponent.COMPONENT_ID,
     );
   }
   public ngOnInit() {}

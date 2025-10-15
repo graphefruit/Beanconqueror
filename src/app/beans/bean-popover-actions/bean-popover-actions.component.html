@@ -14,10 +14,12 @@
       <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
       <span>{{"EDIT" | translate}}</span>
     </ion-item>
-    <ion-item *ngIf='hasBrews()' (click)="choose(getStaticActions().REPEAT_LAST_OR_BEST_BREW)" button tappable>
+    @if (hasBrews()) {
+    <ion-item (click)="choose(getStaticActions().REPEAT_LAST_OR_BEST_BREW)" button tappable>
       <ion-icon name="beanconqueror-repeat" slot="start"></ion-icon>
       <span>{{"POPOVER_BEANS_OPTION_REPEAT" | translate}}</span>
     </ion-item>
+    }
     <ion-item  (click)="choose(getStaticActions().SHOW_BREWS)" button tappable>
       <ion-icon name="beanconqueror-brew" slot="start"></ion-icon>
       <span>{{"POPOVER_SHOW_BREWS" | translate}}</span>
@@ -26,47 +28,66 @@
       <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
     </ion-item>
-    <ion-item *ngIf='settings.freeze_coffee_beans === true && data.isFrozen() === false' (click)="choose(getStaticActions().FREEZE)" button tappable>
+    @if (settings.freeze_coffee_beans === true && data.isFrozen() === false) {
+    <ion-item (click)="choose(getStaticActions().FREEZE)" button tappable>
       <ion-icon name="snow-outline" slot='start'></ion-icon>
       <span>{{"POPOVER_FREEZE_COFFEE_BEAN" | translate}}</span>
     </ion-item>
-    <ion-item *ngIf='settings.freeze_coffee_beans === true && data.isFrozen() === true' (click)="choose(getStaticActions().UNFREEZE)" button tappable>
+    }
+    @if (settings.freeze_coffee_beans === true && data.isFrozen() === true) {
+    <ion-item (click)="choose(getStaticActions().UNFREEZE)" button tappable>
       <ion-icon name="thermometer-outline" slot='start'></ion-icon>
       <span>{{"POPOVER_UNFREEZE_COFFEE_BEAN" | translate}}</span>
     </ion-item>
-    <ion-item *ngIf='data.frozenId' (click)="choose(getStaticActions().COPY_FROZEN_ID)" button tappable>
+    }
+    @if (data.frozenId) {
+    <ion-item (click)="choose(getStaticActions().COPY_FROZEN_ID)" button tappable>
       <ion-icon name="copy-outline" slot='start'></ion-icon>
       <span>{{"POPOVER_COPY_FROZEN_ID" | translate}}</span>
     </ion-item>
-    <ion-item *ngIf="data.qr_code" (click)="choose(getStaticActions().REFRESH_DATA_FROM_QR_CODE)" button tappable>
+    }
+    @if (data.qr_code) {
+    <ion-item (click)="choose(getStaticActions().REFRESH_DATA_FROM_QR_CODE)" button tappable>
       <ion-icon name="beanconqueror-refresh-barcode" slot="start"></ion-icon>
       <span>{{"POPOVER_QR_CODE_REFRESH" | translate}}</span>
     </ion-item>
+    }
     <ion-item (click)="choose(getStaticActions().TOGGLE_FAVOURITE)" button tappable>
-      <ion-icon *ngIf="!data.favourite" name="heart-outline" slot="start"></ion-icon>
-      <ion-icon *ngIf="data.favourite" name="heart" slot="start"></ion-icon>
+      @if (!data.favourite) {
+      <ion-icon name="heart-outline" slot="start"></ion-icon>
+      } @else {
+      <ion-icon name="heart" slot="start"></ion-icon>
+      }
       <span>{{"POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE" | translate}}</span>
     </ion-item>
     <ion-item (click)="choose(getStaticActions().SHARE)" button tappable>
       <ion-icon name="share-social-outline" slot="start"></ion-icon>
       <span>{{"SHARE_BEAN_URL" | translate}}</span>
     </ion-item>
+    @if(false) {
     <ion-item (click)="choose(getStaticActions().SHARE_IMAGE)" button tappable>
       <ion-icon name="beanconqueror-share-image" slot="start"></ion-icon>
       <span>{{"SHARE_BEAN_IMAGE" | translate}}</span>
     </ion-item>
-    <ion-item (click)="choose(getStaticActions().BEANS_CONSUMED)" *ngIf="data.finished === false" button tappable>
+    }
+    @if (data.finished === false) {
+    <ion-item (click)="choose(getStaticActions().BEANS_CONSUMED)" button tappable>
       <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
       <span>{{"BEANS_CONSUMED" | translate}}</span>
     </ion-item>
-    <ion-item (click)="choose(getStaticActions().UNARCHIVE)" *ngIf="data.finished === true" button tappable>
+    }
+    @if (data.finished === true) {
+    <ion-item (click)="choose(getStaticActions().UNARCHIVE)" button tappable>
       <ion-icon name="beanconqueror-unfinish" slot="start"></ion-icon>
       <span>{{"BEANS_UNARCHIVE" | translate}}</span>
     </ion-item>
-    <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" *ngIf="hasPhotos()" button tappable>
+    }
+    @if (hasPhotos()) {
+    <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" button tappable>
       <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_PHOTO_GALLERY" | translate}}</span>
     </ion-item>
+    }
     <ion-item (click)="choose(getStaticActions().GENERATE_INTERNAL_SHARE_CODE)"  button tappable>
       <ion-icon name="qr-code-outline" slot="start"></ion-icon>
       <span>{{"POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE" | translate}}</span>

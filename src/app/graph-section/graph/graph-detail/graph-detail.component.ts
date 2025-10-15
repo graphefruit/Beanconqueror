@@ -36,6 +36,7 @@ declare var Plotly;
   selector: 'app-graph-detail',
   templateUrl: './graph-detail.component.html',
   styleUrls: ['./graph-detail.component.scss'],
+  standalone: false,
 })
 export class GraphDetailComponent implements OnInit {
   public static COMPONENT_ID = 'graph-detail';

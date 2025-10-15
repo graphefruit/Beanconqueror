@@ -12,9 +12,10 @@
     @if(associatedBrews?.length > 0) {
       <!--We stay at 100vh, because else ALL brew instances are rendered with 100vh just the needed once are rendered - very strange -->
       <ag-virtual-scroll #openScrollAssociatedBrews [items]="associatedBrews"  [height]="'100vh'" min-row-height="180">
-        <brew-information [collapsed]="isCollapsed" (brewAction)="brewAction()" *ngFor="let brew of openScrollAssociatedBrews.items"
-                          [brew]="brew"></brew-information>
-
+        @for(brew of openScrollAssociatedBrews.items; track brew.config.uuid) {
+          <brew-information [collapsed]="isCollapsed" (brewAction)="brewAction()"
+                            [brew]="brew"></brew-information>
+        }
       </ag-virtual-scroll>
     } @else {
       <div class="ion-padding ion-text-center">
@@ -27,4 +28,3 @@
       </div>
     }
 </ion-content>
-

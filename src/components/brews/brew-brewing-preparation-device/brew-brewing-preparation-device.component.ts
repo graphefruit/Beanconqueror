@@ -52,11 +52,13 @@ import {
 } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
 import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
+import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBrew';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
   styleUrls: ['./brew-brewing-preparation-device.component.scss'],
+  standalone: false,
 })
 export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public data: Brew;
@@ -125,6 +127,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+    if (!this.data.preparationDeviceBrew) {
+      this.data.preparationDeviceBrew = new PreparationDeviceBrew();
+    }
   }
 
   public getPreparation(): Preparation {
@@ -642,7 +647,12 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       brewFlow.not_mutated_weight = 0;
       newBrewFlow.weight.push(brewFlow);
 
-      if (brewFlow.actual_weight > 0 && firstDripTimeSet === false) {
+      if (
+        brewFlow.actual_weight > 0 &&
+        firstDripTimeSet === false &&
+        brewFlow.actual_weight >=
+          this.settings.bluetooth_scale_first_drip_threshold
+      ) {
         firstDripTimeSet = true;
 
         this.brewComponent.brewFirstDripTime?.setTime(seconds, milliseconds);
@@ -741,7 +751,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       brewFlow.not_mutated_weight = 0;
       newBrewFlow.weight.push(brewFlow);
 
-      if (shotEntry.weight > 0 && firstDripTimeSet === false) {
+      if (
+        shotEntry.weight > 0 &&
+        firstDripTimeSet === false &&
+        shotEntry.weight >= this.settings.bluetooth_scale_first_drip_threshold
+      ) {
         firstDripTimeSet = true;
 
         this.brewComponent.brewFirstDripTime?.setTime(seconds, milliseconds);
@@ -803,5 +817,5 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     }, 50);
   }
 
-  protected readonly SanremoYOUMode = SanremoYOUMode;
+  protected SanremoYOUMode = SanremoYOUMode;
 }

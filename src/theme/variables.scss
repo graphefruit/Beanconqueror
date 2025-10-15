@@ -1,12 +1,26 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/theming/
 
-
+/**Ion-text-color was overwritten by ionic to always #ffffff, thats why we introduce our own variable **/
+:root.md {
+  --ion-text-color: #282013;
+  --beanconqueror-text-color-light: #FFFFFF;
+}
+:root.md.ion-palette-dark
+{
+  --ion-text-color: #D3D3D3;
+  --beanconqueror-text-color-light: #FFFFFF;
+}
 /** Ionic CSS Variables **/
 :root {
-
-  --ion-text-color: #282013;
+  --ion-header-background-color: #FFFFFF;
+  --highlight-color: #FFFFFF!important;
+  --highlight-color-valid: #FFFFFF!important;
   --ion-background-color: #F0F0F0;
+  --ion-background-color-textarea: #F2F2F2;
+  --ion-color-graph-background: #FFFFFF;
+  --ion-item-sort-background: #F0F0F0;
+
   --ion-font-family: 'Karla', sans-serif;
   font-family: var(--ion-font-family) !important;
   /** primary **/
@@ -75,7 +89,7 @@
   --ion-color-medium-tint: #a2a4ab;
 
   /** light **/
-  --ion-color-light: #f4f5f8;
+  --ion-color-light: #FFFFFF;
   --ion-color-light-rgb: 244, 244, 244;
   --ion-color-light-contrast: #000000;
   --ion-color-light-contrast-rgb: 0, 0, 0;
@@ -84,7 +98,10 @@
 
 
   --beanconqueror-highlight-color-item: #AE9F87;
-  --beanconqueror-icon-color: #AE9F87;
+  --beanconqueror-icon-color: #CDC2AC;
+  --beanconqueror-icon-color-inactive: #CCCCCC;
+  --beanconqueror-icon-star-full-color: #504027;
+  --beanconqueror-icon-star-empty-color: #BFB9B0;
 
   --beanconqueror-background-highlight-color: #FFACAB;
 
@@ -146,16 +163,89 @@
   color: var(--ion-color-inactive);
 }
 
-$card-md-border-radius: 5px;
-$card-md-header-color: rgba(8, 66, 138, 0.77);
-$toolbar-background: #7189a7;
-$segment-button-md-text-color-activated: black;
-$segment-button-md-border-color-activated: rgb(160, 176, 196);
-$list-md-header-color: rgb(160, 176, 196);
+.ion-palette-dark {
 
 
-$button-md-text-color: white;
-$button-md-background-color: rgb(160, 176, 196);
-$button-md-outline-text-color: rgb(160, 176, 196);
+  --highlight-color: #FFFFFF!important;
+  --highlight-color-valid: #FFFFFF!important;
+  --ion-background-color: #121212;
+  --ion-background-color-textarea: #222428;
+  --ion-color-graph-background: #222428;
+  --ion-item-sort-background: #222428;
+  --ion-header-background-color: #222428;
+  --ion-border-color: #29292D;
 
+  --ion-color-primary: #383a3e;
+  --ion-color-primary-rgb: 56, 58, 62;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #313337;
+  --ion-color-primary-tint: #4c4f54;
 
+  --ion-color-secondary: #50c8ff;
+  --ion-color-secondary-rgb: 80, 200, 255;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #46b0e0;
+  --ion-color-secondary-tint: #62ceff;
+
+  --ion-color-tertiary: #6a64ff;
+  --ion-color-tertiary-rgb: 106, 100, 255;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #5d58e0;
+  --ion-color-tertiary-tint: #7974ff;
+
+  --ion-color-success: #2fdf75;
+  --ion-color-success-rgb: 47, 223, 117;
+  --ion-color-success-contrast: #000000;
+  --ion-color-success-contrast-rgb: 0, 0, 0;
+  --ion-color-success-shade: #29c467;
+  --ion-color-success-tint: #44e283;
+
+  --ion-color-warning: #ffd534;
+  --ion-color-warning-rgb: 255, 213, 52;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #e0bb2e;
+  --ion-color-warning-tint: #ffd948;
+
+  --ion-color-danger: #ff4961;
+  --ion-color-danger-rgb: 255, 73, 97;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #e04055;
+  --ion-color-danger-tint: #ff5b71;
+
+  --ion-color-dark: #f4f5f8;
+  --ion-color-dark-rgb: 244, 245, 248;
+  --ion-color-dark-contrast: #000000;
+  --ion-color-dark-contrast-rgb: 0, 0, 0;
+  --ion-color-dark-shade: #d7d8da;
+  --ion-color-dark-tint: #f5f6f9;
+
+  --ion-color-medium: #989aa2;
+  --ion-color-medium-rgb: 152, 154, 162;
+  --ion-color-medium-contrast: #000000;
+  --ion-color-medium-contrast-rgb: 0, 0, 0;
+  --ion-color-medium-shade: #86888f;
+  --ion-color-medium-tint: #a2a4ab;
+
+  --ion-color-light: #222428;
+  --ion-color-light-rgb: 34, 36, 40;
+  --ion-color-light-contrast: #ffffff;
+  --ion-color-light-contrast-rgb: 255, 255, 255;
+  --ion-color-light-shade: #1e2023;
+  --ion-color-light-tint: #383a3e;
+
+  --beanconqueror-highlight-color-item: #383a3e;
+  --beanconqueror-icon-color: #8b7e6a;
+  --beanconqueror-icon-color-inactive: #363636;
+  --beanconqueror-icon-star-full-color: #bdb5a8;
+  --beanconqueror-icon-star-empty-color: #38342e;
+  --beanconqueror-background-highlight-color: #FFACAB;
+
+  --ion-color-accent: #8b7e6a;
+  --ion-color-accent-secondary: #B88265;
+  --ion-color-inactive: #555555;
+}

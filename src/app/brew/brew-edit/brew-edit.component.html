@@ -52,9 +52,11 @@
           </ion-chip>
         }
       }
-      <ion-button (click)="tareScale()" *ngIf="brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring"  class="big-icon-only" fill="clear"  tappable>
-        <ion-icon name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
-      </ion-button>
+      @if(brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
+        <ion-button (click)="tareScale()" class="big-icon-only" fill="clear" tappable>
+          <ion-icon name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
+        </ion-button>
+      }
       <ion-button
         (click)="popoverActionsBrew()" tappable>
         <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
@@ -66,7 +68,8 @@
   <brew-brewing [isEdit]="true" #brewBrewing [(data)]="data"></brew-brewing>
 </ion-content>
 
-<ion-footer *ngIf="showFooter" class="ion-no-border">
+@if(showFooter) {
+<ion-footer class="ion-no-border">
   <ion-row>
     <ion-col>
       <ion-button (click)="confirmDismiss()" color="accent" expand="block" fill="outline" tappable>{{"CANCEL" |
@@ -78,3 +81,4 @@
     </ion-col>
   </ion-row>
 </ion-footer>
+}

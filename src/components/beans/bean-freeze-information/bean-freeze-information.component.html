@@ -8,19 +8,21 @@
   </ion-item>
   <ion-item>
     <ion-select label-placement='stacked' label='{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}'
-                [(ngModel)]='data.frozenStorageType' cancelText="{{'CANCEL'| translate }}"
-                name='frozenStorage'
-                okText="{{'CHOOSE'| translate }}"
-                style='padding-left:0px!important;width: 100%; min-width: 100%;'
-                multiple='false'>
-      <ion-select-option *ngFor='let key of beanFreezingStorageEnum | keys'
-                         value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
+      [(ngModel)]='data.frozenStorageType' cancelText="{{'CANCEL'| translate }}"
+      name='frozenStorage'
+      okText="{{'CHOOSE'| translate }}"
+      style='padding-left:0px!important;width: 100%; min-width: 100%;'
+      multiple='false'>
+      @for (key of beanFreezingStorageEnum | keys; track key) {
+        <ion-select-option
+        value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
+      }
     </ion-select>
   </ion-item>
   <ion-item>
     <ion-label id='frozenNote' position="stacked">{{"BEAN_DATA_FROZEN_NOTE" | translate }}</ion-label>
     <ion-textarea style='margin-top:20px;' aria-labelledby='frozenNote'  [(ngModel)]="data.frozenNote" autocapitalize="sentences" autocomplete="true"
-                  autocorrect="true" [autoGrow]="true"
-                  name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+      autocorrect="true" [autoGrow]="true"
+    name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
   </ion-item>
 </ion-card>

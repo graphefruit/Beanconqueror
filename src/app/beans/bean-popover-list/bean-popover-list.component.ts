@@ -14,6 +14,7 @@ import { ModalController } from '@ionic/angular';
   selector: 'app-bean-popover-list',
   templateUrl: './bean-popover-list.component.html',
   styleUrls: ['./bean-popover-list.component.scss'],
+  standalone: false,
 })
 export class BeanPopoverListComponent {
   public static readonly COMPONENT_ID = 'bean-popover-list';
@@ -63,7 +64,7 @@ export class BeanPopoverListComponent {
         dismissed: true,
       },
       undefined,
-      BeanPopoverListComponent.COMPONENT_ID
+      BeanPopoverListComponent.COMPONENT_ID,
     );
   }
 }

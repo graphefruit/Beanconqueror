@@ -11,6 +11,7 @@ import { timer, Subscription } from 'rxjs';
 declare var window;
 @Directive({
   selector: '[long-press]',
+  standalone: false,
 })
 export class LongPressDirective implements OnInit {
   private timerSub: Subscription;
@@ -71,7 +72,7 @@ export class LongPressDirective implements OnInit {
             }, 750);
           });
         },
-        { passive: true }
+        { passive: true },
       );
 
       element.addEventListener(
@@ -79,21 +80,21 @@ export class LongPressDirective implements OnInit {
         (ev) => {
           this.unsub();
         },
-        { passive: true }
+        { passive: true },
       );
       element.addEventListener(
         'touchend',
         (ev) => {
           this.unsub();
         },
-        { passive: true }
+        { passive: true },
       );
       element.addEventListener(
         'touchcancel',
         (ev) => {
           this.unsub();
         },
-        { passive: true }
+        { passive: true },
       );
     }
 

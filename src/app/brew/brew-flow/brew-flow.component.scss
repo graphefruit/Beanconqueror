@@ -1,6 +1,6 @@
 :host {
   ion-header {
-    background-color: #ffffff;
+    background-color: var(--ion-header-background-color);
   }
 
   ion-toolbar {
@@ -9,7 +9,7 @@
   }
 
   ion-footer {
-    background: #FFFFFF;
+    background: var(--ion-color-light);
     box-shadow: none;
   }
 
@@ -58,7 +58,7 @@
     margin: 0px;
 
     ion-card-header {
-      color: #FFFFFF;
+      color: var(--beanconqueror-text-color-light);
       background-color: var(--ion-color-accent) !important;
       font-size: 18px;
       padding: 2px;
@@ -150,12 +150,13 @@
   }
 
   ion-card.flow-profile.weight-card {
+
     ion-card-header {
-      background-color: #cdc2ac !important;
+      background-color: var(--beanconqueror-icon-color) !important;
     }
 
     ion-icon {
-      color: #cdc2ac !important;
+      color: var(--beanconqueror-icon-color) !important;
     }
   }
 

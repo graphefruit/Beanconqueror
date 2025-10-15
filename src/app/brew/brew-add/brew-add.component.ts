@@ -68,6 +68,7 @@ interface IEventPayload {
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
   styleUrls: ['./brew-add.component.scss'],
+  standalone: false,
 })
 export class BrewAddComponent implements OnInit, OnDestroy {
   public static readonly COMPONENT_ID: string = 'brew-add';

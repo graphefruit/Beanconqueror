@@ -33,6 +33,8 @@
     <uses-permission android:name="android.permission.BODY_SENSORS" tools:node="remove" />
     <!-- End of removed entries for Cordova Health plugin -->
 
+    <!-- Remove the need of autofocus, which came with the latest camera plugin we don't use on android at all -->
+    <uses-feature android:name="android.hardware.camera.autofocus"  tools:node="remove" />
 
     <!-- NFC Plugin its not required -->
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
@@ -49,7 +51,7 @@
         android:hardwareAccelerated="true">
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:launchMode="singleTask"

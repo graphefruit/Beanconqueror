@@ -42,6 +42,7 @@ declare var Plotly;
   selector: 'brew-detail',
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
+  standalone: false,
 })
 export class BrewDetailComponent {
   public static readonly COMPONENT_ID = 'brew-detail';

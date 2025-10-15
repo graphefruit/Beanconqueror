@@ -8,6 +8,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-preparation-sort-tools',
   templateUrl: './preparation-sort-tools.component.html',
   styleUrls: ['./preparation-sort-tools.component.scss'],
+  standalone: false,
 })
 export class PreparationSortToolsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-sort-tools';
@@ -22,7 +23,7 @@ export class PreparationSortToolsComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
   ) {}
 
   public ngOnInit() {
@@ -45,7 +46,7 @@ export class PreparationSortToolsComponent implements OnInit {
     this.preparation.tools.splice(
       ev.detail.to,
       0,
-      this.preparation.tools.splice(ev.detail.from, 1)[0]
+      this.preparation.tools.splice(ev.detail.from, 1)[0],
     );
 
     // Finish the reorder and position the item in the DOM based on
@@ -87,7 +88,7 @@ export class PreparationSortToolsComponent implements OnInit {
     this.modalController.dismiss(
       undefined,
       undefined,
-      PreparationSortToolsComponent.COMPONENT_ID
+      PreparationSortToolsComponent.COMPONENT_ID,
     );
   }
 }

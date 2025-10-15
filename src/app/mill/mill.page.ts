@@ -23,6 +23,7 @@ import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
   selector: 'mill',
   templateUrl: './mill.page.html',
   styleUrls: ['./mill.page.scss'],
+  standalone: false,
 })
 export class MillPage implements OnInit {
   public mills: Array<Mill> = [];

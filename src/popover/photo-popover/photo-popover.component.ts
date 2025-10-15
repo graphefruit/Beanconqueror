@@ -12,6 +12,7 @@ import { Preparation } from '../../classes/preparation/preparation';
   selector: 'photo-popover',
   templateUrl: './photo-popover.component.html',
   styleUrls: ['./photo-popover.component.scss'],
+  standalone: false,
 })
 export class PhotoPopoverComponent implements OnInit {
   public static COMPONENT_ID: string = 'photo-popover';
@@ -43,7 +44,7 @@ export class PhotoPopoverComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      PhotoPopoverComponent.COMPONENT_ID
+      PhotoPopoverComponent.COMPONENT_ID,
     );
   }
 

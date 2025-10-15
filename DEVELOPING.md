@@ -23,6 +23,14 @@ After cloning the repository, you need to install `npm` dependencies:
 npm install
 ```
 
+## Running tests
+
+Run unit tests through npm. These are run automatically in CI.
+
+```shell
+npm test
+```
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.
@@ -128,3 +136,21 @@ npm run cap sync android && npm cap sync ios
 ```
 
 After this, you can use the native IDEs to create a production-ready build of the application.
+
+Normal debug builds can be created using the following command:
+
+```shell
+npm run -- build  && npm run capsync
+```
+
+Normal production builds can be created using the following command:
+
+```shell
+npm run -- build --configuration 'production' && npm run capsync
+```
+
+Generate from the bean.proto:
+
+```shell
+ npm run generate_proto
+```

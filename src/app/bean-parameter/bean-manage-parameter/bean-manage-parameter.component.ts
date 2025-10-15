@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   selector: 'app-bean-manage-parameter',
   templateUrl: './bean-manage-parameter.component.html',
   styleUrls: ['./bean-manage-parameter.component.scss'],
+  standalone: false,
 })
 export class BeanManageParameterComponent {
   public bean_segment = 'general';
@@ -18,7 +19,7 @@ export class BeanManageParameterComponent {
 
   constructor(
     public uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {
     this.debounceChanges
       .pipe(debounceTime(500), distinctUntilChanged())

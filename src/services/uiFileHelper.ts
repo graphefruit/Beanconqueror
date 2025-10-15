@@ -415,10 +415,7 @@ export class UIFileHelper extends InstanceClass {
       this.uiLog.debug('Found automatic backup files:', backupFiles);
       return backupFiles;
     } catch (error) {
-      if (
-        error instanceof CapacitorException &&
-        error.message === 'Directory does not exist.'
-      ) {
+      if (error.code === 'OS-PLUG-FILE-0008') {
         // If the directory doesn't exist, it means there are no backup files.
         this.uiLog.info(
           'Automatic backup directory does not exist, returning empty list.',
@@ -612,16 +609,16 @@ export class UIFileHelper extends InstanceClass {
       directory,
     );
     try {
-      await Filesystem.mkdir({
-        path: parts.FILE_PATH,
-        recursive: true,
-        directory: directory,
-      });
+      //Just make it when its not the root directory
+      if (parts.FILE_PATH !== '/') {
+        await Filesystem.mkdir({
+          path: parts.FILE_PATH,
+          recursive: true,
+          directory: directory,
+        });
+      }
     } catch (error) {
-      if (
-        error instanceof CapacitorException &&
-        error.message === 'Directory exists'
-      ) {
+      if (error.code === 'OS-PLUG-FILE-0010') {
         // If the directory already exists just ignore the error
         return;
       }

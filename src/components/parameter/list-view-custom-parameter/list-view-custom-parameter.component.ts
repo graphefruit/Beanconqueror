@@ -10,6 +10,7 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
   selector: 'list-view-custom-parameter',
   templateUrl: './list-view-custom-parameter.component.html',
   styleUrls: ['./list-view-custom-parameter.component.scss'],
+  standalone: false,
 })
 export class ListViewCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;
@@ -17,7 +18,7 @@ export class ListViewCustomParameterComponent implements OnInit {
     public uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   public ngOnInit() {}

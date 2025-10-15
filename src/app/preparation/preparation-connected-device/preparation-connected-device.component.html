@@ -13,27 +13,29 @@
     <ion-card-content>
       <ion-item>
         <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.CHOOSE_DEVICE" | translate}}' (ngModelChange)="save(false)"  [(ngModel)]="data.connectedPreparationDevice.type"
-                    cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
-                    okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
+          cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
+          okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
           <ion-select-option value="{{PREPARATION_DEVICE_TYPE.NONE}}">{{"PREPARATION_DEVICE.TYPE.NONE" | translate}}</ion-select-option>
           <ion-select-option value="{{PREPARATION_DEVICE_TYPE.XENIA}}">{{"PREPARATION_DEVICE.TYPE.XENIA" | translate}}</ion-select-option>
           <ion-select-option value="{{PREPARATION_DEVICE_TYPE.METICULOUS}}">{{"PREPARATION_DEVICE.TYPE.METICULOUS" | translate}}</ion-select-option>
           <ion-select-option value="{{PREPARATION_DEVICE_TYPE.GAGGIUINO}}">{{"PREPARATION_DEVICE.TYPE.GAGGIUINO" | translate}}</ion-select-option>
-          <ion-select-option *ngIf='ENVIRONMENT_PARAMS.FEATURES_ACTIVE.SANREMO_YOU' value="{{PREPARATION_DEVICE_TYPE.SANREMO_YOU}}">{{"PREPARATION_DEVICE.TYPE.SANREMO_YOU" | translate}}</ion-select-option>
+          @if (ENVIRONMENT_PARAMS.FEATURES_ACTIVE.SANREMO_YOU) {
+            <ion-select-option value="{{PREPARATION_DEVICE_TYPE.SANREMO_YOU}}">{{"PREPARATION_DEVICE.TYPE.SANREMO_YOU" | translate}}</ion-select-option>
+          }
         </ion-select>
       </ion-item>
-      <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.XENIA">
+      @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.XENIA) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-                     tabIndex="1" type="text"></ion-input>
+          tabIndex="1" type="text"></ion-input>
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
-                      slot="end" style="margin-left:0px;" tabIndex="2" tappable>
+            slot="end" style="margin-left:0px;" tabIndex="2" tappable>
             <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-item>
         <ion-item>
           <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.API_VERSION" | translate}}'  (ngModelChange)="save()"  [(ngModel)]="data.connectedPreparationDevice.customParams.apiVersion" cancelText="{{'CANCEL'| translate }}"
-                      name="apiVersion" okText="{{'CHOOSE'| translate }}">
+            name="apiVersion" okText="{{'CHOOSE'| translate }}">
             <ion-select-option value="V1">V1</ion-select-option>
             <ion-select-option value="V2">V2</ion-select-option>
           </ion-select>
@@ -41,7 +43,7 @@
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
             <h2>{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
+            style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
           </ion-label>
         </ion-item>
         <ion-item lines='none'>
@@ -51,7 +53,7 @@
         </ion-item>
         <ion-item lines='inset'>
           <ion-range    [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0.1" snaps="true"
-                        [step]="0.05" >
+            [step]="0.05" >
           </ion-range>
         </ion-item>
         <ion-item lines="none">
@@ -59,33 +61,31 @@
             <div class='ion-label'>{{"SAVE_LOGFILES_TO_NOTES_FROM_MACHINE" | translate}}</div>
           </ion-checkbox>
         </ion-item>
+      }
 
-      </ng-container>
-
-      <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.METICULOUS">
-      <ion-item>
-        <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-                   tabIndex="1" type="text"></ion-input>
-        <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
-                    slot="end" style="margin-left:0px;" tabIndex="2" tappable>
-          <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-      </ion-item>
-      </ng-container>
-      <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.SANREMO_YOU">
-      <ion-item>
-        <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-                   tabIndex="1" type="text"></ion-input>
-        <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
-                    slot="end" style="margin-left:0px;" tabIndex="2" tappable>
-          <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-
-      </ion-item>
+      @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.METICULOUS) {
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+          tabIndex="1" type="text"></ion-input>
+          <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
+            slot="end" style="margin-left:0px;" tabIndex="2" tappable>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
+      }
+      @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.SANREMO_YOU) {
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+          tabIndex="1" type="text"></ion-input>
+          <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
+            slot="end" style="margin-left:0px;" tabIndex="2" tappable>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
             <h2>{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
+            style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
           </ion-label>
         </ion-item>
         <ion-item lines='none'>
@@ -95,23 +95,21 @@
         </ion-item>
         <ion-item lines='inset'>
           <ion-range    [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0" snaps="true"
-                        [step]="0.05" >
+            [step]="0.05" >
           </ion-range>
         </ion-item>
-      </ng-container>
+      }
 
-      <ng-container  *ngIf="data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.GAGGIUINO">
+      @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.GAGGIUINO) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-                     tabIndex="1" type="text"></ion-input>
+          tabIndex="1" type="text"></ion-input>
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
-                      slot="end" style="margin-left:0px;" tabIndex="2" tappable>
+            slot="end" style="margin-left:0px;" tabIndex="2" tappable>
             <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
           </ion-button>
-
         </ion-item>
-
-      </ng-container>
+      }
 
     </ion-card-content>
 

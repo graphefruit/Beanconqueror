@@ -22,6 +22,7 @@ import { Mill } from '../../classes/mill/mill';
   selector: 'brew-graph-reference-card',
   templateUrl: './brew-graph-reference-card.component.html',
   styleUrls: ['./brew-graph-reference-card.component.scss'],
+  standalone: false,
 })
 export class BrewGraphReferenceCardComponent implements OnInit {
   @Input() public brew: Brew;
@@ -47,7 +48,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     protected readonly uiBrewHelper: UIBrewHelper,
-    protected readonly uiHelper: UIHelper
+    protected readonly uiHelper: UIHelper,
   ) {}
 
   public getElementOffsetWidth() {

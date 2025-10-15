@@ -8,6 +8,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
+  standalone: false,
 })
 export class AboutComponent implements OnInit {
   public versionStr: string = '';

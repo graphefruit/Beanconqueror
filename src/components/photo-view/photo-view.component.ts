@@ -17,6 +17,7 @@ import { Preparation } from '../../classes/preparation/preparation';
   selector: 'photo-view',
   templateUrl: './photo-view.component.html',
   styleUrls: ['./photo-view.component.scss'],
+  standalone: false,
 })
 export class PhotoViewComponent implements OnInit {
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;

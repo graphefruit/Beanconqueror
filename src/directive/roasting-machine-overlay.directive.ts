@@ -1,59 +1,53 @@
-import {Directive, ElementRef, HostListener, Input} from '@angular/core';
-import {NgModel} from '@angular/forms';
-import {ModalController} from '@ionic/angular';
-import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
-import {RoastingMachine} from '../classes/roasting-machine/roasting-machine';
-import {RoastingMachineModalSelectComponent} from '../app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { NgModel } from '@angular/forms';
+import { ModalController } from '@ionic/angular';
+import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
+import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { RoastingMachineModalSelectComponent } from '../app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 
 @Directive({
-  selector: '[ngModel][roasting-machine-overlay]'
+  selector: '[ngModel][roasting-machine-overlay]',
+  standalone: false,
 })
 export class RoastingMachineOverlayDirective {
-
-  private oldModelValue:any = undefined;
+  private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
 
-  constructor(private readonly model: NgModel,
-              private readonly modalController: ModalController,
-              private el: ElementRef,
-              private uiRoastingMachineStorage: UIRoastingMachineStorage) {
-
-
-  }
-
+  constructor(
+    private readonly model: NgModel,
+    private readonly modalController: ModalController,
+    private el: ElementRef,
+    private uiRoastingMachineStorage: UIRoastingMachineStorage,
+  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {
-
     _event.cancelBubble = true;
     _event.preventDefault();
     _event.stopImmediatePropagation();
     _event.stopPropagation();
 
-
     let selectedValues: Array<string> = [];
-    if (typeof (this.model.control.value) === 'string') {
+    if (typeof this.model.control.value === 'string') {
       selectedValues.push(this.model.control.value);
     } else {
-
       if (this.model && this.model.control.value) {
         selectedValues = [...this.model.control.value];
       }
     }
     const modal = await this.modalController.create({
       component: RoastingMachineModalSelectComponent,
-      componentProps:
-        {
-          multiple: this.multipleSelect,
-          selectedValues: selectedValues,
-          showFinished: this.showFinished
-        },
+      componentProps: {
+        multiple: this.multipleSelect,
+        selectedValues: selectedValues,
+        showFinished: this.showFinished,
+      },
       id: RoastingMachineModalSelectComponent.COMPONENT_ID,
-      showBackdrop: true
+      showBackdrop: true,
     });
     await modal.present();
-    const {data} = await modal.onWillDismiss();
+    const { data } = await modal.onWillDismiss();
     if (data !== undefined) {
       if (this.multipleSelect) {
         this.model.control.setValue(data.selected_values);
@@ -64,38 +58,30 @@ export class RoastingMachineOverlayDirective {
       }
       _event.target.selectedText = data.selected_text;
     }
-
-
   }
 
-
   public ngDoCheck(): void {
-
     try {
-      if (this.oldModelValue !== this.model.model){
+      if (this.oldModelValue !== this.model.model) {
         this.oldModelValue = this.model.model;
         this.__generateOutputText(this.model.model);
       }
-    }
-    catch (ex){
-
-    }
-
-
+    } catch (ex) {}
   }
 
   private __generateOutputText(_uuid: string | Array<string>) {
-
     if (!_uuid) {
       return;
     }
     let generatedText: string = '';
-    if (typeof (_uuid) === 'string') {
-      const obj: RoastingMachine = this.uiRoastingMachineStorage.getByUUID(_uuid);
+    if (typeof _uuid === 'string') {
+      const obj: RoastingMachine =
+        this.uiRoastingMachineStorage.getByUUID(_uuid);
       generatedText = this.__generateTextByObj(obj);
     } else {
       for (const uuid of _uuid) {
-        const obj: RoastingMachine = this.uiRoastingMachineStorage.getByUUID(uuid);
+        const obj: RoastingMachine =
+          this.uiRoastingMachineStorage.getByUUID(uuid);
         generatedText += this.__generateTextByObj(obj) + ', ';
       }
       generatedText = generatedText.substr(0, generatedText.lastIndexOf(', '));
@@ -107,6 +93,4 @@ export class RoastingMachineOverlayDirective {
     const generatedText: string = `${_obj.name}`;
     return generatedText;
   }
-
-
 }

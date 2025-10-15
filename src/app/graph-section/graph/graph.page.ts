@@ -25,6 +25,7 @@ import { UIGraphHelper } from '../../../services/uiGraphHelper';
   selector: 'app-graph',
   templateUrl: './graph.page.html',
   styleUrls: ['./graph.page.scss'],
+  standalone: false,
 })
 export class GraphPage implements OnInit {
   private graphs: Array<Graph> = [];
@@ -51,7 +52,7 @@ export class GraphPage implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGraphHelper: UIGraphHelper
+    private readonly uiGraphHelper: UIGraphHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -94,7 +95,7 @@ export class GraphPage implements OnInit {
 
   public async triggerAction(
     action: GREEN_BEAN_ACTION,
-    bean: GreenBean
+    bean: GreenBean,
   ): Promise<void> {
     this.load();
   }

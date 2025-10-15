@@ -12,20 +12,28 @@
 </ion-header>
 <ion-content>
 
-  <ion-card *ngFor="let key of licences | keys">
-    <ion-item (click)="openLink($event,licences[key].LINK)" button tappable>
-      <ion-title>{{ licences[key].TITLE }}</ion-title>
-      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-    </ion-item>
-    <ion-item (click)="licences[key].ACTIVE = !licences[key].ACTIVE" button lines="none" tappable>
-      <ion-icon *ngIf="licences[key].ACTIVE != true" name="chevron-down-outline" slot="start"></ion-icon>
-      <ion-icon *ngIf="licences[key].ACTIVE === true" name="chevron-up-outline" slot="start"></ion-icon>
-      <ion-label>{{"MORE_INFORMATION" | translate}}</ion-label>
-    </ion-item>
-    <ion-card-content *ngIf="licences[key].ACTIVE === true" [innerHTML]="licences[key].DESCRIPTION"
-                      class="white-space-normal"
-                      style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;">
-    </ion-card-content>
-  </ion-card>
+  @for (key of licences | keys; track key) {
+    <ion-card>
+      <ion-item (click)="openLink($event,licences[key].LINK)" button tappable>
+        <ion-title>{{ licences[key].TITLE }}</ion-title>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+      <ion-item (click)="licences[key].ACTIVE = !licences[key].ACTIVE" button lines="none" tappable>
+        @if (licences[key].ACTIVE != true) {
+          <ion-icon name="chevron-down-outline" slot="start"></ion-icon>
+        }
+        @if (licences[key].ACTIVE === true) {
+          <ion-icon name="chevron-up-outline" slot="start"></ion-icon>
+        }
+        <ion-label>{{"MORE_INFORMATION" | translate}}</ion-label>
+      </ion-item>
+      @if (licences[key].ACTIVE === true) {
+        <ion-card-content [innerHTML]="licences[key].DESCRIPTION"
+          class="white-space-normal"
+          style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;">
+        </ion-card-content>
+      }
+    </ion-card>
+  }
 </ion-content>
 

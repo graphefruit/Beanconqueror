@@ -4,6 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
   selector: 'brew-ratio-card',
   templateUrl: './brew-ratio-card.component.html',
   styleUrls: ['./brew-ratio-card.component.scss'],
+  standalone: false,
 })
 export class BrewRatioCardComponent implements OnInit {
   public brewRatio: any = {

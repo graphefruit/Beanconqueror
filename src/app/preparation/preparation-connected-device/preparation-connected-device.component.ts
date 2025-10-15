@@ -22,6 +22,7 @@ import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevic
   selector: 'app-preparation-connected-device',
   templateUrl: './preparation-connected-device.component.html',
   styleUrls: ['./preparation-connected-device.component.scss'],
+  standalone: false,
 })
 export class PreparationConnectedDeviceComponent {
   public static readonly COMPONENT_ID = 'preparation-connected-device';

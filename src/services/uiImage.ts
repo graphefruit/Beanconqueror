@@ -152,8 +152,15 @@ export class UIImage {
               resolve('CHOOSE');
             },
           },
+          {
+            text: this.translate.instant('CLIPBOARD'),
+            handler: () => {
+              resolve('CLIPBOARD');
+            },
+          },
         ],
       });
+
       await alert.present();
     });
 

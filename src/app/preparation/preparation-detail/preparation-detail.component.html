@@ -25,28 +25,40 @@
     <ion-item>
       <ion-label>
         <h2>{{"PREPARATION_TYPE_STYLE" | translate}}:</h2>
-        <h3 *ngIf="PREPARATION_STYLE_TYPE.POUR_OVER == data.style_type">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</h3>
-        <h3 *ngIf="PREPARATION_STYLE_TYPE.ESPRESSO == data.style_type">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</h3>
-        <h3 *ngIf="PREPARATION_STYLE_TYPE.FULL_IMMERSION == data.style_type">{{"PREPARATION_STYLE_FULL_IMMERSION" | translate}}</h3>
-        <h3 *ngIf="PREPARATION_STYLE_TYPE.PERCOLATION == data.style_type">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</h3>
+        @if (PREPARATION_STYLE_TYPE.POUR_OVER == data.style_type) {
+          <h3>{{"PREPARATION_STYLE_POUR_OVER" | translate}}</h3>
+        }
+        @if (PREPARATION_STYLE_TYPE.ESPRESSO == data.style_type) {
+          <h3>{{"PREPARATION_STYLE_ESPRESSO" | translate}}</h3>
+        }
+        @if (PREPARATION_STYLE_TYPE.FULL_IMMERSION == data.style_type) {
+          <h3>{{"PREPARATION_STYLE_FULL_IMMERSION" | translate}}</h3>
+        }
+        @if (PREPARATION_STYLE_TYPE.PERCOLATION == data.style_type) {
+          <h3>{{"PREPARATION_STYLE_PERCOLATION" | translate}}</h3>
+        }
       </ion-label>
     </ion-item>
     <ion-item [lines]="data.tools.length>0?'none':'full'">
       <ion-label>
         <h2>{{"PREPARATION_TOOLS" | translate}}:</h2>
-        <h3 *ngIf="data.tools.length<=0">-</h3>
+        @if (data.tools.length<=0) {
+          <h3>-</h3>
+        }
       </ion-label>
 
     </ion-item>
     <div class="ion-padding-horizontal">
-      <ion-chip *ngFor="let tool of data.tools;let i=index;">{{tool.name}}&nbsp;<ion-badge>{{getUsedTimes(tool)}}</ion-badge></ion-chip>
+      @for (tool of data.tools; track tool; let i = $index) {
+        <ion-chip>{{tool.name}}&nbsp;<ion-badge>{{getUsedTimes(tool)}}</ion-badge></ion-chip>
+      }
     </div>
     <ion-item  class="ion-margin-bottom">
       <ion-label>
         <h2>{{"NOTES" | translate}}:</h2>
         <pre>{{data.note}}</pre>
       </ion-label>
-  </ion-item>
+    </ion-item>
 
   </ion-card>
 
@@ -55,7 +67,7 @@
   <ion-row>
     <ion-col size="12">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

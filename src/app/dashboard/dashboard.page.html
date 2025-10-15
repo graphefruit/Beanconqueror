@@ -75,10 +75,9 @@
       </ion-row>
     </ion-grid>
 
-  <ion-list>
-    <ion-list-header>
-      <h4 class="ion-no-margin">{{"PAGE_HOME_LAST_BREWS" | translate}}</h4>
-    </ion-list-header>
+  <div class="ion-padding-horizontal ion-padding-top">
+    <h4 class="ion-no-margin">{{"PAGE_HOME_LAST_BREWS" | translate}}</h4>
+  </div>
     @if (brews?.length > 0) {
       @for(brew of brews; track brew.config.uuid) {
         <brew-information [layout]="'dashboard'" (brewAction)="brewAction($event[0],$event[1])"
@@ -95,7 +94,4 @@
       </div>
     }
 
-
-
-  </ion-list>
 </ion-content>

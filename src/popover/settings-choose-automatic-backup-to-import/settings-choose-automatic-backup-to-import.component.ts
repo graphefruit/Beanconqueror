@@ -10,6 +10,7 @@ import { UIHelper } from '../../services/uiHelper';
   selector: 'app-settings-choose-automatic-backup-to-import',
   templateUrl: './settings-choose-automatic-backup-to-import.component.html',
   styleUrls: ['./settings-choose-automatic-backup-to-import.component.scss'],
+  standalone: false,
 })
 export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   public static POPOVER_ID: string =

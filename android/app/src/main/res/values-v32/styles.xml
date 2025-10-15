@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+  <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar" />
+
   <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
     <!-- On API level 32 and up use the default splash screen background provided by the system -->
     <item name="android:windowSplashScreenBackground">@null</item>
