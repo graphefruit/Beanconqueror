@@ -678,9 +678,11 @@ export class AppComponent implements AfterViewInit {
     this.setUIParams();
 
     this.__registerBack();
+
     await this.__setDeviceLanguage();
 
     await this.uiAnalytics.initializeTracking();
+    await this.themeService.initialize();
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
@@ -714,7 +716,7 @@ export class AppComponent implements AfterViewInit {
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
-    await this.themeService.initialize();
+
     this.uiAnalytics.trackEvent(
       SettingsTracking.TITLE,
       SettingsTracking.ACTIONS.USED_LANGUAGE,
