@@ -1,5 +1,6 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 import { argv, env } from 'process';
+import { KeyboardResize } from '@capacitor/keyboard';
 
 type Platform = 'android' | 'ios';
 const PlatformOverrideEnvVariable = 'CAPACITOR_PLATFORM_OVERRIDE';
@@ -99,6 +100,10 @@ const createConfig = () => {
       // to the __baristaDB on Android when updating from Cordova builds
       config.server.hostname = 'beanconqueror.com';
       config.server.androidScheme = 'https';
+      config.plugins.Keyboard = {
+        resize: KeyboardResize.Native,
+        resizeOnFullScreen: true,
+      };
       break;
     case 'ios':
       // Using this hostname and scheme is required to retain access
