@@ -291,7 +291,7 @@ export class TimerComponent implements OnInit, OnDestroy {
           /** If <ion-input is the start, the click was somehow done by the button, else just the "input" is clicked...
            * Thats why we return here, and ignore the click.
            */
-          return;
+          //return;
         }
       }
     } catch (ex) {}
