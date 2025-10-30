@@ -56,7 +56,7 @@ export class BeanFreezeInformationComponent implements OnInit {
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
-        clearText: this.translate.instant('CLEAR'),
+        clearText: this.translate.instant('DELETE'),
         success: (newDate) => {
           let choosenDate;
           if (newDate === undefined) {
