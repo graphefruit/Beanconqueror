@@ -7,11 +7,12 @@ declare var Plotly;
   selector: 'app-roast-chart',
   templateUrl: './roast-chart.component.html',
   styleUrls: ['./roast-chart.component.scss'],
+  standalone: false,
 })
 export class RoastChartComponent implements OnChanges {
   @Input() roastData: RoastData;
 
-  constructor() { }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.roastData && this.roastData) {
@@ -23,18 +24,18 @@ export class RoastChartComponent implements OnChanges {
     const element = document.getElementById('roast-chart');
     const data = [
       {
-        x: this.roastData.timeSeries.map(d => d.time),
-        y: this.roastData.timeSeries.map(d => d.temp),
+        x: this.roastData.timeSeries.map((d) => d.time),
+        y: this.roastData.timeSeries.map((d) => d.temp),
         type: 'scatter',
-        name: 'Temperature'
+        name: 'Temperature',
       },
       {
-        x: this.roastData.timeSeries.map(d => d.time),
-        y: this.roastData.timeSeries.map(d => d.actual_fan_RPM),
+        x: this.roastData.timeSeries.map((d) => d.time),
+        y: this.roastData.timeSeries.map((d) => d.actual_fan_RPM),
         type: 'scatter',
         name: 'Fan Speed',
-        yaxis: 'y2'
-      }
+        yaxis: 'y2',
+      },
     ];
     const layout = {
       title: 'Roast Profile',
@@ -42,8 +43,8 @@ export class RoastChartComponent implements OnChanges {
       yaxis2: {
         title: 'Fan Speed',
         overlaying: 'y',
-        side: 'right'
-      }
+        side: 'right',
+      },
     };
     Plotly.newPlot(element, data, layout);
   }
