@@ -5,6 +5,8 @@ import { ModalController, Platform } from '@ionic/angular';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
+import { RoastingParserService } from 'src/app/shared/roasting-parser/roasting-parser.service';
+import { RoastData } from 'src/app/shared/roasting-parser/roasting-data.model';
 
 @Component({
   selector: 'bean-roast-information',
@@ -16,11 +18,13 @@ export class BeanRoastInformationComponent implements OnInit {
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public displayingTime: string = '';
+  public roastData: RoastData;
 
   constructor(
     private readonly platform: Platform,
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly roastingParserService: RoastingParserService,
   ) {}
 
   public ngOnInit() {
@@ -44,6 +48,20 @@ export class BeanRoastInformationComponent implements OnInit {
   }
   public bluetoothScaleSetRoastBeanWeight() {
     this.data.weight = this.bleManager.getScaleWeight();
+  }
+
+  public onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const fileContent = reader.result as string;
+        this.roastData =
+          this.roastingParserService.parseKaffelogic(fileContent);
+      };
+      reader.readAsText(file);
+    }
   }
 
   /**Somehow on devices an double/tripple click is triggered, and we can't fix this somehow, so we check if the popover is already shown and else ignore the triple tap**/

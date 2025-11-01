@@ -180,9 +180,11 @@ import { BaristamodePage } from '../baristamode/baristamode.page';
 import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { BaristaPage } from '../baristamode/barista/barista.page';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { RoastChartComponent } from 'src/components/charts/roast-chart/roast-chart.component';
 
 @NgModule({
   declarations: [
+    RoastChartComponent,
     SettingsPage,
     StatisticPage,
     HomePage,
@@ -553,6 +555,7 @@ import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/se
     WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
+    RoastChartComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
