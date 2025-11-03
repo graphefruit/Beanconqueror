@@ -6,6 +6,7 @@ import { ROASTING_MACHINE_TYPES } from 'src/enums/roasting-machine/roasting-mach
   selector: 'app-roasting-machine-add-type',
   templateUrl: './roasting-machine-add-type.component.html',
   styleUrls: ['./roasting-machine-add-type.component.scss'],
+  standalone: false,
 })
 export class RoastingMachineAddTypeComponent {
   public readonly ROASTING_MACHINE_TYPES = ROASTING_MACHINE_TYPES;

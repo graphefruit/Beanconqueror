@@ -47,7 +47,7 @@ export class RoastingMachineAddComponent implements OnInit {
   }
 
   public dismiss(): void {
-.    this.modalController.dismiss(
+    this.modalController.dismiss(
       {
         dismissed: true,
       },

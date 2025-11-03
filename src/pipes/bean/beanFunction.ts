@@ -4,6 +4,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { Bean } from '../../classes/bean/bean';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
+import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 
 @Pipe({
   name: 'beanFunctionPipe',
@@ -51,6 +53,18 @@ export class BeanFunction implements PipeTransform {
           return false;
         case BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN:
           return value.isUnfrozen();
+        case BEAN_FUNCTION_PIPE_ENUM.GET_USED_ROASTING_MACHINE:
+          const roastingMachineStorage: UIRoastingMachineStorage =
+            UIRoastingMachineStorage.getInstance();
+          const machines = roastingMachineStorage.getAllEntries();
+          const foundMachine: RoastingMachine = machines.find(
+            (m) =>
+              m.config.uuid === value.bean_roast_information.roaster_machine,
+          );
+          if (foundMachine) {
+            return foundMachine.type;
+          }
+          return null;
       }
     } catch (ex) {}
   }

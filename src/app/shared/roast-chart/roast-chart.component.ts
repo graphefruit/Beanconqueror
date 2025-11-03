@@ -12,6 +12,7 @@ declare const Plotly: any;
 @Component({
   selector: 'app-roast-chart',
   template: `<div #chart></div>`,
+  standalone: false,
 })
 export class RoastChartComponent implements OnChanges {
   @Input() roastData: RoastData;

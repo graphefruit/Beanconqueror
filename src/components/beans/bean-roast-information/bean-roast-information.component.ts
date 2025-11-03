@@ -18,6 +18,7 @@ import { RoastData } from 'src/app/shared/roasting-parser/roasting-data.model';
 import { RoastingMachine } from 'src/classes/roasting-machine/roasting-machine';
 import { UIRoastingMachineStorage } from 'src/services/uiRoastingMachineStorage';
 import { ROASTING_MACHINE_TYPES } from 'src/enums/roasting-machine/roasting-machine-types';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 
 @Component({
   selector: 'bean-roast-information',
@@ -25,7 +26,7 @@ import { ROASTING_MACHINE_TYPES } from 'src/enums/roasting-machine/roasting-mach
   styleUrls: ['./bean-roast-information.component.scss'],
   standalone: false,
 })
-export class BeanRoastInformationComponent implements OnInit, OnChanges {
+export class BeanRoastInformationComponent implements OnInit {
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public displayingTime: string = '';
@@ -46,34 +47,8 @@ export class BeanRoastInformationComponent implements OnInit, OnChanges {
       .startOf('day')
       .add('seconds', this.data.bean_roast_information.roast_length)
       .toISOString();
-
-    if (this.data.bean_roast_information.roaster_machine) {
-      const machines = this.uiRoastingMachineStorage.getAllEntries();
-      this.selectedRoastingMachine = machines.find(
-        (m) =>
-          m.config.uuid === this.data.bean_roast_information.roaster_machine,
-      );
-    }
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes.data &&
-      changes.data.currentValue.bean_roast_information.roaster_machine !==
-        changes.data.previousValue.bean_roast_information.roaster_machine
-    ) {
-      const machines = this.uiRoastingMachineStorage.getAllEntries();
-      this.selectedRoastingMachine = machines.find(
-        (m) =>
-          m.config.uuid === this.data.bean_roast_information.roaster_machine,
-      );
-      if (
-        this.selectedRoastingMachine?.type !== ROASTING_MACHINE_TYPES.KAFFELOGIC
-      ) {
-        this.roastData = null;
-      }
-    }
-  }
   public smartScaleConnected() {
     if (!this.platform.is('capacitor')) {
       return true;
@@ -143,4 +118,6 @@ export class BeanRoastInformationComponent implements OnInit, OnChanges {
         .asSeconds();
     }
   }
+
+  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 }
