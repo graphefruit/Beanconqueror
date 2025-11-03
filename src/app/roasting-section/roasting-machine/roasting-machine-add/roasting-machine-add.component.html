@@ -1,6 +1,22 @@
-<ion-header translucent>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{'ROASTING_SECTION.ROASTING_MACHINE.ADD_TITLE' | translate}}
+    </ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-item>
+    <ion-select label='{{"ROASTING_SECTION.ROASTING_MACHINE.TYPE" | translate}}' [(ngModel)]="data.type">
+      <ion-select-option [value]="ROASTING_MACHINE_TYPES.CUSTOM">{{'ROASTING_SECTION.ROASTING_MACHINE.TYPES.CUSTOM' | translate}}</ion-select-option>
+      <ion-select-option [value]="ROASTING_MACHINE_TYPES.KAFFELOGIC">{{'ROASTING_SECTION.ROASTING_MACHINE.TYPES.KAFFELOGIC' | translate}}</ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-item class="ion-margin-top">
     <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
                placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"

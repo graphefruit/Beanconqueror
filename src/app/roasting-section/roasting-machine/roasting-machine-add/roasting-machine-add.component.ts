@@ -5,6 +5,7 @@ import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachine
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { ROASTING_MACHINE_TYPES } from 'src/enums/roasting-machine/roasting-machine-types';
 
 @Component({
   selector: 'app-roasting-machine-add',
@@ -15,6 +16,7 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
 export class RoastingMachineAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-add';
   public data: RoastingMachine = new RoastingMachine();
+  public ROASTING_MACHINE_TYPES = ROASTING_MACHINE_TYPES;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
@@ -45,7 +47,7 @@ export class RoastingMachineAddComponent implements OnInit {
   }
 
   public dismiss(): void {
-    this.modalController.dismiss(
+.    this.modalController.dismiss(
       {
         dismissed: true,
       },
@@ -53,5 +55,7 @@ export class RoastingMachineAddComponent implements OnInit {
       RoastingMachineAddComponent.COMPONENT_ID,
     );
   }
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.data.type = ROASTING_MACHINE_TYPES.CUSTOM;
+  }
 }

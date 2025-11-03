@@ -36,7 +36,7 @@ export class UIRoastingMachineStorage extends StorageClass {
     protected uiStorage: UIStorage,
     protected uiHelper: UIHelper,
     protected uiLog: UILog,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {
     super(uiStorage, uiHelper, uiLog, 'ROASTING_MACHINES');
     if (UIRoastingMachineStorage.instance === undefined) {

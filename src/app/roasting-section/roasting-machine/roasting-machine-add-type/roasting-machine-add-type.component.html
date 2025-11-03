@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{'ROASTING_SECTION.ROASTING_MACHINE.ADD_TYPE_TITLE' | translate}}
+    </ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="modalCtrl.dismiss()">
+        <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item (click)="chooseType(ROASTING_MACHINE_TYPES.CUSTOM)" button>
+      <ion-label>
+        {{'ROASTING_SECTION.ROASTING_MACHINE.TYPES.CUSTOM' | translate}}
+      </ion-label>
+    </ion-item>
+    <ion-item (click)="chooseType(ROASTING_MACHINE_TYPES.KAFFELOGIC)" button>
+      <ion-label>
+        {{'ROASTING_SECTION.ROASTING_MACHINE.TYPES.KAFFELOGIC' | translate}}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

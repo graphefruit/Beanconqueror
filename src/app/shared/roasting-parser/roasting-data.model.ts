@@ -4,6 +4,10 @@ export interface RoastData {
 }
 
 export interface RoastMetadata {
+  [key: string]: any;
+}
+
+export interface KaffelogicMetadata extends RoastMetadata {
   log_file_name: string;
   profile_file_name: string;
   profile_short_name: string;

@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
 import { ModalController, Platform } from '@ionic/angular';
@@ -7,6 +15,9 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
 import { BluetoothScale } from '../../../classes/devices';
 import { RoastingParserService } from 'src/app/shared/roasting-parser/roasting-parser.service';
 import { RoastData } from 'src/app/shared/roasting-parser/roasting-data.model';
+import { RoastingMachine } from 'src/classes/roasting-machine/roasting-machine';
+import { UIRoastingMachineStorage } from 'src/services/uiRoastingMachineStorage';
+import { ROASTING_MACHINE_TYPES } from 'src/enums/roasting-machine/roasting-machine-types';
 
 @Component({
   selector: 'bean-roast-information',
@@ -14,24 +25,54 @@ import { RoastData } from 'src/app/shared/roasting-parser/roasting-data.model';
   styleUrls: ['./bean-roast-information.component.scss'],
   standalone: false,
 })
-export class BeanRoastInformationComponent implements OnInit {
+export class BeanRoastInformationComponent implements OnInit, OnChanges {
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public displayingTime: string = '';
   public roastData: RoastData;
+  public selectedRoastingMachine: RoastingMachine;
+  public ROASTING_MACHINE_TYPES = ROASTING_MACHINE_TYPES;
 
   constructor(
     private readonly platform: Platform,
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly roastingParserService: RoastingParserService,
+    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
   ) {}
 
-  public ngOnInit() {
+  async ngOnInit() {
     this.displayingTime = moment()
       .startOf('day')
       .add('seconds', this.data.bean_roast_information.roast_length)
       .toISOString();
+
+    if (this.data.bean_roast_information.roaster_machine) {
+      const machines = this.uiRoastingMachineStorage.getAllEntries();
+      this.selectedRoastingMachine = machines.find(
+        (m) =>
+          m.config.uuid === this.data.bean_roast_information.roaster_machine,
+      );
+    }
+  }
+
+  async ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes.data &&
+      changes.data.currentValue.bean_roast_information.roaster_machine !==
+        changes.data.previousValue.bean_roast_information.roaster_machine
+    ) {
+      const machines = this.uiRoastingMachineStorage.getAllEntries();
+      this.selectedRoastingMachine = machines.find(
+        (m) =>
+          m.config.uuid === this.data.bean_roast_information.roaster_machine,
+      );
+      if (
+        this.selectedRoastingMachine?.type !== ROASTING_MACHINE_TYPES.KAFFELOGIC
+      ) {
+        this.roastData = null;
+      }
+    }
   }
   public smartScaleConnected() {
     if (!this.platform.is('capacitor')) {

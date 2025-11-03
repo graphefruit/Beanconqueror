@@ -82,7 +82,7 @@
       type="text">
     </ion-input>
   </ion-item>
-  <ion-item>
+  <ion-item *ngIf="selectedRoastingMachine?.type === ROASTING_MACHINE_TYPES.KAFFELOGIC">
     <input type="file" (change)="onFileSelected($event)" accept=".klog" #fileInput style="display: none;" />
     <ion-button (click)="fileInput.click()">Upload Roast Log</ion-button>
   </ion-item>
