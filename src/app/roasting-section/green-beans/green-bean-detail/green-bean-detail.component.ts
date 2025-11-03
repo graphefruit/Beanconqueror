@@ -8,6 +8,7 @@ import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { Settings } from '../../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { RoastingFlow } from 'src/classes/roasting/roastingFlow';
 
 @Component({
   selector: 'app-green-bean-detail',
@@ -24,6 +25,7 @@ export class GreenBeanDetailComponent {
   public bean_segment = 'general';
 
   public linkedRoasts: Array<Bean> = [];
+  public roastingFlow: RoastingFlow = new RoastingFlow();
 
   public settings: Settings;
 
