@@ -7,6 +7,13 @@
                autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
+  <ion-item>
+      <ion-select label-placement="stacked" label='{{"ROASTING_MACHINE.ROASTER_MACHINE_TYPE" | translate}}*' #name="ngModel" [(ngModel)]="data.type" cancelText="{{'CANCEL'| translate }}"
+        name="style_type" okText="{{'CHOOSE'| translate }}">
+        <ion-select-option value="{{ROASTER_MACHINE_TYPE.CUSTOM}}">{{"ROASTING_MACHINE.ROASTER_MACHINE_TYPE_CUSTOM" | translate}}</ion-select-option>
+        <ion-select-option value="{{ROASTER_MACHINE_TYPE.KAFFELOGIC}}">{{"ROASTING_MACHINE.ROASTER_MACHINE_TYPE_KAFFELOGIC" | translate}}</ion-select-option>
+      </ion-select>
+    </ion-item>
   <ion-row class="ion-margin-top">
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"

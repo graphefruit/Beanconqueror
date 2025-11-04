@@ -19,8 +19,10 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { Brew } from '../brew/brew';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
+import { RoastingProfile } from '../roasting-profile/roasting-profile';
 
 export class Bean implements IBean {
+  public roastingProfile: RoastingProfile;
   public name: string;
   public buyDate: string;
   public roastingDate: string;
@@ -138,6 +140,7 @@ export class Bean implements IBean {
     this.openDate = '';
 
     this.co2e_kg = 0;
+    this.roastingProfile = new RoastingProfile();
   }
 
   public getRoastName(): string {

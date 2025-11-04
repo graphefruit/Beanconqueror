@@ -5,6 +5,7 @@ import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachine
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import {ROASTER_MACHINE_TYPE} from '../../../../enums/roasting-machine/roasterMachineTypes';
 
 @Component({
   selector: 'app-roasting-machine-add',
@@ -15,6 +16,7 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
 export class RoastingMachineAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-add';
   public data: RoastingMachine = new RoastingMachine();
+  ROASTER_MACHINE_TYPE = ROASTER_MACHINE_TYPE;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,

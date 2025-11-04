@@ -1,10 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
 import { ModalController, Platform } from '@ionic/angular';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
+import { RoastingParserService } from '../../../services/roastingParserService';
+import { UIRoastingMachineStorage } from '../../../services/uiRoastingMachineStorage';
+import { RoastingGraphHelperService } from '../../../services/roastingGraphHelper';
+
+declare var Plotly;
 
 @Component({
   selector: 'bean-roast-information',
@@ -15,12 +20,16 @@ import { BluetoothScale } from '../../../classes/devices';
 export class BeanRoastInformationComponent implements OnInit {
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
+  @ViewChild('roastChart', { static: false }) private roastChart: ElementRef;
   public displayingTime: string = '';
 
   constructor(
     private readonly platform: Platform,
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly roastingParserService: RoastingParserService,
+    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
+    private readonly roastingGraphHelperService: RoastingGraphHelperService,
   ) {}
 
   public ngOnInit() {
@@ -28,6 +37,7 @@ export class BeanRoastInformationComponent implements OnInit {
       .startOf('day')
       .add('seconds', this.data.bean_roast_information.roast_length)
       .toISOString();
+    this.renderChart();
   }
   public smartScaleConnected() {
     if (!this.platform.is('capacitor')) {
@@ -82,6 +92,35 @@ export class BeanRoastInformationComponent implements OnInit {
           ),
         )
         .asSeconds();
+    }
+  }
+
+  public async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const fileContent = await file.text();
+      const roasterMachine = this.uiRoastingMachineStorage.getEntryByUUID(this.data.bean_roast_information.roaster_machine);
+      if (roasterMachine) {
+        switch (roasterMachine.type) {
+          case 'KAFFELOGIC':
+            this.data.roastingProfile = this.roastingParserService.parseKaffelogic(fileContent);
+            this.renderChart();
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }
+
+  private renderChart(): void {
+    if (this.data.roastingProfile && this.data.roastingProfile.time.length > 0) {
+      const traces = this.roastingGraphHelperService.initializeTraces();
+      this.roastingGraphHelperService.fillTraces(traces);
+      this.roastingGraphHelperService.fillDataIntoTraces(this.data.roastingProfile, traces);
+      const layout = this.roastingGraphHelperService.getChartLayout();
+      Plotly.newPlot(this.roastChart.nativeElement, [traces.temperatureTrace, traces.powerTrace, traces.fanTrace], layout);
     }
   }
 }

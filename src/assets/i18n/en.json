@@ -602,6 +602,18 @@
         "PLACE_HOLDER": {
             "NAME": "Add a name",
             "NOTES": "Add notes for this roaster"
+        },
+        "ROASTER_MACHINE_TYPE": "Roaster machine type",
+        "ROASTER_MACHINE_TYPE_CUSTOM": "Custom",
+        "ROASTER_MACHINE_TYPE_KAFFELOGIC": "Kaffelogic"
+    },
+    "ROASTING_SECTION": {
+        "BEAN": {
+            "ROAST_PROFILE": "Roast Profile",
+            "TIME": "Time",
+            "TEMPERATURE": "Temperature",
+            "POWER": "Power",
+            "FAN": "Fan"
         }
     },
     "NAV_ROASTING_MACHINE": "Roasting Machines",

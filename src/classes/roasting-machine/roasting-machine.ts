@@ -3,6 +3,7 @@
 /** Classes */
 import {Config} from '../objectConfig/objectConfig';
 import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
+import {ROASTER_MACHINE_TYPE} from '../../enums/roasting-machine/roasterMachineTypes';
 
 export class RoastingMachine implements IRoastingMachine {
   public name: string;
@@ -10,6 +11,7 @@ export class RoastingMachine implements IRoastingMachine {
   public config: Config;
   public finished: boolean;
   public attachments: Array<string>;
+  public type: ROASTER_MACHINE_TYPE;
 
 
   constructor() {
@@ -18,6 +20,7 @@ export class RoastingMachine implements IRoastingMachine {
     this.config = new Config();
     this.attachments = [];
     this.finished = false;
+    this.type = ROASTER_MACHINE_TYPE.CUSTOM;
   }
   public initializeByObject(roastingMachineObj: IRoastingMachine): void {
     Object.assign(this, roastingMachineObj);
