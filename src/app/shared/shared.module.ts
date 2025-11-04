@@ -181,11 +181,11 @@ import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-ac
 import { BaristaPage } from '../baristamode/barista/barista.page';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { RoastingMachineAddTypeComponent } from '../roasting-section/roasting-machine/roasting-machine-add-type/roasting-machine-add-type.component';
-import { RoastChartComponent } from './roast-chart/roast-chart.component';
+import { RoastingGraphComponent } from 'src/components/roasting-graph/roasting-graph.component';
 
 @NgModule({
   declarations: [
-    RoastChartComponent,
+    RoastingGraphComponent,
     RoastingMachineAddTypeComponent,
     SettingsPage,
     StatisticPage,
@@ -259,14 +259,14 @@ import { RoastChartComponent } from './roast-chart/roast-chart.component';
     ListViewParameterComponent,
     PreparationCustomParametersComponent,
     PreparationConnectedDeviceComponent,
-    MillPage,
-    MillEditComponent,
-    MillDetailComponent,
-    PreparationDetailComponent,
     BrewFilterComponent,
     BeanFilterComponent,
     BeanSortComponent,
     BrewSortComponent,
+    MillPage,
+    MillEditComponent,
+    MillDetailComponent,
+    PreparationDetailComponent,
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
@@ -359,7 +359,6 @@ import { RoastChartComponent } from './roast-chart/roast-chart.component';
     WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
-    RoastChartComponent,
   ],
   imports: [
     CommonModule,
@@ -390,6 +389,7 @@ import { RoastChartComponent } from './roast-chart/roast-chart.component';
     AndroidPermissions,
   ],
   exports: [
+    RoastingGraphComponent,
     SettingsPage,
     StatisticPage,
     HomePage,

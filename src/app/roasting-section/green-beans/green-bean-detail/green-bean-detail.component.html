@@ -23,6 +23,10 @@
       <ion-label>{{"BEAN_TAB_LINKED_ROASTS" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="graph">
+      <ion-label>{{"ROASTING_GRAPH.TITLE" | translate }}
+      </ion-label>
+    </ion-segment-button>
   </ion-segment>
   <div>
     @switch (bean_segment) {
@@ -130,6 +134,9 @@
             </div>
           }
         </div>
+      }
+      @case ('graph') {
+        <app-roasting-graph [flow]="roastingFlow" [isDetail]="true"></app-roasting-graph>
       }
     }
   </div>
