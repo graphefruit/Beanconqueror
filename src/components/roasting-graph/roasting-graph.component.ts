@@ -1,13 +1,22 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { RoastingFlow } from 'src/classes/roasting/roastingFlow';
 import { RoastingGraphHelperService } from 'src/services/roastingGraphHelper/roasting-graph-helper.service';
 
 declare var Plotly;
 
 @Component({
-  selector: 'app-roasting-graph',
+  selector: 'roasting-graph',
   templateUrl: './roasting-graph.component.html',
   styleUrls: ['./roasting-graph.component.scss'],
+  standalone: false,
 })
 export class RoastingGraphComponent implements OnInit, OnChanges {
   @ViewChild('profileDiv', { static: true })
@@ -25,7 +34,7 @@ export class RoastingGraphComponent implements OnInit, OnChanges {
   private chartData = [];
   private lastChartLayout: any;
 
-  constructor(private readonly graphHelper: RoastingGraphHelperService) { }
+  constructor(private readonly graphHelper: RoastingGraphHelperService) {}
 
   ngOnInit() {
     this.initializeFlowChart();
@@ -40,7 +49,7 @@ export class RoastingGraphComponent implements OnInit, OnChanges {
   private initializeFlowChart(): void {
     try {
       Plotly.purge(this.profileDiv.nativeElement);
-    } catch (ex) { }
+    } catch (ex) {}
 
     this.traces = this.graphHelper.initializeTraces();
     this.traces = this.graphHelper.fillTraces(this.traces, null, this.isDetail);
@@ -50,7 +59,12 @@ export class RoastingGraphComponent implements OnInit, OnChanges {
     this.chartData.push(this.traces.fanTrace);
     this.chartData.push(this.traces.heatTrace);
 
-    this.lastChartLayout = this.graphHelper.getChartLayout(this.traces, this.isDetail, this.canvaContainer.nativeElement.offsetWidth, 150);
+    this.lastChartLayout = this.graphHelper.getChartLayout(
+      this.traces,
+      this.isDetail,
+      this.canvaContainer.nativeElement.offsetWidth,
+      150,
+    );
 
     Plotly.newPlot(
       this.profileDiv.nativeElement,
@@ -64,5 +78,4 @@ export class RoastingGraphComponent implements OnInit, OnChanges {
     this.traces = this.graphHelper.fillDataIntoTraces(this.flow, this.traces);
     Plotly.redraw(this.profileDiv.nativeElement);
   }
-
 }
