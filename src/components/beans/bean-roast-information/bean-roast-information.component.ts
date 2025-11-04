@@ -14,7 +14,7 @@ import { DatetimePopoverComponent } from '../../../popover/datetime-popover/date
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
 import { RoastingParserService } from 'src/app/shared/roasting-parser/roasting-parser.service';
-import { RoastData } from 'src/app/shared/roasting-parser/roasting-data.model';
+import { RoastingProfile } from 'src/classes/roasting/roasting';
 import { RoastingMachine } from 'src/classes/roasting-machine/roasting-machine';
 import { UIRoastingMachineStorage } from 'src/services/uiRoastingMachineStorage';
 import { ROASTING_MACHINE_TYPES } from 'src/enums/roasting-machine/roasting-machine-types';
@@ -30,7 +30,7 @@ export class BeanRoastInformationComponent implements OnInit {
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public displayingTime: string = '';
-  public roastData: RoastData;
+  public roastData: RoastingProfile;
   public selectedRoastingMachine: RoastingMachine;
   public ROASTING_MACHINE_TYPES = ROASTING_MACHINE_TYPES;
 

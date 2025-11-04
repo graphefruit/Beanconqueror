@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
-  RoastData,
-  KaffelogicMetadata,
-  TimePoint,
-} from './roasting-data.model';
+  RoastingProfile,
+  RoastingProfileData,
+} from '../../../classes/roasting/roasting';
+import { KaffelogicMetadata, TimePoint } from './roasting-data.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ import {
 export class RoastingParserService {
   constructor() {}
 
-  parseKaffelogic(logContent: string): RoastData {
+  parseKaffelogic(logContent: string): RoastingProfile {
     const lines = logContent.split('\n');
     const metadata = {} as KaffelogicMetadata;
     const timeSeries: TimePoint[] = [];
@@ -54,7 +54,16 @@ export class RoastingParserService {
       }
     }
 
-    return { metadata, timeSeries };
+    const roastProfile = new RoastingProfile();
+    roastProfile.data = timeSeries.map((timePoint) => {
+      const profileData = new RoastingProfileData();
+      profileData.time = timePoint.time;
+      profileData.temperature = timePoint.temp;
+      profileData.rate_of_rise = timePoint.actual_ROR;
+      return profileData;
+    });
+
+    return roastProfile;
   }
 
   private parseValue(value: string): any {

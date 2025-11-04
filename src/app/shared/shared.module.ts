@@ -182,9 +182,11 @@ import { BaristaPage } from '../baristamode/barista/barista.page';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { RoastingMachineAddTypeComponent } from '../roasting-section/roasting-machine/roasting-machine-add-type/roasting-machine-add-type.component';
 import { RoastChartComponent } from './roast-chart/roast-chart.component';
+import { RoastingGraphComponent } from '../components/roasting/roasting-graph.component';
 
 @NgModule({
   declarations: [
+    RoastingGraphComponent,
     RoastChartComponent,
     RoastingMachineAddTypeComponent,
     SettingsPage,
@@ -558,6 +560,7 @@ import { RoastChartComponent } from './roast-chart/roast-chart.component';
     WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
+    RoastingGraphComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

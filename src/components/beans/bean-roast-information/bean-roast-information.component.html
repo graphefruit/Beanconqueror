@@ -87,7 +87,7 @@
       <input type="file" (change)="onFileSelected($event)" accept=".klog" #fileInput style="display: none;" />
       <ion-button (click)="fileInput.click()">Upload Roast Log</ion-button>
     </ion-item>
-    <app-roast-chart [roastData]="roastData" *ngIf="roastData"></app-roast-chart>
+    <app-roasting-graph [roastData]="roastData" *ngIf="roastData"></app-roasting-graph>
   }
 
 </ion-card>

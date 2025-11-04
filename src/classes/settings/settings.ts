@@ -17,6 +17,7 @@ import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
+import { IRoastingGraphs } from '../../interfaces/roasting/iRoastingGraphs';
 
 import { BeanManageParameter } from '../parameter/beanManageParameter';
 import {
@@ -136,6 +137,7 @@ export class Settings implements ISettings {
   public graph: {
     ESPRESSO: IBrewGraphs;
     FILTER: IBrewGraphs;
+    ROASTING: IRoastingGraphs;
   };
 
   public graph_time: {
@@ -313,6 +315,13 @@ export class Settings implements ISettings {
     } as IBrewGraphs;
   }
 
+  public GET_ROASTING_GRAPHS(): IRoastingGraphs {
+    return {
+      show_temperature: true,
+      show_rate_of_rise: true,
+    } as IRoastingGraphs;
+  }
+
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
@@ -415,10 +424,12 @@ export class Settings implements ISettings {
     this.graph = {
       ESPRESSO: {} as IBrewGraphs,
       FILTER: {} as IBrewGraphs,
+      ROASTING: {} as IRoastingGraphs,
     };
 
     this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
     this.graph.FILTER = this.GET_BREW_GRAPHS();
+    this.graph.ROASTING = this.GET_ROASTING_GRAPHS();
     this.graph.FILTER.realtime_flow = false;
     this.graph_time = {
       ESPRESSO: {
