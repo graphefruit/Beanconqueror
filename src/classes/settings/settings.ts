@@ -17,7 +17,7 @@ import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
-import { IRoastingGraphs } from '../../interfaces/roasting/iRoastingGraphs';
+import { IRoastingGraphs } from 'src/interfaces/roasting/iRoastingGraphs';
 
 import { BeanManageParameter } from '../parameter/beanManageParameter';
 import {

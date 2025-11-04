@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   RoastingProfile,
   RoastingProfileData,
-} from '../../../classes/roasting/roasting';
+} from 'src/classes/roasting/roasting';
 import { KaffelogicMetadata, TimePoint } from './roasting-data.model';
 
 @Injectable({
