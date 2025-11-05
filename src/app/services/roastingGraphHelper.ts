@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { RoastingProfile } from '../../classes/roasting-profile/roasting-profile';
-import { ThemeService } from '../theme/theme.service';
+import { ThemeService } from '../../services/theme/theme.service';
 
 @Injectable({
   providedIn: 'root',
@@ -61,20 +61,20 @@ export class RoastingGraphHelperService {
     };
 
     traces.fanTrace = {
-        x: [],
-        y: [],
-        name: this.translate.instant('ROASTING_SECTION.BEAN.FAN'),
-        yaxis: 'y3',
-        type: 'scatter',
-        mode: 'lines',
-        line: {
-          shape: 'linear',
-          color: '#56B4E9',
-          width: 2,
-        },
-        hoverinfo: 'all',
-        showlegend: false,
-      };
+      x: [],
+      y: [],
+      name: this.translate.instant('ROASTING_SECTION.BEAN.FAN'),
+      yaxis: 'y3',
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        shape: 'linear',
+        color: '#56B4E9',
+        width: 2,
+      },
+      hoverinfo: 'all',
+      showlegend: false,
+    };
 
     return traces;
   }
@@ -106,12 +106,12 @@ export class RoastingGraphHelperService {
         overlaying: 'y',
         side: 'right',
       },
-        yaxis3: {
+      yaxis3: {
         title: this.translate.instant('ROASTING_SECTION.BEAN.FAN'),
         overlaying: 'y',
         side: 'right',
         position: 1,
-        },
+      },
     };
     return layout;
   }

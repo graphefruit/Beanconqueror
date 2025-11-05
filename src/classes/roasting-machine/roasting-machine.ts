@@ -1,9 +1,9 @@
 /** Interfaces */
 
 /** Classes */
-import {Config} from '../objectConfig/objectConfig';
-import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
-import {ROASTER_MACHINE_TYPE} from '../../enums/roasting-machine/roasterMachineTypes';
+import { Config } from '../objectConfig/objectConfig';
+import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
+import { ROASTER_MACHINE_TYPE } from '../../app/enums/roasting-machine/roasterMachineTypes';
 
 export class RoastingMachine implements IRoastingMachine {
   public name: string;
@@ -12,7 +12,6 @@ export class RoastingMachine implements IRoastingMachine {
   public finished: boolean;
   public attachments: Array<string>;
   public type: ROASTER_MACHINE_TYPE;
-
 
   constructor() {
     this.name = '';
@@ -25,9 +24,4 @@ export class RoastingMachine implements IRoastingMachine {
   public initializeByObject(roastingMachineObj: IRoastingMachine): void {
     Object.assign(this, roastingMachineObj);
   }
-
-
-
-
-
 }

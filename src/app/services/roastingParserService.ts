@@ -9,7 +9,7 @@ export class RoastingParserService {
 
   public parseKaffelogic(data: string): RoastingProfile {
     const profile = new RoastingProfile();
-    const lines = data.split('\\n');
+    const lines = data.split('\n');
     let dataStartIndex = 0;
 
     for (let i = 0; i < lines.length; i++) {
@@ -20,7 +20,7 @@ export class RoastingParserService {
     }
 
     for (let i = dataStartIndex; i < lines.length; i++) {
-      const columns = lines[i].trim().split(/\\s+/);
+      const columns = lines[i].trim().split(/\s+/);
       if (columns.length >= 2) {
         profile.time.push(parseFloat(columns[0]));
         profile.temperature.push(parseFloat(columns[1]));

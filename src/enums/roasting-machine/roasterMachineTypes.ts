@@ -1,4 +1,0 @@
-export enum ROASTER_MACHINE_TYPE {
-    CUSTOM = 'CUSTOM',
-    KAFFELOGIC = 'KAFFELOGIC',
-  }

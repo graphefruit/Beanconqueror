@@ -5,7 +5,7 @@ import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachine
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
-import {ROASTER_MACHINE_TYPE} from '../../../../enums/roasting-machine/roasterMachineTypes';
+import { ROASTER_MACHINE_TYPE } from '../../../enums/roasting-machine/roasterMachineTypes';
 
 @Component({
   selector: 'app-roasting-machine-add',

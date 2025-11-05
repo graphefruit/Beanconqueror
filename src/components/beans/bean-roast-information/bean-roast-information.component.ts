@@ -1,13 +1,21 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
 import { ModalController, Platform } from '@ionic/angular';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
-import { RoastingParserService } from '../../../services/roastingParserService';
+import { RoastingParserService } from '../../../app/services/roastingParserService';
 import { UIRoastingMachineStorage } from '../../../services/uiRoastingMachineStorage';
-import { RoastingGraphHelperService } from '../../../services/roastingGraphHelper';
+import { RoastingGraphHelperService } from '../../../app/services/roastingGraphHelper';
 
 declare var Plotly;
 
@@ -100,11 +108,14 @@ export class BeanRoastInformationComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       const fileContent = await file.text();
-      const roasterMachine = this.uiRoastingMachineStorage.getEntryByUUID(this.data.bean_roast_information.roaster_machine);
+      const roasterMachine = this.uiRoastingMachineStorage.getByUUID(
+        this.data.bean_roast_information.roaster_machine,
+      );
       if (roasterMachine) {
         switch (roasterMachine.type) {
           case 'KAFFELOGIC':
-            this.data.roastingProfile = this.roastingParserService.parseKaffelogic(fileContent);
+            this.data.roastingProfile =
+              this.roastingParserService.parseKaffelogic(fileContent);
             this.renderChart();
             break;
           default:
@@ -115,12 +126,22 @@ export class BeanRoastInformationComponent implements OnInit {
   }
 
   private renderChart(): void {
-    if (this.data.roastingProfile && this.data.roastingProfile.time.length > 0) {
+    if (
+      this.data.roastingProfile &&
+      this.data.roastingProfile.time.length > 0
+    ) {
       const traces = this.roastingGraphHelperService.initializeTraces();
       this.roastingGraphHelperService.fillTraces(traces);
-      this.roastingGraphHelperService.fillDataIntoTraces(this.data.roastingProfile, traces);
+      this.roastingGraphHelperService.fillDataIntoTraces(
+        this.data.roastingProfile,
+        traces,
+      );
       const layout = this.roastingGraphHelperService.getChartLayout();
-      Plotly.newPlot(this.roastChart.nativeElement, [traces.temperatureTrace, traces.powerTrace, traces.fanTrace], layout);
+      Plotly.newPlot(
+        this.roastChart.nativeElement,
+        [traces.temperatureTrace, traces.powerTrace, traces.fanTrace],
+        layout,
+      );
     }
   }
 }
