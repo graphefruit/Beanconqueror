@@ -92,8 +92,26 @@ export class RoastingGraphHelperService {
     }
   }
 
-  public getChartLayout() {
+  public getChartLayout(
+    _chartWidth: number = undefined,
+    _chartHeight: number = undefined,
+  ) {
+    let chartWidth: number = 300;
+    try {
+      if (_chartWidth) {
+        chartWidth = _chartWidth;
+      }
+    } catch (ex) {}
+    let chartHeight: number = 500;
+    try {
+      if (_chartHeight) {
+        chartHeight = _chartHeight;
+      }
+    } catch (ex) {}
+
     const layout = {
+      width: chartWidth,
+      height: chartHeight,
       showlegend: false,
       xaxis: {
         title: this.translate.instant('ROASTING_SECTION.BEAN.TIME'),
@@ -114,5 +132,13 @@ export class RoastingGraphHelperService {
       },
     };
     return layout;
+  }
+  public getChartConfig() {
+    const config = {
+      responsive: false,
+      scrollZoom: false,
+      displayModeBar: false, // this is the line that hides the bar.
+    };
+    return config;
   }
 }

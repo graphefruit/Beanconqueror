@@ -83,9 +83,8 @@
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>{{"ROASTING_SECTION.BEAN.ROAST_PROFILE" | translate}}</ion-label>
-    <input type="file" (change)="onFileSelected($event)" #fileUpload>
-    <ion-button (click)="fileUpload.click()">Upload</ion-button>
+    <input type="file" (change)="onFileSelected($event)" accept=".klog" #fileInput style="display: none;" />
+    <ion-button (click)="fileInput.click()">Upload Roast Log</ion-button>
   </ion-item>
   <div #roastChart></div>
 </ion-card>
