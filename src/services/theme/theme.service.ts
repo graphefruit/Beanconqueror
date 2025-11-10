@@ -6,6 +6,8 @@ import { Capacitor } from '@capacitor/core';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { NavigationBar } from '@capgo/capacitor-navigation-bar';
+import { Keyboard, KeyboardStyle } from '@capacitor/keyboard';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -72,6 +74,7 @@ export class ThemeService {
 
   private toggleDarkPalette(shouldAdd: boolean) {
     if (Capacitor.getPlatform() !== 'web') {
+      const isIOS = Capacitor.getPlatform() == 'ios';
       if (shouldAdd) {
         StatusBar.setStyle({ style: Style.Dark });
         StatusBar.setBackgroundColor({ color: '#121212' });
@@ -79,6 +82,9 @@ export class ThemeService {
           color: '#121212',
           darkButtons: false,
         });
+        if (isIOS) {
+          Keyboard.setStyle({ style: KeyboardStyle.Dark });
+        }
       } else {
         StatusBar.setStyle({ style: Style.Light });
         StatusBar.setBackgroundColor({ color: '#F0F0F0' });
@@ -86,6 +92,9 @@ export class ThemeService {
           color: '#F0F0F0',
           darkButtons: true,
         });
+        if (isIOS) {
+          Keyboard.setStyle({ style: KeyboardStyle.Light });
+        }
       }
     }
     this._darkMode = shouldAdd;
