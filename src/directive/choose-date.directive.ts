@@ -41,7 +41,7 @@ export class ChooseDateOverlayDirective {
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
-        clearText: this.translate.instant('CLEAR'),
+        clearText: this.translate.instant('DELETE'),
         success: (newDate) => {
           if (newDate === undefined) {
             this.data = '';
