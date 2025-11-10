@@ -71,7 +71,7 @@ const createConfig = () => {
     },
     android: {
       allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
-      adjustMarginsForEdgeToEdge: 'auto', // Needed to fix safe area / edge to edge
+      adjustMarginsForEdgeToEdge: 'disable', // We use @capawesome/capacitor-android-edge-to-edge-support instead
     },
     plugins: {
       CapacitorHttp: {
@@ -101,8 +101,7 @@ const createConfig = () => {
       config.server.hostname = 'beanconqueror.com';
       config.server.androidScheme = 'https';
       config.plugins.Keyboard = {
-        resize: KeyboardResize.Native,
-        resizeOnFullScreen: true,
+        resizeOnFullScreen: false, // We use @capawesome/capacitor-android-edge-to-edge-support instead
       };
       break;
     case 'ios':

@@ -45,6 +45,7 @@
     "@capacitor/share": "^7.0.1",
     "@capacitor/splash-screen": "^7.0.1",
     "@capacitor/status-bar": "^7.0.1",
+    "@capawesome/capacitor-android-edge-to-edge-support": "^7.2.3",
     "@capawesome/capacitor-file-picker": "^7.2.0",
     "@capgo/camera-preview": "^7.13.7",
     "@capgo/capacitor-navigation-bar": "^7.1.27",
