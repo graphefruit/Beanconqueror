@@ -923,98 +923,106 @@ export class UIExcel {
         }
 
         const beanInformation: IBeanInformation = {} as IBeanInformation;
-        let hasOneBeanInformation: boolean = false;
 
-        const informationCertificationEntry = entry['1. Bean certification'];
-        if (informationCertificationEntry) {
-          beanInformation.certification =
-            informationCertificationEntry.toString();
-          hasOneBeanInformation = true;
+        for (let i = 1; i < 5; i++) {
+          let hasOneBeanInformation: boolean = false;
+          const informationCertificationEntry =
+            entry[i + '. Bean certification'];
+          if (informationCertificationEntry) {
+            beanInformation.certification =
+              informationCertificationEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationCountryEntry = entry[i + '. Country'];
+          if (informationCountryEntry) {
+            beanInformation.country = informationCountryEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationElevationEntry = entry[i + '. Elevation'];
+          if (informationElevationEntry) {
+            beanInformation.elevation = informationElevationEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationFarmEntry = entry[i + '. Farm'];
+          if (informationFarmEntry) {
+            beanInformation.farm = informationFarmEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationFarmerEntry = entry[i + '. Farmer'];
+          if (informationFarmerEntry) {
+            beanInformation.farmer = informationFarmerEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationHarvestedEntry = entry[i + '. Harvested'];
+          if (informationHarvestedEntry) {
+            beanInformation.harvest_time = informationHarvestedEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationPercentageEntry = entry[i + '. Percentage'];
+          if (
+            informationPercentageEntry &&
+            Number(informationPercentageEntry) > 0
+          ) {
+            beanInformation.percentage = Number(informationPercentageEntry);
+            hasOneBeanInformation = true;
+          }
+
+          const informationProcessingEntry = entry[i + '. Processing'];
+          if (informationProcessingEntry) {
+            beanInformation.processing = informationProcessingEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationRegionEntry = entry[i + '. Region'];
+          if (informationRegionEntry) {
+            beanInformation.region = informationRegionEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationVarietyEntry = entry[i + '. Variety'];
+          if (informationVarietyEntry) {
+            beanInformation.variety = informationVarietyEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationFobPriceEntry = entry[i + '. Fob Price'];
+          if (
+            informationFobPriceEntry &&
+            Number(informationFobPriceEntry) > 0
+          ) {
+            beanInformation.fob_price = Number(informationFobPriceEntry);
+            hasOneBeanInformation = true;
+          }
+
+          const informationPurchasingPriceEntry =
+            entry[i + '. Purchasing Price'];
+          if (
+            informationPurchasingPriceEntry &&
+            Number(informationPurchasingPriceEntry) > 0
+          ) {
+            beanInformation.purchasing_price = Number(
+              informationPurchasingPriceEntry,
+            );
+            hasOneBeanInformation = true;
+          }
+
+          if (hasOneBeanInformation) {
+            varietyInformationWhereAdded = true;
+            bean.bean_information.push(beanInformation);
+          }
         }
 
-        const informationCountryEntry = entry['1. Country'];
-        if (informationCountryEntry) {
-          beanInformation.country = informationCountryEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationElevationEntry = entry['1. Elevation'];
-        if (informationElevationEntry) {
-          beanInformation.elevation = informationElevationEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationFarmEntry = entry['1. Farm'];
-        if (informationFarmEntry) {
-          beanInformation.farm = informationFarmEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationFarmerEntry = entry['1. Farmer'];
-        if (informationFarmerEntry) {
-          beanInformation.farmer = informationFarmerEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationHarvestedEntry = entry['1. Harvested'];
-        if (informationHarvestedEntry) {
-          beanInformation.harvest_time = informationHarvestedEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationPercentageEntry = entry['1. Percentage'];
-        if (
-          informationPercentageEntry &&
-          Number(informationPercentageEntry) > 0
-        ) {
-          beanInformation.percentage = Number(informationPercentageEntry);
-          hasOneBeanInformation = true;
-        }
-
-        const informationProcessingEntry = entry['1. Processing'];
-        if (informationProcessingEntry) {
-          beanInformation.processing = informationProcessingEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationRegionEntry = entry['1. Region'];
-        if (informationRegionEntry) {
-          beanInformation.region = informationRegionEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationVarietyEntry = entry['1. Variety'];
-        if (informationVarietyEntry) {
-          beanInformation.variety = informationVarietyEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationFobPriceEntry = entry['1. Fob Price'];
-        if (informationFobPriceEntry && Number(informationFobPriceEntry) > 0) {
-          beanInformation.fob_price = Number(informationFobPriceEntry);
-          hasOneBeanInformation = true;
-        }
-
-        const informationPurchasingPriceEntry = entry['1. Purchasing Price'];
-        if (
-          informationPurchasingPriceEntry &&
-          Number(informationPurchasingPriceEntry) > 0
-        ) {
-          beanInformation.purchasing_price = Number(
-            informationPurchasingPriceEntry,
-          );
-          hasOneBeanInformation = true;
-        }
-
-        if (hasOneBeanInformation) {
-          varietyInformationWhereAdded = true;
-          bean.bean_information.push(beanInformation);
-        } else {
+        if (bean.bean_information.length <= 0) {
           /** Add atleast one empty bean information**/
           const emptyBeanInformation: IBeanInformation = {} as IBeanInformation;
           bean.bean_information.push(emptyBeanInformation);
         }
-
         toAddBeans.push(bean);
       }
 
@@ -1187,93 +1195,101 @@ export class UIExcel {
         }
 
         const beanInformation: IBeanInformation = {} as IBeanInformation;
-        let hasOneBeanInformation: boolean = false;
 
-        const informationCertificationEntry = entry['1. Bean certification'];
-        if (informationCertificationEntry) {
-          beanInformation.certification =
-            informationCertificationEntry.toString();
-          hasOneBeanInformation = true;
+        for (let i = 1; i < 5; i++) {
+          let hasOneBeanInformation: boolean = false;
+          //We support a max out of 4 entries.
+          const informationCertificationEntry =
+            entry[i + '. Bean certification'];
+          if (informationCertificationEntry) {
+            beanInformation.certification =
+              informationCertificationEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationCountryEntry = entry[i + '. Country'];
+          if (informationCountryEntry) {
+            beanInformation.country = informationCountryEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationElevationEntry = entry[i + '. Elevation'];
+          if (informationElevationEntry) {
+            beanInformation.elevation = informationElevationEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationFarmEntry = entry[i + '. Farm'];
+          if (informationFarmEntry) {
+            beanInformation.farm = informationFarmEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationFarmerEntry = entry[i + '. Farmer'];
+          if (informationFarmerEntry) {
+            beanInformation.farmer = informationFarmerEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationHarvestedEntry = entry[i + '. Harvested'];
+          if (informationHarvestedEntry) {
+            beanInformation.harvest_time = informationHarvestedEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationPercentageEntry = entry[i + '. Percentage'];
+          if (
+            informationPercentageEntry &&
+            Number(informationPercentageEntry) > 0
+          ) {
+            beanInformation.percentage = Number(informationPercentageEntry);
+            hasOneBeanInformation = true;
+          }
+
+          const informationProcessingEntry = entry[i + '. Processing'];
+          if (informationProcessingEntry) {
+            beanInformation.processing = informationProcessingEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationRegionEntry = entry[i + '. Region'];
+          if (informationRegionEntry) {
+            beanInformation.region = informationRegionEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationVarietyEntry = entry[i + '. Variety'];
+          if (informationVarietyEntry) {
+            beanInformation.variety = informationVarietyEntry.toString();
+            hasOneBeanInformation = true;
+          }
+
+          const informationFobPriceEntry = entry[i + '. Fob Price'];
+          if (
+            informationFobPriceEntry &&
+            Number(informationFobPriceEntry) > 0
+          ) {
+            beanInformation.fob_price = Number(informationFobPriceEntry);
+            hasOneBeanInformation = true;
+          }
+
+          const informationPurchasingPriceEntry =
+            entry[i + '. Purchasing Price'];
+          if (
+            informationPurchasingPriceEntry &&
+            Number(informationPurchasingPriceEntry) > 0
+          ) {
+            beanInformation.purchasing_price = Number(
+              informationPurchasingPriceEntry,
+            );
+            hasOneBeanInformation = true;
+          }
+          if (hasOneBeanInformation) {
+            varietyInformationWhereAdded = true;
+            bean.bean_information.push(beanInformation);
+          }
         }
-
-        const informationCountryEntry = entry['1. Country'];
-        if (informationCountryEntry) {
-          beanInformation.country = informationCountryEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationElevationEntry = entry['1. Elevation'];
-        if (informationElevationEntry) {
-          beanInformation.elevation = informationElevationEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationFarmEntry = entry['1. Farm'];
-        if (informationFarmEntry) {
-          beanInformation.farm = informationFarmEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationFarmerEntry = entry['1. Farmer'];
-        if (informationFarmerEntry) {
-          beanInformation.farmer = informationFarmerEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationHarvestedEntry = entry['1. Harvested'];
-        if (informationHarvestedEntry) {
-          beanInformation.harvest_time = informationHarvestedEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationPercentageEntry = entry['1. Percentage'];
-        if (
-          informationPercentageEntry &&
-          Number(informationPercentageEntry) > 0
-        ) {
-          beanInformation.percentage = Number(informationPercentageEntry);
-          hasOneBeanInformation = true;
-        }
-
-        const informationProcessingEntry = entry['1. Processing'];
-        if (informationProcessingEntry) {
-          beanInformation.processing = informationProcessingEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationRegionEntry = entry['1. Region'];
-        if (informationRegionEntry) {
-          beanInformation.region = informationRegionEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationVarietyEntry = entry['1. Variety'];
-        if (informationVarietyEntry) {
-          beanInformation.variety = informationVarietyEntry.toString();
-          hasOneBeanInformation = true;
-        }
-
-        const informationFobPriceEntry = entry['1. Fob Price'];
-        if (informationFobPriceEntry && Number(informationFobPriceEntry) > 0) {
-          beanInformation.fob_price = Number(informationFobPriceEntry);
-          hasOneBeanInformation = true;
-        }
-
-        const informationPurchasingPriceEntry = entry['1. Purchasing Price'];
-        if (
-          informationPurchasingPriceEntry &&
-          Number(informationPurchasingPriceEntry) > 0
-        ) {
-          beanInformation.purchasing_price = Number(
-            informationPurchasingPriceEntry,
-          );
-          hasOneBeanInformation = true;
-        }
-
-        if (hasOneBeanInformation) {
-          varietyInformationWhereAdded = true;
-          bean.bean_information.push(beanInformation);
-        } else {
+        if (bean.bean_information.length <= 0) {
           /** Add atleast one empty bean information**/
           const emptyBeanInformation: IBeanInformation = {} as IBeanInformation;
           bean.bean_information.push(emptyBeanInformation);

@@ -1146,6 +1146,27 @@ export class SettingsPage {
         this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
       }
     } else {
+      const element = document.createElement('div');
+      element.innerHTML = '<input type="file" id="importBeansExcel">';
+      const fileInput = element.firstChild as HTMLInputElement;
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          debugger;
+          const arrayBuffer = reader.result as ArrayBuffer;
+          if (_type === 'roasted') {
+            this.uiExcel.importBeansByExcel(arrayBuffer);
+          } else {
+            this.uiExcel.importGreenBeansByExcel(arrayBuffer);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+
+      fileInput.click();
     }
   }
 
