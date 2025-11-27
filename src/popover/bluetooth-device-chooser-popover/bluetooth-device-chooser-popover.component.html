@@ -25,9 +25,10 @@
               @if(device.name) {
                 <span>{{device.name}}</span>
               }
-              @if(!device.name) {
+              @else {
                 <span>?&nbsp;&nbsp;{{device.type}}</span>
               }
+              <i>{{device.id}}</i>
             </ion-radio>
           </ion-item>
         }
