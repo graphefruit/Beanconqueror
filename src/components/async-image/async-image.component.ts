@@ -10,12 +10,10 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 })
 export class AsyncImageComponent implements OnChanges {
   @Input() public filePath: string;
-  @Input() public showLoadingImage = false;
 
   public errorOccured = false;
   public isLoading = false;
   public img: Promise<SafeResourceUrl | undefined> = Promise.resolve(undefined);
-  public preloadImg = 'assets/img/loading.gif';
   constructor(private uiFileHelper: UIFileHelper) {}
 
   public ngOnChanges(): void {

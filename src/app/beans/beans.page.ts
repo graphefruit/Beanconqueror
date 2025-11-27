@@ -29,6 +29,7 @@ import { Subscription } from 'rxjs';
 import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { NfcService } from '../../services/nfcService/nfc-service.service';
 
+import { UIImage } from '../../services/uiImage';
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
@@ -110,6 +111,7 @@ export class BeansPage implements OnDestroy {
     private readonly modalController: ModalController,
     private readonly beanSortFilterHelper: BeanSortFilterHelperService,
     private readonly nfcService: NfcService,
+    private readonly uiImage: UIImage,
   ) {}
 
   public ionViewWillEnter(): void {
@@ -349,8 +351,11 @@ export class BeansPage implements OnDestroy {
   public async scanBean() {
     if (this.platform.is('capacitor')) {
       try {
-        const scannedCode = await this.qrScannerService.scan();
-        await this.intenthandler.handleQRCodeLink(scannedCode);
+        const hasPermission = await this.uiImage.checkCameraPermission();
+        if (hasPermission) {
+          const scannedCode = await this.qrScannerService.scan();
+          await this.intenthandler.handleQRCodeLink(scannedCode);
+        }
       } catch (error) {
         // Just log and do nothing else, it's likely the user just cancelled
         this.uiLog.warn('Bean QR code scan error:', error);

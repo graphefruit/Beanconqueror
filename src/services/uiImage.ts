@@ -5,6 +5,7 @@ import {
   CameraDirection,
   CameraResultType,
   CameraSource,
+  CameraPluginPermissions,
 } from '@capacitor/camera';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
@@ -26,6 +27,10 @@ import { Water } from '../classes/water/water';
 import { Mill } from '../classes/mill/mill';
 import { Preparation } from '../classes/preparation/preparation';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
+import {
+  CameraPermissionType,
+  PermissionStatus,
+} from '@capacitor/camera/dist/esm/definitions';
 
 @Injectable({
   providedIn: 'root',
@@ -184,5 +189,30 @@ export class UIImage {
     });
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public async checkCameraPermission() {
+    try {
+      const permissionGiven: PermissionStatus = await Camera.checkPermissions();
+      if (permissionGiven.camera == 'denied') {
+        const requestPermission: PermissionStatus =
+          await Camera.requestPermissions({ permissions: ['camera'] });
+        if (requestPermission.camera == 'denied') {
+          await this.uiAlert.showMessage(
+            'NO_CAMERA_PERMISSION',
+            null,
+            null,
+            true,
+          );
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    } catch (ex) {
+      return false;
+    }
   }
 }

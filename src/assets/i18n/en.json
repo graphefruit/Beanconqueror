@@ -1537,5 +1537,6 @@
     "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
     "PAGE_STATISTICS_AVG_RATING": "Average Rating",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Greek"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Greek",
+    "NO_CAMERA_PERMISSION": "No camera permission given, please enable inside the OS-System"
 }
