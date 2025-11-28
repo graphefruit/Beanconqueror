@@ -4,6 +4,9 @@
       <ion-row>
         <ion-col class="expand-fill-space" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
+            @if ((bean.decaffeinated)) {
+              <ion-icon name="moon">&nbsp;</ion-icon>
+            }
             @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
               <ion-icon name="snow-outline">&nbsp;</ion-icon>
             }
