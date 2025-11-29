@@ -166,6 +166,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
 import { PreparationSortToolsComponent } from '../preparation/preparation-sort-tools/preparation-sort-tools.component';
 import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { BeanPopoverFreezeComponent } from '../beans/bean-popover-freeze/bean-popover-freeze.component';
+import { BeanPopoverUnfreezeComponent } from '../beans/bean-popover-unfreeze/bean-popover-unfreeze.component';
 import { BeanFreezeInformationComponent } from '../../components/beans/bean-freeze-information/bean-freeze-information.component';
 import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
 import { PipesModule } from 'src/pipes/pipes.module';
@@ -314,6 +315,7 @@ import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/se
     BeanPopoverAddComponent,
     BeanInternalShareCodeGeneratorComponent,
     BeanPopoverFreezeComponent,
+    BeanPopoverUnfreezeComponent,
     BeanPopoverFrozenListComponent,
     BeanPopoverListComponent,
     BeanArchivePopoverComponent,
