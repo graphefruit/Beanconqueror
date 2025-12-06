@@ -16,6 +16,7 @@ import {
   Platform,
 } from '@ionic/angular';
 import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
+import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { Brew } from '../../classes/brew/brew';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
@@ -54,9 +55,11 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 })
 export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;
+  @Input() public beanGroup: BeanGroup;
   @Input() public showActions: boolean = true;
   @Input() public disabled: boolean = false;
   @Input() public collapsed: boolean = false;
+  @Input() public isGroupChild: boolean = false;
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
   @ViewChild('beanStars', { read: NgxStarsComponent, static: false })
@@ -205,6 +208,14 @@ export class BeanInformationComponent implements OnInit {
     if (data.role !== undefined) {
       await this.internalBeanAction(data.role as BEAN_ACTION);
       this.beanAction.emit([data.role as BEAN_ACTION, this.bean]);
+    }
+  }
+
+  public toggleGroupExpansion(event: Event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    if (this.beanGroup) {
+      this.beanGroup.expanded = !this.beanGroup.expanded;
     }
   }
 

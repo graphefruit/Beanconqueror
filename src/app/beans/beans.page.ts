@@ -30,6 +30,7 @@ import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper
 import { NfcService } from '../../services/nfcService/nfc-service.service';
 
 import { UIImage } from '../../services/uiImage';
+import { BeanGroup } from '../../interfaces/bean/beanGroup';
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
@@ -41,9 +42,9 @@ export class BeansPage implements OnDestroy {
 
   public settings: Settings;
 
-  public openBeans: Array<Bean> = [];
-  public finishedBeans: Array<Bean> = [];
-  public frozenBeans: Array<Bean> = [];
+  public openBeans: Array<Bean | BeanGroup> = [];
+  public finishedBeans: Array<Bean | BeanGroup> = [];
+  public frozenBeans: Array<Bean | BeanGroup> = [];
   public finishedBeansLength: number = 0;
   public openBeansLength: number = 0;
   public frozenBeansLength: number = 0;
@@ -447,12 +448,45 @@ export class BeansPage implements OnDestroy {
       sort,
       filters,
     );
+
+    const groupedBeans: Array<Bean | BeanGroup> = [];
+    const processedUuids = new Set<string>();
+
+    for (const bean of filteredBeans) {
+      if (processedUuids.has(bean.config.uuid)) {
+        continue;
+      }
+
+      if (bean.frozenGroupId) {
+        // Find all beans with this frozenGroupId in the filtered list
+        // We only look in the filtered list to respect current filters
+        const groupMembers = filteredBeans.filter(
+          (b) => b.frozenGroupId === bean.frozenGroupId,
+        );
+
+        if (groupMembers.length > 1) {
+          groupedBeans.push({
+            frozenGroupId: bean.frozenGroupId,
+            beans: groupMembers,
+            expanded: false,
+          });
+          groupMembers.forEach((b) => processedUuids.add(b.config.uuid));
+        } else {
+          groupedBeans.push(bean);
+          processedUuids.add(bean.config.uuid);
+        }
+      } else {
+        groupedBeans.push(bean);
+        processedUuids.add(bean.config.uuid);
+      }
+    }
+
     if (_type === 'open') {
-      this.openBeans = filteredBeans;
+      this.openBeans = groupedBeans;
     } else if (_type === 'archive') {
-      this.finishedBeans = filteredBeans;
+      this.finishedBeans = groupedBeans;
     } else if (_type === 'frozen') {
-      this.frozenBeans = filteredBeans;
+      this.frozenBeans = groupedBeans;
     }
     this.retriggerScroll();
   }
