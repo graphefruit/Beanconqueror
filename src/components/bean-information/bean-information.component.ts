@@ -331,9 +331,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async unfreezeBean() {
-    this.bean.unfrozenDate = moment(new Date()).toISOString();
-    await this.uiBeanStorage.update(this.bean);
-    await this.resetSettings();
+    await this.uiBeanHelper.unfreezeBean(this.bean);
   }
 
   public async toggleFavourite() {
