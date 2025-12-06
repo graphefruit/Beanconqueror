@@ -36,7 +36,7 @@ export class UIBeanStorage extends StorageClass {
     protected uiStorage: UIStorage,
     protected uiHelper: UIHelper,
     protected uiLog: UILog,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {
     super(uiStorage, uiHelper, uiLog, 'BEANS');
     if (UIBeanStorage.instance === undefined) {
@@ -72,6 +72,15 @@ export class UIBeanStorage extends StorageClass {
       }
     }
     return this.beans;
+  }
+
+  public getEntryByUUID(_uuid: string): Bean {
+    const entries: Array<Bean> = this.getAllEntries();
+    const entry = entries.find((e) => e.config.uuid === _uuid);
+    if (entry) {
+      return entry;
+    }
+    return null;
   }
 
   public async add(_entry: Bean): Promise<any> {

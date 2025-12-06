@@ -182,8 +182,11 @@ import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-ac
 import { BaristaPage } from '../baristamode/barista/barista.page';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 
+import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
+
 @NgModule({
   declarations: [
+    UnwrappedModalComponent,
     SettingsPage,
     StatisticPage,
     HomePage,
@@ -387,6 +390,7 @@ import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/se
     AndroidPermissions,
   ],
   exports: [
+    UnwrappedModalComponent,
     SettingsPage,
     StatisticPage,
     HomePage,

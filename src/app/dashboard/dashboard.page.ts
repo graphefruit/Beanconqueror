@@ -13,6 +13,9 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
+import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
+import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'dashboard',
@@ -23,6 +26,7 @@ import { UIMillStorage } from '../../services/uiMillStorage';
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
   public beans: Array<Bean> = [];
+  public showUnwrappedButton: boolean = false;
   public leftOverBeansWeight: string = undefined;
   public leftOverFrozenBeansWeight: string = undefined;
   public getBeansCount: number = undefined;
@@ -42,7 +46,37 @@ export class DashboardPage implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiMillStorage: UIMillStorage,
+    private readonly unwrappedService: UnwrappedService,
+    private readonly modalController: ModalController,
   ) {}
+
+  public async openUnwrapped(year?: number) {
+    const targetYear = year || new Date().getFullYear();
+    const stats = this.unwrappedService.getUnwrappedData(targetYear);
+    if (stats) {
+      const modal = await this.modalController.create({
+        component: UnwrappedModalComponent,
+        componentProps: { stats: stats },
+      });
+      await modal.present();
+    }
+  }
+
+  public get showUnwrapped(): boolean {
+    // Check for current year or previous year (if early in the year)
+    // For now, let's just check 2025 as requested, or make it dynamic
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    // If we are in 2025, show 2025. If we are in 2026, maybe show 2025?
+    // User asked for "Unwrapped 2025", so let's default to checking 2025 for the button visibility
+    // But allow the method to take any year.
+
+    if (currentYear === 2025 || (currentYear === 2026 && currentMonth <= 1)) {
+      return !!this.unwrappedService.getUnwrappedData(2025);
+    } else {
+      return false;
+    }
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -60,6 +94,8 @@ export class DashboardPage implements OnInit {
     this.uiMillStorage.attachOnEvent().subscribe((_val) => {
       this.reloadBrews();
     });
+
+    this.showUnwrappedButton = this.showUnwrapped;
   }
 
   private reloadBrews() {
