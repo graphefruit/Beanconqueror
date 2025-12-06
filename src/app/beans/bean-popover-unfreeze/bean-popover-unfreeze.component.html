@@ -6,25 +6,20 @@
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="save()">
-        <ion-icon name="checkmark" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-card>
   <ion-list>
     <ion-item>
-      <ion-label position="stacked">{{"WEIGHT" | translate}} (g)</ion-label>
+      <ion-label position="stacked">{{"BEAN_DATA_WEIGHT" | translate}}</ion-label>
       <ion-input type="number" [(ngModel)]="unfreezeWeight" placeholder="0" [max]="maxWeight"></ion-input>
     </ion-item>
 
     <ion-item lines="none">
       <ion-range min="0" [max]="maxWeight" [pin]="true" [pinFormatter]="pinFormatter" [(ngModel)]="unfreezeWeight" step="0.1">
-        <ion-icon slot="start" size="small" name="snow-outline"></ion-icon>
-        <ion-icon slot="end" name="thermometer-outline"></ion-icon>
+        <div class='ion-label' slot="end">{{maxWeight}}&nbsp;gr</div>
       </ion-range>
     </ion-item>
 
@@ -65,8 +60,14 @@
     <div class="ion-padding">
       <ion-button expand="block" (click)="save()" [disabled]="unfreezeWeight <= 0 || unfreezeWeight > maxWeight">
         <ion-icon name="thermometer-outline" slot="start"></ion-icon>
-        {{"POPOVER_UNFREEZE_COFFEE_BEAN" | translate}}
+        @if(unfreezeWeight === maxWeight) {
+          {{"POPOVER_UNFREEZE_COFFEE_BEAN" | translate}}
+
+        } @else {
+          {{"POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN" | translate}}
+        }
       </ion-button>
     </div>
   </ion-list>
+  </ion-card>
 </ion-content>

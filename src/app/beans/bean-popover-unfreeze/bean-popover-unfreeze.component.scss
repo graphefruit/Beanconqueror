@@ -1,0 +1,15 @@
+:host {
+  ion-item {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  .container {
+    display: flex;
+  }
+  ion-list {
+    background: var(--ion-color-light);
+  }
+  ion-label {
+    line-height:18px;
+  }
+}
