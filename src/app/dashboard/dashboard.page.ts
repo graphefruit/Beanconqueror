@@ -26,6 +26,7 @@ import { ModalController } from '@ionic/angular';
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
   public beans: Array<Bean> = [];
+  public showUnwrappedButton: boolean = false;
   public leftOverBeansWeight: string = undefined;
   public leftOverFrozenBeansWeight: string = undefined;
   public getBeansCount: number = undefined;
@@ -93,6 +94,8 @@ export class DashboardPage implements OnInit {
     this.uiMillStorage.attachOnEvent().subscribe((_val) => {
       this.reloadBrews();
     });
+
+    this.showUnwrappedButton = this.showUnwrapped;
   }
 
   private reloadBrews() {
