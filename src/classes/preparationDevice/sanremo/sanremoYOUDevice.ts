@@ -521,6 +521,44 @@ export class SanremoYOUDevice extends PreparationDevice {
       return false;
     }
   }
+
+  public async getDoses(): Promise<{
+    key1: number;
+    key2: number;
+    key3: number;
+    keyTea: number;
+  }> {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url + '/api/doses',
+      };
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      return response.data;
+    } catch (error) {
+      this.logError('Error in getDoses():', error);
+      return null;
+    }
+  }
+
+  public async setDose(_key: string, _value: number): Promise<boolean> {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          '/api/doses/' +
+          _key +
+          '/' +
+          _value,
+      };
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = response.data;
+      return responseJSON.result;
+    } catch (error) {
+      this.logError('Error in setDose():', error);
+      return false;
+    }
+  }
 }
 
 export class SanremoYOUParams implements ISanremoYOUParams {

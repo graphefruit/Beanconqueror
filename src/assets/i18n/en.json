@@ -415,6 +415,10 @@
     }
   },
   "PREPARATION": {
+    "SANREMO_YOU": {
+      "UPDATE_DOSES_CONFIRMATION": "The Brew by Weight function requires the doses (P1, P2, P3) to be set to the maximum volume (250ml). Would you like to update them automatically?",
+      "UPDATE_DOSES_TITLE": "Update Doses"
+    },
     "PLACE_HOLDER": {
       "PREPARATION_TYPE_NAME": "Add a name",
       "NOTES": "Add notes about this preparation method"
@@ -1595,5 +1599,6 @@
   },
   "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Bean has been unfrozen",
   "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Bean has been partially unfrozen",
-  "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Unfreeze partial coffee bean"
+  "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Unfreeze partial coffee bean",
+  "LAST_COMMUNICATION": "Last communication"
 }

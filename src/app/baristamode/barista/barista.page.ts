@@ -31,6 +31,7 @@ import { App } from '@capacitor/app';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
+import { UIAlert } from '../../../services/uiAlert';
 
 declare var Plotly;
 @Component({
@@ -54,6 +55,9 @@ export class BaristaPage implements OnInit {
   private timestampIntv = undefined;
   private sendDataIntv = undefined;
 
+  public lastHeartbeat: string = '';
+  @ViewChild('lastHeartBeat', { read: ElementRef })
+  public lastHeartBeatEl: ElementRef;
   @Output() public lastShot = new EventEmitter();
 
   constructor(
@@ -68,6 +72,7 @@ export class BaristaPage implements OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly modalController: ModalController,
     private readonly uiPreparationHelper: UIPreparationHelper,
+    private readonly uiAlert: UIAlert,
   ) {
     // Get first entry
     this.data.bean = this.uiBeanStorage
@@ -114,8 +119,26 @@ export class BaristaPage implements OnInit {
         }
       });
 
+    /**setTimeout(() => {
+      this.checkSanremoYOUDoses();
+    }, 2000);**/
+
     setTimeout(() => {
       this.resizeGraph();
+    }, 1000);
+
+    setInterval(() => {
+      try {
+        const shotData = (
+          this.brewBrewing?.brewBrewingPreparationDeviceEl
+            ?.preparationDevice as SanremoYOUDevice
+        ).getActualShotData();
+
+        this.lastHeartbeat = shotData.localTimeString;
+        this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
+      } catch (ex) {
+        this.lastHeartBeatEl.nativeElement.innerText = '-';
+      }
     }, 1000);
   }
 
@@ -307,6 +330,54 @@ export class BaristaPage implements OnInit {
   public async showPreparationEdit() {
     const preparation: Preparation = this.data.getPreparation();
     await this.uiPreparationHelper.connectDevice(preparation);
+  }
+
+  private async checkSanremoYOUDoses() {
+    if (this.isSanremoConnected()) {
+      const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
+        ?.preparationDevice as SanremoYOUDevice;
+
+      // Because the device initialization might take some time or connection might be established later,
+      // we ensure we have a device instance.
+      if (!device) {
+        return;
+      }
+
+      await device.deviceConnected();
+      // Only proceed if actually connected/reachable, although deviceConnected() check above helps.
+      // But getDoses will handle errors gracefully returning null.
+      const doses = await device.getDoses();
+
+      if (doses) {
+        const keysToCheck = ['key1', 'key2', 'key3'];
+        const keysToUpdate = [];
+
+        for (const key of keysToCheck) {
+          if (doses[key] < 250) {
+            keysToUpdate.push(key);
+          }
+        }
+
+        if (keysToUpdate.length > 0) {
+          try {
+            await this.uiAlert.showConfirmWithYesNoTranslation(
+              'PREPARATION.SANREMO_YOU.UPDATE_DOSES_CONFIRMATION', // You might want to use a real key or just English text if translation missing
+              'PREPARATION.SANREMO_YOU.UPDATE_DOSES_TITLE',
+              'YES',
+              'NO',
+              true,
+            );
+
+            // If confirmed (promise resolves)
+            for (const key of keysToUpdate) {
+              await device.setDose(key, 250);
+            }
+          } catch (e) {
+            // User pressed NO or dismissed
+          }
+        }
+      }
+    }
   }
 
   protected readonly PreparationDeviceType = PreparationDeviceType;

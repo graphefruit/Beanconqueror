@@ -36,6 +36,11 @@
 </ion-header>
 
 <ion-content #ionContent >
+    <ion-card>
+      <ion-card-content>
+       {{ "LAST_COMMUNICATION" | translate}}:&nbsp;<span #lastHeartBeat></span>
+      </ion-card-content>
+    </ion-card>
     @if (!isWebSocketConnected() ) {
     <ion-card color="danger">
       <ion-card-header>
