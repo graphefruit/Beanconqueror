@@ -58,6 +58,19 @@ export class BaristaPage implements OnInit {
   public lastHeartbeat: string = '';
   @ViewChild('lastHeartBeat', { read: ElementRef })
   public lastHeartBeatEl: ElementRef;
+
+  @ViewChild('lagTimeP1', { read: ElementRef })
+  public lagTimeP1El: ElementRef;
+
+  @ViewChild('lagTimeP2', { read: ElementRef })
+  public lagTimeP2El: ElementRef;
+
+  @ViewChild('lagTimeP3', { read: ElementRef })
+  public lagTimeP3El: ElementRef;
+
+  @ViewChild('lagTimeM', { read: ElementRef })
+  public lagTimeMEl: ElementRef;
+
   @Output() public lastShot = new EventEmitter();
 
   constructor(
@@ -126,6 +139,9 @@ export class BaristaPage implements OnInit {
     setTimeout(() => {
       this.resizeGraph();
     }, 1000);
+    setTimeout(() => {
+      this.showLagTime();
+    }, 5000);
 
     setInterval(() => {
       try {
@@ -308,10 +324,24 @@ export class BaristaPage implements OnInit {
   }
 
   public lastShotInformation(_data) {
+    this.showLagTime();
     /**
     this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
     this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
     this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;**/
+  }
+  private showLagTime() {
+    const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
+      ?.preparationDevice as SanremoYOUDevice;
+    const lagTimeP1 = device.getResidualLagTimeByProgram(1);
+    const lagTimeP2 = device.getResidualLagTimeByProgram(2);
+    const lagTimeP3 = device.getResidualLagTimeByProgram(3);
+    const lagTimeM = device.getResidualLagTimeByProgram(4);
+
+    this.lagTimeP1El.nativeElement.innerHTML = lagTimeP1;
+    this.lagTimeP2El.nativeElement.innerHTML = lagTimeP2;
+    this.lagTimeP3El.nativeElement.innerHTML = lagTimeP3;
+    this.lagTimeMEl.nativeElement.innerHTML = lagTimeM;
   }
 
   public async popoverActionsBrew() {

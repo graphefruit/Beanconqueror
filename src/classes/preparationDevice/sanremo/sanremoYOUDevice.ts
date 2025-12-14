@@ -132,8 +132,37 @@ export class SanremoYOUDevice extends PreparationDevice {
       return connectedPreparationDevice.customParams.residualLagTime;
     } else {
       // Fixed value.
-      return 1.35;
+      return 0.9;
     }
+  }
+
+  public getResidualLagTimeByProgram(program: number): number {
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    let val: number | undefined;
+
+    if (connectedPreparationDevice.customParams) {
+      switch (program) {
+        case 1:
+          val = connectedPreparationDevice.customParams.residualLagTimeP1;
+          break;
+        case 2:
+          val = connectedPreparationDevice.customParams.residualLagTimeP2;
+          break;
+        case 3:
+          val = connectedPreparationDevice.customParams.residualLagTimeP3;
+          break;
+        case 4:
+          val = connectedPreparationDevice.customParams.residualLagTimeM;
+          break;
+      }
+    }
+
+    if (val !== undefined && val !== null) {
+      return val;
+    }
+    // Default fallback
+    return 0.9;
   }
 
   public getSaveLogfilesFromMachine(): boolean {
@@ -564,6 +593,11 @@ export class SanremoYOUDevice extends PreparationDevice {
 export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeight: number = 0;
   public residualLagTime: number = 0.9;
+
+  public residualLagTimeP1: number = 0.9;
+  public residualLagTimeP2: number = 0.9;
+  public residualLagTimeP3: number = 0.9;
+  public residualLagTimeM: number = 0.9;
   public selectedMode: SanremoYOUMode = SanremoYOUMode.LISTENING;
 
   public stopAtWeightP1: number = 0;
@@ -572,6 +606,11 @@ export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeightM: number = 0;
   constructor() {
     this.residualLagTime = 0.9;
+    this.residualLagTimeP1 = 0.9;
+    this.residualLagTimeP2 = 0.9;
+    this.residualLagTimeP3 = 0.9;
+    this.residualLagTimeM = 0.9;
+
     this.selectedMode = SanremoYOUMode.LISTENING;
   }
 }

@@ -3032,6 +3032,12 @@ export class BrewBrewingGraphComponent implements OnInit {
 
                     //We overwrite for this shot the target weight, because we have a barista mode target weight
                     targetWeight = baristaModeTargetWeight;
+
+                    residual_lag_time = (
+                      this.brewComponent.brewBrewingPreparationDeviceEl
+                        .preparationDevice as SanremoYOUDevice
+                    ).getResidualLagTimeByProgram(groupStatus);
+
                     if (
                       document
                         .getElementById('statusPhase' + groupStatus)

@@ -119,6 +119,28 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     await this.uiPreparationStorage.update(this.preparation);
   }
 
+  public async setResidualLagTimeByProgram(program: number, value: number) {
+    switch (program) {
+      case 1:
+        this.preparation.connectedPreparationDevice.customParams.residualLagTimeP1 =
+          value;
+        break;
+      case 2:
+        this.preparation.connectedPreparationDevice.customParams.residualLagTimeP2 =
+          value;
+        break;
+      case 3:
+        this.preparation.connectedPreparationDevice.customParams.residualLagTimeP3 =
+          value;
+        break;
+      case 4:
+        this.preparation.connectedPreparationDevice.customParams.residualLagTimeM =
+          value;
+        break;
+    }
+    await this.uiPreparationStorage.update(this.preparation);
+  }
+
   private async setUIParams() {
     this.uiPreparationDeviceConnected = this.preparationDeviceConnected();
     this.uiPreparationDeviceType = this.getDataPreparationDeviceType();

@@ -78,6 +78,7 @@ import { Bean } from '../../../classes/bean/bean';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
+import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 
 declare var cordova;
 
@@ -776,6 +777,43 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     await this.brewBrewingGraphEl.timerPaused(_event);
     if (this.baristamode) {
       try {
+        if (
+          this.brewBrewingGraphEl.flow_profile_raw &&
+          this.brewBrewingGraphEl.flow_profile_raw.weight.length > 0
+        ) {
+          const prepSanremoDeviceCall: SanremoYOUDevice = this
+            .brewBrewingPreparationDeviceEl
+            .preparationDevice as SanremoYOUDevice;
+
+          const lastRunnedProgramm = prepSanremoDeviceCall.lastRunnedProgramm;
+          let oldResidualLagTime =
+            prepSanremoDeviceCall.getResidualLagTimeByProgram(
+              lastRunnedProgramm,
+            );
+
+          // 1. Calculate the new value
+          const newLagTime = this.calculateNextResidualLagTime(
+            this.brewBrewingGraphEl.flow_profile_raw,
+            oldResidualLagTime,
+          );
+
+          // 2. Update and Save if changed
+          if (newLagTime !== oldResidualLagTime) {
+            console.log(
+              `[BBW] Auto-adjusting Lag Time from ${oldResidualLagTime} to ${newLagTime}`,
+            );
+            this.uiLog.log(
+              `[BBW] Auto-adjusting Lag Time from ${oldResidualLagTime} to ${newLagTime}`,
+            );
+            await this.brewBrewingPreparationDeviceEl.setResidualLagTimeByProgram(
+              lastRunnedProgramm,
+              newLagTime,
+            );
+          }
+        }
+      } catch (ex) {}
+
+      try {
         const shotWeight = this.data.brew_beverage_quantity;
         const avgFlow = this.uiHelper.toFixedIfNecessary(
           this.brewBrewingGraphEl.getAvgFlow(),
@@ -824,6 +862,58 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }, 250);
       }
     }
+  }
+
+  private calculateNextResidualLagTime(
+    history: BrewFlow,
+    currentLag: number,
+  ): number {
+    const MIN_LAG = 0.1;
+    const MAX_LAG = 2.0;
+    const STEP_SIZE = 0.05;
+    const SMOOTHING_FACTOR = 0.5;
+
+    // 1. Find the trigger frame (when stop was requested)
+    const triggerFrame = history.brewbyweight.find(
+      (row) => row.calc_exceeds_weight === true,
+    );
+
+    // Safety: If manual stop (no trigger found), do nothing
+    if (!triggerFrame) {
+      return currentLag;
+    }
+
+    // 2. Get Data
+    // Ensure we parse numbers correctly
+    const flowAtTrigger = triggerFrame.average_flow_rate;
+    const targetWeight = triggerFrame.target_weight;
+
+    // Use the very last weight recorded as the final result
+    const finalFrame = history.brewbyweight[history.brewbyweight.length - 1];
+    const finalWeight: number = finalFrame.actual_scale_weight;
+
+    // Safety: Invalid flow
+    if (!flowAtTrigger || flowAtTrigger < 0.1) {
+      return currentLag;
+    }
+
+    // 3. Calculate Logic
+    const weightError = finalWeight - targetWeight;
+    const timeCorrection = weightError / flowAtTrigger;
+    const idealLag = currentLag + timeCorrection;
+
+    // 4. Smoothing
+    let newLag =
+      currentLag * (1 - SMOOTHING_FACTOR) + idealLag * SMOOTHING_FACTOR;
+
+    // 5. Constraints
+    if (newLag < MIN_LAG) newLag = MIN_LAG;
+    if (newLag > MAX_LAG) newLag = MAX_LAG;
+
+    // 6. Rounding to 0.05
+    return parseFloat(
+      Number(Math.round(newLag / STEP_SIZE) * STEP_SIZE).toFixed(2),
+    );
   }
 
   public async tareScale(_event) {

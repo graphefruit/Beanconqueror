@@ -38,7 +38,26 @@
 <ion-content #ionContent >
     <ion-card>
       <ion-card-content>
-       {{ "LAST_COMMUNICATION" | translate}}:&nbsp;<span #lastHeartBeat></span>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="12">{{ "LAST_COMMUNICATION" | translate }}:&nbsp;<span #lastHeartBeat></span></ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3">
+              P1:&nbsp;<span #lagTimeP1></span>
+            </ion-col>
+            <ion-col size="3">
+              P2:&nbsp;<span #lagTimeP2></span>
+            </ion-col>
+            <ion-col size="3">
+              P3:&nbsp;<span #lagTimeP3></span>
+            </ion-col>
+            <ion-col size="3">
+              M:&nbsp;<span #lagTimeM></span>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
       </ion-card-content>
     </ion-card>
     @if (!isWebSocketConnected() ) {
