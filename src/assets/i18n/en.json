@@ -1464,45 +1464,26 @@
   "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible.",
   "BEAN_DATA_AVERAGE_BREW_RATING": "Average Brew Rating",
   "UPDATE_TEXT_TITLE_TITLE": {
-    "8.3.0": {
-      "DESCRIPTION": {
-        "19": "Option to disable the connect\/disconnect popup for Bluetooth devices"
-      }
-    },
-    "8.4.0": {
-      "TITLE": "Version 8.4.0: What's new",
+    "8.5.0": {
+      "TITLE": "Version 8.5.0: What's new",
       "DESCRIPTION": [
-        "<b>Experimental: Dark Mode<\/b>",
-        "Choose between Light and Dark Mode, or let the app follow your system settings - Activate it in the Settings. Default: Light mode",
+        "<b>Unwrap 2025<\/b>",
+        "Unwrap your year 2025!",
+        "",
+        "<b>New Language</b>",
+        "Supporting Greek - Thanks to Mr. pterodactyl",
         "",
         "<b>Bluetooth Scales<\/b>",
-        "Support of Half Decent Scale",
-        "Support of DIY-WeightMyBruh Scale",
-        "Support of EspressiScale",
-        "",
-        "<b>Preparations<\/b>",
-        "You can now turn the Xenia machine on or off",
-        "",
-        "<b>Brews<\/b>",
-        "[IOS]Activate the camera for your espresso pull on maximized screen",
-        "Fixing a bug that bluetooth devices did not work, if your first preparation method had while-brewing section disabled",
-        "Brew date is now displayed on the detail view",
+        "Showing the unique id of the device for easier connection",
         "",
         "<b>Beans<\/b>",
-        "Sort beans by best bean date",
-        "User import of beans supports now images as well",
-        "",
-        "<b>Images<\/b>",
-        "Import images by clipboard",
-        "",
-        "<b>Statistics<\/b>",
-        "Added some bean statistics",
-        "",
-        "<b>Libraries updates<\/b>",
-        "Updating to Capacitor 7 as well as Angular 20",
-        "If you find any bugs, after the whole code has been affected, please reach out to info@beanconqueror.com",
+        "Unfreeze a portion of a frozen bean",
+        "Beans are now grouped if they are from the same parent",
+        "Showing a specific icon for decaf beans (moon-icon)",
+        "Fixing import beans from excel with multiple varieties",
         "",
         "<b>Other<\/b>",
+        "[ANDROID]Supporting Edge2Edge from Capacitor to fix Keyboard whitespace",
         "Minor fixes"
       ]
     }
