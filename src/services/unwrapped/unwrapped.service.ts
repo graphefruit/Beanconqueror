@@ -107,16 +107,22 @@ export class UnwrappedService {
             }
           }
           if (info.processing) {
-            const proc = info.processing.trim();
-            if (proc) {
-              processingMap.set(proc, (processingMap.get(proc) || 0) + 1);
-            }
+            const procs = info.processing.split(/[,;|]/);
+            procs.forEach((p) => {
+              const proc = p.trim();
+              if (proc) {
+                processingMap.set(proc, (processingMap.get(proc) || 0) + 1);
+              }
+            });
           }
           if (info.variety) {
-            const variety = info.variety.trim();
-            if (variety) {
-              varietyMap.set(variety, (varietyMap.get(variety) || 0) + 1);
-            }
+            const varieties = info.variety.split(/[,;|]/);
+            varieties.forEach((v) => {
+              const variety = v.trim();
+              if (variety) {
+                varietyMap.set(variety, (varietyMap.get(variety) || 0) + 1);
+              }
+            });
           }
         });
       }

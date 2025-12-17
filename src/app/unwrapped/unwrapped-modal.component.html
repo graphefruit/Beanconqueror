@@ -27,7 +27,7 @@
           <div class="sub-highlight">{{ 'UNWRAPPED.NUMBERS.BREWS' | translate }}</div>
         </div>
         <div class="favorite-section">
-          <div class="highlight">{{ stats.totalWeight | number:'1.0-2' }} kg</div>
+          <div class="highlight">{{ stats.totalWeight | number }} g</div>
           <div class="sub-highlight">{{ 'UNWRAPPED.NUMBERS.WEIGHT' | translate }}</div>
         </div>
         <div class="favorite-section">
@@ -48,7 +48,7 @@
         </div>
 
         <div class="favorite-section">
-          <div class="highlight">{{ stats.averageRating | number:'1.1-1' }}/5</div>
+          <div class="highlight">{{ stats.averageRating | number:'1.1-1' }}</div>
           <div class="sub-highlight">{{ 'UNWRAPPED.FAVORITES.RATING' | translate }}</div>
         </div>
 
@@ -56,7 +56,7 @@
         <div class="favorite-section">
           <div class="highlight">{{ stats.bestRatedBean.name }}</div>
           <div class="sub-highlight">{{ stats.bestRatedBean.roaster }}</div>
-          <div class="sub-highlight">{{ stats.bestRatedBean.rating | number:'1.1-1' }} / 5</div>
+          <div class="sub-highlight">{{ stats.bestRatedBean.rating | number:'1.1-1' }}</div>
           <div class="sub-highlight">{{ 'UNWRAPPED.FAVORITES.BEST_BEAN' | translate }}</div>
         </div>
         }
