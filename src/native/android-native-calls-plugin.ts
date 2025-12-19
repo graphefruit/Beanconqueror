@@ -76,7 +76,7 @@ export interface BCAndroidNativeCalls {
    * Copy a SAF directory recursively to a File-based internal directory.
    */
   copySafDirectoryToFileDirectory(
-    options: CopySafDirectoryToFileDirectoryOptions
+    options: CopySafDirectoryToFileDirectoryOptions,
   ): Promise<void>;
 
   /**
@@ -84,12 +84,18 @@ export interface BCAndroidNativeCalls {
    * internal directory contents will be deleted!
    */
   moveFileDirectoryToSafDirectory(
-    options: CopyFileDirectoryToSafDirectoryOptions
+    options: CopyFileDirectoryToSafDirectoryOptions,
   ): Promise<void>;
+
+  /**
+   * Set the status bar color.
+   * On Android 15+, this handles edge-to-edge insets.
+   */
+  setStatusBarColor(options: { color: string }): Promise<void>;
 }
 
 const AndroidNativeCalls = registerPlugin<BCAndroidNativeCalls>(
-  'BCAndroidNativeCalls'
+  'BCAndroidNativeCalls',
 );
 
 export { AndroidNativeCalls };

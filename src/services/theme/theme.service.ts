@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
 
 import { DarkMode } from '@aparajita/capacitor-dark-mode';
@@ -22,7 +23,6 @@ export class ThemeService {
   constructor(private readonly uiSettingsStorage: UISettingsStorage) {}
   public async initialize() {
     this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-
     this.prefersDark.addEventListener('change', (mediaQuery) => {
       this.adjustTheme();
     });
@@ -77,7 +77,13 @@ export class ThemeService {
       const isIOS = Capacitor.getPlatform() == 'ios';
       if (shouldAdd) {
         StatusBar.setStyle({ style: Style.Dark });
-        StatusBar.setBackgroundColor({ color: '#121212' });
+
+        if (Capacitor.getPlatform() === 'android') {
+          AndroidNativeCalls.setStatusBarColor({ color: '#121212' });
+        } else {
+          StatusBar.setBackgroundColor({ color: '#121212' });
+        }
+
         NavigationBar.setNavigationBarColor({
           color: '#121212',
           darkButtons: false,
@@ -87,7 +93,13 @@ export class ThemeService {
         }
       } else {
         StatusBar.setStyle({ style: Style.Light });
-        StatusBar.setBackgroundColor({ color: '#F0F0F0' });
+
+        if (Capacitor.getPlatform() === 'android') {
+          AndroidNativeCalls.setStatusBarColor({ color: '#F0F0F0' });
+        } else {
+          StatusBar.setBackgroundColor({ color: '#F0F0F0' });
+        }
+
         NavigationBar.setNavigationBarColor({
           color: '#F0F0F0',
           darkButtons: true,
