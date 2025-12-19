@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   INTERNAL_CALLER: 'beanconqueror://',
   API_URL: 'https://backend.beanconqueror.com/',
-  features_active: {
+  FEATURES_ACTIVE: {
     SANREMO_YOU: false,
   },
 };
