@@ -26,7 +26,7 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
   public maxWeight: number;
   public settings: Settings;
   public copyAttachments: boolean = false;
-  public quality: number = 80;
+  public quality: number = 100;
   public maxMB: number = 0.5;
 
   constructor(
@@ -111,14 +111,18 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
       if (this.bean.cost && this.bean.weight > 0) {
         newBean.cost = this.uiHelper.toFixedIfNecessary(
           (this.bean.cost / this.bean.weight) * newBean.weight,
-          2
+          2,
         );
       } else {
         newBean.cost = 0;
       }
 
       // Copy attachments logic
-      if (this.copyAttachments && this.bean.attachments && this.bean.attachments.length > 0) {
+      if (
+        this.copyAttachments &&
+        this.bean.attachments &&
+        this.bean.attachments.length > 0
+      ) {
         const copyAttachmentsBase64: Array<string> = [];
         for await (let attachment of this.bean.attachments) {
           try {
@@ -184,7 +188,10 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
       this.bean.weight = this.uiHelper.toFixedIfNecessary(remainingWeight, 1);
 
       if (this.bean.cost) {
-        this.bean.cost = this.uiHelper.toFixedIfNecessary(this.bean.cost - newBean.cost, 2);
+        this.bean.cost = this.uiHelper.toFixedIfNecessary(
+          this.bean.cost - newBean.cost,
+          2,
+        );
       }
 
       await this.uiBeanStorage.update(this.bean);
