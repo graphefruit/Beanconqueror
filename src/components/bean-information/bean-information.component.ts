@@ -331,7 +331,14 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async unfreezeBean() {
-    await this.uiBeanHelper.unfreezeBean(this.bean);
+    if (this.bean.weight == 0) {
+      //If a bean has been frozen from the tab menu, it could be frozen with zero weight, if this takes place, we just unfreeze the whole bean.
+      this.bean.unfrozenDate = moment(new Date()).toISOString();
+      await this.uiBeanStorage.update(this.bean);
+      await this.resetSettings();
+    } else {
+      await this.uiBeanHelper.unfreezeBean(this.bean);
+    }
   }
 
   public async toggleFavourite() {

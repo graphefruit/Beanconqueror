@@ -22,7 +22,6 @@
         <div class='ion-label' slot="end">{{maxWeight}}&nbsp;gr</div>
       </ion-range>
     </ion-item>
-
     @if(unfreezeWeight < maxWeight && bean.attachments && bean.attachments.length > 0) {
       <ion-item>
         <ion-checkbox label-placement='start' [(ngModel)]="copyAttachments">

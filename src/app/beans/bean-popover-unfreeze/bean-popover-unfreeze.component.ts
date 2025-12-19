@@ -97,6 +97,12 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
     } else {
       await this.uiAlert.showLoadingSpinner();
       // Partial unfreeze
+      if (!this.bean.frozenGroupId) {
+        this.bean.frozenGroupId = crypto.randomUUID();
+        // Update the original bean immediately so the ID is persisted
+        await this.uiBeanStorage.update(this.bean);
+      }
+
       const newBean: Bean = this.uiHelper.cloneData(this.bean);
 
       // Update new bean properties
