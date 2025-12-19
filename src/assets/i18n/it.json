@@ -1465,40 +1465,26 @@
                 "19": "Opzione per disabilitare il popup di connessione\/disconnessione dei dispositivi Bluetooth"
             }
         },
-        "8.4.0": {
-            "TITLE": "Versione 8.4.0: Novità",
+        "8.5.0": {
+            "TITLE": "Versione 8.5.0: Novità",
             "DESCRIPTION": [
-                "<b>Sperimentale: Modalità oscura<\/b>",
-                "Scegli tra la modalità chiara e scura o lascia che l'app segua le impostazioni di sistema: attivala nelle Impostazioni. Impostazione predefinita: modalità chiara",
+                "<b>Unwrap 2025<\/b>",
+                "Unwrap dell'anno!",
+                "",
+                "<b>Nuova lingua<\/b>",
+                "Supporto del greco - Grazie a Mr. pterodactyl",
                 "",
                 "<b>Bilance Bluetooth<\/b>",
-                "Supporto per Half Decent Scale",
-                "Supporto per DIY-WeightMyBruhScale",
-                "Supporto per EspressiScale",
-                "",
-                "Preparazioni",
-                "Ora puoi accendere o spegnere la Xenia",
-                "",
-                "<b>Preparazioni<\/b>",
-                "[IOS]Attiva la fotocamera a schermo intero per il tuo espresso",
-                "Se trovi dei bug, contatta info@beanconqueror.com",
-                "La data di preparazione è ora visualizzata nella vista dettagliata",
+                "Mostra l'id univoco del dispositivo per facilitare la connessione",
                 "",
                 "<b>Caffè<\/b>",
-                "Ordina i caffè in base alla data migliore",
-                "L'importazione dei caffè supporta anche le immagini",
-                "",
-                "<b>Immagini<\/b>",
-                "Importa immagini dagli appunti",
-                "",
-                "<b>Statistiche<\/b>",
-                "Aggiunte alcune statistiche sui caffè",
-                "",
-                "<b>Aggiornamenti delle librerie<\/b>",
-                "Aggiornamento a Capacitor 7 e Angular 20",
-                "Se trovi dei bug, contatta info@beanconqueror.com",
+                "Scongelare una porzione di caffè surgelato",
+                "I caffè sono ora raggruppati se provengono dallo stesso padre",
+                "Mostrare un'icona specifica per i caffè decaffeinati (moon-icon)",
+                "Correzione dell'importazione di caffè da excel con più varietà",
                 "",
                 "<b>Altro<\/b>",
+                "[ANDROID]Supporto Edge2Edge in Capacitor per correggere gli spazi vuoti attorno la tastiera",
                 "Correzioni minori"
             ]
         }
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
     "PAGE_STATISTICS_AVG_RATING": "Average Rating",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Greco"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Greco",
+    "NO_CAMERA_PERMISSION": "Non è stata concessa l'autorizzazione per la videocamera, abilita dalle impostazioni di sistema",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "Unwrap dell'anno!",
+            "SUBTITLE": "Rivivi il caffettoso viaggio di quest'anno!"
+        },
+        "INTRO": {
+            "TITLE": "Il tuo caffè nell'anno",
+            "SUBTITLE": "Vediamo cosa hai preparato nel {{year}}"
+        },
+        "NUMBERS": {
+            "TITLE": "I numeri",
+            "BEANS": "Caffè esplorati",
+            "WEIGHT": "Peso totale",
+            "BREWS": "Preparazioni totali",
+            "COST": "Spesa totale"
+        },
+        "INSIGHTS": {
+            "TITLE": "Approfondimenti",
+            "CAFFEINE": "Assunzione di caffeina",
+            "AVG_BREWS": "Media giornaliera preparazioni",
+            "BUSIEST_DAY": "Giorno preferito",
+            "PEAK_HOUR": "Ora preferita"
+        },
+        "MAP": {
+            "TITLE": "Coffee Journey",
+            "COUNTRIES": "Origini"
+        },
+        "ROASTERS": {
+            "TITLE": "Migliori torrefazioni",
+            "ROASTERS": "Torrefazione"
+        },
+        "PREPARATIONS": {
+            "TITLE": "Miglior preparazione"
+        },
+        "VARIETIES": {
+            "TITLE": "Miglior varietà"
+        },
+        "PROCESSING": {
+            "TITLE": "Miglior processo"
+        },
+        "GRINDERS": {
+            "TITLE": "Migliori macinacaffè"
+        },
+        "FAVORITES": {
+            "TITLE": "I tuoi preferiti",
+            "ROAST": "Torrefazione preferita",
+            "RATING": "Voto medio",
+            "EXPENSIVE": "Caffè più costoso",
+            "BEST_BEAN": "Caffè più votato"
+        },
+        "SUMMARY": {
+            "TITLE": "È tutto!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Caffè scongelato",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Caffè scongelato parzialmente",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Scongela caffè parzialmente",
+    "LAST_COMMUNICATION": "Ultima comunicazione"
 }

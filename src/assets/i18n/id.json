@@ -1465,40 +1465,26 @@
                 "19": "Option to disable the connect\/disconnect popup for Bluetooth devices"
             }
         },
-        "8.4.0": {
-            "TITLE": "Versi 8.4.0: Apa yang baru",
+        "8.5.0": {
+            "TITLE": "Versi 8.5.0: Apa yang baru",
             "DESCRIPTION": [
-                "<b> Eksperimental: Mode Gelap <\/b>",
-                "Pilih antara Mode Terang dan Gelap, atau biarkan aplikasi mengikuti pengaturan sistem Anda - Aktifkan di Pengaturan. Default: Mode Terang",
+                "<b>Buka bungkus 2025<\/b>",
+                "Buka bungkus tahun 2025 Anda!",
+                "",
+                "<b>Bahasa Baru<\/b>",
+                "Bahasa Yunani - Terima kasih kepada Mr. pterodactyl",
                 "",
                 "<b>Timbangan Bluetooth<\/b>",
-                "Dukungan untuk Half Decent Scale",
-                "Dukungan untuk timbangan  DIY-WeightMyBruh",
-                "Dukungan untuk EspressiScale",
+                "Menampilkan ID unik perangkat untuk memudahkan koneksi.",
                 "",
-                "<b>Metode seduh<\/b>",
-                "Sekarang Anda dapat menghidupkan atau mematikan mesin Xenia",
-                "",
-                "<b>Seduhan<\/b>",
-                "[IOS]Aktifkan kamera untuk tarikan espresso Anda pada layar yang dimaksimalkan",
-                "Memperbaiki bug yang menyebabkan perangkat bluetooth tidak berfungsi, jika metode persiapan pertama Anda menonaktifkan bagian while-brewing",
-                "Tanggal seduh sekarang ditampilkan pada tampilan detail",
-                "",
-                "<b>Beans:<\/b>",
-                "Urutkan biji kopi berdasarkan tanggal terbaik biji kopi",
-                "Impor biji oleh pengguna sekarang juga mendukung gambar",
-                "",
-                "<b>Gambar<\/b>",
-                "Mengimpor gambar dengan papan klip",
-                "",
-                "<b>Statistik<\/b>",
-                "Menambahkan beberapa statistik biji kopi",
-                "",
-                "<b>Pembaruan library<\/b>",
-                "Memperbarui ke Capacitor 7 serta Angular 20",
-                "Jika Anda menemukan bug, setelah seluruh kode terpengaruh, silakan hubungi info@beanconqueror.com",
+                "<b>Biji<\/b>",
+                "Mencairkan sebagian biji kopi beku",
+                "Biji kopi sekarang dibuat per grup jika memiliki sumber yang sama",
+                "Menampilkan ikon khusus untuk biji kopi tanpa kafein (moon-icon)",
+                "Memperbaiki impor data kopi dari excel dengan beberapa varietas",
                 "",
                 "<b>Lainnya<\/b>",
+                "[ANDROID] Mendukung Edge2Edge dari Capacitor untuk memperbaiki spasi kosong pada keyboard",
                 "Perbaikan kecil"
             ]
         }
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
     "PAGE_STATISTICS_AVG_RATING": "Average Rating",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Yunani"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Yunani",
+    "NO_CAMERA_PERMISSION": "Tidak ada izin akses kamera yang diberikan, harap aktifkan di dalam sistem operasi.",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "Buka bungkus tahun Anda!",
+            "SUBTITLE": "Simak perjalanan Anda di dunia kopi tahun ini!"
+        },
+        "INTRO": {
+            "TITLE": "Tahun Anda dalam Dunia Kopi",
+            "SUBTITLE": "Mari kita lihat apa yang telah kamu seduh di {{year}}"
+        },
+        "NUMBERS": {
+            "TITLE": "Angka-angka",
+            "BEANS": "Biji kopi terlacak",
+            "WEIGHT": "Berat Total",
+            "BREWS": "Total seduhan",
+            "COST": "Total pengeluaran"
+        },
+        "INSIGHTS": {
+            "TITLE": "Wawasan",
+            "CAFFEINE": "Asupan kafein",
+            "AVG_BREWS": "Rerata Seduhan\/Hari",
+            "BUSIEST_DAY": "Hari Tersibuk",
+            "PEAK_HOUR": "Jam sibuk"
+        },
+        "MAP": {
+            "TITLE": "Perjalanan kopi",
+            "COUNTRIES": "Negara"
+        },
+        "ROASTERS": {
+            "TITLE": "Roaster Top",
+            "ROASTERS": "Roaster"
+        },
+        "PREPARATIONS": {
+            "TITLE": "Seduhan Terbaik"
+        },
+        "VARIETIES": {
+            "TITLE": "Varietas teratas"
+        },
+        "PROCESSING": {
+            "TITLE": "Pemroses Teratas"
+        },
+        "GRINDERS": {
+            "TITLE": "Penggiling Teratas"
+        },
+        "FAVORITES": {
+            "TITLE": "Favorit Anda",
+            "ROAST": "Roastingan Favorit",
+            "RATING": "Rating Rata-rata",
+            "EXPENSIVE": "Biji kopi paling mahal",
+            "BEST_BEAN": "Rangking biji kopi paling tinggi"
+        },
+        "SUMMARY": {
+            "TITLE": "Selesai sudah!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Biji kopi sudah dicairkan.",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Sebagian Biji kopi beku telah mencair",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Cairkan sebagian biji kopi",
+    "LAST_COMMUNICATION": "Komunikasi terakhir"
 }

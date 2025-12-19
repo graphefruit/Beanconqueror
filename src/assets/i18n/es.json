@@ -1465,41 +1465,27 @@
                 "19": "Se ha añadido una opción para desactivar la ventana emergente de conexión\/desconexión a dispositivos Bluetooth."
             }
         },
-        "8.4.0": {
-            "TITLE": "Versión 8.4.0: Novedades",
+        "8.5.0": {
+            "TITLE": "Versión 8.5.0: Novedades",
             "DESCRIPTION": [
-                "<b>Experimental: Modo oscuro<\/b>",
-                "Elige entre tema claro, oscuro o automático - Activable en la sección de ajustes.\nTema por defecto: claro",
+                "<b>Unwrap 2025<\/b>",
+                "¡Echa un vistazo a tu 2025!",
+                "",
+                "<b>Nuevo idioma<\/b>",
+                "Añadida traducción al Griego - Gracias a Mr. pterodactyl",
                 "",
                 "<b>Básculas Bluetooth<\/b>",
-                "Añadida compatibilídad con la báscula Half Decent",
-                "Añadida compatibilidad con la báscula DIY-WeightMyBruhScale",
-                "Añadida compatibilidad con la báscula EspressiScale",
-                "",
-                "<b>Métodos<\/b>",
-                "Ahora puedes encender y apagar la cafetera Xenia desde la aplicación",
-                "",
-                "<b>Preparaciones<\/b>",
-                "[iOS] Activa la cámara a pantalla completa para hacer una foto en modo espresso",
-                "Corregido un error que impedía que los dispositivos Bluetooth funcionaran correctamente si el primer método de preparación activo no tenía la sección 'Durante la preparación' activada",
-                "Ahora se muestra la fecha de la preparación en la vista detallada",
+                "Ahora se muestra el identificador único de cada báscula",
                 "",
                 "<b>Cafés<\/b>",
-                "Ordena los cafés por fecha óptima de consumo",
-                "Ahora también se pueden importar imágenes usando la función de importar cafés",
-                "",
-                "<b>Imágenes<\/b>",
-                "Importa imágenes desde el portapapeles",
-                "",
-                "<b>Estadísticas<\/b>",
-                "Añadidas estadísticas de cafés",
-                "",
-                "<b>Actualización de librerías<\/b>",
-                "Actualizado a Capacitor 7 y Angular 20",
-                "Dado que se ha reescrito gran parte del código, escribe a info@beanconqueror.com si encuentras algún problema.",
+                "Ahora puedes descongelar parcialmente un café",
+                "El mismo café congelado en varios tipos de envase ahora aparece agrupado",
+                "Icono específico para los descafeinados (luna)",
+                "Corregido un error al importar desde Excel con cafés que tenían múltiples varietales",
                 "",
                 "<b>Otros<\/b>",
-                "Pequeñas correcciones de errores"
+                "[ANDROID] Añadido soporte de Edge2Edge vía Capacitor para arreglar un fallo en el teclado",
+                "Corrección de errores menores"
             ]
         }
     },
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Cafés según tostador",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Puntuación promedio según origen",
     "PAGE_STATISTICS_AVG_RATING": "Puntuación promedio",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Griego"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Griego",
+    "NO_CAMERA_PERMISSION": "No se ha otorgado permisos a la cámara, habilítalo en los ajustes del sistema operativo.",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "¡Tu año en retrospectiva!",
+            "SUBTITLE": "¡Echa un vistazo a tu año cafetero!"
+        },
+        "INTRO": {
+            "TITLE": "Tu año cafetero",
+            "SUBTITLE": "Veamos cómo ha sido tu {{year}}"
+        },
+        "NUMBERS": {
+            "TITLE": "Las cifras",
+            "BEANS": "Cafés",
+            "WEIGHT": "Peso total",
+            "BREWS": "Preparaciones",
+            "COST": "Total gastado"
+        },
+        "INSIGHTS": {
+            "TITLE": "Detalles",
+            "CAFFEINE": "Ingesta de cafeína",
+            "AVG_BREWS": "Preparaciones diarias",
+            "BUSIEST_DAY": "Día más ajetreado",
+            "PEAK_HOUR": "Hora favorita"
+        },
+        "MAP": {
+            "TITLE": "Top países",
+            "COUNTRIES": "Países"
+        },
+        "ROASTERS": {
+            "TITLE": "Top tostadores",
+            "ROASTERS": "Tostadores"
+        },
+        "PREPARATIONS": {
+            "TITLE": "Top preparaciones"
+        },
+        "VARIETIES": {
+            "TITLE": "Top variedades"
+        },
+        "PROCESSING": {
+            "TITLE": "Top procesos"
+        },
+        "GRINDERS": {
+            "TITLE": "Top molinos"
+        },
+        "FAVORITES": {
+            "TITLE": "Tus favoritos",
+            "ROAST": "Tueste favorito",
+            "RATING": "Puntuación media",
+            "EXPENSIVE": "Café más caro",
+            "BEST_BEAN": "Café mejor puntuado"
+        },
+        "SUMMARY": {
+            "TITLE": "¡Esto es todo!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Café descongelado",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Café descongelado parcialmente",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Descongelar parcialmente",
+    "LAST_COMMUNICATION": "Última conexión"
 }

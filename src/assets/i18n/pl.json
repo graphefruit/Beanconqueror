@@ -1465,41 +1465,27 @@
                 "19": "Opcja wyłączenia wyskakującego okienka połączenia\/rozłączenia dla urządzeń Bluetooth"
             }
         },
-        "8.4.0": {
-            "TITLE": "Wersja 8.4.0: Co nowego",
+        "8.5.0": {
+            "TITLE": "Wersja 8.5.0: Co nowego",
             "DESCRIPTION": [
-                "<b>Eksperymentalny: Tryb ciemny<\/b>",
-                "Wybierz między trybem jasnym i ciemnym lub pozwól aplikacji postępować zgodnie z ustawieniami systemowymi - aktywuj ją w Ustawieniach. Domyślnie: Tryb jasny",
+                "<b>Rozpakuj 2025<\/b>",
+                "Rozpakuj swój 2025!",
+                "",
+                "<b>Nowy język<\/b>",
+                "Wspieranie języka greckiego – dzięki Mr. pterodactyl",
                 "",
                 "<b>Wagi Bluetooth<\/b>",
-                "Wsparcie dla skali Half Decent",
-                "Wsparcie dla DIY-WeightMyBruh Scale",
-                "Wsparcie dla EspressiScale",
+                "Wyświetlanie unikalnego identyfikatora urządzenia w celu ułatwienia połączenia",
                 "",
-                "<b>Przygotowania<\/b>",
-                "Możesz teraz włączyć lub wyłączyć maszynę Xenia",
-                "",
-                "<b> Napary <\/b>",
-                "[IOS]Aktywuj kamerę do robienia espresso na zmaksymalizowanym ekranie",
-                "Naprawiono błąd, który powodował, że urządzenia Bluetooth nie działały, jeśli pierwsza metoda przygotowania miała wyłączoną sekcję parzenia",
-                "Data parzenia jest teraz wyświetlana w widoku szczegółowym",
-                "",
-                "<b>Ziarna<\/b>",
-                "Sortuj ziarna według najlepszej daty",
-                "Import ziaren przez użytkownika obsługuje teraz również obrazy",
-                "",
-                "<b>Obrazy<\/b>",
-                "Importowanie obrazów ze schowka",
-                "",
-                "<b>Statystyki<\/b>",
-                "Dodano kilka statystyk ziaren",
-                "",
-                "<b>Aktualizacje bibliotek<\/b>",
-                "Aktualizacja do Capacitor 7 oraz Angular 20",
-                "Jeśli po wprowadzeniu zmian w całym kodzie znajdziesz jakiekolwiek błędy, skontaktuj się z nami pod adresem info@beanconqueror.com",
+                "<b>Ziarna:<\/b>",
+                "Odmrażanie porcji ziaren kawy",
+                "Ziarna są teraz grupowane, jeśli pochodzą od tego samego rodzica",
+                "Wyświetlanie specjalnej ikony dla ziaren bezkofeinowych (ikona księżyca)",
+                "Naprawianie importu ziaren z Excela z wieloma odmianami",
                 "",
                 "<b>Inne<\/b>",
-                "Drobne poprawki błędów"
+                "[ANDROID]Wsparcie Edge2Edge z poziomu Capacitor w celu naprawy odstępów między klawiszami",
+                "Drobne poprawki"
             ]
         }
     },
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Ziarna według palarni",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Średnia ocena ziarna według kraju",
     "PAGE_STATISTICS_AVG_RATING": "Średnia ocena",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Grecki"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Grecki",
+    "NO_CAMERA_PERMISSION": "Brak uprawnień do korzystania z kamery, proszę włączyć je w systemie operacyjnym",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "Rozpakuj swój rok!",
+            "SUBTITLE": "Sprawdź swój rok w kawie!"
+        },
+        "INTRO": {
+            "TITLE": "Rok w kawie",
+            "SUBTITLE": "Zobaczmy, co zostało naparzone w {{year}}"
+        },
+        "NUMBERS": {
+            "TITLE": "Liczby",
+            "BEANS": "Śledzone Ziarna",
+            "WEIGHT": "Całkowita Waga",
+            "BREWS": "Łączne Napary",
+            "COST": "Łączne wydatki"
+        },
+        "INSIGHTS": {
+            "TITLE": "Spostrzeżenia",
+            "CAFFEINE": "Spożycie kofeiny",
+            "AVG_BREWS": "Średnia ilość naparów\/dzień",
+            "BUSIEST_DAY": "Najbardziej pracowity dzień",
+            "PEAK_HOUR": "Godzina szczytu"
+        },
+        "MAP": {
+            "TITLE": "Podróż Kawy",
+            "COUNTRIES": "Kraje"
+        },
+        "ROASTERS": {
+            "TITLE": "Najlepsi palacze",
+            "ROASTERS": "Palarnie"
+        },
+        "PREPARATIONS": {
+            "TITLE": "Najlepsze Metody"
+        },
+        "VARIETIES": {
+            "TITLE": "Najlepsze Odmiany"
+        },
+        "PROCESSING": {
+            "TITLE": "Najlepszy Proces"
+        },
+        "GRINDERS": {
+            "TITLE": "Najlepsze Młynki"
+        },
+        "FAVORITES": {
+            "TITLE": "Ulubione",
+            "ROAST": "Ulubiony wypał",
+            "RATING": "Średnia ocena",
+            "EXPENSIVE": "Najdroższe ziarna",
+            "BEST_BEAN": "Najwyżej ocenione ziarna"
+        },
+        "SUMMARY": {
+            "TITLE": "To już wszystko!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Ziarna zostały odmrożone",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Ziarna zostały częściowo odmrożone",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Odmrażanie partii ziaren kawy",
+    "LAST_COMMUNICATION": "Ostatnia komunikacja"
 }

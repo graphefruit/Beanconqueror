@@ -66,7 +66,7 @@
     "PAGE_SETTINGS_DISPLAY_PAGING": "Sideoppsett",
     "PAGE_SETTINGS_STARTUP_VIEW": "Startside",
     "PAGE_SETTINGS_ANALYTICS_INFORMATION": "Analyse",
-    "PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP": "Trykk i for mer informasjon",
+    "PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP": "Trykk \"i\" for mer informasjon",
     "PAGE_SETTINGS_TRACK_BREW_COORDINATES": "Lagre bryggets geo-lokasjon",
     "PAGE_SETTINGS_FAST_REPEAT": "Gjenta brygg identisk",
     "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION": "Lagre koffeinkonsum",
@@ -438,7 +438,7 @@
             "BREW_DATA_MILL_TIMER": "Angi kvernetid",
             "BREW_DATA_PRESSURE_PROFILE": "Trykk\/strømmeprofil, bryggemetodikk",
             "BREW_DATA_TEMPERATURE_TIME": "Angi tiden maskinen fikk for å varmes opp",
-            "BREW_DATA_COFFEE_BLOOMING_TIME": "Hvor lang er \"blooming\"-tiden?",
+            "BREW_DATA_COFFEE_BLOOMING_TIME": "Hvor lang er \"blooming\"-fasen?",
             "BREW_DATA_COFFEE_FIRST_DRIP_TIME": "På hvilket tidspunkt kom det første dryppet?",
             "BREW_DATA_BREW_QUANTITY": "Hvor mye vann benyttet du for å brygge?",
             "BREW_DATA_COFFEE_TYPE": "Skriv inn kaffetypen (f.eks. ristretto)",
@@ -633,7 +633,7 @@
     "WEBSITE": "Nettsted",
     "SHARE": "Del",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Dele filtilgang kreves",
-    "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "For at appen skal fungere fullt ut ber vi deg godkjenne filtilgang. Ellers vil det være problemer med å bruke appen. Dette er spesielt nødvendig for det automatiske sikkerhetskopieringssystemet.",
+    "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "For at appen skal fungere fullt ut ber vi deg godkjenne filtilgang. Uten dette vil det være problemer med å bruke appen. Dette er spesielt nødvendig for det automatiske sikkerhetskopieringssystemet.",
     "COULD_NOT_ACCESS_FILE": "Vi fikk ikke tilgang til den valgte filen",
     "WRONG_FILE_FORMAT": "Du har valgt et filformat som ikke støttes",
     "SCAN_BEAN": "Skann pakken",
@@ -843,14 +843,14 @@
     "DISCONNECT": "Frakople",
     "SCALE": {
         "BLUETOOTH_SCAN_RUNNING": "Søker etter vekt i opptil 60 sekunder",
-        "BLUETOOTH_NOT_ENABLED": "Blåtann er ikke aktivert, vennligst aktivér for at det skal fungere",
+        "BLUETOOTH_NOT_ENABLED": "Bluetooth er ikke aktivert, vennligst aktivér for at det skal fungere",
         "CONNECTION_NOT_ESTABLISHED": "Vekt ble ikke funnet, eller forbindelse kunne ikke opprettes",
         "CONNECTED_SUCCESSFULLY": "Vekt tilkoblet",
         "DISCONNECTED_SUCCESSFULLY": "Vekt frakoblet",
         "DISCONNECTED_UNPLANNED": "Vekten gjorde en uventet frakobling",
         "REQUEST_PERMISSION": {
-            "LOCATION": "For å finne Blåtann-vekter trenger appen tilgang til plasseringen.",
-            "BLUETOOTH": "For å finne Blåtann-vekter trenger appen tilgang til Blåtann"
+            "LOCATION": "For å finne Bluetooth-vekter trenger appen tilgang til plasseringen.",
+            "BLUETOOTH": "For å finne Bluetooth-vekter trenger appen tilgang til Bluetooth"
         },
         "INFORMATION_DESCRIPTION": "Støttede vekter er: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io, Bookoo Mini Scale, Timemore Black Mirror 2 og Eureka Precisa. Merk: Hvis Eureka Precisa mottar en negativ vektverdi, stopper tidtakeren"
     },
@@ -894,7 +894,7 @@
     "BEAN_ROASTING_TYPE_UNKNOWN": "Ukjent",
     "SMART_SCALE_LOG": "Aktiver loggfiler for smart-vekt (kun for feilsøking)",
     "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Bryggeutstyr redigert",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Blåtann-vekt",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Bluetooth-vekt",
     "PAGE_SETTINGS_TAB_GENERAL": "Generelt",
     "SMART_SCALE_TARE_ON_BREW": "Nullstill vekten ved nytt brygg",
     "SMART_SCALE_TARE_ON_START_TIMER": "Nullstill vekten når tidtaker starter",
@@ -902,7 +902,7 @@
     "BREW_AVG_FLOW_WEIGHT_PER_SECOND": "Ø Strøm",
     "CUSTOM_LIST_VIEW_PARAMETERS": "Listevisningsparametre",
     "NAV_LIST_VIEW_CUSTOM_PARAMETERS": "Listevisningsparametre",
-    "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Bestem hvilke parametre som skal vises på flisene i listevisningen",
+    "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Bestem hvilke parametre som skal vises på infoflisene i listevisningen",
     "BREW_DATA_VESSEL_NAME_WEIGHT": "Beholdernavn\/vekt",
     "IGNORE_NEGATIVE_VALUES": "Ignorer negative vektverdier",
     "IGNORE_ANOMALY_VALUES": "Ingorer avviksverdier",
@@ -957,10 +957,10 @@
         "STAY_CONNECTED_ON_APP_MINIMIZE": "La trykkenhet være tilkoblet selv når appen kjører i bakgrunnen",
         "INFORMATION_DESCRIPTION": "Støttede enheter er: Popsicle, Presssensor, Smart Espresso Profiler, Bookoo Espresso Monitor",
         "BLUETOOTH_SCAN_RUNNING": "Søker etter trykkenhet i opptil 60 sekunder",
-        "BLUETOOTH_NOT_ENABLED": "Blåtann er ikke aktivert, vennligst aktivér for at det skal fungere",
+        "BLUETOOTH_NOT_ENABLED": "Bluetooth er ikke aktivert, vennligst aktivér for at det skal fungere",
         "REQUEST_PERMISSION": {
             "LOCATION": "For å finne temperaturenheter trenger appen tilgang til plasseringen.",
-            "BLUETOOTH": "For å finne trykkenheter trenger appen tilgang til Blåtann."
+            "BLUETOOTH": "For å finne trykkenheter trenger appen tilgang til Bluetooth."
         }
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Koble til vekt på nytt",
@@ -970,7 +970,7 @@
     "LAST_USED_BEAN": "Siste bønner",
     "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "Hvor mange desimaler skal vises?",
     "SMART_SCALE_COMMAND_DELAY": "Kommandoforsinkelse",
-    "SMART_SCALE_COMMAND_DELAY_TOOLTIP": "Hvor lang tid skal det gå mellom hver Blåtann-kommando?",
+    "SMART_SCALE_COMMAND_DELAY_TOOLTIP": "Hvor lang tid skal det gå mellom hver Bluetooth-kommando?",
     "SUPPORT_ME": "Donasjon",
     "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "Vise bilde av bønner på brygg?",
     "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "Hvis det finnes et bilde av bønnene, vil dette bli brukt, i stedet for illustrasjon av bryggemetode",
@@ -1016,9 +1016,9 @@
     "BEAN_PARAMETER_CUSTOMIZE_TITLE": "Tilpass info om bønnene",
     "BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION": "Det kan legges inn og vises omfattende info om bønnene. Velg egne parametre du vil fylle inn, og hvilke du vil vise.",
     "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE": "Nullstill tidtaker!",
-    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": "Fordi du har koblet til en Blåtann-enhet, må du nullstille tidtakeren før du kan starte",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": "Fordi du har koblet til en Bluetooth-enhet, må du nullstille tidtakeren før du kan starte",
     "BREW_FILTER_JUST_CHART_DATA": "Kun grafer",
-    "SCALE_RESET_TRIGGERED_DESCRIPTION": "Blåtann-vekten ønsker å nullstille app-tidtakeren og brygg-grafene, vil du fortsette?",
+    "SCALE_RESET_TRIGGERED_DESCRIPTION": "Bluetooth-vekten ønsker å nullstille app-tidtakeren og brygg-grafene, vil du fortsette?",
     "SCALE_RESET_TRIGGERED_TITLE": "Nullstille?",
     "NAV_REPEAT_PARAMETERS": "Definer gjentakelsesparametre",
     "PAGE_REPEAT_PARAMETERS_DESCRIPTION": "Merk hvilke parametre som skal forhåndsinnstilles når du gjentar et spesifikt brygg",
@@ -1104,10 +1104,10 @@
         "STAY_CONNECTED_ON_APP_MINIMIZE": "Hold termometerenheten tilkoblet selv når appen er i bakgrunnen",
         "INFORMATION_DESCRIPTION": "Støttede enheter er: ETI Ltd BLE Thermometers (ThermaQ Blue, BlueTherm, etc), Combustion Inc., Meater (not Meater+ or Meater 2)",
         "BLUETOOTH_SCAN_RUNNING": "Søker etter temperaturenheter i opptil 60s",
-        "BLUETOOTH_NOT_ENABLED": "Blåtann er ikke aktivert, vennligst aktivér for at det skal fungere",
+        "BLUETOOTH_NOT_ENABLED": "Bluetooth er ikke aktivert, vennligst aktivér for at det skal fungere",
         "REQUEST_PERMISSION": {
             "LOCATION": "For å finne temperaturenheter trenger appen tilgang til plasseringen.",
-            "BLUETOOTH": "For å finne temperaturenheter trenger appen tilgang til Blåtann"
+            "BLUETOOTH": "For å finne temperaturenheter trenger appen tilgang til Bluetooth"
         },
         "LOG": "Aktiver loggfiler for temperaturenhet",
         "THRESHOLD_ACTIVE": "Start tidtaking med forhåndsdefinert temperatur",
@@ -1124,7 +1124,7 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Denne innstillingen brukes kun for brygg av typen 'espresso'. Bryggingen vil automatisk stoppe når det ikke registreres noe gjennomstrømming.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Bryggeforholdet vil bli utregnet med denne verdien for alle brygg, men ikke for typen \"espresso\"",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Bryggeforholdet vil kun utregnes med denne verdien for brygg av typen \"espresso\"",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Det ser ut til at Blåtann-vekten ikke var riktig tilkoblet. Dette skjer vanligvis på iOS-enheter med Acaia-vekter. Koble til vekten igjen og sørg for at vekten er oppdatert.",
+    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Det ser ut til at Bluetooth-vekten ikke var riktig tilkoblet. Dette skjer vanligvis på iOS-enheter med Acaia-vekter. Koble til vekten igjen og sørg for at vekten er oppdatert.",
     "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Ingen vektverdier?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Gjennomstrømmingshastighet som bryggingen skal stoppes på. Brygget vil kun stoppes når det har gått minimum 5 sekunder, 5 gram er i koppen eller hvis du har angitt vekten av kvernet kaffe - minst et bryggeforhold på 1:1 oppnås (feks 18g inn, 18g ut). Etter at disse forholdene er møtt, vil den minste gjennomstrømmingshastigheten som er angitt her, bli sjekket",
     "ONLY_BEST_BREWS": "Bare beste brygg",
@@ -1140,10 +1140,10 @@
         "STAY_CONNECTED_ON_APP_MINIMIZE": "Hold refraktometeret tilkoblet selv når appen er i bakgrunnen",
         "INFORMATION_DESCRIPTION": "Støttede enheter er: DiFluid R2",
         "BLUETOOTH_SCAN_RUNNING": "Søker etter refraktometerenhet i opptil 60s",
-        "BLUETOOTH_NOT_ENABLED": "Blåtann er ikke aktivert, vennligst aktivér for at det skal fungere",
+        "BLUETOOTH_NOT_ENABLED": "Bluetooth er ikke aktivert, vennligst aktivér for at det skal fungere",
         "REQUEST_PERMISSION": {
             "LOCATION": "For å finne refraktometerenheter trenger appen tilgang til plasseringen.",
-            "BLUETOOTH": "For å finne refraktometerenheter trenger appen tilgang til Blåtann."
+            "BLUETOOTH": "For å finne refraktometerenheter trenger appen tilgang til Bluetooth."
         },
         "LOG": "Aktivér loggfiler for refraktometerenheten",
         "READ_END": "Test ferdig - resultat mottatt",
@@ -1205,7 +1205,7 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "Espresso - Vekt",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Strøm",
     "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "Ignorer gjeldende overføringsvekt",
-    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "En ny knapp vises i brygg-seksjonen, som vil ignorere nye vektverdier fra Blåtann-vekten.",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "En ny knapp vises i brygg-seksjonen. Ved klikk vil den ignorere nye vektverdier fra Bluetooth-vekten.",
     "BREWS_ACTIVE": "Aktive brygg",
     "BREWS_ARCHIVED": "Arkiverte brygg",
     "GRAPHS": "Grafer",
@@ -1249,7 +1249,7 @@
     "EXTRACTION_CHART_TITLE": "Ekstraksjonsdiagram",
     "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Vis sikkerhetskopieringsproblemer",
     "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Vis en popup hvis sikkerhetskopi ikke kan skrives til filsystemet",
-    "AUTOMATIC_BACKUP_DID_FAIL": "Automatisk sikkerhetskopiering fungerte ikke, sørg for å ha fungerende sikkerhetskopier! Denne informasjonen kan slås av i innstillingene",
+    "AUTOMATIC_BACKUP_DID_FAIL": "Automatisk sikkerhetskopiering fungerte ikke. Sørg for å ha fungerende sikkerhetskopier! Denne informasjonen kan slås av i innstillingene",
     "INTERNAL_BACKUP_DID_FAIL": "Intern sikkerhetskopiering fungerte ikke, sørg for å ha fungerende sikkerhetskopier! Denne informasjonen kan slås av i innstillingene",
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "ZIP-filen kunne ikke lagres! Denne informasjonen kan slås av i innstillingene",
     "SEND_LOGS": "Send logger",
@@ -1356,7 +1356,7 @@
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Når du aktiverer dette, vil grafen være ett sekund på etterskudd",
     "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Lagre maskinloggene når brygget lagres",
     "IMPORT_SHOT_FROM_METICULOUS": "Importér et brygg",
-    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Alle oppdagede oppføringer i Excel-listen, er endret til nye bønner. Nyt et godt brygg!",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Opplasting av Excel-arket er fullført og radene er konvertert til nye bønneoppføringer. God brygging!",
     "IMPORT_UNSUCCESSFULLY": "Importen feilet",
     "BEAN_LIST": "Bønneliste",
     "IMPORT_ROASTED_BEANS_EXCEL": "Importer brente bønner via Excel",
@@ -1381,8 +1381,8 @@
     "FULL_EXPORT_TO_DIRECTORY_DESCRIPTION": "Eksporter alle data (inkludert alle bilder og strømmeprofiler) til den valgte katalogen.",
     "FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS": "{{fileName}} finnes allerede i den valgte katalogen. Rydd opp i katalogen og prøv igjen.",
     "EXPORT_COMPLETED": "Eksporten ble fullført.",
-    "BLUETOOTH_NOT_ENABLED": "Blåtann ikke aktivert, vennligst aktiver for at det skal fungere skikkelig",
-    "SEARCH_BLUETOOTH_DEVICES": "Søk etter Blåtann-enheter",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth ikke aktivert. Vennligst aktiver for at det skal fungere.",
+    "SEARCH_BLUETOOTH_DEVICES": "Søk etter Bluetooth-enheter",
     "CONNECT_SCALE": "Koble til vekt",
     "CONNECT_PRESSURE": "Koble til trykk",
     "CONNECT_TEMPERATURE": "Koble til temperatur",
@@ -1391,11 +1391,11 @@
     "DISCONNECT_PRESSURE": "Koble fra trykk",
     "DISCONNECT_TEMPERATURE": "Koble fra temperatur",
     "DISCONNECT_REFRACTOMETER": "Koble fra refraktometeret",
-    "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "Vi fant ingen støttede Blåtann-enheter. Vennligst prøv igjen",
+    "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "Vi fant ingen støttede Bluetooth-enheter. Vennligst prøv igjen",
     "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": "Skjul verdi-rutene på maksimert skjerm",
     "BLUETOOTH_REQUEST_PERMISSION": {
-        "LOCATION": "For å finne Blåtann-enheter trenger appen tilgang til plasseringen.",
-        "BLUETOOTH": "For å finne Blåtann-enheter trenger appen tilgang til Blåtann"
+        "LOCATION": "For å finne Bluetooth-enheter trenger appen tilgang til plasseringen.",
+        "BLUETOOTH": "For å finne Bluetooth-enheter trenger appen tilgang til Bluetooth"
     },
     "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generer delekode \/ nfc",
     "BEAN_CODE_ACTION": {
@@ -1462,44 +1462,30 @@
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.3.0": {
             "DESCRIPTION": {
-                "19": "Alternativ for å deaktivere popup-vinduet for tilkobling\/frakobling av Blåtann-enheter"
+                "19": "Alternativ for å deaktivere popup-vinduet for tilkobling\/frakobling av Bluetooth-enheter"
             }
         },
-        "8.4.0": {
-            "TITLE": "Versjon 8.4.0: Hva er nytt",
+        "8.5.0": {
+            "TITLE": "Versjon 8.5.0: Hva er nytt",
             "DESCRIPTION": [
-                "<b> Eksperimentell: Mørk modus <\/b>",
-                "Velg mellom lys og mørk modus, eller la appen følge systeminnstillingene dine. Aktivér den i Innstillinger. Standard: Lys modus",
+                "<b>Pakk ut 2025<\/b>",
+                "Pakk opp året 2025!",
                 "",
-                "<b> Bluetooth-vekter <\/b>",
-                "Støtte for Half Decent Scale",
-                "Støtte for DIY-WeightMyBruh Scale",
-                "Støtte for EspressiScale",
+                "<b>Nytt språk<\/b>",
+                "Støtter gresk - Takk til Mr. pterodactyl",
                 "",
-                "<b>Metoder<\/b>",
-                "Du kan nå slå Xenia-maskinen av eller på",
-                "",
-                "<b>Brygg<\/b>",
-                "[IOS] Aktivér kameraet for espresso-brygg i fullskjerm-modus",
-                "Rettet en feil som gjorde at Bluetooth-enheter ikke fungerte hvis den første bryggemetoden hadde «under brygging»-delen deaktivert.",
-                "Bryggedatoen vises nå i detaljvisningen",
+                "<b>Bluetooth-vekter<\/b>",
+                "Viser enhetens unike ID for enklere tilkobling",
                 "",
                 "<b>Bønner<\/b>",
-                "Sortér bønner etter beste bønnedato",
-                "Brukerimport av bønner støtter nå også bilder",
+                "Avfrys en porsjon av de fryste bønnene",
+                "Bønner grupperes nå hvis de er fra samme forelder",
+                "Viser et eget ikon for koffeinfrie bønner (måneikon)",
+                "Fikset import av bønner fra Excel med flere varianter",
                 "",
-                "<b> Bilder <\/b>",
-                "Importer bilder via utklippstavlen",
-                "",
-                "<b>Statistics<\/b>",
-                "La til ytterligere bønnestatistikk",
-                "",
-                "<b> Oppdateringer av biblioteker <\/b>",
-                "Oppdatert til Capacitor 7 samt Angular 20",
-                "Hvis du finner noen feil nå som hele koden er omarbeidet, kan du kontakte info@beanconqueror.com.",
-                "",
-                "<b> Annet <\/b>",
-                "Mindre rettelser"
+                "<b>Annen<\/b>",
+                "[ANDROID]Støtter Edge2Edge fra kondensator for å fikse mellomrom på tastaturet",
+                "Mindre feilrettinger"
             ]
         }
     },
@@ -1507,8 +1493,8 @@
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Bryggemetode",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Bønner",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": "Brygg",
-    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "TIlkoblingsinformasjon om Blåtann-enhet",
-    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Viser informasjon om tilkobling og frakobling av Blåtann-enheten(e).",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": "TIlkoblingsinformasjon om Bluetooth-enhet",
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": "Viser informasjon om tilkobling og frakobling av Bluetooth-enheten(e).",
     "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": "Bildekvalitet i prosent",
     "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": "Maksimal bildestørrelse i megabytes",
     "POPOVER_COPY_FROZEN_ID": "Kopier nedfrysings-ID",
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Bønner etter kaffebrenneri",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Gjennomsnittlig bønnevurdering etter land",
     "PAGE_STATISTICS_AVG_RATING": "Gjennomsnittlig vurdering",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Gresk"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Gresk",
+    "NO_CAMERA_PERMISSION": "Ingen kameratillatelse gitt, vennligst aktiver i operativsystemet",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "Pakk opp året ditt!",
+            "SUBTITLE": "Sjekk ut ditt kaffe-år!"
+        },
+        "INTRO": {
+            "TITLE": "Ditt år med kaffe",
+            "SUBTITLE": "La oss se hva du brygget i {{year}}"
+        },
+        "NUMBERS": {
+            "TITLE": "Tallene",
+            "BEANS": "Bønner registrert",
+            "WEIGHT": "Totalvekt",
+            "BREWS": "Totalt brygget",
+            "COST": "Totalt brukt"
+        },
+        "INSIGHTS": {
+            "TITLE": "Innsikt",
+            "CAFFEINE": "Koffeininntak",
+            "AVG_BREWS": "Gjsnitt brygg\/dag",
+            "BUSIEST_DAY": "Travleste dagen",
+            "PEAK_HOUR": "Topptimen"
+        },
+        "MAP": {
+            "TITLE": "Kaffereise",
+            "COUNTRIES": "Land"
+        },
+        "ROASTERS": {
+            "TITLE": "Mest populære kaffebrennerier",
+            "ROASTERS": "Kaffebrennerier"
+        },
+        "PREPARATIONS": {
+            "TITLE": "Mest benyttede bryggemetoder"
+        },
+        "VARIETIES": {
+            "TITLE": "Mest foretrukne varieteter"
+        },
+        "PROCESSING": {
+            "TITLE": "Mest foretrukne prosessering"
+        },
+        "GRINDERS": {
+            "TITLE": "Mest benyttede kverner"
+        },
+        "FAVORITES": {
+            "TITLE": "Dine favoritter",
+            "ROAST": "Favoritt brenneprofil",
+            "RATING": "Gjennomsnittlig vurdering",
+            "EXPENSIVE": "De dyreste bønnene",
+            "BEST_BEAN": "Høyest rangerte bønner"
+        },
+        "SUMMARY": {
+            "TITLE": "Det var det!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Bønnene har blitt avfryst",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Et parti av bønnene har blitt avfryst",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Avfrys et parti av bønnene",
+    "LAST_COMMUNICATION": "Siste kommunikasjon"
 }
