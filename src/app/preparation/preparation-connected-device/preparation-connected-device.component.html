@@ -98,6 +98,71 @@
             [step]="0.05" >
           </ion-range>
         </ion-item>
+        <!--<hr>
+        <ion-item lines='none'>
+          <ion-label position="stacked" style="min-height:30px;">
+            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P1" | translate }}&nbsp;<ion-badge
+              style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeP1| toFixed: 2 }}
+            </ion-badge>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item lines='inset'>
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true"
+                     style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()"
+                     [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTimeP1" [max]="2" min="0"
+                     snaps="true"
+                     [step]="0.05">
+          </ion-range>
+        </ion-item>
+        <ion-item lines='none'>
+          <ion-label position="stacked" style="min-height:30px;">
+            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P2" | translate }}&nbsp;<ion-badge
+              style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeP2| toFixed: 2 }}
+            </ion-badge>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item lines='inset'>
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true"
+                     style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()"
+                     [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTimeP2" [max]="2" min="0"
+                     snaps="true"
+                     [step]="0.05">
+          </ion-range>
+        </ion-item>
+        <ion-item lines='none'>
+          <ion-label position="stacked" style="min-height:30px;">
+            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P3" | translate }}&nbsp;<ion-badge
+              style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeP3| toFixed: 2 }}
+            </ion-badge>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item lines='inset'>
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true"
+                     style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()"
+                     [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTimeP3" [max]="2" min="0"
+                     snaps="true"
+                     [step]="0.05">
+          </ion-range>
+        </ion-item>
+        <ion-item lines='none'>
+          <ion-label position="stacked" style="min-height:30px;">
+            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_M" | translate }}&nbsp;<ion-badge
+              style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeM| toFixed: 2 }}
+            </ion-badge>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item lines='inset'>
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true"
+                     style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()"
+                     [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTimeM" [max]="2" min="0"
+                     snaps="true"
+                     [step]="0.05">
+          </ion-range>
+        </ion-item>-->
       }
 
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.GAGGIUINO) {

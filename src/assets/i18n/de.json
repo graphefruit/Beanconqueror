@@ -1465,40 +1465,26 @@
                 "19": "Option zum Deaktivieren des Verbinden\/Trennen-Popups für Bluetooth-Geräte"
             }
         },
-        "8.4.0": {
-            "TITLE": "Version 8.4.0: Das ist neu",
+        "8.5.0": {
+            "TITLE": "Version 8.5.0: Das ist neu",
             "DESCRIPTION": [
-                "<b>Experimentell: Dunkler Modus<\/b>",
-                "Wähle zwischen hellem und dunklem Modus oder lass die App deinen Systemeinstellungen folgen, aktiviere es in den Einstellungen. Standard: Heller Modus",
+                "<b>Das war's 2025<\/b>",
+                "Entdecke dein Jahr 2025!",
+                "",
+                "<b>Neue Sprache<\/b>",
+                "Griechische Unterstützung – Danke an Mr. pterodactyl",
                 "",
                 "<b>Bluetooth-Waagen<\/b>",
-                "Unterstützung von Half Decent Scale",
-                "Unterstützung der DIY-WeightMyBruh Waage",
-                "Unterstützung von EspressiScale",
-                "",
-                "<b>Zubereitungsmethodiken<\/b>",
-                "Die Xenia Maschine kann nun an und ausgeschaltet werden",
-                "",
-                "<b>Brühungen<\/b>",
-                "[IOS]Aktiviere die Kamera für den Espresso-Zug auf dem maximiertem Bildschirm",
-                "Behebung eines Fehlers, der dazu führte, dass Bluetooth-Geräte nicht funktionierten, wenn bei der ersten Zubereitungsmethode der Abschnitt \"Während des Brühens\" deaktiviert war",
-                "Das Brühdatum wird jetzt in der Detailansicht angezeigt",
+                "Anzeige der eindeutigen Geräte-ID zur einfacheren Verbindung",
                 "",
                 "<b>Bohnen<\/b>",
-                "Bohnen nach dem Datum dem besten Bohnenalter sortieren",
-                "Benutzerimport von Bohnen unterstützt jetzt auch Bilder",
+                "Einen Teil einer gefrorenen Bohne auftauen",
+                "Bohnen werden nun gruppiert",
+                "Ein spezielles Symbol für entkoffeinierte Bohnen (Mondsymbol) wird angezeigt",
+                "Import von Bohnen aus Excel mit mehreren Sorten korrigiert",
                 "",
-                "<b>Bilder<\/b>",
-                "Importieren von Bildern über die Zwischenablage",
-                "",
-                "<b>Statistik<\/b>",
-                "Einige Bohnenstatistiken hinzugefügt",
-                "",
-                "<b>Aktualisierungen der Bibliotheken<\/b>",
-                "Aktualisierung auf Capacitor 7 sowie auf Angular 20",
-                "Wenn du  irgendwelche Fehler findest, wende dich bitte an info@beanconqueror.com, denn dieses Update hat sehr viele Code Änderungen zufolge gehabt",
-                "",
-                "<b>Sonstiges<\/b>",
+                "<b>Andere<\/b>",
+                "[ANDROID]Unterstützung von Edge2Edge von Capacitor für korrektes Tastaturverhalten",
                 "Kleinere Korrekturen"
             ]
         }
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
     "PAGE_STATISTICS_AVG_RATING": "Average Rating",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Griechisch"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Griechisch",
+    "NO_CAMERA_PERMISSION": "Es wurde keine Kameraberechtigung erteilt. Bitte aktiviere diese im Betriebssystem.",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "Entdecke dein Jahr!",
+            "SUBTITLE": "Schau dir dein Kaffeejahr an!"
+        },
+        "INTRO": {
+            "TITLE": "Dein Kaffeejahr",
+            "SUBTITLE": "Mal sehen, was du {{year}} gebrüht hast"
+        },
+        "NUMBERS": {
+            "TITLE": "Die Zahlen",
+            "BEANS": "Bohnen hinterlegt",
+            "WEIGHT": "Totales Gewicht",
+            "BREWS": "Totale Brühungen",
+            "COST": "Gesamtausgaben"
+        },
+        "INSIGHTS": {
+            "TITLE": "Einblicke",
+            "CAFFEINE": "Koffeinaufnahme",
+            "AVG_BREWS": "Durchschnittliche Anzahl an Brühvorgängen pro Tag",
+            "BUSIEST_DAY": "Geschäftigster Tag",
+            "PEAK_HOUR": "Stoßzeit"
+        },
+        "MAP": {
+            "TITLE": "Kaffeereise",
+            "COUNTRIES": "Länder"
+        },
+        "ROASTERS": {
+            "TITLE": "Top Röster",
+            "ROASTERS": "Röster"
+        },
+        "PREPARATIONS": {
+            "TITLE": "Top Zubereitungsmethoden"
+        },
+        "VARIETIES": {
+            "TITLE": "Top Sorten"
+        },
+        "PROCESSING": {
+            "TITLE": "Top Verarbeitung"
+        },
+        "GRINDERS": {
+            "TITLE": "Top Mühlen"
+        },
+        "FAVORITES": {
+            "TITLE": "Deine Favoriten",
+            "ROAST": "Liebingsröstung",
+            "RATING": "Durchschnittliche Bewertung",
+            "EXPENSIVE": "Teuerste Bohne",
+            "BEST_BEAN": "Höchstbewertete Bohne"
+        },
+        "SUMMARY": {
+            "TITLE": "Das war's!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Bohne wurde aufgetaut",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Bohne wurde teilweise aufgetaut",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Teile der Kaffeebohne auftauen",
+    "LAST_COMMUNICATION": "Letzte Kommunikation"
 }

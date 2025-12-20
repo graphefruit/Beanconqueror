@@ -1,5 +1,6 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 import { argv, env } from 'process';
+import { KeyboardResize } from '@capacitor/keyboard';
 
 type Platform = 'android' | 'ios';
 const PlatformOverrideEnvVariable = 'CAPACITOR_PLATFORM_OVERRIDE';
@@ -70,7 +71,7 @@ const createConfig = () => {
     },
     android: {
       allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
-      adjustMarginsForEdgeToEdge: 'auto', // Needed to fix safe area / edge to edge
+      adjustMarginsForEdgeToEdge: 'disable', // We use @capawesome/capacitor-android-edge-to-edge-support instead
     },
     plugins: {
       CapacitorHttp: {
@@ -99,6 +100,9 @@ const createConfig = () => {
       // to the __baristaDB on Android when updating from Cordova builds
       config.server.hostname = 'beanconqueror.com';
       config.server.androidScheme = 'https';
+      config.plugins.Keyboard = {
+        resizeOnFullScreen: false, // We use @capawesome/capacitor-android-edge-to-edge-support instead
+      };
       break;
     case 'ios':
       // Using this hostname and scheme is required to retain access

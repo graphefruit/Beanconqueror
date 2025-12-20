@@ -132,8 +132,37 @@ export class SanremoYOUDevice extends PreparationDevice {
       return connectedPreparationDevice.customParams.residualLagTime;
     } else {
       // Fixed value.
-      return 1.35;
+      return 0.9;
     }
+  }
+
+  public getResidualLagTimeByProgram(program: number): number {
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    let val: number | undefined;
+
+    if (connectedPreparationDevice.customParams) {
+      switch (program) {
+        case 1:
+          val = connectedPreparationDevice.customParams.residualLagTimeP1;
+          break;
+        case 2:
+          val = connectedPreparationDevice.customParams.residualLagTimeP2;
+          break;
+        case 3:
+          val = connectedPreparationDevice.customParams.residualLagTimeP3;
+          break;
+        case 4:
+          val = connectedPreparationDevice.customParams.residualLagTimeM;
+          break;
+      }
+    }
+
+    if (val !== undefined && val !== null) {
+      return val;
+    }
+    // Default fallback
+    return 0.9;
   }
 
   public getSaveLogfilesFromMachine(): boolean {
@@ -521,11 +550,54 @@ export class SanremoYOUDevice extends PreparationDevice {
       return false;
     }
   }
+
+  public async getDoses(): Promise<{
+    key1: number;
+    key2: number;
+    key3: number;
+    keyTea: number;
+  }> {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url + '/api/doses',
+      };
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      return response.data;
+    } catch (error) {
+      this.logError('Error in getDoses():', error);
+      return null;
+    }
+  }
+
+  public async setDose(_key: string, _value: number): Promise<boolean> {
+    try {
+      const options = {
+        url:
+          this.getPreparation().connectedPreparationDevice.url +
+          '/api/doses/' +
+          _key +
+          '/' +
+          _value,
+      };
+      const response: HttpResponse = await CapacitorHttp.get(options);
+      const responseJSON = response.data;
+      return responseJSON.result;
+    } catch (error) {
+      this.logError('Error in setDose():', error);
+      return false;
+    }
+  }
 }
 
 export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeight: number = 0;
   public residualLagTime: number = 0.9;
+
+  public residualLagTimeP1: number = 0.9;
+  public residualLagTimeP2: number = 0.9;
+  public residualLagTimeP3: number = 0.9;
+  public residualLagTimeM: number = 0.9;
   public selectedMode: SanremoYOUMode = SanremoYOUMode.LISTENING;
 
   public stopAtWeightP1: number = 0;
@@ -534,6 +606,11 @@ export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeightM: number = 0;
   constructor() {
     this.residualLagTime = 0.9;
+    this.residualLagTimeP1 = 0.9;
+    this.residualLagTimeP2 = 0.9;
+    this.residualLagTimeP3 = 0.9;
+    this.residualLagTimeM = 0.9;
+
     this.selectedMode = SanremoYOUMode.LISTENING;
   }
 }

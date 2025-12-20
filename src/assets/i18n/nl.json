@@ -1465,41 +1465,27 @@
                 "19": "Optie om de pop-up voor verbinden\/verbreken voor Bluetooth-apparaten uit te schakelen"
             }
         },
-        "8.4.0": {
-            "TITLE": "Versie 8.4.0: Wat is er nieuw",
+        "8.5.0": {
+            "TITLE": "Versie 8.5.0: Wat is er nieuw?",
             "DESCRIPTION": [
-                "<b> Experimenteel: Donkere modus <\/b>",
-                "Kies tussen de lichte en donkere modus, of laat de app je systeeminstellingen volgen - activeer dit in de instellingen. Standaard: lichte modus",
+                "<b>Pak 2025 uit<\/b>",
+                "Ontdek, jou 2025!",
                 "",
-                "Bluetooth-weegschaal",
-                "Ondersteuning voor Half Decent Scale",
-                "Ondersteuning voor DIY-WeightMyBruh Scale",
-                "Ondersteuning voor EspressiScale",
+                "<b>Nieuwe taal<\/b>",
+                "Griekse ondersteuning - Met dank aan Mr. pterodactyl",
                 "",
-                "Voorbereidingen",
-                "U kunt de Xenia-machine nu aan- of uitzetten",
-                "",
-                "<b> Brouwsels <\/b>",
-                "[IOS]Activeer de camera voor uw espresso op gemaximaliseerd scherm",
-                "Bug verholpen waardoor bluetooth-apparaten niet werkten als je eerste bereidingsmethode het gedeelte tijdens het brouwen had uitgeschakeld",
-                "De brouwdatum wordt nu weergegeven in het detailoverzicht",
+                "<b>Bluetooth-weegschalen<\/b>",
+                "De unieke ID van het apparaat wordt weergegeven voor een eenvoudigere verbinding maken",
                 "",
                 "<b> Bonen <\/b>",
-                "Bonen sorteren op beste bonen datum",
-                "Gebruikersimport van bonen ondersteunt nu ook afbeeldingen",
-                "",
-                "<b> Afbeeldingen <\/b>",
-                "Afbeeldingen importeren via klembord",
-                "",
-                "<b> Statistieken <\/b>",
-                "Enkele boon statistieken toegevoegd",
-                "",
-                "<b>Bibliotheken updates<\/b>",
-                "Updaten naar Condensator 7 en Angular 20",
-                "Als je bugs vindt, nadat de hele code is aangepast, neem dan contact op met info@beanconqueror.com",
+                "Ontdooi een deel van een bevroren boon.",
+                "Bonen worden nu gegroepeerd als ze van dezelfde ouder afkomstig zijn",
+                "Een specifiek pictogram tonen voor cafeïnevrije bonen (maan-icoon)",
+                "Importeren van bonen uit Excel met meerdere variëteiten opgelost",
                 "",
                 "<b> Anders <\/b>",
-                "Kleine fixes"
+                "[ANDROID] Ondersteuning voor Edge2Edge van Capacitor om witruimte op het toetsenbord te verhelpen",
+                "Kleine correcties"
             ]
         }
     },
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Bonen bij brander",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Gemiddelde bonen beoordeling",
     "PAGE_STATISTICS_AVG_RATING": "Gemiddelde beoordeling",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Grieks"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Grieks",
+    "NO_CAMERA_PERMISSION": "Er is geen camera toegang verleend. Schakel deze in via het besturingssysteem.",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "Ontdek, jou jaar",
+            "SUBTITLE": "Jouw jaar in koffie"
+        },
+        "INTRO": {
+            "TITLE": "Jouw jaar in koffie",
+            "SUBTITLE": "Laten we eens kijken wat je gebrouwen hebt. {{year}}"
+        },
+        "NUMBERS": {
+            "TITLE": "De Cijfers",
+            "BEANS": "Bonen gevolgd",
+            "WEIGHT": "totaal gewicht",
+            "BREWS": "Totaal gebrouwen",
+            "COST": "Totaal besteed"
+        },
+        "INSIGHTS": {
+            "TITLE": "inzichten",
+            "CAFFEINE": "Cafeïne-inname",
+            "AVG_BREWS": "Gemiddeld aantal kopjes per dag",
+            "BUSIEST_DAY": "Drukste Dag",
+            "PEAK_HOUR": "spitsuur"
+        },
+        "MAP": {
+            "TITLE": "koffie avontuur",
+            "COUNTRIES": "Landen"
+        },
+        "ROASTERS": {
+            "TITLE": "Top koffie branders",
+            "ROASTERS": "Koffie Branders"
+        },
+        "PREPARATIONS": {
+            "TITLE": "Top voorbereidingen"
+        },
+        "VARIETIES": {
+            "TITLE": "Top variëteiten"
+        },
+        "PROCESSING": {
+            "TITLE": "Top verwerking process"
+        },
+        "GRINDERS": {
+            "TITLE": "Top Koffie malers"
+        },
+        "FAVORITES": {
+            "TITLE": "Jouw favorieten",
+            "ROAST": "Favoriete Branding",
+            "RATING": "Gemiddelde beoordeling",
+            "EXPENSIVE": "Duurste boon",
+            "BEST_BEAN": "Hoogst gewaardeerde boon"
+        },
+        "SUMMARY": {
+            "TITLE": "Dat was het dan!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "bonen zijn ontdooid",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Bonen zijn gedeeltelijk ontdooid",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Ontdooi een bevroren koffieboon gedeeltelijk",
+    "LAST_COMMUNICATION": "Laatste communicatie"
 }

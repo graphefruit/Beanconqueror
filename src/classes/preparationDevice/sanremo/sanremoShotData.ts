@@ -3,6 +3,12 @@ import { ISanremoShotData } from '../../../interfaces/preparationDevices/sanremo
 export class SanremoShotData implements ISanremoShotData {
   public status: number;
   public description: string;
+  /**
+   * 1 = P1
+   * 2 = P2
+   * 3 = P3
+   * 4 = M
+   */
   public groupStatus: number;
   public statusPhase: number;
   public alarms: number;

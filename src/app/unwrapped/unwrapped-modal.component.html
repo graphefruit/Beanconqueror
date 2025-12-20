@@ -1,0 +1,225 @@
+<ion-content class="unwrapped-content">
+  <div class="close-button" (click)="close()">
+    <ion-icon name="close-outline"></ion-icon>
+  </div>
+
+  <swiper-container #swiper class="unwrapped-swiper" pagination="true" pagination-clickable="true">
+
+    <!-- Slide 1: Intro -->
+    <swiper-slide class="slide-intro">
+      <div class="slide-content">
+        <h1>{{ 'UNWRAPPED.INTRO.TITLE' | translate }}</h1>
+        <p>{{ 'UNWRAPPED.INTRO.SUBTITLE' | translate: { year: stats.year } }}</p>
+        <ion-icon name="beanconqueror-logo" class="huge-icon"></ion-icon>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 2: The Numbers -->
+    <swiper-slide class="slide-numbers">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.NUMBERS.TITLE' | translate }}</h2>
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.totalBeans }}</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.NUMBERS.BEANS' | translate }}</div>
+        </div>
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.totalBrews }}</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.NUMBERS.BREWS' | translate }}</div>
+        </div>
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.totalWeight | number }} g</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.NUMBERS.WEIGHT' | translate }}</div>
+        </div>
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.totalCost | number:'1.2-2' }} {{ getCurrencySymbol() }}</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.NUMBERS.COST' | translate }}</div>
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 3: Insights -->
+    <swiper-slide class="slide-insights">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.INSIGHTS.TITLE' | translate }}</h2>
+
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.totalCaffeine | number:'1.0-0' }} mg</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.INSIGHTS.CAFFEINE' | translate }}</div>
+        </div>
+
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.averageRating | number:'1.1-1' }}</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.FAVORITES.RATING' | translate }}</div>
+        </div>
+
+        @if (stats.bestRatedBean) {
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.bestRatedBean.name }}</div>
+          <div class="sub-highlight">{{ stats.bestRatedBean.roaster }}</div>
+          <div class="sub-highlight">{{ stats.bestRatedBean.rating | number:'1.1-1' }}</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.FAVORITES.BEST_BEAN' | translate }}</div>
+        </div>
+        }
+
+        @if (stats.mostExpensiveBean) {
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.mostExpensiveBean.name }}</div>
+          <div class="sub-highlight">{{ stats.mostExpensiveBean.cost | number:'1.2-2' }} {{ getCurrencySymbol() }}
+          </div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.FAVORITES.EXPENSIVE' | translate }}</div>
+        </div>
+        }
+
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.averageBrewsPerDay | number:'1.1-1' }}</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.INSIGHTS.AVG_BREWS' | translate }}</div>
+        </div>
+
+        @if (stats.mostActiveDay.date) {
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.mostActiveDay.date | date:'dd.MM' }}</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.INSIGHTS.BUSIEST_DAY' | translate }} ({{ stats.mostActiveDay.count
+            }})</div>
+        </div>
+        }
+
+        <div class="favorite-section">
+          <div class="highlight">{{ stats.mostActiveHour.hour }}:00</div>
+          <div class="sub-highlight">{{ 'UNWRAPPED.INSIGHTS.PEAK_HOUR' | translate }}</div>
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 4: Coffee Journey (Globe) -->
+    <swiper-slide class="slide-map">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.MAP.TITLE' | translate }}</h2>
+
+        <div class="top-countries-list">
+          @for (c of stats.topCountries | slice:0:10; track c.country) {
+          <div class="country-item">
+            <div class="bar-container">
+              <div class="bar" [style.width.%]="(c.count / stats.topCountries[0].count) * 100"></div>
+              <div class="label-container">{{ c.country }}</div>
+            </div>
+            <div class="count-container">{{ c.count }}</div>
+          </div>
+          }
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 4: Roasters -->
+    <swiper-slide class="slide-roasters">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.ROASTERS.TITLE' | translate }}</h2>
+        <div class="roaster-list">
+          @for (r of stats.topRoasters | slice:0:10; track r.roaster) {
+          <div class="roaster-item">
+            <div class="bar-container">
+              <div class="bar" [style.width.%]="(r.count / stats.topRoasters[0].count) * 100"></div>
+              <div class="label-container">{{ r.roaster }}</div>
+            </div>
+            <div class="count-container">{{ r.count }}</div>
+          </div>
+          }
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 5: Preparations -->
+    <swiper-slide class="slide-preparations">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.PREPARATIONS.TITLE' | translate }}</h2>
+        <div class="roaster-list">
+          @for (p of stats.topPreparations | slice:0:10; track p.preparation) {
+          <div class="roaster-item">
+            <div class="bar-container">
+              <div class="bar" [style.width.%]="(p.count / stats.topPreparations[0].count) * 100"></div>
+              <div class="label-container">{{ p.preparation }}</div>
+            </div>
+            <div class="count-container">{{ p.count }}</div>
+          </div>
+          }
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 6: Varieties -->
+    <swiper-slide class="slide-varieties">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.VARIETIES.TITLE' | translate }}</h2>
+        <div class="roaster-list">
+          @for (v of stats.topVarieties | slice:0:10; track v.variety) {
+          <div class="roaster-item">
+            <div class="bar-container">
+              <div class="bar" [style.width.%]="(v.count / stats.topVarieties[0].count) * 100"></div>
+              <div class="label-container">{{ v.variety }}</div>
+            </div>
+            <div class="count-container">{{ v.count }}</div>
+          </div>
+          }
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 7: Processing -->
+    <swiper-slide class="slide-processing">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.PROCESSING.TITLE' | translate }}</h2>
+        <div class="roaster-list">
+          @for (p of stats.topProcessingMethods | slice:0:10; track p.method) {
+          <div class="roaster-item">
+            <div class="bar-container">
+              <div class="bar" [style.width.%]="(p.count / stats.topProcessingMethods[0].count) * 100"></div>
+              <div class="label-container">{{ p.method }}</div>
+            </div>
+            <div class="count-container">{{ p.count }}</div>
+          </div>
+          }
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 8: Grinders -->
+    <swiper-slide class="slide-grinders">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.GRINDERS.TITLE' | translate }}</h2>
+        <div class="roaster-list">
+          @for (g of stats.topGrinders | slice:0:10; track g.grinder) {
+          <div class="roaster-item">
+            <div class="bar-container">
+              <div class="bar" [style.width.%]="(g.count / stats.topGrinders[0].count) * 100"></div>
+              <div class="label-container">{{ g.grinder }}</div>
+            </div>
+            <div class="count-container">{{ g.count }}</div>
+          </div>
+          }
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 6: Summary -->
+    <swiper-slide class="slide-summary">
+      <div class="slide-content">
+        <h2>{{ 'UNWRAPPED.SUMMARY.TITLE' | translate }}</h2>
+        <div class="summary-card">
+          <div class="summary-row">
+            <span>{{ 'PAGE_HOME_BEAN_EXPLORED' | translate }}</span>
+            <span class="highlight">{{ stats.totalBeans }}</span>
+          </div>
+          <div class="summary-row">
+            <span>{{ 'UNWRAPPED.MAP.COUNTRIES' | translate }}</span>
+            <span class="highlight">{{ stats.topCountries.length }}</span>
+          </div>
+          <div class="summary-row">
+            <span>{{ 'UNWRAPPED.ROASTERS.ROASTERS' | translate }}</span>
+            <span class="highlight">{{ stats.topRoasters.length }}</span>
+          </div>
+        </div>
+        <ion-button expand="block" (click)="close()" color="light">{{ 'CLOSE' | translate }}</ion-button>
+      </div>
+    </swiper-slide>
+
+  </swiper-container>
+</ion-content>

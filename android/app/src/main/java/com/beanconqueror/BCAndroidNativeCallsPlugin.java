@@ -9,6 +9,15 @@ import android.webkit.MimeTypeMap;
 import androidx.activity.result.ActivityResult;
 import androidx.documentfile.provider.DocumentFile;
 
+import android.view.Window;
+import android.view.WindowInsets;
+import android.graphics.Color;
+import android.os.Build;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -29,6 +38,84 @@ import java.util.List;
 @CapacitorPlugin(name = "BCAndroidNativeCalls")
 public class BCAndroidNativeCallsPlugin extends Plugin {
   private static final String TAG = BCAndroidNativeCallsPlugin.class.getSimpleName();
+
+  @PluginMethod()
+  public void setStatusBarColor(PluginCall call) {
+    if (Build.VERSION.SDK_INT >= 35) {
+      String colorStr = call.getString("color");
+      if (colorStr == null) {
+        call.reject("color was null");
+        return;
+      }
+      int color = Color.parseColor(colorStr);
+
+      getActivity().runOnUiThread(() -> {
+        Window window = getActivity().getWindow();
+        // Use android.R.id.content to find the container where the WebView lives
+        // This is safer than DecorView for "content-level" overlays
+        ViewGroup contentView = window.findViewById(android.R.id.content);
+
+        contentView.setOnApplyWindowInsetsListener((view, insets) -> {
+          android.graphics.Insets statusBarInsets = insets.getInsets(WindowInsets.Type.statusBars());
+          int statusBarHeight = statusBarInsets.top;
+          
+          // 1. Find or create the overlay view
+          View overlayView = contentView.findViewWithTag("customStatusBarOverlay");
+          if (overlayView == null) {
+            overlayView = new View(getActivity());
+            overlayView.setTag("customStatusBarOverlay");
+            contentView.addView(overlayView);
+          }
+
+          // 2. Position it at the top with correct height
+          // Note: If contentView is FrameLayout, we use FrameLayout.LayoutParams
+          if (overlayView.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) overlayView.getLayoutParams();
+             params.width = FrameLayout.LayoutParams.MATCH_PARENT;
+             params.height = statusBarHeight;
+             params.gravity = Gravity.TOP;
+             overlayView.setLayoutParams(params);
+          } else {
+             // Fallback if not set yet or different param type
+             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, 
+                statusBarHeight
+             );
+             params.gravity = Gravity.TOP;
+             overlayView.setLayoutParams(params);
+          }
+          
+          overlayView.setBackgroundColor(color);
+          overlayView.bringToFront();
+
+          // 3. Return INSETS UNMODIFIED
+          // This ensures Ionic/WebView receives the insets and applies the Safe Area padding internally.
+          // Since our overlay sits in that "Safe Area" (0..50px), it acts as the background.
+          return insets;
+        });
+        
+        // Trigger immediate update if view exists
+        View existingOverlay = contentView.findViewWithTag("customStatusBarOverlay");
+        if (existingOverlay != null) {
+            existingOverlay.setBackgroundColor(color);
+        }
+
+        call.resolve();
+      });
+    } else {
+      String colorStr = call.getString("color");
+      if (colorStr == null) {
+        call.reject("color was null");
+        return;
+      }
+      int color = Color.parseColor(colorStr);
+      getActivity().runOnUiThread(() -> {
+        Window window = getActivity().getWindow();
+        window.setStatusBarColor(color);
+        call.resolve();
+      });
+    }
+  }
 
   @PluginMethod()
   public void pickDirectory(PluginCall call) {

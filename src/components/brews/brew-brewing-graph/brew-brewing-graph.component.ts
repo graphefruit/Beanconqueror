@@ -2623,6 +2623,19 @@ export class BrewBrewingGraphComponent implements OnInit {
       _scaleChange.notMutatedWeight,
       1,
     );
+
+    if (this.baristamode && this.brewComponent.timer.getSeconds() <= 6) {
+      /**Maybe the barista put on a new cup, which means the weight was before -XXX grams, and it may jump to like 5 grams then
+       * this means we would regarding the rising factor never work correctly, so we ignore the first 6 seconds in barista mode and then we start**/
+
+      return {
+        actual: weight,
+        old: oldWeight,
+        smoothed: smoothedWeight,
+        oldSmoothed: oldSmoothedWeight,
+        notMutatedWeight: notMutatedWeight,
+      };
+    }
     const isEspresso = _styleType === PREPARATION_STYLE_TYPE.ESPRESSO;
     const scaleType = this.bleManager.getScale()?.getScaleType();
     //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
@@ -3019,6 +3032,12 @@ export class BrewBrewingGraphComponent implements OnInit {
 
                     //We overwrite for this shot the target weight, because we have a barista mode target weight
                     targetWeight = baristaModeTargetWeight;
+
+                    residual_lag_time = (
+                      this.brewComponent.brewBrewingPreparationDeviceEl
+                        .preparationDevice as SanremoYOUDevice
+                    ).getResidualLagTimeByProgram(groupStatus);
+
                     if (
                       document
                         .getElementById('statusPhase' + groupStatus)

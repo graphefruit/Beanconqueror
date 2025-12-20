@@ -433,7 +433,7 @@ export class StatisticPage implements OnInit {
 
     const colorGradient = new Gradient()
       .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
-      .setMidpoint(datasets.length)
+      .setMidpoint(Math.max(4, datasets.length))
       .getColors();
 
     const colorArray = colorGradient;
@@ -513,7 +513,7 @@ export class StatisticPage implements OnInit {
 
     const colorGradient = new Gradient()
       .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
-      .setMidpoint(datasets.length)
+      .setMidpoint(Math.max(4, datasets.length))
       .getColors();
     const colorArray = colorGradient;
     for (let i = 0; i < datasets.length; i++) {
@@ -737,7 +737,7 @@ export class StatisticPage implements OnInit {
 
     const colorGradient = new Gradient()
       .setColorGradient('#CDC2AC', '#607D8B', '#BF658F', '#E0A29A')
-      .setMidpoint(data[0].labels.length)
+      .setMidpoint(Math.max(4, data[0].labels.length))
       .getColors();
 
     data[0].backgroundColor = colorGradient;

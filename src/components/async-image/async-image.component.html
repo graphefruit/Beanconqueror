@@ -3,6 +3,3 @@
 @if (!isLoading && !errorOccured && (img | async)) {
   <img [src]="img | async"/>
 }
-@if (isLoading && showLoadingImage) {
-  <img [src]="preloadImg" alt="Image is loading" class="preload-img"/>
-}

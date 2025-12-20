@@ -1465,40 +1465,26 @@
                 "19": "Bluetooth cihazları için bağlan\/bağlantıyı kes açılır penceresini devre dışı bırakma seçeneği"
             }
         },
-        "8.4.0": {
-            "TITLE": "Sürüm 8.4.0: Yenilikler",
+        "8.5.0": {
+            "TITLE": "Sürüm 8.5.0: Yenilikler",
             "DESCRIPTION": [
-                "<b>Deneysel: Karanlık Mod<\/b>",
-                "Açık ve Koyu Mod arasında seçim yapın veya uygulamanın sistem ayarlarınızı takip etmesine izin verin - Ayarlar'da etkinleştirin. Varsayılan: Işık modu",
+                "<b>2025 Özetini Keşfet<\/b>",
+                "2025 yılınızı keşfedin!",
                 "",
-                "<b>Bluetooth Terazileri<\/b>",
-                "Half Decent Scale Desteği",
-                "DIY-WeightMyBruh Ölçeği Desteği",
-                "EspressiScale Desteği",
+                "<b>Yeni Dil<\/b>",
+                "Yunanca Tercüme İçin - Bay Pterodactyl'e Teşekkürler",
                 "",
-                "<b>Hazırlık<\/b>",
-                "Artık Xenia makinesini açabilir veya kapatabilirsiniz",
+                "<b>Bluetooth Tartılar<\/b>",
+                "Daha kolay bağlantı için cihazın benzersiz kimliğini gösterme",
                 "",
-                "<b>Demlemeler<\/b>",
-                "[IOS]Büyütülmüş ekranda espresso çekiminiz için kamerayı etkinleştirin",
-                "İlk hazırlama yönteminizde demleme sırasında bölümü devre dışı bırakılmışsa, bluetooth cihazlarının çalışmadığı bir hatayı düzeltme",
-                "Demleme tarihi artık ayrıntı görünümünde görüntüleniyor",
-                "",
-                "<b>Fasulye<\/b>",
-                "Fasulyeleri en iyi çekirdek tarihine göre sıralayın",
-                "Çekirdeklerin kullanıcı içe aktarımı artık görüntüleri de destekliyor",
-                "",
-                "<b>Görüntü<\/b>",
-                "Görüntüleri panoya aktarma",
-                "",
-                "<b>İstatistik<\/b>",
-                "Bazı çekirdek istatistikleri eklendi",
-                "",
-                "<b>Kitaplık güncellemeleri<\/b>",
-                "Kapasitör 7'ye ve Açısal 20'ye güncelleme",
-                "Tüm kod etkilendikten sonra herhangi bir hata bulursanız, lütfen info@beanconqueror.com adresine ulaşın",
+                "<b>Çekirdekler<\/b>",
+                "Donmuş çekirdeğin bir kısmını çöz",
+                "Aynı aileden gelen çekirdekleri artık grupluyoruz",
+                "Kafeinsiz çekirdekleri artık ay ikonuyla gösteriyoruz",
+                "Excel'den farklı çeşitlerde çekirdek aktarırken yaşanan sorunu hallettik",
                 "",
                 "<b>Diğer<\/b>",
+                "[ANDROID] Klavyedeki boşluk sorununu düzeltmek için Capacitor'dan Edge2Edge desteği eklendi.",
                 "Küçük düzeltmeler"
             ]
         }
@@ -1537,5 +1523,64 @@
     "STATISTICS_BEANS_BY_ROASTER": "Kavurmaya Göre Çekirdek",
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Ülkelere Göre Ortalama Çekirdek Derecelendirmesi",
     "PAGE_STATISTICS_AVG_RATING": "Ortalama Puan",
-    "PAGE_SETTINGS_LANGUAGE_GREEK": "Yunan"
+    "PAGE_SETTINGS_LANGUAGE_GREEK": "Yunan",
+    "NO_CAMERA_PERMISSION": "Kamera izni verilmedi, lütfen işletim sistemi içinden etkinleştirin",
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": "Hadi, Yılını Keşfet!",
+            "SUBTITLE": "Kahveyle geçen yılınızı inceleyin!"
+        },
+        "INTRO": {
+            "TITLE": "Kahveyle Geçen Yılın",
+            "SUBTITLE": "Bakalım neler demledin{{year}}"
+        },
+        "NUMBERS": {
+            "TITLE": "Rakamlar",
+            "BEANS": "Keşfedilen Kahveler",
+            "WEIGHT": "Toplam Ağırlık",
+            "BREWS": "Toplam Demleme Sayısı",
+            "COST": "Toplam Harcama"
+        },
+        "INSIGHTS": {
+            "TITLE": "Öne Çıkanlar",
+            "CAFFEINE": "Kafein Alımı",
+            "AVG_BREWS": "Ortalama Demleme\/Gün",
+            "BUSIEST_DAY": "En Yoğun Gün",
+            "PEAK_HOUR": "Yoğun Saat"
+        },
+        "MAP": {
+            "TITLE": "Kahve Yolculuğun",
+            "COUNTRIES": "Ülkeler"
+        },
+        "ROASTERS": {
+            "TITLE": "En İyi Kavurucular",
+            "ROASTERS": "Kavurucular"
+        },
+        "PREPARATIONS": {
+            "TITLE": "En İyi Hazırlık Yöntemi"
+        },
+        "VARIETIES": {
+            "TITLE": "En İyi Türler"
+        },
+        "PROCESSING": {
+            "TITLE": "En İyi İşleme Yöntemi"
+        },
+        "GRINDERS": {
+            "TITLE": "En İyi Öğütücüler"
+        },
+        "FAVORITES": {
+            "TITLE": "Favorileriniz",
+            "ROAST": "Favori Kavurma Tercihin",
+            "RATING": "Ortalama Değerlendirme",
+            "EXPENSIVE": "En Pahalı Çekirdek",
+            "BEST_BEAN": "En Yüksek Puanlı Çekirdek"
+        },
+        "SUMMARY": {
+            "TITLE": "İşlem tamamlandı!"
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Çekirdeğin çözülmesi sağlandı",
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Kahve çekirdeği kısmen çözülmüştür",
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Çekirdeğin bir kısmını çöz",
+    "LAST_COMMUNICATION": "Son Bağlantı"
 }
