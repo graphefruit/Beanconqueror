@@ -1,9 +1,11 @@
 // @ts-check
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
-const angular = require('angular-eslint');
+import { defineConfig } from 'eslint/config';
 
-module.exports = tseslint.config(
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import angular from 'angular-eslint';
+
+export default defineConfig(
   {
     files: ['**/*.ts'],
     extends: [
@@ -15,7 +17,6 @@ module.exports = tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: __dirname,
       },
     },
     processor: angular.processInlineTemplates,
