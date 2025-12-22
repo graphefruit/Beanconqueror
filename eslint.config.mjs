@@ -22,6 +22,7 @@ export default defineConfig(
     processor: angular.processInlineTemplates,
     rules: {
       // Block for overrides that ENABLE non-default rules.
+      eqeqeq: ['error'], // prefer '===' over '=='
       // End of overrides that ENABLE non-default rules.
 
       // Block for overrides that DISABLE default rules.
