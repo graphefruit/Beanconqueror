@@ -91,6 +91,7 @@ public class CustomInsets {
     if (Build.VERSION.SDK_INT < 35) {
       Window window = activity.getWindow();
       window.setStatusBarColor(color);
+      return;
     }
 
     // SDK >= 35
