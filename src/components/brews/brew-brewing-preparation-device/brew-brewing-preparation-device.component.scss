@@ -7,9 +7,66 @@
   }
 
   ion-col.active {
-    background-color: #90EE90;
-    ion-item{
-      --background:#90EE90;
+    color:black!important;
+
+    ion-item {
+      --background: #90EE90;
+      color:black!important;
     }
+    .sanremo-unit {
+      color:black!important;
+    }
+  }
+
+  /* Sanremo YOU Button Styling */
+  .sanremo-phase-col {
+    padding: 6px;
+  }
+
+  .sanremo-item {
+    --background: #3871c1;
+    /* Matching the blue shade */
+    --color: #ffffff;
+    --border-radius: 12px;
+    --min-height: 100px;
+    --padding-start: 8px;
+    --inner-padding-end: 8px;
+    border-radius: 12px;
+    margin: 0 !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    position: relative;
+    /* For absolute positioning of unit if needed, or just stacking */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .sanremo-input {
+    font-size: 38px;
+    font-weight: 600;
+    text-align: center;
+    --padding-top: 10px;
+    --padding-bottom: 20px;
+    /* Space for 'gr' if we position it, or just spacing */
+    width: 100%;
+    /* Ensure input takes full width of the item */
+  }
+  .sanremo-label {
+    font-size: 38px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 38px;
+  }
+  .sanremo-unit {
+    position: absolute;
+    bottom: 8px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-weight: 500;
+    pointer-events: none;
+    /* Let clicks pass through to input area if needed */
   }
 }

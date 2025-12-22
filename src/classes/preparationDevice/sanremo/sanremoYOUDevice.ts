@@ -26,6 +26,7 @@ export class SanremoYOUDevice extends PreparationDevice {
   public reconnectionCounter = 0;
 
   public lastRunnedProgramm: number = 0;
+  public lastShotData: SanremoShotData = new SanremoShotData();
 
   constructor(
     protected httpClient: HttpClient,
@@ -36,9 +37,9 @@ export class SanremoYOUDevice extends PreparationDevice {
     this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
     this.websocketURL = this.getPreparation().connectedPreparationDevice.url;
     if (this.websocketURL.indexOf('https:') >= 0) {
-      this.websocketURL = this.websocketURL.replace('https', 'ws');
+      this.websocketURL = 'ws://192.168.0.140'; //this.websocketURL.replace('https', 'ws');
     } else {
-      this.websocketURL = this.websocketURL.replace('http', 'ws');
+      this.websocketURL = 'ws://192.168.0.140'; // this.websocketURL.replace('http', 'ws');
     }
     this.websocketURL = this.websocketURL + ':81';
   }
@@ -380,6 +381,7 @@ export class SanremoYOUDevice extends PreparationDevice {
               this.sanremoShotData.groupStatus <= 4
             ) {
               this.lastRunnedProgramm = this.sanremoShotData.groupStatus;
+              this.lastShotData = this.sanremoShotData;
             }
           }
           this.receivingDataFromWebsocketTimestamp = Date.now();
