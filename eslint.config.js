@@ -20,6 +20,26 @@ module.exports = tseslint.config(
     },
     processor: angular.processInlineTemplates,
     rules: {
+      // Block for overrides that ENABLE non-default rules.
+      // End of overrides that ENABLE non-default rules.
+
+      // Block for overrides that DISABLE default rules.
+      // This is used for rules that cause too many linter errors in the current
+      // codebase. If a higher degree of safety is desired, these will have to
+      // be enabled step by step again when most of the errors are fixed.
+      '@typescript-eslint/no-explicit-any': ['off'],
+      '@typescript-eslint/no-unsafe-argument': ['off'],
+      '@typescript-eslint/no-unsafe-assignment': ['off'],
+      '@typescript-eslint/no-unsafe-call': ['off'],
+      '@typescript-eslint/no-unsafe-member-access': ['off'],
+      '@typescript-eslint/prefer-nullish-coalescing': ['off'],
+      // End of overrides that DISABLE default rules
+
+      // Block for overrides that DOWNGRADE default rules to warnings.
+      // This is used for linter errors that are stylistic issues and that are
+      // (mostly) easily fixable, which is why we want to see them. Yet we don't
+      // want to see them as errors, as 'real' errors are too hard to spot when
+      // every file is full of errors.
       '@angular-eslint/directive-selector': [
         'warn', // downgrade to warning for Beanconqueror
         {
@@ -36,23 +56,6 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
-      // Block for overrides that DISABLE default rules.
-      // This is used for rules that cause too many linter errors in the current
-      // codebase. If a higher degree of safety is desired, these will have to
-      // be enabled step by step again when most of the errors are fixed.
-      '@typescript-eslint/no-explicit-any': ['off'],
-      '@typescript-eslint/no-unsafe-argument': ['off'],
-      '@typescript-eslint/no-unsafe-assignment': ['off'],
-      '@typescript-eslint/no-unsafe-call': ['off'],
-      '@typescript-eslint/no-unsafe-member-access': ['off'],
-      '@typescript-eslint/prefer-nullish-coalescing': ['off'],
-      // End of overrides that DISABLE default rules
-
-      // Block for overrides that DOWNGRADE default rules to warnings.
-      // This is used for linter errors that are stylistic issues and that are
-      // (mostly) easily fixable, which is why we want to see them. Yet we don't
-      // want to see them as errors, as 'rea' errors are too hard to spot when
-      // every file is full of errors.
       '@angular-eslint/component-class-suffix': ['warn'],
       '@typescript-eslint/array-type': ['warn'],
       '@typescript-eslint/dot-notation': ['warn'],
@@ -82,5 +85,5 @@ module.exports = tseslint.config(
       ...angular.configs.templateAccessibility,
     ],
     rules: {},
-  }
+  },
 );
