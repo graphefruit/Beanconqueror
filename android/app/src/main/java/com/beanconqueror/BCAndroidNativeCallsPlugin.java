@@ -41,15 +41,20 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
 
   @Override
   public void load() {
+    Log.d(TAG, "load: load() called");
     getActivity().runOnUiThread(() -> {
+      Log.d(TAG, "load: Starting UI thread actions");
       CustomInsets.initialize(getActivity());
+      Log.d(TAG, "load: UI thread actions finished");
     });
   }
 
   @PluginMethod()
   public void setStatusBarColor(PluginCall call) {
     String colorStr = call.getString("color");
+    Log.d(TAG, "setStatusBarColor: Called with color string " + colorStr);
     if (colorStr == null) {
+      Log.w(TAG, "setStatusBarColor: Color was null, rejecting");
       call.reject("color was null");
       return;
     }
@@ -58,7 +63,8 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
     try {
       color = Color.parseColor(colorStr);
     } catch (RuntimeException e) {
-      call.reject("Cannot parse given color string", e);
+      Log.w(TAG, "setStatusBarColor: Could not parse color " + colorStr, e);
+      call.reject("Cannot parse given color string " + colorStr, e);
       return;
     }
 
@@ -66,6 +72,7 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
       try {
         CustomInsets.updateBackgroundColor(getActivity(), color);
       } catch (RuntimeException e) {
+        Log.e(TAG, "setStatusBarColor: update background color", e);
         call.reject("Cannot update background color of custom insets", e);
         return;
       }
