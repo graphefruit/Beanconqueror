@@ -44,31 +44,47 @@
 } @else {
   <ion-item lines="none">
     <!-- Barista mode goes here-->
-    <ion-grid class="ion-no-padding brew-information-panel-barista" style="margin-bottom:5px;padding-bottom:5px;border-bottom: 3px #CDC2AC solid;">
+    <ion-grid class="ion-no-padding brew-information-panel-barista" style="margin-bottom:5px;padding-bottom:5px;" [style.border-bottom]="showAdvancedBarista?'3px #CDC2AC solid':''">
       <ion-row>
-        <ion-col size="12">
+        <ion-col size="10">
           <h2>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.LAST_SHOT" | translate}}<ion-chip style="background-color: #CDC2AC;border-radius: 6px;"><span #lastShot>?</span></ion-chip></h2>
+        </ion-col>
+        <ion-col size="2"  style="display:flex; flex-direction: column;">
+          <ion-button style="position:relative;top:12px;" fill="clear" tappable (click)="toggleGraphOnBaristaMode()">
+            @if(!showAdvancedBarista) {
+              <ion-icon class="ion-color-accent" name="chevron-expand-outline" slot="icon-only"></ion-icon>
+            } @else{
+              <ion-icon class="ion-color-accent" name="chevron-collapse-outline" slot="icon-only"></ion-icon>
+            }
+          </ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col size="4" style="padding-right:5px;">
+        <ion-col size="6" size-md="3">
           <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
             <ion-card-header>
               <div><ion-icon name="beanconqueror-scale-outline"></ion-icon><span #smartScaleWeightPerSecondBarista>? g</span></div>
             </ion-card-header>
           </ion-card>
         </ion-col>
-        <ion-col size="4" style="padding-right:5px;">
+        <ion-col size="6" size-md="3" >
           <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
             <ion-card-header>
               <div><ion-icon name="water-outline"></ion-icon><span #smartScaleAvgFlowPerSecondBarista>? g/s</span></div>
             </ion-card-header>
           </ion-card>
         </ion-col>
-        <ion-col size="4">
+        <ion-col size="6" size-md="3">
           <ion-card class="flow-profile ion-text-center time-card" style="height: 100%;">
             <ion-card-header>
               <div><ion-icon name="timer-outline"></ion-icon><span #timerBarista>? g</span></div>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6" size-md="3">
+          <ion-card class="flow-profile ion-text-center time-card" style="height: 100%;">
+            <ion-card-header>
+              <div><ion-icon name="beaker-outline"></ion-icon><span #shotVolume>? ml</span></div>
             </ion-card-header>
           </ion-card>
         </ion-col>
@@ -77,7 +93,7 @@
   </ion-item>
 }
 @if (isDetail ===false) {
-  <ion-item [hidden]="shallProfileHidden" lines="none">
+  <ion-item #tileContainer [hidden]="shallProfileHidden" lines="none">
     <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
       @if (settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
         <ion-row>
@@ -156,7 +172,7 @@
     </ion-grid>
   </ion-item>
 }
-<div class="ion-margin-top ion-margin-horizontal" [hidden]="shallProfileHidden">
+<div class="ion-margin-top ion-margin-horizontal" #graphContainer [hidden]="shallProfileHidden">
   <div style="width:100%;height:100%;" #canvaContainer>
     <div #profileDiv></div>
   </div>

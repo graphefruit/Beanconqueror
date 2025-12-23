@@ -2,4 +2,17 @@
   ion-chip {
     margin: 0px;
   }
+
+  ion-chip.baristamode-scale-connected {
+    background-color: rgba(5, 199, 147,0.4);
+    --ion-color-base:black;
+    margin-left: 5px;
+    padding-left: 0px;
+  }
+  ion-chip.baristamode-scale-disconnected {
+    background-color: rgba(204, 51, 17,0.4);
+    --ion-color-base:black;
+    margin-left: 5px;
+    padding-left: 0px;
+  }
 }

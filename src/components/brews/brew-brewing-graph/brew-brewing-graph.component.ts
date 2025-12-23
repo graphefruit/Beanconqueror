@@ -94,6 +94,10 @@ export class BrewBrewingGraphComponent implements OnInit {
   public smartScaleAvgFlowPerSecondBaristaEl: ElementRef;
   @ViewChild('timerBarista', { read: ElementRef })
   public timerBaristaEl: ElementRef;
+
+  @ViewChild('shotVolume', { read: ElementRef })
+  public shotVolumeEl: ElementRef;
+
   @ViewChild('lastShot', { read: ElementRef })
   public lastShotEl: ElementRef;
 
@@ -123,6 +127,10 @@ export class BrewBrewingGraphComponent implements OnInit {
   @Input() public isDetail: boolean = false;
 
   @Input() public baristamode: boolean = false;
+  /**
+   * This flag will toggle graph and the timer to be displayed.
+   */
+  public showAdvancedBarista: boolean = false;
 
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -179,6 +187,14 @@ export class BrewBrewingGraphComponent implements OnInit {
   public canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
+
+  @ViewChild('graphContainer', { read: ElementRef, static: true })
+  public graphContainerEl: ElementRef;
+
+  @ViewChild('tileContainer', { read: ElementRef, static: false })
+  public tileContainerEl: ElementRef;
+
+
 
   public chartData = [];
 
@@ -241,6 +257,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
 
     if (this.isDetail === false) {
+      this.toggleGraphElementsOnBaristaMode();
       let isSomethingConnected: boolean = false;
       if (this.smartScaleConnected()) {
         await this.__connectSmartScale(true);
@@ -532,6 +549,23 @@ export class BrewBrewingGraphComponent implements OnInit {
         return 12;
       }
     }
+  }
+
+  private toggleGraphElementsOnBaristaMode() {
+    if (this.baristamode == true) {
+      if (!this.showAdvancedBarista) {
+        this.tileContainerEl.nativeElement.style.display = 'none';
+        this.graphContainerEl.nativeElement.style.display = 'none';
+      } else {
+        this.tileContainerEl.nativeElement.style.display = 'block';
+        this.graphContainerEl.nativeElement.style.display = 'block';
+      }
+    }
+  }
+
+  public toggleGraphOnBaristaMode() {
+    this.showAdvancedBarista = !this.showAdvancedBarista;
+    this.toggleGraphElementsOnBaristaMode();
   }
 
   public toggleChartLines(_type: string) {
@@ -1288,10 +1322,12 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
 
             if (newLayoutIsNeeded) {
-              Plotly.relayout(
-                this.profileDiv.nativeElement,
-                this.lastChartLayout,
-              );
+              if (!this.baristamode || this.baristamode && this.showAdvancedBarista) {
+                Plotly.relayout(
+                  this.profileDiv.nativeElement,
+                  this.lastChartLayout,
+                );
+              }
             }
           }, 25);
         } else {
@@ -4311,6 +4347,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (prepDeviceCall.lastRunnedProgramm === 4) {
         this.lastShotEl.nativeElement.innerText = 'M';
       }
+
+
+
+      this.shotVolumeEl.nativeElement.innerText = (prepDeviceCall.getActualShotData().counterVol / 10).toFixed(2) + 'ml';
 
       for (let i = 1; i < 5; i++) {
         document.getElementById('statusPhase' + i).classList.remove('active');

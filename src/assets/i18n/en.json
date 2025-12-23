@@ -1086,7 +1086,8 @@
             "RECONNECT_NEEDED": "Reconnect needed",
             "RECONNECT": "Reconnect",
             "ENTER_TARGET_BREW_WEIGHT": "Enter target brew weight in grams",
-            "LAST_SHOT": "Last shot"
+            "LAST_SHOT": "Last shot",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode is just working with connected scale, please connect one"
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"

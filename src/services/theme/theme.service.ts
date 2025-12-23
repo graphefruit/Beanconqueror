@@ -113,13 +113,17 @@ export class ThemeService {
         );
       }
 
-      // Navigation bar
-      promises.push(
-        NavigationBar.setNavigationBarColor({
-          color: theme.navigationBarColor,
-          darkButtons: !theme.isDark,
-        }),
-      );
+      if (isAndroid) {
+        // Navigation bar
+        promises.push(
+          NavigationBar.setNavigationBarColor({
+            color: theme.navigationBarColor,
+            darkButtons: !theme.isDark,
+          }),
+        );
+
+      }
+
 
       // Keyboard
       if (isIOS) {

@@ -12,21 +12,31 @@
     <ion-buttons slot="end">
 
       @if (isWebSocketConnected() === true ) {
-        <ion-chip (click)="showPreparationEdit()" outline='true' class='machine-connected'>
+        <ion-chip (click)="showPreparationEdit()" (long-press)="showDevInformation()" outline='true' class='machine-connected'>
 
           <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
           <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
 
         </ion-chip>
       } @else {
-        <ion-chip (click)="showPreparationEdit()" outline='true' class='machine-disconnected'>
-
+        <ion-chip (click)="showPreparationEdit()"  (long-press)="showDevInformation()" outline='true' class='machine-disconnected'>
           <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
           <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-
-
         </ion-chip>
       }
+
+      @if(smartScaleConnected() === true) {
+        <ion-chip outline='true' class="baristamode-scale-connected">
+          <!--We set color="black" as we just overwrite because not existing-->
+          <ion-icon color="black" name="beanconqueror-scale-outline" size="large"></ion-icon>
+        </ion-chip>
+      } @else{
+        <ion-chip outline='true' class="baristamode-scale-disconnected">
+          <!--We set color="black" as we just overwrite because not existing-->
+          <ion-icon color="black" name="beanconqueror-scale-outline" size="large"></ion-icon>
+        </ion-chip>
+      }
+
       <ion-button
         (click)="popoverActionsBrew()" tappable>
         <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
@@ -36,7 +46,7 @@
 </ion-header>
 
 <ion-content #ionContent >
-    <ion-card>
+    <ion-card #devInformation style="display:none;">
       <ion-card-content>
         <ion-grid class="ion-no-padding">
           <ion-row>

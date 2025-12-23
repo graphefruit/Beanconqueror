@@ -1,37 +1,32 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  NgZone,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
-import { Brew } from '../../../classes/brew/brew';
-import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { Subscription } from 'rxjs';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, NgZone, OnInit, Output, ViewChild,} from '@angular/core';
+import {Brew} from '../../../classes/brew/brew';
+import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
+import {Subscription} from 'rxjs';
 
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import {UIBeanStorage} from '../../../services/uiBeanStorage';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import {UIMillStorage} from '../../../services/uiMillStorage';
+import {ModalController, Platform} from '@ionic/angular';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { BluetoothScale } from '../../../classes/devices';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { App } from '@capacitor/app';
-import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { UIAlert } from '../../../services/uiAlert';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import {UIHelper} from '../../../services/uiHelper';
+import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
+import {SanremoYOUDevice} from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import {BluetoothScale, BluetoothTypes} from '../../../classes/devices';
+import {PreparationDeviceType} from '../../../classes/preparationDevice';
+import {App} from '@capacitor/app';
+import {
+  SettingsPopoverBluetoothActionsComponent
+} from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {UIAlert} from '../../../services/uiAlert';
+import {
+  BluetoothDeviceChooserPopoverComponent
+} from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 
 declare var Plotly;
 @Component({
@@ -49,6 +44,11 @@ export class BaristaPage implements OnInit {
   public ionContent: ElementRef;
   @ViewChild('brewBrewing', { read: BrewBrewingComponent, static: false })
   public brewBrewing: BrewBrewingComponent;
+
+  @ViewChild('devInformation', { read: ElementRef, static: false })
+  public devInformationEl: ElementRef;
+
+
   private scaleFlowChangeSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
 
@@ -110,8 +110,12 @@ export class BaristaPage implements OnInit {
     this.__attachOnDeviceResume();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.uiHelper.deviceKeepAwake();
+
+    if (this.platform.is('capacitor')) {
+      await this.checkIfScaleIsConnected();
+    }
 
     this.__connectSmartScale(false);
     this.bluetoothSubscription = this.bleManager
@@ -141,7 +145,10 @@ export class BaristaPage implements OnInit {
     }, 1000);
     setTimeout(() => {
       this.showLagTime();
+      this.updateSanremoYOUDoses();
     }, 5000);
+
+    this.brewBrewing?.brewBrewingGraphEl?.smartScaleConnected()
 
     setInterval(() => {
       try {
@@ -357,12 +364,38 @@ export class BaristaPage implements OnInit {
     await popover.onWillDismiss();
   }
 
+  public async showDevInformation() {
+    console.log("test");
+      this.devInformationEl.nativeElement.style.display = 'block';
+  }
   public async showPreparationEdit() {
     const preparation: Preparation = this.data.getPreparation();
     await this.uiPreparationHelper.connectDevice(preparation);
   }
 
-  private async checkSanremoYOUDoses() {
+  private async checkIfScaleIsConnected() {
+    const checkDevices = this.uiSettingsStorage.getSettings();
+    const scale_id: string = checkDevices.scale_id;
+    if (scale_id) {
+      //We got an scale, just needs to be connected
+    } else {
+      //We got no scale, so ask user to connect one.
+      await this.uiAlert.showMessage('PREPARATION_DEVICE.TYPE_SANREMO_YOU.NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE',undefined,undefined,true);
+      await this.connectDevice(BluetoothTypes.SCALE);
+    }
+  }
+  public async connectDevice(_type: BluetoothTypes) {
+    const modal = await this.modalController.create({
+      component: BluetoothDeviceChooserPopoverComponent,
+      id: BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
+      componentProps: { bluetoothTypeSearch: _type },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  private async updateSanremoYOUDoses() {
     if (this.isSanremoConnected()) {
       const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
         ?.preparationDevice as SanremoYOUDevice;
@@ -380,32 +413,13 @@ export class BaristaPage implements OnInit {
 
       if (doses) {
         const keysToCheck = ['key1', 'key2', 'key3'];
-        const keysToUpdate = [];
+
 
         for (const key of keysToCheck) {
-          if (doses[key] < 250) {
-            keysToUpdate.push(key);
-          }
+          document.getElementById('sanremo_dose_' + key).innerText = doses[key] + " ml";
+
         }
 
-        if (keysToUpdate.length > 0) {
-          try {
-            await this.uiAlert.showConfirmWithYesNoTranslation(
-              'PREPARATION.SANREMO_YOU.UPDATE_DOSES_CONFIRMATION', // You might want to use a real key or just English text if translation missing
-              'PREPARATION.SANREMO_YOU.UPDATE_DOSES_TITLE',
-              'YES',
-              'NO',
-              true,
-            );
-
-            // If confirmed (promise resolves)
-            for (const key of keysToUpdate) {
-              await device.setDose(key, 250);
-            }
-          } catch (e) {
-            // User pressed NO or dismissed
-          }
-        }
       }
     }
   }
