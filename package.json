@@ -32,7 +32,7 @@
     "@capacitor/android": "^8.0.0",
     "@capacitor/app": "^8.0.0",
     "@capacitor/app-launcher": "^8.0.0",
-    "@capacitor/barcode-scanner": "^2.0.3",
+    "@capacitor/barcode-scanner": "^3.0.0",
     "@capacitor/camera": "^8.0.0",
     "@capacitor/clipboard": "^8.0.0",
     "@capacitor/core": "^8.0.0",
