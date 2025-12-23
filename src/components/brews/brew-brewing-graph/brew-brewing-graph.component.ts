@@ -194,8 +194,6 @@ export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('tileContainer', { read: ElementRef, static: false })
   public tileContainerEl: ElementRef;
 
-
-
   public chartData = [];
 
   public textToSpeechWeightInterval: any = undefined;
@@ -1322,7 +1320,10 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
 
             if (newLayoutIsNeeded) {
-              if (!this.baristamode || this.baristamode && this.showAdvancedBarista) {
+              if (
+                !this.baristamode ||
+                (this.baristamode && this.showAdvancedBarista)
+              ) {
                 Plotly.relayout(
                   this.profileDiv.nativeElement,
                   this.lastChartLayout,
@@ -4348,9 +4349,8 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.lastShotEl.nativeElement.innerText = 'M';
       }
 
-
-
-      this.shotVolumeEl.nativeElement.innerText = (prepDeviceCall.getActualShotData().counterVol / 10).toFixed(2) + 'ml';
+      this.shotVolumeEl.nativeElement.innerText =
+        (prepDeviceCall.getActualShotData().counterVol / 10).toFixed(2) + 'ml';
 
       for (let i = 1; i < 5; i++) {
         document.getElementById('statusPhase' + i).classList.remove('active');

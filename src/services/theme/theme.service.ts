@@ -121,9 +121,7 @@ export class ThemeService {
             darkButtons: !theme.isDark,
           }),
         );
-
       }
-
 
       // Keyboard
       if (isIOS) {

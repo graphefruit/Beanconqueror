@@ -375,7 +375,6 @@ export class SanremoYOUDevice extends PreparationDevice {
             this.sanremoShotData.reconnectionCounter = this.reconnectionCounter;
             //window['sanremoShotData'] = this.sanremoShotData;
 
-
             if (
               this.sanremoShotData.groupStatus !== 0 &&
               this.sanremoShotData.groupStatus <= 4
