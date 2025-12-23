@@ -125,6 +125,10 @@
     "webpack-subresource-integrity": "^1.5.2"
   },
   "overrides": {
+    "@babel/preset-env": {
+      "comment": "Not pinning this causes transpilation issues where 'this' is accessed before calling the super constructor. See https://github.com/angular/angular-cli/issues/31674",
+      "@babel/plugin-transform-class-static-block": "7.27.1"
+    },
     "ag-virtual-scroll": {
       "@angular/common": "$@angular/common",
       "@angular/core": "$@angular/core"
