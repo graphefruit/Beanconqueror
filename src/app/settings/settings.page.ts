@@ -1542,7 +1542,12 @@ export class SettingsPage {
             this.settings.bean_rating_steps = 1;
           }
           this.settings.resetFilter();
+
           await this.uiSettingsStorage.saveSettings(this.settings);
+          // Re-apply current theme after importing, as the import might contain
+          // a theme setting different from the old one.
+          await this.themeService.adjustTheme();
+
           await this.uiAlert.hideLoadingSpinner();
           await this.uiAlert.showMessage(
             this.translate.instant('IMPORT_SUCCESSFULLY'),
