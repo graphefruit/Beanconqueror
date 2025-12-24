@@ -14,7 +14,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
 
@@ -34,10 +34,10 @@ export class AssociatedBrewsComponent {
   public associatedBrews: Array<Brew> = [];
 
   @ViewChild('openScrollAssociatedBrews', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public openScrollAssociatedBrews: AgVirtualSrollComponent;
+  public openScrollAssociatedBrews: AgVirtualScrollComponent;
 
   @ViewChild('associatedBrewsComponent', { read: ElementRef })
   public associatedBrewsComponent: ElementRef;
@@ -72,7 +72,7 @@ export class AssociatedBrewsComponent {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.associatedBrewsComponent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent =
+      const scrollComponent: AgVirtualScrollComponent =
         this.openScrollAssociatedBrews;
 
       if (scrollComponent) {

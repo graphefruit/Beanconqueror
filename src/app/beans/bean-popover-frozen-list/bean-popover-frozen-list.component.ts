@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { ModalController } from '@ionic/angular';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
@@ -22,8 +22,8 @@ export class BeanPopoverFrozenListComponent {
 
   @Input() public frozenBeansList: Array<Bean> = undefined;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
@@ -46,7 +46,7 @@ export class BeanPopoverFrozenListComponent {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       scrollComponent = this.openScroll;
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';

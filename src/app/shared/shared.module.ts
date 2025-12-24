@@ -102,7 +102,7 @@ import { RoastingMachinePopoverActionsComponent } from '../roasting-section/roas
 import { RoastingMachineInformationCardComponent } from '../../components/roasting-machine-information-card/roasting-machine-information-card.component';
 import { RoastingMachineOverlayDirective } from '../../directive/roasting-machine-overlay.directive';
 import { RoastingMachineModalSelectComponent } from '../roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
-import { AgVirtualScrollModule } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { ImpressumComponent } from '../info/impressum/impressum.component';
 import { CookieComponent } from '../info/cookie/cookie.component';
@@ -368,7 +368,7 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     TranslateModule,
     RouterModule,
     NgxStarsModule,
-    AgVirtualScrollModule,
+    AgVirtualScrollComponent,
     PipesModule,
   ],
   providers: [

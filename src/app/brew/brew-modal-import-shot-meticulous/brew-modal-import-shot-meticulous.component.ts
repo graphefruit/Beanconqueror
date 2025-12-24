@@ -11,7 +11,7 @@ import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/
 import { ModalController } from '@ionic/angular';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { UIHelper } from '../../../services/uiHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
 
 @Component({
@@ -34,10 +34,10 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   public historyShotContent: ElementRef;
 
   @ViewChild('shotDataScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public shotDataScroll: AgVirtualSrollComponent;
+  public shotDataScroll: AgVirtualScrollComponent;
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
@@ -67,7 +67,7 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.historyShotContent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent = this.shotDataScroll;
+      const scrollComponent: AgVirtualScrollComponent = this.shotDataScroll;
 
       if (scrollComponent) {
         scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';

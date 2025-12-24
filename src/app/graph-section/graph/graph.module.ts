@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { GraphPageRoutingModule } from './graph-routing.module';
 
-import { AgVirtualScrollModule } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { SharedModule } from '../../shared/shared.module';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     IonicModule,
     GraphPageRoutingModule,
-    AgVirtualScrollModule,
+    AgVirtualScrollComponent,
     SharedModule,
     TranslateModule,
   ],

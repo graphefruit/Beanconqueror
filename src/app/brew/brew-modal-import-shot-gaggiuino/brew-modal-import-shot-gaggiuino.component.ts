@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { GaggiuinoDevice } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
@@ -34,10 +34,10 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   public historyShotContent: ElementRef;
 
   @ViewChild('gaggiuinoShotDataScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public gaggiuinoShotDataScroll: AgVirtualSrollComponent;
+  public gaggiuinoShotDataScroll: AgVirtualScrollComponent;
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
@@ -99,7 +99,7 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.historyShotContent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent =
+      const scrollComponent: AgVirtualScrollComponent =
         this.gaggiuinoShotDataScroll;
 
       if (scrollComponent) {
