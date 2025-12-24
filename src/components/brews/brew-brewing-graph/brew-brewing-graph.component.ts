@@ -4111,7 +4111,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
+  @HostListener('window:orientationchange')
   public onOrientationChange() {
     if (
       (this.smartScaleConnected() ||

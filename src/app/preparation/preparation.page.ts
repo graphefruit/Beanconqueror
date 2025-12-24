@@ -74,8 +74,8 @@ export class PreparationPage implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
   private retriggerScroll() {

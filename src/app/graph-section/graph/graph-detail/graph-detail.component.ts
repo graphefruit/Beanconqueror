@@ -158,8 +158,8 @@ export class GraphDetailComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     setTimeout(() => {
       this.initializeFlowChart();
     }, 250);

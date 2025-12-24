@@ -64,8 +64,8 @@ export class AssociatedBrewsComponent {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 

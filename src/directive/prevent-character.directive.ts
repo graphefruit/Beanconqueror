@@ -8,7 +8,7 @@ import { NgModel } from '@angular/forms';
 export class PreventCharacterDirective {
   constructor(private readonly model: NgModel) {}
 
-  @HostListener('ionBlur', ['$event.target'])
+  @HostListener('ionBlur')
   public blur(): void {
     let val: any = this.model.control.value;
 

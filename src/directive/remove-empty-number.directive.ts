@@ -10,7 +10,7 @@ export class RemoveEmptyNumberDirective {
 
   constructor(private readonly model: NgModel) {}
 
-  @HostListener('ionFocus', ['$event.target'])
+  @HostListener('ionFocus')
   public focus(): void {
     const val: any = this.model.control.value;
     // Emit worked aswell but I don't know what its doing in depth

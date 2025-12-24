@@ -206,8 +206,8 @@ export class BeansPage implements OnDestroy {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 

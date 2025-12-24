@@ -182,8 +182,8 @@ export class BaristaPage implements OnInit {
     );
   }
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     setTimeout(() => {
       this.resizeGraph();
     }, 150);

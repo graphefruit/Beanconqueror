@@ -9,7 +9,7 @@ export class MaxNumberValueDirective {
   @Input('max-number-value') public value: string;
   constructor(private readonly model: NgModel) {}
 
-  @HostListener('ionBlur', ['$event.target'])
+  @HostListener('ionBlur')
   public blur(): void {
     let val: any = this.model.control.value;
 

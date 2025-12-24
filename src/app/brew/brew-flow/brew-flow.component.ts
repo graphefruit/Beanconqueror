@@ -278,7 +278,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
+  @HostListener('window:orientationchange')
   public onOrientationChange() {
     setTimeout(() => {
       try {
