@@ -57,7 +57,7 @@
     "@meticulous-home/espresso-profile": "^0.4.0",
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
-    "@zip.js/zip.js": "2.7.69",
+    "@zip.js/zip.js": "^2.8.11",
     "ag-virtual-scroll": "1.9.0",
     "ble-central-advertisements": "^1.1.0",
     "chart.js": "^4.5.0",

@@ -129,7 +129,10 @@ export class UIExportImportHelper {
     const foundGeneralEntry = entries.find(
       (e) => e.filename === EXPORT_MAIN_FILE_NAME,
     );
-    if (foundGeneralEntry === undefined) {
+    if (
+      foundGeneralEntry === undefined ||
+      !this.isFileEntry(foundGeneralEntry)
+    ) {
       await zipReader.close();
       throw new Error(
         `ZIP file does not contain a ${EXPORT_MAIN_FILE_NAME} file`,
@@ -148,7 +151,8 @@ export class UIExportImportHelper {
       while (
         (entry = entries.find(
           (e) => e.filename === chunkFileName(c.fileName, i),
-        )) !== undefined
+        )) !== undefined &&
+        this.isFileEntry(entry)
       ) {
         this.uiLog.log(`Found ${entry.filename} - Import`);
         const textWriter = new TextWriter();
@@ -161,6 +165,10 @@ export class UIExportImportHelper {
 
     await zipReader.close();
     return importJSONData;
+  }
+
+  private isFileEntry(entry: zip.Entry): entry is zip.FileEntry {
+    return !entry.directory;
   }
 
   private async __getBiggerFileBackupOrAutomatic(): Promise<{
