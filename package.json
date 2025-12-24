@@ -117,8 +117,7 @@
     "stylelint-config-standard": "^20.0.0",
     "ts-proto": "^1.122.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.50.0",
-    "webpack-subresource-integrity": "^1.5.2"
+    "typescript-eslint": "^8.50.0"
   },
   "overrides": {
     "@babel/preset-env": {
