@@ -142,12 +142,12 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     });
   }
   @HostListener('window:keyboardWillShow')
-  private hideFooter() {
+  public hideFooter() {
     // Describe your logic which will be run each time when keyboard is about to be shown.
     this.showFooter = false;
   }
   @HostListener('window:keyboardWillHide')
-  private showFooterAgain() {
+  public showFooterAgain() {
     // Describe your logic which will be run each time when keyboard is about to be closed.
     this.showFooter = true;
   }
