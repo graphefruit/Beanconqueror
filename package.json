@@ -100,7 +100,6 @@
     "cordova-plugin-ble-central": "^2.0.0",
     "cordova-plugin-health": "^2.1.0",
     "cordova-sqlite-storage": "^7.0.0",
-    "elliptic": ">=6.5.4",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^8.0.1",
