@@ -114,7 +114,7 @@ export class UIExportImportHelper {
   }
 
   public async getJSONFromZIPArrayBufferContent(
-    _arrayBuffer: Uint8Array | ArrayBuffer,
+    _arrayBuffer: Uint8Array<ArrayBuffer> | ArrayBuffer,
   ): Promise<any> {
     const readBlob = new Blob([_arrayBuffer], {
       type: 'application/zip',

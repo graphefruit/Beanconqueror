@@ -145,7 +145,7 @@ export class UIFileHelper extends InstanceClass {
   public async readFileAsUint8Array(
     path: string,
     directory?: Directory,
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     this.uiLog.debug(
       'readFileAsUint8Array for path',
       path,
@@ -159,7 +159,7 @@ export class UIFileHelper extends InstanceClass {
 
   public async readInternalFileAsUint8Array(
     fileName: string,
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     this.uiLog.debug('readInternalFileAsUint8Array for fileName:', fileName);
 
     return this.readFileAsUint8Array(
@@ -767,7 +767,9 @@ export class UIFileHelper extends InstanceClass {
     };
   }
 
-  private binaryStringToUint8Array(binaryString: string): Uint8Array {
+  private binaryStringToUint8Array(
+    binaryString: string,
+  ): Uint8Array<ArrayBuffer> {
     const array = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       array[i] = binaryString.charCodeAt(i);
