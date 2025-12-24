@@ -86,6 +86,14 @@ const createConfig = () => {
         androidScaleType: 'CENTER_CROP',
         useDialog: false, // required to set the correct scale type
       },
+      SystemBars: {
+        // Disable Capacitor SystemBars automatic insets handling, which is only
+        // applicable on Android. On android we use
+        // @capawesome/capacitor-android-edge-to-edge-support which already
+        // handles insets on the native side, so we have to disable this to
+        // prevent doubled insets.
+        insetsHandling: 'disable',
+      },
     },
   };
 
