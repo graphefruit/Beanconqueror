@@ -1,6 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 import { argv, env } from 'process';
-import { KeyboardResize } from '@capacitor/keyboard';
 
 type Platform = 'android' | 'ios';
 const PlatformOverrideEnvVariable = 'CAPACITOR_PLATFORM_OVERRIDE';
@@ -71,7 +70,6 @@ const createConfig = () => {
     },
     android: {
       allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
-      adjustMarginsForEdgeToEdge: 'disable', // We use @capawesome/capacitor-android-edge-to-edge-support instead
     },
     plugins: {
       CapacitorHttp: {
@@ -87,9 +85,6 @@ const createConfig = () => {
         backgroundColor: '#000000',
         androidScaleType: 'CENTER_CROP',
         useDialog: false, // required to set the correct scale type
-      },
-      StatusBar: {
-        overlaysWebView: false,
       },
     },
   };

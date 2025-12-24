@@ -76,6 +76,7 @@ import { Bean } from '../classes/bean/bean';
 import { Water } from '../classes/water/water';
 import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
 import { ThemeService } from '../services/theme/theme.service';
+import { SystemBars } from '@capacitor/core';
 
 declare var window;
 
@@ -360,6 +361,7 @@ export class AppComponent implements AfterViewInit {
         await StatusBar.show({ animation: Animation.None });
         const statusBarStyle = Style.Default;
         await StatusBar.setStyle({ style: statusBarStyle });
+        await SystemBars.setAnimation({ animation: 'NONE' });
         if (this.platform.is('ios')) {
           await Keyboard.setAccessoryBarVisible({ isVisible: true });
         }

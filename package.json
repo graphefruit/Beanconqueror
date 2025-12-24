@@ -48,7 +48,6 @@
     "@capawesome/capacitor-android-edge-to-edge-support": "^8.0.0",
     "@capawesome/capacitor-file-picker": "^8.0.0",
     "@capgo/camera-preview": "^8.0.5",
-    "@capgo/capacitor-navigation-bar": "^8.0.5",
     "@ionic/angular": "^8.7.3",
     "@ionic/cli": "^7.2.1",
     "@ionic/core": "^8.7.3",

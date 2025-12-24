@@ -86,12 +86,6 @@ export interface BCAndroidNativeCalls {
   moveFileDirectoryToSafDirectory(
     options: CopyFileDirectoryToSafDirectoryOptions,
   ): Promise<void>;
-
-  /**
-   * Set the status bar color.
-   * On Android 15+, this handles edge-to-edge insets.
-   */
-  setStatusBarColor(options: { color: string }): Promise<void>;
 }
 
 const AndroidNativeCalls = registerPlugin<BCAndroidNativeCalls>(

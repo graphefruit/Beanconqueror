@@ -28,7 +28,6 @@ def capacitor_pods
   pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
   pod 'CapawesomeCapacitorFilePicker', :path => '../../node_modules/@capawesome/capacitor-file-picker'
   pod 'CapgoCameraPreview', :path => '../../node_modules/@capgo/camera-preview'
-  pod 'CapgoCapacitorNavigationBar', :path => '../../node_modules/@capgo/capacitor-navigation-bar'
   pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'
 end
 

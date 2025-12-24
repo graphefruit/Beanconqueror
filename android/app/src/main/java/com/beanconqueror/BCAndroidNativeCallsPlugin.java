@@ -9,15 +9,6 @@ import android.webkit.MimeTypeMap;
 import androidx.activity.result.ActivityResult;
 import androidx.documentfile.provider.DocumentFile;
 
-import android.view.Window;
-import android.view.WindowInsets;
-import android.graphics.Color;
-import android.os.Build;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Gravity;
-import android.widget.FrameLayout;
-
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -38,47 +29,6 @@ import java.util.List;
 @CapacitorPlugin(name = "BCAndroidNativeCalls")
 public class BCAndroidNativeCallsPlugin extends Plugin {
   private static final String TAG = BCAndroidNativeCallsPlugin.class.getSimpleName();
-
-  @Override
-  public void load() {
-    Log.d(TAG, "load: load() called");
-    getActivity().runOnUiThread(() -> {
-      Log.d(TAG, "load: Starting UI thread actions");
-      CustomInsets.initialize(getActivity());
-      Log.d(TAG, "load: UI thread actions finished");
-    });
-  }
-
-  @PluginMethod()
-  public void setStatusBarColor(PluginCall call) {
-    String colorStr = call.getString("color");
-    Log.d(TAG, "setStatusBarColor: Called with color string " + colorStr);
-    if (colorStr == null) {
-      Log.w(TAG, "setStatusBarColor: Color was null, rejecting");
-      call.reject("color was null");
-      return;
-    }
-
-    int color;
-    try {
-      color = Color.parseColor(colorStr);
-    } catch (RuntimeException e) {
-      Log.w(TAG, "setStatusBarColor: Could not parse color " + colorStr, e);
-      call.reject("Cannot parse given color string " + colorStr, e);
-      return;
-    }
-
-    getActivity().runOnUiThread(() -> {
-      try {
-        CustomInsets.updateBackgroundColor(getActivity(), color);
-      } catch (RuntimeException e) {
-        Log.e(TAG, "setStatusBarColor: update background color", e);
-        call.reject("Cannot update background color of custom insets", e);
-        return;
-      }
-      call.resolve();
-    });
-  }
 
   @PluginMethod()
   public void pickDirectory(PluginCall call) {
