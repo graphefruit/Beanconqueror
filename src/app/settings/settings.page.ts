@@ -625,7 +625,7 @@ export class SettingsPage {
   }
 
   public setLanguage(): void {
-    this.translate.setDefaultLang(this.settings.language);
+    this.translate.setFallbackLang(this.settings.language);
     this.translate.use(this.settings.language);
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,

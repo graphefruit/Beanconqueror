@@ -400,7 +400,7 @@ export class AppComponent implements AfterViewInit {
       }
 
       // Before we update and show messages, we need atleast to set one default language.
-      this._translate.setDefaultLang('en');
+      this._translate.setFallbackLang('en');
       await this._translate.use('en').toPromise();
 
       if (this.platform.is('capacitor')) {
@@ -573,7 +573,7 @@ export class AppComponent implements AfterViewInit {
                 settingLanguage = 'en';
               }
               this.uiLog.log(`Setting language: ${settingLanguage}`);
-              this._translate.setDefaultLang(settingLanguage);
+              this._translate.setFallbackLang(settingLanguage);
               settings.language = settingLanguage;
               await this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
@@ -584,7 +584,7 @@ export class AppComponent implements AfterViewInit {
               this.uiLog.error(
                 `Exception occured when setting language ${exMessage}`,
               );
-              this._translate.setDefaultLang('en');
+              this._translate.setFallbackLang('en');
               await this._translate.use('en').toPromise();
               moment.locale('en');
               resolve(undefined);
@@ -593,7 +593,7 @@ export class AppComponent implements AfterViewInit {
             this.uiLog.info('Language settings already existing, set language');
             const settingLanguage: string = settings.language;
             this.uiLog.log(`Setting language: ${settingLanguage}`);
-            this._translate.setDefaultLang(settingLanguage);
+            this._translate.setFallbackLang(settingLanguage);
             await this._translate.use(settingLanguage).toPromise();
             moment.locale(settingLanguage);
             resolve(undefined);
@@ -603,7 +603,7 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.error(
             `Exception occured when setting language ${exMessage}`,
           );
-          this._translate.setDefaultLang('en');
+          this._translate.setFallbackLang('en');
           settings.language = 'en';
           await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
@@ -620,7 +620,7 @@ export class AppComponent implements AfterViewInit {
           settings.language !== ''
         ) {
           this.uiLog.info(`Set language from settings: ${settings.language}`);
-          this._translate.setDefaultLang(settings.language);
+          this._translate.setFallbackLang(settings.language);
           await this._translate.use(settings.language).toPromise();
           moment.locale(settings.language);
           resolve(undefined);
@@ -628,7 +628,7 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.info(
             `Set default language from settings, because no settings set: en `,
           );
-          this._translate.setDefaultLang('en');
+          this._translate.setFallbackLang('en');
           settings.language = 'en';
           await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();

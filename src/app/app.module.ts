@@ -10,20 +10,15 @@ import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { SharedModule } from './shared/shared.module';
 
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import {
-  HttpClient,
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { UILog } from '../services/uiLog';
-// AoT requires an exported function for factories
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
 
 class MyErrorHandler implements ErrorHandler {
   private ERROR_ORIGINAL_ERROR = 'ngOriginalError';
@@ -87,11 +82,10 @@ class MyErrorHandler implements ErrorHandler {
   imports: [
     BrowserModule,
     TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
+      loader: provideTranslateHttpLoader({
+        prefix: './assets/i18n/',
+        suffix: '.json',
+      }),
     }),
     IonicModule.forRoot({
       mode: 'md',
