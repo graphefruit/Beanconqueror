@@ -621,8 +621,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.data.brew_time === 0 ||
       this.isDetail === true
     ) {
-      // Re render, else the lines would not be hidden/shown when having references graphs
-      Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+      if (this.canWePlot()) {
+        // Re render, else the lines would not be hidden/shown when having references graphs
+        Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+      }
     }
     this.checkChanges();
   }
@@ -636,7 +638,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.graphIconColSize = this.getGraphIonColSize();
       this.setUIParams();
       try {
-        Plotly.purge(this.profileDiv.nativeElement);
+        if (this.canWePlot()) {
+          Plotly.purge(this.profileDiv.nativeElement);
+        }
       } catch (ex) {}
       this.graphSettings = this.uiHelper.cloneData(this.settings.graph.FILTER);
       if (
@@ -710,12 +714,14 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       try {
-        Plotly.newPlot(
-          this.profileDiv.nativeElement,
-          this.chartData,
-          this.lastChartLayout,
-          this.getChartConfig(),
-        );
+        if (this.canWePlot()) {
+          Plotly.newPlot(
+            this.profileDiv.nativeElement,
+            this.chartData,
+            this.lastChartLayout,
+            this.getChartConfig(),
+          );
+        }
 
         setTimeout(() => {
           /** On big tablets, the chart is not resized, so trigger the resize event**/
@@ -1320,10 +1326,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
 
             if (newLayoutIsNeeded) {
-              if (
-                !this.baristamode ||
-                (this.baristamode && this.showAdvancedBarista)
-              ) {
+              if (this.canWePlot()) {
                 Plotly.relayout(
                   this.profileDiv.nativeElement,
                   this.lastChartLayout,
@@ -1336,6 +1339,13 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       } catch (ex) {}
     });
+  }
+
+  private canWePlot(): boolean {
+    if (!this.baristamode || (this.baristamode && this.showAdvancedBarista)) {
+      return true;
+    }
+    return false;
   }
 
   public async timerReset(_event) {
@@ -4125,7 +4135,12 @@ export class BrewBrewingGraphComponent implements OnInit {
           this.lastChartLayout.height = 150;
           this.lastChartLayout.width =
             this.canvaContainer.nativeElement.offsetWidth;
-          Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+          if (this.canWePlot()) {
+            Plotly.relayout(
+              this.profileDiv.nativeElement,
+              this.lastChartLayout,
+            );
+          }
         } catch (ex) {}
       }, 50);
     }

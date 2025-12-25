@@ -367,8 +367,12 @@ export class BaristaPage implements OnInit {
     await popover.onWillDismiss();
   }
 
-  public async showDevInformation() {
-    this.devInformationEl.nativeElement.style.display = 'block';
+  public async toggleDevInformation() {
+    if (this.devInformationEl.nativeElement.style.display === 'block') {
+      this.devInformationEl.nativeElement.style.display = 'none';
+    } else {
+      this.devInformationEl.nativeElement.style.display = 'block';
+    }
   }
   public async showPreparationEdit() {
     const preparation: Preparation = this.data.getPreparation();
