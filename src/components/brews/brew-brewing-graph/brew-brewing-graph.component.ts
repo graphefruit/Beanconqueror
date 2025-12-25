@@ -1106,6 +1106,10 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public setActualSmartInformation(_weight: number = null) {
+    if (!this.canWePlot()) {
+      //Ignore this method
+      return;
+    }
     this.ngZone.runOutsideAngular(() => {
       let actualScaleWeight = this.getActualScaleWeight();
 

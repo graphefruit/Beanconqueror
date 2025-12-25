@@ -477,35 +477,32 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           SanremoYOUMode.LISTENING_AND_CONTROLLING;
         this.sanremoYOUModeSelected();
 
-        if (this.baristamode) {
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightP1
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightP1 =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP1;
-          }
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightP2
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightP2 =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP2;
-          }
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightP3
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightP3 =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP3;
-          }
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightM
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightM =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightM;
-          }
+        if (
+          this.preparation.connectedPreparationDevice.customParams
+            .stopAtWeightP1
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightP1 =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightP1;
+        }
+        if (
+          this.preparation.connectedPreparationDevice.customParams
+            .stopAtWeightP2
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightP2 =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightP2;
+        }
+        if (
+          this.preparation.connectedPreparationDevice.customParams
+            .stopAtWeightP3
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightP3 =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightP3;
+        }
+        if (
+          this.preparation.connectedPreparationDevice.customParams.stopAtWeightM
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightM =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightM;
         }
       }
     }

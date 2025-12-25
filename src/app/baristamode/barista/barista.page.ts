@@ -76,6 +76,12 @@ export class BaristaPage implements OnInit {
   @ViewChild('lagTimeM', { read: ElementRef })
   public lagTimeMEl: ElementRef;
 
+  @ViewChild('currentTemp', { read: ElementRef })
+  public currentTempEl: ElementRef;
+
+  @ViewChild('pumpPress', { read: ElementRef })
+  public pumpPressEl: ElementRef;
+
   @Output() public lastShot = new EventEmitter();
 
   constructor(
@@ -162,6 +168,8 @@ export class BaristaPage implements OnInit {
 
         this.lastHeartbeat = shotData.localTimeString;
         this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
+        this.currentTempEl.nativeElement.innerText = shotData.tempBoilerCoffe;
+        this.pumpPressEl.nativeElement.innerText = shotData.pumpPress;
       } catch (ex) {
         this.lastHeartBeatEl.nativeElement.innerText = '-';
       }
@@ -343,15 +351,17 @@ export class BaristaPage implements OnInit {
   private showLagTime() {
     const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
       ?.preparationDevice as SanremoYOUDevice;
-    const lagTimeP1 = device.getResidualLagTimeByProgram(1);
-    const lagTimeP2 = device.getResidualLagTimeByProgram(2);
-    const lagTimeP3 = device.getResidualLagTimeByProgram(3);
-    const lagTimeM = device.getResidualLagTimeByProgram(4);
+    if (device) {
+      const lagTimeP1 = device.getResidualLagTimeByProgram(1);
+      const lagTimeP2 = device.getResidualLagTimeByProgram(2);
+      const lagTimeP3 = device.getResidualLagTimeByProgram(3);
+      const lagTimeM = device.getResidualLagTimeByProgram(4);
 
-    this.lagTimeP1El.nativeElement.innerHTML = lagTimeP1;
-    this.lagTimeP2El.nativeElement.innerHTML = lagTimeP2;
-    this.lagTimeP3El.nativeElement.innerHTML = lagTimeP3;
-    this.lagTimeMEl.nativeElement.innerHTML = lagTimeM;
+      this.lagTimeP1El.nativeElement.innerHTML = lagTimeP1;
+      this.lagTimeP2El.nativeElement.innerHTML = lagTimeP2;
+      this.lagTimeP3El.nativeElement.innerHTML = lagTimeP3;
+      this.lagTimeMEl.nativeElement.innerHTML = lagTimeM;
+    }
   }
 
   public async popoverActionsBrew() {
