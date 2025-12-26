@@ -8,6 +8,7 @@ import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import { SanremoShotData } from './sanremoShotData';
 import { UIAlert } from '../../../services/uiAlert';
+import { sleep } from '../../devices';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -308,13 +309,28 @@ export class SanremoYOUDevice extends PreparationDevice {
   public connectToSocket(): Promise<boolean> {
     this.logInfo('Connect to socket');
     let hasPromiseBeenCalled: boolean = false;
-    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
       if (this.socket !== undefined) {
-        if (hasPromiseBeenCalled === false) {
-          resolve(true);
-          hasPromiseBeenCalled = true;
+        this.logInfo('Socket seems like already connected');
+        //Maybe we're in connection state but the websocket is not finished yet.
+        for (let i = 0; i < 10; i++) {
+          if (i != 0) {
+            await sleep(250);
+          }
+          /**
+           * We're realy connected
+           */
+          this.logInfo(
+            'Check socket connection state ' + this.socket.readyState,
+          );
+          if (this.socket.readyState === 1) {
+            if (hasPromiseBeenCalled === false) {
+              resolve(true);
+              hasPromiseBeenCalled = true;
+            }
+          }
         }
-
+        resolve(false);
         return;
       }
 

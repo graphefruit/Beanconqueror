@@ -1657,6 +1657,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     let hasShotStarted: boolean = false;
     prepDeviceCall.connectToSocket().then((_connected) => {
       if (_connected) {
+        this.uiLog.log('SanremoYOU - We connected to websocket');
         this.ngZone.runOutsideAngular(() => {
           this.sanremoYOUFetchingInterval = setInterval(() => {
             const shotData: SanremoShotData =
@@ -1766,6 +1767,13 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
           }, 100);
         });
+      } else {
+        this.uiAlert.showMessage(
+          'PREPARATION_DEVICE.TYPE_SANREMO_YOU.WE_COULD_NOT_CONNECT',
+          undefined,
+          undefined,
+          true,
+        );
       }
     });
 
