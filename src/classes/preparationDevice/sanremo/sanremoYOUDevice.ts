@@ -37,9 +37,9 @@ export class SanremoYOUDevice extends PreparationDevice {
     this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
     this.websocketURL = this.getPreparation().connectedPreparationDevice.url;
     if (this.websocketURL.indexOf('https:') >= 0) {
-      this.websocketURL = 'ws://192.168.0.140'; //this.websocketURL.replace('https', 'ws');
+      this.websocketURL = this.websocketURL.replace('https', 'ws');
     } else {
-      this.websocketURL = 'ws://192.168.0.140'; // this.websocketURL.replace('http', 'ws');
+      this.websocketURL = this.websocketURL.replace('http', 'ws');
     }
     this.websocketURL = this.websocketURL + ':81';
   }
@@ -324,12 +324,14 @@ export class SanremoYOUDevice extends PreparationDevice {
             'Check socket connection state ' + this.socket.readyState,
           );
           if (this.socket.readyState === 1) {
-            if (hasPromiseBeenCalled === false) {
-              resolve(true);
-              hasPromiseBeenCalled = true;
-            }
+            resolve(true);
+            //We can set promise been called to always true
+            hasPromiseBeenCalled = true;
+            //We can skip now.
+            return;
           }
         }
+        //Seems like the readyState never gone to "1"
         resolve(false);
         return;
       }
@@ -378,8 +380,9 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Listen for messages
         this.socket.onmessage = (event) => {
-          //          this.logInfo('Message from server:', event.data);
+          this.logInfo('Message from server:', event.data);
           const responseJSON = JSON.parse(event.data);
+
           if ('status' in responseJSON) {
             //Valid sanremo shot data
             let currentShotData = new SanremoShotData();
@@ -403,7 +406,8 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Handle errors
         this.socket.onerror = (event) => {
-          this.logInfo('WebSocket error: ', event);
+          this.logInfo('WebSocket error: ', JSON.stringify(event));
+
           if (hasPromiseBeenCalled === false) {
             resolve(false);
             hasPromiseBeenCalled = true;
@@ -414,7 +418,7 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Handle connection close
         this.socket.onclose = (event) => {
-          this.logInfo('WebSocket closed:', event);
+          this.logInfo('WebSocket closed:', JSON.stringify(event));
           if (hasPromiseBeenCalled === false) {
             resolve(false);
             hasPromiseBeenCalled = true;

@@ -1368,16 +1368,13 @@ export class BrewBrewingGraphComponent implements OnInit {
       const deviceType =
         this.brewComponent?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType();
       if (deviceType === PreparationDeviceType.XENIA) {
-        this.stopFetchingDataFromSanremoYOU();
+        this.stopFetchingAndSettingDataFromXenia();
       } else if (deviceType === PreparationDeviceType.METICULOUS) {
         this.stopFetchingDataFromMeticulous();
       } else if (deviceType === PreparationDeviceType.SANREMO_YOU) {
         this.stopFetchingDataFromSanremoYOU();
 
-        if (
-          this.data.preparationDeviceBrew.params.selectedMode ===
-          SanremoYOUMode.LISTENING_AND_CONTROLLING
-        ) {
+        if (this.baristamode) {
           this.startFetchingDataFromSanremoYOU();
         }
       }
@@ -1657,7 +1654,9 @@ export class BrewBrewingGraphComponent implements OnInit {
     let hasShotStarted: boolean = false;
     prepDeviceCall.connectToSocket().then((_connected) => {
       if (_connected) {
-        this.uiLog.log('SanremoYOU - We connected to websocket');
+        this.uiLog.log(
+          'Brew-Brewing-Graph - SanremoYOU - We connected to websocket',
+        );
         this.ngZone.runOutsideAngular(() => {
           this.sanremoYOUFetchingInterval = setInterval(() => {
             const shotData: SanremoShotData =
@@ -1768,6 +1767,9 @@ export class BrewBrewingGraphComponent implements OnInit {
           }, 100);
         });
       } else {
+        this.uiLog.error(
+          'Brew-Brewing-Graph - SanremoYOU - We could not connect to websocket',
+        );
         this.uiAlert.showMessage(
           'PREPARATION_DEVICE.TYPE_SANREMO_YOU.WE_COULD_NOT_CONNECT',
           undefined,
