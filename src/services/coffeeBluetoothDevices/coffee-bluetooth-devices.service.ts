@@ -46,6 +46,7 @@ import { CombustionThermometer } from '../../classes/devices/combustionThermomet
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 import { TimemoreScale } from 'src/classes/devices/timemoreScale';
 import { VariaAkuScale } from '../../classes/devices/variaAku';
+import { GeisingerThermometer } from '../../classes/devices/geisingerThermometer';
 import { UIHelper } from '../uiHelper';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
@@ -494,7 +495,8 @@ export class CoffeeBluetoothDevicesService {
             BasicGrillThermometer.test(scanDevice) ||
             MeaterThermometer.test(scanDevice) ||
             CombustionThermometer.test(scanDevice) ||
-            ArgosThermometer.test(scanDevice)
+            ArgosThermometer.test(scanDevice) ||
+            GeisingerThermometer.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -806,6 +808,12 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceTemperature.id,
         type: TemperatureType.ARGOS,
+      };
+    } else if (GeisingerThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found a Geisinger Thermometer device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.GEISINGER,
       };
     }
 
