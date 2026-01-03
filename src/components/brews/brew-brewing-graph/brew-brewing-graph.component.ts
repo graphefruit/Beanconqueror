@@ -127,6 +127,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   @Input() public isDetail: boolean = false;
 
   @Input() public baristamode: boolean = false;
+  public baristaModeTargetWeight: number = undefined;
   /**
    * This flag will toggle graph and the timer to be displayed.
    */
@@ -2991,7 +2992,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected();
       let residual_lag_time = 1.35;
       let targetWeight = 0;
-      let baristaModeTargetWeight = undefined;
+      this.baristaModeTargetWeight = undefined;
       let brewByWeightActive: boolean = false;
       let preparationDeviceType: PreparationDeviceType;
 
@@ -3070,7 +3071,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               SanremoYOUMode.LISTENING
           ) {
             if (this.baristamode) {
-              if (baristaModeTargetWeight === undefined) {
+              if (this.baristaModeTargetWeight === undefined) {
                 try {
                   let groupStatus = (
                     this.brewComponent.brewBrewingPreparationDeviceEl
@@ -3078,21 +3079,21 @@ export class BrewBrewingGraphComponent implements OnInit {
                   ).getActualShotData().groupStatus;
                   if (groupStatus !== 0) {
                     if (groupStatus === 1) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightP1;
                     } else if (groupStatus === 2) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightP2;
                     } else if (groupStatus === 3) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightP3;
                     } else if (groupStatus === 4) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightM;
                     }
 
                     //We overwrite for this shot the target weight, because we have a barista mode target weight
-                    targetWeight = baristaModeTargetWeight;
+                    targetWeight = this.baristaModeTargetWeight;
 
                     residual_lag_time = (
                       this.brewComponent.brewBrewingPreparationDeviceEl
@@ -3160,7 +3161,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           ).sendActualWeightAndFlowDataToMachine(
             lastWeightEntry,
             lastFlowEntry,
-            baristaModeTargetWeight,
+            this.baristaModeTargetWeight,
           );
         }
       });
@@ -3965,8 +3966,15 @@ export class BrewBrewingGraphComponent implements OnInit {
       grindWeight = 5;
     }
     if (this.baristamode) {
-      /**A bit more threshold for preinfusion**/
-      grindWeight = 10;
+      if (this.baristaModeTargetWeight !== undefined) {
+        //Set the desired weight of the baristamode
+        //We got the issue e.g. on blooming phase, we passed 10g because the bloom-flow, even with low preassure, reached over 10g, and so the shot ended, even so it wasn't finished
+        //We take 90% of the desired weight as minimum, to not have issues with lags, because lets say we take 36 grams, and we need to reach realy here 36 grams, it could take some time
+        grindWeight = this.baristaModeTargetWeight * 0.9;
+      } else {
+        /**A bit more threshold for preinfusion**/
+        grindWeight = 10;
+      }
     }
 
     //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
