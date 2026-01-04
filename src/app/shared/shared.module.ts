@@ -132,6 +132,7 @@ import { BrewFlowComponent } from '../brew/brew-flow/brew-flow.component';
 import { BeanFilterComponent } from '../beans/bean-filter/bean-filter.component';
 import { ChooseDateOverlayDirective } from '../../directive/choose-date.directive';
 import { BeanPopoverAddComponent } from '../beans/bean-popover-add/bean-popover-add.component';
+import { BeanImportPopoverComponent } from '../beans/bean-import-popover/bean-import-popover.component';
 import { PhotoViewComponent } from '../../components/photo-view/photo-view.component';
 import { QrCodeScannerPopoverComponent } from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
 import { PreparationToolModalSelectComponent } from '../preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
@@ -316,6 +317,7 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanImportPopoverComponent,
     BeanInternalShareCodeGeneratorComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverUnfreezeComponent,
@@ -516,6 +518,7 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     GraphPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanImportPopoverComponent,
     BeanInternalShareCodeGeneratorComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,

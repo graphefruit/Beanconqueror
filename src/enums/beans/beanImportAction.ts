@@ -1,0 +1,5 @@
+export enum BEAN_IMPORT_ACTION {
+  QR_SCAN = 'QR_SCAN',
+  NFC_SCAN = 'NFC_SCAN',
+  AI_IMPORT = 'AI_IMPORT',
+}

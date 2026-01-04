@@ -31,6 +31,11 @@ import { NfcService } from '../../services/nfcService/nfc-service.service';
 
 import { UIImage } from '../../services/uiImage';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { BeanImportPopoverComponent } from './bean-import-popover/bean-import-popover.component';
+import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
+import { AIBeanImportService } from '../../services/aiBeanImport/ai-bean-import.service';
+import { UIAlert } from '../../services/uiAlert';
+import { BeansAddComponent } from './beans-add/beans-add.component';
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
@@ -113,6 +118,8 @@ export class BeansPage implements OnDestroy {
     private readonly beanSortFilterHelper: BeanSortFilterHelperService,
     private readonly nfcService: NfcService,
     private readonly uiImage: UIImage,
+    private readonly aiBeanImportService: AIBeanImportService,
+    private readonly uiAlert: UIAlert,
   ) {}
 
   public ionViewWillEnter(): void {
@@ -374,6 +381,101 @@ export class BeansPage implements OnDestroy {
       event.stopImmediatePropagation();
     }
     await this.add();
+  }
+
+  public async openImportMenu() {
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.IMPORT_MENU_OPENED,
+    );
+    const popover = await this.modalController.create({
+      component: BeanImportPopoverComponent,
+      componentProps: {},
+      id: BeanImportPopoverComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.35],
+      initialBreakpoint: 0.35,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
+    if (data.role !== undefined) {
+      switch (data.role as BEAN_IMPORT_ACTION) {
+        case BEAN_IMPORT_ACTION.QR_SCAN:
+          await this.scanBean();
+          break;
+        case BEAN_IMPORT_ACTION.NFC_SCAN:
+          await this.scanNFC();
+          break;
+        case BEAN_IMPORT_ACTION.AI_IMPORT:
+          await this.aiImportBean();
+          break;
+      }
+    }
+  }
+
+  public async aiImportBean() {
+    if (!this.platform.is('capacitor')) {
+      return;
+    }
+
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
+      );
+
+      // Check LLM readiness first
+      const readiness = await this.aiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      // Capture and extract
+      const bean = await this.aiBeanImportService.captureAndExtractBeanData();
+
+      if (bean !== null) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
+        );
+
+        // Open bean add modal with pre-populated data
+        const modal = await this.modalController.create({
+          component: BeansAddComponent,
+          id: BeansAddComponent.COMPONENT_ID,
+          componentProps: { bean_template: bean },
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('AI bean import error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
+      );
+      // Show the actual error message for debugging
+      await this.uiAlert.showMessage(
+        `AI Import Error:\n\n${errorMessage}`,
+        'ERROR_OCCURED',
+        undefined,
+        false, // Don't translate - show raw error
+      );
+    }
+
+    this.loadBeans();
   }
 
   private retriggerScroll() {

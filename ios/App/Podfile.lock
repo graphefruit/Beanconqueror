@@ -39,13 +39,73 @@ PODS:
     - Capacitor
   - CapgoCameraPreview (7.13.7):
     - Capacitor
+  - CapgoCapacitorLlm (7.2.15):
+    - Capacitor
+    - MediaPipeTasksGenAI
+    - MediaPipeTasksGenAIC
   - CapgoCapacitorNavigationBar (7.3.18):
     - Capacitor
   - CordovaPlugins (7.4.4):
     - CapacitorCordova
+  - GoogleDataTransport (10.1.0):
+    - nanopb (~> 3.30910.0)
+    - PromisesObjC (~> 2.4)
+  - GoogleMLKit/MLKitCore (7.0.0):
+    - MLKitCommon (~> 12.0.0)
+  - GoogleMLKit/TextRecognition (7.0.0):
+    - GoogleMLKit/MLKitCore
+    - MLKitTextRecognition (~> 5.0.0)
+  - GoogleToolboxForMac/Defines (4.2.1)
+  - GoogleToolboxForMac/Logger (4.2.1):
+    - GoogleToolboxForMac/Defines (= 4.2.1)
+  - "GoogleToolboxForMac/NSData+zlib (4.2.1)":
+    - GoogleToolboxForMac/Defines (= 4.2.1)
+  - GoogleUtilities/Environment (8.1.0):
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Logger (8.1.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (8.1.0)
+  - GoogleUtilities/UserDefaults (8.1.0):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GTMSessionFetcher/Core (3.5.0)
   - IONFilesystemLib (1.0.0)
   - IONGeolocationLib (1.0.0)
+  - MediaPipeTasksGenAI (0.10.24):
+    - MediaPipeTasksGenAIC (= 0.10.24)
+  - MediaPipeTasksGenAIC (0.10.24)
+  - MLImage (1.0.0-beta6)
+  - MLKitCommon (12.0.0):
+    - GoogleDataTransport (~> 10.0)
+    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
+    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
+    - GoogleUtilities/Logger (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
+  - MLKitTextRecognition (5.0.0):
+    - MLKitCommon (~> 12.0)
+    - MLKitTextRecognitionCommon (= 4.0.0)
+    - MLKitVision (~> 8.0)
+  - MLKitTextRecognitionCommon (4.0.0):
+    - MLKitCommon (~> 12.0)
+    - MLKitVision (~> 8.0)
+  - MLKitVision (8.0.0):
+    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
+    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
+    - MLImage (= 1.0.0-beta6)
+    - MLKitCommon (~> 12.0)
+  - nanopb (3.30910.0):
+    - nanopb/decode (= 3.30910.0)
+    - nanopb/encode (= 3.30910.0)
+  - nanopb/decode (3.30910.0)
+  - nanopb/encode (3.30910.0)
   - OSBarcodeLib (1.1.3)
+  - PantristCapacitorPluginMlKitTextRecognition (7.0.0):
+    - Capacitor
+    - GoogleMLKit/TextRecognition (= 7.0.0)
+  - PromisesObjC (2.4.0)
 
 DEPENDENCIES:
   - "AparajitaCapacitorDarkMode (from `../../node_modules/@aparajita/capacitor-dark-mode`)"
@@ -67,14 +127,30 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/@capawesome/capacitor-file-picker`)"
   - "CapgoCameraPreview (from `../../node_modules/@capgo/camera-preview`)"
+  - "CapgoCapacitorLlm (from `../../node_modules/@capgo/capacitor-llm`)"
   - "CapgoCapacitorNavigationBar (from `../../node_modules/@capgo/capacitor-navigation-bar`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
+  - "PantristCapacitorPluginMlKitTextRecognition (from `../../node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition`)"
 
 SPEC REPOS:
   trunk:
+    - GoogleDataTransport
+    - GoogleMLKit
+    - GoogleToolboxForMac
+    - GoogleUtilities
+    - GTMSessionFetcher
     - IONFilesystemLib
     - IONGeolocationLib
+    - MediaPipeTasksGenAI
+    - MediaPipeTasksGenAIC
+    - MLImage
+    - MLKitCommon
+    - MLKitTextRecognition
+    - MLKitTextRecognitionCommon
+    - MLKitVision
+    - nanopb
     - OSBarcodeLib
+    - PromisesObjC
 
 EXTERNAL SOURCES:
   AparajitaCapacitorDarkMode:
@@ -115,10 +191,14 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capawesome/capacitor-file-picker"
   CapgoCameraPreview:
     :path: "../../node_modules/@capgo/camera-preview"
+  CapgoCapacitorLlm:
+    :path: "../../node_modules/@capgo/capacitor-llm"
   CapgoCapacitorNavigationBar:
     :path: "../../node_modules/@capgo/capacitor-navigation-bar"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
+  PantristCapacitorPluginMlKitTextRecognition:
+    :path: "../../node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition"
 
 SPEC CHECKSUMS:
   AparajitaCapacitorDarkMode: 00dc018a8537d45654afbea7a8535074c08973ef
@@ -140,12 +220,28 @@ SPEC CHECKSUMS:
   CapacitorStatusBar: 6e7af040d8fc4dd655999819625cae9c2d74c36f
   CapawesomeCapacitorFilePicker: 0f4a913a00e39dd77213449f0d917e92f35a5ca9
   CapgoCameraPreview: 29d500a7567cd3005b7fe62a70baad1ee6d0c67e
+  CapgoCapacitorLlm: 5cb42c64f42203effe5a3da59331619d3cd45c10
   CapgoCapacitorNavigationBar: 3c59704af4b6774bebb36beaab82643c141dfa83
   CordovaPlugins: 7d85160adba178e1066f758c0ceb2d4aa86ed6be
+  GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
+  GoogleMLKit: eff9e23ec1d90ea4157a1ee2e32a4f610c5b3318
+  GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
+  GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
+  GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   IONFilesystemLib: ceacae793975039530458eabab0c495c70515a0d
   IONGeolocationLib: 81f33f88d025846946de2cf63b0c7628e7c6bc9d
+  MediaPipeTasksGenAI: 076ba7032a6e9da16db9c7cf0c3b67c751c18bc1
+  MediaPipeTasksGenAIC: ec35d9f431f6a6b651a0bc9f67a4ed149ffa575c
+  MLImage: 0ad1c5f50edd027672d8b26b0fee78a8b4a0fc56
+  MLKitCommon: 07c2c33ae5640e5380beaaa6e4b9c249a205542d
+  MLKitTextRecognition: 3b41f3ff084a79afb214408d25d2068d77ab322c
+  MLKitTextRecognitionCommon: cd44577a8c506fc6bba065096de03bec0d01a213
+  MLKitVision: 45e79d68845a2de77e2dd4d7f07947f0ed157b0e
+  nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   OSBarcodeLib: f2e981270a64faf476cb790864262b29ab8cd68a
+  PantristCapacitorPluginMlKitTextRecognition: 31bbceca70162d30b5e1cd5c20ad91e457ced3b6
+  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: be424e3e511840cf7126fc320124f37a3a126afa
+PODFILE CHECKSUM: 61be9fc2c8645d3a5dcbed216e2083712d70f424
 
 COCOAPODS: 1.16.2
