@@ -166,6 +166,22 @@ export class SanremoYOUDevice extends PreparationDevice {
     return 0.9;
   }
 
+  public showInformationHintForBrewByWeightMode(): boolean {
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    if (connectedPreparationDevice.customParams) {
+      if (
+        connectedPreparationDevice.customParams.showHintForBaristaMode ===
+        undefined
+      ) {
+        return true;
+      }
+
+      return connectedPreparationDevice.customParams.showHintForBaristaMode;
+    }
+    return false;
+  }
+
   public getSaveLogfilesFromMachine(): boolean {
     const connectedPreparationDevice =
       this.getPreparation().connectedPreparationDevice;
@@ -624,12 +640,15 @@ export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeightP2: number = 0;
   public stopAtWeightP3: number = 0;
   public stopAtWeightM: number = 0;
+
+  public showHintForBaristaMode: boolean = true;
   constructor() {
     this.residualLagTime = 0.9;
     this.residualLagTimeP1 = 0.9;
     this.residualLagTimeP2 = 0.9;
     this.residualLagTimeP3 = 0.9;
     this.residualLagTimeM = 0.9;
+    this.showHintForBaristaMode = true;
 
     this.selectedMode = SanremoYOUMode.LISTENING;
   }
