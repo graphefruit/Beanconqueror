@@ -31,7 +31,7 @@ export class MeticulousShotData implements IMeticulousShotData {
 
   protected calculateSmoothedWeight(
     _actualWeight: number,
-    _smoothedWeight: number
+    _smoothedWeight: number,
   ): number {
     return _actualWeight * 0.3 + _smoothedWeight * 0.7;
   }
@@ -44,7 +44,7 @@ export class MeticulousShotData implements IMeticulousShotData {
     this.oldSmoothedWeight = this.smoothedWeight;
     this.smoothedWeight = this.calculateSmoothedWeight(
       _newWeight,
-      this.smoothedWeight
+      this.smoothedWeight,
     );
     this.oldWeight = this.weight;
     // We passed every shake change, seems like everything correct, set the new weight.
