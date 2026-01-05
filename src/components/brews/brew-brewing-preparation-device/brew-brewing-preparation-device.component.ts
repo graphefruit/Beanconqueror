@@ -799,6 +799,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
     this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
 
+    if (_historyData.profile?.name) {
+      this.brewComponent.data.pressure_profile = _historyData.profile.name;
+    }
+    if (_historyData.profile?.temperature) {
+      this.brewComponent.data.brew_temperature =
+        _historyData.profile.temperature;
+    }
+
     this.brewComponent.timer?.setTime(seconds, milliseconds);
     this.brewComponent.timer?.changeEvent();
 
