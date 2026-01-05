@@ -27,10 +27,10 @@ import { UIBeanHelper } from './uiBeanHelper';
 import { GreenBean } from '../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from './uiGreenBeanStorage';
 
-import { WorkBook, WorkSheet } from '../assets/ts/sheetjs-index';
+import * as XLSX from 'xlsx';
+import type { WorkBook, WorkSheet } from 'xlsx';
 import { sleep } from '../classes/devices';
 
-declare var XLSX: any;
 @Injectable({
   providedIn: 'root',
 })

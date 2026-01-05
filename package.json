@@ -79,6 +79,7 @@
     "rxjs": "^7.8.2",
     "swiper": "^11.2.10",
     "tslib": "^2.0.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zone.js": "^0.15.1"
   },
   "devDependencies": {
