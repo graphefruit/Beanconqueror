@@ -12,6 +12,8 @@ export class MeticulousShotData implements IMeticulousShotData {
   public smoothedWeight: number;
   public oldSmoothedWeight: number;
 
+  public gravimetric_flow: number;
+
   public extracting: boolean;
   constructor() {
     this.status = '';
@@ -20,6 +22,7 @@ export class MeticulousShotData implements IMeticulousShotData {
     this.flow = 0;
     this.weight = 0;
     this.temperature = 0;
+    this.gravimetric_flow = 0;
     this.oldWeight = 0;
     this.smoothedWeight = 0;
     this.oldSmoothedWeight = 0;
