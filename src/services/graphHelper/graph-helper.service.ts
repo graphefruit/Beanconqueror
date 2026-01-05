@@ -42,10 +42,19 @@ export class GraphHelperService {
   ) {
     const traces = _traces;
 
-    let weightColor = '#cdc2ac';
-    if (this.themeService.isDarkMode() === true) {
-      weightColor = '#8b7e6a';
-    }
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    const isDarkMode = this.themeService.isDarkMode();
+    const colors = settings.graph_colors;
+
+    const getColor = (key: keyof typeof colors, isRef: boolean) => {
+      if (isRef) {
+        return isDarkMode
+          ? colors[key].reference.dark
+          : colors[key].reference.light;
+      }
+      return isDarkMode ? colors[key].active.dark : colors[key].active.light;
+    };
+
     traces.weightTrace = {
       x: [],
       y: [],
@@ -55,7 +64,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#ebe6dd' : weightColor,
+        color: getColor('weight', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.weight,
@@ -71,7 +80,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#cbd5d9' : '#7F97A2',
+        color: getColor('flowPerSecond', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.calc_flow,
@@ -88,7 +97,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#9cb5be' : '#09485D',
+        color: getColor('realtimeFlow', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.realtime_flow,
@@ -105,7 +114,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#9be8d3' : '#05C793',
+        color: getColor('pressure', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.pressure,
@@ -122,7 +131,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#eaad9f' : '#CC3311',
+        color: getColor('temperature', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.temperature,
@@ -138,7 +147,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#b0924c' : '#8F6400',
+        color: getColor('weightSecond', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.weightSecond,
@@ -155,7 +164,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: _isReference ? '#62cbf0' : '#1FB6EA',
+        color: getColor('realtimeFlowSecond', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : _graphSettings.realtime_flowSecond,
@@ -272,6 +281,13 @@ export class GraphHelperService {
     _disableClick: boolean = false,
   ) {
     const settings: Settings = this.uiSettingsStorage.getSettings();
+    const isDarkMode = this.themeService.isDarkMode();
+    const colors = settings.graph_colors;
+
+    const getAxisColor = (key: keyof typeof colors) => {
+      return isDarkMode ? colors[key].active.dark : colors[key].active.light;
+    };
+
     const isEspressoBrew: boolean =
       _preparationStyle === PREPARATION_STYLE_TYPE.ESPRESSO;
     let chartWidth: number = 300;
@@ -375,8 +391,8 @@ export class GraphHelperService {
         },
         yaxis: {
           title: '',
-          titlefont: { color: '#cdc2ac' },
-          tickfont: { color: '#cdc2ac' },
+          titlefont: { color: getAxisColor('weight') },
+          tickfont: { color: getAxisColor('weight') },
           fixedrange: true,
           side: 'left',
           position: 0.03,
@@ -385,8 +401,8 @@ export class GraphHelperService {
         },
         yaxis2: {
           title: '',
-          titlefont: { color: '#7F97A2' },
-          tickfont: { color: '#7F97A2' },
+          titlefont: { color: getAxisColor('flowPerSecond') },
+          tickfont: { color: getAxisColor('flowPerSecond') },
           anchor: 'free',
           overlaying: 'y',
           side: 'right',
@@ -406,8 +422,8 @@ export class GraphHelperService {
       ) {
         layout['yaxisWeightSecond'] = {
           title: '',
-          titlefont: { color: '#cdc2ac' },
-          tickfont: { color: '#cdc2ac' },
+          titlefont: { color: getAxisColor('weightSecond') },
+          tickfont: { color: getAxisColor('weightSecond') },
           fixedrange: true,
           side: 'left',
           overlaying: 'y',
@@ -417,8 +433,8 @@ export class GraphHelperService {
         };
         layout['yaxisRealtimeFlowSecond'] = {
           title: '',
-          titlefont: { color: '#7F97A2' },
-          tickfont: { color: '#7F97A2' },
+          titlefont: { color: getAxisColor('realtimeFlowSecond') }, // Or flowPerSecond? The original code had #7F97A2 which is flowPerSecond color. But maybe it should be realtimeFlowSecond? Wait, previous code used #7F97A2 for realtimeFlowSecond axis.
+          tickfont: { color: getAxisColor('realtimeFlowSecond') },
           anchor: 'free',
           overlaying: 'y',
           side: 'right',
@@ -440,8 +456,8 @@ export class GraphHelperService {
         const suggestedMaxPressure: number = graph_pressure_settings.upper;
         layout['yaxis4'] = {
           title: '',
-          titlefont: { color: '#05C793' },
-          tickfont: { color: '#05C793' },
+          titlefont: { color: getAxisColor('pressure') },
+          tickfont: { color: getAxisColor('pressure') },
           anchor: 'free',
           overlaying: 'y',
           side: 'right',
@@ -459,8 +475,8 @@ export class GraphHelperService {
       ) {
         layout['yaxis5'] = {
           title: '',
-          titlefont: { color: '#CC3311' },
-          tickfont: { color: '#CC3311' },
+          titlefont: { color: getAxisColor('temperature') },
+          tickfont: { color: getAxisColor('temperature') },
           anchor: 'free',
           overlaying: 'y',
           side: 'right',
@@ -491,16 +507,16 @@ export class GraphHelperService {
         },
         yaxis: {
           title: '',
-          titlefont: { color: '#cdc2ac' },
-          tickfont: { color: '#cdc2ac' },
+          titlefont: { color: getAxisColor('weight') },
+          tickfont: { color: getAxisColor('weight') },
           side: 'left',
           position: 0.05,
           visible: true,
         },
         yaxis2: {
           title: '',
-          titlefont: { color: '#7F97A2' },
-          tickfont: { color: '#7F97A2' },
+          titlefont: { color: getAxisColor('flowPerSecond') },
+          tickfont: { color: getAxisColor('flowPerSecond') },
           anchor: 'x',
           overlaying: 'y',
           side: 'right',
@@ -530,8 +546,8 @@ export class GraphHelperService {
 
       layout['yaxis4'] = {
         title: '',
-        titlefont: { color: '#05C793' },
-        tickfont: { color: '#05C793' },
+        titlefont: { color: getAxisColor('pressure') },
+        tickfont: { color: getAxisColor('pressure') },
         anchor: 'free',
         overlaying: 'y',
         side: 'right',
@@ -543,8 +559,8 @@ export class GraphHelperService {
 
       layout['yaxis5'] = {
         title: '',
-        titlefont: { color: '#CC3311' },
-        tickfont: { color: '#CC3311' },
+        titlefont: { color: getAxisColor('temperature') },
+        tickfont: { color: getAxisColor('temperature') },
         anchor: 'free',
         overlaying: 'y',
         side: 'right',
@@ -557,16 +573,16 @@ export class GraphHelperService {
 
       layout['yaxisWeightSecond'] = {
         title: '',
-        titlefont: { color: '#cdc2ac' },
-        tickfont: { color: '#cdc2ac' },
+        titlefont: { color: getAxisColor('weightSecond') },
+        tickfont: { color: getAxisColor('weightSecond') },
         side: 'left',
         overlaying: 'y',
         position: 0.03,
       };
       layout['yaxisRealtimeFlowSecond'] = {
         title: '',
-        titlefont: { color: '#7F97A2' },
-        tickfont: { color: '#7F97A2' },
+        titlefont: { color: getAxisColor('realtimeFlowSecond') },
+        tickfont: { color: getAxisColor('realtimeFlowSecond') },
         anchor: 'free',
         overlaying: 'y',
         side: 'right',
