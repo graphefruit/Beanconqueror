@@ -459,6 +459,9 @@ export class AIBeanImportService {
 
     // Build the language-specific section
     const languageSection = `
+COMMON ORIGIN COUNTRIES (recognize these names):
+${examples.ORIGINS || 'Ethiopia, Colombia, Brazil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico'}
+
 COMMON PROCESSING METHODS (recognize these terms):
 ${examples.PROCESSING_METHODS || 'Washed, Natural, Honey, Anaerobic, Carbonic Maceration, Wet-Hulled, Semi-Washed, Pulped Natural'}
 

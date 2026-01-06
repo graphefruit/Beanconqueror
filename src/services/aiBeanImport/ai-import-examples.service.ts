@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 export interface MergedExamples {
+  ORIGINS: string;
   PROCESSING_METHODS: string;
   VARIETIES: string;
   ROASTING_TYPE_FILTER_KEYWORDS: string;
@@ -13,6 +14,7 @@ export interface MergedExamples {
 }
 
 const EXAMPLE_KEYS: (keyof MergedExamples)[] = [
+  'ORIGINS',
   'PROCESSING_METHODS',
   'VARIETIES',
   'ROASTING_TYPE_FILTER_KEYWORDS',
@@ -91,6 +93,7 @@ export class AIImportExamplesService {
     allExamples: Record<string, string[]>[],
   ): MergedExamples {
     const merged: MergedExamples = {
+      ORIGINS: '',
       PROCESSING_METHODS: '',
       VARIETIES: '',
       ROASTING_TYPE_FILTER_KEYWORDS: '',
