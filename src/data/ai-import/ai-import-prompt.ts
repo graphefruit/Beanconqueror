@@ -35,6 +35,9 @@ Output: {"name":"House Blend","bean_roasting_type":"ESPRESSO","beanMix":"BLEND",
 Input: "FINCA LA ESPERANZA\\nFIELD BLEND\\nColombia Huila\\nBourbon, Caturra, Typica\\n250g"
 Output: {"name":"Finca La Esperanza","beanMix":"SINGLE_ORIGIN","weight":250,"bean_information":[{"country":"Colombia","region":"Huila","variety":"Bourbon, Caturra, Typica"}]}
 
+Input: "BOMBE WASHING STATION\\nEthiopia Sidama\\nWashed\\nProducer: Kata Muduga Cooperative\\n1.900-2.100m\\n250g"
+Output: {"name":"Bombe Washing Station","weight":250,"bean_information":[{"country":"Ethiopia","region":"Sidama","farm":"Bombe Washing Station","farmer":"Kata Muduga Cooperative","processing":"Washed","elevation":"1900-2100 MASL"}]}
+
 SINGLE ORIGIN vs BLEND CLASSIFICATION:
 - SINGLE_ORIGIN: One country mentioned, "Field Blend" (exception!), or large region + specific country (e.g., "Africa, Ethiopia, Guji")
 - BLEND: Multiple countries, "House Blend"/"Espresso Blend"/etc., or large region alone (e.g., just "Africa")
@@ -48,6 +51,19 @@ ALTITUDE NORMALIZATION:
 - Remove commas and periods from numbers (e.g., "1.850m" → "1850 MASL", "1,900m" → "1900 MASL")
 - Normalize format to number + "MASL" (e.g., "1850 m.ü.M." → "1850 MASL")
 - For ranges use hyphen: "1.700-1.900m" → "1700-1900 MASL"
+
+FARM IDENTIFICATION (extract to "farm" field):
+- "Finca", "Hacienda" (Spanish) = farm/estate
+- "Fazenda" (Portuguese/Brazil) = farm
+- Washing stations, wet mills, dry mills (common in Ethiopia, Kenya, Rwanda)
+- Cooperatives that process coffee
+- Estate names
+
+FARMER/PRODUCER IDENTIFICATION (extract to "farmer" field):
+- Individual names (look for Spanish, Ethiopian, Kenyan names)
+- Family operations ("Family", "Brothers", "Hermanos")
+- Collectives ("Cooperative", "Coop", "Association", "Smallholders")
+- Labels like "Produced by", "Grown by", "Producer:", "Farmer:"
 
 SCHEMA (NEVER use "UNKNOWN" - use null instead):
 {
