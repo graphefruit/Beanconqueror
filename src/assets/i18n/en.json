@@ -648,6 +648,7 @@
     "AI_IMPORT_STEP_CAPTURING": "Capturing image...",
     "AI_IMPORT_STEP_EXTRACTING": "Extracting text from image...",
     "AI_IMPORT_STEP_ANALYZING": "Analyzing with AI... (Tip: If results aren't great, just try again!)",
+    "AI_IMPORT_STEP_DETECTING_LANGUAGE": "Detecting label language...",
     "AI_IMPORT_NO_TEXT_FOUND": "No text could be extracted from the image. Please ensure the label is clearly visible and try again.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "PROCESSING_METHODS": "Washed, Natural, Honey, Anaerobic, Carbonic Maceration, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

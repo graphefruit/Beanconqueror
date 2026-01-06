@@ -5,7 +5,11 @@ import { UIAlert } from '../uiAlert';
 import { UIImage } from '../uiImage';
 import { UILog } from '../uiLog';
 import { Bean } from '../../classes/bean/bean';
-import { AI_IMPORT_PROMPT_TEMPLATE } from '../../data/ai-import/ai-import-prompt';
+import {
+  AI_IMPORT_PROMPT_TEMPLATE,
+  AI_IMPORT_LANGUAGE_DETECTION_PROMPT,
+} from '../../data/ai-import/ai-import-prompt';
+import { AIImportExamplesService } from './ai-import-examples.service';
 import { CapgoLLM } from '@capgo/capacitor-llm';
 import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
 import {
@@ -44,6 +48,7 @@ export class AIBeanImportService {
     private readonly translate: TranslateService,
     private readonly platform: Platform,
     private readonly uiLog: UILog,
+    private readonly aiImportExamples: AIImportExamplesService,
   ) {}
 
   /**
@@ -159,13 +164,32 @@ export class AIBeanImportService {
 
       this.uiLog.log('OCR extracted text: ' + extractedText);
 
-      // Step 3: Analyze with AI
+      // Step 3: Detect language
+      currentStep = 'language_detection';
+      this.uiAlert.setLoadingSpinnerMessage(
+        this.translate.instant('AI_IMPORT_STEP_DETECTING_LANGUAGE'),
+      );
+
+      const detectedLanguage = await this.detectLanguage(extractedText);
+      this.uiLog.log('Detected language: ' + detectedLanguage);
+
+      // Step 4: Determine languages for examples
+      const userLanguage = this.translate.currentLang;
+      const languagesToUse = this.getLanguagesToUse(
+        detectedLanguage,
+        userLanguage,
+      );
+      this.uiLog.log(
+        'Using languages for examples: ' + languagesToUse.join(', '),
+      );
+
+      // Step 5: Analyze with AI using targeted examples
       currentStep = 'llm_analysis';
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
       );
 
-      const bean = await this.analyzeTextWithLLM(extractedText);
+      const bean = await this.analyzeTextWithLLM(extractedText, languagesToUse);
       await this.uiAlert.hideLoadingSpinner();
 
       if (!bean) {
@@ -193,7 +217,10 @@ export class AIBeanImportService {
   /**
    * Send extracted text to LLM for analysis
    */
-  private async analyzeTextWithLLM(ocrText: string): Promise<Bean | null> {
+  private async analyzeTextWithLLM(
+    ocrText: string,
+    languages: string[],
+  ): Promise<Bean | null> {
     try {
       // Set up Apple Intelligence model
       await CapgoLLM.setModel({ path: 'Apple Intelligence' });
@@ -202,8 +229,8 @@ export class AIBeanImportService {
       const { id: chatId } = await CapgoLLM.createChat();
       this.uiLog.log('Created chat with ID: ' + chatId);
 
-      // Build the prompt
-      const prompt = this.buildPrompt(ocrText);
+      // Build the prompt with merged examples from specified languages
+      const prompt = await this.buildPrompt(ocrText, languages);
 
       // Track the latest snapshot (plugin sends full content each time, not deltas)
       let latestSnapshot = '';
@@ -299,19 +326,141 @@ export class AIBeanImportService {
   }
 
   /**
-   * Build the full prompt with language-specific examples
+   * Detect the language of the OCR text using LLM
    */
-  private buildPrompt(ocrText: string): string {
-    // Get language-specific examples from i18n
-    const examples = this.translate.instant('AI_IMPORT_PROMPT_EXAMPLES');
+  private async detectLanguage(ocrText: string): Promise<string | null> {
+    try {
+      // Set up Apple Intelligence model
+      await CapgoLLM.setModel({ path: 'Apple Intelligence' });
+
+      // Create chat session
+      const { id: chatId } = await CapgoLLM.createChat();
+
+      // Build the language detection prompt
+      const prompt = AI_IMPORT_LANGUAGE_DETECTION_PROMPT.replace(
+        '{{OCR_TEXT}}',
+        ocrText,
+      );
+
+      // Track the latest snapshot
+      let latestSnapshot = '';
+      let resolved = false;
+
+      return new Promise<string | null>(async (resolve) => {
+        const cleanup = async (textListener: any, finishedListener: any) => {
+          try {
+            await textListener?.remove();
+            await finishedListener?.remove();
+          } catch (e) {
+            this.uiLog.error('Error cleaning up listeners: ' + e);
+          }
+        };
+
+        const resolveOnce = async (
+          result: string | null,
+          textListener: any,
+          finishedListener: any,
+        ) => {
+          if (!resolved) {
+            resolved = true;
+            await cleanup(textListener, finishedListener);
+            resolve(result);
+          }
+        };
+
+        // Listen for text chunks
+        const textListener = await CapgoLLM.addListener(
+          'textFromAi',
+          (event: any) => {
+            if (event.text) {
+              latestSnapshot = event.text;
+            }
+          },
+        );
+
+        // Listen for completion
+        const finishedListener = await CapgoLLM.addListener(
+          'aiFinished',
+          async () => {
+            if (latestSnapshot) {
+              const langCode = latestSnapshot.trim().toLowerCase();
+              // Return detected language if valid, otherwise null
+              if (langCode !== 'unknown' && langCode.length === 2) {
+                await resolveOnce(langCode, textListener, finishedListener);
+              } else {
+                await resolveOnce(null, textListener, finishedListener);
+              }
+            } else {
+              await resolveOnce(null, textListener, finishedListener);
+            }
+          },
+        );
+
+        // Timeout fallback (10 seconds for language detection)
+        setTimeout(async () => {
+          if (!resolved) {
+            if (latestSnapshot) {
+              const langCode = latestSnapshot.trim().toLowerCase();
+              if (langCode !== 'unknown' && langCode.length === 2) {
+                await resolveOnce(langCode, textListener, finishedListener);
+              } else {
+                await resolveOnce(null, textListener, finishedListener);
+              }
+            } else {
+              await resolveOnce(null, textListener, finishedListener);
+            }
+          }
+        }, 10000);
+
+        // Send message
+        await CapgoLLM.sendMessage({
+          chatId,
+          message: prompt,
+        });
+      });
+    } catch (error) {
+      this.uiLog.error('Language detection error: ' + error);
+      return null;
+    }
+  }
+
+  /**
+   * Determine which languages to use for examples
+   */
+  private getLanguagesToUse(
+    detectedLang: string | null,
+    userLang: string,
+  ): string[] {
+    const languages = new Set<string>();
+
+    // Always include English
+    languages.add('en');
+
+    // Add user's app language
+    languages.add(userLang);
+
+    // Add detected language if available
+    if (detectedLang) {
+      languages.add(detectedLang);
+    }
+
+    return Array.from(languages);
+  }
+
+  /**
+   * Build the full prompt with merged examples from specified languages
+   */
+  private async buildPrompt(
+    ocrText: string,
+    languages: string[],
+  ): Promise<string> {
+    // Get merged examples from specified languages
+    const examples = await this.aiImportExamples.getMergedExamples(languages);
 
     // Build the language-specific section
     const languageSection = `
 COMMON PROCESSING METHODS (recognize these terms):
 ${examples.PROCESSING_METHODS || 'Washed, Natural, Honey, Anaerobic, Carbonic Maceration, Wet-Hulled, Semi-Washed, Pulped Natural'}
-
-PROCESSING MAPPING:
-${examples.PROCESSING_MAPPING || 'Washed/Wet Process → Washed, Natural/Dry Process/Unwashed → Natural, Honey/Pulped Natural → Honey'}
 
 COMMON COFFEE VARIETIES:
 ${examples.VARIETIES || 'Typica, Bourbon, Caturra, Catuai, Mundo Novo, Gesha/Geisha, SL28, SL34, Pacamara, Maragogype, Yellow Bourbon, Red Bourbon, Pink Bourbon, Castillo, Colombia, Tabi, Ethiopian Heirloom, Sidra, Wush Wush'}

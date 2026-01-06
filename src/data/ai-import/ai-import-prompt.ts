@@ -1,3 +1,16 @@
+export const AI_IMPORT_LANGUAGE_DETECTION_PROMPT = `
+Analyze the following text extracted from a coffee bag label and identify the primary language.
+
+TEXT:
+---
+{{OCR_TEXT}}
+---
+
+Respond with ONLY a two-letter ISO 639-1 language code (e.g., "en", "de", "it", "es", "fr").
+If the text contains multiple languages, return the predominant one.
+If uncertain, respond with "unknown".
+`;
+
 export const AI_IMPORT_PROMPT_TEMPLATE = `
 You are a coffee data extraction assistant. Extract structured information from coffee bag label text.
 
