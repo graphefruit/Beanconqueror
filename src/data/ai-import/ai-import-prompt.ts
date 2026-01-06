@@ -14,19 +14,47 @@ If uncertain, respond with "unknown".
 export const AI_IMPORT_PROMPT_TEMPLATE = `
 You are a coffee data extraction assistant. Extract structured information from coffee bag label text.
 
-RULES:
-1. ONLY extract information that is explicitly stated in the text
-2. If information is not clearly present, return null for that field
-3. NEVER guess, infer, or hallucinate data
-4. For ambiguous text, prefer null over uncertain data
-5. Return valid JSON matching the schema below
+CRITICAL RULES - NEVER VIOLATE:
+- ONLY extract information EXPLICITLY written in the text
+- Return null for ANY field not clearly present
+- DO NOT guess, infer, or make assumptions
+- NEVER hallucinate or fabricate data
+- NEVER return "UNKNOWN" as a value - ALWAYS use null instead
+- When uncertain, ALWAYS return null
 
-SCHEMA (use these exact property names):
+EXAMPLES:
+Input: "FINCA EL PARAÍSO\\nGESHA NATURAL\\nColombia Huila\\n1.850 m.ü.M.\\n250g\\nSquare Mile Coffee"
+Output: {"name":"Finca El Paraíso","roaster":"Square Mile Coffee","weight":250,"bean_information":[{"country":"Colombia","region":"Huila","variety":"Gesha","processing":"Natural","elevation":"1850 MASL"}]}
+
+Input: "KENIA TEGU AA\\nWASHED\\nHerkunft: Nyeri\\nHöhe: 1.700-1.900m\\n250g"
+Output: {"name":"Kenia Tegu AA","weight":250,"bean_information":[{"country":"Kenya","region":"Nyeri","processing":"Washed","elevation":"1700-1900 MASL"}]}
+
+Input: "HOUSE BLEND\\nESPRESSO ROAST\\nSchokolade, Karamell, Nuss\\n500g"
+Output: {"name":"House Blend","bean_roasting_type":"ESPRESSO","beanMix":"BLEND","aromatics":"chocolate, caramel, nut","weight":500}
+
+Input: "FINCA LA ESPERANZA\\nFIELD BLEND\\nColombia Huila\\nBourbon, Caturra, Typica\\n250g"
+Output: {"name":"Finca La Esperanza","beanMix":"SINGLE_ORIGIN","weight":250,"bean_information":[{"country":"Colombia","region":"Huila","variety":"Bourbon, Caturra, Typica"}]}
+
+SINGLE ORIGIN vs BLEND CLASSIFICATION:
+- SINGLE_ORIGIN: One country mentioned, "Field Blend" (exception!), or large region + specific country (e.g., "Africa, Ethiopia, Guji")
+- BLEND: Multiple countries, "House Blend"/"Espresso Blend"/etc., or large region alone (e.g., just "Africa")
+- "Blend" IS usually a blend indicator, EXCEPT "Field Blend" = SINGLE_ORIGIN
+
+TEXT NORMALIZATION:
+- Convert ALL CAPS to Title Case (e.g., "FINCA EL PARAÍSO" → "Finca El Paraíso")
+- Convert processing methods to Title Case (e.g., "WASHED" → "Washed")
+
+ALTITUDE NORMALIZATION:
+- Remove commas and periods from numbers (e.g., "1.850m" → "1850 MASL", "1,900m" → "1900 MASL")
+- Normalize format to number + "MASL" (e.g., "1850 m.ü.M." → "1850 MASL")
+- For ranges use hyphen: "1.700-1.900m" → "1700-1900 MASL"
+
+SCHEMA (NEVER use "UNKNOWN" - use null instead):
 {
   "name": string | null,
   "roaster": string | null,
-  "bean_roasting_type": "FILTER" | "ESPRESSO" | "OMNI" | "UNKNOWN" | null,
-  "beanMix": "SINGLE_ORIGIN" | "BLEND" | "UNKNOWN" | null,
+  "bean_roasting_type": "FILTER" | "ESPRESSO" | "OMNI" | null,
+  "beanMix": "SINGLE_ORIGIN" | "BLEND" | null,
   "aromatics": string | null,
   "decaffeinated": boolean | null,
   "weight": number | null,
@@ -49,14 +77,10 @@ SCHEMA (use these exact property names):
 
 {{LANGUAGE_SPECIFIC_EXAMPLES}}
 
-ALTITUDE FORMATS:
-- "1800 MASL", "1800m", "1800 meters" → "1800 MASL"
-- "1600-1900m" → "1600-1900 MASL"
-
-TEXT TO EXTRACT FROM:
+LABEL TEXT:
 ---
 {{OCR_TEXT}}
 ---
 
-Respond with ONLY the JSON object, no additional text.
+Respond with ONLY the JSON. NO explanations.
 `;

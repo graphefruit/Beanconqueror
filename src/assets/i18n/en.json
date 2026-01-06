@@ -659,7 +659,7 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Omni Roast, versatile, all brewing methods, medium roast, all-rounder",
         "DECAF_KEYWORDS": "Decaf, Decaffeinated, Caffeine-free",
         "BLEND_KEYWORDS": "Blend, House Blend, Espresso Blend",
-        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Single Estate, Single Farm"
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Single Estate, Single Farm, Field Blend, Micro Lot"
     },
     "CLEAR": "Clear",
     "BEAN_LOOKS_LIKE_CONSUMED": "It looks like these beans are finished, you want to archive them?",

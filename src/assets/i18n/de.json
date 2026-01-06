@@ -659,7 +659,7 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Omni Röstung, vielseitig, Allrounder, mittlere Röstung",
         "DECAF_KEYWORDS": "Entkoffeiniert, Koffeinfrei, Decaf",
         "BLEND_KEYWORDS": "Mischung, Blend, Hausmischung",
-        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Einzelherkunft, Plantagenkaffee"
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Einzelherkunft, Plantagenkaffee, Field Blend, Feldmischung, Micro Lot"
     },
     "CLEAR": "Zurücksetzen",
     "BEAN_LOOKS_LIKE_CONSUMED": "Bohnenpackung scheint aufgebraucht zu sein, möchtest du diese nun archivieren?",
