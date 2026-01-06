@@ -48,22 +48,6 @@ CRITICAL RULES - NEVER VIOLATE:
 - NEVER return "UNKNOWN" as a value - ALWAYS use null instead
 - When uncertain, ALWAYS return null
 
-EXAMPLES:
-Input: "FINCA EL PARAÍSO\\nGESHA NATURAL\\nColombia Huila\\n1.850 m.ü.M.\\n250g\\nSquare Mile Coffee"
-Output: {"name":"Finca El Paraíso","roaster":"Square Mile Coffee","weight":250,"bean_information":[{"country":"Colombia","region":"Huila","variety":"Gesha","processing":"Natural","elevation":"1850 MASL"}]}
-
-Input: "KENIA TEGU AA\\nWASHED\\nHerkunft: Nyeri\\nHöhe: 1.700-1.900m\\n250g"
-Output: {"name":"Kenia Tegu AA","weight":250,"bean_information":[{"country":"Kenya","region":"Nyeri","processing":"Washed","elevation":"1700-1900 MASL"}]}
-
-Input: "HOUSE BLEND\\nESPRESSO ROAST\\nSchokolade, Karamell, Nuss\\n500g"
-Output: {"name":"House Blend","bean_roasting_type":"ESPRESSO","beanMix":"BLEND","aromatics":"chocolate, caramel, nut","weight":500}
-
-Input: "FINCA LA ESPERANZA\\nFIELD BLEND\\nColombia Huila\\nBourbon, Caturra, Typica\\n250g"
-Output: {"name":"Finca La Esperanza","beanMix":"SINGLE_ORIGIN","weight":250,"bean_information":[{"country":"Colombia","region":"Huila","variety":"Bourbon, Caturra, Typica"}]}
-
-Input: "BOMBE WASHING STATION\\nEthiopia Sidama\\nWashed\\nProducer: Kata Muduga Cooperative\\n1.900-2.100m\\n250g"
-Output: {"name":"Bombe Washing Station","weight":250,"bean_information":[{"country":"Ethiopia","region":"Sidama","farm":"Bombe Washing Station","farmer":"Kata Muduga Cooperative","processing":"Washed","elevation":"1900-2100 MASL"}]}
-
 SINGLE ORIGIN vs BLEND CLASSIFICATION:
 - SINGLE_ORIGIN: One country mentioned, "Field Blend" (exception!), or large region + specific country (e.g., "Africa, Ethiopia, Guji")
 - BLEND: Multiple countries, "House Blend"/"Espresso Blend"/etc., or large region alone (e.g., just "Africa")
