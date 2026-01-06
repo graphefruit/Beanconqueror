@@ -290,3 +290,5 @@ export class GreenBeansPage implements OnInit {
     this.__initializeBeansView('archiv');
   }
 }
+
+export default GreenBeansPage;

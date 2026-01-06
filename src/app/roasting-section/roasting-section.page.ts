@@ -13,3 +13,5 @@ export class RoastingSectionPage implements OnInit {
 
   public ngOnInit() {}
 }
+
+export default RoastingSectionPage;

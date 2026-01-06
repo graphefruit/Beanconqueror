@@ -14,3 +14,5 @@ export class InfoComponent implements OnInit {
 
   public ngOnInit() {}
 }
+
+export default InfoComponent;

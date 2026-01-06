@@ -437,3 +437,5 @@ export class BaristaPage implements OnInit {
 
   protected readonly PreparationDeviceType = PreparationDeviceType;
 }
+
+export default BaristaPage;

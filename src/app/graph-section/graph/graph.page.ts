@@ -148,3 +148,5 @@ export class GraphPage implements OnInit {
     this.__initializeView('archiv');
   }
 }
+
+export default GraphPage;

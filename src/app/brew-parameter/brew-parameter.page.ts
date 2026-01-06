@@ -36,3 +36,5 @@ export class BrewParameterPage implements OnInit {
     this.router.navigateByUrl('/brew-parameter/listview');
   }
 }
+
+export default BrewParameterPage;

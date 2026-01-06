@@ -78,3 +78,5 @@ export class RoastingMachinePage implements OnInit {
     this.loadRoastingMachines();
   }
 }
+
+export default RoastingMachinePage;

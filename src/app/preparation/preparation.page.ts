@@ -134,3 +134,5 @@ export class PreparationPage implements OnInit {
 
   public ngOnInit() {}
 }
+
+export default PreparationPage;

@@ -799,3 +799,5 @@ export class StatisticPage implements OnInit {
     );
   }
 }
+
+export default StatisticPage;

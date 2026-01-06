@@ -602,3 +602,5 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 }
+
+export default BrewPage;

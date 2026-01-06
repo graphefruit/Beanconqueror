@@ -11,3 +11,5 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class WaterSectionPage implements OnInit {
   public ngOnInit(): void {}
 }
+
+export default WaterSectionPage;

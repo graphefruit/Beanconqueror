@@ -29,7 +29,6 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { BeansPage } from '../beans/beans.page';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
 import { BeansEditComponent } from '../beans/beans-edit/beans-edit.component';
-import { HomePage } from '../home/home.page';
 import { StatisticPage } from '../statistic/statistic.page';
 import { SettingsPage } from '../settings/settings.page';
 import { BrewPopoverActionsComponent } from '../brew/brew-popover-actions/brew-popover-actions.component';
@@ -40,7 +39,6 @@ import { HelperPage } from '../helper/helper.page';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { CuppingRadarComponent } from '../../components/cupping-radar/cupping-radar.component';
 import { TooltipDirective } from '../../directive/tooltip.directive';
-import { DashboardPage } from '../dashboard/dashboard.page';
 import { BeanPopoverActionsComponent } from '../beans/bean-popover-actions/bean-popover-actions.component';
 import { PreparationPopoverActionsComponent } from '../preparation/preparation-popover-actions/preparation-popover-actions.component';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
@@ -54,7 +52,7 @@ import { SortParameterComponent } from '../brew-parameter/sort-parameter/sort-pa
 import { ManageParameterComponent } from '../brew-parameter/manage-parameter/manage-parameter.component';
 import { DefaultParameterComponent } from '../brew-parameter/default-parameter/default-parameter.component';
 import { InfoComponent } from '../info/info.component';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { WelcomePopoverComponent } from '../../popover/welcome-popover/welcome-popover.component';
 import { PreparationAddTypeComponent } from '../preparation/preparation-add-type/preparation-add-type.component';
 import { BeanOverlayDirective } from '../../directive/bean-overlay.directive';
@@ -187,16 +185,14 @@ import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/se
     IonicModule,
     FormsModule,
     TranslateModule,
-    RouterModule,
+    RouterLink,
     NgxStarsModule,
     AgVirtualScrollComponent,
     PipesModule,
     SettingsPage,
     StatisticPage,
-    HomePage,
     BrewParameterPage,
     BeanParameterPage,
-    DashboardPage,
     RoastingSectionPage,
     WaterSectionPage,
     GraphSectionPage,
@@ -382,9 +378,9 @@ import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/se
     AndroidPermissions,
   ],
   exports: [
+    RouterLink,
     SettingsPage,
     StatisticPage,
-    HomePage,
     BrewParameterPage,
     BeanParameterPage,
     BeansPage,

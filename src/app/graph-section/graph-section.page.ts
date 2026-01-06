@@ -13,3 +13,5 @@ export class GraphSectionPage implements OnInit {
 
   public ngOnInit() {}
 }
+
+export default GraphSectionPage;

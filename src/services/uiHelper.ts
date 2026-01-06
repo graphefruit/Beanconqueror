@@ -232,16 +232,16 @@ export class UIHelper {
     this.isAppReady = _ready;
   }
 
-  public isBeanconqurorAppReady(): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
+  public isBeanconqurorAppReady(): Promise<void> {
+    const promise = new Promise<void>((resolve, reject) => {
       if (this.isAppReady === 1 || this.isAppReady === 2) {
         this.uiLog.log('Check app ready - Already loaded, no interval needed');
-        resolve(undefined);
+        resolve();
       } else {
         const intV = setInterval(() => {
           this.uiLog.log('Check app ready');
           if (this.isAppReady === 1 || this.isAppReady === 2) {
-            resolve(undefined);
+            resolve();
             clearInterval(intV);
           }
         }, 50);

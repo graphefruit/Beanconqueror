@@ -1656,3 +1656,5 @@ export class SettingsPage {
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
   protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
 }
+
+export default SettingsPage;

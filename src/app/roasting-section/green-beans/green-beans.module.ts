@@ -4,18 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { GreenBeansPageRoutingModule } from './green-beans-routing.module';
-
-import {SharedModule} from '../../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    GreenBeansPageRoutingModule,
-    SharedModule
-  ],
-  declarations: []
+  imports: [CommonModule, FormsModule, IonicModule, SharedModule],
+  declarations: [],
 })
 export class GreenBeansPageModule {}

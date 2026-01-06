@@ -11,3 +11,5 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class BaristamodePage implements OnInit {
   public ngOnInit(): void {}
 }
+
+export default BaristamodePage;

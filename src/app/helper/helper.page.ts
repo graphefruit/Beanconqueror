@@ -9,3 +9,5 @@ import { TranslatePipe } from '@ngx-translate/core';
   imports: [IonicModule, TranslatePipe],
 })
 export class HelperPage {}
+
+export default HelperPage;

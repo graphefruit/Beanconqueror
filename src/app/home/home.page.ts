@@ -23,7 +23,6 @@ export class HomePage {
   public millsExist: boolean;
 
   constructor(
-    private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiMillStorage: UIMillStorage,
@@ -47,21 +46,6 @@ export class HomePage {
     this.preparationsExist = this.activePreparationsExists();
     this.millsExist = this.activeMillsExists();
   }
-  public showBeans() {
-    this.router.navigate(['/beans']);
-  }
-
-  public showBrews() {
-    this.router.navigate(['/brew']);
-  }
-
-  public showPreparation() {
-    this.router.navigate(['/preparation']);
-  }
-
-  public showMills() {
-    this.router.navigate(['/mill']);
-  }
 
   public activeBeansExists(): boolean {
     const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
@@ -80,3 +64,5 @@ export class HomePage {
     return mills.filter((e) => e.finished === false).length > 0;
   }
 }
+
+export default HomePage;

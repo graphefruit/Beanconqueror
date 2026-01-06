@@ -4,18 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { WaterPageRoutingModule } from './water-routing.module';
-
-import {SharedModule} from '../../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    WaterPageRoutingModule,
-    SharedModule,
-  ],
-  declarations: []
+  imports: [CommonModule, FormsModule, IonicModule, SharedModule],
+  declarations: [],
 })
 export class WaterPageModule {}

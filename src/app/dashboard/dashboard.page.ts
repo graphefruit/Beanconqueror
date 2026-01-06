@@ -233,3 +233,5 @@ export class DashboardPage implements OnInit {
     return usedWeightCount;
   }
 }
+
+export default DashboardPage;

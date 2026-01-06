@@ -147,3 +147,5 @@ export class WaterPage implements OnInit {
     this.__initializeView('archiv');
   }
 }
+
+export default WaterPage;

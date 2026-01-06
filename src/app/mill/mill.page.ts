@@ -134,3 +134,5 @@ export class MillPage implements OnInit {
     this.archiveMillsView = this.mills.filter((e) => e.finished === true);
   }
 }
+
+export default MillPage;

@@ -547,3 +547,5 @@ export class BeansPage implements OnDestroy {
     }
   }
 }
+
+export default BeansPage;

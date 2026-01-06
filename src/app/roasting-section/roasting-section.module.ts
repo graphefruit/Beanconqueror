@@ -4,19 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { RoastingSectionPageRoutingModule } from './roasting-section-routing.module';
-
-
-import {SharedModule} from '../shared/shared.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        RoastingSectionPageRoutingModule,
-        SharedModule,
-    ],
-    declarations: []
+  imports: [CommonModule, FormsModule, IonicModule, SharedModule],
+  declarations: [],
 })
 export class RoastingSectionPageModule {}

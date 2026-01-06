@@ -1,30 +1,15 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
-import {RouterModule, Routes} from '@angular/router';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
-import {IonicModule} from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
-import {BrewPage} from './brew.page';
-import {SharedModule} from '../shared/shared.module';
-
-const routes: Routes = [
-  {
-    path: '',
-    component: BrewPage
-  }
-];
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        IonicModule,
-        RouterModule.forChild(routes),
-        SharedModule
-    ],
-    declarations: [],
-    providers: [],
-    exports: []
+  imports: [CommonModule, FormsModule, IonicModule, SharedModule],
+  declarations: [],
+  providers: [],
+  exports: [],
 })
 export class BrewPageModule {}
