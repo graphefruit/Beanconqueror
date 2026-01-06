@@ -653,7 +653,9 @@
         "PROCESSING_METHODS": "Gewaschen, Natural, Honey, Anaerob, Karbonische Mazeration, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey, Nass aufbereitet, Trocken aufbereitet",
         "PROCESSING_MAPPING": "Gewaschen/Nass aufbereitet/Washed → Washed, Natural/Trocken aufbereitet/Sonnengetrocknet → Natural, Honey/Pulped Natural → Honey",
         "VARIETIES": "Typica, Bourbon, Caturra, Catuai, Mundo Novo, Gesha/Geisha, SL28, SL34, Pacamara, Maragogype, Yellow Bourbon, Red Bourbon, Pink Bourbon, Castillo, Colombia, Tabi, Ethiopian Heirloom, Sidra, Wush Wush",
-        "ROASTING_TYPE_MAPPING": "Filterröstung/für Filter → FILTER, Espressoröstung/für Espresso → ESPRESSO, Omni Röstung/vielseitig → OMNI",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Filterröstung, für Filter, helle Röstung, Filterkaffee",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Espressoröstung, für Espresso, dunkle Röstung, kräftige Röstung",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Omni Röstung, vielseitig, Allrounder, mittlere Röstung",
         "DECAF_KEYWORDS": "Entkoffeiniert, Koffeinfrei, Decaf",
         "BLEND_KEYWORDS": "Mischung, Blend, Hausmischung",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Einzelherkunft, Plantagenkaffee"

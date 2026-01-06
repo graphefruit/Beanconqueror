@@ -316,8 +316,10 @@ ${examples.PROCESSING_MAPPING || 'Washed/Wet Process → Washed, Natural/Dry Pro
 COMMON COFFEE VARIETIES:
 ${examples.VARIETIES || 'Typica, Bourbon, Caturra, Catuai, Mundo Novo, Gesha/Geisha, SL28, SL34, Pacamara, Maragogype, Yellow Bourbon, Red Bourbon, Pink Bourbon, Castillo, Colombia, Tabi, Ethiopian Heirloom, Sidra, Wush Wush'}
 
-BEAN ROASTING TYPE MAPPING:
-${examples.ROASTING_TYPE_MAPPING || 'Filter Roast/for filter/pour over → FILTER, Espresso Roast/for espresso → ESPRESSO, Omni Roast/versatile/all brewing methods → OMNI'}
+BEAN ROASTING TYPE KEYWORDS:
+- FILTER: ${examples.ROASTING_TYPE_FILTER_KEYWORDS || 'Filter Roast, for filter, pour over, light roast, filter coffee'}
+- ESPRESSO: ${examples.ROASTING_TYPE_ESPRESSO_KEYWORDS || 'Espresso Roast, for espresso, dark roast, espresso blend'}
+- OMNI: ${examples.ROASTING_TYPE_OMNI_KEYWORDS || 'Omni Roast, versatile, all brewing methods, medium roast, all-rounder'}
 
 DECAF KEYWORDS: ${examples.DECAF_KEYWORDS || 'Decaf, Decaffeinated, Caffeine-free'}
 BLEND KEYWORDS: ${examples.BLEND_KEYWORDS || 'Blend, House Blend, Espresso Blend'}
