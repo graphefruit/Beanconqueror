@@ -4,7 +4,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
@@ -15,8 +15,9 @@ import {
   MenuController,
   ModalController,
   Platform,
+  IonicModule,
 } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 /** Third party */
 import moment from 'moment';
@@ -86,7 +87,7 @@ register();
   selector: 'app-root',
   templateUrl: 'app.component.html',
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [IonicModule, RouterLink, TranslatePipe],
 })
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;
