@@ -11,6 +11,7 @@ import {
 } from '@angular/common/http';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
@@ -19,7 +20,6 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
-import { SharedModule } from './app/shared/shared.module';
 import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
 import { environment } from './environments/environment';
 
@@ -52,10 +52,10 @@ bootstrapApplication(AppComponent, {
           Drivers.LocalStorage,
         ],
       }),
-      SharedModule,
     ),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: BeanconquerorErrorHandler },
+    AndroidPermissions,
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(routes),
     provideZoneChangeDetection(),
