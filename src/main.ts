@@ -2,6 +2,7 @@ import {
   ErrorHandler,
   enableProdMode,
   importProvidersFrom,
+  provideZoneChangeDetection,
 } from '@angular/core';
 
 import {
@@ -57,5 +58,6 @@ bootstrapApplication(AppComponent, {
     { provide: ErrorHandler, useClass: BeanconquerorErrorHandler },
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(routes),
+    provideZoneChangeDetection(),
   ],
 }).catch((err) => console.log(err));
