@@ -637,6 +637,17 @@
     "COULD_NOT_ACCESS_FILE": "Impossibile accedere al file scelto",
     "WRONG_FILE_FORMAT": "Hai scelto un formato di file non supportato",
     "SCAN_BEAN": "Scansiona busta",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "Etiopia, Colombia, Brasile, Kenya, Guatemala, Costa Rica, Honduras, Perù, Ruanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Messico, Bolivia, Ecuador, Papua Nuova Guinea, Hawaii, Giamaica",
+        "PROCESSING_METHODS": "Lavato, Naturale, Honey, Anaerobico, Macerazione Carbonica, Wet-Hulled, Semi-Lavato, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Tostatura filtro, per filtro, tostatura chiara, caffè filtro",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Tostatura espresso, per espresso, tostatura scura, miscela espresso",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Tostatura Omni, versatile, tutti i metodi, tostatura media",
+        "DECAF_KEYWORDS": "Decaffeinato, Senza caffeina, Decaf",
+        "BLEND_KEYWORDS": "Miscela, Blend, Miscela della casa",
+        "SINGLE_ORIGIN_KEYWORDS": "Monorigine, Single Origin, Singola piantagione, Micro Lot"
+    },
     "CLEAR": "Cancella",
     "BEAN_LOOKS_LIKE_CONSUMED": "Sembra che questo caffè sia finito, vuoi archiviarlo?",
     "CUPPING_1": "Frutta",

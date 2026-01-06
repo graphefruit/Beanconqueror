@@ -637,6 +637,17 @@
     "COULD_NOT_ACCESS_FILE": "我们无法访问所选文件",
     "WRONG_FILE_FORMAT": "您选择了不受支持的文件格式",
     "SCAN_BEAN": "扫描包",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "埃塞俄比亚, 哥伦比亚, 巴西, 肯尼亚, 危地马拉, 哥斯达黎加, 洪都拉斯, 秘鲁, 卢旺达, 布隆迪, 坦桑尼亚, 乌干达, 也门, 印度尼西亚, 印度, 巴拿马, 萨尔瓦多, 尼加拉瓜, 墨西哥, 玻利维亚, 厄瓜多尔, 巴布亚新几内亚, 夏威夷, 牙买加",
+        "PROCESSING_METHODS": "水洗, 日晒, 蜜处理, 厌氧发酵, 二氧化碳浸渍, 湿刨法, 半水洗, Pulped Natural, 黑蜜, 红蜜, 黄蜜, 白蜜",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "手冲烘焙, 适合手冲, 浅烘焙, 手冲咖啡",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "意式烘焙, 适合意式, 深烘焙, 意式拼配",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "全能烘焙, 多用途, 所有冲煮方式, 中度烘焙",
+        "DECAF_KEYWORDS": "低因, 无咖啡因, 脱因咖啡",
+        "BLEND_KEYWORDS": "拼配, 混合, 招牌拼配",
+        "SINGLE_ORIGIN_KEYWORDS": "单品, 单一产地, 精品批次, Micro Lot"
+    },
     "CLEAR": "清除",
     "BEAN_LOOKS_LIKE_CONSUMED": "这包咖啡豆看起来已经完全消耗了，要将它归档吗？",
     "CUPPING_1": "水果(Fruit)",

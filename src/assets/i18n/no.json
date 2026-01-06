@@ -637,6 +637,17 @@
     "COULD_NOT_ACCESS_FILE": "Vi fikk ikke tilgang til den valgte filen",
     "WRONG_FILE_FORMAT": "Du har valgt et filformat som ikke støttes",
     "SCAN_BEAN": "Skann pakken",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "Etiopia, Colombia, Brasil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Jemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papua Ny-Guinea, Hawaii, Jamaica",
+        "PROCESSING_METHODS": "Vasket, Natural, Honey, Anaerob, Karbonisk Maserasjon, Wet-Hulled, Semi-Vasket, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Filterbrenning, for filter, lys brenning, filterkaffe",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Espressobrenning, for espresso, mørk brenning, espressoblanding",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Omni brenning, allsidig, alle metoder, medium brenning",
+        "DECAF_KEYWORDS": "Koffeinfri, Decaf, Uten koffein",
+        "BLEND_KEYWORDS": "Blanding, Blend, Husblanding",
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Enkelt opprinnelse, Micro Lot"
+    },
     "CLEAR": "Fjern",
     "BEAN_LOOKS_LIKE_CONSUMED": "Det ser ut som det er tomt for disse bønnene, vil du arkivere dem?",
     "CUPPING_1": "Frukt",
