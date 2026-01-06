@@ -652,8 +652,7 @@
     "AI_IMPORT_NO_TEXT_FOUND": "Es konnte kein Text aus dem Bild extrahiert werden. Bitte stelle sicher, dass das Etikett deutlich sichtbar ist, und versuche es erneut.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "PROCESSING_METHODS": "Gewaschen, Natural, Honey, Anaerob, Karbonische Mazeration, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey, Nass aufbereitet, Trocken aufbereitet",
-        "PROCESSING_MAPPING": "Gewaschen/Nass aufbereitet/Washed → Washed, Natural/Trocken aufbereitet/Sonnengetrocknet → Natural, Honey/Pulped Natural → Honey",
-        "VARIETIES": "Typica, Bourbon, Caturra, Catuai, Mundo Novo, Gesha/Geisha, SL28, SL34, Pacamara, Maragogype, Yellow Bourbon, Red Bourbon, Pink Bourbon, Castillo, Colombia, Tabi, Ethiopian Heirloom, Sidra, Wush Wush",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
         "ROASTING_TYPE_FILTER_KEYWORDS": "Filterröstung, für Filter, helle Röstung, Filterkaffee",
         "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Espressoröstung, für Espresso, dunkle Röstung, kräftige Röstung",
         "ROASTING_TYPE_OMNI_KEYWORDS": "Omni Röstung, vielseitig, Allrounder, mittlere Röstung",
