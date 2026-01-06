@@ -457,31 +457,34 @@ export class AIBeanImportService {
     // Get merged examples from specified languages
     const examples = await this.aiImportExamples.getMergedExamples(languages);
 
-    // Build the language-specific section
+    // Format detected languages as comma-separated ISO 639-1 codes
+    const detectedLanguages = languages.join(', ');
+
+    // Build the language-specific section with clearer "examples" framing
     const languageSection = `
-COMMON ORIGIN COUNTRIES (recognize these names):
-${examples.ORIGINS || 'Ethiopia, Colombia, Brazil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico'}
+Origin countries (examples): ${examples.ORIGINS}
 
-COMMON PROCESSING METHODS (recognize these terms):
-${examples.PROCESSING_METHODS || 'Washed, Natural, Honey, Anaerobic, Carbonic Maceration, Wet-Hulled, Semi-Washed, Pulped Natural'}
+Processing methods (examples): ${examples.PROCESSING_METHODS}
 
-COMMON COFFEE VARIETIES:
-${examples.VARIETIES || 'Typica, Bourbon, Caturra, Catuai, Mundo Novo, Gesha/Geisha, SL28, SL34, Pacamara, Maragogype, Yellow Bourbon, Red Bourbon, Pink Bourbon, Castillo, Colombia, Tabi, Ethiopian Heirloom, Sidra, Wush Wush'}
+Varieties (examples): ${examples.VARIETIES}
 
-BEAN ROASTING TYPE KEYWORDS:
-- FILTER: ${examples.ROASTING_TYPE_FILTER_KEYWORDS || 'Filter Roast, for filter, pour over, light roast, filter coffee'}
-- ESPRESSO: ${examples.ROASTING_TYPE_ESPRESSO_KEYWORDS || 'Espresso Roast, for espresso, dark roast, espresso blend'}
-- OMNI: ${examples.ROASTING_TYPE_OMNI_KEYWORDS || 'Omni Roast, versatile, all brewing methods, medium roast, all-rounder'}
+Roasting type indicators:
+- FILTER: ${examples.ROASTING_TYPE_FILTER_KEYWORDS}
+- ESPRESSO: ${examples.ROASTING_TYPE_ESPRESSO_KEYWORDS}
+- OMNI: ${examples.ROASTING_TYPE_OMNI_KEYWORDS}
 
-DECAF KEYWORDS: ${examples.DECAF_KEYWORDS || 'Decaf, Decaffeinated, Caffeine-free'}
-BLEND KEYWORDS: ${examples.BLEND_KEYWORDS || 'Blend, House Blend, Espresso Blend'}
-SINGLE ORIGIN KEYWORDS: ${examples.SINGLE_ORIGIN_KEYWORDS || 'Single Origin, Single Estate, Single Farm'}
+Other indicators:
+- Decaf: ${examples.DECAF_KEYWORDS}
+- Blend: ${examples.BLEND_KEYWORDS}
+- Single Origin: ${examples.SINGLE_ORIGIN_KEYWORDS}
 `;
 
     return AI_IMPORT_PROMPT_TEMPLATE.replace(
-      '{{LANGUAGE_SPECIFIC_EXAMPLES}}',
-      languageSection,
-    ).replace('{{OCR_TEXT}}', ocrText);
+      '{{DETECTED_LANGUAGES}}',
+      detectedLanguages,
+    )
+      .replace('{{LANGUAGE_SPECIFIC_EXAMPLES}}', languageSection)
+      .replace('{{OCR_TEXT}}', ocrText);
   }
 
   /**

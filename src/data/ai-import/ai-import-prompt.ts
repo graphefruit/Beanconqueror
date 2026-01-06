@@ -101,6 +101,11 @@ SCHEMA (NEVER use "UNKNOWN" - use null instead):
   }]
 }
 
+TERMINOLOGY REFERENCE:
+Expected languages (ISO 639-1 codes): {{DETECTED_LANGUAGES}}
+Below are EXAMPLE terms in these languages. These lists are NOT exhaustive.
+Accept equivalent terms and spelling variants not listed here.
+
 {{LANGUAGE_SPECIFIC_EXAMPLES}}
 
 LABEL TEXT:
