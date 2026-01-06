@@ -647,7 +647,7 @@
     "AI_IMPORT_ERROR": "Beim KI-Import ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "AI_IMPORT_STEP_CAPTURING": "Bild wird aufgenommen...",
     "AI_IMPORT_STEP_EXTRACTING": "Text wird aus dem Bild extrahiert...",
-    "AI_IMPORT_STEP_ANALYZING": "KI-Analyse... (Tipp: Bei suboptimalen Ergebnissen einfach nochmal versuchen!)",
+    "AI_IMPORT_STEP_ANALYZING": "KI-Analyse...\nTipp: Bei suboptimalen Ergebnissen einfach nochmal versuchen!",
     "AI_IMPORT_STEP_DETECTING_LANGUAGE": "Sprache wird erkannt...",
     "AI_IMPORT_NO_TEXT_FOUND": "Es konnte kein Text aus dem Bild extrahiert werden. Bitte stelle sicher, dass das Etikett deutlich sichtbar ist, und versuche es erneut.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
