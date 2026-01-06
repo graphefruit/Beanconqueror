@@ -48,6 +48,11 @@ CRITICAL RULES - NEVER VIOLATE:
 - NEVER return "UNKNOWN" as a value - ALWAYS use null instead
 - When uncertain, ALWAYS return null
 
+COMMONLY HALLUCINATED FIELDS - be extra careful, return null unless explicitly stated:
+- processing: Only if explicitly labeled (Washed, Natural, Honey, etc.)
+- variety: "Arabica" alone is too generic - only extract specific varieties
+- region: Only if explicitly stated, not inferred from country
+
 SINGLE ORIGIN vs BLEND CLASSIFICATION:
 - SINGLE_ORIGIN: One country mentioned, "Field Blend" (exception!), or large region + specific country (e.g., "Africa, Ethiopia, Guji")
 - BLEND: Multiple countries, "House Blend"/"Espresso Blend"/etc., or large region alone (e.g., just "Africa")
