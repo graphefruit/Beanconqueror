@@ -1,14 +1,40 @@
 export const AI_IMPORT_LANGUAGE_DETECTION_PROMPT = `
-Analyze the following text extracted from a coffee bag label and identify the primary language.
+Identify the language of this coffee bag label.
+
+CONTEXT:
+Coffee labels contain mixed content:
+- Brand names and coffee names (ignore these - often borrowed from other languages)
+- Origin info like country/region names (ignore these - universal terms)
+- Universal coffee terms (ignore these): Espresso, Arabica, Natural, Washed, Bourbon, Gesha
+- DESCRIPTIVE TEXT in the target market's language (USE THIS to determine language)
+
+LANGUAGE INDICATORS - Look for these keywords:
+- GERMAN: Aufbereitung, Röstung, Herkunft, geröstet, Geschmack, Säure, Bohnen, frisch
+- FRENCH: torréfié, origine, récolte, acidité, grains, saveur, fraîchement
+- ITALIAN: tostato, raccolto, acidità, chicchi, sapore, fresco
+- SPANISH: tostado, cosecha, acidez, granos, sabor, tueste
+- PORTUGUESE: torrado, colheita, acidez, grãos, sabor, torra
+- ENGLISH: roasted, harvest, acidity, beans, flavor, freshly
+
+EXAMPLES:
+"Röstfrisch, Herkunft: Äthiopien, Aufbereitung: gewaschen" → de
+"Torréfié artisanalement, origine unique, notes florales" → fr
+"Caffè tostato fresco, acidità vivace, gusto intenso" → it
+"Tueste artesanal, origen único, notas de chocolate" → es
+"Freshly roasted, single origin, tasting notes: berry, citrus" → en
+"Café torrado na hora, origem única, notas frutadas" → pt
+
+RULES:
+- Focus on descriptive words and the keyword indicators above
+- DO NOT be confused by: Finca, Fazenda, Hacienda (farm names), Yirgacheffe, Sidamo (regions)
+- If text contains only universal terms and proper nouns, respond: unknown
 
 TEXT:
 ---
 {{OCR_TEXT}}
 ---
 
-Respond with ONLY a two-letter ISO 639-1 language code (e.g., "en", "de", "it", "es", "fr").
-If the text contains multiple languages, return the predominant one.
-If uncertain, respond with "unknown".
+Language code (2 letters only):
 `;
 
 export const AI_IMPORT_PROMPT_TEMPLATE = `
