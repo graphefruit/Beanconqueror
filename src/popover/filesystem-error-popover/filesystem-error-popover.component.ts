@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-filesystem-error-popover',
   templateUrl: './filesystem-error-popover.component.html',
   styleUrls: ['./filesystem-error-popover.component.scss'],
-  standalone: false,
+  imports: [IonicModule],
 })
 export class FilesystemErrorPopoverComponent implements OnInit {
   constructor(private readonly modalCtrl: ModalController) {}

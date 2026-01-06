@@ -18,14 +18,16 @@ import { UIToast } from '../../services/uiToast';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 import { UIAlert } from '../../services/uiAlert';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Clipboard } from '@capacitor/clipboard';
+import { IonicModule } from '@ionic/angular';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'photo-add',
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
-  standalone: false,
+  imports: [IonicModule, AsyncImageComponent, TranslatePipe],
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;

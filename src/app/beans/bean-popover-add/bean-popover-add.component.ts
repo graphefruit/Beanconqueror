@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 
 import { BEAN_POPOVER_ADD_ACTION } from '../../../enums/beans/beanPopoverAddAction';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-popover-add',
   templateUrl: './bean-popover-add.component.html',
   styleUrls: ['./bean-popover-add.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class BeanPopoverAddComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-add';

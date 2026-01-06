@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
@@ -23,12 +23,28 @@ import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import _ from 'lodash';
 import { BeanSortFilterHelperService } from '../../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet, DecimalPipe } from '@angular/common';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { BeanFunction } from '../../../pipes/bean/beanFunction';
 
 @Component({
   selector: 'bean-modal-select',
   templateUrl: './bean-modal-select.component.html',
   styleUrls: ['./bean-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    NgTemplateOutlet,
+    AgVirtualScrollComponent,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    BeanFunction,
+  ],
 })
 export class BeanModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'bean-modal-select';

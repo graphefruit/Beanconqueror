@@ -38,14 +38,14 @@ import {
   IBrewWeightFlow,
 } from '../../../classes/brew/brewFlow';
 import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import {
   SanremoYOUDevice,
   SanremoYOUParams,
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   GaggiuinoDevice,
   GaggiuinoParams,
@@ -53,12 +53,21 @@ import {
 import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
 import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBrew';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
   styleUrls: ['./brew-brewing-preparation-device.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+  ],
 })
 export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public data: Brew;

@@ -5,10 +5,7 @@ import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
 import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
 import { RoastingMachineModalSelectComponent } from '../app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 
-@Directive({
-  selector: '[ngModel][roasting-machine-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][roasting-machine-overlay]' })
 export class RoastingMachineOverlayDirective {
   private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;

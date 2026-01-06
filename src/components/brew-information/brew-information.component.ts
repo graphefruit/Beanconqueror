@@ -10,7 +10,12 @@ import {
 } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { MenuController, ModalController, Platform } from '@ionic/angular';
+import {
+  MenuController,
+  ModalController,
+  Platform,
+  IonicModule,
+} from '@ionic/angular';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BrewPopoverActionsComponent } from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
@@ -18,7 +23,7 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIToast } from '../../services/uiToast';
@@ -29,7 +34,7 @@ import { UIHelper } from '../../services/uiHelper';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import { Settings } from '../../classes/settings/settings';
 import { ShareService } from '../../services/shareService/share-service.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
 import { UIHealthKit } from '../../services/uiHealthKit';
 import * as htmlToImage from 'html-to-image';
@@ -44,6 +49,16 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { NgTemplateOutlet, NgClass, DecimalPipe } from '@angular/common';
+import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
+import { BrewFunction } from '../../pipes/brew/brewFunction';
+import { BeanFunction } from '../../pipes/bean/beanFunction';
+import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -52,7 +67,23 @@ declare var window;
     './brew-information.component.scss',
     '../../theme/variables.scss',
   ],
-  standalone: false,
+  imports: [
+    NgTemplateOutlet,
+    IonicModule,
+    GraphDisplayCardComponent,
+    LongPressDirective,
+    NgClass,
+    AsyncImageComponent,
+    NgxStarsModule,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFunction,
+    BeanFunction,
+    PreparationFunction,
+  ],
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;

@@ -1,6 +1,11 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { AlertController, ModalController, Platform } from '@ionic/angular';
+import {
+  AlertController,
+  ModalController,
+  Platform,
+  IonicModule,
+} from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -15,7 +20,7 @@ import { UIExcel } from '../../../services/uiExcel';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   IBrewRealtimeWaterFlow,
   IBrewWaterFlow,
@@ -36,13 +41,32 @@ import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
+import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
 
 declare var Plotly;
 @Component({
   selector: 'brew-detail',
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    BrewBrewingGraphComponent,
+    PhotoViewComponent,
+    DecimalPipe,
+    KeyValuePipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFieldOrder,
+    BrewFunction,
+  ],
 })
 export class BrewDetailComponent {
   public static readonly COMPONENT_ID = 'brew-detail';

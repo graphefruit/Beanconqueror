@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -9,12 +9,13 @@ import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'preparation-popover-actions',
   templateUrl: './preparation-popover-actions.component.html',
   styleUrls: ['./preparation-popover-actions.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class PreparationPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-popover-actions';

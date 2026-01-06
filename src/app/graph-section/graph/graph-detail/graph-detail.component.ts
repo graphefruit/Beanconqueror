@@ -10,12 +10,12 @@ import moment from 'moment/moment';
 import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Settings } from '../../../../classes/settings/settings';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
 import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { IBrew } from '../../../../interfaces/brew/iBrew';
@@ -36,7 +36,7 @@ declare var Plotly;
   selector: 'app-graph-detail',
   templateUrl: './graph-detail.component.html',
   styleUrls: ['./graph-detail.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class GraphDetailComponent implements OnInit {
   public static COMPONENT_ID = 'graph-detail';

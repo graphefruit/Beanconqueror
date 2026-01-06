@@ -7,12 +7,15 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'manage-custom-parameter',
   templateUrl: './manage-custom-parameter.component.html',
   styleUrls: ['./manage-custom-parameter.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class ManageCustomParameterComponent implements OnInit {
   public debounceChanges: Subject<string> = new Subject<string>();

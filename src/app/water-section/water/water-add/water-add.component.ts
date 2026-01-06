@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { Water } from '../../../../classes/water/water';
@@ -8,12 +8,14 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
 
 import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WaterAddTypeComponent } from '../water-add-type/water-add-type.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../../pipes/keys';
 
 @Component({
   selector: 'app-water-add',
   templateUrl: './water-add.component.html',
   styleUrls: ['./water-add.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe, KeysPipe],
 })
 export class WaterAddComponent implements OnInit {
   public static COMPONENT_ID = 'water-add';

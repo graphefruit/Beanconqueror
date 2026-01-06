@@ -1,17 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { TranslatePipe } from '@ngx-translate/core';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
 
 @Component({
   selector: 'app-bean-sort',
   templateUrl: './bean-sort.component.html',
   styleUrls: ['./bean-sort.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe, BeanFieldVisiblePipe],
 })
 export class BeanSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-sort';

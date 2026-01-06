@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -16,12 +16,21 @@ import { IBean } from '../../../interfaces/bean/iBean';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { Bean } from '../../../classes/bean/bean';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { FormsModule } from '@angular/forms';
+import { KeyValuePipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-cupping',
   templateUrl: './brew-cupping.component.html',
   styleUrls: ['./brew-cupping.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    CuppingRadarComponent,
+    KeyValuePipe,
+    TranslatePipe,
+  ],
 })
 export class BrewCuppingComponent {
   public static readonly COMPONENT_ID = 'brew-cup';

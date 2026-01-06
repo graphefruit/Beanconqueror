@@ -17,12 +17,31 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 import { Bean } from '../../classes/bean/bean';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
+import { IonicModule } from '@ionic/angular';
+import { NgxStarsModule } from 'ngx-stars';
+import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
+import { DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
+import { BrewFunction } from '../../pipes/brew/brewFunction';
 
 @Component({
   selector: 'brew-graph-reference-card',
   templateUrl: './brew-graph-reference-card.component.html',
   styleUrls: ['./brew-graph-reference-card.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    NgxStarsModule,
+    GraphDisplayCardComponent,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFunction,
+  ],
 })
 export class BrewGraphReferenceCardComponent implements OnInit {
   @Input() public brew: Brew;

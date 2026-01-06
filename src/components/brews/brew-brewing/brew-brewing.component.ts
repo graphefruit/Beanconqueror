@@ -11,18 +11,18 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
 import moment from 'moment';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { BrewTimerComponent } from '../../brew-timer/brew-timer.component';
 import { TimerComponent } from '../../timer/timer.component';
@@ -79,6 +79,21 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
+import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
+import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
+import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
+import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { PhotoAddComponent } from '../../photo-add/photo-add.component';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
 
 declare var cordova;
 
@@ -86,7 +101,30 @@ declare var cordova;
   selector: 'brew-brewing',
   templateUrl: './brew-brewing.component.html',
   styleUrls: ['./brew-brewing.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    PreparationOverlayDirective,
+    BeanOverlayDirective,
+    MillOverlayDirective,
+    TimerComponent,
+    PreparationToolOverlayDirective,
+    WaterOverlayDirective,
+    BrewBrewingPreparationDeviceComponent,
+    BrewBrewingGraphComponent,
+    BrewTimerComponent,
+    NgxStarsModule,
+    TransformDateDirective,
+    PhotoAddComponent,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFieldOrder,
+    BrewFunction,
+  ],
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;

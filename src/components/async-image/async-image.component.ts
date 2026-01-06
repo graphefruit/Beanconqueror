@@ -1,12 +1,13 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'async-image',
   templateUrl: './async-image.component.html',
   styleUrls: ['./async-image.component.scss'],
-  standalone: false,
+  imports: [AsyncPipe],
 })
 export class AsyncImageComponent implements OnChanges {
   @Input() public filePath: string;

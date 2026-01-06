@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -15,12 +15,30 @@ import { Brew } from '../../../classes/brew/brew';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { Subscription } from 'rxjs';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { FormsModule } from '@angular/forms';
+import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
+import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
+import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
+import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
+import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ToFixedPipe } from '../../../pipes/toFixed';
 
 @Component({
   selector: 'brew-filter',
   templateUrl: './brew-filter.component.html',
   styleUrls: ['./brew-filter.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    PreparationOverlayDirective,
+    PreparationToolOverlayDirective,
+    BeanOverlayDirective,
+    MillOverlayDirective,
+    WaterOverlayDirective,
+    TranslatePipe,
+    ToFixedPipe,
+  ],
 })
 export class BrewFilterComponent implements OnInit {
   public static COMPONENT_ID = 'brew-filter';

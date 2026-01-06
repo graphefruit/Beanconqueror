@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Brew } from '../../../classes/brew/brew';
@@ -9,12 +9,26 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
 
 @Component({
   selector: 'preparation-modal-select',
   templateUrl: './preparation-modal-select.component.html',
   styleUrls: ['./preparation-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    NgTemplateOutlet,
+    AsyncImageComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    PreparationFunction,
+  ],
 })
 export class PreparationModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'preparation-modal-select';

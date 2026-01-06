@@ -2,14 +2,15 @@ import { Component, Input, OnInit } from '@angular/core';
 import { BEAN_SORT_AFTER } from '../../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../../enums/beans/beanSortOrder';
 import { IBeanPageSort } from '../../../../interfaces/bean/iBeanPageSort';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../../services/uiHelper';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-green-bean-sort',
   templateUrl: './green-bean-sort.component.html',
   styleUrls: ['./green-bean-sort.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class GreenBeanSortComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-sort';

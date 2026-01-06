@@ -1,14 +1,28 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { IonInput, ModalController } from '@ionic/angular';
+import { IonInput, ModalController, IonicModule } from '@ionic/angular';
 import moment from 'moment';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
+import { FormsModule } from '@angular/forms';
+import { MaxNumberValueDirective } from '../../directive/max-number-value.directive';
+import { PreventCharacterDirective } from '../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../directive/remove-empty-number.directive';
+import { DisableDoubleClickDirective } from '../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-datetime-popover',
   templateUrl: './datetime-popover.component.html',
   styleUrls: ['./datetime-popover.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    MaxNumberValueDirective,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class DatetimePopoverComponent implements OnInit {
   public timer = {

@@ -1,14 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-roasting-machine-modal-select',
   templateUrl: './roasting-machine-modal-select.component.html',
   styleUrls: ['./roasting-machine-modal-select.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class RoastingMachineModalSelectComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-modal-select';

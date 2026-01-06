@@ -3,12 +3,15 @@ import { Subject } from 'rxjs';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-list-view-parameter',
   templateUrl: './bean-list-view-parameter.component.html',
   styleUrls: ['./bean-list-view-parameter.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class BeanListViewParameterComponent {
   public bean_segment = 'general';

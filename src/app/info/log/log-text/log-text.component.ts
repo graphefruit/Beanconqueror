@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UILog } from '../../../../services/uiLog';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'log-text',
   templateUrl: './log-text.component.html',
   styleUrls: ['./log-text.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class LogTextComponent implements OnInit {
   public logString: string = '';

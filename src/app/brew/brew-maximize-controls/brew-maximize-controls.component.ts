@@ -11,7 +11,7 @@ import {
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-brew-maximize-controls',
   templateUrl: './brew-maximize-controls.component.html',
   styleUrls: ['./brew-maximize-controls.component.scss'],
-  standalone: false,
+  imports: [IonicModule],
 })
 export class BrewMaximizeControlsComponent
   implements AfterViewInit, OnDestroy, OnInit

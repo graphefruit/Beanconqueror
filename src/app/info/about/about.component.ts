@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { App } from '@capacitor/app';
-import { Platform } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import { Platform, IonicModule } from '@ionic/angular';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class AboutComponent implements OnInit {
   public versionStr: string = '';

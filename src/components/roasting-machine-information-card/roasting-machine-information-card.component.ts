@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIAlert } from '../../services/uiAlert';
@@ -13,12 +13,22 @@ import { Bean } from '../../classes/bean/bean';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
 import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'roasting-machine-information-card',
   templateUrl: './roasting-machine-information-card.component.html',
   styleUrls: ['./roasting-machine-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    LongPressDirective,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+  ],
 })
 export class RoastingMachineInformationCardComponent {
   @Input() public roastingMachine: RoastingMachine;

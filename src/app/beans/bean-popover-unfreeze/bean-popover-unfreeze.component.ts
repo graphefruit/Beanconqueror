@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { Bean } from '../../../classes/bean/bean';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -11,12 +11,14 @@ import { Config } from '../../../classes/objectConfig/objectConfig';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-popover-unfreeze',
   templateUrl: './bean-popover-unfreeze.component.html',
   styleUrls: ['./bean-popover-unfreeze.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class BeanPopoverUnfreezeComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-unfreeze';

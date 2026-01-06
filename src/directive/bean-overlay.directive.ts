@@ -5,10 +5,7 @@ import { BeanModalSelectComponent } from '../app/beans/bean-modal-select/bean-mo
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { Bean } from '../classes/bean/bean';
 
-@Directive({
-  selector: '[ngModel][bean-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][bean-overlay]' })
 export class BeanOverlayDirective {
   private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;

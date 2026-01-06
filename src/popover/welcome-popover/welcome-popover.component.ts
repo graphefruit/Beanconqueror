@@ -1,5 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -7,11 +13,13 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { ThemeService } from '../../services/theme/theme.service';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'welcome-popover',
   templateUrl: './welcome-popover.component.html',
   styleUrls: ['./welcome-popover.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class WelcomePopoverComponent implements OnInit {
   public slide: number = 1;

@@ -1,14 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Water } from '../../../../classes/water/water';
 import { WATER_ACTION } from '../../../../enums/water/waterActions';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { IWater } from '../../../../interfaces/water/iWater';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-water-popover-actions',
   templateUrl: './water-popover-actions.component.html',
   styleUrls: ['./water-popover-actions.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class WaterPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'water-popover-actions';

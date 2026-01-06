@@ -9,7 +9,7 @@ import {
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIAlert } from '../../services/uiAlert';
 import { Mill } from '../../classes/mill/mill';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 
 import { MILL_ACTION } from '../../enums/mills/millActions';
@@ -18,12 +18,21 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import { FormsModule } from '@angular/forms';
+import { MillInformationCardComponent } from '../../components/mill-information-card/mill-information-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'mill',
   templateUrl: './mill.page.html',
   styleUrls: ['./mill.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    AgVirtualScrollComponent,
+    MillInformationCardComponent,
+    TranslatePipe,
+  ],
 })
 export class MillPage implements OnInit {
   public mills: Array<Mill> = [];

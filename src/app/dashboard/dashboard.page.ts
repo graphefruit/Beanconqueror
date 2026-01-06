@@ -4,7 +4,7 @@ import { Brew } from '../../classes/brew/brew';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
@@ -15,13 +15,24 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
 import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
+import { ShortPressDirective } from '../../directive/short-press.directive';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    ShortPressDirective,
+    LongPressDirective,
+    RouterLink,
+    BrewInformationComponent,
+    TranslatePipe,
+  ],
 })
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];

@@ -4,12 +4,15 @@ import { Settings } from '../../../classes/settings/settings';
 
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-manage-parameter',
   templateUrl: './bean-manage-parameter.component.html',
   styleUrls: ['./bean-manage-parameter.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class BeanManageParameterComponent {
   public bean_segment = 'general';

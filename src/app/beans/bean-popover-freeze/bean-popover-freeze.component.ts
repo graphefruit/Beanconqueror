@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import moment from 'moment/moment';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Bean } from '../../../classes/bean/bean';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Brew } from '../../../classes/brew/brew';
@@ -16,13 +16,28 @@ import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIToast } from '../../../services/uiToast';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
 
 declare var cordova;
 @Component({
   selector: 'app-bean-popover-freeze',
   templateUrl: './bean-popover-freeze.component.html',
   styleUrls: ['./bean-popover-freeze.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    TransformDateDirective,
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+  ],
 })
 export class BeanPopoverFreezeComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-freeze';

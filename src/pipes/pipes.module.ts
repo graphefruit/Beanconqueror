@@ -13,7 +13,7 @@ import { SettingFunction } from './setting/settingFunction';
 import { MillFunction } from './mill/millFunction';
 
 @NgModule({
-  declarations: [
+  imports: [
     EnumToArrayPipe,
     FormatDatePipe,
     KeysPipe,

@@ -6,8 +6,8 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import { ModalController, IonicModule } from '@ionic/angular';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from 'src/classes/brew/brew';
 import { Preparation } from 'src/classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
@@ -18,7 +18,7 @@ declare var Plotly;
   selector: 'app-brew-popover-extraction',
   templateUrl: './brew-popover-extraction.component.html',
   styleUrls: ['./brew-popover-extraction.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class BrewPopoverExtractionComponent implements OnInit {
   public static COMPONENT_ID = 'brew-extraction';

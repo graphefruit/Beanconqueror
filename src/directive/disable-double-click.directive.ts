@@ -1,9 +1,6 @@
 import { Directive, HostListener } from '@angular/core';
 
-@Directive({
-  selector: '[disable-double-click]',
-  standalone: false,
-})
+@Directive({ selector: '[disable-double-click]' })
 export class DisableDoubleClickDirective {
   constructor() {}
 

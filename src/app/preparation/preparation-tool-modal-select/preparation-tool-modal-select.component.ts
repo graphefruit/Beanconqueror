@@ -1,15 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Bean } from '../../../classes/bean/bean';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'preparation-tool-modal-select',
   templateUrl: './preparation-tool-modal-select.component.html',
   styleUrls: ['./preparation-tool-modal-select.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class PreparationToolModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'preparation-tool-modal-select';

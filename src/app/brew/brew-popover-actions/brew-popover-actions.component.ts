@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { IBrew } from '../../../interfaces/brew/iBrew';
 import { Brew } from '../../../classes/brew/brew';
 import { UIHelper } from '../../../services/uiHelper';
@@ -7,12 +7,13 @@ import { BREW_ACTION } from '../../../enums/brews/brewAction';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-popover-actions',
   templateUrl: './brew-popover-actions.component.html',
   styleUrls: ['./brew-popover-actions.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class BrewPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'brew-popover-actions';

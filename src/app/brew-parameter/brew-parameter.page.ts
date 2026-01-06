@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { NavController, IonicModule } from '@ionic/angular';
+import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-parameter',
   templateUrl: './brew-parameter.page.html',
   styleUrls: ['./brew-parameter.page.scss'],
-  standalone: false,
+  imports: [IonicModule, RouterLink, TranslatePipe],
 })
 export class BrewParameterPage implements OnInit {
   constructor(

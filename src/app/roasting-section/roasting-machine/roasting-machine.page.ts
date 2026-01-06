@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -10,12 +10,20 @@ import { UIRoastingMachineStorage } from '../../../services/uiRoastingMachineSto
 
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIRoastingMachineHelper } from '../../../services/uiRoastingMachineHelper';
+import { FormsModule } from '@angular/forms';
+import { RoastingMachineInformationCardComponent } from '../../../components/roasting-machine-information-card/roasting-machine-information-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-roasting-machine',
   templateUrl: './roasting-machine.page.html',
   styleUrls: ['./roasting-machine.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    RoastingMachineInformationCardComponent,
+    TranslatePipe,
+  ],
 })
 export class RoastingMachinePage implements OnInit {
   public roastingMachines: Array<RoastingMachine> = [];

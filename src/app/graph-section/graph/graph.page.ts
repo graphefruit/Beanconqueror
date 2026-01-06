@@ -9,7 +9,7 @@ import {
 
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -20,12 +20,21 @@ import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Graph } from '../../../classes/graph/graph';
 import { UIGraphHelper } from '../../../services/uiGraphHelper';
+import { FormsModule } from '@angular/forms';
+import { GraphInformationCardComponent } from '../../../components/graph-information-card/graph-information-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.page.html',
   styleUrls: ['./graph.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    AgVirtualScrollComponent,
+    GraphInformationCardComponent,
+    TranslatePipe,
+  ],
 })
 export class GraphPage implements OnInit {
   private graphs: Array<Graph> = [];

@@ -14,6 +14,7 @@ import {
   ActionSheetController,
   ModalController,
   Platform,
+  IonicModule,
 } from '@ionic/angular';
 import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
@@ -21,7 +22,7 @@ import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { Brew } from '../../classes/brew/brew';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIAlert } from '../../services/uiAlert';
@@ -36,13 +37,20 @@ import QR_TRACKING from '../../data/tracking/qrTracking';
 import { BeanMapper } from '../../mapper/bean/beanMapper';
 import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
 import { UIHelper } from '../../services/uiHelper';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import * as htmlToImage from 'html-to-image';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import moment from 'moment/moment';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { DecimalPipe } from '@angular/common';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { BeanFieldVisiblePipe } from '../../pipes/bean/beanFieldVisible';
+import { BeanFunction } from '../../pipes/bean/beanFunction';
 
 @Component({
   selector: 'bean-information',
@@ -51,7 +59,18 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
     './bean-information.component.scss',
     '../../theme/variables.scss',
   ],
-  standalone: false,
+  imports: [
+    IonicModule,
+    LongPressDirective,
+    NgxStarsModule,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BeanFieldVisiblePipe,
+    BeanFunction,
+  ],
 })
 export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;

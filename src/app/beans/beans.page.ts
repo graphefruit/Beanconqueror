@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { Bean } from '../../classes/bean/bean';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -31,11 +31,22 @@ import { NfcService } from '../../services/nfcService/nfc-service.service';
 
 import { UIImage } from '../../services/uiImage';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
+import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    NgTemplateOutlet,
+    AgVirtualScrollComponent,
+    BeanInformationComponent,
+    TranslatePipe,
+  ],
 })
 export class BeansPage implements OnDestroy {
   public beans: Array<Bean> = [];

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { Mill } from '../../classes/mill/mill';
 import { MILL_ACTION } from '../../enums/mills/millActions';
 import { MillPopoverActionsComponent } from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
@@ -17,11 +17,23 @@ import { UIImage } from '../../services/uiImage';
 import MILL_TRACKING from '../../data/tracking/millTracking';
 import { UIHelper } from '../../services/uiHelper';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { MillFunction } from '../../pipes/mill/millFunction';
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
   styleUrls: ['./mill-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    LongPressDirective,
+    AsyncImageComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    MillFunction,
+  ],
 })
 export class MillInformationCardComponent implements OnInit {
   @Input() public mill: Mill;

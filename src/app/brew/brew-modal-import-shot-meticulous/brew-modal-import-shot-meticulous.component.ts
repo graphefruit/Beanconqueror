@@ -8,17 +8,26 @@ import {
 } from '@angular/core';
 
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { UIHelper } from '../../../services/uiHelper';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
+import { FormsModule } from '@angular/forms';
+import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brew-modal-import-shot-meticulous',
   templateUrl: './brew-modal-import-shot-meticulous.component.html',
   styleUrls: ['./brew-modal-import-shot-meticulous.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    AgVirtualScrollComponent,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+  ],
 })
 export class BrewModalImportShotMeticulousComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-meticulous';

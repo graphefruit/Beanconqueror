@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
@@ -11,12 +11,26 @@ import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
 import WATER_TRACKING from '../../../../data/tracking/waterTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { FormsModule } from '@angular/forms';
+import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
+import { PreventCharacterDirective } from '../../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../../directive/remove-empty-number.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../../pipes/keys';
 
 @Component({
   selector: 'app-water-edit',
   templateUrl: './water-edit.component.html',
   styleUrls: ['./water-edit.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    PhotoAddComponent,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    KeysPipe,
+  ],
 })
 export class WaterEditComponent {
   public static readonly COMPONENT_ID = 'water-edit';

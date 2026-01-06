@@ -10,12 +10,23 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { BeanInformation } from '../../../generated/src/classes/bean/bean';
 import { distinct } from 'rxjs/operators';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'bean-sort-information',
   templateUrl: './bean-sort-information.component.html',
   styleUrls: ['./bean-sort-information.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+  ],
 })
 export class BeanSortInformationComponent implements OnInit {
   @Input() public data: Bean | GreenBean;

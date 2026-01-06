@@ -9,7 +9,7 @@ import {
 import { UIAlert } from '../../services/uiAlert';
 import { Preparation } from '../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -18,12 +18,21 @@ import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import { FormsModule } from '@angular/forms';
+import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'preparation',
   templateUrl: './preparation.page.html',
   styleUrls: ['./preparation.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    AgVirtualScrollComponent,
+    PreparationInformationCardComponent,
+    TranslatePipe,
+  ],
 })
 export class PreparationPage implements OnInit {
   public settings: Settings;

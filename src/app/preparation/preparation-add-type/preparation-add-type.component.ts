@@ -1,11 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { NgForm } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { NgForm, FormsModule } from '@angular/forms';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIToast } from '../../../services/uiToast';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
@@ -13,12 +13,20 @@ import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { TooltipDirective } from '../../../directive/tooltip.directive';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 
 @Component({
   selector: 'preparation-add-type',
   templateUrl: './preparation-add-type.component.html',
   styleUrls: ['./preparation-add-type.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class PreparationAddTypeComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-add-type';

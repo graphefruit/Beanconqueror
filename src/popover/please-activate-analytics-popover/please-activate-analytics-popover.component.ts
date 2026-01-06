@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import moment from 'moment/moment';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIAlert } from '../../services/uiAlert';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-please-activate-analytics-popover',
   templateUrl: './please-activate-analytics-popover.component.html',
   styleUrls: ['./please-activate-analytics-popover.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'please-activate-analytics-popover';

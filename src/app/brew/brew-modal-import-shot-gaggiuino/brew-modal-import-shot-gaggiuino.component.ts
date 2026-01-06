@@ -8,17 +8,26 @@ import {
 } from '@angular/core';
 
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { GaggiuinoDevice } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
 import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
 import { UIAlert } from '../../../services/uiAlert';
+import { FormsModule } from '@angular/forms';
+import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brew-modal-import-shot-gaggiuino',
   templateUrl: './brew-modal-import-shot-gaggiuino.component.html',
   styleUrls: ['./brew-modal-import-shot-gaggiuino.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    AgVirtualScrollComponent,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+  ],
 })
 export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-gaggiuino';

@@ -3,12 +3,14 @@ import { UIHelper } from '../../../services/uiHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { IonicModule } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'privacy',
   templateUrl: './privacy.component.html',
   styleUrls: ['./privacy.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class PrivacyComponent implements OnInit {
   constructor(

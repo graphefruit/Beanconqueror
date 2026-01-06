@@ -10,7 +10,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -21,12 +21,21 @@ import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.compon
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
+import { FormsModule } from '@angular/forms';
+import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-green-beans',
   templateUrl: './green-beans.page.html',
   styleUrls: ['./green-beans.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    AgVirtualScrollComponent,
+    GreenBeanInformationComponent,
+    TranslatePipe,
+  ],
 })
 export class GreenBeansPage implements OnInit {
   private beans: Array<GreenBean> = [];

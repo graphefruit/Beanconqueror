@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIToast } from '../../../services/uiToast';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -15,12 +15,14 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-preparation-edit-tool',
   templateUrl: './preparation-edit-tool.component.html',
   styleUrls: ['./preparation-edit-tool.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class PreparationEditToolComponent {
   public static readonly COMPONENT_ID: string = 'preparation-edit-tool';

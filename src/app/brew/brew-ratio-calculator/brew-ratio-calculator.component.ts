@@ -1,14 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { Brew } from '../../../classes/brew/brew';
+import { BrewRatioCardComponent } from '../../../components/brew-ratio-card/brew-ratio-card.component';
 
 @Component({
   selector: 'app-brew-ratio-calculator',
   templateUrl: './brew-ratio-calculator.component.html',
   styleUrls: ['./brew-ratio-calculator.component.scss'],
-  standalone: false,
+  imports: [IonicModule, BrewRatioCardComponent],
 })
 export class BrewRatioCalculatorComponent implements OnInit {
   public static COMPONENT_ID = 'brew-ratio-calculator';

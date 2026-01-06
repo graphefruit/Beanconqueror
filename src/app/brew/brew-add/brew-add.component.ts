@@ -11,7 +11,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
@@ -53,6 +53,8 @@ import { EventQueueService } from '../../../services/queueService/queue-service.
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { Mill } from '../../../classes/mill/mill';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 declare var Plotly;
 
@@ -68,7 +70,12 @@ interface IEventPayload {
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
   styleUrls: ['./brew-add.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    BrewBrewingComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class BrewAddComponent implements OnInit, OnDestroy {
   public static readonly COMPONENT_ID: string = 'brew-add';

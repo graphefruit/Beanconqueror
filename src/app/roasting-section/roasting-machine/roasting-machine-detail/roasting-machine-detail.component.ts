@@ -1,16 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../../services/uiHelper';
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-roasting-machine-detail',
   templateUrl: './roasting-machine-detail.component.html',
   styleUrls: ['./roasting-machine-detail.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class RoastingMachineDetailComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-detail';

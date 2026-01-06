@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -27,14 +27,27 @@ import { Settings } from '../../classes/settings/settings';
 import { GREEN_BEAN_ACTION } from '../../enums/green-beans/greenBeanAction';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { UIGreenBeanHelper } from '../../services/uiGreenBeanHelper';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../pipes/formatDate';
 
 @Component({
   selector: 'green-bean-information',
   templateUrl: './green-bean-information.component.html',
   styleUrls: ['./green-bean-information.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    LongPressDirective,
+    NgxStarsModule,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+  ],
 })
 export class GreenBeanInformationComponent implements OnInit {
   @Input() public greenBean: GreenBean;

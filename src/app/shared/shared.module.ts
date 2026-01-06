@@ -41,7 +41,6 @@ import { BrewInformationComponent } from '../../components/brew-information/brew
 import { CuppingRadarComponent } from '../../components/cupping-radar/cupping-radar.component';
 import { TooltipDirective } from '../../directive/tooltip.directive';
 import { DashboardPage } from '../dashboard/dashboard.page';
-import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
 import { BeanPopoverActionsComponent } from '../beans/bean-popover-actions/bean-popover-actions.component';
 import { PreparationPopoverActionsComponent } from '../preparation/preparation-popover-actions/preparation-popover-actions.component';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
@@ -182,11 +181,16 @@ import { PleaseActivateAnalyticsPopoverComponent } from '../../popover/please-ac
 import { BaristaPage } from '../baristamode/barista/barista.page';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 
-import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
-
 @NgModule({
-  declarations: [
-    UnwrappedModalComponent,
+  imports: [
+    CommonModule,
+    IonicModule,
+    FormsModule,
+    TranslateModule,
+    RouterModule,
+    NgxStarsModule,
+    AgVirtualScrollComponent,
+    PipesModule,
     SettingsPage,
     StatisticPage,
     HomePage,
@@ -278,7 +282,6 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     BrewInformationComponent,
     BrewGraphReferenceCardComponent,
     GraphDisplayCardComponent,
-    BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     WaterInformationCardComponent,
@@ -306,7 +309,6 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     TransformDateDirective,
     DisableDoubleClickDirective,
     BrewPage,
-
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
@@ -361,16 +363,6 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
   ],
-  imports: [
-    CommonModule,
-    IonicModule,
-    FormsModule,
-    TranslateModule,
-    RouterModule,
-    NgxStarsModule,
-    AgVirtualScrollComponent,
-    PipesModule,
-  ],
   providers: [
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
@@ -390,7 +382,6 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     AndroidPermissions,
   ],
   exports: [
-    UnwrappedModalComponent,
     SettingsPage,
     StatisticPage,
     HomePage,
@@ -479,7 +470,6 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     BrewInformationComponent,
     BrewGraphReferenceCardComponent,
     GraphDisplayCardComponent,
-    BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     WaterInformationCardComponent,

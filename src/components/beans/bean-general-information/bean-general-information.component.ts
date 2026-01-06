@@ -9,13 +9,13 @@ import {
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
-import { Platform } from '@ionic/angular';
+import { Platform, IonicModule } from '@ionic/angular';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ROASTS_ENUM } from '../../../enums/beans/roasts';
 import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 
 import { Settings } from '../../../classes/settings/settings';
@@ -24,13 +24,33 @@ import { UIHelper } from '../../../services/uiHelper';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { FormsModule } from '@angular/forms';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { PhotoAddComponent } from '../../photo-add/photo-add.component';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
 
 declare var cordova;
 @Component({
   selector: 'bean-general-information',
   templateUrl: './bean-general-information.component.html',
   styleUrls: ['./bean-general-information.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    TransformDateDirective,
+    NgxStarsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    PhotoAddComponent,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+    BeanFieldVisiblePipe,
+  ],
 })
 export class BeanGeneralInformationComponent implements OnInit {
   @Input() public data: Bean;

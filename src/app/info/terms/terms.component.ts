@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
+import { IonicModule } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'terms',
   templateUrl: './terms.component.html',
   styleUrls: ['./terms.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class TermsComponent implements OnInit {
   constructor(private readonly uiHelper: UIHelper) {}

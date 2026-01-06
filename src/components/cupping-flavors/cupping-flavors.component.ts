@@ -1,15 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from '../../classes/brew/brew';
 import { IFlavor } from '../../interfaces/flavor/iFlavor';
 import { UIHelper } from '../../services/uiHelper';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { NgStyle } from '@angular/common';
 
 @Component({
   selector: 'cupping-flavors',
   templateUrl: './cupping-flavors.component.html',
   styleUrls: ['./cupping-flavors.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, NgStyle, TranslatePipe],
 })
 export class CuppingFlavorsComponent implements OnInit {
   public searchFlavorText: string = '';

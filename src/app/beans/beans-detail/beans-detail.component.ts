@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { ROASTS_ENUM } from '../../../enums/beans/roasts';
 import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
@@ -15,12 +15,29 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { FormsModule } from '@angular/forms';
+import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
+import { BeanDetailSortInformationComponent } from '../../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
 
 @Component({
   selector: 'app-beans-detail',
   templateUrl: './beans-detail.component.html',
   styleUrls: ['./beans-detail.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    NgxStarsModule,
+    PhotoViewComponent,
+    BeanDetailSortInformationComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BeanFieldVisiblePipe,
+  ],
 })
 export class BeansDetailComponent implements OnInit {
   public static readonly COMPONENT_ID: string = 'bean-detail';

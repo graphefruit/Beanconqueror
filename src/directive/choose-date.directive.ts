@@ -9,10 +9,7 @@ import { Platform } from '@ionic/angular';
 import moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 declare var cordova;
-@Directive({
-  selector: '[choose-date-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[choose-date-overlay]' })
 export class ChooseDateOverlayDirective {
   @Input('data') public data: string;
   @Output() public dataChange = new EventEmitter<any>();

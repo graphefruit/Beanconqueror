@@ -10,7 +10,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Brew } from '../../../classes/brew/brew';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -28,13 +28,15 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
 import { CameraPreview } from '@capgo/camera-preview';
 import { Capacitor } from '@capacitor/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
 
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe, BrewFunction],
 })
 export class BrewFlowComponent implements OnDestroy, OnInit {
   public static readonly COMPONENT_ID: string = 'brew-flow';

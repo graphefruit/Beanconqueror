@@ -18,7 +18,7 @@ import {
   ScaleType,
   sleep,
 } from '../../../classes/devices';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -45,7 +45,7 @@ import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import BeanconquerorFlowTestDataDummySecondDummy from '../../../assets/BeanconquerorFlowTestDataSecond.json';
 import { Subscription } from 'rxjs';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIToast } from '../../../services/uiToast';
 import { Settings } from '../../../classes/settings/settings';
@@ -69,6 +69,9 @@ import { GraphHelperService } from '../../../services/graphHelper/graph-helper.s
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
 import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
+import { FormsModule } from '@angular/forms';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
 
 declare var Plotly;
 
@@ -76,7 +79,13 @@ declare var Plotly;
   selector: 'brew-brewing-graph',
   templateUrl: './brew-brewing-graph.component.html',
   styleUrls: ['./brew-brewing-graph.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    TranslatePipe,
+    BrewFieldOrder,
+    BrewFunction,
+  ],
 })
 export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('smartScaleWeight', { read: ElementRef })

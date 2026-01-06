@@ -1,10 +1,7 @@
 import { Directive, HostListener, Input } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-@Directive({
-  selector: '[ngModel][max-number-value]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][max-number-value]' })
 export class MaxNumberValueDirective {
   @Input('max-number-value') public value: string;
   constructor(private readonly model: NgModel) {}

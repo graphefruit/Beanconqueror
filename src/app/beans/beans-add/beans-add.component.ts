@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIToast } from '../../../services/uiToast';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
@@ -17,12 +17,28 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { FormsModule } from '@angular/forms';
+import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
+import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
+import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
   styleUrls: ['./beans-add.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanFreezeInformationComponent,
+    BeanSortInformationComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class BeansAddComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-add';

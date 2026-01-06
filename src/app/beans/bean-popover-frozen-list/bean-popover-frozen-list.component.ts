@@ -8,14 +8,21 @@ import {
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { BeanInformationComponent } from '../../../components/bean-information/bean-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-popover-frozen-list',
   templateUrl: './bean-popover-frozen-list.component.html',
   styleUrls: ['./bean-popover-frozen-list.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    AgVirtualScrollComponent,
+    BeanInformationComponent,
+    TranslatePipe,
+  ],
 })
 export class BeanPopoverFrozenListComponent {
   public static readonly COMPONENT_ID = 'bean-popover-frozen-list';

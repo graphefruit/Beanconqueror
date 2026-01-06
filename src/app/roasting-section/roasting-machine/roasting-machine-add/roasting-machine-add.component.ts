@@ -1,16 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIToast } from '../../../../services/uiToast';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { FormsModule } from '@angular/forms';
+import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-roasting-machine-add',
   templateUrl: './roasting-machine-add.component.html',
   styleUrls: ['./roasting-machine-add.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class RoastingMachineAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-add';

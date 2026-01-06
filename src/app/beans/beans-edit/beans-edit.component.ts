@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -11,12 +11,26 @@ import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAlert } from '../../../services/uiAlert';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
+import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
+import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'beans-edit',
   templateUrl: './beans-edit.component.html',
   styleUrls: ['./beans-edit.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanFreezeInformationComponent,
+    BeanSortInformationComponent,
+    TranslatePipe,
+  ],
 })
 export class BeansEditComponent implements OnInit {
   public static readonly COMPONENT_ID: string = 'bean-edit';

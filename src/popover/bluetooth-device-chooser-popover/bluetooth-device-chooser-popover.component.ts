@@ -9,7 +9,7 @@ import {
 import { BluetoothTypes, ScaleType } from '../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { finalize, Subscription } from 'rxjs';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIAlert } from '../../services/uiAlert';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import { Settings } from '../../classes/settings/settings';
@@ -18,12 +18,14 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { Preparation } from '../../classes/preparation/preparation';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bluetooth-device-chooser-popover',
   templateUrl: './bluetooth-device-chooser-popover.component.html',
   styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class BluetoothDeviceChooserPopoverComponent
   implements OnInit, OnDestroy

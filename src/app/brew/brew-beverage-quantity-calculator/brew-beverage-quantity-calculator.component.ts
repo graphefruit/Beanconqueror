@@ -1,12 +1,24 @@
 import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brew-beverage-quantity-calculator',
   templateUrl: './brew-beverage-quantity-calculator.component.html',
   styleUrls: ['./brew-beverage-quantity-calculator.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class BrewBeverageQuantityCalculatorComponent {
   public static readonly COMPONENT_ID = 'brew-beverage-quantity-calculator';

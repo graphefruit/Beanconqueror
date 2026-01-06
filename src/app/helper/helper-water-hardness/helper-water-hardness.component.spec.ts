@@ -10,8 +10,7 @@ describe('HelperWaterHardnessComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()],
-      declarations: [HelperWaterHardnessComponent],
+      imports: [TranslateModule.forRoot(), HelperWaterHardnessComponent],
       providers: [],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

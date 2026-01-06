@@ -8,7 +8,7 @@ import {
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
@@ -30,13 +30,14 @@ import { UIAlert } from '../../../services/uiAlert';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { TranslatePipe } from '@ngx-translate/core';
 declare var Plotly;
 declare var window;
 @Component({
   selector: 'brew-edit',
   templateUrl: './brew-edit.component.html',
   styleUrls: ['./brew-edit.component.scss'],
-  standalone: false,
+  imports: [IonicModule, BrewBrewingComponent, TranslatePipe],
 })
 export class BrewEditComponent implements OnInit {
   public static readonly COMPONENT_ID: string = 'brew-edit';

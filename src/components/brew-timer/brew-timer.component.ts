@@ -14,7 +14,12 @@ import { Device } from '@capacitor/device';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import { IonInput, ModalController, Platform } from '@ionic/angular';
+import {
+  IonInput,
+  ModalController,
+  Platform,
+  IonicModule,
+} from '@ionic/angular';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -26,7 +31,7 @@ import { BluetoothScale } from '../../classes/devices';
   selector: 'brew-timer',
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
-  standalone: false,
+  imports: [IonicModule],
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;

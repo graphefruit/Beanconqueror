@@ -8,20 +8,34 @@ import {
   ViewChild,
 } from '@angular/core';
 import moment from 'moment';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { Platform } from '@ionic/angular';
-import { NgxStarsComponent } from 'ngx-stars';
+import { Platform, IonicModule } from '@ionic/angular';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { FormsModule } from '@angular/forms';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { PhotoAddComponent } from '../../photo-add/photo-add.component';
 
 declare var cordova;
 @Component({
   selector: 'green-bean-general-information',
   templateUrl: './green-bean-general-information.component.html',
   styleUrls: ['./green-bean-general-information.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    TransformDateDirective,
+    NgxStarsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    PhotoAddComponent,
+    TranslatePipe,
+  ],
 })
 export class GreenBeanGeneralInformationComponent implements OnInit {
   @Input() public data: GreenBean;

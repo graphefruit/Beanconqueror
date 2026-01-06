@@ -6,11 +6,13 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
+import { IonicModule } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'sort-custom-parameter',
   templateUrl: './sort-custom-parameter.component.html',
   styleUrls: ['./sort-custom-parameter.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class SortCustomParameterComponent implements OnInit {
   public brewOrdersBefore: Array<{

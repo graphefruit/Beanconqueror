@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Graph } from '../../../../classes/graph/graph';
 
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -10,13 +10,15 @@ import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFifth.json';
 import { UIAlert } from '../../../../services/uiAlert';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
 
 @Component({
   selector: 'app-graph-add',
   templateUrl: './graph-add.component.html',
   styleUrls: ['./graph-add.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, GraphDisplayCardComponent, TranslatePipe],
 })
 export class GraphAddComponent {
   public static readonly COMPONENT_ID = 'graph-add';

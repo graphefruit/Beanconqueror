@@ -1,16 +1,30 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { RoastingMachineOverlayDirective } from '../../../directive/roasting-machine-overlay.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'bean-roast-information',
   templateUrl: './bean-roast-information.component.html',
   styleUrls: ['./bean-roast-information.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TransformDateDirective,
+    RoastingMachineOverlayDirective,
+    TranslatePipe,
+  ],
 })
 export class BeanRoastInformationComponent implements OnInit {
   @Input() public data: Bean;

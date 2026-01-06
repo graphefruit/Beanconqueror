@@ -7,18 +7,21 @@ import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { Brew } from '../../classes/brew/brew';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { Chart } from 'chart.js';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import Gradient from 'javascript-color-gradient';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
   styleUrls: ['./statistic.page.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, DecimalPipe, TranslatePipe],
 })
 export class StatisticPage implements OnInit {
   @ViewChild('brewChart', { static: false }) public brewChart;

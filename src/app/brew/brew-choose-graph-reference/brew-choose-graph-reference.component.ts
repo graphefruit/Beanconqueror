@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -20,12 +20,21 @@ import { Graph } from '../../../classes/graph/graph';
 import { UIGraphHelper } from '../../../services/uiGraphHelper';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
+import { FormsModule } from '@angular/forms';
+import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-reference-card/brew-graph-reference-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
   templateUrl: './brew-choose-graph-reference.component.html',
   styleUrls: ['./brew-choose-graph-reference.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    AgVirtualScrollComponent,
+    BrewGraphReferenceCardComponent,
+    TranslatePipe,
+  ],
 })
 export class BrewChooseGraphReferenceComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-graph-reference';

@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-parameter',
   templateUrl: './bean-parameter.page.html',
   styleUrls: ['./bean-parameter.page.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class BeanParameterPage {
   constructor(private readonly router: Router) {}

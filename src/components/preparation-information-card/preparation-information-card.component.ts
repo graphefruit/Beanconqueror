@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { PreparationPopoverActionsComponent } from '../../app/preparation/preparation-popover-actions/preparation-popover-actions.component';
@@ -21,12 +21,22 @@ import { UIHelper } from '../../services/uiHelper';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { PreparationDevice } from '../../classes/preparationDevice/preparationDevice';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
 
 @Component({
   selector: 'preparation-information-card',
   templateUrl: './preparation-information-card.component.html',
   styleUrls: ['./preparation-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    LongPressDirective,
+    AsyncImageComponent,
+    TranslatePipe,
+    PreparationFunction,
+  ],
 })
 export class PreparationInformationCardComponent implements OnInit {
   @Input() public preparation: Preparation;

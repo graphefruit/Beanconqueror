@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -33,13 +33,20 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UIAlert } from '../../../services/uiAlert';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { LongPressDirective } from '../../../directive/long-press.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 declare var Plotly;
 @Component({
   selector: 'app-barista',
   templateUrl: './barista.page.html',
   styleUrls: ['./barista.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    LongPressDirective,
+    BrewBrewingComponent,
+    TranslatePipe,
+  ],
 })
 export class BaristaPage implements OnInit {
   public data: Brew = new Brew();

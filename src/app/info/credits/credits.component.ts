@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
+import { IonicModule } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../pipes/keys';
 
 @Component({
   selector: 'credits',
   templateUrl: './credits.component.html',
   styleUrls: ['./credits.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe, KeysPipe],
 })
 export class CreditsComponent implements OnInit {
   public noCreditsToGive: boolean = true;

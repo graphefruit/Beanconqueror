@@ -1,12 +1,25 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { IonContent, ModalController, Platform } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import {
+  IonContent,
+  ModalController,
+  Platform,
+  IonicModule,
+} from '@ionic/angular';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-popover',
   templateUrl: './update-popover.component.html',
   styleUrls: ['./update-popover.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UpdatePopoverComponent implements OnInit {
   @Input() public versions: Array<string>;

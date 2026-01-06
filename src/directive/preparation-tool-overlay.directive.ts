@@ -12,10 +12,7 @@ import { UIPreparationStorage } from '../services/uiPreparationStorage';
 import { Preparation } from '../classes/preparation/preparation';
 import { PreparationToolModalSelectComponent } from '../app/preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
 
-@Directive({
-  selector: '[ngModel][preparation-tool-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][preparation-tool-overlay]' })
 export class PreparationToolOverlayDirective {
   @Output() public ngModelChange = new EventEmitter();
   @Input('multiple') public multipleSelect: boolean;

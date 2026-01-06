@@ -1,15 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { BREW_SORT_AFTER } from '../../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../../enums/brews/brewSortOrder';
 import { IBrewPageSort } from '../../../interfaces/brew/iBrewPageSort';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brew-sort',
   templateUrl: './brew-sort.component.html',
   styleUrls: ['./brew-sort.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class BrewSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'brew-sort';

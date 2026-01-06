@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
 import { UIImage } from '../../../../services/uiImage';
@@ -10,12 +10,24 @@ import { UIToast } from '../../../../services/uiToast';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { FormsModule } from '@angular/forms';
+import { GreenBeanGeneralInformationComponent } from '../../../../components/beans/green-bean-general-information/green-bean-general-information.component';
+import { BeanSortInformationComponent } from '../../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'green-bean-edit',
   templateUrl: './green-bean-edit.component.html',
   styleUrls: ['./green-bean-edit.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    GreenBeanGeneralInformationComponent,
+    BeanSortInformationComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class GreenBeanEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'green-bean-edit';

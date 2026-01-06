@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-baristamode',
   templateUrl: './baristamode.page.html',
   styleUrls: ['./baristamode.page.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class BaristamodePage implements OnInit {
   public ngOnInit(): void {}

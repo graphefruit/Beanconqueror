@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { Brew } from '../../../classes/brew/brew';
@@ -17,12 +17,19 @@ import { UIMillHelper } from '../../../services/uiMillHelper';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
+import { BrewInformationComponent } from '../../../components/brew-information/brew-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-associated-brews',
   templateUrl: './associated-brews.component.html',
   styleUrls: ['./associated-brews.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    AgVirtualScrollComponent,
+    BrewInformationComponent,
+    TranslatePipe,
+  ],
 })
 export class AssociatedBrewsComponent {
   public static readonly COMPONENT_ID = 'associated-brews';

@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import LINK_TRACKING from '../../../data/tracking/linkTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { IonicModule } from '@ionic/angular';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class ContactComponent implements OnInit {
   constructor(

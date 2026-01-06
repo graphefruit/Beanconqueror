@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { NgForm } from '@angular/forms';
@@ -8,11 +8,13 @@ import { PreparationAddTypeComponent } from '../preparation-add-type/preparation
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../pipes/keys';
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
   styleUrls: ['./preparation-add.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe, KeysPipe],
 })
 export class PreparationAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-add';

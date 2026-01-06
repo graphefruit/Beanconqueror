@@ -3,17 +3,18 @@ import { UILog } from '../../../services/uiLog';
 import { ILogInterface } from '../../../interfaces/log/iLog';
 
 import { LOGS_ENUM } from '../../../enums/logs/logs';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { LogTextComponent } from './log-text/log-text.component';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'log',
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.scss'],
-  standalone: false,
+  imports: [IonicModule, TranslatePipe],
 })
 export class LogComponent implements OnInit {
   public logs: Array<ILogInterface> = [];

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -12,13 +12,15 @@ import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlow
 import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UIAlert } from '../../../../services/uiAlert';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
 
 @Component({
   selector: 'app-graph-edit',
   templateUrl: './graph-edit.component.html',
   styleUrls: ['./graph-edit.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, GraphDisplayCardComponent, TranslatePipe],
 })
 export class GraphEditComponent implements OnInit {
   public static COMPONENT_ID = 'graph-edit';

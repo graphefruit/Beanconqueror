@@ -11,12 +11,23 @@ import { ICupping } from '../../interfaces/cupping/iCupping';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { IonicModule } from '@ionic/angular';
+import { TooltipDirective } from '../../directive/tooltip.directive';
+import { FormsModule } from '@angular/forms';
+import { DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'cupping-radar',
   templateUrl: './cupping-radar.component.html',
   styleUrls: ['./cupping-radar.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    TooltipDirective,
+    FormsModule,
+    DecimalPipe,
+    TranslatePipe,
+  ],
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
   public chartEl: any = undefined;

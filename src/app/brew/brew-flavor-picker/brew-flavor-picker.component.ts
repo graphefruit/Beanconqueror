@@ -1,14 +1,21 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { IFlavor } from '../../../interfaces/flavor/iFlavor';
 import { CuppingFlavorsComponent } from '../../../components/cupping-flavors/cupping-flavors.component';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brew-flavor-picker',
   templateUrl: './brew-flavor-picker.component.html',
   styleUrls: ['./brew-flavor-picker.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    CuppingFlavorsComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+  ],
 })
 export class BrewFlavorPickerComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-flavor-picker';

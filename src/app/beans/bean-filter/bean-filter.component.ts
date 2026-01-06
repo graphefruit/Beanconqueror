@@ -3,7 +3,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -11,12 +11,26 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { FormsModule } from '@angular/forms';
+import { ChooseDateOverlayDirective } from '../../../directive/choose-date.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
 
 @Component({
   selector: 'app-bean-filter',
   templateUrl: './bean-filter.component.html',
   styleUrls: ['./bean-filter.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    ChooseDateOverlayDirective,
+    TransformDateDirective,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+  ],
 })
 export class BeanFilterComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-filter';

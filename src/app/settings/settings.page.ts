@@ -3,6 +3,7 @@ import {
   ModalController,
   Platform,
   ScrollDetail,
+  IonicModule,
 } from '@ionic/angular';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
@@ -20,7 +21,7 @@ import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { Subject } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
@@ -84,12 +85,25 @@ import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { ThemeService } from '../../services/theme/theme.service';
+import { FormsModule } from '@angular/forms';
+import { TooltipDirective } from '../../directive/tooltip.directive';
+import { DecimalPipe } from '@angular/common';
+import { KeysPipe } from '../../pipes/keys';
+import { ToFixedPipe } from '../../pipes/toFixed';
 
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    TooltipDirective,
+    DecimalPipe,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+  ],
 })
 export class SettingsPage {
   public settings: Settings;

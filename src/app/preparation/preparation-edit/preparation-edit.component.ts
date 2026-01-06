@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -13,12 +13,24 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { FormsModule } from '@angular/forms';
+import { TooltipDirective } from '../../../directive/tooltip.directive';
+import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../pipes/keys';
 
 @Component({
   selector: 'preparation-edit',
   templateUrl: './preparation-edit.component.html',
   styleUrls: ['./preparation-edit.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    TooltipDirective,
+    PhotoAddComponent,
+    TranslatePipe,
+    KeysPipe,
+  ],
 })
 export class PreparationEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-edit';

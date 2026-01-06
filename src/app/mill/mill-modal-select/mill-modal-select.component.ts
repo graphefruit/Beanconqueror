@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { Mill } from '../../../classes/mill/mill';
 import { Brew } from '../../../classes/brew/brew';
@@ -8,12 +8,26 @@ import { UIMillHelper } from '../../../services/uiMillHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { MillFunction } from '../../../pipes/mill/millFunction';
 
 @Component({
   selector: 'mill-modal-select',
   templateUrl: './mill-modal-select.component.html',
   styleUrls: ['./mill-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    NgTemplateOutlet,
+    AsyncImageComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    MillFunction,
+  ],
 })
 export class MillModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'mill-modal-select';

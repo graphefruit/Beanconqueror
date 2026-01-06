@@ -1,19 +1,31 @@
 import { Component, Input } from '@angular/core';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { Bean } from '../../../../classes/bean/bean';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { Settings } from '../../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { FormsModule } from '@angular/forms';
+import { BeanDetailSortInformationComponent } from '../../../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
+import { BeanInformationComponent } from '../../../../components/bean-information/bean-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../../../pipes/formatDate';
 
 @Component({
   selector: 'app-green-bean-detail',
   templateUrl: './green-bean-detail.component.html',
   styleUrls: ['./green-bean-detail.component.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    FormsModule,
+    BeanDetailSortInformationComponent,
+    BeanInformationComponent,
+    TranslatePipe,
+    FormatDatePipe,
+  ],
 })
 export class GreenBeanDetailComponent {
   public static readonly COMPONENT_ID = 'green-bean-detail';

@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 import { UIHelper } from '../../services/uiHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -20,12 +20,27 @@ import { Subscription } from 'rxjs';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
+import { ShortPressDirective } from '../../directive/short-press.directive';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
+import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'brew',
   templateUrl: './brew.page.html',
   styleUrls: ['./brew.page.scss'],
-  standalone: false,
+  imports: [
+    IonicModule,
+    ShortPressDirective,
+    LongPressDirective,
+    FormsModule,
+    NgTemplateOutlet,
+    AgVirtualScrollComponent,
+    BrewInformationComponent,
+    TranslatePipe,
+  ],
 })
 export class BrewPage implements OnInit {
   public brews: Array<Brew> = [];

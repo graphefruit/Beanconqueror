@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController } from '@ionic/angular';
+import { ModalController, IonicModule } from '@ionic/angular';
 
 import QRCode from 'qrcode';
 import { environment } from '../../../environments/environment';
@@ -14,12 +14,14 @@ import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
 import { NfcService } from '../../../services/nfcService/nfc-service.service';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bean-internal-share-code-generator.',
   templateUrl: './bean-internal-share-code-generator.component.html',
   styleUrls: ['./bean-internal-share-code-generator.component.scss'],
-  standalone: false,
+  imports: [IonicModule, FormsModule, TranslatePipe],
 })
 export class BeanInternalShareCodeGeneratorComponent implements OnInit {
   public static COMPONENT_ID = 'bean-internal-share-code-generator-popover';

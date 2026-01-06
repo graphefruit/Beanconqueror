@@ -6,10 +6,7 @@ import { UIWaterStorage } from '../services/uiWaterStorage';
 import { Water } from '../classes/water/water';
 import { WaterModalSelectComponent } from '../app/water-section/water/water-modal-select/water-modal-select.component';
 
-@Directive({
-  selector: '[ngModel][water-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][water-overlay]' })
 export class WaterOverlayDirective {
   private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;
