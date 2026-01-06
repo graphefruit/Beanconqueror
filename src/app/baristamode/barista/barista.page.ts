@@ -5,6 +5,7 @@ import {
   EventEmitter,
   HostListener,
   NgZone,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -41,7 +42,7 @@ declare var Plotly;
   styleUrls: ['./barista.page.scss'],
   standalone: false,
 })
-export class BaristaPage implements OnInit {
+export class BaristaPage implements OnInit, OnDestroy {
   public data: Brew = new Brew();
 
   @ViewChild('ionHeader', { read: ElementRef, static: true })
@@ -157,21 +158,26 @@ export class BaristaPage implements OnInit {
     setTimeout(() => {
       this.showLagTime();
       this.updateSanremoYOUDoses();
+      this.checkIfHintShallBeShown();
     }, 5000);
 
     setInterval(() => {
       try {
-        const shotData = (
-          this.brewBrewing?.brewBrewingPreparationDeviceEl
-            ?.preparationDevice as SanremoYOUDevice
-        ).getActualShotData();
+        if (this.isWebSocketConnected()) {
+          const shotData = (
+            this.brewBrewing?.brewBrewingPreparationDeviceEl
+              ?.preparationDevice as SanremoYOUDevice
+          ).getActualShotData();
 
-        this.lastHeartbeat = shotData.localTimeString;
-        this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
-        this.currentTempEl.nativeElement.innerText = shotData.tempBoilerCoffe;
-        this.pumpPressEl.nativeElement.innerText = shotData.pumpPress;
+          this.lastHeartbeat = shotData.localTimeString;
+          this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
+          this.currentTempEl.nativeElement.innerText = shotData.tempBoilerCoffe;
+          this.pumpPressEl.nativeElement.innerText = shotData.pumpPress;
+        }
       } catch (ex) {
         this.lastHeartBeatEl.nativeElement.innerText = '-';
+        this.currentTempEl.nativeElement.innerText = '-';
+        this.pumpPressEl.nativeElement.innerText = '-';
       }
     }, 1000);
   }
@@ -387,6 +393,33 @@ export class BaristaPage implements OnInit {
   public async showPreparationEdit() {
     const preparation: Preparation = this.data.getPreparation();
     await this.uiPreparationHelper.connectDevice(preparation);
+  }
+
+  private async checkIfHintShallBeShown() {
+    if (this.isSanremoConnected()) {
+      const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
+        ?.preparationDevice as SanremoYOUDevice;
+      if (device.showInformationHintForBrewByWeightMode()) {
+        //We got no scale, so ask user to connect one.
+        try {
+          await this.uiAlert.showConfirmWithYesNoTranslation(
+            'PREPARATION_DEVICE.TYPE_SANREMO_YOU.BREW_BY_WEIGHT_HINT',
+            'INFORMATION',
+            'DONT_SHOW_AGAIN',
+            'SKIP',
+            true,
+          );
+
+          await this.brewBrewing?.brewBrewingPreparationDeviceEl.setBaristaHintHasBeenShown();
+
+          //Barista pressed don't show again.
+        } catch (ex) {
+          //Skip was pressed
+        }
+      } else {
+        //Nothing to do we already showed it
+      }
+    }
   }
 
   private async checkIfScaleIsConnected() {

@@ -119,6 +119,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     await this.uiPreparationStorage.update(this.preparation);
   }
 
+  /**
+   * Just used for baristamode on the sanremo you.
+   * @param program
+   * @param value
+   */
   public async setResidualLagTimeByProgram(program: number, value: number) {
     switch (program) {
       case 1:
@@ -138,6 +143,12 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           value;
         break;
     }
+    await this.uiPreparationStorage.update(this.preparation);
+  }
+
+  public async setBaristaHintHasBeenShown() {
+    this.preparation.connectedPreparationDevice.customParams.showHintForBaristaMode =
+      false;
     await this.uiPreparationStorage.update(this.preparation);
   }
 

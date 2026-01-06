@@ -584,6 +584,13 @@ ion-menu:host .menu-inner {
     --padding-top: 0;
   }
 
+  input[type="color"] {
+    border-top-left-radius: 0!important;
+    border-top-right-radius:  0!important;
+    border-bottom-right-radius: 0!important;
+    border-bottom-left-radius:  0!important;
+  }
+
   .bottom-modal, .half-bottom-modal {
     --background: rgba(0, 0, 0, 0.47);
 

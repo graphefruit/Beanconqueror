@@ -501,7 +501,7 @@
         </ion-item>
       }
       <ion-item [style.order]="9999" lines="none">
-        <ion-label><h2>{{"BREW_CREATION_DATE" | translate}}</h2><h3>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}</h3></ion-label>
+        <ion-label><h2>{{"BREW_CREATION_DATE" | translate}}</h2><h3>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}&nbsp;{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</h3></ion-label>
       </ion-item>
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.attachments,
         choosenPreparation.manage_parameters.attachments,

@@ -20,7 +20,9 @@ import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { Subject } from 'rxjs';
+import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import { TranslateService } from '@ngx-translate/core';
+
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
@@ -1636,4 +1638,23 @@ export class SettingsPage {
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
   protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
+  public async resetGraphColor(graphType: string) {
+    try {
+      await this.uiAlert.showConfirm('SURE_QUESTION', undefined, true);
+      if (!this.settings.graph_colors) {
+        this.settings.graph_colors = JSON.parse(
+          JSON.stringify(DEFAULT_GRAPH_COLORS),
+        );
+      }
+
+      // @ts-ignore
+      if (DEFAULT_GRAPH_COLORS[graphType]) {
+        // @ts-ignore
+        this.settings.graph_colors[graphType] = JSON.parse(
+          JSON.stringify(DEFAULT_GRAPH_COLORS[graphType]),
+        );
+        this.saveSettings();
+      }
+    } catch (ex) {}
+  }
 }

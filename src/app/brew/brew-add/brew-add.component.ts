@@ -405,7 +405,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
         eventsToTrack.push({
           category: BEAN_TRACKING.TITLE,
           action:
-            BEAN_TRACKING.ACTIONS.BREW_TRACKED +
+            BEAN_TRACKING.ACTIONS.BREW_TRACKED.TITLE +
             '_' +
             bean.roaster +
             '_' +

@@ -30,6 +30,7 @@ import { TimemoreScale } from './timemoreScale';
 import { VariaAkuScale } from './variaAku';
 import { EspressiScale } from './espressiScale';
 import { WeighMyBruScale } from './weighMyBruScale';
+import { GeisingerThermometer } from './geisingerThermometer';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 
@@ -73,6 +74,7 @@ export enum TemperatureType {
   MEATER = 'MEATER',
   COMBUSTION = 'COMBUSTION',
   ARGOS = 'ARGOS',
+  GEISINGER = 'GEISINGER',
 }
 
 export enum RefractometerType {
@@ -156,6 +158,8 @@ export function makeTemperatureDevice(
       return new CombustionThermometer(data);
     case TemperatureType.ARGOS:
       return new ArgosThermometer(data);
+    case TemperatureType.GEISINGER:
+      return new GeisingerThermometer(data);
     default:
       return null;
   }
