@@ -15,7 +15,7 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { AppComponent } from './app/app.component';
@@ -31,12 +31,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
       BrowserModule,
-      TranslateModule.forRoot({
-        loader: provideTranslateHttpLoader({
-          prefix: './assets/i18n/',
-          suffix: '.json',
-        }),
-      }),
       IonicModule.forRoot({
         mode: 'md',
         menuIcon: 'beanconqueror-menu',
@@ -57,6 +51,12 @@ bootstrapApplication(AppComponent, {
     { provide: ErrorHandler, useClass: BeanconquerorErrorHandler },
     AndroidPermissions,
     provideHttpClient(withInterceptorsFromDi()),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: './assets/i18n/',
+        suffix: '.json',
+      }),
+    }),
     provideRouter(routes),
     provideZoneChangeDetection(),
   ],
