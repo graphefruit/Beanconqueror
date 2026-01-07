@@ -1,21 +1,23 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Ionic native */
 /** Classes */
-import {Preparation} from '../classes/preparation/preparation';
-import {StorageClass} from '../classes/storageClass';
+import { Preparation } from '../classes/preparation/preparation';
+import { StorageClass } from '../classes/storageClass';
 /** Interfaces */
-import {IPreparation} from '../interfaces/preparation/iPreparation';
+import { IPreparation } from '../interfaces/preparation/iPreparation';
 /** Services */
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-import {TranslateService} from '@ngx-translate/core';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIStorage } from './uiStorage';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIPreparationStorage extends StorageClass {
+  private readonly translate = inject(TranslateService);
+
   /**
    * Singelton instance
    */
@@ -29,11 +31,9 @@ export class UIPreparationStorage extends StorageClass {
 
     return undefined;
   }
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog,
-              private readonly translate: TranslateService) {
-    super(uiStorage, uiHelper, uiLog, 'PREPARATION');
+  constructor() {
+    super('PREPARATION');
+
     if (UIPreparationStorage.instance === undefined) {
       UIPreparationStorage.instance = this;
     }
@@ -64,7 +64,6 @@ export class UIPreparationStorage extends StorageClass {
   }
 
   public getAllEntries(): Array<Preparation> {
-
     if (this.preparations.length <= 0) {
       const preparationEntries: Array<any> = super.getAllEntries();
       for (const prep of preparationEntries) {
@@ -75,5 +74,4 @@ export class UIPreparationStorage extends StorageClass {
     }
     return this.preparations;
   }
-
 }
