@@ -63,7 +63,6 @@
     "ble-central-advertisements": "^1.1.0",
     "chart.js": "^4.5.0",
     "community-cordova-plugin-nfc": "^1.4.0",
-    "core-js": "^3.44.0",
     "currency-symbol-map": "^5.1.0",
     "html-to-image": "^1.11.13",
     "javascript-color-gradient": "^2.5.0",
