@@ -5,7 +5,7 @@ import { Brew } from '../classes/brew/brew';
 import { UIBrewStorage } from './uiBrewStorage';
 
 import { PreparationAddComponent } from '../app/preparation/preparation-add/preparation-add.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { PreparationEditComponent } from '../app/preparation/preparation-edit/preparation-edit.component';
 import { Preparation } from '../classes/preparation/preparation';
 import { PreparationDetailComponent } from '../app/preparation/preparation-detail/preparation-detail.component';

@@ -5,15 +5,27 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonTitle,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'repeat-custom-parameter',
   templateUrl: './repeat-custom-parameter.component.html',
   styleUrls: ['./repeat-custom-parameter.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonTitle,
+  ],
 })
 export class RepeatCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;

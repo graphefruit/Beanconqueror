@@ -10,7 +10,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -24,17 +24,42 @@ import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
 import { FormsModule } from '@angular/forms';
 import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-green-beans',
   templateUrl: './green-beans.page.html',
   styleUrls: ['./green-beans.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     AgVirtualScrollComponent,
     GreenBeanInformationComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
   ],
 })
 export class GreenBeansPage implements OnInit {

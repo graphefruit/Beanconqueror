@@ -11,17 +11,40 @@ import {
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { Subscription } from 'rxjs';
+import { addIcons } from 'ionicons';
+import { closeOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-maximize-controls',
   templateUrl: './brew-maximize-controls.component.html',
   styleUrls: ['./brew-maximize-controls.component.scss'],
-  imports: [IonicModule],
+  imports: [
+    IonHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+  ],
 })
 export class BrewMaximizeControlsComponent
   implements AfterViewInit, OnDestroy, OnInit
@@ -46,7 +69,9 @@ export class BrewMaximizeControlsComponent
     private readonly uiSettingsStorage: UISettingsStorage,
 
     private readonly platform: Platform,
-  ) {}
+  ) {
+    addIcons({ closeOutline });
+  }
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
 

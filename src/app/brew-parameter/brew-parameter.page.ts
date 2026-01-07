@@ -1,13 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, IonicModule } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonIcon,
+  IonCardTitle,
+  IonCardContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-parameter',
   templateUrl: './brew-parameter.page.html',
   styleUrls: ['./brew-parameter.page.scss'],
-  imports: [IonicModule, RouterLink, TranslatePipe],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonIcon,
+    IonCardTitle,
+    IonCardContent,
+  ],
 })
 export class BrewParameterPage implements OnInit {
   constructor(

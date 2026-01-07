@@ -20,7 +20,7 @@ import { UIBeanHelper } from './uiBeanHelper';
 import BREW_TRACKING from '../data/tracking/brewTracking';
 import { BrewAddComponent } from '../app/brew/brew-add/brew-add.component';
 import { UIAnalytics } from './uiAnalytics';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { BrewChoosePreparationToBrewComponent } from '../app/brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import { BrewEditComponent } from '../app/brew/brew-edit/brew-edit.component';
 import { IBrew } from '../interfaces/brew/iBrew';

@@ -1,15 +1,43 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonReorderGroup,
+  IonItem,
+  IonLabel,
+  IonReorder,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-preparation-sort-tools',
   templateUrl: './preparation-sort-tools.component.html',
   styleUrls: ['./preparation-sort-tools.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonReorderGroup,
+    IonItem,
+    IonLabel,
+    IonReorder,
+  ],
 })
 export class PreparationSortToolsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-sort-tools';

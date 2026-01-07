@@ -22,7 +22,7 @@ import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { Share } from '@capacitor/share';
 import { UIFileHelper } from '../uiFileHelper';
 
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 
 @Injectable({
   providedIn: 'root',

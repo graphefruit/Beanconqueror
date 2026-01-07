@@ -1,15 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonTitle,
+  IonContent,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-meticulous-help-popover',
   templateUrl: './meticulous-help-popover.component.html',
   styleUrls: ['./meticulous-help-popover.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonTitle,
+    IonContent,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class MeticulousHelpPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'meticulous-help-popover';

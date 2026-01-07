@@ -1,15 +1,56 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { Water } from '../../../../classes/water/water';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadioGroup,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-water-modal-select',
   templateUrl: './water-modal-select.component.html',
   styleUrls: ['./water-modal-select.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadioGroup,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class WaterModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'water-model-select';

@@ -1,17 +1,26 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
 import { GREEN_BEAN_ACTION } from '../../../../enums/green-beans/greenBeanAction';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { flameOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'green-bean-popover-actions',
   templateUrl: './green-bean-popover-actions.component.html',
   styleUrls: ['./green-bean-popover-actions.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class GreenBeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'green-bean-popover-actions';
@@ -20,7 +29,9 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ flameOutline });
+  }
 
   public ionViewDidEnter(): void {}
 

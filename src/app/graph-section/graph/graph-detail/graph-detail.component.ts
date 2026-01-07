@@ -15,7 +15,7 @@ import { IGraph } from '../../../../interfaces/graph/iGraph';
 import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { IBrew } from '../../../../interfaces/brew/iBrew';
@@ -29,6 +29,19 @@ import BeanconquerorFlowTestDataDummySecondDummy from '../../../../assets/Beanco
 import { UIBrewStorage } from '../../../../services/uiBrewStorage';
 import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { UIAlert } from '../../../../services/uiAlert';
+import { addIcons } from 'ionicons';
+import { closeOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonChip,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSpinner,
+} from '@ionic/angular/standalone';
 
 declare var Plotly;
 
@@ -36,7 +49,18 @@ declare var Plotly;
   selector: 'app-graph-detail',
   templateUrl: './graph-detail.component.html',
   styleUrls: ['./graph-detail.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonChip,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSpinner,
+  ],
 })
 export class GraphDetailComponent implements OnInit {
   public static COMPONENT_ID = 'graph-detail';
@@ -73,7 +97,9 @@ export class GraphDetailComponent implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiAlert: UIAlert,
-  ) {}
+  ) {
+    addIcons({ closeOutline });
+  }
 
   public ngOnInit() {}
 

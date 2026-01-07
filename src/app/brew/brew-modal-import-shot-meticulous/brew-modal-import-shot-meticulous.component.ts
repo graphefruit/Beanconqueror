@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { UIHelper } from '../../../services/uiHelper';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -16,17 +16,48 @@ import { UIAlert } from '../../../services/uiAlert';
 import { FormsModule } from '@angular/forms';
 import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonRadio,
+  IonGrid,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-modal-import-shot-meticulous',
   templateUrl: './brew-modal-import-shot-meticulous.component.html',
   styleUrls: ['./brew-modal-import-shot-meticulous.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     AgVirtualScrollComponent,
     GraphDisplayCardComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonRadio,
+    IonGrid,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class BrewModalImportShotMeticulousComponent implements OnInit {

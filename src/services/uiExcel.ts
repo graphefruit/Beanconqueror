@@ -6,7 +6,7 @@ import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
 
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular/standalone';
 import { UIBrewStorage } from './uiBrewStorage';
 import { TranslateService } from '@ngx-translate/core';
 import { UIBeanStorage } from './uiBeanStorage';
@@ -571,15 +571,15 @@ export class UIExcel {
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
-          const alert = await this.alertCtrl.create({
-            header: this.translate.instant('DOWNLOADED'),
-            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-              fileName: filename,
-            }),
-            buttons: ['OK'],
-          });
-          await alert.present();
-        }**/
+                  const alert = await this.alertCtrl.create({
+                    header: this.translate.instant('DOWNLOADED'),
+                    subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                      fileName: filename,
+                    }),
+                    buttons: ['OK'],
+                  });
+                  await alert.present();
+                }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {
@@ -670,15 +670,15 @@ export class UIExcel {
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
-         const alert = await this.alertCtrl.create({
-         header: this.translate.instant('DOWNLOADED'),
-         subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-         fileName: filename,
-         }),
-         buttons: ['OK'],
-         });
-         await alert.present();
-         }**/
+                 const alert = await this.alertCtrl.create({
+                 header: this.translate.instant('DOWNLOADED'),
+                 subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                 fileName: filename,
+                 }),
+                 buttons: ['OK'],
+                 });
+                 await alert.present();
+                 }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {
@@ -786,15 +786,15 @@ export class UIExcel {
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
-         const alert = await this.alertCtrl.create({
-         header: this.translate.instant('DOWNLOADED'),
-         subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-         fileName: filename,
-         }),
-         buttons: ['OK'],
-         });
-         await alert.present();
-         }**/
+                 const alert = await this.alertCtrl.create({
+                 header: this.translate.instant('DOWNLOADED'),
+                 subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                 fileName: filename,
+                 }),
+                 buttons: ['OK'],
+                 });
+                 await alert.present();
+                 }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {

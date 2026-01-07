@@ -12,7 +12,7 @@ import {
   ActionSheetController,
   ModalController,
   Platform,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { BeanArchivePopoverComponent } from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 import { BeansEditComponent } from '../app/beans/beans-edit/beans-edit.component';
 import { BeansDetailComponent } from '../app/beans/beans-detail/beans-detail.component';

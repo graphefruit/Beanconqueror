@@ -9,7 +9,7 @@ import {
 import { UIAlert } from '../../services/uiAlert';
 import { Preparation } from '../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -21,17 +21,40 @@ import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { FormsModule } from '@angular/forms';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation',
   templateUrl: './preparation.page.html',
   styleUrls: ['./preparation.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     AgVirtualScrollComponent,
     PreparationInformationCardComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
   ],
 })
 export class PreparationPage implements OnInit {

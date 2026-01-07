@@ -11,7 +11,7 @@ import moment from 'moment';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { Platform, IonicModule } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -20,6 +20,16 @@ import { TransformDateDirective } from '../../../directive/transform-date';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { PhotoAddComponent } from '../../photo-add/photo-add.component';
+import {
+  IonCard,
+  IonItem,
+  IonInput,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonCheckbox,
+  IonTextarea,
+} from '@ionic/angular/standalone';
 
 declare var cordova;
 @Component({
@@ -27,7 +37,6 @@ declare var cordova;
   templateUrl: './green-bean-general-information.component.html',
   styleUrls: ['./green-bean-general-information.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     TransformDateDirective,
     NgxStarsModule,
@@ -35,6 +44,14 @@ declare var cordova;
     RemoveEmptyNumberDirective,
     PhotoAddComponent,
     TranslatePipe,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonCheckbox,
+    IonTextarea,
   ],
 })
 export class GreenBeanGeneralInformationComponent implements OnInit {

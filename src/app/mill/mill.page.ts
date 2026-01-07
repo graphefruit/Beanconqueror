@@ -9,7 +9,7 @@ import {
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIAlert } from '../../services/uiAlert';
 import { Mill } from '../../classes/mill/mill';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 
 import { MILL_ACTION } from '../../enums/mills/millActions';
@@ -21,17 +21,40 @@ import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { FormsModule } from '@angular/forms';
 import { MillInformationCardComponent } from '../../components/mill-information-card/mill-information-card.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'mill',
   templateUrl: './mill.page.html',
   styleUrls: ['./mill.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     AgVirtualScrollComponent,
     MillInformationCardComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
   ],
 })
 export class MillPage implements OnInit {

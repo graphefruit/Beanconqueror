@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -22,13 +22,34 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import { addIcons } from 'ionicons';
+import { create, globeOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonItem,
+  IonRange,
+  IonBadge,
+  IonCheckbox,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-beans-detail',
   templateUrl: './beans-detail.component.html',
   styleUrls: ['./beans-detail.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     NgxStarsModule,
     PhotoViewComponent,
@@ -37,6 +58,24 @@ import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
     FormatDatePipe,
     ToFixedPipe,
     BeanFieldVisiblePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonRange,
+    IonBadge,
+    IonCheckbox,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class BeansDetailComponent implements OnInit {
@@ -64,7 +103,9 @@ export class BeansDetailComponent implements OnInit {
     public readonly uiBeanHelper: UIBeanHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBeanStorage: UIBeanStorage,
-  ) {}
+  ) {
+    addIcons({ create, globeOutline });
+  }
 
   public ionViewDidEnter() {
     this.uiAnalytics.trackEvent(

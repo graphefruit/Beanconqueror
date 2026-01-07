@@ -4,25 +4,46 @@ import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Brew } from '../../../classes/brew/brew';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { FormsModule } from '@angular/forms';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonTextarea,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-rating',
   templateUrl: './brew-rating.component.html',
   styleUrls: ['./brew-rating.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     NgxStarsModule,
     DisableDoubleClickDirective,
     TranslatePipe,
     ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonTextarea,
+    IonRow,
+    IonCol,
+    IonButton,
   ],
 })
 export class BrewRatingComponent implements OnInit {

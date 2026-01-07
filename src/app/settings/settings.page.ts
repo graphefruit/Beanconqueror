@@ -3,8 +3,7 @@ import {
   ModalController,
   Platform,
   ScrollDetail,
-  IonicModule,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
@@ -90,19 +89,75 @@ import { TooltipDirective } from '../../directive/tooltip.directive';
 import { DecimalPipe } from '@angular/common';
 import { KeysPipe } from '../../pipes/keys';
 import { ToFixedPipe } from '../../pipes/toFixed';
+import { addIcons } from 'ionicons';
+import {
+  chevronForwardOutline,
+  informationOutline,
+  checkmarkCircleOutline,
+  cloudUploadOutline,
+  bluetoothOutline,
+  informationCircleOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonCardContent,
+  IonCardTitle,
+  IonItem,
+  IonIcon,
+  IonSelect,
+  IonSelectOption,
+  IonRange,
+  IonCheckbox,
+  IonInput,
+  IonButton,
+  IonNote,
+  IonList,
+  IonBadge,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     TooltipDirective,
     DecimalPipe,
     TranslatePipe,
     KeysPipe,
     ToFixedPipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonCardContent,
+    IonCardTitle,
+    IonItem,
+    IonIcon,
+    IonSelect,
+    IonSelectOption,
+    IonRange,
+    IonCheckbox,
+    IonInput,
+    IonButton,
+    IonNote,
+    IonList,
+    IonBadge,
   ],
 })
 export class SettingsPage {
@@ -215,6 +270,14 @@ export class SettingsPage {
     this.isAndroid =
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
+    addIcons({
+      chevronForwardOutline,
+      informationOutline,
+      checkmarkCircleOutline,
+      cloudUploadOutline,
+      bluetoothOutline,
+      informationCircleOutline,
+    });
   }
 
   public handleScrollStart() {

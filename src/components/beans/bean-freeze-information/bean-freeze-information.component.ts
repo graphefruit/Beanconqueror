@@ -12,12 +12,21 @@ import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import moment from 'moment';
-import { Platform, IonicModule } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { FormsModule } from '@angular/forms';
 import { KeysPipe } from '../../../pipes/keys';
+import {
+  IonCard,
+  IonItem,
+  IonInput,
+  IonSelect,
+  IonSelectOption,
+  IonLabel,
+  IonTextarea,
+} from '@ionic/angular/standalone';
 
 declare var cordova;
 @Component({
@@ -25,11 +34,17 @@ declare var cordova;
   templateUrl: './bean-freeze-information.component.html',
   styleUrls: ['./bean-freeze-information.component.scss'],
   imports: [
-    IonicModule,
     TransformDateDirective,
     FormsModule,
     TranslatePipe,
     KeysPipe,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    IonLabel,
+    IonTextarea,
   ],
 })
 export class BeanFreezeInformationComponent implements OnInit {

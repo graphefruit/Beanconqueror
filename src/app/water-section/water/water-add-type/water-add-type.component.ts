@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import WATER_TRACKING from '../../../../data/tracking/waterTracking';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -13,16 +13,31 @@ import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
 import TrackContentImpression from '../../../../data/tracking/trackContentImpression/trackContentImpression';
 import { FormsModule } from '@angular/forms';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'water-add-type',
   templateUrl: './water-add-type.component.html',
   styleUrls: ['./water-add-type.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     DisableDoubleClickDirective,
     TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonRow,
+    IonCol,
+    IonButton,
   ],
 })
 export class WaterAddTypeComponent implements OnInit {

@@ -17,7 +17,6 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 import { Bean } from '../../classes/bean/bean';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
-import { IonicModule } from '@ionic/angular';
 import { NgxStarsModule } from 'ngx-stars';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 import { DecimalPipe } from '@angular/common';
@@ -26,13 +25,25 @@ import { FormatDatePipe } from '../../pipes/formatDate';
 import { ToFixedPipe } from '../../pipes/toFixed';
 import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../pipes/brew/brewFunction';
+import { addIcons } from 'ionicons';
+import { trophy, heart, analyticsOutline } from 'ionicons/icons';
+import {
+  IonItem,
+  IonRadio,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonIcon,
+  IonBadge,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-graph-reference-card',
   templateUrl: './brew-graph-reference-card.component.html',
   styleUrls: ['./brew-graph-reference-card.component.scss'],
   imports: [
-    IonicModule,
     NgxStarsModule,
     GraphDisplayCardComponent,
     DecimalPipe,
@@ -41,6 +52,15 @@ import { BrewFunction } from '../../pipes/brew/brewFunction';
     ToFixedPipe,
     BrewFieldVisiblePipe,
     BrewFunction,
+    IonItem,
+    IonRadio,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonBadge,
+    IonLabel,
+    IonText,
   ],
 })
 export class BrewGraphReferenceCardComponent implements OnInit {
@@ -68,7 +88,9 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     protected readonly uiBrewHelper: UIBrewHelper,
     protected readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ trophy, heart, analyticsOutline });
+  }
 
   public getElementOffsetWidth() {
     if (this.ionItemEl?.nativeElement?.offsetWidth) {

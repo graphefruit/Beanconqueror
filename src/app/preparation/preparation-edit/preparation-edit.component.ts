@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -18,18 +18,59 @@ import { TooltipDirective } from '../../../directive/tooltip.directive';
 import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
+import { addIcons } from 'ionicons';
+import { swapVerticalOutline, informationOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+  IonInput,
+  IonLabel,
+  IonChip,
+  IonCheckbox,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-edit',
   templateUrl: './preparation-edit.component.html',
   styleUrls: ['./preparation-edit.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     TooltipDirective,
     PhotoAddComponent,
     TranslatePipe,
     KeysPipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonInput,
+    IonLabel,
+    IonChip,
+    IonCheckbox,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class PreparationEditComponent implements OnInit {
@@ -48,7 +89,9 @@ export class PreparationEditComponent implements OnInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  ) {
+    addIcons({ swapVerticalOutline, informationOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

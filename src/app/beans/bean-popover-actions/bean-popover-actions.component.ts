@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -9,12 +9,29 @@ import { Brew } from '../../../classes/brew/brew';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  snowOutline,
+  thermometerOutline,
+  copyOutline,
+  heartOutline,
+  heart,
+  shareSocialOutline,
+  qrCodeOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'bean-popover-actions',
   templateUrl: './bean-popover-actions.component.html',
   styleUrls: ['./bean-popover-actions.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class BeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-actions';
@@ -30,6 +47,15 @@ export class BeanPopoverActionsComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
   ) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
+    addIcons({
+      snowOutline,
+      thermometerOutline,
+      copyOutline,
+      heartOutline,
+      heart,
+      shareSocialOutline,
+      qrCodeOutline,
+    });
   }
 
   public ionViewDidEnter(): void {}

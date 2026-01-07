@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { PreparationPopoverActionsComponent } from '../../app/preparation/preparation-popover-actions/preparation-popover-actions.component';
@@ -25,17 +25,38 @@ import { LongPressDirective } from '../../directive/long-press.directive';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
+import { addIcons } from 'ionicons';
+import { wifiOutline } from 'ionicons/icons';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonIcon,
+  IonButton,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-information-card',
   templateUrl: './preparation-information-card.component.html',
   styleUrls: ['./preparation-information-card.component.scss'],
   imports: [
-    IonicModule,
     LongPressDirective,
     AsyncImageComponent,
     TranslatePipe,
     PreparationFunction,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonButton,
+    IonLabel,
+    IonText,
   ],
 })
 export class PreparationInformationCardComponent implements OnInit {
@@ -60,7 +81,9 @@ export class PreparationInformationCardComponent implements OnInit {
     private readonly uiImage: UIImage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ wifiOutline });
+  }
 
   public ngOnInit() {
     this.brewsCount = this.getBrewsCount();

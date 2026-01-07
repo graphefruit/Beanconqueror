@@ -11,12 +11,10 @@ import { Animation, StatusBar, Style } from '@capacitor/status-bar';
 import { Keyboard } from '@capacitor/keyboard';
 
 import {
-  IonRouterOutlet,
   MenuController,
   ModalController,
   Platform,
-  IonicModule,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 /** Third party */
@@ -78,6 +76,33 @@ import { Water } from '../classes/water/water';
 import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
 import { ThemeService } from '../services/theme/theme.service';
 import { SystemBars } from '@capacitor/core';
+import { beanconquerorIcons } from '../generated/icon-registry';
+import { addIcons } from 'ionicons';
+import {
+  closeOutline,
+  logoInstagram,
+  logoFacebook,
+  codeSlashOutline,
+  logoDiscord,
+} from 'ionicons/icons';
+import {
+  IonApp,
+  IonSplitPane,
+  IonMenu,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonMenuToggle,
+  IonItem,
+  IonLabel,
+  IonFooter,
+  IonRouterOutlet,
+} from '@ionic/angular/standalone';
 
 declare var window;
 
@@ -87,7 +112,26 @@ register();
   selector: 'app-root',
   templateUrl: 'app.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [IonicModule, RouterLink, TranslatePipe],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    IonApp,
+    IonSplitPane,
+    IonMenu,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonMenuToggle,
+    IonItem,
+    IonLabel,
+    IonFooter,
+    IonRouterOutlet,
+  ],
 })
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;
@@ -276,6 +320,31 @@ export class AppComponent implements AfterViewInit {
       // Just support deeplinks on devices.
       this.intentHandlerService.attachOnHandleOpenUrl();
     }
+
+    // Add ionicons required by the app component
+    // We don't want to add all of them since the SVGs are inlined into the export
+    addIcons({
+      closeOutline,
+      logoInstagram,
+      logoFacebook,
+      codeSlashOutline,
+      logoDiscord,
+    });
+
+    // We do want to add all the paths to the custom icons though
+    this.addAllCustomIcons();
+  }
+
+  private addAllCustomIcons() {
+    // Add all custom icons here so we don't have to bother with them in other components.
+    // This isn't too bad for the bundle size as we only add the path to the custom icons
+    // anyway. This is different from the default ionicons, which are inlined into the
+    // module exports.
+    const customIcons: Record<string, string> = {};
+    for (const icon of beanconquerorIcons) {
+      customIcons[icon.name] = `/assets/custom-ion-icons/${icon.path}`;
+    }
+    addIcons(customIcons);
   }
 
   public ngOnInit() {
@@ -969,21 +1038,21 @@ export class AppComponent implements AfterViewInit {
   private __instanceAppRating() {
     if (this.platform.is('capacitor')) {
       /** const appLanguage = this.uiSettingsStorage.getSettings().language;
-       AppRate.setPreferences({
-       usesUntilPrompt: 25,
-       storeAppURL: {
-       ios: '1445297158',
-       android: 'market://details?id=com.beanconqueror.app',
-       },
-       promptAgainForEachNewVersion: false,
-       reviewType: {
-       ios: 'AppStoreReview',
-       android: 'InAppReview',
-       },
-       useLanguage: appLanguage,
-       });
+             AppRate.setPreferences({
+             usesUntilPrompt: 25,
+             storeAppURL: {
+             ios: '1445297158',
+             android: 'market://details?id=com.beanconqueror.app',
+             },
+             promptAgainForEachNewVersion: false,
+             reviewType: {
+             ios: 'AppStoreReview',
+             android: 'InAppReview',
+             },
+             useLanguage: appLanguage,
+             });
 
-       AppRate.promptForRating(false);**/
+             AppRate.promptForRating(false);**/
     }
   }
 

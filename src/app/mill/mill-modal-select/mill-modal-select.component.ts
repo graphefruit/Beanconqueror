@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { Mill } from '../../../classes/mill/mill';
 import { Brew } from '../../../classes/brew/brew';
@@ -14,19 +14,58 @@ import { AsyncImageComponent } from '../../../components/async-image/async-image
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { MillFunction } from '../../../pipes/mill/millFunction';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonThumbnail,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'mill-modal-select',
   templateUrl: './mill-modal-select.component.html',
   styleUrls: ['./mill-modal-select.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     NgTemplateOutlet,
     AsyncImageComponent,
     TranslatePipe,
     FormatDatePipe,
     MillFunction,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonThumbnail,
   ],
 })
 export class MillModalSelectComponent implements OnInit {

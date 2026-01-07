@@ -9,7 +9,7 @@ import {
 import { Water } from '../../../classes/water/water';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -22,17 +22,42 @@ import { UIWaterHelper } from '../../../services/uiWaterHelper';
 import { FormsModule } from '@angular/forms';
 import { WaterInformationCardComponent } from '../../../components/water-information-card/water-information-card.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-water',
   templateUrl: './water.page.html',
   styleUrls: ['./water.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     AgVirtualScrollComponent,
     WaterInformationCardComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
   ],
 })
 export class WaterPage implements OnInit {
@@ -67,6 +92,7 @@ export class WaterPage implements OnInit {
     private readonly uiWaterHelper: UIWaterHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ waterOutline });
   }
 
   public ionViewWillEnter(): void {

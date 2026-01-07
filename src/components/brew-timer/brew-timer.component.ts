@@ -14,24 +14,25 @@ import { Device } from '@capacitor/device';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import {
-  IonInput,
-  ModalController,
-  Platform,
-  IonicModule,
-} from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Subscription } from 'rxjs';
 import { BluetoothScale } from '../../classes/devices';
+import {
+  IonItem,
+  IonInput,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-timer',
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
-  imports: [IonicModule],
+  imports: [IonItem, IonInput, IonButton, IonIcon],
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;

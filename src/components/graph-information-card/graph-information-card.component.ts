@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 
 import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -32,13 +32,32 @@ import { BrewFlow } from '../../classes/brew/brewFlow';
 import { UIHelper } from '../../services/uiHelper';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 declare var Plotly;
 @Component({
   selector: 'graph-information-card',
   templateUrl: './graph-information-card.component.html',
   styleUrls: ['./graph-information-card.component.scss'],
-  imports: [IonicModule, LongPressDirective, GraphDisplayCardComponent],
+  imports: [
+    LongPressDirective,
+    GraphDisplayCardComponent,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+  ],
 })
 export class GraphInformationCardComponent implements OnInit {
   @Input() public graph: Graph;

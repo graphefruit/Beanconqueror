@@ -1,16 +1,23 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { IMill } from '../../../interfaces/mill/iMill';
 import { MILL_ACTION } from '../../../enums/mills/millActions';
 import { Mill } from '../../../classes/mill/mill';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'mill-popover-actions',
   templateUrl: './mill-popover-actions.component.html',
   styleUrls: ['./mill-popover-actions.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class MillPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'mill-popover-actions';

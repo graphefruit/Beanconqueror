@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAlert } from '../../../services/uiAlert';
@@ -14,12 +14,30 @@ import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { bluetoothOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-settings-popover-bluetooth-actions',
   templateUrl: './settings-popover-bluetooth-actions.component.html',
   styleUrls: ['./settings-popover-bluetooth-actions.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonIcon,
+  ],
 })
 export class SettingsPopoverBluetoothActionsComponent implements OnInit {
   public static COMPONENT_ID = 'settings-popover-bluetooth-actions';
@@ -35,6 +53,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
     private readonly eventQueue: EventQueueService,
   ) {
     this.settings = this.uiSettings.getSettings();
+    addIcons({ bluetoothOutline });
   }
 
   public ionViewDidEnter(): void {}

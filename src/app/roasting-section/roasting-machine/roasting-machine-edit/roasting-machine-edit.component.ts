@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
@@ -10,12 +10,50 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { FormsModule } from '@angular/forms';
 import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonCheckbox,
+  IonLabel,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-roasting-machine-edit',
   templateUrl: './roasting-machine-edit.component.html',
   styleUrls: ['./roasting-machine-edit.component.scss'],
-  imports: [IonicModule, FormsModule, PhotoAddComponent, TranslatePipe],
+  imports: [
+    FormsModule,
+    PhotoAddComponent,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonCheckbox,
+    IonLabel,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class RoastingMachineEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-edit';

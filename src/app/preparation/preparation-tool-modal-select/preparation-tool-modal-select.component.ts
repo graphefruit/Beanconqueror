@@ -1,17 +1,62 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Bean } from '../../../classes/bean/bean';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { eyeOffOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonSearchbar,
+  IonItem,
+  IonCheckbox,
+  IonRadioGroup,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-tool-modal-select',
   templateUrl: './preparation-tool-modal-select.component.html',
   styleUrls: ['./preparation-tool-modal-select.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonSearchbar,
+    IonItem,
+    IonCheckbox,
+    IonRadioGroup,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class PreparationToolModalSelectComponent implements OnInit {
   public static COMPONENT_ID = 'preparation-tool-modal-select';
@@ -34,7 +79,9 @@ export class PreparationToolModalSelectComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage,
-  ) {}
+  ) {
+    addIcons({ eyeOffOutline });
+  }
 
   public ionViewDidEnter(): void {
     if (this.preparationId) {

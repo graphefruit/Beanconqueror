@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { Water } from '../../../../classes/water/water';
@@ -10,12 +10,43 @@ import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WaterAddTypeComponent } from '../water-add-type/water-add-type.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../../pipes/keys';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-water-add',
   templateUrl: './water-add.component.html',
   styleUrls: ['./water-add.component.scss'],
-  imports: [IonicModule, TranslatePipe, KeysPipe],
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+  ],
 })
 export class WaterAddComponent implements OnInit {
   public static COMPONENT_ID = 'water-add';
@@ -28,7 +59,9 @@ export class WaterAddComponent implements OnInit {
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  ) {
+    addIcons({ waterOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

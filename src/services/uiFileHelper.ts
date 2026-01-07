@@ -8,7 +8,7 @@ import {
   Filesystem,
   StatOptions,
 } from '@capacitor/filesystem';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UILog } from './uiLog';
 

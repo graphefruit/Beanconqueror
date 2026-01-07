@@ -1,16 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { GRAPH_ACTION } from '../../../../enums/graph/graphAction';
 import { Graph } from '../../../../classes/graph/graph';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { shareSocialOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-graph-popover-actions',
   templateUrl: './graph-popover-actions.component.html',
   styleUrls: ['./graph-popover-actions.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class GraphPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'graph-popover-actions';
@@ -19,6 +28,7 @@ export class GraphPopoverActionsComponent implements OnInit {
   @Input('graph') public graph: IGraph;
   constructor(private readonly modalController: ModalController) {
     this.data.initializeByObject(this.graph);
+    addIcons({ shareSocialOutline });
   }
 
   public ionViewDidEnter(): void {}

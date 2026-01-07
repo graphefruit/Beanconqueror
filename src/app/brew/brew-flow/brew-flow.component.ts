@@ -10,7 +10,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 import { Brew } from '../../../classes/brew/brew';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -30,13 +30,49 @@ import { CameraPreview } from '@capgo/camera-preview';
 import { Capacitor } from '@capacitor/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { addIcons } from 'ionicons';
+import {
+  closeOutline,
+  waterOutline,
+  thermometerOutline,
+  timeOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonChip,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonFooter,
+} from '@ionic/angular/standalone';
 
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
-  imports: [IonicModule, TranslatePipe, BrewFunction],
+  imports: [
+    TranslatePipe,
+    BrewFunction,
+    IonHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonChip,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+    IonFooter,
+  ],
 })
 export class BrewFlowComponent implements OnDestroy, OnInit {
   public static readonly COMPONENT_ID: string = 'brew-flow';
@@ -108,6 +144,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ closeOutline, waterOutline, thermometerOutline, timeOutline });
   }
 
   public ngOnInit() {

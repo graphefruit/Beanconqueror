@@ -1,16 +1,57 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadioGroup,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-roasting-machine-modal-select',
   templateUrl: './roasting-machine-modal-select.component.html',
   styleUrls: ['./roasting-machine-modal-select.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadioGroup,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class RoastingMachineModalSelectComponent implements OnInit {
   public static COMPONENT_ID: string = 'roasting-machine-modal-select';

@@ -3,7 +3,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -17,19 +17,52 @@ import { TransformDateDirective } from '../../../directive/transform-date';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonToggle,
+  IonSelect,
+  IonSelectOption,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonInput,
+  IonLabel,
+  IonRange,
+  IonIcon,
+  IonBadge,
+  IonList,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-filter',
   templateUrl: './bean-filter.component.html',
   styleUrls: ['./bean-filter.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     ChooseDateOverlayDirective,
     TransformDateDirective,
     TranslatePipe,
     KeysPipe,
     ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonToggle,
+    IonSelect,
+    IonSelectOption,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonInput,
+    IonLabel,
+    IonRange,
+    IonIcon,
+    IonBadge,
+    IonList,
+    IonButton,
   ],
 })
 export class BeanFilterComponent implements OnInit {

@@ -9,7 +9,7 @@ import {
 import { BluetoothTypes, ScaleType } from '../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { finalize, Subscription } from 'rxjs';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAlert } from '../../services/uiAlert';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import { Settings } from '../../classes/settings/settings';
@@ -20,12 +20,51 @@ import { Preparation } from '../../classes/preparation/preparation';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { refreshOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonRadioGroup,
+  IonItem,
+  IonRadio,
+  IonSpinner,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bluetooth-device-chooser-popover',
   templateUrl: './bluetooth-device-chooser-popover.component.html',
   styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonRadioGroup,
+    IonItem,
+    IonRadio,
+    IonSpinner,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BluetoothDeviceChooserPopoverComponent
   implements OnInit, OnDestroy
@@ -49,7 +88,9 @@ export class BluetoothDeviceChooserPopoverComponent
     private readonly changeDetector: ChangeDetectorRef,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private ngZone: NgZone,
-  ) {}
+  ) {
+    addIcons({ refreshOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

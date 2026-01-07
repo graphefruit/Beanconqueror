@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Bean } from '../../classes/bean/bean';
 import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Brew } from '../../classes/brew/brew';
@@ -9,12 +9,31 @@ import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { AsyncImageComponent } from '../../components/async-image/async-image.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'photo-popover',
   templateUrl: './photo-popover.component.html',
   styleUrls: ['./photo-popover.component.scss'],
-  imports: [IonicModule, AsyncImageComponent, TranslatePipe],
+  imports: [
+    AsyncImageComponent,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+  ],
 })
 export class PhotoPopoverComponent implements OnInit {
   public static COMPONENT_ID: string = 'photo-popover';

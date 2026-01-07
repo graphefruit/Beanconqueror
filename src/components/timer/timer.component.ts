@@ -11,17 +11,23 @@ import { Device } from '@capacitor/device';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
 import moment from 'moment';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { TransformDateDirective } from '../../directive/transform-date';
+import {
+  IonItem,
+  IonInput,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss'],
-  imports: [IonicModule, TransformDateDirective],
+  imports: [TransformDateDirective, IonItem, IonInput, IonButton, IonIcon],
 })
 export class TimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;

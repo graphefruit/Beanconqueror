@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -13,16 +13,39 @@ import { UIRoastingMachineHelper } from '../../../services/uiRoastingMachineHelp
 import { FormsModule } from '@angular/forms';
 import { RoastingMachineInformationCardComponent } from '../../../components/roasting-machine-information-card/roasting-machine-information-card.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-roasting-machine',
   templateUrl: './roasting-machine.page.html',
   styleUrls: ['./roasting-machine.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     RoastingMachineInformationCardComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
   ],
 })
 export class RoastingMachinePage implements OnInit {

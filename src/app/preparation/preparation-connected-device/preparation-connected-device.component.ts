@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
@@ -20,12 +20,54 @@ import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevic
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import { addIcons } from 'ionicons';
+import { checkmarkCircleOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+  IonInput,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonCheckbox,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-preparation-connected-device',
   templateUrl: './preparation-connected-device.component.html',
   styleUrls: ['./preparation-connected-device.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe, ToFixedPipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    ToFixedPipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonInput,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonCheckbox,
+  ],
 })
 export class PreparationConnectedDeviceComponent {
   public static readonly COMPONENT_ID = 'preparation-connected-device';
@@ -53,7 +95,9 @@ export class PreparationConnectedDeviceComponent {
     private readonly uiAlert: UIAlert,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  ) {
+    addIcons({ checkmarkCircleOutline });
+  }
 
   public ionViewWillEnter(): void {
     if (this.preparation !== undefined) {

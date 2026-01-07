@@ -11,7 +11,7 @@ import { Settings } from '../../classes/settings/settings';
 import BeanconquerorFlowTestDataDummy from '../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UIHelper } from '../../services/uiHelper';
 import { UIFileHelper } from '../../services/uiFileHelper';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
 import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';

@@ -1,20 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { FormsModule } from '@angular/forms';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-brix-calculator',
   templateUrl: './brew-brix-calculator.component.html',
   styleUrls: ['./brew-brix-calculator.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     DisableDoubleClickDirective,
     TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonRow,
+    IonCol,
+    IonButton,
   ],
 })
 export class BrewBrixCalculatorComponent implements OnInit {

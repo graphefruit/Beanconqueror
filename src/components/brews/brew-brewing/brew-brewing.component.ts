@@ -16,7 +16,7 @@ import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
 import moment from 'moment';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
@@ -94,6 +94,30 @@ import { ToFixedPipe } from '../../../pipes/toFixed';
 import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { addIcons } from 'ionicons';
+import {
+  globeOutline,
+  download,
+  expandOutline,
+  analyticsOutline,
+} from 'ionicons/icons';
+import {
+  IonCard,
+  IonItem,
+  IonInput,
+  IonButton,
+  IonIcon,
+  IonSelect,
+  IonList,
+  IonLabel,
+  IonRow,
+  IonCol,
+  IonSelectOption,
+  IonBadge,
+  IonRange,
+  IonTextarea,
+  IonGrid,
+} from '@ionic/angular/standalone';
 
 declare var cordova;
 
@@ -102,7 +126,6 @@ declare var cordova;
   templateUrl: './brew-brewing.component.html',
   styleUrls: ['./brew-brewing.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
@@ -124,6 +147,21 @@ declare var cordova;
     BrewFieldVisiblePipe,
     BrewFieldOrder,
     BrewFunction,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonButton,
+    IonIcon,
+    IonSelect,
+    IonList,
+    IonLabel,
+    IonRow,
+    IonCol,
+    IonSelectOption,
+    IonBadge,
+    IonRange,
+    IonTextarea,
+    IonGrid,
   ],
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
@@ -221,7 +259,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly eventQueue: EventQueueService,
     private readonly hapticService: HapticService,
     private readonly textToSpeech: TextToSpeechService,
-  ) {}
+  ) {
+    addIcons({ globeOutline, download, expandOutline, analyticsOutline });
+  }
 
   public openURL(_url) {
     if (_url) {
@@ -357,8 +397,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
        * We removed this line, because we loaded the preparation device element twice, because it was already loaded fron the last brew
        */
       /** if (this.brewBrewingPreparationDeviceEl && !this.brewBrewingPreparationDeviceEl.hasAPreparationDeviceSet()) {
-        await this.brewBrewingPreparationDeviceEl?.instance();
-      }**/
+              await this.brewBrewingPreparationDeviceEl?.instance();
+            }**/
 
       const uiSectionWhileBrewingVisibleOnEnd = this.uiShowSectionWhileBrew;
       if (
@@ -637,10 +677,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     this.maxBrewRating = this.settings.brew_rating;
     /** if (this.loadSpecificLastPreparation) {
-      this.forceSetPreparation(this.loadSpecificLastPreparation);
-    } else {
-      this.setChoosenPreparation();
-    }**/
+          this.forceSetPreparation(this.loadSpecificLastPreparation);
+        } else {
+          this.setChoosenPreparation();
+        }**/
     this.setChoosenPreparation();
   }
 

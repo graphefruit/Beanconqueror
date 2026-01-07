@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Graph } from '../../../../classes/graph/graph';
 
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -13,12 +13,54 @@ import { UIAlert } from '../../../../services/uiAlert';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
+import { addIcons } from 'ionicons';
+import {
+  cloudUploadOutline,
+  informationCircleOutline,
+  trashOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonLabel,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-graph-add',
   templateUrl: './graph-add.component.html',
   styleUrls: ['./graph-add.component.scss'],
-  imports: [IonicModule, FormsModule, GraphDisplayCardComponent, TranslatePipe],
+  imports: [
+    FormsModule,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonLabel,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class GraphAddComponent {
   public static readonly COMPONENT_ID = 'graph-add';
@@ -34,7 +76,9 @@ export class GraphAddComponent {
     private readonly platform: Platform,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
-  ) {}
+  ) {
+    addIcons({ cloudUploadOutline, informationCircleOutline, trashOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

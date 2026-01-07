@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../services/uiHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -26,13 +26,26 @@ import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew',
   templateUrl: './brew.page.html',
   styleUrls: ['./brew.page.scss'],
   imports: [
-    IonicModule,
     ShortPressDirective,
     LongPressDirective,
     FormsModule,
@@ -40,6 +53,18 @@ import { TranslatePipe } from '@ngx-translate/core';
     AgVirtualScrollComponent,
     BrewInformationComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
   ],
 })
 export class BrewPage implements OnInit {

@@ -3,7 +3,7 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { FormsModule } from '@angular/forms';
 import { ManageCustomParameterComponent } from '../../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
@@ -12,13 +12,28 @@ import { SortCustomParameterComponent } from '../../../components/parameter/sort
 import { ListViewCustomParameterComponent } from '../../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
 import { RepeatCustomParameterComponent } from '../../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonItem,
+  IonCheckbox,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-preparation-custom-parameters',
   templateUrl: './preparation-custom-parameters.component.html',
   styleUrls: ['./preparation-custom-parameters.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     ManageCustomParameterComponent,
     DefaultCustomParameterComponent,
@@ -26,6 +41,20 @@ import { TranslatePipe } from '@ngx-translate/core';
     ListViewCustomParameterComponent,
     RepeatCustomParameterComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonItem,
+    IonCheckbox,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
   ],
 })
 export class PreparationCustomParametersComponent implements OnInit {

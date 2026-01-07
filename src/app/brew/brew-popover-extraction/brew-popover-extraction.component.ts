@@ -6,11 +6,21 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from 'src/classes/brew/brew';
 import { Preparation } from 'src/classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+} from '@ionic/angular/standalone';
 
 declare var Plotly;
 
@@ -18,7 +28,17 @@ declare var Plotly;
   selector: 'app-brew-popover-extraction',
   templateUrl: './brew-popover-extraction.component.html',
   styleUrls: ['./brew-popover-extraction.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+  ],
 })
 export class BrewPopoverExtractionComponent implements OnInit {
   public static COMPONENT_ID = 'brew-extraction';

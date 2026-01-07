@@ -11,22 +11,38 @@ import { ICupping } from '../../interfaces/cupping/iCupping';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { IonicModule } from '@ionic/angular';
 import { TooltipDirective } from '../../directive/tooltip.directive';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { informationOutline } from 'ionicons/icons';
+import {
+  IonCard,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonTextarea,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'cupping-radar',
   templateUrl: './cupping-radar.component.html',
   styleUrls: ['./cupping-radar.component.scss'],
   imports: [
-    IonicModule,
     TooltipDirective,
     FormsModule,
     DecimalPipe,
     TranslatePipe,
+    IonCard,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonTextarea,
   ],
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
@@ -51,7 +67,9 @@ export class CuppingRadarComponent implements AfterViewInit, OnInit {
   @Output() public cuppingChanged: EventEmitter<any> = new EventEmitter();
 
   private debounceCounter: number = 0;
-  constructor(private uiBrewHelper: UIBrewHelper) {}
+  constructor(private uiBrewHelper: UIBrewHelper) {
+    addIcons({ informationOutline });
+  }
 
   public ngOnInit(): void {
     this.debounceRadar

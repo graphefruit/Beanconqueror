@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Bean } from '../../classes/bean/bean';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -35,17 +35,43 @@ import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
+
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     NgTemplateOutlet,
     AgVirtualScrollComponent,
     BeanInformationComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
   ],
 })
 export class BeansPage implements OnDestroy {

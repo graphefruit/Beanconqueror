@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
 import { UILog } from '../../services/uiLog';
 import { ShareService } from '../../services/shareService/share-service.service';
@@ -7,12 +7,18 @@ import { EventQueueService } from '../../services/queueService/queue-service.ser
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { Subscription } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonContent,
+  IonSpinner,
+  IonFooter,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'loading-popover',
   templateUrl: './loading-popover.component.html',
   styleUrls: ['./loading-popover.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [TranslatePipe, IonContent, IonSpinner, IonFooter, IonButton],
 })
 export class LoadingPopoverComponent implements OnInit {
   public __showDismissButton: boolean = false;

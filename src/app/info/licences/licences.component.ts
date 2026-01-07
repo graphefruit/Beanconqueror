@@ -1,14 +1,46 @@
 import { Component, OnInit } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
-import { IonicModule } from '@ionic/angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
+import { addIcons } from 'ionicons';
+import {
+  chevronForwardOutline,
+  chevronDownOutline,
+  chevronUpOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonIcon,
+  IonLabel,
+  IonCardContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'licences',
   templateUrl: './licences.component.html',
   styleUrls: ['./licences.component.scss'],
-  imports: [IonicModule, TranslatePipe, KeysPipe],
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonCardContent,
+  ],
 })
 export class LicencesComponent implements OnInit {
   public licences: any = {
@@ -639,7 +671,9 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
     },
   };
-  constructor(private readonly uiHelper: UIHelper) {}
+  constructor(private readonly uiHelper: UIHelper) {
+    addIcons({ chevronForwardOutline, chevronDownOutline, chevronUpOutline });
+  }
 
   public ngOnInit() {}
 

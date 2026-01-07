@@ -10,22 +10,38 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { BeanInformation } from '../../../generated/src/classes/bean/bean';
 import { distinct } from 'rxjs/operators';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { copyOutline, closeOutline } from 'ionicons/icons';
+import {
+  IonCard,
+  IonItem,
+  IonButton,
+  IonIcon,
+  IonInput,
+  IonList,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'bean-sort-information',
   templateUrl: './bean-sort-information.component.html',
   styleUrls: ['./bean-sort-information.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     TranslatePipe,
+    IonCard,
+    IonItem,
+    IonButton,
+    IonIcon,
+    IonInput,
+    IonList,
+    IonLabel,
   ],
 })
 export class BeanSortInformationComponent implements OnInit {
@@ -40,7 +56,9 @@ export class BeanSortInformationComponent implements OnInit {
     public readonly uiBeanHelper: UIBeanHelper,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ copyOutline, closeOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

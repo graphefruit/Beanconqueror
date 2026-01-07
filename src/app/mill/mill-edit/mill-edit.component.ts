@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { Mill } from '../../../classes/mill/mill';
 import { UIHelper } from '../../../services/uiHelper';
@@ -10,12 +10,50 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { FormsModule } from '@angular/forms';
 import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonCheckbox,
+  IonLabel,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'mill-edit',
   templateUrl: './mill-edit.component.html',
   styleUrls: ['./mill-edit.component.scss'],
-  imports: [IonicModule, FormsModule, PhotoAddComponent, TranslatePipe],
+  imports: [
+    FormsModule,
+    PhotoAddComponent,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonCheckbox,
+    IonLabel,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class MillEditComponent implements OnInit {
   public static COMPONENT_ID: string = 'mill-edit';

@@ -1,6 +1,6 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 /** Ionic */
 
 declare var navigator;
@@ -20,7 +20,7 @@ export class UIHealthKit {
           },
           (e) => {
             reject(false);
-          }
+          },
         );
       } else {
         reject(false);
@@ -45,12 +45,12 @@ export class UIHealthKit {
             },
             (e) => {
               reject();
-            }
+            },
           );
         },
         (e) => {
           reject();
-        }
+        },
       );
     });
     return promise;
@@ -67,7 +67,7 @@ export class UIHealthKit {
           unit: 'g',
         },
         (e) => {},
-        (e) => {}
+        (e) => {},
       );
     } catch (ex) {}
   }

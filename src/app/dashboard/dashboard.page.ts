@@ -15,23 +15,56 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
 import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { ShortPressDirective } from '../../directive/short-press.directive';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { giftOutline, thermometerOutline, snowOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   imports: [
-    IonicModule,
     ShortPressDirective,
     LongPressDirective,
     RouterLink,
     BrewInformationComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
   ],
 })
 export class DashboardPage implements OnInit {
@@ -59,7 +92,9 @@ export class DashboardPage implements OnInit {
     private readonly uiMillStorage: UIMillStorage,
     private readonly unwrappedService: UnwrappedService,
     private readonly modalController: ModalController,
-  ) {}
+  ) {
+    addIcons({ giftOutline, thermometerOutline, snowOutline });
+  }
 
   public async openUnwrapped(year?: number) {
     const targetYear = year || new Date().getFullYear();

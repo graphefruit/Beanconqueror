@@ -1,16 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonTitle,
+  IonContent,
+  IonFooter,
+  IonItem,
+  IonCheckbox,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-qr-code-scanner-popover',
   templateUrl: './qr-code-scanner-popover.component.html',
   styleUrls: ['./qr-code-scanner-popover.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonTitle,
+    IonContent,
+    IonFooter,
+    IonItem,
+    IonCheckbox,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class QrCodeScannerPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'qr-code-scanner-popover';

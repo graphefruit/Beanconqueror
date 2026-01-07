@@ -3,18 +3,48 @@ import { UILog } from '../../../services/uiLog';
 import { ILogInterface } from '../../../interfaces/log/iLog';
 
 import { LOGS_ENUM } from '../../../enums/logs/logs';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { LogTextComponent } from './log-text/log-text.component';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { sendOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonRow,
+  IonCol,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'log',
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonRow,
+    IonCol,
+    IonText,
+  ],
 })
 export class LogComponent implements OnInit {
   public logs: Array<ILogInterface> = [];
@@ -25,7 +55,9 @@ export class LogComponent implements OnInit {
     private readonly modalCtrl: ModalController,
     private shareService: ShareService,
     private readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ sendOutline });
+  }
 
   public ngOnInit() {
     this.logs = this.uiLog.getLogs();

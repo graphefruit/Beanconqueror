@@ -14,8 +14,7 @@ import {
   MenuController,
   ModalController,
   Platform,
-  IonicModule,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BrewPopoverActionsComponent } from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
@@ -69,7 +68,6 @@ declare var window;
   ],
   imports: [
     NgTemplateOutlet,
-    IonicModule,
     GraphDisplayCardComponent,
     LongPressDirective,
     NgClass,
@@ -289,22 +287,22 @@ export class BrewInformationComponent implements OnInit {
     await this.uiAlert.hideLoadingSpinner();
     /** const vS: Visualizer = new Visualizer();
 
-    vS.mapBrew(this.brew);
-    vS.mapBean(this.brew.getBean());
-    vS.mapWater(this.brew.getWater());
-    vS.mapPreparation(this.brew.getPreparation());
-    vS.mapMill(this.brew.getMill());
-    vS.brewFlow = await this.readFlowProfile();
+        vS.mapBrew(this.brew);
+        vS.mapBean(this.brew.getBean());
+        vS.mapWater(this.brew.getWater());
+        vS.mapPreparation(this.brew.getPreparation());
+        vS.mapMill(this.brew.getMill());
+        vS.brewFlow = await this.readFlowProfile();
 
 
-    this.uiFileHelper.saveJSONFile('TestJSONVisualizer.json', JSON.stringify(vS));
-    try {
-      await this.uiHelper.exportJSON(
-        this.brew.config.uuid + '_visualizer.json',
-        JSON.stringify(vS),
-        true
-      );
-    } catch (ex) {}**/
+        this.uiFileHelper.saveJSONFile('TestJSONVisualizer.json', JSON.stringify(vS));
+        try {
+          await this.uiHelper.exportJSON(
+            this.brew.config.uuid + '_visualizer.json',
+            JSON.stringify(vS),
+            true
+          );
+        } catch (ex) {}**/
   }
 
   public async fastRepeatBrew() {

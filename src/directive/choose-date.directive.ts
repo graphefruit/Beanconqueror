@@ -5,7 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 declare var cordova;

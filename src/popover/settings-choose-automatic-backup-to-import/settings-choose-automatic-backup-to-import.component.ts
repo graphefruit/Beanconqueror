@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { FileInfo } from '@capacitor/filesystem';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -8,12 +8,46 @@ import { UIHelper } from '../../services/uiHelper';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../pipes/formatDate';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonRadioGroup,
+  IonItem,
+  IonRadio,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-settings-choose-automatic-backup-to-import',
   templateUrl: './settings-choose-automatic-backup-to-import.component.html',
   styleUrls: ['./settings-choose-automatic-backup-to-import.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe, FormatDatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    FormatDatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonRadioGroup,
+    IonItem,
+    IonRadio,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   public static POPOVER_ID: string =

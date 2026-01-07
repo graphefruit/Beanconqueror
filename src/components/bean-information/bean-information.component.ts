@@ -14,8 +14,7 @@ import {
   ActionSheetController,
   ModalController,
   Platform,
-  IonicModule,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { BEAN_ACTION } from '../../enums/beans/beanAction';
@@ -51,6 +50,31 @@ import { FormatDatePipe } from '../../pipes/formatDate';
 import { ToFixedPipe } from '../../pipes/toFixed';
 import { BeanFieldVisiblePipe } from '../../pipes/bean/beanFieldVisible';
 import { BeanFunction } from '../../pipes/bean/beanFunction';
+import { addIcons } from 'ionicons';
+import {
+  fileTrayFullOutline,
+  moon,
+  snowOutline,
+  flameOutline,
+  qrCodeOutline,
+  shareSocialOutline,
+  heart,
+  pricetagOutline,
+  chevronUpOutline,
+  chevronDownOutline,
+} from 'ionicons/icons';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonIcon,
+  IonBadge,
+  IonButton,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'bean-information',
@@ -60,7 +84,6 @@ import { BeanFunction } from '../../pipes/bean/beanFunction';
     '../../theme/variables.scss',
   ],
   imports: [
-    IonicModule,
     LongPressDirective,
     NgxStarsModule,
     AsyncImageComponent,
@@ -70,6 +93,16 @@ import { BeanFunction } from '../../pipes/bean/beanFunction';
     ToFixedPipe,
     BeanFieldVisiblePipe,
     BeanFunction,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonBadge,
+    IonButton,
+    IonLabel,
+    IonText,
   ],
 })
 export class BeanInformationComponent implements OnInit {
@@ -119,6 +152,18 @@ export class BeanInformationComponent implements OnInit {
     private readonly currencyService: CurrencyService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({
+      fileTrayFullOutline,
+      moon,
+      snowOutline,
+      flameOutline,
+      qrCodeOutline,
+      shareSocialOutline,
+      heart,
+      pricetagOutline,
+      chevronUpOutline,
+      chevronDownOutline,
+    });
   }
 
   public ngOnInit() {
@@ -322,10 +367,10 @@ export class BeanInformationComponent implements OnInit {
     await this.resetSettings();
 
     /* this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
-    this.bean.finished = true;
-    await this.uiBeanStorage.update(this.bean);
-    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    */
+        this.bean.finished = true;
+        await this.uiBeanStorage.update(this.bean);
+        this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
+        */
   }
 
   public async unarchiveBean() {
@@ -622,8 +667,8 @@ export class BeanInformationComponent implements OnInit {
   }
 
   /*
-    Deprecated right now, used by pipe
-   */
+      Deprecated right now, used by pipe
+     */
   public showCostPerKG(): boolean {
     if (
       this.bean.weight &&

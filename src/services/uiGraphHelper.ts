@@ -1,6 +1,6 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Graph } from '../classes/graph/graph';
 import { GraphEditComponent } from '../app/graph-section/graph/graph-edit/graph-edit.component';
 import { GraphAddComponent } from '../app/graph-section/graph/graph-add/graph-add.component';
@@ -25,7 +25,7 @@ export class UIGraphHelper {
     private readonly platform: Platform,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
-    private readonly uiFileHelper: UIFileHelper
+    private readonly uiFileHelper: UIFileHelper,
   ) {}
 
   public async addGraph() {
@@ -89,7 +89,7 @@ export class UIGraphHelper {
       return data;
     } catch (error) {
       this.uiAlert.showMessage(
-        this.translate.instant('ERROR_ON_FILE_READING') + error
+        this.translate.instant('ERROR_ON_FILE_READING') + error,
       );
     }
   }
@@ -98,7 +98,7 @@ export class UIGraphHelper {
     const savingPath = 'graphs/' + _uuid + '_flow_profile.json';
     await this.uiFileHelper.writeInternalFileFromText(
       JSON.stringify(_jsonObj),
-      savingPath
+      savingPath,
     );
     return savingPath;
   }
@@ -108,9 +108,8 @@ export class UIGraphHelper {
       if (this.platform.is('capacitor')) {
         if (_flowProfilePath !== '') {
           try {
-            const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-              _flowProfilePath
-            );
+            const jsonParsed =
+              await this.uiFileHelper.readInternalJSONFile(_flowProfilePath);
             resolve(jsonParsed);
           } catch (ex) {
             reject();

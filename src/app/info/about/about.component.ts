@@ -1,14 +1,42 @@
 import { Component, OnInit } from '@angular/core';
 import { App } from '@capacitor/app';
-import { Platform, IonicModule } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { addIcons } from 'ionicons';
+import {
+  informationCircleOutline,
+  analyticsOutline,
+  helpBuoyOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonIcon,
+  ],
 })
 export class AboutComponent implements OnInit {
   public versionStr: string = '';
@@ -19,7 +47,9 @@ export class AboutComponent implements OnInit {
     public platform: Platform,
     private readonly translate: TranslateService,
     private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  ) {
+    addIcons({ informationCircleOutline, analyticsOutline, helpBuoyOutline });
+  }
 
   public async ngOnInit() {
     await this.setAppVersion();

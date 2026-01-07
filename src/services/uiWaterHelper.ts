@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 import { UIAnalytics } from './uiAnalytics';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { WaterAddComponent } from '../app/water-section/water/water-add/water-add.component';
 import { WaterEditComponent } from '../app/water-section/water/water-edit/water-edit.component';
 import { Water } from '../classes/water/water';

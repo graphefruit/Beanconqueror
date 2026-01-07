@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Mill } from '../../classes/mill/mill';
 import { MILL_ACTION } from '../../enums/mills/millActions';
 import { MillPopoverActionsComponent } from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
@@ -22,17 +22,37 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { MillFunction } from '../../pipes/mill/millFunction';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
+
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
   styleUrls: ['./mill-information-card.component.scss'],
   imports: [
-    IonicModule,
     LongPressDirective,
     AsyncImageComponent,
     TranslatePipe,
     FormatDatePipe,
     MillFunction,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
   ],
 })
 export class MillInformationCardComponent implements OnInit {

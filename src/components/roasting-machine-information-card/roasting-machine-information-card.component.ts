@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIAlert } from '../../services/uiAlert';
@@ -17,17 +17,36 @@ import { LongPressDirective } from '../../directive/long-press.directive';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'roasting-machine-information-card',
   templateUrl: './roasting-machine-information-card.component.html',
   styleUrls: ['./roasting-machine-information-card.component.scss'],
   imports: [
-    IonicModule,
     LongPressDirective,
     AsyncImageComponent,
     DecimalPipe,
     TranslatePipe,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
   ],
 })
 export class RoastingMachineInformationCardComponent {

@@ -4,7 +4,7 @@ import { UIToast } from '../../services/uiToast';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { WATER_ACTION } from '../../enums/water/waterActions';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { WaterPopoverActionsComponent } from '../../app/water-section/water/water-popover-actions/water-popover-actions.component';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIImage } from '../../services/uiImage';
@@ -18,17 +18,36 @@ import { LongPressDirective } from '../../directive/long-press.directive';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'water-information-card',
   templateUrl: './water-information-card.component.html',
   styleUrls: ['./water-information-card.component.scss'],
   imports: [
-    IonicModule,
     LongPressDirective,
     AsyncImageComponent,
     DecimalPipe,
     TranslatePipe,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
   ],
 })
 export class WaterInformationCardComponent implements OnInit {

@@ -10,7 +10,11 @@ import {
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 /** Ionic */
-import { AlertController, ModalController, Platform } from '@ionic/angular';
+import {
+  AlertController,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 import { UIHelper } from './uiHelper';
 import { UIFileHelper } from './uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';

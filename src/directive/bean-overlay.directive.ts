@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { BeanModalSelectComponent } from '../app/beans/bean-modal-select/bean-modal-select.component';
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { Bean } from '../classes/bean/bean';

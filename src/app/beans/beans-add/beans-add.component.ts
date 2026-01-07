@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIToast } from '../../../services/uiToast';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
@@ -24,13 +24,27 @@ import { BeanFreezeInformationComponent } from '../../../components/beans/bean-f
 import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
   styleUrls: ['./beans-add.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
@@ -38,6 +52,19 @@ import { TranslatePipe } from '@ngx-translate/core';
     BeanSortInformationComponent,
     DisableDoubleClickDirective,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class BeansAddComponent implements OnInit {

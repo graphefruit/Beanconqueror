@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { IonInput, ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import moment from 'moment';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -9,19 +9,38 @@ import { PreventCharacterDirective } from '../../directive/prevent-character.dir
 import { RemoveEmptyNumberDirective } from '../../directive/remove-empty-number.directive';
 import { DisableDoubleClickDirective } from '../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonItem,
+  IonCheckbox,
+  IonInput,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-datetime-popover',
   templateUrl: './datetime-popover.component.html',
   styleUrls: ['./datetime-popover.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     MaxNumberValueDirective,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     DisableDoubleClickDirective,
     TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonItem,
+    IonCheckbox,
+    IonInput,
+    IonButton,
   ],
 })
 export class DatetimePopoverComponent implements OnInit {
@@ -57,11 +76,11 @@ export class DatetimePopoverComponent implements OnInit {
   }
   public ionViewDidEnter(): void {
     /**
-     * To many "issues" on the user side, so we disable this feature for now.
-     * setTimeout(() => {
-      //Give it a short time
-      this.secondInput.setFocus();
-    }, 250);**/
+         * To many "issues" on the user side, so we disable this feature for now.
+         * setTimeout(() => {
+          //Give it a short time
+          this.secondInput.setFocus();
+        }, 250);**/
   }
 
   public saveSettings() {

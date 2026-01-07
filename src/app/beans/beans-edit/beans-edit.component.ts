@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -17,19 +17,46 @@ import { BeanGeneralInformationComponent } from '../../../components/beans/bean-
 import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
 import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'beans-edit',
   templateUrl: './beans-edit.component.html',
   styleUrls: ['./beans-edit.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanFreezeInformationComponent,
     BeanSortInformationComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class BeansEditComponent implements OnInit {

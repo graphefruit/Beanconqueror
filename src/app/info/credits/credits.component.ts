@@ -1,20 +1,56 @@
 import { Component, OnInit } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
-import { IonicModule } from '@ionic/angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
+import { addIcons } from 'ionicons';
+import {
+  chevronForwardOutline,
+  chevronDownOutline,
+  chevronUpOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonItem,
+  IonIcon,
+  IonLabel,
+  IonCardContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'credits',
   templateUrl: './credits.component.html',
   styleUrls: ['./credits.component.scss'],
-  imports: [IonicModule, TranslatePipe, KeysPipe],
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonCardContent,
+  ],
 })
 export class CreditsComponent implements OnInit {
   public noCreditsToGive: boolean = true;
   public credits: any = {};
 
-  constructor(private readonly uiHelper: UIHelper) {}
+  constructor(private readonly uiHelper: UIHelper) {
+    addIcons({ chevronForwardOutline, chevronDownOutline, chevronUpOutline });
+  }
 
   public ngOnInit() {}
 

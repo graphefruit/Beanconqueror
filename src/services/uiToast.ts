@@ -1,7 +1,7 @@
 /** Core */
 import { Injectable } from '@angular/core';
 /** Ionic */
-import { ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({

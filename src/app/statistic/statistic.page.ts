@@ -14,14 +14,48 @@ import Gradient from 'javascript-color-gradient';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import { CurrencyService } from '../../services/currencyService/currency.service';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+} from '@ionic/angular/standalone';
+
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
   styleUrls: ['./statistic.page.scss'],
-  imports: [IonicModule, FormsModule, DecimalPipe, TranslatePipe],
+  imports: [
+    FormsModule,
+    DecimalPipe,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+  ],
 })
 export class StatisticPage implements OnInit {
   @ViewChild('brewChart', { static: false }) public brewChart;

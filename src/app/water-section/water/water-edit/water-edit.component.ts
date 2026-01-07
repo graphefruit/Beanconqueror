@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
@@ -17,19 +17,58 @@ import { PreventCharacterDirective } from '../../../../directive/prevent-charact
 import { RemoveEmptyNumberDirective } from '../../../../directive/remove-empty-number.directive';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../../pipes/keys';
+import { addIcons } from 'ionicons';
+import { informationCircleOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonCheckbox,
+  IonLabel,
+  IonTextarea,
+  IonRow,
+  IonCol,
+  IonSelect,
+  IonSelectOption,
+  IonFooter,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-water-edit',
   templateUrl: './water-edit.component.html',
   styleUrls: ['./water-edit.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     PhotoAddComponent,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     TranslatePipe,
     KeysPipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonCheckbox,
+    IonLabel,
+    IonTextarea,
+    IonRow,
+    IonCol,
+    IonSelect,
+    IonSelectOption,
+    IonFooter,
   ],
 })
 export class WaterEditComponent {
@@ -46,7 +85,9 @@ export class WaterEditComponent {
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  ) {
+    addIcons({ informationCircleOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

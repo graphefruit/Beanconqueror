@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
@@ -29,13 +29,36 @@ import { AsyncImageComponent } from '../../../components/async-image/async-image
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { BeanFunction } from '../../../pipes/bean/beanFunction';
+import { addIcons } from 'ionicons';
+import { snowOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonThumbnail,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'bean-modal-select',
   templateUrl: './bean-modal-select.component.html',
   styleUrls: ['./bean-modal-select.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     NgTemplateOutlet,
     AgVirtualScrollComponent,
@@ -44,6 +67,26 @@ import { BeanFunction } from '../../../pipes/bean/beanFunction';
     TranslatePipe,
     FormatDatePipe,
     BeanFunction,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonThumbnail,
+    IonSearchbar,
   ],
 })
 export class BeanModalSelectComponent implements OnInit {
@@ -147,6 +190,7 @@ export class BeanModalSelectComponent implements OnInit {
     ) {
       this.bean_segment = 'frozen';
     }
+    addIcons({ snowOutline });
   }
 
   public __initializeBeans() {

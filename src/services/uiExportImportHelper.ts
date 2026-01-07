@@ -17,7 +17,7 @@ import {
 import * as zip from '@zip.js/zip.js';
 import { Directory, FileInfo } from '@capacitor/filesystem';
 import { UILog } from './uiLog';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIFileHelper } from './uiFileHelper';
 import { UIAlert } from './uiAlert';
 import moment from 'moment';

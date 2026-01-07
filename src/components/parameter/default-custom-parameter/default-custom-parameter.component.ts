@@ -6,15 +6,27 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonTitle,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'default-custom-parameter',
   templateUrl: './default-custom-parameter.component.html',
   styleUrls: ['./default-custom-parameter.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonTitle,
+  ],
 })
 export class DefaultCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;

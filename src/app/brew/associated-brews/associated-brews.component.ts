@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { Brew } from '../../../classes/brew/brew';
@@ -19,16 +19,31 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
 import { BrewInformationComponent } from '../../../components/brew-information/brew-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-associated-brews',
   templateUrl: './associated-brews.component.html',
   styleUrls: ['./associated-brews.component.scss'],
   imports: [
-    IonicModule,
     AgVirtualScrollComponent,
     BrewInformationComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
   ],
 })
 export class AssociatedBrewsComponent {

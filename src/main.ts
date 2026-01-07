@@ -12,7 +12,10 @@ import {
 import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import {
+  IonicRouteStrategy,
+  provideIonicAngular,
+} from '@ionic/angular/standalone';
 import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -30,13 +33,6 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
-      IonicModule.forRoot({
-        mode: 'md',
-        menuIcon: 'beanconqueror-menu',
-        swipeBackEnabled: true,
-        animated: true,
-        rippleEffect: false,
-      }),
       IonicStorageModule.forRoot({
         name: '__baristaDB',
         driverOrder: [
@@ -58,5 +54,12 @@ bootstrapApplication(AppComponent, {
     }),
     provideRouter(routes),
     provideZoneChangeDetection(),
+    provideIonicAngular({
+      mode: 'md',
+      menuIcon: 'beanconqueror-menu',
+      swipeBackEnabled: true,
+      animated: true,
+      rippleEffect: false,
+    }),
   ],
 }).catch((err) => console.log(err));

@@ -20,14 +20,16 @@ import { Mill } from '../../classes/mill/mill';
 import { UIAlert } from '../../services/uiAlert';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Clipboard } from '@capacitor/clipboard';
-import { IonicModule } from '@ionic/angular';
 import { AsyncImageComponent } from '../async-image/async-image.component';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline, arrowForwardOutline, trash } from 'ionicons/icons';
+import { IonItem, IonIcon, IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'photo-add',
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
-  imports: [IonicModule, AsyncImageComponent, TranslatePipe],
+  imports: [AsyncImageComponent, TranslatePipe, IonItem, IonIcon, IonButton],
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
@@ -44,7 +46,9 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     private readonly uiToast: UIToast,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
-  ) {}
+  ) {
+    addIcons({ arrowBackOutline, arrowForwardOutline, trash });
+  }
 
   public ngOnInit() {
     setTimeout(() => {

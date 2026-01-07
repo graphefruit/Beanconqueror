@@ -8,19 +8,34 @@ import {
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { BeanInformationComponent } from '../../../components/bean-information/bean-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-popover-list',
   templateUrl: './bean-popover-list.component.html',
   styleUrls: ['./bean-popover-list.component.scss'],
   imports: [
-    IonicModule,
     AgVirtualScrollComponent,
     BeanInformationComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
   ],
 })
 export class BeanPopoverListComponent {

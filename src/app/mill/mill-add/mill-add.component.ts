@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { Mill } from '../../../classes/mill/mill';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../../services/uiToast';
 import MILL_TRACKING from '../../../data/tracking/millTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -9,16 +9,31 @@ import TrackContentImpression from '../../../data/tracking/trackContentImpressio
 import { FormsModule } from '@angular/forms';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'mill-add',
   templateUrl: './mill-add.component.html',
   styleUrls: ['./mill-add.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     DisableDoubleClickDirective,
     TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonRow,
+    IonCol,
+    IonButton,
   ],
 })
 export class MillAddComponent implements OnInit {

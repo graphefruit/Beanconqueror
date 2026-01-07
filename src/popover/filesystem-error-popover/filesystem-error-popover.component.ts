@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { arrowDownOutline } from 'ionicons/icons';
+import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-filesystem-error-popover',
   templateUrl: './filesystem-error-popover.component.html',
   styleUrls: ['./filesystem-error-popover.component.scss'],
-  imports: [IonicModule],
+  imports: [IonContent, IonButton, IonIcon],
 })
 export class FilesystemErrorPopoverComponent implements OnInit {
-  constructor(private readonly modalCtrl: ModalController) {}
+  constructor(private readonly modalCtrl: ModalController) {
+    addIcons({ arrowDownOutline });
+  }
 
   public ngOnInit() {}
   public async copyLogfiles(): Promise<any> {

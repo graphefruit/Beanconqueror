@@ -5,15 +5,27 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonCard,
+  IonTitle,
+  IonItem,
+  IonCheckbox,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'list-view-custom-parameter',
   templateUrl: './list-view-custom-parameter.component.html',
   styleUrls: ['./list-view-custom-parameter.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonCard,
+    IonTitle,
+    IonItem,
+    IonCheckbox,
+  ],
 })
 export class ListViewCustomParameterComponent implements OnInit {
   @Input() public data: Settings | Preparation;

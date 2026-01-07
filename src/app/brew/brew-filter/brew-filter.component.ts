@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -23,13 +23,26 @@ import { MillOverlayDirective } from '../../../directive/mill-overlay.directive'
 import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonSelect,
+  IonToggle,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonIcon,
+  IonSelectOption,
+  IonList,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-filter',
   templateUrl: './brew-filter.component.html',
   styleUrls: ['./brew-filter.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     PreparationOverlayDirective,
     PreparationToolOverlayDirective,
@@ -38,6 +51,18 @@ import { ToFixedPipe } from '../../../pipes/toFixed';
     WaterOverlayDirective,
     TranslatePipe,
     ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonSelect,
+    IonToggle,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonIcon,
+    IonSelectOption,
+    IonList,
+    IonButton,
   ],
 })
 export class BrewFilterComponent implements OnInit {

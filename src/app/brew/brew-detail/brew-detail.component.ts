@@ -4,8 +4,7 @@ import {
   AlertController,
   ModalController,
   Platform,
-  IonicModule,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -48,6 +47,36 @@ import { ToFixedPipe } from '../../../pipes/toFixed';
 import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { addIcons } from 'ionicons';
+import {
+  create,
+  globeOutline,
+  download,
+  shareSocialOutline,
+  expandOutline,
+  clipboardOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonLabel,
+  IonChip,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardHeader,
+  IonCardContent,
+  IonPopover,
+  IonList,
+  IonFooter,
+} from '@ionic/angular/standalone';
 
 declare var Plotly;
 @Component({
@@ -55,7 +84,6 @@ declare var Plotly;
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
   imports: [
-    IonicModule,
     BrewBrewingGraphComponent,
     PhotoViewComponent,
     DecimalPipe,
@@ -66,6 +94,25 @@ declare var Plotly;
     BrewFieldVisiblePipe,
     BrewFieldOrder,
     BrewFunction,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonLabel,
+    IonChip,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCardHeader,
+    IonCardContent,
+    IonPopover,
+    IonList,
+    IonFooter,
   ],
 })
 export class BrewDetailComponent {
@@ -113,6 +160,14 @@ export class BrewDetailComponent {
     private readonly shareService: ShareService,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({
+      create,
+      globeOutline,
+      download,
+      shareSocialOutline,
+      expandOutline,
+      clipboardOutline,
+    });
   }
   public setUIParams() {
     this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
@@ -288,9 +343,9 @@ export class BrewDetailComponent {
 
   public async shareFlowProfile() {
     /* const fileShare: string = this.flowProfileChartEl.toBase64Image(
-      'image/jpeg',
-      1
-    );*/
+          'image/jpeg',
+          1
+        );*/
     if (this.platform.is('ios')) {
       //#544 - we need to do it twice... don't know why, ios issue
       Plotly.Snapshot.toImage(
@@ -371,15 +426,15 @@ export class BrewDetailComponent {
       );
       // No popup needed anymore, because we share the file now
       /*if (this.platform.is('android')) {
-        const alert = await this.alertCtrl.create({
-          header: this.translate.instant('DOWNLOADED'),
-          subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-            fileName: filename,
-          }),
-          buttons: ['OK'],
-        });
-        await alert.present();
-      }*/
+              const alert = await this.alertCtrl.create({
+                header: this.translate.instant('DOWNLOADED'),
+                subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                  fileName: filename,
+                }),
+                buttons: ['OK'],
+              });
+              await alert.present();
+            }*/
     }
   }
   public async downloadFlowProfile() {

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 
 import QRCode from 'qrcode';
 import { environment } from '../../../environments/environment';
@@ -16,12 +16,43 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { download, clipboardOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+  IonLabel,
+  IonButton,
+  IonIcon,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-internal-share-code-generator.',
   templateUrl: './bean-internal-share-code-generator.component.html',
   styleUrls: ['./bean-internal-share-code-generator.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BeanInternalShareCodeGeneratorComponent implements OnInit {
   public static COMPONENT_ID = 'bean-internal-share-code-generator-popover';
@@ -42,7 +73,9 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
     private readonly uiLog: UILog,
     private readonly nfcService: NfcService,
     private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  ) {
+    addIcons({ download, clipboardOutline });
+  }
 
   ngOnInit() {}
   public ionViewDidEnter(): void {

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
 import { UIImage } from '../../../../services/uiImage';
@@ -15,18 +15,45 @@ import { GreenBeanGeneralInformationComponent } from '../../../../components/bea
 import { BeanSortInformationComponent } from '../../../../components/beans/bean-sort-information/bean-sort-information.component';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'green-bean-edit',
   templateUrl: './green-bean-edit.component.html',
   styleUrls: ['./green-bean-edit.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     GreenBeanGeneralInformationComponent,
     BeanSortInformationComponent,
     DisableDoubleClickDirective,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class GreenBeanEditComponent implements OnInit {

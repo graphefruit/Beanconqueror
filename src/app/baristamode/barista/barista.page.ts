@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -35,6 +35,25 @@ import { UIAlert } from '../../../services/uiAlert';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { LongPressDirective } from '../../../directive/long-press.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,
+  IonChip,
+  IonIcon,
+  IonButton,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+} from '@ionic/angular/standalone';
 
 declare var Plotly;
 @Component({
@@ -42,10 +61,26 @@ declare var Plotly;
   templateUrl: './barista.page.html',
   styleUrls: ['./barista.page.scss'],
   imports: [
-    IonicModule,
     LongPressDirective,
     BrewBrewingComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonTitle,
+    IonChip,
+    IonIcon,
+    IonButton,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
   ],
 })
 export class BaristaPage implements OnInit {
@@ -149,8 +184,8 @@ export class BaristaPage implements OnInit {
       });
 
     /**setTimeout(() => {
-      this.checkSanremoYOUDoses();
-    }, 2000);**/
+          this.checkSanremoYOUDoses();
+        }, 2000);**/
 
     setTimeout(() => {
       this.resizeGraph();
@@ -323,8 +358,8 @@ export class BaristaPage implements OnInit {
   private __attachOnDeviceResume() {
     App.addListener('resume', async () => {
       /** setTimeout(() => {
-        this.checkIfSanremoIsStillConnectedElseShowUpAReconnectButton();
-      },5000);**/
+              this.checkIfSanremoIsStillConnectedElseShowUpAReconnectButton();
+            },5000);**/
     });
   }
 
@@ -343,9 +378,9 @@ export class BaristaPage implements OnInit {
   public lastShotInformation(_data) {
     this.showLagTime();
     /**
-    this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
-    this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
-    this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;**/
+        this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
+        this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
+        this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;**/
   }
   private showLagTime() {
     const device = this.brewBrewing?.brewBrewingPreparationDeviceEl

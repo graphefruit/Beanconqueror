@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../services/uiPreparationStorage';
 import { Preparation } from '../classes/preparation/preparation';
 import { PreparationModalSelectComponent } from '../app/preparation/preparation-modal-select/preparation-modal-select.component';

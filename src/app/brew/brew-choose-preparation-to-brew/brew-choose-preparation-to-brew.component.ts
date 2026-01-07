@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Preparation } from '../../../classes/preparation/preparation';
@@ -11,12 +11,27 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../../pipes/formatDate';
+import { addIcons } from 'ionicons';
+import { wifiOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-choose-preparation-to-brew',
   templateUrl: './brew-choose-preparation-to-brew.component.html',
   styleUrls: ['./brew-choose-preparation-to-brew.component.scss'],
-  imports: [IonicModule, TranslatePipe, FormatDatePipe],
+  imports: [
+    TranslatePipe,
+    FormatDatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonIcon,
+  ],
 })
 export class BrewChoosePreparationToBrewComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-preparation-to-brew';
@@ -33,6 +48,7 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
     private readonly uiSettings: UISettingsStorage,
   ) {
     this.settings = this.uiSettings.getSettings();
+    addIcons({ wifiOutline });
   }
 
   public ngOnInit() {

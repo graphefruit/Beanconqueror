@@ -1,16 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import moment from 'moment/moment';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonTitle,
+  IonContent,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'analytics-popover',
   templateUrl: './analytics-popover.component.html',
   styleUrls: ['./analytics-popover.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonTitle,
+    IonContent,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class AnalyticsPopoverComponent implements OnInit {
   public static POPOVER_ID: string = 'analytics-popover';

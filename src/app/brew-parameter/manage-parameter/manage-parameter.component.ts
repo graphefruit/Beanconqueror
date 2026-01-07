@@ -1,15 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
-import { IonicModule } from '@ionic/angular';
 import { ManageCustomParameterComponent } from '../../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
+  IonContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'manage-parameter',
   templateUrl: './manage-parameter.component.html',
   styleUrls: ['./manage-parameter.component.scss'],
-  imports: [IonicModule, ManageCustomParameterComponent, TranslatePipe],
+  imports: [
+    ManageCustomParameterComponent,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonContent,
+  ],
 })
 export class ManageParameterComponent implements OnInit {
   public settings: Settings;

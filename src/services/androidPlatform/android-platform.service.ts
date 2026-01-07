@@ -3,7 +3,7 @@ import { UIStorage } from '../uiStorage';
 import { UILog } from '../uiLog';
 import { UIFileHelper } from '../uiFileHelper';
 import { EventQueueService } from '../queueService/queue-service.service';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { debounceTime } from 'rxjs/operators';
 
@@ -29,7 +29,7 @@ export class AndroidPlatformService {
     private readonly uiAlert: UIAlert,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiExportImportHelper: UIExportImportHelper
+    private readonly uiExportImportHelper: UIExportImportHelper,
   ) {
     if (this.platform.is('capacitor') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(
@@ -37,16 +37,16 @@ export class AndroidPlatformService {
           // Delete on startup old json backup files
           this.uiFileHelper.deleteZIPBackupsOlderThanSevenDays().then(
             () => {},
-            () => {}
+            () => {},
           );
         },
-        () => {}
+        () => {},
       );
       this.eventQueue
         .on(AppEventType.STORAGE_CHANGED)
         .pipe(
           // Wait for 3 seconds before we call the the debounce
-          debounceTime(3000)
+          debounceTime(3000),
         )
         .subscribe((event) => {
           this.uiLog.log('android-Platform - Start to export ZIP file');
@@ -58,59 +58,59 @@ export class AndroidPlatformService {
   }
 
   /* private requestExternalStorageAccess() {
-    const promise = new Promise((resolve, reject) => {
-      this.androidPermissions
-        .requestPermission(
-          this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
-        )
-        .then(
-          (_status) => {
-            if (_status.hasPermission) {
-              resolve(undefined);
-            } else {
+      const promise = new Promise((resolve, reject) => {
+        this.androidPermissions
+          .requestPermission(
+            this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
+          )
+          .then(
+            (_status) => {
+              if (_status.hasPermission) {
+                resolve(undefined);
+              } else {
+                reject();
+              }
+            },
+            () => {
               reject();
             }
-          },
-          () => {
-            reject();
-          }
-        );
-    });
-    return promise;
-  }
-
-  public async checkHasExternalStorage() {
-    const promise = new Promise((resolve, reject) => {
-      this.androidPermissions
-        .hasPermission(
-          this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
-        )
-        .then(
-          async (_status) => {
-            if (_status.hasPermission === false) {
-              await this.uiAlert.showMessage(
-                'ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION',
-                'ANDROID_FILE_ACCESS_NEEDED_TITLE',
-                undefined,
-                true
-              );
-              this.requestExternalStorageAccess().then(
-                () => {
-                  resolve(undefined);
-                },
-                () => {
-                  reject();
-                }
-              );
-            } else {
-              resolve(undefined);
+          );
+      });
+      return promise;
+    }
+  
+    public async checkHasExternalStorage() {
+      const promise = new Promise((resolve, reject) => {
+        this.androidPermissions
+          .hasPermission(
+            this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE
+          )
+          .then(
+            async (_status) => {
+              if (_status.hasPermission === false) {
+                await this.uiAlert.showMessage(
+                  'ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION',
+                  'ANDROID_FILE_ACCESS_NEEDED_TITLE',
+                  undefined,
+                  true
+                );
+                this.requestExternalStorageAccess().then(
+                  () => {
+                    resolve(undefined);
+                  },
+                  () => {
+                    reject();
+                  }
+                );
+              } else {
+                resolve(undefined);
+              }
+            },
+            () => {
+              reject();
             }
-          },
-          () => {
-            reject();
-          }
-        );
-    });
-    return promise;
-  }*/
+          );
+      });
+      return promise;
+    }*/
 }

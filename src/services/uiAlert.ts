@@ -5,7 +5,7 @@ import {
   AlertController,
   LoadingController,
   ModalController,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
@@ -48,18 +48,18 @@ export class UIAlert {
   ) {
     await this.showLoadingMessage(message, translate, false);
     /**if (this.existingLoadingSpinners.length > 0) {
-      await this.hideLoadingSpinner();
-    }
-    let msg = message;
-    if (translate) {
-      msg = this.translate.instant(message);
-    }
-    const loadingSpinner = await this.loadingController.create({
-      animated: false,
-      message: msg,
-    });
-    this.existingLoadingSpinners.push(loadingSpinner);
-    loadingSpinner.present();**/
+          await this.hideLoadingSpinner();
+        }
+        let msg = message;
+        if (translate) {
+          msg = this.translate.instant(message);
+        }
+        const loadingSpinner = await this.loadingController.create({
+          animated: false,
+          message: msg,
+        });
+        this.existingLoadingSpinners.push(loadingSpinner);
+        loadingSpinner.present();**/
   }
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {

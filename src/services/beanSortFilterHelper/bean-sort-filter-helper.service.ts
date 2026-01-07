@@ -7,7 +7,7 @@ import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import moment from 'moment/moment';
 import { BeanSortComponent } from '../../app/beans/bean-sort/bean-sort.component';
 import { BeanFilterComponent } from '../../app/beans/bean-filter/bean-filter.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../uiHelper';
 import { Brew } from '../../classes/brew/brew';
 import { UIBeanHelper } from '../uiBeanHelper';

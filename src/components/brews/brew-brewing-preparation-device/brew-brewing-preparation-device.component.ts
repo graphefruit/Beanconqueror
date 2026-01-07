@@ -38,7 +38,7 @@ import {
   IBrewWeightFlow,
 } from '../../../classes/brew/brewFlow';
 import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import {
   SanremoYOUDevice,
@@ -56,17 +56,46 @@ import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBr
 import { FormsModule } from '@angular/forms';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { addIcons } from 'ionicons';
+import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
+import {
+  IonCard,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+  IonInput,
+  IonCheckbox,
+  IonIcon,
+  IonLabel,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardHeader,
+  IonCardContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
   styleUrls: ['./brew-brewing-preparation-device.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     TranslatePipe,
+    IonCard,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonInput,
+    IonCheckbox,
+    IonIcon,
+    IonLabel,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCardHeader,
+    IonCardContent,
   ],
 })
 export class BrewBrewingPreparationDeviceComponent implements OnInit {
@@ -106,7 +135,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     private readonly modalController: ModalController,
     public readonly uiBrewHelper: UIBrewHelper,
     private readonly translate: TranslateService,
-  ) {}
+  ) {
+    addIcons({ cloudDownloadOutline, informationCircleOutline });
+  }
 
   public async baristaModeWeightChanged(_type: string) {
     if (_type === 'P1') {
@@ -556,47 +587,47 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
     return;
     /**
-    // Seccond call
-    await connectedDevice.deviceConnected().then(
-      () => {},
-      () => {},
-    );
-    //Third call call
-
-    const apiThirdCallDelayStart = moment(); // create a moment with the current time
-    let apiDelayEnd;
-    const delayCallTimeout = setTimeout(() => {
-      let apiTakesToLong: boolean = false;
-      let delta;
-      if (apiDelayEnd === undefined) {
-        //After 2 seconds we didn't even hit the return
-        delta = 1000;
-      } else {
-        delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
-      }
-      if (delta > 200) {
-        apiTakesToLong = true;
-      }
-
-      if (apiTakesToLong) {
-        this.uiAlert.showMessage(
-          this.translate.instant('SANREMO_API_RESPONSE_TAKE_TO_LONG', {
-            time: delta,
-          }),
-          this.translate.instant('CARE'),
-          this.translate.instant('OK'),
-          false,
+        // Seccond call
+        await connectedDevice.deviceConnected().then(
+          () => {},
+          () => {},
         );
-      }
-    }, 1000);
-    await connectedDevice.deviceConnected().then(
-      () => {
-        apiDelayEnd = moment(); // create a moment with the other time timestamp in seconds
-      },
-      () => {
-        clearTimeout(delayCallTimeout);
-      },
-    );**/
+        //Third call call
+    
+        const apiThirdCallDelayStart = moment(); // create a moment with the current time
+        let apiDelayEnd;
+        const delayCallTimeout = setTimeout(() => {
+          let apiTakesToLong: boolean = false;
+          let delta;
+          if (apiDelayEnd === undefined) {
+            //After 2 seconds we didn't even hit the return
+            delta = 1000;
+          } else {
+            delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+          }
+          if (delta > 200) {
+            apiTakesToLong = true;
+          }
+    
+          if (apiTakesToLong) {
+            this.uiAlert.showMessage(
+              this.translate.instant('SANREMO_API_RESPONSE_TAKE_TO_LONG', {
+                time: delta,
+              }),
+              this.translate.instant('CARE'),
+              this.translate.instant('OK'),
+              false,
+            );
+          }
+        }, 1000);
+        await connectedDevice.deviceConnected().then(
+          () => {
+            apiDelayEnd = moment(); // create a moment with the other time timestamp in seconds
+          },
+          () => {
+            clearTimeout(delayCallTimeout);
+          },
+        );**/
   }
 
   public async importShotFromMeticulous() {

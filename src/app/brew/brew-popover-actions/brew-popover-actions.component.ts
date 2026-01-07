@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { IBrew } from '../../../interfaces/brew/iBrew';
 import { Brew } from '../../../classes/brew/brew';
 import { UIHelper } from '../../../services/uiHelper';
@@ -8,12 +8,28 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  heartOutline,
+  heart,
+  trophyOutline,
+  trophy,
+  shareSocialOutline,
+  analyticsOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-popover-actions',
   templateUrl: './brew-popover-actions.component.html',
   styleUrls: ['./brew-popover-actions.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class BrewPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'brew-popover-actions';
@@ -31,6 +47,14 @@ export class BrewPopoverActionsComponent implements OnInit {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
 
     this.settings = this.uiSettings.getSettings();
+    addIcons({
+      heartOutline,
+      heart,
+      trophyOutline,
+      trophy,
+      shareSocialOutline,
+      analyticsOutline,
+    });
   }
 
   public ionViewDidEnter(): void {}

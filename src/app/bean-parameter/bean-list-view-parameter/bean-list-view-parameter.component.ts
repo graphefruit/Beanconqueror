@@ -3,15 +3,45 @@ import { Subject } from 'rxjs';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonCardContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-list-view-parameter',
   templateUrl: './bean-list-view-parameter.component.html',
   styleUrls: ['./bean-list-view-parameter.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonCardContent,
+  ],
 })
 export class BeanListViewParameterComponent {
   public bean_segment = 'general';

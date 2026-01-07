@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import moment from 'moment/moment';
@@ -22,6 +22,28 @@ import { PreventCharacterDirective } from '../../../directive/prevent-character.
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { KeysPipe } from '../../../pipes/keys';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import { addIcons } from 'ionicons';
+import { warningOutline, trashOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonCheckbox,
+  IonLabel,
+  IonRange,
+  IonSelect,
+  IonSelectOption,
+  IonTextarea,
+  IonIcon,
+  IonButton,
+  IonList,
+  IonListHeader,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 declare var cordova;
 @Component({
@@ -29,7 +51,6 @@ declare var cordova;
   templateUrl: './bean-popover-freeze.component.html',
   styleUrls: ['./bean-popover-freeze.component.scss'],
   imports: [
-    IonicModule,
     TransformDateDirective,
     FormsModule,
     PreventCharacterDirective,
@@ -37,6 +58,24 @@ declare var cordova;
     TranslatePipe,
     KeysPipe,
     ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonCheckbox,
+    IonLabel,
+    IonRange,
+    IonSelect,
+    IonSelectOption,
+    IonTextarea,
+    IonIcon,
+    IonButton,
+    IonList,
+    IonListHeader,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class BeanPopoverFreezeComponent implements OnInit {
@@ -77,6 +116,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
+    addIcons({ warningOutline, trashOutline });
   }
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);

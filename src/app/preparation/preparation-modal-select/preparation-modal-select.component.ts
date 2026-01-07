@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Brew } from '../../../classes/brew/brew';
@@ -15,19 +15,60 @@ import { AsyncImageComponent } from '../../../components/async-image/async-image
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
+import { addIcons } from 'ionicons';
+import { wifiOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonThumbnail,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-modal-select',
   templateUrl: './preparation-modal-select.component.html',
   styleUrls: ['./preparation-modal-select.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     NgTemplateOutlet,
     AsyncImageComponent,
     TranslatePipe,
     FormatDatePipe,
     PreparationFunction,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonThumbnail,
   ],
 })
 export class PreparationModalSelectComponent implements OnInit {
@@ -55,6 +96,7 @@ export class PreparationModalSelectComponent implements OnInit {
     this.settings = this.uiSettings.getSettings();
     this.openPreparations = this.getOpenPreparations();
     this.archivedPreparations = this.getArchivedPreparations();
+    addIcons({ wifiOutline });
   }
 
   public ionViewDidEnter(): void {

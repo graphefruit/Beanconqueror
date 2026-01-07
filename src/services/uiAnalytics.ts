@@ -1,7 +1,7 @@
 /** Core */
 import { Injectable } from '@angular/core';
 /** Ionic */
-import { AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 import { UIHelper } from './uiHelper';
 

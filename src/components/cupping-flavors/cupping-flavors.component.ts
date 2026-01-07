@@ -4,15 +4,38 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from '../../classes/brew/brew';
 import { IFlavor } from '../../interfaces/flavor/iFlavor';
 import { UIHelper } from '../../services/uiHelper';
-import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { NgStyle } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { addCircleOutline, close } from 'ionicons/icons';
+import {
+  IonList,
+  IonListHeader,
+  IonItem,
+  IonInput,
+  IonIcon,
+  IonChip,
+  IonSearchbar,
+  IonCheckbox,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'cupping-flavors',
   templateUrl: './cupping-flavors.component.html',
   styleUrls: ['./cupping-flavors.component.scss'],
-  imports: [IonicModule, FormsModule, NgStyle, TranslatePipe],
+  imports: [
+    FormsModule,
+    NgStyle,
+    TranslatePipe,
+    IonList,
+    IonListHeader,
+    IonItem,
+    IonInput,
+    IonIcon,
+    IonChip,
+    IonSearchbar,
+    IonCheckbox,
+  ],
 })
 export class CuppingFlavorsComponent implements OnInit {
   public searchFlavorText: string = '';
@@ -30,7 +53,9 @@ export class CuppingFlavorsComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ addCircleOutline, close });
+  }
 
   public ngOnInit() {
     this.instanceCuppingFlavors();

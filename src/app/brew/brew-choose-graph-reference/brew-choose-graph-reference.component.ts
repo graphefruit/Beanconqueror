@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -23,17 +23,50 @@ import { UIHelper } from '../../../services/uiHelper';
 import { FormsModule } from '@angular/forms';
 import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-reference-card/brew-graph-reference-card.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRadioGroup,
+  IonCard,
+  IonSearchbar,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
   templateUrl: './brew-choose-graph-reference.component.html',
   styleUrls: ['./brew-choose-graph-reference.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     AgVirtualScrollComponent,
     BrewGraphReferenceCardComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonSearchbar,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class BrewChooseGraphReferenceComponent implements OnInit {

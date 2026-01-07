@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { Water } from '../../../../classes/water/water';
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
@@ -10,12 +10,45 @@ import { UIWaterHelper } from '../../../../services/uiWaterHelper';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonLabel,
+  IonCheckbox,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-water-detail',
   templateUrl: './water-detail.component.html',
   styleUrls: ['./water-detail.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonLabel,
+    IonCheckbox,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class WaterDetailComponent implements OnInit {
   public static COMPONENT_ID = 'water-detail';

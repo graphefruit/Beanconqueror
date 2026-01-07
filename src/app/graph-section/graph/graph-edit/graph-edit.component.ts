@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -15,12 +15,54 @@ import { UIAlert } from '../../../../services/uiAlert';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
+import { addIcons } from 'ionicons';
+import {
+  cloudUploadOutline,
+  informationCircleOutline,
+  trashOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonLabel,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-graph-edit',
   templateUrl: './graph-edit.component.html',
   styleUrls: ['./graph-edit.component.scss'],
-  imports: [IonicModule, FormsModule, GraphDisplayCardComponent, TranslatePipe],
+  imports: [
+    FormsModule,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonLabel,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class GraphEditComponent implements OnInit {
   public static COMPONENT_ID = 'graph-edit';
@@ -43,7 +85,9 @@ export class GraphEditComponent implements OnInit {
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
-  ) {}
+  ) {
+    addIcons({ cloudUploadOutline, informationCircleOutline, trashOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

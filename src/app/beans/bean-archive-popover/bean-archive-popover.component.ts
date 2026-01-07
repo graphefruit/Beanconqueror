@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../../services/uiToast';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Settings } from '../../../classes/settings/settings';
@@ -13,18 +13,39 @@ import { FormsModule } from '@angular/forms';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonTextarea,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-archive-popover',
   templateUrl: './bean-archive-popover.component.html',
   styleUrls: ['./bean-archive-popover.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     NgxStarsModule,
     DisableDoubleClickDirective,
     TranslatePipe,
     ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonTextarea,
+    IonRow,
+    IonCol,
+    IonButton,
   ],
 })
 export class BeanArchivePopoverComponent implements OnInit {

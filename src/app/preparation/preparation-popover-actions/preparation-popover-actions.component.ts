@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -10,12 +10,21 @@ import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/prep
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { powerOutline, wifiOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-popover-actions',
   templateUrl: './preparation-popover-actions.component.html',
   styleUrls: ['./preparation-popover-actions.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class PreparationPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-popover-actions';
@@ -28,7 +37,9 @@ export class PreparationPopoverActionsComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ powerOutline, wifiOutline });
+  }
 
   public ionViewDidEnter(): void {}
 

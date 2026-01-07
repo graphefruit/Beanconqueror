@@ -6,14 +6,31 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { Preparation } from '../../classes/preparation/preparation';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { Mill } from '../../classes/mill/mill';
-import { IonicModule } from '@ionic/angular';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonContent,
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+  IonBadge,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonContent,
+    IonTabs,
+    IonTabBar,
+    IonTabButton,
+    IonIcon,
+    IonLabel,
+    IonBadge,
+  ],
 })
 export class HomePage {
   /** Needed app minimize for android */

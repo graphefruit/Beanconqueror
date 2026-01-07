@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Bean } from '../../../classes/bean/bean';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -13,12 +13,47 @@ import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { thermometerOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonRange,
+  IonCheckbox,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-popover-unfreeze',
   templateUrl: './bean-popover-unfreeze.component.html',
   styleUrls: ['./bean-popover-unfreeze.component.scss'],
-  imports: [IonicModule, FormsModule, TranslatePipe],
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonRange,
+    IonCheckbox,
+  ],
 })
 export class BeanPopoverUnfreezeComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-unfreeze';
@@ -42,6 +77,7 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
     private readonly uiAlert: UIAlert,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ thermometerOutline });
   }
 
   public ngOnInit() {

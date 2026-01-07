@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { NgForm } from '@angular/forms';
@@ -10,11 +10,41 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { environment } from '../../../environments/environment';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardContent,
+} from '@ionic/angular/standalone';
+
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
   styleUrls: ['./preparation-add.component.scss'],
-  imports: [IonicModule, TranslatePipe, KeysPipe],
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+  ],
 })
 export class PreparationAddComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-add';

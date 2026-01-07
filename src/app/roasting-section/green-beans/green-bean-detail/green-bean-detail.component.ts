@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Bean } from '../../../../classes/bean/bean';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
@@ -13,18 +13,51 @@ import { BeanDetailSortInformationComponent } from '../../../../components/beans
 import { BeanInformationComponent } from '../../../../components/bean-information/bean-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../../../pipes/formatDate';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-green-bean-detail',
   templateUrl: './green-bean-detail.component.html',
   styleUrls: ['./green-bean-detail.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     BeanDetailSortInformationComponent,
     BeanInformationComponent,
     TranslatePipe,
     FormatDatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class GreenBeanDetailComponent {

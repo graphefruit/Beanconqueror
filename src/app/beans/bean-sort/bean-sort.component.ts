@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
@@ -8,12 +8,41 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { TranslatePipe } from '@ngx-translate/core';
 import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import { addIcons } from 'ionicons';
+import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonListHeader,
+  IonItem,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonIcon,
+  IonLabel,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-sort',
   templateUrl: './bean-sort.component.html',
   styleUrls: ['./bean-sort.component.scss'],
-  imports: [IonicModule, TranslatePipe, BeanFieldVisiblePipe],
+  imports: [
+    TranslatePipe,
+    BeanFieldVisiblePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonListHeader,
+    IonItem,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonLabel,
+    IonButton,
+  ],
 })
 export class BeanSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-sort';
@@ -34,7 +63,9 @@ export class BeanSortComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  ) {
+    addIcons({ chevronDownOutline, chevronUpOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

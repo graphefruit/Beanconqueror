@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
-import { Platform, IonicModule } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ROASTS_ENUM } from '../../../enums/beans/roasts';
@@ -32,6 +32,21 @@ import { PhotoAddComponent } from '../../photo-add/photo-add.component';
 import { KeysPipe } from '../../../pipes/keys';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import {
+  IonCard,
+  IonItem,
+  IonInput,
+  IonList,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  IonBadge,
+  IonRange,
+  IonButton,
+  IonIcon,
+  IonCheckbox,
+  IonTextarea,
+} from '@ionic/angular/standalone';
 
 declare var cordova;
 @Component({
@@ -39,7 +54,6 @@ declare var cordova;
   templateUrl: './bean-general-information.component.html',
   styleUrls: ['./bean-general-information.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     TransformDateDirective,
     NgxStarsModule,
@@ -50,6 +64,19 @@ declare var cordova;
     KeysPipe,
     ToFixedPipe,
     BeanFieldVisiblePipe,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonList,
+    IonLabel,
+    IonSelect,
+    IonSelectOption,
+    IonBadge,
+    IonRange,
+    IonButton,
+    IonIcon,
+    IonCheckbox,
+    IonTextarea,
   ],
 })
 export class BeanGeneralInformationComponent implements OnInit {

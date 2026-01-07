@@ -25,11 +25,6 @@
               },
               {
                 "glob": "**/*.svg",
-                "input": "node_modules/ionicons/dist/ionicons/svg",
-                "output": "./svg"
-              },
-              {
-                "glob": "**/*.svg",
                 "input": "src/assets/custom-ion-icons",
                 "output": "./svg"
               }

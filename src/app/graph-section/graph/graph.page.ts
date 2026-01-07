@@ -9,7 +9,7 @@ import {
 
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -23,17 +23,42 @@ import { UIGraphHelper } from '../../../services/uiGraphHelper';
 import { FormsModule } from '@angular/forms';
 import { GraphInformationCardComponent } from '../../../components/graph-information-card/graph-information-card.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { analyticsOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonButton,
+  IonIcon,
+  IonTitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.page.html',
   styleUrls: ['./graph.page.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     AgVirtualScrollComponent,
     GraphInformationCardComponent,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonMenuButton,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
   ],
 })
 export class GraphPage implements OnInit {
@@ -67,6 +92,7 @@ export class GraphPage implements OnInit {
     private readonly uiGraphHelper: UIGraphHelper,
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ analyticsOutline });
   }
 
   public ionViewWillEnter(): void {

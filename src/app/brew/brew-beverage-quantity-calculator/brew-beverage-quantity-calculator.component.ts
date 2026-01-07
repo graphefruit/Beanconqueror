@@ -1,23 +1,38 @@
 import { Component, Input } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { FormsModule } from '@angular/forms';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-beverage-quantity-calculator',
   templateUrl: './brew-beverage-quantity-calculator.component.html',
   styleUrls: ['./brew-beverage-quantity-calculator.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     DisableDoubleClickDirective,
     TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonRow,
+    IonCol,
+    IonButton,
   ],
 })
 export class BrewBeverageQuantityCalculatorComponent {

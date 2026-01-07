@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -34,19 +34,38 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../pipes/formatDate';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'green-bean-information',
   templateUrl: './green-bean-information.component.html',
   styleUrls: ['./green-bean-information.component.scss'],
   imports: [
-    IonicModule,
     LongPressDirective,
     NgxStarsModule,
     AsyncImageComponent,
     DecimalPipe,
     TranslatePipe,
     FormatDatePipe,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
   ],
 })
 export class GreenBeanInformationComponent implements OnInit {

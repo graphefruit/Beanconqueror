@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -19,17 +19,50 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { FormsModule } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { addOutline, trashOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonItem,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-cupping',
   templateUrl: './brew-cupping.component.html',
   styleUrls: ['./brew-cupping.component.scss'],
   imports: [
-    IonicModule,
     FormsModule,
     CuppingRadarComponent,
     KeyValuePipe,
     TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonFooter,
+    IonRow,
+    IonCol,
   ],
 })
 export class BrewCuppingComponent {
@@ -56,6 +89,7 @@ export class BrewCuppingComponent {
     this.settings = this.uiSettingsStorage.getSettings();
 
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
+    addIcons({ addOutline, trashOutline });
   }
 
   public segmentChanged() {

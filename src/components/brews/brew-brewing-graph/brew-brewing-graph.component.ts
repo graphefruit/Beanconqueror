@@ -18,7 +18,7 @@ import {
   ScaleType,
   sleep,
 } from '../../../classes/devices';
-import { ModalController, Platform, IonicModule } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -79,13 +79,7 @@ declare var Plotly;
   selector: 'brew-brewing-graph',
   templateUrl: './brew-brewing-graph.component.html',
   styleUrls: ['./brew-brewing-graph.component.scss'],
-  imports: [
-    IonicModule,
-    FormsModule,
-    TranslatePipe,
-    BrewFieldOrder,
-    BrewFunction,
-  ],
+  imports: [FormsModule, TranslatePipe, BrewFieldOrder, BrewFunction],
 })
 export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('smartScaleWeight', { read: ElementRef })
@@ -1641,13 +1635,13 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.stopFetchingDataFromSanremoYOU();
 
     /**const setSanremoData = () => {
-      this.ngZone.runOutsideAngular(() => {
-        const temp = prepDeviceCall.getTemperature();
-        const press = prepDeviceCall.getPressure();
-        this.__setPressureFlow({ actual: press, old: press });
-        this.__setTemperatureFlow({ actual: temp, old: temp });
-      });
-    };**/
+          this.ngZone.runOutsideAngular(() => {
+            const temp = prepDeviceCall.getTemperature();
+            const press = prepDeviceCall.getPressure();
+            this.__setPressureFlow({ actual: press, old: press });
+            this.__setTemperatureFlow({ actual: temp, old: temp });
+          });
+        };**/
 
     let hasShotStarted: boolean = false;
     prepDeviceCall.connectToSocket().then((_connected) => {
@@ -1769,28 +1763,28 @@ export class BrewBrewingGraphComponent implements OnInit {
      * When we would await it we would maybe build in very big lag potential
      */
     /**prepDeviceCall.fetchRuntimeData(() => {
-      // before we start the interval, we fetch the data once to overwrite, and set them.
-      setSanremoData();
-    });**/
+          // before we start the interval, we fetch the data once to overwrite, and set them.
+          setSanremoData();
+        });**/
 
     /**this.ngZone.runOutsideAngular(() => {
-      this.sanremoYOUFetchingInterval = setInterval(async () => {
-        try {
-          //const apiThirdCallDelayStart = moment(); // create a moment with the current time
-          //let apiDelayEnd;
+          this.sanremoYOUFetchingInterval = setInterval(async () => {
+            try {
+              //const apiThirdCallDelayStart = moment(); // create a moment with the current time
+              //let apiDelayEnd;
 
-          // We don't use the callback function to make sure we don't have to many performance issues
-          prepDeviceCall.fetchRuntimeData(() => {
-            //apiDelayEnd = moment();
+              // We don't use the callback function to make sure we don't have to many performance issues
+              prepDeviceCall.fetchRuntimeData(() => {
+                //apiDelayEnd = moment();
 
-            //before we start the interval, we fetch the data once to overwrite, and set them.
-            //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
-            //console.log(delta);
-            setSanremoData();
-          });
-        } catch (ex) {}
-      }, 250);
-    });**/
+                //before we start the interval, we fetch the data once to overwrite, and set them.
+                //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+                //console.log(delta);
+                setSanremoData();
+              });
+            } catch (ex) {}
+          }, 250);
+        });**/
   }
 
   public startFetchingDataFromMeticulous() {
@@ -1852,9 +1846,9 @@ export class BrewBrewingGraphComponent implements OnInit {
               });
 
               /** this.__setTemperatureFlow({
-                actual: shotData.temperature,
-                old: shotData.temperature,
-              });**/
+                              actual: shotData.temperature,
+                              old: shotData.temperature,
+                            });**/
 
               this.__setFlowProfile({
                 actual: shotData.weight,

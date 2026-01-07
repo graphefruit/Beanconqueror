@@ -1,16 +1,44 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, IonicModule } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { BREW_SORT_AFTER } from '../../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../../enums/brews/brewSortOrder';
 import { IBrewPageSort } from '../../../interfaces/brew/iBrewPageSort';
 import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { chevronUpOutline, chevronDownOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonListHeader,
+  IonItem,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonIcon,
+  IonLabel,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-sort',
   templateUrl: './brew-sort.component.html',
   styleUrls: ['./brew-sort.component.scss'],
-  imports: [IonicModule, TranslatePipe],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonListHeader,
+    IonItem,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonLabel,
+    IonButton,
+  ],
 })
 export class BrewSortComponent implements OnInit {
   public static readonly COMPONENT_ID = 'brew-sort';
@@ -28,7 +56,9 @@ export class BrewSortComponent implements OnInit {
   constructor(
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
-  ) {}
+  ) {
+    addIcons({ chevronUpOutline, chevronDownOutline });
+  }
 
   public ngOnInit() {
     this.filter = this.uiHelper.copyData(this.brew_sort);
