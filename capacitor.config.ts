@@ -59,7 +59,7 @@ const createConfig = () => {
   const config: CapacitorConfig = {
     appId: 'com.beanconqueror.app',
     appName: 'Beanconqueror',
-    webDir: 'www',
+    webDir: 'www/browser',
     loggingBehavior: 'none',
     zoomEnabled: false,
     server: {
