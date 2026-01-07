@@ -20,6 +20,8 @@ import {
   sleep,
 } from '../../../classes/devices';
 import { ModalController, Platform } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -228,6 +230,10 @@ export class BrewBrewingGraphComponent implements OnInit {
   public graphUpdateChartTimestamp = 0;
   public graph_threshold_frequency_update_active: boolean = false;
   public graph_frequency_update_interval: number = 150;
+
+  constructor() {
+    addIcons({ waterOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
