@@ -42,7 +42,6 @@ import moment from 'moment/moment';
 import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
-import BeanconquerorFlowTestDataDummySecondDummy from '../../../assets/BeanconquerorFlowTestDataSecond.json';
 import { Subscription } from 'rxjs';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -373,49 +372,55 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.uiSmartScaleSupportsTaring = this.smartScaleSupportsTaring();
   }
 
-  private async readReferenceFlowProfile(_brew: Brew) {
-    if (this.platform.is('capacitor')) {
-      if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
-        let referencePath: string = '';
-        const uuid = _brew.reference_flow_profile.uuid;
-        let referenceObj: Brew | Graph = null;
-        if (
-          _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
-          _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-        ) {
-          referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+  private async readDummyFlowProfile(): Promise<any> {
+    return (
+      await import('../../../assets/BeanconquerorFlowTestDataSecond.json')
+    ).default;
+  }
 
-          if (
-            _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-          ) {
-            referencePath = referenceObj.getGraphPath(
-              BREW_GRAPH_TYPE.IMPORTED_GRAPH,
-            );
-          } else {
-            referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
-          }
+  private async readReferenceFlowProfile(_brew: Brew) {
+    if (!this.platform.is('capacitor')) {
+      this.reference_profile_raw = await this.readDummyFlowProfile();
+      return;
+    }
+
+    if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
+      let referencePath: string = '';
+      const uuid = _brew.reference_flow_profile.uuid;
+      let referenceObj: Brew | Graph = null;
+      if (
+        _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
+        _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+
+        if (
+          _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
+          referencePath = referenceObj.getGraphPath(
+            BREW_GRAPH_TYPE.IMPORTED_GRAPH,
+          );
         } else {
-          referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
-          referencePath = referenceObj.getGraphPath();
+          referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
         }
-        if (referenceObj) {
-          await this.uiAlert.showLoadingSpinner();
-          try {
-            const jsonParsed =
-              await this.uiFileHelper.readInternalJSONFile(referencePath);
-            this.reference_profile_raw = jsonParsed;
-          } catch (ex) {
-            // Maybe the reference flow has been deleted.
-          }
+      } else {
+        referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
+        referencePath = referenceObj.getGraphPath();
+      }
+      if (referenceObj) {
+        await this.uiAlert.showLoadingSpinner();
+        try {
+          const jsonParsed =
+            await this.uiFileHelper.readInternalJSONFile(referencePath);
+          this.reference_profile_raw = jsonParsed;
+        } catch (ex) {
+          // Maybe the reference flow has been deleted.
         }
       }
-      await this.uiAlert.hideLoadingSpinner();
-    } else {
-      this.reference_profile_raw =
-        BeanconquerorFlowTestDataDummySecondDummy as any;
     }
+    await this.uiAlert.hideLoadingSpinner();
   }
 
   public checkChanges() {
@@ -3226,21 +3231,21 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.destroy();
   }
 
-  private async returnFlowProfile(_flowProfile: string) {
-    const promiseRtr = new Promise(async (resolve) => {
-      if (this.platform.is('capacitor')) {
-        if (_flowProfile !== '') {
-          try {
-            const jsonParsed =
-              await this.uiFileHelper.readInternalJSONFile(_flowProfile);
-            resolve(jsonParsed);
-          } catch (ex) {}
-        }
-      } else {
-        resolve(BeanconquerorFlowTestDataDummySecondDummy);
-      }
-    });
-    return promiseRtr;
+  private async returnFlowProfile(_flowProfile: string): Promise<any> {
+    if (!this.platform.is('capacitor')) {
+      return this.readDummyFlowProfile();
+    }
+
+    if (_flowProfile === '') {
+      throw new Error('_flowProfile is empty');
+    }
+    try {
+      const jsonParsed =
+        await this.uiFileHelper.readInternalJSONFile(_flowProfile);
+      return jsonParsed;
+    } catch (ex) {
+      // ignore
+    }
   }
 
   public async readFlowProfile() {

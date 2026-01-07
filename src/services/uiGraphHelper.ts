@@ -8,7 +8,6 @@ import { GraphDetailComponent } from '../app/graph-section/graph/graph-detail/gr
 import { UIAlert } from './uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 import { UIFileHelper } from './uiFileHelper';
-import BeanconquerorFlowTestDataDummy from '../assets/BeanconquerorFlowTestDataFourth.json';
 import { Brew } from '../classes/brew/brew';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 
@@ -103,23 +102,15 @@ export class UIGraphHelper {
     return savingPath;
   }
 
-  public async readFlowProfile(_flowProfilePath: string) {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('capacitor')) {
-        if (_flowProfilePath !== '') {
-          try {
-            const jsonParsed =
-              await this.uiFileHelper.readInternalJSONFile(_flowProfilePath);
-            resolve(jsonParsed);
-          } catch (ex) {
-            reject();
-          }
-        } else {
-          reject();
-        }
-      } else {
-        resolve(BeanconquerorFlowTestDataDummy as any);
-      }
-    });
+  public async readFlowProfile(_flowProfilePath: string): Promise<any> {
+    if (!this.platform.is('capacitor')) {
+      return (await import('../assets/BeanconquerorFlowTestDataFourth.json'))
+        .default;
+    }
+    if (_flowProfilePath === '') {
+      throw new Error('_flowProfilePath is empty');
+    }
+
+    return this.uiFileHelper.readInternalJSONFile(_flowProfilePath);
   }
 }

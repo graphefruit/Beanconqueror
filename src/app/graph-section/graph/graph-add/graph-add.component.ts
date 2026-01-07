@@ -8,7 +8,6 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
 import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
 import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFifth.json';
 import { UIAlert } from '../../../../services/uiAlert';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
@@ -103,37 +102,41 @@ export class GraphAddComponent {
 
   public async uploadGraph() {
     try {
-      if (this.platform.is('capacitor')) {
-        const data: any = await this.uiGraphHelper.chooseGraph();
+      if (!this.platform.is('capacitor')) {
+        const dummyData = (
+          await import('../../../../assets/BeanconquerorFlowTestDataFifth.json')
+        ).default;
+        this.flowData = dummyData as BrewFlow;
+        return;
+      }
+
+      const data: any = await this.uiGraphHelper.chooseGraph();
+      if (
+        data &&
+        (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+      ) {
+        // Export from a normal flow data
+        this.flowData = data as BrewFlow;
+      } else {
+        // Export from graph object
         if (
           data &&
-          (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+          (data?.DATA?.weight ||
+            data?.DATA?.pressureFlow ||
+            data?.DATA?.temperatureFlow)
         ) {
-          // Export from a normal flow data
-          this.flowData = data as BrewFlow;
-        } else {
-          // Export from graph object
-          if (
-            data &&
-            (data?.DATA?.weight ||
-              data?.DATA?.pressureFlow ||
-              data?.DATA?.temperatureFlow)
-          ) {
-            this.flowData = data.DATA as BrewFlow;
-            if (data.NAME) {
-              this.data.name = data.NAME;
-            }
-            if (data.NOTE) {
-              this.data.note = data.NOTE;
-            }
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT'),
-            );
+          this.flowData = data.DATA as BrewFlow;
+          if (data.NAME) {
+            this.data.name = data.NAME;
           }
+          if (data.NOTE) {
+            this.data.note = data.NOTE;
+          }
+        } else {
+          this.uiAlert.showMessage(
+            this.translate.instant('INVALID_FILE_FORMAT'),
+          );
         }
-      } else {
-        this.flowData = BeanconquerorFlowTestDataDummy as BrewFlow;
       }
     } catch (ex) {}
   }

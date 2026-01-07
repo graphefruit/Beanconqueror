@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Settings } from '../../classes/settings/settings';
-import BeanconquerorFlowTestDataDummy from '../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UIHelper } from '../../services/uiHelper';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { Platform } from '@ionic/angular/standalone';
@@ -156,17 +155,25 @@ export class GraphDisplayCardComponent implements OnInit {
   }
 
   private async readFlowProfile() {
-    if (this.platform.is('capacitor')) {
-      if (this.flowProfilePath !== '') {
-        try {
-          const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-            this.flowProfilePath,
-          );
-          this.flow_profile_raw = jsonParsed;
-        } catch (ex) {}
-      }
-    } else {
-      this.flow_profile_raw = BeanconquerorFlowTestDataDummy as any;
+    if (!this.platform.is('capacitor')) {
+      const dummyData = (
+        await import('../../assets/BeanconquerorFlowTestDataFourth.json')
+      ).default;
+      this.flow_profile_raw = dummyData as any;
+      return;
+    }
+
+    if (this.flowProfilePath === '') {
+      return;
+    }
+
+    try {
+      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+        this.flowProfilePath,
+      );
+      this.flow_profile_raw = jsonParsed;
+    } catch (ex) {
+      // ignore
     }
   }
   public ngOnDestroy() {

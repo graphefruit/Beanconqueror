@@ -6,8 +6,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import moment from 'moment/moment';
-import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Settings } from '../../../../classes/settings/settings';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -25,7 +23,6 @@ import { Brew } from '../../../../classes/brew/brew';
 import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
 import { Graph } from '../../../../classes/graph/graph';
 import { BREW_GRAPH_TYPE } from '../../../../enums/brews/brewGraphType';
-import BeanconquerorFlowTestDataDummySecondDummy from '../../../../assets/BeanconquerorFlowTestDataSecond.json';
 import { UIBrewStorage } from '../../../../services/uiBrewStorage';
 import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { UIAlert } from '../../../../services/uiAlert';
@@ -296,63 +293,69 @@ export class GraphDetailComponent implements OnInit {
   }
 
   private async readFlowProfile(_path) {
-    if (this.platform.is('capacitor')) {
-      if (_path !== '') {
-        try {
-          const jsonParsed =
-            await this.uiFileHelper.readInternalJSONFile(_path);
-          this.flow_profile_raw = jsonParsed;
-        } catch (ex) {}
-      }
-    } else {
-      this.flow_profile_raw = BeanconquerorFlowTestDataDummy as any;
+    if (!this.platform.is('capacitor')) {
+      const dummyData = (
+        await import('../../../../assets/BeanconquerorFlowTestDataFourth.json')
+      ).default;
+      this.flow_profile_raw = dummyData as any;
+      return;
+    }
+
+    if (_path !== '') {
+      try {
+        const jsonParsed = await this.uiFileHelper.readInternalJSONFile(_path);
+        this.flow_profile_raw = jsonParsed;
+      } catch (ex) {}
     }
   }
 
   private async readReferenceFlowProfile(_iBrew: IBrew) {
-    if (this.platform.is('capacitor')) {
-      const _brew: Brew = this.uiBrewStorage.getEntryByUUID(_iBrew.config.uuid);
-      if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
-        let referencePath: string = '';
-        const uuid = _brew.reference_flow_profile.uuid;
-        let referenceObj: Brew | Graph = null;
-        if (
-          _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
-          _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-        ) {
-          referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+    if (!this.platform.is('capacitor')) {
+      const dummyData = (
+        await import('../../../../assets/BeanconquerorFlowTestDataSecond.json')
+      ).default;
+      this.reference_profile_raw = dummyData as any;
+      return;
+    }
 
-          if (
-            _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-          ) {
-            referencePath = referenceObj.getGraphPath(
-              BREW_GRAPH_TYPE.IMPORTED_GRAPH,
-            );
-          } else {
-            referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
-          }
+    const _brew: Brew = this.uiBrewStorage.getEntryByUUID(_iBrew.config.uuid);
+    if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
+      let referencePath: string = '';
+      const uuid = _brew.reference_flow_profile.uuid;
+      let referenceObj: Brew | Graph = null;
+      if (
+        _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
+        _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+
+        if (
+          _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
+          referencePath = referenceObj.getGraphPath(
+            BREW_GRAPH_TYPE.IMPORTED_GRAPH,
+          );
         } else {
-          referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
-          referencePath = referenceObj.getGraphPath();
+          referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
         }
-        if (referenceObj) {
-          await this.uiAlert.showLoadingSpinner();
-          try {
-            const jsonParsed =
-              await this.uiFileHelper.readInternalJSONFile(referencePath);
-            this.reference_profile_raw = jsonParsed;
-          } catch (ex) {
-            // Maybe the reference flow has been deleted.
-          }
+      } else {
+        referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
+        referencePath = referenceObj.getGraphPath();
+      }
+      if (referenceObj) {
+        await this.uiAlert.showLoadingSpinner();
+        try {
+          const jsonParsed =
+            await this.uiFileHelper.readInternalJSONFile(referencePath);
+          this.reference_profile_raw = jsonParsed;
+        } catch (ex) {
+          // Maybe the reference flow has been deleted.
         }
       }
-      await this.uiAlert.hideLoadingSpinner();
-    } else {
-      this.reference_profile_raw =
-        BeanconquerorFlowTestDataDummySecondDummy as any;
     }
+    await this.uiAlert.hideLoadingSpinner();
   }
 
   public ngOnDestroy() {

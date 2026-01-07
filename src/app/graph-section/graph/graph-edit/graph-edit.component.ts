@@ -8,7 +8,6 @@ import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
 import { Graph } from '../../../../classes/graph/graph';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFifth.json';
 import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UIAlert } from '../../../../services/uiAlert';
@@ -138,54 +137,62 @@ export class GraphEditComponent implements OnInit {
     await this.uiGraphHelper.detailGraphRawData(this.flowData);
   }
 
+  private async readDummyFlowProfile(): Promise<any> {
+    return (
+      await import('../../../../assets/BeanconquerorFlowTestDataFifth.json')
+    ).default;
+  }
+
   private async readFlowProfile() {
-    if (this.platform.is('capacitor')) {
-      if (this.data.flow_profile !== '') {
-        try {
-          const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-            this.data.flow_profile,
-          );
-          this.flowData = jsonParsed;
-        } catch (ex) {}
-      }
-    } else {
-      this.flowData = BeanconquerorFlowTestDataDummy as any;
+    if (!this.platform.is('capacitor')) {
+      this.flowData = await this.readDummyFlowProfile();
+      return;
+    }
+
+    if (this.data.flow_profile !== '') {
+      try {
+        const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+          this.data.flow_profile,
+        );
+        this.flowData = jsonParsed;
+      } catch (ex) {}
     }
   }
 
   public async uploadGraph() {
     try {
-      if (this.platform.is('capacitor')) {
-        const data: any = await this.uiGraphHelper.chooseGraph();
+      if (!this.platform.is('capacitor')) {
+        this.flowData = await this.readDummyFlowProfile();
+        return;
+      }
+
+      const data: any = await this.uiGraphHelper.chooseGraph();
+      if (
+        data &&
+        (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+      ) {
+        // Export from a normal flow data
+        this.flowData = data as BrewFlow;
+      } else {
+        // Export from graph object
         if (
           data &&
-          (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+          (data?.DATA?.weight ||
+            data?.DATA?.pressureFlow ||
+            data?.DATA?.temperatureFlow)
         ) {
-          // Export from a normal flow data
-          this.flowData = data as BrewFlow;
-        } else {
-          // Export from graph object
-          if (
-            data &&
-            (data?.DATA?.weight ||
-              data?.DATA?.pressureFlow ||
-              data?.DATA?.temperatureFlow)
-          ) {
-            this.flowData = data.DATA as BrewFlow;
-            if (data.NAME) {
-              this.data.name = data.NAME;
-            }
-            if (data.NOTE) {
-              this.data.note = data.NOTE;
-            }
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT'),
-            );
+          this.flowData = data.DATA as BrewFlow;
+          if (data.NAME) {
+            this.data.name = data.NAME;
           }
+          if (data.NOTE) {
+            this.data.note = data.NOTE;
+          }
+        } else {
+          this.uiAlert.showMessage(
+            this.translate.instant('INVALID_FILE_FORMAT'),
+          );
         }
-      } else {
-        this.flowData = BeanconquerorFlowTestDataDummy as BrewFlow;
       }
     } catch (ex) {}
   }
