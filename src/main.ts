@@ -9,7 +9,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -30,7 +30,6 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
-      BrowserModule,
       IonicModule.forRoot({
         mode: 'md',
         menuIcon: 'beanconqueror-menu',
