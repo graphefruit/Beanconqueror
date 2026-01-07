@@ -12,14 +12,14 @@
     <ion-buttons slot="end">
 
       @if (isWebSocketConnected() === true ) {
-        <ion-chip (click)="showPreparationEdit()" (long-press)="showDevInformation()" outline='true' class='machine-connected'>
+        <ion-chip (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-connected'>
 
           <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
           <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
 
         </ion-chip>
       } @else {
-        <ion-chip (click)="showPreparationEdit()"  (long-press)="showDevInformation()" outline='true' class='machine-disconnected'>
+        <ion-chip (click)="showPreparationEdit()"  (long-press)="toggleDevInformation()" outline='true' class='machine-disconnected'>
           <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
           <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
         </ion-chip>
@@ -65,7 +65,14 @@
             <ion-col size="3">
               M:&nbsp;<span #lagTimeM></span>
             </ion-col>
-
+          </ion-row>
+          <ion-row>
+            <ion-col size="6">
+              Current Temp:&nbsp;<span #currentTemp></span>
+            </ion-col>
+            <ion-col size="6">
+              Current Press:&nbsp;<span #pumpPress></span>
+            </ion-col>
           </ion-row>
         </ion-grid>
       </ion-card-content>

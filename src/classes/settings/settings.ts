@@ -1,6 +1,7 @@
 /** Interfaces */
 /** Enums */
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
 /** Classes */
 import { Config } from '../objectConfig/objectConfig';
@@ -34,8 +35,10 @@ import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
+import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 
 export class Settings implements ISettings {
+  public graph_colors: IGraphColors;
   public theme_mode: THEME_MODE_ENUM;
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
@@ -604,10 +607,16 @@ export class Settings implements ISettings {
 
     this.brew_display_image_type = BREW_DISPLAY_IMAGE_TYPE.PREPARATION;
     this.theme_mode = THEME_MODE_ENUM.LIGHT;
+
+    this.graph_colors = JSON.parse(JSON.stringify(DEFAULT_GRAPH_COLORS));
   }
 
   public initializeByObject(settingsObj: ISettings): void {
     Object.assign(this, settingsObj);
+    // Safety check if graph_colors is missing (e.g. old backup)
+    if (!this.graph_colors) {
+      this.graph_colors = JSON.parse(JSON.stringify(DEFAULT_GRAPH_COLORS));
+    }
     // We need to reassign brew order here, else the class would be dismissed.
 
     this.manage_parameters = new ManageBrewParameter();

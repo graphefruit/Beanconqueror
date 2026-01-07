@@ -285,6 +285,7 @@ export class MeticulousDevice extends PreparationDevice {
           pressureSensor_pressure: data.sensors.p,
           flowSensor_flow: data.sensors.f,
           loadcell_weight: data.sensors.w,
+          gravimetric_flow: data.sensors.g,
           display_temp: data.sensors.t,
           extracting: data.extracting,
         };
@@ -298,6 +299,7 @@ export class MeticulousDevice extends PreparationDevice {
           currentShotData.shotTime = data.time;
           //currentShotData.temperature = data.sensors.t;
           currentShotData.extracting = data.extracting;
+          currentShotData.gravimetric_flow = data.sensors.g;
 
           this.meticulousShotData = currentShotData;
         } else {
@@ -308,6 +310,7 @@ export class MeticulousDevice extends PreparationDevice {
           this.meticulousShotData.shotTime = data.time;
           //this.meticulousShotData.temperature = data.sensors.t;
           this.meticulousShotData.extracting = data.extracting;
+          this.meticulousShotData.gravimetric_flow = data.sensors.g;
         }
       });
     });

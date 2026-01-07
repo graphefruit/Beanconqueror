@@ -96,9 +96,8 @@ export class DashboardPage implements OnInit {
     addIcons({ giftOutline, thermometerOutline, snowOutline });
   }
 
-  public async openUnwrapped(year?: number) {
-    const targetYear = year || new Date().getFullYear();
-    const stats = this.unwrappedService.getUnwrappedData(targetYear);
+  public async openUnwrapped(year: number) {
+    const stats = this.unwrappedService.getUnwrappedData(year);
     if (stats) {
       const modal = await this.modalController.create({
         component: UnwrappedModalComponent,

@@ -160,6 +160,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     await this.uiPreparationStorage.update(this.preparation);
   }
 
+  /**
+   * Just used for baristamode on the sanremo you.
+   * @param program
+   * @param value
+   */
   public async setResidualLagTimeByProgram(program: number, value: number) {
     switch (program) {
       case 1:
@@ -179,6 +184,11 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           value;
         break;
     }
+    await this.uiPreparationStorage.update(this.preparation);
+  }
+
+  public async setBaristaHintHasBeenShown() {
+    this.preparation.connectedPreparationDevice.customParams.showHintForBaristaMode = false;
     await this.uiPreparationStorage.update(this.preparation);
   }
 
@@ -518,35 +528,32 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           SanremoYOUMode.LISTENING_AND_CONTROLLING;
         this.sanremoYOUModeSelected();
 
-        if (this.baristamode) {
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightP1
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightP1 =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP1;
-          }
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightP2
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightP2 =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP2;
-          }
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightP3
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightP3 =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightP3;
-          }
-          if (
-            this.preparation.connectedPreparationDevice.customParams
-              .stopAtWeightM
-          ) {
-            this.data.preparationDeviceBrew.params.stopAtWeightM =
-              this.preparation.connectedPreparationDevice.customParams.stopAtWeightM;
-          }
+        if (
+          this.preparation.connectedPreparationDevice.customParams
+            .stopAtWeightP1
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightP1 =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightP1;
+        }
+        if (
+          this.preparation.connectedPreparationDevice.customParams
+            .stopAtWeightP2
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightP2 =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightP2;
+        }
+        if (
+          this.preparation.connectedPreparationDevice.customParams
+            .stopAtWeightP3
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightP3 =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightP3;
+        }
+        if (
+          this.preparation.connectedPreparationDevice.customParams.stopAtWeightM
+        ) {
+          this.data.preparationDeviceBrew.params.stopAtWeightM =
+            this.preparation.connectedPreparationDevice.customParams.stopAtWeightM;
         }
       }
     }
@@ -842,6 +849,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
     this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
+
+    if (_historyData.profile?.name) {
+      this.brewComponent.data.pressure_profile = _historyData.profile.name;
+    }
+    if (_historyData.profile?.temperature) {
+      this.brewComponent.data.brew_temperature =
+        _historyData.profile.temperature;
+    }
 
     this.brewComponent.timer?.setTime(seconds, milliseconds);
     this.brewComponent.timer?.changeEvent();

@@ -5,6 +5,7 @@ import {
   EventEmitter,
   HostListener,
   NgZone,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -84,7 +85,7 @@ declare var Plotly;
     IonCardSubtitle,
   ],
 })
-export class BaristaPage implements OnInit {
+export class BaristaPage implements OnInit, OnDestroy {
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiMillStorage = inject(UIMillStorage);
@@ -131,6 +132,12 @@ export class BaristaPage implements OnInit {
 
   @ViewChild('lagTimeM', { read: ElementRef })
   public lagTimeMEl: ElementRef;
+
+  @ViewChild('currentTemp', { read: ElementRef })
+  public currentTempEl: ElementRef;
+
+  @ViewChild('pumpPress', { read: ElementRef })
+  public pumpPressEl: ElementRef;
 
   @Output() public lastShot = new EventEmitter();
 
@@ -194,19 +201,26 @@ export class BaristaPage implements OnInit {
     setTimeout(() => {
       this.showLagTime();
       this.updateSanremoYOUDoses();
+      this.checkIfHintShallBeShown();
     }, 5000);
 
     setInterval(() => {
       try {
-        const shotData = (
-          this.brewBrewing?.brewBrewingPreparationDeviceEl
-            ?.preparationDevice as SanremoYOUDevice
-        ).getActualShotData();
+        if (this.isWebSocketConnected()) {
+          const shotData = (
+            this.brewBrewing?.brewBrewingPreparationDeviceEl
+              ?.preparationDevice as SanremoYOUDevice
+          ).getActualShotData();
 
-        this.lastHeartbeat = shotData.localTimeString;
-        this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
+          this.lastHeartbeat = shotData.localTimeString;
+          this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
+          this.currentTempEl.nativeElement.innerText = shotData.tempBoilerCoffe;
+          this.pumpPressEl.nativeElement.innerText = shotData.pumpPress;
+        }
       } catch (ex) {
         this.lastHeartBeatEl.nativeElement.innerText = '-';
+        this.currentTempEl.nativeElement.innerText = '-';
+        this.pumpPressEl.nativeElement.innerText = '-';
       }
     }, 1000);
   }
@@ -386,15 +400,17 @@ export class BaristaPage implements OnInit {
   private showLagTime() {
     const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
       ?.preparationDevice as SanremoYOUDevice;
-    const lagTimeP1 = device.getResidualLagTimeByProgram(1);
-    const lagTimeP2 = device.getResidualLagTimeByProgram(2);
-    const lagTimeP3 = device.getResidualLagTimeByProgram(3);
-    const lagTimeM = device.getResidualLagTimeByProgram(4);
+    if (device) {
+      const lagTimeP1 = device.getResidualLagTimeByProgram(1);
+      const lagTimeP2 = device.getResidualLagTimeByProgram(2);
+      const lagTimeP3 = device.getResidualLagTimeByProgram(3);
+      const lagTimeM = device.getResidualLagTimeByProgram(4);
 
-    this.lagTimeP1El.nativeElement.innerHTML = lagTimeP1;
-    this.lagTimeP2El.nativeElement.innerHTML = lagTimeP2;
-    this.lagTimeP3El.nativeElement.innerHTML = lagTimeP3;
-    this.lagTimeMEl.nativeElement.innerHTML = lagTimeM;
+      this.lagTimeP1El.nativeElement.innerHTML = lagTimeP1;
+      this.lagTimeP2El.nativeElement.innerHTML = lagTimeP2;
+      this.lagTimeP3El.nativeElement.innerHTML = lagTimeP3;
+      this.lagTimeMEl.nativeElement.innerHTML = lagTimeM;
+    }
   }
 
   public async popoverActionsBrew() {
@@ -410,12 +426,43 @@ export class BaristaPage implements OnInit {
     await popover.onWillDismiss();
   }
 
-  public async showDevInformation() {
-    this.devInformationEl.nativeElement.style.display = 'block';
+  public async toggleDevInformation() {
+    if (this.devInformationEl.nativeElement.style.display === 'block') {
+      this.devInformationEl.nativeElement.style.display = 'none';
+    } else {
+      this.devInformationEl.nativeElement.style.display = 'block';
+    }
   }
   public async showPreparationEdit() {
     const preparation: Preparation = this.data.getPreparation();
     await this.uiPreparationHelper.connectDevice(preparation);
+  }
+
+  private async checkIfHintShallBeShown() {
+    if (this.isSanremoConnected()) {
+      const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
+        ?.preparationDevice as SanremoYOUDevice;
+      if (device.showInformationHintForBrewByWeightMode()) {
+        //We got no scale, so ask user to connect one.
+        try {
+          await this.uiAlert.showConfirmWithYesNoTranslation(
+            'PREPARATION_DEVICE.TYPE_SANREMO_YOU.BREW_BY_WEIGHT_HINT',
+            'INFORMATION',
+            'DONT_SHOW_AGAIN',
+            'SKIP',
+            true,
+          );
+
+          await this.brewBrewing?.brewBrewingPreparationDeviceEl.setBaristaHintHasBeenShown();
+
+          //Barista pressed don't show again.
+        } catch (ex) {
+          //Skip was pressed
+        }
+      } else {
+        //Nothing to do we already showed it
+      }
+    }
   }
 
   private async checkIfScaleIsConnected() {

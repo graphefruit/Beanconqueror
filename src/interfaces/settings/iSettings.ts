@@ -19,9 +19,11 @@ import {
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBrewPageSort } from '../brew/iBrewPageSort';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { IGraphColors } from './iGraphColors';
 
 export interface ISettings {
   // Properties
+  graph_colors: IGraphColors;
   brew_view: BREW_VIEW_ENUM;
   startup_view: STARTUP_VIEW_ENUM;
   date_format: string;

@@ -152,6 +152,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   @Input() public isDetail: boolean = false;
 
   @Input() public baristamode: boolean = false;
+  public baristaModeTargetWeight: number = undefined;
   /**
    * This flag will toggle graph and the timer to be displayed.
    */
@@ -634,8 +635,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.data.brew_time === 0 ||
       this.isDetail === true
     ) {
-      // Re render, else the lines would not be hidden/shown when having references graphs
-      Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+      if (this.canWePlot()) {
+        // Re render, else the lines would not be hidden/shown when having references graphs
+        Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+      }
     }
     this.checkChanges();
   }
@@ -649,7 +652,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.graphIconColSize = this.getGraphIonColSize();
       this.setUIParams();
       try {
-        Plotly.purge(this.profileDiv.nativeElement);
+        if (this.canWePlot()) {
+          Plotly.purge(this.profileDiv.nativeElement);
+        }
       } catch (ex) {}
       this.graphSettings = this.uiHelper.cloneData(this.settings.graph.FILTER);
       if (
@@ -723,12 +728,14 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       try {
-        Plotly.newPlot(
-          this.profileDiv.nativeElement,
-          this.chartData,
-          this.lastChartLayout,
-          this.getChartConfig(),
-        );
+        if (this.canWePlot()) {
+          Plotly.newPlot(
+            this.profileDiv.nativeElement,
+            this.chartData,
+            this.lastChartLayout,
+            this.getChartConfig(),
+          );
+        }
 
         setTimeout(() => {
           /** On big tablets, the chart is not resized, so trigger the resize event**/
@@ -1113,6 +1120,10 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public setActualSmartInformation(_weight: number = null) {
+    if (!this.canWePlot()) {
+      //Ignore this method
+      return;
+    }
     this.ngZone.runOutsideAngular(() => {
       let actualScaleWeight = this.getActualScaleWeight();
 
@@ -1333,10 +1344,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
 
             if (newLayoutIsNeeded) {
-              if (
-                !this.baristamode ||
-                (this.baristamode && this.showAdvancedBarista)
-              ) {
+              if (this.canWePlot()) {
                 Plotly.relayout(
                   this.profileDiv.nativeElement,
                   this.lastChartLayout,
@@ -1349,6 +1357,13 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       } catch (ex) {}
     });
+  }
+
+  private canWePlot(): boolean {
+    if (!this.baristamode || (this.baristamode && this.showAdvancedBarista)) {
+      return true;
+    }
+    return false;
   }
 
   public async timerReset(_event) {
@@ -1367,16 +1382,13 @@ export class BrewBrewingGraphComponent implements OnInit {
       const deviceType =
         this.brewComponent?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType();
       if (deviceType === PreparationDeviceType.XENIA) {
-        this.stopFetchingDataFromSanremoYOU();
+        this.stopFetchingAndSettingDataFromXenia();
       } else if (deviceType === PreparationDeviceType.METICULOUS) {
         this.stopFetchingDataFromMeticulous();
       } else if (deviceType === PreparationDeviceType.SANREMO_YOU) {
         this.stopFetchingDataFromSanremoYOU();
 
-        if (
-          this.data.preparationDeviceBrew.params.selectedMode ===
-          SanremoYOUMode.LISTENING_AND_CONTROLLING
-        ) {
+        if (this.baristamode) {
           this.startFetchingDataFromSanremoYOU();
         }
       }
@@ -1656,6 +1668,9 @@ export class BrewBrewingGraphComponent implements OnInit {
     let hasShotStarted: boolean = false;
     prepDeviceCall.connectToSocket().then((_connected) => {
       if (_connected) {
+        this.uiLog.log(
+          'Brew-Brewing-Graph - SanremoYOU - We connected to websocket',
+        );
         this.ngZone.runOutsideAngular(() => {
           this.sanremoYOUFetchingInterval = setInterval(() => {
             const shotData: SanremoShotData =
@@ -1765,6 +1780,16 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
           }, 100);
         });
+      } else {
+        this.uiLog.error(
+          'Brew-Brewing-Graph - SanremoYOU - We could not connect to websocket',
+        );
+        this.uiAlert.showMessage(
+          'PREPARATION_DEVICE.TYPE_SANREMO_YOU.WE_COULD_NOT_CONNECT',
+          undefined,
+          undefined,
+          true,
+        );
       }
     });
 
@@ -2980,7 +3005,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected();
       let residual_lag_time = 1.35;
       let targetWeight = 0;
-      let baristaModeTargetWeight = undefined;
+      this.baristaModeTargetWeight = undefined;
       let brewByWeightActive: boolean = false;
       let preparationDeviceType: PreparationDeviceType;
 
@@ -3059,7 +3084,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               SanremoYOUMode.LISTENING
           ) {
             if (this.baristamode) {
-              if (baristaModeTargetWeight === undefined) {
+              if (this.baristaModeTargetWeight === undefined) {
                 try {
                   let groupStatus = (
                     this.brewComponent.brewBrewingPreparationDeviceEl
@@ -3067,21 +3092,21 @@ export class BrewBrewingGraphComponent implements OnInit {
                   ).getActualShotData().groupStatus;
                   if (groupStatus !== 0) {
                     if (groupStatus === 1) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightP1;
                     } else if (groupStatus === 2) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightP2;
                     } else if (groupStatus === 3) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightP3;
                     } else if (groupStatus === 4) {
-                      baristaModeTargetWeight =
+                      this.baristaModeTargetWeight =
                         this.data.preparationDeviceBrew.params.stopAtWeightM;
                     }
 
                     //We overwrite for this shot the target weight, because we have a barista mode target weight
-                    targetWeight = baristaModeTargetWeight;
+                    targetWeight = this.baristaModeTargetWeight;
 
                     residual_lag_time = (
                       this.brewComponent.brewBrewingPreparationDeviceEl
@@ -3149,7 +3174,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           ).sendActualWeightAndFlowDataToMachine(
             lastWeightEntry,
             lastFlowEntry,
-            baristaModeTargetWeight,
+            this.baristaModeTargetWeight,
           );
         }
       });
@@ -3954,8 +3979,15 @@ export class BrewBrewingGraphComponent implements OnInit {
       grindWeight = 5;
     }
     if (this.baristamode) {
-      /**A bit more threshold for preinfusion**/
-      grindWeight = 10;
+      if (this.baristaModeTargetWeight !== undefined) {
+        //Set the desired weight of the baristamode
+        //We got the issue e.g. on blooming phase, we passed 10g because the bloom-flow, even with low preassure, reached over 10g, and so the shot ended, even so it wasn't finished
+        //We take 90% of the desired weight as minimum, to not have issues with lags, because lets say we take 36 grams, and we need to reach realy here 36 grams, it could take some time
+        grindWeight = this.baristaModeTargetWeight * 0.9;
+      } else {
+        /**A bit more threshold for preinfusion**/
+        grindWeight = 10;
+      }
     }
 
     //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
@@ -4138,7 +4170,12 @@ export class BrewBrewingGraphComponent implements OnInit {
           this.lastChartLayout.height = 150;
           this.lastChartLayout.width =
             this.canvaContainer.nativeElement.offsetWidth;
-          Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+          if (this.canWePlot()) {
+            Plotly.relayout(
+              this.profileDiv.nativeElement,
+              this.lastChartLayout,
+            );
+          }
         } catch (ex) {}
       }, 50);
     }

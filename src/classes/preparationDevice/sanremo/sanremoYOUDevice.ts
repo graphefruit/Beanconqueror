@@ -8,6 +8,7 @@ import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import { SanremoShotData } from './sanremoShotData';
 import { UIAlert } from '../../../services/uiAlert';
+import { sleep } from '../../devices';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -36,9 +37,9 @@ export class SanremoYOUDevice extends PreparationDevice {
     this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
     this.websocketURL = this.getPreparation().connectedPreparationDevice.url;
     if (this.websocketURL.indexOf('https:') >= 0) {
-      this.websocketURL = 'ws://192.168.0.140'; //this.websocketURL.replace('https', 'ws');
+      this.websocketURL = this.websocketURL.replace('https', 'ws');
     } else {
-      this.websocketURL = 'ws://192.168.0.140'; // this.websocketURL.replace('http', 'ws');
+      this.websocketURL = this.websocketURL.replace('http', 'ws');
     }
     this.websocketURL = this.websocketURL + ':81';
   }
@@ -163,6 +164,22 @@ export class SanremoYOUDevice extends PreparationDevice {
     }
     // Default fallback
     return 0.9;
+  }
+
+  public showInformationHintForBrewByWeightMode(): boolean {
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    if (connectedPreparationDevice.customParams) {
+      if (
+        connectedPreparationDevice.customParams.showHintForBaristaMode ===
+        undefined
+      ) {
+        return true;
+      }
+
+      return connectedPreparationDevice.customParams.showHintForBaristaMode;
+    }
+    return false;
   }
 
   public getSaveLogfilesFromMachine(): boolean {
@@ -308,13 +325,30 @@ export class SanremoYOUDevice extends PreparationDevice {
   public connectToSocket(): Promise<boolean> {
     this.logInfo('Connect to socket');
     let hasPromiseBeenCalled: boolean = false;
-    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
       if (this.socket !== undefined) {
-        if (hasPromiseBeenCalled === false) {
-          resolve(true);
-          hasPromiseBeenCalled = true;
+        this.logInfo('Socket seems like already connected');
+        //Maybe we're in connection state but the websocket is not finished yet.
+        for (let i = 0; i < 10; i++) {
+          if (i != 0) {
+            await sleep(250);
+          }
+          /**
+           * We're realy connected
+           */
+          this.logInfo(
+            'Check socket connection state ' + this.socket.readyState,
+          );
+          if (this.socket.readyState === 1) {
+            resolve(true);
+            //We can set promise been called to always true
+            hasPromiseBeenCalled = true;
+            //We can skip now.
+            return;
+          }
         }
-
+        //Seems like the readyState never gone to "1"
+        resolve(false);
         return;
       }
 
@@ -362,8 +396,9 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Listen for messages
         this.socket.onmessage = (event) => {
-          //          this.logInfo('Message from server:', event.data);
+          this.logInfo('Message from server:', event.data);
           const responseJSON = JSON.parse(event.data);
+
           if ('status' in responseJSON) {
             //Valid sanremo shot data
             let currentShotData = new SanremoShotData();
@@ -387,7 +422,8 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Handle errors
         this.socket.onerror = (event) => {
-          this.logInfo('WebSocket error: ', event);
+          this.logInfo('WebSocket error: ', JSON.stringify(event));
+
           if (hasPromiseBeenCalled === false) {
             resolve(false);
             hasPromiseBeenCalled = true;
@@ -398,7 +434,7 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Handle connection close
         this.socket.onclose = (event) => {
-          this.logInfo('WebSocket closed:', event);
+          this.logInfo('WebSocket closed:', JSON.stringify(event));
           if (hasPromiseBeenCalled === false) {
             resolve(false);
             hasPromiseBeenCalled = true;
@@ -604,12 +640,15 @@ export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeightP2: number = 0;
   public stopAtWeightP3: number = 0;
   public stopAtWeightM: number = 0;
+
+  public showHintForBaristaMode: boolean = true;
   constructor() {
     this.residualLagTime = 0.9;
     this.residualLagTimeP1 = 0.9;
     this.residualLagTimeP2 = 0.9;
     this.residualLagTimeP3 = 0.9;
     this.residualLagTimeM = 0.9;
+    this.showHintForBaristaMode = true;
 
     this.selectedMode = SanremoYOUMode.LISTENING;
   }

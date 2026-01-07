@@ -1087,7 +1087,9 @@
             "RECONNECT": "Reconnect",
             "ENTER_TARGET_BREW_WEIGHT": "Enter target brew weight in grams",
             "LAST_SHOT": "Last shot",
-            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode is just working with connected scale, please connect one"
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode is just working with connected scale, please connect one",
+            "WE_COULD_NOT_CONNECT": "We could not connect to the machine",
+            "BREW_BY_WEIGHT_HINT": "The programmed volume in ml must be higher than the target weight in grams for the shot to stop at the set weight. If its not the case, please adjust the volume in ml."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
@@ -1583,5 +1585,10 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Bean has been unfrozen",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Bean has been partially unfrozen",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Unfreeze partial coffee bean",
-    "LAST_COMMUNICATION": "Last communication"
+    "LAST_COMMUNICATION": "Last communication",
+  "GRAPH_ACTIVE_LIGHT_MODE": "Active (Light)",
+  "GRAPH_ACTIVE_DARK_MODE": "Active (Dark)",
+  "GRAPH_REFERENCE_LIGHT_MODE": "Reference (Light)",
+  "GRAPH_REFERENCE_DARK_MODE": "Reference (Dark)",
+  "GRAPH_COLORS": "Graph colors"
 }

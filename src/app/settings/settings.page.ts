@@ -6,7 +6,6 @@ import {
 } from '@ionic/angular/standalone';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
-import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import { Bean } from '../../classes/bean/bean';
 
 import { Brew } from '../../classes/brew/brew';
@@ -21,6 +20,7 @@ import { Settings } from '../../classes/settings/settings';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { Subject } from 'rxjs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
@@ -97,6 +97,7 @@ import {
   cloudUploadOutline,
   bluetoothOutline,
   informationCircleOutline,
+  refreshOutline,
 } from 'ionicons/icons';
 import {
   IonHeader,
@@ -270,12 +271,13 @@ export class SettingsPage {
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
     addIcons({
-      chevronForwardOutline,
-      informationOutline,
-      checkmarkCircleOutline,
-      cloudUploadOutline,
       bluetoothOutline,
+      checkmarkCircleOutline,
+      chevronForwardOutline,
+      cloudUploadOutline,
       informationCircleOutline,
+      informationOutline,
+      refreshOutline,
     });
   }
 
@@ -1458,7 +1460,6 @@ export class SettingsPage {
     // Dynamically import the data here to avoid including it in the normal application bundle
     const dummyData = (await import('../../assets/BeanconquerorTestData.json'))
       .default;
-    // const dummyData = BeanconquerorSettingsDummy;
 
     console.log(dummyData);
 
@@ -1721,6 +1722,25 @@ export class SettingsPage {
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
   protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
+  public async resetGraphColor(graphType: string) {
+    try {
+      await this.uiAlert.showConfirm('SURE_QUESTION', undefined, true);
+      if (!this.settings.graph_colors) {
+        this.settings.graph_colors = JSON.parse(
+          JSON.stringify(DEFAULT_GRAPH_COLORS),
+        );
+      }
+
+      // @ts-ignore
+      if (DEFAULT_GRAPH_COLORS[graphType]) {
+        // @ts-ignore
+        this.settings.graph_colors[graphType] = JSON.parse(
+          JSON.stringify(DEFAULT_GRAPH_COLORS[graphType]),
+        );
+        this.saveSettings();
+      }
+    } catch (ex) {}
+  }
 }
 
 export default SettingsPage;

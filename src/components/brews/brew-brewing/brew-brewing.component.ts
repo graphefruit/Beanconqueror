@@ -294,6 +294,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return this.choosenPreparation.tools.filter((e) => e.archived === false);
   }
 
+  private async _waiUntilGraphAndPreparationElementIsThere() {
+    if (this.brewBrewingGraphEl && this.brewBrewingPreparationDeviceEl) {
+      await this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+    } else {
+      for (let i = 0; i < 10; i++) {
+        await sleep(250);
+        if (this.brewBrewingGraphEl && this.brewBrewingPreparationDeviceEl) {
+          await this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+          break;
+        }
+      }
+      return;
+    }
+  }
+
   public async ngAfterViewInit() {
     setTimeout(async () => {
       /**We need to track the state if the brewing was visible on start, because if not we need to give some time for the graph to start**/
@@ -330,9 +345,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             await this.__loadLastBrew();
           }
         } else {
-          if (this.brewBrewingPreparationDeviceEl) {
-            await this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
-          }
+          await this._waiUntilGraphAndPreparationElementIsThere();
         }
         this.setChoosenPreparation();
       } else {
