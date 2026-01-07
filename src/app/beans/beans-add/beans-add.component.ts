@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
 import { Bean } from '../../../classes/bean/bean';
@@ -68,6 +68,17 @@ import {
   ],
 })
 export class BeansAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'bean-add';
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
@@ -82,19 +93,6 @@ export class BeansAddComponent implements OnInit {
 
   private initialBeanData: string = '';
   private disableHardwareBack;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

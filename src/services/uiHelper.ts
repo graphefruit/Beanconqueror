@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Clipboard } from '@capacitor/clipboard';
 /** Ionic */
 import { Platform } from '@ionic/angular/standalone';
@@ -23,21 +23,19 @@ import { KeepAwake } from '@capacitor-community/keep-awake';
   providedIn: 'root',
 })
 export class UIHelper {
+  private readonly platform = inject(Platform);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiLog = inject(UILog);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+
   /**
    *
    */
   private isAppReady: number = -1;
 
   private appStateIsActive: boolean = true;
-
-  constructor(
-    private readonly platform: Platform,
-    private readonly sanitizer: DomSanitizer,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiLog: UILog,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-  ) {}
 
   public static generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
@@ -64,6 +64,17 @@ import {
   ],
 })
 export class GraphEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly platform = inject(Platform);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+
   public static COMPONENT_ID = 'graph-edit';
   public data: Graph = new Graph();
 
@@ -73,18 +84,7 @@ export class GraphEditComponent implements OnInit {
 
   @Input() private graph: IGraph;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly platform: Platform,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-  ) {
+  constructor() {
     addIcons({ cloudUploadOutline, informationCircleOutline, trashOutline });
   }
 

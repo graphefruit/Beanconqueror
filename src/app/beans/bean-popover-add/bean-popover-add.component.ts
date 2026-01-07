@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -21,9 +21,11 @@ import {
   imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class BeanPopoverAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+
   public static COMPONENT_ID = 'bean-popover-add';
 
-  constructor(private readonly modalController: ModalController) {
+  constructor() {
     addIcons({ addCircleOutline, qrCodeOutline });
   }
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { ModalController } from '@ionic/angular/standalone';
 import { IFlavor } from '../../../interfaces/flavor/iFlavor';
@@ -39,17 +39,15 @@ import {
   ],
 })
 export class BrewFlavorPickerComponent implements OnInit {
+  private readonly uiHelper = inject(UIHelper);
+  private readonly modalController = inject(ModalController);
+
   public static COMPONENT_ID: string = 'brew-flavor-picker';
   @Input() public flavor: IFlavor;
   public data: IFlavor = undefined;
 
   @ViewChild('flavorEl', { read: CuppingFlavorsComponent, static: false })
   public flavorEl: CuppingFlavorsComponent;
-
-  constructor(
-    private readonly uiHelper: UIHelper,
-    private readonly modalController: ModalController,
-  ) {}
 
   public dismiss(): void {
     this.modalController.dismiss(

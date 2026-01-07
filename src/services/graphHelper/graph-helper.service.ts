@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 import { BrewFlow } from '../../classes/brew/brewFlow';
@@ -14,13 +14,11 @@ import { ThemeService } from '../theme/theme.service';
   providedIn: 'root',
 })
 export class GraphHelperService {
-  constructor(
-    private readonly translate: TranslateService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform,
-    private readonly themeService: ThemeService,
-  ) {}
+  private readonly translate = inject(TranslateService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly platform = inject(Platform);
+  private readonly themeService = inject(ThemeService);
 
   public initializeTraces() {
     const trace: any = {};

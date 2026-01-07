@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -66,6 +66,15 @@ import {
   ],
 })
 export class BrewFilterComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly eventQueue = inject(EventQueueService);
+
   public static COMPONENT_ID = 'brew-filter';
   public settings: Settings;
 
@@ -88,16 +97,7 @@ export class BrewFilterComponent implements OnInit {
   public preparationToolsExist: boolean;
   public maxBrewRating: number;
   public filterParameterActive: boolean = false;
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly eventQueue: EventQueueService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.settings.GET_BREW_FILTER();
     this.brews = this.uiBrewStorage.getAllEntries();

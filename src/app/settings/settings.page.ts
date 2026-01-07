@@ -11,7 +11,7 @@ import { Bean } from '../../classes/bean/bean';
 
 import { Brew } from '../../classes/brew/brew';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
@@ -161,6 +161,40 @@ import {
   ],
 })
 export class SettingsPage {
+  protected readonly platform = inject(Platform);
+  uiSettingsStorage = inject(UISettingsStorage);
+  uiStorage = inject(UIStorage);
+  uiHelper = inject(UIHelper);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly androidPermissions = inject(AndroidPermissions);
+  private readonly uiUpdate = inject(UIUpdate);
+  private readonly uiVersionStorage = inject(UiVersionStorage);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiHealthKit = inject(UIHealthKit);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiToast = inject(UIToast);
+  private readonly currencyService = inject(CurrencyService);
+  private readonly eventQueue = inject(EventQueueService);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly textToSpeech = inject(TextToSpeechService);
+  private readonly themeService = inject(ThemeService);
+
   public settings: Settings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
@@ -207,42 +241,7 @@ export class SettingsPage {
     }
   }
 
-  constructor(
-    protected readonly platform: Platform,
-    public uiSettingsStorage: UISettingsStorage,
-    public uiStorage: UIStorage,
-    public uiHelper: UIHelper,
-    private readonly alertCtrl: AlertController,
-    private readonly uiAlert: UIAlert,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiMillStorage: UIMillStorage,
-
-    private readonly uiLog: UILog,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly androidPermissions: AndroidPermissions,
-    private readonly uiUpdate: UIUpdate,
-    private readonly uiVersionStorage: UiVersionStorage,
-    private readonly uiExcel: UIExcel,
-    private readonly uiHealthKit: UIHealthKit,
-    private readonly modalCtrl: ModalController,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiToast: UIToast,
-    private readonly currencyService: CurrencyService,
-    private readonly eventQueue: EventQueueService,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly visualizerService: VisualizerService,
-    private readonly textToSpeech: TextToSpeechService,
-    private readonly themeService: ThemeService,
-  ) {
+  constructor() {
     this.__initializeSettings();
     this.debounceLanguageFilter
       .pipe(debounceTime(500), distinctUntilChanged())

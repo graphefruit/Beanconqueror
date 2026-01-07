@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
@@ -49,17 +49,17 @@ import {
   ],
 })
 export class WaterAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'water-add';
 
   public data: Water = new Water();
 
   public water_type_enums = WATER_TYPES;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {
+  constructor() {
     addIcons({ waterOutline });
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular/standalone';
 import { UIHelper } from '../uiHelper';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -8,12 +8,10 @@ import { UILog } from '../uiLog';
   providedIn: 'root',
 })
 export class CleanupService {
-  constructor(
-    private readonly platform: Platform,
-    private readonly uiHelper: UIHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiLog: UILog,
-  ) {}
+  private readonly platform = inject(Platform);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiLog = inject(UILog);
 
   public async cleanupOldBrewData() {
     /**

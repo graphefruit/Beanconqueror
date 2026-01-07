@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { Mill } from '../../../classes/mill/mill';
@@ -69,6 +69,11 @@ import {
   ],
 })
 export class MillModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+
   public static COMPONENT_ID = 'mill-modal-select';
   public objs: Array<Mill> = [];
   public multipleSelection = {};
@@ -84,12 +89,7 @@ export class MillModalSelectComponent implements OnInit {
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiSettings: UISettingsStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
   }
 

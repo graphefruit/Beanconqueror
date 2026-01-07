@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
@@ -57,21 +57,20 @@ import {
   ],
 })
 export class GreenBeanEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiImage = inject(UIImage);
+  uiHelper = inject(UIHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'green-bean-edit';
 
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
 
   public bean_segment = 'general';
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiImage: UIImage,
-    public uiHelper: UIHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

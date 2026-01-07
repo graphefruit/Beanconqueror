@@ -1,9 +1,9 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, HostListener, inject } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 @Directive({ selector: '[ngModel][prevent-characters]' })
 export class PreventCharacterDirective {
-  constructor(private readonly model: NgModel) {}
+  private readonly model = inject(NgModel);
 
   @HostListener('ionBlur')
   public blur(): void {

@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Subject } from 'rxjs';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -30,16 +36,16 @@ import {
   ],
 })
 export class ManageCustomParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   public debounceChanges: Subject<string> = new Subject<string>();
 
   private numerator: number = 0;
   @Input() public data: Settings | Preparation;
-  constructor(
-    public uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.debounceChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {

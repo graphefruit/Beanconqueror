@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { DefaultCustomParameterComponent } from '../../../components/parameter/default-custom-parameter/default-custom-parameter.component';
@@ -28,9 +28,11 @@ import {
   ],
 })
 export class DefaultParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+
   public settings: Settings;
 
-  constructor(public uiSettingsStorage: UISettingsStorage) {
+  constructor() {
     this.__initializeSettings();
   }
 

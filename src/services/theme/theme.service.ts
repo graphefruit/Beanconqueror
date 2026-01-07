@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
 
 import { DarkMode } from '@aparajita/capacitor-dark-mode';
@@ -40,14 +40,14 @@ const LightTheme: Theme = {
   providedIn: 'root',
 })
 export class ThemeService {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   private prefersDark: MediaQueryList;
 
   private _darkMode = false;
   public isDarkMode() {
     return this._darkMode;
   }
-
-  constructor(private readonly uiSettingsStorage: UISettingsStorage) {}
   public async initialize() {
     this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     this.prefersDark.addEventListener('change', () => {

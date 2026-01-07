@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Bean } from '../../../classes/bean/bean';
@@ -66,6 +66,13 @@ import {
   ],
 })
 export class BeanFilterComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+
   public static readonly COMPONENT_ID = 'bean-filter';
   public settings: Settings;
 
@@ -84,14 +91,7 @@ export class BeanFilterComponent implements OnInit {
 
   public maxBeanRating: number = undefined;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

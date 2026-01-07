@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Camera,
   CameraDirection,
@@ -40,16 +40,14 @@ import {
   providedIn: 'root',
 })
 export class UIImage {
-  constructor(
-    private readonly alertController: AlertController,
-    private readonly platform: Platform,
-    private readonly androidPermissions: AndroidPermissions,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly translate: TranslateService,
-    private readonly uiAlert: UIAlert,
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  private readonly alertController = inject(AlertController);
+  private readonly platform = inject(Platform);
+  private readonly androidPermissions = inject(AndroidPermissions);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   private getImageQuality(): number {
     const settings: Settings = this.uiSettingsStorage.getSettings();

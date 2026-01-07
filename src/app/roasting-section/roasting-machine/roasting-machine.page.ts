@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIAlert } from '../../../services/uiAlert';
@@ -49,21 +49,19 @@ import {
   ],
 })
 export class RoastingMachinePage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiRoastingMachineHelper = inject(UIRoastingMachineHelper);
+
   public roastingMachines: Array<RoastingMachine> = [];
 
   public settings: Settings;
   public segment: string = 'open';
-
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiRoastingMachineHelper: UIRoastingMachineHelper,
-  ) {}
 
   public ngOnInit(): void {}
 

@@ -5,6 +5,7 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
@@ -63,6 +64,15 @@ import {
   ],
 })
 export class GreenBeansPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiGreenBeanHelper = inject(UIGreenBeanHelper);
+
   private beans: Array<GreenBean> = [];
 
   public openBeans: Array<GreenBean> = [];
@@ -94,16 +104,7 @@ export class GreenBeansPage implements OnInit {
 
   public settings: Settings;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGreenBeanHelper: UIGreenBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

@@ -5,6 +5,7 @@ import {
   HostListener,
   Input,
   Output,
+  inject,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import { ModalController } from '@ionic/angular/standalone';
@@ -14,18 +15,17 @@ import { PreparationToolModalSelectComponent } from '../app/preparation/preparat
 
 @Directive({ selector: '[ngModel][preparation-tool-overlay]' })
 export class PreparationToolOverlayDirective {
+  private readonly model = inject(NgModel);
+  private readonly modalController = inject(ModalController);
+  private el = inject(ElementRef);
+  private uiPreparationStorage = inject(UIPreparationStorage);
+
   @Output() public ngModelChange = new EventEmitter();
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
   @Input('preparation-id') public preparationId: string = undefined;
   @Input('preparation-ids') public preparationIds: Array<string> = [];
   private oldModelValue: any = undefined;
-  constructor(
-    private readonly model: NgModel,
-    private readonly modalController: ModalController,
-    private el: ElementRef,
-    private uiPreparationStorage: UIPreparationStorage,
-  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {

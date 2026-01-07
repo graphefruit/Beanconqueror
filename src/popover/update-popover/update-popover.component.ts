@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -33,6 +34,10 @@ import {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UpdatePopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private translate = inject(TranslateService);
+  private readonly platform = inject(Platform);
+
   @Input() public versions: Array<string>;
 
   public slide: number = 1;
@@ -41,12 +46,6 @@ export class UpdatePopoverComponent implements OnInit {
     | undefined;
   @ViewChild('updateContent', { static: false })
   public updateContentElement: IonContent;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private translate: TranslateService,
-    private readonly platform: Platform,
-  ) {}
 
   public isAndroid() {
     return this.platform.is('android');

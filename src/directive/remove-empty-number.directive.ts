@@ -1,11 +1,9 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, HostListener, inject } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 @Directive({ selector: '[ngModel][remove-empty-number]' })
 export class RemoveEmptyNumberDirective {
-  // @Output() ngModelChange:EventEmitter<any> = new EventEmitter();
-
-  constructor(private readonly model: NgModel) {}
+  private readonly model = inject(NgModel);
 
   @HostListener('ionFocus')
   public focus(): void {

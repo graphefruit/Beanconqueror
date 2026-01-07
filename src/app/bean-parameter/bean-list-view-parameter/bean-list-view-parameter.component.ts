@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -44,15 +44,15 @@ import {
   ],
 })
 export class BeanListViewParameterComponent {
+  uiSettingsStorage = inject(UISettingsStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   public bean_segment = 'general';
   public debounceChanges: Subject<string> = new Subject<string>();
   public data: Settings;
   private numerator: number = 0;
 
-  constructor(
-    public uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.debounceChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {

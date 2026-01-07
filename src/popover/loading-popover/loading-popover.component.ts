@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
 import { UILog } from '../../services/uiLog';
@@ -21,6 +21,11 @@ import {
   imports: [TranslatePipe, IonContent, IonSpinner, IonFooter, IonButton],
 })
 export class LoadingPopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiLog = inject(UILog);
+  private shareService = inject(ShareService);
+  private eventQueue = inject(EventQueueService);
+
   public __showDismissButton: boolean = false;
   @Input('showDismissAfterSpecificTimeout')
   public showDismissAfterSpecificTimeout: boolean;
@@ -28,12 +33,6 @@ export class LoadingPopoverComponent implements OnInit {
   private timeoutFunc = null;
 
   private updatingLoadingSpinnerMessageSubscription: Subscription = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiLog: UILog,
-    private shareService: ShareService,
-    private eventQueue: EventQueueService,
-  ) {}
 
   public ngOnInit() {
     if (this.showDismissAfterSpecificTimeout) {

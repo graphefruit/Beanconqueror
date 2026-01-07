@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Bean } from '../../classes/bean/bean';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -28,14 +28,12 @@ import { Platform } from '@ionic/angular/standalone';
   providedIn: 'root',
 })
 export class ShareService {
-  constructor(
-    private readonly translate: TranslateService,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly platform: Platform,
-    private readonly uiLog: UILog,
-  ) {}
+  private readonly translate = inject(TranslateService);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly platform = inject(Platform);
+  private readonly uiLog = inject(UILog);
 
   public async shareImage(_dataUrl: string) {
     try {

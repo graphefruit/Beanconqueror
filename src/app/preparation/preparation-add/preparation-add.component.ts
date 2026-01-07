@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -47,6 +47,9 @@ import {
   ],
 })
 export class PreparationAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'preparation-add';
   public data: Preparation = new Preparation();
 
@@ -58,11 +61,6 @@ export class PreparationAddComponent implements OnInit {
   public preparationForm: NgForm;
 
   @Input() private hide_toast_message: boolean;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

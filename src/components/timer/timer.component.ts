@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 
 import { Device } from '@capacitor/device';
@@ -30,6 +31,11 @@ import {
   imports: [TransformDateDirective, IonItem, IonInput, IonButton, IonIcon],
 })
 export class TimerComponent implements OnInit, OnDestroy {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+
   @Input() public label: string;
   @Input('label-id') public labelId: string;
   @Input('hide-control-buttons') public hideControlButtons: boolean = false;
@@ -49,12 +55,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   public timer: ITimer;
   public settings: Settings;
   private isIos16 = false;
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
       this.isIos16 =

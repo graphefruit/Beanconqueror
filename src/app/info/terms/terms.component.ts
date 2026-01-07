@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
@@ -27,7 +27,7 @@ import {
   ],
 })
 export class TermsComponent implements OnInit {
-  constructor(private readonly uiHelper: UIHelper) {}
+  private readonly uiHelper = inject(UIHelper);
 
   public ngOnInit() {}
 

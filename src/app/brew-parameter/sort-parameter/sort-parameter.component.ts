@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { SortCustomParameterComponent } from '../../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
@@ -28,9 +28,11 @@ import {
   ],
 })
 export class SortParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+
   public settings: Settings;
 
-  constructor(public uiSettingsStorage: UISettingsStorage) {
+  constructor() {
     this.__initializeSettings();
   }
 

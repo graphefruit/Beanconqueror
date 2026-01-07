@@ -5,6 +5,7 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -62,6 +63,15 @@ import {
   ],
 })
 export class GraphPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+
   private graphs: Array<Graph> = [];
 
   public openGraphs: Array<Graph> = [];
@@ -81,16 +91,7 @@ export class GraphPage implements OnInit {
 
   public settings: Settings;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGraphHelper: UIGraphHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     addIcons({ analyticsOutline });
   }

@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -70,6 +71,16 @@ import {
   ],
 })
 export class BrewChooseGraphReferenceComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly platform = inject(Platform);
+
   public static COMPONENT_ID: string = 'brew-choose-graph-reference';
   public brew_segment: string = 'brews-open';
   public radioSelection: string;
@@ -115,17 +126,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
 
   public segmentScrollHeight: string = undefined;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiHelper: UIHelper,
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();

@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { Brew } from '../classes/brew/brew';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -19,12 +19,12 @@ import { MillDetailComponent } from '../app/mill/mill-detail/mill-detail.compone
   providedIn: 'root',
 })
 export class UIMillHelper {
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly modalController = inject(ModalController);
+
   private allStoredBrews: Array<Brew> = [];
-  constructor(
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController,
-  ) {
+  constructor() {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];

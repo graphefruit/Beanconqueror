@@ -3,6 +3,7 @@ import {
   Component,
   ViewChild,
   ViewEncapsulation,
+  inject,
 } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { App } from '@capacitor/app';
@@ -134,6 +135,39 @@ register();
   ],
 })
 export class AppComponent implements AfterViewInit {
+  private readonly router = inject(Router);
+  platform = inject(Platform);
+  private readonly uiLog = inject(UILog);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private _translate = inject(TranslateService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly menu = inject(MenuController);
+  private readonly uiUpdate = inject(UIUpdate);
+  private readonly uiVersionStorage = inject(UiVersionStorage);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly intentHandlerService = inject(IntentHandlerService);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly cleanupService = inject(CleanupService);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiStorage = inject(UIStorage);
+  private readonly androidPlatformService = inject(AndroidPlatformService);
+  private readonly iosPlatformService = inject(IosPlatformService);
+  private readonly themeService = inject(ThemeService);
+
   public toggleAbout: boolean = false;
   @ViewChild(IonRouterOutlet, { static: false })
   public routerOutlet: IonRouterOutlet;
@@ -272,40 +306,7 @@ export class AppComponent implements AfterViewInit {
   public uiWaterSectionVisible: boolean = false;
   public uiRoastingSectionVisible: boolean = false;
 
-  constructor(
-    private readonly router: Router,
-    public platform: Platform,
-    private readonly uiLog: UILog,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-    private _translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly menu: MenuController,
-    private readonly uiUpdate: UIUpdate,
-    private readonly uiVersionStorage: UiVersionStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly intentHandlerService: IntentHandlerService,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly cleanupService: CleanupService,
-    private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiStorage: UIStorage,
-    private readonly androidPlatformService: AndroidPlatformService,
-    private readonly iosPlatformService: IosPlatformService,
-    private readonly themeService: ThemeService,
-  ) {
+  constructor() {
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6

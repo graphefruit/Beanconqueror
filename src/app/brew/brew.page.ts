@@ -5,6 +5,7 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../services/uiHelper';
@@ -68,6 +69,13 @@ import {
   ],
 })
 export class BrewPage implements OnInit {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  uiHelper = inject(UIHelper);
+  uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public brews: Array<Brew> = [];
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
@@ -115,14 +123,7 @@ export class BrewPage implements OnInit {
   public uiShallBarBeDisplayed: boolean = false;
   public uiSearchText: string = '';
 
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    public uiHelper: UIHelper,
-    public uiBrewHelper: UIBrewHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();

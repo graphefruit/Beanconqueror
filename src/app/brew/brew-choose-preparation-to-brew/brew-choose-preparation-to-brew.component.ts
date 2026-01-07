@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -34,19 +34,19 @@ import {
   ],
 })
 export class BrewChoosePreparationToBrewComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+
   public static COMPONENT_ID: string = 'brew-choose-preparation-to-brew';
   public settings: Settings;
 
   public preparationMethods: Array<Preparation> = [];
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
     addIcons({ wifiOutline });
   }

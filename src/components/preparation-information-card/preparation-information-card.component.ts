@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { ModalController } from '@ionic/angular/standalone';
@@ -60,6 +67,18 @@ import {
   ],
 })
 export class PreparationInformationCardComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiImage = inject(UIImage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiHelper = inject(UIHelper);
+
   @Input() public preparation: Preparation;
 
   @Output() public preparationAction: EventEmitter<any> = new EventEmitter();
@@ -69,19 +88,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public drunkenQuantity: number = 0;
   public beansCount: number = 0;
 
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiToast: UIToast,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiImage: UIImage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     addIcons({ wifiOutline });
   }
 

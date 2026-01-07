@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -28,13 +34,12 @@ import {
   ],
 })
 export class RepeatCustomParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   @Input() public data: Settings | Preparation;
-  constructor(
-    public uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {}
 
   public ngOnInit() {}
 

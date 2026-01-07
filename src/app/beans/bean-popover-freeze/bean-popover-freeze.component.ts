@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
@@ -79,6 +85,18 @@ declare var cordova;
   ],
 })
 export class BeanPopoverFreezeComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly platform = inject(Platform);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+
   public static COMPONENT_ID = 'bean-popover-freeze';
   public settings: Settings;
   @Input() public bean: Bean;
@@ -101,19 +119,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   public allNewCreatedBeans: Array<Bean> = [];
   public readonly beanFreezingStorageEnum = BEAN_FREEZING_STORAGE_ENUM;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly platform: Platform,
-    private readonly uiBeanHelper: UIBeanHelper,
-    public readonly uiHelper: UIHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
     addIcons({ warningOutline, trashOutline });

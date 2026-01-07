@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { IBean } from '../../../interfaces/bean/iBean';
@@ -60,6 +60,15 @@ import {
   ],
 })
 export class BeansEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+
   public static readonly COMPONENT_ID: string = 'bean-edit';
   public settings: Settings = undefined;
   public data: Bean;
@@ -67,17 +76,6 @@ export class BeansEditComponent implements OnInit {
   public bean_segment = 'general';
   private initialBeanData: string = '';
   private disableHardwareBack: Subscription;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

@@ -4,6 +4,7 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -43,6 +44,15 @@ import {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class WelcomePopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly themeService = inject(ThemeService);
+
   public slide: number = 1;
   @ViewChild('slider', { static: false }) public welcomeSlider:
     | ElementRef
@@ -51,16 +61,6 @@ export class WelcomePopoverComponent implements OnInit {
   private settings: Settings;
 
   private disableHardwareBack;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly themeService: ThemeService,
-  ) {}
 
   public ngOnInit() {
     this.themeService.setLightMode();

@@ -60,13 +60,6 @@ export default defineConfig(
       ],
       '@angular-eslint/component-class-suffix': ['warn'],
 
-      // Must be fixed in bulk if desired.
-      // See the following references and issue #1006:
-      // - https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-inject.md
-      // - https://angular.dev/reference/migrations/inject-function
-      // - https://angular.dev/guide/di#injecting-dependencies-with-inject
-      '@angular-eslint/prefer-inject': ['warn'],
-
       '@typescript-eslint/array-type': ['warn'],
       '@typescript-eslint/dot-notation': ['warn'],
       '@typescript-eslint/no-inferrable-types': ['warn'],

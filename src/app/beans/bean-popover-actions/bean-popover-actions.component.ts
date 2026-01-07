@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
@@ -34,18 +34,18 @@ import {
   imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class BeanPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static COMPONENT_ID = 'bean-popover-actions';
   public data: Bean = new Bean();
 
   @Input('bean') public bean: IBean;
 
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {
+  constructor() {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     addIcons({
       snowOutline,

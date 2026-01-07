@@ -8,6 +8,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
@@ -84,6 +85,19 @@ declare var Plotly;
   ],
 })
 export class BaristaPage implements OnInit {
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly platform = inject(Platform);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly ngZone = inject(NgZone);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public data: Brew = new Brew();
 
   @ViewChild('ionHeader', { read: ElementRef, static: true })
@@ -120,20 +134,7 @@ export class BaristaPage implements OnInit {
 
   @Output() public lastShot = new EventEmitter();
 
-  constructor(
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly platform: Platform,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly ngZone: NgZone,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly modalController: ModalController,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiAlert: UIAlert,
-  ) {
+  constructor() {
     // Get first entry
     this.data.bean = this.uiBeanStorage
       .getAllEntries()

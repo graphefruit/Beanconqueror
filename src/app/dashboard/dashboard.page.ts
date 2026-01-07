@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { UIStatistic } from '../../services/uiStatistic';
 import { Brew } from '../../classes/brew/brew';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
@@ -68,6 +68,19 @@ import {
   ],
 })
 export class DashboardPage implements OnInit {
+  uiStatistic = inject(UIStatistic);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly unwrappedService = inject(UnwrappedService);
+  private readonly modalController = inject(ModalController);
+
   public brews: Array<Brew> = [];
   public beans: Array<Bean> = [];
   public showUnwrappedButton: boolean = false;
@@ -79,20 +92,7 @@ export class DashboardPage implements OnInit {
   public getTimePassedSinceLastBrewMessage: string = undefined;
   public settings: Settings;
 
-  constructor(
-    public uiStatistic: UIStatistic,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly router: Router,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly unwrappedService: UnwrappedService,
-    private readonly modalController: ModalController,
-  ) {
+  constructor() {
     addIcons({ giftOutline, thermometerOutline, snowOutline });
   }
 

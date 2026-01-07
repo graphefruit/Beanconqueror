@@ -1,4 +1,11 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { Bean } from '../../classes/bean/bean';
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -36,6 +43,8 @@ import {
   ],
 })
 export class PhotoPopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+
   public static COMPONENT_ID: string = 'photo-popover';
 
   @Input() public data:
@@ -49,7 +58,6 @@ export class PhotoPopoverComponent implements OnInit {
   @ViewChild('photoSlides', { static: false }) public photoSlides:
     | ElementRef
     | undefined;
-  constructor(private readonly modalController: ModalController) {}
   private async updateSlider() {
     if (this.photoSlides) {
       //TODO await this.photoSlides.update();

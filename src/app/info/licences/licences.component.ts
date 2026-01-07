@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
@@ -43,6 +43,8 @@ import {
   ],
 })
 export class LicencesComponent implements OnInit {
+  private readonly uiHelper = inject(UIHelper);
+
   public licences: any = {
     ionic: {
       TITLE: 'Ionic Framework',
@@ -671,7 +673,7 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
     },
   };
-  constructor(private readonly uiHelper: UIHelper) {
+  constructor() {
     addIcons({ chevronForwardOutline, chevronDownOutline, chevronUpOutline });
   }
 

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
 import { ModalController, Platform } from '@ionic/angular/standalone';
@@ -40,15 +47,13 @@ import {
   ],
 })
 export class BeanRoastInformationComponent implements OnInit {
+  private readonly platform = inject(Platform);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public displayingTime: string = '';
-
-  constructor(
-    private readonly platform: Platform,
-    private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-  ) {}
 
   public ngOnInit() {
     this.displayingTime = moment()

@@ -8,6 +8,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 
 import { Device } from '@capacitor/device';
@@ -35,6 +36,13 @@ import {
   imports: [IonItem, IonInput, IonButton, IonIcon],
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly platform = inject(Platform);
+  private readonly zone = inject(NgZone);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+
   @Input() public label: string;
 
   @Output() public timerStarted = new EventEmitter();
@@ -124,14 +132,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public bluetoothSubscription: Subscription = undefined;
 
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly platform: Platform,
-    private readonly zone: NgZone,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
       this.isIos16 =

@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -90,6 +91,12 @@ import {
   ],
 })
 export class BeanModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
+
   public static COMPONENT_ID = 'bean-modal-select';
   public objs: Array<Bean> = [];
   public bean_segment: string = 'open';
@@ -163,13 +170,7 @@ export class BeanModalSelectComponent implements OnInit {
   public uiIsFilterActive: boolean = false;
   public uiSearchText: string = '';
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
 
     this.archivedBeansSort = this.settings.bean_sort_selection.ARCHIVED;

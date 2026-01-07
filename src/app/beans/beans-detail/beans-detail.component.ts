@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
@@ -79,6 +79,13 @@ import {
   ],
 })
 export class BeansDetailComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+
   public static readonly COMPONENT_ID: string = 'bean-detail';
   public roast_enum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
@@ -96,14 +103,7 @@ export class BeansDetailComponent implements OnInit {
 
   @Input('bean') public bean: IBean;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-  ) {
+  constructor() {
     addIcons({ create, globeOutline });
   }
 

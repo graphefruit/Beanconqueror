@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
@@ -23,13 +23,13 @@ import {
   imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class GreenBeanPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID = 'green-bean-popover-actions';
   public data: GreenBean = new GreenBean();
   @Input('greenbean') public greenbean: IGreenBean;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     addIcons({ flameOutline });
   }
 

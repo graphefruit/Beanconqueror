@@ -6,6 +6,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import moment from 'moment';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -55,18 +56,18 @@ declare var cordova;
   ],
 })
 export class GreenBeanGeneralInformationComponent implements OnInit {
+  private readonly platform = inject(Platform);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiSettings = inject(UISettingsStorage);
+
   @Input() public data: GreenBean;
   @Output() public dataChange = new EventEmitter<GreenBean>();
   @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
   public beanRating: NgxStarsComponent;
   public settings: Settings;
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiSettings: UISettingsStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
   }
 

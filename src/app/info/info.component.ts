@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
@@ -36,7 +36,9 @@ import {
   ],
 })
 export class InfoComponent implements OnInit {
-  constructor(private readonly router: Router) {
+  private readonly router = inject(Router);
+
+  constructor() {
     addIcons({ chevronForwardOutline });
   }
 

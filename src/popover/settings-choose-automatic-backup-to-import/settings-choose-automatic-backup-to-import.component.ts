@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { FileInfo } from '@capacitor/filesystem';
@@ -50,6 +50,11 @@ import {
   ],
 })
 export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  protected readonly uiHelper = inject(UIHelper);
+
   public static POPOVER_ID: string =
     'choose-automatic-backup-to-import-popover';
 
@@ -57,12 +62,7 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
 
   public foundBackupFiles: Array<FileInfo> = [];
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

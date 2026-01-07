@@ -7,6 +7,7 @@ import {
   Output,
   SimpleChange,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -84,6 +85,26 @@ declare var window;
   ],
 })
 export class BrewInformationComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiImage = inject(UIImage);
+  private readonly modalCtrl = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly shareService = inject(ShareService);
+  private readonly translate = inject(TranslateService);
+  private readonly brewTracking = inject(BrewTrackingService);
+  private readonly uiHealthKit = inject(UIHealthKit);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly menu = inject(MenuController);
+
   @Input() public brew: Brew;
   public _collapsed: boolean = undefined;
   @Input() public layout: string = 'brew';
@@ -121,28 +142,6 @@ export class BrewInformationComponent implements OnInit {
 
   public uiHasCustomRatingRange: boolean = undefined;
   public uiCuppedBrewFlavors: Array<string> = [];
-
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly uiImage: UIImage,
-    private readonly modalCtrl: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly shareService: ShareService,
-    private readonly translate: TranslateService,
-    private readonly brewTracking: BrewTrackingService,
-    private readonly uiHealthKit: UIHealthKit,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly visualizerService: VisualizerService,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly menu: MenuController,
-  ) {}
 
   @Input() set collapsed(value: boolean) {
     let retrigger: boolean = false;

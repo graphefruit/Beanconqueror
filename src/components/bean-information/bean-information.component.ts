@@ -6,6 +6,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
@@ -106,6 +107,26 @@ import {
   ],
 })
 export class BeanInformationComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiImage = inject(UIImage);
+  private readonly shareService = inject(ShareService);
+  private readonly serverCommunicationService = inject(
+    ServerCommunicationService,
+  );
+  readonly uiHelper = inject(UIHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly platform = inject(Platform);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private actionSheetCtrl = inject(ActionSheetController);
+  private readonly currencyService = inject(CurrencyService);
+
   @Input() public bean: Bean;
   @Input() public beanGroup: BeanGroup;
   @Input() public showActions: boolean = true;
@@ -132,25 +153,7 @@ export class BeanInformationComponent implements OnInit {
   public uiCalculatedCostPerKG: number = undefined;
   public uiCurrencySymbol: string = '';
 
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiImage: UIImage,
-    private readonly shareService: ShareService,
-    private readonly serverCommunicationService: ServerCommunicationService,
-    public readonly uiHelper: UIHelper,
-    private readonly translate: TranslateService,
-    private readonly platform: Platform,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private actionSheetCtrl: ActionSheetController,
-    private readonly currencyService: CurrencyService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     addIcons({
       fileTrayFullOutline,

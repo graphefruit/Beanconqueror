@@ -6,6 +6,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
@@ -80,6 +81,15 @@ declare var cordova;
   ],
 })
 export class BeanGeneralInformationComponent implements OnInit {
+  private readonly platform = inject(Platform);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiHelper = inject(UIHelper);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+
   @Input() public data: Bean;
   public initialBeanData: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
@@ -99,16 +109,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   public maxBeanRating: number = 5;
   public settings: Settings = undefined;
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiHelper: UIHelper,
-    public readonly uiBeanHelper: UIBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

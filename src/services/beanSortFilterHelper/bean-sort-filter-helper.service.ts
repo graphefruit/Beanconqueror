@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Bean } from '../../classes/bean/bean';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
@@ -16,11 +16,9 @@ import { UIBeanHelper } from '../uiBeanHelper';
   providedIn: 'root',
 })
 export class BeanSortFilterHelperService {
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiBeanHelper: UIBeanHelper,
-  ) {}
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
 
   public async showSort(_sort: IBeanPageSort) {
     const beanSort: IBeanPageSort = this.uiHelper.cloneData(_sort);

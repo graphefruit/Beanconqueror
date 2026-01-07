@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Graph } from '../../../../classes/graph/graph';
 
 import { ModalController, Platform } from '@ionic/angular/standalone';
@@ -62,20 +62,20 @@ import {
   ],
 })
 export class GraphAddComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+
   public static readonly COMPONENT_ID = 'graph-add';
   public data: Graph = new Graph();
   public flowData: BrewFlow = undefined;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-  ) {
+  constructor() {
     addIcons({ cloudUploadOutline, informationCircleOutline, trashOutline });
   }
 

@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { Brew } from '../classes/brew/brew';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -34,6 +34,14 @@ import { UIAnalytics } from './uiAnalytics';
   providedIn: 'root',
 })
 export class UIPreparationHelper {
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly httpClient = inject(HttpClient);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   private allStoredBrews: Array<Brew> = [];
 
   public static instance: UIPreparationHelper;
@@ -46,15 +54,7 @@ export class UIPreparationHelper {
     return undefined;
   }
 
-  constructor(
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly translate: TranslateService,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly httpClient: HttpClient,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {
+  constructor() {
     if (UIPreparationHelper.instance === undefined) {
       UIPreparationHelper.instance = this;
     }

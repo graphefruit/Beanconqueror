@@ -1,16 +1,17 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  Input,
+  inject,
+} from '@angular/core';
 import { UIAlert } from '../services/uiAlert';
 
 @Directive({ selector: '[tooltip]' })
 export class TooltipDirective {
-  @Input('tooltip') public tooltip: string;
+  private readonly uiAlert = inject(UIAlert);
 
-  constructor(
-    el: ElementRef,
-    private readonly uiAlert: UIAlert,
-  ) {
-    // el.nativeElement.style.backgroundColor = 'yellow';
-  }
+  @Input('tooltip') public tooltip: string;
 
   @HostListener('click', ['$event'])
   public onClick($event) {

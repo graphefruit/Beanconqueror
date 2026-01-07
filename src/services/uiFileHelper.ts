@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Capacitor, CapacitorException } from '@capacitor/core';
 import {
   Directory,
@@ -32,13 +32,9 @@ declare let navigator: any;
   providedIn: 'root',
 })
 export class UIFileHelper extends InstanceClass {
-  constructor(
-    private readonly uiLog: UILog,
-    private readonly platform: Platform,
-    private readonly domSanitizer: DomSanitizer,
-  ) {
-    super();
-  }
+  private readonly uiLog = inject(UILog);
+  private readonly platform = inject(Platform);
+  private readonly domSanitizer = inject(DomSanitizer);
 
   public getDataDirectory(): Directory {
     if (this.platform.is('ios') && this.platform.is('capacitor')) {

@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Settings } from '../../../../classes/settings/settings';
@@ -60,6 +61,18 @@ declare var Plotly;
   ],
 })
 export class GraphDetailComponent implements OnInit {
+  private readonly translate = inject(TranslateService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly graphHelper = inject(GraphHelperService);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID = 'graph-detail';
   public flow_profile_raw: BrewFlow = new BrewFlow();
 
@@ -82,19 +95,7 @@ export class GraphDetailComponent implements OnInit {
 
   @Input() private flowProfileData: any;
 
-  constructor(
-    private readonly translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiHelper: UIHelper,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController,
-    private readonly graphHelper: GraphHelperService,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiAlert: UIAlert,
-  ) {
+  constructor() {
     addIcons({ closeOutline });
   }
 

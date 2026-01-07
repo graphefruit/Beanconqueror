@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -61,6 +62,10 @@ import {
   ],
 })
 export class BrewModalImportShotGaggiuinoComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID: string = 'brew-modal-import-shot-gaggiuino';
 
   @Input() public gaggiuinoDevice: GaggiuinoDevice;
@@ -81,12 +86,6 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
-
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-  ) {}
 
   public ngOnInit() {
     this.readHistory();

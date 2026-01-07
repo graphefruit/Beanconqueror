@@ -5,6 +5,7 @@ import {
   NgZone,
   OnDestroy,
   OnInit,
+  inject,
 } from '@angular/core';
 import { BluetoothTypes, ScaleType } from '../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
@@ -69,6 +70,16 @@ import {
 export class BluetoothDeviceChooserPopoverComponent
   implements OnInit, OnDestroy
 {
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly modalController = inject(ModalController);
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private ngZone = inject(NgZone);
+
   public static POPOVER_ID: string = 'bluetooth-device-chooser-popover';
   @Input() public bluetoothTypeSearch: BluetoothTypes = undefined;
 
@@ -78,17 +89,7 @@ export class BluetoothDeviceChooserPopoverComponent
   private settings: Settings;
   public searchRunning: boolean = undefined;
 
-  constructor(
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly modalController: ModalController,
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetector: ChangeDetectorRef,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private ngZone: NgZone,
-  ) {
+  constructor() {
     addIcons({ refreshOutline });
   }
 

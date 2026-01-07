@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import moment from 'moment';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -44,6 +44,9 @@ import {
   ],
 })
 export class DatetimePopoverComponent implements OnInit {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public timer = {
     HOURS: 0,
     MINUTES: 0,
@@ -59,10 +62,6 @@ export class DatetimePopoverComponent implements OnInit {
 
   @Input() public displayingTime: string;
   public settings: Settings;
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

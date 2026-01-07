@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
@@ -66,6 +66,14 @@ import {
   ],
 })
 export class BrewCuppingComponent {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+
   public static readonly COMPONENT_ID = 'brew-cup';
   public segment: string = 'flavor';
 
@@ -77,15 +85,7 @@ export class BrewCuppingComponent {
   @Input('brew') public brew: IBrew;
   @Input('bean') public bean: IBean;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiBeanStorage: UIBeanStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
 
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range

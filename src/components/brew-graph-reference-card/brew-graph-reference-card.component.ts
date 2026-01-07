@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { Settings } from '../../classes/settings/settings';
@@ -64,6 +65,10 @@ import {
   ],
 })
 export class BrewGraphReferenceCardComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  protected readonly uiBrewHelper = inject(UIBrewHelper);
+  protected readonly uiHelper = inject(UIHelper);
+
   @Input() public brew: Brew;
   @Input() public graph: Graph;
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -84,11 +89,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   public isGraph: boolean;
   public isCustomRatingRange: boolean;
 
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiBrewHelper: UIBrewHelper,
-    protected readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     addIcons({ trophy, heart, analyticsOutline });
   }
 

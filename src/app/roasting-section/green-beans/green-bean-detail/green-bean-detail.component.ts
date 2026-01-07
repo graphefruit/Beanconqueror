@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
 import { ModalController } from '@ionic/angular/standalone';
@@ -61,6 +61,11 @@ import {
   ],
 })
 export class GreenBeanDetailComponent {
+  private readonly modalController = inject(ModalController);
+  private uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiSettings = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'green-bean-detail';
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
@@ -72,12 +77,7 @@ export class GreenBeanDetailComponent {
 
   public settings: Settings;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private uiBeanHelper: UIBeanHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettings: UISettingsStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
   }
 

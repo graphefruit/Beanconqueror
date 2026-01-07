@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
@@ -69,6 +70,18 @@ import {
   ],
 })
 export class GreenBeanInformationComponent implements OnInit {
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiImage = inject(UIImage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiGreenBeanHelper = inject(UIGreenBeanHelper);
+
   @Input() public greenBean: GreenBean;
 
   @Output() public greenBeanAction: EventEmitter<any> = new EventEmitter();
@@ -76,19 +89,7 @@ export class GreenBeanInformationComponent implements OnInit {
   public greenBeanRating: NgxStarsComponent;
 
   public settings: Settings;
-  constructor(
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-    private readonly uiImage: UIImage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiGreenBeanHelper: UIGreenBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
   public ngOnInit() {}

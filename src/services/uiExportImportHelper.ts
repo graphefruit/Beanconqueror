@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { UIStorage } from './uiStorage';
 import { UIHelper } from './uiHelper';
@@ -47,23 +47,21 @@ function chunkFileName(fileName: string, index: number): string {
   providedIn: 'root',
 })
 export class UIExportImportHelper {
+  private readonly uiSettings = inject(UISettingsStorage);
+  uiStorage = inject(UIStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiLog = inject(UILog);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalController = inject(ModalController);
+
   /**
    *
    */
   private isAppReady: number = -1;
-
-  constructor(
-    private readonly uiSettings: UISettingsStorage,
-    public uiStorage: UIStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiLog: UILog,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalController: ModalController,
-  ) {}
 
   public async buildExportZIP(): Promise<Blob> {
     const _data = await this.uiStorage.export();

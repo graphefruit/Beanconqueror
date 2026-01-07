@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
@@ -51,6 +51,10 @@ import {
   ],
 })
 export class WaterDetailComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'water-detail';
   public data: Water = new Water();
 
@@ -58,12 +62,6 @@ export class WaterDetailComponent implements OnInit {
 
   public waterPropertyEnum = WATER_UNIT;
   public waterPropertyTdsEnum = WATER_UNIT_TDS;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

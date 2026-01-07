@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
@@ -49,6 +50,11 @@ import {
 export class BrewMaximizeControlsComponent
   implements AfterViewInit, OnDestroy, OnInit
 {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+
   public static COMPONENT_ID: string = 'brew-maximize-controls';
 
   @Input() public brew: Brew;
@@ -63,13 +69,7 @@ export class BrewMaximizeControlsComponent
   @ViewChild('timerElement', { static: false })
   public timerElement: ElementRef;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     addIcons({ closeOutline });
   }
   public ngOnInit() {

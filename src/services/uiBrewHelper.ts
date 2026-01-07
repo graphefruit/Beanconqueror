@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIMillStorage } from './uiMillStorage';
@@ -54,6 +54,18 @@ interface IEventPayload {
   providedIn: 'root',
 })
 export class UIBrewHelper {
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+
   private static instance: UIBrewHelper;
 
   private canBrewBoolean: boolean = undefined;
@@ -94,19 +106,7 @@ export class UIBrewHelper {
     return sortedBrews;
   }
 
-  constructor(
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-  ) {
+  constructor() {
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
       this.canBrewBoolean = undefined;
     });

@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { UIAnalytics } from './uiAnalytics';
 import { ModalController } from '@ionic/angular/standalone';
@@ -16,10 +16,8 @@ import { GreenBeanDetailComponent } from '../app/roasting-section/green-beans/gr
   providedIn: 'root',
 })
 export class UIGreenBeanHelper {
-  constructor(
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController,
-  ) {}
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly modalController = inject(ModalController);
 
   public async addGreenBean() {
     const modal = await this.modalController.create({

@@ -5,6 +5,7 @@ import {
   HostListener,
   OnDestroy,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { ModalController, Platform } from '@ionic/angular/standalone';
@@ -75,6 +76,20 @@ import {
   ],
 })
 export class BeansPage implements OnDestroy {
+  private readonly uiLog = inject(UILog);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly qrScannerService = inject(QrScannerService);
+  private readonly intenthandler = inject(IntentHandlerService);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly platform = inject(Platform);
+  private readonly modalController = inject(ModalController);
+  private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
+  private readonly nfcService = inject(NfcService);
+  private readonly uiImage = inject(UIImage);
+
   public beans: Array<Bean> = [];
 
   public settings: Settings;
@@ -135,22 +150,6 @@ export class BeansPage implements OnDestroy {
   public uiShallBarBeDisplayed: boolean = false;
   public uiIsTextSearchActive: boolean = false;
   public uiSearchText: string = '';
-
-  constructor(
-    private readonly uiLog: UILog,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly qrScannerService: QrScannerService,
-    private readonly intenthandler: IntentHandlerService,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly platform: Platform,
-    private readonly modalController: ModalController,
-    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
-    private readonly nfcService: NfcService,
-    private readonly uiImage: UIImage,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();

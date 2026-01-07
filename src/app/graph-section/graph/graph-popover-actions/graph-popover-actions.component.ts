@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 import { GRAPH_ACTION } from '../../../../enums/graph/graphAction';
@@ -22,11 +22,13 @@ import {
   imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class GraphPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+
   public static COMPONENT_ID = 'graph-popover-actions';
 
   public data: Graph = new Graph();
   @Input('graph') public graph: IGraph;
-  constructor(private readonly modalController: ModalController) {
+  constructor() {
     this.data.initializeByObject(this.graph);
     addIcons({ shareSocialOutline });
   }

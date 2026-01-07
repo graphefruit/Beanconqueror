@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIHelper } from './uiHelper';
@@ -24,17 +24,15 @@ import { UIRoastingMachineStorage } from './uiRoastingMachineStorage';
   providedIn: 'root',
 })
 export class UIStatistic {
-  constructor(
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage,
-    private readonly translate: TranslateService
-  ) {}
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+  private readonly translate = inject(TranslateService);
 
   public getSpentMoneyForCoffeeBeans(): number {
     let costs: number = 0;
@@ -57,7 +55,7 @@ export class UIStatistic {
 
     const allBeansWithoutFrozenId = allBeans.filter((e) => !e.frozenGroupId);
     const allBeansWithFrozenId = new Set(
-      allBeans.filter((e) => e.frozenGroupId).map((e) => e.frozenGroupId)
+      allBeans.filter((e) => e.frozenGroupId).map((e) => e.frozenGroupId),
     );
     return allBeansWithoutFrozenId.length + allBeansWithFrozenId.size;
   }
@@ -75,7 +73,7 @@ export class UIStatistic {
     if (lastBrew !== undefined) {
       return this.uiHelper.formateDate(
         lastBrew.config.unix_timestamp,
-        this.uiSettings.getSettings().date_format + ', HH:mm:ss'
+        this.uiSettings.getSettings().date_format + ', HH:mm:ss',
       );
     }
 
@@ -86,7 +84,7 @@ export class UIStatistic {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
       const timeDiff = this.uiHelper.timeDifference(
-        lastBrew.config.unix_timestamp
+        lastBrew.config.unix_timestamp,
       );
 
       if (timeDiff.DAYS === 1) {
@@ -117,7 +115,7 @@ export class UIStatistic {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
       const timeDiff = this.uiHelper.timeDifference(
-        lastBrew.config.unix_timestamp
+        lastBrew.config.unix_timestamp,
       );
 
       if (timeDiff.DAYS === 1) {
@@ -148,7 +146,7 @@ export class UIStatistic {
     const timePassed = this.getTimePassedSinceLastBrew();
     if (timePassed !== '') {
       return `${this.getTimePassedSinceLastBrewMessage()} ${this.translate.instant(
-        'WITHOUT_COFFEE'
+        'WITHOUT_COFFEE',
       )}`;
     }
 
@@ -168,7 +166,7 @@ export class UIStatistic {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
       return this.uiPreparationStorage.getPreparationNameByUUID(
-        lastBrew.method_of_preparation
+        lastBrew.method_of_preparation,
       );
     }
 

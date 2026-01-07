@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 
 import { ModalController, Platform } from '@ionic/angular/standalone';
@@ -60,27 +61,25 @@ declare var Plotly;
   ],
 })
 export class GraphInformationCardComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  protected readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiHelper = inject(UIHelper);
+
   @Input() public graph: Graph;
   @Output() public graphAction: EventEmitter<any> = new EventEmitter();
 
   public settings: Settings;
 
   public radioSelection: string;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly translate: TranslateService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper,
-  ) {}
 
   public async ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

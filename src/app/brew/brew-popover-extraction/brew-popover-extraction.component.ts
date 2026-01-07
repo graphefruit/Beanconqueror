@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -41,6 +42,9 @@ declare var Plotly;
   ],
 })
 export class BrewPopoverExtractionComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private translate = inject(TranslateService);
+
   public static COMPONENT_ID = 'brew-extraction';
   @Input() public brew: Brew;
 
@@ -49,11 +53,6 @@ export class BrewPopoverExtractionComponent implements OnInit {
 
   protected heightInformationBlock: number = 50;
   protected widthInformationBlock: number = 50;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private translate: TranslateService,
-  ) {}
 
   public ngOnInit() {}
   public ionViewDidEnter(): void {

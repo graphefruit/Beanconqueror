@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { Bean } from '../../classes/bean/bean';
@@ -33,17 +33,15 @@ import {
   ],
 })
 export class HomePage {
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+
   /** Needed app minimize for android */
 
   public beansExist: boolean;
   public preparationsExist: boolean;
   public millsExist: boolean;
-
-  constructor(
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-  ) {}
 
   public ngOnInit() {
     this._calculcateEntries();

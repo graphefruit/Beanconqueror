@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -58,17 +58,15 @@ import {
   ],
 })
 export class PreparationCustomParametersComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+
   public static COMPONENT_ID: string = 'preparation-custom-parameters';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public preparationTypeEnum = PREPARATION_TYPES;
   public segment: string = 'manage';
   @Input() private preparation: IPreparation;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-  ) {}
 
   public ionViewWillEnter(): void {
     if (this.preparation !== undefined) {

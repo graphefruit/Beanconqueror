@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, inject } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
   AlertController,
@@ -116,6 +116,23 @@ declare var Plotly;
   ],
 })
 export class BrewDetailComponent {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly uiLog = inject(UILog);
+  private readonly shareService = inject(ShareService);
+
   public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public data: Brew = new Brew();
@@ -141,24 +158,7 @@ export class BrewDetailComponent {
   public uiShowSectionBeforeBrew: boolean = false;
   public uiShowCupping: boolean = false;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiExcel: UIExcel,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly translate: TranslateService,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-    private readonly alertCtrl: AlertController,
-    private readonly uiLog: UILog,
-    private readonly shareService: ShareService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     addIcons({
       create,

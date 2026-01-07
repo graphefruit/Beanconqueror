@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
@@ -33,14 +33,12 @@ import {
   ],
 })
 export class BrewBrixCalculatorComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'brew-brix-calculator';
 
   public brix: number = 0;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
@@ -44,16 +44,14 @@ import {
   ],
 })
 export class RoastingMachineDetailComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'roasting-machine-detail';
   public data: RoastingMachine = new RoastingMachine();
 
   @Input() private roastingMachine: IRoastingMachine;
-
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

@@ -5,6 +5,7 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Water } from '../../../classes/water/water';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -61,6 +62,15 @@ import {
   ],
 })
 export class WaterPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiWaterHelper = inject(UIWaterHelper);
+
   private waters: Array<Water> = [];
 
   public openWaters: Array<Water> = [];
@@ -81,16 +91,7 @@ export class WaterPage implements OnInit {
   public settings: Settings;
 
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiWaterHelper: UIWaterHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     addIcons({ waterOutline });
   }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { FormsModule } from '@angular/forms';
@@ -36,16 +36,14 @@ import {
   ],
 })
 export class BrewBeverageQuantityCalculatorComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static readonly COMPONENT_ID = 'brew-beverage-quantity-calculator';
 
   public totalWeight: number = 0;
   @Input('vesselWeight') public vesselWeight: number = 0;
   public calculatedWeight: number = 0;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {}
 
   public calculateWeight() {
     this.calculatedWeight = this.totalWeight - this.vesselWeight;

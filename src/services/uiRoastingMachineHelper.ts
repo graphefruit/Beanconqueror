@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { UIAnalytics } from './uiAnalytics';
 import { ModalController } from '@ionic/angular/standalone';
@@ -16,10 +16,8 @@ import { RoastingMachineDetailComponent } from '../app/roasting-section/roasting
   providedIn: 'root',
 })
 export class UIRoastingMachineHelper {
-  constructor(
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController,
-  ) {}
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly modalController = inject(ModalController);
 
   public async addRoastingMachine() {
     const modal = await this.modalController.create({

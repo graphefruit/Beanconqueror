@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from '../../classes/brew/brew';
@@ -38,6 +45,9 @@ import {
   ],
 })
 export class CuppingFlavorsComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private readonly uiHelper = inject(UIHelper);
+
   public searchFlavorText: string = '';
 
   @Input('data') public data: IFlavor;
@@ -50,10 +60,7 @@ export class CuppingFlavorsComponent implements OnInit {
   private allCuppingFlavors = [];
   public customFlavor: string = '';
 
-  constructor(
-    private translate: TranslateService,
-    private readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     addIcons({ addCircleOutline, close });
   }
 

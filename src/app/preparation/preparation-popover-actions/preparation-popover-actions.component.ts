@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
@@ -27,6 +27,9 @@ import {
   imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class PreparationPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID: string = 'preparation-popover-actions';
   public data: Preparation = new Preparation();
   @Input('preparation') public preparation: IPreparation;
@@ -34,10 +37,7 @@ export class PreparationPopoverActionsComponent implements OnInit {
   public isMachineConnected: boolean = false;
   public isMachineTurnedOn: boolean = false;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     addIcons({ powerOutline, wifiOutline });
   }
 

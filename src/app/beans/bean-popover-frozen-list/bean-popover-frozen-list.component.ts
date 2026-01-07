@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -40,6 +41,9 @@ import {
   ],
 })
 export class BeanPopoverFrozenListComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+
   public static readonly COMPONENT_ID = 'bean-popover-frozen-list';
 
   @Input() public frozenBeansList: Array<Bean> = undefined;
@@ -50,10 +54,6 @@ export class BeanPopoverFrozenListComponent {
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-  ) {}
 
   public async ionViewWillEnter() {
     this.loadBrews();

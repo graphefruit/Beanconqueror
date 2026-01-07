@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -36,16 +36,16 @@ import {
   ],
 })
 export class QrCodeScannerPopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+
   public static POPOVER_ID: string = 'qr-code-scanner-popover';
   public readonly settings: Settings;
 
   private disableHardwareBack;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

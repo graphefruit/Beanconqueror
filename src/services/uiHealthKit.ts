@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular/standalone';
 /** Ionic */
 
@@ -9,7 +9,7 @@ declare var navigator;
   providedIn: 'root',
 })
 export class UIHealthKit {
-  constructor(private platform: Platform) {}
+  private platform = inject(Platform);
 
   public isAvailable(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {

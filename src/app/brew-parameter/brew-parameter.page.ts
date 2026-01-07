@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { NavController } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -37,10 +37,8 @@ import {
   ],
 })
 export class BrewParameterPage implements OnInit {
-  constructor(
-    public navCtrl: NavController,
-    private readonly router: Router,
-  ) {}
+  navCtrl = inject(NavController);
+  private readonly router = inject(Router);
 
   public ngOnInit() {}
 

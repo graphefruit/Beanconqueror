@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
@@ -99,6 +100,18 @@ import {
   ],
 })
 export class BrewBrewingPreparationDeviceComponent implements OnInit {
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly modalController = inject(ModalController);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly translate = inject(TranslateService);
+
   @Input() public data: Brew;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
@@ -123,19 +136,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   public uiPreparationDeviceConnected: boolean = undefined;
   public uiPreparationDeviceType: PreparationDeviceType = undefined;
   public uiHasAPreparationDeviceSet: boolean = undefined;
-  constructor(
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly modalController: ModalController,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly translate: TranslateService,
-  ) {
+  constructor() {
     addIcons({ cloudDownloadOutline, informationCircleOutline });
   }
 

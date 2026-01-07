@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { ModalController } from '@ionic/angular/standalone';
@@ -70,6 +70,14 @@ import {
   ],
 })
 export class PreparationConnectedDeviceComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'preparation-connected-device';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -87,15 +95,7 @@ export class PreparationConnectedDeviceComponent {
     const newValue = +parsedFloat.toFixed(2);
     return `${newValue}`;
   }
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {
+  constructor() {
     addIcons({ checkmarkCircleOutline });
   }
 

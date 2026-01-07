@@ -9,6 +9,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
@@ -81,6 +82,26 @@ declare var Plotly;
   imports: [FormsModule, TranslatePipe, BrewFieldOrder, BrewFunction],
 })
 export class BrewBrewingGraphComponent implements OnInit {
+  private readonly platform = inject(Platform);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly ngZone = inject(NgZone);
+  private readonly modalController = inject(ModalController);
+  private readonly uiLog = inject(UILog);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly textToSpeech = inject(TextToSpeechService);
+  private readonly graphHelper = inject(GraphHelperService);
+
   @ViewChild('smartScaleWeight', { read: ElementRef })
   public smartScaleWeightEl: ElementRef;
   @ViewChild('smartScaleWeightPerSecond', { read: ElementRef })
@@ -207,28 +228,6 @@ export class BrewBrewingGraphComponent implements OnInit {
   public graphUpdateChartTimestamp = 0;
   public graph_threshold_frequency_update_active: boolean = false;
   public graph_frequency_update_interval: number = 150;
-
-  constructor(
-    private readonly platform: Platform,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly translate: TranslateService,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-    private readonly uiHelper: UIHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly ngZone: NgZone,
-    private readonly modalController: ModalController,
-    private readonly uiLog: UILog,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly textToSpeech: TextToSpeechService,
-    private readonly graphHelper: GraphHelperService,
-  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

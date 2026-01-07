@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
@@ -45,6 +45,10 @@ import {
   ],
 })
 export class BeanSortComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'bean-sort';
   public beanSortAfterEnum = BEAN_SORT_AFTER;
   public beanSortOrderEnum = BEAN_SORT_ORDER;
@@ -59,11 +63,7 @@ export class BeanSortComponent implements OnInit {
 
   public settings: Settings;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {
+  constructor() {
     addIcons({ chevronDownOutline, chevronUpOutline });
   }
 

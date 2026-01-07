@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
@@ -40,18 +40,18 @@ import {
   ],
 })
 export class SettingsPopoverBluetoothActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+  private readonly bluetoothService = inject(CoffeeBluetoothDevicesService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly eventQueue = inject(EventQueueService);
+
   public static COMPONENT_ID = 'settings-popover-bluetooth-actions';
 
   public settings: Settings;
   public readonly BluetoothTypes = BluetoothTypes;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage,
-    private readonly bluetoothService: CoffeeBluetoothDevicesService,
-    private readonly uiAlert: UIAlert,
-    private readonly eventQueue: EventQueueService,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
     addIcons({ bluetoothOutline });
   }

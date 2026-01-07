@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -49,6 +49,12 @@ import {
   ],
 })
 export class BeanArchivePopoverComponent implements OnInit {
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID = 'bean-archive-popover';
   @Input() public bean: IBean;
   @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
@@ -58,13 +64,7 @@ export class BeanArchivePopoverComponent implements OnInit {
 
   public maxBeanRating: number = 5;
   public settings: Settings = undefined;
-  constructor(
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly modalController: ModalController,
-    private readonly uiToast: UIToast,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.maxBeanRating = this.settings.bean_rating;
   }

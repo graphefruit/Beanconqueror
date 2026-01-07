@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
@@ -48,17 +49,16 @@ declare var cordova;
   ],
 })
 export class BeanFreezeInformationComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly platform = inject(Platform);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public settings: Settings = undefined;
   public readonly beanFreezingStorageEnum = BEAN_FREEZING_STORAGE_ENUM;
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly platform: Platform,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

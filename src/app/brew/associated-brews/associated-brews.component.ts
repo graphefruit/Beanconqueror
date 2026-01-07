@@ -4,6 +4,7 @@ import {
   HostListener,
   Input,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { ModalController } from '@ionic/angular/standalone';
@@ -47,6 +48,14 @@ import {
   ],
 })
 export class AssociatedBrewsComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiWaterHelper = inject(UIWaterHelper);
+
   public static readonly COMPONENT_ID = 'associated-brews';
   public data: Bean = new Bean();
 
@@ -66,15 +75,6 @@ export class AssociatedBrewsComponent {
   public segmentScrollHeight: string = undefined;
 
   public isCollapsed: boolean = false;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiWaterHelper: UIWaterHelper,
-  ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

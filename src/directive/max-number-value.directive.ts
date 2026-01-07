@@ -1,10 +1,11 @@
-import { Directive, HostListener, Input } from '@angular/core';
+import { Directive, HostListener, Input, inject } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 @Directive({ selector: '[ngModel][max-number-value]' })
 export class MaxNumberValueDirective {
+  private readonly model = inject(NgModel);
+
   @Input('max-number-value') public value: string;
-  constructor(private readonly model: NgModel) {}
 
   @HostListener('ionBlur')
   public blur(): void {

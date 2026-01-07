@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -72,6 +72,12 @@ import {
   ],
 })
 export class WaterEditComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static readonly COMPONENT_ID = 'water-edit';
   public data: Water = new Water();
 
@@ -79,13 +85,7 @@ export class WaterEditComponent {
   public waterPropertyEnum = WATER_UNIT;
   public waterPropertyTdsEnum = WATER_UNIT_TDS;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {
+  constructor() {
     addIcons({ informationCircleOutline });
   }
 

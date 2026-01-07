@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Settings } from '../../classes/settings/settings';
@@ -24,6 +25,11 @@ declare var Plotly;
   imports: [],
 })
 export class GraphDisplayCardComponent implements OnInit {
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly platform = inject(Platform);
+  private readonly graphHelper = inject(GraphHelperService);
+
   @Input() public flowProfileData: any;
   @Input() public flowProfilePath: any;
 
@@ -45,12 +51,6 @@ export class GraphDisplayCardComponent implements OnInit {
   public canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
-  constructor(
-    private readonly uiHelper: UIHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly platform: Platform,
-    private readonly graphHelper: GraphHelperService,
-  ) {}
 
   public async ngOnInit() {
     if (this.flowProfilePath) {

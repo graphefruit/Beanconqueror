@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -72,6 +72,11 @@ import {
   ],
 })
 export class PreparationModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+
   public static COMPONENT_ID = 'preparation-modal-select';
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
@@ -86,12 +91,7 @@ export class PreparationModalSelectComponent implements OnInit {
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiSettings: UISettingsStorage,
-  ) {
+  constructor() {
     this.objs = this.uiPreparationStorage.getAllEntries();
     this.settings = this.uiSettings.getSettings();
     this.openPreparations = this.getOpenPreparations();

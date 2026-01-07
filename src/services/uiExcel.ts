@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Services */
 
 import { UIHelper } from './uiHelper';
@@ -35,23 +35,23 @@ declare var XLSX: any;
   providedIn: 'root',
 })
 export class UIExcel {
+  protected uiStorage = inject(UIStorage);
+  protected uiHelper = inject(UIHelper);
+  protected uiLog = inject(UILog);
+  private readonly platform = inject(Platform);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiPreparationStoraage = inject(UIPreparationStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+
   private settings: Settings;
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    private readonly platform: Platform,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiPreparationStoraage: UIPreparationStorage,
-    private readonly translate: TranslateService,
-    private readonly uiAlert: UIAlert,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
   private write(): WorkBook {

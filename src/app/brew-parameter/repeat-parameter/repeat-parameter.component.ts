@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { RepeatCustomParameterComponent } from '../../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
@@ -28,9 +28,11 @@ import {
   ],
 })
 export class RepeatParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+
   public settings: Settings;
 
-  constructor(public uiSettingsStorage: UISettingsStorage) {
+  constructor() {
     this.__initializeSettings();
   }
 

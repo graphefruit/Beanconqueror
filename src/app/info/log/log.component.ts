@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UILog } from '../../../services/uiLog';
 import { ILogInterface } from '../../../interfaces/log/iLog';
 
@@ -47,15 +47,15 @@ import {
   ],
 })
 export class LogComponent implements OnInit {
+  private readonly uiLog = inject(UILog);
+  private readonly modalCtrl = inject(ModalController);
+  private shareService = inject(ShareService);
+  private readonly uiHelper = inject(UIHelper);
+
   public logs: Array<ILogInterface> = [];
   public LOG_ENUM = LOGS_ENUM;
 
-  constructor(
-    private readonly uiLog: UILog,
-    private readonly modalCtrl: ModalController,
-    private shareService: ShareService,
-    private readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     addIcons({ sendOutline });
   }
 

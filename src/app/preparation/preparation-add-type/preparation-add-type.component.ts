@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { NgForm, FormsModule } from '@angular/forms';
@@ -58,6 +58,13 @@ import {
   ],
 })
 export class PreparationAddTypeComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+
   public static COMPONENT_ID: string = 'preparation-add-type';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -70,14 +77,7 @@ export class PreparationAddTypeComponent implements OnInit {
 
   @Input('type') public type: any;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiToast: UIToast,
-    private readonly translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-  ) {
+  constructor() {
     addIcons({ informationOutline, close });
   }
 

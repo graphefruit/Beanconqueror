@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { Bean } from '../../../classes/bean/bean';
 import { UIHelper } from '../../../services/uiHelper';
@@ -56,6 +56,15 @@ import {
   ],
 })
 export class BeanPopoverUnfreezeComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID = 'bean-popover-unfreeze';
   @Input() public bean: Bean;
 
@@ -66,16 +75,7 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
   public quality: number = 100;
   public maxMB: number = 0.5;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     addIcons({ thermometerOutline });
   }

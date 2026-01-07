@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { Platform } from '@ionic/angular/standalone';
@@ -9,6 +9,8 @@ declare var window;
   providedIn: 'root',
 })
 export class TextToSpeechService {
+  private readonly platform = inject(Platform);
+
   private settings: Settings;
 
   private rate: number = 1;
@@ -18,7 +20,7 @@ export class TextToSpeechService {
 
   private ttsEnabled = false;
 
-  constructor(private readonly platform: Platform) {
+  constructor() {
     this.settings = UISettingsStorage.getInstance().getSettings();
     if (this.platform.is('ios')) {
       this.ttsEnabled = true;

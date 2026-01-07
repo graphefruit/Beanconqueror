@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import WATER_TRACKING from '../../../../data/tracking/waterTracking';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
@@ -41,19 +41,17 @@ import {
   ],
 })
 export class WaterAddTypeComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly translate = inject(TranslateService);
+
   public static COMPONENT_ID = 'water-add-type';
   public WATER_TYPES = WATER_TYPES;
   public data: Water = new Water();
 
   @Input('type') public type: any;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly translate: TranslateService,
-  ) {}
 
   public ngOnInit() {
     this.data.type = this.type;

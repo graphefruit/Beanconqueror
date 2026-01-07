@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Ionic */
 import {
   AlertController,
@@ -19,6 +19,13 @@ declare var window;
   providedIn: 'root',
 })
 export class UIAlert {
+  private readonly alertController = inject(AlertController);
+  private readonly translate = inject(TranslateService);
+  private readonly modalController = inject(ModalController);
+  private readonly loadingController = inject(LoadingController);
+  private readonly uiLog = inject(UILog);
+  private eventQueue = inject(EventQueueService);
+
   private static instance: UIAlert;
   public static getInstance(): UIAlert {
     if (UIAlert.instance) {
@@ -27,14 +34,7 @@ export class UIAlert {
 
     return undefined;
   }
-  constructor(
-    private readonly alertController: AlertController,
-    private readonly translate: TranslateService,
-    private readonly modalController: ModalController,
-    private readonly loadingController: LoadingController,
-    private readonly uiLog: UILog,
-    private eventQueue: EventQueueService,
-  ) {
+  constructor() {
     if (UIAlert.instance === undefined) {
       UIAlert.instance = this;
     }

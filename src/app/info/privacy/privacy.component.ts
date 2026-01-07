@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -30,11 +30,9 @@ import {
   ],
 })
 export class PrivacyComponent implements OnInit {
-  constructor(
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
 
   public ngOnInit() {}
 

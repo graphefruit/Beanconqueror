@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { Water } from '../../../../classes/water/water';
@@ -53,6 +53,9 @@ import {
   ],
 })
 export class WaterModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+
   public static COMPONENT_ID = 'water-model-select';
 
   public segment: string = 'open';
@@ -63,10 +66,7 @@ export class WaterModalSelectComponent implements OnInit {
   @Input() public showFinished: boolean;
   @Input() private selectedValues: Array<string>;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-  ) {
+  constructor() {
     this.objs = this.uiWaterStorage.getAllEntries();
   }
 

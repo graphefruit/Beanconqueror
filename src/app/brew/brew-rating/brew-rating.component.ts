@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -47,6 +47,11 @@ import {
   ],
 })
 export class BrewRatingComponent implements OnInit {
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+
   public static COMPONENT_ID: string = 'brew-rating';
   public maxBrewRating: number = 5;
   public settings: Settings;
@@ -55,13 +60,6 @@ export class BrewRatingComponent implements OnInit {
   public brewStars: NgxStarsComponent;
 
   @Input('brew') public brew: IBrew;
-
-  constructor(
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-  ) {}
 
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);

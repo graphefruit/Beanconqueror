@@ -5,6 +5,7 @@ import {
   ViewChild,
   ElementRef,
   CUSTOM_ELEMENTS_SCHEMA,
+  inject,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UnwrappedStats } from '../../services/unwrapped/unwrapped.service';
@@ -34,16 +35,16 @@ register();
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UnwrappedModalComponent implements OnInit {
+  private modalController = inject(ModalController);
+  private translate = inject(TranslateService);
+  private currencyService = inject(CurrencyService);
+
   @Input() stats: UnwrappedStats;
   @ViewChild('swiper') swiperRef: ElementRef | undefined;
 
   public static COMPONENT_ID = 'UnwrappedModalComponent';
 
-  constructor(
-    private modalController: ModalController,
-    private translate: TranslateService,
-    private currencyService: CurrencyService,
-  ) {
+  constructor() {
     addIcons({ closeOutline });
   }
 

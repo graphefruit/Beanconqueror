@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { App } from '@capacitor/app';
 import { Platform } from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -39,15 +39,15 @@ import {
   ],
 })
 export class AboutComponent implements OnInit {
+  platform = inject(Platform);
+  private readonly translate = inject(TranslateService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public versionStr: string = '';
 
   public analyticsEnabled: boolean = false;
   public analyticsId: string = '';
-  constructor(
-    public platform: Platform,
-    private readonly translate: TranslateService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {
+  constructor() {
     addIcons({ informationCircleOutline, analyticsOutline, helpBuoyOutline });
   }
 

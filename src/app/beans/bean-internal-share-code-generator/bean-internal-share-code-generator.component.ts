@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Bean } from '../../../classes/bean/bean';
 import { ModalController } from '@ionic/angular/standalone';
@@ -55,6 +55,15 @@ import {
   ],
 })
 export class BeanInternalShareCodeGeneratorComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private shareService = inject(ShareService);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly nfcService = inject(NfcService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'bean-internal-share-code-generator-popover';
   public settings: Settings;
   @Input() public bean: Bean;
@@ -64,16 +73,7 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
   public action: BEAN_CODE_ACTION = BEAN_CODE_ACTION.START_BREW;
 
   public qrData: string = '';
-  constructor(
-    private readonly modalController: ModalController,
-    private shareService: ShareService,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiLog: UILog,
-    private readonly nfcService: NfcService,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {
+  constructor() {
     addIcons({ download, clipboardOutline });
   }
 

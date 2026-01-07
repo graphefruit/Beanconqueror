@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { UIImage } from '../../services/uiImage';
 import { Brew } from '../../classes/brew/brew';
@@ -32,6 +33,12 @@ import { IonItem, IonIcon, IonButton } from '@ionic/angular/standalone';
   imports: [AsyncImageComponent, TranslatePipe, IonItem, IonIcon, IonButton],
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
+  private readonly uiImage = inject(UIImage);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
   @Output() public dataChange = new EventEmitter<
     Brew | Bean | GreenBean | Mill | Preparation
@@ -40,13 +47,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     | ElementRef
     | undefined;
 
-  constructor(
-    private readonly uiImage: UIImage,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-  ) {
+  constructor() {
     addIcons({ arrowBackOutline, arrowForwardOutline, trash });
   }
 

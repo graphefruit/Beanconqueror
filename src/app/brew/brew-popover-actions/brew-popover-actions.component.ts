@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { IBrew } from '../../../interfaces/brew/iBrew';
 import { Brew } from '../../../classes/brew/brew';
@@ -32,18 +32,18 @@ import {
   imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class BrewPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+
   public static COMPONENT_ID = 'brew-popover-actions';
   public data: Brew = new Brew();
   public settings: Settings;
 
   @Input('brew') public brew: IBrew;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-  ) {
+  constructor() {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
 
     this.settings = this.uiSettings.getSettings();

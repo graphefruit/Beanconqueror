@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Graph } from '../classes/graph/graph';
 import { GraphEditComponent } from '../app/graph-section/graph/graph-edit/graph-edit.component';
@@ -19,13 +19,11 @@ import { FilePicker } from '@capawesome/capacitor-file-picker';
   providedIn: 'root',
 })
 export class UIGraphHelper {
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-    private readonly uiFileHelper: UIFileHelper,
-  ) {}
+  private readonly modalController = inject(ModalController);
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+  private readonly uiFileHelper = inject(UIFileHelper);
 
   public async addGraph() {
     const modal = await this.modalController.create({

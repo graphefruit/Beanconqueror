@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
 import { ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -12,7 +12,9 @@ import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
   imports: [IonContent, IonButton, IonIcon],
 })
 export class FilesystemErrorPopoverComponent implements OnInit {
-  constructor(private readonly modalCtrl: ModalController) {
+  private readonly modalCtrl = inject(ModalController);
+
+  constructor() {
     addIcons({ arrowDownOutline });
   }
 

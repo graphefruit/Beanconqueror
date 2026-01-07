@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -34,6 +34,14 @@ import {
   ],
 })
 export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAlert = inject(UIAlert);
+
   public static POPOVER_ID: string = 'please-activate-analytics-popover';
   private readonly settings: Settings;
 
@@ -42,15 +50,7 @@ export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
   public delayCounter: number = 20;
   public brewsCount: number = 0;
   public beansCount: number = 0;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAlert: UIAlert,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.beansCount = this.uiBeanStorage.getAllEntries().length;
     this.brewsCount = this.uiBrewStorage.getAllEntries().length;

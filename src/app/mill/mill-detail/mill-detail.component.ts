@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Mill } from '../../../classes/mill/mill';
@@ -44,15 +44,13 @@ import {
   ],
 })
 export class MillDetailComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'mill-detail';
   @Input('mill') public mill: IMill;
   public data: Mill = new Mill();
-
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

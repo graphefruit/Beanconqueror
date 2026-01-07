@@ -5,6 +5,7 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { UIAlert } from '../../services/uiAlert';
 import { Preparation } from '../../classes/preparation/preparation';
@@ -58,6 +59,16 @@ import {
   ],
 })
 export class PreparationPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+
   public settings: Settings;
   public segment: string = 'open';
   public preparations: Array<Preparation> = [];
@@ -75,17 +86,6 @@ export class PreparationPage implements OnInit {
   @ViewChild('preparationContent', { read: ElementRef })
   public preparationContent: ElementRef;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();

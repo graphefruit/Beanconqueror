@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -59,6 +59,9 @@ import {
   ],
 })
 export class PreparationToolModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+
   public static COMPONENT_ID = 'preparation-tool-modal-select';
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
@@ -76,10 +79,7 @@ export class PreparationToolModalSelectComponent implements OnInit {
   @Input() public showFinished: boolean;
   @Input() private preparationId: string;
   @Input() private preparationIds: Array<string>;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-  ) {
+  constructor() {
     addIcons({ eyeOffOutline });
   }
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { Mill } from '../../../classes/mill/mill';
@@ -56,18 +56,16 @@ import {
   ],
 })
 export class MillEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'mill-edit';
   public data: Mill = new Mill();
 
   @Input() private mill: IMill;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

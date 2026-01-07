@@ -2,7 +2,14 @@ import { Water } from '../../classes/water/water';
 import { UIAlert } from '../../services/uiAlert';
 import { UIToast } from '../../services/uiToast';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { WATER_ACTION } from '../../enums/water/waterActions';
 import { ModalController } from '@ionic/angular/standalone';
 import { WaterPopoverActionsComponent } from '../../app/water-section/water/water-popover-actions/water-popover-actions.component';
@@ -51,21 +58,20 @@ import {
   ],
 })
 export class WaterInformationCardComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiImage = inject(UIImage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiWaterHelper = inject(UIWaterHelper);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+
   @Input() public water: Water;
   @Output() public waterAction: EventEmitter<any> = new EventEmitter();
   public readonly WATER_TYPES = WATER_TYPES;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly uiImage: UIImage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiWaterHelper: UIWaterHelper,
-    private readonly uiBrewHelper: UIBrewHelper,
-  ) {}
 
   public ngOnInit() {}
 

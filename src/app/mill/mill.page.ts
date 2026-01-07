@@ -5,6 +5,7 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIAlert } from '../../services/uiAlert';
@@ -58,6 +59,15 @@ import {
   ],
 })
 export class MillPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiMillHelper = inject(UIMillHelper);
+
   public mills: Array<Mill> = [];
 
   public openMillsView: Array<Mill> = [];
@@ -76,16 +86,6 @@ export class MillPage implements OnInit {
   public settings: Settings;
   public segment: string = 'open';
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiMillHelper: UIMillHelper,
-  ) {}
 
   public ngOnInit(): void {}
 

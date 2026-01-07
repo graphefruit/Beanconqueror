@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UILog } from '../../../../services/uiLog';
 import { FormsModule } from '@angular/forms';
@@ -36,12 +36,10 @@ import {
   ],
 })
 export class LogTextComponent implements OnInit {
-  public logString: string = '';
+  private readonly modalController = inject(ModalController);
+  private readonly uiLog = inject(UILog);
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiLog: UILog,
-  ) {}
+  public logString: string = '';
 
   public ngOnInit() {
     this.logString = JSON.stringify(this.uiLog.getLogs());

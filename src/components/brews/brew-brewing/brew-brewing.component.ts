@@ -10,6 +10,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Brew } from '../../../classes/brew/brew';
@@ -165,6 +166,32 @@ declare var cordova;
   ],
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
+  private readonly platform = inject(Platform);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly modalController = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  readonly uiHelper = inject(UIHelper);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly ngZone = inject(NgZone);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiLog = inject(UILog);
+  private readonly eventQueue = inject(EventQueueService);
+  private readonly hapticService = inject(HapticService);
+  private readonly textToSpeech = inject(TextToSpeechService);
+
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewBrewingGraphEl', { static: false })
   public brewBrewingGraphEl: BrewBrewingGraphComponent;
@@ -233,33 +260,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public uiHasActivePreparationTools: boolean = false;
   public uiRefractometerConnected: boolean = false;
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly translate: TranslateService,
-    private readonly modalController: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    public readonly uiHelper: UIHelper,
-    private readonly modalCtrl: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiExcel: UIExcel,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly ngZone: NgZone,
-    private readonly uiToast: UIToast,
-    private readonly uiLog: UILog,
-    private readonly eventQueue: EventQueueService,
-    private readonly hapticService: HapticService,
-    private readonly textToSpeech: TextToSpeechService,
-  ) {
+  constructor() {
     addIcons({ globeOutline, download, expandOutline, analyticsOutline });
   }
 

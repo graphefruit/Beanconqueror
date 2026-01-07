@@ -5,6 +5,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Chart } from 'chart.js';
 import { ICupping } from '../../interfaces/cupping/iCupping';
@@ -46,6 +47,8 @@ import {
   ],
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
+  private uiBrewHelper = inject(UIBrewHelper);
+
   public chartEl: any = undefined;
   public model: ICupping = {
     body: 0,
@@ -67,7 +70,7 @@ export class CuppingRadarComponent implements AfterViewInit, OnInit {
   @Output() public cuppingChanged: EventEmitter<any> = new EventEmitter();
 
   private debounceCounter: number = 0;
-  constructor(private uiBrewHelper: UIBrewHelper) {
+  constructor() {
     addIcons({ informationOutline });
   }
 

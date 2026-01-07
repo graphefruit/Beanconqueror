@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
@@ -13,14 +13,13 @@ import { IonHeader, IonContent } from '@ionic/angular/standalone';
   imports: [BrewRatioCardComponent, IonHeader, IonContent],
 })
 export class BrewRatioCalculatorComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'brew-ratio-calculator';
 
   @Input('grindWeight') public grindWeight: number = 0;
   @Input('waterQuantity') public waterQuantity: number = 0;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
@@ -45,10 +45,12 @@ import {
   ],
 })
 export class CreditsComponent implements OnInit {
+  private readonly uiHelper = inject(UIHelper);
+
   public noCreditsToGive: boolean = true;
   public credits: any = {};
 
-  constructor(private readonly uiHelper: UIHelper) {
+  constructor() {
     addIcons({ chevronForwardOutline, chevronDownOutline, chevronUpOutline });
   }
 

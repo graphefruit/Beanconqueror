@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -74,22 +74,22 @@ import {
   ],
 })
 export class PreparationEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'preparation-edit';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @Input() private preparation: IPreparation;
   public preparationTypeEnum = PREPARATION_TYPES;
   public nextToolName: string = '';
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {
+  constructor() {
     addIcons({ swapVerticalOutline, informationOutline });
   }
 

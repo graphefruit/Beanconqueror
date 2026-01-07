@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
@@ -35,7 +35,7 @@ import {
   ],
 })
 export class BeanParameterPage {
-  constructor(private readonly router: Router) {}
+  private readonly router = inject(Router);
 
   public openManageParameters(): void {
     this.router.navigate(['/bean-parameter/manage']);

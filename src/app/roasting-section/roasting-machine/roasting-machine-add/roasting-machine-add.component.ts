@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../../../services/uiToast';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
@@ -36,14 +36,13 @@ import {
   ],
 })
 export class RoastingMachineAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'roasting-machine-add';
   public data: RoastingMachine = new RoastingMachine();
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

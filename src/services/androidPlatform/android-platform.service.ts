@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UIStorage } from '../uiStorage';
 import { UILog } from '../uiLog';
 import { UIFileHelper } from '../uiFileHelper';
@@ -18,19 +18,19 @@ import { UIExportImportHelper } from '../uiExportImportHelper';
   providedIn: 'root',
 })
 export class AndroidPlatformService {
-  constructor(
-    private readonly uiStorage: UIStorage,
-    private readonly uiLog: UILog,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly eventQueue: EventQueueService,
-    private readonly platform: Platform,
-    private readonly uiHelper: UIHelper,
-    private readonly androidPermissions: AndroidPermissions,
-    private readonly uiAlert: UIAlert,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiExportImportHelper: UIExportImportHelper,
-  ) {
+  private readonly uiStorage = inject(UIStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly eventQueue = inject(EventQueueService);
+  private readonly platform = inject(Platform);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly androidPermissions = inject(AndroidPermissions);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
+
+  constructor() {
     if (this.platform.is('capacitor') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
