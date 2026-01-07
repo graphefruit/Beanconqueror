@@ -15,7 +15,8 @@
     "generate_proto": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto  --ts_proto_opt=snakeToCamel=false --ts_proto_opt=esModuleInterop=true --ts_proto_out ./src/generated ./src/classes/bean/bean.proto",
     "ionic": "ionic",
     "cap": "capacitor",
-    "capsync": "capacitor sync android && capacitor sync ios"
+    "capsync": "capacitor sync android && capacitor sync ios",
+    "generate-icon-registry": "node scripts/generate-icon-registry.mjs > src/generated/icon-registry.ts"
   },
   "private": true,
   "dependencies": {
