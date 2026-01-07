@@ -1453,36 +1453,40 @@ export class SettingsPage {
     }
   }
 
-  private __importDummyData(): void {
+  private async __importDummyData(): Promise<void> {
     this.uiLog.log('Import dummy data');
-    const dummyData = BeanconquerorSettingsDummy;
 
-    if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
+    // Dynamically import the data here to avoid including it in the normal application bundle
+    const dummyData = (await import('../../assets/BeanconquerorTestData.json'))
+      .default;
+    // const dummyData = BeanconquerorSettingsDummy;
+
+    console.log(dummyData);
+
+    if (dummyData.SETTINGS[0].brew_order.before === undefined) {
       this.uiLog.log('Old brew order structure');
       // Breaking change, we need to throw away the old order types by import
       const settingsConst = new Settings();
-      dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
+      dummyData.SETTINGS[0].brew_order = this.uiHelper.copyData(
         settingsConst.brew_order,
       );
     }
-    this.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
+    this.__cleanupImportSettingsData(dummyData.SETTINGS[0]);
 
-    this.uiStorage.import(dummyData).then(async () => {
-      this.__reinitializeStorages().then(async () => {
-        this.uiAnalytics.disableTracking();
-        this.__initializeSettings();
-        this.settings.resetFilter();
-        this.setLanguage();
-        await this.uiAlert.showMessage(
-          this.translate.instant('IMPORT_SUCCESSFULLY'),
-        );
-        if (this.settings.matomo_analytics === undefined) {
-          await this.showAnalyticsInformation();
-        } else {
-          this.uiAnalytics.enableTracking();
-        }
-      });
-    });
+    await this.uiStorage.import(dummyData);
+    await this.__reinitializeStorages();
+    this.uiAnalytics.disableTracking();
+    this.__initializeSettings();
+    this.settings.resetFilter();
+    this.setLanguage();
+    await this.uiAlert.showMessage(
+      this.translate.instant('IMPORT_SUCCESSFULLY'),
+    );
+    if (this.settings.matomo_analytics === undefined) {
+      await this.showAnalyticsInformation();
+    } else {
+      await this.uiAnalytics.enableTracking();
+    }
   }
 
   private async __importJSON(_parsedJSON: any, _importDirectory: string) {
