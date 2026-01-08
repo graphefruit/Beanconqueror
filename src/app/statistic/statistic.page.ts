@@ -18,10 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -32,6 +29,7 @@ import {
   IonCardHeader,
   IonCardContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'statistic',
@@ -41,11 +39,9 @@ import {
     FormsModule,
     DecimalPipe,
     TranslatePipe,
+    HeaderComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonContent,
     IonSegment,
     IonSegmentButton,

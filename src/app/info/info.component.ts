@@ -5,16 +5,14 @@ import { addIcons } from 'ionicons';
 import { chevronForwardOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonContent,
   IonCard,
   IonItem,
   IonLabel,
   IonIcon,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'info',
@@ -24,15 +22,13 @@ import {
     RouterLink,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonContent,
     IonCard,
     IonItem,
     IonLabel,
     IonIcon,
+    HeaderComponent,
   ],
 })
 export class InfoComponent implements OnInit {

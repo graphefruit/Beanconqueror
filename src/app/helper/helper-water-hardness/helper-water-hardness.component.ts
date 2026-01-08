@@ -5,10 +5,7 @@ import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-numb
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonContent,
   IonGrid,
   IonRow,
@@ -19,6 +16,7 @@ import {
   IonItem,
   IonInput,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'helper-water-hardness',
@@ -30,10 +28,7 @@ import {
     RemoveEmptyNumberDirective,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonContent,
     IonGrid,
     IonRow,
@@ -43,6 +38,7 @@ import {
     IonCardContent,
     IonItem,
     IonInput,
+    HeaderComponent,
   ],
 })
 export class HelperWaterHardnessComponent implements OnInit {

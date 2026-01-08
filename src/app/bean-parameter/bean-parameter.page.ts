@@ -3,10 +3,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonContent,
   IonCard,
   IonCardTitle,
@@ -14,6 +11,7 @@ import {
   IonItem,
   IonIcon,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'app-bean-parameter',
@@ -21,11 +19,9 @@ import {
   styleUrls: ['./bean-parameter.page.scss'],
   imports: [
     TranslatePipe,
+    HeaderComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonContent,
     IonCard,
     IonCardTitle,

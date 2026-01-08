@@ -28,17 +28,14 @@ import { addIcons } from 'ionicons';
 import { analyticsOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonButton,
-  IonIcon,
-  IonTitle,
   IonContent,
   IonSegment,
   IonSegmentButton,
   IonLabel,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'app-graph',
@@ -49,13 +46,10 @@ import {
     AgVirtualScrollComponent,
     GraphInformationCardComponent,
     TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonButton,
-    IonIcon,
-    IonTitle,
     IonContent,
     IonSegment,
     IonSegmentButton,

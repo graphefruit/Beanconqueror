@@ -27,18 +27,15 @@ import { GreenBeanInformationComponent } from '../../../components/green-bean-in
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonButton,
-  IonIcon,
-  IonTitle,
   IonContent,
   IonSegment,
   IonSegmentButton,
   IonLabel,
   IonSearchbar,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'app-green-beans',
@@ -49,13 +46,10 @@ import {
     AgVirtualScrollComponent,
     GreenBeanInformationComponent,
     TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonButton,
-    IonIcon,
-    IonTitle,
     IonContent,
     IonSegment,
     IonSegmentButton,

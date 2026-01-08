@@ -16,20 +16,13 @@ import { UIMillStorage } from '../../services/uiMillStorage';
 import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
 import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
 import { ModalController } from '@ionic/angular/standalone';
-import { ShortPressDirective } from '../../directive/short-press.directive';
-import { LongPressDirective } from '../../directive/long-press.directive';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { giftOutline, thermometerOutline, snowOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonButton,
-  IonIcon,
-  IonTitle,
   IonContent,
   IonGrid,
   IonRow,
@@ -39,24 +32,21 @@ import {
   IonCardTitle,
   IonCardSubtitle,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
 
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   imports: [
-    ShortPressDirective,
-    LongPressDirective,
     RouterLink,
     BrewInformationComponent,
     TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonButton,
-    IonIcon,
-    IonTitle,
     IonContent,
     IonGrid,
     IonRow,

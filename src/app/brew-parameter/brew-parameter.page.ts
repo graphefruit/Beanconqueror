@@ -4,10 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonContent,
   IonCard,
   IonItem,
@@ -15,6 +12,7 @@ import {
   IonCardTitle,
   IonCardContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'brew-parameter',
@@ -23,11 +21,9 @@ import {
   imports: [
     RouterLink,
     TranslatePipe,
+    HeaderComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonContent,
     IonCard,
     IonItem,

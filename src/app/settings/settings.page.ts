@@ -101,10 +101,7 @@ import {
 } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -124,6 +121,7 @@ import {
   IonList,
   IonBadge,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'settings',
@@ -136,11 +134,9 @@ import {
     TranslatePipe,
     KeysPipe,
     ToFixedPipe,
+    HeaderComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonContent,
     IonSegment,
     IonSegmentButton,

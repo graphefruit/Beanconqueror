@@ -15,17 +15,14 @@ import { RoastingMachineInformationCardComponent } from '../../../components/roa
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonButton,
-  IonIcon,
-  IonTitle,
   IonContent,
   IonSegment,
   IonSegmentButton,
   IonLabel,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'app-roasting-machine',
@@ -35,13 +32,10 @@ import {
     FormsModule,
     RoastingMachineInformationCardComponent,
     TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonButton,
-    IonIcon,
-    IonTitle,
     IonContent,
     IonSegment,
     IonSegmentButton,

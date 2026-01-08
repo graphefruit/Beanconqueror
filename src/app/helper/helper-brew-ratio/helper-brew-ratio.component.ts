@@ -3,12 +3,10 @@ import { BrewRatioCardComponent } from '../../../components/brew-ratio-card/brew
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'helper-brew-ratio',
@@ -18,11 +16,9 @@ import {
     BrewRatioCardComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonContent,
+    HeaderComponent,
   ],
 })
 export class HelperBrewRatioComponent implements OnInit {

@@ -21,46 +21,36 @@ import { Subscription } from 'rxjs';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
-import { ShortPressDirective } from '../../directive/short-press.directive';
-import { LongPressDirective } from '../../directive/long-press.directive';
 import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonButton,
-  IonIcon,
-  IonTitle,
   IonContent,
   IonSegment,
   IonSegmentButton,
   IonLabel,
   IonSearchbar,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
 
 @Component({
   selector: 'brew',
   templateUrl: './brew.page.html',
   styleUrls: ['./brew.page.scss'],
   imports: [
-    ShortPressDirective,
-    LongPressDirective,
     FormsModule,
     NgTemplateOutlet,
     AgVirtualScrollComponent,
     BrewInformationComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonButton,
-    IonIcon,
-    IonTitle,
+    HeaderComponent,
+    HeaderButtonComponent,
     IonContent,
     IonSegment,
     IonSegmentButton,
