@@ -3,13 +3,11 @@ import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
   IonCard,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'terms',
@@ -18,12 +16,10 @@ import {
   imports: [
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
     IonCard,
+    HeaderComponent,
   ],
 })
 export class TermsComponent implements OnInit {

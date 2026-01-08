@@ -13,18 +13,15 @@ import { addIcons } from 'ionicons';
 import { sendOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonButton,
-  IonIcon,
-  IonTitle,
   IonContent,
   IonCard,
   IonRow,
   IonCol,
   IonText,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'log',
@@ -33,17 +30,14 @@ import {
   imports: [
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonButton,
-    IonIcon,
-    IonTitle,
     IonContent,
     IonCard,
     IonRow,
     IonCol,
     IonText,
+    HeaderComponent,
+    HeaderButtonComponent,
   ],
 })
 export class LogComponent implements OnInit {

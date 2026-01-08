@@ -10,10 +10,7 @@ import {
 } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
   IonCard,
   IonItem,
@@ -21,6 +18,7 @@ import {
   IonLabel,
   IonCardContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'licences',
@@ -30,16 +28,14 @@ import {
     TranslatePipe,
     KeysPipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
     IonCard,
     IonItem,
     IonIcon,
     IonLabel,
     IonCardContent,
+    HeaderComponent,
   ],
 })
 export class LicencesComponent implements OnInit {

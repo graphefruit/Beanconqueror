@@ -2,12 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'thanks',
@@ -16,11 +14,9 @@ import {
   imports: [
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
+    HeaderComponent,
   ],
 })
 export class ThanksComponent implements OnInit {

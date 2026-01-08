@@ -10,10 +10,7 @@ import {
 } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
   IonCard,
   IonCardHeader,
@@ -22,6 +19,7 @@ import {
   IonLabel,
   IonCardContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'credits',
@@ -31,10 +29,7 @@ import {
     TranslatePipe,
     KeysPipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
     IonCard,
     IonCardHeader,
@@ -42,6 +37,7 @@ import {
     IonIcon,
     IonLabel,
     IonCardContent,
+    HeaderComponent,
   ],
 })
 export class CreditsComponent implements OnInit {

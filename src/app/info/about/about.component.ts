@@ -11,15 +11,13 @@ import {
 } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
   IonCard,
   IonItem,
   IonIcon,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'about',
@@ -28,14 +26,12 @@ import {
   imports: [
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
     IonCard,
     IonItem,
     IonIcon,
+    HeaderComponent,
   ],
 })
 export class AboutComponent implements OnInit {

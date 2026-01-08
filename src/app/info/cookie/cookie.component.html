@@ -1,14 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button
-        icon="beanconqueror-back">
-      </ion-back-button>
-    </ion-buttons>
-    <ion-title>
-      {{"NAV_COOKIE" | translate}}
-    </ion-title>
-  </ion-toolbar>
+  <app-header [title]="'NAV_COOKIE' | translate">
+    <ion-back-button header-slot="start" icon="beanconqueror-back" />
+  </app-header>
 </ion-header>
 
 <ion-content>

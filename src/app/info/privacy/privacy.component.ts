@@ -6,13 +6,11 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
   IonCard,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'privacy',
@@ -21,12 +19,10 @@ import {
   imports: [
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
     IonCard,
+    HeaderComponent,
   ],
 })
 export class PrivacyComponent implements OnInit {
