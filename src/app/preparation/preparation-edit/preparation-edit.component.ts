@@ -22,9 +22,6 @@ import { addIcons } from 'ionicons';
 import { swapVerticalOutline, informationOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonContent,
@@ -41,6 +38,8 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'preparation-edit',
@@ -52,10 +51,9 @@ import {
     PhotoAddComponent,
     TranslatePipe,
     KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,

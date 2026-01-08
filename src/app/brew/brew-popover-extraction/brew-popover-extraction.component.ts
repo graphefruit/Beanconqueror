@@ -12,16 +12,9 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from 'src/classes/brew/brew';
 import { Preparation } from 'src/classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonCard,
-} from '@ionic/angular/standalone';
+import { IonHeader, IonContent, IonCard } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 declare var Plotly;
 
@@ -32,13 +25,10 @@ declare var Plotly;
   imports: [
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
     IonCard,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
   ],
 })
 export class BrewPopoverExtractionComponent implements OnInit {

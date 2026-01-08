@@ -24,11 +24,6 @@ import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonCard,
   IonCardContent,
@@ -40,7 +35,11 @@ import {
   IonBadge,
   IonRange,
   IonCheckbox,
+  IonButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-preparation-connected-device',
@@ -51,12 +50,11 @@ import {
     TranslatePipe,
     ToFixedPipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
+    IonContent,
     IonButton,
     IonIcon,
-    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonCard,
     IonCardContent,
     IonItem,

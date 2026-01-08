@@ -17,11 +17,6 @@ import { addIcons } from 'ionicons';
 import { thermometerOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonCard,
   IonList,
@@ -30,7 +25,11 @@ import {
   IonInput,
   IonRange,
   IonCheckbox,
+  IonButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-bean-popover-unfreeze',
@@ -40,12 +39,11 @@ import {
     FormsModule,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
+    IonContent,
     IonButton,
     IonIcon,
-    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonCard,
     IonList,
     IonItem,

@@ -19,11 +19,6 @@ import { addIcons } from 'ionicons';
 import { wifiOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -37,7 +32,11 @@ import {
   IonRow,
   IonCol,
   IonThumbnail,
+  IonIcon,
+  IonButton,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'preparation-modal-select',
@@ -51,12 +50,10 @@ import {
     FormatDatePipe,
     PreparationFunction,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    IonIcon,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -69,6 +66,7 @@ import {
     IonRow,
     IonCol,
     IonThumbnail,
+    IonButton,
   ],
 })
 export class PreparationModalSelectComponent implements OnInit {

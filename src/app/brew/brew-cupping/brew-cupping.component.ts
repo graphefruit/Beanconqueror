@@ -23,11 +23,6 @@ import { addIcons } from 'ionicons';
 import { addOutline, trashOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -37,7 +32,11 @@ import {
   IonFooter,
   IonRow,
   IonCol,
+  IonButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'brew-cupping',
@@ -49,12 +48,11 @@ import {
     KeyValuePipe,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
+    IonContent,
     IonButton,
     IonIcon,
-    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonSegment,
     IonSegmentButton,
     IonLabel,

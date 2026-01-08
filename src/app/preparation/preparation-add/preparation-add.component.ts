@@ -12,9 +12,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonContent,
@@ -24,6 +21,8 @@ import {
   IonCard,
   IonCardContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'preparation-add',
@@ -32,10 +31,9 @@ import {
   imports: [
     TranslatePipe,
     KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,

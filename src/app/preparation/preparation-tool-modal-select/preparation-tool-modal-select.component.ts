@@ -10,11 +10,6 @@ import { addIcons } from 'ionicons';
 import { eyeOffOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -28,7 +23,11 @@ import {
   IonFooter,
   IonRow,
   IonCol,
+  IonIcon,
+  IonButton,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'preparation-tool-modal-select',
@@ -38,12 +37,10 @@ import {
     FormsModule,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    IonIcon,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -56,6 +53,7 @@ import {
     IonFooter,
     IonRow,
     IonCol,
+    IonButton,
   ],
 })
 export class PreparationToolModalSelectComponent implements OnInit {

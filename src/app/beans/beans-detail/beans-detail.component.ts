@@ -26,9 +26,6 @@ import { addIcons } from 'ionicons';
 import { create, globeOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonContent,
@@ -44,6 +41,9 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'app-beans-detail',
@@ -58,10 +58,10 @@ import {
     FormatDatePipe,
     ToFixedPipe,
     BeanFieldVisiblePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,

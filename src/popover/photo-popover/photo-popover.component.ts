@@ -16,15 +16,9 @@ import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { AsyncImageComponent } from '../../components/async-image/async-image.component';
 import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonContent,
-} from '@ionic/angular/standalone';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'photo-popover',
@@ -34,12 +28,9 @@ import {
     AsyncImageComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
   ],
 })
 export class PhotoPopoverComponent implements OnInit {

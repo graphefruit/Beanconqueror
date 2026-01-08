@@ -58,9 +58,6 @@ import {
 } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonContent,
@@ -77,6 +74,9 @@ import {
   IonList,
   IonFooter,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 declare var Plotly;
 @Component({
@@ -94,10 +94,10 @@ declare var Plotly;
     BrewFieldVisiblePipe,
     BrewFieldOrder,
     BrewFunction,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,

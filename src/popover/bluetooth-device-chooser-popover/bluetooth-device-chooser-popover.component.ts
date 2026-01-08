@@ -25,11 +25,6 @@ import { addIcons } from 'ionicons';
 import { refreshOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonCard,
   IonCardContent,
@@ -40,7 +35,10 @@ import {
   IonFooter,
   IonRow,
   IonCol,
+  IonButton,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
 
 @Component({
   selector: 'app-bluetooth-device-chooser-popover',
@@ -50,12 +48,10 @@ import {
     FormsModule,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderButtonComponent,
     IonCard,
     IonCardContent,
     IonRadioGroup,

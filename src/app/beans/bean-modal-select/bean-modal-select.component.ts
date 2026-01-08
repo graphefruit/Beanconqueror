@@ -34,11 +34,6 @@ import { addIcons } from 'ionicons';
 import { snowOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -53,7 +48,12 @@ import {
   IonCol,
   IonThumbnail,
   IonSearchbar,
+  IonButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'bean-modal-select',
@@ -69,12 +69,12 @@ import {
     FormatDatePipe,
     BeanFunction,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
+    IonContent,
     IonButton,
     IonIcon,
-    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
     IonSegment,
     IonSegmentButton,
     IonLabel,

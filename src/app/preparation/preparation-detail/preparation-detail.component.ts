@@ -13,9 +13,6 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonContent,
@@ -28,6 +25,8 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-preparation-detail',
@@ -35,10 +34,9 @@ import {
   styleUrls: ['./preparation-detail.component.scss'],
   imports: [
     TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,

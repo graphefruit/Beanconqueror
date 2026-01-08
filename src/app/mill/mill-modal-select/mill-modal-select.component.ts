@@ -16,11 +16,6 @@ import { FormatDatePipe } from '../../../pipes/formatDate';
 import { MillFunction } from '../../../pipes/mill/millFunction';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -34,7 +29,10 @@ import {
   IonRow,
   IonCol,
   IonThumbnail,
+  IonButton,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'mill-modal-select',
@@ -48,12 +46,9 @@ import {
     FormatDatePipe,
     MillFunction,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -66,6 +61,7 @@ import {
     IonRow,
     IonCol,
     IonThumbnail,
+    IonButton,
   ],
 })
 export class MillModalSelectComponent implements OnInit {

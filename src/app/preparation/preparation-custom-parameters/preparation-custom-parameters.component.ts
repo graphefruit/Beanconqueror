@@ -14,11 +14,6 @@ import { RepeatCustomParameterComponent } from '../../../components/parameter/re
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonCard,
   IonCardContent,
@@ -28,6 +23,8 @@ import {
   IonSegmentButton,
   IonLabel,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-preparation-custom-parameters',
@@ -42,12 +39,9 @@ import {
     RepeatCustomParameterComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonCard,
     IonCardContent,
     IonItem,

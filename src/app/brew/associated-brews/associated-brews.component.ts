@@ -20,15 +20,9 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
 import { BrewInformationComponent } from '../../../components/brew-information/brew-information.component';
 import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonContent,
-} from '@ionic/angular/standalone';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-bean-associated-brews',
@@ -39,12 +33,9 @@ import {
     BrewInformationComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
   ],
 })
 export class AssociatedBrewsComponent {

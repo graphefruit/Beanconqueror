@@ -1,4 +1,9 @@
 :host {
+  // Fix repeat icon sizing in header
+  ::ng-deep app-header-button ion-icon[name="beanconqueror-repeat"] {
+    width: 32px;
+    margin-top: 5px;
+  }
 
   ion-item {
     --border-width: 0px;

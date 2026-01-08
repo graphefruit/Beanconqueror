@@ -14,9 +14,6 @@ import { addIcons } from 'ionicons';
 import { waterOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonContent,
@@ -26,6 +23,8 @@ import {
   IonCard,
   IonCardContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-water-add',
@@ -34,10 +33,9 @@ import {
   imports: [
     TranslatePipe,
     KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,

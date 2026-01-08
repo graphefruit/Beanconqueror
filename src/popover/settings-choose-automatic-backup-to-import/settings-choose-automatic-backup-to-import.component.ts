@@ -10,8 +10,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonCard,
   IonCardContent,
@@ -24,6 +22,7 @@ import {
   IonCol,
   IonButton,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'app-settings-choose-automatic-backup-to-import',
@@ -34,9 +33,8 @@ import {
     TranslatePipe,
     FormatDatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
+    HeaderComponent,
     IonCard,
     IonCardContent,
     IonRadioGroup,

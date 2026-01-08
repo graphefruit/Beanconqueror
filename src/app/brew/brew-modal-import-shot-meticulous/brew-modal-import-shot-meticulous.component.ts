@@ -19,11 +19,6 @@ import { GraphDisplayCardComponent } from '../../../components/graph-display-car
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonRadioGroup,
   IonCard,
@@ -33,7 +28,10 @@ import {
   IonFooter,
   IonRow,
   IonCol,
+  IonButton,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-brew-modal-import-shot-meticulous',
@@ -45,12 +43,10 @@ import {
     GraphDisplayCardComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonRadioGroup,
     IonCard,
     IonItem,

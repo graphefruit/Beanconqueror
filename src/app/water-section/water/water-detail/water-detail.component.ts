@@ -12,9 +12,6 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonContent,
@@ -26,6 +23,8 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-water-detail',
@@ -34,10 +33,9 @@ import {
   imports: [
     FormsModule,
     TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,

@@ -7,16 +7,14 @@ import { DisableDoubleClickDirective } from '../../../directive/disable-double-c
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonFooter,
   IonRow,
   IonCol,
+  IonButton,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-brew-flavor-picker',
@@ -27,12 +25,10 @@ import {
     DisableDoubleClickDirective,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonFooter,
     IonRow,
     IonCol,

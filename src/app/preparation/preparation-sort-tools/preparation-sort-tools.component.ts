@@ -12,11 +12,6 @@ import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonIcon,
   IonContent,
   IonCard,
   IonReorderGroup,
@@ -24,6 +19,8 @@ import {
   IonLabel,
   IonReorder,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-preparation-sort-tools',
@@ -32,12 +29,9 @@ import {
   imports: [
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonButton,
-    IonIcon,
     IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
     IonCard,
     IonReorderGroup,
     IonItem,
