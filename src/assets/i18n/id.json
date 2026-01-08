@@ -646,7 +646,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Sangrai Omni, serbaguna, semua metode, sangrai medium",
         "DECAF_KEYWORDS": "Dekaf, Tanpa kafein, Decaf",
         "BLEND_KEYWORDS": "Campuran, Blend, House Blend",
-        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Asal tunggal, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Asal tunggal, Micro Lot",
+        "PRODUCER_KEYWORDS": "Produsen, Diproduksi oleh, Ditanam oleh, Petani, Penanam, Keluarga, Koperasi, Asosiasi, Petani kecil"
     },
     "CLEAR": "Clear",
     "BEAN_LOOKS_LIKE_CONSUMED": "Sepertinya biji ini sudah habis, apakah anda ingin mengarsipkannya?",

@@ -649,17 +649,43 @@
     "AI_IMPORT_STEP_EXTRACTING": "Extracting text from image...",
     "AI_IMPORT_STEP_ANALYZING": "Analyzing with AI... (retry if needed)",
     "AI_IMPORT_STEP_DETECTING_LANGUAGE": "Detecting label language...",
+    "AI_IMPORT_STEP_LANGUAGE": "Language",
+    "AI_IMPORT_STEP_STRUCTURE": "Structure",
+    "AI_IMPORT_STEP_NAME": "Name",
+    "AI_IMPORT_STEP_ROASTER": "Roaster",
+    "AI_IMPORT_STEP_WEIGHT": "Weight",
+    "AI_IMPORT_STEP_ROAST_TYPE": "Roast Type",
+    "AI_IMPORT_STEP_AROMATICS": "Aromatics",
+    "AI_IMPORT_STEP_DECAF": "Decaf",
+    "AI_IMPORT_STEP_ORIGIN": "Origin",
+    "AI_IMPORT_STEP_VALIDATING": "Validating",
+    "AI_IMPORT_FIELD_NAME": "Name",
+    "AI_IMPORT_FIELD_ROASTER": "Roaster",
+    "AI_IMPORT_FIELD_WEIGHT": "Weight",
+    "AI_IMPORT_FIELD_BEAN_ROASTING_TYPE": "Roast Type",
+    "AI_IMPORT_FIELD_AROMATICS": "Aromatics",
+    "AI_IMPORT_FIELD_DECAFFEINATED": "Decaffeinated",
+    "AI_IMPORT_FIELD_BEANMIX": "Bean Type",
+    "AI_IMPORT_FIELD_ORIGINCOUNT": "Origin Count",
+    "AI_IMPORT_FIELD_COUNTRY": "Country",
+    "AI_IMPORT_FIELD_REGION": "Region",
+    "AI_IMPORT_FIELD_VARIETY": "Variety",
+    "AI_IMPORT_FIELD_PROCESSING": "Processing",
+    "AI_IMPORT_FIELD_ELEVATION": "Elevation",
+    "AI_IMPORT_FIELD_FARM": "Farm",
+    "AI_IMPORT_FIELD_FARMER": "Farmer",
     "AI_IMPORT_NO_TEXT_FOUND": "No text could be extracted from the image. Please ensure the label is clearly visible and try again.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Ethiopia, Colombia, Brazil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papua New Guinea, Hawaii, Jamaica",
         "PROCESSING_METHODS": "Washed, Natural, Honey, Anaerobic, Carbonic Maceration, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
-        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
         "ROASTING_TYPE_FILTER_KEYWORDS": "Filter Roast, for filter, pour over, light roast, filter coffee",
         "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Espresso Roast, for espresso, dark roast, espresso blend",
         "ROASTING_TYPE_OMNI_KEYWORDS": "Omni Roast, versatile, all brewing methods, medium roast, all-rounder",
         "DECAF_KEYWORDS": "Decaf, Decaffeinated, Caffeine-free",
         "BLEND_KEYWORDS": "Blend, House Blend, Espresso Blend",
-        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Single Estate, Single Farm, Field Blend, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Single Estate, Single Farm, Field Blend, Micro Lot",
+        "PRODUCER_KEYWORDS": "Producer, Produced by, Grown by, Farmer, Grower, Family, Cooperative, Coop, Association, Smallholders"
     },
     "CLEAR": "Clear",
     "BEAN_LOOKS_LIKE_CONSUMED": "It looks like these beans are finished, you want to archive them?",
@@ -1112,8 +1138,7 @@
             "ENTER_TARGET_BREW_WEIGHT": "Enter target brew weight in grams",
             "LAST_SHOT": "Last shot",
             "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode is just working with connected scale, please connect one",
-            "WE_COULD_NOT_CONNECT": "We could not connect to the machine",
-            "BREW_BY_WEIGHT_HINT": "The programmed volume in ml must be higher than the target weight in grams for the shot to stop at the set weight. If its not the case, please adjust the volume in ml."
+            "WE_COULD_NOT_CONNECT": "We could not connect to the machine"
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
@@ -1609,10 +1634,5 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Bean has been unfrozen",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Bean has been partially unfrozen",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Unfreeze partial coffee bean",
-    "LAST_COMMUNICATION": "Last communication",
-  "GRAPH_ACTIVE_LIGHT_MODE": "Active (Light)",
-  "GRAPH_ACTIVE_DARK_MODE": "Active (Dark)",
-  "GRAPH_REFERENCE_LIGHT_MODE": "Reference (Light)",
-  "GRAPH_REFERENCE_DARK_MODE": "Reference (Dark)",
-  "GRAPH_COLORS": "Graph colors"
+    "LAST_COMMUNICATION": "Last communication"
 }

@@ -646,7 +646,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Palenie Omni, uniwersalne, wszystkie metody, średnie palenie",
         "DECAF_KEYWORDS": "Bezkofeinowa, Bez kofeiny, Decaf",
         "BLEND_KEYWORDS": "Mieszanka, Blend, Mieszanka domowa",
-        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Jedno pochodzenie, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Jedno pochodzenie, Micro Lot",
+        "PRODUCER_KEYWORDS": "Producent, Wyprodukowane przez, Uprawiane przez, Rolnik, Plantator, Rodzina, Spółdzielnia, Stowarzyszenie, Drobni producenci"
     },
     "CLEAR": "Wyczyść",
     "BEAN_LOOKS_LIKE_CONSUMED": "Wygląda na to, że te ziarna są zużyte. Chcesz je zarchiwizować?",

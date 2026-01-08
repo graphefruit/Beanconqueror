@@ -1,0 +1,120 @@
+import { TestBed } from '@angular/core/testing';
+import { TextNormalizationService } from './text-normalization.service';
+
+describe('TextNormalizationService', () => {
+  let service: TextNormalizationService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [TextNormalizationService],
+    });
+    service = TestBed.inject(TextNormalizationService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
+  describe('normalizeCase', () => {
+    it('should convert ALL CAPS to Title Case', () => {
+      expect(service.normalizeCase('FINCA EL PARAÍSO')).toBe(
+        'Finca El Paraíso',
+      );
+    });
+
+    it('should preserve mixed case text', () => {
+      expect(service.normalizeCase('Square Mile Coffee')).toBe(
+        'Square Mile Coffee',
+      );
+    });
+
+    it('should handle multiple lines', () => {
+      const input = 'ETHIOPIA YIRGACHEFFE\nNATURAL PROCESS';
+      const expected = 'Ethiopia Yirgacheffe\nNatural Process';
+      expect(service.normalizeCase(input)).toBe(expected);
+    });
+
+    it('should preserve coffee acronyms', () => {
+      expect(service.normalizeCase('KENYA AA')).toBe('Kenya AA');
+    });
+
+    it('should preserve SL-28 and SL-34 varieties', () => {
+      expect(service.normalizeCase('SL-28 SL-34')).toBe('SL-28 SL-34');
+    });
+  });
+
+  describe('normalizeNumbers', () => {
+    it('should remove European thousand separator (dot)', () => {
+      expect(service.normalizeNumbers('1.850m')).toBe('1850m');
+    });
+
+    it('should remove European thousand separator (comma)', () => {
+      expect(service.normalizeNumbers('1,900m')).toBe('1900m');
+    });
+
+    it('should handle ranges', () => {
+      expect(service.normalizeNumbers('1.700-1.900m')).toBe('1700-1900m');
+    });
+
+    it('should not affect decimal numbers', () => {
+      expect(service.normalizeNumbers('1.5kg')).toBe('1.5kg');
+    });
+  });
+
+  describe('normalizeAltitude', () => {
+    it('should normalize m.ü.M. to MASL', () => {
+      expect(service.normalizeAltitude('1.850 m.ü.M.')).toBe('1850 MASL');
+    });
+
+    it('should normalize meters to MASL', () => {
+      expect(service.normalizeAltitude('1850 meters')).toBe('1850 MASL');
+    });
+
+    it('should normalize msnm to MASL', () => {
+      expect(service.normalizeAltitude('2000 msnm')).toBe('2000 MASL');
+    });
+
+    it('should handle altitude ranges', () => {
+      expect(service.normalizeAltitude('1.700 - 1.900m')).toBe(
+        '1700-1900 MASL',
+      );
+    });
+
+    it('should handle already MASL format', () => {
+      expect(service.normalizeAltitude('1850 MASL')).toBe('1850 MASL');
+    });
+  });
+
+  describe('extractWeight', () => {
+    it('should extract grams', () => {
+      expect(service.extractWeight('250g')).toBe(250);
+      expect(service.extractWeight('250 grams')).toBe(250);
+    });
+
+    it('should convert kilograms to grams', () => {
+      expect(service.extractWeight('1kg')).toBe(1000);
+      expect(service.extractWeight('1.5 kg')).toBe(1500);
+    });
+
+    it('should convert ounces to grams', () => {
+      expect(service.extractWeight('12oz')).toBe(340);
+    });
+
+    it('should convert pounds to grams', () => {
+      expect(service.extractWeight('1lb')).toBe(454);
+    });
+
+    it('should return null if no weight found', () => {
+      expect(service.extractWeight('Ethiopia Yirgacheffe')).toBeNull();
+    });
+  });
+
+  describe('normalizeAll', () => {
+    it('should apply all normalizations', () => {
+      const input = 'FINCA EL PARAÍSO\n1.850 m.ü.M.\n250g';
+      const result = service.normalizeAll(input);
+      expect(result).toContain('Finca El Paraíso');
+      expect(result).toContain('1850 MASL');
+    });
+  });
+});

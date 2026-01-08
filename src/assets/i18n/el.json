@@ -646,7 +646,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Καβούρδισμα Omni, ευέλικτο, για όλες τις μεθόδους, μεσαίο καβούρδισμα",
         "DECAF_KEYWORDS": "Ντεκαφεϊνέ, Χωρίς καφεΐνη, Decaf",
         "BLEND_KEYWORDS": "Μείγμα, Blend, Μείγμα σπιτιού",
-        "SINGLE_ORIGIN_KEYWORDS": "Μονής προέλευσης, Single Origin, Μικρή παρτίδα, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "Μονής προέλευσης, Single Origin, Μικρή παρτίδα, Micro Lot",
+        "PRODUCER_KEYWORDS": "Παραγωγός, Παράχθηκε από, Καλλιεργήθηκε από, Αγρότης, Καλλιεργητής, Οικογένεια, Συνεταιρισμός, Ένωση, Μικροί παραγωγοί"
     },
     "CLEAR": "Καθαρισμός",
     "BEAN_LOOKS_LIKE_CONSUMED": "Φαίνεται ότι αυτοί οι κόκκοι έχουν τελειώσει, θέλετε να τους αρχειοθετήσετε;",

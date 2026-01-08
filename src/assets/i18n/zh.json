@@ -646,7 +646,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "全能烘焙, 多用途, 所有冲煮方式, 中度烘焙",
         "DECAF_KEYWORDS": "低因, 无咖啡因, 脱因咖啡",
         "BLEND_KEYWORDS": "拼配, 混合, 招牌拼配",
-        "SINGLE_ORIGIN_KEYWORDS": "单品, 单一产地, 精品批次, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "单品, 单一产地, 精品批次, Micro Lot",
+        "PRODUCER_KEYWORDS": "生产者, 生产商, 种植者, 农民, 农户, 家族, 合作社, 协会, 小农户"
     },
     "CLEAR": "清除",
     "BEAN_LOOKS_LIKE_CONSUMED": "这包咖啡豆看起来已经完全消耗了，要将它归档吗？",

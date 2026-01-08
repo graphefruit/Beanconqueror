@@ -1113,7 +1113,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "تحميص متعدد, متعدد الاستخدامات, لجميع طرق التحضير, تحميص متوسط",
         "DECAF_KEYWORDS": "منزوع الكافيين, خالي من الكافيين, ديكاف",
         "BLEND_KEYWORDS": "خليط, مزيج, خليط المنزل",
-        "SINGLE_ORIGIN_KEYWORDS": "أحادي المصدر, مزرعة واحدة, Single Origin, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "أحادي المصدر, مزرعة واحدة, Single Origin, Micro Lot",
+        "PRODUCER_KEYWORDS": "منتج, أنتج بواسطة, مزروع بواسطة, مزارع, عائلة, تعاونية, جمعية, صغار المنتجين"
     },
     "CLEAR": "",
     "BEAN_LOOKS_LIKE_CONSUMED": "",

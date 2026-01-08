@@ -27,14 +27,17 @@ EXAMPLES:
 RULES:
 - Focus on descriptive words and the keyword indicators above
 - DO NOT be confused by: Finca, Fazenda, Hacienda (farm names), Yirgacheffe, Sidamo (regions)
-- If text contains only universal terms and proper nouns, respond: unknown
+
+RESPONSE FORMAT:
+- Return ONLY a 2-letter ISO language code (de, fr, it, es, pt, en, etc.)
+- Do NOT include explanations or sentences
+- Do NOT include punctuation
+- If text contains only universal terms and proper nouns, return exactly: unknown
 
 TEXT:
 ---
 {{OCR_TEXT}}
 ---
-
-Language code (2 letters only):
 `;
 
 export const AI_IMPORT_PROMPT_TEMPLATE = `

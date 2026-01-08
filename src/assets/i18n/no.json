@@ -646,7 +646,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Omni brenning, allsidig, alle metoder, medium brenning",
         "DECAF_KEYWORDS": "Koffeinfri, Decaf, Uten koffein",
         "BLEND_KEYWORDS": "Blanding, Blend, Husblanding",
-        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Enkelt opprinnelse, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Enkelt opprinnelse, Micro Lot",
+        "PRODUCER_KEYWORDS": "Produsent, Produsert av, Dyrket av, Bonde, Dyrker, Familie, Kooperativ, Forening, Småbønder"
     },
     "CLEAR": "Fjern",
     "BEAN_LOOKS_LIKE_CONSUMED": "Det ser ut som det er tomt for disse bønnene, vil du arkivere dem?",

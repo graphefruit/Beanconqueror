@@ -11,6 +11,7 @@ export interface MergedExamples {
   DECAF_KEYWORDS: string;
   BLEND_KEYWORDS: string;
   SINGLE_ORIGIN_KEYWORDS: string;
+  PRODUCER_KEYWORDS: string;
 }
 
 const EXAMPLE_KEYS: (keyof MergedExamples)[] = [
@@ -23,6 +24,7 @@ const EXAMPLE_KEYS: (keyof MergedExamples)[] = [
   'DECAF_KEYWORDS',
   'BLEND_KEYWORDS',
   'SINGLE_ORIGIN_KEYWORDS',
+  'PRODUCER_KEYWORDS',
 ];
 
 @Injectable({
@@ -102,6 +104,7 @@ export class AIImportExamplesService {
       DECAF_KEYWORDS: '',
       BLEND_KEYWORDS: '',
       SINGLE_ORIGIN_KEYWORDS: '',
+      PRODUCER_KEYWORDS: '',
     };
 
     for (const key of EXAMPLE_KEYS) {

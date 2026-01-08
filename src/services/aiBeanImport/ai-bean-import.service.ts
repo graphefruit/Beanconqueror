@@ -10,6 +10,7 @@ import {
   AI_IMPORT_LANGUAGE_DETECTION_PROMPT,
 } from '../../data/ai-import/ai-import-prompt';
 import { AIImportExamplesService } from './ai-import-examples.service';
+import { FieldExtractionService } from './field-extraction.service';
 import { CapgoLLM } from '@capgo/capacitor-llm';
 import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
 import {
@@ -49,6 +50,7 @@ export class AIBeanImportService {
     private readonly platform: Platform,
     private readonly uiLog: UILog,
     private readonly aiImportExamples: AIImportExamplesService,
+    private readonly fieldExtraction: FieldExtractionService,
   ) {}
 
   /**
@@ -164,7 +166,7 @@ export class AIBeanImportService {
 
       this.uiLog.log('OCR extracted text: ' + extractedText);
 
-      // Step 3: Detect language
+      // Step 3: Detect language (on raw OCR text before normalization)
       currentStep = 'language_detection';
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_DETECTING_LANGUAGE'),
@@ -183,17 +185,22 @@ export class AIBeanImportService {
         'Using languages for examples: ' + languagesToUse.join(', '),
       );
 
-      // Step 5: Analyze with AI using targeted examples
-      currentStep = 'llm_analysis';
+      // Step 5: Multi-step field extraction with pre/post-processing
+      currentStep = 'multi_step_extraction';
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
       );
 
-      const bean = await this.analyzeTextWithLLM(extractedText, languagesToUse);
+      const bean = await this.fieldExtraction.extractAllFields(
+        extractedText,
+        languagesToUse,
+      );
       await this.uiAlert.hideLoadingSpinner();
 
       if (!bean) {
-        throw new Error('LLM returned null - check logs for details');
+        throw new Error(
+          'Field extraction returned null - check logs for details',
+        );
       }
 
       return bean;

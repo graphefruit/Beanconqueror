@@ -646,7 +646,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Omni kavurma, çok yönlü, tüm yöntemler, orta kavurma",
         "DECAF_KEYWORDS": "Kafeinsiz, Decaf, Kafein içermez",
         "BLEND_KEYWORDS": "Karışım, Blend, Ev karışımı",
-        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Tek köken, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Tek köken, Micro Lot",
+        "PRODUCER_KEYWORDS": "Üretici, Üreten, Yetiştiren, Çiftçi, Aile, Kooperatif, Dernek, Küçük üreticiler"
     },
     "CLEAR": "Temizle",
     "BEAN_LOOKS_LIKE_CONSUMED": "Çekirdek paketi bitmiş gibi görünüyor, şimdi arşivlemek ister misiniz?",

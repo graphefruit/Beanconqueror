@@ -646,7 +646,8 @@
         "ROASTING_TYPE_OMNI_KEYWORDS": "Torréfaction Omni, polyvalent, toutes méthodes, torréfaction moyenne",
         "DECAF_KEYWORDS": "Décaféiné, Sans caféine, Decaf",
         "BLEND_KEYWORDS": "Mélange, Blend, Mélange maison",
-        "SINGLE_ORIGIN_KEYWORDS": "Origine unique, Single Origin, Mono-origine, Micro Lot"
+        "SINGLE_ORIGIN_KEYWORDS": "Origine unique, Single Origin, Mono-origine, Micro Lot",
+        "PRODUCER_KEYWORDS": "Producteur, Produit par, Cultivé par, Fermier, Agriculteur, Famille, Coopérative, Association, Petits producteurs"
     },
     "CLEAR": "Effacer",
     "BEAN_LOOKS_LIKE_CONSUMED": "On dirait que ces grains de café sont finis, tu veux les archiver?",
