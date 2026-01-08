@@ -1,68 +1,56 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{"EDIT_BREW" | translate}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="confirmDismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      @if(brewBrewing?.brewBrewingPreparationDeviceEl?.uiHasAPreparationDeviceSet) {
-        @if (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) {
-          <ion-chip outline='true' class='machine-connected'>
-            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
-              @case (PreparationDeviceType.METICULOUS) {
-                <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
-              }
-              @case (PreparationDeviceType.SANREMO_YOU) {
-                <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
-              }
-              @case (PreparationDeviceType.XENIA) {
-                <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
-              }
-              @case (PreparationDeviceType.GAGGIUINO) {
-                <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
-              }
+  <app-header [title]="'EDIT_BREW' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="confirmDismiss()" />
+    @if(brewBrewing?.brewBrewingPreparationDeviceEl?.uiHasAPreparationDeviceSet) {
+      @if (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) {
+        <ion-chip header-slot="end" outline='true' class='machine-connected'>
+          @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
+            @case (PreparationDeviceType.METICULOUS) {
+              <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
             }
-          </ion-chip>
-        } @else {
-          <ion-chip outline='true' class='machine-disconnected'>
-            @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
-              @case (PreparationDeviceType.METICULOUS) {
-                <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-              }
-              @case (PreparationDeviceType.SANREMO_YOU) {
-                <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-              }
-              @case (PreparationDeviceType.XENIA) {
-                <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-              }
-              @case (PreparationDeviceType.GAGGIUINO) {
-                <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
-                <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-              }
+            @case (PreparationDeviceType.SANREMO_YOU) {
+              <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
             }
-          </ion-chip>
-        }
+            @case (PreparationDeviceType.XENIA) {
+              <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+            }
+            @case (PreparationDeviceType.GAGGIUINO) {
+              <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+            }
+          }
+        </ion-chip>
+      } @else {
+        <ion-chip header-slot="end" outline='true' class='machine-disconnected'>
+          @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
+            @case (PreparationDeviceType.METICULOUS) {
+              <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+            }
+            @case (PreparationDeviceType.SANREMO_YOU) {
+              <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+            }
+            @case (PreparationDeviceType.XENIA) {
+              <ion-icon name="beanconqueror-xenia-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+            }
+            @case (PreparationDeviceType.GAGGIUINO) {
+              <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+            }
+          }
+        </ion-chip>
       }
-      @if(brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
-        <ion-button (click)="tareScale()" class="big-icon-only" fill="clear" tappable>
-          <ion-icon name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
-        </ion-button>
-      }
-      <ion-button
-        (click)="popoverActionsBrew()" tappable>
-        <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+    }
+    @if(brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
+      <app-header-button header-slot="end" icon="beanconqueror-scale-tare" buttonClass="big-icon-only" (clicked)="tareScale()" />
+    }
+    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" (clicked)="popoverActionsBrew()" />
+  </app-header>
 </ion-header>
 <ion-content>
   <brew-brewing [isEdit]="true" #brewBrewing [(data)]="data"></brew-brewing>

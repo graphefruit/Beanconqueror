@@ -34,9 +34,6 @@ import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonChip,
@@ -45,6 +42,9 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 declare var Plotly;
 declare var window;
@@ -56,9 +56,6 @@ declare var window;
     BrewBrewingComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonChip,
@@ -66,6 +63,9 @@ declare var window;
     IonFooter,
     IonRow,
     IonCol,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
   ],
 })
 export class BrewEditComponent implements OnInit {

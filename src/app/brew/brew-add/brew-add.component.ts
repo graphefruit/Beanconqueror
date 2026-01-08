@@ -58,9 +58,6 @@ import { DisableDoubleClickDirective } from '../../../directive/disable-double-c
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
   IonButton,
   IonIcon,
   IonChip,
@@ -69,6 +66,9 @@ import {
   IonRow,
   IonCol,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 declare var Plotly;
 
@@ -89,9 +89,6 @@ interface IEventPayload {
     DisableDoubleClickDirective,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonChip,
@@ -99,6 +96,9 @@ interface IEventPayload {
     IonFooter,
     IonRow,
     IonCol,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
   ],
 })
 export class BrewAddComponent implements OnInit, OnDestroy {

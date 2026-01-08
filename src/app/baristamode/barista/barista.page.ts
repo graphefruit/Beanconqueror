@@ -39,10 +39,7 @@ import { LongPressDirective } from '../../../directive/long-press.directive';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonMenuButton,
-  IonTitle,
   IonChip,
   IonIcon,
   IonButton,
@@ -56,6 +53,8 @@ import {
   IonCardTitle,
   IonCardSubtitle,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 declare var Plotly;
 @Component({
@@ -67,10 +66,7 @@ declare var Plotly;
     BrewBrewingComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonMenuButton,
-    IonTitle,
     IonChip,
     IonIcon,
     IonButton,
@@ -83,6 +79,8 @@ declare var Plotly;
     IonCardHeader,
     IonCardTitle,
     IonCardSubtitle,
+    HeaderComponent,
+    HeaderButtonComponent,
   ],
 })
 export class BaristaPage implements OnInit, OnDestroy {
