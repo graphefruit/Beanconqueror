@@ -8,6 +8,12 @@ import { IonToolbar, IonButtons, IonTitle } from '@ionic/angular/standalone';
     ion-toolbar:has(ion-title .subtitle) {
       margin-top: 12px;
     }
+
+    /* Attempt to fix bad centering of the Baloo font */
+    ion-title span {
+      vertical-align: -moz-middle-with-baseline;
+      vertical-align: -webkit-baseline-middle;
+    }
   `,
   template: `
     <ion-toolbar>
@@ -20,7 +26,9 @@ import { IonToolbar, IonButtons, IonTitle } from '@ionic/angular/standalone';
       <ion-title>
         <span>{{ title() }}</span>
         @if (subtitle()) {
-          <p class="subtitle">{{ subtitle() }}</p>
+          <p class="subtitle">
+            <span>{{ subtitle() }}</span>
+          </p>
         }
       </ion-title>
     </ion-toolbar>
