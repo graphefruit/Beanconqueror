@@ -7,10 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
   IonSegment,
   IonSegmentButton,
@@ -20,6 +17,7 @@ import {
   IonCheckbox,
   IonCardContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'app-bean-list-view-parameter',
@@ -29,10 +27,7 @@ import {
     FormsModule,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
     IonSegment,
     IonSegmentButton,
@@ -41,6 +36,7 @@ import {
     IonItem,
     IonCheckbox,
     IonCardContent,
+    HeaderComponent,
   ],
 })
 export class BeanListViewParameterComponent {

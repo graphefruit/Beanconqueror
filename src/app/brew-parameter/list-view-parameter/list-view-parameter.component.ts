@@ -5,12 +5,10 @@ import { ListViewCustomParameterComponent } from '../../../components/parameter/
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'list-view-parameter',
@@ -20,11 +18,9 @@ import {
     ListViewCustomParameterComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
+    HeaderComponent,
   ],
 })
 export class ListViewParameterComponent implements OnInit {

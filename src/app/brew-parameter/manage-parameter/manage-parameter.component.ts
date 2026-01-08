@@ -5,12 +5,10 @@ import { ManageCustomParameterComponent } from '../../../components/parameter/ma
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'manage-parameter',
@@ -20,11 +18,9 @@ import {
     ManageCustomParameterComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
+    HeaderComponent,
   ],
 })
 export class ManageParameterComponent implements OnInit {

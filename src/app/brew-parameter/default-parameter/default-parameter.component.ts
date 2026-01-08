@@ -5,12 +5,10 @@ import { DefaultCustomParameterComponent } from '../../../components/parameter/d
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'default-parameter',
@@ -20,11 +18,9 @@ import {
     DefaultCustomParameterComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
+    HeaderComponent,
   ],
 })
 export class DefaultParameterComponent implements OnInit {

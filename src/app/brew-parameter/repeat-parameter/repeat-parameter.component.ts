@@ -5,12 +5,10 @@ import { RepeatCustomParameterComponent } from '../../../components/parameter/re
 import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
-  IonToolbar,
-  IonButtons,
   IonBackButton,
-  IonTitle,
   IonContent,
 } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'app-repeat-parameter',
@@ -20,11 +18,9 @@ import {
     RepeatCustomParameterComponent,
     TranslatePipe,
     IonHeader,
-    IonToolbar,
-    IonButtons,
     IonBackButton,
-    IonTitle,
     IonContent,
+    HeaderComponent,
   ],
 })
 export class RepeatParameterComponent implements OnInit {
