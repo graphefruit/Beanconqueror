@@ -14,7 +14,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import {
   IonHeader,
   IonButton,
-  IonIcon,
   IonContent,
   IonCard,
   IonItem,
@@ -38,7 +37,6 @@ import { HeaderDismissButtonComponent } from '../../../components/header/header-
     HeaderDismissButtonComponent,
     IonHeader,
     IonButton,
-    IonIcon,
     IonContent,
     IonCard,
     IonItem,

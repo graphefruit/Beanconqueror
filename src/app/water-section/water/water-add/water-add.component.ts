@@ -14,7 +14,6 @@ import { addIcons } from 'ionicons';
 import { waterOutline } from 'ionicons/icons';
 import {
   IonHeader,
-  IonButton,
   IonIcon,
   IonContent,
   IonGrid,
@@ -36,7 +35,6 @@ import { HeaderDismissButtonComponent } from '../../../../components/header/head
     HeaderComponent,
     HeaderDismissButtonComponent,
     IonHeader,
-    IonButton,
     IonIcon,
     IonContent,
     IonGrid,
