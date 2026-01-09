@@ -1140,6 +1140,11 @@ export class UIExcel {
           bean.url = websiteEntry.toString();
         }
 
+        const rating = entry['Rating'];
+        if (rating && Number(rating) > 0) {
+          bean.rating = Number(rating);
+        }
+
         const roasterEntry = entry['Roaster'];
         if (roasterEntry) {
           bean.roaster = roasterEntry.toString();
@@ -1168,7 +1173,14 @@ export class UIExcel {
         const degreeOfRoastEntry = entry['Degree of Roast'];
         if (degreeOfRoastEntry) {
           bean.roast = degreeOfRoastEntry;
+          if (degreeOfRoastEntry === 'CUSTOM_ROAST') {
+            const customDegreeOfRoast = entry['Custom degree of Roast'];
+            if (customDegreeOfRoast) {
+              bean.roast_custom = customDegreeOfRoast;
+            }
+          }
         }
+
         const decaffeinatedEntry = entry['Decaffeinated'];
         if (decaffeinatedEntry) {
           bean.decaffeinated = decaffeinatedEntry;
