@@ -16,6 +16,7 @@ describe('OCRCorrectionService', () => {
     BLEND_KEYWORDS: 'Blend, House Blend',
     SINGLE_ORIGIN_KEYWORDS: 'Single Origin',
     PRODUCER_KEYWORDS: 'Producer, Farmer, Cooperative',
+    ROASTDATE_KEYWORDS: 'Roast date, Roasted on, Freshly roasted',
   };
 
   beforeEach(() => {

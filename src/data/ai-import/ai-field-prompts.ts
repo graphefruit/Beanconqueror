@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
 
 /**
@@ -217,6 +218,58 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
         return v;
       }
       return null;
+    },
+  },
+
+  roastingDate: {
+    field: 'roastingDate',
+    promptTemplate: `What is the roast date of this coffee?
+
+ROAST DATE indicators:
+{{ROASTDATE_KEYWORDS}}
+
+DATE FORMAT RECOGNITION:
+- European format: DD.MM.YYYY or DD/MM/YYYY
+- ISO format: YYYY-MM-DD
+- American format: MM/DD/YYYY
+- Written format with month names
+- Short year: DD.MM.YY
+
+IMPORTANT:
+- Look for dates near roast-related keywords
+- Dates labeled "best before", "use by", or "expiration" are NOT roast dates
+- If only an expiration/best-before date exists, return NOT_FOUND
+
+RESPONSE FORMAT:
+- Return ONLY the date as written on the label
+- If not found, return exactly: NOT_FOUND
+- Do NOT include explanations or sentences
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    examplesKeys: ['ROASTDATE_KEYWORDS'],
+    postProcess: (v) => {
+      // Try to parse with moment's flexible parsing
+      const parsed = moment(v);
+      if (!parsed.isValid()) {
+        return null;
+      }
+
+      const now = moment();
+      const oneYearAgo = moment().subtract(1, 'year');
+
+      // Reject future dates
+      if (parsed.isAfter(now)) {
+        return null;
+      }
+
+      // Reject dates older than 1 year (likely misread)
+      if (parsed.isBefore(oneYearAgo)) {
+        return null;
+      }
+
+      // Return as ISO string for storage
+      return parsed.toISOString();
     },
   },
 
@@ -446,6 +499,7 @@ export const TOP_LEVEL_FIELDS = [
   'aromatics',
   'decaffeinated',
   'cupping_points',
+  'roastingDate',
 ];
 
 /**

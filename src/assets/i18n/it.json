@@ -647,7 +647,8 @@
         "DECAF_KEYWORDS": "Decaffeinato, Senza caffeina, Decaf",
         "BLEND_KEYWORDS": "Miscela, Blend, Miscela della casa",
         "SINGLE_ORIGIN_KEYWORDS": "Monorigine, Single Origin, Singola piantagione, Micro Lot",
-        "PRODUCER_KEYWORDS": "Produttore, Prodotto da, Coltivato da, Agricoltore, Coltivatore, Famiglia, Cooperativa, Associazione, Piccoli produttori"
+        "PRODUCER_KEYWORDS": "Produttore, Prodotto da, Coltivato da, Agricoltore, Coltivatore, Famiglia, Cooperativa, Associazione, Piccoli produttori",
+        "ROASTDATE_KEYWORDS": "Data di tostatura, Tostato il, Tostatura, Appena tostato"
     },
     "CLEAR": "Cancella",
     "BEAN_LOOKS_LIKE_CONSUMED": "Sembra che questo caffè sia finito, vuoi archiviarlo?",

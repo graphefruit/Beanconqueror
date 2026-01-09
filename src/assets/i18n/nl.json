@@ -647,7 +647,8 @@
         "DECAF_KEYWORDS": "Cafeïnevrij, Decaf, Zonder cafeïne",
         "BLEND_KEYWORDS": "Melange, Blend, Huismengsel",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Enkele herkomst, Micro Lot",
-        "PRODUCER_KEYWORDS": "Producent, Geproduceerd door, Geteeld door, Boer, Teler, Familie, Coöperatie, Vereniging, Kleinschalige boeren"
+        "PRODUCER_KEYWORDS": "Producent, Geproduceerd door, Geteeld door, Boer, Teler, Familie, Coöperatie, Vereniging, Kleinschalige boeren",
+        "ROASTDATE_KEYWORDS": "Branddatum, Gebrand op, Branding, Vers gebrand"
     },
     "CLEAR": "leeg maken",
     "BEAN_LOOKS_LIKE_CONSUMED": "Het lijkt erop dat deze bonen op zijn. Wil je ze archiveren?",

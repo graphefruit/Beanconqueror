@@ -647,7 +647,8 @@
         "DECAF_KEYWORDS": "Descafeinado, Sem cafeína, Decaf",
         "BLEND_KEYWORDS": "Blend, Mistura, Blend da casa",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Origem única, Micro Lot, Microlote",
-        "PRODUCER_KEYWORDS": "Produtor, Produzido por, Cultivado por, Agricultor, Fazendeiro, Família, Cooperativa, Associação, Pequenos produtores"
+        "PRODUCER_KEYWORDS": "Produtor, Produzido por, Cultivado por, Agricultor, Fazendeiro, Família, Cooperativa, Associação, Pequenos produtores",
+        "ROASTDATE_KEYWORDS": "Data da torra, Torrado em, Torra, Recém torrado"
     },
     "CLEAR": "Limpar",
     "BEAN_LOOKS_LIKE_CONSUMED": "Parece que esses grãos estão prontos, quer registrá-los?",

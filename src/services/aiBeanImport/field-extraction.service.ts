@@ -383,6 +383,9 @@ export class FieldExtractionService {
     if (topLevel.cupping_points) {
       bean.cupping_points = topLevel.cupping_points;
     }
+    if (topLevel.roastingDate) {
+      bean.roastingDate = topLevel.roastingDate;
+    }
 
     // Set beanMix
     if (beanMix) {

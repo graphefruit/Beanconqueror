@@ -647,7 +647,8 @@
         "DECAF_KEYWORDS": "Descafeinado, Sin cafeína, Decaf",
         "BLEND_KEYWORDS": "Mezcla, Blend, Mezcla de la casa",
         "SINGLE_ORIGIN_KEYWORDS": "Origen único, Single Origin, Finca única, Micro Lot",
-        "PRODUCER_KEYWORDS": "Productor, Producido por, Cultivado por, Agricultor, Caficultor, Familia, Cooperativa, Asociación, Pequeños productores"
+        "PRODUCER_KEYWORDS": "Productor, Producido por, Cultivado por, Agricultor, Caficultor, Familia, Cooperativa, Asociación, Pequeños productores",
+        "ROASTDATE_KEYWORDS": "Fecha de tueste, Tostado el, Tueste, Recién tostado"
     },
     "CLEAR": "Limpiar",
     "BEAN_LOOKS_LIKE_CONSUMED": "Parece que has terminado la bolsa de café, ¿quieres archivarla ahora?",

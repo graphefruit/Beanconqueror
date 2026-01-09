@@ -647,7 +647,8 @@
         "DECAF_KEYWORDS": "Bezkofeinowa, Bez kofeiny, Decaf",
         "BLEND_KEYWORDS": "Mieszanka, Blend, Mieszanka domowa",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Jedno pochodzenie, Micro Lot",
-        "PRODUCER_KEYWORDS": "Producent, Wyprodukowane przez, Uprawiane przez, Rolnik, Plantator, Rodzina, Spółdzielnia, Stowarzyszenie, Drobni producenci"
+        "PRODUCER_KEYWORDS": "Producent, Wyprodukowane przez, Uprawiane przez, Rolnik, Plantator, Rodzina, Spółdzielnia, Stowarzyszenie, Drobni producenci",
+        "ROASTDATE_KEYWORDS": "Data wypału, Wypalono, Palenie, Świeżo wypalony"
     },
     "CLEAR": "Wyczyść",
     "BEAN_LOOKS_LIKE_CONSUMED": "Wygląda na to, że te ziarna są zużyte. Chcesz je zarchiwizować?",
