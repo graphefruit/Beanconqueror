@@ -675,6 +675,8 @@
     "AI_IMPORT_FIELD_ELEVATION": "Anbauhöhe",
     "AI_IMPORT_FIELD_FARM": "Farm",
     "AI_IMPORT_FIELD_FARMER": "Farmer",
+    "AI_IMPORT_FIELD_ROASTINGDATE": "Röstdatum",
+    "AI_IMPORT_FIELD_CUPPING_POINTS": "Cupping-Punkte",
     "AI_IMPORT_NO_TEXT_FOUND": "Es konnte kein Text aus dem Bild extrahiert werden. Bitte stelle sicher, dass das Etikett deutlich sichtbar ist, und versuche es erneut.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Äthiopien, Kolumbien, Brasilien, Kenia, Guatemala, Costa Rica, Honduras, Peru, Ruanda, Burundi, Tansania, Uganda, Jemen, Indonesien, Indien, Panama, El Salvador, Nicaragua, Mexiko, Bolivien, Ecuador, Papua-Neuguinea, Hawaii, Jamaika",

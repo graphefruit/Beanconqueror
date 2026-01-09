@@ -287,7 +287,7 @@ ROAST DATE indicators:
 {{ROASTDATE_KEYWORDS}}
 
 DATE FORMAT RECOGNITION:
-- European format: DD.MM.YYYY or DD/MM/YYYY
+- European format: DD.MM.YYYY
 - ISO format: YYYY-MM-DD
 - American format: MM/DD/YYYY
 - Written format with month names
@@ -296,12 +296,13 @@ DATE FORMAT RECOGNITION:
 IMPORTANT:
 - Look for dates near roast-related keywords
 - Dates labeled "best before", "use by", or "expiration" are NOT roast dates
-- If only an expiration/best-before date exists, return NOT_FOUND
 
 RESPONSE FORMAT:
+- Convert the date to ISO format: YYYY-MM-DD
 - Return ONLY the date as written on the label
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
+- EXCLUDE any prefixes
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,

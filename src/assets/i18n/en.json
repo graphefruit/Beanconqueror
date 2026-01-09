@@ -675,6 +675,8 @@
     "AI_IMPORT_FIELD_ELEVATION": "Elevation",
     "AI_IMPORT_FIELD_FARM": "Farm",
     "AI_IMPORT_FIELD_FARMER": "Farmer",
+    "AI_IMPORT_FIELD_ROASTINGDATE": "Roast Date",
+    "AI_IMPORT_FIELD_CUPPING_POINTS": "Cupping Points",
     "AI_IMPORT_NO_TEXT_FOUND": "No text could be extracted from the image. Please ensure the label is clearly visible and try again.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Ethiopia, Colombia, Brazil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papua New Guinea, Hawaii, Jamaica",
