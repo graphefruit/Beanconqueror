@@ -38,7 +38,7 @@ RESPONSE FORMAT:
 - Do NOT include explanations or sentences
 - If uncertain, return: NOT_FOUND
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['SINGLE_ORIGIN_KEYWORDS', 'BLEND_KEYWORDS'],
     validation: /^(SINGLE_ORIGIN|BLEND)$/i,
@@ -65,7 +65,7 @@ RESPONSE FORMAT:
 - Return ONLY a number (1, 2, 3, etc.) or NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     validation: /^\d+$/,
     postProcess: (v) => parseInt(v, 10) || 1,
@@ -84,7 +84,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
   },
 
@@ -100,7 +100,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
   },
 
@@ -115,7 +115,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     validation: /^\d+(?:[.,]\d+)?\s*(?:g|kg|oz|lb)/i,
   },
@@ -133,7 +133,7 @@ RESPONSE FORMAT:
 - Do NOT include explanations or sentences
 - If uncertain, return: NOT_FOUND
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: [
       'ROASTING_TYPE_FILTER_KEYWORDS',
@@ -162,7 +162,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
   },
 
@@ -178,7 +178,7 @@ RESPONSE FORMAT:
 - If no decaf indicator found, return: NOT_FOUND
 - Only return "true" if you see an explicit decaf indicator
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['DECAF_KEYWORDS'],
     validation: /^(true|false)$/i,
@@ -208,7 +208,7 @@ RESPONSE FORMAT:
 - You MUST NOT return any number if there is none
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     validation: /^\d+(?:[.,]\d+)?$/,
     postProcess: (v) => {
@@ -236,7 +236,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['ORIGINS'],
   },
@@ -256,7 +256,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
   },
 
@@ -275,7 +275,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['VARIETIES'],
   },
@@ -295,7 +295,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['PROCESSING_METHODS'],
   },
@@ -318,7 +318,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     // No validation - postProcess handles cleanup of weird formatting
     postProcess: (v) => {
@@ -369,7 +369,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
   },
 
@@ -387,7 +387,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['PRODUCER_KEYWORDS'],
   },

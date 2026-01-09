@@ -432,26 +432,36 @@ export class AIBeanImportService {
   }
 
   /**
-   * Determine which languages to use for examples
+   * Determine which languages to use for examples, ordered by probability.
+   * Order: detected language (most likely) → English (fallback) → UI language
    */
   private getLanguagesToUse(
     detectedLang: string | null,
     userLang: string,
   ): string[] {
-    const languages = new Set<string>();
+    const languages: string[] = [];
+    const seen = new Set<string>();
 
-    // Always include English
-    languages.add('en');
+    // Helper to add unique language
+    const addLang = (lang: string) => {
+      if (lang && !seen.has(lang)) {
+        seen.add(lang);
+        languages.push(lang);
+      }
+    };
 
-    // Add user's app language
-    languages.add(userLang);
-
-    // Add detected language if available
+    // 1. Detected language first (highest probability)
     if (detectedLang) {
-      languages.add(detectedLang);
+      addLang(detectedLang);
     }
 
-    return Array.from(languages);
+    // 2. English second (universal fallback, coffee industry lingua franca)
+    addLang('en');
+
+    // 3. UI language third (user's preference, may match text)
+    addLang(userLang);
+
+    return languages;
   }
 
   /**
