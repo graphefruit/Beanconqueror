@@ -58,8 +58,7 @@ export class BaristaPage implements OnInit, OnDestroy {
   private scaleFlowChangeSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
 
-  private timestampIntv = undefined;
-  private sendDataIntv = undefined;
+  private debugInformationIntv = undefined;
 
   public lastHeartbeat: string = '';
   @ViewChild('lastHeartBeat', { read: ElementRef })
@@ -157,11 +156,12 @@ export class BaristaPage implements OnInit, OnDestroy {
     }, 1000);
     setTimeout(() => {
       this.showLagTime();
-      this.updateSanremoYOUDoses();
+
       this.checkIfHintShallBeShown();
     }, 5000);
 
-    setInterval(() => {
+    let updateSanremoYouTicker = 0;
+    this.debugInformationIntv = setInterval(() => {
       try {
         if (this.isWebSocketConnected()) {
           const shotData = (
@@ -173,6 +173,19 @@ export class BaristaPage implements OnInit, OnDestroy {
           this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
           this.currentTempEl.nativeElement.innerText = shotData.tempBoilerCoffe;
           this.pumpPressEl.nativeElement.innerText = shotData.pumpPress;
+
+          if (shotData.groupStatus === 0) {
+            updateSanremoYouTicker++;
+            if (updateSanremoYouTicker >= 5) {
+              //We use an update ticker to update just every 5 ticks (so every 5 seconds, we don't want to use another interval)
+              //We're not doing any shot right now
+              this.updateSanremoYOUDoses();
+              updateSanremoYouTicker = 0;
+            }
+          } else {
+            //Reset the timer
+            updateSanremoYouTicker = 0;
+          }
         }
       } catch (ex) {
         this.lastHeartBeatEl.nativeElement.innerText = '-';
@@ -306,12 +319,9 @@ export class BaristaPage implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy() {
-    if (this.timestampIntv) {
-      window.clearInterval(this.timestampIntv);
-    }
-
-    if (this.sendDataIntv) {
-      window.clearInterval(this.sendDataIntv);
+    if (this.debugInformationIntv) {
+      window.clearInterval(this.debugInformationIntv);
+      this.debugInformationIntv = undefined;
     }
 
     this.uiHelper.deviceAllowSleepAgain();
@@ -459,9 +469,6 @@ export class BaristaPage implements OnInit, OnDestroy {
         return;
       }
 
-      await device.deviceConnected();
-      // Only proceed if actually connected/reachable, although deviceConnected() check above helps.
-      // But getDoses will handle errors gracefully returning null.
       const doses = await device.getDoses();
 
       if (doses) {
