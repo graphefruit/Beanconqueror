@@ -659,6 +659,7 @@
     "AI_IMPORT_STEP_DECAF": "Entkoffeiniert",
     "AI_IMPORT_STEP_ORIGIN": "Herkunft",
     "AI_IMPORT_STEP_VALIDATING": "Validierung",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "Blend-Herkünfte",
     "AI_IMPORT_FIELD_NAME": "Name",
     "AI_IMPORT_FIELD_ROASTER": "Rösterei",
     "AI_IMPORT_FIELD_WEIGHT": "Gewicht",

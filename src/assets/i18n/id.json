@@ -637,6 +637,7 @@
     "COULD_NOT_ACCESS_FILE": "Kami tidak dapat mengakses file yang dipilih",
     "WRONG_FILE_FORMAT": "Anda telah memilih format file yang tidak didukung",
     "SCAN_BEAN": "Scan package",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "Asal Blend",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Ethiopia, Kolombia, Brasil, Kenya, Guatemala, Kosta Rika, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yaman, Indonesia, India, Panama, El Salvador, Nikaragua, Meksiko, Bolivia, Ekuador, Papua Nugini, Hawaii, Jamaika",
         "PROCESSING_METHODS": "Washed, Natural, Honey, Anaerobik, Karbonasi Maserasi, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey, Giling Basah",

@@ -2,6 +2,64 @@ import moment from 'moment';
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
 
 /**
+ * Prompt for extracting all origin attributes from a BLEND in one call.
+ *
+ * Key difference from single-origin extraction:
+ * - "Arabica" IS accepted as a variety for blends (useful for Arabica/Robusta blends)
+ * - Single-origin prompt excludes "Arabica alone" as too generic, but for blends
+ *   it provides meaningful distinction between blend components
+ */
+export const BLEND_ORIGINS_PROMPT_TEMPLATE = `
+Extract origin information for this coffee BLEND.
+
+CRITICAL RULES - NEVER VIOLATE:
+- ONLY extract information EXPLICITLY written in the text
+- Return null for ANY field not clearly present
+- DO NOT guess, infer, or make assumptions
+- NEVER hallucinate or fabricate data
+- When uncertain, ALWAYS return null
+
+For each blend component found, extract ONLY what is explicitly stated:
+- country: The origin country (if identifiable)
+- region: The specific region ONLY if explicitly written
+- variety: The coffee variety/cultivar ONLY if explicitly stated
+- processing: Processing method ONLY if explicitly stated
+- elevation: Altitude ONLY if explicitly written (format: "XXXX MASL")
+- farm: Farm/estate/washing station name ONLY if present
+- farmer: Producer/farmer name ONLY if present
+- percentage: Blend percentage ONLY if explicitly stated (e.g., "n%")
+
+TERMINOLOGY (for recognition only - do NOT use to fill missing data):
+Countries: {{ORIGINS}}
+Varieties: {{VARIETIES}}
+Processing: {{PROCESSING_METHODS}}
+
+RESPONSE FORMAT:
+Return a JSON array with one object per blend component.
+Use null for any field not explicitly found.
+Return at least one origin object, even if all fields are null.
+
+Schema:
+[
+  {
+    "country": string | null,
+    "region": string | null,
+    "variety": string | null,
+    "processing": string | null,
+    "elevation": string | null,
+    "farm": string | null,
+    "farmer": string | null,
+    "percentage": number | null
+  }
+]
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}
+
+Respond with ONLY the JSON array. NO explanations.
+`;
+
+/**
  * Configuration for a field extraction prompt.
  */
 export interface FieldPromptConfig {

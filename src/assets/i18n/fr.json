@@ -637,6 +637,7 @@
     "COULD_NOT_ACCESS_FILE": "Le fichier choisi n'a pas pu accéder",
     "WRONG_FILE_FORMAT": "Tu as choisi un format de fichier non supporté",
     "SCAN_BEAN": "Scanner le paquet",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "Origines du Blend",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Éthiopie, Colombie, Brésil, Kenya, Guatemala, Costa Rica, Honduras, Pérou, Rwanda, Burundi, Tanzanie, Ouganda, Yémen, Indonésie, Inde, Panama, El Salvador, Nicaragua, Mexique, Bolivie, Équateur, Papouasie-Nouvelle-Guinée, Hawaï, Jamaïque",
         "PROCESSING_METHODS": "Lavé, Naturel, Honey, Anaérobie, Macération Carbonique, Wet-Hulled, Semi-Lavé, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

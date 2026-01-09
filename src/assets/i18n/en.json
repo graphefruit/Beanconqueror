@@ -659,6 +659,7 @@
     "AI_IMPORT_STEP_DECAF": "Decaf",
     "AI_IMPORT_STEP_ORIGIN": "Origin",
     "AI_IMPORT_STEP_VALIDATING": "Validating",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "Blend Origins",
     "AI_IMPORT_FIELD_NAME": "Name",
     "AI_IMPORT_FIELD_ROASTER": "Roaster",
     "AI_IMPORT_FIELD_WEIGHT": "Weight",

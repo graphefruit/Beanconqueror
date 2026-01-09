@@ -637,6 +637,7 @@
     "COULD_NOT_ACCESS_FILE": "Vi fikk ikke tilgang til den valgte filen",
     "WRONG_FILE_FORMAT": "Du har valgt et filformat som ikke støttes",
     "SCAN_BEAN": "Skann pakken",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "Blend Opprinnelser",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopia, Colombia, Brasil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Jemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papua Ny-Guinea, Hawaii, Jamaica",
         "PROCESSING_METHODS": "Vasket, Natural, Honey, Anaerob, Karbonisk Maserasjon, Wet-Hulled, Semi-Vasket, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

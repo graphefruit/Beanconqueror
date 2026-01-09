@@ -637,6 +637,7 @@
     "COULD_NOT_ACCESS_FILE": "我们无法访问所选文件",
     "WRONG_FILE_FORMAT": "您选择了不受支持的文件格式",
     "SCAN_BEAN": "扫描包",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "拼配产地",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "埃塞俄比亚, 哥伦比亚, 巴西, 肯尼亚, 危地马拉, 哥斯达黎加, 洪都拉斯, 秘鲁, 卢旺达, 布隆迪, 坦桑尼亚, 乌干达, 也门, 印度尼西亚, 印度, 巴拿马, 萨尔瓦多, 尼加拉瓜, 墨西哥, 玻利维亚, 厄瓜多尔, 巴布亚新几内亚, 夏威夷, 牙买加",
         "PROCESSING_METHODS": "水洗, 日晒, 蜜处理, 厌氧发酵, 二氧化碳浸渍, 湿刨法, 半水洗, Pulped Natural, 黑蜜, 红蜜, 黄蜜, 白蜜",

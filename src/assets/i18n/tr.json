@@ -637,6 +637,7 @@
     "COULD_NOT_ACCESS_FILE": "Seçilen dosyaya erişemedik",
     "WRONG_FILE_FORMAT": "Desteklenmeyen bir dosya biçimi seçtiniz",
     "SCAN_BEAN": "Paketi tara",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "Blend Kökenleri",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiyopya, Kolombiya, Brezilya, Kenya, Guatemala, Kosta Rika, Honduras, Peru, Ruanda, Burundi, Tanzanya, Uganda, Yemen, Endonezya, Hindistan, Panama, El Salvador, Nikaragua, Meksika, Bolivya, Ekvador, Papua Yeni Gine, Hawaii, Jamaika",
         "PROCESSING_METHODS": "Yıkanmış, Natural, Honey, Anaerobik, Karbonik Maserasyon, Wet-Hulled, Yarı Yıkanmış, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

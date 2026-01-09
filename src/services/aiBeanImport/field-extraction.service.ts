@@ -16,6 +16,7 @@ import {
   buildFieldPrompt,
   TOP_LEVEL_FIELDS,
   ORIGIN_FIELDS,
+  BLEND_ORIGINS_PROMPT_TEMPLATE,
 } from '../../data/ai-import/ai-field-prompts';
 
 /**
@@ -64,17 +65,7 @@ export class FieldExtractionService {
       examples,
       languages,
     );
-    let originCount = 1;
-    if (beanMix === 'BLEND') {
-      originCount = await this.extractField(
-        'originCount',
-        normalizedText,
-        examples,
-        languages,
-      );
-      originCount = Math.max(1, Math.min(originCount || 1, 5)); // Limit 1-5
-    }
-    this.uiLog.log(`Structure: beanMix=${beanMix}, originCount=${originCount}`);
+    this.uiLog.log(`Structure: beanMix=${beanMix}`);
 
     // Step 3: Extract top-level fields sequentially
     const topLevelResults = await this.extractFieldsSequentially(
@@ -86,17 +77,31 @@ export class FieldExtractionService {
     );
     this.uiLog.log('Top-level results: ' + JSON.stringify(topLevelResults));
 
-    // Step 4: Extract origin fields for each origin sequentially
-    const beanInfoArray: Partial<IBeanInformation>[] = [];
-    for (let i = 0; i < originCount; i++) {
+    // Step 4: Extract origin fields - different approach for BLEND vs SINGLE_ORIGIN
+    let beanInfoArray: Partial<IBeanInformation>[] = [];
+
+    if (beanMix === 'BLEND') {
+      // BLEND: Use single comprehensive prompt for all origins
+      // No separate originCount extraction - determined from JSON response
+      this.updateProgress('BLEND_ORIGINS');
+      beanInfoArray = await this.extractBlendOrigins(
+        normalizedText,
+        examples,
+        languages,
+      );
+      this.uiLog.log(
+        `Blend origins extracted: ${beanInfoArray.length} components`,
+      );
+    } else {
+      // SINGLE_ORIGIN: Use per-field extraction (works well for detailed labels)
       const originResults = await this.extractFieldsSequentially(
         ORIGIN_FIELDS,
         normalizedText,
         examples,
         languages,
-        `ORIGIN_${i + 1}`,
+        'ORIGIN_1',
       );
-      beanInfoArray.push(this.buildBeanInformation(originResults));
+      beanInfoArray = [this.buildBeanInformation(originResults)];
     }
 
     // Step 5: Post-process and validate
@@ -315,6 +320,189 @@ export class FieldExtractionService {
     cleaned = cleaned.replace(/\s*NOT_FOUND\s*/gi, ' ').trim();
 
     return cleaned;
+  }
+
+  /**
+   * Extract all origin fields for a blend in one prompt.
+   * Returns an array of partial IBeanInformation objects.
+   */
+  private async extractBlendOrigins(
+    ocrText: string,
+    examples: MergedExamples,
+    languages: string[],
+  ): Promise<Partial<IBeanInformation>[]> {
+    // Build the blend-specific prompt
+    const prompt = this.buildBlendOriginsPrompt(ocrText, examples, languages);
+
+    console.log('=== BLEND ORIGINS PROMPT ===');
+    console.log(prompt);
+    console.log('=== END BLEND ORIGINS PROMPT ===');
+
+    // Send to LLM
+    const response = await this.sendLLMMessage(prompt);
+    const cleaned = this.cleanResponse(response);
+
+    console.log('=== BLEND ORIGINS RESPONSE ===');
+    console.log(cleaned);
+    console.log('=== END BLEND ORIGINS RESPONSE ===');
+
+    // Parse JSON response
+    return this.parseBlendOriginsResponse(cleaned);
+  }
+
+  /**
+   * Build the blend origins prompt with examples substituted.
+   */
+  private buildBlendOriginsPrompt(
+    ocrText: string,
+    examples: MergedExamples,
+    languages: string[],
+  ): string {
+    let prompt = BLEND_ORIGINS_PROMPT_TEMPLATE;
+
+    // Replace example placeholders
+    prompt = prompt.replace('{{ORIGINS}}', examples.ORIGINS || '');
+    prompt = prompt.replace('{{VARIETIES}}', examples.VARIETIES || '');
+    prompt = prompt.replace(
+      '{{PROCESSING_METHODS}}',
+      examples.PROCESSING_METHODS || '',
+    );
+
+    // Replace languages placeholder
+    prompt = prompt.replace('{{LANGUAGES}}', languages.join(', '));
+
+    // Replace OCR text placeholder
+    prompt = prompt.replace('{{OCR_TEXT}}', ocrText);
+
+    return prompt;
+  }
+
+  /**
+   * Parse the blend origins JSON response.
+   * Handles malformed JSON gracefully.
+   */
+  private parseBlendOriginsResponse(
+    response: string,
+  ): Partial<IBeanInformation>[] {
+    try {
+      // Try to extract JSON from potential markdown code blocks
+      let jsonStr = response;
+      const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[1].trim();
+      }
+
+      // Try to parse as JSON
+      const parsed = JSON.parse(jsonStr);
+
+      if (!Array.isArray(parsed)) {
+        // Single object returned - wrap in array
+        return [this.sanitizeBlendOriginObject(parsed)];
+      }
+
+      // Sanitize each origin object
+      const results = parsed.map((obj) => this.sanitizeBlendOriginObject(obj));
+
+      // Ensure at least one origin
+      return results.length > 0 ? results : [this.createEmptyOrigin()];
+    } catch (e) {
+      // JSON parse failed - return empty origin
+      this.uiLog.error('Failed to parse blend origins JSON: ' + e);
+      return [this.createEmptyOrigin()];
+    }
+  }
+
+  /**
+   * Sanitize and validate a single origin object from JSON.
+   */
+  private sanitizeBlendOriginObject(obj: any): Partial<IBeanInformation> {
+    const info: Partial<IBeanInformation> = {
+      country: this.sanitizeStringField(obj?.country),
+      region: this.sanitizeStringField(obj?.region),
+      variety: this.sanitizeStringField(obj?.variety),
+      processing: this.sanitizeStringField(obj?.processing),
+      elevation: this.sanitizeElevation(obj?.elevation),
+      farm: this.sanitizeStringField(obj?.farm),
+      farmer: this.sanitizeStringField(obj?.farmer),
+      harvest_time: '',
+      certification: '',
+      purchasing_price: 0,
+      fob_price: 0,
+    };
+
+    // Only add percentage if meaningful
+    const pct = obj?.percentage;
+    if (typeof pct === 'number' && pct > 0 && pct < 100) {
+      info.percentage = pct;
+    }
+
+    return info;
+  }
+
+  /**
+   * Sanitize a string field - convert null-like values to empty string.
+   */
+  private sanitizeStringField(value: any): string {
+    if (value === null || value === undefined) return '';
+    if (typeof value !== 'string') return '';
+    const trimmed = value.trim();
+    if (
+      trimmed.toLowerCase() === 'null' ||
+      trimmed.toLowerCase() === 'not_found' ||
+      trimmed.toLowerCase() === 'unknown'
+    ) {
+      return '';
+    }
+    return trimmed;
+  }
+
+  /**
+   * Sanitize elevation field - validate and clean up format.
+   */
+  private sanitizeElevation(value: any): string {
+    if (value === null || value === undefined) return '';
+    if (typeof value !== 'string') return '';
+
+    const trimmed = value.trim();
+    if (
+      trimmed.toLowerCase() === 'null' ||
+      trimmed.toLowerCase() === 'not_found' ||
+      trimmed.toLowerCase() === 'unknown'
+    ) {
+      return '';
+    }
+
+    // Validate elevation is reasonable (< 5000m)
+    const allNumbers = trimmed.match(/\d+/g);
+    if (allNumbers) {
+      for (const numStr of allNumbers) {
+        const num = parseInt(numStr, 10);
+        if (num >= 5000) {
+          return ''; // Likely not an elevation
+        }
+      }
+    }
+
+    return trimmed;
+  }
+
+  /**
+   * Create an empty origin object.
+   */
+  private createEmptyOrigin(): Partial<IBeanInformation> {
+    return {
+      country: '',
+      region: '',
+      variety: '',
+      processing: '',
+      elevation: '',
+      farm: '',
+      farmer: '',
+      harvest_time: '',
+      certification: '',
+      purchasing_price: 0,
+      fob_price: 0,
+    };
   }
 
   /**

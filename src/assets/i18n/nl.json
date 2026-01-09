@@ -637,6 +637,7 @@
     "COULD_NOT_ACCESS_FILE": "We konden het gekozen bestand niet openen",
     "WRONG_FILE_FORMAT": "U hebt een niet-ondersteund bestandsformaat gekozen",
     "SCAN_BEAN": "Scan pakket",
+    "AI_IMPORT_STEP_BLEND_ORIGINS": "Blend Herkomsten",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Ethiopië, Colombia, Brazilië, Kenia, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Oeganda, Jemen, Indonesië, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papoea-Nieuw-Guinea, Hawaï, Jamaica",
         "PROCESSING_METHODS": "Gewassen, Natural, Honey, Anaeroob, Koolzuurmaceratie, Wet-Hulled, Semi-Gewassen, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
