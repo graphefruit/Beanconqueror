@@ -547,34 +547,3 @@ export function buildFieldPrompt(
   return prompt;
 }
 
-/**
- * List of top-level bean fields (not in bean_information array).
- */
-export const TOP_LEVEL_FIELDS = [
-  'name',
-  'roaster',
-  'weight',
-  'bean_roasting_type',
-  'aromatics',
-  'decaffeinated',
-  'cupping_points',
-  'roastingDate',
-];
-
-/**
- * List of origin/bean_information fields.
- */
-export const ORIGIN_FIELDS = [
-  'country',
-  'region',
-  'variety',
-  'processing',
-  'elevation',
-  'farm',
-  'farmer',
-];
-
-/**
- * Fields that should always be extracted regardless of user settings.
- */
-export const ESSENTIAL_FIELDS = ['name', 'country', 'weight'];

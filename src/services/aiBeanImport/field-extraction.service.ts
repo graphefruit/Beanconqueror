@@ -3,8 +3,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { CapgoLLM } from '@capgo/capacitor-llm';
 import { Bean } from '../../classes/bean/bean';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
+import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
 import { UILog } from '../uiLog';
 import { UIAlert } from '../uiAlert';
+import { UISettingsStorage } from '../uiSettingsStorage';
 import {
   AIImportExamplesService,
   MergedExamples,
@@ -14,8 +16,6 @@ import { OCRCorrectionService } from './ocr-correction.service';
 import {
   FIELD_PROMPTS,
   buildFieldPrompt,
-  TOP_LEVEL_FIELDS,
-  ORIGIN_FIELDS,
   BLEND_ORIGINS_PROMPT_TEMPLATE,
 } from '../../data/ai-import/ai-field-prompts';
 
@@ -30,6 +30,7 @@ export class FieldExtractionService {
     private readonly translate: TranslateService,
     private readonly uiLog: UILog,
     private readonly uiAlert: UIAlert,
+    private readonly uiSettingsStorage: UISettingsStorage,
     private readonly aiImportExamples: AIImportExamplesService,
     private readonly textNorm: TextNormalizationService,
     private readonly ocrCorrection: OCRCorrectionService,
@@ -37,7 +38,7 @@ export class FieldExtractionService {
 
   /**
    * Main extraction entry point.
-   * Extracts all fields using multi-step focused prompts.
+   * Extracts only fields enabled in user's bean customization settings.
    */
   public async extractAllFields(
     ocrText: string,
@@ -48,65 +49,111 @@ export class FieldExtractionService {
     console.log(ocrText);
     console.log('=== END RAW OCR TEXT ===');
 
-    // Step 0: Load merged i18n examples
+    // Get user's bean customization settings
+    const settings = this.uiSettingsStorage.getSettings();
+    const params = settings.bean_manage_parameters;
+
+    // Load merged i18n examples
     const examples = await this.aiImportExamples.getMergedExamples(languages);
 
-    // Step 1: Pre-process text
-    const normalizedText = this.preProcess(ocrText, examples);
+    // Pre-process text
+    const text = this.preProcess(ocrText, examples);
     console.log('=== NORMALIZED TEXT ===');
-    console.log(normalizedText);
+    console.log(text);
     console.log('=== END NORMALIZED TEXT ===');
 
-    // Step 2: Detect structure
-    this.updateProgress('STRUCTURE');
-    const beanMix = await this.extractField(
-      'beanMix',
-      normalizedText,
-      examples,
-      languages,
-    );
-    this.uiLog.log(`Structure: beanMix=${beanMix}`);
+    const bean = new Bean();
 
-    // Step 3: Extract top-level fields sequentially
-    const topLevelResults = await this.extractFieldsSequentially(
-      TOP_LEVEL_FIELDS,
-      normalizedText,
-      examples,
-      languages,
-      'TOP_LEVEL',
-    );
-    this.uiLog.log('Top-level results: ' + JSON.stringify(topLevelResults));
+    // === TOP-LEVEL FIELDS ===
 
-    // Step 4: Extract origin fields - different approach for BLEND vs SINGLE_ORIGIN
-    let beanInfoArray: Partial<IBeanInformation>[] = [];
+    // Name - always extract (essential)
+    this.updateFieldProgress('TOP_LEVEL', 'name');
+    bean.name = (await this.extractField('name', text, examples, languages)) || '';
 
-    if (beanMix === 'BLEND') {
-      // BLEND: Use single comprehensive prompt for all origins
-      // No separate originCount extraction - determined from JSON response
-      this.updateProgress('BLEND_ORIGINS');
-      beanInfoArray = await this.extractBlendOrigins(
-        normalizedText,
-        examples,
-        languages,
-      );
-      this.uiLog.log(
-        `Blend origins extracted: ${beanInfoArray.length} components`,
-      );
-    } else {
-      // SINGLE_ORIGIN: Use per-field extraction (works well for detailed labels)
-      const originResults = await this.extractFieldsSequentially(
-        ORIGIN_FIELDS,
-        normalizedText,
-        examples,
-        languages,
-        'ORIGIN_1',
-      );
-      beanInfoArray = [this.buildBeanInformation(originResults)];
+    // Roaster
+    if (params.roaster) {
+      this.updateFieldProgress('TOP_LEVEL', 'roaster');
+      bean.roaster = (await this.extractField('roaster', text, examples, languages)) || '';
     }
 
-    // Step 5: Post-process and validate
+    // Weight - always extract (essential for ratios)
+    this.updateFieldProgress('TOP_LEVEL', 'weight');
+    const weightStr = await this.extractField('weight', text, examples, languages);
+    if (weightStr) {
+      bean.weight = this.textNorm.extractWeight(weightStr.toString()) || 0;
+    }
+
+    // Bean roasting type
+    if (params.bean_roasting_type) {
+      this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
+      bean.bean_roasting_type = await this.extractField('bean_roasting_type', text, examples, languages);
+    }
+
+    // Aromatics
+    if (params.aromatics) {
+      this.updateFieldProgress('TOP_LEVEL', 'aromatics');
+      bean.aromatics = (await this.extractField('aromatics', text, examples, languages)) || '';
+    }
+
+    // Decaffeinated
+    if (params.decaffeinated) {
+      this.updateFieldProgress('TOP_LEVEL', 'decaffeinated');
+      const decafResult = await this.extractField('decaffeinated', text, examples, languages);
+      if (decafResult !== null && decafResult !== undefined) {
+        bean.decaffeinated = decafResult;
+      }
+    }
+
+    // Cupping points
+    if (params.cupping_points) {
+      this.updateFieldProgress('TOP_LEVEL', 'cupping_points');
+      bean.cupping_points = await this.extractField('cupping_points', text, examples, languages);
+    }
+
+    // Roasting date
+    if (params.roastingDate) {
+      this.updateFieldProgress('TOP_LEVEL', 'roastingDate');
+      bean.roastingDate = await this.extractField('roastingDate', text, examples, languages);
+    }
+
+    // === ORIGIN FIELDS ===
+
+    // Only extract origin info if bean_information is enabled
+    if (params.bean_information) {
+      // Detect structure (single origin vs blend)
+      this.updateProgress('STRUCTURE');
+      const beanMix = await this.extractField('beanMix', text, examples, languages);
+      bean.beanMix = beanMix || ('UNKNOWN' as any);
+      this.uiLog.log(`Structure: beanMix=${beanMix}`);
+
+      if (beanMix === 'BLEND') {
+        // BLEND: Use single JSON prompt, then filter by settings
+        this.updateProgress('BLEND_ORIGINS');
+        bean.bean_information = await this.extractBlendOriginsFiltered(
+          text,
+          examples,
+          languages,
+          params,
+        );
+        this.uiLog.log(
+          `Blend origins extracted: ${bean.bean_information.length} components`,
+        );
+      } else {
+        // SINGLE_ORIGIN: Use per-field extraction with settings checks
+        const info = await this.extractSingleOriginInfo(text, examples, languages, params);
+        if (this.hasAnyOriginData(info)) {
+          bean.bean_information.push(info);
+        }
+      }
+    }
+
+    // Ensure at least one bean_information entry
+    if (bean.bean_information.length === 0) {
+      bean.bean_information = [this.createEmptyBeanInformation()];
+    }
+
+    // Final validation
     this.updateProgress('VALIDATING');
-    const bean = this.constructBean(topLevelResults, beanMix, beanInfoArray);
     return this.validateBean(bean);
   }
 
@@ -125,41 +172,6 @@ export class FieldExtractionService {
     text = this.textNorm.normalizeCase(text);
 
     return text;
-  }
-
-  /**
-   * Extract multiple fields sequentially.
-   * Sequential extraction is required because CapgoLLM's event listeners
-   * are global and don't filter by chatId - parallel extraction causes
-   * cross-contamination of responses between fields.
-   */
-  private async extractFieldsSequentially(
-    fields: string[],
-    ocrText: string,
-    examples: MergedExamples,
-    languages: string[],
-    progressPrefix: string,
-  ): Promise<Record<string, any>> {
-    const resultMap: Record<string, any> = {};
-
-    for (const field of fields) {
-      // Update progress for each field
-      this.updateFieldProgress(progressPrefix, field);
-
-      try {
-        resultMap[field] = await this.extractField(
-          field,
-          ocrText,
-          examples,
-          languages,
-        );
-      } catch (error) {
-        this.uiLog.error(`Error extracting ${field}: ${error}`);
-        resultMap[field] = null;
-      }
-    }
-
-    return resultMap;
   }
 
   /**
@@ -351,6 +363,142 @@ export class FieldExtractionService {
   }
 
   /**
+   * Extract origin fields for SINGLE_ORIGIN beans.
+   * Uses per-field extraction with settings checks to skip disabled fields.
+   */
+  private async extractSingleOriginInfo(
+    text: string,
+    examples: MergedExamples,
+    languages: string[],
+    params: IBeanParameter,
+  ): Promise<IBeanInformation> {
+    const info = this.createEmptyBeanInformation();
+
+    // Country - always extract (essential for origin tracking)
+    this.updateFieldProgress('ORIGIN', 'country');
+    info.country = (await this.extractField('country', text, examples, languages)) || '';
+
+    // Region
+    if (params.region) {
+      this.updateFieldProgress('ORIGIN', 'region');
+      info.region = (await this.extractField('region', text, examples, languages)) || '';
+    }
+
+    // Variety
+    if (params.variety) {
+      this.updateFieldProgress('ORIGIN', 'variety');
+      info.variety = (await this.extractField('variety', text, examples, languages)) || '';
+    }
+
+    // Processing
+    if (params.processing) {
+      this.updateFieldProgress('ORIGIN', 'processing');
+      info.processing = (await this.extractField('processing', text, examples, languages)) || '';
+    }
+
+    // Elevation
+    if (params.elevation) {
+      this.updateFieldProgress('ORIGIN', 'elevation');
+      info.elevation = (await this.extractField('elevation', text, examples, languages)) || '';
+    }
+
+    // Farm
+    if (params.farm) {
+      this.updateFieldProgress('ORIGIN', 'farm');
+      info.farm = (await this.extractField('farm', text, examples, languages)) || '';
+    }
+
+    // Farmer
+    if (params.farmer) {
+      this.updateFieldProgress('ORIGIN', 'farmer');
+      info.farmer = (await this.extractField('farmer', text, examples, languages)) || '';
+    }
+
+    return info;
+  }
+
+  /**
+   * Extract blend origins and filter by user settings.
+   *
+   * Note: We always extract ALL fields from the LLM (JSON prompt needs full context
+   * to avoid hallucinations), but only populate enabled fields on the result.
+   */
+  private async extractBlendOriginsFiltered(
+    text: string,
+    examples: MergedExamples,
+    languages: string[],
+    params: IBeanParameter,
+  ): Promise<IBeanInformation[]> {
+    // Extract all origins via JSON prompt (existing method)
+    const rawOrigins = await this.extractBlendOrigins(text, examples, languages);
+
+    // Filter each origin's fields based on settings
+    return rawOrigins.map((origin) =>
+      this.filterOriginBySettings(origin, params),
+    );
+  }
+
+  /**
+   * Filter an origin object to only include enabled fields.
+   */
+  private filterOriginBySettings(
+    origin: Partial<IBeanInformation>,
+    params: IBeanParameter,
+  ): IBeanInformation {
+    const filtered = this.createEmptyBeanInformation();
+
+    // Country - always include (essential)
+    filtered.country = origin.country || '';
+
+    // Only include enabled fields
+    if (params.region) filtered.region = origin.region || '';
+    if (params.variety) filtered.variety = origin.variety || '';
+    if (params.processing) filtered.processing = origin.processing || '';
+    if (params.elevation) filtered.elevation = origin.elevation || '';
+    if (params.farm) filtered.farm = origin.farm || '';
+    if (params.farmer) filtered.farmer = origin.farmer || '';
+
+    // Percentage - always include for blends (not a user setting, essential for blend composition)
+    if (origin.percentage) filtered.percentage = origin.percentage;
+
+    return filtered;
+  }
+
+  /**
+   * Check if an origin object has any meaningful data.
+   */
+  private hasAnyOriginData(info: IBeanInformation): boolean {
+    return !!(
+      info.country ||
+      info.region ||
+      info.variety ||
+      info.processing ||
+      info.elevation ||
+      info.farm ||
+      info.farmer
+    );
+  }
+
+  /**
+   * Create an empty IBeanInformation object with all fields initialized.
+   */
+  private createEmptyBeanInformation(): IBeanInformation {
+    return {
+      country: '',
+      region: '',
+      farm: '',
+      farmer: '',
+      elevation: '',
+      harvest_time: '',
+      variety: '',
+      processing: '',
+      certification: '',
+      purchasing_price: 0,
+      fob_price: 0,
+    } as IBeanInformation;
+  }
+
+  /**
    * Build the blend origins prompt with examples substituted.
    */
   private buildBlendOriginsPrompt(
@@ -503,95 +651,6 @@ export class FieldExtractionService {
       purchasing_price: 0,
       fob_price: 0,
     };
-  }
-
-  /**
-   * Build IBeanInformation from extracted fields.
-   */
-  private buildBeanInformation(
-    fields: Record<string, any>,
-  ): Partial<IBeanInformation> {
-    const info: Partial<IBeanInformation> = {
-      country: fields.country || '',
-      region: fields.region || '',
-      farm: fields.farm || '',
-      farmer: fields.farmer || '',
-      elevation: fields.elevation || '',
-      harvest_time: fields.harvest_time || '',
-      variety: fields.variety || '',
-      processing: fields.processing || '',
-      certification: fields.certification || '',
-      purchasing_price: 0,
-      fob_price: 0,
-    };
-
-    // Only add percentage if it's a meaningful value (not null, '', 0, or 100)
-    const pct = fields.percentage;
-    if (pct !== null && pct !== '' && pct !== 0 && pct !== 100) {
-      info.percentage = pct;
-    }
-
-    return info;
-  }
-
-  /**
-   * Construct Bean object from extracted fields.
-   */
-  private constructBean(
-    topLevel: Record<string, any>,
-    beanMix: string | null,
-    beanInfo: Partial<IBeanInformation>[],
-  ): Bean {
-    const bean = new Bean();
-
-    // Set top-level fields
-    if (topLevel.name) {
-      bean.name = topLevel.name;
-    }
-    if (topLevel.roaster) {
-      bean.roaster = topLevel.roaster;
-    }
-    if (topLevel.weight) {
-      // Extract weight handles conversion to grams
-      const weight = this.textNorm.extractWeight(topLevel.weight.toString());
-      bean.weight = weight || 0;
-    }
-    if (topLevel.bean_roasting_type) {
-      bean.bean_roasting_type = topLevel.bean_roasting_type;
-    }
-    if (topLevel.aromatics) {
-      bean.aromatics = topLevel.aromatics;
-    }
-    if (
-      topLevel.decaffeinated !== null &&
-      topLevel.decaffeinated !== undefined
-    ) {
-      bean.decaffeinated = topLevel.decaffeinated;
-    }
-    if (topLevel.cupping_points) {
-      bean.cupping_points = topLevel.cupping_points;
-    }
-    if (topLevel.roastingDate) {
-      bean.roastingDate = topLevel.roastingDate;
-    }
-
-    // Set beanMix
-    if (beanMix) {
-      bean.beanMix = beanMix as any;
-    }
-
-    // Set bean_information array
-    bean.bean_information = beanInfo.filter(
-      (info) =>
-        info.country ||
-        info.region ||
-        info.variety ||
-        info.processing ||
-        info.farm ||
-        info.farmer,
-    ) as IBeanInformation[];
-
-    return bean;
   }
 
   /**
