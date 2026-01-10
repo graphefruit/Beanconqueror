@@ -1468,26 +1468,24 @@
                 "19": "Option to disable the connect\/disconnect popup for Bluetooth devices"
             }
         },
-        "8.5.0": {
-            "TITLE": "Version 8.5.0: What's new",
+        "8.6.0": {
+            "TITLE": "Version 8.6.0: What's new",
             "DESCRIPTION": [
-                "<b>Unwrap 2025<\/b>",
-                "Unwrap your year 2025!",
+                "<b>Sanremo YOU<\/b>",
+                "Support of the Sanremo YOU Machine combined with the brew by weight feature!",
+                "Explore the Baristamode, start the shot from the Sanremo YOU and BeanConqueror will stop it at the right time.",
                 "",
-                "<b>New Language<\/b>",
-                "Supporting Greek - Thanks to Mr. pterodactyl",
+                "<b>Graph-Colors<\/b>",
+                "You can now customize the graph colors for light and dark mode",
                 "",
-                "<b>Bluetooth Scales<\/b>",
-                "Showing the unique id of the device for easier connection",
+                "<b>Meticulous<\/b>",
+                "If you import a shot, the profile name and the set temperature is set now aswell",
                 "",
-                "<b>Beans<\/b>",
-                "Unfreeze a portion of a frozen bean",
-                "Beans are now grouped if they are from the same parent",
-                "Showing a specific icon for decaf beans (moon-icon)",
-                "Fixing import beans from excel with multiple varieties",
+                "<b>Brew<\/b>",
+                "Displaying hour and minute on the detail screen of the brew",
                 "",
                 "<b>Other<\/b>",
-                "[ANDROID]Supporting Edge2Edge from Capacitor to fix Keyboard whitespace",
+                "Fixing excel import for Chinese characters",
                 "Minor fixes"
             ]
         }
@@ -1590,5 +1588,9 @@
   "GRAPH_ACTIVE_DARK_MODE": "Active (Dark)",
   "GRAPH_REFERENCE_LIGHT_MODE": "Reference (Light)",
   "GRAPH_REFERENCE_DARK_MODE": "Reference (Dark)",
-  "GRAPH_COLORS": "Graph colors"
+  "GRAPH_COLORS": "Graph colors",
+  "PAGE_SETTINGS_LANGUAGE_KOREAN": "Korean",
+  "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovak",
+  "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japanese",
+  "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russian"
 }
