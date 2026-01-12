@@ -4,6 +4,7 @@ import { defineConfig } from 'eslint/config';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
+import prettier from 'eslint-config-prettier/flat'
 
 export default defineConfig(
   {
@@ -13,6 +14,7 @@ export default defineConfig(
       ...tseslint.configs.recommendedTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
       ...angular.configs.tsRecommended,
+      prettier,
     ],
     languageOptions: {
       parserOptions: {
