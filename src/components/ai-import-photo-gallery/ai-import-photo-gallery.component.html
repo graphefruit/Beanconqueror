@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'AI_BEAN_IMPORT_MULTI' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Empty state -->
+  @if (photoPaths.length === 0) {
+    <div class="empty-state">
+      <ion-icon name="images-outline" class="empty-icon"></ion-icon>
+      <p class="empty-text">{{ 'AI_IMPORT_MULTI_NO_PHOTOS_YET' | translate }}</p>
+    </div>
+  }
+
+  <!-- Photo gallery (same swiper pattern as photo-add) -->
+  @if (photoPaths.length > 0) {
+    <div class="photo-gallery">
+      <swiper-container
+        class="swiper"
+        [pagination]="{ clickable: true, draggable: true }"
+        #photoSlides
+        pager="true">
+        @for (path of photoPaths; track path; let i = $index) {
+          <swiper-slide>
+            <ion-button
+              (click)="removePhoto(i)"
+              class="position-absolute-button"
+              color="danger"
+              fill="clear">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+            <!-- Reuses existing async-image component -->
+            <async-image class="gallery-image" filePath="{{ path }}"></async-image>
+          </swiper-slide>
+        }
+      </swiper-container>
+    </div>
+  }
+
+  <!-- Add photo button -->
+  <ion-button
+    expand="block"
+    fill="outline"
+    (click)="addPhoto()"
+    [disabled]="photoPaths.length >= maxPhotos"
+    class="add-photo-button">
+    <ion-icon name="add" slot="start"></ion-icon>
+    {{ 'AI_IMPORT_MULTI_ADD_PHOTO' | translate }} ({{ photoPaths.length }}/{{ maxPhotos }})
+  </ion-button>
+
+  <!-- Attach toggle -->
+  <ion-item lines="none" class="attach-toggle">
+    <ion-label>{{ 'AI_IMPORT_MULTI_ATTACH_PHOTOS' | translate }}</ion-label>
+    <ion-toggle [(ngModel)]="attachPhotos"></ion-toggle>
+  </ion-item>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button
+      expand="block"
+      (click)="startAnalysis()"
+      [disabled]="photoPaths.length === 0"
+      color="primary">
+      {{ 'AI_IMPORT_MULTI_START_ANALYSIS' | translate }}
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

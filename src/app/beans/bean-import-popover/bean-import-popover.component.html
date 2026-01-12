@@ -14,5 +14,12 @@
       <ion-icon name="camera-outline" slot="start"></ion-icon>
       <span>{{"AI_BEAN_IMPORT" | translate}}</span>
     </ion-item>
+    <ion-item (click)="choose(getStaticActions().AI_IMPORT_MULTI)" button tappable>
+      <ion-icon name="images-outline" slot="start"></ion-icon>
+      <ion-label>
+        <span>{{"AI_BEAN_IMPORT_MULTI" | translate}}</span>
+        <p>{{"AI_BEAN_IMPORT_MULTI_HINT" | translate}}</p>
+      </ion-label>
+    </ion-item>
   </ion-list>
 </ion-content>

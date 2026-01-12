@@ -87,6 +87,7 @@ import { GreenBeanPopoverActionsComponent } from '../roasting-section/green-bean
 import { GreenBeanInformationComponent } from '../../components/green-bean-information/green-bean-information.component';
 import { PhotoPopoverComponent } from '../../popover/photo-popover/photo-popover.component';
 import { PhotoAddComponent } from '../../components/photo-add/photo-add.component';
+import { AiImportPhotoGalleryComponent } from '../../components/ai-import-photo-gallery/ai-import-photo-gallery.component';
 import { BeanRoastInformationComponent } from '../../components/beans/bean-roast-information/bean-roast-information.component';
 import { BeanGeneralInformationComponent } from '../../components/beans/bean-general-information/bean-general-information.component';
 import { BeanSortInformationComponent } from '../../components/beans/bean-sort-information/bean-sort-information.component';
@@ -342,6 +343,7 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     BrewTimerComponent,
     PhotoAddComponent,
     PhotoViewComponent,
+    AiImportPhotoGalleryComponent,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
@@ -542,6 +544,7 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     BrewTimerComponent,
     PhotoAddComponent,
     PhotoViewComponent,
+    AiImportPhotoGalleryComponent,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,

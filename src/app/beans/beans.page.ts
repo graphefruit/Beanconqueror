@@ -35,7 +35,9 @@ import { BeanImportPopoverComponent } from './bean-import-popover/bean-import-po
 import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
 import { AIBeanImportService } from '../../services/aiBeanImport/ai-bean-import.service';
 import { UIAlert } from '../../services/uiAlert';
+import { UIFileHelper } from '../../services/uiFileHelper';
 import { BeansAddComponent } from './beans-add/beans-add.component';
+import { AiImportPhotoGalleryComponent } from '../../components/ai-import-photo-gallery/ai-import-photo-gallery.component';
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
@@ -120,6 +122,7 @@ export class BeansPage implements OnDestroy {
     private readonly uiImage: UIImage,
     private readonly aiBeanImportService: AIBeanImportService,
     private readonly uiAlert: UIAlert,
+    private readonly uiFileHelper: UIFileHelper,
   ) {}
 
   public ionViewWillEnter(): void {
@@ -393,8 +396,8 @@ export class BeansPage implements OnDestroy {
       componentProps: {},
       id: BeanImportPopoverComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
-      breakpoints: [0, 0.35],
-      initialBreakpoint: 0.35,
+      breakpoints: [0, 0.45],
+      initialBreakpoint: 0.45,
     });
     await popover.present();
     const data = await popover.onWillDismiss();
@@ -408,6 +411,9 @@ export class BeansPage implements OnDestroy {
           break;
         case BEAN_IMPORT_ACTION.AI_IMPORT:
           await this.aiImportBean();
+          break;
+        case BEAN_IMPORT_ACTION.AI_IMPORT_MULTI:
+          await this.aiImportBeanMulti();
           break;
       }
     }
@@ -462,6 +468,117 @@ export class BeansPage implements OnDestroy {
       const errorMessage =
         error?.message || error?.toString() || 'Unknown error';
       this.uiLog.warn('AI bean import error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
+      );
+      // Show the actual error message for debugging
+      await this.uiAlert.showMessage(
+        `AI Import Error:\n\n${errorMessage}`,
+        'ERROR_OCCURED',
+        undefined,
+        false, // Don't translate - show raw error
+      );
+    }
+
+    this.loadBeans();
+  }
+
+  public async aiImportBeanMulti() {
+    if (!this.platform.is('capacitor')) {
+      return;
+    }
+
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
+      );
+
+      // Check LLM readiness first
+      const readiness = await this.aiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      // Present photo gallery modal
+      const modal = await this.modalController.create({
+        component: AiImportPhotoGalleryComponent,
+        id: AiImportPhotoGalleryComponent.COMPONENT_ID,
+      });
+      await modal.present();
+
+      const { data, role } = await modal.onDidDismiss();
+
+      // User cancelled or no photos collected
+      if (
+        role === 'cancel' ||
+        !data ||
+        !data.photoPaths ||
+        data.photoPaths.length === 0
+      ) {
+        return;
+      }
+
+      // Process images
+      await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
+      try {
+        const result = await this.aiBeanImportService.extractBeanDataFromImages(
+          data.photoPaths,
+          data.attachPhotos,
+        );
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (result && result.bean) {
+          this.uiAnalytics.trackEvent(
+            BEAN_TRACKING.TITLE,
+            BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
+          );
+
+          // Attach photos if user opted in (paths already in result)
+          if (result.attachmentPaths) {
+            result.bean.attachments = result.attachmentPaths;
+          }
+
+          // Open bean add modal with pre-populated data
+          const addModal = await this.modalController.create({
+            component: BeansAddComponent,
+            id: BeansAddComponent.COMPONENT_ID,
+            componentProps: { bean_template: result.bean },
+          });
+          await addModal.present();
+          await addModal.onWillDismiss();
+        }
+      } catch (error: any) {
+        await this.uiAlert.hideLoadingSpinner();
+
+        // Clean up temp files on error (if not attaching)
+        if (!data.attachPhotos) {
+          for (const path of data.photoPaths) {
+            try {
+              await this.uiFileHelper.deleteInternalFile(path);
+            } catch (e) {
+              // Ignore cleanup errors
+            }
+          }
+        }
+
+        throw error;
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('AI bean import (multi) error: ' + errorMessage);
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
