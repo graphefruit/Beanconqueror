@@ -88,6 +88,7 @@
     "@angular/language-service": "^21.0.6",
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.0.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@ionic/angular-toolkit": "^12.3.0",
     "@types/jasmine": "^5.1.13",
     "@types/jasminewd2": "~2.0.8",
@@ -124,7 +125,27 @@
   ],
   "prettier": {
     "singleQuote": true,
-    "semi": true
+    "semi": true,
+    "plugins": [
+      "@ianvs/prettier-plugin-sort-imports"
+    ],
+    "importOrder": [
+      "<BUILTIN_MODULES>",
+      "",
+      "^@angular",
+      "",
+      "^@ionic",
+      "^ionicons",
+      "",
+      "<THIRD_PARTY_MODULES>",
+      "",
+      "^src/",
+      "^[.]"
+    ],
+    "importOrderParserPlugins": [
+      "typescript",
+      "decorators"
+    ]
   },
   "lint-staged": {
     "*.css": "stylelint --fix",
