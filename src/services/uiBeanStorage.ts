@@ -1,17 +1,12 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
-/** Classes */
 import { Bean } from '../classes/bean/bean';
-/** Interfaces */
 import { IBean } from '../interfaces/bean/iBean';
-/** Services */
 import { StorageClass } from '../classes/storageClass';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
 import { TranslateService } from '@ngx-translate/core';
 
-/** Ionic native */
 
 @Injectable({
   providedIn: 'root',

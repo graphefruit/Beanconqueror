@@ -1,8 +1,4 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
-/** Classes */
-/** Interfaces */
-/** Services */
 import { StorageClass } from '../classes/storageClass';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
@@ -11,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
 import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
 
-/** Ionic native */
 
 @Injectable({
   providedIn: 'root',

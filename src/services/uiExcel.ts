@@ -1,6 +1,4 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
-/** Services */
 
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';

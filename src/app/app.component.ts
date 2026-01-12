@@ -18,7 +18,6 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
-/** Third party */
 import moment from 'moment';
 import { Settings } from '../classes/settings/settings';
 import LINK_TRACKING from '../data/tracking/linkTracking';

@@ -1,4 +1,3 @@
-/** Interfacdes */
 
 import {IBrewParameter} from '../../interfaces/parameter/iBrewParameter';
 

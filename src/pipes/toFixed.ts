@@ -1,7 +1,5 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
-/** Third party */
 
 @Pipe({ name: 'toFixed' })
 export class ToFixedPipe implements PipeTransform {

@@ -1,9 +1,6 @@
-/** Interfaces */
-/** Enums */
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
-/** Classes */
 import { Config } from '../objectConfig/objectConfig';
 
 import { DefaultBrewParameter } from '../parameter/defaultBrewParameter';

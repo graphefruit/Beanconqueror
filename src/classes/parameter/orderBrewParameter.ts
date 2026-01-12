@@ -1,4 +1,3 @@
-/** Interfacdes */
 
 import {IOrderBrewParameter} from '../../interfaces/parameter/iOrderBrewParameter';
 

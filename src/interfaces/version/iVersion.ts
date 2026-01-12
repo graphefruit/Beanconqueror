@@ -1,7 +1,5 @@
-/** Interfaces */
 import {IConfig} from '../objectConfig/iObjectConfig';
 
-/** Enums */
 
 export interface IVersion {
 

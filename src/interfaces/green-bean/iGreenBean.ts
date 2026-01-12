@@ -2,7 +2,6 @@
  * Created by lars on 10/18/2017.
  */
 import {IConfig} from '../objectConfig/iObjectConfig';
-/** Enums */
 
 import {IBeanInformation} from '../bean/iBeanInformation';
 

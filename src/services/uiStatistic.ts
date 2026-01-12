@@ -1,10 +1,8 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIHelper } from './uiHelper';
 import { UIPreparationStorage } from './uiPreparationStorage';
-/** Interfaces */
 import { Bean } from '../classes/bean/bean';
 import { IBrew } from '../interfaces/brew/iBrew';
 import { UIMillStorage } from './uiMillStorage';
@@ -18,7 +16,6 @@ import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachin
 import { UIGreenBeanStorage } from './uiGreenBeanStorage';
 import { UIRoastingMachineStorage } from './uiRoastingMachineStorage';
 
-/** Services  */
 
 @Injectable({
   providedIn: 'root',

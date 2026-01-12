@@ -1,8 +1,4 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
-/** Ionic native */
-/** Classes */
-/** Services */
 
 import { StorageClass } from '../classes/storageClass';
 
@@ -12,7 +8,6 @@ import { UIStorage } from './uiStorage';
 import { TranslateService } from '@ngx-translate/core';
 import { Water } from '../classes/water/water';
 
-/** Interfaces */
 
 @Injectable({
   providedIn: 'root',

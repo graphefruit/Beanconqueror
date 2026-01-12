@@ -1,9 +1,6 @@
-/** Interfaces */
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
-/** Enums */
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
 import { IBean } from '../../interfaces/bean/iBean';
-/** Classes */
 import { Config } from '../objectConfig/objectConfig';
 import moment from 'moment';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';

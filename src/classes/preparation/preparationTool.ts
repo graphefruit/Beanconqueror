@@ -1,6 +1,4 @@
-/** Interfaces */
 import {IPreparationTool} from '../../interfaces/preparation/iPreparationTool';
-/** Classes */
 import {Config} from '../objectConfig/objectConfig';
 
 

@@ -1,6 +1,4 @@
-/** Interfaces */
 import { IPreparation } from '../../interfaces/preparation/iPreparation';
-/** Classes */
 import { Config } from '../objectConfig/objectConfig';
 import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';

@@ -1,4 +1,3 @@
-/**  Core */
 import { Injectable, inject } from '@angular/core';
 /**
  * Ionic native

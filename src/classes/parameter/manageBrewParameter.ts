@@ -1,4 +1,3 @@
-/** Interfacdes */
 
 import { IManageBrewParameter } from '../../interfaces/parameter/iManageBrewParameter';
 

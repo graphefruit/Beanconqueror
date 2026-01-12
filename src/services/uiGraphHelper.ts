@@ -1,4 +1,3 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Graph } from '../classes/graph/graph';

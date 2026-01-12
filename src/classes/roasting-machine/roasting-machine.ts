@@ -1,6 +1,4 @@
-/** Interfaces */
 
-/** Classes */
 import {Config} from '../objectConfig/objectConfig';
 import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
 

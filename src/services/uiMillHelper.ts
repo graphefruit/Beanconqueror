@@ -1,4 +1,3 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 
 import { Brew } from '../classes/brew/brew';

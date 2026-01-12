@@ -1,5 +1,3 @@
-/** Interfaces */
-/** Enums */
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { IConfig } from '../objectConfig/iObjectConfig';
 import { IBrewParameter } from '../parameter/iBrewParameter';

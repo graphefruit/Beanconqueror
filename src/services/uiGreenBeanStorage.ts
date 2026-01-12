@@ -1,9 +1,5 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
-/** Classes */
-/** Interfaces */
 
-/** Services */
 import { StorageClass } from '../classes/storageClass';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
@@ -12,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
 import { GreenBean } from '../classes/green-bean/green-bean';
 
-/** Ionic native */
 
 @Injectable({
   providedIn: 'root',

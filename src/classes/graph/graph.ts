@@ -1,6 +1,4 @@
-/** Interfaces */
 import { IGraph } from '../../interfaces/graph/iGraph';
-/** Classes */
 import { Config } from '../objectConfig/objectConfig';
 
 export class Graph implements IGraph {

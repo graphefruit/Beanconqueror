@@ -5,7 +5,6 @@ import { IConfig } from '../objectConfig/iObjectConfig';
 import { WATER_UNIT } from '../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../enums/water/waterUnitTds';
 
-/** Enums */
 
 export interface IWater {
   name: string;

@@ -32,7 +32,6 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIStorage } from '../../services/uiStorage';
 
-/** Third party */
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 

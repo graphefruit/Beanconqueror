@@ -1,4 +1,3 @@
-/** Core */
 import { Injectable } from '@angular/core';
 import { LOGS_ENUM } from '../enums/logs/logs';
 import { ILogInterface } from '../interfaces/log/iLog';

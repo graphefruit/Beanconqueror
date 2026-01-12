@@ -1,6 +1,4 @@
-/** Interfaces */
 import {IMill} from '../../interfaces/mill/iMill';
-/** Classes */
 import {Config} from '../objectConfig/objectConfig';
 
 export class Mill implements IMill {

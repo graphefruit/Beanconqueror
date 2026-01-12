@@ -1,4 +1,3 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 import {
   Camera,
@@ -9,7 +8,6 @@ import {
 } from '@capacitor/camera';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
-/** Ionic */
 import {
   AlertController,
   ModalController,

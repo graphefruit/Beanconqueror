@@ -1,6 +1,3 @@
-/** Interfaces */
-/** Enums */
-/** Classes */
 import { Config } from '../objectConfig/objectConfig';
 import { IVersion } from '../../interfaces/version/iVersion';
 

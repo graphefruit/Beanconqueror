@@ -1,4 +1,3 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';

@@ -1,4 +1,3 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { Settings } from '../../classes/settings/settings';

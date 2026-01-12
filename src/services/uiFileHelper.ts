@@ -1,4 +1,3 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 import { Capacitor, CapacitorException } from '@capacitor/core';
 import {

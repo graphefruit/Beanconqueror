@@ -1,4 +1,3 @@
-/** Classes */
 import {Brew} from './brew';
 
 export class BrewView {

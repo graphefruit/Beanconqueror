@@ -1,9 +1,6 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 import { Clipboard } from '@capacitor/clipboard';
-/** Ionic */
 import { Platform } from '@ionic/angular/standalone';
-/** Third party */
 import moment from 'moment';
 import 'moment/locale/de';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';

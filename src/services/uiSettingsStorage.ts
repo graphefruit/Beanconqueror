@@ -1,11 +1,6 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
-/** Ionic native */
-/** Classes */
 import { Settings } from '../classes/settings/settings';
-/** Interfaces */
 import { ISettings } from '../interfaces/settings/iSettings';
-/** Services */
 import { StorageClass } from '../classes/storageClass';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';

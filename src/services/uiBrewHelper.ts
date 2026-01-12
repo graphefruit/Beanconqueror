@@ -1,4 +1,3 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 
 import { UIBeanStorage } from './uiBeanStorage';

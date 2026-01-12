@@ -1,4 +1,3 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';

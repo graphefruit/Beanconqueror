@@ -1,4 +1,3 @@
-/** Interfaces */
 
 export interface IOrderBrewParameter {
   // Properties

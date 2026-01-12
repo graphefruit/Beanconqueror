@@ -1,8 +1,5 @@
-/** Interfaces */
 
-/** Enums */
 
-/** Classes */
 import { Config } from '../objectConfig/objectConfig';
 import { IWater } from '../../interfaces/water/iWater';
 import { WATER_UNIT } from '../../enums/water/waterUnit';

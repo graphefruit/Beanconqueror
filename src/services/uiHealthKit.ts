@@ -1,7 +1,5 @@
-/** Core */
 import { Injectable, inject } from '@angular/core';
 import { Platform } from '@ionic/angular/standalone';
-/** Ionic */
 
 declare var navigator;
 
