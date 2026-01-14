@@ -117,4 +117,36 @@ describe('TextNormalizationService', () => {
       expect(result).toContain('1850 MASL');
     });
   });
+
+  describe('layout tag preservation', () => {
+    it('should preserve OCR layout tags', () => {
+      const input = '[LARGE | TOP | CENTER]\nCOFFEE NAME';
+      const result = service.normalizeCase(input);
+      expect(result).toContain('[LARGE | TOP | CENTER]');
+      expect(result).toContain('Coffee Name');
+    });
+
+    it('should preserve section headers', () => {
+      const input = '=== OCR WITH LAYOUT ===';
+      const result = service.normalizeCase(input);
+      expect(result).toBe('=== OCR WITH LAYOUT ===');
+    });
+
+    it('should preserve label markers', () => {
+      const input = '--- Label 1 of 2 ---';
+      const result = service.normalizeCase(input);
+      expect(result).toBe('--- Label 1 of 2 ---');
+    });
+
+    it('should handle mixed layout and content', () => {
+      const input =
+        '=== OCR WITH LAYOUT ===\n\n[LARGE | TOP | CENTER]\nROASTER NAME\n\n[MEDIUM | MIDDLE | CENTER]\nCOFFEE ORIGIN';
+      const result = service.normalizeCase(input);
+      expect(result).toContain('=== OCR WITH LAYOUT ===');
+      expect(result).toContain('[LARGE | TOP | CENTER]');
+      expect(result).toContain('Roaster Name');
+      expect(result).toContain('[MEDIUM | MIDDLE | CENTER]');
+      expect(result).toContain('Coffee Origin');
+    });
+  });
 });

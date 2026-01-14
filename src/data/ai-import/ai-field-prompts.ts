@@ -135,7 +135,16 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
     field: 'name',
     promptTemplate: `What is the coffee name?
 
-Look for the most prominent/distinctive text - often a place name, farm name, or descriptive title.
+LAYOUT HINTS (text may include [SIZE | POSITION] tags):
+- Coffee names are typically LARGE text, often at the TOP or MIDDLE of the label
+- If there are two large texts at the top: the SECOND one is usually the coffee name
+- Look for [LARGE] or [MEDIUM] tags in the OCR output
+
+DISTINGUISHING COFFEE NAME FROM ROASTER:
+- Coffee name: Place name, farm name, or descriptive title
+- Roaster: Company/brand name that produces many different coffees
+- Coffee names often reference: countries, regions, farms, flavor profiles, or blend names
+
 Convert ALL CAPS to Title Case.
 
 RESPONSE FORMAT:
@@ -143,7 +152,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages in order of likelihood: {{LANGUAGES}}):
+TEXT WITH LAYOUT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
   },
 
@@ -151,7 +160,17 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
     field: 'roaster',
     promptTemplate: `What company roasted this coffee?
 
-Look for roaster names, often at bottom of label or with "roasted by", company logos.
+LAYOUT HINTS (text may include [SIZE | POSITION] tags):
+- Roaster/company names are typically LARGE text at the TOP of the label
+- Look for text tagged with [LARGE] AND [TOP] - this is usually the roaster brand
+- Roaster names are often the FIRST prominent text element
+- May also appear with keywords: "roasted by", "Rösterei", "torréfacteur", "Coffee Roasters"
+
+DISTINGUISHING ROASTER FROM COFFEE NAME:
+- Roaster: Company/brand name
+- Coffee name: Place/origin name or descriptive title
+- If two large texts at top: first is usually roaster, second is coffee name
+
 Convert ALL CAPS to Title Case.
 
 RESPONSE FORMAT:
@@ -159,7 +178,7 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT (languages in order of likelihood: {{LANGUAGES}}):
+TEXT WITH LAYOUT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
   },
 

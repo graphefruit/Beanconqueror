@@ -22,10 +22,16 @@ export class TextNormalizationService {
   /**
    * Normalize a single line's casing.
    * Only converts if the line is predominantly uppercase.
+   * Preserves OCR layout tags like [LARGE | TOP | CENTER].
    */
   private normalizeLineCasing(line: string): string {
     const trimmed = line.trim();
     if (!trimmed) {
+      return line;
+    }
+
+    // Preserve OCR layout metadata tags (format: [WORD | WORD | WORD])
+    if (this.isLayoutTag(trimmed)) {
       return line;
     }
 
@@ -43,6 +49,29 @@ export class TextNormalizationService {
     }
 
     return line;
+  }
+
+  /**
+   * Check if a line is an OCR layout metadata element that should be preserved.
+   * Includes:
+   * - Layout tags: [LARGE | TOP | CENTER]
+   * - Section headers: === OCR WITH LAYOUT ===
+   * - Label markers: --- Label 1 of 2 ---
+   */
+  private isLayoutTag(line: string): boolean {
+    // Layout tags: [SIZE | POSITION | ALIGNMENT]
+    if (/^\[[\w\s|]+\]$/.test(line)) {
+      return true;
+    }
+    // Section headers: === TEXT ===
+    if (/^===.*===$/.test(line)) {
+      return true;
+    }
+    // Label markers: --- Label N of M ---
+    if (/^---.*---$/.test(line)) {
+      return true;
+    }
+    return false;
   }
 
   /**

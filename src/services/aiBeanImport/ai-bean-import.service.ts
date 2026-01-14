@@ -12,6 +12,10 @@ import {
 } from '../../data/ai-import/ai-import-prompt';
 import { AIImportExamplesService } from './ai-import-examples.service';
 import { FieldExtractionService } from './field-extraction.service';
+import {
+  OcrMetadataService,
+  TextDetectionResult,
+} from './ocr-metadata.service';
 import { CapgoLLM } from '@capgo/capacitor-llm';
 import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
 import {
@@ -53,6 +57,7 @@ export class AIBeanImportService {
     private readonly aiImportExamples: AIImportExamplesService,
     private readonly fieldExtraction: FieldExtractionService,
     private readonly uiFileHelper: UIFileHelper,
+    private readonly ocrMetadata: OcrMetadataService,
   ) {}
 
   /**
@@ -147,15 +152,15 @@ export class AIBeanImportService {
       this.uiLog.log('Base64 image length: ' + (base64Image?.length || 0));
 
       currentStep = 'ocr';
-      const ocrResult = await CapacitorPluginMlKitTextRecognition.detectText({
+      const ocrResult = (await CapacitorPluginMlKitTextRecognition.detectText({
         base64Image: base64Image,
-      });
-      const extractedText = ocrResult.text;
+      })) as TextDetectionResult;
+      const rawText = ocrResult.text;
       this.uiLog.log(
         'OCR result: ' + JSON.stringify(ocrResult).substring(0, 500),
       );
 
-      if (!extractedText || extractedText.trim() === '') {
+      if (!rawText || rawText.trim() === '') {
         await this.uiAlert.hideLoadingSpinner();
         await this.uiAlert.showMessage(
           'AI_IMPORT_NO_TEXT_FOUND',
@@ -166,18 +171,31 @@ export class AIBeanImportService {
         return null;
       }
 
-      this.uiLog.log('OCR extracted text: ' + extractedText);
+      this.uiLog.log('OCR extracted text: ' + rawText);
 
-      // Step 3: Detect language (on raw OCR text before normalization)
+      // Step 3: Enrich OCR with layout metadata
+      currentStep = 'ocr_metadata';
+      const enrichedResult = this.ocrMetadata.enrichWithLayout(ocrResult);
+      this.uiLog.log(
+        `OCR metadata: hasUsefulMetadata=${enrichedResult.hasUsefulMetadata}`,
+      );
+      if (enrichedResult.hasUsefulMetadata) {
+        this.uiLog.log(
+          'Enriched text preview: ' +
+            enrichedResult.enrichedText.substring(0, 300),
+        );
+      }
+
+      // Step 4: Detect language (on raw OCR text - layout tags would confuse detection)
       currentStep = 'language_detection';
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_DETECTING_LANGUAGE'),
       );
 
-      const detectedLanguage = await this.detectLanguage(extractedText);
+      const detectedLanguage = await this.detectLanguage(rawText);
       this.uiLog.log('Detected language: ' + detectedLanguage);
 
-      // Step 4: Determine languages for examples
+      // Step 5: Determine languages for examples
       const userLanguage = this.translate.currentLang;
       const languagesToUse = this.getLanguagesToUse(
         detectedLanguage,
@@ -187,14 +205,18 @@ export class AIBeanImportService {
         'Using languages for examples: ' + languagesToUse.join(', '),
       );
 
-      // Step 5: Multi-step field extraction with pre/post-processing
+      // Step 6: Multi-step field extraction with pre/post-processing
+      // Use enriched text (with layout metadata) for better name/roaster extraction
       currentStep = 'multi_step_extraction';
+      console.log('=== STARTING FIELD EXTRACTION ===');
+      console.log('extractedText:', enrichedResult.enrichedText);
+      console.log('languagesToUse:', languagesToUse);
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
       );
 
       const bean = await this.fieldExtraction.extractAllFields(
-        extractedText,
+        enrichedResult.enrichedText,
         languagesToUse,
       );
       await this.uiAlert.hideLoadingSpinner();
@@ -237,9 +259,10 @@ export class AIBeanImportService {
   ): Promise<{ bean: Bean; attachmentPaths?: string[] } | null> {
     let currentStep = 'init';
     try {
-      // Step 1: Run OCR on each photo
+      // Step 1: Run OCR on each photo - collect full results including blocks
       currentStep = 'ocr';
-      const ocrTexts: string[] = [];
+      const ocrResults: TextDetectionResult[] = [];
+      const rawTexts: string[] = [];
 
       for (let i = 0; i < photoPaths.length; i++) {
         this.uiAlert.setLoadingSpinnerMessage(
@@ -278,16 +301,17 @@ export class AIBeanImportService {
 
         try {
           const ocrResult =
-            await CapacitorPluginMlKitTextRecognition.detectText({
+            (await CapacitorPluginMlKitTextRecognition.detectText({
               base64Image: base64,
-            });
+            })) as TextDetectionResult;
 
           this.uiLog.log(
             `Multi-photo OCR: Photo ${i + 1} OCR result: ${JSON.stringify(ocrResult).substring(0, 200)}`,
           );
 
           if (ocrResult.text && ocrResult.text.trim() !== '') {
-            ocrTexts.push(ocrResult.text);
+            ocrResults.push(ocrResult);
+            rawTexts.push(ocrResult.text);
             this.uiLog.log(
               `Multi-photo OCR: Photo ${i + 1} extracted ${ocrResult.text.length} chars: "${ocrResult.text.substring(0, 100)}..."`,
             );
@@ -303,7 +327,7 @@ export class AIBeanImportService {
       }
 
       // Check if we got any text at all
-      if (ocrTexts.length === 0) {
+      if (ocrResults.length === 0) {
         await this.uiAlert.hideLoadingSpinner();
         await this.uiAlert.showMessage(
           'AI_IMPORT_NO_TEXT_FOUND',
@@ -319,20 +343,23 @@ export class AIBeanImportService {
         return null;
       }
 
-      // Step 2: Concatenate OCR text from all photos
-      currentStep = 'concatenate';
-      const combinedText = this.concatenateOCRResults(ocrTexts);
+      // Step 2: Enrich OCR with layout metadata for all photos
+      currentStep = 'ocr_metadata';
+      const enrichedText = this.ocrMetadata.enrichMultiplePhotos(ocrResults);
       this.uiLog.log(
-        `Multi-photo OCR: Combined text length: ${combinedText.length}`,
+        `Multi-photo OCR: Enriched text length: ${enrichedText.length}`,
       );
 
-      // Step 3: Detect language
+      // Concatenate raw texts for language detection (without layout tags)
+      const combinedRawText = this.concatenateOCRResults(rawTexts);
+
+      // Step 3: Detect language (on raw text - layout tags would confuse detection)
       currentStep = 'language_detection';
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_DETECTING_LANGUAGE'),
       );
 
-      const detectedLanguage = await this.detectLanguage(combinedText);
+      const detectedLanguage = await this.detectLanguage(combinedRawText);
       this.uiLog.log('Detected language: ' + detectedLanguage);
 
       // Step 4: Determine languages for examples
@@ -345,14 +372,14 @@ export class AIBeanImportService {
         'Using languages for examples: ' + languagesToUse.join(', '),
       );
 
-      // Step 5: Multi-step field extraction
+      // Step 5: Multi-step field extraction with layout-enriched text
       currentStep = 'multi_step_extraction';
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
       );
 
       const bean = await this.fieldExtraction.extractAllFields(
-        combinedText,
+        enrichedText,
         languagesToUse,
       );
 

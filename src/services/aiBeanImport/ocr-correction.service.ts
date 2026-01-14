@@ -14,13 +14,14 @@ export class OCRCorrectionService {
    * Maps a character to its commonly confused alternatives.
    */
   private readonly CHAR_SUBSTITUTIONS = new Map<string, string[]>([
+    // Number/letter confusions
     ['0', ['O', 'o']],
     ['O', ['0']],
     ['o', ['0']],
     ['1', ['l', 'I', 'i', 't']],
-    ['l', ['1', 'I', 't']],
-    ['I', ['1', 'l', 't']],
-    ['i', ['1', 'l']],
+    ['l', ['1', 'I', 'i', 't']],
+    ['I', ['1', 'l', 'i', 't']],
+    ['i', ['1', 'l', 'I']],
     ['t', ['1', 'l', 'I']],
     ['5', ['S', 's']],
     ['S', ['5']],
