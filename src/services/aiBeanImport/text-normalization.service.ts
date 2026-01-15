@@ -163,24 +163,49 @@ export class TextNormalizationService {
    * - "1.850 m.ü.M." → "1850 MASL"
    * - "1,700 - 1,900 meters" → "1700-1900 MASL"
    * - "2000 msnm" → "2000 MASL"
+   * - "800m 1200m" → "800-1200 MASL" (implicit range)
    */
   public normalizeAltitude(text: string): string {
     let result = text;
 
-    // Handle ranges first
+    // Altitude unit pattern: m.ü.M., meters, msnm, or standalone m (but not MASL)
+    // Using word boundary or end assertion to avoid partial matches
+    const altitudeUnitPattern =
+      /m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$|-)/i;
+
+    // Handle explicit ranges with dash/en-dash (e.g., "1700-1900m", "800-1200 meters")
+    // Supports 3-4 digit altitudes (up to 4999)
     result = result.replace(
-      /(\d)[.,]?(\d{3})\s*[-–]\s*(\d)[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|m(?:eters?)?|msnm)/gi,
-      '$1$2-$3$4 MASL',
+      /(\d{1,2})?[.,]?(\d{3})\s*[-–]\s*(\d{1,2})?[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$))/gi,
+      (_, p1, p2, p3, p4) => {
+        const low = (p1 || '') + p2;
+        const high = (p3 || '') + p4;
+        return `${low}-${high} MASL`;
+      },
     );
 
-    // Handle single altitudes
+    // Handle implicit ranges: two altitudes with units close together without dash
+    // e.g., "800m 1200m" → "800-1200 MASL"
     result = result.replace(
-      /(\d)[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|m(?:eters?)?|msnm)/gi,
-      '$1$2 MASL',
+      /(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s))\s+(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$)|MASL)/gi,
+      '$1-$2 MASL',
     );
 
-    // Handle already MASL without thousand separator normalization
-    result = result.replace(/(\d)[.,](\d{3})\s*MASL/gi, '$1$2 MASL');
+    // Handle single altitudes (3-4 digit numbers with unit)
+    // Negative lookahead prevents matching the start of an explicit range
+    result = result.replace(
+      /(\d{1,2})?[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$))(?!\s*[-–]\s*\d)/gi,
+      (_, p1, p2) => {
+        const altitude = (p1 || '') + p2;
+        return `${altitude} MASL`;
+      },
+    );
+
+    // Normalize thousand separators in existing MASL values
+    result = result.replace(/(\d{1,2})?[.,](\d{3})\s*MASL/gi, (_, p1, p2) => {
+      const altitude = (p1 || '') + p2;
+      return `${altitude} MASL`;
+    });
 
     return result;
   }

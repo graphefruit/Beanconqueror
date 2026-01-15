@@ -18,7 +18,7 @@ describe('TextNormalizationService', () => {
   describe('normalizeCase', () => {
     it('should convert ALL CAPS to Title Case', () => {
       expect(service.normalizeCase('FINCA EL PARAÍSO')).toBe(
-        'Finca El Paraíso',
+        'Finca el Paraíso',
       );
     });
 
@@ -83,6 +83,24 @@ describe('TextNormalizationService', () => {
     it('should handle already MASL format', () => {
       expect(service.normalizeAltitude('1850 MASL')).toBe('1850 MASL');
     });
+
+    it('should handle 3-digit altitudes', () => {
+      expect(service.normalizeAltitude('800m')).toBe('800 MASL');
+      expect(service.normalizeAltitude('900 meters')).toBe('900 MASL');
+    });
+
+    it('should handle implicit ranges without dash', () => {
+      expect(service.normalizeAltitude('800m 1200m')).toBe('800-1200 MASL');
+      expect(service.normalizeAltitude('800m 1200 MASL')).toBe('800-1200 MASL');
+      expect(service.normalizeAltitude('1200m 1800m')).toBe('1200-1800 MASL');
+    });
+
+    it('should handle 3-digit ranges with dash', () => {
+      expect(service.normalizeAltitude('800-1200m')).toBe('800-1200 MASL');
+      expect(service.normalizeAltitude('800 - 1200 meters')).toBe(
+        '800-1200 MASL',
+      );
+    });
   });
 
   describe('extractWeight', () => {
@@ -113,7 +131,7 @@ describe('TextNormalizationService', () => {
     it('should apply all normalizations', () => {
       const input = 'FINCA EL PARAÍSO\n1.850 m.ü.M.\n250g';
       const result = service.normalizeAll(input);
-      expect(result).toContain('Finca El Paraíso');
+      expect(result).toContain('Finca el Paraíso');
       expect(result).toContain('1850 MASL');
     });
   });
