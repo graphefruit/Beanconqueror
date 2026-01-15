@@ -157,24 +157,53 @@ export class OcrMetadataService {
    */
   public shouldUseMetadata(ocrResult: TextDetectionResult): boolean {
     // Need blocks array
-    if (!ocrResult.blocks || ocrResult.blocks.length < this.MIN_BLOCKS_FOR_METADATA) {
+    if (!ocrResult.blocks) {
+      console.log('OCR metadata: blocks is undefined/null');
+      return false;
+    }
+
+    if (ocrResult.blocks.length < this.MIN_BLOCKS_FOR_METADATA) {
+      console.log(
+        `OCR metadata: only ${ocrResult.blocks.length} blocks, need at least ${this.MIN_BLOCKS_FOR_METADATA}`,
+      );
+      return false;
+    }
+
+    // Check if blocks have bounding boxes
+    const blocksWithBoundingBox = ocrResult.blocks.filter(
+      (b) => b.boundingBox && typeof b.boundingBox.bottom === 'number',
+    );
+    if (blocksWithBoundingBox.length < this.MIN_BLOCKS_FOR_METADATA) {
+      console.log(
+        `OCR metadata: only ${blocksWithBoundingBox.length} blocks have bounding boxes`,
+      );
       return false;
     }
 
     // Check for size variation
-    const heights = ocrResult.blocks.map(
+    const heights = blocksWithBoundingBox.map(
       (b) => b.boundingBox.bottom - b.boundingBox.top,
     );
     const maxHeight = Math.max(...heights);
     const minHeight = Math.min(...heights);
+    console.log(
+      `OCR metadata: ${blocksWithBoundingBox.length} blocks, heights min=${minHeight} max=${maxHeight} ratio=${minHeight > 0 ? (maxHeight / minHeight).toFixed(2) : 'N/A'}`,
+    );
 
     // If min is 0, avoid division by zero
     if (minHeight === 0) {
-      return maxHeight > 0;
+      const useful = maxHeight > 0;
+      console.log(`OCR metadata: useful=${useful} (minHeight=0)`);
+      return useful;
     }
 
     // If all text is similar size, metadata won't help much
-    return maxHeight / minHeight > this.SIZE_VARIATION_THRESHOLD;
+    const ratio = maxHeight / minHeight;
+    const useful = ratio > this.SIZE_VARIATION_THRESHOLD;
+    console.log(
+      `OCR metadata: useful=${useful} (ratio ${ratio.toFixed(2)} ${useful ? '>' : '<='} threshold ${this.SIZE_VARIATION_THRESHOLD})`,
+    );
+    return useful;
   }
 
   /**
