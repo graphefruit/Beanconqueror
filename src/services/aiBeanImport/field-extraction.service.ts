@@ -68,17 +68,24 @@ export class FieldExtractionService {
 
     // Name - always extract (essential)
     this.updateFieldProgress('TOP_LEVEL', 'name');
-    bean.name = (await this.extractField('name', text, examples, languages)) || '';
+    bean.name =
+      (await this.extractField('name', text, examples, languages)) || '';
 
     // Roaster
     if (params.roaster) {
       this.updateFieldProgress('TOP_LEVEL', 'roaster');
-      bean.roaster = (await this.extractField('roaster', text, examples, languages)) || '';
+      bean.roaster =
+        (await this.extractField('roaster', text, examples, languages)) || '';
     }
 
     // Weight - always extract (essential for ratios)
     this.updateFieldProgress('TOP_LEVEL', 'weight');
-    const weightStr = await this.extractField('weight', text, examples, languages);
+    const weightStr = await this.extractField(
+      'weight',
+      text,
+      examples,
+      languages,
+    );
     if (weightStr) {
       bean.weight = this.textNorm.extractWeight(weightStr.toString()) || 0;
     }
@@ -86,19 +93,30 @@ export class FieldExtractionService {
     // Bean roasting type
     if (params.bean_roasting_type) {
       this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
-      bean.bean_roasting_type = await this.extractField('bean_roasting_type', text, examples, languages);
+      bean.bean_roasting_type = await this.extractField(
+        'bean_roasting_type',
+        text,
+        examples,
+        languages,
+      );
     }
 
     // Aromatics
     if (params.aromatics) {
       this.updateFieldProgress('TOP_LEVEL', 'aromatics');
-      bean.aromatics = (await this.extractField('aromatics', text, examples, languages)) || '';
+      bean.aromatics =
+        (await this.extractField('aromatics', text, examples, languages)) || '';
     }
 
     // Decaffeinated
     if (params.decaffeinated) {
       this.updateFieldProgress('TOP_LEVEL', 'decaffeinated');
-      const decafResult = await this.extractField('decaffeinated', text, examples, languages);
+      const decafResult = await this.extractField(
+        'decaffeinated',
+        text,
+        examples,
+        languages,
+      );
       if (decafResult !== null && decafResult !== undefined) {
         bean.decaffeinated = decafResult;
       }
@@ -107,13 +125,23 @@ export class FieldExtractionService {
     // Cupping points
     if (params.cupping_points) {
       this.updateFieldProgress('TOP_LEVEL', 'cupping_points');
-      bean.cupping_points = await this.extractField('cupping_points', text, examples, languages);
+      bean.cupping_points = await this.extractField(
+        'cupping_points',
+        text,
+        examples,
+        languages,
+      );
     }
 
     // Roasting date
     if (params.roastingDate) {
       this.updateFieldProgress('TOP_LEVEL', 'roastingDate');
-      bean.roastingDate = await this.extractField('roastingDate', text, examples, languages);
+      bean.roastingDate = await this.extractField(
+        'roastingDate',
+        text,
+        examples,
+        languages,
+      );
     }
 
     // === ORIGIN FIELDS ===
@@ -122,7 +150,12 @@ export class FieldExtractionService {
     if (params.bean_information) {
       // Detect structure (single origin vs blend)
       this.updateProgress('STRUCTURE');
-      const beanMix = await this.extractField('beanMix', text, examples, languages);
+      const beanMix = await this.extractField(
+        'beanMix',
+        text,
+        examples,
+        languages,
+      );
       bean.beanMix = beanMix || ('UNKNOWN' as any);
       this.uiLog.log(`Structure: beanMix=${beanMix}`);
 
@@ -140,7 +173,12 @@ export class FieldExtractionService {
         );
       } else {
         // SINGLE_ORIGIN: Use per-field extraction with settings checks
-        const info = await this.extractSingleOriginInfo(text, examples, languages, params);
+        const info = await this.extractSingleOriginInfo(
+          text,
+          examples,
+          languages,
+          params,
+        );
         if (this.hasAnyOriginData(info)) {
           bean.bean_information.push(info);
         }
@@ -220,7 +258,7 @@ export class FieldExtractionService {
 
       // Post-process if handler provided
       if (config.postProcess) {
-        return config.postProcess(cleaned);
+        return config.postProcess(cleaned, ocrText);
       }
 
       return cleaned;
@@ -331,6 +369,9 @@ export class FieldExtractionService {
     // Remove NOT_FOUND if appended to valid content (exact NOT_FOUND handled in extractField)
     cleaned = cleaned.replace(/\s*NOT_FOUND\s*/gi, ' ').trim();
 
+    // Remove colons (often left over from label prefixes like "Region:")
+    cleaned = cleaned.replace(/:/g, '').trim();
+
     return cleaned;
   }
 
@@ -376,42 +417,50 @@ export class FieldExtractionService {
 
     // Country - always extract (essential for origin tracking)
     this.updateFieldProgress('ORIGIN', 'country');
-    info.country = (await this.extractField('country', text, examples, languages)) || '';
+    info.country =
+      (await this.extractField('country', text, examples, languages)) || '';
 
     // Region
     if (params.region) {
       this.updateFieldProgress('ORIGIN', 'region');
-      info.region = (await this.extractField('region', text, examples, languages)) || '';
+      info.region =
+        (await this.extractField('region', text, examples, languages)) || '';
     }
 
     // Variety
     if (params.variety) {
       this.updateFieldProgress('ORIGIN', 'variety');
-      info.variety = (await this.extractField('variety', text, examples, languages)) || '';
+      info.variety =
+        (await this.extractField('variety', text, examples, languages)) || '';
     }
 
     // Processing
     if (params.processing) {
       this.updateFieldProgress('ORIGIN', 'processing');
-      info.processing = (await this.extractField('processing', text, examples, languages)) || '';
+      info.processing =
+        (await this.extractField('processing', text, examples, languages)) ||
+        '';
     }
 
     // Elevation
     if (params.elevation) {
       this.updateFieldProgress('ORIGIN', 'elevation');
-      info.elevation = (await this.extractField('elevation', text, examples, languages)) || '';
+      info.elevation =
+        (await this.extractField('elevation', text, examples, languages)) || '';
     }
 
     // Farm
     if (params.farm) {
       this.updateFieldProgress('ORIGIN', 'farm');
-      info.farm = (await this.extractField('farm', text, examples, languages)) || '';
+      info.farm =
+        (await this.extractField('farm', text, examples, languages)) || '';
     }
 
     // Farmer
     if (params.farmer) {
       this.updateFieldProgress('ORIGIN', 'farmer');
-      info.farmer = (await this.extractField('farmer', text, examples, languages)) || '';
+      info.farmer =
+        (await this.extractField('farmer', text, examples, languages)) || '';
     }
 
     return info;
@@ -430,7 +479,11 @@ export class FieldExtractionService {
     params: IBeanParameter,
   ): Promise<IBeanInformation[]> {
     // Extract all origins via JSON prompt (existing method)
-    const rawOrigins = await this.extractBlendOrigins(text, examples, languages);
+    const rawOrigins = await this.extractBlendOrigins(
+      text,
+      examples,
+      languages,
+    );
 
     // Filter each origin's fields based on settings
     return rawOrigins.map((origin) =>

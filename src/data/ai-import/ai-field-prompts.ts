@@ -71,8 +71,8 @@ export interface FieldPromptConfig {
   examplesKeys?: (keyof MergedExamples)[];
   /** Validation regex pattern */
   validation?: RegExp;
-  /** Post-processing function */
-  postProcess?: (value: string) => any;
+  /** Post-processing function (ocrText provided for validation) */
+  postProcess?: (value: string, ocrText: string) => any;
 }
 
 /**
@@ -101,7 +101,7 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['SINGLE_ORIGIN_KEYWORDS', 'BLEND_KEYWORDS'],
     validation: /^(SINGLE_ORIGIN|BLEND)$/i,
-    postProcess: (v) => {
+    postProcess: (v, _ocrText) => {
       const upper = v.toUpperCase();
       if (upper === 'SINGLE_ORIGIN' || upper === 'BLEND') {
         return upper;
@@ -172,6 +172,18 @@ RESPONSE FORMAT:
 TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     validation: /^\d+(?:[.,]\d+)?\s*(?:g|kg|oz|lb)/i,
+    postProcess: (v, ocrText) => {
+      // Extract number before unit
+      const match = v.match(/^(\d+(?:[.,]\d+)?)/);
+      if (!match) {
+        return null;
+      }
+      // Check raw number exists in OCR to prevent hallucinations
+      if (!ocrText.includes(match[1])) {
+        return null;
+      }
+      return v; // Return raw string, extractWeight handles conversion
+    },
   },
 
   bean_roasting_type: {
@@ -195,7 +207,7 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
       'ROASTING_TYPE_OMNI_KEYWORDS',
     ],
     validation: /^(FILTER|ESPRESSO|OMNI)$/i,
-    postProcess: (v) => {
+    postProcess: (v, _ocrText) => {
       const upper = v.toUpperCase();
       if (upper === 'FILTER' || upper === 'ESPRESSO' || upper === 'OMNI') {
         return upper;
@@ -236,7 +248,7 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['DECAF_KEYWORDS'],
     validation: /^(true|false)$/i,
-    postProcess: (v) => {
+    postProcess: (v, _ocrText) => {
       const lower = v.toLowerCase();
       if (lower === 'true') {
         return true;
@@ -265,12 +277,17 @@ RESPONSE FORMAT:
 TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     validation: /^\d+(?:[.,]\d+)?$/,
-    postProcess: (v) => {
+    postProcess: (v, ocrText) => {
       const num = parseFloat(v.replace(',', '.'));
-      if (num >= 80 && num < 100) {
-        return v;
+      if (num < 80 || num >= 100) {
+        return null;
       }
-      return null;
+      // Check integer part exists in OCR to prevent hallucinations
+      const intPart = Math.floor(num).toString();
+      if (!ocrText.includes(intPart)) {
+        return null;
+      }
+      return v;
     },
   },
 
@@ -302,7 +319,7 @@ RESPONSE FORMAT:
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     examplesKeys: ['ROASTDATE_KEYWORDS'],
-    postProcess: (v) => {
+    postProcess: (v, _ocrText) => {
       // Try to parse with moment's flexible parsing
       const parsed = moment(v);
       if (!parsed.isValid()) {
@@ -365,6 +382,10 @@ RESPONSE FORMAT:
 
 TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
+    postProcess: (v, _ocrText) => {
+      // Remove "Region" suffix/prefix (case-insensitive)
+      return v.replace(/\s*\bregion\b\s*/gi, ' ').trim();
+    },
   },
 
   variety: {
@@ -428,7 +449,7 @@ RESPONSE FORMAT:
 TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     // No validation - postProcess handles cleanup of weird formatting
-    postProcess: (v) => {
+    postProcess: (v, _ocrText) => {
       let cleaned = v
         // Remove linebreaks
         .replace(/[\r\n]+/g, ' ')
@@ -538,4 +559,3 @@ export function buildFieldPrompt(
 
   return prompt;
 }
-
