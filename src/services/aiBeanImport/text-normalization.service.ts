@@ -22,7 +22,7 @@ export class TextNormalizationService {
   /**
    * Normalize a single line's casing.
    * Only converts if the line is predominantly uppercase.
-   * Preserves OCR layout tags like [LARGE | TOP | CENTER].
+   * Preserves OCR layout tags and markdown size prefixes.
    */
   private normalizeLineCasing(line: string): string {
     const trimmed = line.trim();
@@ -30,39 +30,51 @@ export class TextNormalizationService {
       return line;
     }
 
-    // Preserve OCR layout metadata tags (format: [WORD | WORD | WORD])
+    // Preserve OCR layout metadata tags
     if (this.isLayoutTag(trimmed)) {
       return line;
     }
 
+    // Handle markdown size prefix: **LARGE:** text → **LARGE:** Normalized Text
+    const markdownMatch = trimmed.match(
+      /^(\*\*(?:LARGE|MEDIUM|SMALL):\*\*)\s*(.+)$/i,
+    );
+    if (markdownMatch) {
+      const prefix = markdownMatch[1].toUpperCase();
+      const content = markdownMatch[2];
+      return `${prefix} ${this.normalizeLineCasingContent(content)}`;
+    }
+
+    return this.normalizeLineCasingContent(trimmed);
+  }
+
+  /**
+   * Normalize the casing of text content (without layout prefixes).
+   */
+  private normalizeLineCasingContent(text: string): string {
     // Count uppercase vs lowercase letters
-    const letters = trimmed.replace(/[^a-zA-Z]/g, '');
+    const letters = text.replace(/[^a-zA-Z]/g, '');
     if (!letters) {
-      return line;
+      return text;
     }
 
     const upperCount = (letters.match(/[A-Z]/g) || []).length;
 
     // Only convert if more than 70% uppercase (likely ALL CAPS)
     if (upperCount > 0 && upperCount / letters.length > 0.7) {
-      return this.toTitleCase(trimmed);
+      return this.toTitleCase(text);
     }
 
-    return line;
+    return text;
   }
 
   /**
    * Check if a line is an OCR layout metadata element that should be preserved.
    * Includes:
-   * - Layout tags: [LARGE | TOP | CENTER]
    * - Section headers: === OCR WITH LAYOUT ===
    * - Label markers: --- Label 1 of 2 ---
    */
   private isLayoutTag(line: string): boolean {
-    // Layout tags: [SIZE | POSITION | ALIGNMENT]
-    if (/^\[[\w\s|]+\]$/.test(line)) {
-      return true;
-    }
     // Section headers: === TEXT ===
     if (/^===.*===$/.test(line)) {
       return true;

@@ -649,7 +649,8 @@
         "BLEND_KEYWORDS": "Karışım, Blend, Ev karışımı",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Tek köken, Micro Lot",
         "PRODUCER_KEYWORDS": "Üretici, Üreten, Yetiştiren, Çiftçi, Aile, Kooperatif, Dernek, Küçük üreticiler",
-        "ROASTDATE_KEYWORDS": "Kavurma tarihi, Kavurulma tarihi, Kavurma, Taze kavrulmuş"
+        "ROASTDATE_KEYWORDS": "Kavurma tarihi, Kavurulma tarihi, Kavurma, Taze kavrulmuş",
+        "ROASTER_KEYWORDS": "Kavurucu, Kahve, A.Ş., Ltd. Şti."
     },
     "CLEAR": "Temizle",
     "BEAN_LOOKS_LIKE_CONSUMED": "Çekirdek paketi bitmiş gibi görünüyor, şimdi arşivlemek ister misiniz?",

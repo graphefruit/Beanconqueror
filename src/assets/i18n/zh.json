@@ -649,7 +649,8 @@
         "BLEND_KEYWORDS": "拼配, 混合, 招牌拼配",
         "SINGLE_ORIGIN_KEYWORDS": "单品, 单一产地, 精品批次, Micro Lot",
         "PRODUCER_KEYWORDS": "生产者, 生产商, 种植者, 农民, 农户, 家族, 合作社, 协会, 小农户",
-        "ROASTDATE_KEYWORDS": "烘焙日期, 烘焙于, 烘焙, 新鲜烘焙"
+        "ROASTDATE_KEYWORDS": "烘焙日期, 烘焙于, 烘焙, 新鲜烘焙",
+        "ROASTER_KEYWORDS": "烘焙, 咖啡, 有限公司, 股份"
     },
     "CLEAR": "清除",
     "BEAN_LOOKS_LIKE_CONSUMED": "这包咖啡豆看起来已经完全消耗了，要将它归档吗？",

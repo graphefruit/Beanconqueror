@@ -119,11 +119,10 @@ describe('TextNormalizationService', () => {
   });
 
   describe('layout tag preservation', () => {
-    it('should preserve OCR layout tags', () => {
-      const input = '[LARGE | TOP | CENTER]\nCOFFEE NAME';
+    it('should preserve markdown size prefix and normalize content', () => {
+      const input = '**LARGE:** COFFEE NAME';
       const result = service.normalizeCase(input);
-      expect(result).toContain('[LARGE | TOP | CENTER]');
-      expect(result).toContain('Coffee Name');
+      expect(result).toBe('**LARGE:** Coffee Name');
     });
 
     it('should preserve section headers', () => {
@@ -138,15 +137,25 @@ describe('TextNormalizationService', () => {
       expect(result).toBe('--- Label 1 of 2 ---');
     });
 
-    it('should handle mixed layout and content', () => {
+    it('should handle mixed layout and content with markdown format', () => {
       const input =
-        '=== OCR WITH LAYOUT ===\n\n[LARGE | TOP | CENTER]\nROASTER NAME\n\n[MEDIUM | MIDDLE | CENTER]\nCOFFEE ORIGIN';
+        '=== OCR WITH LAYOUT ===\n\n**LARGE:** ROASTER NAME\n\n**MEDIUM:** COFFEE ORIGIN';
       const result = service.normalizeCase(input);
       expect(result).toContain('=== OCR WITH LAYOUT ===');
-      expect(result).toContain('[LARGE | TOP | CENTER]');
-      expect(result).toContain('Roaster Name');
-      expect(result).toContain('[MEDIUM | MIDDLE | CENTER]');
-      expect(result).toContain('Coffee Origin');
+      expect(result).toContain('**LARGE:** Roaster Name');
+      expect(result).toContain('**MEDIUM:** Coffee Origin');
+    });
+
+    it('should handle all size tags', () => {
+      expect(service.normalizeCase('**SMALL:** DETAILS')).toBe(
+        '**SMALL:** Details',
+      );
+      expect(service.normalizeCase('**MEDIUM:** VARIETY')).toBe(
+        '**MEDIUM:** Variety',
+      );
+      expect(service.normalizeCase('**LARGE:** TITLE')).toBe(
+        '**LARGE:** Title',
+      );
     });
   });
 });

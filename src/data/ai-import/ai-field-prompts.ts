@@ -110,40 +110,18 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
     },
   },
 
-  originCount: {
-    field: 'originCount',
-    promptTemplate: `How many different coffee origins are in this blend?
-
-Count the number of distinct countries mentioned.
-Examples:
-- "Ethiopia + Brazil" = 2
-- "60% Colombia, 40% Guatemala" = 2
-- "House Blend" (no countries) = 1 (assume single origin components)
-
-RESPONSE FORMAT:
-- Return ONLY a number (1, 2, 3, etc.) or NOT_FOUND
-- Do NOT include explanations or sentences
-
-TEXT (languages in order of likelihood: {{LANGUAGES}}):
-{{OCR_TEXT}}`,
-    validation: /^\d+$/,
-    postProcess: (v) => parseInt(v, 10) || 1,
-  },
-
   // Top-level fields
   name: {
     field: 'name',
     promptTemplate: `What is the coffee name?
 
-LAYOUT HINTS (text may include [SIZE | POSITION] tags):
-- Coffee names are typically LARGE text, often at the TOP or MIDDLE of the label
-- If there are two large texts at the top: the SECOND one is usually the coffee name
-- Look for [LARGE] or [MEDIUM] tags in the OCR output
+LAYOUT HINTS (text is annotated with **SIZE:** tags):
+- The coffee name is usually the **LARGE:** text
+- If multiple large texts: the one that is NOT a company name is the coffee name
 
 DISTINGUISHING COFFEE NAME FROM ROASTER:
 - Coffee name: Place name, farm name, or descriptive title
-- Roaster: Company/brand name that produces many different coffees
-- Coffee names often reference: countries, regions, farms, flavor profiles, or blend names
+- Roaster: Company/brand with suffixes: {{ROASTER_KEYWORDS}}
 
 Convert ALL CAPS to Title Case.
 
@@ -152,24 +130,21 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT WITH LAYOUT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
+    examplesKeys: ['ROASTER_KEYWORDS'],
   },
 
   roaster: {
     field: 'roaster',
     promptTemplate: `What company roasted this coffee?
 
-LAYOUT HINTS (text may include [SIZE | POSITION] tags):
-- Roaster/company names are typically LARGE text at the TOP of the label
-- Look for text tagged with [LARGE] AND [TOP] - this is usually the roaster brand
-- Roaster names are often the FIRST prominent text element
-- May also appear with keywords: "roasted by", "Rösterei", "torréfacteur", "Coffee Roasters"
+LAYOUT HINTS (text is annotated with **SIZE:** tags):
+- Roaster can be any size (**LARGE:**, **MEDIUM:**, or **SMALL:**)
+- Size alone does NOT indicate roaster vs coffee name
 
-DISTINGUISHING ROASTER FROM COFFEE NAME:
-- Roaster: Company/brand name
-- Coffee name: Place/origin name or descriptive title
-- If two large texts at top: first is usually roaster, second is coffee name
+IDENTIFYING THE ROASTER:
+- Look for company suffixes: {{ROASTER_KEYWORDS}}
 
 Convert ALL CAPS to Title Case.
 
@@ -178,8 +153,9 @@ RESPONSE FORMAT:
 - If not found, return exactly: NOT_FOUND
 - Do NOT include explanations or sentences
 
-TEXT WITH LAYOUT (languages: {{LANGUAGES}}):
+TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
+    examplesKeys: ['ROASTER_KEYWORDS'],
   },
 
   weight: {
@@ -489,11 +465,8 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
     field: 'farm',
     promptTemplate: `What is the farm, estate, or washing station name?
 
-RECOGNITION HINTS:
-- "Finca", "Hacienda" (Spanish) = farm/estate
-- "Fazenda" (Portuguese) = farm
-- "Washing Station", "Wet Mill" (common in Ethiopia, Kenya, Rwanda)
-- Cooperative names that process coffee
+KEYWORDS (may be part of the farm name):
+Finca, Hacienda, Fazenda, Washing Station, Wet Mill
 
 RESPONSE FORMAT:
 - Return ONLY the farm/station name, nothing else

@@ -649,7 +649,8 @@
         "BLEND_KEYWORDS": "Miscela, Blend, Miscela della casa",
         "SINGLE_ORIGIN_KEYWORDS": "Monorigine, Single Origin, Singola piantagione, Micro Lot",
         "PRODUCER_KEYWORDS": "Produttore, Prodotto da, Coltivato da, Agricoltore, Coltivatore, Famiglia, Cooperativa, Associazione, Piccoli produttori",
-        "ROASTDATE_KEYWORDS": "Data di tostatura, Tostato il, Tostatura, Appena tostato"
+        "ROASTDATE_KEYWORDS": "Data di tostatura, Tostato il, Tostatura, Appena tostato",
+        "ROASTER_KEYWORDS": "Torrefazione, Caffè, S.r.l., S.p.A."
     },
     "CLEAR": "Cancella",
     "BEAN_LOOKS_LIKE_CONSUMED": "Sembra che questo caffè sia finito, vuoi archiviarlo?",

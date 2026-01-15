@@ -1116,7 +1116,8 @@
         "BLEND_KEYWORDS": "خليط, مزيج, خليط المنزل",
         "SINGLE_ORIGIN_KEYWORDS": "أحادي المصدر, مزرعة واحدة, Single Origin, Micro Lot",
         "PRODUCER_KEYWORDS": "منتج, أنتج بواسطة, مزروع بواسطة, مزارع, عائلة, تعاونية, جمعية, صغار المنتجين",
-        "ROASTDATE_KEYWORDS": "تاريخ التحميص, محمص في, تحميص, محمص طازج"
+        "ROASTDATE_KEYWORDS": "تاريخ التحميص, محمص في, تحميص, محمص طازج",
+        "ROASTER_KEYWORDS": "محمصة, قهوة, ش.م.م., ذ.م.م."
     },
     "CLEAR": "",
     "BEAN_LOOKS_LIKE_CONSUMED": "",

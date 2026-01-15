@@ -696,7 +696,8 @@
         "BLEND_KEYWORDS": "Mischung, Blend, Hausmischung",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Einzelherkunft, Plantagenkaffee, Field Blend, Feldmischung, Micro Lot",
         "PRODUCER_KEYWORDS": "Produzent, Erzeuger, Bauer, Angebaut von, Familie, Genossenschaft, Kooperative, Kleinbauern",
-        "ROASTDATE_KEYWORDS": "Röstdatum, geröstet am, Röstung, frisch geröstet, Röstfrisch"
+        "ROASTDATE_KEYWORDS": "Röstdatum, geröstet am, Röstung, frisch geröstet, Röstfrisch",
+        "ROASTER_KEYWORDS": "Rösterei, Kaffee, GmbH, UG, e.K."
     },
     "CLEAR": "Zurücksetzen",
     "BEAN_LOOKS_LIKE_CONSUMED": "Bohnenpackung scheint aufgebraucht zu sein, möchtest du diese nun archivieren?",

@@ -38,24 +38,11 @@ export interface TextDetectionResult {
 export type TextSize = 'large' | 'medium' | 'small';
 
 /**
- * Vertical position classification for text blocks.
- */
-export type VerticalPosition = 'top' | 'middle' | 'bottom';
-
-/**
- * Horizontal position classification for text blocks.
- */
-export type HorizontalPosition = 'left' | 'center' | 'right';
-
-/**
- * Enriched text block with layout metadata.
+ * Enriched text block with size metadata.
  */
 export interface EnrichedTextBlock {
   text: string;
   relativeSize: TextSize;
-  verticalPosition: VerticalPosition;
-  horizontalPosition: HorizontalPosition;
-  boundingBox: BoundingBox;
 }
 
 /**
@@ -106,16 +93,10 @@ export class OcrMetadataService {
       };
     }
 
-    // Calculate image dimensions from block positions
-    const imageDimensions = this.calculateImageDimensions(ocrResult.blocks);
+    // Classify each block by size
+    const enrichedBlocks = this.classifyBlocks(ocrResult.blocks);
 
-    // Classify each block
-    const enrichedBlocks = this.classifyBlocks(
-      ocrResult.blocks,
-      imageDimensions,
-    );
-
-    // Format as annotated text
+    // Format as annotated text using markdown
     const enrichedText = this.formatEnrichedText(enrichedBlocks);
 
     return {
@@ -144,8 +125,13 @@ export class OcrMetadataService {
     // Process each photo and combine with markers
     const enrichedTexts = ocrResults.map((result, index) => {
       const enriched = this.enrichWithLayout(result);
+      // Strip header from individual results to avoid duplication
+      const textWithoutHeader = enriched.enrichedText.replace(
+        /^=== OCR WITH LAYOUT ===\n\n/,
+        '',
+      );
       const marker = `--- Label ${index + 1} of ${ocrResults.length} ---`;
-      return `${marker}\n${enriched.enrichedText}`;
+      return `${marker}\n${textWithoutHeader}`;
     });
 
     return '=== OCR WITH LAYOUT ===\n\n' + enrichedTexts.join('\n\n');
@@ -208,65 +194,14 @@ export class OcrMetadataService {
   }
 
   /**
-   * Calculate image dimensions from block positions.
-   * Uses the extent of all blocks as a proxy for image size.
-   * Handles both coordinate systems (Y origin at top or bottom).
+   * Classify all blocks by relative size.
    */
-  private calculateImageDimensions(blocks: Block[]): {
-    width: number;
-    height: number;
-    yOriginAtBottom: boolean;
-  } {
-    let maxRight = 0;
-    let maxY = 0;
-    let minY = Infinity;
-
-    for (const block of blocks) {
-      if (block.boundingBox.right > maxRight) {
-        maxRight = block.boundingBox.right;
-      }
-      // Track both top and bottom to handle either coordinate system
-      const yTop = block.boundingBox.top;
-      const yBottom = block.boundingBox.bottom;
-      maxY = Math.max(maxY, yTop, yBottom);
-      minY = Math.min(minY, yTop, yBottom);
-    }
-
-    // Detect if Y origin is at bottom (top > bottom means Y increases upward)
-    const firstBlock = blocks[0];
-    const yOriginAtBottom =
-      firstBlock && firstBlock.boundingBox.top > firstBlock.boundingBox.bottom;
-
-    return {
-      width: maxRight,
-      height: maxY - (minY === Infinity ? 0 : minY),
-      yOriginAtBottom,
-    };
-  }
-
-  /**
-   * Classify all blocks by size and position.
-   */
-  private classifyBlocks(
-    blocks: Block[],
-    imageDimensions: { width: number; height: number; yOriginAtBottom: boolean },
-  ): EnrichedTextBlock[] {
-    // Calculate size classifications
+  private classifyBlocks(blocks: Block[]): EnrichedTextBlock[] {
     const sizeMap = this.classifySizes(blocks);
 
     return blocks.map((block) => ({
       text: block.text,
       relativeSize: sizeMap.get(block) || 'medium',
-      verticalPosition: this.classifyVerticalPosition(
-        block,
-        imageDimensions.height,
-        imageDimensions.yOriginAtBottom,
-      ),
-      horizontalPosition: this.classifyHorizontalPosition(
-        block,
-        imageDimensions.width,
-      ),
-      boundingBox: block.boundingBox,
     }));
   }
 
@@ -311,69 +246,8 @@ export class OcrMetadataService {
   }
 
   /**
-   * Classify vertical position based on Y coordinate.
-   * Divides image into thirds: top, middle, bottom.
-   * Handles both coordinate systems (Y origin at top or bottom).
-   */
-  private classifyVerticalPosition(
-    block: Block,
-    imageHeight: number,
-    yOriginAtBottom: boolean,
-  ): VerticalPosition {
-    if (imageHeight === 0) {
-      return 'middle';
-    }
-
-    const centerY = (block.boundingBox.top + block.boundingBox.bottom) / 2;
-    const relativePosition = centerY / imageHeight;
-
-    if (yOriginAtBottom) {
-      // Y origin at bottom: higher Y = top of image
-      if (relativePosition > 0.66) {
-        return 'top';
-      }
-      if (relativePosition < 0.33) {
-        return 'bottom';
-      }
-    } else {
-      // Y origin at top (standard screen coords): lower Y = top of image
-      if (relativePosition < 0.33) {
-        return 'top';
-      }
-      if (relativePosition > 0.66) {
-        return 'bottom';
-      }
-    }
-    return 'middle';
-  }
-
-  /**
-   * Classify horizontal position based on X coordinate.
-   * Divides image into thirds: left, center, right.
-   */
-  private classifyHorizontalPosition(
-    block: Block,
-    imageWidth: number,
-  ): HorizontalPosition {
-    if (imageWidth === 0) {
-      return 'center';
-    }
-
-    const centerX = (block.boundingBox.left + block.boundingBox.right) / 2;
-    const relativePosition = centerX / imageWidth;
-
-    if (relativePosition < 0.33) {
-      return 'left';
-    }
-    if (relativePosition > 0.66) {
-      return 'right';
-    }
-    return 'center';
-  }
-
-  /**
-   * Format enriched blocks as annotated text.
-   * Each block is prefixed with [SIZE | VERTICAL | HORIZONTAL] tags.
+   * Format enriched blocks as annotated text using markdown.
+   * Each block is prefixed with **SIZE:** tag.
    */
   private formatEnrichedText(blocks: EnrichedTextBlock[]): string {
     if (blocks.length === 0) {
@@ -384,10 +258,7 @@ export class OcrMetadataService {
 
     const formattedBlocks = blocks.map((block) => {
       const sizeTag = block.relativeSize.toUpperCase();
-      const vertTag = block.verticalPosition.toUpperCase();
-      const horzTag = block.horizontalPosition.toUpperCase();
-
-      return `[${sizeTag} | ${vertTag} | ${horzTag}]\n${block.text}`;
+      return `**${sizeTag}:** ${block.text}`;
     });
 
     return header + formattedBlocks.join('\n\n');

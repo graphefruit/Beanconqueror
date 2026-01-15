@@ -696,7 +696,8 @@
         "BLEND_KEYWORDS": "Blend, House Blend, Espresso Blend",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Single Estate, Single Farm, Field Blend, Micro Lot",
         "PRODUCER_KEYWORDS": "Producer, Produced by, Grown by, Farmer, Grower, Family, Cooperative, Coop, Association, Smallholders",
-        "ROASTDATE_KEYWORDS": "Roast date, Roasted on, Roasting date, Freshly roasted, Roasted"
+        "ROASTDATE_KEYWORDS": "Roast date, Roasted on, Roasting date, Freshly roasted, Roasted",
+        "ROASTER_KEYWORDS": "Roasters, Roastery, Coffee, Ltd, LLC, Inc"
     },
     "CLEAR": "Clear",
     "BEAN_LOOKS_LIKE_CONSUMED": "It looks like these beans are finished, you want to archive them?",

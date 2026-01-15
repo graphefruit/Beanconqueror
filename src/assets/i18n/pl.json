@@ -649,7 +649,8 @@
         "BLEND_KEYWORDS": "Mieszanka, Blend, Mieszanka domowa",
         "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Jedno pochodzenie, Micro Lot",
         "PRODUCER_KEYWORDS": "Producent, Wyprodukowane przez, Uprawiane przez, Rolnik, Plantator, Rodzina, Spółdzielnia, Stowarzyszenie, Drobni producenci",
-        "ROASTDATE_KEYWORDS": "Data wypału, Wypalono, Palenie, Świeżo wypalony"
+        "ROASTDATE_KEYWORDS": "Data wypału, Wypalono, Palenie, Świeżo wypalony",
+        "ROASTER_KEYWORDS": "Palarnia, Kawa, Sp. z o.o., S.A."
     },
     "CLEAR": "Wyczyść",
     "BEAN_LOOKS_LIKE_CONSUMED": "Wygląda na to, że te ziarna są zużyte. Chcesz je zarchiwizować?",

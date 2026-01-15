@@ -649,7 +649,8 @@
         "BLEND_KEYWORDS": "Mélange, Blend, Mélange maison",
         "SINGLE_ORIGIN_KEYWORDS": "Origine unique, Single Origin, Mono-origine, Micro Lot",
         "PRODUCER_KEYWORDS": "Producteur, Produit par, Cultivé par, Fermier, Agriculteur, Famille, Coopérative, Association, Petits producteurs",
-        "ROASTDATE_KEYWORDS": "Date de torréfaction, Torréfié le, Fraîchement torréfié, Torréfaction"
+        "ROASTDATE_KEYWORDS": "Date de torréfaction, Torréfié le, Fraîchement torréfié, Torréfaction",
+        "ROASTER_KEYWORDS": "Torréfacteur, Café, SARL, SAS"
     },
     "CLEAR": "Effacer",
     "BEAN_LOOKS_LIKE_CONSUMED": "On dirait que ces grains de café sont finis, tu veux les archiver?",
