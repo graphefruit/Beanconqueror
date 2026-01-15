@@ -181,8 +181,9 @@ export class OcrMetadataService {
     }
 
     // Check for size variation
-    const heights = blocksWithBoundingBox.map(
-      (b) => b.boundingBox.bottom - b.boundingBox.top,
+    // Use absolute value since coordinate system may have Y origin at bottom (top > bottom)
+    const heights = blocksWithBoundingBox.map((b) =>
+      Math.abs(b.boundingBox.bottom - b.boundingBox.top),
     );
     const maxHeight = Math.max(...heights);
     const minHeight = Math.min(...heights);
@@ -209,24 +210,38 @@ export class OcrMetadataService {
   /**
    * Calculate image dimensions from block positions.
    * Uses the extent of all blocks as a proxy for image size.
+   * Handles both coordinate systems (Y origin at top or bottom).
    */
   private calculateImageDimensions(blocks: Block[]): {
     width: number;
     height: number;
+    yOriginAtBottom: boolean;
   } {
     let maxRight = 0;
-    let maxBottom = 0;
+    let maxY = 0;
+    let minY = Infinity;
 
     for (const block of blocks) {
       if (block.boundingBox.right > maxRight) {
         maxRight = block.boundingBox.right;
       }
-      if (block.boundingBox.bottom > maxBottom) {
-        maxBottom = block.boundingBox.bottom;
-      }
+      // Track both top and bottom to handle either coordinate system
+      const yTop = block.boundingBox.top;
+      const yBottom = block.boundingBox.bottom;
+      maxY = Math.max(maxY, yTop, yBottom);
+      minY = Math.min(minY, yTop, yBottom);
     }
 
-    return { width: maxRight, height: maxBottom };
+    // Detect if Y origin is at bottom (top > bottom means Y increases upward)
+    const firstBlock = blocks[0];
+    const yOriginAtBottom =
+      firstBlock && firstBlock.boundingBox.top > firstBlock.boundingBox.bottom;
+
+    return {
+      width: maxRight,
+      height: maxY - (minY === Infinity ? 0 : minY),
+      yOriginAtBottom,
+    };
   }
 
   /**
@@ -234,7 +249,7 @@ export class OcrMetadataService {
    */
   private classifyBlocks(
     blocks: Block[],
-    imageDimensions: { width: number; height: number },
+    imageDimensions: { width: number; height: number; yOriginAtBottom: boolean },
   ): EnrichedTextBlock[] {
     // Calculate size classifications
     const sizeMap = this.classifySizes(blocks);
@@ -245,6 +260,7 @@ export class OcrMetadataService {
       verticalPosition: this.classifyVerticalPosition(
         block,
         imageDimensions.height,
+        imageDimensions.yOriginAtBottom,
       ),
       horizontalPosition: this.classifyHorizontalPosition(
         block,
@@ -261,10 +277,10 @@ export class OcrMetadataService {
   private classifySizes(blocks: Block[]): Map<Block, TextSize> {
     const sizeMap = new Map<Block, TextSize>();
 
-    // Calculate height of each block
+    // Calculate height of each block (use abs since Y origin may be at bottom)
     const heights = blocks.map((b) => ({
       block: b,
-      height: b.boundingBox.bottom - b.boundingBox.top,
+      height: Math.abs(b.boundingBox.bottom - b.boundingBox.top),
     }));
 
     if (heights.length === 0) {
@@ -297,10 +313,12 @@ export class OcrMetadataService {
   /**
    * Classify vertical position based on Y coordinate.
    * Divides image into thirds: top, middle, bottom.
+   * Handles both coordinate systems (Y origin at top or bottom).
    */
   private classifyVerticalPosition(
     block: Block,
     imageHeight: number,
+    yOriginAtBottom: boolean,
   ): VerticalPosition {
     if (imageHeight === 0) {
       return 'middle';
@@ -309,11 +327,22 @@ export class OcrMetadataService {
     const centerY = (block.boundingBox.top + block.boundingBox.bottom) / 2;
     const relativePosition = centerY / imageHeight;
 
-    if (relativePosition < 0.33) {
-      return 'top';
-    }
-    if (relativePosition > 0.66) {
-      return 'bottom';
+    if (yOriginAtBottom) {
+      // Y origin at bottom: higher Y = top of image
+      if (relativePosition > 0.66) {
+        return 'top';
+      }
+      if (relativePosition < 0.33) {
+        return 'bottom';
+      }
+    } else {
+      // Y origin at top (standard screen coords): lower Y = top of image
+      if (relativePosition < 0.33) {
+        return 'top';
+      }
+      if (relativePosition > 0.66) {
+        return 'bottom';
+      }
     }
     return 'middle';
   }
