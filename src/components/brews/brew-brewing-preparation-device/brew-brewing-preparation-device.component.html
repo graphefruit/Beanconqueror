@@ -201,7 +201,7 @@
                     </ion-card-header>
                     <ion-card-content>
 
-                      <ion-item lines="none">
+                      <ion-item  style="padding:0px;margin:0px;" lines="none">
                         <ion-input (ionBlur)="baristaModeWeightChanged('P1')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP1" inputmode="decimal"
                                    prevent-characters
@@ -221,7 +221,7 @@
                     </ion-card-header>
                     <ion-card-content>
 
-                      <ion-item lines="none">
+                      <ion-item  style="padding:0px;margin:0px;" lines="none">
                         <ion-input (ionBlur)="baristaModeWeightChanged('P3')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP3" inputmode="decimal"
                                    prevent-characters
@@ -240,7 +240,7 @@
                     </ion-card-header>
                     <ion-card-content>
 
-                      <ion-item lines="none">
+                      <ion-item style="padding:0px;margin:0px;" lines="none">
                         <ion-input (ionBlur)="baristaModeWeightChanged('P2')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP2" inputmode="decimal"
                                    prevent-characters
@@ -260,7 +260,7 @@
                     </ion-card-header>
                     <ion-card-content>
 
-                      <ion-item lines="none">
+                      <ion-item style="padding:0px;margin:0px;" lines="none">
                         <ion-input (ionBlur)="baristaModeWeightChanged('M')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightM" inputmode="decimal"
                                    prevent-characters
@@ -269,7 +269,7 @@
                         </ion-input>
                       </ion-item>
                     </ion-card-content>
-                    <div id="sanremoMLM" class="sanremo-ml-unit">&#8734;&nbsp;ml</div>
+                    <div id="sanremoMLM" class="sanremo-ml-unit">&nbsp;</div>
                   </ion-card>
                 </ion-col>
               </ion-row>
