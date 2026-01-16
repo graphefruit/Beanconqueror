@@ -111,47 +111,42 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
   },
 
   // Top-level fields
-  name: {
-    field: 'name',
-    promptTemplate: `What is the coffee name?
+
+  // Combined name and roaster extraction
+  name_and_roaster: {
+    field: 'name_and_roaster',
+    promptTemplate: `Extract both the ROASTER (company) and COFFEE NAME from this label.
 
 LAYOUT HINTS (text is annotated with **SIZE:** tags):
-- The coffee name is usually the **LARGE:** text
-- If multiple large texts: the one that is NOT a company name is the coffee name
+- Coffee name is often **LARGE:** text, sometimes **MEDIUM**
+- Roaster can be any size (**LARGE:**, **MEDIUM:**, or **SMALL:**), but probably not small
+- Both may appear in ALL CAPS
 
-DISTINGUISHING COFFEE NAME FROM ROASTER:
-- Coffee name: Place name, farm name, or descriptive title
-- Roaster: Company/brand with suffixes: {{ROASTER_KEYWORDS}}
+LABEL ANATOMY - typical layout from top to bottom:
+1. ROASTER/BRAND - Usually at the very top OR at the bottom (near company info, address, website)
+2. COFFEE NAME - Prominently displayed, often just below the brand. This is the specific product name.
+3. Origin/details - Country, region, processing info
 
-Convert ALL CAPS to Title Case.
+DISTINGUISHING RULES:
+- ROASTER: The company that roasted/sells the coffee. Look for:
+  - Company suffixes: {{ROASTER_KEYWORDS}}
+  - Contact info nearby (website, address, social media)
+  - Text at very top or company info block at bottom
 
-RESPONSE FORMAT:
-- Return ONLY the name, nothing else
-- If not found, return exactly: NOT_FOUND
-- Do NOT include explanations or sentences
+- COFFEE NAME: The specific coffee product name. Often:
+  - A place name (farm, region, country)
+  - A descriptive name (blend name, farmer name)
+  - NOT followed by company suffixes
 
-TEXT (languages in order of likelihood: {{LANGUAGES}}):
-{{OCR_TEXT}}`,
-    examplesKeys: ['ROASTER_KEYWORDS'],
-  },
+CRITICAL: These must be DIFFERENT values. If you're unsure which is which:
+- The one at the very top/bottom with company indicators = ROASTER
+- The prominent one describing the specific coffee = COFFEE NAME
 
-  roaster: {
-    field: 'roaster',
-    promptTemplate: `What company roasted this coffee?
+RESPONSE FORMAT (JSON):
+{"roaster": "Company Name", "name": "Coffee Name"}
 
-LAYOUT HINTS (text is annotated with **SIZE:** tags):
-- Roaster can be any size (**LARGE:**, **MEDIUM:**, or **SMALL:**)
-- Size alone does NOT indicate roaster vs coffee name
-
-IDENTIFYING THE ROASTER:
-- Look for company suffixes: {{ROASTER_KEYWORDS}}
-
-Convert ALL CAPS to Title Case.
-
-RESPONSE FORMAT:
-- Return ONLY the roaster/company name, nothing else
-- If not found, return exactly: NOT_FOUND
-- Do NOT include explanations or sentences
+If either not found, use "NOT_FOUND" for that field.
+Do NOT include explanations.
 
 TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,

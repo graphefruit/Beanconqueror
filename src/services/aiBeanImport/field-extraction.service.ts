@@ -66,16 +66,16 @@ export class FieldExtractionService {
 
     // === TOP-LEVEL FIELDS ===
 
-    // Name - always extract (essential)
-    this.updateFieldProgress('TOP_LEVEL', 'name');
-    bean.name =
-      (await this.extractField('name', text, examples, languages)) || '';
-
-    // Roaster
+    // Name and Roaster - extract together for better disambiguation
+    this.updateProgress('NAME_AND_ROASTER');
+    const nameAndRoaster = await this.extractNameAndRoaster(
+      text,
+      examples,
+      languages,
+    );
+    bean.name = nameAndRoaster.name;
     if (params.roaster) {
-      this.updateFieldProgress('TOP_LEVEL', 'roaster');
-      bean.roaster =
-        (await this.extractField('roaster', text, examples, languages)) || '';
+      bean.roaster = nameAndRoaster.roaster;
     }
 
     // Weight - always extract (essential for ratios)
@@ -266,6 +266,95 @@ export class FieldExtractionService {
       this.uiLog.error(`Error extracting ${fieldName}: ${error}`);
       return null;
     }
+  }
+
+  /**
+   * Extract name and roaster together for better disambiguation.
+   */
+  private async extractNameAndRoaster(
+    ocrText: string,
+    examples: MergedExamples,
+    languages: string[],
+  ): Promise<{ name: string; roaster: string }> {
+    try {
+      // Build the combined prompt
+      const prompt = buildFieldPrompt(
+        'name_and_roaster',
+        ocrText,
+        examples,
+        languages,
+      );
+      console.log('=== PROMPT FOR name_and_roaster ===');
+      console.log(prompt);
+      console.log('=== END PROMPT FOR name_and_roaster ===');
+
+      // Send to LLM
+      const response = await this.sendLLMMessage(prompt);
+      // Don't use cleanResponse - it strips colons which breaks JSON
+      const trimmed = response?.trim() || '';
+
+      console.log(`name_and_roaster response: "${trimmed}"`);
+
+      // Parse JSON response
+      return this.parseNameAndRoasterResponse(trimmed);
+    } catch (error) {
+      this.uiLog.error(`Error in combined extraction: ${error}`);
+      return { name: '', roaster: '' };
+    }
+  }
+
+  /**
+   * Parse the combined name/roaster JSON response.
+   */
+  private parseNameAndRoasterResponse(response: string): {
+    name: string;
+    roaster: string;
+  } {
+    try {
+      // Try to extract JSON from potential markdown code blocks
+      let jsonStr = response;
+      const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[1].trim();
+      }
+
+      // Try to parse as JSON
+      const parsed = JSON.parse(jsonStr);
+
+      // Extract and sanitize values
+      let name = this.sanitizeNameRoasterField(parsed?.name);
+      let roaster = this.sanitizeNameRoasterField(parsed?.roaster);
+
+      // Apply title case normalization
+      if (name) {
+        name = this.textNorm.normalizeCase(name);
+      }
+      if (roaster) {
+        roaster = this.textNorm.normalizeCase(roaster);
+      }
+
+      return { name: name || '', roaster: roaster || '' };
+    } catch (e) {
+      this.uiLog.error('Failed to parse name/roaster JSON: ' + e);
+      return { name: '', roaster: '' };
+    }
+  }
+
+  /**
+   * Sanitize a name/roaster field value.
+   */
+  private sanitizeNameRoasterField(value: any): string {
+    if (value === null || value === undefined) return '';
+    if (typeof value !== 'string') return '';
+    const trimmed = value.trim();
+    if (
+      trimmed.toLowerCase() === 'null' ||
+      trimmed.toUpperCase() === 'NOT_FOUND' ||
+      trimmed.toLowerCase() === 'unknown'
+    ) {
+      return '';
+    }
+    return trimmed;
   }
 
   /**
