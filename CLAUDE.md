@@ -104,6 +104,7 @@ Device factories in `CoffeeBluetoothDevicesService` create instances based on de
 ### Helper Services
 
 Business logic lives in helper services using singleton pattern:
+
 - `UIBrewHelper` - Brew calculations, ratio, sorting
 - `UIBeanHelper` - Bean validation, calculations
 - `UIHelper` - General utilities (UUID generation, cloning, timestamps)
@@ -119,6 +120,19 @@ Business logic lives in helper services using singleton pattern:
 ## Testing
 
 Tests run with Karma/Jasmine in headless Chrome. Test files use `.spec.ts` suffix alongside source files.
+
+**Important:** Always run `npm test` after completing any implementation to ensure all tests pass before committing.
+
+## CI/CD Notes
+
+This fork's CI runs on Node 22 with npm 10. If you need to update `package-lock.json`, regenerate it using npm 10 to ensure CI compatibility:
+
+```bash
+rm -rf node_modules package-lock.json
+npx npm@10 install
+```
+
+This is necessary because different npm versions resolve dependencies differently and can produce incompatible lock files.
 
 ## Code Style
 
