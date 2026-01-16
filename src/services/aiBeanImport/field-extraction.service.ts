@@ -393,14 +393,15 @@ export class FieldExtractionService {
 
     // Send to LLM
     const response = await this.sendLLMMessage(prompt);
-    const cleaned = this.cleanResponse(response);
+    // Note: Don't use cleanResponse here - it strips colons which breaks JSON syntax
+    const trimmed = response?.trim() || '';
 
     console.log('=== BLEND ORIGINS RESPONSE ===');
-    console.log(cleaned);
+    console.log(trimmed);
     console.log('=== END BLEND ORIGINS RESPONSE ===');
 
-    // Parse JSON response
-    return this.parseBlendOriginsResponse(cleaned);
+    // Parse JSON response (handles markdown code blocks internally)
+    return this.parseBlendOriginsResponse(trimmed);
   }
 
   /**
