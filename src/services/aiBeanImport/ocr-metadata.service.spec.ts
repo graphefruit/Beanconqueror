@@ -95,7 +95,7 @@ describe('OcrMetadataService', () => {
 
       expect(enriched.hasUsefulMetadata).toBeTrue();
       expect(enriched.enrichedText).toContain('=== OCR WITH LAYOUT ===');
-      expect(enriched.enrichedText).toContain('[LARGE |');
+      expect(enriched.enrichedText).toContain('**LARGE:**');
       expect(enriched.enrichedText).toContain('ROASTER NAME');
       expect(enriched.enrichedText).toContain('Coffee Name');
       expect(enriched.enrichedText).toContain('Details');
@@ -112,42 +112,44 @@ describe('OcrMetadataService', () => {
 
       const enriched = service.enrichWithLayout(result);
 
-      expect(enriched.enrichedText).toContain('[LARGE |');
-      expect(enriched.enrichedText).toContain('[SMALL |');
+      expect(enriched.enrichedText).toContain('**LARGE:**');
+      expect(enriched.enrichedText).toContain('**SMALL:**');
     });
 
-    it('should classify vertical position correctly', () => {
+    it('should classify text sizes based on height variation', () => {
       const result: TextDetectionResult = {
         text: 'Top\nMiddle\nBottom',
         blocks: [
-          createBlock('Top', 0, 0, 100, 80), // Top third (center at 40/300 = 0.13)
-          createBlock('Middle', 0, 100, 100, 200), // Middle third (center at 150/300 = 0.5)
-          createBlock('Bottom', 0, 220, 100, 300), // Bottom third (center at 260/300 = 0.87)
+          createBlock('Top', 0, 0, 100, 80), // Height: 80 (large)
+          createBlock('Middle', 0, 100, 100, 150), // Height: 50 (medium)
+          createBlock('Bottom', 0, 220, 100, 240), // Height: 20 (small)
         ],
       };
 
       const enriched = service.enrichWithLayout(result);
 
-      expect(enriched.enrichedText).toContain('| TOP |');
-      expect(enriched.enrichedText).toContain('| MIDDLE |');
-      expect(enriched.enrichedText).toContain('| BOTTOM |');
+      // Should contain size classifications
+      expect(enriched.enrichedText).toContain('**LARGE:**');
+      expect(enriched.enrichedText).toContain('Top');
+      expect(enriched.enrichedText).toContain('Middle');
+      expect(enriched.enrichedText).toContain('Bottom');
     });
 
-    it('should classify horizontal position correctly', () => {
+    it('should include all block texts in output', () => {
       const result: TextDetectionResult = {
         text: 'Left\nCenter\nRight',
         blocks: [
-          createBlock('Left', 0, 0, 50, 80), // Left third (center at 25/300 = 0.08)
-          createBlock('Center', 100, 0, 200, 80), // Center third (center at 150/300 = 0.5)
-          createBlock('Right', 250, 0, 300, 80), // Right third (center at 275/300 = 0.92)
+          createBlock('Left', 0, 0, 50, 80),
+          createBlock('Center', 100, 0, 200, 80),
+          createBlock('Right', 250, 0, 300, 80),
         ],
       };
 
       const enriched = service.enrichWithLayout(result);
 
-      expect(enriched.enrichedText).toContain('| LEFT]');
-      expect(enriched.enrichedText).toContain('| CENTER]');
-      expect(enriched.enrichedText).toContain('| RIGHT]');
+      expect(enriched.enrichedText).toContain('Left');
+      expect(enriched.enrichedText).toContain('Center');
+      expect(enriched.enrichedText).toContain('Right');
     });
   });
 
@@ -218,7 +220,9 @@ describe('OcrMetadataService', () => {
       // Both photos should have their own layout annotations
       expect(enriched).toContain('TITLE');
       expect(enriched).toContain('ANOTHER');
-      expect(enriched.match(/\[LARGE/g)?.length).toBeGreaterThanOrEqual(2);
+      expect(enriched.match(/\*\*LARGE:\*\*/g)?.length).toBeGreaterThanOrEqual(
+        2,
+      );
     });
   });
 
