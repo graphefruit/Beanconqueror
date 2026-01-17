@@ -442,7 +442,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     this.ngZone.runOutsideAngular(() => {
       if (this.temperatureDetail?.nativeElement) {
         const temperatureEl = this.temperatureDetail.nativeElement;
-        temperatureEl.textContent = _val.temperature;
+        const temperatureFormatted = _val.temperature.toFixed(2);
+        temperatureEl.textContent = temperatureFormatted;
       }
     });
   }

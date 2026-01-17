@@ -84,6 +84,7 @@ import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { ThemeService } from '../../services/theme/theme.service';
+import { TemperatureSource } from 'src/classes/devices/temperatureBluetoothDevice';
 
 @Component({
   selector: 'settings',
@@ -298,6 +299,7 @@ export class SettingsPage {
       if (disconnected) {
         this.settings.temperature_id = '';
         this.settings.temperature_type = null;
+        this.settings.temperature_graph_source = TemperatureSource.WATER_PROBE;
       }
     } else if (_type === BluetoothTypes.TDS) {
       this.eventQueue.dispatch(

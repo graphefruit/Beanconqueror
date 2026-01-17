@@ -1111,7 +1111,8 @@
         },
         "LOG": "Activate log files for temperature device",
         "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
-        "THRESHOLD_TEMP": "Threshold temperature"
+        "THRESHOLD_TEMP": "Threshold temperature",
+        "SHOW_BEFORE_TIMER": "Show temperature before timer starts"
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
     "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Pressure device is only usable with the preparation style 'Espresso'",

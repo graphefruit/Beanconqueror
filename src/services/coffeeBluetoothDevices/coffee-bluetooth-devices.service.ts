@@ -1169,6 +1169,7 @@ export class CoffeeBluetoothDevicesService {
 
           try {
             const settings = this.uiStettingsStorage.getSettings();
+            settings.temperature_graph_source = this.getTemperatureDevice().getDefaultTempeatureSource();
             if (settings.bluetooth_devices_show_connection_messages === true) {
               this.uiToast.showInfoToast(
                 this.translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
