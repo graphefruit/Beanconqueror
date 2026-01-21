@@ -5,13 +5,14 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
@@ -20,14 +21,66 @@ import { Graph } from '../../../classes/graph/graph';
 import { UIGraphHelper } from '../../../services/uiGraphHelper';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
+import { FormsModule } from '@angular/forms';
+import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-reference-card/brew-graph-reference-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRadioGroup,
+  IonCard,
+  IonSearchbar,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
   templateUrl: './brew-choose-graph-reference.component.html',
   styleUrls: ['./brew-choose-graph-reference.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    BrewGraphReferenceCardComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonSearchbar,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BrewChooseGraphReferenceComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly platform = inject(Platform);
+
   public static COMPONENT_ID: string = 'brew-choose-graph-reference';
   public brew_segment: string = 'brews-open';
   public radioSelection: string;
@@ -52,15 +105,18 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   @Input() public brew: Brew;
 
   public settings: Settings = undefined;
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
-  @ViewChild('graphOpenScroll', {
-    read: AgVirtualSrollComponent,
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public graphOpenScroll: AgVirtualSrollComponent;
+  public archivedScroll: AgVirtualScrollComponent;
+  @ViewChild('graphOpenScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public graphOpenScroll: AgVirtualScrollComponent;
 
   @ViewChild('brewContent', { read: ElementRef })
   public brewContent: ElementRef;
@@ -70,17 +126,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
 
   public segmentScrollHeight: string = undefined;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiHelper: UIHelper,
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -103,8 +149,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     this.retriggerScroll();
   }
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
@@ -138,7 +184,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
 
       const footerEl = this.footerContent.nativeElement;
 
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else if (this.archivedScroll !== undefined) {

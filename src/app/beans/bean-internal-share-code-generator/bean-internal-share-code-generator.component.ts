@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 
 import QRCode from 'qrcode';
 import { environment } from '../../../environments/environment';
@@ -14,14 +14,56 @@ import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
 import { NfcService } from '../../../services/nfcService/nfc-service.service';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { download, clipboardOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+  IonLabel,
+  IonButton,
+  IonIcon,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-bean-internal-share-code-generator.',
   templateUrl: './bean-internal-share-code-generator.component.html',
   styleUrls: ['./bean-internal-share-code-generator.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BeanInternalShareCodeGeneratorComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private shareService = inject(ShareService);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly nfcService = inject(NfcService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'bean-internal-share-code-generator-popover';
   public settings: Settings;
   @Input() public bean: Bean;
@@ -31,16 +73,9 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
   public action: BEAN_CODE_ACTION = BEAN_CODE_ACTION.START_BREW;
 
   public qrData: string = '';
-  constructor(
-    private readonly modalController: ModalController,
-    private shareService: ShareService,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiLog: UILog,
-    private readonly nfcService: NfcService,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  constructor() {
+    addIcons({ download, clipboardOutline });
+  }
 
   ngOnInit() {}
   public ionViewDidEnter(): void {

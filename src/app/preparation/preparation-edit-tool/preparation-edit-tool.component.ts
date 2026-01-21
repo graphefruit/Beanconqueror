@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIToast } from '../../../services/uiToast';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -15,14 +15,45 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-preparation-edit-tool',
   templateUrl: './preparation-edit-tool.component.html',
   styleUrls: ['./preparation-edit-tool.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class PreparationEditToolComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID: string = 'preparation-edit-tool';
   public data: PreparationTool = new PreparationTool();
 
@@ -30,18 +61,6 @@ export class PreparationEditToolComponent {
   @Input() private preparation: IPreparation;
 
   private clonedPreparation: Preparation = new Preparation();
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

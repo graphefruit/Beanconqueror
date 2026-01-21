@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { Bean } from '../../classes/bean/bean';
 import { DateTime } from 'luxon';
@@ -35,12 +35,10 @@ import { UIMillStorage } from '../uiMillStorage';
   providedIn: 'root',
 })
 export class UnwrappedService {
-  constructor(
-    private uiBeanStorage: UIBeanStorage,
-    private uiBrewStorage: UIBrewStorage,
-    private uiPreparationStorage: UIPreparationStorage,
-    private uiMillStorage: UIMillStorage,
-  ) {}
+  private uiBeanStorage = inject(UIBeanStorage);
+  private uiBrewStorage = inject(UIBrewStorage);
+  private uiPreparationStorage = inject(UIPreparationStorage);
+  private uiMillStorage = inject(UIMillStorage);
 
   public getUnwrappedData(year: number): UnwrappedStats | null {
     const allBeans = this.uiBeanStorage.getAllEntries();

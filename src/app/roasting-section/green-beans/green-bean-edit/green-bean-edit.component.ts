@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
 import { UIImage } from '../../../../services/uiImage';
@@ -10,29 +10,63 @@ import { UIToast } from '../../../../services/uiToast';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { FormsModule } from '@angular/forms';
+import { GreenBeanGeneralInformationComponent } from '../../../../components/beans/green-bean-general-information/green-bean-general-information.component';
+import { BeanSortInformationComponent } from '../../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'green-bean-edit',
   templateUrl: './green-bean-edit.component.html',
   styleUrls: ['./green-bean-edit.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    GreenBeanGeneralInformationComponent,
+    BeanSortInformationComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class GreenBeanEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiImage = inject(UIImage);
+  uiHelper = inject(UIHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'green-bean-edit';
 
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
 
   public bean_segment = 'general';
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiImage: UIImage,
-    public uiHelper: UIHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

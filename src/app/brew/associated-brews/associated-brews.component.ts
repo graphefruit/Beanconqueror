@@ -4,9 +4,10 @@ import {
   HostListener,
   Input,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { Brew } from '../../../classes/brew/brew';
@@ -14,17 +15,38 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
+import { BrewInformationComponent } from '../../../components/brew-information/brew-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-bean-associated-brews',
   templateUrl: './associated-brews.component.html',
   styleUrls: ['./associated-brews.component.scss'],
-  standalone: false,
+  imports: [
+    AgVirtualScrollComponent,
+    BrewInformationComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+  ],
 })
 export class AssociatedBrewsComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiWaterHelper = inject(UIWaterHelper);
+
   public static readonly COMPONENT_ID = 'associated-brews';
   public data: Bean = new Bean();
 
@@ -34,25 +56,16 @@ export class AssociatedBrewsComponent {
   public associatedBrews: Array<Brew> = [];
 
   @ViewChild('openScrollAssociatedBrews', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public openScrollAssociatedBrews: AgVirtualSrollComponent;
+  public openScrollAssociatedBrews: AgVirtualScrollComponent;
 
   @ViewChild('associatedBrewsComponent', { read: ElementRef })
   public associatedBrewsComponent: ElementRef;
   public segmentScrollHeight: string = undefined;
 
   public isCollapsed: boolean = false;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiWaterHelper: UIWaterHelper,
-  ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
@@ -64,15 +77,15 @@ export class AssociatedBrewsComponent {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.associatedBrewsComponent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent =
+      const scrollComponent: AgVirtualScrollComponent =
         this.openScrollAssociatedBrews;
 
       if (scrollComponent) {

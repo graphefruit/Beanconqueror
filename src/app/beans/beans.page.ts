@@ -5,16 +5,17 @@ import {
   HostListener,
   OnDestroy,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Bean } from '../../classes/bean/bean';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UILog } from '../../services/uiLog';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
@@ -31,13 +32,58 @@ import { NfcService } from '../../services/nfcService/nfc-service.service';
 
 import { UIImage } from '../../services/uiImage';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
+import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonMenuButton,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
+
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgTemplateOutlet,
+    AgVirtualScrollComponent,
+    BeanInformationComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
+  ],
 })
 export class BeansPage implements OnDestroy {
+  private readonly uiLog = inject(UILog);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly qrScannerService = inject(QrScannerService);
+  private readonly intenthandler = inject(IntentHandlerService);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly platform = inject(Platform);
+  private readonly modalController = inject(ModalController);
+  private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
+  private readonly nfcService = inject(NfcService);
+  private readonly uiImage = inject(UIImage);
+
   public beans: Array<Bean> = [];
 
   public settings: Settings;
@@ -54,15 +100,15 @@ export class BeansPage implements OnDestroy {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
   @ViewChild('archivedScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public archivedScroll: AgVirtualSrollComponent;
-  @ViewChild('frozenScroll', { read: AgVirtualSrollComponent, static: false })
-  public frozenScroll: AgVirtualSrollComponent;
+  public archivedScroll: AgVirtualScrollComponent;
+  @ViewChild('frozenScroll', { read: AgVirtualScrollComponent, static: false })
+  public frozenScroll: AgVirtualScrollComponent;
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
@@ -98,22 +144,6 @@ export class BeansPage implements OnDestroy {
   public uiShallBarBeDisplayed: boolean = false;
   public uiIsTextSearchActive: boolean = false;
   public uiSearchText: string = '';
-
-  constructor(
-    private readonly uiLog: UILog,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly qrScannerService: QrScannerService,
-    private readonly intenthandler: IntentHandlerService,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly platform: Platform,
-    private readonly modalController: ModalController,
-    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
-    private readonly nfcService: NfcService,
-    private readonly uiImage: UIImage,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -206,8 +236,8 @@ export class BeansPage implements OnDestroy {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
@@ -379,7 +409,7 @@ export class BeansPage implements OnDestroy {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else if (this.archivedScroll !== undefined) {
@@ -536,3 +566,5 @@ export class BeansPage implements OnDestroy {
     }
   }
 }
+
+export default BeansPage;

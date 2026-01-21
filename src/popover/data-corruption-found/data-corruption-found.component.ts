@@ -1,13 +1,41 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { alertCircleOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonTitle,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonIcon,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-data-corruption-found',
   templateUrl: './data-corruption-found.component.html',
   styleUrls: ['./data-corruption-found.component.scss'],
-  standalone: false,
+  imports: [
+    IonHeader,
+    IonTitle,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonIcon,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class DataCorruptionFoundComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly platform = inject(Platform);
+
   public static POPOVER_ID: string = 'data-corruption-found-popover';
 
   @Input() public actualUIStorageDataObj: any = undefined;
@@ -16,10 +44,9 @@ export class DataCorruptionFoundComponent implements OnInit {
 
   private disableHardwareBack;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly platform: Platform,
-  ) {}
+  constructor() {
+    addIcons({ alertCircleOutline });
+  }
 
   public ngOnInit() {
     try {

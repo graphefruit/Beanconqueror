@@ -1,12 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>
-      {{"NAV_STATISTICS" | translate}}
-    </ion-title>
-  </ion-toolbar>
+  <app-header [title]="'NAV_STATISTICS' | translate">
+    <ion-menu-button header-slot="start" />
+  </app-header>
 </ion-header>
 <ion-content>
   <ion-segment scrollable="true" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">

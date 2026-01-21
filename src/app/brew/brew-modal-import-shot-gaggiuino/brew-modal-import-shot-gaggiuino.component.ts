@@ -5,22 +5,63 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { ModalController } from '@ionic/angular';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { GaggiuinoDevice } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
 import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
 import { UIAlert } from '../../../services/uiAlert';
+import { FormsModule } from '@angular/forms';
+import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonRadio,
+  IonGrid,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-brew-modal-import-shot-gaggiuino',
   templateUrl: './brew-modal-import-shot-gaggiuino.component.html',
   styleUrls: ['./brew-modal-import-shot-gaggiuino.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonRadio,
+    IonGrid,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BrewModalImportShotGaggiuinoComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID: string = 'brew-modal-import-shot-gaggiuino';
 
   @Input() public gaggiuinoDevice: GaggiuinoDevice;
@@ -34,19 +75,13 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   public historyShotContent: ElementRef;
 
   @ViewChild('gaggiuinoShotDataScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public gaggiuinoShotDataScroll: AgVirtualSrollComponent;
+  public gaggiuinoShotDataScroll: AgVirtualScrollComponent;
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
-
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-  ) {}
 
   public ngOnInit() {
     this.readHistory();
@@ -91,15 +126,15 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.historyShotContent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent =
+      const scrollComponent: AgVirtualScrollComponent =
         this.gaggiuinoShotDataScroll;
 
       if (scrollComponent) {

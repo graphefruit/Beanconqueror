@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
@@ -7,27 +7,62 @@ import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-m
 import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { FormsModule } from '@angular/forms';
+import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonCheckbox,
+  IonLabel,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-roasting-machine-edit',
   templateUrl: './roasting-machine-edit.component.html',
   styleUrls: ['./roasting-machine-edit.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PhotoAddComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonCheckbox,
+    IonLabel,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class RoastingMachineEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'roasting-machine-edit';
 
   public data: RoastingMachine = new RoastingMachine();
 
   @Input() private roastingMachine: IRoastingMachine;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

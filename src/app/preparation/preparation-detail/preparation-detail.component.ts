@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -10,26 +10,56 @@ import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Brew } from '../../../classes/brew/brew';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonLabel,
+  IonChip,
+  IonBadge,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-preparation-detail',
   templateUrl: './preparation-detail.component.html',
   styleUrls: ['./preparation-detail.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonLabel,
+    IonChip,
+    IonBadge,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class PreparationDetailComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'preparation-detail';
   @Input('preparation') public preparation: IPreparation;
   public data: Preparation = new Preparation();
 
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   private brews: Array<Brew> = [];
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { UIStatistic } from '../../services/uiStatistic';
 import { Brew } from '../../classes/brew/brew';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
@@ -15,15 +15,62 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
 import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
+import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { giftOutline, thermometerOutline, snowOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonMenuButton,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
 
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
-  standalone: false,
+  imports: [
+    RouterLink,
+    BrewInformationComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+  ],
 })
 export class DashboardPage implements OnInit {
+  uiStatistic = inject(UIStatistic);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly unwrappedService = inject(UnwrappedService);
+  private readonly modalController = inject(ModalController);
+
   public brews: Array<Brew> = [];
   public beans: Array<Bean> = [];
   public showUnwrappedButton: boolean = false;
@@ -35,20 +82,9 @@ export class DashboardPage implements OnInit {
   public getTimePassedSinceLastBrewMessage: string = undefined;
   public settings: Settings;
 
-  constructor(
-    public uiStatistic: UIStatistic,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly router: Router,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly unwrappedService: UnwrappedService,
-    private readonly modalController: ModalController,
-  ) {}
+  constructor() {
+    addIcons({ giftOutline, thermometerOutline, snowOutline });
+  }
 
   public async openUnwrapped(year: number) {
     const stats = this.unwrappedService.getUnwrappedData(year);
@@ -221,3 +257,5 @@ export class DashboardPage implements OnInit {
     return usedWeightCount;
   }
 }
+
+export default DashboardPage;

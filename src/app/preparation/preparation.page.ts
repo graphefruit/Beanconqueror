@@ -5,11 +5,12 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { UIAlert } from '../../services/uiAlert';
 import { Preparation } from '../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -17,15 +18,51 @@ import { Settings } from '../../classes/settings/settings';
 import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import { FormsModule } from '@angular/forms';
+import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonMenuButton,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
 
 @Component({
   selector: 'preparation',
   templateUrl: './preparation.page.html',
   styleUrls: ['./preparation.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    PreparationInformationCardComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+  ],
 })
 export class PreparationPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+
   public settings: Settings;
   public segment: string = 'open';
   public preparations: Array<Preparation> = [];
@@ -33,24 +70,16 @@ export class PreparationPage implements OnInit {
   public openPreparationsView: Array<Preparation> = [];
   public archivePreparationsView: Array<Preparation> = [];
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   @ViewChild('preparationContent', { read: ElementRef })
   public preparationContent: ElementRef;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -71,14 +100,14 @@ export class PreparationPage implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.preparationContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {
@@ -122,3 +151,5 @@ export class PreparationPage implements OnInit {
 
   public ngOnInit() {}
 }
+
+export default PreparationPage;

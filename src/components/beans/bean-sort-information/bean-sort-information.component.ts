@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
@@ -10,26 +17,55 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { BeanInformation } from '../../../generated/src/classes/bean/bean';
 import { distinct } from 'rxjs/operators';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { copyOutline, closeOutline } from 'ionicons/icons';
+import {
+  IonCard,
+  IonItem,
+  IonButton,
+  IonIcon,
+  IonInput,
+  IonList,
+  IonLabel,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'bean-sort-information',
   templateUrl: './bean-sort-information.component.html',
   styleUrls: ['./bean-sort-information.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    IonCard,
+    IonItem,
+    IonButton,
+    IonIcon,
+    IonInput,
+    IonList,
+    IonLabel,
+  ],
 })
 export class BeanSortInformationComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiHelper = inject(UIHelper);
+
   @Input() public data: Bean | GreenBean;
   @Output() public dataChange = new EventEmitter<Bean | GreenBean>();
   public settings: Settings = undefined;
 
   public typeaheadSearch = {};
 
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiHelper: UIHelper,
-  ) {}
+  constructor() {
+    addIcons({ copyOutline, closeOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

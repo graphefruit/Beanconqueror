@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Classes */
 import { Bean } from '../classes/bean/bean';
 /** Interfaces */
@@ -17,6 +17,8 @@ import { TranslateService } from '@ngx-translate/core';
   providedIn: 'root',
 })
 export class UIBeanStorage extends StorageClass {
+  private readonly translate = inject(TranslateService);
+
   /**
    * Singelton instance
    */
@@ -32,13 +34,9 @@ export class UIBeanStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    private readonly translate: TranslateService,
-  ) {
-    super(uiStorage, uiHelper, uiLog, 'BEANS');
+  constructor() {
+    super('BEANS');
+
     if (UIBeanStorage.instance === undefined) {
       UIBeanStorage.instance = this;
     }

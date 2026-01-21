@@ -1,19 +1,18 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Ionic native */
 /** Classes */
-import {Settings} from '../classes/settings/settings';
+import { Settings } from '../classes/settings/settings';
 /** Interfaces */
-import {ISettings} from '../interfaces/settings/iSettings';
+import { ISettings } from '../interfaces/settings/iSettings';
 /** Services */
-import {StorageClass} from '../classes/storageClass';
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-
+import { StorageClass } from '../classes/storageClass';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIStorage } from './uiStorage';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UISettingsStorage extends StorageClass {
   /**
@@ -31,46 +30,44 @@ export class UISettingsStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog) {
-    super(uiStorage, uiHelper, uiLog, 'SETTINGS');
+  constructor() {
+    super('SETTINGS');
+
     if (UISettingsStorage.instance === undefined) {
       UISettingsStorage.instance = this;
     }
-    super.storageReady()
-      .then(async () => {
+    super.storageReady().then(
+      async () => {
+        const entries: Array<any> = this.getAllEntries();
+        if (entries.length > 0) {
+          // We already had some settings here.
+          if (this.settings === undefined) {
+            this.settings = new Settings();
+          }
+          this.settings.initializeByObject(entries[0]);
+          this.isSettingsInitialized = 1;
+        } else {
+          // Take the new settings obj.
 
-      const entries: Array<any> = this.getAllEntries();
-      if (entries.length > 0) {
-        // We already had some settings here.
-        if (this.settings === undefined) {
+          const data: any = await super.add(this.settings);
           this.settings = new Settings();
+          this.settings.initializeByObject(data);
+          this.isSettingsInitialized = 1;
         }
-        this.settings.initializeByObject(entries[0]);
-        this.isSettingsInitialized = 1;
-      } else {
-        // Take the new settings obj.
-
-        const data: any = await super.add(this.settings);
-        this.settings = new Settings();
-        this.settings.initializeByObject(data);
-        this.isSettingsInitialized = 1;
-      }
-    }, () => {
-      // Outsch, cant do much.
+      },
+      () => {
+        // Outsch, cant do much.
         this.isSettingsInitialized = 0;
-    });
+      },
+    );
   }
 
   public async initializeStorage() {
     await super.__initializeStorage();
-
   }
 
   public async storageReady(): Promise<any> {
     const promise = new Promise((resolve, reject) => {
-
       if (this.isSettingsInitialized === -1) {
         const intV: any = setInterval(async () => {
           if (this.isSettingsInitialized === 1) {
@@ -92,7 +89,6 @@ export class UISettingsStorage extends StorageClass {
           reject();
         }
       }
-
     });
 
     return promise;
@@ -101,29 +97,31 @@ export class UISettingsStorage extends StorageClass {
   public async reinitializeStorage() {
     await super.reinitializeStorage();
 
-    await super.storageReady().then(async () => {
-      const entries: Array<any> = this.getAllEntries();
-      if (entries.length > 0) {
-        // We already had some settings here.
+    await super.storageReady().then(
+      async () => {
+        const entries: Array<any> = this.getAllEntries();
+        if (entries.length > 0) {
+          // We already had some settings here.
 
-        // Issue found - when we add new data types or over import, we need to clean up settings before and then initialize by object
-        this.settings = new Settings();
-        this.settings.initializeByObject(entries[0]);
-      } else {
-        const data: any = await super.add(this.settings);
-        this.settings = new Settings();
-        this.settings.initializeByObject(data);
-      }
-    }, () => {
-      // Outsch, cant do much.
-    });
+          // Issue found - when we add new data types or over import, we need to clean up settings before and then initialize by object
+          this.settings = new Settings();
+          this.settings.initializeByObject(entries[0]);
+        } else {
+          const data: any = await super.add(this.settings);
+          this.settings = new Settings();
+          this.settings.initializeByObject(data);
+        }
+      },
+      () => {
+        // Outsch, cant do much.
+      },
+    );
   }
   public getSettings(): Settings {
     return this.settings;
   }
 
   public async saveSettings(settings: ISettings | Settings) {
-      await super.update(settings);
+    await super.update(settings);
   }
-
 }

@@ -1,27 +1,52 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Mill } from '../../../classes/mill/mill';
 import { IMill } from '../../../interfaces/mill/iMill';
 import MILL_TRACKING from '../../../data/tracking/millTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-mill-detail',
   templateUrl: './mill-detail.component.html',
   styleUrls: ['./mill-detail.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class MillDetailComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'mill-detail';
   @Input('mill') public mill: IMill;
   public data: Mill = new Mill();
-
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter() {
     this.uiAnalytics.trackEvent(

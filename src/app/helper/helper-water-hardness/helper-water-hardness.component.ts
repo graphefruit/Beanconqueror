@@ -1,10 +1,45 @@
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonMenuButton,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonItem,
+  IonInput,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'helper-water-hardness',
   templateUrl: './helper-water-hardness.component.html',
   styleUrls: ['./helper-water-hardness.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+    IonItem,
+    IonInput,
+    HeaderComponent,
+  ],
 })
 export class HelperWaterHardnessComponent implements OnInit {
   public waterhardness: any = {

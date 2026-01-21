@@ -1,5 +1,5 @@
 /**  Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /**
  * Ionic native
  *
@@ -15,14 +15,12 @@ import { UIAlert } from './uiAlert';
   providedIn: 'root',
 })
 export class UIStorage {
-  private _storage: Storage | null = null;
+  private readonly storage = inject(Storage);
+  private eventQueue = inject(EventQueueService);
+  private readonly uiLog = inject(UILog);
+  private readonly uiAlert = inject(UIAlert);
 
-  constructor(
-    private readonly storage: Storage,
-    private eventQueue: EventQueueService,
-    private readonly uiLog: UILog,
-    private readonly uiAlert: UIAlert
-  ) {}
+  private _storage: Storage | null = null;
 
   public async init() {
     // If using, define drivers here: await this.storage.defineDriver(/*...*/);
@@ -41,7 +39,7 @@ export class UIStorage {
     } catch (ex) {
       this.uiLog.error(
         'UIStorage - ReinitializeStorage - Issue occured ' +
-          JSON.stringify(ex.message)
+          JSON.stringify(ex.message),
       );
     }
   }
@@ -52,7 +50,7 @@ export class UIStorage {
       while (true) {
         try {
           this.uiLog.log(
-            'UIStorage - Set Key - ' + _key + ' start counter:' + whileCounter
+            'UIStorage - Set Key - ' + _key + ' start counter:' + whileCounter,
           );
           await this.internalSet(_key, _val);
           this.uiLog.log('UIStorage - Set Key - ' + _key + ' successfully');
@@ -62,7 +60,10 @@ export class UIStorage {
         } catch (ex) {
           // We could not access the database... do it again.
           this.uiLog.error(
-            'UIStorage - Set Key - ' + _key + ' exception ' + JSON.stringify(ex)
+            'UIStorage - Set Key - ' +
+              _key +
+              ' exception ' +
+              JSON.stringify(ex),
           );
           await new Promise(async (_internalResolve) => {
             setTimeout(() => {
@@ -74,19 +75,19 @@ export class UIStorage {
             this.uiLog.error(
               'UIStorage - Set Key - ' +
                 _key +
-                ' we try to reconnect to the database and hopefully fix all issues'
+                ' we try to reconnect to the database and hopefully fix all issues',
             );
             await this.reinitializeStorage();
           } else if (whileCounter >= 20) {
             this.uiLog.error(
               'UIStorage - Set Key - ' +
                 _key +
-                ' we stop to try getting data now 20 attempts are enough - show error'
+                ' we stop to try getting data now 20 attempts are enough - show error',
             );
             await this.uiAlert.showIOSIndexedDBIssues(
               'IOS_DATABASE_ISSUE_DESCRIPTION',
               'IOS_DATABASE_ISSUE_TITLE',
-              true
+              true,
             );
             reject(ex);
             return;
@@ -104,13 +105,13 @@ export class UIStorage {
           await this._storage.set(_key, _val);
           // We just trigger storage change when the set was successfully.
           this.eventQueue.dispatch(
-            new AppEvent(AppEventType.STORAGE_CHANGED, undefined)
+            new AppEvent(AppEventType.STORAGE_CHANGED, undefined),
           );
           resolve(true);
         } catch (ex) {
           reject(ex);
         }
-      }
+      },
     );
     return promise;
   }
@@ -134,7 +135,7 @@ export class UIStorage {
       while (true) {
         try {
           this.uiLog.log(
-            'UIStorage - Get Key - ' + _key + ' start counter:' + whileCounter
+            'UIStorage - Get Key - ' + _key + ' start counter:' + whileCounter,
           );
           const data = await this.internalGet(_key);
           this.uiLog.log('UIStorage - Get Key - ' + _key + ' successfully');
@@ -144,7 +145,10 @@ export class UIStorage {
         } catch (ex) {
           // We could not access the database... do it again.
           this.uiLog.error(
-            'UIStorage - Get Key - ' + _key + ' exception ' + JSON.stringify(ex)
+            'UIStorage - Get Key - ' +
+              _key +
+              ' exception ' +
+              JSON.stringify(ex),
           );
           await new Promise(async (_internalResolve) => {
             setTimeout(() => {
@@ -157,18 +161,18 @@ export class UIStorage {
             this.uiLog.error(
               'UIStorage - Get Key - ' +
                 _key +
-                ' we try to reconnect to the database and hopefully fix all issues'
+                ' we try to reconnect to the database and hopefully fix all issues',
             );
           } else if (whileCounter >= 20) {
             this.uiLog.error(
               'UIStorage - Get Key - ' +
                 _key +
-                ' we stop to try getting data now 20 attempts are enough - show error'
+                ' we stop to try getting data now 20 attempts are enough - show error',
             );
             await this.uiAlert.showIOSIndexedDBIssues(
               'IOS_DATABASE_ISSUE_DESCRIPTION',
               'IOS_DATABASE_ISSUE_TITLE',
-              true
+              true,
             );
             resolve(null);
             return;
@@ -233,7 +237,7 @@ export class UIStorage {
           },
           () => {
             resolve(false);
-          }
+          },
         );
     });
 
@@ -300,7 +304,7 @@ export class UIStorage {
           },
           () => {
             resolve({ CORRUPTED: false, DATA: hasDataObj });
-          }
+          },
         );
     });
 
@@ -323,9 +327,9 @@ export class UIStorage {
               },
               () => {
                 reject({ BACKUP: true });
-              }
+              },
             );
-          }
+          },
         );
       });
     });
@@ -358,7 +362,7 @@ export class UIStorage {
             },
             () => {
               reject();
-            }
+            },
           );
         }
       }

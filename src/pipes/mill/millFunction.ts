@@ -5,10 +5,7 @@ import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/prepara
 import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
 import { Mill } from '../../classes/mill/mill';
 
-@Pipe({
-  name: 'millFunctionPipe',
-  standalone: false,
-})
+@Pipe({ name: 'millFunctionPipe' })
 export class MillFunction implements PipeTransform {
   public transform(
     value: Mill,

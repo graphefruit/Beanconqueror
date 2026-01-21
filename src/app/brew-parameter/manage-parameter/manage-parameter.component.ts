@@ -1,17 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { ManageCustomParameterComponent } from '../../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonBackButton,
+  IonContent,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'manage-parameter',
   templateUrl: './manage-parameter.component.html',
   styleUrls: ['./manage-parameter.component.scss'],
-  standalone: false,
+  imports: [
+    ManageCustomParameterComponent,
+    TranslatePipe,
+    IonHeader,
+    IonBackButton,
+    IonContent,
+    HeaderComponent,
+  ],
 })
 export class ManageParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+
   public settings: Settings;
 
-  constructor(public uiSettingsStorage: UISettingsStorage) {
+  constructor() {
     this.__initializeSettings();
   }
 

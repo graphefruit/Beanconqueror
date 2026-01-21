@@ -1,17 +1,15 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Ionic */
-import { ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIToast {
-  constructor(
-    private readonly translate: TranslateService,
-    private readonly toastController: ToastController,
-  ) {}
+  private readonly translate = inject(TranslateService);
+  private readonly toastController = inject(ToastController);
 
   public async showAutomaticSaveTimer(_seconds: number) {
     let message = this.translate.instant('SAVING_BREW_COUNTDOWN', {

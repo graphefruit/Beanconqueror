@@ -1,8 +1,8 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { UIAnalytics } from './uiAnalytics';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { WaterAddComponent } from '../app/water-section/water/water-add/water-add.component';
 import { WaterEditComponent } from '../app/water-section/water/water-edit/water-edit.component';
 import { Water } from '../classes/water/water';
@@ -18,12 +18,12 @@ import { UIBrewStorage } from './uiBrewStorage';
   providedIn: 'root',
 })
 export class UIWaterHelper {
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+
   private allStoredBrews: Array<Brew> = [];
-  constructor(
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-  ) {
+  constructor() {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];

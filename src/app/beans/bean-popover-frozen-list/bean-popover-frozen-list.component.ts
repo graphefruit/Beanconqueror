@@ -5,48 +5,61 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { ModalController } from '@ionic/angular';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { BeanInformationComponent } from '../../../components/bean-information/bean-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-bean-popover-frozen-list',
   templateUrl: './bean-popover-frozen-list.component.html',
   styleUrls: ['./bean-popover-frozen-list.component.scss'],
-  standalone: false,
+  imports: [
+    AgVirtualScrollComponent,
+    BeanInformationComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+  ],
 })
 export class BeanPopoverFrozenListComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+
   public static readonly COMPONENT_ID = 'bean-popover-frozen-list';
 
   @Input() public frozenBeansList: Array<Bean> = undefined;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-  ) {}
 
   public async ionViewWillEnter() {
     this.loadBrews();
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       scrollComponent = this.openScroll;
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';

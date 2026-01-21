@@ -1,7 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { PreparationPopoverActionsComponent } from '../../app/preparation/preparation-popover-actions/preparation-popover-actions.component';
@@ -21,14 +28,57 @@ import { UIHelper } from '../../services/uiHelper';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { PreparationDevice } from '../../classes/preparationDevice/preparationDevice';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
+import { addIcons } from 'ionicons';
+import { wifiOutline } from 'ionicons/icons';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonIcon,
+  IonButton,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-information-card',
   templateUrl: './preparation-information-card.component.html',
   styleUrls: ['./preparation-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    AsyncImageComponent,
+    TranslatePipe,
+    PreparationFunction,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonButton,
+    IonLabel,
+    IonText,
+  ],
 })
 export class PreparationInformationCardComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiImage = inject(UIImage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiHelper = inject(UIHelper);
+
   @Input() public preparation: Preparation;
 
   @Output() public preparationAction: EventEmitter<any> = new EventEmitter();
@@ -38,19 +88,9 @@ export class PreparationInformationCardComponent implements OnInit {
   public drunkenQuantity: number = 0;
   public beansCount: number = 0;
 
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiToast: UIToast,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiImage: UIImage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper,
-  ) {}
+  constructor() {
+    addIcons({ wifiOutline });
+  }
 
   public ngOnInit() {
     this.brewsCount = this.getBrewsCount();

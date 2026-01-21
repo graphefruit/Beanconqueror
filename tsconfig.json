@@ -14,12 +14,16 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+
+    // This is currently required because of a typing issue in Ionic 8.
+    // See https://github.com/ionic-team/ionic-framework/issues/30650#issuecomment-3254931600
+    // Remove this again once Ionic 9 is released, which should fix the root cause.
+    "skipLibCheck": true
+  },
+  "angularCompilerOptions": {
+    "strictStandalone": true
   }
 }

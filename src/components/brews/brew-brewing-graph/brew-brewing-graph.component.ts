@@ -9,6 +9,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
@@ -18,7 +19,9 @@ import {
   ScaleType,
   sleep,
 } from '../../../classes/devices';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -42,10 +45,9 @@ import moment from 'moment/moment';
 import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
-import BeanconquerorFlowTestDataDummySecondDummy from '../../../assets/BeanconquerorFlowTestDataSecond.json';
 import { Subscription } from 'rxjs';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIToast } from '../../../services/uiToast';
 import { Settings } from '../../../classes/settings/settings';
@@ -69,6 +71,9 @@ import { GraphHelperService } from '../../../services/graphHelper/graph-helper.s
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
 import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
+import { FormsModule } from '@angular/forms';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
 
 declare var Plotly;
 
@@ -76,9 +81,29 @@ declare var Plotly;
   selector: 'brew-brewing-graph',
   templateUrl: './brew-brewing-graph.component.html',
   styleUrls: ['./brew-brewing-graph.component.scss'],
-  standalone: false,
+  imports: [FormsModule, TranslatePipe, BrewFieldOrder, BrewFunction],
 })
 export class BrewBrewingGraphComponent implements OnInit {
+  private readonly platform = inject(Platform);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly ngZone = inject(NgZone);
+  private readonly modalController = inject(ModalController);
+  private readonly uiLog = inject(UILog);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly textToSpeech = inject(TextToSpeechService);
+  private readonly graphHelper = inject(GraphHelperService);
+
   @ViewChild('smartScaleWeight', { read: ElementRef })
   public smartScaleWeightEl: ElementRef;
   @ViewChild('smartScaleWeightPerSecond', { read: ElementRef })
@@ -207,27 +232,9 @@ export class BrewBrewingGraphComponent implements OnInit {
   public graph_threshold_frequency_update_active: boolean = false;
   public graph_frequency_update_interval: number = 150;
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly translate: TranslateService,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-    private readonly uiHelper: UIHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly ngZone: NgZone,
-    private readonly modalController: ModalController,
-    private readonly uiLog: UILog,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly textToSpeech: TextToSpeechService,
-    private readonly graphHelper: GraphHelperService,
-  ) {}
+  constructor() {
+    addIcons({ waterOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -371,49 +378,55 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.uiSmartScaleSupportsTaring = this.smartScaleSupportsTaring();
   }
 
-  private async readReferenceFlowProfile(_brew: Brew) {
-    if (this.platform.is('capacitor')) {
-      if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
-        let referencePath: string = '';
-        const uuid = _brew.reference_flow_profile.uuid;
-        let referenceObj: Brew | Graph = null;
-        if (
-          _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
-          _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-        ) {
-          referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+  private async readDummyFlowProfile(): Promise<any> {
+    return (
+      await import('../../../assets/BeanconquerorFlowTestDataSecond.json')
+    ).default;
+  }
 
-          if (
-            _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-          ) {
-            referencePath = referenceObj.getGraphPath(
-              BREW_GRAPH_TYPE.IMPORTED_GRAPH,
-            );
-          } else {
-            referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
-          }
+  private async readReferenceFlowProfile(_brew: Brew) {
+    if (!this.platform.is('capacitor')) {
+      this.reference_profile_raw = await this.readDummyFlowProfile();
+      return;
+    }
+
+    if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
+      let referencePath: string = '';
+      const uuid = _brew.reference_flow_profile.uuid;
+      let referenceObj: Brew | Graph = null;
+      if (
+        _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
+        _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+
+        if (
+          _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
+          referencePath = referenceObj.getGraphPath(
+            BREW_GRAPH_TYPE.IMPORTED_GRAPH,
+          );
         } else {
-          referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
-          referencePath = referenceObj.getGraphPath();
+          referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
         }
-        if (referenceObj) {
-          await this.uiAlert.showLoadingSpinner();
-          try {
-            const jsonParsed =
-              await this.uiFileHelper.readInternalJSONFile(referencePath);
-            this.reference_profile_raw = jsonParsed;
-          } catch (ex) {
-            // Maybe the reference flow has been deleted.
-          }
+      } else {
+        referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
+        referencePath = referenceObj.getGraphPath();
+      }
+      if (referenceObj) {
+        await this.uiAlert.showLoadingSpinner();
+        try {
+          const jsonParsed =
+            await this.uiFileHelper.readInternalJSONFile(referencePath);
+          this.reference_profile_raw = jsonParsed;
+        } catch (ex) {
+          // Maybe the reference flow has been deleted.
         }
       }
-      await this.uiAlert.hideLoadingSpinner();
-    } else {
-      this.reference_profile_raw =
-        BeanconquerorFlowTestDataDummySecondDummy as any;
     }
+    await this.uiAlert.hideLoadingSpinner();
   }
 
   public checkChanges() {
@@ -1644,13 +1657,13 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.stopFetchingDataFromSanremoYOU();
 
     /**const setSanremoData = () => {
-      this.ngZone.runOutsideAngular(() => {
-        const temp = prepDeviceCall.getTemperature();
-        const press = prepDeviceCall.getPressure();
-        this.__setPressureFlow({ actual: press, old: press });
-        this.__setTemperatureFlow({ actual: temp, old: temp });
-      });
-    };**/
+          this.ngZone.runOutsideAngular(() => {
+            const temp = prepDeviceCall.getTemperature();
+            const press = prepDeviceCall.getPressure();
+            this.__setPressureFlow({ actual: press, old: press });
+            this.__setTemperatureFlow({ actual: temp, old: temp });
+          });
+        };**/
 
     let hasShotStarted: boolean = false;
     prepDeviceCall.connectToSocket().then((_connected) => {
@@ -1785,28 +1798,28 @@ export class BrewBrewingGraphComponent implements OnInit {
      * When we would await it we would maybe build in very big lag potential
      */
     /**prepDeviceCall.fetchRuntimeData(() => {
-      // before we start the interval, we fetch the data once to overwrite, and set them.
-      setSanremoData();
-    });**/
+          // before we start the interval, we fetch the data once to overwrite, and set them.
+          setSanremoData();
+        });**/
 
     /**this.ngZone.runOutsideAngular(() => {
-      this.sanremoYOUFetchingInterval = setInterval(async () => {
-        try {
-          //const apiThirdCallDelayStart = moment(); // create a moment with the current time
-          //let apiDelayEnd;
+          this.sanremoYOUFetchingInterval = setInterval(async () => {
+            try {
+              //const apiThirdCallDelayStart = moment(); // create a moment with the current time
+              //let apiDelayEnd;
 
-          // We don't use the callback function to make sure we don't have to many performance issues
-          prepDeviceCall.fetchRuntimeData(() => {
-            //apiDelayEnd = moment();
+              // We don't use the callback function to make sure we don't have to many performance issues
+              prepDeviceCall.fetchRuntimeData(() => {
+                //apiDelayEnd = moment();
 
-            //before we start the interval, we fetch the data once to overwrite, and set them.
-            //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
-            //console.log(delta);
-            setSanremoData();
-          });
-        } catch (ex) {}
-      }, 250);
-    });**/
+                //before we start the interval, we fetch the data once to overwrite, and set them.
+                //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+                //console.log(delta);
+                setSanremoData();
+              });
+            } catch (ex) {}
+          }, 250);
+        });**/
   }
 
   public startFetchingDataFromMeticulous() {
@@ -1868,9 +1881,9 @@ export class BrewBrewingGraphComponent implements OnInit {
               });
 
               /** this.__setTemperatureFlow({
-                actual: shotData.temperature,
-                old: shotData.temperature,
-              });**/
+                              actual: shotData.temperature,
+                              old: shotData.temperature,
+                            });**/
 
               this.__setFlowProfile({
                 actual: shotData.weight,
@@ -3248,21 +3261,21 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.destroy();
   }
 
-  private async returnFlowProfile(_flowProfile: string) {
-    const promiseRtr = new Promise(async (resolve) => {
-      if (this.platform.is('capacitor')) {
-        if (_flowProfile !== '') {
-          try {
-            const jsonParsed =
-              await this.uiFileHelper.readInternalJSONFile(_flowProfile);
-            resolve(jsonParsed);
-          } catch (ex) {}
-        }
-      } else {
-        resolve(BeanconquerorFlowTestDataDummySecondDummy);
-      }
-    });
-    return promiseRtr;
+  private async returnFlowProfile(_flowProfile: string): Promise<any> {
+    if (!this.platform.is('capacitor')) {
+      return this.readDummyFlowProfile();
+    }
+
+    if (_flowProfile === '') {
+      throw new Error('_flowProfile is empty');
+    }
+    try {
+      const jsonParsed =
+        await this.uiFileHelper.readInternalJSONFile(_flowProfile);
+      return jsonParsed;
+    } catch (ex) {
+      // ignore
+    }
   }
 
   public async readFlowProfile() {
@@ -4143,7 +4156,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
+  @HostListener('window:orientationchange')
   public onOrientationChange() {
     if (
       (this.smartScaleConnected() ||

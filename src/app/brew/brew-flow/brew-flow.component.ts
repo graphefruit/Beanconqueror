@@ -9,8 +9,9 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 import { Brew } from '../../../classes/brew/brew';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -28,15 +29,61 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 
 import { CameraPreview } from '@capgo/camera-preview';
 import { Capacitor } from '@capacitor/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { addIcons } from 'ionicons';
+import {
+  closeOutline,
+  waterOutline,
+  thermometerOutline,
+  timeOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonChip,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonFooter,
+} from '@ionic/angular/standalone';
 
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    BrewFunction,
+    IonHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonChip,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+    IonFooter,
+  ],
 })
 export class BrewFlowComponent implements OnDestroy, OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly platform = inject(Platform);
+  private readonly ngZone = inject(NgZone);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   public static readonly COMPONENT_ID: string = 'brew-flow';
 
   @ViewChild('brewFlowContent', { read: ElementRef })
@@ -96,16 +143,9 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   public graphIconColSize: number = 2.4;
   public bluetoothSubscription: Subscription = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform,
-    private readonly ngZone: NgZone,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ closeOutline, waterOutline, thermometerOutline, timeOutline });
   }
 
   public ngOnInit() {
@@ -278,7 +318,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
+  @HostListener('window:orientationchange')
   public onOrientationChange() {
     setTimeout(() => {
       try {

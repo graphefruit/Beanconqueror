@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { Water } from '../../../../classes/water/water';
@@ -8,25 +8,56 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
 
 import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WaterAddTypeComponent } from '../water-add-type/water-add-type.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../../pipes/keys';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonIcon,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardContent,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-water-add',
   templateUrl: './water-add.component.html',
   styleUrls: ['./water-add.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonIcon,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+  ],
 })
 export class WaterAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'water-add';
 
   public data: Water = new Water();
 
   public water_type_enums = WATER_TYPES;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  constructor() {
+    addIcons({ waterOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

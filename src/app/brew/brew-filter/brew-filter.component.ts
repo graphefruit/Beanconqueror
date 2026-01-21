@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -15,14 +15,66 @@ import { Brew } from '../../../classes/brew/brew';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { Subscription } from 'rxjs';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { FormsModule } from '@angular/forms';
+import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
+import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
+import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
+import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
+import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonSelect,
+  IonToggle,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonIcon,
+  IonSelectOption,
+  IonList,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-filter',
   templateUrl: './brew-filter.component.html',
   styleUrls: ['./brew-filter.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreparationOverlayDirective,
+    PreparationToolOverlayDirective,
+    BeanOverlayDirective,
+    MillOverlayDirective,
+    WaterOverlayDirective,
+    TranslatePipe,
+    ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonSelect,
+    IonToggle,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonIcon,
+    IonSelectOption,
+    IonList,
+    IonButton,
+  ],
 })
 export class BrewFilterComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly eventQueue = inject(EventQueueService);
+
   public static COMPONENT_ID = 'brew-filter';
   public settings: Settings;
 
@@ -45,16 +97,7 @@ export class BrewFilterComponent implements OnInit {
   public preparationToolsExist: boolean;
   public maxBrewRating: number;
   public filterParameterActive: boolean = false;
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly eventQueue: EventQueueService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.settings.GET_BREW_FILTER();
     this.brews = this.uiBrewStorage.getAllEntries();

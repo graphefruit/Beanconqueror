@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CapacitorCookies, CapacitorHttp } from '@capacitor/core';
 import { UIFileHelper } from '../uiFileHelper';
 import { Visualizer } from '../../classes/visualizer/visualizer';
@@ -16,15 +16,13 @@ import { UIAlert } from '../uiAlert';
   providedIn: 'root',
 })
 export class VisualizerService {
-  constructor(
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiLog: UILog,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiAlert: UIAlert,
-  ) {}
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiAlert = inject(UIAlert);
 
   private async readFlowProfile(_brew: Brew): Promise<BrewFlow> {
     try {

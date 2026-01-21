@@ -7,6 +7,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { UIImage } from '../../services/uiImage';
 import { Brew } from '../../classes/brew/brew';
@@ -18,16 +19,26 @@ import { UIToast } from '../../services/uiToast';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 import { UIAlert } from '../../services/uiAlert';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Clipboard } from '@capacitor/clipboard';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline, arrowForwardOutline, trash } from 'ionicons/icons';
+import { IonItem, IonIcon, IonButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'photo-add',
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
-  standalone: false,
+  imports: [AsyncImageComponent, TranslatePipe, IonItem, IonIcon, IonButton],
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
+  private readonly uiImage = inject(UIImage);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
   @Output() public dataChange = new EventEmitter<
     Brew | Bean | GreenBean | Mill | Preparation
@@ -36,13 +47,9 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     | ElementRef
     | undefined;
 
-  constructor(
-    private readonly uiImage: UIImage,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-  ) {}
+  constructor() {
+    addIcons({ arrowBackOutline, arrowForwardOutline, trash });
+  }
 
   public ngOnInit() {
     setTimeout(() => {

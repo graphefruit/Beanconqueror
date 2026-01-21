@@ -1,19 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import LINK_TRACKING from '../../../data/tracking/linkTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { chevronForwardOutline, logoGithub } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonBackButton,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonBackButton,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+    IonItem,
+    IonIcon,
+    HeaderComponent,
+  ],
 })
 export class ContactComponent implements OnInit {
-  constructor(
-    private readonly uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
+  constructor() {
+    addIcons({ chevronForwardOutline, logoGithub });
+  }
 
   public ngOnInit() {}
 

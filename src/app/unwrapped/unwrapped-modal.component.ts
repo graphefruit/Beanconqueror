@@ -1,9 +1,21 @@
-import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import {
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+} from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UnwrappedStats } from '../../services/unwrapped/unwrapped.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { register } from 'swiper/element/bundle';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import { SlicePipe, DecimalPipe, DatePipe } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { closeOutline } from 'ionicons/icons';
+import { IonContent, IonIcon, IonButton } from '@ionic/angular/standalone';
 
 register();
 
@@ -11,19 +23,30 @@ register();
   selector: 'app-unwrapped-modal',
   templateUrl: './unwrapped-modal.component.html',
   styleUrls: ['./unwrapped-modal.component.scss'],
-  standalone: false,
+  imports: [
+    SlicePipe,
+    DecimalPipe,
+    DatePipe,
+    TranslatePipe,
+    IonContent,
+    IonIcon,
+    IonButton,
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UnwrappedModalComponent implements OnInit {
+  private modalController = inject(ModalController);
+  private translate = inject(TranslateService);
+  private currencyService = inject(CurrencyService);
+
   @Input() stats: UnwrappedStats;
   @ViewChild('swiper') swiperRef: ElementRef | undefined;
 
   public static COMPONENT_ID = 'UnwrappedModalComponent';
 
-  constructor(
-    private modalController: ModalController,
-    private translate: TranslateService,
-    private currencyService: CurrencyService,
-  ) {}
+  constructor() {
+    addIcons({ closeOutline });
+  }
 
   ngOnInit() {}
 

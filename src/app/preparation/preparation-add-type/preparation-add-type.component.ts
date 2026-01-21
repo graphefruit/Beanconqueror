@@ -1,11 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { NgForm } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { NgForm, FormsModule } from '@angular/forms';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIToast } from '../../../services/uiToast';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
@@ -13,14 +13,58 @@ import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { TooltipDirective } from '../../../directive/tooltip.directive';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { addIcons } from 'ionicons';
+import { informationOutline, close } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonToolbar,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonSelect,
+  IonSelectOption,
+  IonLabel,
+  IonIcon,
+  IonButton,
+  IonChip,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-add-type',
   templateUrl: './preparation-add-type.component.html',
   styleUrls: ['./preparation-add-type.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    IonHeader,
+    IonToolbar,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    IonLabel,
+    IonIcon,
+    IonButton,
+    IonChip,
+    IonRow,
+    IonCol,
+  ],
 })
 export class PreparationAddTypeComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+
   public static COMPONENT_ID: string = 'preparation-add-type';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -33,14 +77,9 @@ export class PreparationAddTypeComponent implements OnInit {
 
   @Input('type') public type: any;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiToast: UIToast,
-    private readonly translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-  ) {}
+  constructor() {
+    addIcons({ informationOutline, close });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

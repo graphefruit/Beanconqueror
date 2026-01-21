@@ -1,5 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -7,13 +14,45 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { ThemeService } from '../../services/theme/theme.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonTitle,
+  IonContent,
+  IonIcon,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
+
 @Component({
   selector: 'welcome-popover',
   templateUrl: './welcome-popover.component.html',
   styleUrls: ['./welcome-popover.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonTitle,
+    IonContent,
+    IonIcon,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class WelcomePopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly themeService = inject(ThemeService);
+
   public slide: number = 1;
   @ViewChild('slider', { static: false }) public welcomeSlider:
     | ElementRef
@@ -22,16 +61,6 @@ export class WelcomePopoverComponent implements OnInit {
   private settings: Settings;
 
   private disableHardwareBack;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly themeService: ThemeService,
-  ) {}
 
   public ngOnInit() {
     this.themeService.setLightMode();
@@ -39,8 +68,8 @@ export class WelcomePopoverComponent implements OnInit {
       setTimeout(() => {
         try {
           /** Somehow on android device, the swiper scrolled to the latest tile, and didn't show the first one.
-          This was repeatable on google pixel 4a5g, but not on pixel 2XL, and more funny,
-           this was just repeatable on a production build app **/
+                    This was repeatable on google pixel 4a5g, but not on pixel 2XL, and more funny,
+                     this was just repeatable on a production build app **/
           this.welcomeSlider?.nativeElement.swiper.slideTo(0);
           this.welcomeSlider?.nativeElement.swiper.pagination.update(true);
         } catch (ex) {}

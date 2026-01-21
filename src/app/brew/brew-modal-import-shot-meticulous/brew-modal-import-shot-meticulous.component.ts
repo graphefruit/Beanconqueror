@@ -5,22 +5,63 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { UIHelper } from '../../../services/uiHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAlert } from '../../../services/uiAlert';
+import { FormsModule } from '@angular/forms';
+import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonRadio,
+  IonGrid,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-brew-modal-import-shot-meticulous',
   templateUrl: './brew-modal-import-shot-meticulous.component.html',
   styleUrls: ['./brew-modal-import-shot-meticulous.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonRadio,
+    IonGrid,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BrewModalImportShotMeticulousComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID: string = 'brew-modal-import-shot-meticulous';
 
   @Input() public meticulousDevice: MeticulousDevice;
@@ -34,19 +75,14 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   public historyShotContent: ElementRef;
 
   @ViewChild('shotDataScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public shotDataScroll: AgVirtualSrollComponent;
+  public shotDataScroll: AgVirtualScrollComponent;
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-  ) {}
 
   public ngOnInit() {
     this.readHistory();
@@ -59,15 +95,15 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
     this.retriggerScroll();
   }
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.historyShotContent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent = this.shotDataScroll;
+      const scrollComponent: AgVirtualScrollComponent = this.shotDataScroll;
 
       if (scrollComponent) {
         scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';

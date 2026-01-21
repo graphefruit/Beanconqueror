@@ -1,6 +1,6 @@
-Chrome >=107
+Chrome >=111
 ChromeAndroid >=89
-Firefox >=104
-Edge >=107
-Safari >=16
-iOS >=16
+Firefox >=112
+Edge >=111
+Safari >=16.4
+iOS >=16.4

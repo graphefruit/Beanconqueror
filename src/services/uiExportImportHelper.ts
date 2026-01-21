@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { UIStorage } from './uiStorage';
 import { UIHelper } from './uiHelper';
@@ -17,7 +17,7 @@ import {
 import * as zip from '@zip.js/zip.js';
 import { Directory, FileInfo } from '@capacitor/filesystem';
 import { UILog } from './uiLog';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIFileHelper } from './uiFileHelper';
 import { UIAlert } from './uiAlert';
 import moment from 'moment';
@@ -47,23 +47,21 @@ function chunkFileName(fileName: string, index: number): string {
   providedIn: 'root',
 })
 export class UIExportImportHelper {
+  private readonly uiSettings = inject(UISettingsStorage);
+  uiStorage = inject(UIStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiLog = inject(UILog);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalController = inject(ModalController);
+
   /**
    *
    */
   private isAppReady: number = -1;
-
-  constructor(
-    private readonly uiSettings: UISettingsStorage,
-    public uiStorage: UIStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiLog: UILog,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalController: ModalController,
-  ) {}
 
   public async buildExportZIP(): Promise<Blob> {
     const _data = await this.uiStorage.export();
@@ -114,7 +112,7 @@ export class UIExportImportHelper {
   }
 
   public async getJSONFromZIPArrayBufferContent(
-    _arrayBuffer: Uint8Array | ArrayBuffer,
+    _arrayBuffer: Uint8Array<ArrayBuffer> | ArrayBuffer,
   ): Promise<any> {
     const readBlob = new Blob([_arrayBuffer], {
       type: 'application/zip',
@@ -129,7 +127,10 @@ export class UIExportImportHelper {
     const foundGeneralEntry = entries.find(
       (e) => e.filename === EXPORT_MAIN_FILE_NAME,
     );
-    if (foundGeneralEntry === undefined) {
+    if (
+      foundGeneralEntry === undefined ||
+      !this.isFileEntry(foundGeneralEntry)
+    ) {
       await zipReader.close();
       throw new Error(
         `ZIP file does not contain a ${EXPORT_MAIN_FILE_NAME} file`,
@@ -148,7 +149,8 @@ export class UIExportImportHelper {
       while (
         (entry = entries.find(
           (e) => e.filename === chunkFileName(c.fileName, i),
-        )) !== undefined
+        )) !== undefined &&
+        this.isFileEntry(entry)
       ) {
         this.uiLog.log(`Found ${entry.filename} - Import`);
         const textWriter = new TextWriter();
@@ -161,6 +163,10 @@ export class UIExportImportHelper {
 
     await zipReader.close();
     return importJSONData;
+  }
+
+  private isFileEntry(entry: zip.Entry): entry is zip.FileEntry {
+    return !entry.directory;
   }
 
   private async __getBiggerFileBackupOrAutomatic(): Promise<{

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -8,19 +8,71 @@ import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
 import { Graph } from '../../../../classes/graph/graph';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFifth.json';
 import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UIAlert } from '../../../../services/uiAlert';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
+import { addIcons } from 'ionicons';
+import {
+  cloudUploadOutline,
+  informationCircleOutline,
+  trashOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonLabel,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-graph-edit',
   templateUrl: './graph-edit.component.html',
   styleUrls: ['./graph-edit.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonLabel,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class GraphEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly platform = inject(Platform);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+
   public static COMPONENT_ID = 'graph-edit';
   public data: Graph = new Graph();
 
@@ -30,18 +82,9 @@ export class GraphEditComponent implements OnInit {
 
   @Input() private graph: IGraph;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly platform: Platform,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-  ) {}
+  constructor() {
+    addIcons({ cloudUploadOutline, informationCircleOutline, trashOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
@@ -92,54 +135,62 @@ export class GraphEditComponent implements OnInit {
     await this.uiGraphHelper.detailGraphRawData(this.flowData);
   }
 
+  private async readDummyFlowProfile(): Promise<any> {
+    return (
+      await import('../../../../assets/BeanconquerorFlowTestDataFifth.json')
+    ).default;
+  }
+
   private async readFlowProfile() {
-    if (this.platform.is('capacitor')) {
-      if (this.data.flow_profile !== '') {
-        try {
-          const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-            this.data.flow_profile,
-          );
-          this.flowData = jsonParsed;
-        } catch (ex) {}
-      }
-    } else {
-      this.flowData = BeanconquerorFlowTestDataDummy as any;
+    if (!this.platform.is('capacitor')) {
+      this.flowData = await this.readDummyFlowProfile();
+      return;
+    }
+
+    if (this.data.flow_profile !== '') {
+      try {
+        const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+          this.data.flow_profile,
+        );
+        this.flowData = jsonParsed;
+      } catch (ex) {}
     }
   }
 
   public async uploadGraph() {
     try {
-      if (this.platform.is('capacitor')) {
-        const data: any = await this.uiGraphHelper.chooseGraph();
+      if (!this.platform.is('capacitor')) {
+        this.flowData = await this.readDummyFlowProfile();
+        return;
+      }
+
+      const data: any = await this.uiGraphHelper.chooseGraph();
+      if (
+        data &&
+        (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+      ) {
+        // Export from a normal flow data
+        this.flowData = data as BrewFlow;
+      } else {
+        // Export from graph object
         if (
           data &&
-          (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+          (data?.DATA?.weight ||
+            data?.DATA?.pressureFlow ||
+            data?.DATA?.temperatureFlow)
         ) {
-          // Export from a normal flow data
-          this.flowData = data as BrewFlow;
-        } else {
-          // Export from graph object
-          if (
-            data &&
-            (data?.DATA?.weight ||
-              data?.DATA?.pressureFlow ||
-              data?.DATA?.temperatureFlow)
-          ) {
-            this.flowData = data.DATA as BrewFlow;
-            if (data.NAME) {
-              this.data.name = data.NAME;
-            }
-            if (data.NOTE) {
-              this.data.note = data.NOTE;
-            }
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT'),
-            );
+          this.flowData = data.DATA as BrewFlow;
+          if (data.NAME) {
+            this.data.name = data.NAME;
           }
+          if (data.NOTE) {
+            this.data.note = data.NOTE;
+          }
+        } else {
+          this.uiAlert.showMessage(
+            this.translate.instant('INVALID_FILE_FORMAT'),
+          );
         }
-      } else {
-        this.flowData = BeanconquerorFlowTestDataDummy as BrewFlow;
       }
     } catch (ex) {}
   }

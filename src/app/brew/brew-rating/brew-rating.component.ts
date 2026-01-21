@@ -1,20 +1,57 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { Brew } from '../../../classes/brew/brew';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { FormsModule } from '@angular/forms';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonLabel,
+  IonBadge,
+  IonRange,
+  IonTextarea,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-rating',
   templateUrl: './brew-rating.component.html',
   styleUrls: ['./brew-rating.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgxStarsModule,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonTextarea,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class BrewRatingComponent implements OnInit {
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+
   public static COMPONENT_ID: string = 'brew-rating';
   public maxBrewRating: number = 5;
   public settings: Settings;
@@ -23,13 +60,6 @@ export class BrewRatingComponent implements OnInit {
   public brewStars: NgxStarsComponent;
 
   @Input('brew') public brew: IBrew;
-
-  constructor(
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-  ) {}
 
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);

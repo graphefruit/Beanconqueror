@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { Bean } from '../../../classes/bean/bean';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -11,14 +11,58 @@ import { Config } from '../../../classes/objectConfig/objectConfig';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { thermometerOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonCard,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonRange,
+  IonCheckbox,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-bean-popover-unfreeze',
   templateUrl: './bean-popover-unfreeze.component.html',
   styleUrls: ['./bean-popover-unfreeze.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonButton,
+    IonIcon,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonCard,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonRange,
+    IonCheckbox,
+  ],
 })
 export class BeanPopoverUnfreezeComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID = 'bean-popover-unfreeze';
   @Input() public bean: Bean;
 
@@ -29,17 +73,9 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
   public quality: number = 100;
   public maxMB: number = 0.5;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ thermometerOutline });
   }
 
   public ngOnInit() {

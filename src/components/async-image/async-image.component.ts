@@ -1,20 +1,22 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, inject } from '@angular/core';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'async-image',
   templateUrl: './async-image.component.html',
   styleUrls: ['./async-image.component.scss'],
-  standalone: false,
+  imports: [AsyncPipe],
 })
 export class AsyncImageComponent implements OnChanges {
+  private uiFileHelper = inject(UIFileHelper);
+
   @Input() public filePath: string;
 
   public errorOccured = false;
   public isLoading = false;
   public img: Promise<SafeResourceUrl | undefined> = Promise.resolve(undefined);
-  constructor(private uiFileHelper: UIFileHelper) {}
 
   public ngOnChanges(): void {
     this.img = this.getImageSrc();

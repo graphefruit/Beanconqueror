@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAlert } from '../../../services/uiAlert';
@@ -13,27 +13,47 @@ import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { bluetoothOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-settings-popover-bluetooth-actions',
   templateUrl: './settings-popover-bluetooth-actions.component.html',
   styleUrls: ['./settings-popover-bluetooth-actions.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonIcon,
+  ],
 })
 export class SettingsPopoverBluetoothActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+  private readonly bluetoothService = inject(CoffeeBluetoothDevicesService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly eventQueue = inject(EventQueueService);
+
   public static COMPONENT_ID = 'settings-popover-bluetooth-actions';
 
   public settings: Settings;
   public readonly BluetoothTypes = BluetoothTypes;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage,
-    private readonly bluetoothService: CoffeeBluetoothDevicesService,
-    private readonly uiAlert: UIAlert,
-    private readonly eventQueue: EventQueueService,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
+    addIcons({ bluetoothOutline });
   }
 
   public ionViewDidEnter(): void {}
