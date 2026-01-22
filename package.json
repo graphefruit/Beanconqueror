@@ -16,7 +16,7 @@
     "ionic": "ionic",
     "cap": "capacitor",
     "capsync": "capacitor sync android && capacitor sync ios",
-    "generate-icon-registry": "node scripts/generate-icon-registry.mjs > src/generated/icon-registry.ts"
+    "generate-icon-registry": "node tools/generate-icon-registry.mjs > src/generated/icon-registry.ts"
   },
   "private": true,
   "dependencies": {
