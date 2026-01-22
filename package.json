@@ -149,6 +149,6 @@
   },
   "lint-staged": {
     "*.css": "stylelint --fix",
-    "*.{ts,js,css,md}": "prettier --write"
+    "*": "prettier --write --ignore-unknown"
   }
 }
