@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, inject } from '@angular/core';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { SafeResourceUrl } from '@angular/platform-browser';
 import { AsyncPipe } from '@angular/common';
+import { Component, inject, Input, OnChanges } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
+
+import { UIFileHelper } from '../../services/uiFileHelper';
 
 @Component({
   selector: 'async-image',

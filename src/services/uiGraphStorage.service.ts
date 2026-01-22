@@ -1,13 +1,12 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
+import { TranslateService } from '@ngx-translate/core';
+
+import { Graph } from '../classes/graph/graph';
 import { StorageClass } from '../classes/storageClass';
-
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
-import { TranslateService } from '@ngx-translate/core';
-import { Graph } from '../classes/graph/graph';
-
 
 @Injectable({
   providedIn: 'root',

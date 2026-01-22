@@ -1,11 +1,13 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+
+import { of } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
+
+import { ServerBrew } from '../../classes/server/brew/brew';
 import { environment } from '../../environments/environment';
 import { ServerBean } from '../../models/bean/serverBean';
 import { UILog } from '../uiLog';
-import { ServerBrew } from '../../classes/server/brew/brew';
-import { catchError, timeout } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

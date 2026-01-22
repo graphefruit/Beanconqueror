@@ -1,4 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+import { Platform } from '@ionic/angular/standalone';
+
 import { Capacitor, CapacitorException } from '@capacitor/core';
 import {
   Directory,
@@ -7,14 +11,11 @@ import {
   Filesystem,
   StatOptions,
 } from '@capacitor/filesystem';
-import { Platform } from '@ionic/angular/standalone';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { UILog } from './uiLog';
-
-import moment from 'moment';
-import { InstanceClass } from './instanceClass';
-
 import { Share } from '@capacitor/share';
+import moment from 'moment';
+
+import { InstanceClass } from './instanceClass';
+import { UILog } from './uiLog';
 
 export interface CreateTempCacheDirectoryResult {
   path: string;

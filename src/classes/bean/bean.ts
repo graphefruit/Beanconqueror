@@ -1,21 +1,22 @@
+import moment from 'moment';
+
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { IBean } from '../../interfaces/bean/iBean';
-import { Config } from '../objectConfig/objectConfig';
-import moment from 'moment';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
-import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
-import { BeanRoastInformation } from './beanRoastInformation';
-import { RoastingMachine } from '../roasting-machine/roasting-machine';
-import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
-import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
 import { BeanProto } from '../../generated/src/classes/bean/bean';
+import { IBean } from '../../interfaces/bean/iBean';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { ICupping } from '../../interfaces/cupping/iCupping';
 import { IFlavor } from '../../interfaces/flavor/iFlavor';
+import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { Brew } from '../brew/brew';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
+import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
+import { Brew } from '../brew/brew';
+import { Config } from '../objectConfig/objectConfig';
+import { RoastingMachine } from '../roasting-machine/roasting-machine';
+import { BeanRoastInformation } from './beanRoastInformation';
 
 export class Bean implements IBean {
   public name: string;

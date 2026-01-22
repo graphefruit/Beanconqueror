@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
+
 import { UIHelper } from '../services/uiHelper';
 import HomePage from './home/home.page';
 import { routes as HomeRoutes } from './home/home.routes';

@@ -1,31 +1,33 @@
-import { Component, Input, inject } from '@angular/core';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIToast } from '../../../services/uiToast';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
-
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { Brew } from '../../../classes/brew/brew';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonRow,
-  IonCol,
   IonButton,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonRow,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import { Settings } from '../../../classes/settings/settings';
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'app-preparation-edit-tool',

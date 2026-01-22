@@ -1,7 +1,6 @@
 import { LimitedPeripheralData, PeripheralData } from './ble.types';
-
-import { PressureDevice, psiToBar } from './pressureBluetoothDevice';
 import { parseAdvertisingManufacturerData } from './common/util';
+import { PressureDevice, psiToBar } from './pressureBluetoothDevice';
 
 declare var ble: any;
 export class TransducerDirectPressure extends PressureDevice {

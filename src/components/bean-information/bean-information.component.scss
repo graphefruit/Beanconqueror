@@ -27,7 +27,7 @@
   }
 
   .add-child-margin {
-    >*:not(:last-child) {
+    > *:not(:last-child) {
       margin-right: 5px;
     }
   }
@@ -45,7 +45,7 @@
     min-width: 0;
   }
 
-  .children-force-newline>* {
+  .children-force-newline > * {
     // you can override this for a specific child eg by `clear: none !important;`
     clear: both;
   }
@@ -62,7 +62,7 @@
     flex-wrap: wrap;
     text-align: right;
 
-    >*:only-child {
+    > *:only-child {
       margin-top: 12px;
     }
   }
@@ -75,7 +75,7 @@
     margin-bottom: 4px;
     color: var(--ion-color-medium) !important;
 
-    >* {
+    > * {
       color: inherit !important;
     }
 
@@ -103,7 +103,6 @@
       padding-top: 0px !important;
       padding-bottom: 0px !important;
     }
-
   }
 
   ion-text {
@@ -122,8 +121,6 @@
       text-overflow: ellipsis;
     }
   }
-
-
 
   .group-card {
     border: 2px solid var(--ion-color-accent);

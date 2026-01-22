@@ -106,7 +106,7 @@ export class SmartchefScale extends BluetoothScale {
         (e: any) => {
           this.logger.debug('Write unsuccessfully');
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -119,7 +119,7 @@ export class SmartchefScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -136,7 +136,7 @@ export class SmartchefScale extends BluetoothScale {
       this.setWeight(weight);
     } else {
       this.logger.log(
-        'Bluetooth incoming statusUpdate is malformed, we should probably throw an error here...'
+        'Bluetooth incoming statusUpdate is malformed, we should probably throw an error here...',
       );
     }
   }
@@ -147,7 +147,7 @@ export class SmartchefScale extends BluetoothScale {
       SmartchefScale.DATA_SERVICE,
       SmartchefScale.DATA_CHARACTERISTIC,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

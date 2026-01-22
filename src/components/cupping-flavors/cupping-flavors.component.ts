@@ -1,30 +1,33 @@
+import { NgStyle } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { Brew } from '../../classes/brew/brew';
-import { IFlavor } from '../../interfaces/flavor/iFlavor';
-import { UIHelper } from '../../services/uiHelper';
 import { FormsModule } from '@angular/forms';
-import { NgStyle } from '@angular/common';
-import { addIcons } from 'ionicons';
-import { addCircleOutline, close } from 'ionicons/icons';
+
 import {
+  IonCheckbox,
+  IonChip,
+  IonIcon,
+  IonInput,
+  IonItem,
   IonList,
   IonListHeader,
-  IonItem,
-  IonInput,
-  IonIcon,
-  IonChip,
   IonSearchbar,
-  IonCheckbox,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { addCircleOutline, close } from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { Brew } from '../../classes/brew/brew';
+import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json';
+import { IFlavor } from '../../interfaces/flavor/iFlavor';
+import { UIHelper } from '../../services/uiHelper';
 
 @Component({
   selector: 'cupping-flavors',

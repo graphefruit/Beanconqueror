@@ -1,11 +1,12 @@
-import { PreparationDevice } from '../preparationDevice';
 import { HttpClient } from '@angular/common/http';
-import { Preparation } from '../../preparation/preparation';
+
+import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 
 import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
 import { UILog } from '../../../services/uiLog';
-import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import { sleep } from '../../devices';
+import { Preparation } from '../../preparation/preparation';
+import { PreparationDevice } from '../preparationDevice';
 
 export class XeniaDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];

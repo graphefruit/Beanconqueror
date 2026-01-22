@@ -1,6 +1,4 @@
-
 export abstract class InstanceClass {
-
   /**
    * Singelton instance
    */

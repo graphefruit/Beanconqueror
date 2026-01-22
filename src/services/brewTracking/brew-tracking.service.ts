@@ -1,8 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { Brew } from '../../classes/brew/brew';
+import { ServerBrew } from '../../classes/server/brew/brew';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
 import { UIHelper } from '../uiHelper';
-import { ServerBrew } from '../../classes/server/brew/brew';
 
 @Injectable({
   providedIn: 'root',

@@ -1,11 +1,8 @@
-
-
-import { Config } from '../objectConfig/objectConfig';
-import { IWater } from '../../interfaces/water/iWater';
+import { WATER_TYPES } from '../../enums/water/waterTypes';
 import { WATER_UNIT } from '../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../enums/water/waterUnitTds';
-
-import { WATER_TYPES } from '../../enums/water/waterTypes';
+import { IWater } from '../../interfaces/water/iWater';
+import { Config } from '../objectConfig/objectConfig';
 
 export class Water implements IWater {
   public name: string;

@@ -1,18 +1,24 @@
-import { Injectable, inject } from '@angular/core';
-import { Clipboard } from '@capacitor/clipboard';
+import { inject, Injectable } from '@angular/core';
+
 import { Platform } from '@ionic/angular/standalone';
+
+import { Clipboard } from '@capacitor/clipboard';
 import moment from 'moment';
+
 import 'moment/locale/de';
+
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+import { KeepAwake } from '@capacitor-community/keep-awake';
+import { AppLauncher } from '@capacitor/app-launcher';
+import { cloneDeep } from 'lodash';
+
+import { UIAlert } from './uiAlert';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
-import { UIAlert } from './uiAlert';
-
-import { cloneDeep } from 'lodash';
-import { UIToast } from './uiToast';
 import { UISettingsStorage } from './uiSettingsStorage';
-import { AppLauncher } from '@capacitor/app-launcher';
-import { KeepAwake } from '@capacitor-community/keep-awake';
+import { UIToast } from './uiToast';
+
 /**
  * Handles every helping functionalities
  */

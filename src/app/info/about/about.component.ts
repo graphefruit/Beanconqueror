@@ -1,23 +1,26 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { App } from '@capacitor/app';
-import { Platform } from '@ionic/angular/standalone';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonBackButton,
+  IonCard,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  Platform,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  informationCircleOutline,
   analyticsOutline,
   helpBuoyOutline,
+  informationCircleOutline,
 } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonBackButton,
-  IonContent,
-  IonCard,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
+
+import { App } from '@capacitor/app';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../../components/header/header.component';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'about',

@@ -1,18 +1,19 @@
-import { Injectable, NgZone, inject } from '@angular/core';
-import { UIHelper } from '../uiHelper';
+import { inject, Injectable, NgZone } from '@angular/core';
 
-import { UILog } from '../uiLog';
-import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
-import { UIBeanHelper } from '../uiBeanHelper';
-import { ServerBean } from '../../models/bean/serverBean';
-import { UIAlert } from '../uiAlert';
-import QR_TRACKING from '../../data/tracking/qrTracking';
-import { UIAnalytics } from '../uiAnalytics';
-import { VisualizerService } from '../visualizerService/visualizer-service.service';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
-import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
-import { UIBrewHelper } from '../uiBrewHelper';
+
 import IntentHandlerTracking from '../../data/tracking/intentHandlerTracking';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
+import { ServerBean } from '../../models/bean/serverBean';
+import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
+import { UIAlert } from '../uiAlert';
+import { UIAnalytics } from '../uiAnalytics';
+import { UIBeanHelper } from '../uiBeanHelper';
+import { UIBrewHelper } from '../uiBrewHelper';
+import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
+import { VisualizerService } from '../visualizerService/visualizer-service.service';
 
 @Injectable({
   providedIn: 'root',

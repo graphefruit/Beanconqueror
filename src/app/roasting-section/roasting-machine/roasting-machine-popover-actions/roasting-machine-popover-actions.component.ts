@@ -1,17 +1,20 @@
-import { Component, Input, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../../services/uiHelper';
-import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
-import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
-import { ROASTING_MACHINE_ACTION } from '../../../../enums/roasting-machine/roastingMachineAction';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input } from '@angular/core';
+
 import {
-  IonHeader,
   IonContent,
-  IonList,
-  IonItem,
+  IonHeader,
   IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
+import { ROASTING_MACHINE_ACTION } from '../../../../enums/roasting-machine/roastingMachineAction';
+import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
+import { UIHelper } from '../../../../services/uiHelper';
 
 @Component({
   selector: 'app-roasting-machine-popover-actions',

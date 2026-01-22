@@ -1,21 +1,28 @@
+import { DatePipe, DecimalPipe, SlicePipe } from '@angular/common';
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  ElementRef,
-  CUSTOM_ELEMENTS_SCHEMA,
-  inject,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UnwrappedStats } from '../../services/unwrapped/unwrapped.service';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { register } from 'swiper/element/bundle';
-import { CurrencyService } from '../../services/currencyService/currency.service';
-import { SlicePipe, DecimalPipe, DatePipe } from '@angular/common';
+
+import {
+  IonButton,
+  IonContent,
+  IonIcon,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
-import { IonContent, IonIcon, IonButton } from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { register } from 'swiper/element/bundle';
+
+import { CurrencyService } from '../../services/currencyService/currency.service';
+import { UnwrappedStats } from '../../services/unwrapped/unwrapped.service';
 
 register();
 

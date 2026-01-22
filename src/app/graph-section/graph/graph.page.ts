@@ -3,39 +3,40 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-
-import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { Graph } from '../../../classes/graph/graph';
-import { UIGraphHelper } from '../../../services/uiGraphHelper';
 import { FormsModule } from '@angular/forms';
-import { GraphInformationCardComponent } from '../../../components/graph-information-card/graph-information-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { analyticsOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { analyticsOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { Graph } from '../../../classes/graph/graph';
+import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { Settings } from '../../../classes/settings/settings';
+import { GraphInformationCardComponent } from '../../../components/graph-information-card/graph-information-card.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIGraphHelper } from '../../../services/uiGraphHelper';
+import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-graph',

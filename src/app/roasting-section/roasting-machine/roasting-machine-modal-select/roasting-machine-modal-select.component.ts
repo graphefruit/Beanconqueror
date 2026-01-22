@@ -1,28 +1,30 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-
-import { ModalController } from '@ionic/angular/standalone';
-import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
-import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonCard,
-  IonItem,
-  IonCheckbox,
-  IonRadioGroup,
-  IonRadio,
-  IonFooter,
-  IonRow,
-  IonCol,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 
 @Component({
   selector: 'app-roasting-machine-modal-select',

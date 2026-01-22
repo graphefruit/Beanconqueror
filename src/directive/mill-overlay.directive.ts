@@ -2,14 +2,16 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  Input,
   inject,
+  Input,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
+
 import { ModalController } from '@ionic/angular/standalone';
-import { UIMillStorage } from '../services/uiMillStorage';
-import { Mill } from '../classes/mill/mill';
+
 import { MillModalSelectComponent } from '../app/mill/mill-modal-select/mill-modal-select.component';
+import { Mill } from '../classes/mill/mill';
+import { UIMillStorage } from '../services/uiMillStorage';
 
 @Directive({ selector: '[ngModel][mill-overlay]' })
 export class MillOverlayDirective {

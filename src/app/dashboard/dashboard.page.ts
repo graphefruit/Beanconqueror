@@ -1,39 +1,41 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { UIStatistic } from '../../services/uiStatistic';
-import { Brew } from '../../classes/brew/brew';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { BREW_ACTION } from '../../enums/brews/brewAction';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { Bean } from '../../classes/bean/bean';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
 
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { Settings } from '../../classes/settings/settings';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
-import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
-import { ModalController } from '@ionic/angular/standalone';
-import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { giftOutline, thermometerOutline, snowOutline } from 'ionicons/icons';
 import {
-  IonHeader,
-  IonMenuButton,
-  IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonCard,
   IonCardHeader,
-  IonCardTitle,
   IonCardSubtitle,
+  IonCardTitle,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonMenuButton,
+  IonRow,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { giftOutline, snowOutline, thermometerOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { Settings } from '../../classes/settings/settings';
+import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import { BREW_ACTION } from '../../enums/brews/brewAction';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIStatistic } from '../../services/uiStatistic';
+import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
+import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
 
 @Component({
   selector: 'dashboard',

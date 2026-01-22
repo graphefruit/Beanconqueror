@@ -2,19 +2,25 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Bean } from '../../../classes/bean/bean';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { ModalController } from '@ionic/angular/standalone';
-import { BeanInformationComponent } from '../../../components/bean-information/bean-information.component';
+
+import {
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
 import { TranslatePipe } from '@ngx-translate/core';
-import { IonHeader, IonContent } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { Bean } from '../../../classes/bean/bean';
+import { BeanInformationComponent } from '../../../components/bean-information/bean-information.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({
   selector: 'app-bean-popover-list',

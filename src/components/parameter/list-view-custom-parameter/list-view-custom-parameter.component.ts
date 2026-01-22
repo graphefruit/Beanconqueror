@@ -1,24 +1,27 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnInit,
-  inject,
 } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
   IonCard,
-  IonTitle,
-  IonItem,
   IonCheckbox,
+  IonItem,
+  IonTitle,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { Settings } from '../../../classes/settings/settings';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'list-view-custom-parameter',

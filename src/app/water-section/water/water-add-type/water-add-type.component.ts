@@ -1,27 +1,29 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import WATER_TRACKING from '../../../../data/tracking/waterTracking';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIWaterStorage } from '../../../../services/uiWaterStorage';
-import { UIToast } from '../../../../services/uiToast';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import { WATER_TYPES } from '../../../../enums/water/waterTypes';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { Water } from '../../../../classes/water/water';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import TrackContentImpression from '../../../../data/tracking/trackContentImpression/trackContentImpression';
+import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
-import TrackContentImpression from '../../../../data/tracking/trackContentImpression/trackContentImpression';
-import { FormsModule } from '@angular/forms';
-import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
-import {
-  IonHeader,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonRow,
-  IonCol,
-  IonButton,
-} from '@ionic/angular/standalone';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIToast } from '../../../../services/uiToast';
+import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 
 @Component({
   selector: 'water-add-type',

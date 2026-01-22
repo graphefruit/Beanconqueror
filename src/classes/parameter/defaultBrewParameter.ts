@@ -1,5 +1,4 @@
-
-import {IBrewParameter} from '../../interfaces/parameter/iBrewParameter';
+import { IBrewParameter } from '../../interfaces/parameter/iBrewParameter';
 
 export class DefaultBrewParameter implements IBrewParameter {
   public brew_time: boolean;

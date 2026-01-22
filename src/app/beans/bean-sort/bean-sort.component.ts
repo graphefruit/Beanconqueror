@@ -1,28 +1,31 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
-import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
-import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { TranslatePipe } from '@ngx-translate/core';
-import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
-import { addIcons } from 'ionicons';
-import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCol,
   IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
   IonList,
   IonListHeader,
-  IonItem,
-  IonGrid,
   IonRow,
-  IonCol,
-  IonIcon,
-  IonLabel,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Settings } from '../../../classes/settings/settings';
+import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
+import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-bean-sort',

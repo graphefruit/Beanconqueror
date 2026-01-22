@@ -1,6 +1,6 @@
 :host {
   ion-header {
-    height:40px;
+    height: 40px;
     background-color: var(--ion-color-light);
   }
   ion-item.active {
@@ -11,10 +11,9 @@
     --background: var(--ion-item-sort-background);
     border: 1px solid var(--ion-color-accent);
 
-    ion-icon{
+    ion-icon {
       padding-left: 16px;
       margin-right: 8px;
     }
   }
-
 }

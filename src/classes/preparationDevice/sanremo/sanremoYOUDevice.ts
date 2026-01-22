@@ -1,14 +1,15 @@
-import { PreparationDevice } from '../preparationDevice';
 import { HttpClient } from '@angular/common/http';
-import { Preparation } from '../../preparation/preparation';
 
-import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
-import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
-import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
-import { SanremoShotData } from './sanremoShotData';
+
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
 import { UIAlert } from '../../../services/uiAlert';
+import { UILog } from '../../../services/uiLog';
 import { sleep } from '../../devices';
+import { Preparation } from '../../preparation/preparation';
+import { PreparationDevice } from '../preparationDevice';
+import { SanremoShotData } from './sanremoShotData';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];

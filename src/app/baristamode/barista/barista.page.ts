@@ -4,57 +4,60 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   NgZone,
   OnDestroy,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Brew } from '../../../classes/brew/brew';
-import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonMenuButton,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { App } from '@capacitor/app';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { ModalController, Platform } from '@ionic/angular/standalone';
+import { Brew } from '../../../classes/brew/brew';
+import { BluetoothScale, BluetoothTypes } from '../../../classes/devices';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { LongPressDirective } from '../../../directive/long-press.directive';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { BluetoothScale, BluetoothTypes } from '../../../classes/devices';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { App } from '@capacitor/app';
-import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { Preparation } from '../../../classes/preparation/preparation';
 import { UIAlert } from '../../../services/uiAlert';
-import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
-import { LongPressDirective } from '../../../directive/long-press.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonHeader,
-  IonMenuButton,
-  IonChip,
-  IonIcon,
-  IonButton,
-  IonContent,
-  IonCard,
-  IonCardContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-} from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
-import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
 declare var Plotly;
 @Component({

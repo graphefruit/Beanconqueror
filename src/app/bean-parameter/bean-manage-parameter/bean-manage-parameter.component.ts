@@ -1,23 +1,25 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { Subject } from 'rxjs';
-import { Settings } from '../../../classes/settings/settings';
-
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonBackButton,
+  IonCard,
+  IonCardContent,
+  IonCheckbox,
   IonContent,
+  IonHeader,
+  IonItem,
   IonSegment,
   IonSegmentButton,
-  IonCard,
-  IonItem,
-  IonCheckbox,
-  IonCardContent,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { Settings } from '../../../classes/settings/settings';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-bean-manage-parameter',

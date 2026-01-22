@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { Haptics } from '@capacitor/haptics';
 
 @Injectable({

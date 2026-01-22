@@ -1,42 +1,46 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { Bean } from '../../../classes/bean/bean';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIToast } from '../../../services/uiToast';
-import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
-import moment from 'moment';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { ServerBean } from '../../../models/bean/serverBean';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
-import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
-import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
-import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonButton,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonLabel,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonFooter,
-  IonRow,
-  IonCol,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment';
+
+import { Bean } from '../../../classes/bean/bean';
+import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { Settings } from '../../../classes/settings/settings';
+import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
+import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
+import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
+import { ServerBean } from '../../../models/bean/serverBean';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'beans-add',

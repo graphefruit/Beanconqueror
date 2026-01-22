@@ -2,29 +2,33 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  IonTitle,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Settings } from '../../classes/settings/settings';
+import { ThemeService } from '../../services/theme/theme.service';
+import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
-import { ThemeService } from '../../services/theme/theme.service';
-import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonHeader,
-  IonTitle,
-  IonContent,
-  IonIcon,
-  IonFooter,
-  IonRow,
-  IonCol,
-  IonButton,
-} from '@ionic/angular/standalone';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'welcome-popover',

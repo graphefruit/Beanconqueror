@@ -1,31 +1,31 @@
 :host {
-
-
   ul {
-    text-align:left;
+    text-align: left;
     li {
       word-break: break-word;
     }
   }
-  ion-slides { height: initial; }
-  ion-header, ion-content, ion-footer{
-    background:var(--ion-color-light);
-    --background:var(--ion-color-light);
+  ion-slides {
+    height: initial;
+  }
+  ion-header,
+  ion-content,
+  ion-footer {
+    background: var(--ion-color-light);
+    --background: var(--ion-color-light);
   }
   swiper-slide {
     div {
-      margin-bottom:20px;
+      margin-bottom: 20px;
     }
   }
-
 }
 :root {
   .swiper-pagination-bullet {
     background-color: #282013;
   }
   .swiper-pagination-bullet active-bullet {
-
-    background-color: #AE9F87;
+    background-color: #ae9f87;
   }
 
   swiper-slide {
@@ -56,7 +56,6 @@
     background-color: #282013;
   }
   .swiper-pagination-bullet.active-bullet {
-
-    background-color: #AE9F87!important;
+    background-color: #ae9f87 !important;
   }
 }

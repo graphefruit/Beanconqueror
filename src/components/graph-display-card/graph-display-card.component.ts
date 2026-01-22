@@ -2,20 +2,23 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { BrewFlow } from '../../classes/brew/brewFlow';
-import { Settings } from '../../classes/settings/settings';
-import { UIHelper } from '../../services/uiHelper';
-import { UIFileHelper } from '../../services/uiFileHelper';
+
 import { Platform } from '@ionic/angular/standalone';
+
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+
+import { BrewFlow } from '../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
-import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
+import { Settings } from '../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIHelper } from '../../services/uiHelper';
 
 declare var Plotly;
 @Component({

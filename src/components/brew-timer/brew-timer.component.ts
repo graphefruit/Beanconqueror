@@ -2,32 +2,34 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   NgZone,
   OnDestroy,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
 
-import { Device } from '@capacitor/device';
-import { ITimer } from '../../interfaces/timer/iTimer';
-import moment from 'moment';
-import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { Settings } from '../../classes/settings/settings';
-import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Subscription } from 'rxjs';
-import { BluetoothScale } from '../../classes/devices';
 import {
-  IonItem,
-  IonInput,
   IonButton,
   IonIcon,
+  IonInput,
+  IonItem,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+
+import { Device } from '@capacitor/device';
+import moment from 'moment';
+import { Subscription } from 'rxjs';
+
+import { BluetoothScale } from '../../classes/devices';
+import { Settings } from '../../classes/settings/settings';
+import { ITimer } from '../../interfaces/timer/iTimer';
+import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'brew-timer',

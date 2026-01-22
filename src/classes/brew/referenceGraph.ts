@@ -1,5 +1,5 @@
-import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
 
 export class ReferenceGraph implements IReferenceGraph {
   public type: REFERENCE_GRAPH_TYPE;

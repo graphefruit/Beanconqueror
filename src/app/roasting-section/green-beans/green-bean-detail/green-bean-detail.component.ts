@@ -1,35 +1,38 @@
-import { Component, Input, inject } from '@angular/core';
-import { GreenBean } from '../../../../classes/green-bean/green-bean';
-import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
-import { ModalController } from '@ionic/angular/standalone';
-import { Bean } from '../../../../classes/bean/bean';
-import { UIBeanHelper } from '../../../../services/uiBeanHelper';
-import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import { Settings } from '../../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BeanDetailSortInformationComponent } from '../../../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
-import { BeanInformationComponent } from '../../../../components/bean-information/bean-information.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../../../pipes/formatDate';
+
 import {
-  IonHeader,
   IonButton,
-  IonIcon,
+  IonCard,
+  IonCheckbox,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonCard,
-  IonItem,
-  IonCheckbox,
-  IonFooter,
-  IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Bean } from '../../../../classes/bean/bean';
+import { GreenBean } from '../../../../classes/green-bean/green-bean';
+import { Settings } from '../../../../classes/settings/settings';
+import { BeanInformationComponent } from '../../../../components/bean-information/bean-information.component';
+import { BeanDetailSortInformationComponent } from '../../../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
+import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
+import { FormatDatePipe } from '../../../../pipes/formatDate';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIBeanHelper } from '../../../../services/uiBeanHelper';
+import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-green-bean-detail',

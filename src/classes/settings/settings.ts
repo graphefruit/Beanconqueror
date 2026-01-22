@@ -1,38 +1,35 @@
-import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
-import { ISettings } from '../../interfaces/settings/iSettings';
-import { Config } from '../objectConfig/objectConfig';
-
-import { DefaultBrewParameter } from '../parameter/defaultBrewParameter';
-import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
-import { OrderBrewParameter } from '../parameter/orderBrewParameter';
-import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
-import { ManageBrewParameter } from '../parameter/manageBrewParameter';
-import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
+import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
-
+import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
-
-import { BeanManageParameter } from '../parameter/beanManageParameter';
+import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
+import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { IGraphColors } from '../../interfaces/settings/iGraphColors';
+import { ISettings } from '../../interfaces/settings/iSettings';
 import {
   PressureType,
   RefractometerType,
   ScaleType,
   TemperatureType,
 } from '../devices';
-import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { Config } from '../objectConfig/objectConfig';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
+import { BeanManageParameter } from '../parameter/beanManageParameter';
+import { DefaultBrewParameter } from '../parameter/defaultBrewParameter';
+import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
+import { ManageBrewParameter } from '../parameter/manageBrewParameter';
+import { OrderBrewParameter } from '../parameter/orderBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
-import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
-import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
-import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
-import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
-import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
-import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
-import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 
 export class Settings implements ISettings {
   public graph_colors: IGraphColors;

@@ -1,45 +1,48 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { UIToast } from '../../../services/uiToast';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TooltipDirective } from '../../../directive/tooltip.directive';
-import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { KeysPipe } from '../../../pipes/keys';
-import { addIcons } from 'ionicons';
-import { swapVerticalOutline, informationOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
   IonButton,
-  IonIcon,
-  IonContent,
   IonCard,
+  IonCheckbox,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
   IonItem,
+  IonLabel,
+  IonRow,
   IonSelect,
   IonSelectOption,
-  IonInput,
-  IonLabel,
-  IonChip,
-  IonCheckbox,
   IonTextarea,
-  IonFooter,
-  IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { informationOutline, swapVerticalOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { TooltipDirective } from '../../../directive/tooltip.directive';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { KeysPipe } from '../../../pipes/keys';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'preparation-edit',

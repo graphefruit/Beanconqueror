@@ -1,19 +1,21 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { alertCircleOutline } from 'ionicons/icons';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
-  IonTitle,
-  IonContent,
+  IonButton,
   IonCard,
   IonCardContent,
-  IonIcon,
-  IonFooter,
-  IonRow,
   IonCol,
-  IonButton,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  IonTitle,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { alertCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-data-corruption-found',

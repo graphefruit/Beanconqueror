@@ -1,38 +1,41 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { Mill } from '../../../classes/mill/mill';
-import { Brew } from '../../../classes/brew/brew';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UIMillHelper } from '../../../services/uiMillHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
-import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
-import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../../pipes/formatDate';
-import { MillFunction } from '../../../pipes/mill/millFunction';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonRadioGroup,
-  IonCard,
-  IonItem,
-  IonCheckbox,
-  IonRadio,
-  IonFooter,
-  IonRow,
-  IonCol,
   IonThumbnail,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Mill } from '../../../classes/mill/mill';
+import { Settings } from '../../../classes/settings/settings';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { MillFunction } from '../../../pipes/mill/millFunction';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIMillHelper } from '../../../services/uiMillHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'mill-modal-select',

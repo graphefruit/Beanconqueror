@@ -1,31 +1,34 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../../services/uiHelper';
-import { UIToast } from '../../../../services/uiToast';
-import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
-import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
-import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
-import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonButton,
-  IonContent,
   IonCard,
-  IonItem,
-  IonInput,
   IonCheckbox,
-  IonLabel,
-  IonTextarea,
-  IonFooter,
-  IonRow,
   IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonTextarea,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
+import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
+import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
+import { UIToast } from '../../../../services/uiToast';
 
 @Component({
   selector: 'app-roasting-machine-edit',

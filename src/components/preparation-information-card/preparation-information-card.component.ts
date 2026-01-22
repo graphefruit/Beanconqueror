@@ -1,50 +1,53 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController } from '@ionic/angular/standalone';
-import { Preparation } from '../../classes/preparation/preparation';
-import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
-import { PreparationPopoverActionsComponent } from '../../app/preparation/preparation-popover-actions/preparation-popover-actions.component';
-import { Brew } from '../../classes/brew/brew';
-import { UIPreparationHelper } from '../../services/uiPreparationHelper';
-import { PreparationCustomParametersComponent } from '../../app/preparation/preparation-custom-parameters/preparation-custom-parameters.component';
-import { UIAlert } from '../../services/uiAlert';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIToast } from '../../services/uiToast';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIImage } from '../../services/uiImage';
-import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
-import { PreparationDeviceType } from '../../classes/preparationDevice';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIHelper } from '../../services/uiHelper';
-import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
-import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { PreparationDevice } from '../../classes/preparationDevice/preparationDevice';
-import { LongPressDirective } from '../../directive/long-press.directive';
-import { AsyncImageComponent } from '../async-image/async-image.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
-import { addIcons } from 'ionicons';
-import { wifiOutline } from 'ionicons/icons';
+
 import {
+  IonButton,
   IonCard,
   IonCardContent,
-  IonGrid,
-  IonRow,
   IonCol,
+  IonGrid,
   IonIcon,
-  IonButton,
   IonLabel,
+  IonRow,
   IonText,
+  ModalController,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { wifiOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { PreparationCustomParametersComponent } from '../../app/preparation/preparation-custom-parameters/preparation-custom-parameters.component';
+import { PreparationPopoverActionsComponent } from '../../app/preparation/preparation-popover-actions/preparation-popover-actions.component';
+import { Brew } from '../../classes/brew/brew';
+import { Preparation } from '../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../classes/preparationDevice';
+import { PreparationDevice } from '../../classes/preparationDevice/preparationDevice';
+import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { Settings } from '../../classes/settings/settings';
+import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
+import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIImage } from '../../services/uiImage';
+import { UIPreparationHelper } from '../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'preparation-information-card',

@@ -1,14 +1,17 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { ModalController, Platform } from '@ionic/angular/standalone';
-import { Graph } from '../classes/graph/graph';
-import { GraphEditComponent } from '../app/graph-section/graph/graph-edit/graph-edit.component';
+
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { TranslateService } from '@ngx-translate/core';
+
 import { GraphAddComponent } from '../app/graph-section/graph/graph-add/graph-add.component';
 import { GraphDetailComponent } from '../app/graph-section/graph/graph-detail/graph-detail.component';
-import { UIAlert } from './uiAlert';
-import { TranslateService } from '@ngx-translate/core';
-import { UIFileHelper } from './uiFileHelper';
+import { GraphEditComponent } from '../app/graph-section/graph/graph-edit/graph-edit.component';
 import { Brew } from '../classes/brew/brew';
-import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { Graph } from '../classes/graph/graph';
+import { UIAlert } from './uiAlert';
+import { UIFileHelper } from './uiFileHelper';
 
 /**
  * Handles every helping functionalities

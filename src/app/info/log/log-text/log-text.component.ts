@@ -1,18 +1,21 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UILog } from '../../../../services/uiLog';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCol,
   IonContent,
   IonFooter,
+  IonHeader,
   IonRow,
-  IonCol,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { UILog } from '../../../../services/uiLog';
 
 @Component({
   selector: 'log-text',

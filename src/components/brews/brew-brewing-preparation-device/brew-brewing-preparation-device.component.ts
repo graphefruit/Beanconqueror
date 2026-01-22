@@ -2,35 +2,39 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import { Brew } from '../../../classes/brew/brew';
-import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
+import { FormsModule } from '@angular/forms';
+
 import {
-  XeniaDevice,
-  XeniaParams,
-} from '../../../classes/preparationDevice/xenia/xeniaDevice';
-import {
-  MeticulousDevice,
-  MeticulousParams,
-} from '../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIToast } from '../../../services/uiToast';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCheckbox,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
+
+import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
+
+import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
+import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
+import { Brew } from '../../../classes/brew/brew';
 import {
   BrewFlow,
   IBrewPressureFlow,
@@ -38,42 +42,41 @@ import {
   IBrewTemperatureFlow,
   IBrewWeightFlow,
 } from '../../../classes/brew/brewFlow';
-import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
-import { ModalController } from '@ionic/angular/standalone';
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
-import {
-  SanremoYOUDevice,
-  SanremoYOUParams,
-} from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBrew';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import {
   GaggiuinoDevice,
   GaggiuinoParams,
 } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
-import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
-import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBrew';
-import { FormsModule } from '@angular/forms';
+import {
+  MeticulousDevice,
+  MeticulousParams,
+} from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
+import {
+  SanremoYOUDevice,
+  SanremoYOUParams,
+} from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import {
+  XeniaDevice,
+  XeniaParams,
+} from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Settings } from '../../../classes/settings/settings';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
-import { addIcons } from 'ionicons';
-import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
-import {
-  IonCard,
-  IonItem,
-  IonSelect,
-  IonSelectOption,
-  IonInput,
-  IonCheckbox,
-  IonIcon,
-  IonLabel,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonCardHeader,
-  IonCardContent,
-} from '@ionic/angular/standalone';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
+import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
 
 @Component({
   selector: 'brew-brewing-preparation-device',

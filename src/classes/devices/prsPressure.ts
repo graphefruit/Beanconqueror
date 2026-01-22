@@ -1,5 +1,4 @@
 import { PeripheralData } from './ble.types';
-
 import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
 
 declare var ble: any;

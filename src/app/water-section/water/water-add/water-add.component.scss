@@ -1,5 +1,4 @@
 :host {
-
   ion-label {
     font-family: 'Baloo', sans-serif;
   }
@@ -8,7 +7,7 @@
     width: 130px !important;
   }
   .empirical-water {
-    width:120px;
+    width: 120px;
   }
 
   ion-card {
@@ -18,9 +17,7 @@
       width: 128px;
       height: 128px;
       font-size: 128px;
-
     }
-
   }
   @media (max-width: 400px) {
     ion-card {
@@ -30,11 +27,7 @@
         width: 96px;
         height: 96px;
         font-size: 96px;
-
       }
     }
   }
-
-
-
 }

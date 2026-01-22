@@ -1,7 +1,9 @@
-import { Injectable, inject } from '@angular/core';
-import { UISettingsStorage } from '../uiSettingsStorage';
-import { Settings } from '../../classes/settings/settings';
+import { inject, Injectable } from '@angular/core';
+
 import { Platform } from '@ionic/angular/standalone';
+
+import { Settings } from '../../classes/settings/settings';
+import { UISettingsStorage } from '../uiSettingsStorage';
 
 declare var TTS;
 declare var window;

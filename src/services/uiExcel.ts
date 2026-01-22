@@ -1,33 +1,33 @@
-import { Injectable, inject } from '@angular/core';
-
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
+import { inject, Injectable } from '@angular/core';
 
 import { AlertController, Platform } from '@ionic/angular/standalone';
-import { UIBrewStorage } from './uiBrewStorage';
-import { TranslateService } from '@ngx-translate/core';
-import { UIBeanStorage } from './uiBeanStorage';
-import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
-import { BEAN_MIX_ENUM } from '../enums/beans/mix';
-import { UIPreparationStorage } from './uiPreparationStorage';
-import { UIAlert } from './uiAlert';
-import { UIFileHelper } from './uiFileHelper';
-import { UIMillStorage } from './uiMillStorage';
-import { BrewFlow, IBrewWaterFlow } from '../classes/brew/brewFlow';
-import moment from 'moment';
-import { UISettingsStorage } from './uiSettingsStorage';
-import { Settings } from '../classes/settings/settings';
-import { Brew } from '../classes/brew/brew';
-import { Bean } from '../classes/bean/bean';
-import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
-import { UIBeanHelper } from './uiBeanHelper';
-import { GreenBean } from '../classes/green-bean/green-bean';
-import { UIGreenBeanStorage } from './uiGreenBeanStorage';
 
+import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
 import * as XLSX from 'xlsx';
 import type { WorkBook, WorkSheet } from 'xlsx';
+
+import { Bean } from '../classes/bean/bean';
+import { Brew } from '../classes/brew/brew';
+import { BrewFlow, IBrewWaterFlow } from '../classes/brew/brewFlow';
 import { sleep } from '../classes/devices';
+import { GreenBean } from '../classes/green-bean/green-bean';
+import { Settings } from '../classes/settings/settings';
+import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../enums/beans/mix';
+import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
+import { UIAlert } from './uiAlert';
+import { UIBeanHelper } from './uiBeanHelper';
+import { UIBeanStorage } from './uiBeanStorage';
+import { UIBrewStorage } from './uiBrewStorage';
+import { UIFileHelper } from './uiFileHelper';
+import { UIGreenBeanStorage } from './uiGreenBeanStorage';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIMillStorage } from './uiMillStorage';
+import { UIPreparationStorage } from './uiPreparationStorage';
+import { UISettingsStorage } from './uiSettingsStorage';
+import { UIStorage } from './uiStorage';
 
 @Injectable({
   providedIn: 'root',

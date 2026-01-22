@@ -1,8 +1,6 @@
-
-import {Config} from '../objectConfig/objectConfig';
-
-import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
-import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
+import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
+import { Config } from '../objectConfig/objectConfig';
 
 export class GreenBean implements IGreenBean {
   public name: string;
@@ -14,16 +12,13 @@ export class GreenBean implements IGreenBean {
   public finished: boolean;
   public cost: number;
   public attachments: Array<string>;
-  public cupping_points:string;
+  public cupping_points: string;
   public decaffeinated: boolean;
   public url: string;
   public ean_article_number: string;
   public rating: number;
 
-
-
   public bean_information: Array<IBeanInformation>;
-
 
   constructor() {
     this.name = '';
@@ -47,7 +42,6 @@ export class GreenBean implements IGreenBean {
     Object.assign(this, beanObj);
   }
 
-
   public beanAgeInDays(): number {
     const today = Date.now();
     let millisecondsSinceRoasting = today - Date.parse(this.date);
@@ -56,6 +50,4 @@ export class GreenBean implements IGreenBean {
     }
     return Math.floor(millisecondsSinceRoasting / (1000 * 60 * 60 * 24));
   }
-
-
 }

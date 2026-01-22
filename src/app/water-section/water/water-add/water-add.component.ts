@@ -1,29 +1,31 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIToast } from '../../../../services/uiToast';
-import { UIWaterStorage } from '../../../../services/uiWaterStorage';
-import { Water } from '../../../../classes/water/water';
-import WATER_TRACKING from '../../../../data/tracking/waterTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { Component, inject, Input, OnInit } from '@angular/core';
 
-import { WATER_TYPES } from '../../../../enums/water/waterTypes';
-import { WaterAddTypeComponent } from '../water-add-type/water-add-type.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { KeysPipe } from '../../../../pipes/keys';
-import { addIcons } from 'ionicons';
-import { waterOutline } from 'ionicons/icons';
 import {
-  IonHeader,
-  IonIcon,
-  IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonCard,
   IonCardContent,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Water } from '../../../../classes/water/water';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import { WATER_TYPES } from '../../../../enums/water/waterTypes';
+import { KeysPipe } from '../../../../pipes/keys';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIToast } from '../../../../services/uiToast';
+import { UIWaterStorage } from '../../../../services/uiWaterStorage';
+import { WaterAddTypeComponent } from '../water-add-type/water-add-type.component';
 
 @Component({
   selector: 'app-water-add',

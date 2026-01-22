@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { Platform } from '@ionic/angular/standalone';
 
 declare var navigator;

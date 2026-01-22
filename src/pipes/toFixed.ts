@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-
 @Pipe({ name: 'toFixed' })
 export class ToFixedPipe implements PipeTransform {
   public transform(value, format, args?: Array<string>): any {

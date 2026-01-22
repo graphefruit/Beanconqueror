@@ -1,28 +1,26 @@
-import { Injectable, inject } from '@angular/core';
-import { Bean } from '../../classes/bean/bean';
+import { inject, Injectable } from '@angular/core';
 
+import { Platform } from '@ionic/angular/standalone';
+
+import { Share } from '@capacitor/share';
 import { TranslateService } from '@ngx-translate/core';
-import { UIHelper } from '../uiHelper';
 
-import { UIAnalytics } from '../uiAnalytics';
-
+import { Bean } from '../../classes/bean/bean';
+import { Config } from '../../classes/objectConfig/objectConfig';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
-
-import { UILog } from '../uiLog';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
+import { ROASTS_ENUM } from '../../enums/beans/roasts';
 import {
   BeanMix,
   BeanProto,
   BeanRoastingType,
   Roast,
 } from '../../generated/src/classes/bean/bean';
-import { Config } from '../../classes/objectConfig/objectConfig';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
-import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
-import { Share } from '@capacitor/share';
+import { UIAnalytics } from '../uiAnalytics';
 import { UIFileHelper } from '../uiFileHelper';
-
-import { Platform } from '@ionic/angular/standalone';
+import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
 
 @Injectable({
   providedIn: 'root',

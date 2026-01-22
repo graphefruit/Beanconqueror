@@ -1,42 +1,44 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-
-import { ModalController } from '@ionic/angular/standalone';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { Brew } from '../../../classes/brew/brew';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
-import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
-import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../../pipes/formatDate';
-import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
-import { addIcons } from 'ionicons';
-import { wifiOutline } from 'ionicons/icons';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonRadioGroup,
-  IonCard,
-  IonItem,
-  IonCheckbox,
-  IonRadio,
-  IonFooter,
-  IonRow,
-  IonCol,
   IonThumbnail,
-  IonIcon,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { wifiOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { Settings } from '../../../classes/settings/settings';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'preparation-modal-select',

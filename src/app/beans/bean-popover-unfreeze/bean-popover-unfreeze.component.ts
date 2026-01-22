@@ -1,35 +1,38 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { Bean } from '../../../classes/bean/bean';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIToast } from '../../../services/uiToast';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIAlert } from '../../../services/uiAlert';
-import moment from 'moment';
-import { Config } from '../../../classes/objectConfig/objectConfig';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { thermometerOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonContent,
+  IonButton,
   IonCard,
-  IonList,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
   IonItem,
   IonLabel,
-  IonInput,
+  IonList,
   IonRange,
-  IonCheckbox,
-  IonButton,
-  IonIcon,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { thermometerOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Config } from '../../../classes/objectConfig/objectConfig';
+import { Settings } from '../../../classes/settings/settings';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'app-bean-popover-unfreeze',

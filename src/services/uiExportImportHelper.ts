@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
-import { UISettingsStorage } from './uiSettingsStorage';
-import { UIStorage } from './uiStorage';
-import { UIHelper } from './uiHelper';
+import { inject, Injectable } from '@angular/core';
+
+import { ModalController, Platform } from '@ionic/angular/standalone';
+
+import { Directory, FileInfo } from '@capacitor/filesystem';
 /**
  * Handles every helping functionalities
  */
@@ -15,15 +16,16 @@ import {
   ZipWriter,
 } from '@zip.js/zip.js';
 import * as zip from '@zip.js/zip.js';
-import { Directory, FileInfo } from '@capacitor/filesystem';
-import { UILog } from './uiLog';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIFileHelper } from './uiFileHelper';
-import { UIAlert } from './uiAlert';
 import moment from 'moment';
-import { UIBrewStorage } from './uiBrewStorage';
 
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
+import { UIAlert } from './uiAlert';
+import { UIBrewStorage } from './uiBrewStorage';
+import { UIFileHelper } from './uiFileHelper';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UISettingsStorage } from './uiSettingsStorage';
+import { UIStorage } from './uiStorage';
 
 const EXPORT_MAIN_FILE_NAME = 'Beanconqueror.json';
 const EXPORT_CHUNKING_CONFIG = [

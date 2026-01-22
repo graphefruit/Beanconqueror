@@ -1,31 +1,34 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { Mill } from '../../../classes/mill/mill';
-import { UIHelper } from '../../../services/uiHelper';
-import { IMill } from '../../../interfaces/mill/iMill';
-import { UIToast } from '../../../services/uiToast';
-import MILL_TRACKING from '../../../data/tracking/millTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonButton,
-  IonContent,
   IonCard,
-  IonItem,
-  IonInput,
   IonCheckbox,
-  IonLabel,
-  IonTextarea,
-  IonFooter,
-  IonRow,
   IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonTextarea,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Mill } from '../../../classes/mill/mill';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
+import MILL_TRACKING from '../../../data/tracking/millTracking';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'mill-edit',

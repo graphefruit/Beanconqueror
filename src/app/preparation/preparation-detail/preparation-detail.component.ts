@@ -1,31 +1,33 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { Brew } from '../../../classes/brew/brew';
-import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { TranslatePipe } from '@ngx-translate/core';
 import {
-  IonHeader,
+  IonBadge,
   IonButton,
-  IonContent,
   IonCard,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
   IonItem,
   IonLabel,
-  IonChip,
-  IonBadge,
-  IonFooter,
   IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-preparation-detail',

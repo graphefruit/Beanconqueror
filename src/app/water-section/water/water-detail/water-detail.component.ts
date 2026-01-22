@@ -1,29 +1,31 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../../services/uiHelper';
-import { Water } from '../../../../classes/water/water';
-import { WATER_UNIT } from '../../../../enums/water/waterUnit';
-import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
-import WATER_TRACKING from '../../../../data/tracking/waterTracking';
-import { UIWaterHelper } from '../../../../services/uiWaterHelper';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonButton,
-  IonContent,
   IonCard,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
   IonItem,
   IonLabel,
-  IonCheckbox,
-  IonFooter,
   IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Water } from '../../../../classes/water/water';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import { WATER_UNIT } from '../../../../enums/water/waterUnit';
+import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UIWaterHelper } from '../../../../services/uiWaterHelper';
 
 @Component({
   selector: 'app-water-detail',

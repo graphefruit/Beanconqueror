@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { Brew } from '../classes/brew/brew';
 import { StorageClass } from '../classes/storageClass';
 import { UIHelper } from './uiHelper';

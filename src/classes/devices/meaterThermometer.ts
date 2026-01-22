@@ -1,6 +1,5 @@
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-
 import { TemperatureDevice } from './temperatureBluetoothDevice';
 
 declare var ble: any;
@@ -45,13 +44,13 @@ export class MeaterThermometer extends TemperatureDevice {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
 
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
   private parseStatusUpdate(temperatureRawStatus: Uint8Array) {
     this.logger.log(
-      'temperatureRawStatus received is: ' + temperatureRawStatus
+      'temperatureRawStatus received is: ' + temperatureRawStatus,
     );
 
     const tipTemperature =
@@ -65,7 +64,7 @@ export class MeaterThermometer extends TemperatureDevice {
       MeaterThermometer.TEMPERATURE_SERVICE_UUID,
       MeaterThermometer.TEMPERATURE_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

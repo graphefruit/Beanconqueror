@@ -1,11 +1,12 @@
-import { Injectable, inject } from '@angular/core';
-import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
+import { inject, Injectable } from '@angular/core';
 
 import { DarkMode } from '@aparajita/capacitor-dark-mode';
 import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
 import { Keyboard, KeyboardStyle } from '@capacitor/keyboard';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
+
+import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
 import { UISettingsStorage } from '../uiSettingsStorage';
 
 interface Theme {

@@ -1,4 +1,5 @@
 import { ErrorHandler } from '@angular/core';
+
 import { UILog } from '../../services/uiLog';
 
 export class BeanconquerorErrorHandler implements ErrorHandler {

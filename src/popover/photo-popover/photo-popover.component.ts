@@ -1,24 +1,30 @@
 import {
   Component,
   ElementRef,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
+
+import {
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Bean } from '../../classes/bean/bean';
-import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Brew } from '../../classes/brew/brew';
-import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
-import { Water } from '../../classes/water/water';
+import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { Water } from '../../classes/water/water';
 import { AsyncImageComponent } from '../../components/async-image/async-image.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { IonHeader, IonContent } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
 import { HeaderDismissButtonComponent } from '../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'photo-popover',

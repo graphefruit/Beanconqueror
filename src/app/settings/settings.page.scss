@@ -1,13 +1,11 @@
 :host {
-
   ion-accordion.accordion-expanded {
-    div[slot="content"] {
+    div[slot='content'] {
       border: 1px solid var(--ion-color-accent-secondary);
     }
-
   }
   ion-accordion {
-    background-color:inherit!important;
+    background-color: inherit !important;
   }
   ion-list {
     background: none;
@@ -17,7 +15,6 @@
     ion-list-header {
       padding-left: 10px;
       font-size: 16px;
-
     }
 
     ion-item {
@@ -37,7 +34,6 @@
         margin-bottom: 0px;
       }
     }
-
   }
 
   .ion-label {
@@ -48,7 +44,4 @@
       white-space: break-spaces;
     }
   }
-
-
 }
-

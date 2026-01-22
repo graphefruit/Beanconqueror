@@ -1,35 +1,38 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
-import { BrewView } from '../../classes/brew/brewView';
-import { UIStatistic } from '../../services/uiStatistic';
-import { UIHelper } from '../../services/uiHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { Brew } from '../../classes/brew/brew';
-import { IBrew } from '../../interfaces/brew/iBrew';
-import { Chart } from 'chart.js';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import Gradient from 'javascript-color-gradient';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import currencyToSymbolMap from 'currency-symbol-map/map';
-import { CurrencyService } from '../../services/currencyService/currency.service';
-import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import {
-  IonHeader,
-  IonMenuButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCol,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonRow,
-  IonCol,
-  IonCard,
-  IonCardHeader,
-  IonCardContent,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Chart } from 'chart.js';
+import currencyToSymbolMap from 'currency-symbol-map/map';
+import Gradient from 'javascript-color-gradient';
+
+import { Brew } from '../../classes/brew/brew';
+import { BrewView } from '../../classes/brew/brewView';
 import { HeaderComponent } from '../../components/header/header.component';
+import { IBrew } from '../../interfaces/brew/iBrew';
+import { CurrencyService } from '../../services/currencyService/currency.service';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UIStatistic } from '../../services/uiStatistic';
 
 @Component({
   selector: 'statistic',

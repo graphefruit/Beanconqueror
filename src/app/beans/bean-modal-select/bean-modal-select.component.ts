@@ -1,59 +1,62 @@
+import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { Bean } from '../../../classes/bean/bean';
-import { Brew } from '../../../classes/brew/brew';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
-import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
-import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
-import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
-import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
-import _ from 'lodash';
-import { BeanSortFilterHelperService } from '../../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
-import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 import { FormsModule } from '@angular/forms';
-import { NgTemplateOutlet, DecimalPipe } from '@angular/common';
-import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../../pipes/formatDate';
-import { BeanFunction } from '../../../pipes/bean/beanFunction';
-import { addIcons } from 'ionicons';
-import { snowOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonSearchbar,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonRadioGroup,
-  IonCard,
-  IonItem,
-  IonCheckbox,
-  IonRadio,
-  IonFooter,
-  IonRow,
-  IonCol,
   IonThumbnail,
-  IonSearchbar,
-  IonButton,
-  IonIcon,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
-import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { addIcons } from 'ionicons';
+import { snowOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import _ from 'lodash';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
+import { Settings } from '../../../classes/settings/settings';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
+import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
+import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import { BeanFunction } from '../../../pipes/bean/beanFunction';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { BeanSortFilterHelperService } from '../../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'bean-modal-select',

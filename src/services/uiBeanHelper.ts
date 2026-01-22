@@ -1,48 +1,48 @@
-import { Injectable, Injector, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, Injector } from '@angular/core';
 
-import { Brew } from '../classes/brew/brew';
-import { UIBrewStorage } from './uiBrewStorage';
-import { UIBeanStorage } from './uiBeanStorage';
-import { Bean } from '../classes/bean/bean';
-import BEAN_TRACKING from '../data/tracking/beanTracking';
-import { BeansAddComponent } from '../app/beans/beans-add/beans-add.component';
-import { UIAnalytics } from './uiAnalytics';
 import {
   ActionSheetController,
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
-import { BeanArchivePopoverComponent } from '../app/beans/bean-archive-popover/bean-archive-popover.component';
-import { BeansEditComponent } from '../app/beans/beans-edit/beans-edit.component';
-import { BeansDetailComponent } from '../app/beans/beans-detail/beans-detail.component';
-import { GreenBean } from '../classes/green-bean/green-bean';
-import { ServerBean } from '../models/bean/serverBean';
-import { BeanMapper } from '../mapper/bean/beanMapper';
-import { UIAlert } from './uiAlert';
-import { UIToast } from './uiToast';
-import QR_TRACKING from '../data/tracking/qrTracking';
-import { QrCodeScannerPopoverComponent } from '../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
-import { UISettingsStorage } from './uiSettingsStorage';
 
-import { BeanProto } from '../generated/src/classes/bean/bean';
-import { UIHelper } from './uiHelper';
+import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+
+import { BeanArchivePopoverComponent } from '../app/beans/bean-archive-popover/bean-archive-popover.component';
+import { BeanInternalShareCodeGeneratorComponent } from '../app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
+import { BeanPopoverFreezeComponent } from '../app/beans/bean-popover-freeze/bean-popover-freeze.component';
+import { BeanPopoverListComponent } from '../app/beans/bean-popover-list/bean-popover-list.component';
+import { BeanPopoverUnfreezeComponent } from '../app/beans/bean-popover-unfreeze/bean-popover-unfreeze.component';
+import { BeansAddComponent } from '../app/beans/beans-add/beans-add.component';
+import { BeansDetailComponent } from '../app/beans/beans-detail/beans-detail.component';
+import { BeansEditComponent } from '../app/beans/beans-edit/beans-edit.component';
+import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
+import { Bean } from '../classes/bean/bean';
+import { Brew } from '../classes/brew/brew';
+import { GreenBean } from '../classes/green-bean/green-bean';
+import { Config } from '../classes/objectConfig/objectConfig';
+import BEAN_TRACKING from '../data/tracking/beanTracking';
+import QR_TRACKING from '../data/tracking/qrTracking';
+import { BEAN_CODE_ACTION } from '../enums/beans/beanCodeAction';
+import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { ROASTS_ENUM } from '../enums/beans/roasts';
-import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
-import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
-import { BeanPopoverFreezeComponent } from '../app/beans/bean-popover-freeze/bean-popover-freeze.component';
-import { BeanPopoverUnfreezeComponent } from '../app/beans/bean-popover-unfreeze/bean-popover-unfreeze.component';
-
-import { BeanPopoverListComponent } from '../app/beans/bean-popover-list/bean-popover-list.component';
-import { BeanInternalShareCodeGeneratorComponent } from '../app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component';
-import { BEAN_CODE_ACTION } from '../enums/beans/beanCodeAction';
-import { TranslateService } from '@ngx-translate/core';
-import { Config } from '../classes/objectConfig/objectConfig';
-import { UILog } from './uiLog';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { BeanProto } from '../generated/src/classes/bean/bean';
 import { IAttachment } from '../interfaces/server/iAttachment';
+import { BeanMapper } from '../mapper/bean/beanMapper';
+import { ServerBean } from '../models/bean/serverBean';
+import { QrCodeScannerPopoverComponent } from '../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
+import { UIAlert } from './uiAlert';
+import { UIAnalytics } from './uiAnalytics';
+import { UIBeanStorage } from './uiBeanStorage';
+import { UIBrewStorage } from './uiBrewStorage';
 import { UIFileHelper } from './uiFileHelper';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UISettingsStorage } from './uiSettingsStorage';
+import { UIToast } from './uiToast';
 
 /**
  * Handles every helping functionalities

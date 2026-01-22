@@ -1,24 +1,27 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { Mill } from '../../../classes/mill/mill';
-import { IMill } from '../../../interfaces/mill/iMill';
-import MILL_TRACKING from '../../../data/tracking/millTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
   IonButton,
-  IonContent,
   IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
   IonItem,
   IonLabel,
-  IonFooter,
   IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Mill } from '../../../classes/mill/mill';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import MILL_TRACKING from '../../../data/tracking/millTracking';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-mill-detail',

@@ -1,82 +1,82 @@
-import { Component, Input, ViewChild, inject } from '@angular/core';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import { Component, inject, Input, ViewChild } from '@angular/core';
+
 import {
   AlertController,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonPopover,
+  IonRow,
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { Brew } from '../../../classes/brew/brew';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { Settings } from '../../../classes/settings/settings';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { addIcons } from 'ionicons';
+import {
+  clipboardOutline,
+  create,
+  download,
+  expandOutline,
+  globeOutline,
+  shareSocialOutline,
+} from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { UIExcel } from '../../../services/uiExcel';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { UIMillHelper } from '../../../services/uiMillHelper';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
 import {
   IBrewRealtimeWaterFlow,
   IBrewWaterFlow,
 } from '../../../classes/brew/brewFlow';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIAlert } from '../../../services/uiAlert';
-import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
-import moment from 'moment';
-
-import { UILog } from '../../../services/uiLog';
-import { Visualizer } from '../../../classes/visualizer/visualizer';
-import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
-import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { sleep } from '../../../classes/devices';
-import { ShareService } from '../../../services/shareService/share-service.service';
-import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
-import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
+import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { Settings } from '../../../classes/settings/settings';
+import { Visualizer } from '../../../classes/visualizer/visualizer';
+import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
-import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IBrew } from '../../../interfaces/brew/iBrew';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { ToFixedPipe } from '../../../pipes/toFixed';
-import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
-import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
-import { BrewFunction } from '../../../pipes/brew/brewFunction';
-import { addIcons } from 'ionicons';
-import {
-  create,
-  globeOutline,
-  download,
-  shareSocialOutline,
-  expandOutline,
-  clipboardOutline,
-} from 'ionicons/icons';
-import {
-  IonHeader,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonCard,
-  IonItem,
-  IonLabel,
-  IonChip,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonCardHeader,
-  IonCardContent,
-  IonPopover,
-  IonList,
-  IonFooter,
-} from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
-import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
-import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { ShareService } from '../../../services/shareService/share-service.service';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIExcel } from '../../../services/uiExcel';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
+import { UIMillHelper } from '../../../services/uiMillHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
+import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
 
 declare var Plotly;
 @Component({

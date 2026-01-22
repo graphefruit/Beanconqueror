@@ -1,28 +1,30 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { ROASTING_MACHINE_ACTION } from '../../../enums/roasting-machine/roastingMachineAction';
-import { RoastingMachine } from '../../../classes/roasting-machine/roasting-machine';
-import { UIRoastingMachineStorage } from '../../../services/uiRoastingMachineStorage';
-
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { UIRoastingMachineHelper } from '../../../services/uiRoastingMachineHelper';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RoastingMachineInformationCardComponent } from '../../../components/roasting-machine-information-card/roasting-machine-information-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { RoastingMachine } from '../../../classes/roasting-machine/roasting-machine';
+import { Settings } from '../../../classes/settings/settings';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { RoastingMachineInformationCardComponent } from '../../../components/roasting-machine-information-card/roasting-machine-information-card.component';
+import { ROASTING_MACHINE_ACTION } from '../../../enums/roasting-machine/roastingMachineAction';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIRoastingMachineHelper } from '../../../services/uiRoastingMachineHelper';
+import { UIRoastingMachineStorage } from '../../../services/uiRoastingMachineStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-roasting-machine',

@@ -1,6 +1,5 @@
-
 export interface IBrewParameter {
- // Properties
+  // Properties
   brew_temperature_time: boolean;
   brew_time: boolean;
   grind_size: boolean;

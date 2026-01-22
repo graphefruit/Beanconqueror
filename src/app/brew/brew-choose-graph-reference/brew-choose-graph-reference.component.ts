@@ -2,46 +2,50 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { Brew } from '../../../classes/brew/brew';
-import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
-import { Graph } from '../../../classes/graph/graph';
-import { UIGraphHelper } from '../../../services/uiGraphHelper';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIHelper } from '../../../services/uiHelper';
 import { FormsModule } from '@angular/forms';
-import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-reference-card/brew-graph-reference-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonButton,
-  IonIcon,
+  IonCard,
+  IonCol,
   IonContent,
-  IonSegment,
-  IonSegmentButton,
+  IonFooter,
+  IonHeader,
+  IonIcon,
   IonLabel,
   IonRadioGroup,
-  IonCard,
-  IonSearchbar,
-  IonFooter,
   IonRow,
-  IonCol,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
-import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Graph } from '../../../classes/graph/graph';
+import { Settings } from '../../../classes/settings/settings';
+import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-reference-card/brew-graph-reference-card.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIGraphHelper } from '../../../services/uiGraphHelper';
+import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',

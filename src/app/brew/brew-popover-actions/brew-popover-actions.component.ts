@@ -1,29 +1,32 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { Brew } from '../../../classes/brew/brew';
-import { UIHelper } from '../../../services/uiHelper';
-import { BREW_ACTION } from '../../../enums/brews/brewAction';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  heartOutline,
-  heart,
-  trophyOutline,
-  trophy,
-  shareSocialOutline,
   analyticsOutline,
+  heart,
+  heartOutline,
+  shareSocialOutline,
+  trophy,
+  trophyOutline,
 } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonContent,
-  IonList,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Settings } from '../../../classes/settings/settings';
+import { BREW_ACTION } from '../../../enums/brews/brewAction';
+import { IBrew } from '../../../interfaces/brew/iBrew';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'brew-popover-actions',

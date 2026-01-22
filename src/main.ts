@@ -1,26 +1,28 @@
 import {
-  ErrorHandler,
-  enableProdMode,
-  importProvidersFrom,
-  provideZoneChangeDetection,
-} from '@angular/core';
-
-import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
+import {
+  enableProdMode,
+  ErrorHandler,
+  importProvidersFrom,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { RouteReuseStrategy, provideRouter } from '@angular/router';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { provideRouter, RouteReuseStrategy } from '@angular/router';
+
 import {
   IonicRouteStrategy,
   provideIonicAngular,
 } from '@ionic/angular/standalone';
 import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
+
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
+
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';

@@ -1,7 +1,6 @@
 import { PeripheralData } from './ble.types';
-
-import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
 import { Logger } from './common';
+import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
 
 declare var ble: any;
 export class BookooPressure extends PressureDevice {

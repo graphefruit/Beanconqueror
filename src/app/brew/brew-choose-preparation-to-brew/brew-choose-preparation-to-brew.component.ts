@@ -1,24 +1,27 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { Brew } from '../../../classes/brew/brew';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../../pipes/formatDate';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { wifiOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonContent,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { Settings } from '../../../classes/settings/settings';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-brew-choose-preparation-to-brew',

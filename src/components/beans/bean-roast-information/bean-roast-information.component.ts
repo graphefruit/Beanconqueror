@@ -1,31 +1,35 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import { Bean } from '../../../classes/bean/bean';
-import moment from 'moment';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothScale } from '../../../classes/devices';
 import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonSelect,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment';
+
+import { Bean } from '../../../classes/bean/bean';
+import { BluetoothScale } from '../../../classes/devices';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
-import { TransformDateDirective } from '../../../directive/transform-date';
 import { RoastingMachineOverlayDirective } from '../../../directive/roasting-machine-overlay.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonCard,
-  IonItem,
-  IonInput,
-  IonSelect,
-  IonButton,
-  IonIcon,
-} from '@ionic/angular/standalone';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'bean-roast-information',

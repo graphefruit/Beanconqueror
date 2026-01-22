@@ -1,20 +1,22 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../../services/uiHelper';
-import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
-import { GREEN_BEAN_ACTION } from '../../../../enums/green-beans/greenBeanAction';
-import { GreenBean } from '../../../../classes/green-bean/green-bean';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { flameOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonContent,
-  IonList,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { GreenBean } from '../../../../classes/green-bean/green-bean';
+import { GREEN_BEAN_ACTION } from '../../../../enums/green-beans/greenBeanAction';
+import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
+import { UIHelper } from '../../../../services/uiHelper';
 
 @Component({
   selector: 'green-bean-popover-actions',

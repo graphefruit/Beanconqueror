@@ -144,7 +144,7 @@ export class EurekaPrecisaScale extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -157,7 +157,7 @@ export class EurekaPrecisaScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -196,7 +196,7 @@ export class EurekaPrecisaScale extends BluetoothScale {
       DATA_SERVICE,
       DATA_CHARACTERISTIC,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

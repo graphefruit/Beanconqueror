@@ -1,18 +1,21 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import { GreenBean } from '../../../../classes/green-bean/green-bean';
+
+import { IonCard, IonItem, IonLabel } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Bean } from '../../../../classes/bean/bean';
-import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { Settings } from '../../../../classes/settings/settings';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
-import { TranslatePipe } from '@ngx-translate/core';
-import { IonCard, IonItem, IonLabel } from '@ionic/angular/standalone';
+import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'bean-detail-sort-information',

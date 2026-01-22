@@ -1,23 +1,26 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { Mill } from '../../../classes/mill/mill';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIToast } from '../../../services/uiToast';
-import MILL_TRACKING from '../../../data/tracking/millTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonRow,
-  IonCol,
   IonButton,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonRow,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Mill } from '../../../classes/mill/mill';
+import MILL_TRACKING from '../../../data/tracking/millTracking';
+import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'mill-add',

@@ -1,55 +1,58 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnInit,
-  inject,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import moment from 'moment/moment';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { Bean } from '../../../classes/bean/bean';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { Brew } from '../../../classes/brew/brew';
-
-import { UIHelper } from '../../../services/uiHelper';
-import { Config } from '../../../classes/objectConfig/objectConfig';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIAlert } from '../../../services/uiAlert';
-import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
-import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIToast } from '../../../services/uiToast';
-import { TransformDateDirective } from '../../../directive/transform-date';
 import { FormsModule } from '@angular/forms';
-import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
-import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
-import { KeysPipe } from '../../../pipes/keys';
-import { ToFixedPipe } from '../../../pipes/toFixed';
-import { addIcons } from 'ionicons';
-import { warningOutline, trashOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonContent,
+  IonButton,
   IonCard,
-  IonItem,
-  IonInput,
   IonCheckbox,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
   IonLabel,
+  IonList,
+  IonListHeader,
   IonRange,
+  IonRow,
   IonSelect,
   IonSelectOption,
   IonTextarea,
-  IonIcon,
-  IonButton,
-  IonList,
-  IonListHeader,
-  IonFooter,
-  IonRow,
-  IonCol,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { trashOutline, warningOutline } from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import moment from 'moment/moment';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
+import { Config } from '../../../classes/objectConfig/objectConfig';
+import { Settings } from '../../../classes/settings/settings';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
+import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
 
 declare var cordova;
 @Component({

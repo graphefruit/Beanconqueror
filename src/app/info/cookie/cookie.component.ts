@@ -1,15 +1,18 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { Settings } from '../../../classes/settings/settings';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
   IonBackButton,
-  IonContent,
   IonCard,
+  IonContent,
+  IonHeader,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Settings } from '../../../classes/settings/settings';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-cookie',

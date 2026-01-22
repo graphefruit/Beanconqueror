@@ -1,12 +1,13 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { UIAnalytics } from '../uiAnalytics';
-import QR_TRACKING from '../../data/tracking/qrTracking';
 import {
   CapacitorBarcodeScanner,
   CapacitorBarcodeScannerCameraDirection,
   CapacitorBarcodeScannerTypeHint,
 } from '@capacitor/barcode-scanner';
+
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import { UIAnalytics } from '../uiAnalytics';
 
 @Injectable({
   providedIn: 'root',

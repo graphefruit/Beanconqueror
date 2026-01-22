@@ -1,44 +1,48 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   NgZone,
   OnDestroy,
   OnInit,
-  inject,
 } from '@angular/core';
-import { BluetoothTypes, ScaleType } from '../../classes/devices';
-import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { finalize, Subscription } from 'rxjs';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIAlert } from '../../services/uiAlert';
-import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { Preparation } from '../../classes/preparation/preparation';
-import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { refreshOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonContent,
+  IonButton,
   IonCard,
   IonCardContent,
-  IonRadioGroup,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
   IonItem,
   IonRadio,
-  IonSpinner,
-  IonFooter,
+  IonRadioGroup,
   IonRow,
-  IonCol,
-  IonButton,
+  IonSpinner,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { refreshOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { finalize, Subscription } from 'rxjs';
+
+import { BluetoothTypes, ScaleType } from '../../classes/devices';
+import { Preparation } from '../../classes/preparation/preparation';
+import { Settings } from '../../classes/settings/settings';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-bluetooth-device-chooser-popover',

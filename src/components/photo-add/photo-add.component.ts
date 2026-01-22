@@ -2,29 +2,31 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { UIImage } from '../../services/uiImage';
-import { Brew } from '../../classes/brew/brew';
-import { GreenBean } from '../../classes/green-bean/green-bean';
-import { Bean } from '../../classes/bean/bean';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIToast } from '../../services/uiToast';
 
-import { Preparation } from '../../classes/preparation/preparation';
-import { Mill } from '../../classes/mill/mill';
-import { UIAlert } from '../../services/uiAlert';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { Clipboard } from '@capacitor/clipboard';
-import { AsyncImageComponent } from '../async-image/async-image.component';
+import { IonButton, IonIcon, IonItem } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowForwardOutline, trash } from 'ionicons/icons';
-import { IonItem, IonIcon, IonButton } from '@ionic/angular/standalone';
+
+import { Clipboard } from '@capacitor/clipboard';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { GreenBean } from '../../classes/green-bean/green-bean';
+import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
+import { UIAlert } from '../../services/uiAlert';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIImage } from '../../services/uiImage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'photo-add',

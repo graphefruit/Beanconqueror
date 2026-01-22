@@ -1,18 +1,19 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
-
-import { BEAN_POPOVER_ADD_ACTION } from '../../../enums/beans/beanPopoverAddAction';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addCircleOutline, qrCodeOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonContent,
-  IonList,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { BEAN_POPOVER_ADD_ACTION } from '../../../enums/beans/beanPopoverAddAction';
 
 @Component({
   selector: 'app-bean-popover-add',

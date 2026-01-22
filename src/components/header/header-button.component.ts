@@ -1,5 +1,7 @@
 import { Component, input, output } from '@angular/core';
+
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
+
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { ShortPressDirective } from '../../directive/short-press.directive';
 

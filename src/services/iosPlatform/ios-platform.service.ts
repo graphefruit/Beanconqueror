@@ -1,18 +1,20 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { UIStorage } from '../uiStorage';
-import { UIFileHelper } from '../uiFileHelper';
-import { UILog } from '../uiLog';
-import { EventQueueService } from '../queueService/queue-service.service';
-import { AppEventType } from '../../enums/appEvent/appEvent';
 import { Platform } from '@ionic/angular/standalone';
-import { debounceTime } from 'rxjs/operators';
+
 import moment from 'moment';
-import { UIHelper } from '../uiHelper';
-import { UIBrewStorage } from '../uiBrewStorage';
-import { UISettingsStorage } from '../uiSettingsStorage';
+import { debounceTime } from 'rxjs/operators';
+
+import { AppEventType } from '../../enums/appEvent/appEvent';
+import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
+import { UIBrewStorage } from '../uiBrewStorage';
 import { UIExportImportHelper } from '../uiExportImportHelper';
+import { UIFileHelper } from '../uiFileHelper';
+import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
+import { UISettingsStorage } from '../uiSettingsStorage';
+import { UIStorage } from '../uiStorage';
 
 @Injectable({
   providedIn: 'root',

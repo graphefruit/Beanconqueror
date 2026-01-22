@@ -3,35 +3,37 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UIAlert } from '../../services/uiAlert';
-import { Mill } from '../../classes/mill/mill';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-
-import { MILL_ACTION } from '../../enums/mills/millActions';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIMillHelper } from '../../services/uiMillHelper';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { FormsModule } from '@angular/forms';
-import { MillInformationCardComponent } from '../../components/mill-information-card/mill-information-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { Mill } from '../../classes/mill/mill';
+import { Settings } from '../../classes/settings/settings';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import { MillInformationCardComponent } from '../../components/mill-information-card/mill-information-card.component';
+import { MILL_ACTION } from '../../enums/mills/millActions';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIMillHelper } from '../../services/uiMillHelper';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'mill',

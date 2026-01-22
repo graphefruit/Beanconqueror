@@ -2,44 +2,48 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import { Settings } from '../../../../classes/settings/settings';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { IGraph } from '../../../../interfaces/graph/iGraph';
-import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import { UIHelper } from '../../../../services/uiHelper';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIFileHelper } from '../../../../services/uiFileHelper';
-import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
-import { IBrew } from '../../../../interfaces/brew/iBrew';
-import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
-import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
-import { Brew } from '../../../../classes/brew/brew';
-import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
-import { Graph } from '../../../../classes/graph/graph';
-import { BREW_GRAPH_TYPE } from '../../../../enums/brews/brewGraphType';
-import { UIBrewStorage } from '../../../../services/uiBrewStorage';
-import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
-import { UIAlert } from '../../../../services/uiAlert';
+
+import {
+  IonButton,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  IonSpinner,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonChip,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonSpinner,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { Brew } from '../../../../classes/brew/brew';
+import { BrewFlow } from '../../../../classes/brew/brewFlow';
+import { Graph } from '../../../../classes/graph/graph';
+import { Settings } from '../../../../classes/settings/settings';
+import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
+import { BREW_GRAPH_TYPE } from '../../../../enums/brews/brewGraphType';
+import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
+import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
+import { IBrew } from '../../../../interfaces/brew/iBrew';
+import { IGraph } from '../../../../interfaces/graph/iGraph';
+import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
+import { UIAlert } from '../../../../services/uiAlert';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../../services/uiBrewStorage';
+import { UIFileHelper } from '../../../../services/uiFileHelper';
+import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 
 declare var Plotly;
 

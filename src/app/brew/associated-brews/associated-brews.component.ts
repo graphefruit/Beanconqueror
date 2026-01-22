@@ -2,27 +2,33 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   ViewChild,
-  inject,
 } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { Brew } from '../../../classes/brew/brew';
+import { BrewInformationComponent } from '../../../components/brew-information/brew-information.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { UIAlert } from '../../../services/uiAlert';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
-import { BrewInformationComponent } from '../../../components/brew-information/brew-information.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { IonHeader, IonContent } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
-import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-bean-associated-brews',

@@ -2,13 +2,16 @@ import {
   Directive,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   Output,
-  inject,
 } from '@angular/core';
+
 import { Platform } from '@ionic/angular/standalone';
-import moment from 'moment';
+
 import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
+
 declare var cordova;
 @Directive({ selector: '[choose-date-overlay]' })
 export class ChooseDateOverlayDirective {

@@ -1,4 +1,3 @@
-
 export interface IOrderBrewParameter {
   // Properties
   before: {
@@ -19,7 +18,6 @@ export interface IOrderBrewParameter {
     brew_time: number;
     coffee_blooming_time: number;
     coffee_first_drip_time: number;
-
   };
 
   after: {
@@ -30,11 +28,9 @@ export interface IOrderBrewParameter {
     note: number;
     set_custom_brew_time: number;
     attachments: number;
-    tds:number;
-    brew_beverage_quantity:number;
+    tds: number;
+    brew_beverage_quantity: number;
   };
-
-
 
   getLabel(string): string;
 }

@@ -1,9 +1,13 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { Platform } from '@ionic/angular/standalone';
-import { UIHelper } from '../uiHelper';
-import { UIBrewStorage } from '../uiBrewStorage';
+
 import moment from 'moment';
+
+import { UIBrewStorage } from '../uiBrewStorage';
+import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
+
 @Injectable({
   providedIn: 'root',
 })

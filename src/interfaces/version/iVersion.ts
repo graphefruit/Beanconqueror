@@ -1,9 +1,6 @@
-import {IConfig} from '../objectConfig/iObjectConfig';
-
+import { IConfig } from '../objectConfig/iObjectConfig';
 
 export interface IVersion {
-
-
-  alreadyDisplayedVersions: Array<string>
+  alreadyDisplayedVersions: Array<string>;
   config: IConfig;
 }

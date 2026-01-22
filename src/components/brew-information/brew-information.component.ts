@@ -1,64 +1,66 @@
+import { DecimalPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
   SimpleChange,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Brew } from '../../classes/brew/brew';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+
 import {
   MenuController,
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
-import { BREW_ACTION } from '../../enums/brews/brewAction';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import * as htmlToImage from 'html-to-image';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
 import { BrewPopoverActionsComponent } from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
-import { Preparation } from '../../classes/preparation/preparation';
-import { Mill } from '../../classes/mill/mill';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
-import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
-import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIToast } from '../../services/uiToast';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIAlert } from '../../services/uiAlert';
-import { UIImage } from '../../services/uiImage';
-import { UIHelper } from '../../services/uiHelper';
-import BREW_TRACKING from '../../data/tracking/brewTracking';
-import { Settings } from '../../classes/settings/settings';
-import { ShareService } from '../../services/shareService/share-service.service';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
-import { UIHealthKit } from '../../services/uiHealthKit';
-import * as htmlToImage from 'html-to-image';
-
-import { UIFileHelper } from '../../services/uiFileHelper';
+import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-
-import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
-import { UIGraphHelper } from '../../services/uiGraphHelper';
-import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
-import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
-import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
-import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
-import { NgTemplateOutlet, NgClass, DecimalPipe } from '@angular/common';
-import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
+import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
+import { Settings } from '../../classes/settings/settings';
+import BREW_TRACKING from '../../data/tracking/brewTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
-import { AsyncImageComponent } from '../async-image/async-image.component';
-import { FormatDatePipe } from '../../pipes/formatDate';
-import { ToFixedPipe } from '../../pipes/toFixed';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
+import { BREW_ACTION } from '../../enums/brews/brewAction';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
+import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { BeanFunction } from '../../pipes/bean/beanFunction';
 import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../pipes/brew/brewFunction';
-import { BeanFunction } from '../../pipes/bean/beanFunction';
+import { FormatDatePipe } from '../../pipes/formatDate';
 import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
+import { ShareService } from '../../services/shareService/share-service.service';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIGraphHelper } from '../../services/uiGraphHelper';
+import { UIHealthKit } from '../../services/uiHealthKit';
+import { UIHelper } from '../../services/uiHelper';
+import { UIImage } from '../../services/uiImage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
+
 declare var window;
 @Component({
   selector: 'brew-information',

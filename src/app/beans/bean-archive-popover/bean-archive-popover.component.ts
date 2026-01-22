@@ -1,30 +1,33 @@
-import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { IBean } from '../../../interfaces/bean/iBean';
-import { Bean } from '../../../classes/bean/bean';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIToast } from '../../../services/uiToast';
-import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { Brew } from '../../../classes/brew/brew';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ToFixedPipe } from '../../../pipes/toFixed';
+
 import {
-  IonHeader,
+  IonBadge,
+  IonButton,
+  IonCol,
   IonContent,
+  IonHeader,
   IonItem,
   IonLabel,
-  IonBadge,
   IonRange,
-  IonTextarea,
   IonRow,
-  IonCol,
-  IonButton,
+  IonTextarea,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
+import { Settings } from '../../../classes/settings/settings';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'app-bean-archive-popover',

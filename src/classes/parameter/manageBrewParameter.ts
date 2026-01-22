@@ -1,4 +1,3 @@
-
 import { IManageBrewParameter } from '../../interfaces/parameter/iManageBrewParameter';
 
 export class ManageBrewParameter implements IManageBrewParameter {

@@ -1,21 +1,22 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
+import { TranslateService } from '@ngx-translate/core';
+
+import { Bean } from '../classes/bean/bean';
+import { IBean } from '../interfaces/bean/iBean';
+import { IBrew } from '../interfaces/brew/iBrew';
+import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
+import { IMill } from '../interfaces/mill/iMill';
+import { IPreparation } from '../interfaces/preparation/iPreparation';
+import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
-import { UIHelper } from './uiHelper';
-import { UIPreparationStorage } from './uiPreparationStorage';
-import { Bean } from '../classes/bean/bean';
-import { IBrew } from '../interfaces/brew/iBrew';
-import { UIMillStorage } from './uiMillStorage';
-import { UISettingsStorage } from './uiSettingsStorage';
-import { TranslateService } from '@ngx-translate/core';
-import { IPreparation } from '../interfaces/preparation/iPreparation';
-import { IMill } from '../interfaces/mill/iMill';
-import { IBean } from '../interfaces/bean/iBean';
-import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
-import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
 import { UIGreenBeanStorage } from './uiGreenBeanStorage';
+import { UIHelper } from './uiHelper';
+import { UIMillStorage } from './uiMillStorage';
+import { UIPreparationStorage } from './uiPreparationStorage';
 import { UIRoastingMachineStorage } from './uiRoastingMachineStorage';
-
+import { UISettingsStorage } from './uiSettingsStorage';
 
 @Injectable({
   providedIn: 'root',

@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input, inject } from '@angular/core';
+import { Directive, HostListener, inject, Input } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 @Directive({ selector: '[ngModel][max-number-value]' })

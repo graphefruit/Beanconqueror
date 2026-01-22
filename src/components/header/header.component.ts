@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
-import { IonToolbar, IonButtons, IonTitle } from '@ionic/angular/standalone';
+
+import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-header',

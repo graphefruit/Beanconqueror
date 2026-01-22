@@ -1,9 +1,15 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
-import { ModalController } from '@ionic/angular/standalone';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonButton,
+  IonContent,
+  IonIcon,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowDownOutline } from 'ionicons/icons';
-import { IonContent, IonButton, IonIcon } from '@ionic/angular/standalone';
+
+import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
 
 @Component({
   selector: 'app-filesystem-error-popover',

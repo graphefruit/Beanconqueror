@@ -1,41 +1,44 @@
-import { Water } from '../../classes/water/water';
-import { UIAlert } from '../../services/uiAlert';
-import { UIToast } from '../../services/uiToast';
-import { UIWaterStorage } from '../../services/uiWaterStorage';
+import { DecimalPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import { WATER_ACTION } from '../../enums/water/waterActions';
-import { ModalController } from '@ionic/angular/standalone';
-import { WaterPopoverActionsComponent } from '../../app/water-section/water/water-popover-actions/water-popover-actions.component';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIImage } from '../../services/uiImage';
-import WATER_TRACKING from '../../data/tracking/waterTracking';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { Brew } from '../../classes/brew/brew';
-import { UIWaterHelper } from '../../services/uiWaterHelper';
-import { WATER_TYPES } from '../../enums/water/waterTypes';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { LongPressDirective } from '../../directive/long-press.directive';
-import { AsyncImageComponent } from '../async-image/async-image.component';
-import { DecimalPipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
+  IonButton,
   IonCard,
   IonCardContent,
-  IonGrid,
-  IonRow,
   IonCol,
-  IonButton,
+  IonGrid,
   IonIcon,
   IonLabel,
+  IonRow,
   IonText,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { WaterPopoverActionsComponent } from '../../app/water-section/water/water-popover-actions/water-popover-actions.component';
+import { Brew } from '../../classes/brew/brew';
+import { Water } from '../../classes/water/water';
+import WATER_TRACKING from '../../data/tracking/waterTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { WATER_ACTION } from '../../enums/water/waterActions';
+import { WATER_TYPES } from '../../enums/water/waterTypes';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIImage } from '../../services/uiImage';
+import { UIToast } from '../../services/uiToast';
+import { UIWaterHelper } from '../../services/uiWaterHelper';
+import { UIWaterStorage } from '../../services/uiWaterStorage';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'water-information-card',

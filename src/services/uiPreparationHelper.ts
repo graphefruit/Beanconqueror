@@ -1,29 +1,30 @@
-import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 
-import { Brew } from '../classes/brew/brew';
-import { UIBrewStorage } from './uiBrewStorage';
+import { ModalController } from '@ionic/angular/standalone';
+
+import { TranslateService } from '@ngx-translate/core';
 
 import { PreparationAddComponent } from '../app/preparation/preparation-add/preparation-add.component';
-import { ModalController } from '@ionic/angular/standalone';
-import { PreparationEditComponent } from '../app/preparation/preparation-edit/preparation-edit.component';
-import { Preparation } from '../classes/preparation/preparation';
+import { PreparationConnectedDeviceComponent } from '../app/preparation/preparation-connected-device/preparation-connected-device.component';
 import { PreparationDetailComponent } from '../app/preparation/preparation-detail/preparation-detail.component';
-import { PreparationTool } from '../classes/preparation/preparationTool';
 import { PreparationEditToolComponent } from '../app/preparation/preparation-edit-tool/preparation-edit-tool.component';
-import { UIHelper } from './uiHelper';
+import { PreparationEditComponent } from '../app/preparation/preparation-edit/preparation-edit.component';
+import { PreparationSortToolsComponent } from '../app/preparation/preparation-sort-tools/preparation-sort-tools.component';
+import { Brew } from '../classes/brew/brew';
 import { Config } from '../classes/objectConfig/objectConfig';
-import { TranslateService } from '@ngx-translate/core';
-import { UIPreparationStorage } from './uiPreparationStorage';
+import { Preparation } from '../classes/preparation/preparation';
+import { PreparationTool } from '../classes/preparation/preparationTool';
 import {
   makePreparationDevice,
   PreparationDeviceType,
 } from '../classes/preparationDevice';
-import { HttpClient } from '@angular/common/http';
 import { PreparationDevice } from '../classes/preparationDevice/preparationDevice';
-import { PreparationSortToolsComponent } from '../app/preparation/preparation-sort-tools/preparation-sort-tools.component';
 import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
-import { PreparationConnectedDeviceComponent } from '../app/preparation/preparation-connected-device/preparation-connected-device.component';
 import { UIAnalytics } from './uiAnalytics';
+import { UIBrewStorage } from './uiBrewStorage';
+import { UIHelper } from './uiHelper';
+import { UIPreparationStorage } from './uiPreparationStorage';
 
 /**
  * Handles every helping functionalities

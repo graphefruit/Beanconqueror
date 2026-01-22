@@ -1,16 +1,19 @@
-import { Injectable, inject } from '@angular/core';
-import { Bean } from '../../classes/bean/bean';
-import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
-import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
-import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
-import moment from 'moment/moment';
-import { BeanSortComponent } from '../../app/beans/bean-sort/bean-sort.component';
-import { BeanFilterComponent } from '../../app/beans/bean-filter/bean-filter.component';
+import { inject, Injectable } from '@angular/core';
+
 import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../uiHelper';
+
+import moment from 'moment/moment';
+
+import { BeanFilterComponent } from '../../app/beans/bean-filter/bean-filter.component';
+import { BeanSortComponent } from '../../app/beans/bean-sort/bean-sort.component';
+import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
+import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
+import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
+import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
+import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { UIBeanHelper } from '../uiBeanHelper';
+import { UIHelper } from '../uiHelper';
 
 @Injectable({
   providedIn: 'root',

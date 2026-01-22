@@ -1,11 +1,10 @@
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-
 import {
+  celciusToFahrenheit,
+  fahrenheitToCelcius,
   Temperature,
   TemperatureDevice,
-  fahrenheitToCelcius,
-  celciusToFahrenheit,
 } from './temperatureBluetoothDevice';
 
 declare var ble: any;
@@ -63,7 +62,7 @@ export class ETITemperature extends TemperatureDevice {
         this.parseStatusUpdate(new Float32Array(_data));
       },
 
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -73,7 +72,7 @@ export class ETITemperature extends TemperatureDevice {
    */
   private parseStatusUpdate(temperatureRawStatus: Float32Array) {
     this.logger.log(
-      'temperatureRawStatus received is: ' + temperatureRawStatus
+      'temperatureRawStatus received is: ' + temperatureRawStatus,
     );
 
     var temperatureString = temperatureRawStatus.toString();
@@ -92,7 +91,7 @@ export class ETITemperature extends TemperatureDevice {
       ETITemperature.TEMPERATURE_SERVICE_UUID,
       ETITemperature.TEMPERATURE_CHANNEL_1_TEMP_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

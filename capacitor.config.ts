@@ -1,5 +1,6 @@
-import type { CapacitorConfig } from '@capacitor/cli';
 import { argv, env } from 'process';
+
+import type { CapacitorConfig } from '@capacitor/cli';
 
 type Platform = 'android' | 'ios';
 const PlatformOverrideEnvVariable = 'CAPACITOR_PLATFORM_OVERRIDE';

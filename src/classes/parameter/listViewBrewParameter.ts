@@ -1,4 +1,3 @@
-
 import { IBrewParameter } from '../../interfaces/parameter/iBrewParameter';
 
 export class ListViewBrewParameter implements IBrewParameter {

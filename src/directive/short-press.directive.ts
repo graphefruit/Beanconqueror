@@ -1,10 +1,10 @@
 import {
-  EventEmitter,
   Directive,
-  Output,
-  Input,
   ElementRef,
+  EventEmitter,
   inject,
+  Input,
+  Output,
 } from '@angular/core';
 
 @Directive({ selector: '[short-press]' })
