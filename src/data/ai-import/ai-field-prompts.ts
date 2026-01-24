@@ -173,10 +173,24 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
       if (!match) {
         return null;
       }
-      // Check raw number exists in OCR to prevent hallucinations
-      if (!ocrText.includes(match[1])) {
+
+      // Extract just the digits from the LLM response (ignore separators)
+      const responseDigits = match[1].replace(/[.,]/g, '');
+
+      // Extract digit sequences from OCR text and check if response digits appear
+      // This handles cases like "1.000g" → "1000g" normalization
+      const ocrDigitSequences: string[] = ocrText.match(/\d+/g) || [];
+      const digitsFoundInOcr = ocrDigitSequences.some(
+        (seq: string) =>
+          seq === responseDigits ||
+          seq.includes(responseDigits) ||
+          responseDigits.includes(seq),
+      );
+
+      if (!digitsFoundInOcr) {
         return null;
       }
+
       return v; // Return raw string, extractWeight handles conversion
     },
   },
@@ -334,8 +348,8 @@ TEXT (languages: {{LANGUAGES}}):
         return null;
       }
 
-      // Return as ISO string for storage
-      return parsed.toISOString();
+      // Return in local timezone format (consistent with rest of app)
+      return parsed.format();
     },
   },
 
