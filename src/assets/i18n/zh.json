@@ -1086,7 +1086,10 @@
             "RECONNECT_NEEDED": "需要重新连接",
             "RECONNECT": "重新连接",
             "ENTER_TARGET_BREW_WEIGHT": "输入目标冲泡重量（单位：克）",
-            "LAST_SHOT": "上一次萃取"
+            "LAST_SHOT": "上一次萃取",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode is just working with connected scale, please connect one",
+            "WE_COULD_NOT_CONNECT": "We could not connect to the machine",
+            "BREW_BY_WEIGHT_HINT": "The programmed volume in ml must be higher than the target weight in grams for the shot to stop at the set weight. If its not the case, please adjust the volume in ml."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
@@ -1459,36 +1462,6 @@
     "ANALYTICS_INFORMATION": "<h1>与BeanConqueror共度的咖啡之旅<\/h1><p>哇！你已经发现了<b>{{BEANS_COUNT}}<\/b>咖啡豆和冲泡的<b>{{BREWS_COUNT}}<\/b>从他们那里品尝到美味的咖啡。这让你成为真正的咖啡探索者！<\/p><h2>携手共创咖啡的未来<\/h2><p>想象一下：我们社区中只有4%的成员愿意与我们分享他们的使用体验。这就像试图用一种原料来完善一道菜肴！你们的酿造数据就像是珍贵的宝藏，帮助我们把BeanConqueror打造成你们想要的工具。<\/p><h3>携手，我们可以：<\/h3><ul><li>为每种咖啡豆品种确定理想的参数<\/li><li>制定基于科学研究的咖啡入门指南<\/li><li>绘制冲泡变量与风味特征之间的复杂关系图<\/li><li>让BeanConqueror成为您咖啡之旅中更加直观的得力助手。<\/li><\/ul><h2>您的贡献非常宝贵：<\/h2><p>现在或稍后在设置中启用数据共享。每次共享的体验都能丰富我们的咖啡知识库，并为BeanConqueror的未来发展奠定基础！<\/p><h2>您的隐私对我们至关重要<\/h2><p>作为欧洲心脏地带的一支德国团队，我们非常重视您的隐私。我们仅传输经过匿名处理的数据，这些数据无法用于推断您的身份。您可以在BeanConqueror网站上找到所有详细信息。<\/p><h2>加入BeanConqueror的进化之旅！<\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id 未与个人数据相关联；无法进行个人身份识别。",
     "BEAN_DATA_AVERAGE_BREW_RATING": "平均萃取评分",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "关闭蓝牙设备连接\/断开连接提示框的选项"
-            }
-        },
-        "8.5.0": {
-            "TITLE": "版本 8.5.0：新增功能",
-            "DESCRIPTION": [
-                "<b>揭开2025年的面纱<\/b>",
-                "开启你的2025年之旅！",
-                "空的",
-                "<b>新语言<\/b>",
-                "支持希腊语——感谢 Mr. pterodactyl",
-                "空的",
-                "<b>蓝牙秤<\/b>",
-                "显示设备的唯一 ID，以便于连接。",
-                "空的",
-                "<b>豆子<\/b>",
-                "解冻一部分冷冻豆子",
-                "如果豆子来自同一品种，则现在将它们归为一组。",
-                "显示无咖啡因咖啡豆的特定图标（月亮图标）",
-                "修复从 Excel 导入多个不同类型的 bean 的问题",
-                "空的",
-                "<b>其他<\/b>",
-                "【安卓】通过电容支持 Edge2Edge 修复键盘空白问题",
-                "小修复"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "选择显示图片类型的冲泡方式",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "准备",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "豆子",
@@ -1582,5 +1555,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "豆子已经被冻结",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "豆子已部分解冻",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "解冻部分咖啡豆",
-    "LAST_COMMUNICATION": "最后一次通讯"
+    "LAST_COMMUNICATION": "最后一次通讯",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Version 8.6.0: What's new",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU<\/b>",
+                "Support of the Sanremo YOU Machine combined with the brew by weight feature!",
+                "Explore the Baristamode, start the shot from the Sanremo YOU and BeanConqueror will stop it at the right time.",
+                "",
+                "<b>Graph-Colors<\/b>",
+                "You can now customize the graph colors for light and dark mode",
+                "",
+                "<b>Meticulous<\/b>",
+                "If you import a shot, the profile name and the set temperature is set now aswell",
+                "",
+                "<b>Brew<\/b>",
+                "Displaying hour and minute on the detail screen of the brew",
+                "",
+                "<b>Other<\/b>",
+                "Fixing excel import for Chinese characters",
+                "Minor fixes"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Active (Light)",
+    "GRAPH_ACTIVE_DARK_MODE": "Active (Dark)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Reference (Light)",
+    "GRAPH_REFERENCE_DARK_MODE": "Reference (Dark)",
+    "GRAPH_COLORS": "Graph colors",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": ""
 }

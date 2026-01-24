@@ -1086,7 +1086,10 @@
             "RECONNECT_NEEDED": "Opnieuw verbinden nodig",
             "RECONNECT": "Opnieuw verbinden",
             "ENTER_TARGET_BREW_WEIGHT": "Voer het gewenste brouwgewicht in grammen in",
-            "LAST_SHOT": "Laatste schot"
+            "LAST_SHOT": "Laatste schot",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Barista modus werkt alleen met aangesloten weegschaal, sluit er een aan",
+            "WE_COULD_NOT_CONNECT": "We konden geen verbinding maken met de machine",
+            "BREW_BY_WEIGHT_HINT": "Het geprogrammeerde volume in ml moet hoger zijn dan het streefgewicht in grammen, zodat de injectie stopt bij het ingestelde gewicht. Als dit niet het geval is, pas dan het volume in ml aan."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
@@ -1459,36 +1462,6 @@
     "ANALYTICS_INFORMATION": "<h1> Jouw koffie-avontuur met BeanConqueror <\/h1> <p> Wauw! Je hebt al <b> {{BEANS_COUNT}} <\/b> bonen ontdekt en er <b> {{BREWS_COUNT}} <\/b> heerlijke kopjes koffie mee gezet. Dat maakt je een echte koffie-ontdekker! <\/p> <h2> Samen de toekomst van koffie vormgeven <\/h2> <p> Stel je voor: slechts 4% van onze community deelt hun ervaringen met ons. Dat is alsof je een recept probeert te perfectioneren met slechts één ingrediënt! Jouw zetgegevens zijn als kleine schatten die ons helpen om van BeanConqueror de tool te maken die jij wilt. <\/p> <h3> Samen kunnen we: <\/h3> <ul> <li> De ideale parameters voor elke koffieboonsoort decoderen <\/li> <li> Wetenschappelijk onderbouwde handleidingen ontwikkelen om aan de slag te gaan in de koffiewereld <\/li> <li> De complexe relaties tussen zetvariabelen en smaakprofielen in kaart brengen <\/li> <li> BeanConqueror nog intuïtiever maken voor je koffie-avontuur <\/li> <\/ul> <h2> Jouw bijdrage is waardevol: <\/h2> <p> Activeer het delen van gegevens nu of later in de instellingen. Elke gedeelde ervaring verrijkt onze collectieve koffiekennis en is een bouwsteen voor de toekomst van BeanConqueror! <\/p> <h2> Jouw privacy is belangrijk voor ons <\/h2> <p> Als Duits team in het hart van Europa nemen we jouw privacy zeer serieus. We verzenden alleen geanonimiseerde gegevens waaruit geen conclusies over jouw identiteit kunnen worden getrokken. Je vindt alle details op de website van BeanConqueror. <\/p> <h2> Word onderdeel van de BeanConqueror-evolutie! <\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics-ID is niet gekoppeld aan persoonlijke gegevens; persoonlijke identificatie is niet mogelijk.",
     "BEAN_DATA_AVERAGE_BREW_RATING": "Gemiddelde brouwbeoordeling",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "Optie om de pop-up voor verbinden\/verbreken voor Bluetooth-apparaten uit te schakelen"
-            }
-        },
-        "8.5.0": {
-            "TITLE": "Versie 8.5.0: Wat is er nieuw?",
-            "DESCRIPTION": [
-                "<b>Pak 2025 uit<\/b>",
-                "Ontdek, jou 2025!",
-                "",
-                "<b>Nieuwe taal<\/b>",
-                "Griekse ondersteuning - Met dank aan Mr. pterodactyl",
-                "",
-                "<b>Bluetooth-weegschalen<\/b>",
-                "De unieke ID van het apparaat wordt weergegeven voor een eenvoudigere verbinding maken",
-                "",
-                "<b> Bonen <\/b>",
-                "Ontdooi een deel van een bevroren boon.",
-                "Bonen worden nu gegroepeerd als ze van dezelfde ouder afkomstig zijn",
-                "Een specifiek pictogram tonen voor cafeïnevrije bonen (maan-icoon)",
-                "Importeren van bonen uit Excel met meerdere variëteiten opgelost",
-                "",
-                "<b> Anders <\/b>",
-                "[ANDROID] Ondersteuning voor Edge2Edge van Capacitor om witruimte op het toetsenbord te verhelpen",
-                "Kleine correcties"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Kies brouwsel weergave afbeeldingstype",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Bereidingswijze",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Boon",
@@ -1582,5 +1555,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "bonen zijn ontdooid",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Bonen zijn gedeeltelijk ontdooid",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Ontdooi een bevroren koffieboon gedeeltelijk",
-    "LAST_COMMUNICATION": "Laatste communicatie"
+    "LAST_COMMUNICATION": "Laatste communicatie",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Versie 8.6.0: Wat is er nieuw?",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU Machine<\/b>",
+                "Ondersteuning van de Sanremo YOU Machine in combinatie met de functie voor het zetten op basis van gewicht!",
+                "Ontdek de Barista modus, start de espresso vanuit de Sanremo YOU en BeanConqueror stopt het op het juiste moment.",
+                "",
+                "<b>Grafiekkleuren<\/b>",
+                "Je kunt nu de grafiekkleuren aanpassen voor de lichte en donkere modus",
+                "",
+                "<b>Meticulous<\/b>",
+                "Als je een espresso opname importeert, worden nu ook de profielnaam en de ingestelde temperatuur ingesteld.",
+                "",
+                "<b> Brouwen <\/b>",
+                "Weergave van uur en minuten op het detailscherm van het brouwproces",
+                "",
+                "<b>Overige<\/b>",
+                "Excel import voor Chinese tekens correctie",
+                "Kleine correcties"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Actief (Licht)",
+    "GRAPH_ACTIVE_DARK_MODE": "Actief (Donker)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Referentie (Licht)",
+    "GRAPH_REFERENCE_DARK_MODE": "Referentie (donker)",
+    "GRAPH_COLORS": "Grafiekkleuren",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "Koreaans",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slowaaks",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japans",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russisch"
 }
