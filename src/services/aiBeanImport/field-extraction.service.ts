@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { CapgoLLM } from '@capgo/capacitor-llm';
 import { Bean } from '../../classes/bean/bean';
+import {
+  sendLLMPrompt,
+  extractJsonFromResponse,
+  isNullLikeValue,
+} from './llm-communication.service';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
 import { UILog } from '../uiLog';
@@ -241,12 +245,7 @@ export class FieldExtractionService {
       console.log(`${fieldName} response: "${cleaned}"`);
 
       // Handle null/not found responses (exact match only - partial NOT_FOUND handled by postProcess)
-      if (
-        !cleaned ||
-        cleaned.toLowerCase() === 'null' ||
-        cleaned.toLowerCase() === 'none' ||
-        cleaned.toUpperCase() === 'NOT_FOUND'
-      ) {
+      if (isNullLikeValue(cleaned)) {
         return null;
       }
 
@@ -310,34 +309,27 @@ export class FieldExtractionService {
     name: string;
     roaster: string;
   } {
-    try {
-      // Try to extract JSON from potential markdown code blocks
-      let jsonStr = response;
-      const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (jsonMatch) {
-        jsonStr = jsonMatch[1].trim();
-      }
-
-      // Try to parse as JSON
-      const parsed = JSON.parse(jsonStr);
-
-      // Extract and sanitize values
-      let name = this.sanitizeNameRoasterField(parsed?.name);
-      let roaster = this.sanitizeNameRoasterField(parsed?.roaster);
-
-      // Apply title case normalization
-      if (name) {
-        name = this.textNorm.normalizeCase(name);
-      }
-      if (roaster) {
-        roaster = this.textNorm.normalizeCase(roaster);
-      }
-
-      return { name: name || '', roaster: roaster || '' };
-    } catch (e) {
-      this.uiLog.error('Failed to parse name/roaster JSON: ' + e);
+    const parsed = extractJsonFromResponse<{ name?: string; roaster?: string }>(
+      response,
+    );
+    if (!parsed) {
+      this.uiLog.error('Failed to parse name/roaster JSON');
       return { name: '', roaster: '' };
     }
+
+    // Extract and sanitize values
+    let name = this.sanitizeNameRoasterField(parsed.name);
+    let roaster = this.sanitizeNameRoasterField(parsed.roaster);
+
+    // Apply title case normalization
+    if (name) {
+      name = this.textNorm.normalizeCase(name);
+    }
+    if (roaster) {
+      roaster = this.textNorm.normalizeCase(roaster);
+    }
+
+    return { name: name || '', roaster: roaster || '' };
   }
 
   /**
@@ -347,11 +339,7 @@ export class FieldExtractionService {
     if (value === null || value === undefined) return '';
     if (typeof value !== 'string') return '';
     const trimmed = value.trim();
-    if (
-      trimmed.toLowerCase() === 'null' ||
-      trimmed.toUpperCase() === 'NOT_FOUND' ||
-      trimmed.toLowerCase() === 'unknown'
-    ) {
+    if (isNullLikeValue(trimmed)) {
       return '';
     }
     return trimmed;
@@ -361,73 +349,9 @@ export class FieldExtractionService {
    * Send a message to the LLM and wait for response.
    */
   private async sendLLMMessage(prompt: string): Promise<string> {
-    // Set up Apple Intelligence model
-    await CapgoLLM.setModel({ path: 'Apple Intelligence' });
-
-    // Create chat session
-    const { id: chatId } = await CapgoLLM.createChat();
-
-    // Track the response
-    let latestSnapshot = '';
-    let resolved = false;
-
-    return new Promise<string>(async (resolve, reject) => {
-      const cleanup = async (textListener: any, finishedListener: any) => {
-        try {
-          await textListener?.remove();
-          await finishedListener?.remove();
-        } catch (e) {
-          this.uiLog.error('Error cleaning up listeners: ' + e);
-        }
-      };
-
-      const resolveOnce = async (
-        value: string,
-        textListener: any,
-        finishedListener: any,
-      ) => {
-        if (!resolved) {
-          resolved = true;
-          await cleanup(textListener, finishedListener);
-          resolve(value);
-        }
-      };
-
-      // Listen for text chunks
-      const textListener = await CapgoLLM.addListener(
-        'textFromAi',
-        (event: any) => {
-          if (event.text) {
-            latestSnapshot = event.text;
-          }
-        },
-      );
-
-      // Listen for completion
-      const finishedListener = await CapgoLLM.addListener(
-        'aiFinished',
-        async () => {
-          await resolveOnce(latestSnapshot, textListener, finishedListener);
-        },
-      );
-
-      // Timeout fallback (15 seconds per field)
-      setTimeout(async () => {
-        if (!resolved) {
-          this.uiLog.log('LLM timeout, using latest snapshot');
-          await resolveOnce(
-            latestSnapshot || '',
-            textListener,
-            finishedListener,
-          );
-        }
-      }, 15000);
-
-      // Send message
-      await CapgoLLM.sendMessage({
-        chatId,
-        message: prompt,
-      });
+    return sendLLMPrompt(prompt, {
+      timeoutMs: 15000,
+      logger: this.uiLog,
     });
   }
 
@@ -675,32 +599,24 @@ export class FieldExtractionService {
   private parseBlendOriginsResponse(
     response: string,
   ): Partial<IBeanInformation>[] {
-    try {
-      // Try to extract JSON from potential markdown code blocks
-      let jsonStr = response;
-      const jsonMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (jsonMatch) {
-        jsonStr = jsonMatch[1].trim();
-      }
+    const parsed = extractJsonFromResponse<unknown>(response);
 
-      // Try to parse as JSON
-      const parsed = JSON.parse(jsonStr);
-
-      if (!Array.isArray(parsed)) {
-        // Single object returned - wrap in array
-        return [this.sanitizeBlendOriginObject(parsed)];
-      }
-
-      // Sanitize each origin object
-      const results = parsed.map((obj) => this.sanitizeBlendOriginObject(obj));
-
-      // Ensure at least one origin
-      return results.length > 0 ? results : [this.createEmptyOrigin()];
-    } catch (e) {
+    if (!parsed) {
       // JSON parse failed - return empty origin
-      this.uiLog.error('Failed to parse blend origins JSON: ' + e);
-      return [this.createEmptyOrigin()];
+      this.uiLog.error('Failed to parse blend origins JSON');
+      return [this.createEmptyBeanInformation()];
     }
+
+    if (!Array.isArray(parsed)) {
+      // Single object returned - wrap in array
+      return [this.sanitizeBlendOriginObject(parsed)];
+    }
+
+    // Sanitize each origin object
+    const results = parsed.map((obj) => this.sanitizeBlendOriginObject(obj));
+
+    // Ensure at least one origin
+    return results.length > 0 ? results : [this.createEmptyBeanInformation()];
   }
 
   /**
@@ -737,11 +653,7 @@ export class FieldExtractionService {
     if (value === null || value === undefined) return '';
     if (typeof value !== 'string') return '';
     const trimmed = value.trim();
-    if (
-      trimmed.toLowerCase() === 'null' ||
-      trimmed.toLowerCase() === 'not_found' ||
-      trimmed.toLowerCase() === 'unknown'
-    ) {
+    if (isNullLikeValue(trimmed)) {
       return '';
     }
     return trimmed;
@@ -755,11 +667,7 @@ export class FieldExtractionService {
     if (typeof value !== 'string') return '';
 
     const trimmed = value.trim();
-    if (
-      trimmed.toLowerCase() === 'null' ||
-      trimmed.toLowerCase() === 'not_found' ||
-      trimmed.toLowerCase() === 'unknown'
-    ) {
+    if (isNullLikeValue(trimmed)) {
       return '';
     }
 
@@ -775,25 +683,6 @@ export class FieldExtractionService {
     }
 
     return trimmed;
-  }
-
-  /**
-   * Create an empty origin object.
-   */
-  private createEmptyOrigin(): Partial<IBeanInformation> {
-    return {
-      country: '',
-      region: '',
-      variety: '',
-      processing: '',
-      elevation: '',
-      farm: '',
-      farmer: '',
-      harvest_time: '',
-      certification: '',
-      purchasing_price: 0,
-      fob_price: 0,
-    };
   }
 
   /**
