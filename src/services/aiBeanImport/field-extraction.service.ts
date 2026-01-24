@@ -839,34 +839,32 @@ export class FieldExtractionService {
    * Update progress message in loading spinner.
    */
   private updateProgress(stepKey: string): void {
-    try {
-      const stepName = this.translate.instant(`AI_IMPORT_STEP_${stepKey}`);
-      const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
-      this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${stepName}`);
-    } catch (e) {
-      // Silently fail if translation not found
+    const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
+    let stepName = this.translate.instant(`AI_IMPORT_STEP_${stepKey}`);
+    if (stepName === `AI_IMPORT_STEP_${stepKey}`) {
+      // Translation not found, format the step key nicely
+      stepName = stepKey
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase());
     }
+    this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${stepName}`);
   }
 
   /**
    * Update progress message with current field being extracted.
    */
   private updateFieldProgress(prefix: string, fieldName: string): void {
-    try {
-      const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
-      // Try to get translated field name, fallback to formatted field name
-      let fieldLabel = this.translate.instant(
-        `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`,
-      );
-      if (fieldLabel === `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`) {
-        // Translation not found, format the field name nicely
-        fieldLabel = fieldName
-          .replace(/_/g, ' ')
-          .replace(/\b\w/g, (c) => c.toUpperCase());
-      }
-      this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${fieldLabel}`);
-    } catch (e) {
-      // Silently fail if translation not found
+    const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
+    // Try to get translated field name, fallback to formatted field name
+    let fieldLabel = this.translate.instant(
+      `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`,
+    );
+    if (fieldLabel === `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`) {
+      // Translation not found, format the field name nicely
+      fieldLabel = fieldName
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase());
     }
+    this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${fieldLabel}`);
   }
 }
