@@ -6,16 +6,13 @@ import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
 import { UILog } from '../uiLog';
 import { Bean } from '../../classes/bean/bean';
-import {
-  AI_IMPORT_PROMPT_TEMPLATE,
-  AI_IMPORT_LANGUAGE_DETECTION_PROMPT,
-} from '../../data/ai-import/ai-import-prompt';
-import { AIImportExamplesService } from './ai-import-examples.service';
+import { AI_IMPORT_LANGUAGE_DETECTION_PROMPT } from '../../data/ai-import/ai-import-prompt';
 import { FieldExtractionService } from './field-extraction.service';
 import {
   OcrMetadataService,
   TextDetectionResult,
 } from './ocr-metadata.service';
+import { sendLLMPrompt } from './llm-communication.service';
 import { CapgoLLM } from '@capgo/capacitor-llm';
 import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
 import {
@@ -34,27 +31,12 @@ export interface AIReadinessResult {
   providedIn: 'root',
 })
 export class AIBeanImportService {
-  private static readonly ALLOWED_PROPERTIES = [
-    'name',
-    'roaster',
-    'bean_roasting_type',
-    'beanMix',
-    'aromatics',
-    'decaffeinated',
-    'weight',
-    'url',
-    'cupping_points',
-    'note',
-    'bean_information',
-  ];
-
   constructor(
     private readonly uiImage: UIImage,
     private readonly uiAlert: UIAlert,
     private readonly translate: TranslateService,
     private readonly platform: Platform,
     private readonly uiLog: UILog,
-    private readonly aiImportExamples: AIImportExamplesService,
     private readonly fieldExtraction: FieldExtractionService,
     private readonly uiFileHelper: UIFileHelper,
     private readonly ocrMetadata: OcrMetadataService,
@@ -447,209 +429,31 @@ export class AIBeanImportService {
   }
 
   /**
-   * Send extracted text to LLM for analysis
-   */
-  private async analyzeTextWithLLM(
-    ocrText: string,
-    languages: string[],
-  ): Promise<Bean | null> {
-    try {
-      // Set up Apple Intelligence model
-      await CapgoLLM.setModel({ path: 'Apple Intelligence' });
-
-      // Create chat session
-      const { id: chatId } = await CapgoLLM.createChat();
-      this.uiLog.log('Created chat with ID: ' + chatId);
-
-      // Build the prompt with merged examples from specified languages
-      const prompt = await this.buildPrompt(ocrText, languages);
-
-      // Track the latest snapshot (plugin sends full content each time, not deltas)
-      let latestSnapshot = '';
-      let resolved = false;
-
-      return new Promise<Bean | null>(async (resolve) => {
-        const cleanup = async (textListener: any, finishedListener: any) => {
-          try {
-            await textListener?.remove();
-            await finishedListener?.remove();
-          } catch (e) {
-            this.uiLog.error('Error cleaning up listeners: ' + e);
-          }
-        };
-
-        const resolveOnce = async (
-          bean: Bean | null,
-          textListener: any,
-          finishedListener: any,
-        ) => {
-          if (!resolved) {
-            resolved = true;
-            await cleanup(textListener, finishedListener);
-            resolve(bean);
-          }
-        };
-
-        // Listen for text chunks (snapshots contain full content so far)
-        const textListener = await CapgoLLM.addListener(
-          'textFromAi',
-          (event: any) => {
-            // Store the latest snapshot (not accumulating since these are full snapshots)
-            if (event.text) {
-              latestSnapshot = event.text;
-            }
-          },
-        );
-
-        // Listen for completion
-        const finishedListener = await CapgoLLM.addListener(
-          'aiFinished',
-          async (event: any) => {
-            this.uiLog.log(
-              'aiFinished event received: ' + JSON.stringify(event),
-            );
-            this.uiLog.log('Latest snapshot length: ' + latestSnapshot.length);
-
-            // Don't check chatId - just process when we get the finished signal
-            if (latestSnapshot) {
-              this.uiLog.log('LLM response: ' + latestSnapshot);
-
-              try {
-                const bean = this.createBeanFromResponse(latestSnapshot);
-                await resolveOnce(bean, textListener, finishedListener);
-              } catch (parseError) {
-                this.uiLog.error('Failed to parse LLM response: ' + parseError);
-                await resolveOnce(null, textListener, finishedListener);
-              }
-            } else {
-              this.uiLog.error('aiFinished but no snapshot content received');
-              await resolveOnce(null, textListener, finishedListener);
-            }
-          },
-        );
-
-        // Timeout fallback (30 seconds)
-        setTimeout(async () => {
-          if (!resolved && latestSnapshot) {
-            this.uiLog.log('Timeout reached, using latest snapshot');
-            try {
-              const bean = this.createBeanFromResponse(latestSnapshot);
-              await resolveOnce(bean, textListener, finishedListener);
-            } catch (parseError) {
-              this.uiLog.error('Timeout parse error: ' + parseError);
-              await resolveOnce(null, textListener, finishedListener);
-            }
-          } else if (!resolved) {
-            this.uiLog.error('Timeout with no response');
-            await resolveOnce(null, textListener, finishedListener);
-          }
-        }, 30000);
-
-        // Send message
-        await CapgoLLM.sendMessage({
-          chatId,
-          message: prompt,
-        });
-      });
-    } catch (error) {
-      this.uiLog.error('LLM analysis error: ' + error);
-      return null;
-    }
-  }
-
-  /**
    * Detect the language of the OCR text using LLM
    */
   private async detectLanguage(ocrText: string): Promise<string | null> {
     try {
-      // Set up Apple Intelligence model
-      await CapgoLLM.setModel({ path: 'Apple Intelligence' });
-
-      // Create chat session
-      const { id: chatId } = await CapgoLLM.createChat();
-
       // Build the language detection prompt
       const prompt = AI_IMPORT_LANGUAGE_DETECTION_PROMPT.replace(
         '{{OCR_TEXT}}',
         ocrText,
       );
 
-      // Track the latest snapshot
-      let latestSnapshot = '';
-      let resolved = false;
-
-      return new Promise<string | null>(async (resolve) => {
-        const cleanup = async (textListener: any, finishedListener: any) => {
-          try {
-            await textListener?.remove();
-            await finishedListener?.remove();
-          } catch (e) {
-            this.uiLog.error('Error cleaning up listeners: ' + e);
-          }
-        };
-
-        const resolveOnce = async (
-          result: string | null,
-          textListener: any,
-          finishedListener: any,
-        ) => {
-          if (!resolved) {
-            resolved = true;
-            await cleanup(textListener, finishedListener);
-            resolve(result);
-          }
-        };
-
-        // Listen for text chunks
-        const textListener = await CapgoLLM.addListener(
-          'textFromAi',
-          (event: any) => {
-            if (event.text) {
-              latestSnapshot = event.text;
-            }
-          },
-        );
-
-        // Listen for completion
-        const finishedListener = await CapgoLLM.addListener(
-          'aiFinished',
-          async () => {
-            if (latestSnapshot) {
-              const langCode = latestSnapshot.trim().toLowerCase();
-              // Return detected language if valid, otherwise null
-              if (langCode !== 'unknown' && langCode.length === 2) {
-                await resolveOnce(langCode, textListener, finishedListener);
-              } else {
-                await resolveOnce(null, textListener, finishedListener);
-              }
-            } else {
-              await resolveOnce(null, textListener, finishedListener);
-            }
-          },
-        );
-
-        // Timeout fallback (10 seconds for language detection)
-        setTimeout(async () => {
-          if (!resolved) {
-            if (latestSnapshot) {
-              const langCode = latestSnapshot.trim().toLowerCase();
-              if (langCode !== 'unknown' && langCode.length === 2) {
-                await resolveOnce(langCode, textListener, finishedListener);
-              } else {
-                await resolveOnce(null, textListener, finishedListener);
-              }
-            } else {
-              await resolveOnce(null, textListener, finishedListener);
-            }
-          }
-        }, 10000);
-
-        // Send message
-        await CapgoLLM.sendMessage({
-          chatId,
-          message: prompt,
-        });
+      // Send to LLM with 10s timeout for language detection
+      const response = await sendLLMPrompt(prompt, {
+        timeoutMs: 10000,
+        logger: this.uiLog,
       });
+
+      if (response) {
+        const langCode = response.trim().toLowerCase();
+        // Return detected language if valid, otherwise null
+        if (langCode !== 'unknown' && langCode.length === 2) {
+          return langCode;
+        }
+      }
+
+      return null;
     } catch (error) {
       this.uiLog.error('Language detection error: ' + error);
       return null;
@@ -687,86 +491,5 @@ export class AIBeanImportService {
     addLang(userLang);
 
     return languages;
-  }
-
-  /**
-   * Build the full prompt with merged examples from specified languages
-   */
-  private async buildPrompt(
-    ocrText: string,
-    languages: string[],
-  ): Promise<string> {
-    // Get merged examples from specified languages
-    const examples = await this.aiImportExamples.getMergedExamples(languages);
-
-    // Format detected languages as comma-separated ISO 639-1 codes
-    const detectedLanguages = languages.join(', ');
-
-    // Build the language-specific section with clearer "examples" framing
-    const languageSection = `
-Origin countries (examples): ${examples.ORIGINS}
-
-Processing methods (examples): ${examples.PROCESSING_METHODS}
-
-Varieties (examples): ${examples.VARIETIES}
-
-Roasting type indicators:
-- FILTER: ${examples.ROASTING_TYPE_FILTER_KEYWORDS}
-- ESPRESSO: ${examples.ROASTING_TYPE_ESPRESSO_KEYWORDS}
-- OMNI: ${examples.ROASTING_TYPE_OMNI_KEYWORDS}
-
-Other indicators:
-- Decaf: ${examples.DECAF_KEYWORDS}
-- Blend: ${examples.BLEND_KEYWORDS}
-- Single Origin: ${examples.SINGLE_ORIGIN_KEYWORDS}
-`;
-
-    return AI_IMPORT_PROMPT_TEMPLATE.replace(
-      '{{DETECTED_LANGUAGES}}',
-      detectedLanguages,
-    )
-      .replace('{{LANGUAGE_SPECIFIC_EXAMPLES}}', languageSection)
-      .replace('{{OCR_TEXT}}', ocrText);
-  }
-
-  /**
-   * Parse JSON response from LLM and create a Bean object
-   */
-  private createBeanFromResponse(llmResponse: string): Bean | null {
-    // Try to extract JSON from the response
-    let jsonStr = llmResponse.trim();
-
-    // If response contains markdown code blocks, extract JSON
-    const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (jsonMatch) {
-      jsonStr = jsonMatch[1].trim();
-    }
-
-    // Parse JSON
-    const extracted = JSON.parse(jsonStr);
-
-    // Create Bean with defaults
-    const bean = new Bean();
-
-    // Assign only non-null extracted properties from allowed list
-    for (const key of AIBeanImportService.ALLOWED_PROPERTIES) {
-      const value = extracted[key];
-      if (value !== null && value !== undefined) {
-        (bean as any)[key] = value;
-      }
-    }
-
-    // Ensure bean_information has at least one entry if data was extracted
-    if (
-      extracted.bean_information &&
-      Array.isArray(extracted.bean_information) &&
-      extracted.bean_information.length > 0
-    ) {
-      bean.bean_information = extracted.bean_information.filter(
-        (info: any) => info !== null,
-      );
-    }
-
-    return bean;
   }
 }
