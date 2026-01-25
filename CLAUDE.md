@@ -121,7 +121,29 @@ Business logic lives in helper services using singleton pattern:
 
 Tests run with Karma/Jasmine in headless Chrome. Test files use `.spec.ts` suffix alongside source files.
 
-**Important:** Always run `npm test` after completing any implementation to ensure all tests pass before committing.
+```bash
+# Run unit tests (headless Chrome)
+npm test
+
+# Run tests with browser UI
+npm run test:dev
+```
+
+### Running Tests in Docker/Containerized Environments
+
+If `npm test` fails with "No binary for ChromeHeadless" or sandbox errors, use:
+
+```bash
+# Set CHROME_BIN and use the no-sandbox browser configuration
+CHROME_BIN=/usr/bin/chromium npm test -- --browsers=ChromeHeadlessNoSandbox
+```
+
+Common issues in containers:
+
+- **"No binary for ChromeHeadless"** → Set `CHROME_BIN` to your Chromium/Chrome path (e.g., `/usr/bin/chromium`)
+- **"Failed to move to new namespace"** → Use `ChromeHeadlessNoSandbox` browser (already configured in `karma.conf.js`)
+
+**Important:** Always run tests after completing any implementation to ensure all tests pass before committing.
 
 ## CI/CD Notes
 
