@@ -90,4 +90,32 @@
     pointer-events: none;
     /* Let clicks pass through to input area if needed */
   }
+
+  #statusPhase1 {
+    order:1;
+  }
+  #statusPhase2 {
+    order:2;
+  }
+  #statusPhase3 {
+    order:3;
+  }
+  #statusPhase4 {
+    order:4;
+  }
+
+  @media screen and (max-width: 768px) {
+    #statusPhase1 {
+      order:1;
+    }
+    #statusPhase2 {
+      order:3;
+    }
+    #statusPhase3 {
+      order:2;
+    }
+    #statusPhase4 {
+      order:4;
+    }
+  }
 }
