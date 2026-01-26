@@ -39,7 +39,7 @@ export class IntentHandlerService {
   public attachOnHandleOpenUrl() {
     App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
       this.zone.run(() => {
-        this.uiLog.log('Deeplink matched ' + JSON.stringify(event));
+        this.uiLog.log('Deeplink matched', event);
         this.handleDeepLink(event.url);
       });
     });

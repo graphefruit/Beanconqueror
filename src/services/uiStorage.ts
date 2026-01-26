@@ -38,10 +38,7 @@ export class UIStorage {
       await this.init();
       this.uiLog.log('UIStorage - ReinitializeStorage - Ended successfully');
     } catch (ex) {
-      this.uiLog.error(
-        'UIStorage - ReinitializeStorage - Issue occured ' +
-          JSON.stringify(ex.message),
-      );
+      this.uiLog.error('UIStorage - ReinitializeStorage - Issue occured', ex);
     }
   }
 
@@ -60,12 +57,7 @@ export class UIStorage {
           return;
         } catch (ex) {
           // We could not access the database... do it again.
-          this.uiLog.error(
-            'UIStorage - Set Key - ' +
-              _key +
-              ' exception ' +
-              JSON.stringify(ex),
-          );
+          this.uiLog.error('UIStorage - Set Key - ' + _key + ' exception ', ex);
           await new Promise(async (_internalResolve) => {
             setTimeout(() => {
               _internalResolve(undefined);
@@ -145,12 +137,7 @@ export class UIStorage {
           return;
         } catch (ex) {
           // We could not access the database... do it again.
-          this.uiLog.error(
-            'UIStorage - Get Key - ' +
-              _key +
-              ' exception ' +
-              JSON.stringify(ex),
-          );
+          this.uiLog.error('UIStorage - Get Key - ' + _key + ' exception ', ex);
           await new Promise(async (_internalResolve) => {
             setTimeout(() => {
               _internalResolve(undefined);

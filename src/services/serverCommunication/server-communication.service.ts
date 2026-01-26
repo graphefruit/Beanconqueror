@@ -69,16 +69,12 @@ export class ServerCommunicationService {
               // Timeout was triggered.
               reject();
             } else {
-              this.uiLog.log(
-                `getBeanInformation - data received - ${JSON.stringify(data)}`,
-              );
+              this.uiLog.log(`getBeanInformation - data received`, data);
               resolve(data);
             }
           },
           (error) => {
-            this.uiLog.log(
-              `getBeanInformation - error received - ${JSON.stringify(error)}`,
-            );
+            this.uiLog.log(`getBeanInformation - error received`, error);
             reject();
           },
         )

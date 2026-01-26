@@ -650,10 +650,7 @@ export class AppComponent implements AfterViewInit {
               moment.locale(settingLanguage);
               resolve(undefined);
             } catch (ex) {
-              const exMessage: string = JSON.stringify(ex);
-              this.uiLog.error(
-                `Exception occured when setting language ${exMessage}`,
-              );
+              this.uiLog.error('Exception occured when setting language', ex);
               this._translate.setFallbackLang('en');
               await this._translate.use('en').toPromise();
               moment.locale('en');
@@ -669,10 +666,7 @@ export class AppComponent implements AfterViewInit {
             resolve(undefined);
           }
         } catch (ex) {
-          const exMessage: string = JSON.stringify(ex);
-          this.uiLog.error(
-            `Exception occured when setting language ${exMessage}`,
-          );
+          this.uiLog.error('Exception occured when setting language', ex);
           this._translate.setFallbackLang('en');
           settings.language = 'en';
           await this.uiSettingsStorage.saveSettings(settings);
