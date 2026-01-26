@@ -19,6 +19,7 @@ import {
   TemperatureType,
 } from '../../classes/devices';
 import { DecentScale } from '../../classes/devices/decentScale';
+import { FutulaScale } from '../../classes/devices/futulaScale';
 import { TransducerDirectPressure } from '../../classes/devices/transducerDirectPressure';
 import { FelicitaScale } from '../../classes/devices/felicitaScale';
 import { PeripheralData } from '../../classes/devices/ble.types';
@@ -675,6 +676,10 @@ export class CoffeeBluetoothDevicesService {
     if (FelicitaScale.test(deviceScale)) {
       this.logger.log('BleManager - We found a felicita scale');
       return { id: deviceScale.id, type: ScaleType.FELICITA };
+    }
+    if (FutulaScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a futula scale');
+      return { id: deviceScale.id, type: ScaleType.FUTULA };
     }
     if (EurekaPrecisaScale.test(deviceScale)) {
       this.logger.log('BleManager - We found a eureka scale');
