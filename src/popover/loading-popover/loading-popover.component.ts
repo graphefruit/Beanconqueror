@@ -10,6 +10,7 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import stringify from 'safe-stable-stringify';
 
 import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
 import { AppEventType } from '../../enums/appEvent/appEvent';
@@ -73,7 +74,8 @@ export class LoadingPopoverComponent implements OnInit {
 
   public async sendLogs() {
     const logs = this.uiLog.getLogs();
-    const stringifiedJSON = JSON.stringify(logs);
+    // Use safe-stable-stringify to prevent bad surprises with circular references
+    const stringifiedJSON = stringify(logs);
     const blob = new Blob([stringifiedJSON], {
       type: 'application/json',
     });
