@@ -2468,36 +2468,39 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (scale) {
       this.deattachToFlowChange();
 
-      let errorShown: boolean = false;
+      let didWeReceiveAnyFlow: boolean = false;
 
-      const showScaleErrorOnce = (where: string, err?: any) => {
-        if (errorShown) return;
-        errorShown = true;
-
-        this.uiAlert.showMessage(
-          'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION',
-          'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE',
-          undefined,
-          true,
-        );
-      };
-
-      this.scaleFlowChangeSubscription = scale.flowChange.subscribe({
-        next: (_val) => this.setActualSmartInformation(),
-        error: (err) => showScaleErrorOnce('flowChange', err),
+      this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
+        this.setActualSmartInformation();
+        didWeReceiveAnyFlow = true;
       });
 
       const isEspressoBrew: boolean =
         this.data.getPreparation().style_type ===
         PREPARATION_STYLE_TYPE.ESPRESSO;
-
       if (scale.supportsTwoWeights === true && isEspressoBrew === false) {
         this.scaleFlowChangeSecondSubscription =
-          scale.flowSecondChange.subscribe({
-            next: (_val) => this.setActualSmartSecondInformation(),
-            error: (err) => showScaleErrorOnce('flowSecondChange', err),
+          scale.flowSecondChange.subscribe((_val) => {
+            this.setActualSmartSecondInformation();
           });
       }
+
+      /** on iPad and connecting an acaia lunar 2021, the popup was display always, even so after it had values after 3 seconds
+       * thats why we update to 4 seconds
+       * **/
+      setTimeout(() => {
+        if (
+          didWeReceiveAnyFlow === false &&
+          this.brewComponent.timer.isTimerRunning() === false
+        ) {
+          this.uiAlert.showMessage(
+            'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION',
+            'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE',
+            undefined,
+            true,
+          );
+        }
+      }, 5000);
     }
   }
 
