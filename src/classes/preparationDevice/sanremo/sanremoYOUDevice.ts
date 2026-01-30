@@ -212,7 +212,12 @@ export class SanremoYOUDevice extends PreparationDevice {
         .then((_response) => {
           const responseJSON = _response.data;
           const temp = responseJSON.tempBoilerCoffe;
-          const press = responseJSON.pumpPress * 10;
+
+          let press = 0;
+          if (responseJSON.pumpPress === 0) {
+          } else {
+            press = Number((responseJSON.pumpPress / 10).toFixed(2));
+          }
 
           this.temperature = temp;
           this.pressure = press;
@@ -403,7 +408,13 @@ export class SanremoYOUDevice extends PreparationDevice {
             //Valid sanremo shot data
             let currentShotData = new SanremoShotData();
             currentShotData = responseJSON;
-            currentShotData.pumpPress = currentShotData.pumpPress * 10;
+            if (currentShotData.pumpPress === 0) {
+            } else {
+              currentShotData.pumpPress = Number(
+                (currentShotData.pumpPress / 10).toFixed(2),
+              );
+            }
+
             this.sanremoShotData = currentShotData;
             this.sanremoShotData.localTimeString =
               new Date().toLocaleTimeString();
