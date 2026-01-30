@@ -812,9 +812,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
           // 2. Update and Save if changed
           if (newLagTime !== oldResidualLagTime) {
-            console.log(
-              `[BBW] Auto-adjusting Lag Time from ${oldResidualLagTime} to ${newLagTime}`,
-            );
             this.uiLog.log(
               `[BBW] Auto-adjusting Lag Time from ${oldResidualLagTime} to ${newLagTime}`,
             );
