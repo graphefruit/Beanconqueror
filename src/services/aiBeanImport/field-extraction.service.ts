@@ -301,19 +301,19 @@ export class FieldExtractionService {
     bean.roaster = topLevelFields.roaster;
     bean.weight = topLevelFields.weight;
 
-    if (topLevelFields.bean_roasting_type !== undefined) {
+    if (topLevelFields.bean_roasting_type != null) {
       bean.bean_roasting_type = topLevelFields.bean_roasting_type;
     }
-    if (topLevelFields.aromatics !== undefined) {
+    if (topLevelFields.aromatics != null) {
       bean.aromatics = topLevelFields.aromatics;
     }
-    if (topLevelFields.decaffeinated !== undefined) {
+    if (topLevelFields.decaffeinated != null) {
       bean.decaffeinated = topLevelFields.decaffeinated;
     }
-    if (topLevelFields.cupping_points !== undefined) {
+    if (topLevelFields.cupping_points != null) {
       bean.cupping_points = String(topLevelFields.cupping_points);
     }
-    if (topLevelFields.roastingDate !== undefined) {
+    if (topLevelFields.roastingDate != null) {
       bean.roastingDate = topLevelFields.roastingDate;
     }
 
