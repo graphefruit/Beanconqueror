@@ -414,6 +414,11 @@ export class SanremoYOUDevice extends PreparationDevice {
                 (currentShotData.pumpPress / 10).toFixed(2),
               );
             }
+            if (this.sanremoShotData.groupStatus === 0) {
+              //Currently if the sanremo you is attached to the water line, it would report pressure like 1 bar because of the line pressure, which is correctly
+              //To avoid this kind of issue, we overwrite the pressure when the groupstatus gets to 0 we reset the press on our side :)
+              currentShotData.pumpPress = 0;
+            }
 
             this.sanremoShotData = currentShotData;
             this.sanremoShotData.localTimeString =
