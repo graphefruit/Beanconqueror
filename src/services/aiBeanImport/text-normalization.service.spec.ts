@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
 import {
+  buildThousandSeparatorPattern,
   normalizeAltitudeUnit,
   removeThousandSeparatorsFromInteger,
   TextNormalizationService,
+  weightExistsInOcrText,
 } from './text-normalization.service';
 
 describe('TextNormalizationService', () => {
@@ -500,5 +502,123 @@ describe('preprocessing and postprocessing consistency', () => {
     const postprocessed = postprocess(input);
     expect(preprocessed).toBe('1850 MASL');
     expect(postprocessed).toBe('1850 MASL');
+  });
+});
+
+describe('buildThousandSeparatorPattern', () => {
+  it('should return plain digits for numbers < 1000', () => {
+    expect(buildThousandSeparatorPattern('250')).toBe('250');
+    expect(buildThousandSeparatorPattern('999')).toBe('999');
+  });
+
+  it('should insert optional separator for 4-digit numbers', () => {
+    const pattern = buildThousandSeparatorPattern('1000');
+    const regex = new RegExp(`^${pattern}$`);
+    // Should match with and without separators
+    expect(regex.test('1000')).toBeTrue();
+    expect(regex.test('1.000')).toBeTrue();
+    expect(regex.test('1,000')).toBeTrue();
+    expect(regex.test("1'000")).toBeTrue();
+    expect(regex.test('1 000')).toBeTrue();
+  });
+
+  it('should insert optional separator for 5-digit numbers', () => {
+    const pattern = buildThousandSeparatorPattern('12500');
+    const regex = new RegExp(`^${pattern}$`);
+    expect(regex.test('12500')).toBeTrue();
+    expect(regex.test('12.500')).toBeTrue();
+    expect(regex.test('12,500')).toBeTrue();
+  });
+
+  it('should handle 6-digit numbers with two separator positions', () => {
+    const pattern = buildThousandSeparatorPattern('123456');
+    const regex = new RegExp(`^${pattern}$`);
+    expect(regex.test('123456')).toBeTrue();
+    expect(regex.test('123.456')).toBeTrue();
+    // Note: pattern allows separator at each position independently
+  });
+});
+
+describe('weightExistsInOcrText', () => {
+  describe('gram weights', () => {
+    it('should find exact gram match', () => {
+      expect(weightExistsInOcrText(250, 'Coffee 250g Ethiopia')).toBeTrue();
+      expect(weightExistsInOcrText(250, 'Coffee 250 g Ethiopia')).toBeTrue();
+      expect(weightExistsInOcrText(250, 'Coffee 250 grams')).toBeTrue();
+    });
+
+    it('should find grams with thousand separators', () => {
+      expect(weightExistsInOcrText(1000, 'Coffee 1.000g pack')).toBeTrue();
+      expect(weightExistsInOcrText(1000, 'Coffee 1,000g pack')).toBeTrue();
+      expect(weightExistsInOcrText(1000, "Coffee 1'000g pack")).toBeTrue();
+      expect(weightExistsInOcrText(1000, 'Coffee 1 000g pack')).toBeTrue();
+    });
+
+    it('should not match numbers without weight unit', () => {
+      // WHY: Prevents "1kg" hallucination when OCR has "Label 1 of 2"
+      expect(weightExistsInOcrText(1000, 'Label 1 of 2')).toBeFalse();
+      expect(weightExistsInOcrText(1000, 'Roasted 15.01.2025')).toBeFalse();
+    });
+  });
+
+  describe('kilogram weights', () => {
+    it('should find integer kg as kg unit', () => {
+      expect(weightExistsInOcrText(1000, 'Coffee 1kg bag')).toBeTrue();
+      expect(weightExistsInOcrText(1000, 'Coffee 1 kg bag')).toBeTrue();
+      expect(weightExistsInOcrText(2000, 'Coffee 2kg bag')).toBeTrue();
+    });
+
+    it('should find integer kg written as X.0kg', () => {
+      expect(weightExistsInOcrText(1000, 'Coffee 1.0kg bag')).toBeTrue();
+      expect(weightExistsInOcrText(1000, 'Coffee 1,0kg bag')).toBeTrue();
+    });
+
+    it('should find decimal kg values', () => {
+      expect(weightExistsInOcrText(1500, 'Coffee 1.5kg bag')).toBeTrue();
+      expect(weightExistsInOcrText(1500, 'Coffee 1,5kg bag')).toBeTrue();
+      expect(weightExistsInOcrText(500, 'Coffee 0.5kg bag')).toBeTrue();
+    });
+
+    it('should find kg with "kilo" and "kilogram" variants', () => {
+      expect(weightExistsInOcrText(1000, 'Coffee 1 kilo')).toBeTrue();
+      expect(weightExistsInOcrText(1000, 'Coffee 1 kilogram')).toBeTrue();
+    });
+  });
+
+  describe('hallucination prevention', () => {
+    it('should reject 1kg when OCR only has 250g', () => {
+      // WHY: Main hallucination case - LLM returns "1kg" but label shows "250g"
+      expect(weightExistsInOcrText(1000, 'Ethiopia 250g Natural')).toBeFalse();
+    });
+
+    it('should reject 1kg when OCR has date containing "1"', () => {
+      // WHY: Old bug - "1" from "1kg" matched "1" in date "15.01.2025"
+      expect(
+        weightExistsInOcrText(1000, 'Ethiopia 250g Roasted 15.01.2025'),
+      ).toBeFalse();
+    });
+
+    it('should reject 1kg when OCR has "100g" (contains digit 1)', () => {
+      // WHY: Old bug - "1" matched as substring of "100"
+      expect(weightExistsInOcrText(1000, 'Ethiopia 100g bag')).toBeFalse();
+    });
+
+    it('should reject 1kg when OCR has label markers', () => {
+      // WHY: Old bug - "1" from "1kg" matched "1" in "Label 1 of 2"
+      expect(
+        weightExistsInOcrText(1000, 'Ethiopia 250g --- Label 1 of 2 ---'),
+      ).toBeFalse();
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle decimal gram values', () => {
+      expect(weightExistsInOcrText(250, 'Coffee 250.0g')).toBeTrue();
+    });
+
+    it('should handle weights at start and end of text', () => {
+      expect(weightExistsInOcrText(250, '250g Ethiopia')).toBeTrue();
+      expect(weightExistsInOcrText(250, 'Ethiopia 250g')).toBeTrue();
+    });
   });
 });

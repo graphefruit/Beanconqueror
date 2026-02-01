@@ -151,23 +151,41 @@ describe('ai-field-prompts', () => {
     describe('postProcess', () => {
       const postProcess = FIELD_PROMPTS['weight'].postProcess!;
 
-      it('should return null when number not found in value', () => {
+      it('should return null when value has no valid weight format', () => {
         // WHY: Prevents LLM from returning non-numeric responses
         expect(postProcess('unknown', 'OCR text')).toBeNull();
+        expect(postProcess('250', 'Coffee 250g')).toBeNull(); // missing unit
       });
 
-      it('should return null when extracted number not in OCR text', () => {
-        // WHY: OCR validation prevents LLM from hallucinating weights not in text
+      it('should return null when weight not in OCR text', () => {
+        // WHY: OCR validation prevents LLM from hallucinating weights
         expect(postProcess('500g', 'Coffee 250g Ethiopia')).toBeNull();
       });
 
-      it('should return original value when number exists in OCR text', () => {
+      it('should return original value when weight exists in OCR text', () => {
         expect(postProcess('250g', 'Coffee 250g Ethiopia')).toBe('250g');
       });
 
-      it('should handle thousand separators in weight', () => {
-        // WHY: Normalized "1.000g" → "1000g" should match "1000" in OCR
-        expect(postProcess('1000g', 'Coffee 1000g pack')).toBe('1000g');
+      it('should handle thousand separators in OCR text', () => {
+        expect(postProcess('1000g', 'Coffee 1.000g pack')).toBe('1000g');
+        expect(postProcess('1000g', 'Coffee 1,000g pack')).toBe('1000g');
+      });
+
+      it('should validate kg by converting to grams', () => {
+        // 1kg = 1000g, should find "1kg" or "1.000g" in OCR
+        expect(postProcess('1kg', 'Coffee 1kg bag')).toBe('1kg');
+        expect(postProcess('1kg', 'Coffee 1.000g bag')).toBe('1kg');
+      });
+
+      it('should reject 1kg hallucination when OCR has different weight', () => {
+        // WHY: Main hallucination case this fix addresses
+        expect(postProcess('1kg', 'Coffee 250g Ethiopia')).toBeNull();
+      });
+
+      it('should reject 1kg when OCR only has unrelated numbers', () => {
+        // WHY: Prevents matching "1" in dates or label markers
+        expect(postProcess('1kg', 'Roasted 15.01.2025')).toBeNull();
+        expect(postProcess('1kg', 'Label 1 of 2')).toBeNull();
       });
     });
   });

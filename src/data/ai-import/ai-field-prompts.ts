@@ -1,6 +1,11 @@
 import moment from 'moment';
 
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
+import {
+  normalizeAltitudeUnit,
+  removeThousandSeparatorsFromInteger,
+  weightExistsInOcrText,
+} from '../../services/aiBeanImport/text-normalization.service';
 
 import {
   MAX_BLEND_PERCENTAGE,
@@ -176,26 +181,30 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     validation: /^\d+(?:[.,]\d+)?\s*(?:g|kg|oz|lb)/i,
     postProcess: (v, ocrText) => {
-      // Extract number before unit
-      const match = /^(\d+(?:[.,]\d+)?)/.exec(v);
+      // Parse the LLM response to get value and unit
+      const match = /^(\d+(?:[.,]\d+)?)\s*(g|kg|oz|lb)/i.exec(v);
       if (!match) {
         return null;
       }
 
-      // Extract just the digits from the LLM response (ignore separators)
-      const responseDigits = match[1].replace(/[.,]/g, '');
+      const value = parseFloat(match[1].replace(',', '.'));
+      const unit = match[2].toLowerCase();
 
-      // Extract digit sequences from OCR text and check if response digits appear
-      // This handles cases like "1.000g" → "1000g" normalization
-      const ocrDigitSequences: string[] = ocrText.match(/\d+/g) || [];
-      const digitsFoundInOcr = ocrDigitSequences.some(
-        (seq: string) =>
-          seq === responseDigits ||
-          seq.includes(responseDigits) ||
-          responseDigits.includes(seq),
-      );
+      // Convert to grams for validation
+      let grams: number;
+      if (unit === 'kg') {
+        grams = value * 1000;
+      } else if (unit === 'oz') {
+        grams = value * 28.3495;
+      } else if (unit === 'lb') {
+        grams = value * 453.592;
+      } else {
+        grams = value;
+      }
 
-      if (!digitsFoundInOcr) {
+      // Validate that this weight actually appears in OCR text with a weight unit
+      // This prevents hallucinations like "1kg" when OCR only contains "250g"
+      if (!weightExistsInOcrText(grams, ocrText)) {
         return null;
       }
 
@@ -453,30 +462,32 @@ CRITICAL: Only extract altitude numbers that ACTUALLY APPEAR in the label below.
 DO NOT guess typical elevations for a country or region.
 DO NOT make up altitude values.
 
-FORMAT RULES (only if altitude number is found):
-- Return as "XXXX MASL" format
-- Remove thousand separators
-- Convert: "m", "m.ü.M.", "meters", "msnm" all become "MASL"
-
 RESPONSE FORMAT:
-- Return ONLY elevation in MASL format, nothing else
+- Return the elevation as a number followed by MASL (e.g., "1850 MASL")
+- For ranges, use format: "1700-1900 MASL"
 - If not found, return exactly: NOT_FOUND
-- Do NOT include explanations or sentences
 
 TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    // No validation - postProcess handles cleanup of weird formatting
+    // No validation regex - postProcess handles cleanup and validation
     postProcess: (v, _ocrText) => {
-      const cleaned = v
+      let cleaned = v
         // Remove linebreaks
         .replace(/[\r\n]+/g, ' ')
-        // Remove points and commas (thousand separators)
-        .replace(/[.,]/g, '')
-        // Convert "2300 MASL 2400 MASL" to "2300-2400 MASL" (spaces optional)
-        .replace(/(\d+)\s*MASL\s*(\d+)\s*MASL/gi, '$1-$2 MASL')
         // Clean up extra whitespace
         .replace(/\s+/g, ' ')
         .trim();
+
+      // Normalize thousand separators (safety net if LLM includes them)
+      // Handles: dot, comma, apostrophe (Swiss), space (French/ISO)
+      cleaned = removeThousandSeparatorsFromInteger(cleaned);
+
+      // Normalize altitude units (safety net if LLM uses non-MASL units)
+      // Handles: m, m.ü.M., meters, msnm → MASL
+      cleaned = normalizeAltitudeUnit(cleaned);
+
+      // Handle LLM quirk: "2300 MASL 2400 MASL" → "2300-2400 MASL"
+      cleaned = cleaned.replace(/(\d+)\s*MASL\s*(\d+)\s*MASL/gi, '$1-$2 MASL');
 
       // Return null if empty after cleanup
       if (!cleaned || cleaned.length === 0) {

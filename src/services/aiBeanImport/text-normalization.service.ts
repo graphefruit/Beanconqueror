@@ -1,6 +1,163 @@
 import { Injectable } from '@angular/core';
 
 /**
+ * Regex character class for thousand separator variants.
+ * Includes: . , ' (apostrophe) ' (right single quote U+2019) space, thin space (U+2009), narrow no-break space (U+202F)
+ */
+const THOUSAND_SEPARATOR_CHARS = "[.,''\u2019 \u2009\u202F]";
+
+/**
+ * Optional thousand separator for regex patterns.
+ */
+const THOUSAND_SEPARATOR_OPTIONAL = "[.,''\u2019 \u2009\u202F]?";
+
+/**
+ * Removes thousand separators from integer-like values in a string.
+ * Handles international formats: dot, comma, apostrophe (Swiss), space (French/ISO).
+ *
+ * @example
+ *   removeThousandSeparatorsFromInteger("1.850") // → "1850"
+ *   removeThousandSeparatorsFromInteger("1'234'567") // → "1234567" (Swiss)
+ *   removeThousandSeparatorsFromInteger("1 850") // → "1850" (French/ISO)
+ */
+export function removeThousandSeparatorsFromInteger(value: string): string {
+  const pattern = new RegExp(
+    `(\\d)${THOUSAND_SEPARATOR_CHARS}(\\d{3})(?!\\d)`,
+    'g',
+  );
+  let result = value;
+  let prev = '';
+  // Iterate until no more replacements (handles 1'234'567)
+  while (prev !== result) {
+    prev = result;
+    result = result.replace(pattern, '$1$2');
+  }
+  return result;
+}
+
+/**
+ * Builds a regex pattern string that matches a number with optional thousand separators.
+ * Only adds separators at valid positions (before groups of 3 digits from the right).
+ *
+ * @example
+ *   buildThousandSeparatorPattern("1000") // matches: "1000", "1.000", "1,000", "1'000", "1 000"
+ *   buildThousandSeparatorPattern("250")  // matches: "250" (no separator position)
+ *   buildThousandSeparatorPattern("1500") // matches: "1500", "1.500", "1,500", etc.
+ */
+export function buildThousandSeparatorPattern(digits: string): string {
+  const num = parseInt(digits, 10);
+  if (isNaN(num) || num < 1000) {
+    // No thousand separator possible for numbers < 1000
+    return digits;
+  }
+
+  // Build pattern with optional separator before each group of 3 digits from the right
+  // e.g., "1000" → "1[separators]?000"
+  // e.g., "12500" → "12[separators]?500"
+  let pattern = '';
+  const len = digits.length;
+
+  for (let i = 0; i < len; i++) {
+    // Insert optional separator before positions that are multiples of 3 from the end
+    // (but not at the very beginning)
+    const posFromEnd = len - i;
+    if (i > 0 && posFromEnd % 3 === 0) {
+      pattern += THOUSAND_SEPARATOR_OPTIONAL;
+    }
+    pattern += digits[i];
+  }
+
+  return pattern;
+}
+
+/**
+ * Checks if a weight value (in grams) appears in OCR text, accounting for:
+ * - Thousand separators (1.000, 1,000, 1'000, 1 000)
+ * - Different units (g, kg)
+ *
+ * @param grams The weight in grams to search for
+ * @param ocrText The OCR text to search in
+ * @returns true if the weight appears in the text with a weight unit
+ *
+ * @example
+ *   weightExistsInOcrText(1000, "Coffee 1.000g") // true
+ *   weightExistsInOcrText(1000, "Coffee 1kg")    // true
+ *   weightExistsInOcrText(1000, "Label 1 of 2")  // false (no weight unit)
+ */
+export function weightExistsInOcrText(grams: number, ocrText: string): boolean {
+  const gramsRounded = Math.round(grams);
+  const gramsStr = gramsRounded.toString();
+
+  // Build pattern for grams value with optional thousand separators, followed by gram unit
+  const gramsPattern = buildThousandSeparatorPattern(gramsStr);
+  const gramsWithUnit = new RegExp(gramsPattern + '\\s*g(?:rams?)?\\b', 'i');
+  if (gramsWithUnit.test(ocrText)) {
+    return true;
+  }
+
+  // Check for kg representation if weight is >= 1000g
+  if (gramsRounded >= 1000) {
+    const kgValue = gramsRounded / 1000;
+
+    if (Number.isInteger(kgValue)) {
+      // Integer kg (e.g., 1000g = 1kg)
+      // Match: "1kg", "1 kg", "1.0kg", "1,0kg"
+      const intKgPattern = new RegExp(
+        `${kgValue}(?:[.,]0)?\\s*kg\\b|${kgValue}\\s*kilos?\\b|${kgValue}\\s*kilograms?\\b`,
+        'i',
+      );
+      if (intKgPattern.test(ocrText)) {
+        return true;
+      }
+    } else {
+      // Decimal kg (e.g., 1500g = 1.5kg)
+      // Convert to string and handle decimal separator variations
+      const kgStr = kgValue.toFixed(1);
+      const kgPatternStr = kgStr.replace('.', '[.,]');
+      const decimalKgPattern = new RegExp(
+        `${kgPatternStr}\\s*kg\\b|${kgPatternStr}\\s*kilos?\\b|${kgPatternStr}\\s*kilograms?\\b`,
+        'i',
+      );
+      if (decimalKgPattern.test(ocrText)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Normalizes altitude unit suffixes to MASL.
+ * Handles: m, m.ü.M., meters, msnm (case-insensitive).
+ * Works with single values and ranges.
+ *
+ * @example
+ *   normalizeAltitudeUnit("1850 m.ü.M.") // → "1850 MASL"
+ *   normalizeAltitudeUnit("1700-1900 meters") // → "1700-1900 MASL"
+ *   normalizeAltitudeUnit("1850 masl") // → "1850 MASL"
+ */
+export function normalizeAltitudeUnit(value: string): string {
+  // Pattern for altitude units (but not MASL itself)
+  // m.ü.M., msnm, meters, meter, m (when followed by space, end, or dash)
+  const unitPattern = /m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$|-)/gi;
+
+  // Replace units with MASL
+  let result = value.replace(unitPattern, 'MASL');
+
+  // Normalize existing masl to uppercase MASL
+  result = result.replace(/masl/gi, 'MASL');
+
+  // Clean up multiple spaces and ensure single space before MASL
+  result = result.replace(/\s+MASL/g, ' MASL');
+
+  // Remove duplicate MASL (e.g., "1850 MASL MASL" → "1850 MASL")
+  result = result.replace(/(MASL\s*)+/g, 'MASL');
+
+  return result;
+}
+
+/**
  * Service for normalizing OCR text before LLM processing.
  * Handles case normalization, number formatting, and altitude standardization.
  */
@@ -147,14 +304,12 @@ export class TextNormalizationService {
   }
 
   /**
-   * Normalize European number formats.
-   * Removes thousand separators (dots/commas used as such).
-   * Examples: "1.850" → "1850", "1,900" → "1900"
+   * Normalize international number formats.
+   * Removes thousand separators (dots, commas, apostrophes, spaces).
+   * Examples: "1.850" → "1850", "1,900" → "1900", "1'850" → "1850", "1 850" → "1850"
    */
   public normalizeNumbers(text: string): string {
-    // Pattern: digit(s) followed by dot/comma followed by exactly 3 digits
-    // This identifies thousand separators (1.850 or 1,900)
-    return text.replace(/(\d)[.,](\d{3})(?!\d)/g, '$1$2');
+    return removeThousandSeparatorsFromInteger(text);
   }
 
   /**
@@ -164,51 +319,36 @@ export class TextNormalizationService {
    * - "1,700 - 1,900 meters" → "1700-1900 MASL"
    * - "2000 msnm" → "2000 MASL"
    * - "800m 1200m" → "800-1200 MASL" (implicit range)
+   * - "1'850 m.ü.M." → "1850 MASL" (Swiss format)
    */
   public normalizeAltitude(text: string): string {
-    let result = text;
-
-    // Altitude unit pattern: m.ü.M., meters, msnm, or standalone m (but not MASL)
-    // Using word boundary or end assertion to avoid partial matches
-    const altitudeUnitPattern =
-      /m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$|-)/i;
+    // First, normalize all thousand separators (including Swiss/French formats)
+    let result = removeThousandSeparatorsFromInteger(text);
 
     // Pattern 1: Explicit ranges with dash/en-dash
-    // e.g., "1700-1900m" → "1700-1900 MASL", "1.850-2.100 meters" → "1850-2100 MASL"
-    // Supports 3-4 digit altitudes (up to 4999)
+    // e.g., "1700-1900m" → "1700-1900 MASL"
     result = result.replace(
-      /(\d{1,2})?[.,]?(\d{3})\s*[-–]\s*(\d{1,2})?[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$))/gi,
-      (_, p1, p2, p3, p4) => {
-        const low = (p1 || '') + p2;
-        const high = (p3 || '') + p4;
-        return `${low}-${high} MASL`;
-      },
+      /(\d{3,4})\s*[-–]\s*(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$))/gi,
+      '$1-$2 MASL',
     );
 
     // Pattern 2: Implicit ranges - two altitudes with units close together without dash
     // e.g., "800m 1200m" → "800-1200 MASL"
     result = result.replace(
-      /(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s))\s+(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$)|MASL)/gi,
+      /(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s))\s+(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$)|MASL)/gi,
       '$1-$2 MASL',
     );
 
     // Pattern 3: Single altitudes (3-4 digit numbers with unit)
-    // e.g., "1850m" → "1850 MASL", "1.850 m.ü.M." → "1850 MASL", "2000 msnm" → "2000 MASL"
+    // e.g., "1850m" → "1850 MASL", "1850 m.ü.M." → "1850 MASL", "2000 msnm" → "2000 MASL"
     // Negative lookahead prevents matching the start of an explicit range
     result = result.replace(
-      /(\d{1,2})?[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$))(?!\s*[-–]\s*\d)/gi,
-      (_, p1, p2) => {
-        const altitude = (p1 || '') + p2;
-        return `${altitude} MASL`;
-      },
+      /(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$))(?!\s*[-–]\s*\d)/gi,
+      '$1 MASL',
     );
 
-    // Pattern 4: Normalize thousand separators in existing MASL values
-    // e.g., "1.850 MASL" → "1850 MASL"
-    result = result.replace(/(\d{1,2})?[.,](\d{3})\s*MASL/gi, (_, p1, p2) => {
-      const altitude = (p1 || '') + p2;
-      return `${altitude} MASL`;
-    });
+    // Normalize any remaining masl case variations
+    result = result.replace(/masl/gi, 'MASL');
 
     return result;
   }
