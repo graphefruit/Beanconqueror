@@ -5,6 +5,7 @@ import {
   OcrMetadataService,
   TextDetectionResult,
 } from './ocr-metadata.service';
+import { createBlock, createTextDetectionResult } from './test-utils';
 
 describe('OcrMetadataService', () => {
   let service: OcrMetadataService;
@@ -16,84 +17,102 @@ describe('OcrMetadataService', () => {
     service = TestBed.inject(OcrMetadataService);
   });
 
-  it('should be created', () => {
+  it('should be injectable via TestBed', () => {
     expect(service).toBeTruthy();
   });
 
   describe('shouldUseMetadata', () => {
-    it('should return false when blocks is empty', () => {
-      const result: TextDetectionResult = {
-        text: 'Some text',
-        blocks: [],
-      };
+    it('should return false when blocks array is empty', () => {
+      // Arrange
+      const result = createTextDetectionResult('Some text', []);
+
+      // Act & Assert
       expect(service.shouldUseMetadata(result)).toBeFalse();
     });
 
     it('should return false when blocks is undefined', () => {
+      // Arrange
       const result: TextDetectionResult = {
         text: 'Some text',
         blocks: undefined as any,
       };
+
+      // Act & Assert
       expect(service.shouldUseMetadata(result)).toBeFalse();
     });
 
-    it('should return false when only one block', () => {
-      const result: TextDetectionResult = {
-        text: 'Some text',
-        blocks: [createBlock('Text', 0, 0, 100, 50)],
-      };
+    it('should return false when only one block exists (insufficient data for layout analysis)', () => {
+      // WHY: Layout analysis requires multiple blocks to detect size variations
+
+      // Arrange
+      const result = createTextDetectionResult('Text', [
+        createBlock('Text', 0, 0, 100, 50),
+      ]);
+
+      // Act & Assert
       expect(service.shouldUseMetadata(result)).toBeFalse();
     });
 
-    it('should return false when all blocks have similar size', () => {
-      const result: TextDetectionResult = {
-        text: 'Line 1\nLine 2',
-        blocks: [
-          createBlock('Line 1', 0, 0, 100, 50),
-          createBlock('Line 2', 0, 60, 100, 110),
-        ],
-      };
+    it('should return false when all blocks have similar size (no meaningful hierarchy)', () => {
+      // WHY: Similar-sized blocks indicate uniform text without headers/titles
+
+      // Arrange
+      const result = createTextDetectionResult('Line 1\nLine 2', [
+        createBlock('Line 1', 0, 0, 100, 50),
+        createBlock('Line 2', 0, 60, 100, 110),
+      ]);
+
+      // Act & Assert
       expect(service.shouldUseMetadata(result)).toBeFalse();
     });
 
-    it('should return true when blocks have varied sizes', () => {
-      const result: TextDetectionResult = {
-        text: 'Big Title\nSmall text',
-        blocks: [
-          createBlock('Big Title', 0, 0, 200, 100), // Height: 100
-          createBlock('Small text', 0, 110, 200, 130), // Height: 20
-        ],
-      };
+    it('should return true when blocks have significant size variation (headers vs body text)', () => {
+      // WHY: Size variation indicates visual hierarchy useful for field extraction
+
+      // Arrange
+      const largeTitle = createBlock('Big Title', 0, 0, 200, 100); // Height: 100
+      const smallBody = createBlock('Small text', 0, 110, 200, 130); // Height: 20
+      const result = createTextDetectionResult('Big Title\nSmall text', [
+        largeTitle,
+        smallBody,
+      ]);
+
+      // Act & Assert
       expect(service.shouldUseMetadata(result)).toBeTrue();
     });
   });
 
   describe('enrichWithLayout', () => {
-    it('should return raw text when metadata is not useful', () => {
-      const result: TextDetectionResult = {
-        text: 'Some text',
-        blocks: [createBlock('Some text', 0, 0, 100, 50)],
-      };
+    it('should return raw text without layout tags when metadata is not useful', () => {
+      // Arrange
+      const result = createTextDetectionResult('Some text', [
+        createBlock('Some text', 0, 0, 100, 50),
+      ]);
 
+      // Act
       const enriched = service.enrichWithLayout(result);
 
+      // Assert
       expect(enriched.rawText).toBe('Some text');
       expect(enriched.enrichedText).toBe('Some text');
       expect(enriched.hasUsefulMetadata).toBeFalse();
     });
 
-    it('should add layout tags when metadata is useful', () => {
-      const result: TextDetectionResult = {
-        text: 'ROASTER NAME\nCoffee Name\nDetails',
-        blocks: [
+    it('should add layout tags with OCR header when metadata provides hierarchy info', () => {
+      // Arrange
+      const result = createTextDetectionResult(
+        'ROASTER NAME\nCoffee Name\nDetails',
+        [
           createBlock('ROASTER NAME', 0, 0, 300, 80), // Large, top
           createBlock('Coffee Name', 0, 100, 300, 160), // Medium, top
           createBlock('Details', 0, 300, 150, 330), // Small, bottom
         ],
-      };
+      );
 
+      // Act
       const enriched = service.enrichWithLayout(result);
 
+      // Assert
       expect(enriched.hasUsefulMetadata).toBeTrue();
       expect(enriched.enrichedText).toContain('=== OCR WITH LAYOUT ===');
       expect(enriched.enrichedText).toContain('**LARGE:**');
@@ -102,52 +121,55 @@ describe('OcrMetadataService', () => {
       expect(enriched.enrichedText).toContain('Details');
     });
 
-    it('should classify large text correctly', () => {
-      const result: TextDetectionResult = {
-        text: 'BIG\nsmall',
-        blocks: [
-          createBlock('BIG', 0, 0, 200, 100), // Height: 100 (large)
-          createBlock('small', 0, 120, 200, 140), // Height: 20 (small)
-        ],
-      };
+    it('should classify blocks by relative height into LARGE and SMALL categories', () => {
+      // WHY: Size classification helps LLM identify headers vs body text
 
+      // Arrange
+      const largeBlock = createBlock('BIG', 0, 0, 200, 100); // Height: 100
+      const smallBlock = createBlock('small', 0, 120, 200, 140); // Height: 20
+      const result = createTextDetectionResult('BIG\nsmall', [
+        largeBlock,
+        smallBlock,
+      ]);
+
+      // Act
       const enriched = service.enrichWithLayout(result);
 
+      // Assert
       expect(enriched.enrichedText).toContain('**LARGE:**');
       expect(enriched.enrichedText).toContain('**SMALL:**');
     });
 
-    it('should classify text sizes based on height variation', () => {
-      const result: TextDetectionResult = {
-        text: 'Top\nMiddle\nBottom',
-        blocks: [
-          createBlock('Top', 0, 0, 100, 80), // Height: 80 (large)
-          createBlock('Middle', 0, 100, 100, 150), // Height: 50 (medium)
-          createBlock('Bottom', 0, 220, 100, 240), // Height: 20 (small)
-        ],
-      };
+    it('should classify text sizes as LARGE, MEDIUM, and SMALL based on height variation', () => {
+      // Arrange
+      const result = createTextDetectionResult('Top\nMiddle\nBottom', [
+        createBlock('Top', 0, 0, 100, 80), // Height: 80 (large)
+        createBlock('Middle', 0, 100, 100, 150), // Height: 50 (medium)
+        createBlock('Bottom', 0, 220, 100, 240), // Height: 20 (small)
+      ]);
 
+      // Act
       const enriched = service.enrichWithLayout(result);
 
-      // Should contain size classifications
+      // Assert
       expect(enriched.enrichedText).toContain('**LARGE:**');
       expect(enriched.enrichedText).toContain('Top');
       expect(enriched.enrichedText).toContain('Middle');
       expect(enriched.enrichedText).toContain('Bottom');
     });
 
-    it('should include all block texts in output', () => {
-      const result: TextDetectionResult = {
-        text: 'Left\nCenter\nRight',
-        blocks: [
-          createBlock('Left', 0, 0, 50, 80),
-          createBlock('Center', 100, 0, 200, 80),
-          createBlock('Right', 250, 0, 300, 80),
-        ],
-      };
+    it('should include all block texts in output regardless of position', () => {
+      // Arrange
+      const result = createTextDetectionResult('Left\nCenter\nRight', [
+        createBlock('Left', 0, 0, 50, 80),
+        createBlock('Center', 100, 0, 200, 80),
+        createBlock('Right', 250, 0, 300, 80),
+      ]);
 
+      // Act
       const enriched = service.enrichWithLayout(result);
 
+      // Assert
       expect(enriched.enrichedText).toContain('Left');
       expect(enriched.enrichedText).toContain('Center');
       expect(enriched.enrichedText).toContain('Right');
@@ -156,122 +178,107 @@ describe('OcrMetadataService', () => {
 
   describe('enrichMultiplePhotos', () => {
     it('should return empty string for empty array', () => {
+      // Arrange & Act & Assert
       expect(service.enrichMultiplePhotos([])).toBe('');
     });
 
-    it('should handle single photo without markers', () => {
+    it('should return text without section markers for single photo', () => {
+      // Arrange
       const results: TextDetectionResult[] = [
-        {
-          text: 'Single photo',
-          blocks: [createBlock('Single photo', 0, 0, 100, 50)],
-        },
+        createTextDetectionResult('Single photo', [
+          createBlock('Single photo', 0, 0, 100, 50),
+        ]),
       ];
 
+      // Act
       const enriched = service.enrichMultiplePhotos(results);
 
-      // Single photo without useful metadata should just return raw text
+      // Assert - single photo without useful metadata returns raw text
       expect(enriched).toBe('Single photo');
+      expect(enriched).not.toContain('Label 1 of');
     });
 
-    it('should add section markers for multiple photos', () => {
+    it('should add "Label X of Y" section markers for multiple photos', () => {
+      // WHY: Section markers help LLM understand text comes from separate label photos
+
+      // Arrange
       const results: TextDetectionResult[] = [
-        {
-          text: 'Photo 1',
-          blocks: [
-            createBlock('BIG', 0, 0, 200, 100),
-            createBlock('small', 0, 120, 200, 140),
-          ],
-        },
-        {
-          text: 'Photo 2',
-          blocks: [
-            createBlock('Another', 0, 0, 200, 100),
-            createBlock('text', 0, 120, 200, 140),
-          ],
-        },
+        createTextDetectionResult('Photo 1', [
+          createBlock('BIG', 0, 0, 200, 100),
+          createBlock('small', 0, 120, 200, 140),
+        ]),
+        createTextDetectionResult('Photo 2', [
+          createBlock('Another', 0, 0, 200, 100),
+          createBlock('text', 0, 120, 200, 140),
+        ]),
       ];
 
+      // Act
       const enriched = service.enrichMultiplePhotos(results);
 
+      // Assert
       expect(enriched).toContain('=== OCR WITH LAYOUT ===');
       expect(enriched).toContain('--- Label 1 of 2 ---');
       expect(enriched).toContain('--- Label 2 of 2 ---');
     });
 
-    it('should enrich each photo independently', () => {
+    it('should enrich each photo independently with its own layout annotations', () => {
+      // Arrange
       const results: TextDetectionResult[] = [
-        {
-          text: 'Photo1',
-          blocks: [
-            createBlock('TITLE', 0, 0, 200, 100),
-            createBlock('detail', 0, 120, 200, 140),
-          ],
-        },
-        {
-          text: 'Photo2',
-          blocks: [
-            createBlock('ANOTHER', 0, 0, 200, 100),
-            createBlock('info', 0, 120, 200, 140),
-          ],
-        },
+        createTextDetectionResult('Photo1', [
+          createBlock('TITLE', 0, 0, 200, 100),
+          createBlock('detail', 0, 120, 200, 140),
+        ]),
+        createTextDetectionResult('Photo2', [
+          createBlock('ANOTHER', 0, 0, 200, 100),
+          createBlock('info', 0, 120, 200, 140),
+        ]),
       ];
 
+      // Act
       const enriched = service.enrichMultiplePhotos(results);
 
-      // Both photos should have their own layout annotations
+      // Assert - both photos should have their own layout annotations
       expect(enriched).toContain('TITLE');
       expect(enriched).toContain('ANOTHER');
-      expect(enriched.match(/\*\*LARGE:\*\*/g)?.length).toBeGreaterThanOrEqual(
-        2,
-      );
+      // Should have at least 2 LARGE tags (one per photo)
+      const largeTagCount = (enriched.match(/\*\*LARGE:\*\*/g) || []).length;
+      expect(largeTagCount).toBeGreaterThanOrEqual(2);
     });
   });
 
   describe('edge cases', () => {
-    it('should handle zero height blocks gracefully', () => {
-      const result: TextDetectionResult = {
-        text: 'Text',
-        blocks: [
-          createBlock('Text', 0, 0, 100, 0), // Zero height
-          createBlock('More', 0, 10, 100, 50), // Normal height
-        ],
-      };
+    it('should handle zero height blocks gracefully without dividing by zero', () => {
+      // WHY: ML Kit sometimes returns blocks with zero height for malformed OCR
+      // results or empty lines. Dividing by zero height would cause NaN.
 
-      // Should not throw
+      // Arrange
+      const result = createTextDetectionResult('Text', [
+        createBlock('Text', 0, 0, 100, 0), // Zero height block
+        createBlock('More', 0, 10, 100, 50), // Normal height
+      ]);
+
+      // Act
       const enriched = service.enrichWithLayout(result);
+
+      // Assert - should not throw
       expect(enriched).toBeDefined();
     });
 
-    it('should handle blocks with identical positions', () => {
-      const result: TextDetectionResult = {
-        text: 'Overlapping',
-        blocks: [
-          createBlock('A', 0, 0, 100, 50),
-          createBlock('B', 0, 0, 100, 50), // Same position
-        ],
-      };
+    it('should handle blocks with identical positions without errors', () => {
+      // WHY: OCR may return overlapping blocks for text detected multiple times
 
-      // Should not throw
+      // Arrange
+      const result = createTextDetectionResult('Overlapping', [
+        createBlock('A', 0, 0, 100, 50),
+        createBlock('B', 0, 0, 100, 50), // Same position
+      ]);
+
+      // Act
       const enriched = service.enrichWithLayout(result);
+
+      // Assert - should not throw
       expect(enriched).toBeDefined();
     });
   });
 });
-
-/**
- * Helper to create a Block with specified bounding box.
- */
-function createBlock(
-  text: string,
-  left: number,
-  top: number,
-  right: number,
-  bottom: number,
-): Block {
-  return {
-    text,
-    boundingBox: { left, top, right, bottom },
-    recognizedLanguage: 'en',
-    lines: [],
-  };
-}

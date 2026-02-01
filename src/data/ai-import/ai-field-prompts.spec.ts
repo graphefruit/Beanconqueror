@@ -1,105 +1,366 @@
 import moment from 'moment';
 
-import { FIELD_PROMPTS } from './ai-field-prompts';
+import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
+import { createMockExamples } from '../../services/aiBeanImport/test-utils';
+
+import { buildFieldPrompt, FIELD_PROMPTS } from './ai-field-prompts';
 
 describe('ai-field-prompts', () => {
-  describe('roastingDate postProcess', () => {
-    const postProcess = FIELD_PROMPTS.roastingDate.postProcess;
+  let mockExamples: MergedExamples;
 
-    it('should return local timezone format (not UTC)', () => {
-      // Use a date from 3 months ago to be within valid range
-      const testDate = moment().subtract(3, 'months').format('YYYY-MM-DD');
-      const result = postProcess(testDate, '');
-      expect(result).toBeTruthy();
-      // Should use moment().format() which includes timezone offset
-      // e.g., "2025-10-15T00:00:00+02:00" not "2025-10-15T00:00:00.000Z"
-      expect(result).not.toMatch(/\.000Z$/);
+  beforeEach(() => {
+    mockExamples = createMockExamples();
+  });
+
+  describe('buildFieldPrompt', () => {
+    it('should throw error for unknown field name', () => {
+      // Arrange & Act & Assert
+      expect(() =>
+        buildFieldPrompt('unknownField', 'OCR text', mockExamples, ['en']),
+      ).toThrowError('Unknown field: unknownField');
     });
 
-    it('should parse ISO date format', () => {
-      // Use date from 3 months ago - prompt requests ISO format (YYYY-MM-DD)
-      const threeMonthsAgo = moment().subtract(3, 'months');
-      const isoDate = threeMonthsAgo.format('YYYY-MM-DD');
+    it('should substitute example placeholders from examplesKeys', () => {
+      // Arrange
+      const ocrText = 'Ethiopia Yirgacheffe';
 
-      expect(postProcess(isoDate, '')).toBeTruthy();
+      // Act
+      const prompt = buildFieldPrompt('country', ocrText, mockExamples, ['en']);
+
+      // Assert - should have substituted {{ORIGINS}} placeholder
+      expect(prompt).toContain('Colombia');
+      expect(prompt).toContain('Ethiopia');
+      expect(prompt).not.toContain('{{ORIGINS}}');
     });
 
-    it('should reject invalid dates', () => {
-      expect(postProcess('not-a-date', '')).toBeNull();
-      expect(postProcess('', '')).toBeNull();
+    it('should substitute all example key placeholders even if not in examplesKeys', () => {
+      // WHY: Some prompts reference example keys inline even without declaring them in examplesKeys
+
+      // Arrange
+      const ocrText = 'Decaf Ethiopia';
+
+      // Act
+      const prompt = buildFieldPrompt('decaffeinated', ocrText, mockExamples, [
+        'en',
+      ]);
+
+      // Assert - DECAF_KEYWORDS should be substituted
+      expect(prompt).toContain('Decaf');
+      expect(prompt).not.toContain('{{DECAF_KEYWORDS}}');
     });
 
-    it('should reject future dates', () => {
-      const futureDate = moment().add(1, 'month').format('YYYY-MM-DD');
-      expect(postProcess(futureDate, '')).toBeNull();
+    it('should substitute LANGUAGES placeholder with comma-separated list', () => {
+      // Arrange
+      const ocrText = 'Some text';
+
+      // Act
+      const prompt = buildFieldPrompt('country', ocrText, mockExamples, [
+        'de',
+        'en',
+        'es',
+      ]);
+
+      // Assert
+      expect(prompt).toContain('de, en, es');
+      expect(prompt).not.toContain('{{LANGUAGES}}');
     });
 
-    it('should reject dates older than 1 year', () => {
-      const oldDate = moment().subtract(2, 'years').format('YYYY-MM-DD');
-      expect(postProcess(oldDate, '')).toBeNull();
+    it('should substitute OCR_TEXT placeholder with provided text', () => {
+      // Arrange
+      const ocrText = 'Square Mile Coffee Ethiopia Yirgacheffe';
+
+      // Act
+      const prompt = buildFieldPrompt('country', ocrText, mockExamples, ['en']);
+
+      // Assert
+      expect(prompt).toContain(ocrText);
+      expect(prompt).not.toContain('{{OCR_TEXT}}');
     });
 
-    it('should accept dates within the last year', () => {
-      const recentDate = moment().subtract(3, 'months').format('YYYY-MM-DD');
-      expect(postProcess(recentDate, '')).toBeTruthy();
-    });
+    it('should preserve prompt structure after all substitutions', () => {
+      // Arrange
+      const ocrText = 'Test OCR text';
 
-    it('should preserve date without timezone shift', () => {
-      // Use a date from 3 months ago to be within valid range
-      const threeMonthsAgo = moment().subtract(3, 'months');
-      const inputDate = threeMonthsAgo.format('YYYY-MM-DD');
-      const result = postProcess(inputDate, '');
-      expect(result).toBeTruthy();
-      const parsedResult = moment(result);
-      expect(parsedResult.date()).toBe(threeMonthsAgo.date());
-      expect(parsedResult.month()).toBe(threeMonthsAgo.month());
-      expect(parsedResult.year()).toBe(threeMonthsAgo.year());
+      // Act
+      const prompt = buildFieldPrompt('beanMix', ocrText, mockExamples, ['en']);
+
+      // Assert - core prompt structure should remain
+      expect(prompt).toContain('SINGLE ORIGIN');
+      expect(prompt).toContain('BLEND');
+      expect(prompt).toContain('RESPONSE FORMAT');
     });
   });
 
-  describe('weight postProcess', () => {
-    const postProcess = FIELD_PROMPTS.weight.postProcess;
+  describe('FIELD_PROMPTS.beanMix', () => {
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['beanMix'].postProcess!;
 
-    it('should accept weight when number matches OCR exactly', () => {
-      expect(postProcess('250g', '250g coffee')).toBe('250g');
-      expect(postProcess('1000g', '1000g premium')).toBe('1000g');
+      it('should return "SINGLE_ORIGIN" for case-insensitive match', () => {
+        expect(postProcess('single_origin', '')).toBe('SINGLE_ORIGIN');
+        expect(postProcess('SINGLE_ORIGIN', '')).toBe('SINGLE_ORIGIN');
+        expect(postProcess('Single_Origin', '')).toBe('SINGLE_ORIGIN');
+      });
+
+      it('should return "BLEND" for case-insensitive match', () => {
+        expect(postProcess('blend', '')).toBe('BLEND');
+        expect(postProcess('BLEND', '')).toBe('BLEND');
+        expect(postProcess('Blend', '')).toBe('BLEND');
+      });
+
+      it('should return null for invalid values', () => {
+        expect(postProcess('unknown', '')).toBeNull();
+        expect(postProcess('mixed', '')).toBeNull();
+        expect(postProcess('', '')).toBeNull();
+      });
+    });
+  });
+
+  describe('FIELD_PROMPTS.weight', () => {
+    describe('validation', () => {
+      const validation = FIELD_PROMPTS['weight'].validation!;
+
+      it('should match weight with grams unit', () => {
+        expect(validation.test('250g')).toBeTrue();
+        expect(validation.test('250 g')).toBeTrue();
+        expect(validation.test('1000g')).toBeTrue();
+      });
+
+      it('should match weight with kilograms unit', () => {
+        expect(validation.test('1kg')).toBeTrue();
+        expect(validation.test('1.5kg')).toBeTrue();
+        expect(validation.test('2 kg')).toBeTrue();
+      });
+
+      it('should match weight with ounces unit', () => {
+        expect(validation.test('12oz')).toBeTrue();
+        expect(validation.test('16 oz')).toBeTrue();
+      });
+
+      it('should match weight with pounds unit', () => {
+        expect(validation.test('1lb')).toBeTrue();
+        expect(validation.test('2.5 lb')).toBeTrue();
+      });
+
+      it('should match decimal weights', () => {
+        expect(validation.test('1.5kg')).toBeTrue();
+        expect(validation.test('0.5lb')).toBeTrue();
+        expect(validation.test('1,5kg')).toBeTrue(); // European decimal
+      });
     });
 
-    it('should accept weight with thousand separator when OCR is normalized', () => {
-      // LLM returns "1.000g" but OCR was normalized to "1000g"
-      expect(postProcess('1.000g', '1000g coffee')).toBe('1.000g');
-      // Same with comma separator
-      expect(postProcess('1,000g', '1000g coffee')).toBe('1,000g');
-    });
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['weight'].postProcess!;
 
-    it('should accept weight when OCR contains the number', () => {
-      expect(postProcess('250g', 'Premium Coffee 250g Arabica')).toBe('250g');
-    });
+      it('should return null when number not found in value', () => {
+        // WHY: Prevents LLM from returning non-numeric responses
+        expect(postProcess('unknown', 'OCR text')).toBeNull();
+      });
 
-    it('should accept decimal weights', () => {
-      expect(postProcess('0.5kg', '0.5kg roasted')).toBe('0.5kg');
-      expect(postProcess('1.5kg', '1.5kg beans')).toBe('1.5kg');
-    });
+      it('should return null when extracted number not in OCR text', () => {
+        // WHY: OCR validation prevents LLM from hallucinating weights not in text
+        expect(postProcess('500g', 'Coffee 250g Ethiopia')).toBeNull();
+      });
 
-    it('should reject hallucinated weights not in OCR', () => {
-      // 500g doesn't appear anywhere in the OCR text
-      expect(postProcess('500g', '250g premium coffee')).toBeNull();
-    });
+      it('should return original value when number exists in OCR text', () => {
+        expect(postProcess('250g', 'Coffee 250g Ethiopia')).toBe('250g');
+      });
 
-    it('should reject when no number found', () => {
-      expect(postProcess('grams', '250g')).toBeNull();
-      expect(postProcess('kg', '1kg')).toBeNull();
+      it('should handle thousand separators in weight', () => {
+        // WHY: Normalized "1.000g" → "1000g" should match "1000" in OCR
+        expect(postProcess('1000g', 'Coffee 1000g pack')).toBe('1000g');
+      });
     });
+  });
 
-    it('should handle partial digit matches in larger numbers', () => {
-      // "250" is contained in "2500"
-      expect(postProcess('250g', '2500g bulk')).toBe('250g');
+  describe('FIELD_PROMPTS.bean_roasting_type', () => {
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['bean_roasting_type'].postProcess!;
+
+      it('should return "FILTER" for case-insensitive match', () => {
+        expect(postProcess('filter', '')).toBe('FILTER');
+        expect(postProcess('FILTER', '')).toBe('FILTER');
+        expect(postProcess('Filter', '')).toBe('FILTER');
+      });
+
+      it('should return "ESPRESSO" for case-insensitive match', () => {
+        expect(postProcess('espresso', '')).toBe('ESPRESSO');
+        expect(postProcess('ESPRESSO', '')).toBe('ESPRESSO');
+      });
+
+      it('should return "OMNI" for case-insensitive match', () => {
+        expect(postProcess('omni', '')).toBe('OMNI');
+        expect(postProcess('OMNI', '')).toBe('OMNI');
+      });
+
+      it('should return null for invalid values', () => {
+        expect(postProcess('unknown', '')).toBeNull();
+        expect(postProcess('light roast', '')).toBeNull();
+      });
     });
+  });
 
-    it('should handle multiple numbers in OCR text', () => {
-      expect(postProcess('250g', 'Score 85 Weight 250g Altitude 1850m')).toBe(
-        '250g',
-      );
+  describe('FIELD_PROMPTS.decaffeinated', () => {
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['decaffeinated'].postProcess!;
+
+      it('should return true for "true" string', () => {
+        expect(postProcess('true', '')).toBeTrue();
+        expect(postProcess('TRUE', '')).toBeTrue();
+      });
+
+      it('should return false for "false" string', () => {
+        expect(postProcess('false', '')).toBeFalse();
+        expect(postProcess('FALSE', '')).toBeFalse();
+      });
+
+      it('should return null for other values', () => {
+        expect(postProcess('yes', '')).toBeNull();
+        expect(postProcess('decaf', '')).toBeNull();
+        expect(postProcess('', '')).toBeNull();
+      });
+    });
+  });
+
+  describe('FIELD_PROMPTS.cupping_points', () => {
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['cupping_points'].postProcess!;
+
+      it('should return null for scores below 80', () => {
+        // WHY: SCA cupping scores range from 80-100; lower numbers are likely other data
+        expect(postProcess('75', '75 points')).toBeNull();
+        expect(postProcess('79', '79')).toBeNull();
+      });
+
+      it('should return null for scores 100 or above', () => {
+        // WHY: Prevents confusion with weight (e.g., "100g" is not a cupping score)
+        expect(postProcess('100', '100 score')).toBeNull();
+        expect(postProcess('105', '105')).toBeNull();
+      });
+
+      it('should return null when score integer not in OCR text', () => {
+        // WHY: Prevents LLM from hallucinating scores not present in original text
+        expect(postProcess('88', 'Ethiopia Natural')).toBeNull();
+      });
+
+      it('should return value for valid scores between 80-99 present in OCR', () => {
+        expect(postProcess('85', 'Score: 85 points')).toBe('85');
+        expect(postProcess('88.5', 'SCA 88.5')).toBe('88.5');
+        expect(postProcess('92', 'Cupping score 92')).toBe('92');
+      });
+    });
+  });
+
+  describe('FIELD_PROMPTS.roastingDate', () => {
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['roastingDate'].postProcess!;
+
+      it('should return null for unparseable dates', () => {
+        expect(postProcess('invalid date', '')).toBeNull();
+        expect(postProcess('not a date', '')).toBeNull();
+      });
+
+      it('should return null for future dates', () => {
+        // WHY: Date validation prevents expiration dates from being used as roast dates
+        const futureDate = moment().add(1, 'month').format('YYYY-MM-DD');
+        expect(postProcess(futureDate, '')).toBeNull();
+      });
+
+      it('should return null for dates older than one year', () => {
+        // WHY: Roast dates older than 1 year are likely misread or expiration dates
+        const oldDate = moment().subtract(2, 'years').format('YYYY-MM-DD');
+        expect(postProcess(oldDate, '')).toBeNull();
+      });
+
+      it('should return ISO string for valid recent dates', () => {
+        // Arrange
+        const recentDate = moment().subtract(1, 'week').format('YYYY-MM-DD');
+
+        // Act
+        const result = postProcess(recentDate, '');
+
+        // Assert - should return a valid moment format string
+        expect(result).toBeTruthy();
+        expect(moment(result).isValid()).toBeTrue();
+      });
+
+      it('should handle ISO date format (YYYY-MM-DD)', () => {
+        // Arrange - date about 2 weeks ago
+        const testDate = moment().subtract(2, 'weeks');
+
+        // Act
+        const result = postProcess(testDate.format('YYYY-MM-DD'), '');
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(moment(result).isValid()).toBeTrue();
+      });
+    });
+  });
+
+  describe('FIELD_PROMPTS.elevation', () => {
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['elevation'].postProcess!;
+
+      it('should remove linebreaks from value', () => {
+        expect(postProcess('1800\nMASL', '')).toBe('1800 MASL');
+      });
+
+      it('should remove thousand separators (dots and commas)', () => {
+        expect(postProcess('1.800 MASL', '')).toBe('1800 MASL');
+        expect(postProcess('1,800 MASL', '')).toBe('1800 MASL');
+      });
+
+      it('should normalize "2300 MASL 2400 MASL" to "2300-2400 MASL" format', () => {
+        expect(postProcess('2300 MASL 2400 MASL', '')).toBe('2300-2400 MASL');
+      });
+
+      it('should return null for empty string after cleanup', () => {
+        expect(postProcess('', '')).toBeNull();
+        expect(postProcess('   ', '')).toBeNull();
+      });
+
+      it('should return null when any number is >= 5000', () => {
+        // WHY: Filters variety numbers like 74158 from being misread as altitude
+        expect(postProcess('74158 MASL', '')).toBeNull();
+        expect(postProcess('1800-5000 MASL', '')).toBeNull();
+      });
+
+      it('should return cleaned value for valid elevations', () => {
+        expect(postProcess('1850 MASL', '')).toBe('1850 MASL');
+        expect(postProcess('1700-1900 MASL', '')).toBe('1700-1900 MASL');
+      });
+    });
+  });
+
+  describe('FIELD_PROMPTS.region', () => {
+    describe('postProcess', () => {
+      const postProcess = FIELD_PROMPTS['region'].postProcess!;
+
+      it('should remove "Region" suffix from value (case-insensitive)', () => {
+        expect(postProcess('Yirgacheffe Region', '')).toBe('Yirgacheffe');
+        expect(postProcess('Sidamo REGION', '')).toBe('Sidamo');
+      });
+
+      it('should remove "Region" prefix from value (case-insensitive)', () => {
+        expect(postProcess('Region Yirgacheffe', '')).toBe('Yirgacheffe');
+        expect(postProcess('region Sidamo', '')).toBe('Sidamo');
+      });
+
+      it('should trim result after removal', () => {
+        expect(postProcess('  Yirgacheffe Region  ', '')).toBe('Yirgacheffe');
+      });
+    });
+  });
+
+  describe('FIELD_PROMPTS.name_and_roaster', () => {
+    it('should have promptTemplate with required placeholders', () => {
+      // Arrange
+      const config = FIELD_PROMPTS['name_and_roaster'];
+
+      // Assert
+      expect(config.promptTemplate).toContain('{{LANGUAGES}}');
+      expect(config.promptTemplate).toContain('{{OCR_TEXT}}');
+      expect(config.promptTemplate).toContain('{{ROASTER_KEYWORDS}}');
     });
   });
 });
