@@ -76,6 +76,9 @@ export class AiImportPhotoGalleryComponent {
   /**
    * Add a photo via camera or library picker.
    * Uses Camera plugin directly to ensure HEIC images are converted to JPEG.
+   *
+   * Error handling: User cancellations are expected behavior and silently ignored.
+   * Actual errors (permission issues, storage failures) are logged for debugging.
    */
   public async addPhoto(): Promise<void> {
     if (this.photoPaths.length >= this.maxPhotos) {
@@ -129,16 +132,54 @@ export class AiImportPhotoGalleryComponent {
             }
           }
         } catch (e: any) {
-          // User cancelled - check if it's actually an error
-          if (e?.message && !e.message.includes('cancel')) {
-            this.uiLog.error(`AI Import Gallery: Camera error: ${e}`);
+          // User cancellation is expected behavior, log actual errors
+          const isCancellation = this.isCancellationError(e);
+          if (!isCancellation) {
+            this.uiLog.error(
+              `AI Import Gallery: Camera error: ${e?.message || e}`,
+            );
           }
         }
       }
       // Note: CLIPBOARD option not included for AI import (less common use case)
-    } catch (e) {
-      // User cancelled option chooser - do nothing
+    } catch (e: any) {
+      // Option chooser dismissal - only log unexpected errors
+      const isDismissal = this.isOptionChooserDismissal(e);
+      if (!isDismissal) {
+        this.uiLog.error(
+          `AI Import Gallery: Option chooser error: ${e?.message || e}`,
+        );
+      }
     }
+  }
+
+  /**
+   * Check if an error represents a user cancellation (camera/photo picker).
+   */
+  private isCancellationError(e: any): boolean {
+    if (!e) return true; // No error is effectively a cancellation
+    const message = e?.message?.toLowerCase() || '';
+    const code = e?.code || '';
+    return (
+      message.includes('cancel') ||
+      message.includes('user denied') ||
+      message.includes('permission denied') ||
+      code === 'USER_CANCELLED' ||
+      code === 'PERMISSION_DENIED'
+    );
+  }
+
+  /**
+   * Check if an error represents option chooser dismissal.
+   */
+  private isOptionChooserDismissal(e: any): boolean {
+    if (!e) return true; // No error is effectively a dismissal
+    const message = e?.message?.toLowerCase() || '';
+    return (
+      message.includes('dismiss') ||
+      message.includes('cancel') ||
+      message.includes('backdrop')
+    );
   }
 
   /**

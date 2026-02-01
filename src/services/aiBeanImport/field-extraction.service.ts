@@ -48,156 +48,175 @@ export class FieldExtractionService {
   /**
    * Main extraction entry point.
    * Extracts only fields enabled in user's bean customization settings.
+   *
+   * Error handling: If an unexpected error occurs during the extraction pipeline,
+   * this method returns a minimal fallback bean rather than crashing. This allows
+   * users to manually fill in fields rather than losing their captured photos.
+   * Individual field extraction failures are handled gracefully (returning null)
+   * and don't interrupt the overall pipeline.
    */
   public async extractAllFields(
     ocrText: string,
     languages: string[],
   ): Promise<Bean> {
-    // Debug: Log raw OCR text
-    this.debugLog('RAW OCR TEXT', ocrText);
+    try {
+      // Debug: Log raw OCR text
+      this.debugLog('RAW OCR TEXT', ocrText);
 
-    // Get user's bean customization settings
-    const settings = this.uiSettingsStorage.getSettings();
-    const params = settings.bean_manage_parameters;
+      // Get user's bean customization settings
+      const settings = this.uiSettingsStorage.getSettings();
+      const params = settings.bean_manage_parameters;
 
-    // Load merged i18n examples
-    const examples = await this.aiImportExamples.getMergedExamples(languages);
+      // Load merged i18n examples
+      const examples = await this.aiImportExamples.getMergedExamples(languages);
 
-    // Pre-process text
-    const text = this.preProcess(ocrText, examples);
-    this.debugLog('NORMALIZED TEXT', text);
+      // Pre-process text
+      const text = this.preProcess(ocrText, examples);
+      this.debugLog('NORMALIZED TEXT', text);
 
-    const bean = new Bean();
+      const bean = new Bean();
 
-    // === TOP-LEVEL FIELDS ===
+      // === TOP-LEVEL FIELDS ===
 
-    // Name and Roaster - extract together for better disambiguation
-    this.updateProgress('NAME_AND_ROASTER');
-    const nameAndRoaster = await this.extractNameAndRoaster(
-      text,
-      examples,
-      languages,
-    );
-    bean.name = nameAndRoaster.name;
-    if (params.roaster) {
-      bean.roaster = nameAndRoaster.roaster;
-    }
-
-    // Weight - always extract (essential for ratios)
-    this.updateFieldProgress('TOP_LEVEL', 'weight');
-    const weightStr = await this.extractField(
-      'weight',
-      text,
-      examples,
-      languages,
-    );
-    if (weightStr) {
-      bean.weight = this.textNorm.extractWeight(weightStr.toString()) || 0;
-    }
-
-    // Bean roasting type
-    if (params.bean_roasting_type) {
-      this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
-      bean.bean_roasting_type = await this.extractField(
-        'bean_roasting_type',
+      // Name and Roaster - extract together for better disambiguation
+      this.updateProgress('NAME_AND_ROASTER');
+      const nameAndRoaster = await this.extractNameAndRoaster(
         text,
         examples,
         languages,
       );
-    }
-
-    // Aromatics
-    if (params.aromatics) {
-      this.updateFieldProgress('TOP_LEVEL', 'aromatics');
-      bean.aromatics =
-        (await this.extractField('aromatics', text, examples, languages)) || '';
-    }
-
-    // Decaffeinated
-    if (params.decaffeinated) {
-      this.updateFieldProgress('TOP_LEVEL', 'decaffeinated');
-      const decafResult = await this.extractField(
-        'decaffeinated',
-        text,
-        examples,
-        languages,
-      );
-      if (decafResult !== null && decafResult !== undefined) {
-        bean.decaffeinated = decafResult;
+      bean.name = nameAndRoaster.name;
+      if (params.roaster) {
+        bean.roaster = nameAndRoaster.roaster;
       }
-    }
 
-    // Cupping points
-    if (params.cupping_points) {
-      this.updateFieldProgress('TOP_LEVEL', 'cupping_points');
-      bean.cupping_points = await this.extractField(
-        'cupping_points',
+      // Weight - always extract (essential for ratios)
+      this.updateFieldProgress('TOP_LEVEL', 'weight');
+      const weightStr = await this.extractField(
+        'weight',
         text,
         examples,
         languages,
       );
-    }
+      if (weightStr) {
+        bean.weight = this.textNorm.extractWeight(weightStr.toString()) || 0;
+      }
 
-    // Roasting date
-    if (params.roastingDate) {
-      this.updateFieldProgress('TOP_LEVEL', 'roastingDate');
-      bean.roastingDate = await this.extractField(
-        'roastingDate',
-        text,
-        examples,
-        languages,
-      );
-    }
-
-    // === ORIGIN FIELDS ===
-
-    // Only extract origin info if bean_information is enabled
-    if (params.bean_information) {
-      // Detect structure (single origin vs blend)
-      this.updateProgress('STRUCTURE');
-      const beanMix = await this.extractField(
-        'beanMix',
-        text,
-        examples,
-        languages,
-      );
-      bean.beanMix = beanMix || ('UNKNOWN' as any);
-      this.uiLog.log(`Structure: beanMix=${beanMix}`);
-
-      if (beanMix === 'BLEND') {
-        // BLEND: Use single JSON prompt, then filter by settings
-        this.updateProgress('BLEND_ORIGINS');
-        bean.bean_information = await this.extractBlendOriginsFiltered(
+      // Bean roasting type
+      if (params.bean_roasting_type) {
+        this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
+        bean.bean_roasting_type = await this.extractField(
+          'bean_roasting_type',
           text,
           examples,
           languages,
-          params,
         );
-        this.uiLog.log(
-          `Blend origins extracted: ${bean.bean_information.length} components`,
-        );
-      } else {
-        // SINGLE_ORIGIN: Use per-field extraction with settings checks
-        const info = await this.extractSingleOriginInfo(
+      }
+
+      // Aromatics
+      if (params.aromatics) {
+        this.updateFieldProgress('TOP_LEVEL', 'aromatics');
+        bean.aromatics =
+          (await this.extractField('aromatics', text, examples, languages)) ||
+          '';
+      }
+
+      // Decaffeinated
+      if (params.decaffeinated) {
+        this.updateFieldProgress('TOP_LEVEL', 'decaffeinated');
+        const decafResult = await this.extractField(
+          'decaffeinated',
           text,
           examples,
           languages,
-          params,
         );
-        if (this.hasAnyOriginData(info)) {
-          bean.bean_information.push(info);
+        if (decafResult !== null && decafResult !== undefined) {
+          bean.decaffeinated = decafResult;
         }
       }
-    }
 
-    // Ensure at least one bean_information entry
-    if (bean.bean_information.length === 0) {
-      bean.bean_information = [this.createEmptyBeanInformation()];
-    }
+      // Cupping points
+      if (params.cupping_points) {
+        this.updateFieldProgress('TOP_LEVEL', 'cupping_points');
+        bean.cupping_points = await this.extractField(
+          'cupping_points',
+          text,
+          examples,
+          languages,
+        );
+      }
 
-    // Final validation
-    this.updateProgress('VALIDATING');
-    return this.validateBean(bean);
+      // Roasting date
+      if (params.roastingDate) {
+        this.updateFieldProgress('TOP_LEVEL', 'roastingDate');
+        bean.roastingDate = await this.extractField(
+          'roastingDate',
+          text,
+          examples,
+          languages,
+        );
+      }
+
+      // === ORIGIN FIELDS ===
+
+      // Only extract origin info if bean_information is enabled
+      if (params.bean_information) {
+        // Detect structure (single origin vs blend)
+        this.updateProgress('STRUCTURE');
+        const beanMix = await this.extractField(
+          'beanMix',
+          text,
+          examples,
+          languages,
+        );
+        bean.beanMix = beanMix || ('UNKNOWN' as any);
+        this.uiLog.log(`Structure: beanMix=${beanMix}`);
+
+        if (beanMix === 'BLEND') {
+          // BLEND: Use single JSON prompt, then filter by settings
+          this.updateProgress('BLEND_ORIGINS');
+          bean.bean_information = await this.extractBlendOriginsFiltered(
+            text,
+            examples,
+            languages,
+            params,
+          );
+          this.uiLog.log(
+            `Blend origins extracted: ${bean.bean_information.length} components`,
+          );
+        } else {
+          // SINGLE_ORIGIN: Use per-field extraction with settings checks
+          const info = await this.extractSingleOriginInfo(
+            text,
+            examples,
+            languages,
+            params,
+          );
+          if (this.hasAnyOriginData(info)) {
+            bean.bean_information.push(info);
+          }
+        }
+      }
+
+      // Ensure at least one bean_information entry
+      if (bean.bean_information.length === 0) {
+        bean.bean_information = [this.createEmptyBeanInformation()];
+      }
+
+      // Final validation
+      this.updateProgress('VALIDATING');
+      return this.validateBean(bean);
+    } catch (error: any) {
+      // Unexpected error in extraction pipeline - log and return fallback bean
+      this.uiLog.error(
+        `[AI Import] Field extraction failed unexpectedly: ${error?.message || error}`,
+      );
+
+      // Return minimal bean rather than crashing - allows user to manually fill fields
+      const fallbackBean = new Bean();
+      fallbackBean.bean_information = [this.createEmptyBeanInformation()];
+      return fallbackBean;
+    }
   }
 
   /**
@@ -219,6 +238,11 @@ export class FieldExtractionService {
 
   /**
    * Extract a single field using LLM.
+   *
+   * Error handling: Returns null if extraction fails. Caller should
+   * treat null as "field not found in OCR text" and continue with
+   * other fields. Errors are logged for debugging but do not
+   * interrupt the extraction pipeline.
    */
   private async extractField(
     fieldName: string,
@@ -727,35 +751,61 @@ export class FieldExtractionService {
 
   /**
    * Update progress message in loading spinner.
+   *
+   * Error handling: Logs a warning if translation is missing. This is a
+   * cosmetic issue that doesn't interrupt extraction but helps catch
+   * missing translation keys during development.
    */
   private updateProgress(stepKey: string): void {
-    const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
-    let stepName = this.translate.instant(`AI_IMPORT_STEP_${stepKey}`);
-    if (stepName === `AI_IMPORT_STEP_${stepKey}`) {
-      // Translation not found, format the step key nicely
-      stepName = stepKey
-        .replace(/_/g, ' ')
-        .replace(/\b\w/g, (c) => c.toUpperCase());
+    try {
+      const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
+      let stepName = this.translate.instant(`AI_IMPORT_STEP_${stepKey}`);
+      if (stepName === `AI_IMPORT_STEP_${stepKey}`) {
+        // Translation not found, log warning and format the step key nicely
+        console.warn(
+          `[AI Import] Translation missing for AI_IMPORT_STEP_${stepKey}`,
+        );
+        stepName = stepKey
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+      this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${stepName}`);
+    } catch (e) {
+      // Log cosmetic failure but don't interrupt extraction
+      console.warn(`[AI Import] updateProgress failed for ${stepKey}: ${e}`);
     }
-    this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${stepName}`);
   }
 
   /**
    * Update progress message with current field being extracted.
+   *
+   * Error handling: Logs a warning if translation is missing. This is a
+   * cosmetic issue that doesn't interrupt extraction but helps catch
+   * missing translation keys during development.
    */
   private updateFieldProgress(prefix: string, fieldName: string): void {
-    const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
-    // Try to get translated field name, fallback to formatted field name
-    let fieldLabel = this.translate.instant(
-      `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`,
-    );
-    if (fieldLabel === `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`) {
-      // Translation not found, format the field name nicely
-      fieldLabel = fieldName
-        .replace(/_/g, ' ')
-        .replace(/\b\w/g, (c) => c.toUpperCase());
+    try {
+      const baseMessage = this.translate.instant('AI_IMPORT_STEP_ANALYZING');
+      // Try to get translated field name, fallback to formatted field name
+      let fieldLabel = this.translate.instant(
+        `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`,
+      );
+      if (fieldLabel === `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`) {
+        // Translation not found, log warning and format the field name nicely
+        console.warn(
+          `[AI Import] Translation missing for AI_IMPORT_FIELD_${fieldName.toUpperCase()}`,
+        );
+        fieldLabel = fieldName
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+      this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${fieldLabel}`);
+    } catch (e) {
+      // Log cosmetic failure but don't interrupt extraction
+      console.warn(
+        `[AI Import] updateFieldProgress failed for ${fieldName}: ${e}`,
+      );
     }
-    this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${fieldLabel}`);
   }
 
   /**
