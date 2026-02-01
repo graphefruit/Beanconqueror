@@ -344,6 +344,14 @@ export class FieldExtractionService {
 
   /**
    * Send a message to the LLM and wait for response.
+   *
+   * IMPORTANT: Fields are extracted sequentially (not in parallel) because
+   * CapgoLLM uses global event listeners. Parallel extraction causes event
+   * contamination between concurrent chat sessions, where responses from one
+   * prompt can be incorrectly associated with another prompt's listener.
+   *
+   * DO NOT attempt to parallelize field extraction (e.g., Promise.all) without
+   * first refactoring CapgoLLM to use scoped event listeners per chat session.
    */
   private async sendLLMMessage(prompt: string): Promise<string> {
     return sendLLMPrompt(prompt, {

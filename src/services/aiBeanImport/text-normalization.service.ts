@@ -173,7 +173,8 @@ export class TextNormalizationService {
     const altitudeUnitPattern =
       /m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$|-)/i;
 
-    // Handle explicit ranges with dash/en-dash (e.g., "1700-1900m", "800-1200 meters")
+    // Pattern 1: Explicit ranges with dash/en-dash
+    // e.g., "1700-1900m" → "1700-1900 MASL", "1.850-2.100 meters" → "1850-2100 MASL"
     // Supports 3-4 digit altitudes (up to 4999)
     result = result.replace(
       /(\d{1,2})?[.,]?(\d{3})\s*[-–]\s*(\d{1,2})?[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$))/gi,
@@ -184,14 +185,15 @@ export class TextNormalizationService {
       },
     );
 
-    // Handle implicit ranges: two altitudes with units close together without dash
+    // Pattern 2: Implicit ranges - two altitudes with units close together without dash
     // e.g., "800m 1200m" → "800-1200 MASL"
     result = result.replace(
       /(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s))\s+(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$)|MASL)/gi,
       '$1-$2 MASL',
     );
 
-    // Handle single altitudes (3-4 digit numbers with unit)
+    // Pattern 3: Single altitudes (3-4 digit numbers with unit)
+    // e.g., "1850m" → "1850 MASL", "1.850 m.ü.M." → "1850 MASL", "2000 msnm" → "2000 MASL"
     // Negative lookahead prevents matching the start of an explicit range
     result = result.replace(
       /(\d{1,2})?[.,]?(\d{3})\s*(?:m\.?ü\.?M\.?|msnm|m(?:eters?)?(?![a-zA-Z])|m(?=\s|$))(?!\s*[-–]\s*\d)/gi,
@@ -201,7 +203,8 @@ export class TextNormalizationService {
       },
     );
 
-    // Normalize thousand separators in existing MASL values
+    // Pattern 4: Normalize thousand separators in existing MASL values
+    // e.g., "1.850 MASL" → "1850 MASL"
     result = result.replace(/(\d{1,2})?[.,](\d{3})\s*MASL/gi, (_, p1, p2) => {
       const altitude = (p1 || '') + p2;
       return `${altitude} MASL`;
