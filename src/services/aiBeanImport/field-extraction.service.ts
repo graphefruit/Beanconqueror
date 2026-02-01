@@ -3,6 +3,7 @@ import { Injectable, isDevMode } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import {
   BLEND_ORIGINS_PROMPT_TEMPLATE,
   buildFieldPrompt,
@@ -30,6 +31,7 @@ import {
 } from './llm-communication.service';
 import { OCRCorrectionService } from './ocr-correction.service';
 import { TextNormalizationService } from './text-normalization.service';
+import { mapToBeanMix } from './type-mappings';
 
 /**
  * Result of extracting top-level bean fields.
@@ -49,7 +51,7 @@ interface TopLevelFieldsResult {
  * Result of extracting origin-related fields.
  */
 interface OriginFieldsResult {
-  beanMix: 'SINGLE_ORIGIN' | 'BLEND' | 'UNKNOWN';
+  beanMix: BEAN_MIX_ENUM;
   bean_information: IBeanInformation[];
 }
 
@@ -236,7 +238,7 @@ export class FieldExtractionService {
     params: IBeanParameter,
   ): Promise<OriginFieldsResult> {
     const result: OriginFieldsResult = {
-      beanMix: 'UNKNOWN',
+      beanMix: BEAN_MIX_ENUM.UNKNOWN,
       bean_information: [],
     };
 
@@ -247,16 +249,16 @@ export class FieldExtractionService {
 
     // Detect structure (single origin vs blend)
     this.updateProgress('STRUCTURE');
-    const beanMix = await this.extractField(
+    const beanMixRaw = await this.extractField(
       'beanMix',
       text,
       examples,
       languages,
     );
-    result.beanMix = beanMix || 'UNKNOWN';
-    this.uiLog.log(`Structure: beanMix=${beanMix}`);
+    result.beanMix = mapToBeanMix(beanMixRaw);
+    this.uiLog.log(`Structure: beanMix=${result.beanMix}`);
 
-    if (beanMix === 'BLEND') {
+    if (result.beanMix === BEAN_MIX_ENUM.BLEND) {
       // BLEND: Use single JSON prompt, then filter by settings
       this.updateProgress('BLEND_ORIGINS');
       result.bean_information = await this.extractBlendOriginsFiltered(
@@ -309,14 +311,14 @@ export class FieldExtractionService {
       bean.decaffeinated = topLevelFields.decaffeinated;
     }
     if (topLevelFields.cupping_points !== undefined) {
-      bean.cupping_points = topLevelFields.cupping_points;
+      bean.cupping_points = String(topLevelFields.cupping_points);
     }
     if (topLevelFields.roastingDate !== undefined) {
       bean.roastingDate = topLevelFields.roastingDate;
     }
 
     // Assign origin fields
-    bean.beanMix = originFields.beanMix as any;
+    bean.beanMix = originFields.beanMix;
     bean.bean_information = originFields.bean_information;
 
     // Ensure at least one bean_information entry
@@ -827,14 +829,17 @@ export class FieldExtractionService {
     // If country detected but beanMix is null/unknown, set to SINGLE_ORIGIN
     if (
       bean.bean_information.length === 1 &&
-      (!bean.beanMix || bean.beanMix === ('UNKNOWN' as any))
+      (!bean.beanMix || bean.beanMix === BEAN_MIX_ENUM.UNKNOWN)
     ) {
-      bean.beanMix = 'SINGLE_ORIGIN' as any;
+      bean.beanMix = BEAN_MIX_ENUM.SINGLE_ORIGIN;
     }
 
     // If multiple countries, ensure BLEND
-    if (bean.bean_information.length > 1 && bean.beanMix !== ('BLEND' as any)) {
-      bean.beanMix = 'BLEND' as any;
+    if (
+      bean.bean_information.length > 1 &&
+      bean.beanMix !== BEAN_MIX_ENUM.BLEND
+    ) {
+      bean.beanMix = BEAN_MIX_ENUM.BLEND;
     }
 
     // Ensure at least one bean_information entry exists if any origin data

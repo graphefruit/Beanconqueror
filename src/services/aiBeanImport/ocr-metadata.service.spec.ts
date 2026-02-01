@@ -31,11 +31,11 @@ describe('OcrMetadataService', () => {
     });
 
     it('should return false when blocks is undefined', () => {
-      // Arrange
-      const result: TextDetectionResult = {
+      // Arrange - Use Partial type to represent incomplete test data
+      const result = {
         text: 'Some text',
-        blocks: undefined as any,
-      };
+        blocks: undefined,
+      } as Partial<TextDetectionResult> as TextDetectionResult;
 
       // Act & Assert
       expect(service.shouldUseMetadata(result)).toBeFalse();

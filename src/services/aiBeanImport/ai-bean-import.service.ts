@@ -20,6 +20,7 @@ import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
 import { UILog } from '../uiLog';
 
+import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
 import { FieldExtractionService } from './field-extraction.service';
 import { sendLLMPrompt } from './llm-communication.service';
 import {
@@ -98,7 +99,7 @@ export class AIBeanImportService {
    * Capture a photo and extract bean data using OCR + LLM
    */
   public async captureAndExtractBeanData(): Promise<Bean | null> {
-    let currentStep = 'init';
+    let currentStep: AIImportStep = 'init';
     try {
       // Step 1: Capture image
       currentStep = 'camera_permission';
@@ -172,9 +173,9 @@ export class AIBeanImportService {
       }
 
       return bean;
-    } catch (error: any) {
+    } catch (error: unknown) {
       const errorMessage =
-        error?.message || error?.toString() || 'Unknown error';
+        error instanceof Error ? error.message : String(error);
       this.uiLog.error(
         `AI Bean Import error at step [${currentStep}]: ${errorMessage}`,
       );
@@ -182,10 +183,11 @@ export class AIBeanImportService {
       await this.uiAlert.hideLoadingSpinner();
 
       // Re-throw with more context
-      const detailedError = new Error(`[${currentStep}] ${errorMessage}`);
-      (detailedError as any).step = currentStep;
-      (detailedError as any).originalError = error;
-      throw detailedError;
+      throw createAIBeanImportError(
+        `[${currentStep}] ${errorMessage}`,
+        currentStep,
+        error,
+      );
     }
   }
 
@@ -201,7 +203,7 @@ export class AIBeanImportService {
     photoPaths: string[],
     attachPhotos: boolean,
   ): Promise<{ bean: Bean; attachmentPaths?: string[] } | null> {
-    let currentStep = 'init';
+    let currentStep: AIImportStep = 'init';
     try {
       // Step 1: Run OCR on all photos
       currentStep = 'ocr';
@@ -247,19 +249,20 @@ export class AIBeanImportService {
 
       // Return bean with attachment paths
       return { bean, attachmentPaths: photoPaths };
-    } catch (error: any) {
+    } catch (error: unknown) {
       const errorMessage =
-        error?.message || error?.toString() || 'Unknown error';
+        error instanceof Error ? error.message : String(error);
       this.uiLog.error(
         `AI Multi-Photo Import error at step [${currentStep}]: ${errorMessage}`,
       );
       this.uiLog.error('Full error: ' + JSON.stringify(error));
 
       // Re-throw with more context
-      const detailedError = new Error(`[${currentStep}] ${errorMessage}`);
-      (detailedError as any).step = currentStep;
-      (detailedError as any).originalError = error;
-      throw detailedError;
+      throw createAIBeanImportError(
+        `[${currentStep}] ${errorMessage}`,
+        currentStep,
+        error,
+      );
     }
   }
 
