@@ -32,6 +32,28 @@ import { OCRCorrectionService } from './ocr-correction.service';
 import { TextNormalizationService } from './text-normalization.service';
 
 /**
+ * Result of extracting top-level bean fields.
+ */
+interface TopLevelFieldsResult {
+  name: string;
+  roaster: string;
+  weight: number;
+  bean_roasting_type?: any;
+  aromatics?: string;
+  decaffeinated?: boolean;
+  cupping_points?: number;
+  roastingDate?: string;
+}
+
+/**
+ * Result of extracting origin-related fields.
+ */
+interface OriginFieldsResult {
+  beanMix: 'SINGLE_ORIGIN' | 'BLEND' | 'UNKNOWN';
+  bean_information: IBeanInformation[];
+}
+
+/**
  * Service for multi-step field extraction using focused LLM prompts.
  */
 @Injectable({
@@ -77,138 +99,22 @@ export class FieldExtractionService {
       const text = this.preProcess(ocrText, examples);
       this.debugLog('NORMALIZED TEXT', text);
 
-      const bean = new Bean();
-
-      // === TOP-LEVEL FIELDS ===
-
-      // Name and Roaster - extract together for better disambiguation
-      this.updateProgress('NAME_AND_ROASTER');
-      const nameAndRoaster = await this.extractNameAndRoaster(
+      // Extract fields in two phases
+      const topLevelFields = await this.extractTopLevelFields(
         text,
         examples,
         languages,
+        params,
       );
-      bean.name = nameAndRoaster.name;
-      if (params.roaster) {
-        bean.roaster = nameAndRoaster.roaster;
-      }
-
-      // Weight - always extract (essential for ratios)
-      this.updateFieldProgress('TOP_LEVEL', 'weight');
-      const weightStr = await this.extractField(
-        'weight',
+      const originFields = await this.extractOriginFields(
         text,
         examples,
         languages,
+        params,
       );
-      if (weightStr) {
-        bean.weight = this.textNorm.extractWeight(weightStr.toString()) || 0;
-      }
 
-      // Bean roasting type
-      if (params.bean_roasting_type) {
-        this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
-        bean.bean_roasting_type = await this.extractField(
-          'bean_roasting_type',
-          text,
-          examples,
-          languages,
-        );
-      }
-
-      // Aromatics
-      if (params.aromatics) {
-        this.updateFieldProgress('TOP_LEVEL', 'aromatics');
-        bean.aromatics =
-          (await this.extractField('aromatics', text, examples, languages)) ||
-          '';
-      }
-
-      // Decaffeinated
-      if (params.decaffeinated) {
-        this.updateFieldProgress('TOP_LEVEL', 'decaffeinated');
-        const decafResult = await this.extractField(
-          'decaffeinated',
-          text,
-          examples,
-          languages,
-        );
-        if (decafResult !== null && decafResult !== undefined) {
-          bean.decaffeinated = decafResult;
-        }
-      }
-
-      // Cupping points
-      if (params.cupping_points) {
-        this.updateFieldProgress('TOP_LEVEL', 'cupping_points');
-        bean.cupping_points = await this.extractField(
-          'cupping_points',
-          text,
-          examples,
-          languages,
-        );
-      }
-
-      // Roasting date
-      if (params.roastingDate) {
-        this.updateFieldProgress('TOP_LEVEL', 'roastingDate');
-        bean.roastingDate = await this.extractField(
-          'roastingDate',
-          text,
-          examples,
-          languages,
-        );
-      }
-
-      // === ORIGIN FIELDS ===
-
-      // Only extract origin info if bean_information is enabled
-      if (params.bean_information) {
-        // Detect structure (single origin vs blend)
-        this.updateProgress('STRUCTURE');
-        const beanMix = await this.extractField(
-          'beanMix',
-          text,
-          examples,
-          languages,
-        );
-        bean.beanMix = beanMix || ('UNKNOWN' as any);
-        this.uiLog.log(`Structure: beanMix=${beanMix}`);
-
-        if (beanMix === 'BLEND') {
-          // BLEND: Use single JSON prompt, then filter by settings
-          this.updateProgress('BLEND_ORIGINS');
-          bean.bean_information = await this.extractBlendOriginsFiltered(
-            text,
-            examples,
-            languages,
-            params,
-          );
-          this.uiLog.log(
-            `Blend origins extracted: ${bean.bean_information.length} components`,
-          );
-        } else {
-          // SINGLE_ORIGIN: Use per-field extraction with settings checks
-          const info = await this.extractSingleOriginInfo(
-            text,
-            examples,
-            languages,
-            params,
-          );
-          if (this.hasAnyOriginData(info)) {
-            bean.bean_information.push(info);
-          }
-        }
-      }
-
-      // Ensure at least one bean_information entry
-      if (bean.bean_information.length === 0) {
-        bean.bean_information = [this.createEmptyBeanInformation()];
-      }
-
-      // Final validation
-      this.updateProgress('VALIDATING');
-      return this.validateBean(bean);
+      // Construct and return final bean
+      return this.constructBeanFromExtractedData(topLevelFields, originFields);
     } catch (error: any) {
       // Unexpected error in extraction pipeline - log and return fallback bean
       this.uiLog.error(
@@ -220,6 +126,207 @@ export class FieldExtractionService {
       fallbackBean.bean_information = [this.createEmptyBeanInformation()];
       return fallbackBean;
     }
+  }
+
+  /**
+   * Extract top-level bean fields (name, roaster, weight, roasting type, etc.)
+   * These are fields that apply to the bean as a whole, not to individual origins.
+   */
+  private async extractTopLevelFields(
+    text: string,
+    examples: MergedExamples,
+    languages: string[],
+    params: IBeanParameter,
+  ): Promise<TopLevelFieldsResult> {
+    const result: TopLevelFieldsResult = {
+      name: '',
+      roaster: '',
+      weight: 0,
+    };
+
+    // Name and Roaster - extract together for better disambiguation
+    this.updateProgress('NAME_AND_ROASTER');
+    const nameAndRoaster = await this.extractNameAndRoaster(
+      text,
+      examples,
+      languages,
+    );
+    result.name = nameAndRoaster.name;
+    if (params.roaster) {
+      result.roaster = nameAndRoaster.roaster;
+    }
+
+    // Weight - always extract (essential for ratios)
+    this.updateFieldProgress('TOP_LEVEL', 'weight');
+    const weightStr = await this.extractField(
+      'weight',
+      text,
+      examples,
+      languages,
+    );
+    if (weightStr) {
+      result.weight = this.textNorm.extractWeight(weightStr.toString()) || 0;
+    }
+
+    // Bean roasting type
+    if (params.bean_roasting_type) {
+      this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
+      result.bean_roasting_type = await this.extractField(
+        'bean_roasting_type',
+        text,
+        examples,
+        languages,
+      );
+    }
+
+    // Aromatics
+    if (params.aromatics) {
+      this.updateFieldProgress('TOP_LEVEL', 'aromatics');
+      result.aromatics =
+        (await this.extractField('aromatics', text, examples, languages)) || '';
+    }
+
+    // Decaffeinated
+    if (params.decaffeinated) {
+      this.updateFieldProgress('TOP_LEVEL', 'decaffeinated');
+      const decafResult = await this.extractField(
+        'decaffeinated',
+        text,
+        examples,
+        languages,
+      );
+      if (decafResult !== null && decafResult !== undefined) {
+        result.decaffeinated = decafResult;
+      }
+    }
+
+    // Cupping points
+    if (params.cupping_points) {
+      this.updateFieldProgress('TOP_LEVEL', 'cupping_points');
+      result.cupping_points = await this.extractField(
+        'cupping_points',
+        text,
+        examples,
+        languages,
+      );
+    }
+
+    // Roasting date
+    if (params.roastingDate) {
+      this.updateFieldProgress('TOP_LEVEL', 'roastingDate');
+      result.roastingDate = await this.extractField(
+        'roastingDate',
+        text,
+        examples,
+        languages,
+      );
+    }
+
+    return result;
+  }
+
+  /**
+   * Extract origin-related fields based on detected bean mix type.
+   * Handles both single origin (per-field extraction) and blend (bulk JSON extraction).
+   */
+  private async extractOriginFields(
+    text: string,
+    examples: MergedExamples,
+    languages: string[],
+    params: IBeanParameter,
+  ): Promise<OriginFieldsResult> {
+    const result: OriginFieldsResult = {
+      beanMix: 'UNKNOWN',
+      bean_information: [],
+    };
+
+    // Only extract origin info if bean_information is enabled
+    if (!params.bean_information) {
+      return result;
+    }
+
+    // Detect structure (single origin vs blend)
+    this.updateProgress('STRUCTURE');
+    const beanMix = await this.extractField(
+      'beanMix',
+      text,
+      examples,
+      languages,
+    );
+    result.beanMix = beanMix || 'UNKNOWN';
+    this.uiLog.log(`Structure: beanMix=${beanMix}`);
+
+    if (beanMix === 'BLEND') {
+      // BLEND: Use single JSON prompt, then filter by settings
+      this.updateProgress('BLEND_ORIGINS');
+      result.bean_information = await this.extractBlendOriginsFiltered(
+        text,
+        examples,
+        languages,
+        params,
+      );
+      this.uiLog.log(
+        `Blend origins extracted: ${result.bean_information.length} components`,
+      );
+    } else {
+      // SINGLE_ORIGIN: Use per-field extraction with settings checks
+      const info = await this.extractSingleOriginInfo(
+        text,
+        examples,
+        languages,
+        params,
+      );
+      if (this.hasAnyOriginData(info)) {
+        result.bean_information.push(info);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Construct a Bean object from extracted field data.
+   * Applies cross-field validation and ensures data consistency.
+   */
+  private constructBeanFromExtractedData(
+    topLevelFields: TopLevelFieldsResult,
+    originFields: OriginFieldsResult,
+  ): Bean {
+    const bean = new Bean();
+
+    // Assign top-level fields
+    bean.name = topLevelFields.name;
+    bean.roaster = topLevelFields.roaster;
+    bean.weight = topLevelFields.weight;
+
+    if (topLevelFields.bean_roasting_type !== undefined) {
+      bean.bean_roasting_type = topLevelFields.bean_roasting_type;
+    }
+    if (topLevelFields.aromatics !== undefined) {
+      bean.aromatics = topLevelFields.aromatics;
+    }
+    if (topLevelFields.decaffeinated !== undefined) {
+      bean.decaffeinated = topLevelFields.decaffeinated;
+    }
+    if (topLevelFields.cupping_points !== undefined) {
+      bean.cupping_points = topLevelFields.cupping_points;
+    }
+    if (topLevelFields.roastingDate !== undefined) {
+      bean.roastingDate = topLevelFields.roastingDate;
+    }
+
+    // Assign origin fields
+    bean.beanMix = originFields.beanMix as any;
+    bean.bean_information = originFields.bean_information;
+
+    // Ensure at least one bean_information entry
+    if (bean.bean_information.length === 0) {
+      bean.bean_information = [this.createEmptyBeanInformation()];
+    }
+
+    // Final validation
+    this.updateProgress('VALIDATING');
+    return this.validateBean(bean);
   }
 
   /**

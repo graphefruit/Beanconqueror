@@ -130,7 +130,7 @@ export class AIBeanImportService {
       );
 
       // Step 2: Run OCR
-      currentStep = 'ocr_setup';
+      currentStep = 'ocr';
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_EXTRACTING'),
       );
@@ -138,7 +138,6 @@ export class AIBeanImportService {
       const base64Image = imageData.base64String;
       this.uiLog.log('Base64 image length: ' + (base64Image?.length || 0));
 
-      currentStep = 'ocr';
       const ocrResult = (await CapacitorPluginMlKitTextRecognition.detectText({
         base64Image: base64Image,
       })) as TextDetectionResult;
@@ -160,52 +159,10 @@ export class AIBeanImportService {
 
       this.uiLog.log('OCR extracted text: ' + rawText);
 
-      // Step 3: Enrich OCR with layout metadata
-      currentStep = 'ocr_metadata';
-      const enrichedResult = this.ocrMetadata.enrichWithLayout(ocrResult);
-      this.uiLog.log(
-        `OCR metadata: hasUsefulMetadata=${enrichedResult.hasUsefulMetadata}`,
-      );
-      if (enrichedResult.hasUsefulMetadata) {
-        this.uiLog.log(
-          'Enriched text preview: ' +
-            enrichedResult.enrichedText.substring(0, 300),
-        );
-      }
+      // Step 3: Shared processing pipeline (enrich → detect language → extract fields)
+      currentStep = 'processing';
+      const bean = await this.processOcrAndExtractBean([ocrResult], [rawText]);
 
-      // Step 4: Detect language (on raw OCR text - layout tags would confuse detection)
-      currentStep = 'language_detection';
-      this.uiAlert.setLoadingSpinnerMessage(
-        this.translate.instant('AI_IMPORT_STEP_DETECTING_LANGUAGE'),
-      );
-
-      const detectedLanguage = await this.detectLanguage(rawText);
-      this.uiLog.log('Detected language: ' + detectedLanguage);
-
-      // Step 5: Determine languages for examples
-      const userLanguage = this.translate.currentLang;
-      const languagesToUse = this.getLanguagesToUse(
-        detectedLanguage,
-        userLanguage,
-      );
-      this.uiLog.log(
-        'Using languages for examples: ' + languagesToUse.join(', '),
-      );
-
-      // Step 6: Multi-step field extraction with pre/post-processing
-      // Use enriched text (with layout metadata) for better name/roaster extraction
-      currentStep = 'multi_step_extraction';
-      this.debugLog('STARTING FIELD EXTRACTION');
-      this.debugLog('extractedText', enrichedResult.enrichedText);
-      this.debugLog('languagesToUse', languagesToUse);
-      this.uiAlert.setLoadingSpinnerMessage(
-        this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
-      );
-
-      const bean = await this.fieldExtraction.extractAllFields(
-        enrichedResult.enrichedText,
-        languagesToUse,
-      );
       await this.uiAlert.hideLoadingSpinner();
 
       if (!bean) {
@@ -246,72 +203,9 @@ export class AIBeanImportService {
   ): Promise<{ bean: Bean; attachmentPaths?: string[] } | null> {
     let currentStep = 'init';
     try {
-      // Step 1: Run OCR on each photo - collect full results including blocks
+      // Step 1: Run OCR on all photos
       currentStep = 'ocr';
-      const ocrResults: TextDetectionResult[] = [];
-      const rawTexts: string[] = [];
-
-      for (let i = 0; i < photoPaths.length; i++) {
-        this.uiAlert.setLoadingSpinnerMessage(
-          this.translate.instant('AI_IMPORT_MULTI_PROCESSING_PHOTO', {
-            current: i + 1,
-            total: photoPaths.length,
-          }),
-        );
-
-        const photoPath = photoPaths[i];
-        this.uiLog.log(
-          `Multi-photo OCR: Processing photo ${i + 1}/${photoPaths.length}, path: ${photoPath}`,
-        );
-
-        // Read file as base64 for OCR
-        let base64: string;
-        try {
-          base64 = await this.uiFileHelper.readInternalFileAsBase64(photoPath);
-          this.uiLog.log(
-            `Multi-photo OCR: Photo ${i + 1} read successfully, base64 length: ${base64.length}, first 50 chars: ${base64.substring(0, 50)}`,
-          );
-        } catch (readError: any) {
-          this.uiLog.error(
-            `Multi-photo OCR: Failed to read photo ${i + 1} at path ${photoPath}: ${readError?.message || readError}`,
-          );
-          continue; // Skip this photo but try others
-        }
-
-        // Validate base64 looks like image data
-        if (!base64 || base64.length < 1000) {
-          this.uiLog.error(
-            `Multi-photo OCR: Photo ${i + 1} has suspiciously short base64 (${base64?.length || 0} chars), skipping`,
-          );
-          continue;
-        }
-
-        try {
-          const ocrResult =
-            (await CapacitorPluginMlKitTextRecognition.detectText({
-              base64Image: base64,
-            })) as TextDetectionResult;
-
-          this.uiLog.log(
-            `Multi-photo OCR: Photo ${i + 1} OCR result: ${JSON.stringify(ocrResult).substring(0, 200)}`,
-          );
-
-          if (ocrResult.text && ocrResult.text.trim() !== '') {
-            ocrResults.push(ocrResult);
-            rawTexts.push(ocrResult.text);
-            this.uiLog.log(
-              `Multi-photo OCR: Photo ${i + 1} extracted ${ocrResult.text.length} chars: "${ocrResult.text.substring(0, 100)}..."`,
-            );
-          } else {
-            this.uiLog.log(`Multi-photo OCR: Photo ${i + 1} had no text`);
-          }
-        } catch (ocrError: any) {
-          this.uiLog.error(
-            `Multi-photo OCR: OCR failed for photo ${i + 1}: ${ocrError?.message || ocrError}`,
-          );
-          continue;
-        }
-      }
+      const { ocrResults, rawTexts } = await this.runOcrOnPhotos(photoPaths);
 
       // Check if we got any text at all
       if (ocrResults.length === 0) {
@@ -330,45 +224,9 @@ export class AIBeanImportService {
         return null;
       }
 
-      // Step 2: Enrich OCR with layout metadata for all photos
-      currentStep = 'ocr_metadata';
-      const enrichedText = this.ocrMetadata.enrichMultiplePhotos(ocrResults);
-      this.uiLog.log(
-        `Multi-photo OCR: Enriched text length: ${enrichedText.length}`,
-      );
-
-      // Concatenate raw texts for language detection (without layout tags)
-      const combinedRawText = this.concatenateOCRResults(rawTexts);
-
-      // Step 3: Detect language (on raw text - layout tags would confuse detection)
-      currentStep = 'language_detection';
-      this.uiAlert.setLoadingSpinnerMessage(
-        this.translate.instant('AI_IMPORT_STEP_DETECTING_LANGUAGE'),
-      );
-
-      const detectedLanguage = await this.detectLanguage(combinedRawText);
-      this.uiLog.log('Detected language: ' + detectedLanguage);
-
-      // Step 4: Determine languages for examples
-      const userLanguage = this.translate.currentLang;
-      const languagesToUse = this.getLanguagesToUse(
-        detectedLanguage,
-        userLanguage,
-      );
-      this.uiLog.log(
-        'Using languages for examples: ' + languagesToUse.join(', '),
-      );
-
-      // Step 5: Multi-step field extraction with layout-enriched text
-      currentStep = 'multi_step_extraction';
-      this.uiAlert.setLoadingSpinnerMessage(
-        this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
-      );
-
-      const bean = await this.fieldExtraction.extractAllFields(
-        enrichedText,
-        languagesToUse,
-      );
+      // Step 2: Shared processing pipeline (enrich → detect language → extract fields)
+      currentStep = 'processing';
+      const bean = await this.processOcrAndExtractBean(ocrResults, rawTexts);
 
       if (!bean) {
         // Clean up photos if not attaching
@@ -380,7 +238,7 @@ export class AIBeanImportService {
         );
       }
 
-      // Step 6: Handle photo attachments
+      // Step 3: Handle photo attachments
       if (!attachPhotos) {
         // Delete temp photos since user doesn't want attachments
         await this.cleanupPhotos(photoPaths);
@@ -403,6 +261,140 @@ export class AIBeanImportService {
       (detailedError as any).originalError = error;
       throw detailedError;
     }
+  }
+
+  /**
+   * Shared pipeline for OCR post-processing and field extraction.
+   * Takes OCR result(s), enriches with layout, detects language, and extracts fields.
+   */
+  private async processOcrAndExtractBean(
+    ocrResults: TextDetectionResult[],
+    rawTexts: string[],
+  ): Promise<Bean> {
+    // Step 1: Enrich with layout metadata
+    const enrichedText =
+      ocrResults.length === 1
+        ? this.ocrMetadata.enrichWithLayout(ocrResults[0]).enrichedText
+        : this.ocrMetadata.enrichMultiplePhotos(ocrResults);
+
+    this.uiLog.log(`Enriched text length: ${enrichedText.length}`);
+    this.debugLog('enrichedText', enrichedText);
+
+    // Step 2: Prepare raw text for language detection
+    const combinedRawText = this.concatenateOCRResults(rawTexts);
+
+    // Step 3: Detect language (on raw text - layout tags would confuse detection)
+    this.uiAlert.setLoadingSpinnerMessage(
+      this.translate.instant('AI_IMPORT_STEP_DETECTING_LANGUAGE'),
+    );
+    const detectedLanguage = await this.detectLanguage(combinedRawText);
+    this.uiLog.log('Detected language: ' + detectedLanguage);
+
+    // Step 4: Get languages for examples
+    const userLanguage = this.translate.currentLang;
+    const languagesToUse = this.getLanguagesToUse(
+      detectedLanguage,
+      userLanguage,
+    );
+    this.uiLog.log(
+      'Using languages for examples: ' + languagesToUse.join(', '),
+    );
+
+    // Step 5: Extract fields
+    this.debugLog('STARTING FIELD EXTRACTION');
+    this.debugLog('languagesToUse', languagesToUse);
+    this.uiAlert.setLoadingSpinnerMessage(
+      this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
+    );
+
+    const bean = await this.fieldExtraction.extractAllFields(
+      enrichedText,
+      languagesToUse,
+    );
+
+    if (!bean) {
+      throw new Error(
+        'Field extraction returned null - check logs for details',
+      );
+    }
+
+    return bean;
+  }
+
+  /**
+   * Run OCR on multiple photos and collect results.
+   * Handles errors gracefully, skipping failed photos.
+   */
+  private async runOcrOnPhotos(
+    photoPaths: string[],
+  ): Promise<{ ocrResults: TextDetectionResult[]; rawTexts: string[] }> {
+    const ocrResults: TextDetectionResult[] = [];
+    const rawTexts: string[] = [];
+
+    for (let i = 0; i < photoPaths.length; i++) {
+      this.uiAlert.setLoadingSpinnerMessage(
+        this.translate.instant('AI_IMPORT_MULTI_PROCESSING_PHOTO', {
+          current: i + 1,
+          total: photoPaths.length,
+        }),
+      );
+
+      const photoPath = photoPaths[i];
+      this.uiLog.log(
+        `Multi-photo OCR: Processing photo ${i + 1}/${photoPaths.length}, path: ${photoPath}`,
+      );
+
+      // Read file as base64 for OCR
+      let base64: string;
+      try {
+        base64 = await this.uiFileHelper.readInternalFileAsBase64(photoPath);
+        this.uiLog.log(
+          `Multi-photo OCR: Photo ${i + 1} read successfully, base64 length: ${base64.length}, first 50 chars: ${base64.substring(0, 50)}`,
+        );
+      } catch (readError: any) {
+        this.uiLog.error(
+          `Multi-photo OCR: Failed to read photo ${i + 1} at path ${photoPath}: ${readError?.message || readError}`,
+        );
+        continue; // Skip this photo but try others
+      }
+
+      // Validate base64 looks like image data
+      if (!base64 || base64.length < 1000) {
+        this.uiLog.error(
+          `Multi-photo OCR: Photo ${i + 1} has suspiciously short base64 (${base64?.length || 0} chars), skipping`,
+        );
+        continue;
+      }
+
+      try {
+        const ocrResult = (await CapacitorPluginMlKitTextRecognition.detectText(
+          {
+            base64Image: base64,
+          },
+        )) as TextDetectionResult;
+
+        this.uiLog.log(
+          `Multi-photo OCR: Photo ${i + 1} OCR result: ${JSON.stringify(ocrResult).substring(0, 200)}`,
+        );
+
+        if (ocrResult.text && ocrResult.text.trim() !== '') {
+          ocrResults.push(ocrResult);
+          rawTexts.push(ocrResult.text);
+          this.uiLog.log(
+            `Multi-photo OCR: Photo ${i + 1} extracted ${ocrResult.text.length} chars: "${ocrResult.text.substring(0, 100)}..."`,
+          );
+        } else {
+          this.uiLog.log(`Multi-photo OCR: Photo ${i + 1} had no text`);
+        }
+      } catch (ocrError: any) {
+        this.uiLog.error(
+          `Multi-photo OCR: OCR failed for photo ${i + 1}: ${ocrError?.message || ocrError}`,
+        );
+        continue;
+      }
+    }
+
+    return { ocrResults, rawTexts };
   }
 
   /**
