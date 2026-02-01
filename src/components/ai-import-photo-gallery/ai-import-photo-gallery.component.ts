@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { UIImage } from '../../services/uiImage';
 import { UIFileHelper } from '../../services/uiFileHelper';
@@ -25,8 +25,14 @@ export class AiImportPhotoGalleryComponent {
   public attachPhotos: boolean = false;
   public readonly maxPhotos: number = 4;
 
+  /** Screen reader announcement text for ARIA live region */
+  public screenReaderAnnouncement: string = '';
+
   @ViewChild('photoSlides', { static: false })
   public photoSlides: ElementRef | undefined;
+
+  @ViewChild('addPhotoButton', { static: false })
+  private addPhotoButton: ElementRef | undefined;
 
   constructor(
     private readonly modalCtrl: ModalController,
@@ -36,6 +42,36 @@ export class AiImportPhotoGalleryComponent {
     private readonly uiLog: UILog,
     private readonly translate: TranslateService,
   ) {}
+
+  /**
+   * Handle keyboard navigation for the gallery
+   */
+  @HostListener('document:keydown', ['$event'])
+  public handleKeyboardNavigation(event: KeyboardEvent): void {
+    // Gallery navigation when gallery is focused
+    if (this.isGalleryFocused()) {
+      switch (event.key) {
+        case 'ArrowLeft':
+          this.navigateToPreviousSlide();
+          event.preventDefault();
+          break;
+        case 'ArrowRight':
+          this.navigateToNextSlide();
+          event.preventDefault();
+          break;
+        case 'Delete':
+          this.removeCurrentPhoto();
+          event.preventDefault();
+          break;
+      }
+    }
+
+    // Escape to close modal
+    if (event.key === 'Escape') {
+      this.cancel();
+      event.preventDefault();
+    }
+  }
 
   /**
    * Add a photo via camera or library picker.
@@ -84,6 +120,12 @@ export class AiImportPhotoGalleryComponent {
                 `AI Import Gallery: Saved photo to ${fileUri.path}, total now: ${this.photoPaths.length}`,
               );
               this.updateSlider();
+
+              // Focus management: move to new slide
+              this.focusOnNewPhoto();
+
+              // Announce to screen readers
+              this.announcePhotoAdded();
             }
           }
         } catch (e: any) {
@@ -104,13 +146,23 @@ export class AiImportPhotoGalleryComponent {
    */
   public async removePhoto(index: number): Promise<void> {
     const path = this.photoPaths[index];
+    const wasLastPhoto = this.photoPaths.length === 1;
+    const wasAtEnd = index === this.photoPaths.length - 1;
+
     try {
       await this.uiFileHelper.deleteInternalFile(path);
     } catch (e) {
       // File may not exist, continue anyway
     }
+
     this.photoPaths.splice(index, 1);
     this.updateSlider();
+
+    // Focus management after removal
+    this.manageFocusAfterRemoval(wasLastPhoto, wasAtEnd, index);
+
+    // Announce to screen readers
+    this.announcePhotoRemoved();
   }
 
   /**
@@ -147,6 +199,128 @@ export class AiImportPhotoGalleryComponent {
       'cancel',
       AiImportPhotoGalleryComponent.COMPONENT_ID,
     );
+  }
+
+  /**
+   * Check if the gallery swiper is currently focused
+   */
+  private isGalleryFocused(): boolean {
+    const activeElement = document.activeElement;
+    return this.photoSlides?.nativeElement?.contains(activeElement) ?? false;
+  }
+
+  /**
+   * Navigate to the previous slide in the gallery
+   */
+  private navigateToPreviousSlide(): void {
+    if (this.photoSlides?.nativeElement?.swiper) {
+      this.photoSlides.nativeElement.swiper.slidePrev();
+    }
+  }
+
+  /**
+   * Navigate to the next slide in the gallery
+   */
+  private navigateToNextSlide(): void {
+    if (this.photoSlides?.nativeElement?.swiper) {
+      this.photoSlides.nativeElement.swiper.slideNext();
+    }
+  }
+
+  /**
+   * Remove the currently displayed photo
+   */
+  private removeCurrentPhoto(): void {
+    if (this.photoSlides?.nativeElement?.swiper && this.photoPaths.length > 0) {
+      const activeIndex = this.photoSlides.nativeElement.swiper.activeIndex;
+      this.removePhoto(activeIndex);
+    }
+  }
+
+  /**
+   * Focus on the newly added photo in the gallery
+   */
+  private focusOnNewPhoto(): void {
+    setTimeout(() => {
+      if (this.photoSlides?.nativeElement?.swiper) {
+        // Navigate to the last slide (newly added)
+        const lastIndex = this.photoPaths.length - 1;
+        this.photoSlides.nativeElement.swiper.slideTo(lastIndex);
+
+        // Focus the gallery container
+        this.photoSlides.nativeElement.focus();
+      }
+    }, 300); // Allow swiper update to complete
+  }
+
+  /**
+   * Manage focus after a photo is removed
+   */
+  private manageFocusAfterRemoval(
+    wasLastPhoto: boolean,
+    wasAtEnd: boolean,
+    removedIndex: number,
+  ): void {
+    setTimeout(() => {
+      if (wasLastPhoto) {
+        // No photos left - focus on add button
+        this.focusAddButton();
+      } else if (this.photoSlides?.nativeElement?.swiper) {
+        // Photos remain - focus on appropriate slide
+        const newIndex = wasAtEnd ? removedIndex - 1 : removedIndex;
+        const targetIndex = Math.max(
+          0,
+          Math.min(newIndex, this.photoPaths.length - 1),
+        );
+        this.photoSlides.nativeElement.swiper.slideTo(targetIndex);
+        this.photoSlides.nativeElement.focus();
+      }
+    }, 300);
+  }
+
+  /**
+   * Focus on the add photo button
+   */
+  private focusAddButton(): void {
+    setTimeout(() => {
+      if (this.addPhotoButton?.nativeElement) {
+        this.addPhotoButton.nativeElement.focus();
+      }
+    }, 100);
+  }
+
+  /**
+   * Announce to screen readers that a photo was added
+   */
+  private announcePhotoAdded(): void {
+    this.screenReaderAnnouncement = this.translate.instant(
+      'AI_IMPORT_PHOTO_ADDED',
+      {
+        current: this.photoPaths.length,
+        max: this.maxPhotos,
+      },
+    );
+    // Clear after announcement
+    setTimeout(() => (this.screenReaderAnnouncement = ''), 1000);
+  }
+
+  /**
+   * Announce to screen readers that a photo was removed
+   */
+  private announcePhotoRemoved(): void {
+    if (this.photoPaths.length === 0) {
+      this.screenReaderAnnouncement = this.translate.instant(
+        'AI_IMPORT_ALL_PHOTOS_REMOVED',
+      );
+    } else {
+      this.screenReaderAnnouncement = this.translate.instant(
+        'AI_IMPORT_PHOTO_REMOVED',
+        {
+          remaining: this.photoPaths.length,
+        },
+      );
+    }
+    setTimeout(() => (this.screenReaderAnnouncement = ''), 1000);
   }
 
   /**
