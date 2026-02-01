@@ -15,7 +15,7 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
@@ -61,16 +61,16 @@ export class BeanModalSelectComponent implements OnInit {
     frozen: false,
   };
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('frozenScroll', { read: AgVirtualSrollComponent, static: false })
-  public frozenScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('frozenScroll', { read: AgVirtualScrollComponent, static: false })
+  public frozenScroll: AgVirtualScrollComponent;
 
   @ViewChild('archivedScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public archivedScroll: AgVirtualSrollComponent;
+  public archivedScroll: AgVirtualScrollComponent;
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
@@ -196,7 +196,7 @@ export class BeanModalSelectComponent implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else if (this.archivedScroll !== undefined) {

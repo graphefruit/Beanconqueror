@@ -14,7 +14,7 @@ import { Settings } from '../../classes/settings/settings';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UILog } from '../../services/uiLog';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
@@ -61,15 +61,15 @@ export class BeansPage implements OnDestroy {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
   @ViewChild('archivedScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public archivedScroll: AgVirtualSrollComponent;
-  @ViewChild('frozenScroll', { read: AgVirtualSrollComponent, static: false })
-  public frozenScroll: AgVirtualSrollComponent;
+  public archivedScroll: AgVirtualScrollComponent;
+  @ViewChild('frozenScroll', { read: AgVirtualScrollComponent, static: false })
+  public frozenScroll: AgVirtualScrollComponent;
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
@@ -598,7 +598,7 @@ export class BeansPage implements OnDestroy {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else if (this.archivedScroll !== undefined) {

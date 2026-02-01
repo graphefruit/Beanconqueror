@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Water } from '../../../classes/water/water';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { Settings } from '../../../classes/settings/settings';
 import { ModalController } from '@ionic/angular';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
@@ -35,10 +35,13 @@ export class WaterPage implements OnInit {
   @ViewChild('waterContent', { read: ElementRef })
   public waterContent: ElementRef;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   public segment: string = 'open';
 
   public settings: Settings;
@@ -79,7 +82,7 @@ export class WaterPage implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.waterContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {

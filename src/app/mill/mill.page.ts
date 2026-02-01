@@ -17,7 +17,7 @@ import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIMillHelper } from '../../services/uiMillHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 @Component({
   selector: 'mill',
@@ -31,10 +31,13 @@ export class MillPage implements OnInit {
   public openMillsView: Array<Mill> = [];
   public archiveMillsView: Array<Mill> = [];
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   @ViewChild('millContent', { read: ElementRef })
   public millContent: ElementRef;
 
@@ -66,7 +69,7 @@ export class MillPage implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.millContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {

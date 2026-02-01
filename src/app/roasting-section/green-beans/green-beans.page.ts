@@ -18,7 +18,7 @@ import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from '../../../services/uiGreenBeanStorage';
 import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
 import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.component';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
 
@@ -42,10 +42,13 @@ export class GreenBeansPage implements OnInit {
   @ViewChild('greenBeanContent', { read: ElementRef })
   public greenBeanContent: ElementRef;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   public bean_segment: string = 'open';
   public archivedBeansFilter: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -95,7 +98,7 @@ export class GreenBeansPage implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.greenBeanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {

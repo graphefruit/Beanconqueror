@@ -17,7 +17,7 @@ import { Settings } from '../../classes/settings/settings';
 import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 @Component({
   selector: 'preparation',
@@ -33,10 +33,13 @@ export class PreparationPage implements OnInit {
   public openPreparationsView: Array<Preparation> = [];
   public archivePreparationsView: Array<Preparation> = [];
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   @ViewChild('preparationContent', { read: ElementRef })
   public preparationContent: ElementRef;
   public segmentScrollHeight: string = undefined;
@@ -78,7 +81,7 @@ export class PreparationPage implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.preparationContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {

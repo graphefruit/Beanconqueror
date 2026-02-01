@@ -15,7 +15,7 @@ import { Brew } from '../../classes/brew/brew';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { BrewFilterComponent } from './brew-filter/brew-filter.component';
 import { Settings } from '../../classes/settings/settings';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { Subscription } from 'rxjs';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
@@ -38,10 +38,13 @@ export class BrewPage implements OnInit {
   public brew_segment: 'open' | 'archive' = 'open';
   public segmentScrollHeight: string = undefined;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   @ViewChild('brewContent', { read: ElementRef })
   public brewContent: ElementRef;
 
@@ -124,7 +127,7 @@ export class BrewPage implements OnInit {
   private retriggerScroll() {
     setTimeout(() => {
       const el = this.brewContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {
