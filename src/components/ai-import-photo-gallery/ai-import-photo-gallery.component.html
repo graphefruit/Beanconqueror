@@ -2,6 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="cancel()"
+                  (keydown.enter)="cancel()"
                   aria-label="{{ 'CANCEL' | translate }}"
                   tabindex="1">
         <ion-icon name="close" slot="icon-only"></ion-icon>
@@ -41,6 +42,7 @@
           <swiper-slide role="group" [attr.aria-label]="('AI_IMPORT_PHOTO' | translate) + ' ' + (i + 1)">
             <ion-button
               (click)="removePhoto(i)"
+              (keydown.enter)="removePhoto(i)"
               class="position-absolute-button"
               color="danger"
               fill="clear"
@@ -61,6 +63,7 @@
     expand="block"
     fill="outline"
     (click)="addPhoto()"
+    (keydown.enter)="addPhoto()"
     [disabled]="photoPaths.length >= maxPhotos"
     class="add-photo-button"
     #addPhotoButton
@@ -83,6 +86,7 @@
     <ion-button
       expand="block"
       (click)="startAnalysis()"
+      (keydown.enter)="startAnalysis()"
       [disabled]="photoPaths.length === 0"
       color="primary"
       tabindex="6">
