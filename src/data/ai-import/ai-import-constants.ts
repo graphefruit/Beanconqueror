@@ -30,7 +30,15 @@ export const OCR_LARGE_TEXT_AVG_MULTIPLIER = 1.5;
 export const OCR_SMALL_TEXT_AVG_MULTIPLIER = 0.7;
 
 // === VALIDATION CONSTANTS ===
-/** Maximum valid coffee growing elevation in meters (filters variety numbers like 74158) */
+/**
+ * Maximum valid coffee growing elevation in meters.
+ *
+ * Rationale: The highest coffee-growing regions are around 2500m (some Bolivian farms).
+ * We use 5000m as a conservative upper bound to avoid false rejections while still
+ * filtering out variety numbers that could be misread as elevations (e.g., 74158, 74110).
+ * Ethiopian variety codes like "74158" commonly appear on labels and would otherwise
+ * be incorrectly parsed as altitude values.
+ */
 export const MAX_VALID_ELEVATION_METERS = 5000;
 
 /** Minimum valid SCA cupping score */

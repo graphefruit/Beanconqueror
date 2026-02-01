@@ -134,8 +134,13 @@ import { MAX_VALID_ELEVATION_METERS } from '../../data/ai-import/ai-import-const
  * This is a simple smoke test to catch LLM hallucinations - if the number isn't on the
  * label at all, it's definitely wrong.
  *
+ * Note: This function intentionally checks against the original (non-preprocessed) OCR text.
+ * The buildThousandSeparatorPattern() handles various international separator formats,
+ * so the validation works regardless of whether the text was preprocessed. This approach
+ * validates against what was actually on the label rather than the normalized version.
+ *
  * @param elevation The sanitized elevation string (e.g., "1850 MASL" or "1700-1900 MASL")
- * @param ocrText The OCR text to search in
+ * @param ocrText The OCR text to search in (original, non-preprocessed)
  * @returns true if all numbers from the elevation appear somewhere in the OCR text
  *
  * @example
@@ -179,6 +184,7 @@ export function elevationExistsInOcrText(
  *   normalizeAltitudeUnit("1850 m.ü.M.") // → "1850 MASL"
  *   normalizeAltitudeUnit("1700-1900 meters") // → "1700-1900 MASL"
  *   normalizeAltitudeUnit("1850 masl") // → "1850 MASL"
+ *   normalizeAltitudeUnit("1850m") // → "1850 MASL" (space added)
  */
 export function normalizeAltitudeUnit(value: string): string {
   // Pattern for altitude units (but not MASL itself)
@@ -191,7 +197,10 @@ export function normalizeAltitudeUnit(value: string): string {
   // Normalize existing masl to uppercase MASL
   result = result.replace(/masl/gi, 'MASL');
 
-  // Clean up multiple spaces and ensure single space before MASL
+  // Ensure space before MASL when preceded by a digit (handles "1850MASL" → "1850 MASL")
+  result = result.replace(/(\d)MASL/g, '$1 MASL');
+
+  // Clean up multiple spaces before MASL
   result = result.replace(/\s+MASL/g, ' MASL');
 
   // Remove duplicate MASL (e.g., "1850 MASL MASL" → "1850 MASL")
@@ -203,6 +212,10 @@ export function normalizeAltitudeUnit(value: string): string {
 /**
  * Sanitizes and validates an elevation value from LLM response.
  * Used by both single-origin field extraction and blend JSON parsing.
+ *
+ * Note: Some normalizations (thousand separators, unit normalization) are also
+ * performed during preprocessing. This intentional redundancy provides defense-in-depth
+ * since LLM responses may not preserve preprocessing normalizations.
  *
  * Performs:
  * 1. Null-like value rejection ("null", "NOT_FOUND", "unknown")
