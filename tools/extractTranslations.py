@@ -23,7 +23,7 @@ def main():
                 data = json.load(f)
 
             main_section = data.get("UPDATE_TEXT_TITLE_TITLE", {})
-            version_data = main_section.get("8.5.0", {})
+            version_data = main_section.get("8.6.0", {})
             description_list = version_data.get("DESCRIPTION", [])
 
             out_f.write(f"=== {lang} ===\n")

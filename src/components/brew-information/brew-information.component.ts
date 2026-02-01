@@ -248,7 +248,9 @@ export class BrewInformationComponent implements OnInit {
 
   public async showVisualizerShot() {
     this.uiHelper.openExternalWebpage(
-      'https://visualizer.coffee/shots/' +
+      // Visualizer URL should be in the right format due to checkVisualizerURL method in settings.ts
+      this.settings.visualizer_url +
+        'shots/' +
         this.brew.customInformation.visualizer_id,
     );
   }

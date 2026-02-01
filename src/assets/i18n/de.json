@@ -1151,7 +1151,10 @@
             "RECONNECT_NEEDED": "Erneute Verbindung erforderlich",
             "RECONNECT": "Erneut verbinden",
             "ENTER_TARGET_BREW_WEIGHT": "Gebe das gewünschte Brühgewicht in Gramm ein",
-            "LAST_SHOT": "Letzte Brühung"
+            "LAST_SHOT": "Letzte Brühung",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode funktioniert nur mit verbundener Waage, bitte eine verbinden.",
+            "WE_COULD_NOT_CONNECT": "Verbindung zur Maschine konnte nicht hergestellt werden",
+            "BREW_BY_WEIGHT_HINT": "Das programmierte Volumen in ml muss größer sein als das Zielgewicht in Gramm, damit das Ende bei dem eingestellten Gewicht stoppt. Sollte dies nicht der Fall sein, bitte das Volumen in ml anpassen."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Maschine"
@@ -1524,36 +1527,6 @@
     "ANALYTICS_INFORMATION": "<h1>Deine Kaffee-Reise mit BeanConqueror<\/h1><p>Wow! Du hast bereits <b>{{BEANS_COUNT}}<\/b> Bohnen entdeckt und dir daraus <b>{{BREWS_COUNT}}<\/b> köstliche Tassen Kaffee gezaubert. Das macht dich zu einem echten Kaffee-Entdecker!<\/p><h2>Gemeinsam die Zukunft des Kaffees gestalten<\/h2><p>Stell dir vor: Nur 4% unserer Community teilen ihre Erfahrungen mit uns. Das ist, als würden wir ein Rezept mit nur einer Zutat perfektionieren wollen! Deine Brühdaten sind wie kleine Schätze, die uns helfen, BeanConqueror zu dem Werkzeug zu machen, das du dir wünschst.<\/p><h3>Gemeinsam können wir:<\/h3><ul><li>Die idealen Parameter für jede Bohnenvarietät entschlüsseln<\/li><li>Wissenschaftlich fundierte Guides für die ersten Schritte in der Kaffeewelt entwickeln<\/li><li>Die komplexen Beziehungen zwischen Brühvariablen und Geschmacksprofilen kartieren<\/li><li>BeanConqueror zu einem noch intuitiveren Begleiter für deine Kaffee-Reise machen<\/li><\/ul><h2>Dein Beitrag ist wertvoll:<\/h2><p>Aktiviere die Datenspende jetzt oder später in den Einstellungen. Jede geteilte Erfahrung bereichert unser kollektives Kaffee-Wissen und ist ein Baustein für die Zukunft von BeanConqueror!<\/p><h2>Dein Datenschutz liegt uns am Herzen<\/h2><p>Als deutsches Team im Herzen Europas nehmen wir deine Privatsphäre sehr ernst. Wir übertragen nur anonymisierte Daten, welche keine Rückschlüsse auf deine Person ermöglichen. Alle Details findest du auf der Beanconqueror Webseite.<\/p><h2>Werde Teil der BeanConqueror-Evolution!<\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} – Die Analytics-ID ist nicht mit personenbezogenen Daten verknüpft; keine persönliche Identifizierung möglich.",
     "BEAN_DATA_AVERAGE_BREW_RATING": "Durchschnittliche Brühbewertung",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "Option zum Deaktivieren des Verbinden\/Trennen-Popups für Bluetooth-Geräte"
-            }
-        },
-        "8.5.0": {
-            "TITLE": "Version 8.5.0: Das ist neu",
-            "DESCRIPTION": [
-                "<b>Das war's 2025<\/b>",
-                "Entdecke dein Jahr 2025!",
-                "",
-                "<b>Neue Sprache<\/b>",
-                "Griechische Unterstützung – Danke an Mr. pterodactyl",
-                "",
-                "<b>Bluetooth-Waagen<\/b>",
-                "Anzeige der eindeutigen Geräte-ID zur einfacheren Verbindung",
-                "",
-                "<b>Bohnen<\/b>",
-                "Einen Teil einer gefrorenen Bohne auftauen",
-                "Bohnen werden nun gruppiert",
-                "Ein spezielles Symbol für entkoffeinierte Bohnen (Mondsymbol) wird angezeigt",
-                "Import von Bohnen aus Excel mit mehreren Sorten korrigiert",
-                "",
-                "<b>Andere<\/b>",
-                "[ANDROID]Unterstützung von Edge2Edge von Capacitor für korrektes Tastaturverhalten",
-                "Kleinere Korrekturen"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Wählen Sie den Bildtyp für die Brühanzeige",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Zubereitungsmethodik",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Bohne",
@@ -1647,5 +1620,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Bohne wurde aufgetaut",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Bohne wurde teilweise aufgetaut",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Teile der Kaffeebohne auftauen",
-    "LAST_COMMUNICATION": "Letzte Kommunikation"
+    "LAST_COMMUNICATION": "Letzte Kommunikation",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Version 8.6.0: Das ist neu",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU<\/b>",
+                "Unterstützung der Sanremo YOU Maschine in Kombination mit der Funktion zum Brühen nach Gewicht!",
+                "Entdecke den Barista-Modus, starte den Shot mit der Sanremo YOU und BeanConqueror stoppt ihn zum richtigen Zeitpunkt.",
+                "",
+                "<b>Graph-Farben<\/b>",
+                "Es können jetzt die Diagrammfarben für den hellen und dunklen Modus angepasst werden",
+                "",
+                "<b>Meticulous<\/b>",
+                "Wenn ein Shot importiert wird, werden nun auch der Profilname und die Solltemperatur übertragen.",
+                "",
+                "<b>Brühungen<\/b>",
+                "Anzeige von Stunde und Minute auf dem Detailbildschirm des Brühvorgangs",
+                "",
+                "<b>Andere<\/b>",
+                "Behebung von Problemen beim Excel-Import für chinesische Zeichen",
+                "Kleinere Korrekturen"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Aktiv (Hell)",
+    "GRAPH_ACTIVE_DARK_MODE": "Aktiv (Dunkel)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Referenz (Hell)",
+    "GRAPH_REFERENCE_DARK_MODE": "Referenz (Dunkel)",
+    "GRAPH_COLORS": "Graphische Farben",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "Koreanisch",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slowakisch",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japanisch",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russisch"
 }
