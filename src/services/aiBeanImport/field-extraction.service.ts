@@ -12,7 +12,6 @@ import {
 import {
   LLM_TIMEOUT_PER_FIELD_MS,
   MAX_BLEND_PERCENTAGE,
-  MAX_VALID_ELEVATION_METERS,
 } from '../../data/ai-import/ai-import-constants';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
@@ -30,7 +29,10 @@ import {
   sendLLMPrompt,
 } from './llm-communication.service';
 import { OCRCorrectionService } from './ocr-correction.service';
-import { TextNormalizationService } from './text-normalization.service';
+import {
+  sanitizeElevation,
+  TextNormalizationService,
+} from './text-normalization.service';
 import { mapToBeanMix } from './type-mappings';
 
 /**
@@ -765,7 +767,7 @@ export class FieldExtractionService {
       region: this.sanitizeStringField(obj?.region),
       variety: this.sanitizeStringField(obj?.variety),
       processing: this.sanitizeStringField(obj?.processing),
-      elevation: this.sanitizeElevation(obj?.elevation),
+      elevation: sanitizeElevation(obj?.elevation) ?? '',
       farm: this.sanitizeStringField(obj?.farm),
       farmer: this.sanitizeStringField(obj?.farmer),
       harvest_time: '',
@@ -793,32 +795,6 @@ export class FieldExtractionService {
     if (isNullLikeValue(trimmed)) {
       return '';
     }
-    return trimmed;
-  }
-
-  /**
-   * Sanitize elevation field - validate and clean up format.
-   */
-  private sanitizeElevation(value: any): string {
-    if (value === null || value === undefined) return '';
-    if (typeof value !== 'string') return '';
-
-    const trimmed = value.trim();
-    if (isNullLikeValue(trimmed)) {
-      return '';
-    }
-
-    // Validate elevation is reasonable - filters out variety numbers like 74158
-    const allNumbers = trimmed.match(/\d+/g);
-    if (allNumbers) {
-      for (const numStr of allNumbers) {
-        const num = parseInt(numStr, 10);
-        if (num >= MAX_VALID_ELEVATION_METERS) {
-          return ''; // Likely not an elevation
-        }
-      }
-    }
-
     return trimmed;
   }
 
