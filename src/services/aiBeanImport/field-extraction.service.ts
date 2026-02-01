@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Bean } from '../../classes/bean/bean';
 import {
@@ -22,6 +22,11 @@ import {
   buildFieldPrompt,
   BLEND_ORIGINS_PROMPT_TEMPLATE,
 } from '../../data/ai-import/ai-field-prompts';
+import {
+  LLM_TIMEOUT_PER_FIELD_MS,
+  MAX_VALID_ELEVATION_METERS,
+  MAX_BLEND_PERCENTAGE,
+} from '../../data/ai-import/ai-import-constants';
 
 /**
  * Service for multi-step field extraction using focused LLM prompts.
@@ -48,10 +53,8 @@ export class FieldExtractionService {
     ocrText: string,
     languages: string[],
   ): Promise<Bean> {
-    // Debug: Log raw OCR text (using console.log for Xcode visibility)
-    console.log('=== RAW OCR TEXT ===');
-    console.log(ocrText);
-    console.log('=== END RAW OCR TEXT ===');
+    // Debug: Log raw OCR text
+    this.debugLog('RAW OCR TEXT', ocrText);
 
     // Get user's bean customization settings
     const settings = this.uiSettingsStorage.getSettings();
@@ -62,9 +65,7 @@ export class FieldExtractionService {
 
     // Pre-process text
     const text = this.preProcess(ocrText, examples);
-    console.log('=== NORMALIZED TEXT ===');
-    console.log(text);
-    console.log('=== END NORMALIZED TEXT ===');
+    this.debugLog('NORMALIZED TEXT', text);
 
     const bean = new Bean();
 
@@ -234,15 +235,13 @@ export class FieldExtractionService {
     try {
       // Build the prompt
       const prompt = buildFieldPrompt(fieldName, ocrText, examples, languages);
-      console.log(`=== PROMPT FOR ${fieldName} ===`);
-      console.log(prompt);
-      console.log(`=== END PROMPT FOR ${fieldName} ===`);
+      this.debugLog(`PROMPT FOR ${fieldName}`, prompt);
 
       // Send to LLM
       const response = await this.sendLLMMessage(prompt);
       const cleaned = this.cleanResponse(response);
 
-      console.log(`${fieldName} response: "${cleaned}"`);
+      this.debugLog(`${fieldName} response`, cleaned);
 
       // Handle null/not found responses (exact match only - partial NOT_FOUND handled by postProcess)
       if (isNullLikeValue(cleaned)) {
@@ -283,16 +282,14 @@ export class FieldExtractionService {
         examples,
         languages,
       );
-      console.log('=== PROMPT FOR name_and_roaster ===');
-      console.log(prompt);
-      console.log('=== END PROMPT FOR name_and_roaster ===');
+      this.debugLog('PROMPT FOR name_and_roaster', prompt);
 
       // Send to LLM
       const response = await this.sendLLMMessage(prompt);
       // Don't use cleanResponse - it strips colons which breaks JSON
       const trimmed = response?.trim() || '';
 
-      console.log(`name_and_roaster response: "${trimmed}"`);
+      this.debugLog('name_and_roaster response', trimmed);
 
       // Parse JSON response
       return this.parseNameAndRoasterResponse(trimmed);
@@ -350,7 +347,7 @@ export class FieldExtractionService {
    */
   private async sendLLMMessage(prompt: string): Promise<string> {
     return sendLLMPrompt(prompt, {
-      timeoutMs: 15000,
+      timeoutMs: LLM_TIMEOUT_PER_FIELD_MS,
       logger: this.uiLog,
     });
   }
@@ -400,18 +397,14 @@ export class FieldExtractionService {
     // Build the blend-specific prompt
     const prompt = this.buildBlendOriginsPrompt(ocrText, examples, languages);
 
-    console.log('=== BLEND ORIGINS PROMPT ===');
-    console.log(prompt);
-    console.log('=== END BLEND ORIGINS PROMPT ===');
+    this.debugLog('BLEND ORIGINS PROMPT', prompt);
 
     // Send to LLM
     const response = await this.sendLLMMessage(prompt);
     // Note: Don't use cleanResponse here - it strips colons which breaks JSON syntax
     const trimmed = response?.trim() || '';
 
-    console.log('=== BLEND ORIGINS RESPONSE ===');
-    console.log(trimmed);
-    console.log('=== END BLEND ORIGINS RESPONSE ===');
+    this.debugLog('BLEND ORIGINS RESPONSE', trimmed);
 
     // Parse JSON response (handles markdown code blocks internally)
     return this.parseBlendOriginsResponse(trimmed);
@@ -639,7 +632,7 @@ export class FieldExtractionService {
 
     // Only add percentage if meaningful
     const pct = obj?.percentage;
-    if (typeof pct === 'number' && pct > 0 && pct < 100) {
+    if (typeof pct === 'number' && pct > 0 && pct < MAX_BLEND_PERCENTAGE) {
       info.percentage = pct;
     }
 
@@ -671,12 +664,12 @@ export class FieldExtractionService {
       return '';
     }
 
-    // Validate elevation is reasonable (< 5000m)
+    // Validate elevation is reasonable - filters out variety numbers like 74158
     const allNumbers = trimmed.match(/\d+/g);
     if (allNumbers) {
       for (const numStr of allNumbers) {
         const num = parseInt(numStr, 10);
-        if (num >= 5000) {
+        if (num >= MAX_VALID_ELEVATION_METERS) {
           return ''; // Likely not an elevation
         }
       }
@@ -755,5 +748,27 @@ export class FieldExtractionService {
         .replace(/\b\w/g, (c) => c.toUpperCase());
     }
     this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${fieldLabel}`);
+  }
+
+  /**
+   * Debug logging helper - only logs in development mode.
+   * Verbose output (prompts/responses) goes to console in dev mode.
+   * Essential info always goes to UILog for app debug viewer.
+   */
+  private debugLog(label: string, data?: any): void {
+    const message = `[AI Import] ${label}`;
+    if (isDevMode()) {
+      console.log(`=== ${label} ===`);
+      if (data !== undefined) {
+        console.log(data);
+      }
+      console.log(`=== END ${label} ===`);
+    }
+    // Always log to UILog for debug viewer (truncated for large data)
+    const truncatedData =
+      typeof data === 'string' && data.length > 200
+        ? data.substring(0, 200) + '...'
+        : data;
+    this.uiLog.debug(`${message}: ${truncatedData ?? ''}`);
   }
 }

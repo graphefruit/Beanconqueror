@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { UIAlert } from '../uiAlert';
@@ -21,6 +21,7 @@ import {
   CameraResultType,
   CameraSource,
 } from '@capacitor/camera';
+import { LLM_TIMEOUT_LANGUAGE_DETECTION_MS } from '../../data/ai-import/ai-import-constants';
 
 export interface AIReadinessResult {
   ready: boolean;
@@ -190,9 +191,9 @@ export class AIBeanImportService {
       // Step 6: Multi-step field extraction with pre/post-processing
       // Use enriched text (with layout metadata) for better name/roaster extraction
       currentStep = 'multi_step_extraction';
-      console.log('=== STARTING FIELD EXTRACTION ===');
-      console.log('extractedText:', enrichedResult.enrichedText);
-      console.log('languagesToUse:', languagesToUse);
+      this.debugLog('STARTING FIELD EXTRACTION');
+      this.debugLog('extractedText', enrichedResult.enrichedText);
+      this.debugLog('languagesToUse', languagesToUse);
       this.uiAlert.setLoadingSpinnerMessage(
         this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
       );
@@ -439,9 +440,9 @@ export class AIBeanImportService {
         ocrText,
       );
 
-      // Send to LLM with 10s timeout for language detection
+      // Send to LLM with timeout for language detection
       const response = await sendLLMPrompt(prompt, {
-        timeoutMs: 10000,
+        timeoutMs: LLM_TIMEOUT_LANGUAGE_DETECTION_MS,
         logger: this.uiLog,
       });
 
@@ -491,5 +492,27 @@ export class AIBeanImportService {
     addLang(userLang);
 
     return languages;
+  }
+
+  /**
+   * Debug logging helper - only logs in development mode.
+   * Verbose output goes to console in dev mode.
+   * Essential info always goes to UILog for app debug viewer.
+   */
+  private debugLog(label: string, data?: any): void {
+    const message = `[AI Import] ${label}`;
+    if (isDevMode()) {
+      console.log(`=== ${label} ===`);
+      if (data !== undefined) {
+        console.log(data);
+      }
+      console.log(`=== END ${label} ===`);
+    }
+    // Always log to UILog for debug viewer (truncated for large data)
+    const truncatedData =
+      typeof data === 'string' && data.length > 200
+        ? data.substring(0, 200) + '...'
+        : data;
+    this.uiLog.debug(`${message}: ${truncatedData ?? ''}`);
   }
 }

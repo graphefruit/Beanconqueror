@@ -1,5 +1,11 @@
 import moment from 'moment';
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
+import {
+  MAX_VALID_ELEVATION_METERS,
+  MIN_CUPPING_SCORE,
+  MAX_CUPPING_SCORE,
+  MAX_BLEND_PERCENTAGE,
+} from './ai-import-constants';
 
 /**
  * Prompt for extracting all origin attributes from a BLEND in one call.
@@ -288,7 +294,7 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
     validation: /^\d+(?:[.,]\d+)?$/,
     postProcess: (v, ocrText) => {
       const num = parseFloat(v.replace(',', '.'));
-      if (num < 80 || num >= 100) {
+      if (num < MIN_CUPPING_SCORE || num >= MAX_CUPPING_SCORE) {
         return null;
       }
       // Check integer part exists in OCR to prevent hallucinations
@@ -475,13 +481,13 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
         return null;
       }
 
-      // Validate elevation is reasonable (< 5000m) - filters out variety numbers like 74158
+      // Validate elevation is reasonable - filters out variety numbers like 74158
       // Check all numbers in the string (handles ranges like "1700-1900 MASL")
       const allNumbers = cleaned.match(/\d+/g);
       if (allNumbers) {
         for (const numStr of allNumbers) {
           const num = parseInt(numStr, 10);
-          if (num >= 5000) {
+          if (num >= MAX_VALID_ELEVATION_METERS) {
             return null;
           }
         }

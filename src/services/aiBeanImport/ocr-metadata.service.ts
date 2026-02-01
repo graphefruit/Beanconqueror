@@ -1,4 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
+import {
+  OCR_SIZE_VARIATION_THRESHOLD,
+  OCR_MIN_BLOCKS_FOR_METADATA,
+  OCR_LARGE_TEXT_MAX_HEIGHT_RATIO,
+  OCR_LARGE_TEXT_AVG_MULTIPLIER,
+  OCR_SMALL_TEXT_AVG_MULTIPLIER,
+} from '../../data/ai-import/ai-import-constants';
 
 /**
  * Interfaces matching the ML Kit plugin's TypeScript definitions.
@@ -67,17 +74,6 @@ export interface EnrichedOCRResult {
 })
 export class OcrMetadataService {
   /**
-   * Minimum ratio of max/min height for metadata to be considered useful.
-   * If all text is similar size, layout hints won't help much.
-   */
-  private readonly SIZE_VARIATION_THRESHOLD = 1.3;
-
-  /**
-   * Minimum number of blocks needed for meaningful layout analysis.
-   */
-  private readonly MIN_BLOCKS_FOR_METADATA = 2;
-
-  /**
    * Enrich OCR result with layout metadata annotations.
    *
    * @param ocrResult Full OCR result including blocks with bounding boxes
@@ -144,13 +140,13 @@ export class OcrMetadataService {
   public shouldUseMetadata(ocrResult: TextDetectionResult): boolean {
     // Need blocks array
     if (!ocrResult.blocks) {
-      console.log('OCR metadata: blocks is undefined/null');
+      this.debugLog('blocks is undefined/null');
       return false;
     }
 
-    if (ocrResult.blocks.length < this.MIN_BLOCKS_FOR_METADATA) {
-      console.log(
-        `OCR metadata: only ${ocrResult.blocks.length} blocks, need at least ${this.MIN_BLOCKS_FOR_METADATA}`,
+    if (ocrResult.blocks.length < OCR_MIN_BLOCKS_FOR_METADATA) {
+      this.debugLog(
+        `only ${ocrResult.blocks.length} blocks, need at least ${OCR_MIN_BLOCKS_FOR_METADATA}`,
       );
       return false;
     }
@@ -159,9 +155,9 @@ export class OcrMetadataService {
     const blocksWithBoundingBox = ocrResult.blocks.filter(
       (b) => b.boundingBox && typeof b.boundingBox.bottom === 'number',
     );
-    if (blocksWithBoundingBox.length < this.MIN_BLOCKS_FOR_METADATA) {
-      console.log(
-        `OCR metadata: only ${blocksWithBoundingBox.length} blocks have bounding boxes`,
+    if (blocksWithBoundingBox.length < OCR_MIN_BLOCKS_FOR_METADATA) {
+      this.debugLog(
+        `only ${blocksWithBoundingBox.length} blocks have bounding boxes`,
       );
       return false;
     }
@@ -173,22 +169,22 @@ export class OcrMetadataService {
     );
     const maxHeight = Math.max(...heights);
     const minHeight = Math.min(...heights);
-    console.log(
-      `OCR metadata: ${blocksWithBoundingBox.length} blocks, heights min=${minHeight} max=${maxHeight} ratio=${minHeight > 0 ? (maxHeight / minHeight).toFixed(2) : 'N/A'}`,
+    this.debugLog(
+      `${blocksWithBoundingBox.length} blocks, heights min=${minHeight} max=${maxHeight} ratio=${minHeight > 0 ? (maxHeight / minHeight).toFixed(2) : 'N/A'}`,
     );
 
     // If min is 0, avoid division by zero
     if (minHeight === 0) {
       const useful = maxHeight > 0;
-      console.log(`OCR metadata: useful=${useful} (minHeight=0)`);
+      this.debugLog(`useful=${useful} (minHeight=0)`);
       return useful;
     }
 
     // If all text is similar size, metadata won't help much
     const ratio = maxHeight / minHeight;
-    const useful = ratio > this.SIZE_VARIATION_THRESHOLD;
-    console.log(
-      `OCR metadata: useful=${useful} (ratio ${ratio.toFixed(2)} ${useful ? '>' : '<='} threshold ${this.SIZE_VARIATION_THRESHOLD})`,
+    const useful = ratio > OCR_SIZE_VARIATION_THRESHOLD;
+    this.debugLog(
+      `useful=${useful} (ratio ${ratio.toFixed(2)} ${useful ? '>' : '<='} threshold ${OCR_SIZE_VARIATION_THRESHOLD})`,
     );
     return useful;
   }
@@ -229,13 +225,16 @@ export class OcrMetadataService {
       heightValues.reduce((a, b) => a + b, 0) / heightValues.length;
 
     // Classify each block
-    // Large: > 1.5x average OR within 80% of max
-    // Small: < 0.7x average
+    // Large: >= OCR_LARGE_TEXT_AVG_MULTIPLIER * average OR within OCR_LARGE_TEXT_MAX_HEIGHT_RATIO of max
+    // Small: < OCR_SMALL_TEXT_AVG_MULTIPLIER * average
     // Medium: everything else
     for (const { block, height } of heights) {
-      if (height >= maxHeight * 0.8 || height >= avgHeight * 1.5) {
+      if (
+        height >= maxHeight * OCR_LARGE_TEXT_MAX_HEIGHT_RATIO ||
+        height >= avgHeight * OCR_LARGE_TEXT_AVG_MULTIPLIER
+      ) {
         sizeMap.set(block, 'large');
-      } else if (height < avgHeight * 0.7) {
+      } else if (height < avgHeight * OCR_SMALL_TEXT_AVG_MULTIPLIER) {
         sizeMap.set(block, 'small');
       } else {
         sizeMap.set(block, 'medium');
@@ -262,5 +261,14 @@ export class OcrMetadataService {
     });
 
     return header + formattedBlocks.join('\n\n');
+  }
+
+  /**
+   * Debug logging helper - only logs in development mode.
+   */
+  private debugLog(message: string): void {
+    if (isDevMode()) {
+      console.log(`OCR metadata: ${message}`);
+    }
   }
 }
