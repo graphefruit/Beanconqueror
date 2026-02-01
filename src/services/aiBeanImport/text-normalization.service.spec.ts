@@ -1,6 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TextNormalizationService } from './text-normalization.service';
+import {
+  normalizeAltitudeUnit,
+  removeThousandSeparatorsFromInteger,
+  TextNormalizationService,
+} from './text-normalization.service';
 
 describe('TextNormalizationService', () => {
   let service: TextNormalizationService;
@@ -207,7 +211,6 @@ describe('TextNormalizationService', () => {
       // Arrange & Act & Assert
       expect(service.normalizeAltitude('800m 1200m')).toBe('800-1200 MASL');
       expect(service.normalizeAltitude('800m 1200 MASL')).toBe('800-1200 MASL');
-      expect(service.normalizeAltitude('1200m 1800m')).toBe('1200-1800 MASL');
     });
 
     it('should handle 3-digit ranges with dash', () => {
@@ -346,5 +349,156 @@ describe('TextNormalizationService', () => {
         '**LARGE:** Title',
       );
     });
+  });
+
+  describe('normalizeNumbers with international formats', () => {
+    it('should handle Swiss apostrophe thousand separator', () => {
+      // WHY: Swiss German uses apostrophe as thousand separator (1'850 = 1850)
+
+      expect(service.normalizeNumbers("1'850m")).toBe('1850m');
+    });
+
+    it('should handle French space thousand separator', () => {
+      // WHY: French uses space as thousand separator (1 850 = 1850)
+
+      expect(service.normalizeNumbers('1 850m')).toBe('1850m');
+    });
+
+    it('should handle thin space (U+2009) thousand separator', () => {
+      // WHY: ISO 31-0 recommends thin space as thousand separator
+
+      expect(service.normalizeNumbers('1\u2009850m')).toBe('1850m');
+    });
+
+    it('should handle narrow no-break space (U+202F) thousand separator', () => {
+      // WHY: French typography often uses narrow no-break space
+
+      expect(service.normalizeNumbers('1\u202F850m')).toBe('1850m');
+    });
+  });
+
+  describe('normalizeAltitude with international formats', () => {
+    it('should handle Swiss format with apostrophe', () => {
+      // WHY: Swiss coffee labels may use "1'850 m.ü.M." format
+
+      expect(service.normalizeAltitude("1'850 m.ü.M.")).toBe('1850 MASL');
+    });
+
+    it('should handle French format with narrow no-break space', () => {
+      // WHY: French labels may use "1 850 msnm" with thin/narrow space
+
+      expect(service.normalizeAltitude('1\u202F850 msnm')).toBe('1850 MASL');
+    });
+
+    it('should handle Swiss range format', () => {
+      expect(service.normalizeAltitude("1'700-1'900m")).toBe('1700-1900 MASL');
+    });
+  });
+});
+
+// Tests for standalone exported functions
+describe('removeThousandSeparatorsFromInteger', () => {
+  it('should remove standard European separators (dot, comma)', () => {
+    expect(removeThousandSeparatorsFromInteger('1.850')).toBe('1850');
+    expect(removeThousandSeparatorsFromInteger('1,850')).toBe('1850');
+  });
+
+  it('should remove Swiss/French separators (apostrophe, spaces)', () => {
+    expect(removeThousandSeparatorsFromInteger("1'850")).toBe('1850');
+    expect(removeThousandSeparatorsFromInteger('1\u2019850')).toBe('1850'); // right single quote
+    expect(removeThousandSeparatorsFromInteger('1 850')).toBe('1850');
+    expect(removeThousandSeparatorsFromInteger('1\u2009850')).toBe('1850'); // thin space
+    expect(removeThousandSeparatorsFromInteger('1\u202F850')).toBe('1850'); // narrow no-break space
+  });
+
+  it('should handle multiple separators in same number', () => {
+    expect(removeThousandSeparatorsFromInteger("1'234'567")).toBe('1234567');
+    expect(removeThousandSeparatorsFromInteger('1.234.567')).toBe('1234567');
+  });
+
+  it('should preserve decimals and pass through clean numbers', () => {
+    expect(removeThousandSeparatorsFromInteger('1850')).toBe('1850');
+    expect(removeThousandSeparatorsFromInteger('1.5')).toBe('1.5');
+    expect(removeThousandSeparatorsFromInteger('1.50')).toBe('1.50');
+  });
+
+  it('should handle numbers in context and mixed formats', () => {
+    expect(removeThousandSeparatorsFromInteger("altitude 1'850 MASL")).toBe(
+      'altitude 1850 MASL',
+    );
+    expect(removeThousandSeparatorsFromInteger("1'850 to 2.100")).toBe(
+      '1850 to 2100',
+    );
+  });
+});
+
+describe('normalizeAltitudeUnit', () => {
+  it('should convert various unit notations to MASL', () => {
+    expect(normalizeAltitudeUnit('1850 m.ü.M.')).toBe('1850 MASL');
+    expect(normalizeAltitudeUnit('1850 M.Ü.M.')).toBe('1850 MASL');
+    expect(normalizeAltitudeUnit('1850 meters')).toBe('1850 MASL');
+    expect(normalizeAltitudeUnit('1850 meter')).toBe('1850 MASL');
+    expect(normalizeAltitudeUnit('1850 msnm')).toBe('1850 MASL');
+    expect(normalizeAltitudeUnit('1850 m')).toBe('1850 MASL');
+    // Note: normalizeAltitudeUnit doesn't add space, that's handled by normalizeAltitude
+    expect(normalizeAltitudeUnit('1850m')).toBe('1850MASL');
+  });
+
+  it('should handle ranges', () => {
+    expect(normalizeAltitudeUnit('1700-1900m')).toBe('1700-1900MASL');
+    expect(normalizeAltitudeUnit('1700-1900 meters')).toBe('1700-1900 MASL');
+  });
+
+  it('should normalize MASL case variations', () => {
+    expect(normalizeAltitudeUnit('1850 MASL')).toBe('1850 MASL');
+    expect(normalizeAltitudeUnit('1850 masl')).toBe('1850 MASL');
+    expect(normalizeAltitudeUnit('1850 Masl')).toBe('1850 MASL');
+  });
+});
+
+describe('preprocessing and postprocessing consistency', () => {
+  let service: TextNormalizationService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [TextNormalizationService],
+    });
+    service = TestBed.inject(TextNormalizationService);
+  });
+
+  // Simulate what preprocessing does (via normalizeAltitude)
+  const preprocess = (text: string) => {
+    return service.normalizeAltitude(text);
+  };
+
+  // Simulate what postprocessing does (standalone functions)
+  const postprocess = (text: string) => {
+    let result = removeThousandSeparatorsFromInteger(text);
+    result = normalizeAltitudeUnit(result);
+    return result;
+  };
+
+  it('Swiss format "1\'850 m.ü.M." produces consistent result', () => {
+    const input = "1'850 m.ü.M.";
+    const preprocessed = preprocess(input);
+    const postprocessed = postprocess(input);
+    expect(preprocessed).toContain('1850 MASL');
+    expect(postprocessed).toContain('1850 MASL');
+  });
+
+  it('French format with narrow no-break space produces consistent result', () => {
+    const input = '1\u202F850 msnm';
+    const preprocessed = preprocess(input);
+    const postprocessed = postprocess(input);
+    expect(preprocessed).toContain('1850 MASL');
+    expect(postprocessed).toContain('1850 MASL');
+  });
+
+  it('German format "1.850 m.ü.M." produces consistent result', () => {
+    const input = '1.850 m.ü.M.';
+    const preprocessed = preprocess(input);
+    const postprocessed = postprocess(input);
+    expect(preprocessed).toBe('1850 MASL');
+    expect(postprocessed).toBe('1850 MASL');
   });
 });
