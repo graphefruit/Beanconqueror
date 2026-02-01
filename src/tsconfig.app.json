@@ -7,6 +7,7 @@
   "exclude": [
     "test.ts",
     "**/*.spec.ts",
-    "**/*.worker.ts"
+    "**/*.worker.ts",
+    "**/test-utils/**"
   ]
 }
