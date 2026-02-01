@@ -319,33 +319,12 @@ describe('ai-field-prompts', () => {
     describe('postProcess', () => {
       const postProcess = FIELD_PROMPTS['elevation'].postProcess!;
 
-      it('should remove linebreaks from value', () => {
-        expect(postProcess('1800\nMASL', '')).toBe('1800 MASL');
+      it('should return sanitized elevation when number present in OCR', () => {
+        expect(postProcess('1850 MASL', 'Coffee 1850m')).toBe('1850 MASL');
       });
 
-      it('should remove thousand separators (dots and commas)', () => {
-        expect(postProcess('1.800 MASL', '')).toBe('1800 MASL');
-        expect(postProcess('1,800 MASL', '')).toBe('1800 MASL');
-      });
-
-      it('should normalize "2300 MASL 2400 MASL" to "2300-2400 MASL" format', () => {
-        expect(postProcess('2300 MASL 2400 MASL', '')).toBe('2300-2400 MASL');
-      });
-
-      it('should return null for empty string after cleanup', () => {
-        expect(postProcess('', '')).toBeNull();
-        expect(postProcess('   ', '')).toBeNull();
-      });
-
-      it('should return null when any number is >= 5000', () => {
-        // WHY: Filters variety numbers like 74158 from being misread as altitude
-        expect(postProcess('74158 MASL', '')).toBeNull();
-        expect(postProcess('1800-5000 MASL', '')).toBeNull();
-      });
-
-      it('should return cleaned value for valid elevations', () => {
-        expect(postProcess('1850 MASL', '')).toBe('1850 MASL');
-        expect(postProcess('1700-1900 MASL', '')).toBe('1700-1900 MASL');
+      it('should return null when number not in OCR text', () => {
+        expect(postProcess('1850 MASL', 'Ethiopia 250g')).toBeNull();
       });
     });
   });

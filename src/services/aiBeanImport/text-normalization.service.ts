@@ -127,6 +127,49 @@ export function weightExistsInOcrText(grams: number, ocrText: string): boolean {
   return false;
 }
 
+import { MAX_VALID_ELEVATION_METERS } from '../../data/ai-import/ai-import-constants';
+
+/**
+ * Checks if elevation numbers appear in OCR text, accounting for thousand separators.
+ * This is a simple smoke test to catch LLM hallucinations - if the number isn't on the
+ * label at all, it's definitely wrong.
+ *
+ * @param elevation The sanitized elevation string (e.g., "1850 MASL" or "1700-1900 MASL")
+ * @param ocrText The OCR text to search in
+ * @returns true if all numbers from the elevation appear somewhere in the OCR text
+ *
+ * @example
+ *   elevationExistsInOcrText("1850 MASL", "Coffee 1.850 m.ü.M.") // true
+ *   elevationExistsInOcrText("1850 MASL", "Coffee 1850m")        // true
+ *   elevationExistsInOcrText("1850 MASL", "Coffee 250g")         // false (1850 not in text)
+ *   elevationExistsInOcrText("1700-1900 MASL", "1.700-1.900m")   // true
+ */
+export function elevationExistsInOcrText(
+  elevation: string,
+  ocrText: string,
+): boolean {
+  if (!elevation || !ocrText) {
+    return false;
+  }
+
+  // Extract all numbers from the elevation string
+  const numbers = elevation.match(/\d+/g);
+  if (!numbers || numbers.length === 0) {
+    return false;
+  }
+
+  // Check that each number appears in OCR text (with optional thousand separators)
+  for (const numStr of numbers) {
+    const pattern = buildThousandSeparatorPattern(numStr);
+    const regex = new RegExp(pattern);
+    if (!regex.test(ocrText)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /**
  * Normalizes altitude unit suffixes to MASL.
  * Handles: m, m.ü.M., meters, msnm (case-insensitive).
@@ -155,6 +198,88 @@ export function normalizeAltitudeUnit(value: string): string {
   result = result.replace(/(MASL\s*)+/g, 'MASL');
 
   return result;
+}
+
+/**
+ * Sanitizes and validates an elevation value from LLM response.
+ * Used by both single-origin field extraction and blend JSON parsing.
+ *
+ * Performs:
+ * 1. Null-like value rejection ("null", "NOT_FOUND", "unknown")
+ * 2. Whitespace cleanup (linebreaks, extra spaces)
+ * 3. Thousand separator removal (international formats)
+ * 4. Unit normalization to MASL
+ * 5. LLM quirk fix ("2300 MASL 2400 MASL" → "2300-2400 MASL")
+ * 6. Validation: rejects if any number >= 5000 (filters variety numbers like 74158)
+ *
+ * @param value Raw elevation value from LLM
+ * @returns Sanitized elevation string, or null if invalid/not found
+ *
+ * @example
+ *   sanitizeElevation("1.850 m.ü.M.") // → "1850 MASL"
+ *   sanitizeElevation("1800\nMASL") // → "1800 MASL"
+ *   sanitizeElevation("2300 MASL 2400 MASL") // → "2300-2400 MASL"
+ *   sanitizeElevation("74158 MASL") // → null (variety number, not elevation)
+ *   sanitizeElevation("NOT_FOUND") // → null
+ */
+export function sanitizeElevation(
+  value: string | null | undefined,
+): string | null {
+  // Reject null/undefined
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  // Reject non-strings
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  // Reject null-like values
+  const trimmed = value.trim().toLowerCase();
+  if (
+    trimmed === '' ||
+    trimmed === 'null' ||
+    trimmed === 'not_found' ||
+    trimmed === 'unknown' ||
+    trimmed === 'none' ||
+    trimmed === 'n/a'
+  ) {
+    return null;
+  }
+
+  // Clean up whitespace
+  let cleaned = value
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Normalize thousand separators
+  cleaned = removeThousandSeparatorsFromInteger(cleaned);
+
+  // Normalize altitude units to MASL
+  cleaned = normalizeAltitudeUnit(cleaned);
+
+  // Handle LLM quirk: "2300 MASL 2400 MASL" → "2300-2400 MASL"
+  cleaned = cleaned.replace(/(\d+)\s*MASL\s*(\d+)\s*MASL/gi, '$1-$2 MASL');
+
+  // Return null if empty after cleanup
+  if (!cleaned || cleaned.length === 0) {
+    return null;
+  }
+
+  // Validate elevation is reasonable - filters out variety numbers like 74158
+  const allNumbers = cleaned.match(/\d+/g);
+  if (allNumbers) {
+    for (const numStr of allNumbers) {
+      const num = parseInt(numStr, 10);
+      if (num >= MAX_VALID_ELEVATION_METERS) {
+        return null;
+      }
+    }
+  }
+
+  return cleaned;
 }
 
 /**

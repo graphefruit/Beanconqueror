@@ -2,8 +2,10 @@ import { TestBed } from '@angular/core/testing';
 
 import {
   buildThousandSeparatorPattern,
+  elevationExistsInOcrText,
   normalizeAltitudeUnit,
   removeThousandSeparatorsFromInteger,
+  sanitizeElevation,
   TextNormalizationService,
   weightExistsInOcrText,
 } from './text-normalization.service';
@@ -619,6 +621,128 @@ describe('weightExistsInOcrText', () => {
     it('should handle weights at start and end of text', () => {
       expect(weightExistsInOcrText(250, '250g Ethiopia')).toBeTrue();
       expect(weightExistsInOcrText(250, 'Ethiopia 250g')).toBeTrue();
+    });
+  });
+});
+
+describe('sanitizeElevation', () => {
+  describe('valid elevations', () => {
+    it('should pass through valid MASL format', () => {
+      expect(sanitizeElevation('1850 MASL')).toBe('1850 MASL');
+      expect(sanitizeElevation('1700-1900 MASL')).toBe('1700-1900 MASL');
+    });
+
+    it('should normalize unit formats to MASL', () => {
+      // WHY: LLM may return non-standard units that need normalization
+      expect(sanitizeElevation('1850 m.ü.M.')).toBe('1850 MASL');
+      expect(sanitizeElevation('1850 meters')).toBe('1850 MASL');
+      expect(sanitizeElevation('1850 msnm')).toBe('1850 MASL');
+    });
+
+    it('should remove thousand separators', () => {
+      // WHY: International formats use different thousand separators
+      expect(sanitizeElevation('1.850 MASL')).toBe('1850 MASL');
+      expect(sanitizeElevation('1,850 MASL')).toBe('1850 MASL');
+      expect(sanitizeElevation("1'850 MASL")).toBe('1850 MASL');
+    });
+  });
+
+  describe('whitespace cleanup', () => {
+    it('should remove linebreaks', () => {
+      expect(sanitizeElevation('1800\nMASL')).toBe('1800 MASL');
+    });
+
+    it('should normalize multiple spaces', () => {
+      expect(sanitizeElevation('1850   MASL')).toBe('1850 MASL');
+    });
+  });
+
+  describe('LLM quirks', () => {
+    it('should normalize "2300 MASL 2400 MASL" to range format', () => {
+      // WHY: LLM sometimes returns ranges as two separate MASL values
+      expect(sanitizeElevation('2300 MASL 2400 MASL')).toBe('2300-2400 MASL');
+    });
+  });
+
+  describe('null-like values', () => {
+    it('should return null for null/undefined input', () => {
+      expect(sanitizeElevation(null)).toBeNull();
+      expect(sanitizeElevation(undefined)).toBeNull();
+    });
+
+    it('should return null for null-like strings', () => {
+      // WHY: LLM returns these when field not found in OCR
+      expect(sanitizeElevation('NOT_FOUND')).toBeNull();
+      expect(sanitizeElevation('null')).toBeNull();
+      expect(sanitizeElevation('unknown')).toBeNull();
+      expect(sanitizeElevation('')).toBeNull();
+    });
+  });
+
+  describe('validation', () => {
+    it('should return null when any number is >= 5000', () => {
+      // WHY: Filters variety numbers like 74158 from being misread as altitude
+      expect(sanitizeElevation('74158 MASL')).toBeNull();
+      expect(sanitizeElevation('5000 MASL')).toBeNull();
+      expect(sanitizeElevation('1800-5000 MASL')).toBeNull();
+    });
+
+    it('should accept elevations below 5000', () => {
+      expect(sanitizeElevation('4999 MASL')).toBe('4999 MASL');
+      expect(sanitizeElevation('1800-4999 MASL')).toBe('1800-4999 MASL');
+    });
+  });
+});
+
+describe('elevationExistsInOcrText', () => {
+  describe('single elevation values', () => {
+    it('should find number in OCR text', () => {
+      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1850m')).toBeTrue();
+      expect(elevationExistsInOcrText('1850 MASL', 'altitude 1850')).toBeTrue();
+    });
+
+    it('should find number with thousand separators in OCR', () => {
+      // WHY: European formats use various thousand separators
+      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1.850m')).toBeTrue();
+      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1,850m')).toBeTrue();
+      expect(elevationExistsInOcrText('1850 MASL', "Coffee 1'850m")).toBeTrue();
+      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1 850m')).toBeTrue();
+    });
+
+    it('should return false when number not in OCR text', () => {
+      // WHY: Smoke test to catch hallucinations
+      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 250g')).toBeFalse();
+      expect(
+        elevationExistsInOcrText('2000 MASL', 'Grown at 1850m'),
+      ).toBeFalse();
+    });
+  });
+
+  describe('elevation ranges', () => {
+    it('should require all numbers in range to be present', () => {
+      expect(
+        elevationExistsInOcrText('1700-1900 MASL', '1700-1900m'),
+      ).toBeTrue();
+      expect(
+        elevationExistsInOcrText('1700-1900 MASL', '1.700-1.900m'),
+      ).toBeTrue();
+    });
+
+    it('should return false if any range number is missing', () => {
+      // WHY: Both numbers must be on the label for a valid range
+      expect(elevationExistsInOcrText('1700-1900 MASL', '1700m')).toBeFalse();
+      expect(elevationExistsInOcrText('1700-1900 MASL', '1900m')).toBeFalse();
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should return false for empty inputs', () => {
+      expect(elevationExistsInOcrText('', 'Coffee 1850m')).toBeFalse();
+      expect(elevationExistsInOcrText('1850 MASL', '')).toBeFalse();
+    });
+
+    it('should handle 3-digit elevations', () => {
+      expect(elevationExistsInOcrText('800 MASL', 'Grown at 800m')).toBeTrue();
     });
   });
 });

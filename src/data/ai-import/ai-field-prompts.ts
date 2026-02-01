@@ -2,15 +2,14 @@ import moment from 'moment';
 
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
 import {
-  normalizeAltitudeUnit,
-  removeThousandSeparatorsFromInteger,
+  elevationExistsInOcrText,
+  sanitizeElevation,
   weightExistsInOcrText,
 } from '../../services/aiBeanImport/text-normalization.service';
 
 import {
   MAX_BLEND_PERCENTAGE,
   MAX_CUPPING_SCORE,
-  MAX_VALID_ELEVATION_METERS,
   MIN_CUPPING_SCORE,
 } from './ai-import-constants';
 
@@ -469,44 +468,20 @@ RESPONSE FORMAT:
 
 TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    // No validation regex - postProcess handles cleanup and validation
-    postProcess: (v, _ocrText) => {
-      let cleaned = v
-        // Remove linebreaks
-        .replace(/[\r\n]+/g, ' ')
-        // Clean up extra whitespace
-        .replace(/\s+/g, ' ')
-        .trim();
-
-      // Normalize thousand separators (safety net if LLM includes them)
-      // Handles: dot, comma, apostrophe (Swiss), space (French/ISO)
-      cleaned = removeThousandSeparatorsFromInteger(cleaned);
-
-      // Normalize altitude units (safety net if LLM uses non-MASL units)
-      // Handles: m, m.ü.M., meters, msnm → MASL
-      cleaned = normalizeAltitudeUnit(cleaned);
-
-      // Handle LLM quirk: "2300 MASL 2400 MASL" → "2300-2400 MASL"
-      cleaned = cleaned.replace(/(\d+)\s*MASL\s*(\d+)\s*MASL/gi, '$1-$2 MASL');
-
-      // Return null if empty after cleanup
-      if (!cleaned || cleaned.length === 0) {
+    // No validation regex - sanitizeElevation handles cleanup and validation
+    postProcess: (v, ocrText) => {
+      const sanitized = sanitizeElevation(v);
+      if (!sanitized) {
         return null;
       }
 
-      // Validate elevation is reasonable - filters out variety numbers like 74158
-      // Check all numbers in the string (handles ranges like "1700-1900 MASL")
-      const allNumbers = cleaned.match(/\d+/g);
-      if (allNumbers) {
-        for (const numStr of allNumbers) {
-          const num = parseInt(numStr, 10);
-          if (num >= MAX_VALID_ELEVATION_METERS) {
-            return null;
-          }
-        }
+      // Validate that this elevation actually appears in OCR text with an altitude unit
+      // This prevents hallucinations where LLM returns an elevation not on the label
+      if (!elevationExistsInOcrText(sanitized, ocrText)) {
+        return null;
       }
 
-      return cleaned;
+      return sanitized;
     },
   },
 
