@@ -1,9 +1,10 @@
 import moment from 'moment';
+
 import { FIELD_PROMPTS } from './ai-field-prompts';
 
 describe('ai-field-prompts', () => {
   describe('roastingDate postProcess', () => {
-    const postProcess = FIELD_PROMPTS.roastingDate.postProcess!;
+    const postProcess = FIELD_PROMPTS.roastingDate.postProcess;
 
     it('should return local timezone format (not UTC)', () => {
       // Use a date from 3 months ago to be within valid range
@@ -57,7 +58,7 @@ describe('ai-field-prompts', () => {
   });
 
   describe('weight postProcess', () => {
-    const postProcess = FIELD_PROMPTS.weight.postProcess!;
+    const postProcess = FIELD_PROMPTS.weight.postProcess;
 
     it('should accept weight when number matches OCR exactly', () => {
       expect(postProcess('250g', '250g coffee')).toBe('250g');
@@ -96,9 +97,9 @@ describe('ai-field-prompts', () => {
     });
 
     it('should handle multiple numbers in OCR text', () => {
-      expect(
-        postProcess('250g', 'Score 85 Weight 250g Altitude 1850m'),
-      ).toBe('250g');
+      expect(postProcess('250g', 'Score 85 Weight 250g Altitude 1850m')).toBe(
+        '250g',
+      );
     });
   });
 });

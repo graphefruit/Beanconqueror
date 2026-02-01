@@ -36,8 +36,8 @@ export class TextNormalizationService {
     }
 
     // Handle markdown size prefix: **LARGE:** text → **LARGE:** Normalized Text
-    const markdownMatch = trimmed.match(
-      /^(\*\*(?:LARGE|MEDIUM|SMALL):\*\*)\s*(.+)$/i,
+    const markdownMatch = /^(\*\*(?:LARGE|MEDIUM|SMALL):\*\*)\s*(.+)$/i.exec(
+      trimmed,
     );
     if (markdownMatch) {
       const prefix = markdownMatch[1].toUpperCase();

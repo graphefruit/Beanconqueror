@@ -1,10 +1,12 @@
 import moment from 'moment';
+
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
+
 import {
+  MAX_BLEND_PERCENTAGE,
+  MAX_CUPPING_SCORE,
   MAX_VALID_ELEVATION_METERS,
   MIN_CUPPING_SCORE,
-  MAX_CUPPING_SCORE,
-  MAX_BLEND_PERCENTAGE,
 } from './ai-import-constants';
 
 /**
@@ -175,7 +177,7 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
     validation: /^\d+(?:[.,]\d+)?\s*(?:g|kg|oz|lb)/i,
     postProcess: (v, ocrText) => {
       // Extract number before unit
-      const match = v.match(/^(\d+(?:[.,]\d+)?)/);
+      const match = /^(\d+(?:[.,]\d+)?)/.exec(v);
       if (!match) {
         return null;
       }
@@ -465,7 +467,7 @@ TEXT (languages in order of likelihood: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
     // No validation - postProcess handles cleanup of weird formatting
     postProcess: (v, _ocrText) => {
-      let cleaned = v
+      const cleaned = v
         // Remove linebreaks
         .replace(/[\r\n]+/g, ' ')
         // Remove points and commas (thousand separators)

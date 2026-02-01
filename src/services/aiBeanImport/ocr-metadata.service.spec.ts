@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+
 import {
+  Block,
   OcrMetadataService,
   TextDetectionResult,
-  Block,
 } from './ocr-metadata.service';
 
 describe('OcrMetadataService', () => {

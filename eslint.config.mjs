@@ -4,6 +4,7 @@ import { defineConfig } from 'eslint/config';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export default defineConfig(
   {
@@ -14,6 +15,9 @@ export default defineConfig(
       ...tseslint.configs.stylisticTypeChecked,
       ...angular.configs.tsRecommended,
     ],
+    plugins: {
+      'simple-import-sort': simpleImportSort,
+    },
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -21,6 +25,28 @@ export default defineConfig(
     },
     processor: angular.processInlineTemplates,
     rules: {
+      // Import ordering rules
+      'simple-import-sort/imports': [
+        'warn',
+        {
+          groups: [
+            // Angular core
+            ['^@angular/'],
+            // Angular-related third-party (Ionic, ngx-translate)
+            ['^@ionic/', '^@ngx-translate/'],
+            // Other third-party packages
+            ['^@?\\w'],
+            // Absolute imports from src (if any)
+            ['^src/'],
+            // Parent imports (../)
+            ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+            // Same-directory imports (./)
+            ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+          ],
+        },
+      ],
+      'simple-import-sort/exports': 'warn',
+
       // Block for overrides that ENABLE non-default rules.
       eqeqeq: ['error'], // prefer '===' over '=='
       // End of overrides that ENABLE non-default rules.

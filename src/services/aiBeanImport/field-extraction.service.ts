@@ -1,32 +1,35 @@
 import { Injectable, isDevMode } from '@angular/core';
+
 import { TranslateService } from '@ngx-translate/core';
+
 import { Bean } from '../../classes/bean/bean';
 import {
-  sendLLMPrompt,
-  extractJsonFromResponse,
-  isNullLikeValue,
-} from './llm-communication.service';
+  BLEND_ORIGINS_PROMPT_TEMPLATE,
+  buildFieldPrompt,
+  FIELD_PROMPTS,
+} from '../../data/ai-import/ai-field-prompts';
+import {
+  LLM_TIMEOUT_PER_FIELD_MS,
+  MAX_BLEND_PERCENTAGE,
+  MAX_VALID_ELEVATION_METERS,
+} from '../../data/ai-import/ai-import-constants';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
-import { UILog } from '../uiLog';
 import { UIAlert } from '../uiAlert';
+import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
+
 import {
   AIImportExamplesService,
   MergedExamples,
 } from './ai-import-examples.service';
-import { TextNormalizationService } from './text-normalization.service';
+import {
+  extractJsonFromResponse,
+  isNullLikeValue,
+  sendLLMPrompt,
+} from './llm-communication.service';
 import { OCRCorrectionService } from './ocr-correction.service';
-import {
-  FIELD_PROMPTS,
-  buildFieldPrompt,
-  BLEND_ORIGINS_PROMPT_TEMPLATE,
-} from '../../data/ai-import/ai-field-prompts';
-import {
-  LLM_TIMEOUT_PER_FIELD_MS,
-  MAX_VALID_ELEVATION_METERS,
-  MAX_BLEND_PERCENTAGE,
-} from '../../data/ai-import/ai-import-constants';
+import { TextNormalizationService } from './text-normalization.service';
 
 /**
  * Service for multi-step field extraction using focused LLM prompts.
@@ -395,7 +398,7 @@ export class FieldExtractionService {
     let cleaned = response.trim();
 
     // Remove markdown code blocks if present
-    const codeMatch = cleaned.match(/```(?:\w+)?\s*([\s\S]*?)```/);
+    const codeMatch = /```(?:\w+)?\s*([\s\S]*?)```/.exec(cleaned);
     if (codeMatch) {
       cleaned = codeMatch[1].trim();
     }

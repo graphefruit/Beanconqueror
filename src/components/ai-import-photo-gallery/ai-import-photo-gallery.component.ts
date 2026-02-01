@@ -1,16 +1,19 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+
 import { ModalController } from '@ionic/angular';
-import { UIImage } from '../../services/uiImage';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIAlert } from '../../services/uiAlert';
-import { UILog } from '../../services/uiLog';
 import { TranslateService } from '@ngx-translate/core';
+
 import {
   Camera,
   CameraDirection,
   CameraResultType,
   CameraSource,
 } from '@capacitor/camera';
+
+import { UIAlert } from '../../services/uiAlert';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIImage } from '../../services/uiImage';
+import { UILog } from '../../services/uiLog';
 
 @Component({
   selector: 'ai-import-photo-gallery',
@@ -22,11 +25,11 @@ export class AiImportPhotoGalleryComponent {
   public static readonly COMPONENT_ID = 'ai-import-photo-gallery';
 
   public photoPaths: string[] = [];
-  public attachPhotos: boolean = false;
+  public attachPhotos = false;
   public readonly maxPhotos: number = 4;
 
   /** Screen reader announcement text for ARIA live region */
-  public screenReaderAnnouncement: string = '';
+  public screenReaderAnnouncement = '';
 
   @ViewChild('photoSlides', { static: false })
   public photoSlides: ElementRef | undefined;

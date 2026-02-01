@@ -1,27 +1,31 @@
 import { Injectable, isDevMode } from '@angular/core';
+
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { UIAlert } from '../uiAlert';
-import { UIFileHelper } from '../uiFileHelper';
-import { UIImage } from '../uiImage';
-import { UILog } from '../uiLog';
-import { Bean } from '../../classes/bean/bean';
-import { AI_IMPORT_LANGUAGE_DETECTION_PROMPT } from '../../data/ai-import/ai-import-prompt';
-import { FieldExtractionService } from './field-extraction.service';
-import {
-  OcrMetadataService,
-  TextDetectionResult,
-} from './ocr-metadata.service';
-import { sendLLMPrompt } from './llm-communication.service';
-import { CapgoLLM } from '@capgo/capacitor-llm';
-import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
+
 import {
   Camera,
   CameraDirection,
   CameraResultType,
   CameraSource,
 } from '@capacitor/camera';
+import { CapgoLLM } from '@capgo/capacitor-llm';
+import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
+
+import { Bean } from '../../classes/bean/bean';
 import { LLM_TIMEOUT_LANGUAGE_DETECTION_MS } from '../../data/ai-import/ai-import-constants';
+import { AI_IMPORT_LANGUAGE_DETECTION_PROMPT } from '../../data/ai-import/ai-import-prompt';
+import { UIAlert } from '../uiAlert';
+import { UIFileHelper } from '../uiFileHelper';
+import { UIImage } from '../uiImage';
+import { UILog } from '../uiLog';
+
+import { FieldExtractionService } from './field-extraction.service';
+import { sendLLMPrompt } from './llm-communication.service';
+import {
+  OcrMetadataService,
+  TextDetectionResult,
+} from './ocr-metadata.service';
 
 export interface AIReadinessResult {
   ready: boolean;

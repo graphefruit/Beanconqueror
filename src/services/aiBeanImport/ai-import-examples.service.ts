@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { TranslateService } from '@ngx-translate/core';
 
 export interface MergedExamples {
@@ -68,7 +69,7 @@ export class AIImportExamplesService {
       const translations = await this.translate
         .getTranslation(lang)
         .toPromise();
-      const examples = translations?.['AI_IMPORT_PROMPT_EXAMPLES'];
+      const examples = translations?.AI_IMPORT_PROMPT_EXAMPLES;
 
       if (!examples || typeof examples !== 'object') {
         return null;

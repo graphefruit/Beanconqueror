@@ -45,7 +45,7 @@ export function extractJsonFromResponse<T = unknown>(
     let jsonStr = response.trim();
 
     // Extract JSON from markdown code blocks if present
-    const jsonMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
+    const jsonMatch = /```(?:json)?\s*([\s\S]*?)```/.exec(jsonStr);
     if (jsonMatch) {
       jsonStr = jsonMatch[1].trim();
     }
