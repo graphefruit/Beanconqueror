@@ -76,62 +76,59 @@ export async function sendLLMPrompt(
   // Create chat session
   const { id: chatId } = await CapgoLLM.createChat();
 
-  // Track the response
+  // Track the response and listeners
   let latestSnapshot = '';
   let resolved = false;
+  let textListener: any;
+  let finishedListener: any;
 
-  return new Promise<string>(async (resolve) => {
-    const cleanup = async (textListener: any, finishedListener: any) => {
-      try {
-        await textListener?.remove();
-        await finishedListener?.remove();
-      } catch (e) {
-        logger?.error('Error cleaning up listeners: ' + e);
-      }
-    };
+  const cleanup = async () => {
+    try {
+      await textListener?.remove();
+      await finishedListener?.remove();
+    } catch (e) {
+      logger?.error('Error cleaning up listeners: ' + e);
+    }
+  };
 
-    const resolveOnce = async (
-      value: string,
-      textListener: any,
-      finishedListener: any,
-    ) => {
-      if (!resolved) {
-        resolved = true;
-        await cleanup(textListener, finishedListener);
-        resolve(value);
-      }
-    };
-
-    // Listen for text chunks
-    const textListener = await CapgoLLM.addListener(
-      'textFromAi',
-      (event: any) => {
-        if (event.text) {
-          latestSnapshot = event.text;
-        }
-      },
-    );
-
-    // Listen for completion
-    const finishedListener = await CapgoLLM.addListener(
-      'aiFinished',
-      async () => {
-        await resolveOnce(latestSnapshot, textListener, finishedListener);
-      },
-    );
-
-    // Timeout fallback
-    setTimeout(async () => {
-      if (!resolved) {
-        logger?.log('LLM timeout, using latest snapshot');
-        await resolveOnce(latestSnapshot || '', textListener, finishedListener);
-      }
-    }, timeoutMs);
-
-    // Send message
-    await CapgoLLM.sendMessage({
-      chatId,
-      message: prompt,
-    });
+  // Create promise first so resolvePromise is available for listeners
+  let resolvePromise!: (value: string) => void;
+  const responsePromise = new Promise<string>((resolve) => {
+    resolvePromise = resolve;
   });
+
+  const resolveOnce = (value: string) => {
+    if (!resolved) {
+      resolved = true;
+      void cleanup();
+      resolvePromise(value);
+    }
+  };
+
+  // Set up listeners
+  textListener = await CapgoLLM.addListener('textFromAi', (event: any) => {
+    if (event.text) {
+      latestSnapshot = event.text;
+    }
+  });
+
+  finishedListener = await CapgoLLM.addListener('aiFinished', () => {
+    resolveOnce(latestSnapshot);
+  });
+
+  // Timeout fallback
+  setTimeout(() => {
+    if (!resolved) {
+      logger?.log('LLM timeout, using latest snapshot');
+      resolveOnce(latestSnapshot || '');
+    }
+  }, timeoutMs);
+
+  // Send message (don't await - let the promise handle completion)
+  void CapgoLLM.sendMessage({
+    chatId,
+    message: prompt,
+  });
+
+  return responsePromise;
 }
