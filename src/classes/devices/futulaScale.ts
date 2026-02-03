@@ -35,7 +35,7 @@ export class FutulaScale extends BluetoothScale {
   constructor(data: PeripheralData, type: ScaleType) {
     super(data, type);
     this.logger = new Logger('FutulaScale');
-    this.supportsTaring = false;
+    this.supportsTaring = true;
 
     this.connect();
   }

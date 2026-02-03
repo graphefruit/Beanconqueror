@@ -1129,6 +1129,8 @@
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "The brew ratio will be calculated with this value only for brews of type 'espresso'",
     "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "It looks like the bluetooth scale was not connected correctly. This usually happens on iOS-Devices with Acaia scales, please reconnect the scale and make sure the weight tile is updated",
     "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "No weight values?",
+    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "No weight yet",
+    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "This scale starts sending data only after the weight changes. Place a cup on the scale to make sure everything is ready before you start brewing.",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "The flow rate at which the brew should be stopped. The brew will only be stopped when a minimum of 5 seconds has passed, 5 grams is in the cup or if you entered ground coffee weight - at least a 1:1 brew ratio is achieved (e.g: 18g in, 18g out). After those conditions are me, the minimum flow rate set here will be checked",
     "ONLY_BEST_BREWS": "Only best brews",
     "POPOVER_BEST_BREW": "Best brew",
