@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, inject } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { BluetoothScale } from 'src/classes/devices/bluetoothDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
@@ -71,6 +71,12 @@ export enum CoffeeBluetoothServiceEvent {
   providedIn: 'root',
 })
 export class CoffeeBluetoothDevicesService {
+  private readonly uiStettingsStorage = inject(UISettingsStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public scale: BluetoothScale | null = null;
   public pressureDevice: PressureDevice | null = null;
   public temperatureDevice: TemperatureDevice | null = null;
@@ -83,13 +89,7 @@ export class CoffeeBluetoothDevicesService {
 
   private scanBluetoothTimeout: any = null;
 
-  constructor(
-    private readonly uiStettingsStorage: UISettingsStorage,
-    private readonly translate: TranslateService,
-    private readonly uiToast: UIToast,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {
+  constructor() {
     this.logger = new Logger('CoffeeBluetoothDevices');
     this.failed = false;
     this.ready = true;

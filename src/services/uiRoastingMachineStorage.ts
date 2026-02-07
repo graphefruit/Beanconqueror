@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Classes */
 /** Interfaces */
 /** Services */
@@ -17,6 +17,8 @@ import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachin
   providedIn: 'root',
 })
 export class UIRoastingMachineStorage extends StorageClass {
+  private readonly translate = inject(TranslateService);
+
   /**
    * Singelton instance
    */
@@ -32,13 +34,9 @@ export class UIRoastingMachineStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    private readonly translate: TranslateService
-  ) {
-    super(uiStorage, uiHelper, uiLog, 'ROASTING_MACHINES');
+  constructor() {
+    super('ROASTING_MACHINES');
+
     if (UIRoastingMachineStorage.instance === undefined) {
       UIRoastingMachineStorage.instance = this;
     }

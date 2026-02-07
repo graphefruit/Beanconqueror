@@ -5,11 +5,12 @@ import {
   NgZone,
   OnDestroy,
   OnInit,
+  inject,
 } from '@angular/core';
 import { BluetoothTypes, ScaleType } from '../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { finalize, Subscription } from 'rxjs';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAlert } from '../../services/uiAlert';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import { Settings } from '../../classes/settings/settings';
@@ -18,16 +19,63 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { Preparation } from '../../classes/preparation/preparation';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { refreshOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonRadioGroup,
+  IonItem,
+  IonRadio,
+  IonSpinner,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../components/header/header.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
 
 @Component({
   selector: 'app-bluetooth-device-chooser-popover',
   templateUrl: './bluetooth-device-chooser-popover.component.html',
   styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonCard,
+    IonCardContent,
+    IonRadioGroup,
+    IonItem,
+    IonRadio,
+    IonSpinner,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BluetoothDeviceChooserPopoverComponent
   implements OnInit, OnDestroy
 {
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly modalController = inject(ModalController);
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private ngZone = inject(NgZone);
+
   public static POPOVER_ID: string = 'bluetooth-device-chooser-popover';
   @Input() public bluetoothTypeSearch: BluetoothTypes = undefined;
 
@@ -37,17 +85,9 @@ export class BluetoothDeviceChooserPopoverComponent
   private settings: Settings;
   public searchRunning: boolean = undefined;
 
-  constructor(
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly modalController: ModalController,
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetector: ChangeDetectorRef,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private ngZone: NgZone,
-  ) {}
+  constructor() {
+    addIcons({ refreshOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

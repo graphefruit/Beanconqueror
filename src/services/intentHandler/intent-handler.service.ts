@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { UIHelper } from '../uiHelper';
 
 import { UILog } from '../uiLog';
@@ -18,21 +18,22 @@ import IntentHandlerTracking from '../../data/tracking/intentHandlerTracking';
   providedIn: 'root',
 })
 export class IntentHandlerService {
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiLog = inject(UILog);
+  private readonly serverCommunicationService = inject(
+    ServerCommunicationService,
+  );
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly zone = inject(NgZone);
+
   public static SUPPORTED_INTENTS = {
     ADD_BEAN_ONLINE: 'ADD_BEAN_ONLINE',
     ADD_USER_BEAN: 'ADD_USER_BEAN',
   };
-  constructor(
-    private readonly uiHelper: UIHelper,
-    private readonly uiLog: UILog,
-    private readonly serverCommunicationService: ServerCommunicationService,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly visualizerService: VisualizerService,
-    private readonly zone: NgZone,
-  ) {}
 
   public attachOnHandleOpenUrl() {
     App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {

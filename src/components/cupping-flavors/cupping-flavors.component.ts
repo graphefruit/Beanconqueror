@@ -1,17 +1,53 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from '../../classes/brew/brew';
 import { IFlavor } from '../../interfaces/flavor/iFlavor';
 import { UIHelper } from '../../services/uiHelper';
+import { FormsModule } from '@angular/forms';
+import { NgStyle } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { addCircleOutline, close } from 'ionicons/icons';
+import {
+  IonList,
+  IonListHeader,
+  IonItem,
+  IonInput,
+  IonIcon,
+  IonChip,
+  IonSearchbar,
+  IonCheckbox,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'cupping-flavors',
   templateUrl: './cupping-flavors.component.html',
   styleUrls: ['./cupping-flavors.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgStyle,
+    TranslatePipe,
+    IonList,
+    IonListHeader,
+    IonItem,
+    IonInput,
+    IonIcon,
+    IonChip,
+    IonSearchbar,
+    IonCheckbox,
+  ],
 })
 export class CuppingFlavorsComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private readonly uiHelper = inject(UIHelper);
+
   public searchFlavorText: string = '';
 
   @Input('data') public data: IFlavor;
@@ -24,10 +60,9 @@ export class CuppingFlavorsComponent implements OnInit {
   private allCuppingFlavors = [];
   public customFlavor: string = '';
 
-  constructor(
-    private translate: TranslateService,
-    private readonly uiHelper: UIHelper,
-  ) {}
+  constructor() {
+    addIcons({ addCircleOutline, close });
+  }
 
   public ngOnInit() {
     this.instanceCuppingFlavors();

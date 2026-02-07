@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { ServerBean } from '../../models/bean/serverBean';
@@ -11,10 +11,8 @@ import { of } from 'rxjs';
   providedIn: 'root',
 })
 export class ServerCommunicationService {
-  constructor(
-    private http: HttpClient,
-    private readonly uiLog: UILog,
-  ) {}
+  private http = inject(HttpClient);
+  private readonly uiLog = inject(UILog);
 
   public uploadShot() {
     const promise = new Promise<any>((resolve, reject) => {

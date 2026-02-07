@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -13,30 +13,83 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { FormsModule } from '@angular/forms';
+import { TooltipDirective } from '../../../directive/tooltip.directive';
+import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../pipes/keys';
+import { addIcons } from 'ionicons';
+import { swapVerticalOutline, informationOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+  IonInput,
+  IonLabel,
+  IonChip,
+  IonCheckbox,
+  IonTextarea,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'preparation-edit',
   templateUrl: './preparation-edit.component.html',
   styleUrls: ['./preparation-edit.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TooltipDirective,
+    PhotoAddComponent,
+    TranslatePipe,
+    KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonInput,
+    IonLabel,
+    IonChip,
+    IonCheckbox,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class PreparationEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'preparation-edit';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @Input() private preparation: IPreparation;
   public preparationTypeEnum = PREPARATION_TYPES;
   public nextToolName: string = '';
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  constructor() {
+    addIcons({ swapVerticalOutline, informationOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

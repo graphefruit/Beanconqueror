@@ -49,14 +49,8 @@ ion-title {
 ion-toolbar {
   --background: var(--ion-background-color);
   --border-style: none;
-  padding-top: 26px!important;
 }
 
-ion-toolbar[with-add-button] {
-  --background: var(--ion-background-color);
-  --border-style: none;
-  padding-top: 19px!important;
-}
 ion-header {
   box-shadow:none!important;
   -webkit-box-shadow:none!important;
@@ -760,14 +754,6 @@ ion-menu:host .menu-inner {
         padding-left: 2.5%;
         padding-right: 2.5%;
       }
-
-    }
-  }
-  ion-modal {
-    ion-toolbar {
-      padding-top:28px!important;
-    }
-    ion-footer {
 
     }
   }

@@ -1,17 +1,49 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { BEAN_SORT_AFTER } from '../../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../../enums/beans/beanSortOrder';
 import { IBeanPageSort } from '../../../../interfaces/bean/iBeanPageSort';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { timeOutline, calendarOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonListHeader,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonItem,
+  IonIcon,
+  IonLabel,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-green-bean-sort',
   templateUrl: './green-bean-sort.component.html',
   styleUrls: ['./green-bean-sort.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonListHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonButton,
+  ],
 })
 export class GreenBeanSortComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID = 'green-bean-sort';
 
   public beanSortAfterEnum = BEAN_SORT_AFTER;
@@ -23,10 +55,9 @@ export class GreenBeanSortComponent implements OnInit {
 
   @Input('segment') public segment: string = 'open';
   @Input('bean_filter') public bean_filter: any;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {}
+  constructor() {
+    addIcons({ timeOutline, calendarOutline });
+  }
 
   public ngOnInit() {
     this.filter = this.uiHelper.copyData(this.bean_filter);

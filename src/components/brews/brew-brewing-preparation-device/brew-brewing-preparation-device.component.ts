@@ -5,6 +5,7 @@ import {
   Input,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
@@ -38,14 +39,14 @@ import {
   IBrewWeightFlow,
 } from '../../../classes/brew/brewFlow';
 import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import {
   SanremoYOUDevice,
   SanremoYOUParams,
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   GaggiuinoDevice,
   GaggiuinoParams,
@@ -53,14 +54,64 @@ import {
 import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
 import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBrew';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { addIcons } from 'ionicons';
+import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
+import {
+  IonCard,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
+  IonInput,
+  IonCheckbox,
+  IonIcon,
+  IonLabel,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardHeader,
+  IonCardContent,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
   styleUrls: ['./brew-brewing-preparation-device.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    IonCard,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonInput,
+    IonCheckbox,
+    IonIcon,
+    IonLabel,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCardHeader,
+    IonCardContent,
+  ],
 })
 export class BrewBrewingPreparationDeviceComponent implements OnInit {
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly modalController = inject(ModalController);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly translate = inject(TranslateService);
+
   @Input() public data: Brew;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
@@ -85,19 +136,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   public uiPreparationDeviceConnected: boolean = undefined;
   public uiPreparationDeviceType: PreparationDeviceType = undefined;
   public uiHasAPreparationDeviceSet: boolean = undefined;
-  constructor(
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly modalController: ModalController,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly translate: TranslateService,
-  ) {}
+  constructor() {
+    addIcons({ cloudDownloadOutline, informationCircleOutline });
+  }
 
   public async baristaModeWeightChanged(_type: string) {
     if (_type === 'P1') {
@@ -555,47 +596,47 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
     return;
     /**
-    // Seccond call
-    await connectedDevice.deviceConnected().then(
-      () => {},
-      () => {},
-    );
-    //Third call call
-
-    const apiThirdCallDelayStart = moment(); // create a moment with the current time
-    let apiDelayEnd;
-    const delayCallTimeout = setTimeout(() => {
-      let apiTakesToLong: boolean = false;
-      let delta;
-      if (apiDelayEnd === undefined) {
-        //After 2 seconds we didn't even hit the return
-        delta = 1000;
-      } else {
-        delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
-      }
-      if (delta > 200) {
-        apiTakesToLong = true;
-      }
-
-      if (apiTakesToLong) {
-        this.uiAlert.showMessage(
-          this.translate.instant('SANREMO_API_RESPONSE_TAKE_TO_LONG', {
-            time: delta,
-          }),
-          this.translate.instant('CARE'),
-          this.translate.instant('OK'),
-          false,
+        // Seccond call
+        await connectedDevice.deviceConnected().then(
+          () => {},
+          () => {},
         );
-      }
-    }, 1000);
-    await connectedDevice.deviceConnected().then(
-      () => {
-        apiDelayEnd = moment(); // create a moment with the other time timestamp in seconds
-      },
-      () => {
-        clearTimeout(delayCallTimeout);
-      },
-    );**/
+        //Third call call
+    
+        const apiThirdCallDelayStart = moment(); // create a moment with the current time
+        let apiDelayEnd;
+        const delayCallTimeout = setTimeout(() => {
+          let apiTakesToLong: boolean = false;
+          let delta;
+          if (apiDelayEnd === undefined) {
+            //After 2 seconds we didn't even hit the return
+            delta = 1000;
+          } else {
+            delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+          }
+          if (delta > 200) {
+            apiTakesToLong = true;
+          }
+    
+          if (apiTakesToLong) {
+            this.uiAlert.showMessage(
+              this.translate.instant('SANREMO_API_RESPONSE_TAKE_TO_LONG', {
+                time: delta,
+              }),
+              this.translate.instant('CARE'),
+              this.translate.instant('OK'),
+              false,
+            );
+          }
+        }, 1000);
+        await connectedDevice.deviceConnected().then(
+          () => {
+            apiDelayEnd = moment(); // create a moment with the other time timestamp in seconds
+          },
+          () => {
+            clearTimeout(delayCallTimeout);
+          },
+        );**/
   }
 
   public async importShotFromMeticulous() {

@@ -5,8 +5,9 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
@@ -15,7 +16,7 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
@@ -23,14 +24,79 @@ import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import _ from 'lodash';
 import { BeanSortFilterHelperService } from '../../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet, DecimalPipe } from '@angular/common';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { BeanFunction } from '../../../pipes/bean/beanFunction';
+import { addIcons } from 'ionicons';
+import { snowOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonThumbnail,
+  IonSearchbar,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'bean-modal-select',
   templateUrl: './bean-modal-select.component.html',
   styleUrls: ['./bean-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgTemplateOutlet,
+    AgVirtualScrollComponent,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    BeanFunction,
+    IonHeader,
+    IonContent,
+    IonButton,
+    IonIcon,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonThumbnail,
+    IonSearchbar,
+  ],
 })
 export class BeanModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
+
   public static COMPONENT_ID = 'bean-modal-select';
   public objs: Array<Bean> = [];
   public bean_segment: string = 'open';
@@ -61,16 +127,16 @@ export class BeanModalSelectComponent implements OnInit {
     frozen: false,
   };
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('frozenScroll', { read: AgVirtualSrollComponent, static: false })
-  public frozenScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('frozenScroll', { read: AgVirtualScrollComponent, static: false })
+  public frozenScroll: AgVirtualScrollComponent;
 
   @ViewChild('archivedScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public archivedScroll: AgVirtualSrollComponent;
+  public archivedScroll: AgVirtualScrollComponent;
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
@@ -104,13 +170,7 @@ export class BeanModalSelectComponent implements OnInit {
   public uiIsFilterActive: boolean = false;
   public uiSearchText: string = '';
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
 
     this.archivedBeansSort = this.settings.bean_sort_selection.ARCHIVED;
@@ -131,6 +191,7 @@ export class BeanModalSelectComponent implements OnInit {
     ) {
       this.bean_segment = 'frozen';
     }
+    addIcons({ snowOutline });
   }
 
   public __initializeBeans() {
@@ -178,8 +239,8 @@ export class BeanModalSelectComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
   public segmentChanged() {
@@ -196,7 +257,7 @@ export class BeanModalSelectComponent implements OnInit {
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else if (this.archivedScroll !== undefined) {

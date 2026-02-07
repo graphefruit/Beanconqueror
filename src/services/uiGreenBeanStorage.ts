@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Classes */
 /** Interfaces */
 
@@ -18,6 +18,8 @@ import { GreenBean } from '../classes/green-bean/green-bean';
   providedIn: 'root',
 })
 export class UIGreenBeanStorage extends StorageClass {
+  private readonly translate = inject(TranslateService);
+
   /**
    * Singelton instance
    */
@@ -33,13 +35,9 @@ export class UIGreenBeanStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    private readonly translate: TranslateService
-  ) {
-    super(uiStorage, uiHelper, uiLog, 'GREEN_BEANS');
+  constructor() {
+    super('GREEN_BEANS');
+
     if (UIGreenBeanStorage.instance === undefined) {
       UIGreenBeanStorage.instance = this;
     }

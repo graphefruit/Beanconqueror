@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -11,14 +11,60 @@ import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAlert } from '../../../services/uiAlert';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
+import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
+import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'beans-edit',
   templateUrl: './beans-edit.component.html',
   styleUrls: ['./beans-edit.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanFreezeInformationComponent,
+    BeanSortInformationComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BeansEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+
   public static readonly COMPONENT_ID: string = 'bean-edit';
   public settings: Settings = undefined;
   public data: Bean;
@@ -26,17 +72,6 @@ export class BeansEditComponent implements OnInit {
   public bean_segment = 'general';
   private initialBeanData: string = '';
   private disableHardwareBack: Subscription;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

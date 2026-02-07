@@ -6,16 +6,17 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ROASTS_ENUM } from '../../../enums/beans/roasts';
 import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 
 import { Settings } from '../../../classes/settings/settings';
@@ -24,15 +25,71 @@ import { UIHelper } from '../../../services/uiHelper';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { FormsModule } from '@angular/forms';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { PhotoAddComponent } from '../../photo-add/photo-add.component';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import {
+  IonCard,
+  IonItem,
+  IonInput,
+  IonList,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  IonBadge,
+  IonRange,
+  IonButton,
+  IonIcon,
+  IonCheckbox,
+  IonTextarea,
+} from '@ionic/angular/standalone';
 
 declare var cordova;
 @Component({
   selector: 'bean-general-information',
   templateUrl: './bean-general-information.component.html',
   styleUrls: ['./bean-general-information.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TransformDateDirective,
+    NgxStarsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    PhotoAddComponent,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+    BeanFieldVisiblePipe,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonList,
+    IonLabel,
+    IonSelect,
+    IonSelectOption,
+    IonBadge,
+    IonRange,
+    IonButton,
+    IonIcon,
+    IonCheckbox,
+    IonTextarea,
+  ],
 })
 export class BeanGeneralInformationComponent implements OnInit {
+  private readonly platform = inject(Platform);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiHelper = inject(UIHelper);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+
   @Input() public data: Bean;
   public initialBeanData: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
@@ -52,16 +109,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   public maxBeanRating: number = 5;
   public settings: Settings = undefined;
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiHelper: UIHelper,
-    public readonly uiBeanHelper: UIBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

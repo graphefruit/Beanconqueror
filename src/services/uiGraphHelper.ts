@@ -1,6 +1,6 @@
 /** Core */
-import { Injectable } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import { Injectable, inject } from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Graph } from '../classes/graph/graph';
 import { GraphEditComponent } from '../app/graph-section/graph/graph-edit/graph-edit.component';
 import { GraphAddComponent } from '../app/graph-section/graph/graph-add/graph-add.component';
@@ -8,7 +8,6 @@ import { GraphDetailComponent } from '../app/graph-section/graph/graph-detail/gr
 import { UIAlert } from './uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 import { UIFileHelper } from './uiFileHelper';
-import BeanconquerorFlowTestDataDummy from '../assets/BeanconquerorFlowTestDataFourth.json';
 import { Brew } from '../classes/brew/brew';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 
@@ -20,13 +19,11 @@ import { FilePicker } from '@capawesome/capacitor-file-picker';
   providedIn: 'root',
 })
 export class UIGraphHelper {
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-    private readonly uiFileHelper: UIFileHelper
-  ) {}
+  private readonly modalController = inject(ModalController);
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+  private readonly uiFileHelper = inject(UIFileHelper);
 
   public async addGraph() {
     const modal = await this.modalController.create({
@@ -89,7 +86,7 @@ export class UIGraphHelper {
       return data;
     } catch (error) {
       this.uiAlert.showMessage(
-        this.translate.instant('ERROR_ON_FILE_READING') + error
+        this.translate.instant('ERROR_ON_FILE_READING') + error,
       );
     }
   }
@@ -98,29 +95,20 @@ export class UIGraphHelper {
     const savingPath = 'graphs/' + _uuid + '_flow_profile.json';
     await this.uiFileHelper.writeInternalFileFromText(
       JSON.stringify(_jsonObj),
-      savingPath
+      savingPath,
     );
     return savingPath;
   }
 
-  public async readFlowProfile(_flowProfilePath: string) {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('capacitor')) {
-        if (_flowProfilePath !== '') {
-          try {
-            const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-              _flowProfilePath
-            );
-            resolve(jsonParsed);
-          } catch (ex) {
-            reject();
-          }
-        } else {
-          reject();
-        }
-      } else {
-        resolve(BeanconquerorFlowTestDataDummy as any);
-      }
-    });
+  public async readFlowProfile(_flowProfilePath: string): Promise<any> {
+    if (!this.platform.is('capacitor')) {
+      return (await import('../assets/BeanconquerorFlowTestDataFourth.json'))
+        .default;
+    }
+    if (_flowProfilePath === '') {
+      throw new Error('_flowProfilePath is empty');
+    }
+
+    return this.uiFileHelper.readInternalJSONFile(_flowProfilePath);
   }
 }

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
@@ -8,27 +8,54 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Brew } from '../../../classes/brew/brew';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  snowOutline,
+  thermometerOutline,
+  copyOutline,
+  heartOutline,
+  heart,
+  shareSocialOutline,
+  qrCodeOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'bean-popover-actions',
   templateUrl: './bean-popover-actions.component.html',
   styleUrls: ['./bean-popover-actions.component.scss'],
-  standalone: false,
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class BeanPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static COMPONENT_ID = 'bean-popover-actions';
   public data: Bean = new Bean();
 
   @Input('bean') public bean: IBean;
 
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {
+  constructor() {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
+    addIcons({
+      snowOutline,
+      thermometerOutline,
+      copyOutline,
+      heartOutline,
+      heart,
+      shareSocialOutline,
+      qrCodeOutline,
+    });
   }
 
   public ionViewDidEnter(): void {}

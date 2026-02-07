@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Ionic native */
 /** Classes */
 /** Services */
@@ -18,6 +18,8 @@ import { Graph } from '../classes/graph/graph';
   providedIn: 'root',
 })
 export class UIGraphStorage extends StorageClass {
+  private readonly translate = inject(TranslateService);
+
   /**
    * Singelton instance
    */
@@ -31,13 +33,9 @@ export class UIGraphStorage extends StorageClass {
 
     return undefined;
   }
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    private readonly translate: TranslateService
-  ) {
-    super(uiStorage, uiHelper, uiLog, 'GRAPH');
+  constructor() {
+    super('GRAPH');
+
     if (UIGraphStorage.instance === undefined) {
       UIGraphStorage.instance = this;
     }

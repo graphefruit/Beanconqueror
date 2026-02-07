@@ -1,7 +1,7 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Ionic */
-import { AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 import { UIHelper } from './uiHelper';
 
@@ -24,20 +24,18 @@ interface IEventPayload {
   providedIn: 'root',
 })
 export class UIAnalytics {
+  private readonly alertController = inject(AlertController);
+  private readonly translate = inject(TranslateService);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiLog = inject(UILog);
+  private readonly router = inject(Router);
+
   private canTrack: boolean = false;
   private matomoTracker: any = undefined;
   private matomoUrl: string = 'https://analytics-beanconqueror.com/matomo.php'; // Extracted from index.html
   private siteId: string = '2'; // Extracted from index.html
-
-  constructor(
-    private readonly alertController: AlertController,
-    private readonly translate: TranslateService,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiLog: UILog,
-    private readonly router: Router,
-  ) {}
 
   public async initializeTracking(): Promise<any> {
     return new Promise(async (resolve, reject) => {

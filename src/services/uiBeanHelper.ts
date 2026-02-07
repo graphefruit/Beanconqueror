@@ -1,5 +1,5 @@
 /** Core */
-import { Inject, Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 
 import { Brew } from '../classes/brew/brew';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -12,7 +12,7 @@ import {
   ActionSheetController,
   ModalController,
   Platform,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
 import { BeanArchivePopoverComponent } from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 import { BeansEditComponent } from '../app/beans/beans-edit/beans-edit.component';
 import { BeansDetailComponent } from '../app/beans/beans-detail/beans-detail.component';
@@ -53,25 +53,25 @@ import { UIFileHelper } from './uiFileHelper';
   providedIn: 'root',
 })
 export class UIBeanHelper {
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly modalController = inject(ModalController);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly actionSheetCtrl = inject(ActionSheetController);
+  private readonly translate = inject(TranslateService);
+  private readonly uiLog = inject(UILog);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly http = inject(HttpClient);
+
   private static instance: UIBeanHelper;
   private allStoredBrews: Array<Brew> = [];
   private allStoredBeans: Array<Bean> = [];
 
-  constructor(
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly actionSheetCtrl: ActionSheetController,
-    private readonly translate: TranslateService,
-    private readonly uiLog: UILog,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly http: HttpClient,
-  ) {
+  constructor() {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];

@@ -1,16 +1,58 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadioGroup,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'app-roasting-machine-modal-select',
   templateUrl: './roasting-machine-modal-select.component.html',
   styleUrls: ['./roasting-machine-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadioGroup,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class RoastingMachineModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+
   public static COMPONENT_ID: string = 'roasting-machine-modal-select';
   public objs: Array<RoastingMachine> = [];
   public multipleSelection = {};
@@ -19,10 +61,6 @@ export class RoastingMachineModalSelectComponent implements OnInit {
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-  ) {}
 
   public ionViewDidEnter(): void {
     this.objs = this.uiRoastingMachineStorage.getAllEntries();

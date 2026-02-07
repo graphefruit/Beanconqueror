@@ -7,10 +7,15 @@ import {
   Output,
   SimpleChange,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { MenuController, ModalController, Platform } from '@ionic/angular';
+import {
+  MenuController,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BrewPopoverActionsComponent } from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
@@ -18,7 +23,7 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
-import { NgxStarsComponent } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIToast } from '../../services/uiToast';
@@ -29,7 +34,7 @@ import { UIHelper } from '../../services/uiHelper';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import { Settings } from '../../classes/settings/settings';
 import { ShareService } from '../../services/shareService/share-service.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
 import { UIHealthKit } from '../../services/uiHealthKit';
 import * as htmlToImage from 'html-to-image';
@@ -44,6 +49,16 @@ import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { NgTemplateOutlet, NgClass, DecimalPipe } from '@angular/common';
+import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
+import { BrewFunction } from '../../pipes/brew/brewFunction';
+import { BeanFunction } from '../../pipes/bean/beanFunction';
+import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -52,9 +67,44 @@ declare var window;
     './brew-information.component.scss',
     '../../theme/variables.scss',
   ],
-  standalone: false,
+  imports: [
+    NgTemplateOutlet,
+    GraphDisplayCardComponent,
+    LongPressDirective,
+    NgClass,
+    AsyncImageComponent,
+    NgxStarsModule,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFunction,
+    BeanFunction,
+    PreparationFunction,
+  ],
 })
 export class BrewInformationComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiImage = inject(UIImage);
+  private readonly modalCtrl = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly shareService = inject(ShareService);
+  private readonly translate = inject(TranslateService);
+  private readonly brewTracking = inject(BrewTrackingService);
+  private readonly uiHealthKit = inject(UIHealthKit);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly menu = inject(MenuController);
+
   @Input() public brew: Brew;
   public _collapsed: boolean = undefined;
   @Input() public layout: string = 'brew';
@@ -92,28 +142,6 @@ export class BrewInformationComponent implements OnInit {
 
   public uiHasCustomRatingRange: boolean = undefined;
   public uiCuppedBrewFlavors: Array<string> = [];
-
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly uiImage: UIImage,
-    private readonly modalCtrl: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly shareService: ShareService,
-    private readonly translate: TranslateService,
-    private readonly brewTracking: BrewTrackingService,
-    private readonly uiHealthKit: UIHealthKit,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly visualizerService: VisualizerService,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly menu: MenuController,
-  ) {}
 
   @Input() set collapsed(value: boolean) {
     let retrigger: boolean = false;
@@ -260,22 +288,22 @@ export class BrewInformationComponent implements OnInit {
     await this.uiAlert.hideLoadingSpinner();
     /** const vS: Visualizer = new Visualizer();
 
-    vS.mapBrew(this.brew);
-    vS.mapBean(this.brew.getBean());
-    vS.mapWater(this.brew.getWater());
-    vS.mapPreparation(this.brew.getPreparation());
-    vS.mapMill(this.brew.getMill());
-    vS.brewFlow = await this.readFlowProfile();
+        vS.mapBrew(this.brew);
+        vS.mapBean(this.brew.getBean());
+        vS.mapWater(this.brew.getWater());
+        vS.mapPreparation(this.brew.getPreparation());
+        vS.mapMill(this.brew.getMill());
+        vS.brewFlow = await this.readFlowProfile();
 
 
-    this.uiFileHelper.saveJSONFile('TestJSONVisualizer.json', JSON.stringify(vS));
-    try {
-      await this.uiHelper.exportJSON(
-        this.brew.config.uuid + '_visualizer.json',
-        JSON.stringify(vS),
-        true
-      );
-    } catch (ex) {}**/
+        this.uiFileHelper.saveJSONFile('TestJSONVisualizer.json', JSON.stringify(vS));
+        try {
+          await this.uiHelper.exportJSON(
+            this.brew.config.uuid + '_visualizer.json',
+            JSON.stringify(vS),
+            true
+          );
+        } catch (ex) {}**/
   }
 
   public async fastRepeatBrew() {

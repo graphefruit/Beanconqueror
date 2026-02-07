@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIToast } from '../../../services/uiToast';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
@@ -17,14 +17,64 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { FormsModule } from '@angular/forms';
+import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
+import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
+import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
   styleUrls: ['./beans-add.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanFreezeInformationComponent,
+    BeanSortInformationComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BeansAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'bean-add';
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
@@ -39,19 +89,6 @@ export class BeansAddComponent implements OnInit {
 
   private initialBeanData: string = '';
   private disableHardwareBack;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

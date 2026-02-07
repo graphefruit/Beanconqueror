@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { NgForm } from '@angular/forms';
@@ -8,13 +8,42 @@ import { PreparationAddTypeComponent } from '../preparation-add-type/preparation
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { environment } from '../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
+import { KeysPipe } from '../../../pipes/keys';
+import {
+  IonHeader,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardContent,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
   styleUrls: ['./preparation-add.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+  ],
 })
 export class PreparationAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'preparation-add';
   public data: Preparation = new Preparation();
 
@@ -26,11 +55,6 @@ export class PreparationAddComponent implements OnInit {
   public preparationForm: NgForm;
 
   @Input() private hide_toast_message: boolean;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

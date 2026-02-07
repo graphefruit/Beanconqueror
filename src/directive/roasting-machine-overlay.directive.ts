@@ -1,25 +1,26 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  Input,
+  inject,
+} from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
 import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
 import { RoastingMachineModalSelectComponent } from '../app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 
-@Directive({
-  selector: '[ngModel][roasting-machine-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][roasting-machine-overlay]' })
 export class RoastingMachineOverlayDirective {
+  private readonly model = inject(NgModel);
+  private readonly modalController = inject(ModalController);
+  private el = inject(ElementRef);
+  private uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+
   private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
-
-  constructor(
-    private readonly model: NgModel,
-    private readonly modalController: ModalController,
-    private el: ElementRef,
-    private uiRoastingMachineStorage: UIRoastingMachineStorage,
-  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {

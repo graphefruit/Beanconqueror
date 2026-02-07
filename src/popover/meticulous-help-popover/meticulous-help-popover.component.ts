@@ -1,27 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonTitle,
+  IonContent,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-meticulous-help-popover',
   templateUrl: './meticulous-help-popover.component.html',
   styleUrls: ['./meticulous-help-popover.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonTitle,
+    IonContent,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class MeticulousHelpPopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+
   public static POPOVER_ID: string = 'meticulous-help-popover';
   private readonly settings: Settings;
 
   private disableHardwareBack;
   public finishButtonDisabled: boolean = true;
   public delayCounter: number = 15;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

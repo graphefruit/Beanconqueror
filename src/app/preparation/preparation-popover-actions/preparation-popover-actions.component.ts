@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -9,14 +9,27 @@ import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import { powerOutline, wifiOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonList,
+  IonItem,
+  IonIcon,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'preparation-popover-actions',
   templateUrl: './preparation-popover-actions.component.html',
   styleUrls: ['./preparation-popover-actions.component.scss'],
-  standalone: false,
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class PreparationPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID: string = 'preparation-popover-actions';
   public data: Preparation = new Preparation();
   @Input('preparation') public preparation: IPreparation;
@@ -24,10 +37,9 @@ export class PreparationPopoverActionsComponent implements OnInit {
   public isMachineConnected: boolean = false;
   public isMachineTurnedOn: boolean = false;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {}
+  constructor() {
+    addIcons({ powerOutline, wifiOutline });
+  }
 
   public ionViewDidEnter(): void {}
 

@@ -5,12 +5,16 @@ import {
   Input,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import { ModalController } from '@ionic/angular/standalone';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Brew } from 'src/classes/brew/brew';
 import { Preparation } from 'src/classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
+import { IonHeader, IonContent, IonCard } from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 declare var Plotly;
 
@@ -18,9 +22,19 @@ declare var Plotly;
   selector: 'app-brew-popover-extraction',
   templateUrl: './brew-popover-extraction.component.html',
   styleUrls: ['./brew-popover-extraction.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonCard,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+  ],
 })
 export class BrewPopoverExtractionComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private translate = inject(TranslateService);
+
   public static COMPONENT_ID = 'brew-extraction';
   @Input() public brew: Brew;
 
@@ -29,11 +43,6 @@ export class BrewPopoverExtractionComponent implements OnInit {
 
   protected heightInformationBlock: number = 50;
   protected widthInformationBlock: number = 50;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private translate: TranslateService,
-  ) {}
 
   public ngOnInit() {}
   public ionViewDidEnter(): void {
@@ -45,7 +54,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
+  @HostListener('window:orientationchange')
   public onOrientationChange() {
     setTimeout(() => {
       try {

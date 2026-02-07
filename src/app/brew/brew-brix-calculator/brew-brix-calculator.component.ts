@@ -1,23 +1,44 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { FormsModule } from '@angular/forms';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonItem,
+  IonInput,
+  IonRow,
+  IonCol,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-brew-brix-calculator',
   templateUrl: './brew-brix-calculator.component.html',
   styleUrls: ['./brew-brix-calculator.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class BrewBrixCalculatorComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'brew-brix-calculator';
 
   public brix: number = 0;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

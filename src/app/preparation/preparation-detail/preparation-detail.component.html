@@ -1,12 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{"DETAIL_PREPARATION" | translate}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'DETAIL_PREPARATION' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+  </app-header>
 </ion-header>
 <ion-content>
   <ion-card class="popover" style="display:flex; flex-direction: column;">

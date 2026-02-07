@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIAlert } from '../../services/uiAlert';
@@ -13,30 +13,57 @@ import { Bean } from '../../classes/bean/bean';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
 import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+import { DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonIcon,
+  IonLabel,
+  IonText,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'roasting-machine-information-card',
   templateUrl: './roasting-machine-information-card.component.html',
   styleUrls: ['./roasting-machine-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
+  ],
 })
 export class RoastingMachineInformationCardComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiImage = inject(UIImage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiRoastingMachineHelper = inject(UIRoastingMachineHelper);
+
   @Input() public roastingMachine: RoastingMachine;
   @Output() public roastingMachineAction: EventEmitter<any> =
     new EventEmitter();
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly uiImage: UIImage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiRoastingMachineHelper: UIRoastingMachineHelper,
-  ) {}
 
   public async show() {
     await this.detail();

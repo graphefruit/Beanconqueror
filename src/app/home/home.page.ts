@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { Bean } from '../../classes/bean/bean';
@@ -6,26 +6,42 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { Preparation } from '../../classes/preparation/preparation';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { Mill } from '../../classes/mill/mill';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonContent,
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+  IonBadge,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonContent,
+    IonTabs,
+    IonTabBar,
+    IonTabButton,
+    IonIcon,
+    IonLabel,
+    IonBadge,
+  ],
 })
 export class HomePage {
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+
   /** Needed app minimize for android */
 
   public beansExist: boolean;
   public preparationsExist: boolean;
   public millsExist: boolean;
-
-  constructor(
-    private readonly router: Router,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-  ) {}
 
   public ngOnInit() {
     this._calculcateEntries();
@@ -45,21 +61,6 @@ export class HomePage {
     this.preparationsExist = this.activePreparationsExists();
     this.millsExist = this.activeMillsExists();
   }
-  public showBeans() {
-    this.router.navigate(['/beans']);
-  }
-
-  public showBrews() {
-    this.router.navigate(['/brew']);
-  }
-
-  public showPreparation() {
-    this.router.navigate(['/preparation']);
-  }
-
-  public showMills() {
-    this.router.navigate(['/mill']);
-  }
 
   public activeBeansExists(): boolean {
     const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
@@ -78,3 +79,5 @@ export class HomePage {
     return mills.filter((e) => e.finished === false).length > 0;
   }
 }
+
+export default HomePage;

@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Class */
 import { Brew } from '../classes/brew/brew';
 /** Services */
@@ -27,12 +27,8 @@ export class UIBrewStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog
-  ) {
-    super(uiStorage, uiHelper, uiLog, 'BREWS');
+  constructor() {
+    super('BREWS');
 
     if (UIBrewStorage.instance === undefined) {
       UIBrewStorage.instance = this;

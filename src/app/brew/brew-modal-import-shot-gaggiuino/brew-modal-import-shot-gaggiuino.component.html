@@ -1,13 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{"IMPORT_SHOT_FROM_METICULOUS" | translate}}</ion-title>
-
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'IMPORT_SHOT_FROM_METICULOUS' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+  </app-header>
 </ion-header>
 <ion-content #historyShotContent>
   @if(history) {

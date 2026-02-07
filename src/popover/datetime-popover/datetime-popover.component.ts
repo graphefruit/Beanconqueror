@@ -1,16 +1,52 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { IonInput, ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import { ModalController } from '@ionic/angular/standalone';
 import moment from 'moment';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
+import { FormsModule } from '@angular/forms';
+import { MaxNumberValueDirective } from '../../directive/max-number-value.directive';
+import { PreventCharacterDirective } from '../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../directive/remove-empty-number.directive';
+import { DisableDoubleClickDirective } from '../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonItem,
+  IonCheckbox,
+  IonInput,
+  IonButton,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-datetime-popover',
   templateUrl: './datetime-popover.component.html',
   styleUrls: ['./datetime-popover.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    MaxNumberValueDirective,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonItem,
+    IonCheckbox,
+    IonInput,
+    IonButton,
+  ],
 })
 export class DatetimePopoverComponent implements OnInit {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public timer = {
     HOURS: 0,
     MINUTES: 0,
@@ -26,10 +62,6 @@ export class DatetimePopoverComponent implements OnInit {
 
   @Input() public displayingTime: string;
   public settings: Settings;
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -43,11 +75,11 @@ export class DatetimePopoverComponent implements OnInit {
   }
   public ionViewDidEnter(): void {
     /**
-     * To many "issues" on the user side, so we disable this feature for now.
-     * setTimeout(() => {
-      //Give it a short time
-      this.secondInput.setFocus();
-    }, 250);**/
+         * To many "issues" on the user side, so we disable this feature for now.
+         * setTimeout(() => {
+          //Give it a short time
+          this.secondInput.setFocus();
+        }, 250);**/
   }
 
   public saveSettings() {

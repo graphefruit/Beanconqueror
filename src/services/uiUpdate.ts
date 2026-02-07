@@ -1,5 +1,5 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Mill } from '../classes/mill/mill';
 import { Brew } from '../classes/brew/brew';
 import { Bean } from '../classes/bean/bean';
@@ -14,7 +14,7 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { UILog } from './uiLog';
 import { UiVersionStorage } from './uiVersionStorage';
 import { Version } from '../classes/version/iVersion';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UIFileHelper } from './uiFileHelper';
@@ -32,22 +32,20 @@ import { BREW_DISPLAY_IMAGE_TYPE } from '../enums/brews/brewDisplayImageType';
   providedIn: 'root',
 })
 export class UIUpdate {
-  constructor(
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiLog: UILog,
-    private readonly uiVersionStorage: UiVersionStorage,
-    private readonly platform: Platform,
-    private readonly modalCtrl: ModalController,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-    private readonly uiStorage: UIStorage,
-    private readonly uiHelper: UIHelper,
-  ) {}
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly uiVersionStorage = inject(UiVersionStorage);
+  private readonly platform = inject(Platform);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+  private readonly uiStorage = inject(UIStorage);
+  private readonly uiHelper = inject(UIHelper);
 
   public async checkUpdate() {
     this.uiLog.info('Check updates');

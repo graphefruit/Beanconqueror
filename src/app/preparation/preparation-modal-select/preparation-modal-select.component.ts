@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Brew } from '../../../classes/brew/brew';
@@ -9,14 +9,72 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
+import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
+import { addIcons } from 'ionicons';
+import { wifiOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonRadioGroup,
+  IonCard,
+  IonItem,
+  IonCheckbox,
+  IonRadio,
+  IonFooter,
+  IonRow,
+  IonCol,
+  IonThumbnail,
+  IonIcon,
+  IonButton,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 
 @Component({
   selector: 'preparation-modal-select',
   templateUrl: './preparation-modal-select.component.html',
   styleUrls: ['./preparation-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgTemplateOutlet,
+    AsyncImageComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    PreparationFunction,
+    IonHeader,
+    IonContent,
+    IonIcon,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonThumbnail,
+    IonButton,
+  ],
 })
 export class PreparationModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+
   public static COMPONENT_ID = 'preparation-modal-select';
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
@@ -31,16 +89,12 @@ export class PreparationModalSelectComponent implements OnInit {
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiSettings: UISettingsStorage,
-  ) {
+  constructor() {
     this.objs = this.uiPreparationStorage.getAllEntries();
     this.settings = this.uiSettings.getSettings();
     this.openPreparations = this.getOpenPreparations();
     this.archivedPreparations = this.getArchivedPreparations();
+    addIcons({ wifiOutline });
   }
 
   public ionViewDidEnter(): void {

@@ -4,22 +4,19 @@ import {
   HostListener,
   Input,
   Output,
+  inject,
 } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular/standalone';
 import moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 declare var cordova;
-@Directive({
-  selector: '[choose-date-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[choose-date-overlay]' })
 export class ChooseDateOverlayDirective {
+  private readonly platform = inject(Platform);
+  private readonly translate = inject(TranslateService);
+
   @Input('data') public data: string;
   @Output() public dataChange = new EventEmitter<any>();
-  constructor(
-    private readonly platform: Platform,
-    private readonly translate: TranslateService,
-  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {

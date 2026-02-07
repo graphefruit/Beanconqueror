@@ -6,12 +6,13 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
@@ -53,6 +54,21 @@ import { EventQueueService } from '../../../services/queueService/queue-service.
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { Mill } from '../../../classes/mill/mill';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonButton,
+  IonIcon,
+  IonChip,
+  IonContent,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 declare var Plotly;
 
@@ -68,9 +84,45 @@ interface IEventPayload {
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
   styleUrls: ['./brew-add.component.scss'],
-  standalone: false,
+  imports: [
+    BrewBrewingComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonChip,
+    IonContent,
+    IonFooter,
+    IonRow,
+    IonCol,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+  ],
 })
 export class BrewAddComponent implements OnInit, OnDestroy {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly platform = inject(Platform);
+  private readonly uiLog = inject(UILog);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiHealthKit = inject(UIHealthKit);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly brewTracking = inject(BrewTrackingService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly hapticService = inject(HapticService);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly eventQueue = inject(EventQueueService);
+
   public static readonly COMPONENT_ID: string = 'brew-add';
   @Input('brew_template') public brew_template: Brew;
   public data: Brew = new Brew();
@@ -94,29 +146,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   public automaticSaveSubscription: Subscription = undefined;
   public readonly PreparationDeviceType = PreparationDeviceType;
 
-  constructor(
-    private readonly modalController: ModalController,
-
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiToast: UIToast,
-    private readonly platform: Platform,
-    private readonly uiLog: UILog,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHealthKit: UIHealthKit,
-    private readonly uiAlert: UIAlert,
-    private readonly brewTracking: BrewTrackingService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly visualizerService: VisualizerService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly hapticService: HapticService,
-    private readonly uiHelper: UIHelper,
-    private readonly eventQueue: EventQueueService,
-  ) {
+  constructor() {
     // Initialize to standard in drop down
     this.settings = this.uiSettingsStorage.getSettings();
 
@@ -142,12 +172,12 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     });
   }
   @HostListener('window:keyboardWillShow')
-  private hideFooter() {
+  public hideFooter() {
     // Describe your logic which will be run each time when keyboard is about to be shown.
     this.showFooter = false;
   }
   @HostListener('window:keyboardWillHide')
-  private showFooterAgain() {
+  public showFooterAgain() {
     // Describe your logic which will be run each time when keyboard is about to be closed.
     this.showFooter = true;
   }

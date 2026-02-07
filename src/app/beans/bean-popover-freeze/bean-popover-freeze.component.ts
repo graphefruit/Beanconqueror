@@ -1,9 +1,15 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  inject,
+} from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import moment from 'moment/moment';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Bean } from '../../../classes/bean/bean';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Brew } from '../../../classes/brew/brew';
@@ -16,15 +22,81 @@ import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIToast } from '../../../services/uiToast';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { addIcons } from 'ionicons';
+import { warningOutline, trashOutline } from 'ionicons/icons';
+import {
+  IonHeader,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonInput,
+  IonCheckbox,
+  IonLabel,
+  IonRange,
+  IonSelect,
+  IonSelectOption,
+  IonTextarea,
+  IonIcon,
+  IonButton,
+  IonList,
+  IonListHeader,
+  IonFooter,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 declare var cordova;
 @Component({
   selector: 'app-bean-popover-freeze',
   templateUrl: './bean-popover-freeze.component.html',
   styleUrls: ['./bean-popover-freeze.component.scss'],
-  standalone: false,
+  imports: [
+    TransformDateDirective,
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonCheckbox,
+    IonLabel,
+    IonRange,
+    IonSelect,
+    IonSelectOption,
+    IonTextarea,
+    IonIcon,
+    IonButton,
+    IonList,
+    IonListHeader,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BeanPopoverFreezeComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly platform = inject(Platform);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+
   public static COMPONENT_ID = 'bean-popover-freeze';
   public settings: Settings;
   @Input() public bean: Bean;
@@ -47,21 +119,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
   public allNewCreatedBeans: Array<Bean> = [];
   public readonly beanFreezingStorageEnum = BEAN_FREEZING_STORAGE_ENUM;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly platform: Platform,
-    private readonly uiBeanHelper: UIBeanHelper,
-    public readonly uiHelper: UIHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
+    addIcons({ warningOutline, trashOutline });
   }
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);

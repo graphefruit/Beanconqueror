@@ -1,24 +1,24 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 /** Ionic native */
 /** Classes */
 /** Services */
 
-import {StorageClass} from '../classes/storageClass';
+import { StorageClass } from '../classes/storageClass';
 
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-import {TranslateService} from '@ngx-translate/core';
-import {Water} from '../classes/water/water';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIStorage } from './uiStorage';
+import { TranslateService } from '@ngx-translate/core';
+import { Water } from '../classes/water/water';
 
 /** Interfaces */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIWaterStorage extends StorageClass {
-
+  private readonly translate = inject(TranslateService);
 
   /**
    * Singelton instance
@@ -33,11 +33,9 @@ export class UIWaterStorage extends StorageClass {
 
     return undefined;
   }
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog,
-              private readonly translate: TranslateService) {
-    super(uiStorage, uiHelper, uiLog, 'WATER');
+  constructor() {
+    super('WATER');
+
     if (UIWaterStorage.instance === undefined) {
       UIWaterStorage.instance = this;
     }
@@ -45,7 +43,6 @@ export class UIWaterStorage extends StorageClass {
       this.waters = [];
     });
   }
-
 
   public async initializeStorage() {
     this.waters = [];
@@ -59,10 +56,8 @@ export class UIWaterStorage extends StorageClass {
         const waterObj: Water = new Water();
         waterObj.initializeByObject(water);
         this.waters.push(waterObj);
-
       }
     }
     return this.waters;
   }
-
 }

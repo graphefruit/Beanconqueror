@@ -1,18 +1,8 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{ "CHOOSE_REFERENCE_GRAPH" | translate }}</ion-title>
-
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button tappable (click)="addOwnGraph()" class="big-add-icon" fill="clear">
-        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'CHOOSE_REFERENCE_GRAPH' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+    <app-header-button header-slot="end" icon="beanconqueror-add" (clicked)="addOwnGraph()" />
+  </app-header>
 </ion-header>
 <ion-content #brewContent>
   <ion-segment scrollable="true" (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">

@@ -9,6 +9,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
@@ -17,7 +18,7 @@ import { Subscription } from 'rxjs';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -34,15 +35,68 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UIAlert } from '../../../services/uiAlert';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { LongPressDirective } from '../../../directive/long-press.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonMenuButton,
+  IonChip,
+  IonIcon,
+  IonButton,
+  IonContent,
+  IonCard,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 declare var Plotly;
 @Component({
   selector: 'app-barista',
   templateUrl: './barista.page.html',
   styleUrls: ['./barista.page.scss'],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    BrewBrewingComponent,
+    TranslatePipe,
+    IonHeader,
+    IonMenuButton,
+    IonChip,
+    IonIcon,
+    IonButton,
+    IonContent,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    HeaderComponent,
+    HeaderButtonComponent,
+  ],
 })
 export class BaristaPage implements OnInit, OnDestroy {
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly platform = inject(Platform);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly ngZone = inject(NgZone);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public data: Brew = new Brew();
 
   @ViewChild('ionHeader', { read: ElementRef, static: true })
@@ -84,20 +138,7 @@ export class BaristaPage implements OnInit, OnDestroy {
 
   @Output() public lastShot = new EventEmitter();
 
-  constructor(
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly platform: Platform,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly ngZone: NgZone,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly modalController: ModalController,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiAlert: UIAlert,
-  ) {
+  constructor() {
     // Get first entry
     this.data.bean = this.uiBeanStorage
       .getAllEntries()
@@ -148,8 +189,8 @@ export class BaristaPage implements OnInit, OnDestroy {
       });
 
     /**setTimeout(() => {
-      this.checkSanremoYOUDoses();
-    }, 2000);**/
+          this.checkSanremoYOUDoses();
+        }, 2000);**/
 
     setTimeout(() => {
       this.resizeGraph();
@@ -211,8 +252,8 @@ export class BaristaPage implements OnInit, OnDestroy {
     );
   }
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     setTimeout(() => {
       this.resizeGraph();
     }, 150);
@@ -342,8 +383,8 @@ export class BaristaPage implements OnInit, OnDestroy {
   private __attachOnDeviceResume() {
     App.addListener('resume', async () => {
       /** setTimeout(() => {
-        this.checkIfSanremoIsStillConnectedElseShowUpAReconnectButton();
-      },5000);**/
+              this.checkIfSanremoIsStillConnectedElseShowUpAReconnectButton();
+            },5000);**/
     });
   }
 
@@ -362,9 +403,9 @@ export class BaristaPage implements OnInit, OnDestroy {
   public lastShotInformation(_data) {
     this.showLagTime();
     /**
-    this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
-    this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
-    this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;**/
+        this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
+        this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
+        this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;**/
   }
   private showLagTime() {
     const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
@@ -498,3 +539,5 @@ export class BaristaPage implements OnInit, OnDestroy {
 
   protected readonly PreparationDeviceType = PreparationDeviceType;
 }
+
+export default BaristaPage;

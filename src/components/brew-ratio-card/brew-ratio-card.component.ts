@@ -1,10 +1,37 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { PreventCharacterDirective } from '../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../directive/remove-empty-number.directive';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonItem,
+  IonInput,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'brew-ratio-card',
   templateUrl: './brew-ratio-card.component.html',
   styleUrls: ['./brew-ratio-card.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+    IonItem,
+    IonInput,
+  ],
 })
 export class BrewRatioCardComponent implements OnInit {
   public brewRatio: any = {

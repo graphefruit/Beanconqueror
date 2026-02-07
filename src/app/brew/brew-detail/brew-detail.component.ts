@@ -1,6 +1,10 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, inject } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { AlertController, ModalController, Platform } from '@ionic/angular';
+import {
+  AlertController,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 import { UIHelper } from '../../../services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -15,7 +19,7 @@ import { UIExcel } from '../../../services/uiExcel';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   IBrewRealtimeWaterFlow,
   IBrewWaterFlow,
@@ -36,15 +40,99 @@ import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
+import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { addIcons } from 'ionicons';
+import {
+  create,
+  globeOutline,
+  download,
+  shareSocialOutline,
+  expandOutline,
+  clipboardOutline,
+} from 'ionicons/icons';
+import {
+  IonHeader,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonCard,
+  IonItem,
+  IonLabel,
+  IonChip,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardHeader,
+  IonCardContent,
+  IonPopover,
+  IonList,
+  IonFooter,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 declare var Plotly;
 @Component({
   selector: 'brew-detail',
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
-  standalone: false,
+  imports: [
+    BrewBrewingGraphComponent,
+    PhotoViewComponent,
+    DecimalPipe,
+    KeyValuePipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFieldOrder,
+    BrewFunction,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonLabel,
+    IonChip,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCardHeader,
+    IonCardContent,
+    IonPopover,
+    IonList,
+    IonFooter,
+  ],
 })
 export class BrewDetailComponent {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly uiLog = inject(UILog);
+  private readonly shareService = inject(ShareService);
+
   public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public data: Brew = new Brew();
@@ -70,25 +158,16 @@ export class BrewDetailComponent {
   public uiShowSectionBeforeBrew: boolean = false;
   public uiShowCupping: boolean = false;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiExcel: UIExcel,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly translate: TranslateService,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-    private readonly alertCtrl: AlertController,
-    private readonly uiLog: UILog,
-    private readonly shareService: ShareService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({
+      create,
+      globeOutline,
+      download,
+      shareSocialOutline,
+      expandOutline,
+      clipboardOutline,
+    });
   }
   public setUIParams() {
     this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
@@ -264,9 +343,9 @@ export class BrewDetailComponent {
 
   public async shareFlowProfile() {
     /* const fileShare: string = this.flowProfileChartEl.toBase64Image(
-      'image/jpeg',
-      1
-    );*/
+          'image/jpeg',
+          1
+        );*/
     if (this.platform.is('ios')) {
       //#544 - we need to do it twice... don't know why, ios issue
       Plotly.Snapshot.toImage(
@@ -347,15 +426,15 @@ export class BrewDetailComponent {
       );
       // No popup needed anymore, because we share the file now
       /*if (this.platform.is('android')) {
-        const alert = await this.alertCtrl.create({
-          header: this.translate.instant('DOWNLOADED'),
-          subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-            fileName: filename,
-          }),
-          buttons: ['OK'],
-        });
-        await alert.present();
-      }*/
+              const alert = await this.alertCtrl.create({
+                header: this.translate.instant('DOWNLOADED'),
+                subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                  fileName: filename,
+                }),
+                buttons: ['OK'],
+              });
+              await alert.present();
+            }*/
     }
   }
   public async downloadFlowProfile() {

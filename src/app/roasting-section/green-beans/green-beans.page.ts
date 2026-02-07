@@ -5,12 +5,13 @@ import {
   HostListener,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Settings } from '../../../classes/settings/settings';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -18,17 +19,54 @@ import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { UIGreenBeanStorage } from '../../../services/uiGreenBeanStorage';
 import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
 import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.component';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
+import { FormsModule } from '@angular/forms';
+import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonHeader,
+  IonMenuButton,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonSearchbar,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 
 @Component({
   selector: 'app-green-beans',
   templateUrl: './green-beans.page.html',
   styleUrls: ['./green-beans.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    GreenBeanInformationComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
+  ],
 })
 export class GreenBeansPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiGreenBeanHelper = inject(UIGreenBeanHelper);
+
   private beans: Array<GreenBean> = [];
 
   public openBeans: Array<GreenBean> = [];
@@ -42,10 +80,13 @@ export class GreenBeansPage implements OnInit {
   @ViewChild('greenBeanContent', { read: ElementRef })
   public greenBeanContent: ElementRef;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   public bean_segment: string = 'open';
   public archivedBeansFilter: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -57,16 +98,7 @@ export class GreenBeansPage implements OnInit {
 
   public settings: Settings;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGreenBeanHelper: UIGreenBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
@@ -88,14 +120,14 @@ export class GreenBeansPage implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.greenBeanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {
@@ -278,3 +310,5 @@ export class GreenBeansPage implements OnInit {
     this.__initializeBeansView('archiv');
   }
 }
+
+export default GreenBeansPage;
