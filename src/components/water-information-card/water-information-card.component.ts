@@ -20,6 +20,8 @@ import {
   IonText,
   ModalController,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -75,6 +77,14 @@ export class WaterInformationCardComponent implements OnInit {
   @Input() public water: Water;
   @Output() public waterAction: EventEmitter<any> = new EventEmitter();
   public readonly WATER_TYPES = WATER_TYPES;
+
+  constructor() {
+    addIcons({
+      // water.getIcon() can return 'water-outline' if no custom icon is set.
+      // Therefore, we need to register this icon here.
+      waterOutline,
+    });
+  }
 
   public ngOnInit() {}
 
