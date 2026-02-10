@@ -1,20 +1,23 @@
-import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { UIHelper } from '../../../services/uiHelper';
-import { ModalController } from '@ionic/angular/standalone';
-import { IFlavor } from '../../../interfaces/flavor/iFlavor';
-import { CuppingFlavorsComponent } from '../../../components/cupping-flavors/cupping-flavors.component';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCol,
   IonContent,
   IonFooter,
+  IonHeader,
   IonRow,
-  IonCol,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { CuppingFlavorsComponent } from '../../../components/cupping-flavors/cupping-flavors.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { IFlavor } from '../../../interfaces/flavor/iFlavor';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-brew-flavor-picker',

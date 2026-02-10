@@ -1,32 +1,34 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
-import { Mill } from '../classes/mill/mill';
-import { Brew } from '../classes/brew/brew';
+import { inject, Injectable } from '@angular/core';
+
+import { ModalController, Platform } from '@ionic/angular/standalone';
+
+import { App } from '@capacitor/app';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { TranslateService } from '@ngx-translate/core';
+import { keys, maxBy } from 'lodash';
+
 import { Bean } from '../classes/bean/bean';
+import { Brew } from '../classes/brew/brew';
+import { Mill } from '../classes/mill/mill';
+import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
 import { Preparation } from '../classes/preparation/preparation';
-import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTypes';
 import { Settings } from '../classes/settings/settings';
-import { UIBrewStorage } from './uiBrewStorage';
-import { UIMillStorage } from './uiMillStorage';
+import { Version } from '../classes/version/iVersion';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../enums/brews/brewDisplayImageType';
+import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTypes';
+import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
+import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
+import { UIAlert } from './uiAlert';
 import { UIBeanStorage } from './uiBeanStorage';
+import { UIBrewStorage } from './uiBrewStorage';
+import { UIFileHelper } from './uiFileHelper';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIMillStorage } from './uiMillStorage';
 import { UIPreparationStorage } from './uiPreparationStorage';
 import { UISettingsStorage } from './uiSettingsStorage';
-import { UILog } from './uiLog';
-import { UiVersionStorage } from './uiVersionStorage';
-import { Version } from '../classes/version/iVersion';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
-import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
-import { UIFileHelper } from './uiFileHelper';
-import { Filesystem, Directory } from '@capacitor/filesystem';
-import { UIAlert } from './uiAlert';
-import { TranslateService } from '@ngx-translate/core';
 import { UIStorage } from './uiStorage';
-import { maxBy, keys } from 'lodash';
-import { UIHelper } from './uiHelper';
-import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
-import { App } from '@capacitor/app';
-import { BREW_DISPLAY_IMAGE_TYPE } from '../enums/brews/brewDisplayImageType';
+import { UiVersionStorage } from './uiVersionStorage';
 
 @Injectable({
   providedIn: 'root',

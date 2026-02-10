@@ -1,25 +1,28 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { BREW_SORT_AFTER } from '../../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../../enums/brews/brewSortOrder';
 import { IBrewPageSort } from '../../../interfaces/brew/iBrewPageSort';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { chevronUpOutline, chevronDownOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonContent,
-  IonList,
-  IonListHeader,
-  IonItem,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonIcon,
-  IonLabel,
-  IonButton,
-} from '@ionic/angular/standalone';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-brew-sort',

@@ -1,32 +1,35 @@
+import { DecimalPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   EventEmitter,
+  inject,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Chart } from 'chart.js';
-import { ICupping } from '../../interfaces/cupping/iCupping';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { TooltipDirective } from '../../directive/tooltip.directive';
 import { FormsModule } from '@angular/forms';
-import { DecimalPipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { informationOutline } from 'ionicons/icons';
+
 import {
+  IonBadge,
   IonCard,
   IonIcon,
   IonItem,
   IonLabel,
-  IonBadge,
   IonRange,
   IonTextarea,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { informationOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { Chart } from 'chart.js';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { TooltipDirective } from '../../directive/tooltip.directive';
+import { ICupping } from '../../interfaces/cupping/iCupping';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'cupping-radar',

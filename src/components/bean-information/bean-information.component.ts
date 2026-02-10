@@ -1,81 +1,82 @@
+import { DecimalPipe } from '@angular/common';
 import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Bean } from '../../classes/bean/bean';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+
 import {
   ActionSheetController,
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonLabel,
+  IonRow,
+  IonText,
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
-import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
-import { BeanGroup } from '../../interfaces/bean/beanGroup';
-import { BEAN_ACTION } from '../../enums/beans/beanAction';
-import { Brew } from '../../classes/brew/brew';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIAlert } from '../../services/uiAlert';
-import { UIToast } from '../../services/uiToast';
-import { UIImage } from '../../services/uiImage';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import BEAN_TRACKING from '../../data/tracking/beanTracking';
-import { ShareService } from '../../services/shareService/share-service.service';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
-import { ServerBean } from '../../models/bean/serverBean';
-import QR_TRACKING from '../../data/tracking/qrTracking';
-import { BeanMapper } from '../../mapper/bean/beanMapper';
-import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
-import { UIHelper } from '../../services/uiHelper';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import * as htmlToImage from 'html-to-image';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import moment from 'moment/moment';
-import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
-import { CurrencyService } from '../../services/currencyService/currency.service';
-import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
-import { LongPressDirective } from '../../directive/long-press.directive';
-import { AsyncImageComponent } from '../async-image/async-image.component';
-import { DecimalPipe } from '@angular/common';
-import { FormatDatePipe } from '../../pipes/formatDate';
-import { ToFixedPipe } from '../../pipes/toFixed';
-import { BeanFieldVisiblePipe } from '../../pipes/bean/beanFieldVisible';
-import { BeanFunction } from '../../pipes/bean/beanFunction';
 import { addIcons } from 'ionicons';
 import {
+  chevronDownOutline,
+  chevronUpOutline,
   fileTrayFullOutline,
-  moon,
-  snowOutline,
   flameOutline,
+  heart,
+  moon,
+  pricetagOutline,
   qrCodeOutline,
   shareSocialOutline,
-  heart,
-  pricetagOutline,
-  chevronUpOutline,
-  chevronDownOutline,
+  snowOutline,
 } from 'ionicons/icons';
-import {
-  IonCard,
-  IonCardContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonIcon,
-  IonBadge,
-  IonButton,
-  IonLabel,
-  IonText,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import * as htmlToImage from 'html-to-image';
+import moment from 'moment/moment';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { Settings } from '../../classes/settings/settings';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { BEAN_ACTION } from '../../enums/beans/beanAction';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { ROASTS_ENUM } from '../../enums/beans/roasts';
+import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { BeanMapper } from '../../mapper/bean/beanMapper';
+import { ServerBean } from '../../models/bean/serverBean';
+import { BeanFieldVisiblePipe } from '../../pipes/bean/beanFieldVisible';
+import { BeanFunction } from '../../pipes/bean/beanFunction';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { CurrencyService } from '../../services/currencyService/currency.service';
+import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
+import { ShareService } from '../../services/shareService/share-service.service';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIImage } from '../../services/uiImage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'bean-information',

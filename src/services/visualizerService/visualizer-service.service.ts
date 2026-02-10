@@ -1,16 +1,18 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { CapacitorCookies, CapacitorHttp } from '@capacitor/core';
-import { UIFileHelper } from '../uiFileHelper';
-import { Visualizer } from '../../classes/visualizer/visualizer';
+
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-import { UIToast } from '../uiToast';
-import { UIBrewStorage } from '../uiBrewStorage';
-import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
-import { UILog } from '../uiLog';
-import { UIBrewHelper } from '../uiBrewHelper';
+import { Visualizer } from '../../classes/visualizer/visualizer';
 import { UIAlert } from '../uiAlert';
+import { UIBrewHelper } from '../uiBrewHelper';
+import { UIBrewStorage } from '../uiBrewStorage';
+import { UIFileHelper } from '../uiFileHelper';
+import { UILog } from '../uiLog';
+import { UISettingsStorage } from '../uiSettingsStorage';
+import { UIToast } from '../uiToast';
 
 @Injectable({
   providedIn: 'root',

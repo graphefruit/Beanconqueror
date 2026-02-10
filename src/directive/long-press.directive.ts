@@ -1,13 +1,14 @@
 import {
-  EventEmitter,
   Directive,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
   OnInit,
   Output,
-  Input,
-  ElementRef,
-  inject,
 } from '@angular/core';
-import { timer, Subscription } from 'rxjs';
+
+import { Subscription, timer } from 'rxjs';
 
 declare var window;
 @Directive({ selector: '[long-press]' })

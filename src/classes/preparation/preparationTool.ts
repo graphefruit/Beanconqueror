@@ -1,8 +1,5 @@
-/** Interfaces */
-import {IPreparationTool} from '../../interfaces/preparation/iPreparationTool';
-/** Classes */
-import {Config} from '../objectConfig/objectConfig';
-
+import { IPreparationTool } from '../../interfaces/preparation/iPreparationTool';
+import { Config } from '../objectConfig/objectConfig';
 
 export class PreparationTool implements IPreparationTool {
   public name: string;
@@ -15,7 +12,5 @@ export class PreparationTool implements IPreparationTool {
     this.config = new Config();
 
     this.archived = false;
-
   }
-
 }

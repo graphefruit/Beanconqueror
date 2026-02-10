@@ -2,52 +2,54 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Bean } from '../../../classes/bean/bean';
-import moment from 'moment';
-import { Platform } from '@ionic/angular/standalone';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { ROASTS_ENUM } from '../../../enums/beans/roasts';
-import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
-import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
-import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
-
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothScale } from '../../../classes/devices';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { FormsModule } from '@angular/forms';
-import { TransformDateDirective } from '../../../directive/transform-date';
-import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
-import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
-import { PhotoAddComponent } from '../../photo-add/photo-add.component';
-import { KeysPipe } from '../../../pipes/keys';
-import { ToFixedPipe } from '../../../pipes/toFixed';
-import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+
 import {
+  IonBadge,
+  IonButton,
   IonCard,
-  IonItem,
+  IonCheckbox,
+  IonIcon,
   IonInput,
-  IonList,
+  IonItem,
   IonLabel,
+  IonList,
+  IonRange,
   IonSelect,
   IonSelectOption,
-  IonBadge,
-  IonRange,
-  IonButton,
-  IonIcon,
-  IonCheckbox,
   IonTextarea,
+  Platform,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { Bean } from '../../../classes/bean/bean';
+import { BluetoothScale } from '../../../classes/devices';
+import { Settings } from '../../../classes/settings/settings';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { ROASTS_ENUM } from '../../../enums/beans/roasts';
+import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { PhotoAddComponent } from '../../photo-add/photo-add.component';
 
 declare var cordova;
 @Component({

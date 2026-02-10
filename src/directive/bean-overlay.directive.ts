@@ -2,14 +2,16 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  Input,
   inject,
+  Input,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
+
 import { ModalController } from '@ionic/angular/standalone';
+
 import { BeanModalSelectComponent } from '../app/beans/bean-modal-select/bean-modal-select.component';
-import { UIBeanStorage } from '../services/uiBeanStorage';
 import { Bean } from '../classes/bean/bean';
+import { UIBeanStorage } from '../services/uiBeanStorage';
 
 @Directive({ selector: '[ngModel][bean-overlay]' })
 export class BeanOverlayDirective {

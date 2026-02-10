@@ -1,14 +1,11 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
-/** Services */
+import { inject, Injectable } from '@angular/core';
+
 import { StorageClass } from '../classes/storageClass';
+import { Version } from '../classes/version/iVersion';
+import { IVersion } from '../interfaces/version/iVersion';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
-import { Version } from '../classes/version/iVersion';
-import { IVersion } from '../interfaces/version/iVersion';
-
-/** Ionic native */
 
 @Injectable({
   providedIn: 'root',

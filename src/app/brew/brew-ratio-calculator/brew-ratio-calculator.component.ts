@@ -1,10 +1,15 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
 import { Brew } from '../../../classes/brew/brew';
 import { BrewRatioCardComponent } from '../../../components/brew-ratio-card/brew-ratio-card.component';
-import { IonHeader, IonContent } from '@ionic/angular/standalone';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-brew-ratio-calculator',

@@ -3,38 +3,40 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Water } from '../../../classes/water/water';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIWaterStorage } from '../../../services/uiWaterStorage';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-
-import { UIWaterHelper } from '../../../services/uiWaterHelper';
 import { FormsModule } from '@angular/forms';
-import { WaterInformationCardComponent } from '../../../components/water-information-card/water-information-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { waterOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { Settings } from '../../../classes/settings/settings';
+import { Water } from '../../../classes/water/water';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { WaterInformationCardComponent } from '../../../components/water-information-card/water-information-card.component';
+import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIWaterHelper } from '../../../services/uiWaterHelper';
+import { UIWaterStorage } from '../../../services/uiWaterStorage';
 
 @Component({
   selector: 'app-water',

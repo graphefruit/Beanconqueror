@@ -4,16 +4,17 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 import moment from 'moment';
-import { IFlavor } from '../interfaces/flavor/iFlavor';
+
 import { Brew } from '../classes/brew/brew';
+import { IFlavor } from '../interfaces/flavor/iFlavor';
 
 @Directive({ selector: '[transform-date]' })
 export class TransformDateDirective implements AfterViewInit {

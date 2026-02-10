@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonBackButton,
-  IonContent,
   IonCard,
+  IonContent,
+  IonHeader,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({

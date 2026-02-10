@@ -1,19 +1,21 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
-/** Ionic */
+import { inject, Injectable } from '@angular/core';
+
 import {
   AlertController,
   LoadingController,
   ModalController,
 } from '@ionic/angular/standalone';
+
 import { TranslateService } from '@ngx-translate/core';
-import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
-import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
-import { UILog } from './uiLog';
-import { EventQueueService } from './queueService/queue-service.service';
+
+import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
-import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
+import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
+import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
+import { EventQueueService } from './queueService/queue-service.service';
+import { UILog } from './uiLog';
+
 declare var window;
 @Injectable({
   providedIn: 'root',

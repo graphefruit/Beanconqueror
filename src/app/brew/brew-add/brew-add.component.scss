@@ -1,22 +1,15 @@
 :host {
-
-
   ion-item {
     --border-width: 0px;
     margin-left: 16px;
     margin-right: 16px;
   }
 
-
-  ion-card
-  {
+  ion-card {
     div.last-item {
-      margin-bottom:16px;
+      margin-bottom: 16px;
       /*Last one*/
-      order:10000;
+      order: 10000;
     }
-
   }
-
-
 }

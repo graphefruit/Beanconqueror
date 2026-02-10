@@ -1,12 +1,12 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { UIAnalytics } from './uiAnalytics';
 import { ModalController } from '@ionic/angular/standalone';
-import { GreenBean } from '../classes/green-bean/green-bean';
+
 import { GreenBeanAddComponent } from '../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
-import { GreenBeanEditComponent } from '../app/roasting-section/green-beans/green-bean-edit/green-bean-edit.component';
 import { GreenBeanDetailComponent } from '../app/roasting-section/green-beans/green-bean-detail/green-bean-detail.component';
+import { GreenBeanEditComponent } from '../app/roasting-section/green-beans/green-bean-edit/green-bean-edit.component';
+import { GreenBean } from '../classes/green-bean/green-bean';
+import { UIAnalytics } from './uiAnalytics';
 
 /**
  * Handles every helping functionalities

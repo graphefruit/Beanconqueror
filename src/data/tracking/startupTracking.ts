@@ -1,6 +1,5 @@
 export default {
-
-  TITLE:'STARTUP',
+  TITLE: 'STARTUP',
   ACTIONS: {
     FORCE_TOUCH: {
       CATEGORY: 'FORCE_TOUCH',
@@ -8,8 +7,5 @@ export default {
     STARTUP_VIEW: {
       CATEGORY: 'STARTUP_VIEW',
     },
-
-  }
-
-
-}
+  },
+};

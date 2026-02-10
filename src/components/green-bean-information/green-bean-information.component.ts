@@ -1,51 +1,52 @@
+import { DecimalPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
-
-import { GreenBean } from '../../classes/green-bean/green-bean';
-import { GreenBeanPopoverActionsComponent } from '../../app/roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
-import { Bean } from '../../classes/bean/bean';
-import { GreenBeanAddComponent } from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
-import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
-import { Brew } from '../../classes/brew/brew';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIToast } from '../../services/uiToast';
-import { UIImage } from '../../services/uiImage';
-import { UIAlert } from '../../services/uiAlert';
-import { Settings } from '../../classes/settings/settings';
-import { GREEN_BEAN_ACTION } from '../../enums/green-beans/greenBeanAction';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
-import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
-import { UIGreenBeanHelper } from '../../services/uiGreenBeanHelper';
-import { LongPressDirective } from '../../directive/long-press.directive';
-import { AsyncImageComponent } from '../async-image/async-image.component';
-import { DecimalPipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../pipes/formatDate';
 import {
+  IonButton,
   IonCard,
   IonCardContent,
-  IonGrid,
-  IonRow,
   IonCol,
-  IonButton,
+  IonGrid,
   IonIcon,
   IonLabel,
+  IonRow,
   IonText,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
+import { GreenBeanAddComponent } from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
+import { GreenBeanPopoverActionsComponent } from '../../app/roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { GreenBean } from '../../classes/green-bean/green-bean';
+import { Settings } from '../../classes/settings/settings';
+import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { GREEN_BEAN_ACTION } from '../../enums/green-beans/greenBeanAction';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIGreenBeanHelper } from '../../services/uiGreenBeanHelper';
+import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
+import { UIImage } from '../../services/uiImage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'green-bean-information',

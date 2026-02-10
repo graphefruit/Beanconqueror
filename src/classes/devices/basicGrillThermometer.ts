@@ -1,11 +1,10 @@
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-
 import {
+  celciusToFahrenheit,
+  fahrenheitToCelcius,
   Temperature,
   TemperatureDevice,
-  fahrenheitToCelcius,
-  celciusToFahrenheit,
 } from './temperatureBluetoothDevice';
 
 declare var ble: any;
@@ -49,13 +48,13 @@ export class BasicGrillThermometer extends TemperatureDevice {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
 
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
   private parseStatusUpdate(temperatureRawStatus: Uint8Array) {
     this.logger.log(
-      'temperatureRawStatus received is: ' + temperatureRawStatus
+      'temperatureRawStatus received is: ' + temperatureRawStatus,
     );
 
     const temperature =
@@ -78,7 +77,7 @@ export class BasicGrillThermometer extends TemperatureDevice {
       BasicGrillThermometer.TEMPERATURE_SERVICE_UUID,
       BasicGrillThermometer.TEMPERATURE_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

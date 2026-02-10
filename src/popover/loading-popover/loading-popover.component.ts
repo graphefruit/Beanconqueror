@@ -1,18 +1,21 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
-import { UILog } from '../../services/uiLog';
-import { ShareService } from '../../services/shareService/share-service.service';
-import { EventQueueService } from '../../services/queueService/queue-service.service';
-import { AppEventType } from '../../enums/appEvent/appEvent';
-import { Subscription } from 'rxjs';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
 import {
-  IonContent,
-  IonSpinner,
-  IonFooter,
   IonButton,
+  IonContent,
+  IonFooter,
+  IonSpinner,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+
+import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
+import { AppEventType } from '../../enums/appEvent/appEvent';
+import { EventQueueService } from '../../services/queueService/queue-service.service';
+import { ShareService } from '../../services/shareService/share-service.service';
+import { UILog } from '../../services/uiLog';
 
 @Component({
   selector: 'loading-popover',

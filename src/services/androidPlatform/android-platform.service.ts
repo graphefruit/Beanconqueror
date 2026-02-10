@@ -1,19 +1,21 @@
-import { Injectable, inject } from '@angular/core';
-import { UIStorage } from '../uiStorage';
-import { UILog } from '../uiLog';
-import { UIFileHelper } from '../uiFileHelper';
-import { EventQueueService } from '../queueService/queue-service.service';
-import { Platform } from '@ionic/angular/standalone';
-import { AppEventType } from '../../enums/appEvent/appEvent';
-import { debounceTime } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
 
-import { UIHelper } from '../uiHelper';
+import { Platform } from '@ionic/angular/standalone';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { debounceTime } from 'rxjs/operators';
+
+import { AppEventType } from '../../enums/appEvent/appEvent';
+import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
-import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UIExportImportHelper } from '../uiExportImportHelper';
+import { UIFileHelper } from '../uiFileHelper';
+import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
+import { UISettingsStorage } from '../uiSettingsStorage';
+import { UIStorage } from '../uiStorage';
+
 @Injectable({
   providedIn: 'root',
 })

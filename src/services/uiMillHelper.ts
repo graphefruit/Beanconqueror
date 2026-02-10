@@ -1,15 +1,15 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { Brew } from '../classes/brew/brew';
-import { UIBrewStorage } from './uiBrewStorage';
-import MILL_TRACKING from '../data/tracking/millTracking';
-import { MillAddComponent } from '../app/mill/mill-add/mill-add.component';
-import { UIAnalytics } from './uiAnalytics';
 import { ModalController } from '@ionic/angular/standalone';
-import { MillEditComponent } from '../app/mill/mill-edit/mill-edit.component';
-import { Mill } from '../classes/mill/mill';
+
+import { MillAddComponent } from '../app/mill/mill-add/mill-add.component';
 import { MillDetailComponent } from '../app/mill/mill-detail/mill-detail.component';
+import { MillEditComponent } from '../app/mill/mill-edit/mill-edit.component';
+import { Brew } from '../classes/brew/brew';
+import { Mill } from '../classes/mill/mill';
+import MILL_TRACKING from '../data/tracking/millTracking';
+import { UIAnalytics } from './uiAnalytics';
+import { UIBrewStorage } from './uiBrewStorage';
 
 /**
  * Handles every helping functionalities

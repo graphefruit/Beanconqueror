@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import { readdirSync } from 'fs';
 
 const iconsDir = './src/assets/custom-ion-icons';

@@ -1,9 +1,6 @@
 export default {
-
-  TITLE:'MILL',
+  TITLE: 'MILL',
   ACTIONS: {
-
-
     ADD: 'ADD',
     ADD_FINISH: 'ADD_FINISH',
     EDIT: 'EDIT',
@@ -12,7 +9,6 @@ export default {
     POPOVER_ACTIONS: 'POPOVER_ACTIONS',
     DELETE: 'DELETE',
     ARCHIVE: 'ARCHIVE',
-    PHOTO_VIEW: 'PHOTO_VIEW'
-  }
-
-}
+    PHOTO_VIEW: 'PHOTO_VIEW',
+  },
+};

@@ -1,25 +1,28 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { UIHelper } from '../../../services/uiHelper';
-import { TranslatePipe } from '@ngx-translate/core';
-import { KeysPipe } from '../../../pipes/keys';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonBackButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  chevronForwardOutline,
   chevronDownOutline,
+  chevronForwardOutline,
   chevronUpOutline,
 } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonBackButton,
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonItem,
-  IonIcon,
-  IonLabel,
-  IonCardContent,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../../components/header/header.component';
+import { KeysPipe } from '../../../pipes/keys';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'credits',

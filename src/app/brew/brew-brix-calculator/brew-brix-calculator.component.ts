@@ -1,19 +1,22 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonRow,
-  IonCol,
   IonButton,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonRow,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-brew-brix-calculator',

@@ -2,15 +2,16 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  Input,
   inject,
+  Input,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
+
 import { ModalController } from '@ionic/angular/standalone';
 
-import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Water } from '../classes/water/water';
 import { WaterModalSelectComponent } from '../app/water-section/water/water-modal-select/water-modal-select.component';
+import { Water } from '../classes/water/water';
+import { UIWaterStorage } from '../services/uiWaterStorage';
 
 @Directive({ selector: '[ngModel][water-overlay]' })
 export class WaterOverlayDirective {

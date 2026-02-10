@@ -1,11 +1,14 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { Platform } from '@ionic/angular/standalone';
-import { UIAlert } from '../uiAlert';
+
 import { TranslateService } from '@ngx-translate/core';
-import { IntentHandlerService } from '../intentHandler/intent-handler.service';
-import { UILog } from '../uiLog';
 import { Observable, Subject } from 'rxjs';
+
+import { IntentHandlerService } from '../intentHandler/intent-handler.service';
+import { UIAlert } from '../uiAlert';
 import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
 import { UIToast } from '../uiToast';
 
 /**https://github.com/EYALIN/community-cordova-plugin-nfc**/

@@ -1,43 +1,43 @@
-import { Component, Input, inject } from '@angular/core';
-
-import { ModalController } from '@ionic/angular/standalone';
-
-import { UIHelper } from '../../../../services/uiHelper';
-import { UIToast } from '../../../../services/uiToast';
-import { Water } from '../../../../classes/water/water';
-import { UIWaterStorage } from '../../../../services/uiWaterStorage';
-
-import { WATER_UNIT } from '../../../../enums/water/waterUnit';
-import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
-import WATER_TRACKING from '../../../../data/tracking/waterTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
-import { PreventCharacterDirective } from '../../../../directive/prevent-character.directive';
-import { RemoveEmptyNumberDirective } from '../../../../directive/remove-empty-number.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import { KeysPipe } from '../../../../pipes/keys';
-import { addIcons } from 'ionicons';
-import { informationCircleOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
   IonButton,
-  IonIcon,
-  IonContent,
   IonCard,
-  IonItem,
-  IonInput,
   IonCheckbox,
-  IonLabel,
-  IonTextarea,
-  IonRow,
   IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
   IonSelect,
   IonSelectOption,
-  IonFooter,
+  IonTextarea,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { informationCircleOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Water } from '../../../../classes/water/water';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
+import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import { PreventCharacterDirective } from '../../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../../directive/remove-empty-number.directive';
+import { WATER_UNIT } from '../../../../enums/water/waterUnit';
+import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
+import { KeysPipe } from '../../../../pipes/keys';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UIToast } from '../../../../services/uiToast';
+import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 
 @Component({
   selector: 'app-water-edit',

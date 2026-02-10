@@ -1,8 +1,9 @@
-/** Core */
 import { Injectable } from '@angular/core';
+
+import moment from 'moment';
+
 import { LOGS_ENUM } from '../enums/logs/logs';
 import { ILogInterface } from '../interfaces/log/iLog';
-import moment from 'moment';
 
 @Injectable({
   providedIn: 'root',

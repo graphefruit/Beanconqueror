@@ -1,8 +1,10 @@
-import { PreparationDevice } from '../preparationDevice';
 import { HttpClient } from '@angular/common/http';
-import { Preparation } from '../../preparation/preparation';
 
+import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import moment from 'moment';
+
+import { IGaggiuinoParams } from '../../../interfaces/preparationDevices/gaggiuino/iGaggiuinoParams';
+import { UILog } from '../../../services/uiLog';
 import {
   BrewFlow,
   IBrewPressureFlow,
@@ -10,9 +12,8 @@ import {
   IBrewTemperatureFlow,
   IBrewWeightFlow,
 } from '../../brew/brewFlow';
-import { IGaggiuinoParams } from '../../../interfaces/preparationDevices/gaggiuino/iGaggiuinoParams';
-import { CapacitorHttp, HttpResponse } from '@capacitor/core';
-import { UILog } from '../../../services/uiLog';
+import { Preparation } from '../../preparation/preparation';
+import { PreparationDevice } from '../preparationDevice';
 
 declare var cordova;
 

@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { BrewRatioCardComponent } from '../../../components/brew-ratio-card/brew-ratio-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
+  IonContent,
   IonHeader,
   IonMenuButton,
-  IonContent,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { BrewRatioCardComponent } from '../../../components/brew-ratio-card/brew-ratio-card.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 
 @Component({

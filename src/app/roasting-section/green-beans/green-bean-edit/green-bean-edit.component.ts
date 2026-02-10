@@ -1,33 +1,35 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { GreenBean } from '../../../../classes/green-bean/green-bean';
-import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
-import { UIImage } from '../../../../services/uiImage';
-import { UIHelper } from '../../../../services/uiHelper';
-import { UIFileHelper } from '../../../../services/uiFileHelper';
-import { UIToast } from '../../../../services/uiToast';
-
-import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
-import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GreenBeanGeneralInformationComponent } from '../../../../components/beans/green-bean-general-information/green-bean-general-information.component';
-import { BeanSortInformationComponent } from '../../../../components/beans/bean-sort-information/bean-sort-information.component';
-import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonButton,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonLabel,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonFooter,
-  IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { GreenBean } from '../../../../classes/green-bean/green-bean';
+import { BeanSortInformationComponent } from '../../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { GreenBeanGeneralInformationComponent } from '../../../../components/beans/green-bean-general-information/green-bean-general-information.component';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
+import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIFileHelper } from '../../../../services/uiFileHelper';
+import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UIImage } from '../../../../services/uiImage';
+import { UIToast } from '../../../../services/uiToast';
 
 @Component({
   selector: 'green-bean-edit',

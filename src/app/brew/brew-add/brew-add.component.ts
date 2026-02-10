@@ -2,73 +2,76 @@ import {
   ChangeDetectorRef,
   Component,
   HostListener,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Geolocation } from '@capacitor/geolocation';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { Brew } from '../../../classes/brew/brew';
-import moment from 'moment';
-import { UIToast } from '../../../services/uiToast';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { UILog } from '../../../services/uiLog';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { Settings } from '../../../classes/settings/settings';
-import { UIHealthKit } from '../../../services/uiHealthKit';
-import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { UIAlert } from '../../../services/uiAlert';
-import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes'; // Added import
 
-import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+import {
+  IonButton,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { Geolocation } from '@capacitor/geolocation';
+import { TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment';
+import { Subscription } from 'rxjs';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
+import { BrewFlow } from '../../../classes/brew/brewFlow';
+import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import {
   BluetoothScale,
   SCALE_TIMER_COMMAND,
   sleep,
 } from '../../../classes/devices';
+import { Mill } from '../../../classes/mill/mill';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Settings } from '../../../classes/settings/settings';
+import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes'; // Added import
+import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
-import { Subscription } from 'rxjs';
 import { HapticService } from '../../../services/hapticService/haptic.service';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
-import { BrewFlow } from '../../../classes/brew/brewFlow';
-import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
-import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
-import { UIHelper } from '../../../services/uiHelper';
-import { Bean } from '../../../classes/bean/bean';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
-import { AppEventType } from '../../../enums/appEvent/appEvent';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import { Mill } from '../../../classes/mill/mill';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonHeader,
-  IonButton,
-  IonIcon,
-  IonChip,
-  IonContent,
-  IonFooter,
-  IonRow,
-  IonCol,
-} from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
-import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
-import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHealthKit } from '../../../services/uiHealthKit';
+import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
+import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
 declare var Plotly;
 

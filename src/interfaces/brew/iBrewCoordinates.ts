@@ -1,4 +1,3 @@
-
 export interface IBrewCoordinates {
   accuracy: number;
   altitude: number | null;
@@ -7,5 +6,4 @@ export interface IBrewCoordinates {
   latitude: number;
   longitude: number;
   speed: number | null;
-
 }

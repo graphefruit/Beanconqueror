@@ -1,5 +1,6 @@
-import { PeripheralData } from './ble.types';
 import { EventEmitter } from '@angular/core';
+
+import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
 import { to128bitUUID } from './common/util';
 

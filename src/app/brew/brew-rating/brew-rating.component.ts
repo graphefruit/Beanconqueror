@@ -1,28 +1,31 @@
-import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { UIHelper } from '../../../services/uiHelper';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController } from '@ionic/angular/standalone';
-import { Brew } from '../../../classes/brew/brew';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ToFixedPipe } from '../../../pipes/toFixed';
+
 import {
-  IonHeader,
+  IonBadge,
+  IonButton,
+  IonCol,
   IonContent,
+  IonHeader,
   IonItem,
   IonLabel,
-  IonBadge,
   IonRange,
-  IonTextarea,
   IonRow,
-  IonCol,
-  IonButton,
+  IonTextarea,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Settings } from '../../../classes/settings/settings';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { IBrew } from '../../../interfaces/brew/iBrew';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-brew-rating',

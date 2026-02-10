@@ -1,22 +1,26 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import moment from 'moment/moment';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIAlert } from '../../services/uiAlert';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
-  IonTitle,
+  IonButton,
+  IonCol,
   IonContent,
   IonFooter,
+  IonHeader,
   IonRow,
-  IonCol,
-  IonButton,
+  IonTitle,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment/moment';
+
+import { Settings } from '../../classes/settings/settings';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-please-activate-analytics-popover',

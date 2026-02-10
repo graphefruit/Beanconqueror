@@ -2,21 +2,24 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 import {
+  IonButton,
+  IonCol,
   IonContent,
-  IonTitle,
   IonImg,
   IonRow,
-  IonCol,
-  IonButton,
+  IonTitle,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-popover',

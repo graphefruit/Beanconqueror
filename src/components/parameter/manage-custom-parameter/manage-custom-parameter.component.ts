@@ -1,26 +1,29 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnInit,
-  inject,
 } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { Subject } from 'rxjs';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
   IonCard,
-  IonTitle,
-  IonItem,
   IonCheckbox,
+  IonItem,
+  IonTitle,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { Settings } from '../../../classes/settings/settings';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'manage-custom-parameter',

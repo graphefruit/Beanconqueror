@@ -1,33 +1,36 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { Bean } from '../../../classes/bean/bean';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { eyeOffOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonSearchbar,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonCard,
-  IonSearchbar,
-  IonItem,
-  IonCheckbox,
-  IonRadioGroup,
-  IonRadio,
-  IonFooter,
-  IonRow,
-  IonCol,
-  IonIcon,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { eyeOffOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
   selector: 'preparation-tool-modal-select',

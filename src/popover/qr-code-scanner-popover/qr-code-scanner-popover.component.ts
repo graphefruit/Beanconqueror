@@ -1,21 +1,25 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonTitle,
+  IonButton,
+  IonCheckbox,
+  IonCol,
   IonContent,
   IonFooter,
+  IonHeader,
   IonItem,
-  IonCheckbox,
   IonRow,
-  IonCol,
-  IonButton,
+  IonTitle,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Settings } from '../../classes/settings/settings';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-qr-code-scanner-popover',

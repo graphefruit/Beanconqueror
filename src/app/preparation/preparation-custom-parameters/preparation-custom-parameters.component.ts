@@ -1,30 +1,33 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ManageCustomParameterComponent } from '../../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
-import { DefaultCustomParameterComponent } from '../../../components/parameter/default-custom-parameter/default-custom-parameter.component';
-import { SortCustomParameterComponent } from '../../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
-import { ListViewCustomParameterComponent } from '../../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
-import { RepeatCustomParameterComponent } from '../../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonContent,
   IonCard,
   IonCardContent,
-  IonItem,
   IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonLabel,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { DefaultCustomParameterComponent } from '../../../components/parameter/default-custom-parameter/default-custom-parameter.component';
+import { ListViewCustomParameterComponent } from '../../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
+import { ManageCustomParameterComponent } from '../../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
+import { RepeatCustomParameterComponent } from '../../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
+import { SortCustomParameterComponent } from '../../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
   selector: 'app-preparation-custom-parameters',

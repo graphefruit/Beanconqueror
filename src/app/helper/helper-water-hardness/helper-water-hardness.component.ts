@@ -1,22 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
-import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCol,
   IonContent,
   IonGrid,
-  IonRow,
-  IonCol,
-  IonCard,
-  IonCardHeader,
-  IonCardContent,
-  IonItem,
+  IonHeader,
   IonInput,
+  IonItem,
+  IonMenuButton,
+  IonRow,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../../components/header/header.component';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 
 @Component({
   selector: 'helper-water-hardness',

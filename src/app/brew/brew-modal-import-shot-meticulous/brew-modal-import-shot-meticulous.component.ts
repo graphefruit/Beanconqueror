@@ -2,36 +2,38 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-
-import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { ModalController } from '@ionic/angular/standalone';
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
-import { UIHelper } from '../../../services/uiHelper';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { UIAlert } from '../../../services/uiAlert';
 import { FormsModule } from '@angular/forms';
-import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonContent,
-  IonRadioGroup,
+  IonButton,
   IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonGrid,
+  IonHeader,
   IonItem,
   IonRadio,
-  IonGrid,
-  IonFooter,
+  IonRadioGroup,
   IonRow,
-  IonCol,
-  IonButton,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-brew-modal-import-shot-meticulous',

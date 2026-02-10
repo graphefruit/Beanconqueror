@@ -1,26 +1,29 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnInit,
-  inject,
 } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
-import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
   IonCard,
-  IonTitle,
-  IonReorderGroup,
   IonItem,
   IonLabel,
   IonReorder,
+  IonReorderGroup,
+  IonTitle,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { Settings } from '../../../classes/settings/settings';
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'sort-custom-parameter',

@@ -1,17 +1,20 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { chevronForwardOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonMenuButton,
-  IonContent,
   IonCard,
+  IonContent,
+  IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
-  IonIcon,
+  IonMenuButton,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { chevronForwardOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({

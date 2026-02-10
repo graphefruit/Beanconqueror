@@ -1,22 +1,25 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIToast } from '../../../../services/uiToast';
-import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import { FormsModule } from '@angular/forms';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonHeader,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonRow,
-  IonCol,
-  IonButton,
-} from '@ionic/angular/standalone';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
+import { UIToast } from '../../../../services/uiToast';
 
 @Component({
   selector: 'app-roasting-machine-add',

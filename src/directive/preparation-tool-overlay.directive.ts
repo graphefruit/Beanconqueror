@@ -3,15 +3,17 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   Output,
-  inject,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
+
 import { ModalController } from '@ionic/angular/standalone';
-import { UIPreparationStorage } from '../services/uiPreparationStorage';
-import { Preparation } from '../classes/preparation/preparation';
+
 import { PreparationToolModalSelectComponent } from '../app/preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
+import { Preparation } from '../classes/preparation/preparation';
+import { UIPreparationStorage } from '../services/uiPreparationStorage';
 
 @Directive({ selector: '[ngModel][preparation-tool-overlay]' })
 export class PreparationToolOverlayDirective {

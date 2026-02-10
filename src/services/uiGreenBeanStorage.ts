@@ -1,18 +1,13 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
-/** Classes */
-/** Interfaces */
+import { inject, Injectable } from '@angular/core';
 
-/** Services */
+import { TranslateService } from '@ngx-translate/core';
+
+import { GreenBean } from '../classes/green-bean/green-bean';
 import { StorageClass } from '../classes/storageClass';
+import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
-import { TranslateService } from '@ngx-translate/core';
-import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
-import { GreenBean } from '../classes/green-bean/green-bean';
-
-/** Ionic native */
 
 @Injectable({
   providedIn: 'root',

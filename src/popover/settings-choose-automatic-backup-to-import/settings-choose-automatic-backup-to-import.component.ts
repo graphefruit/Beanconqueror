@@ -1,28 +1,31 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { FileInfo } from '@capacitor/filesystem';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { Settings } from '../../classes/settings/settings';
-import { UIHelper } from '../../services/uiHelper';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../pipes/formatDate';
+
 import {
-  IonHeader,
-  IonContent,
+  IonButton,
   IonCard,
   IonCardContent,
-  IonRadioGroup,
-  IonItem,
-  IonRadio,
-  IonLabel,
-  IonFooter,
-  IonRow,
   IonCol,
-  IonButton,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { FileInfo } from '@capacitor/filesystem';
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-settings-choose-automatic-backup-to-import',

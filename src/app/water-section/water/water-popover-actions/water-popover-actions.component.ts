@@ -1,16 +1,19 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Water } from '../../../../classes/water/water';
 import { WATER_ACTION } from '../../../../enums/water/waterActions';
-import { ModalController } from '@ionic/angular/standalone';
 import { IWater } from '../../../../interfaces/water/iWater';
-import { TranslatePipe } from '@ngx-translate/core';
-import {
-  IonHeader,
-  IonContent,
-  IonList,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-water-popover-actions',

@@ -1,45 +1,48 @@
-import { Component, Input, inject } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
-import { UIToast } from '../../../services/uiToast';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { environment } from '../../../environments/environment';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ToFixedPipe } from '../../../pipes/toFixed';
-import { addIcons } from 'ionicons';
-import { checkmarkCircleOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonContent,
+  IonBadge,
+  IonButton,
   IonCard,
   IonCardContent,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
   IonItem,
+  IonLabel,
+  IonRange,
   IonSelect,
   IonSelectOption,
-  IonInput,
-  IonLabel,
-  IonBadge,
-  IonRange,
-  IonCheckbox,
-  IonButton,
-  IonIcon,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { checkmarkCircleOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
+import { SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Settings } from '../../../classes/settings/settings';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { environment } from '../../../environments/environment';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'app-preparation-connected-device',

@@ -1,35 +1,35 @@
 .unwrapped-content {
-    --background: var(--ion-background-color);
-    color: var(--ion-text-color);
+  --background: var(--ion-background-color);
+  color: var(--ion-text-color);
 }
 
 .close-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-    font-size: 32px;
-    opacity: 0.7;
-    color: var(--ion-text-color);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  font-size: 32px;
+  opacity: 0.7;
+  color: var(--ion-text-color);
 }
 
 .unwrapped-swiper {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 swiper-slide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--ion-background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ion-background-color);
 }
 
 .slide-content {
-    text-align: center;
-    padding: 20px;
-    width: 100%;
-    max-width: 400px;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
 }
 
 // Apply flex layout only to list-based slides for scrolling
@@ -39,12 +39,12 @@ swiper-slide {
 .slide-varieties,
 .slide-processing,
 .slide-grinders {
-    .slide-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
+  .slide-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
 // Ensure other slides are scrollable if content overflows
@@ -53,141 +53,140 @@ swiper-slide {
 .slide-intro,
 .slide-summary,
 .slide-favorites {
-    .slide-content {
-        max-height: 100%;
-        overflow-y: auto;
+  .slide-content {
+    max-height: 100%;
+    overflow-y: auto;
 
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        &::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Hide scrollbar for IE, Edge and Firefox */
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
     }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
   p {
     color: var(--ion-color-accent-secondary);
   }
 }
 
 h1 {
-    font-size: 3rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: var(--ion-color-accent-secondary);
-    flex-shrink: 0;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--ion-color-accent-secondary);
+  flex-shrink: 0;
 }
 
 h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    color: var(--ion-color-accent-secondary);
-    flex-shrink: 0;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: var(--ion-color-accent-secondary);
+  flex-shrink: 0;
 }
 
 // ... other styles ...
 
 .top-countries-list,
 .roaster-list {
-    margin-top: 30px;
-    text-align: left;
-    width: 100%;
-    overflow-y: auto;
-    flex-grow: 1;
-    min-height: 0;
+  margin-top: 30px;
+  text-align: left;
+  width: 100%;
+  overflow-y: auto;
+  flex-grow: 1;
+  min-height: 0;
 
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    &::-webkit-scrollbar {
-        display: none;
-    }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .country-item,
 .roaster-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  position: relative;
+  height: 40px;
+
+  .bar-container {
+    flex-grow: 1;
+    background: var(--ion-background-color);
+    border-radius: 8px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    margin-right: 10px;
+  }
+
+  .bar {
+    height: 100%;
+    background: var(--beanconqueror-highlight-color-item);
+    border-radius: 8px;
+    transition: width 1s ease-out;
+  }
+
+  .label-container {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
-    position: relative;
-    height: 40px;
+    z-index: 2;
+    color: var(--ion-text-color);
+    font-weight: bold;
+  }
 
-    .bar-container {
-        flex-grow: 1;
-        background: var(--ion-background-color);
-        border-radius: 8px;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        margin-right: 10px;
-    }
-
-    .bar {
-        height: 100%;
-        background: var(--beanconqueror-highlight-color-item);
-        border-radius: 8px;
-        transition: width 1s ease-out;
-    }
-
-    .label-container {
-        position: absolute;
-        left: 10px;
-        top: 0;
-        bottom: 0;
-        display: flex;
-        align-items: center;
-        z-index: 2;
-        color: var(--ion-text-color);
-        font-weight: bold;
-
-    }
-
-    .count-container {
-        min-width: 30px;
-        text-align: right;
-        font-weight: bold;
-        color: var(--ion-color-accent);
-    }
+  .count-container {
+    min-width: 30px;
+    text-align: right;
+    font-weight: bold;
+    color: var(--ion-color-accent);
+  }
 }
 
 .favorite-section {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 
-    .highlight {
-        font-size: 2rem;
-        font-weight: bold;
-        color: var(--ion-color-accent);
-    }
+  .highlight {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--ion-color-accent);
+  }
 
-    .sub-highlight {
-        font-size: 1.2rem;
-        color: var(--ion-text-color);
-        opacity: 0.8;
-    }
+  .sub-highlight {
+    font-size: 1.2rem;
+    color: var(--ion-text-color);
+    opacity: 0.8;
+  }
 }
 
 .summary-card {
-    background: var(--ion-item-sort-background);
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: var(--ion-item-sort-background);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-    .summary-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
-        font-size: 1.2rem;
-        color: var(--ion-text-color);
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: var(--ion-text-color);
 
-        span:last-child {
-            font-weight: bold;
-            color: var(--ion-color-accent);
-        }
+    span:last-child {
+      font-weight: bold;
+      color: var(--ion-color-accent);
     }
+  }
 }

@@ -3,18 +3,20 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   Output,
-  inject,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
+
 import { ModalController } from '@ionic/angular/standalone';
-import { UIPreparationStorage } from '../services/uiPreparationStorage';
-import { Preparation } from '../classes/preparation/preparation';
+
 import { PreparationModalSelectComponent } from '../app/preparation/preparation-modal-select/preparation-modal-select.component';
-import { EventQueueService } from '../services/queueService/queue-service.service';
 import { AppEvent } from '../classes/appEvent/appEvent';
+import { Preparation } from '../classes/preparation/preparation';
 import { AppEventType } from '../enums/appEvent/appEvent';
+import { EventQueueService } from '../services/queueService/queue-service.service';
+import { UIPreparationStorage } from '../services/uiPreparationStorage';
 
 @Directive({ selector: '[ngModel][preparation-overlay]' })
 export class PreparationOverlayDirective {

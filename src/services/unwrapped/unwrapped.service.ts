@@ -1,8 +1,13 @@
-import { Injectable, inject } from '@angular/core';
-import { UIBeanStorage } from '../uiBeanStorage';
-import { Bean } from '../../classes/bean/bean';
+import { inject, Injectable } from '@angular/core';
+
 import { DateTime } from 'luxon';
+
+import { Bean } from '../../classes/bean/bean';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
+import { UIBeanStorage } from '../uiBeanStorage';
+import { UIBrewStorage } from '../uiBrewStorage';
+import { UIMillStorage } from '../uiMillStorage';
+import { UIPreparationStorage } from '../uiPreparationStorage';
 
 export interface UnwrappedStats {
   year: number;
@@ -26,10 +31,6 @@ export interface UnwrappedStats {
   mostUsedBean: { name: string; count: number } | null;
   bestRatedBean: { name: string; rating: number; roaster: string } | null;
 }
-
-import { UIBrewStorage } from '../uiBrewStorage';
-import { UIPreparationStorage } from '../uiPreparationStorage';
-import { UIMillStorage } from '../uiMillStorage';
 
 @Injectable({
   providedIn: 'root',

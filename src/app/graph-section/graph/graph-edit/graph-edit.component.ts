@@ -1,41 +1,45 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../../services/uiHelper';
-import { UIToast } from '../../../../services/uiToast';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
-import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
-import { IGraph } from '../../../../interfaces/graph/iGraph';
-import { Graph } from '../../../../classes/graph/graph';
-import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import { UIGraphHelper } from '../../../../services/uiGraphHelper';
-import { UIFileHelper } from '../../../../services/uiFileHelper';
-import { UIAlert } from '../../../../services/uiAlert';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
+
+import {
+  IonButton,
+  IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonTextarea,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   cloudUploadOutline,
   informationCircleOutline,
   trashOutline,
 } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonCard,
-  IonItem,
-  IonInput,
-  IonLabel,
-  IonTextarea,
-  IonFooter,
-  IonRow,
-  IonCol,
-} from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { BrewFlow } from '../../../../classes/brew/brewFlow';
+import { Graph } from '../../../../classes/graph/graph';
+import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
+import { IGraph } from '../../../../interfaces/graph/iGraph';
+import { UIAlert } from '../../../../services/uiAlert';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIFileHelper } from '../../../../services/uiFileHelper';
+import { UIGraphHelper } from '../../../../services/uiGraphHelper';
+import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UIToast } from '../../../../services/uiToast';
 
 @Component({
   selector: 'app-graph-edit',

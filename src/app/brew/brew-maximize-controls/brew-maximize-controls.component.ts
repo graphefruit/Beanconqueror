@@ -3,33 +3,37 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Brew } from '../../../classes/brew/brew';
-import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { Settings } from '../../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { Subscription } from 'rxjs';
-import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonButton,
-  IonIcon,
-  IonContent,
   IonCard,
   IonCardHeader,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { closeOutline } from 'ionicons/icons';
+
+import { Subscription } from 'rxjs';
+
+import { Brew } from '../../../classes/brew/brew';
+import { Settings } from '../../../classes/settings/settings';
+import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-brew-maximize-controls',

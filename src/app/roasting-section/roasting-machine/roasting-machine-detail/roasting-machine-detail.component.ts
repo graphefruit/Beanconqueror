@@ -1,24 +1,27 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../../services/uiHelper';
-import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
-import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
-import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
   IonButton,
-  IonContent,
   IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
   IonItem,
   IonLabel,
-  IonFooter,
   IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
+import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIHelper } from '../../../../services/uiHelper';
 
 @Component({
   selector: 'app-roasting-machine-detail',

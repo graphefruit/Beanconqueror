@@ -1,40 +1,39 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
-import {
-  Camera,
-  CameraDirection,
-  CameraResultType,
-  CameraSource,
-  CameraPluginPermissions,
-} from '@capacitor/camera';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { inject, Injectable } from '@angular/core';
 
-/** Ionic */
 import {
   AlertController,
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
-import { UIHelper } from './uiHelper';
-import { UIFileHelper } from './uiFileHelper';
-import { TranslateService } from '@ngx-translate/core';
 
-import { UIAlert } from './uiAlert';
-import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
-import { Brew } from '../classes/brew/brew';
-import { GreenBean } from '../classes/green-bean/green-bean';
-import { Bean } from '../classes/bean/bean';
-import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
-import { UISettingsStorage } from './uiSettingsStorage';
-import { Settings } from '../classes/settings/settings';
-import { Water } from '../classes/water/water';
-import { Mill } from '../classes/mill/mill';
-import { Preparation } from '../classes/preparation/preparation';
-import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import {
+  Camera,
+  CameraDirection,
+  CameraPluginPermissions,
+  CameraResultType,
+  CameraSource,
+} from '@capacitor/camera';
 import {
   CameraPermissionType,
   PermissionStatus,
 } from '@capacitor/camera/dist/esm/definitions';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { TranslateService } from '@ngx-translate/core';
+
+import { Bean } from '../classes/bean/bean';
+import { Brew } from '../classes/brew/brew';
+import { GreenBean } from '../classes/green-bean/green-bean';
+import { Mill } from '../classes/mill/mill';
+import { Preparation } from '../classes/preparation/preparation';
+import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { Settings } from '../classes/settings/settings';
+import { Water } from '../classes/water/water';
+import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
+import { UIAlert } from './uiAlert';
+import { UIFileHelper } from './uiFileHelper';
+import { UIHelper } from './uiHelper';
+import { UISettingsStorage } from './uiSettingsStorage';
 
 @Injectable({
   providedIn: 'root',

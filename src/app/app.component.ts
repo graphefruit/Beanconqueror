@@ -1,40 +1,95 @@
 import {
   AfterViewInit,
   Component,
+  inject,
   ViewChild,
   ViewEncapsulation,
-  inject,
 } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { App } from '@capacitor/app';
-import { Device } from '@capacitor/device';
-import { Animation, StatusBar, Style } from '@capacitor/status-bar';
-import { Keyboard } from '@capacitor/keyboard';
 
 import {
+  IonApp,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenu,
+  IonMenuToggle,
+  IonRouterOutlet,
+  IonSplitPane,
+  IonTitle,
+  IonToolbar,
   MenuController,
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  closeOutline,
+  codeSlashOutline,
+  logoDiscord,
+  logoFacebook,
+  logoInstagram,
+} from 'ionicons/icons';
+
+import { App } from '@capacitor/app';
+import { SystemBars } from '@capacitor/core';
+import { Device } from '@capacitor/device';
+import { Keyboard } from '@capacitor/keyboard';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { Animation, StatusBar, Style } from '@capacitor/status-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
-/** Third party */
 import moment from 'moment';
+import { filter } from 'rxjs/operators';
+import { register } from 'swiper/element/bundle';
+
+import { Bean } from '../classes/bean/bean';
+import { BrewInstanceHelper } from '../classes/brew/brew';
+import {
+  Logger,
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  sleep,
+  TemperatureType,
+} from '../classes/devices';
+import { Mill } from '../classes/mill/mill';
+import { Preparation } from '../classes/preparation/preparation';
 import { Settings } from '../classes/settings/settings';
+import { Water } from '../classes/water/water';
+import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
+import SettingsTracking from '../data/tracking/settingsTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
+import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
+import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
 import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
 import { environment } from '../environments/environment';
+import { beanconquerorIcons } from '../generated/icon-registry';
 import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
+import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
+import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
+import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
+import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
+import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
 import { UIAnalytics } from '../services/uiAnalytics';
 import { UIBeanHelper } from '../services/uiBeanHelper';
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewHelper } from '../services/uiBrewHelper';
 import { UIBrewStorage } from '../services/uiBrewStorage';
+import { UIExportImportHelper } from '../services/uiExportImportHelper';
+import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
 import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
@@ -44,66 +99,10 @@ import { UIPreparationHelper } from '../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../services/uiPreparationStorage';
 import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
 import { UISettingsStorage } from '../services/uiSettingsStorage';
+import { UIStorage } from '../services/uiStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import {
-  Logger,
-  PressureType,
-  RefractometerType,
-  ScaleType,
-  sleep,
-  TemperatureType,
-} from '../classes/devices';
-import { UIExportImportHelper } from '../services/uiExportImportHelper';
-import { register } from 'swiper/element/bundle';
-import { UIGraphStorage } from '../services/uiGraphStorage.service';
-import { UIStorage } from '../services/uiStorage';
-import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
-import { SplashScreen } from '@capacitor/splash-screen';
-import { BrewInstanceHelper } from '../classes/brew/brew';
-import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
-import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
-import SettingsTracking from '../data/tracking/settingsTracking';
-import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
-import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
-import { filter } from 'rxjs/operators';
-import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
-import { Mill } from '../classes/mill/mill';
-import { Preparation } from '../classes/preparation/preparation';
-import { Bean } from '../classes/bean/bean';
-import { Water } from '../classes/water/water';
-import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
-import { ThemeService } from '../services/theme/theme.service';
-import { SystemBars } from '@capacitor/core';
-import { beanconquerorIcons } from '../generated/icon-registry';
-import { addIcons } from 'ionicons';
-import {
-  closeOutline,
-  logoInstagram,
-  logoFacebook,
-  codeSlashOutline,
-  logoDiscord,
-} from 'ionicons/icons';
-import {
-  IonApp,
-  IonSplitPane,
-  IonMenu,
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonButton,
-  IonIcon,
-  IonTitle,
-  IonContent,
-  IonList,
-  IonMenuToggle,
-  IonItem,
-  IonLabel,
-  IonFooter,
-  IonRouterOutlet,
-} from '@ionic/angular/standalone';
 
 declare var window;
 

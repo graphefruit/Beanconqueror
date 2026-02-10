@@ -1,45 +1,48 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController } from '@ionic/angular/standalone';
-import { Mill } from '../../classes/mill/mill';
-import { MILL_ACTION } from '../../enums/mills/millActions';
-import { MillPopoverActionsComponent } from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
-import { Brew } from '../../classes/brew/brew';
-import { UIMillHelper } from '../../services/uiMillHelper';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIToast } from '../../services/uiToast';
-import { UIAlert } from '../../services/uiAlert';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIImage } from '../../services/uiImage';
-import MILL_TRACKING from '../../data/tracking/millTracking';
-import { UIHelper } from '../../services/uiHelper';
-import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
-import { LongPressDirective } from '../../directive/long-press.directive';
-import { AsyncImageComponent } from '../async-image/async-image.component';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../pipes/formatDate';
-import { MillFunction } from '../../pipes/mill/millFunction';
+
 import {
+  IonButton,
   IonCard,
   IonCardContent,
-  IonGrid,
-  IonRow,
   IonCol,
-  IonButton,
+  IonGrid,
   IonIcon,
   IonLabel,
+  IonRow,
   IonText,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { MillPopoverActionsComponent } from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
+import { Brew } from '../../classes/brew/brew';
+import { Mill } from '../../classes/mill/mill';
+import { Settings } from '../../classes/settings/settings';
+import MILL_TRACKING from '../../data/tracking/millTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { MILL_ACTION } from '../../enums/mills/millActions';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { MillFunction } from '../../pipes/mill/millFunction';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIImage } from '../../services/uiImage';
+import { UIMillHelper } from '../../services/uiMillHelper';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'mill-information-card',

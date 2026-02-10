@@ -1,26 +1,28 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnInit,
-  inject,
 } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
 
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { TranslatePipe } from '@ngx-translate/core';
 import {
-  IonHeader,
-  IonContent,
   IonCard,
-  IonReorderGroup,
+  IonContent,
+  IonHeader,
   IonItem,
   IonLabel,
   IonReorder,
+  IonReorderGroup,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-preparation-sort-tools',

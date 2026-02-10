@@ -1,37 +1,39 @@
-import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { NgForm, FormsModule } from '@angular/forms';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIToast } from '../../../services/uiToast';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { PreparationTool } from '../../../classes/preparation/preparationTool';
-import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
-import { TooltipDirective } from '../../../directive/tooltip.directive';
-import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
-import { addIcons } from 'ionicons';
-import { informationOutline, close } from 'ionicons/icons';
 import {
-  IonHeader,
-  IonToolbar,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonSelect,
-  IonSelectOption,
-  IonLabel,
-  IonIcon,
   IonButton,
   IonChip,
-  IonRow,
   IonCol,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonToolbar,
+  ModalController,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { close, informationOutline } from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TooltipDirective } from '../../../directive/tooltip.directive';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'preparation-add-type',

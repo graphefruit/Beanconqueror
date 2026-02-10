@@ -1,127 +1,124 @@
+import { DecimalPipe } from '@angular/common';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import {
   AlertController,
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardTitle,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenuButton,
+  IonNote,
+  IonRange,
+  IonSegment,
+  IonSegmentButton,
+  IonSelect,
+  IonSelectOption,
   ModalController,
   Platform,
   ScrollDetail,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  bluetoothOutline,
+  checkmarkCircleOutline,
+  chevronForwardOutline,
+  cloudUploadOutline,
+  informationCircleOutline,
+  informationOutline,
+  refreshOutline,
+} from 'ionicons/icons';
+
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
-import { Bean } from '../../classes/bean/bean';
-
-import { Brew } from '../../classes/brew/brew';
-import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
+import { AppEvent } from '../../classes/appEvent/appEvent';
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { BrewFlow } from '../../classes/brew/brewFlow';
+import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
+import { Logger } from '../../classes/devices/common/logger';
+import { Graph } from '../../classes/graph/graph';
+import { GreenBean } from '../../classes/green-bean/green-bean';
+import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../classes/preparationDevice';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { Settings } from '../../classes/settings/settings';
+import { Water } from '../../classes/water/water';
+import { HeaderComponent } from '../../components/header/header.component';
+import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import { TooltipDirective } from '../../directive/tooltip.directive';
+import { AppEventType } from '../../enums/appEvent/appEvent';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
-import { ISettings } from '../../interfaces/settings/iSettings';
-import { Mill } from '../../classes/mill/mill';
-import { Settings } from '../../classes/settings/settings';
-import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
-import { Subject } from 'rxjs';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
-import { UIAlert } from '../../services/uiAlert';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIHelper } from '../../services/uiHelper';
-import { UILog } from '../../services/uiLog';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIStorage } from '../../services/uiStorage';
-
-/** Third party */
-import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-
-import { CurrencyService } from '../../services/currencyService/currency.service';
-import { GreenBean } from '../../classes/green-bean/green-bean';
 import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
 import { IMill } from '../../interfaces/mill/iMill';
 import { IPreparation } from '../../interfaces/preparation/iPreparation';
 import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
-import moment from 'moment';
-import { Preparation } from '../../classes/preparation/preparation';
-import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
-import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
-import { UIExcel } from '../../services/uiExcel';
-import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
-import { UIHealthKit } from '../../services/uiHealthKit';
-import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
-import { UIToast } from '../../services/uiToast';
-import { UIUpdate } from '../../services/uiUpdate';
-import { UiVersionStorage } from '../../services/uiVersionStorage';
-import { UIWaterStorage } from '../../services/uiWaterStorage';
-import { Water } from '../../classes/water/water';
-import { AppEvent } from '../../classes/appEvent/appEvent';
-import { AppEventType } from '../../enums/appEvent/appEvent';
-import { EventQueueService } from '../../services/queueService/queue-service.service';
+import { ISettings } from '../../interfaces/settings/iSettings';
+import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
+import { KeysPipe } from '../../pipes/keys';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
+import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Logger } from '../../classes/devices/common/logger';
+import { CurrencyService } from '../../services/currencyService/currency.service';
+import { EventQueueService } from '../../services/queueService/queue-service.service';
+import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
+import { ThemeService } from '../../services/theme/theme.service';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIExcel } from '../../services/uiExcel';
+import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 import {
   CreateTempCacheDirectoryResult,
   UIFileHelper,
 } from '../../services/uiFileHelper';
-import { UIExportImportHelper } from '../../services/uiExportImportHelper';
-import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
-import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
-import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
-import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
-import { Graph } from '../../classes/graph/graph';
-import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
-import { PreparationDeviceType } from '../../classes/preparationDevice';
-import { BrewFlow } from '../../classes/brew/brewFlow';
-import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
-import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
-import { FilePicker } from '@capawesome/capacitor-file-picker';
-import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
-import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
-import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
-import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
-import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
-import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
-import { ThemeService } from '../../services/theme/theme.service';
-import { FormsModule } from '@angular/forms';
-import { TooltipDirective } from '../../directive/tooltip.directive';
-import { DecimalPipe } from '@angular/common';
-import { KeysPipe } from '../../pipes/keys';
-import { ToFixedPipe } from '../../pipes/toFixed';
-import { addIcons } from 'ionicons';
-import {
-  chevronForwardOutline,
-  informationOutline,
-  checkmarkCircleOutline,
-  cloudUploadOutline,
-  bluetoothOutline,
-  informationCircleOutline,
-  refreshOutline,
-} from 'ionicons/icons';
-import {
-  IonHeader,
-  IonMenuButton,
-  IonContent,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
-  IonCard,
-  IonCardContent,
-  IonCardTitle,
-  IonItem,
-  IonIcon,
-  IonSelect,
-  IonSelectOption,
-  IonRange,
-  IonCheckbox,
-  IonInput,
-  IonButton,
-  IonNote,
-  IonList,
-  IonBadge,
-} from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
+import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
+import { UIHealthKit } from '../../services/uiHealthKit';
+import { UIHelper } from '../../services/uiHelper';
+import { UILog } from '../../services/uiLog';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIStorage } from '../../services/uiStorage';
+import { UIToast } from '../../services/uiToast';
+import { UIUpdate } from '../../services/uiUpdate';
+import { UiVersionStorage } from '../../services/uiVersionStorage';
+import { UIWaterStorage } from '../../services/uiWaterStorage';
+import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 
 @Component({
   selector: 'settings',

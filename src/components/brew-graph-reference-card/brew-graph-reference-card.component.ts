@@ -1,44 +1,47 @@
+import { DecimalPipe } from '@angular/common';
 import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Brew } from '../../classes/brew/brew';
-import { Settings } from '../../classes/settings/settings';
-import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { Graph } from '../../classes/graph/graph';
-import { UIHelper } from '../../services/uiHelper';
-import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
-import { Bean } from '../../classes/bean/bean';
-import { Preparation } from '../../classes/preparation/preparation';
-import { Mill } from '../../classes/mill/mill';
-import { NgxStarsModule } from 'ngx-stars';
-import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
-import { DecimalPipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
-import { FormatDatePipe } from '../../pipes/formatDate';
-import { ToFixedPipe } from '../../pipes/toFixed';
-import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
-import { BrewFunction } from '../../pipes/brew/brewFunction';
-import { addIcons } from 'ionicons';
-import { trophy, heart, analyticsOutline } from 'ionicons/icons';
+
 import {
-  IonItem,
-  IonRadio,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonIcon,
   IonBadge,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonItem,
   IonLabel,
+  IonRadio,
+  IonRow,
   IonText,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { analyticsOutline, heart, trophy } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgxStarsModule } from 'ngx-stars';
+
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { Graph } from '../../classes/graph/graph';
+import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
+import { Settings } from '../../classes/settings/settings';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
+import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
+import { BrewFunction } from '../../pipes/brew/brewFunction';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
 @Component({
   selector: 'brew-graph-reference-card',

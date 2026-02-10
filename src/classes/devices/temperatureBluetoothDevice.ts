@@ -1,5 +1,6 @@
-import { PeripheralData } from './ble.types';
 import { EventEmitter } from '@angular/core';
+
+import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
 import { to128bitUUID } from './common/util';
 
@@ -73,7 +74,7 @@ export abstract class TemperatureDevice {
             err = new Error(JSON.stringify(err));
           }
           reject(err);
-        }
+        },
       );
     });
   }
@@ -88,7 +89,7 @@ export abstract class TemperatureDevice {
       'Bluetooth Temperature Device - New temperature recieved ' +
         _newTemperature +
         ' - raw data ' +
-        JSON.stringify(_rawData)
+        JSON.stringify(_rawData),
     );
 
     this.temperature.actual = _newTemperature;
@@ -96,7 +97,7 @@ export abstract class TemperatureDevice {
     try {
       this.temperatureParentLogger.log(
         'Bluetooth Pressure Device - Are subscriptions existing? ' +
-          this.temperatureChange?.observers?.length
+          this.temperatureChange?.observers?.length,
       );
     } catch (ex) {}
     this.temperatureChange.emit({

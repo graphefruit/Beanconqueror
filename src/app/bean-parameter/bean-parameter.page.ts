@@ -1,16 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
-  IonContent,
   IonCard,
-  IonCardTitle,
   IonCardContent,
-  IonItem,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
   IonIcon,
+  IonItem,
+  IonMenuButton,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({

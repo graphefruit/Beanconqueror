@@ -1,40 +1,43 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { Bean } from '../../../classes/bean/bean';
-import { Mill } from '../../../classes/mill/mill';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChooseDateOverlayDirective } from '../../../directive/choose-date.directive';
-import { TransformDateDirective } from '../../../directive/transform-date';
-import { TranslatePipe } from '@ngx-translate/core';
-import { KeysPipe } from '../../../pipes/keys';
-import { ToFixedPipe } from '../../../pipes/toFixed';
+
 import {
-  IonHeader,
+  IonBadge,
+  IonButton,
+  IonCol,
   IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonInput,
   IonItem,
-  IonToggle,
+  IonLabel,
+  IonList,
+  IonRange,
+  IonRow,
   IonSelect,
   IonSelectOption,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonInput,
-  IonLabel,
-  IonRange,
-  IonIcon,
-  IonBadge,
-  IonList,
-  IonButton,
+  IonToggle,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Mill } from '../../../classes/mill/mill';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { Settings } from '../../../classes/settings/settings';
+import { ChooseDateOverlayDirective } from '../../../directive/choose-date.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-bean-filter',

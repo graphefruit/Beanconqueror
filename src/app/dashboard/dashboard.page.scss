@@ -1,6 +1,4 @@
 :host {
-
-
   ion-card.dashboard {
     text-align: center;
     padding: 12px;
@@ -19,7 +17,6 @@
     }
   }
 
-
   ion-button[add-brew] {
     --padding-bottom: 0px;
     --padding-end: 0px;
@@ -37,7 +34,6 @@
 
   ion-grid {
     --ion-grid-column-padding: 5px;
-
   }
 
   ion-list {
@@ -46,7 +42,6 @@
     ion-list-header {
       padding-left: 10px;
       font-size: 16px;
-
     }
   }
 
@@ -55,14 +50,10 @@
       letter-spacing: -0.21px;
       line-height: inherit;
     }
-
   }
-
 }
 
 .no-border {
   box-shadow: none !important;
   border: 1px solid var(--ion-color-light-shade);
 }
-
-

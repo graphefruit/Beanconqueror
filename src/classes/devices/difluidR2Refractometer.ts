@@ -1,8 +1,8 @@
+import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-import { RefractometerDevice } from './refractometerBluetoothDevice';
 import { diFluid } from './diFluid/protocol';
-import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
+import { RefractometerDevice } from './refractometerBluetoothDevice';
 
 declare var ble: any;
 export class DiFluidR2Refractometer extends RefractometerDevice {

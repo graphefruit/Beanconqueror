@@ -1,14 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { SortCustomParameterComponent } from '../../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
   IonBackButton,
   IonContent,
+  IonHeader,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Settings } from '../../../classes/settings/settings';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { SortCustomParameterComponent } from '../../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'sort-parameter',

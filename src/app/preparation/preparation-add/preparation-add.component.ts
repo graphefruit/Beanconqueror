@@ -1,26 +1,28 @@
-import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController } from '@ionic/angular/standalone';
-
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { PreparationAddTypeComponent } from '../preparation-add-type/preparation-add-type.component';
-import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { environment } from '../../../environments/environment';
-import { TranslatePipe } from '@ngx-translate/core';
-import { KeysPipe } from '../../../pipes/keys';
+
 import {
-  IonHeader,
-  IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonCard,
   IonCardContent,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonRow,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { environment } from '../../../environments/environment';
+import { KeysPipe } from '../../../pipes/keys';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { PreparationAddTypeComponent } from '../preparation-add-type/preparation-add-type.component';
 
 @Component({
   selector: 'preparation-add',

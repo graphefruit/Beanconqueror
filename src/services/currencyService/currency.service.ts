@@ -1,6 +1,9 @@
-import { Injectable, inject } from '@angular/core';
-import { UISettingsStorage } from '../uiSettingsStorage';
+import { inject, Injectable } from '@angular/core';
+
 import currencyToSymbolMap from 'currency-symbol-map/map';
+
+import { UISettingsStorage } from '../uiSettingsStorage';
+
 @Injectable({
   providedIn: 'root',
 })

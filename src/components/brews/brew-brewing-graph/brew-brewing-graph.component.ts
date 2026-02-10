@@ -4,32 +4,26 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   NgZone,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import {
-  BluetoothScale,
-  SCALE_TIMER_COMMAND,
-  ScaleType,
-  sleep,
-} from '../../../classes/devices';
+import { FormsModule } from '@angular/forms';
+
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { waterOutline } from 'ionicons/icons';
-import {
-  CoffeeBluetoothDevicesService,
-  CoffeeBluetoothServiceEvent,
-} from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { TemperatureDevice } from '../../../classes/devices/temperatureBluetoothDevice';
-import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import moment from 'moment/moment';
+import regression from 'regression';
+import { Subscription } from 'rxjs';
+
+import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
 import { Brew } from '../../../classes/brew/brew';
-import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import {
   BrewFlow,
   IBrewByWeight,
@@ -39,41 +33,50 @@ import {
   IBrewWaterFlow,
   IBrewWeightFlow,
 } from '../../../classes/brew/brewFlow';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import moment from 'moment/moment';
-import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
-import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
-import { Subscription } from 'rxjs';
-import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIToast } from '../../../services/uiToast';
-import { Settings } from '../../../classes/settings/settings';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UILog } from '../../../services/uiLog';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import {
+  BluetoothScale,
+  SCALE_TIMER_COMMAND,
+  ScaleType,
+  sleep,
+} from '../../../classes/devices';
+import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+import { TemperatureDevice } from '../../../classes/devices/temperatureBluetoothDevice';
+import { Graph } from '../../../classes/graph/graph';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { MeticulousShotData } from '../../../classes/preparationDevice/meticulous/meticulousShotData';
-import { Graph } from '../../../classes/graph/graph';
-import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
-import regression from 'regression';
-import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
+import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
-import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
+import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Settings } from '../../../classes/settings/settings';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
-import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
-import { FormsModule } from '@angular/forms';
+import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import {
+  CoffeeBluetoothDevicesService,
+  CoffeeBluetoothServiceEvent,
+} from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
+import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
+import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
+import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
 
 declare var Plotly;
 

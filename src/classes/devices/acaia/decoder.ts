@@ -1,16 +1,16 @@
-import { MAGIC1, MAGIC2 } from './constants';
+import { Logger } from '../common/logger';
 import {
   Button,
+  DecoderResult,
+  DecoderResultType,
   Message,
   MessageType,
   ParsedMessage,
   ScaleMessageType,
   Settings,
   Units,
-  DecoderResult,
-  DecoderResultType,
 } from './common';
-import { Logger } from '../common/logger';
+import { MAGIC1, MAGIC2 } from './constants';
 
 export class Decoder {
   private readonly log: Logger;

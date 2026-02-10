@@ -1,21 +1,24 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { Bean } from '../../classes/bean/bean';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { Preparation } from '../../classes/preparation/preparation';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { Mill } from '../../classes/mill/mill';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
+  IonBadge,
   IonContent,
-  IonTabs,
-  IonTabBar,
-  IonTabButton,
   IonIcon,
   IonLabel,
-  IonBadge,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Bean } from '../../classes/bean/bean';
+import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 
 @Component({
   selector: 'app-home',

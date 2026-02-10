@@ -1,14 +1,17 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
+import { Platform } from '@ionic/angular/standalone';
+
 import { TranslateService } from '@ngx-translate/core';
-import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
-import { BrewFlow } from '../../classes/brew/brewFlow';
 import moment from 'moment';
-import { UISettingsStorage } from '../uiSettingsStorage';
+
+import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Settings } from '../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 import { CoffeeBluetoothDevicesService } from '../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Platform } from '@ionic/angular/standalone';
 import { ThemeService } from '../theme/theme.service';
+import { UISettingsStorage } from '../uiSettingsStorage';
 
 @Injectable({
   providedIn: 'root',

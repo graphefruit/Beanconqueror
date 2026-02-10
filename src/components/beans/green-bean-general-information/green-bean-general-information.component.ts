@@ -2,35 +2,37 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
   ViewChild,
-  inject,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonBadge,
+  IonCard,
+  IonCheckbox,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRange,
+  IonTextarea,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
 import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { Platform } from '@ionic/angular/standalone';
-import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { FormsModule } from '@angular/forms';
-import { TransformDateDirective } from '../../../directive/transform-date';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PhotoAddComponent } from '../../photo-add/photo-add.component';
-import {
-  IonCard,
-  IonItem,
-  IonInput,
-  IonLabel,
-  IonBadge,
-  IonRange,
-  IonCheckbox,
-  IonTextarea,
-} from '@ionic/angular/standalone';
 
 declare var cordova;
 @Component({

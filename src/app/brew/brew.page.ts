@@ -1,41 +1,44 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../services/uiHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { Brew } from '../../classes/brew/brew';
-import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
-import { BrewFilterComponent } from './brew-filter/brew-filter.component';
-import { Settings } from '../../classes/settings/settings';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { Subscription } from 'rxjs';
-import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
-import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
-import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { FormsModule } from '@angular/forms';
-import { NgTemplateOutlet } from '@angular/common';
-import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSearchbar,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonSearchbar,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import { Subscription } from 'rxjs';
+
+import { Brew } from '../../classes/brew/brew';
+import { Settings } from '../../classes/settings/settings';
+import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
+import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
+import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BrewFilterComponent } from './brew-filter/brew-filter.component';
 
 @Component({
   selector: 'brew',

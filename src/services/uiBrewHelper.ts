@@ -1,43 +1,44 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { UIBeanStorage } from './uiBeanStorage';
-import { UIMillStorage } from './uiMillStorage';
-import { UIPreparationStorage } from './uiPreparationStorage';
-import { UIAlert } from './uiAlert';
-import { Brew } from '../classes/brew/brew';
-import { IBean } from '../interfaces/bean/iBean';
-import { IPreparation } from '../interfaces/preparation/iPreparation';
-import { IMill } from '../interfaces/mill/iMill';
-import { UISettingsStorage } from './uiSettingsStorage';
-import { Settings } from '../classes/settings/settings';
-import { Preparation } from '../classes/preparation/preparation';
-import { TranslateService } from '@ngx-translate/core';
-import { ICupping } from '../interfaces/cupping/iCupping';
-import { UIBrewStorage } from './uiBrewStorage';
-import { Bean } from '../classes/bean/bean';
-import { UIBeanHelper } from './uiBeanHelper';
-import BREW_TRACKING from '../data/tracking/brewTracking';
-import { BrewAddComponent } from '../app/brew/brew-add/brew-add.component';
-import { UIAnalytics } from './uiAnalytics';
 import { ModalController } from '@ionic/angular/standalone';
-import { BrewChoosePreparationToBrewComponent } from '../app/brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
-import { BrewEditComponent } from '../app/brew/brew-edit/brew-edit.component';
-import { IBrew } from '../interfaces/brew/iBrew';
-import { BrewDetailComponent } from '../app/brew/brew-detail/brew-detail.component';
-import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
-import { BrewFlowComponent } from '../app/brew/brew-flow/brew-flow.component';
-import { PreparationDeviceType } from '../classes/preparationDevice';
-import { UIHelper } from './uiHelper';
-import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
+
+import { TranslateService } from '@ngx-translate/core';
+
 import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
-import { BrewFlow } from '../classes/brew/brewFlow';
-import { IBrewPageSort } from '../interfaces/brew/iBrewPageSort';
+import { BrewAddComponent } from '../app/brew/brew-add/brew-add.component';
+import { BrewChoosePreparationToBrewComponent } from '../app/brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
+import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
+import { BrewDetailComponent } from '../app/brew/brew-detail/brew-detail.component';
+import { BrewEditComponent } from '../app/brew/brew-edit/brew-edit.component';
+import { BrewFlowComponent } from '../app/brew/brew-flow/brew-flow.component';
+import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
 import { BrewSortComponent } from '../app/brew/brew-sort/brew-sort.component';
-import { CoffeeBluetoothDevicesService } from './coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { Bean } from '../classes/bean/bean';
+import { Brew } from '../classes/brew/brew';
+import { BrewFlow } from '../classes/brew/brewFlow';
 import { BluetoothScale } from '../classes/devices';
 import { PressureDevice } from '../classes/devices/pressureBluetoothDevice';
+import { Preparation } from '../classes/preparation/preparation';
+import { PreparationDeviceType } from '../classes/preparationDevice';
+import { Settings } from '../classes/settings/settings';
+import BREW_TRACKING from '../data/tracking/brewTracking';
 import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTypes';
+import { IBean } from '../interfaces/bean/iBean';
+import { IBrew } from '../interfaces/brew/iBrew';
+import { IBrewPageSort } from '../interfaces/brew/iBrewPageSort';
+import { ICupping } from '../interfaces/cupping/iCupping';
+import { IMill } from '../interfaces/mill/iMill';
+import { IPreparation } from '../interfaces/preparation/iPreparation';
+import { CoffeeBluetoothDevicesService } from './coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UIAlert } from './uiAlert';
+import { UIAnalytics } from './uiAnalytics';
+import { UIBeanHelper } from './uiBeanHelper';
+import { UIBeanStorage } from './uiBeanStorage';
+import { UIBrewStorage } from './uiBrewStorage';
+import { UIHelper } from './uiHelper';
+import { UIMillStorage } from './uiMillStorage';
+import { UIPreparationStorage } from './uiPreparationStorage';
+import { UISettingsStorage } from './uiSettingsStorage';
 
 /**
  * Handles every helping functionalities

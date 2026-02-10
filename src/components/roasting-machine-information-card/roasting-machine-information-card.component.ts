@@ -1,33 +1,36 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIToast } from '../../services/uiToast';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIAlert } from '../../services/uiAlert';
-import { UIImage } from '../../services/uiImage';
-import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
-import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
-import { ROASTING_MACHINE_ACTION } from '../../enums/roasting-machine/roastingMachineAction';
-import { RoastingMachinePopoverActionsComponent } from '../../app/roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { Bean } from '../../classes/bean/bean';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
-import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
-import { LongPressDirective } from '../../directive/long-press.directive';
-import { AsyncImageComponent } from '../async-image/async-image.component';
 import { DecimalPipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+
 import {
+  IonButton,
   IonCard,
   IonCardContent,
-  IonGrid,
-  IonRow,
   IonCol,
-  IonButton,
+  IonGrid,
   IonIcon,
   IonLabel,
+  IonRow,
   IonText,
+  ModalController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { RoastingMachinePopoverActionsComponent } from '../../app/roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
+import { Bean } from '../../classes/bean/bean';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { ROASTING_MACHINE_ACTION } from '../../enums/roasting-machine/roastingMachineAction';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIImage } from '../../services/uiImage';
+import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
+import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'roasting-machine-information-card',

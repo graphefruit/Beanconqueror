@@ -1,5 +1,4 @@
 :host {
-
   ion-card {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -16,7 +15,7 @@
   .full-sized-icon {
     width: 100%;
     height: 100%;
-    max-height:120px!important;
+    max-height: 120px !important;
   }
 
   // Overwrite
@@ -25,10 +24,10 @@
     top: -20px;
     right: -20px;
     min-height: 20px;
-    ion-icon{
-      font-size: 18px!important;
-      width: 18px!important;
-      height: 18px!important;
+    ion-icon {
+      font-size: 18px !important;
+      width: 18px !important;
+      height: 18px !important;
     }
   }
 
@@ -37,7 +36,6 @@
       padding-top: 0px !important;
       padding-bottom: 0px !important;
     }
-
   }
   ion-text {
     position: relative;
@@ -50,5 +48,4 @@
     display: block;
     object-fit: cover;
   }
-
 }

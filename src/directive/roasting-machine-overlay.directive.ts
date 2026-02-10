@@ -2,14 +2,16 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  Input,
   inject,
+  Input,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
+
 import { ModalController } from '@ionic/angular/standalone';
-import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
-import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+
 import { RoastingMachineModalSelectComponent } from '../app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
+import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
 
 @Directive({ selector: '[ngModel][roasting-machine-overlay]' })
 export class RoastingMachineOverlayDirective {

@@ -1,37 +1,40 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
-import { Bean } from '../../../classes/bean/bean';
-import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { BeanInformation } from '../../../generated/src/classes/bean/bean';
-import { distinct } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
-import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
-import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { copyOutline, closeOutline } from 'ionicons/icons';
+
 import {
-  IonCard,
-  IonItem,
   IonButton,
+  IonCard,
   IonIcon,
   IonInput,
-  IonList,
+  IonItem,
   IonLabel,
+  IonList,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { closeOutline, copyOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { distinct } from 'rxjs/operators';
+
+import { Bean } from '../../../classes/bean/bean';
+import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { Settings } from '../../../classes/settings/settings';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { BeanInformation } from '../../../generated/src/classes/bean/bean';
+import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'bean-sort-information',

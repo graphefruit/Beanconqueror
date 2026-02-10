@@ -3,39 +3,42 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
-import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
-import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { UIGreenBeanStorage } from '../../../services/uiGreenBeanStorage';
-import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
-import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.component';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
 import { FormsModule } from '@angular/forms';
-import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSearchbar,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonSearchbar,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { Settings } from '../../../classes/settings/settings';
+import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
+import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
+import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
+import { UIGreenBeanStorage } from '../../../services/uiGreenBeanStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.component';
 
 @Component({
   selector: 'app-green-beans',

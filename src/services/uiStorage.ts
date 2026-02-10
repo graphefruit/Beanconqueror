@@ -1,15 +1,16 @@
-/**  Core */
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 /**
  * Ionic native
  *
  */
 import { Storage } from '@ionic/storage';
-import { EventQueueService } from './queueService/queue-service.service';
+
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
-import { UILog } from './uiLog';
+import { EventQueueService } from './queueService/queue-service.service';
 import { UIAlert } from './uiAlert';
+import { UILog } from './uiLog';
 
 @Injectable({
   providedIn: 'root',

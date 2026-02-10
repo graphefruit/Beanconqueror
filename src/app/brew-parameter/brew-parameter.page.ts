@@ -1,17 +1,20 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { NavController } from '@ionic/angular/standalone';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
-  IonContent,
   IonCard,
-  IonItem,
-  IonIcon,
-  IonCardTitle,
   IonCardContent,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonMenuButton,
+  NavController,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({

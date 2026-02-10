@@ -1,25 +1,28 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { calendarOutline, timeOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { BEAN_SORT_AFTER } from '../../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../../enums/beans/beanSortOrder';
 import { IBeanPageSort } from '../../../../interfaces/bean/iBeanPageSort';
-import { ModalController } from '@ionic/angular/standalone';
 import { UIHelper } from '../../../../services/uiHelper';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { timeOutline, calendarOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonContent,
-  IonList,
-  IonListHeader,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonItem,
-  IonIcon,
-  IonLabel,
-  IonButton,
-} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-green-bean-sort',

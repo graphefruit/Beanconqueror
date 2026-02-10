@@ -1,52 +1,55 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnDestroy,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { Bean } from '../../classes/bean/bean';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { Settings } from '../../classes/settings/settings';
-import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
-import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
-import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { UILog } from '../../services/uiLog';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
-import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
-import _ from 'lodash';
-import BEAN_TRACKING from '../../data/tracking/beanTracking';
-import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
-import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
-import { Subscription } from 'rxjs';
-import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
-import { NfcService } from '../../services/nfcService/nfc-service.service';
-
-import { UIImage } from '../../services/uiImage';
-import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { FormsModule } from '@angular/forms';
-import { NgTemplateOutlet } from '@angular/common';
-import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSearchbar,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonSearchbar,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import _ from 'lodash';
+import { Subscription } from 'rxjs';
+
+import { Bean } from '../../classes/bean/bean';
+import { Settings } from '../../classes/settings/settings';
+import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
+import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
+import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
+import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
+import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
+import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
+import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
+import { NfcService } from '../../services/nfcService/nfc-service.service';
+import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIImage } from '../../services/uiImage';
+import { UILog } from '../../services/uiLog';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
 
 @Component({
   selector: 'beans',

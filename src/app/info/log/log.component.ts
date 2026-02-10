@@ -1,27 +1,29 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { UILog } from '../../../services/uiLog';
-import { ILogInterface } from '../../../interfaces/log/iLog';
+import { Component, inject, OnInit } from '@angular/core';
 
+import {
+  IonBackButton,
+  IonCard,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonRow,
+  IonText,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { sendOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import { LOGS_ENUM } from '../../../enums/logs/logs';
-import { ModalController } from '@ionic/angular/standalone';
-import { LogTextComponent } from './log-text/log-text.component';
+import { ILogInterface } from '../../../interfaces/log/iLog';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { sendOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonBackButton,
-  IonContent,
-  IonCard,
-  IonRow,
-  IonCol,
-  IonText,
-} from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
-import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { UILog } from '../../../services/uiLog';
+import { LogTextComponent } from './log-text/log-text.component';
 
 @Component({
   selector: 'log',

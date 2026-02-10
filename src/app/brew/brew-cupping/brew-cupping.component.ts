@@ -1,42 +1,44 @@
-import { Component, Input, ViewChild, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { Brew } from '../../../classes/brew/brew';
-import { Settings } from '../../../classes/settings/settings';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-
-import { UIToast } from '../../../services/uiToast';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { CuppingRadarComponent } from '../../../components/cupping-radar/cupping-radar.component';
-import { BrewFlavorPickerComponent } from '../brew-flavor-picker/brew-flavor-picker.component';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { IBean } from '../../../interfaces/bean/iBean';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { Bean } from '../../../classes/bean/bean';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import { FormsModule } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { addOutline, trashOutline } from 'ionicons/icons';
+import { Component, inject, Input, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import {
-  IonHeader,
+  IonButton,
+  IonCard,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonCard,
-  IonItem,
-  IonFooter,
-  IonRow,
-  IonCol,
-  IonButton,
-  IonIcon,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+import { addIcons } from 'ionicons';
+import { addOutline, trashOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
+import { Settings } from '../../../classes/settings/settings';
+import { CuppingRadarComponent } from '../../../components/cupping-radar/cupping-radar.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { IBrew } from '../../../interfaces/brew/iBrew';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
+import { BrewFlavorPickerComponent } from '../brew-flavor-picker/brew-flavor-picker.component';
 
 @Component({
   selector: 'brew-cupping',

@@ -1,18 +1,22 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Settings } from '../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, OnInit } from '@angular/core';
+
 import {
-  IonHeader,
-  IonTitle,
+  IonButton,
+  IonCol,
   IonContent,
   IonFooter,
+  IonHeader,
   IonRow,
-  IonCol,
-  IonButton,
+  IonTitle,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Settings } from '../../classes/settings/settings';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-meticulous-help-popover',

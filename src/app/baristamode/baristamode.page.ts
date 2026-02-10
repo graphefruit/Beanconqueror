@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { waterOutline } from 'ionicons/icons';
+
 import {
   IonContent,
-  IonTabs,
-  IonTabBar,
-  IonTabButton,
   IonIcon,
   IonLabel,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-baristamode',

@@ -2,19 +2,26 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
+import {
+  IonCard,
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
 import { Brew } from 'src/classes/brew/brew';
 import { Preparation } from 'src/classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
-import { IonHeader, IonContent, IonCard } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 
 declare var Plotly;
 

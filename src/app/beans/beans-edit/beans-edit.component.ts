@@ -1,35 +1,39 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { IBean } from '../../../interfaces/bean/iBean';
-import { Bean } from '../../../classes/bean/bean';
-import { UIToast } from '../../../services/uiToast';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAlert } from '../../../services/uiAlert';
-import { Subscription } from 'rxjs';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
-import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
-import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
-import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
   IonButton,
+  IonCol,
   IonContent,
+  IonFooter,
+  IonHeader,
+  IonLabel,
+  IonRow,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
-  IonFooter,
-  IonRow,
-  IonCol,
+  ModalController,
+  Platform,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Settings } from '../../../classes/settings/settings';
+import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
+import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
+import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'beans-edit',

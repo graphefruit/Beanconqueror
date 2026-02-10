@@ -1,4 +1,4 @@
-import {LOGS_ENUM} from '../../enums/logs/logs';
+import { LOGS_ENUM } from '../../enums/logs/logs';
 
 export interface ILogInterface {
   key: LOGS_ENUM;

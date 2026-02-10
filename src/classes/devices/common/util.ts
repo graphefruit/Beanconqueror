@@ -15,7 +15,7 @@ export function to128bitUUID(uuid: string) {
 }
 
 export function parseAdvertisingManufacturerData(
-  adv: ArrayBuffer | IOSAdvertisingData
+  adv: ArrayBuffer | IOSAdvertisingData,
 ): Uint8Array | null {
   if (
     adv &&

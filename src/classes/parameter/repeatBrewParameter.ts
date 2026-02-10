@@ -1,5 +1,3 @@
-/** Interfacdes */
-
 import { IBrewParameter } from '../../interfaces/parameter/iBrewParameter';
 
 export class RepeatBrewParameter implements IBrewParameter {

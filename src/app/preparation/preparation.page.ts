@@ -3,35 +3,38 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { UIAlert } from '../../services/uiAlert';
-import { Preparation } from '../../classes/preparation/preparation';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { Settings } from '../../classes/settings/settings';
-import { UIToast } from '../../services/uiToast';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIPreparationHelper } from '../../services/uiPreparationHelper';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { FormsModule } from '@angular/forms';
-import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
-import { TranslatePipe } from '@ngx-translate/core';
+
 import {
-  IonHeader,
-  IonMenuButton,
   IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { HeaderComponent } from '../../components/header/header.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { Preparation } from '../../classes/preparation/preparation';
+import { Settings } from '../../classes/settings/settings';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
+import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIPreparationHelper } from '../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
 
 @Component({
   selector: 'preparation',

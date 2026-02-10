@@ -1,42 +1,45 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular/standalone';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonBadge,
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRange,
+  IonSelect,
+  IonSelectOption,
+  IonToggle,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+
 import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { Brew } from '../../../classes/brew/brew';
-import { AppEventType } from '../../../enums/appEvent/appEvent';
-import { Subscription } from 'rxjs';
-import { EventQueueService } from '../../../services/queueService/queue-service.service';
-import { FormsModule } from '@angular/forms';
-import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
-import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
 import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
 import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
+import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
+import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
 import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
-import { TranslatePipe } from '@ngx-translate/core';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { ToFixedPipe } from '../../../pipes/toFixed';
-import {
-  IonHeader,
-  IonContent,
-  IonItem,
-  IonSelect,
-  IonToggle,
-  IonLabel,
-  IonBadge,
-  IonRange,
-  IonIcon,
-  IonSelectOption,
-  IonList,
-  IonButton,
-} from '@ionic/angular/standalone';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'brew-filter',

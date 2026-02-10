@@ -4,54 +4,56 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular/standalone';
-import { Subscription } from 'rxjs';
-import { Brew } from '../../../classes/brew/brew';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { Settings } from '../../../classes/settings/settings';
-import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
-import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothScale } from '../../../classes/devices';
 
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { UIHelper } from 'src/services/uiHelper';
-import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
-
-import { CameraPreview } from '@capgo/camera-preview';
-import { Capacitor } from '@capacitor/core';
-import { TranslatePipe } from '@ngx-translate/core';
-import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   closeOutline,
-  waterOutline,
   thermometerOutline,
   timeOutline,
+  waterOutline,
 } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonChip,
-  IonButton,
-  IonIcon,
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardContent,
-  IonFooter,
-} from '@ionic/angular/standalone';
+
+import { Capacitor } from '@capacitor/core';
+import { CameraPreview } from '@capgo/camera-preview';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+
+import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
+import { UIHelper } from 'src/services/uiHelper';
+import { Brew } from '../../../classes/brew/brew';
+import { BluetoothScale } from '../../../classes/devices';
+import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { Settings } from '../../../classes/settings/settings';
+import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 declare var Plotly;
 @Component({

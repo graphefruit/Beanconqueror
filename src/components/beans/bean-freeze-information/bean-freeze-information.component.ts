@@ -2,32 +2,35 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonCard,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonSelect,
+  IonSelectOption,
+  IonTextarea,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
+
 import { Bean } from '../../../classes/bean/bean';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import moment from 'moment';
-import { Platform } from '@ionic/angular/standalone';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { TransformDateDirective } from '../../../directive/transform-date';
-import { FormsModule } from '@angular/forms';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { KeysPipe } from '../../../pipes/keys';
-import {
-  IonCard,
-  IonItem,
-  IonInput,
-  IonSelect,
-  IonSelectOption,
-  IonLabel,
-  IonTextarea,
-} from '@ionic/angular/standalone';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 declare var cordova;
 @Component({

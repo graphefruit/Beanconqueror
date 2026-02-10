@@ -7,8 +7,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Brew } from '../../classes/brew/brew';
+
 import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
 import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';

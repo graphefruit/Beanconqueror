@@ -1,6 +1,5 @@
 export default {
-
-  TITLE:'QR',
+  TITLE: 'QR',
   ACTIONS: {
     SCAN: 'SCAN',
     SCANNED_LINK: {
@@ -9,5 +8,5 @@ export default {
     SCAN_SUCCESSFULLY: 'SCAN_SUCCESSFULLY',
     REFRESH_SUCCESSFULLY: 'REFRESH_SUCCESSFULLY',
     SCAN_FAILED: 'SCAN_FAILED',
-  }
+  },
 };

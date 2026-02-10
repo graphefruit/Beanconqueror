@@ -1,19 +1,21 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
-import { GRAPH_ACTION } from '../../../../enums/graph/graphAction';
-import { Graph } from '../../../../classes/graph/graph';
-import { IGraph } from '../../../../interfaces/graph/iGraph';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { shareSocialOutline } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonContent,
-  IonList,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Graph } from '../../../../classes/graph/graph';
+import { GRAPH_ACTION } from '../../../../enums/graph/graphAction';
+import { IGraph } from '../../../../interfaces/graph/iGraph';
 
 @Component({
   selector: 'app-graph-popover-actions',

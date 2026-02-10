@@ -1,15 +1,15 @@
-/** Core */
-import { Injectable, inject } from '@angular/core';
-/** Ionic */
+import { inject, Injectable } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+
 import { AlertController } from '@ionic/angular/standalone';
+
 import { TranslateService } from '@ngx-translate/core';
-import { UIHelper } from './uiHelper';
 
 import { Settings } from '../classes/settings/settings';
-import { UISettingsStorage } from './uiSettingsStorage';
 import { UIAlert } from './uiAlert';
+import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
-import { NavigationEnd, Router } from '@angular/router';
+import { UISettingsStorage } from './uiSettingsStorage';
 
 declare var Matomo;
 

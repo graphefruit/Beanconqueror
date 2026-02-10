@@ -1,21 +1,24 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { UIHelper } from '../../../services/uiHelper';
-import LINK_TRACKING from '../../../data/tracking/linkTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonBackButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline, logoGithub } from 'ionicons/icons';
-import {
-  IonHeader,
-  IonBackButton,
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardContent,
-  IonItem,
-  IonIcon,
-} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { HeaderComponent } from '../../../components/header/header.component';
+import LINK_TRACKING from '../../../data/tracking/linkTracking';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'contact',

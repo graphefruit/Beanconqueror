@@ -1,37 +1,39 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { Bean } from '../../../classes/bean/bean';
-import { ModalController } from '@ionic/angular/standalone';
-
-import QRCode from 'qrcode';
-import { environment } from '../../../environments/environment';
-import { ShareService } from '../../../services/shareService/share-service.service';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UILog } from '../../../services/uiLog';
-import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
-import { NfcService } from '../../../services/nfcService/nfc-service.service';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { download, clipboardOutline } from 'ionicons/icons';
+
 import {
-  IonHeader,
-  IonContent,
+  IonButton,
   IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
   IonItem,
+  IonLabel,
+  IonRow,
   IonSelect,
   IonSelectOption,
-  IonLabel,
-  IonButton,
-  IonIcon,
-  IonFooter,
-  IonRow,
-  IonCol,
+  ModalController,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { clipboardOutline, download } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import QRCode from 'qrcode';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Settings } from '../../../classes/settings/settings';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
+import { environment } from '../../../environments/environment';
+import { NfcService } from '../../../services/nfcService/nfc-service.service';
+import { ShareService } from '../../../services/shareService/share-service.service';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
 
 @Component({
   selector: 'app-bean-internal-share-code-generator.',

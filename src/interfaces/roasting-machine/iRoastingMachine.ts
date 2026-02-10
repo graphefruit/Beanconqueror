@@ -1,9 +1,7 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import {IConfig} from '../objectConfig/iObjectConfig';
-/** Enums */
-
+import { IConfig } from '../objectConfig/iObjectConfig';
 
 export interface IRoastingMachine {
   name: string;
