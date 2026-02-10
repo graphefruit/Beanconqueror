@@ -1086,7 +1086,10 @@
             "RECONNECT_NEEDED": "Perlu terhubung kembali",
             "RECONNECT": "Hubungkan kembali",
             "ENTER_TARGET_BREW_WEIGHT": "Masukkan target berat minuman dalam gram",
-            "LAST_SHOT": "Ekstraksi terakhir"
+            "LAST_SHOT": "Ekstraksi terakhir",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode hanya bekerja dengan skala yang terhubung, silakan hubungkan satu",
+            "WE_COULD_NOT_CONNECT": "Kami tidak dapat terhubung ke mesin",
+            "BREW_BY_WEIGHT_HINT": "Volume yang diprogram dalam ml harus lebih tinggi daripada berat target dalam gram agar tembakan berhenti pada berat yang telah ditetapkan. Jika tidak demikian, harap sesuaikan volume dalam ml."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
@@ -1459,36 +1462,6 @@
     "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible.",
     "BEAN_DATA_AVERAGE_BREW_RATING": "Average Brew Rating",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "Option to disable the connect\/disconnect popup for Bluetooth devices"
-            }
-        },
-        "8.5.0": {
-            "TITLE": "Versi 8.5.0: Apa yang baru",
-            "DESCRIPTION": [
-                "<b>Buka bungkus 2025<\/b>",
-                "Buka bungkus tahun 2025 Anda!",
-                "",
-                "<b>Bahasa Baru<\/b>",
-                "Bahasa Yunani - Terima kasih kepada Mr. pterodactyl",
-                "",
-                "<b>Timbangan Bluetooth<\/b>",
-                "Menampilkan ID unik perangkat untuk memudahkan koneksi.",
-                "",
-                "<b>Biji<\/b>",
-                "Mencairkan sebagian biji kopi beku",
-                "Biji kopi sekarang dibuat per grup jika memiliki sumber yang sama",
-                "Menampilkan ikon khusus untuk biji kopi tanpa kafein (moon-icon)",
-                "Memperbaiki impor data kopi dari excel dengan beberapa varietas",
-                "",
-                "<b>Lainnya<\/b>",
-                "[ANDROID] Mendukung Edge2Edge dari Capacitor untuk memperbaiki spasi kosong pada keyboard",
-                "Perbaikan kecil"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Choose brew displaying image type",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Preparation",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Bean",
@@ -1582,5 +1555,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Biji kopi sudah dicairkan.",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Sebagian Biji kopi beku telah mencair",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Cairkan sebagian biji kopi",
-    "LAST_COMMUNICATION": "Komunikasi terakhir"
+    "LAST_COMMUNICATION": "Komunikasi terakhir",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Versi 8.6.0: Apa yang baru",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU<\/b>",
+                "Dukungan untuk mesin Sanremo YOU yang dipadukan dengan fitur penyeduhan berdasarkan berat!",
+                "Jelajahi Baristamode, mulai proses penyeduhan dari Sanremo YOU dan BeanConqueror akan menghentikannya pada waktu yang tepat.",
+                "",
+                "<b>Graph-Colors<\/b>",
+                "Sekarang Anda dapat menyesuaikan warna grafik untuk mode terang dan gelap",
+                "",
+                "<b>Meticulous<\/b>",
+                "Jika Anda mengimpor bidikan, nama profil dan suhu yang ditetapkan, juga ditetapkan sekarang",
+                "",
+                "<b>Seduh<\/b>",
+                "Menampilkan jam dan menit pada layar detail minuman",
+                "",
+                "<b>Lainnya<\/b>",
+                "Memperbaiki impor excel untuk karakter Mandarin",
+                "Perbaikan bug kecil"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Aktif (Terang)",
+    "GRAPH_ACTIVE_DARK_MODE": "Aktif (Gelap)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Referensi (Terang)",
+    "GRAPH_REFERENCE_DARK_MODE": "Referensi (Gelap)",
+    "GRAPH_COLORS": "Warna grafik",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "Bahasa Korea",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slowakia",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Bahasa Jepang",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Rusia"
 }

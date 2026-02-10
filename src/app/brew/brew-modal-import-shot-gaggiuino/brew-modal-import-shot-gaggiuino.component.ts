@@ -134,14 +134,26 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   }
 
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.historyShotContent.nativeElement;
       const scrollComponent: AgVirtualScrollComponent =
         this.gaggiuinoShotDataScroll;
 
-      if (scrollComponent) {
-        scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
-        // this.segmentScrollHeight = scrollComponent.el.style.height;
+      if (!scrollComponent) {
+        return;
+      }
+
+      scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
+      // this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
       }
     }, 150);
   }

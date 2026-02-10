@@ -213,7 +213,12 @@ export class SanremoYOUDevice extends PreparationDevice {
         .then((_response) => {
           const responseJSON = _response.data;
           const temp = responseJSON.tempBoilerCoffe;
-          const press = responseJSON.pumpPress * 10;
+
+          let press = 0;
+          if (responseJSON.pumpPress === 0) {
+          } else {
+            press = Number((responseJSON.pumpPress / 10).toFixed(2));
+          }
 
           this.temperature = temp;
           this.pressure = press;
@@ -404,7 +409,18 @@ export class SanremoYOUDevice extends PreparationDevice {
             //Valid sanremo shot data
             let currentShotData = new SanremoShotData();
             currentShotData = responseJSON;
-            currentShotData.pumpPress = currentShotData.pumpPress * 10;
+            if (currentShotData.pumpPress === 0) {
+            } else {
+              currentShotData.pumpPress = Number(
+                (currentShotData.pumpPress / 10).toFixed(2),
+              );
+            }
+            if (this.sanremoShotData.groupStatus === 0) {
+              //Currently if the sanremo you is attached to the water line, it would report pressure like 1 bar because of the line pressure, which is correctly
+              //To avoid this kind of issue, we overwrite the pressure when the groupstatus gets to 0 we reset the press on our side :)
+              currentShotData.pumpPress = 0;
+            }
+
             this.sanremoShotData = currentShotData;
             this.sanremoShotData.localTimeString =
               new Date().toLocaleTimeString();
