@@ -1,10 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { Brew } from '../classes/brew/brew';
 import { StorageClass } from '../classes/storageClass';
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
 
 @Injectable({
   providedIn: 'root',
@@ -70,13 +67,8 @@ export class UIBrewStorage extends StorageClass {
   }
 
   public async update(_obj: Brew): Promise<boolean> {
-    const promise: Promise<any> = new Promise(async (resolve, reject) => {
-      _obj.fixDataTypes();
-
-      const updatingObj = this.uiHelper.cloneData(_obj);
-      const updateval: boolean = await super.update(updatingObj);
-      resolve(updateval);
-    });
-    return promise;
+    _obj.fixDataTypes();
+    const updatingObj = this.uiHelper.cloneData(_obj);
+    return await super.update(updatingObj);
   }
 }

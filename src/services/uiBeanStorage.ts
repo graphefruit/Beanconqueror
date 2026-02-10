@@ -5,9 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Bean } from '../classes/bean/bean';
 import { StorageClass } from '../classes/storageClass';
 import { IBean } from '../interfaces/bean/iBean';
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
 
 @Injectable({
   providedIn: 'root',
@@ -88,11 +85,7 @@ export class UIBeanStorage extends StorageClass {
   }
 
   public async update(_obj: Bean): Promise<boolean> {
-    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
-      _obj.fixDataTypes();
-      const val = await super.update(_obj);
-      resolve(val);
-    });
-    return promise;
+    _obj.fixDataTypes();
+    return await super.update(_obj);
   }
 }

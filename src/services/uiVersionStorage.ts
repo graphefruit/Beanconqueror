@@ -1,11 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { StorageClass } from '../classes/storageClass';
 import { Version } from '../classes/version/iVersion';
 import { IVersion } from '../interfaces/version/iVersion';
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
 
 @Injectable({
   providedIn: 'root',
@@ -49,7 +46,7 @@ export class UiVersionStorage extends StorageClass {
   public async storageReady(): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       if (this.isVersionInitialized === -1) {
-        const intV: any = setInterval(async () => {
+        const intV: any = setInterval(() => {
           if (this.isVersionInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);

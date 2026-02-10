@@ -5,9 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Mill } from '../classes/mill/mill';
 import { StorageClass } from '../classes/storageClass';
 import { IMill } from '../interfaces/mill/iMill';
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
 
 @Injectable({
   providedIn: 'root',

@@ -5,9 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { GreenBean } from '../classes/green-bean/green-bean';
 import { StorageClass } from '../classes/storageClass';
 import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
 
 @Injectable({
   providedIn: 'root',
