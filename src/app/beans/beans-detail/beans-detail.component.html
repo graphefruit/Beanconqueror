@@ -1,17 +1,8 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{"DETAIL_BEAN" | translate}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button class="big-icon-only" (click)="edit()" tappable>
-        <ion-icon name="create" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'DETAIL_BEAN' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+    <app-header-button header-slot="end" icon="create" buttonClass="big-icon-only" (clicked)="edit()" />
+  </app-header>
 </ion-header>
 <ion-content>
 

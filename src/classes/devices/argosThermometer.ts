@@ -1,6 +1,5 @@
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-
 import { TemperatureDevice } from './temperatureBluetoothDevice';
 
 declare var ble: any;
@@ -48,13 +47,13 @@ export class ArgosThermometer extends TemperatureDevice {
         this.parseStatusUpdate(rawData);
       },
 
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
   private parseStatusUpdate(temperatureRawStatus: any) {
     this.logger.log(
-      'temperatureRawStatus received is: ' + temperatureRawStatus
+      'temperatureRawStatus received is: ' + temperatureRawStatus,
     );
     const formatNumber = new Intl.NumberFormat(undefined, {
       minimumIntegerDigits: 2,
@@ -73,7 +72,7 @@ export class ArgosThermometer extends TemperatureDevice {
       ArgosThermometer.TEMPERATURE_SERVICE_UUID,
       ArgosThermometer.TEMPERATURE_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

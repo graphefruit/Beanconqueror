@@ -1,99 +1,194 @@
+import { DecimalPipe } from '@angular/common';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import {
   AlertController,
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardTitle,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenuButton,
+  IonNote,
+  IonRange,
+  IonSegment,
+  IonSegmentButton,
+  IonSelect,
+  IonSelectOption,
   ModalController,
   Platform,
   ScrollDetail,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  bluetoothOutline,
+  checkmarkCircleOutline,
+  chevronForwardOutline,
+  cloudUploadOutline,
+  informationCircleOutline,
+  informationOutline,
+  refreshOutline,
+} from 'ionicons/icons';
+
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
-import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
-import { Bean } from '../../classes/bean/bean';
-
-import { Brew } from '../../classes/brew/brew';
-import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
+import { AppEvent } from '../../classes/appEvent/appEvent';
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { BrewFlow } from '../../classes/brew/brewFlow';
+import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
+import { Logger } from '../../classes/devices/common/logger';
+import { Graph } from '../../classes/graph/graph';
+import { GreenBean } from '../../classes/green-bean/green-bean';
+import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../classes/preparationDevice';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { Settings } from '../../classes/settings/settings';
+import { Water } from '../../classes/water/water';
+import { HeaderComponent } from '../../components/header/header.component';
+import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import { TooltipDirective } from '../../directive/tooltip.directive';
+import { AppEventType } from '../../enums/appEvent/appEvent';
+import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
+import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
-import { ISettings } from '../../interfaces/settings/iSettings';
-import { Mill } from '../../classes/mill/mill';
-import { Settings } from '../../classes/settings/settings';
-import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
-import { Subject } from 'rxjs';
-import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
-import { TranslateService } from '@ngx-translate/core';
-
-import { UIAlert } from '../../services/uiAlert';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIHelper } from '../../services/uiHelper';
-import { UILog } from '../../services/uiLog';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIStorage } from '../../services/uiStorage';
-
-/** Third party */
-import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-
-import { CurrencyService } from '../../services/currencyService/currency.service';
-import { GreenBean } from '../../classes/green-bean/green-bean';
 import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
 import { IMill } from '../../interfaces/mill/iMill';
 import { IPreparation } from '../../interfaces/preparation/iPreparation';
 import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
-import moment from 'moment';
-import { Preparation } from '../../classes/preparation/preparation';
-import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
-import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
-import { UIExcel } from '../../services/uiExcel';
-import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
-import { UIHealthKit } from '../../services/uiHealthKit';
-import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
-import { UIToast } from '../../services/uiToast';
-import { UIUpdate } from '../../services/uiUpdate';
-import { UiVersionStorage } from '../../services/uiVersionStorage';
-import { UIWaterStorage } from '../../services/uiWaterStorage';
-import { Water } from '../../classes/water/water';
-import { AppEvent } from '../../classes/appEvent/appEvent';
-import { AppEventType } from '../../enums/appEvent/appEvent';
-import { EventQueueService } from '../../services/queueService/queue-service.service';
+import { ISettings } from '../../interfaces/settings/iSettings';
+import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
+import { KeysPipe } from '../../pipes/keys';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
+import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Logger } from '../../classes/devices/common/logger';
+import { CurrencyService } from '../../services/currencyService/currency.service';
+import { EventQueueService } from '../../services/queueService/queue-service.service';
+import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
+import { ThemeService } from '../../services/theme/theme.service';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIExcel } from '../../services/uiExcel';
+import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 import {
   CreateTempCacheDirectoryResult,
   UIFileHelper,
 } from '../../services/uiFileHelper';
-import { UIExportImportHelper } from '../../services/uiExportImportHelper';
-import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
-import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
-import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
-import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
-import { Graph } from '../../classes/graph/graph';
-import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
-import { PreparationDeviceType } from '../../classes/preparationDevice';
-import { BrewFlow } from '../../classes/brew/brewFlow';
-import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
-import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
-import { FilePicker } from '@capawesome/capacitor-file-picker';
-import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
-import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
-import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
-import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
-import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
-import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
-import { ThemeService } from '../../services/theme/theme.service';
+import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
+import { UIHealthKit } from '../../services/uiHealthKit';
+import { UIHelper } from '../../services/uiHelper';
+import { UILog } from '../../services/uiLog';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIStorage } from '../../services/uiStorage';
+import { UIToast } from '../../services/uiToast';
+import { UIUpdate } from '../../services/uiUpdate';
+import { UiVersionStorage } from '../../services/uiVersionStorage';
+import { UIWaterStorage } from '../../services/uiWaterStorage';
+import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TooltipDirective,
+    DecimalPipe,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+    HeaderComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonCardContent,
+    IonCardTitle,
+    IonItem,
+    IonIcon,
+    IonSelect,
+    IonSelectOption,
+    IonRange,
+    IonCheckbox,
+    IonInput,
+    IonButton,
+    IonNote,
+    IonList,
+    IonBadge,
+  ],
 })
 export class SettingsPage {
+  protected readonly platform = inject(Platform);
+  uiSettingsStorage = inject(UISettingsStorage);
+  uiStorage = inject(UIStorage);
+  uiHelper = inject(UIHelper);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly translate = inject(TranslateService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly androidPermissions = inject(AndroidPermissions);
+  private readonly uiUpdate = inject(UIUpdate);
+  private readonly uiVersionStorage = inject(UiVersionStorage);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiHealthKit = inject(UIHealthKit);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiToast = inject(UIToast);
+  private readonly currencyService = inject(CurrencyService);
+  private readonly eventQueue = inject(EventQueueService);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly textToSpeech = inject(TextToSpeechService);
+  private readonly themeService = inject(ThemeService);
+
   public settings: Settings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
@@ -140,42 +235,7 @@ export class SettingsPage {
     }
   }
 
-  constructor(
-    protected readonly platform: Platform,
-    public uiSettingsStorage: UISettingsStorage,
-    public uiStorage: UIStorage,
-    public uiHelper: UIHelper,
-    private readonly alertCtrl: AlertController,
-    private readonly uiAlert: UIAlert,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiMillStorage: UIMillStorage,
-
-    private readonly uiLog: UILog,
-    private readonly translate: TranslateService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly androidPermissions: AndroidPermissions,
-    private readonly uiUpdate: UIUpdate,
-    private readonly uiVersionStorage: UiVersionStorage,
-    private readonly uiExcel: UIExcel,
-    private readonly uiHealthKit: UIHealthKit,
-    private readonly modalCtrl: ModalController,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiToast: UIToast,
-    private readonly currencyService: CurrencyService,
-    private readonly eventQueue: EventQueueService,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly visualizerService: VisualizerService,
-    private readonly textToSpeech: TextToSpeechService,
-    private readonly themeService: ThemeService,
-  ) {
+  constructor() {
     this.__initializeSettings();
     this.debounceLanguageFilter
       .pipe(debounceTime(500), distinctUntilChanged())
@@ -203,6 +263,15 @@ export class SettingsPage {
     this.isAndroid =
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
+    addIcons({
+      bluetoothOutline,
+      checkmarkCircleOutline,
+      chevronForwardOutline,
+      cloudUploadOutline,
+      informationCircleOutline,
+      informationOutline,
+      refreshOutline,
+    });
   }
 
   public handleScrollStart() {
@@ -627,7 +696,7 @@ export class SettingsPage {
   }
 
   public setLanguage(): void {
-    this.translate.setDefaultLang(this.settings.language);
+    this.translate.setFallbackLang(this.settings.language);
     this.translate.use(this.settings.language);
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,
@@ -1378,36 +1447,39 @@ export class SettingsPage {
     }
   }
 
-  private __importDummyData(): void {
+  private async __importDummyData(): Promise<void> {
     this.uiLog.log('Import dummy data');
-    const dummyData = BeanconquerorSettingsDummy;
 
-    if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
+    // Dynamically import the data here to avoid including it in the normal application bundle
+    const dummyData = (await import('../../assets/BeanconquerorTestData.json'))
+      .default;
+
+    console.log(dummyData);
+
+    if (dummyData.SETTINGS[0].brew_order.before === undefined) {
       this.uiLog.log('Old brew order structure');
       // Breaking change, we need to throw away the old order types by import
       const settingsConst = new Settings();
-      dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
+      dummyData.SETTINGS[0].brew_order = this.uiHelper.copyData(
         settingsConst.brew_order,
       );
     }
-    this.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
+    this.__cleanupImportSettingsData(dummyData.SETTINGS[0]);
 
-    this.uiStorage.import(dummyData).then(async () => {
-      this.__reinitializeStorages().then(async () => {
-        this.uiAnalytics.disableTracking();
-        this.__initializeSettings();
-        this.settings.resetFilter();
-        this.setLanguage();
-        await this.uiAlert.showMessage(
-          this.translate.instant('IMPORT_SUCCESSFULLY'),
-        );
-        if (this.settings.matomo_analytics === undefined) {
-          await this.showAnalyticsInformation();
-        } else {
-          this.uiAnalytics.enableTracking();
-        }
-      });
-    });
+    await this.uiStorage.import(dummyData);
+    await this.__reinitializeStorages();
+    this.uiAnalytics.disableTracking();
+    this.__initializeSettings();
+    this.settings.resetFilter();
+    this.setLanguage();
+    await this.uiAlert.showMessage(
+      this.translate.instant('IMPORT_SUCCESSFULLY'),
+    );
+    if (this.settings.matomo_analytics === undefined) {
+      await this.showAnalyticsInformation();
+    } else {
+      await this.uiAnalytics.enableTracking();
+    }
   }
 
   private async __importJSON(_parsedJSON: any, _importDirectory: string) {
@@ -1544,7 +1616,12 @@ export class SettingsPage {
             this.settings.bean_rating_steps = 1;
           }
           this.settings.resetFilter();
+
           await this.uiSettingsStorage.saveSettings(this.settings);
+          // Re-apply current theme after importing, as the import might contain
+          // a theme setting different from the old one.
+          await this.themeService.adjustTheme();
+
           await this.uiAlert.hideLoadingSpinner();
           await this.uiAlert.showMessage(
             this.translate.instant('IMPORT_SUCCESSFULLY'),
@@ -1658,3 +1735,5 @@ export class SettingsPage {
     } catch (ex) {}
   }
 }
+
+export default SettingsPage;

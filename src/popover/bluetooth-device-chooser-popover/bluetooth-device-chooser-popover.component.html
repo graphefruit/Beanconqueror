@@ -1,13 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title class="ion-text-center ion-margin-top">{{"SEARCH_BLUETOOTH_DEVICES" | translate}}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="research()" tappable fill="clear">
-        <ion-icon class="ion-color-accent" name="refresh-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-
+  <app-header [title]="'SEARCH_BLUETOOTH_DEVICES' | translate">
+    <app-header-button header-slot="end" icon="refresh-outline" buttonClass="" (clicked)="research()" />
+  </app-header>
 </ion-header>
 <ion-content>
 

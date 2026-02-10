@@ -1,21 +1,21 @@
 import {
-  EventEmitter,
   Directive,
-  Output,
-  Input,
   ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
 } from '@angular/core';
 
-@Directive({
-  selector: '[short-press]',
-  standalone: false,
-})
+@Directive({ selector: '[short-press]' })
 export class ShortPressDirective {
+  private elRef = inject(ElementRef);
+
   @Input('short-press-delay') public delay?: number = 250;
   @Output('short-press') public shortPress: EventEmitter<any> =
     new EventEmitter();
 
-  constructor(private elRef: ElementRef) {
+  constructor() {
     this.bindFunctions();
   }
 

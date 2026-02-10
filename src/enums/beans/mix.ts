@@ -4,5 +4,5 @@
 export enum BEAN_MIX_ENUM {
   UNKNOWN = 'Unknown',
   SINGLE_ORIGIN = 'Single Origin',
-  BLEND = 'Blend'
+  BLEND = 'Blend',
 }

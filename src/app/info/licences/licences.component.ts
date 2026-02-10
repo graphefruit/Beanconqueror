@@ -1,13 +1,49 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonBackButton,
+  IonCard,
+  IonCardContent,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  chevronDownOutline,
+  chevronForwardOutline,
+  chevronUpOutline,
+} from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { HeaderComponent } from '../../../components/header/header.component';
+import { KeysPipe } from '../../../pipes/keys';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'licences',
   templateUrl: './licences.component.html',
   styleUrls: ['./licences.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    IonHeader,
+    IonBackButton,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonCardContent,
+    HeaderComponent,
+  ],
 })
 export class LicencesComponent implements OnInit {
+  private readonly uiHelper = inject(UIHelper);
+
   public licences: any = {
     ionic: {
       TITLE: 'Ionic Framework',
@@ -636,7 +672,9 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
     },
   };
-  constructor(private readonly uiHelper: UIHelper) {}
+  constructor() {
+    addIcons({ chevronForwardOutline, chevronDownOutline, chevronUpOutline });
+  }
 
   public ngOnInit() {}
 

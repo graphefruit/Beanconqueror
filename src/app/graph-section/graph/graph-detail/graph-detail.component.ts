@@ -2,33 +2,48 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import moment from 'moment/moment';
-import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFourth.json';
-import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import { Settings } from '../../../../classes/settings/settings';
-import { TranslateService } from '@ngx-translate/core';
-import { IGraph } from '../../../../interfaces/graph/iGraph';
-import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import { UIHelper } from '../../../../services/uiHelper';
-import { ModalController, Platform } from '@ionic/angular';
-import { UIFileHelper } from '../../../../services/uiFileHelper';
-import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
-import { IBrew } from '../../../../interfaces/brew/iBrew';
-import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
-import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
+
+import {
+  IonButton,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  IonSpinner,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { closeOutline } from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
 import { Brew } from '../../../../classes/brew/brew';
-import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
+import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Graph } from '../../../../classes/graph/graph';
+import { Settings } from '../../../../classes/settings/settings';
+import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
 import { BREW_GRAPH_TYPE } from '../../../../enums/brews/brewGraphType';
-import BeanconquerorFlowTestDataDummySecondDummy from '../../../../assets/BeanconquerorFlowTestDataSecond.json';
-import { UIBrewStorage } from '../../../../services/uiBrewStorage';
-import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
+import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
+import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
+import { IBrew } from '../../../../interfaces/brew/iBrew';
+import { IGraph } from '../../../../interfaces/graph/iGraph';
+import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
 import { UIAlert } from '../../../../services/uiAlert';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../../services/uiBrewStorage';
+import { UIFileHelper } from '../../../../services/uiFileHelper';
+import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 
 declare var Plotly;
 
@@ -36,9 +51,32 @@ declare var Plotly;
   selector: 'app-graph-detail',
   templateUrl: './graph-detail.component.html',
   styleUrls: ['./graph-detail.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonChip,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSpinner,
+  ],
 })
 export class GraphDetailComponent implements OnInit {
+  private readonly translate = inject(TranslateService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly graphHelper = inject(GraphHelperService);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID = 'graph-detail';
   public flow_profile_raw: BrewFlow = new BrewFlow();
 
@@ -61,19 +99,9 @@ export class GraphDetailComponent implements OnInit {
 
   @Input() private flowProfileData: any;
 
-  constructor(
-    private readonly translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiHelper: UIHelper,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController,
-    private readonly graphHelper: GraphHelperService,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiAlert: UIAlert,
-  ) {}
+  constructor() {
+    addIcons({ closeOutline });
+  }
 
   public ngOnInit() {}
 
@@ -158,8 +186,8 @@ export class GraphDetailComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     setTimeout(() => {
       this.initializeFlowChart();
     }, 250);
@@ -270,63 +298,69 @@ export class GraphDetailComponent implements OnInit {
   }
 
   private async readFlowProfile(_path) {
-    if (this.platform.is('capacitor')) {
-      if (_path !== '') {
-        try {
-          const jsonParsed =
-            await this.uiFileHelper.readInternalJSONFile(_path);
-          this.flow_profile_raw = jsonParsed;
-        } catch (ex) {}
-      }
-    } else {
-      this.flow_profile_raw = BeanconquerorFlowTestDataDummy as any;
+    if (!this.platform.is('capacitor')) {
+      const dummyData = (
+        await import('../../../../assets/BeanconquerorFlowTestDataFourth.json')
+      ).default;
+      this.flow_profile_raw = dummyData as any;
+      return;
+    }
+
+    if (_path !== '') {
+      try {
+        const jsonParsed = await this.uiFileHelper.readInternalJSONFile(_path);
+        this.flow_profile_raw = jsonParsed;
+      } catch (ex) {}
     }
   }
 
   private async readReferenceFlowProfile(_iBrew: IBrew) {
-    if (this.platform.is('capacitor')) {
-      const _brew: Brew = this.uiBrewStorage.getEntryByUUID(_iBrew.config.uuid);
-      if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
-        let referencePath: string = '';
-        const uuid = _brew.reference_flow_profile.uuid;
-        let referenceObj: Brew | Graph = null;
-        if (
-          _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
-          _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-        ) {
-          referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+    if (!this.platform.is('capacitor')) {
+      const dummyData = (
+        await import('../../../../assets/BeanconquerorFlowTestDataSecond.json')
+      ).default;
+      this.reference_profile_raw = dummyData as any;
+      return;
+    }
 
-          if (
-            _brew.reference_flow_profile.type ===
-            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-          ) {
-            referencePath = referenceObj.getGraphPath(
-              BREW_GRAPH_TYPE.IMPORTED_GRAPH,
-            );
-          } else {
-            referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
-          }
+    const _brew: Brew = this.uiBrewStorage.getEntryByUUID(_iBrew.config.uuid);
+    if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
+      let referencePath: string = '';
+      const uuid = _brew.reference_flow_profile.uuid;
+      let referenceObj: Brew | Graph = null;
+      if (
+        _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
+        _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+      ) {
+        referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
+
+        if (
+          _brew.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
+          referencePath = referenceObj.getGraphPath(
+            BREW_GRAPH_TYPE.IMPORTED_GRAPH,
+          );
         } else {
-          referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
-          referencePath = referenceObj.getGraphPath();
+          referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
         }
-        if (referenceObj) {
-          await this.uiAlert.showLoadingSpinner();
-          try {
-            const jsonParsed =
-              await this.uiFileHelper.readInternalJSONFile(referencePath);
-            this.reference_profile_raw = jsonParsed;
-          } catch (ex) {
-            // Maybe the reference flow has been deleted.
-          }
+      } else {
+        referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
+        referencePath = referenceObj.getGraphPath();
+      }
+      if (referenceObj) {
+        await this.uiAlert.showLoadingSpinner();
+        try {
+          const jsonParsed =
+            await this.uiFileHelper.readInternalJSONFile(referencePath);
+          this.reference_profile_raw = jsonParsed;
+        } catch (ex) {
+          // Maybe the reference flow has been deleted.
         }
       }
-      await this.uiAlert.hideLoadingSpinner();
-    } else {
-      this.reference_profile_raw =
-        BeanconquerorFlowTestDataDummySecondDummy as any;
     }
+    await this.uiAlert.hideLoadingSpinner();
   }
 
   public ngOnDestroy() {

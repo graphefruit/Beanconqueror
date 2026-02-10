@@ -1,8 +1,8 @@
-import { IBeanVisualizer } from '../../interfaces/visualizer/iBeanVisualizer';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
+import { IBeanVisualizer } from '../../interfaces/visualizer/iBeanVisualizer';
 
 export class BeanVisualizer implements IBeanVisualizer {
   public name: string;

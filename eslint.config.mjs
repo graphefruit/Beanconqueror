@@ -1,9 +1,9 @@
 // @ts-check
-import { defineConfig } from 'eslint/config';
-
 import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
 import angular from 'angular-eslint';
+import prettier from 'eslint-config-prettier/flat';
+import { defineConfig } from 'eslint/config';
+import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   {
@@ -13,6 +13,7 @@ export default defineConfig(
       ...tseslint.configs.recommendedTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
       ...angular.configs.tsRecommended,
+      prettier,
     ],
     languageOptions: {
       parserOptions: {
@@ -59,13 +60,6 @@ export default defineConfig(
         },
       ],
       '@angular-eslint/component-class-suffix': ['warn'],
-
-      // Must be fixed in bulk if desired.
-      // See the following references and issue #1006:
-      // - https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-inject.md
-      // - https://angular.dev/reference/migrations/inject-function
-      // - https://angular.dev/guide/di#injecting-dependencies-with-inject
-      '@angular-eslint/prefer-inject': ['warn'],
 
       '@typescript-eslint/array-type': ['warn'],
       '@typescript-eslint/dot-notation': ['warn'],

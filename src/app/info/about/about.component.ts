@@ -1,25 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonBackButton,
+  IonCard,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  analyticsOutline,
+  helpBuoyOutline,
+  informationCircleOutline,
+} from 'ionicons/icons';
+
 import { App } from '@capacitor/app';
-import { Platform } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { HeaderComponent } from '../../../components/header/header.component';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonBackButton,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonIcon,
+    HeaderComponent,
+  ],
 })
 export class AboutComponent implements OnInit {
+  platform = inject(Platform);
+  private readonly translate = inject(TranslateService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public versionStr: string = '';
 
   public analyticsEnabled: boolean = false;
   public analyticsId: string = '';
-  constructor(
-    public platform: Platform,
-    private readonly translate: TranslateService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  constructor() {
+    addIcons({ informationCircleOutline, analyticsOutline, helpBuoyOutline });
+  }
 
   public async ngOnInit() {
     await this.setAppVersion();

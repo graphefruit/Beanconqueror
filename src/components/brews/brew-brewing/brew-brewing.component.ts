@@ -5,80 +5,115 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   NgZone,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
-import { NgxStarsComponent } from 'ngx-stars';
-import { Brew } from '../../../classes/brew/brew';
-import { Preparation } from '../../../classes/preparation/preparation';
-import moment from 'moment';
-import { Settings } from '../../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular';
-import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { TranslateService } from '@ngx-translate/core';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { BrewTimerComponent } from '../../brew-timer/brew-timer.component';
-import { TimerComponent } from '../../timer/timer.component';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { IBean } from '../../../interfaces/bean/iBean';
-import { IMill } from '../../../interfaces/mill/iMill';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIWaterStorage } from '../../../services/uiWaterStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
-import { BrewBrixCalculatorComponent } from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
-import { BrewBeverageQuantityCalculatorComponent } from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
+import { FormsModule } from '@angular/forms';
 
+import {
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRange,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonTextarea,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  analyticsOutline,
+  download,
+  expandOutline,
+  globeOutline,
+} from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Subscription } from 'rxjs';
 
-import { UIHelper } from '../../../services/uiHelper';
-import { UIExcel } from '../../../services/uiExcel';
-
-import { UIFileHelper } from '../../../services/uiFileHelper';
+import { BrewPopoverExtractionComponent } from 'src/app/brew/brew-popover-extraction/brew-popover-extraction.component';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
+import { BrewBeverageQuantityCalculatorComponent } from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
+import { BrewBrixCalculatorComponent } from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-
-import { UIAlert } from '../../../services/uiAlert';
+import { BrewMaximizeControlsComponent } from '../../../app/brew/brew-maximize-controls/brew-maximize-controls.component';
+import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
+import { AppEvent } from '../../../classes/appEvent/appEvent';
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
+import { BrewFlow } from '../../../classes/brew/brewFlow';
+import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
+import { BluetoothScale, sleep } from '../../../classes/devices';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Settings } from '../../../classes/settings/settings';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
+import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
+import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
+import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
+import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothScale, sleep } from '../../../classes/devices';
-
-import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
-
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
-
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
-import { UIToast } from '../../../services/uiToast';
-import { UILog } from '../../../services/uiLog';
-import { BrewMaximizeControlsComponent } from '../../../app/brew/brew-maximize-controls/brew-maximize-controls.component';
-
-import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
-
-import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { HapticService } from '../../../services/hapticService/haptic.service';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
-import { BrewPopoverExtractionComponent } from 'src/app/brew/brew-popover-extraction/brew-popover-extraction.component';
-import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIExcel } from '../../../services/uiExcel';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
+import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { BrewTimerComponent } from '../../brew-timer/brew-timer.component';
+import { PhotoAddComponent } from '../../photo-add/photo-add.component';
+import { TimerComponent } from '../../timer/timer.component';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
-import { HapticService } from '../../../services/hapticService/haptic.service';
-import { BrewFlow } from '../../../classes/brew/brewFlow';
-import { Bean } from '../../../classes/bean/bean';
-import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
-import { AppEvent } from '../../../classes/appEvent/appEvent';
-import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
-import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 
 declare var cordova;
 
@@ -86,9 +121,72 @@ declare var cordova;
   selector: 'brew-brewing',
   templateUrl: './brew-brewing.component.html',
   styleUrls: ['./brew-brewing.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    PreparationOverlayDirective,
+    BeanOverlayDirective,
+    MillOverlayDirective,
+    TimerComponent,
+    PreparationToolOverlayDirective,
+    WaterOverlayDirective,
+    BrewBrewingPreparationDeviceComponent,
+    BrewBrewingGraphComponent,
+    BrewTimerComponent,
+    NgxStarsModule,
+    TransformDateDirective,
+    PhotoAddComponent,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFieldOrder,
+    BrewFunction,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonButton,
+    IonIcon,
+    IonSelect,
+    IonList,
+    IonLabel,
+    IonRow,
+    IonCol,
+    IonSelectOption,
+    IonBadge,
+    IonRange,
+    IonTextarea,
+    IonGrid,
+  ],
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
+  private readonly platform = inject(Platform);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly modalController = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  readonly uiHelper = inject(UIHelper);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly ngZone = inject(NgZone);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiLog = inject(UILog);
+  private readonly eventQueue = inject(EventQueueService);
+  private readonly hapticService = inject(HapticService);
+  private readonly textToSpeech = inject(TextToSpeechService);
+
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewBrewingGraphEl', { static: false })
   public brewBrewingGraphEl: BrewBrewingGraphComponent;
@@ -157,33 +255,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public uiHasActivePreparationTools: boolean = false;
   public uiRefractometerConnected: boolean = false;
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly translate: TranslateService,
-    private readonly modalController: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    public readonly uiHelper: UIHelper,
-    private readonly modalCtrl: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiExcel: UIExcel,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly ngZone: NgZone,
-    private readonly uiToast: UIToast,
-    private readonly uiLog: UILog,
-    private readonly eventQueue: EventQueueService,
-    private readonly hapticService: HapticService,
-    private readonly textToSpeech: TextToSpeechService,
-  ) {}
+  constructor() {
+    addIcons({ globeOutline, download, expandOutline, analyticsOutline });
+  }
 
   public openURL(_url) {
     if (_url) {
@@ -332,8 +406,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
        * We removed this line, because we loaded the preparation device element twice, because it was already loaded fron the last brew
        */
       /** if (this.brewBrewingPreparationDeviceEl && !this.brewBrewingPreparationDeviceEl.hasAPreparationDeviceSet()) {
-        await this.brewBrewingPreparationDeviceEl?.instance();
-      }**/
+              await this.brewBrewingPreparationDeviceEl?.instance();
+            }**/
 
       const uiSectionWhileBrewingVisibleOnEnd = this.uiShowSectionWhileBrew;
       if (
@@ -612,10 +686,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     this.maxBrewRating = this.settings.brew_rating;
     /** if (this.loadSpecificLastPreparation) {
-      this.forceSetPreparation(this.loadSpecificLastPreparation);
-    } else {
-      this.setChoosenPreparation();
-    }**/
+          this.forceSetPreparation(this.loadSpecificLastPreparation);
+        } else {
+          this.setChoosenPreparation();
+        }**/
     this.setChoosenPreparation();
   }
 

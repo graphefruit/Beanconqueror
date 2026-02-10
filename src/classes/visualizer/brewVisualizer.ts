@@ -1,6 +1,6 @@
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
-import { BrewFlow } from '../brew/brewFlow';
 import { IBrewVisualizer } from '../../interfaces/visualizer/iBrewVisualizer';
+import { BrewFlow } from '../brew/brewFlow';
 import { Config } from '../objectConfig/objectConfig';
 
 export class BrewVisualizer implements IBrewVisualizer {

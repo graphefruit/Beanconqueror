@@ -1,8 +1,9 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { HelperWaterHardnessComponent } from './helper-water-hardness.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+import { HelperWaterHardnessComponent } from './helper-water-hardness.component';
 
 describe('HelperWaterHardnessComponent', () => {
   let component: HelperWaterHardnessComponent;
@@ -10,8 +11,7 @@ describe('HelperWaterHardnessComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()],
-      declarations: [HelperWaterHardnessComponent],
+      imports: [TranslateModule.forRoot(), HelperWaterHardnessComponent],
       providers: [],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();

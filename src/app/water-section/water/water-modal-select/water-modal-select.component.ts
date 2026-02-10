@@ -1,15 +1,60 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIWaterStorage } from '../../../../services/uiWaterStorage';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Water } from '../../../../classes/water/water';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 
 @Component({
   selector: 'app-water-modal-select',
   templateUrl: './water-modal-select.component.html',
   styleUrls: ['./water-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadioGroup,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class WaterModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+
   public static COMPONENT_ID = 'water-model-select';
 
   public segment: string = 'open';
@@ -20,10 +65,7 @@ export class WaterModalSelectComponent implements OnInit {
   @Input() public showFinished: boolean;
   @Input() private selectedValues: Array<string>;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-  ) {
+  constructor() {
     this.objs = this.uiWaterStorage.getAllEntries();
   }
 

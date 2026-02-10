@@ -1,17 +1,18 @@
-import { Injectable } from '@angular/core';
-import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
-import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
+import { inject, Injectable } from '@angular/core';
 
 import { DarkMode } from '@aparajita/capacitor-dark-mode';
-import { Capacitor } from '@capacitor/core';
-import { UISettingsStorage } from '../uiSettingsStorage';
-import { StatusBar, Style } from '@capacitor/status-bar';
-import { NavigationBar } from '@capgo/capacitor-navigation-bar';
+import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
 import { Keyboard, KeyboardStyle } from '@capacitor/keyboard';
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
+
+import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
+import { UISettingsStorage } from '../uiSettingsStorage';
 
 interface Theme {
   isDark: boolean;
   statusBarStyle: Style;
+  systemBarsStyle: SystemBarsStyle;
   statusBarColor: string;
   navigationBarColor: string;
   keyboardStyle: KeyboardStyle;
@@ -20,14 +21,17 @@ interface Theme {
 const DarkTheme: Theme = {
   isDark: true,
   statusBarStyle: Style.Dark,
+  systemBarsStyle: SystemBarsStyle.Dark,
   statusBarColor: '#121212',
   navigationBarColor: '#121212',
+  // navigationBarColor: '#222428',
   keyboardStyle: KeyboardStyle.Dark,
 };
 
 const LightTheme: Theme = {
   isDark: false,
   statusBarStyle: Style.Light,
+  systemBarsStyle: SystemBarsStyle.Light,
   statusBarColor: '#F0F0F0',
   navigationBarColor: '#F0F0F0',
   keyboardStyle: KeyboardStyle.Light,
@@ -37,14 +41,14 @@ const LightTheme: Theme = {
   providedIn: 'root',
 })
 export class ThemeService {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   private prefersDark: MediaQueryList;
 
   private _darkMode = false;
   public isDarkMode() {
     return this._darkMode;
   }
-
-  constructor(private readonly uiSettingsStorage: UISettingsStorage) {}
   public async initialize() {
     this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     this.prefersDark.addEventListener('change', () => {
@@ -100,26 +104,22 @@ export class ThemeService {
     const isAndroid = Capacitor.getPlatform() === 'android';
     const isIOS = Capacitor.getPlatform() === 'ios';
     if (isAndroid || isIOS) {
-      // Status bar
+      // Status bar handling must be done both by the legacy status bar plugin...
       promises.push(StatusBar.setStyle({ style: theme.statusBarStyle }));
-      // TODO: Remove this hack for android during Capacitor 8 migration, see issue #1003 and #1006
-      if (Capacitor.getPlatform() === 'android') {
-        promises.push(
-          AndroidNativeCalls.setStatusBarColor({ color: theme.statusBarColor }),
-        );
-      } else {
-        promises.push(
-          StatusBar.setBackgroundColor({ color: theme.statusBarColor }),
-        );
-      }
+      promises.push(
+        StatusBar.setBackgroundColor({ color: theme.statusBarColor }),
+      );
+      // ...and the new SystemBars plugin to work on all supported API levels
+      promises.push(SystemBars.setStyle({ style: theme.systemBarsStyle }));
 
       if (isAndroid) {
-        // Navigation bar
+        // On Android we let the Android-specific edge-to-edge plugin handle the bar colors
+        // iOS should just work natively according to documentation.
         promises.push(
-          NavigationBar.setNavigationBarColor({
-            color: theme.navigationBarColor,
-            darkButtons: !theme.isDark,
-          }),
+          EdgeToEdge.setNavigationBarColor({ color: theme.navigationBarColor }),
+        );
+        promises.push(
+          EdgeToEdge.setStatusBarColor({ color: theme.statusBarColor }),
         );
       }
 

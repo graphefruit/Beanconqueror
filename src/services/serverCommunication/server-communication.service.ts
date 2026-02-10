@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+
+import { of } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
+
+import { ServerBrew } from '../../classes/server/brew/brew';
 import { environment } from '../../environments/environment';
 import { ServerBean } from '../../models/bean/serverBean';
 import { UILog } from '../uiLog';
-import { ServerBrew } from '../../classes/server/brew/brew';
-import { catchError, timeout } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServerCommunicationService {
-  constructor(
-    private http: HttpClient,
-    private readonly uiLog: UILog,
-  ) {}
+  private http = inject(HttpClient);
+  private readonly uiLog = inject(UILog);
 
   public uploadShot() {
     const promise = new Promise<any>((resolve, reject) => {
@@ -69,16 +69,12 @@ export class ServerCommunicationService {
               // Timeout was triggered.
               reject();
             } else {
-              this.uiLog.log(
-                `getBeanInformation - data received - ${JSON.stringify(data)}`,
-              );
+              this.uiLog.log(`getBeanInformation - data received`, data);
               resolve(data);
             }
           },
           (error) => {
-            this.uiLog.log(
-              `getBeanInformation - error received - ${JSON.stringify(error)}`,
-            );
+            this.uiLog.log(`getBeanInformation - error received`, error);
             reject();
           },
         )

@@ -1,10 +1,9 @@
 :host {
-
   ion-card {
-    margin-top:0px;
-    margin-bottom:0px;
-    margin-left:10px;
-    margin-right:10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-right: 10px;
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
@@ -12,7 +11,7 @@
     }
   }
 
-  .bean-title{
+  .bean-title {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -23,10 +22,10 @@
     top: -20px;
     right: -20px;
     min-height: 20px;
-    ion-icon{
-      font-size: 18px!important;
-      width: 18px!important;
-      height: 18px!important;
+    ion-icon {
+      font-size: 18px !important;
+      width: 18px !important;
+      height: 18px !important;
     }
   }
 
@@ -35,15 +34,14 @@
       padding-top: 0px !important;
       padding-bottom: 0px !important;
     }
-
   }
   ion-text {
     position: relative;
     top: -5px;
   }
   .limit-grid-overflow {
-    padding-top:0px;
-    padding-bottom:0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
     ion-text {
       white-space: nowrap;
       display: block;
@@ -58,5 +56,4 @@
     display: block;
     object-fit: cover;
   }
-
 }

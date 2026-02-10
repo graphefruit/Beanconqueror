@@ -2,55 +2,83 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
 import { Bean } from '../../../classes/bean/bean';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { ModalController } from '@ionic/angular';
+import { BeanInformationComponent } from '../../../components/bean-information/bean-information.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
 @Component({
   selector: 'app-bean-popover-frozen-list',
   templateUrl: './bean-popover-frozen-list.component.html',
   styleUrls: ['./bean-popover-frozen-list.component.scss'],
-  standalone: false,
+  imports: [
+    AgVirtualScrollComponent,
+    BeanInformationComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+  ],
 })
 export class BeanPopoverFrozenListComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+
   public static readonly COMPONENT_ID = 'bean-popover-frozen-list';
 
   @Input() public frozenBeansList: Array<Bean> = undefined;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-  ) {}
 
   public async ionViewWillEnter() {
     this.loadBrews();
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
-      scrollComponent = this.openScroll;
+      const scrollComponent = this.openScroll;
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
       this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
+      }
     }, 150);
   }
 

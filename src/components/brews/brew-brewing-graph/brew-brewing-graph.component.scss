@@ -1,6 +1,6 @@
 :host {
-  display:block;
-  height:100%;
+  display: block;
+  height: 100%;
   ion-item {
     --border-width: 0px;
     margin-left: 16px;
@@ -19,7 +19,7 @@
       display: flex;
       justify-content: space-evenly;
       flex-direction: column;
-      font-weight:bold;
+      font-weight: bold;
     }
 
     ion-card-content {
@@ -27,58 +27,55 @@
       color: #000000;
       padding-bottom: 4px;
     }
-
   }
 
   ion-card.flow-profile.temperature-card {
     ion-card-header {
-      background-color: #CC3311 !important;
+      background-color: #cc3311 !important;
     }
 
     ion-icon {
-      color: #CC3311 !important;
+      color: #cc3311 !important;
     }
   }
 
   ion-card.flow-profile.pressure-card {
     ion-card-header {
-      background-color: #05C793 !important;
+      background-color: #05c793 !important;
     }
 
     ion-icon {
-      color: #05C793 !important;
+      color: #05c793 !important;
     }
 
-    ion-icon>div.icon-inner>svg.s-ion-icon>g {
-      fill: #05C793 !important;
+    ion-icon > div.icon-inner > svg.s-ion-icon > g {
+      fill: #05c793 !important;
     }
   }
 
   ion-card.flow-profile.flow-card {
     ion-card-header {
-      background-color: #09485D !important;
+      background-color: #09485d !important;
     }
 
     ion-icon {
-      color: #09485D !important;
+      color: #09485d !important;
     }
   }
 
-
   .brew-information-panel-barista {
-
     ion-icon {
-      position:relative;
+      position: relative;
       top: 2px;
     }
     ion-card-header {
-      min-height: 30px!important;
-      height: 40px!important;
-      padding: 0!important;
-      margin: 0!important;
-      font-size:16px!important;
+      min-height: 30px !important;
+      height: 40px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      font-size: 16px !important;
       span {
-        margin-left:3px;
+        margin-left: 3px;
       }
     }
     .weight-card {
@@ -87,17 +84,17 @@
         border: 2px var(--beanconqueror-icon-color) solid;
       }
       ion-icon {
-        color:var(--beanconqueror-icon-color) !important;
+        color: var(--beanconqueror-icon-color) !important;
       }
     }
 
     .flow-card {
       ion-card-header {
         background-color: white !important;
-        border: 2px #09485D solid;
+        border: 2px #09485d solid;
       }
       ion-icon {
-        color: #09485D !important;
+        color: #09485d !important;
       }
     }
 
@@ -112,7 +109,7 @@
     }
 
     span {
-      color:black;
+      color: black;
     }
   }
 
@@ -136,5 +133,4 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
 }

@@ -1,33 +1,74 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../services/uiHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { Brew } from '../../classes/brew/brew';
-import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
-import { BrewFilterComponent } from './brew-filter/brew-filter.component';
-import { Settings } from '../../classes/settings/settings';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { Subscription } from 'rxjs';
-import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
-import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+
+import { Brew } from '../../classes/brew/brew';
+import { Settings } from '../../classes/settings/settings';
+import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
+import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
+import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BrewFilterComponent } from './brew-filter/brew-filter.component';
 
 @Component({
   selector: 'brew',
   templateUrl: './brew.page.html',
   styleUrls: ['./brew.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgTemplateOutlet,
+    AgVirtualScrollComponent,
+    BrewInformationComponent,
+    TranslatePipe,
+    IonHeader,
+    IonMenuButton,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
+  ],
 })
 export class BrewPage implements OnInit {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  uiHelper = inject(UIHelper);
+  uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public brews: Array<Brew> = [];
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
@@ -38,10 +79,13 @@ export class BrewPage implements OnInit {
   public brew_segment: 'open' | 'archive' = 'open';
   public segmentScrollHeight: string = undefined;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   @ViewChild('brewContent', { read: ElementRef })
   public brewContent: ElementRef;
 
@@ -72,14 +116,7 @@ export class BrewPage implements OnInit {
   public uiShallBarBeDisplayed: boolean = false;
   public uiSearchText: string = '';
 
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    public uiHelper: UIHelper,
-    public uiBrewHelper: UIBrewHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -124,7 +161,7 @@ export class BrewPage implements OnInit {
   private retriggerScroll() {
     setTimeout(() => {
       const el = this.brewContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {
@@ -135,6 +172,16 @@ export class BrewPage implements OnInit {
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
 
       this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
+      }
       setTimeout(() => {
         /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
         const elScroll = scrollComponent.el;
@@ -144,8 +191,8 @@ export class BrewPage implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
@@ -584,3 +631,5 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 }
+
+export default BrewPage;

@@ -1,17 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    @if (multiple) {
-      <ion-title>{{ "CHOOSE_PREPARATIONS" | translate }}</ion-title>
-    }
-    @if (!multiple) {
-      <ion-title>{{ "CHOOSE_PREPARATION" | translate }}</ion-title>
-    }
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="(multiple ? 'CHOOSE_PREPARATIONS' : 'CHOOSE_PREPARATION') | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+  </app-header>
 </ion-header>
 <ion-content>
 

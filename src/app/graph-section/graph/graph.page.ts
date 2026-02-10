@@ -3,31 +3,70 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular';
-import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
+import {
+  IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { analyticsOutline } from 'ionicons/icons';
 
-import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
 import { Graph } from '../../../classes/graph/graph';
+import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { Settings } from '../../../classes/settings/settings';
+import { GraphInformationCardComponent } from '../../../components/graph-information-card/graph-information-card.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIGraphHelper } from '../../../services/uiGraphHelper';
+import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.page.html',
   styleUrls: ['./graph.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    GraphInformationCardComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+  ],
 })
 export class GraphPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+
   private graphs: Array<Graph> = [];
 
   public openGraphs: Array<Graph> = [];
@@ -36,25 +75,20 @@ export class GraphPage implements OnInit {
   @ViewChild('graphContent', { read: ElementRef })
   public graphContent: ElementRef;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   public segment: string = 'open';
 
   public settings: Settings;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGraphHelper: UIGraphHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ analyticsOutline });
   }
 
   public ionViewWillEnter(): void {
@@ -72,14 +106,14 @@ export class GraphPage implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.graphContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {
@@ -90,6 +124,16 @@ export class GraphPage implements OnInit {
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
 
       this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
+      }
     }, 250);
   }
 
@@ -136,3 +180,5 @@ export class GraphPage implements OnInit {
     this.__initializeView('archiv');
   }
 }
+
+export default GraphPage;

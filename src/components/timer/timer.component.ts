@@ -1,28 +1,44 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
 
+import {
+  IonButton,
+  IonIcon,
+  IonInput,
+  IonItem,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
 import { Device } from '@capacitor/device';
+import moment from 'moment';
+
+import { Settings } from '../../classes/settings/settings';
+import { TransformDateDirective } from '../../directive/transform-date';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import moment from 'moment';
-import { ModalController, Platform } from '@ionic/angular';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss'],
-  standalone: false,
+  imports: [TransformDateDirective, IonItem, IonInput, IonButton, IonIcon],
 })
 export class TimerComponent implements OnInit, OnDestroy {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+
   @Input() public label: string;
   @Input('label-id') public labelId: string;
   @Input('hide-control-buttons') public hideControlButtons: boolean = false;
@@ -42,12 +58,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   public timer: ITimer;
   public settings: Settings;
   private isIos16 = false;
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
       this.isIos16 =

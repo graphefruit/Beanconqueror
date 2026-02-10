@@ -1,8 +1,5 @@
-/** Interfaces */
-/** Enums */
-/** Classes */
-import { Config } from '../objectConfig/objectConfig';
 import { IVersion } from '../../interfaces/version/iVersion';
+import { Config } from '../objectConfig/objectConfig';
 
 export class Version implements IVersion {
   public config: Config;

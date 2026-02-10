@@ -1,15 +1,15 @@
 import { IVisualizer } from '../../interfaces/visualizer/iVisualizer';
-import { BrewVisualizer } from './brewVisualizer';
-import { BeanVisualizer } from './beanVisualizer';
-import { PreparationVisualizer } from './preparationVisualizer';
-import { WaterVisualizer } from './waterVisualizer';
-import { MillVisualizer } from './millVisualizer';
-import { Brew } from '../brew/brew';
 import { Bean } from '../bean/bean';
+import { Brew } from '../brew/brew';
+import { BrewFlow } from '../brew/brewFlow';
 import { Mill } from '../mill/mill';
 import { Preparation } from '../preparation/preparation';
 import { Water } from '../water/water';
-import { BrewFlow } from '../brew/brewFlow';
+import { BeanVisualizer } from './beanVisualizer';
+import { BrewVisualizer } from './brewVisualizer';
+import { MillVisualizer } from './millVisualizer';
+import { PreparationVisualizer } from './preparationVisualizer';
+import { WaterVisualizer } from './waterVisualizer';
 
 export class Visualizer implements IVisualizer {
   public bean: BeanVisualizer;

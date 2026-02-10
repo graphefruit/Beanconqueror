@@ -1,44 +1,92 @@
 import {
   Component,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { ModalController, Platform } from '@ionic/angular';
-import { Brew } from '../../../classes/brew/brew';
+
+import {
+  IonButton,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
-import { UIToast } from '../../../services/uiToast';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+
+import { Brew } from '../../../classes/brew/brew';
 import {
   BluetoothScale,
   SCALE_TIMER_COMMAND,
   sleep,
 } from '../../../classes/devices';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { UIAlert } from '../../../services/uiAlert';
-import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
-import { HapticService } from '../../../services/hapticService/haptic.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { Settings } from '../../../classes/settings/settings';
+import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { IBrew } from '../../../interfaces/brew/iBrew';
+import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { HapticService } from '../../../services/hapticService/haptic.service';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
+import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+
 declare var Plotly;
 declare var window;
 @Component({
   selector: 'brew-edit',
   templateUrl: './brew-edit.component.html',
   styleUrls: ['./brew-edit.component.scss'],
-  standalone: false,
+  imports: [
+    BrewBrewingComponent,
+    TranslatePipe,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonChip,
+    IonContent,
+    IonFooter,
+    IonRow,
+    IonCol,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+  ],
 })
 export class BrewEditComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly platform = inject(Platform);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly brewTracking = inject(BrewTrackingService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly hapticService = inject(HapticService);
+
   public static readonly COMPONENT_ID: string = 'brew-edit';
   @ViewChild('brewBrewing', { read: BrewBrewingComponent, static: false })
   public brewBrewing: BrewBrewingComponent;
@@ -49,32 +97,18 @@ export class BrewEditComponent implements OnInit {
   private disableHardwareBack;
   public readonly PreparationDeviceType = PreparationDeviceType;
   @Input('brew') public brew: IBrew;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly platform: Platform,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly brewTracking: BrewTrackingService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiAlert: UIAlert,
-    private readonly visualizerService: VisualizerService,
-    private readonly hapticService: HapticService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
   }
 
   @HostListener('window:keyboardWillShow')
-  private hideFooter() {
+  public hideFooter() {
     // Describe your logic which will be run each time when keyboard is about to be shown.
     this.showFooter = false;
   }
   @HostListener('window:keyboardWillHide')
-  private showFooterAgain() {
+  public showFooterAgain() {
     // Describe your logic which will be run each time when keyboard is about to be closed.
     this.showFooter = true;
   }

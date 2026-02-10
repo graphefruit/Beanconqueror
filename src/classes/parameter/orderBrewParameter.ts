@@ -1,12 +1,9 @@
-/** Interfacdes */
-
-import {IOrderBrewParameter} from '../../interfaces/parameter/iOrderBrewParameter';
+import { IOrderBrewParameter } from '../../interfaces/parameter/iOrderBrewParameter';
 
 export class OrderBrewParameter implements IOrderBrewParameter {
-
   public before: {
     bean_type: number;
-    bean_weight_in:number;
+    bean_weight_in: number;
     grind_weight: number;
     mill: number;
     grind_size: number;
@@ -25,7 +22,6 @@ export class OrderBrewParameter implements IOrderBrewParameter {
     brew_time: number;
     coffee_blooming_time: number;
     coffee_first_drip_time: number;
-
   };
 
   public after: {
@@ -33,14 +29,12 @@ export class OrderBrewParameter implements IOrderBrewParameter {
     coffee_concentration: number;
     brew_quantity: number;
     brew_beverage_quantity: number;
-    tds:number;
+    tds: number;
     rating: number;
     note: number;
     set_custom_brew_time: number;
     attachments: number;
   };
-
-
 
   constructor() {
     this.before = {
@@ -55,8 +49,8 @@ export class OrderBrewParameter implements IOrderBrewParameter {
       method_of_preparation_tool: 9,
       brew_temperature: 10,
       water: 11,
-      vessel:12,
-      pressure_profile: 13
+      vessel: 12,
+      pressure_profile: 13,
     };
 
     this.while = {
@@ -75,7 +69,7 @@ export class OrderBrewParameter implements IOrderBrewParameter {
       rating: 6,
       note: 7,
       set_custom_brew_time: 8,
-      attachments: 9
+      attachments: 9,
     };
   }
 

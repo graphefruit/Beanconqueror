@@ -1,19 +1,57 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
-import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Settings } from '../../../classes/settings/settings';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'app-bean-sort',
   templateUrl: './bean-sort.component.html',
   styleUrls: ['./bean-sort.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    BeanFieldVisiblePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonListHeader,
+    IonItem,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonLabel,
+    IonButton,
+  ],
 })
 export class BeanSortComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'bean-sort';
   public beanSortAfterEnum = BEAN_SORT_AFTER;
   public beanSortOrderEnum = BEAN_SORT_ORDER;
@@ -28,11 +66,9 @@ export class BeanSortComponent implements OnInit {
 
   public settings: Settings;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  constructor() {
+    addIcons({ chevronDownOutline, chevronUpOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

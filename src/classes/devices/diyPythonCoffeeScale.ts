@@ -1,7 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { ScaleType } from './index';
 import { Logger } from './common/logger';
+import { ScaleType } from './index';
 
 declare var ble: any;
 export class DiyPythonCoffeeScale extends BluetoothScale {
@@ -113,7 +113,7 @@ export class DiyPythonCoffeeScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(_data);
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -134,7 +134,7 @@ export class DiyPythonCoffeeScale extends BluetoothScale {
       DiyPythonCoffeeScale.DATA_SERVICE,
       DiyPythonCoffeeScale.DATA_CHARACTERISTIC,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

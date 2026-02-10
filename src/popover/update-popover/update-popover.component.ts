@@ -1,14 +1,46 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { IonContent, ModalController, Platform } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonImg,
+  IonRow,
+  IonTitle,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-popover',
   templateUrl: './update-popover.component.html',
   styleUrls: ['./update-popover.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonContent,
+    IonTitle,
+    IonImg,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UpdatePopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private translate = inject(TranslateService);
+  private readonly platform = inject(Platform);
+
   @Input() public versions: Array<string>;
 
   public slide: number = 1;
@@ -17,12 +49,6 @@ export class UpdatePopoverComponent implements OnInit {
     | undefined;
   @ViewChild('updateContent', { static: false })
   public updateContentElement: IonContent;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private translate: TranslateService,
-    private readonly platform: Platform,
-  ) {}
 
   public isAndroid() {
     return this.platform.is('android');

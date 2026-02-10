@@ -1,30 +1,84 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { Bean } from '../../../classes/bean/bean';
-import { ModalController, Platform } from '@ionic/angular';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIToast } from '../../../services/uiToast';
-import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonLabel,
+  IonRow,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
+
+import { Bean } from '../../../classes/bean/bean';
+import { GreenBean } from '../../../classes/green-bean/green-bean';
+import { Settings } from '../../../classes/settings/settings';
+import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
+import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
+import { BeanSortInformationComponent } from '../../../components/beans/bean-sort-information/bean-sort-information.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
+import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { ServerBean } from '../../../models/bean/serverBean';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
   styleUrls: ['./beans-add.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanFreezeInformationComponent,
+    BeanSortInformationComponent,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BeansAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'bean-add';
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
@@ -39,19 +93,6 @@ export class BeansAddComponent implements OnInit {
 
   private initialBeanData: string = '';
   private disableHardwareBack;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

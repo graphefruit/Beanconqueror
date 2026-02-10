@@ -3,30 +3,70 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Water } from '../../../classes/water/water';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular';
-import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { Water } from '../../../classes/water/water';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { WaterInformationCardComponent } from '../../../components/water-information-card/water-information-card.component';
+import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
+import { UIWaterStorage } from '../../../services/uiWaterStorage';
 
 @Component({
   selector: 'app-water',
   templateUrl: './water.page.html',
   styleUrls: ['./water.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    WaterInformationCardComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+  ],
 })
 export class WaterPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiWaterHelper = inject(UIWaterHelper);
+
   private waters: Array<Water> = [];
 
   public openWaters: Array<Water> = [];
@@ -35,26 +75,21 @@ export class WaterPage implements OnInit {
   @ViewChild('waterContent', { read: ElementRef })
   public waterContent: ElementRef;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   public segment: string = 'open';
 
   public settings: Settings;
 
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiWaterHelper: UIWaterHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ waterOutline });
   }
 
   public ionViewWillEnter(): void {
@@ -72,14 +107,14 @@ export class WaterPage implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.waterContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {
@@ -89,6 +124,16 @@ export class WaterPage implements OnInit {
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
       this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
+      }
     }, 250);
   }
 
@@ -135,3 +180,5 @@ export class WaterPage implements OnInit {
     this.__initializeView('archiv');
   }
 }
+
+export default WaterPage;

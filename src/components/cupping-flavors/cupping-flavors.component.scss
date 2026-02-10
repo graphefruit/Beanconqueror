@@ -1,27 +1,25 @@
 :host {
   .margin-left-first {
-    margin-left:20px;
+    margin-left: 20px;
   }
   .margin-left-second {
-    margin-left:40px;
+    margin-left: 40px;
   }
   .margin-left-third {
-    margin-left:60px;
+    margin-left: 60px;
   }
   .flavor-color-box {
-    margin-left:20px;
-    width:40px;
-    height:40px;
+    margin-left: 20px;
+    width: 40px;
+    height: 40px;
   }
   #customFlavorInput {
-    --padding-start:16px;
+    --padding-start: 16px;
   }
 
-    ion-searchbar{
-      padding-left:16px;
-      padding-right:16px;
-      --border-radius: 0px;
-    }
-
-
+  ion-searchbar {
+    padding-left: 16px;
+    padding-right: 16px;
+    --border-radius: 0px;
+  }
 }

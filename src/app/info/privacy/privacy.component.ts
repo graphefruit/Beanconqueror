@@ -1,21 +1,37 @@
-import { Component, OnInit } from '@angular/core';
-import { UIHelper } from '../../../services/uiHelper';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonBackButton,
+  IonCard,
+  IonContent,
+  IonHeader,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { HeaderComponent } from '../../../components/header/header.component';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'privacy',
   templateUrl: './privacy.component.html',
   styleUrls: ['./privacy.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonBackButton,
+    IonContent,
+    IonCard,
+    HeaderComponent,
+  ],
 })
 export class PrivacyComponent implements OnInit {
-  constructor(
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
 
   public ngOnInit() {}
 

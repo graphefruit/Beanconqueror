@@ -2,32 +2,45 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
-import { UIImage } from '../../services/uiImage';
+
+import { IonButton, IonIcon, IonItem } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline, arrowForwardOutline, trash } from 'ionicons/icons';
+
+import { Clipboard } from '@capacitor/clipboard';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { GreenBean } from '../../classes/green-bean/green-bean';
-import { Bean } from '../../classes/bean/bean';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIToast } from '../../services/uiToast';
-
-import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
 import { UIAlert } from '../../services/uiAlert';
-import { TranslateService } from '@ngx-translate/core';
-import { Clipboard } from '@capacitor/clipboard';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIImage } from '../../services/uiImage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'photo-add',
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
-  standalone: false,
+  imports: [AsyncImageComponent, TranslatePipe, IonItem, IonIcon, IonButton],
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
+  private readonly uiImage = inject(UIImage);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
   @Output() public dataChange = new EventEmitter<
     Brew | Bean | GreenBean | Mill | Preparation
@@ -36,13 +49,9 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     | ElementRef
     | undefined;
 
-  constructor(
-    private readonly uiImage: UIImage,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-  ) {}
+  constructor() {
+    addIcons({ arrowBackOutline, arrowForwardOutline, trash });
+  }
 
   public ngOnInit() {
     setTimeout(() => {

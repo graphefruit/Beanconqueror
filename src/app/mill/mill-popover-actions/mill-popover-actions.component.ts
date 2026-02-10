@@ -1,24 +1,34 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
-import { IMill } from '../../../interfaces/mill/iMill';
-import { MILL_ACTION } from '../../../enums/mills/millActions';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Mill } from '../../../classes/mill/mill';
+import { MILL_ACTION } from '../../../enums/mills/millActions';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'mill-popover-actions',
   templateUrl: './mill-popover-actions.component.html',
   styleUrls: ['./mill-popover-actions.component.scss'],
-  standalone: false,
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class MillPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID = 'mill-popover-actions';
   public data: Mill = new Mill();
   @Input('mill') public mill: IMill;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {}
 
   public ionViewDidEnter(): void {}
 

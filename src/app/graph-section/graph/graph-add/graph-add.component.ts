@@ -1,38 +1,84 @@
-import { Component } from '@angular/core';
-import { Graph } from '../../../../classes/graph/graph';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { ModalController, Platform } from '@ionic/angular';
+import {
+  IonButton,
+  IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonTextarea,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  cloudUploadOutline,
+  informationCircleOutline,
+  trashOutline,
+} from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
+import { BrewFlow } from '../../../../classes/brew/brewFlow';
+import { Graph } from '../../../../classes/graph/graph';
+import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
+import { UIAlert } from '../../../../services/uiAlert';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { UIToast } from '../../../../services/uiToast';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
-import { UIGraphHelper } from '../../../../services/uiGraphHelper';
-import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFifth.json';
-import { UIAlert } from '../../../../services/uiAlert';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-graph-add',
   templateUrl: './graph-add.component.html',
   styleUrls: ['./graph-add.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonLabel,
+    IonTextarea,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class GraphAddComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly translate = inject(TranslateService);
+
   public static readonly COMPONENT_ID = 'graph-add';
   public data: Graph = new Graph();
   public flowData: BrewFlow = undefined;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly translate: TranslateService,
-  ) {}
+  constructor() {
+    addIcons({ cloudUploadOutline, informationCircleOutline, trashOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
@@ -57,37 +103,41 @@ export class GraphAddComponent {
 
   public async uploadGraph() {
     try {
-      if (this.platform.is('capacitor')) {
-        const data: any = await this.uiGraphHelper.chooseGraph();
+      if (!this.platform.is('capacitor')) {
+        const dummyData = (
+          await import('../../../../assets/BeanconquerorFlowTestDataFifth.json')
+        ).default;
+        this.flowData = dummyData as BrewFlow;
+        return;
+      }
+
+      const data: any = await this.uiGraphHelper.chooseGraph();
+      if (
+        data &&
+        (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+      ) {
+        // Export from a normal flow data
+        this.flowData = data as BrewFlow;
+      } else {
+        // Export from graph object
         if (
           data &&
-          (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+          (data?.DATA?.weight ||
+            data?.DATA?.pressureFlow ||
+            data?.DATA?.temperatureFlow)
         ) {
-          // Export from a normal flow data
-          this.flowData = data as BrewFlow;
-        } else {
-          // Export from graph object
-          if (
-            data &&
-            (data?.DATA?.weight ||
-              data?.DATA?.pressureFlow ||
-              data?.DATA?.temperatureFlow)
-          ) {
-            this.flowData = data.DATA as BrewFlow;
-            if (data.NAME) {
-              this.data.name = data.NAME;
-            }
-            if (data.NOTE) {
-              this.data.note = data.NOTE;
-            }
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT'),
-            );
+          this.flowData = data.DATA as BrewFlow;
+          if (data.NAME) {
+            this.data.name = data.NAME;
           }
+          if (data.NOTE) {
+            this.data.note = data.NOTE;
+          }
+        } else {
+          this.uiAlert.showMessage(
+            this.translate.instant('INVALID_FILE_FORMAT'),
+          );
         }
-      } else {
-        this.flowData = BeanconquerorFlowTestDataDummy as BrewFlow;
       }
     } catch (ex) {}
   }

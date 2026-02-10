@@ -1,25 +1,28 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  inject,
+  Input,
+} from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
-import { UIMillStorage } from '../services/uiMillStorage';
-import { Mill } from '../classes/mill/mill';
-import { MillModalSelectComponent } from '../app/mill/mill-modal-select/mill-modal-select.component';
 
-@Directive({
-  selector: '[ngModel][mill-overlay]',
-  standalone: false,
-})
+import { ModalController } from '@ionic/angular/standalone';
+
+import { MillModalSelectComponent } from '../app/mill/mill-modal-select/mill-modal-select.component';
+import { Mill } from '../classes/mill/mill';
+import { UIMillStorage } from '../services/uiMillStorage';
+
+@Directive({ selector: '[ngModel][mill-overlay]' })
 export class MillOverlayDirective {
+  private readonly model = inject(NgModel);
+  private readonly modalController = inject(ModalController);
+  private el = inject(ElementRef);
+  private uiMillStorage = inject(UIMillStorage);
+
   private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
-
-  constructor(
-    private readonly model: NgModel,
-    private readonly modalController: ModalController,
-    private el: ElementRef,
-    private uiMillStorage: UIMillStorage,
-  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {

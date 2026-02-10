@@ -1,12 +1,11 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import { IConfig } from '../objectConfig/iObjectConfig';
-/** Enums */
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { IBeanInformation } from '../bean/iBeanInformation';
+import { IConfig } from '../objectConfig/iObjectConfig';
 
 export interface IBeanVisualizer {
   name: string;

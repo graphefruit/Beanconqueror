@@ -6,14 +6,14 @@ import {
   CMD_START_TIMER,
   CMD_STOP_TIMER,
   CMD_TARE,
+  CMD_TOGGLE_PRECISION,
+  CMD_TOGGLE_UNIT,
   DATA_CHARACTERISTIC,
   DATA_SERVICE,
   DEVICE_NAME,
+  FELICITA_GRAM_UNIT,
   MAX_BATTERY_LEVEL,
   MIN_BATTERY_LEVEL,
-  FELICITA_GRAM_UNIT,
-  CMD_TOGGLE_UNIT,
-  CMD_TOGGLE_PRECISION,
 } from './felicita/constants';
 import { ScaleType } from './index';
 
@@ -152,7 +152,7 @@ export class FelicitaScale extends BluetoothScale {
         (e: any) => {
           this.logger.debug('Write unsuccessfully');
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -165,7 +165,7 @@ export class FelicitaScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 
@@ -186,7 +186,7 @@ export class FelicitaScale extends BluetoothScale {
         this.getBatteryPercentageFromFelicitaRawStatus(felicitaRawStatus);
     } else {
       this.logger.log(
-        'Bluetooth incoming statusUpdate is malformed, we should probably throw an error here...'
+        'Bluetooth incoming statusUpdate is malformed, we should probably throw an error here...',
       );
     }
   }
@@ -212,12 +212,12 @@ export class FelicitaScale extends BluetoothScale {
    * @returns The integer battery percentage.
    */
   private getBatteryPercentageFromFelicitaRawStatus(
-    felicitaRawStatus: Uint8Array
+    felicitaRawStatus: Uint8Array,
   ) {
     let batteryLevelPercentage = Math.round(
       ((felicitaRawStatus[15] - MIN_BATTERY_LEVEL) /
         (MAX_BATTERY_LEVEL - MIN_BATTERY_LEVEL)) *
-        100
+        100,
     );
 
     this.logger.log('Battery level percentage is: ' + batteryLevelPercentage);
@@ -253,7 +253,7 @@ export class FelicitaScale extends BluetoothScale {
       DATA_SERVICE,
       DATA_CHARACTERISTIC,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

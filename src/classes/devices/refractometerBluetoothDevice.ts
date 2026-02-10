@@ -1,7 +1,8 @@
-import { PeripheralData } from './ble.types';
 import { EventEmitter } from '@angular/core';
-import { Logger } from './common/logger';
+
 import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
+import { PeripheralData } from './ble.types';
+import { Logger } from './common/logger';
 
 export interface RefractometerReading {
   tds: number;

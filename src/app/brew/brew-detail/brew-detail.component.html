@@ -1,20 +1,9 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{"DETAIL_BREW" | translate}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button class="big-icon-only" (click)="repeat()" tappable>
-        <ion-icon style='width: 32px;margin-top:5px;' name="beanconqueror-repeat" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button class="big-icon-only" (click)="edit()" tappable>
-        <ion-icon name="create" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'DETAIL_BREW' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+    <app-header-button header-slot="end" icon="beanconqueror-repeat" buttonClass="big-icon-only" (clicked)="repeat()" />
+    <app-header-button header-slot="end" icon="create" buttonClass="big-icon-only" (clicked)="edit()" />
+  </app-header>
 </ion-header>
 <!--We need to set editActive here aswell, because this will destroy 'everything' else we sometimes have the issue on android that plotly does not render the lines on the first time -->
 @if(loaded && editActive === false) {

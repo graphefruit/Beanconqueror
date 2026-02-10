@@ -1,6 +1,6 @@
-import type { CapacitorConfig } from '@capacitor/cli';
 import { argv, env } from 'process';
-import { KeyboardResize } from '@capacitor/keyboard';
+
+import type { CapacitorConfig } from '@capacitor/cli';
 
 type Platform = 'android' | 'ios';
 const PlatformOverrideEnvVariable = 'CAPACITOR_PLATFORM_OVERRIDE';
@@ -60,7 +60,7 @@ const createConfig = () => {
   const config: CapacitorConfig = {
     appId: 'com.beanconqueror.app',
     appName: 'Beanconqueror',
-    webDir: 'www',
+    webDir: 'www/browser',
     loggingBehavior: 'none',
     zoomEnabled: false,
     server: {
@@ -71,7 +71,6 @@ const createConfig = () => {
     },
     android: {
       allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
-      adjustMarginsForEdgeToEdge: 'disable', // We use @capawesome/capacitor-android-edge-to-edge-support instead
     },
     plugins: {
       CapacitorHttp: {
@@ -88,8 +87,13 @@ const createConfig = () => {
         androidScaleType: 'CENTER_CROP',
         useDialog: false, // required to set the correct scale type
       },
-      StatusBar: {
-        overlaysWebView: false,
+      SystemBars: {
+        // Disable Capacitor SystemBars automatic insets handling, which is only
+        // applicable on Android. On android we use
+        // @capawesome/capacitor-android-edge-to-edge-support which already
+        // handles insets on the native side, so we have to disable this to
+        // prevent doubled insets.
+        insetsHandling: 'disable',
       },
     },
   };

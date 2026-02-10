@@ -1,10 +1,8 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import {IConfig} from '../objectConfig/iObjectConfig';
-/** Enums */
-
-import {IBeanInformation} from '../bean/iBeanInformation';
+import { IBeanInformation } from '../bean/iBeanInformation';
+import { IConfig } from '../objectConfig/iObjectConfig';
 
 export interface IGreenBean {
   name: string;
@@ -23,12 +21,10 @@ export interface IGreenBean {
 
   url: string;
   ean_article_number: string;
-  cupping_points:string;
+  cupping_points: string;
   decaffeinated: boolean;
 
   bean_information: Array<IBeanInformation>;
 
   rating: number;
-
-
 }

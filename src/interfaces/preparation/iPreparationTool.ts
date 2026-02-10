@@ -1,5 +1,4 @@
-import {IConfig} from '../objectConfig/iObjectConfig';
-
+import { IConfig } from '../objectConfig/iObjectConfig';
 
 export interface IPreparationTool {
   name: string;
