@@ -114,7 +114,7 @@ export class NfcService {
     }
   }
   private __handleNFCData(_tag) {
-    this.uiLog.log('We read NFC-Tag: ' + JSON.stringify(_tag));
+    this.uiLog.log('We read NFC-Tag', _tag);
     if (_tag) {
       let data = ndef.textHelper.decodePayload(_tag.ndefMessage[0].payload);
       /**We dont use bytes to string because somehow ascis came into play

@@ -8,7 +8,7 @@ export class BeanconquerorErrorHandler implements ErrorHandler {
   constructor() {
     this._console = console;
   }
-  public handleError(error) {
+  public handleError(error: unknown) {
     // do something with the exception
     const originalError = this._findOriginalError(error);
     this._console.error('ERROR', error);
@@ -16,38 +16,25 @@ export class BeanconquerorErrorHandler implements ErrorHandler {
       this._console.error('ORIGINAL ERROR', originalError);
     }
     try {
+      UILog.getInstance().unhandledError(error);
+    } catch (ex) {
+      // Shouldn't ever happen, but if it does, still try to log the originalError
+    }
+    if (originalError) {
       try {
-        UILog.getInstance().unhandledError(JSON.stringify(error));
+        UILog.getInstance().unhandledError(originalError);
       } catch (ex) {
-        try {
-          UILog.getInstance().unhandledError(error.toString());
-        } catch (ex) {}
+        // Shouldn't ever happen, but if it does, don't explode
       }
-      if (originalError) {
-        try {
-          UILog.getInstance().unhandledError(JSON.stringify(originalError));
-        } catch (ex) {
-          try {
-            UILog.getInstance().unhandledError(originalError.toString());
-          } catch (ex) {}
-        }
-      }
-    } catch (ex) {}
+    }
   }
 
-  private wrappedError(message, originalError) {
-    const msg = `${message} caused by: ${
-      originalError instanceof Error ? originalError.message : originalError
-    }`;
-    const error = Error(msg);
-    error[this.ERROR_ORIGINAL_ERROR] = originalError;
-    return error;
-  }
-  private getOriginalError(error) {
+  private getOriginalError(error: unknown): unknown {
     return error[this.ERROR_ORIGINAL_ERROR];
   }
+
   /** @internal */
-  private _findOriginalError(error) {
+  private _findOriginalError(error: unknown) {
     let e = error && this.getOriginalError(error);
     while (e && this.getOriginalError(e)) {
       e = this.getOriginalError(e);

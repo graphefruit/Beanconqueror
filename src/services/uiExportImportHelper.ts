@@ -258,8 +258,8 @@ export class UIExportImportHelper {
       }
     } catch (ex) {
       this.uiLog.log(
-        'Check over - if we got a deep corruption - Result exception: ' +
-          JSON.stringify(ex),
+        'Check over - if we got a deep corruption - Result exception: ',
+        ex,
       );
     }
   }

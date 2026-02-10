@@ -80,9 +80,7 @@ export abstract class StorageClass {
         await this.__save();
         this.__sendEvent('ADD');
       } catch (ex) {
-        this.uiLog.error(
-          `Storage - Add - Unsuccessfully - ${JSON.stringify(ex)}`,
-        );
+        this.uiLog.error('Storage - Add - Unsuccessfully', ex);
         this.uiHelper.showAlert(ex.message, 'ADD CRITICAL ERROR');
       }
       resolve(this.uiHelper.cloneData(newEntry));
@@ -123,10 +121,11 @@ export abstract class StorageClass {
         resolve(false);
       } catch (ex) {
         this.uiLog.error(
-          `Storage - Update  - Unsucessfully - Execption occured- ${ex.message}`,
+          'Storage - Update  - Unsucessfully - Execption occured',
+          ex,
         );
         this.uiHelper.showAlert(
-          `Storage - Update  - Unsucessfully - Execption occured- ${ex.message}`,
+          `Storage - Update  - Unsucessfully - Execption occured - ${ex.message}`,
           'CRITICAL ERROR',
         );
         resolve(false);
@@ -219,9 +218,7 @@ export abstract class StorageClass {
         },
         (e) => {
           // Error
-          this.uiLog.log(
-            `Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`,
-          );
+          this.uiLog.log(`Storage error - ${this.DB_PATH}`, e);
           this.storedData = [];
           this.isInitialized = 0;
           reject();
@@ -260,9 +257,7 @@ export abstract class StorageClass {
           if (_saved === true) {
             this.uiLog.log('Storage - Save - Successfully');
           } else {
-            this.uiLog.error(
-              `Storage - Save Set - Unsuccessfully - ` + JSON.stringify(_saved),
-            );
+            this.uiLog.error('Storage - Save Set - Unsuccessfully', _saved);
             this.uiHelper.showAlert(
               'Storage - Save Set - Unsuccessfully  - ' +
                 JSON.stringify(_saved),
@@ -271,11 +266,7 @@ export abstract class StorageClass {
           }
         },
         (e) => {
-          this.uiLog.error(
-            `Storage - Save Set Exception - Unsuccessfully - ${JSON.stringify(
-              e,
-            )}`,
-          );
+          this.uiLog.error('Storage - Save Set Exception - Unsuccessfully', e);
           this.uiHelper.showAlert(
             JSON.stringify(e),
             'CRITICAL ERROR - SAVE SET',
@@ -283,9 +274,7 @@ export abstract class StorageClass {
         },
       );
     } catch (ex) {
-      this.uiLog.error(
-        `Storage - Save - Unsuccessfully - ${JSON.stringify(ex)}`,
-      );
+      this.uiLog.error('Storage - Save - Unsuccessfully', ex);
       this.uiHelper.showAlert(ex.message, 'CRITICAL ERROR');
     }
   }

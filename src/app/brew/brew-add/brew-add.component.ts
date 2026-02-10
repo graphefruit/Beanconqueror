@@ -291,11 +291,9 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.data.coordinates.heading = resp.coords.heading;
       this.data.coordinates.speed = resp.coords.speed;
       this.data.coordinates.longitude = resp.coords.longitude;
-      this.uiLog.info(
-        'BREW - Coordinates found - ' + JSON.stringify(this.data.coordinates),
-      );
+      this.uiLog.info('BREW - Coordinates found', this.data.coordinates);
     } catch (error) {
-      this.uiLog.error('BREW - No Coordinates found: ', error);
+      this.uiLog.error('BREW - No Coordinates found', error);
       if (_highAccuracy === true) {
         this.uiLog.error('BREW - Try to get coordinates with low accuracy');
         return await this.setCoordinates(false);
@@ -502,9 +500,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
               addedBrewObj.note + '\r\n' + JSON.stringify(logs);
             await this.uiBrewStorage.update(addedBrewObj);
           } catch (ex) {
-            this.uiLog.log(
-              'We could not get the logs from xenia: ' + JSON.stringify(ex),
-            );
+            this.uiLog.log('We could not get the logs from xenia', ex);
             this.uiToast.showInfoToast(
               'We could not get the logs from xenia: ' + JSON.stringify(ex),
               false,
