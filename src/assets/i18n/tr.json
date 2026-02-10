@@ -1086,7 +1086,10 @@
             "RECONNECT_NEEDED": "Yeniden bağlantı gerekli",
             "RECONNECT": "Yeniden bağlan",
             "ENTER_TARGET_BREW_WEIGHT": "Hedef demleme ağırlığını gram cinsinden girin",
-            "LAST_SHOT": "Son doz"
+            "LAST_SHOT": "Son doz",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode yalnızca tartı bağlantısı ile çalışır, lütfen bir tartı bağlayın.",
+            "WE_COULD_NOT_CONNECT": "Makineye bağlanamadık",
+            "BREW_BY_WEIGHT_HINT": "Espresso akışının ayarlanan ağırlıkta durması için ml cinsinden programlanan hacim, gram cinsinden hedef ağırlıktan daha yüksek olmalıdır. Eğer durum böyle değilse, lütfen ml cinsinden hacmi ayarlayın."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
@@ -1459,36 +1462,6 @@
     "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible.",
     "BEAN_DATA_AVERAGE_BREW_RATING": "Ortalama Demleme Derecesi",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "Bluetooth cihazları için bağlan\/bağlantıyı kes açılır penceresini devre dışı bırakma seçeneği"
-            }
-        },
-        "8.5.0": {
-            "TITLE": "Sürüm 8.5.0: Yenilikler",
-            "DESCRIPTION": [
-                "<b>2025 Özetini Keşfet<\/b>",
-                "2025 yılınızı keşfedin!",
-                "",
-                "<b>Yeni Dil<\/b>",
-                "Yunanca Tercüme İçin - Bay Pterodactyl'e Teşekkürler",
-                "",
-                "<b>Bluetooth Tartılar<\/b>",
-                "Daha kolay bağlantı için cihazın benzersiz kimliğini gösterme",
-                "",
-                "<b>Çekirdekler<\/b>",
-                "Donmuş çekirdeğin bir kısmını çöz",
-                "Aynı aileden gelen çekirdekleri artık grupluyoruz",
-                "Kafeinsiz çekirdekleri artık ay ikonuyla gösteriyoruz",
-                "Excel'den farklı çeşitlerde çekirdek aktarırken yaşanan sorunu hallettik",
-                "",
-                "<b>Diğer<\/b>",
-                "[ANDROID] Klavyedeki boşluk sorununu düzeltmek için Capacitor'dan Edge2Edge desteği eklendi.",
-                "Küçük düzeltmeler"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Demleme görüntü tipini seçin",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Hazırlık",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Çekirdek",
@@ -1582,5 +1555,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Çekirdeğin çözülmesi sağlandı",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Kahve çekirdeği kısmen çözülmüştür",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Çekirdeğin bir kısmını çöz",
-    "LAST_COMMUNICATION": "Son Bağlantı"
+    "LAST_COMMUNICATION": "Son Bağlantı",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Sürüm 8.6.0: Yenilikler",
+            "DESCRIPTION": [
+                "<b>Sanremo You<\/b>",
+                "Ağırlığa göre demleme özelliğine sahip olan Sanremo YOU Makinesi artık destekleniyor!",
+                "Baristamode'u keşfedin, Sanremo YOU'dan akışı başlatın ve BeanConqueror doğru zamanda bunu durduracaktır.",
+                "",
+                "<b>Grafik Renkleri<\/b>",
+                "Artık grafik renklerini açık ve koyu mod için özelleştirebilirsiniz",
+                "",
+                "<b> Meticulous <\/b>",
+                "Bir shot kaydını içe aktardığınızda, profil adı ve ayarlanan sıcaklık da otomatik olarak kaydedilir.",
+                "",
+                "<b>Demleme<\/b>",
+                "Demleme detay ekranında saat ve dakikanın görüntülenmesi",
+                "",
+                "<b>Diğer<\/b>",
+                "Çince karakterler için Excel içe aktarma sorununu düzeltme",
+                "Küçük düzeltmeler"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Aktif (Açık)",
+    "GRAPH_ACTIVE_DARK_MODE": "Aktif (Koyu)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Referans (Açık)",
+    "GRAPH_REFERENCE_DARK_MODE": "Referans (Koyu)",
+    "GRAPH_COLORS": "Grafik renkleri",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "Korece",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovakça",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japonca",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Rusça"
 }

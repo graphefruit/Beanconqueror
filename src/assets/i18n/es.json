@@ -1086,7 +1086,10 @@
             "RECONNECT_NEEDED": "Se necesita reconectar",
             "RECONNECT": "Reconectar",
             "ENTER_TARGET_BREW_WEIGHT": "Introduce la cantidad objetivo a extraer (en gramos)",
-            "LAST_SHOT": "Última preparación"
+            "LAST_SHOT": "Última preparación",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "El modo barista sólo funciona con una báscula conectada. Por favor, conecta una.",
+            "WE_COULD_NOT_CONNECT": "Imposible establecer conexión con la cafetera",
+            "BREW_BY_WEIGHT_HINT": "El volumen programado en ml debe ser mayor que el peso objetivo en gramos para que la extracción se pare en el peso prefijado. Si no es el caso, modifica el volumen en ml"
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Máquina Gaggiuino"
@@ -1459,36 +1462,6 @@
     "ANALYTICS_INFORMATION": "<h1>Tu viaje cafetero con BeanConqueror<\/h1><p>Desde que empezaste a usar la app has probado <b>{{BEANS_COUNT}}<\/b> cafés distintos y has tomado <b>{{BREWS_COUNT}}<\/b> tazas de café. ¡Esperamos que hayas disfrutado de todas ellas!<\/p><h2>Ayúdanos a construir una app mejor<\/h2><p>Sólo el 4% de los usuarios comparte su experiencia con nosotros ¡Eso es como intentar cocinar un plato muy complejo con un sólo ingrediente! Nos gustaría que compartieras tu experiencia con nosotros para que, así, podamos aprender de tus preparaciones y mejorar, entre todos, BeanConqueror.<\/p><h3>Juntos, podemos:<\/h3><ul><li>Analizar los mejores parámetros para cada variedad de café<\/li><li>Preparar recetas básicas, simples e intuitivas para aquellos que se inician en el mundo del café<\/li><li>Comprobar las relaciones entre los parámetros de una preparacion y los perfiles sensoriales en taza<\/li><li>Hacer de BeanConqueror una aplicación mucho más intuitiva y fácil de usar en tu viaje cafetero<\/li><\/ul><h2>Cómo ayudarnos:<\/h2><p>Si deseas ayudarnos, sólo tienes que activar la opción \"Permitir analítica\" en la configuración. Todo usuario que comparte su experiencia con nosotros es una pieza fundamental del futuro de BeanConqueror.<\/p><h2>Tu privacidad es lo primero<\/h2><p>BeanConqueror está hecha con mucho cariño por un programador alemán, en el corazón de Europa, y, por ende, nos tomamos tu privacidad muy en serio. Sólo usaremos datos anonimizados relativos al uso de la aplicación en sí, los cuales no continenen informacion personal de ningún tipo. Puedes encontrar todos los detalles en nuestra página web.<\/p><h2>¡Forma parte de la evolución de BeanConqueror!<\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Tu ID de telemetría no está vinculado de ningún modo a tus datos personales. No se almacena ninguna información que pueda identificarte.",
     "BEAN_DATA_AVERAGE_BREW_RATING": "Puntuación promedio de preparaciones",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "Se ha añadido una opción para desactivar la ventana emergente de conexión\/desconexión a dispositivos Bluetooth."
-            }
-        },
-        "8.5.0": {
-            "TITLE": "Versión 8.5.0: Novedades",
-            "DESCRIPTION": [
-                "<b>Unwrap 2025<\/b>",
-                "¡Echa un vistazo a tu 2025!",
-                "",
-                "<b>Nuevo idioma<\/b>",
-                "Añadida traducción al Griego - Gracias a Mr. pterodactyl",
-                "",
-                "<b>Básculas Bluetooth<\/b>",
-                "Ahora se muestra el identificador único de cada báscula",
-                "",
-                "<b>Cafés<\/b>",
-                "Ahora puedes descongelar parcialmente un café",
-                "El mismo café congelado en varios tipos de envase ahora aparece agrupado",
-                "Icono específico para los descafeinados (luna)",
-                "Corregido un error al importar desde Excel con cafés que tenían múltiples varietales",
-                "",
-                "<b>Otros<\/b>",
-                "[ANDROID] Añadido soporte de Edge2Edge vía Capacitor para arreglar un fallo en el teclado",
-                "Corrección de errores menores"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Imagen a mostrar en las preparaciones",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Método de preparación",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Café",
@@ -1582,5 +1555,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Café descongelado",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Café descongelado parcialmente",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Descongelar parcialmente",
-    "LAST_COMMUNICATION": "Última conexión"
+    "LAST_COMMUNICATION": "Última conexión",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Versión 8.6.0.: Novedades",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU<\/b>",
+                "Añadido soporte para Sanremo YOU junto a la función Brew by weight.",
+                "Explora el modo barista: inicia la extracción desde la Sanremo YOU y Beanconqueror enviará la señal de parada.",
+                "",
+                "<b>Colores en gráficos<\/b>",
+                "Personalización de los colores de los gráficos en ambos modos (claro y oscuro)",
+                "",
+                "<b>Meticulous<\/b>",
+                "El nombre del perfil y la temperatura se añaden al importar una preparación.",
+                "",
+                "<b>Preparaciones<\/b>",
+                "Se muestra hora exacta de la preparación en la vista detallada",
+                "",
+                "<b>Otros<\/b>",
+                "Corregida la importación en Excel para caracteres chinos",
+                "Corrección de errores menores"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Activo (Claro)",
+    "GRAPH_ACTIVE_DARK_MODE": "Activo (Oscuro)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Predeterminado (Claro)",
+    "GRAPH_REFERENCE_DARK_MODE": "Predeterminado (Oscuro)",
+    "GRAPH_COLORS": "Colores del gráfico",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "Coreano",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Eslovaco",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japonés",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Ruso"
 }

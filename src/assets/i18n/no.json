@@ -1086,7 +1086,10 @@
             "RECONNECT_NEEDED": "Tilkobling nødvendig",
             "RECONNECT": "Koble til igjen",
             "ENTER_TARGET_BREW_WEIGHT": "Angi målvekt for brygging i gram",
-            "LAST_SHOT": "Siste brygg"
+            "LAST_SHOT": "Siste brygg",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode fungerer bare med en tilkoblet vekt, vennligst koble til en",
+            "WE_COULD_NOT_CONNECT": "Vi kunne ikke koble til maskinen",
+            "BREW_BY_WEIGHT_HINT": "Det programmerte volumet i ml må være høyere enn målvekten i gram for at brygget skal stoppe ved den angitte vekten. Hvis dette ikke er tilfellet, vennligst juster volumet i ml."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino Machine"
@@ -1356,7 +1359,7 @@
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Når du aktiverer dette, vil grafen være ett sekund på etterskudd",
     "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Lagre maskinloggene når brygget lagres",
     "IMPORT_SHOT_FROM_METICULOUS": "Importér et brygg",
-    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Opplasting av Excel-arket er fullført og radene er konvertert til nye bønneoppføringer. God brygging!",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Opplasting av Excel-arket er fullført og importert til ny(e) bønneoppføring(er). God brygging!",
     "IMPORT_UNSUCCESSFULLY": "Importen feilet",
     "BEAN_LIST": "Bønneliste",
     "IMPORT_ROASTED_BEANS_EXCEL": "Importer brente bønner via Excel",
@@ -1364,7 +1367,7 @@
     "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Det ser ut til at den valgte Excel-filen er ødelagt, har feil data, er feil strukturert eller er feilvalgt. På grunn av dette kunne ingen bønner importeres.",
     "OK": "Ok",
     "BEAN_SORT_BEAN_AGE": "Dager etter brenning",
-    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Alle oppdagede oppføringer i Excel-listen, er endret til nye grønne bønner. Lykke til med brenning!",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Opplasting av Excel-arket er fullført og importert til ny(e) grønne bønneoppføring(er). Lykke til med brenning!",
     "PREPARATION_TYPE_SANREMO_YOU": "Sanremo YOU",
     "PREPARATION_TYPE_XENIA": "Xenia",
     "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Du legger til bønner som har informasjon om variant, men disse parameterne er ikke aktivert. Vil du aktivere dem nå?",
@@ -1459,36 +1462,6 @@
     "ANALYTICS_INFORMATION": "<h1>Din kaffereise med BeanConqueror<\/h1><p>Wow! Du har allerede oppdaget <b>{{BEANS_COUNT}}<\/b> bønner og brygget <b>{{BREWS_COUNT}}<\/b> deilige kopper kaffe fra dem. Det gjør deg til en ekte kaffeutforsker!<\/p><h2>Vær med på å forme fremtidens kaffe sammen<\/h2><p>Se for deg dette: Bare 4 % av fellesskapet vårt deler sine erfaringer med oss. Det er som å prøve å perfeksjonere en oppskrift med bare én ingrediens! Bryggedataene dine er som små skatter som hjelper oss med å gjøre BeanConqueror til det verktøyet du ønsker at det skal være.<\/p><h3>Sammen kan vi:<\/h3><ul><li> Avkode de ideelle parametrene for hver kaffebønnesort<\/li><li>Utvikle vitenskapelig støttede guider slik at du kan starte din reise i kaffeverdenen<\/li><li>Kartlegge de komplekse forholdene mellom bryggevariabler og smaksprofiler<\/li><li>Gjøre BeanConqueror til en enda mer intuitiv følgesvenn for kaffereisen din<\/li><\/ul><h2>Ditt bidrag er verdifullt:<\/h2><p>Aktiver datadeling nå eller senere i innstillingene. Hver delte opplevelse beriker vår kollektive kaffekunnskap og er en byggestein for fremtiden til BeanConqueror!<\/p><h2>Ditt personvern er viktig for oss<\/h2><p>Som et tysk team i hjertet av Europa tar vi personvernet ditt svært alvorlig. Vi overfører kun anonymiserte data som ikke kan knyttes til din identitet. Du finner alle detaljer på BeanConquerors nettsted.<\/p><h2>Bli en del av BeanConquerors utvikling! <\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} – Analytics-ID-en er ikke knyttet til personopplysninger; personlig identifikasjon er ikke mulig.",
     "BEAN_DATA_AVERAGE_BREW_RATING": "Gjennomsnittlig bryggvurdering",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "Alternativ for å deaktivere popup-vinduet for tilkobling\/frakobling av Bluetooth-enheter"
-            }
-        },
-        "8.5.0": {
-            "TITLE": "Versjon 8.5.0: Hva er nytt",
-            "DESCRIPTION": [
-                "<b>Pakk ut 2025<\/b>",
-                "Pakk opp året 2025!",
-                "",
-                "<b>Nytt språk<\/b>",
-                "Støtter gresk - Takk til Mr. pterodactyl",
-                "",
-                "<b>Bluetooth-vekter<\/b>",
-                "Viser enhetens unike ID for enklere tilkobling",
-                "",
-                "<b>Bønner<\/b>",
-                "Avfrys en porsjon av de fryste bønnene",
-                "Bønner grupperes nå hvis de er fra samme forelder",
-                "Viser et eget ikon for koffeinfrie bønner (måneikon)",
-                "Fikset import av bønner fra Excel med flere varianter",
-                "",
-                "<b>Annen<\/b>",
-                "[ANDROID]Støtter Edge2Edge fra kondensator for å fikse mellomrom på tastaturet",
-                "Mindre feilrettinger"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Velg bildetype for brygg",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Bryggemetode",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Bønner",
@@ -1582,5 +1555,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Bønnene har blitt avfryst",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Et parti av bønnene har blitt avfryst",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Avfrys et parti av bønnene",
-    "LAST_COMMUNICATION": "Siste kommunikasjon"
+    "LAST_COMMUNICATION": "Siste kommunikasjon",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Versjon 8.6.0: Hva er nytt",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU<\/b>",
+                "Støtte for Sanremo YOU-maskinen kombinert med \"brygge etter vekt\"-funksjonen!",
+                "Utforsk Baristamode, start brygget fra Sanremo YOU og Beanconqueror vil stoppe til riktig tid.",
+                "",
+                "<b>Graffarger<\/b>",
+                "Du kan nå tilpasse graffargene for lys og mørk modus",
+                "",
+                "<b>1Meticulous1<\/b>",
+                "Hvis du importerer et brygg, blir profilnavnet og den innstilte temperaturen også angitt.",
+                "",
+                "<b>Brygg<\/b>",
+                "Viser time og minutt på detaljskjermen til brygget",
+                "",
+                "<b>Annet<\/b>",
+                "Fikset Excel-import for kinesiske tegn",
+                "Mindre feilrettinger"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Aktiv (lys)",
+    "GRAPH_ACTIVE_DARK_MODE": "Aktiv (mørk)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Referanse (lys)",
+    "GRAPH_REFERENCE_DARK_MODE": "Referanse (mørk)",
+    "GRAPH_COLORS": "Graffarger",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "Koreansk",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovakisk",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japansk",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russisk"
 }
