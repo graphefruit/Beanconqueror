@@ -1086,7 +1086,10 @@
             "RECONNECT_NEEDED": "Reconnexion nécessaire",
             "RECONNECT": "Reconnecter",
             "ENTER_TARGET_BREW_WEIGHT": "Entrer le poids cible de la tasse en grammes",
-            "LAST_SHOT": "Dernier shot d'expresso"
+            "LAST_SHOT": "Dernier shot d'expresso",
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": "Baristamode ne fonctionne qu'avec une balance connectée, veuillez en connecter une",
+            "WE_COULD_NOT_CONNECT": "La connexion n'a pas pu être établie avec la machine",
+            "BREW_BY_WEIGHT_HINT": "Le volume programmé en ml doit être supérieur au poids cible en grammes pour que le shot s'arrête au poids fixé. Si ce n'est pas le cas, veuillez ajuster le volume en ml."
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Machine Gaggiuino"
@@ -1459,36 +1462,6 @@
     "ANALYTICS_INFORMATION": "<h1>Your Coffee Journey with BeanConqueror<\/h1><p>Wow! You have already discovered <b>{{BEANS_COUNT}}<\/b> beans and brewed <b>{{BREWS_COUNT}}<\/b> delicious cups of coffee from them. That makes you a true coffee explorer!<\/p><h2>Shaping the Future of Coffee Together<\/h2><p>Imagine this: Only 4% of our community shares their experiences with us. That’s like trying to perfect a recipe with just one ingredient! Your brewing data is like little treasures that help us make BeanConqueror the tool you want it to be.<\/p><h3>Together, we can:<\/h3><ul><li>Decode the ideal parameters for each coffee bean variety<\/li><li>Develop scientifically backed guides for getting started in the coffee world<\/li><li>Map the complex relationships between brewing variables and flavor profiles<\/li><li>Make BeanConqueror an even more intuitive companion for your coffee journey<\/li><\/ul><h2>Your Contribution is Valuable:<\/h2><p>Activate data sharing now or later in the settings. Every shared experience enriches our collective coffee knowledge and is a building block for the future of BeanConqueror!<\/p><h2>Your Privacy Matters to Us<\/h2><p>As a German team in the heart of Europe, we take your privacy very seriously. We only transmit anonymized data that does not allow any conclusions to be drawn about your identity. You can find all details on the BeanConqueror website.<\/p><h2>Become Part of the BeanConqueror Evolution!<\/h2>",
     "ANALYTICS_INFORMATION_ABOUT": "{{analyticsId}} - Analytics id is not linked to personal data; no personal identification possible.",
     "BEAN_DATA_AVERAGE_BREW_RATING": "Évaluation moyenne des infusions",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "8.3.0": {
-            "DESCRIPTION": {
-                "19": "Option pour désactiver la fenêtre popup de connexion\/déconnexion des appareils bluetooth"
-            }
-        },
-        "8.5.0": {
-            "TITLE": "8.5.0: Quoi de neuf",
-            "DESCRIPTION": [
-                "<b>Déballe ton année 2025 !<\/b>",
-                "Déballe ton année 2025 !",
-                "",
-                "<b>Nouvelle langue<\/b>",
-                "Traduction Grecque - Merci à Mr. pterodactyl",
-                "",
-                "<b>Balances Bluetooth<\/b>",
-                "Affichage de l'identifiant unique de l'appareil pour faciliter la connexion",
-                "",
-                "<b>Grains de café<\/b>",
-                "Décongeler une partie des grains de café",
-                "Les grains de café sont désormais regroupés s'ils proviennent du même parent",
-                "Affichage d'une icône spécifique pour les grains de café décaféinés (icône de lune)",
-                "Correction de l'importation depuis Excel de grains de café avec plusieurs variétés",
-                "",
-                "<b>Autre<\/b>",
-                "[ANDROID] Prise en charge de la fonction Edge2Edge de Capacitor pour corriger les espaces blancs du clavier",
-                "Corrections de bugs mineurs"
-            ]
-        }
-    },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": "Choisissez le type d'image de l'affichage de l'infusion",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": "Méthode de préparation",
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": "Grains de café",
@@ -1582,5 +1555,37 @@
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": "Les grains de café ont été décongelés",
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": "Une partie des grains de café ont été congeler",
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "Décongeler une partie des grains de café",
-    "LAST_COMMUNICATION": "Dernière communication"
+    "LAST_COMMUNICATION": "Dernière communication",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.6.0": {
+            "TITLE": "Version 8.6.0 : Quoi de neuf",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU<\/b>",
+                "Compatible avec la machine Sanremo YOU et la fonction d'infusion au poids !",
+                "Explorez le mode Barista, lancez l'extraction depuis la Sanremo YOU et BeanConqueror l'arrêtera au bon moment.",
+                "",
+                "<b>Couleurs du graph<\/b>",
+                "Vous pouvez désormais personnaliser les couleurs du graphique pour les modes clair et sombre",
+                "",
+                "<b>Meticulous<\/b>",
+                "Si vous importez un shot d'expresso, le nom du profil et la température définie sont désormais aussi définis",
+                "",
+                "<b>Infusion<\/b>",
+                "Affichage de l'heure et des minutes sur l'écran de détails de l'infusion",
+                "",
+                "<b>Autre<\/b>",
+                "Correction de l'importation Excel pour les caractères chinois",
+                "Corrections mineures"
+            ]
+        }
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": "Actif (Clair)",
+    "GRAPH_ACTIVE_DARK_MODE": "Actif (Sombre)",
+    "GRAPH_REFERENCE_LIGHT_MODE": "Référence (Clair)",
+    "GRAPH_REFERENCE_DARK_MODE": "Référence (Sombre)",
+    "GRAPH_COLORS": "Couleurs de graph",
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": "Coréen",
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovaque",
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japonais",
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russe"
 }

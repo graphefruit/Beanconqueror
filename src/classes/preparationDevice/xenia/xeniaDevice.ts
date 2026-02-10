@@ -31,8 +31,8 @@ export class XeniaDevice extends PreparationDevice {
     }
   }
 
-  private logError(...args: any[]) {
-    UILog.getInstance().error('XeniaDevice:', ...args);
+  private logError(message: string, ...optionalParams: unknown[]): void {
+    UILog.getInstance().error(`XeniaDevice: ${message}`, ...optionalParams);
   }
 
   public override async deviceConnected(): Promise<boolean> {
@@ -42,11 +42,9 @@ export class XeniaDevice extends PreparationDevice {
         return true;
       }
 
-      const errorMessage = `Unexpected JSON response: ${JSON.stringify(
-        responseJSON,
-      )}`;
-      this.logError(errorMessage);
-      throw new Error(errorMessage);
+      const errorMessage = 'Unexpected JSON response';
+      this.logError(errorMessage, responseJSON);
+      throw new Error(`${errorMessage}: ${JSON.stringify(responseJSON)}`);
     } catch (error) {
       this.logError('Error in deviceConnected():', error);
       throw error;

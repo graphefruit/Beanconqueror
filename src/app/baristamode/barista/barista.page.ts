@@ -215,15 +215,17 @@ export class BaristaPage implements OnInit, OnDestroy {
 
           this.lastHeartbeat = shotData.localTimeString;
           this.lastHeartBeatEl.nativeElement.innerText = this.lastHeartbeat;
-          this.currentTempEl.nativeElement.innerText = shotData.tempBoilerCoffe;
-          this.pumpPressEl.nativeElement.innerText = shotData.pumpPress;
+          this.currentTempEl.nativeElement.innerText =
+            +shotData.tempBoilerCoffe.toFixed(2);
+          this.pumpPressEl.nativeElement.innerText =
+            +shotData.pumpPress.toFixed(2);
 
           if (shotData.groupStatus === 0) {
             updateSanremoYouTicker++;
             if (updateSanremoYouTicker >= 5) {
               //We use an update ticker to update just every 5 ticks (so every 5 seconds, we don't want to use another interval)
               //We're not doing any shot right now
-              this.updateSanremoYOUDoses();
+              this.updateSanremoYOUDoses(shotData.doses);
               updateSanremoYouTicker = 0;
             }
           } else {
@@ -501,8 +503,20 @@ export class BaristaPage implements OnInit, OnDestroy {
     await modal.present();
     await modal.onWillDismiss();
   }
+  private async updateSanremoYOUDoses(_doses) {
+    const doses = _doses;
 
-  private async updateSanremoYOUDoses() {
+    if (doses) {
+      const keysToCheck = ['key1', 'key2', 'key3'];
+
+      for (const key of keysToCheck) {
+        document.getElementById('sanremo_dose_' + key).innerText =
+          doses[key] + ' ml';
+      }
+    }
+  }
+  /**Not used, we take the data from the websocket**/
+  private async __updateSanremoYOUDoses() {
     if (this.isSanremoConnected()) {
       const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
         ?.preparationDevice as SanremoYOUDevice;

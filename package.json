@@ -74,6 +74,8 @@
     "qrcode": "^1.5.4",
     "regression": "^2.0.1",
     "rxjs": "^7.8.2",
+    "safe-stable-stringify": "^2.5.0",
+    "serialize-error": "^13.0.1",
     "swiper": "^12.0.3",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zone.js": "^0.16.0"
@@ -112,8 +114,6 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.3.3",
     "skwas-cordova-plugin-datetimepicker": "^3.0.2",
-    "stylelint": "^13.12.0",
-    "stylelint-config-standard": "^20.0.0",
     "ts-proto": "^2.10.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.50.0"
@@ -148,7 +148,6 @@
     ]
   },
   "lint-staged": {
-    "*.css": "stylelint --fix",
-    "*": "prettier --write --ignore-unknown"
+    "*.{ts,js,css,md}": "prettier --write"
   }
 }

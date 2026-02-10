@@ -191,7 +191,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   public async setBaristaHintHasBeenShown() {
-    this.preparation.connectedPreparationDevice.customParams.showHintForBaristaMode = false;
+    this.preparation.connectedPreparationDevice.customParams.showHintForBaristaMode =
+      false;
     await this.uiPreparationStorage.update(this.preparation);
   }
 

@@ -34,10 +34,7 @@ export class UIStorage {
       await this.init();
       this.uiLog.log('UIStorage - ReinitializeStorage - Ended successfully');
     } catch (ex) {
-      this.uiLog.error(
-        'UIStorage - ReinitializeStorage - Issue occured ' +
-          JSON.stringify(ex.message),
-      );
+      this.uiLog.error('UIStorage - ReinitializeStorage - Issue occured', ex);
     }
   }
 

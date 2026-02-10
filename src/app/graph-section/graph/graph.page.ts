@@ -111,7 +111,7 @@ export class GraphPage implements OnInit {
     this.retriggerScroll();
   }
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.graphContent.nativeElement;
       let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
@@ -124,6 +124,16 @@ export class GraphPage implements OnInit {
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
 
       this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
+      }
     }, 250);
   }
 

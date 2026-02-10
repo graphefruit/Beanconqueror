@@ -307,7 +307,8 @@ export class UIUpdate {
                 settings.brew_beverage_quantity;
 
               // This will be fixed value
-              settings.default_last_coffee_parameters.method_of_preparation = true;
+              settings.default_last_coffee_parameters.method_of_preparation =
+                true;
 
               // With this property there also came the change that we moved all parameters to manage_parameters
               await this.uiSettingsStorage.saveSettings(settings);

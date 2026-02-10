@@ -196,15 +196,12 @@ export class VisualizerService {
 
       this.uiLog.error(
         'Visualizer connection check did not return data:',
-        JSON.stringify(response),
+        response,
       );
       return false;
     } catch (errorResponse) {
       // Typical case that ends up here: wrong credentials, 401 status code
-      this.uiLog.error(
-        'Visualizer connection check errored:',
-        JSON.stringify(errorResponse),
-      );
+      this.uiLog.error('Visualizer connection check errored:', errorResponse);
       return false;
     }
   }
