@@ -1,16 +1,51 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
+import {
+  IonCard,
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonReorder,
+  IonReorderGroup,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-preparation-sort-tools',
   templateUrl: './preparation-sort-tools.component.html',
   styleUrls: ['./preparation-sort-tools.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonCard,
+    IonReorderGroup,
+    IonItem,
+    IonLabel,
+    IonReorder,
+  ],
 })
 export class PreparationSortToolsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID: string = 'preparation-sort-tools';
   public toolsOrders: Array<{
     number: number;
@@ -20,11 +55,6 @@ export class PreparationSortToolsComponent implements OnInit {
   }> = [];
 
   @Input() public preparation: Preparation;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiHelper: UIHelper,
-  ) {}
 
   public ngOnInit() {
     this.__initializeData();

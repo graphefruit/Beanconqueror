@@ -1,5 +1,3 @@
-/** Interfaces */
-
 export interface IBeanParameter {
   name: boolean;
   buyDate: boolean;

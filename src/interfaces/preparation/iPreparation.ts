@@ -1,11 +1,11 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import { IConfig } from '../objectConfig/iObjectConfig';
+import { PreparationTool } from '../../classes/preparation/preparationTool';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { IConfig } from '../objectConfig/iObjectConfig';
 import { IBrewParameter } from '../parameter/iBrewParameter';
 import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
-import { PreparationTool } from '../../classes/preparation/preparationTool';
 import { IConnectedPreparationDevice } from '../preparationDevices/iConnectedPreparationDevice';
 
 export interface IPreparation {

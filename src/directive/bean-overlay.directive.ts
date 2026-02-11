@@ -1,25 +1,28 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  inject,
+  Input,
+} from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
-import { BeanModalSelectComponent } from '../app/beans/bean-modal-select/bean-modal-select.component';
-import { UIBeanStorage } from '../services/uiBeanStorage';
-import { Bean } from '../classes/bean/bean';
 
-@Directive({
-  selector: '[ngModel][bean-overlay]',
-  standalone: false,
-})
+import { ModalController } from '@ionic/angular/standalone';
+
+import { BeanModalSelectComponent } from '../app/beans/bean-modal-select/bean-modal-select.component';
+import { Bean } from '../classes/bean/bean';
+import { UIBeanStorage } from '../services/uiBeanStorage';
+
+@Directive({ selector: '[ngModel][bean-overlay]' })
 export class BeanOverlayDirective {
+  private readonly model = inject(NgModel);
+  private readonly modalController = inject(ModalController);
+  private el = inject(ElementRef);
+  private uiBeanStorage = inject(UIBeanStorage);
+
   private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
-
-  constructor(
-    private readonly model: NgModel,
-    private readonly modalController: ModalController,
-    private el: ElementRef,
-    private uiBeanStorage: UIBeanStorage,
-  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {

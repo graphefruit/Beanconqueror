@@ -1,29 +1,79 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { UIStatistic } from '../../services/uiStatistic';
-import { Brew } from '../../classes/brew/brew';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { BREW_ACTION } from '../../enums/brews/brewAction';
-import { Router } from '@angular/router';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { Bean } from '../../classes/bean/bean';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import {
+  IonCard,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonMenuButton,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { giftOutline, snowOutline, thermometerOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
 import { Settings } from '../../classes/settings/settings';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import { BREW_ACTION } from '../../enums/brews/brewAction';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIStatistic } from '../../services/uiStatistic';
 import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
 import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
-import { ModalController } from '@ionic/angular';
+import moment from 'moment/moment';
 
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
-  standalone: false,
+  imports: [
+    RouterLink,
+    BrewInformationComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+  ],
 })
 export class DashboardPage implements OnInit {
+  uiStatistic = inject(UIStatistic);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly unwrappedService = inject(UnwrappedService);
+  private readonly modalController = inject(ModalController);
+
   public brews: Array<Brew> = [];
   public beans: Array<Bean> = [];
   public showUnwrappedButton: boolean = false;
@@ -35,20 +85,9 @@ export class DashboardPage implements OnInit {
   public getTimePassedSinceLastBrewMessage: string = undefined;
   public settings: Settings;
 
-  constructor(
-    public uiStatistic: UIStatistic,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly router: Router,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly unwrappedService: UnwrappedService,
-    private readonly modalController: ModalController,
-  ) {}
+  constructor() {
+    addIcons({ giftOutline, thermometerOutline, snowOutline });
+  }
 
   public async openUnwrapped(year: number) {
     const stats = this.unwrappedService.getUnwrappedData(year);
@@ -64,13 +103,14 @@ export class DashboardPage implements OnInit {
   public get showUnwrapped(): boolean {
     // Check for current year or previous year (if early in the year)
     // For now, let's just check 2025 as requested, or make it dynamic
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
+
+    const currentYear = moment().year();
+    const currentMonth = moment().month();
     // If we are in 2025, show 2025. If we are in 2026, maybe show 2025?
     // User asked for "Unwrapped 2025", so let's default to checking 2025 for the button visibility
     // But allow the method to take any year.
 
-    if (currentYear === 2025 || (currentYear === 2026 && currentMonth <= 1)) {
+    if (currentYear === 2025 || (currentYear === 2026 && currentMonth == 0)) {
       return !!this.unwrappedService.getUnwrappedData(2025);
     } else {
       return false;
@@ -221,3 +261,5 @@ export class DashboardPage implements OnInit {
     return usedWeightCount;
   }
 }
+
+export default DashboardPage;

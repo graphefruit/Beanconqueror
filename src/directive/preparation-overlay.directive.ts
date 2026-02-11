@@ -3,34 +3,33 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   Output,
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
-import { UIPreparationStorage } from '../services/uiPreparationStorage';
-import { Preparation } from '../classes/preparation/preparation';
-import { PreparationModalSelectComponent } from '../app/preparation/preparation-modal-select/preparation-modal-select.component';
-import { EventQueueService } from '../services/queueService/queue-service.service';
-import { AppEvent } from '../classes/appEvent/appEvent';
-import { AppEventType } from '../enums/appEvent/appEvent';
 
-@Directive({
-  selector: '[ngModel][preparation-overlay]',
-  standalone: false,
-})
+import { ModalController } from '@ionic/angular/standalone';
+
+import { PreparationModalSelectComponent } from '../app/preparation/preparation-modal-select/preparation-modal-select.component';
+import { AppEvent } from '../classes/appEvent/appEvent';
+import { Preparation } from '../classes/preparation/preparation';
+import { AppEventType } from '../enums/appEvent/appEvent';
+import { EventQueueService } from '../services/queueService/queue-service.service';
+import { UIPreparationStorage } from '../services/uiPreparationStorage';
+
+@Directive({ selector: '[ngModel][preparation-overlay]' })
 export class PreparationOverlayDirective {
+  private readonly model = inject(NgModel);
+  private readonly modalController = inject(ModalController);
+  private el = inject(ElementRef);
+  private uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly eventQueue = inject(EventQueueService);
+
   @Output() public ngModelChange = new EventEmitter();
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
   private oldModelValue: any = undefined;
-  constructor(
-    private readonly model: NgModel,
-    private readonly modalController: ModalController,
-    private el: ElementRef,
-    private uiPreparationStorage: UIPreparationStorage,
-    private readonly eventQueue: EventQueueService,
-  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {

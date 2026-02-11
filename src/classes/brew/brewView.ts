@@ -1,5 +1,4 @@
-/** Classes */
-import {Brew} from './brew';
+import { Brew } from './brew';
 
 export class BrewView {
   public title: string;
@@ -9,5 +8,4 @@ export class BrewView {
     this.title = '';
     this.brews = [];
   }
-
 }

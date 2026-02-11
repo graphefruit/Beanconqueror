@@ -1,5 +1,3 @@
-/** Interfacdes */
-
 import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
 
 export class BeanManageParameter implements IBeanParameter {

@@ -1,24 +1,33 @@
-/** Core */
-import { Injectable } from '@angular/core';
-/** Ionic */
+import { inject, Injectable } from '@angular/core';
+
 import {
   AlertController,
   LoadingController,
   ModalController,
-} from '@ionic/angular';
+} from '@ionic/angular/standalone';
+
 import { TranslateService } from '@ngx-translate/core';
-import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
-import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
-import { UILog } from './uiLog';
-import { EventQueueService } from './queueService/queue-service.service';
+
+import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
-import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
+import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
+import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
+import { EventQueueService } from './queueService/queue-service.service';
+import { UILog } from './uiLog';
+
 declare var window;
 @Injectable({
   providedIn: 'root',
 })
 export class UIAlert {
+  private readonly alertController = inject(AlertController);
+  private readonly translate = inject(TranslateService);
+  private readonly modalController = inject(ModalController);
+  private readonly loadingController = inject(LoadingController);
+  private readonly uiLog = inject(UILog);
+  private eventQueue = inject(EventQueueService);
+
   private static instance: UIAlert;
   public static getInstance(): UIAlert {
     if (UIAlert.instance) {
@@ -27,14 +36,7 @@ export class UIAlert {
 
     return undefined;
   }
-  constructor(
-    private readonly alertController: AlertController,
-    private readonly translate: TranslateService,
-    private readonly modalController: ModalController,
-    private readonly loadingController: LoadingController,
-    private readonly uiLog: UILog,
-    private eventQueue: EventQueueService,
-  ) {
+  constructor() {
     if (UIAlert.instance === undefined) {
       UIAlert.instance = this;
     }
@@ -48,18 +50,18 @@ export class UIAlert {
   ) {
     await this.showLoadingMessage(message, translate, false);
     /**if (this.existingLoadingSpinners.length > 0) {
-      await this.hideLoadingSpinner();
-    }
-    let msg = message;
-    if (translate) {
-      msg = this.translate.instant(message);
-    }
-    const loadingSpinner = await this.loadingController.create({
-      animated: false,
-      message: msg,
-    });
-    this.existingLoadingSpinners.push(loadingSpinner);
-    loadingSpinner.present();**/
+          await this.hideLoadingSpinner();
+        }
+        let msg = message;
+        if (translate) {
+          msg = this.translate.instant(message);
+        }
+        const loadingSpinner = await this.loadingController.create({
+          animated: false,
+          message: msg,
+        });
+        this.existingLoadingSpinners.push(loadingSpinner);
+        loadingSpinner.present();**/
   }
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {

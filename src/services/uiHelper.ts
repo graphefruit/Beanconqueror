@@ -1,21 +1,24 @@
-/** Core */
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
+import { Platform } from '@ionic/angular/standalone';
+
 import { Clipboard } from '@capacitor/clipboard';
-/** Ionic */
-import { Platform } from '@ionic/angular';
-/** Third party */
 import moment from 'moment';
+
 import 'moment/locale/de';
+
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+import { KeepAwake } from '@capacitor-community/keep-awake';
+import { AppLauncher } from '@capacitor/app-launcher';
+import { cloneDeep } from 'lodash';
+
+import { UIAlert } from './uiAlert';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
-import { UIAlert } from './uiAlert';
-
-import { cloneDeep } from 'lodash';
-import { UIToast } from './uiToast';
 import { UISettingsStorage } from './uiSettingsStorage';
-import { AppLauncher } from '@capacitor/app-launcher';
-import { KeepAwake } from '@capacitor-community/keep-awake';
+import { UIToast } from './uiToast';
+
 /**
  * Handles every helping functionalities
  */
@@ -23,21 +26,19 @@ import { KeepAwake } from '@capacitor-community/keep-awake';
   providedIn: 'root',
 })
 export class UIHelper {
+  private readonly platform = inject(Platform);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiLog = inject(UILog);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+
   /**
    *
    */
   private isAppReady: number = -1;
 
   private appStateIsActive: boolean = true;
-
-  constructor(
-    private readonly platform: Platform,
-    private readonly sanitizer: DomSanitizer,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiLog: UILog,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-  ) {}
 
   public static generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -232,16 +233,16 @@ export class UIHelper {
     this.isAppReady = _ready;
   }
 
-  public isBeanconqurorAppReady(): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
+  public isBeanconqurorAppReady(): Promise<void> {
+    const promise = new Promise<void>((resolve, reject) => {
       if (this.isAppReady === 1 || this.isAppReady === 2) {
         this.uiLog.log('Check app ready - Already loaded, no interval needed');
-        resolve(undefined);
+        resolve();
       } else {
         const intV = setInterval(() => {
           this.uiLog.log('Check app ready');
           if (this.isAppReady === 1 || this.isAppReady === 2) {
-            resolve(undefined);
+            resolve();
             clearInterval(intV);
           }
         }, 50);

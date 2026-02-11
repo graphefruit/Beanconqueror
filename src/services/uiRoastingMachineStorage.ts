@@ -1,22 +1,17 @@
-/** Core */
-import { Injectable } from '@angular/core';
-/** Classes */
-/** Interfaces */
-/** Services */
-import { StorageClass } from '../classes/storageClass';
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
-import { TranslateService } from '@ngx-translate/core';
-import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
-import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
+import { inject, Injectable } from '@angular/core';
 
-/** Ionic native */
+import { TranslateService } from '@ngx-translate/core';
+
+import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { StorageClass } from '../classes/storageClass';
+import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIRoastingMachineStorage extends StorageClass {
+  private readonly translate = inject(TranslateService);
+
   /**
    * Singelton instance
    */
@@ -32,13 +27,9 @@ export class UIRoastingMachineStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    private readonly translate: TranslateService
-  ) {
-    super(uiStorage, uiHelper, uiLog, 'ROASTING_MACHINES');
+  constructor() {
+    super('ROASTING_MACHINES');
+
     if (UIRoastingMachineStorage.instance === undefined) {
       UIRoastingMachineStorage.instance = this;
     }

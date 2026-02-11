@@ -59,7 +59,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
     this.setWeight(0);
 
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x01, 0xc5])
+      new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x01, 0xc5]),
     );
   }
 
@@ -71,7 +71,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
 
   public async setUnitToGram() {
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x04, 0x01, 0x00, 0xc4])
+      new Uint8Array([0xdf, 0xdf, 0x01, 0x04, 0x01, 0x00, 0xc4]),
     );
   }
 
@@ -80,11 +80,11 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
 
     if (_timer === SCALE_TIMER_COMMAND.START) {
       await this.write(
-        new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x00, 0xc4])
+        new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x00, 0xc4]),
       );
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
       await this.write(
-        new Uint8Array([0xdf, 0xdf, 0x03, 0x01, 0x01, 0x00, 0xc3])
+        new Uint8Array([0xdf, 0xdf, 0x03, 0x01, 0x01, 0x00, 0xc3]),
       );
     }
   }
@@ -92,7 +92,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
   public async enableAutoNotifications() {
     this.logger.log('enabling auto notifications');
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x01, 0xc1])
+      new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x01, 0xc1]),
     );
   }
 
@@ -131,7 +131,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -144,7 +144,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
   private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
@@ -172,7 +172,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
       DifluidMicrobalanceTi.SERVICE_UUID,
       DifluidMicrobalanceTi.CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

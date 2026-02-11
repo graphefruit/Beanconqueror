@@ -117,7 +117,7 @@ export class SkaleScale extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -130,7 +130,7 @@ export class SkaleScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(_data);
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
     // We need to put LED on on first conneciton, aswell as starting the current weight and toggling mode to grams.
     await this.setLed(true);

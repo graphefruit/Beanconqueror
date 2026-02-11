@@ -98,7 +98,7 @@ export class JimmyScale extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -111,7 +111,7 @@ export class JimmyScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 

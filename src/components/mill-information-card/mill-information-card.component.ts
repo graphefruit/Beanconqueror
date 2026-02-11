@@ -1,29 +1,83 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController } from '@ionic/angular';
-import { Mill } from '../../classes/mill/mill';
-import { MILL_ACTION } from '../../enums/mills/millActions';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
+
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonLabel,
+  IonRow,
+  IonText,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { MillPopoverActionsComponent } from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
 import { Brew } from '../../classes/brew/brew';
-import { UIMillHelper } from '../../services/uiMillHelper';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIToast } from '../../services/uiToast';
-import { UIAlert } from '../../services/uiAlert';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIImage } from '../../services/uiImage';
+import { Mill } from '../../classes/mill/mill';
+import { Settings } from '../../classes/settings/settings';
 import MILL_TRACKING from '../../data/tracking/millTracking';
-import { UIHelper } from '../../services/uiHelper';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { MILL_ACTION } from '../../enums/mills/millActions';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { MillFunction } from '../../pipes/mill/millFunction';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIImage } from '../../services/uiImage';
+import { UIMillHelper } from '../../services/uiMillHelper';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
+
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
   styleUrls: ['./mill-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    AsyncImageComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    MillFunction,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
+  ],
 })
 export class MillInformationCardComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiImage = inject(UIImage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiHelper = inject(UIHelper);
+
   @Input() public mill: Mill;
 
   @Output() public millAction: EventEmitter<any> = new EventEmitter();
@@ -36,19 +90,7 @@ export class MillInformationCardComponent implements OnInit {
   public lastUsedBean: string = '';
   public lastUsed: number = 0;
 
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiImage: UIImage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

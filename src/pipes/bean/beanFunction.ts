@@ -1,14 +1,10 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { Bean } from '../../classes/bean/bean';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 
-@Pipe({
-  name: 'beanFunctionPipe',
-  standalone: false,
-})
+@Pipe({ name: 'beanFunctionPipe' })
 export class BeanFunction implements PipeTransform {
   public transform(
     value: Bean,

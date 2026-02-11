@@ -1,22 +1,63 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { IBean } from '../../../interfaces/bean/iBean';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonBadge,
+  IonButton,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonRange,
+  IonRow,
+  IonTextarea,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
 import { Bean } from '../../../classes/bean/bean';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { ModalController } from '@ionic/angular';
-import { UIToast } from '../../../services/uiToast';
-import { NgxStarsComponent } from 'ngx-stars';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIHelper } from '../../../services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
+import { Settings } from '../../../classes/settings/settings';
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'app-bean-archive-popover',
   templateUrl: './bean-archive-popover.component.html',
   styleUrls: ['./bean-archive-popover.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgxStarsModule,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonTextarea,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class BeanArchivePopoverComponent implements OnInit {
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID = 'bean-archive-popover';
   @Input() public bean: IBean;
   @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
@@ -26,13 +67,7 @@ export class BeanArchivePopoverComponent implements OnInit {
 
   public maxBeanRating: number = 5;
   public settings: Settings = undefined;
-  constructor(
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly modalController: ModalController,
-    private readonly uiToast: UIToast,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.maxBeanRating = this.settings.bean_rating;
   }

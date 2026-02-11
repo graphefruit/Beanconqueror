@@ -1,51 +1,52 @@
-/** Core */
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
+import {
+  AlertController,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import {
   Camera,
   CameraDirection,
+  CameraPluginPermissions,
   CameraResultType,
   CameraSource,
-  CameraPluginPermissions,
 } from '@capacitor/camera';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-
-/** Ionic */
-import { AlertController, ModalController, Platform } from '@ionic/angular';
-import { UIHelper } from './uiHelper';
-import { UIFileHelper } from './uiFileHelper';
-import { TranslateService } from '@ngx-translate/core';
-
-import { UIAlert } from './uiAlert';
-import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
-import { Brew } from '../classes/brew/brew';
-import { GreenBean } from '../classes/green-bean/green-bean';
-import { Bean } from '../classes/bean/bean';
-import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
-import { UISettingsStorage } from './uiSettingsStorage';
-import { Settings } from '../classes/settings/settings';
-import { Water } from '../classes/water/water';
-import { Mill } from '../classes/mill/mill';
-import { Preparation } from '../classes/preparation/preparation';
-import { FilePicker } from '@capawesome/capacitor-file-picker';
 import {
   CameraPermissionType,
   PermissionStatus,
 } from '@capacitor/camera/dist/esm/definitions';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+import { TranslateService } from '@ngx-translate/core';
+
+import { Bean } from '../classes/bean/bean';
+import { Brew } from '../classes/brew/brew';
+import { GreenBean } from '../classes/green-bean/green-bean';
+import { Mill } from '../classes/mill/mill';
+import { Preparation } from '../classes/preparation/preparation';
+import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { Settings } from '../classes/settings/settings';
+import { Water } from '../classes/water/water';
+import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
+import { UIAlert } from './uiAlert';
+import { UIFileHelper } from './uiFileHelper';
+import { UIHelper } from './uiHelper';
+import { UISettingsStorage } from './uiSettingsStorage';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIImage {
-  constructor(
-    private readonly alertController: AlertController,
-    private readonly platform: Platform,
-    private readonly androidPermissions: AndroidPermissions,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly translate: TranslateService,
-    private readonly uiAlert: UIAlert,
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  private readonly alertController = inject(AlertController);
+  private readonly platform = inject(Platform);
+  private readonly androidPermissions = inject(AndroidPermissions);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   private getImageQuality(): number {
     const settings: Settings = this.uiSettingsStorage.getSettings();

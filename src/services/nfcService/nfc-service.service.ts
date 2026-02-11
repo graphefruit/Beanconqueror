@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
-import { UIAlert } from '../uiAlert';
+import { inject, Injectable } from '@angular/core';
+
+import { Platform } from '@ionic/angular/standalone';
+
 import { TranslateService } from '@ngx-translate/core';
-import { IntentHandlerService } from '../intentHandler/intent-handler.service';
-import { UILog } from '../uiLog';
 import { Observable, Subject } from 'rxjs';
+
+import { IntentHandlerService } from '../intentHandler/intent-handler.service';
+import { UIAlert } from '../uiAlert';
 import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
 import { UIToast } from '../uiToast';
 
 /**https://github.com/EYALIN/community-cordova-plugin-nfc**/
@@ -15,20 +18,20 @@ declare var ndef;
   providedIn: 'root',
 })
 export class NfcService {
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly intentHandler = inject(IntentHandlerService);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiLog = inject(UILog);
+
   private didAndroidAttachToListener: boolean = false;
 
   private nfcEnabled: boolean = false;
 
   private androidMessageSubject = new Subject<any>();
 
-  constructor(
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly intentHandler: IntentHandlerService,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiLog: UILog,
-  ) {
+  constructor() {
     if (this.platform.is('capacitor')) {
       this.uiHelper.isBeanconqurorAppReady().then(async () => {
         this.nfcEnabled = await this.getEnabledState();
@@ -111,11 +114,11 @@ export class NfcService {
     }
   }
   private __handleNFCData(_tag) {
-    this.uiLog.log('We read NFC-Tag: ' + JSON.stringify(_tag));
+    this.uiLog.log('We read NFC-Tag', _tag);
     if (_tag) {
       let data = ndef.textHelper.decodePayload(_tag.ndefMessage[0].payload);
       /**We dont use bytes to string because somehow ascis came into play
-      let data = nfc.bytesToString(_tag.ndefMessage[0].payload)**/
+            let data = nfc.bytesToString(_tag.ndefMessage[0].payload)**/
       this.intentHandler.handleDeepLink(data);
     } else {
       this.uiLog.error('No data found on NFC-Tag');

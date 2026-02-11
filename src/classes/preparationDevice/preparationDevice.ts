@@ -1,5 +1,6 @@
-import { Logger } from '../devices/common/logger';
 import { HttpClient } from '@angular/common/http';
+
+import { Logger } from '../devices/common/logger';
 import { Preparation } from '../preparation/preparation';
 
 export class PreparationDevice {

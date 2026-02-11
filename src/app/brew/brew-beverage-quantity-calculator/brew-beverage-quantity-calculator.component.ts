@@ -1,24 +1,52 @@
-import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, inject, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-brew-beverage-quantity-calculator',
   templateUrl: './brew-beverage-quantity-calculator.component.html',
   styleUrls: ['./brew-beverage-quantity-calculator.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    DisableDoubleClickDirective,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class BrewBeverageQuantityCalculatorComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static readonly COMPONENT_ID = 'brew-beverage-quantity-calculator';
 
   public totalWeight: number = 0;
   @Input('vesselWeight') public vesselWeight: number = 0;
   public calculatedWeight: number = 0;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {}
 
   public calculateWeight() {
     this.calculatedWeight = this.totalWeight - this.vesselWeight;

@@ -1,26 +1,25 @@
 import {
-  EventEmitter,
   Directive,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
   OnInit,
   Output,
-  Input,
-  ElementRef,
 } from '@angular/core';
-import { timer, Subscription } from 'rxjs';
+
+import { Subscription, timer } from 'rxjs';
 
 declare var window;
-@Directive({
-  selector: '[long-press]',
-  standalone: false,
-})
+@Directive({ selector: '[long-press]' })
 export class LongPressDirective implements OnInit {
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
   private timerSub: Subscription;
 
   @Input('long-press-delay') public delay?: number = 500;
   @Output('long-press') public longPress: EventEmitter<any> =
     new EventEmitter();
-
-  constructor(private elementRef: ElementRef<HTMLElement>) {}
 
   public ngOnInit() {
     const isTouch = 'ontouchstart' in document.documentElement;

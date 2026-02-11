@@ -1,28 +1,93 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
-import { IBean } from '../../../interfaces/bean/iBean';
-import { Bean } from '../../../classes/bean/bean';
-import { NgxStarsComponent } from 'ngx-stars';
-import { ROASTS_ENUM } from '../../../enums/beans/roasts';
-import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import {
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRange,
+  IonRow,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { create, globeOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { Bean } from '../../../classes/bean/bean';
 import { Settings } from '../../../classes/settings/settings';
+import { BeanDetailSortInformationComponent } from '../../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { ROASTS_ENUM } from '../../../enums/beans/roasts';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-beans-detail',
   templateUrl: './beans-detail.component.html',
   styleUrls: ['./beans-detail.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgxStarsModule,
+    PhotoViewComponent,
+    BeanDetailSortInformationComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BeanFieldVisiblePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonItem,
+    IonRange,
+    IonBadge,
+    IonCheckbox,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BeansDetailComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+
   public static readonly COMPONENT_ID: string = 'bean-detail';
   public roast_enum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
@@ -40,14 +105,9 @@ export class BeansDetailComponent implements OnInit {
 
   @Input('bean') public bean: IBean;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-  ) {}
+  constructor() {
+    addIcons({ create, globeOutline });
+  }
 
   public ionViewDidEnter() {
     this.uiAnalytics.trackEvent(

@@ -1,14 +1,14 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
-import { IConfig } from '../objectConfig/iObjectConfig';
-import { ICupping } from '../cupping/iCupping';
-import { IBrewCoordinates } from './iBrewCoordinates';
-import { IFlavor } from '../flavor/iFlavor';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-import { IPreparationDeviceBrew } from './iPreparationDeviceBrew';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { ICupping } from '../cupping/iCupping';
+import { IFlavor } from '../flavor/iFlavor';
+import { IConfig } from '../objectConfig/iObjectConfig';
+import { IBrewCoordinates } from './iBrewCoordinates';
 import { ICustomInformationBrew } from './ICustomInformationBrew';
+import { IPreparationDeviceBrew } from './iPreparationDeviceBrew';
 import { IReferenceGraph } from './iReferenceGraph';
 
 export interface IBrew {

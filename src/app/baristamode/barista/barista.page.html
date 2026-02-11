@@ -1,48 +1,28 @@
 <ion-header #ionHeader>
-  <ion-toolbar with-add-button>
-    <ion-buttons slot="start">
-      <ion-menu-button show="back"></ion-menu-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-
-    </ion-buttons>
-    <ion-title>
-      {{"NAV_BARISTAMODE_SECTION" | translate }}
-    </ion-title>
-    <ion-buttons slot="end">
-
-      @if (isWebSocketConnected() === true ) {
-        <ion-chip (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-connected'>
-
-          <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-          <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
-
-        </ion-chip>
-      } @else {
-        <ion-chip (click)="showPreparationEdit()"  (long-press)="toggleDevInformation()" outline='true' class='machine-disconnected'>
-          <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-          <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
-        </ion-chip>
-      }
-
-      @if(smartScaleConnected() === true) {
-        <ion-chip outline='true' class="baristamode-scale-connected">
-          <!--We set color="black" as we just overwrite because not existing-->
-          <ion-icon color="black" name="beanconqueror-scale-outline" size="large"></ion-icon>
-        </ion-chip>
-      } @else{
-        <ion-chip outline='true' class="baristamode-scale-disconnected">
-          <!--We set color="black" as we just overwrite because not existing-->
-          <ion-icon color="black" name="beanconqueror-scale-outline" size="large"></ion-icon>
-        </ion-chip>
-      }
-
-      <ion-button
-        (click)="popoverActionsBrew()" tappable>
-        <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'NAV_BARISTAMODE_SECTION' | translate">
+    <ion-menu-button header-slot="start" />
+    @if (isWebSocketConnected() === true ) {
+      <ion-chip header-slot="end" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-connected'>
+        <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+        <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+      </ion-chip>
+    } @else {
+      <ion-chip header-slot="end" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-disconnected'>
+        <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
+        <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+      </ion-chip>
+    }
+    @if(smartScaleConnected() === true) {
+      <ion-chip header-slot="end" outline='true' class="baristamode-scale-connected">
+        <ion-icon color="black" name="beanconqueror-scale-outline" size="large"></ion-icon>
+      </ion-chip>
+    } @else{
+      <ion-chip header-slot="end" outline='true' class="baristamode-scale-disconnected">
+        <ion-icon color="black" name="beanconqueror-scale-outline" size="large"></ion-icon>
+      </ion-chip>
+    }
+    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" (clicked)="popoverActionsBrew()" />
+  </app-header>
 </ion-header>
 
 <ion-content #ionContent >

@@ -1,17 +1,68 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController } from '@ionic/angular';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { eyeOffOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Bean } from '../../../classes/bean/bean';
+import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
   selector: 'preparation-tool-modal-select',
   templateUrl: './preparation-tool-modal-select.component.html',
   styleUrls: ['./preparation-tool-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonIcon,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonCard,
+    IonSearchbar,
+    IonItem,
+    IonCheckbox,
+    IonRadioGroup,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class PreparationToolModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+
   public static COMPONENT_ID = 'preparation-tool-modal-select';
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
@@ -29,10 +80,9 @@ export class PreparationToolModalSelectComponent implements OnInit {
   @Input() public showFinished: boolean;
   @Input() private preparationId: string;
   @Input() private preparationIds: Array<string>;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-  ) {}
+  constructor() {
+    addIcons({ eyeOffOutline });
+  }
 
   public ionViewDidEnter(): void {
     if (this.preparationId) {

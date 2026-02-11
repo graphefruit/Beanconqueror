@@ -1,0 +1,9 @@
+# Ignore all assets for now. Enabling i18n formatting may be desirable in the future.
+src/assets/
+
+# Native platforms
+android/
+ios/
+
+# Ignore HTML files for now. The changes in those would be massive.
+*.html

@@ -1,17 +1,18 @@
-import { Injectable } from '@angular/core';
-import {UISettingsStorage} from '../uiSettingsStorage';
+import { inject, Injectable } from '@angular/core';
+
 import currencyToSymbolMap from 'currency-symbol-map/map';
+
+import { UISettingsStorage } from '../uiSettingsStorage';
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CurrencyService {
-
-  constructor(private readonly uiSettingsStorage: UISettingsStorage) { }
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   public getCurrencies() {
     return currencyToSymbolMap;
   }
-
 
   public getActualCurrencySymbol() {
     return currencyToSymbolMap[this.uiSettingsStorage.getSettings().currency];

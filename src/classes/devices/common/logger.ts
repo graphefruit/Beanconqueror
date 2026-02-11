@@ -1,5 +1,6 @@
-import { DEBUG } from './constants';
 import { Observable, Subject } from 'rxjs';
+
+import { DEBUG } from './constants';
 
 export class Logger {
   private static logSubject = new Subject<{ type: string; log: string }>();

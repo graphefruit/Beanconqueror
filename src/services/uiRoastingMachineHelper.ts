@@ -1,12 +1,12 @@
-/** Core */
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { UIAnalytics } from './uiAnalytics';
-import { ModalController } from '@ionic/angular';
-import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { ModalController } from '@ionic/angular/standalone';
+
 import { RoastingMachineAddComponent } from '../app/roasting-section/roasting-machine/roasting-machine-add/roasting-machine-add.component';
-import { RoastingMachineEditComponent } from '../app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
 import { RoastingMachineDetailComponent } from '../app/roasting-section/roasting-machine/roasting-machine-detail/roasting-machine-detail.component';
+import { RoastingMachineEditComponent } from '../app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
+import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
+import { UIAnalytics } from './uiAnalytics';
 
 /**
  * Handles every helping functionalities
@@ -16,10 +16,8 @@ import { RoastingMachineDetailComponent } from '../app/roasting-section/roasting
   providedIn: 'root',
 })
 export class UIRoastingMachineHelper {
-  constructor(
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController
-  ) {}
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly modalController = inject(ModalController);
 
   public async addRoastingMachine() {
     const modal = await this.modalController.create({

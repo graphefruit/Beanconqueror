@@ -1,12 +1,8 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
-/** Third party */
+
 import moment from 'moment';
 
-@Pipe({
-  name: 'formatDate',
-  standalone: false,
-})
+@Pipe({ name: 'formatDate' })
 export class FormatDatePipe implements PipeTransform {
   public transform(value, format, args?: Array<string>): any {
     // SAMPLE - http://jsfiddle.net/kunycrkb/

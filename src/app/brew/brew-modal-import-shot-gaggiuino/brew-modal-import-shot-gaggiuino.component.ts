@@ -2,25 +2,68 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
+import {
+  IonButton,
+  IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonGrid,
+  IonHeader,
+  IonItem,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
 import { GaggiuinoDevice } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoDevice';
 import { GaggiuinoShotData } from '../../../classes/preparationDevice/gaggiuino/gaggiuinoShotData';
+import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-brew-modal-import-shot-gaggiuino',
   templateUrl: './brew-modal-import-shot-gaggiuino.component.html',
   styleUrls: ['./brew-modal-import-shot-gaggiuino.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    GraphDisplayCardComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonRadio,
+    IonGrid,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BrewModalImportShotGaggiuinoComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+
   public static COMPONENT_ID: string = 'brew-modal-import-shot-gaggiuino';
 
   @Input() public gaggiuinoDevice: GaggiuinoDevice;
@@ -34,19 +77,13 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   public historyShotContent: ElementRef;
 
   @ViewChild('gaggiuinoShotDataScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public gaggiuinoShotDataScroll: AgVirtualSrollComponent;
+  public gaggiuinoShotDataScroll: AgVirtualScrollComponent;
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
-
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-  ) {}
 
   public ngOnInit() {
     this.readHistory();
@@ -91,20 +128,32 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.historyShotContent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent =
+      const scrollComponent: AgVirtualScrollComponent =
         this.gaggiuinoShotDataScroll;
 
-      if (scrollComponent) {
-        scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
-        // this.segmentScrollHeight = scrollComponent.el.style.height;
+      if (!scrollComponent) {
+        return;
+      }
+
+      scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
+      // this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
       }
     }, 150);
   }

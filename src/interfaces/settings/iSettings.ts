@@ -1,24 +1,22 @@
-/** Interfaces */
-/** Enums */
-import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { IConfig } from '../objectConfig/iObjectConfig';
-import { IBrewParameter } from '../parameter/iBrewParameter';
-import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
-import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
-import { IBrewPageFilter } from '../brew/iBrewPageFilter';
-import { IBeanPageSort } from '../bean/iBeanPageSort';
-import { IBeanPageFilter } from '../bean/iBeanPageFilter';
-import { IBrewGraphs } from '../brew/iBrewGraphs';
-import { IBeanParameter } from '../parameter/iBeanParameter';
 import {
   PressureType,
   RefractometerType,
   ScaleType,
   TemperatureType,
 } from '../../classes/devices';
-import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
-import { IBrewPageSort } from '../brew/iBrewPageSort';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
+import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { IBeanPageFilter } from '../bean/iBeanPageFilter';
+import { IBeanPageSort } from '../bean/iBeanPageSort';
+import { IBrewGraphs } from '../brew/iBrewGraphs';
+import { IBrewPageFilter } from '../brew/iBrewPageFilter';
+import { IBrewPageSort } from '../brew/iBrewPageSort';
+import { IConfig } from '../objectConfig/iObjectConfig';
+import { IBeanParameter } from '../parameter/iBeanParameter';
+import { IBrewParameter } from '../parameter/iBrewParameter';
+import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
 import { IGraphColors } from './iGraphColors';
 
 export interface ISettings {

@@ -1,23 +1,16 @@
-/** Core */
-import {Injectable} from '@angular/core';
-/** Ionic native */
-/** Classes */
-/** Services */
-import {Mill} from '../classes/mill/mill';
-import {StorageClass} from '../classes/storageClass';
-import {IMill} from '../interfaces/mill/iMill';
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-import {TranslateService} from '@ngx-translate/core';
+import { inject, Injectable } from '@angular/core';
 
-/** Interfaces */
+import { TranslateService } from '@ngx-translate/core';
+
+import { Mill } from '../classes/mill/mill';
+import { StorageClass } from '../classes/storageClass';
+import { IMill } from '../interfaces/mill/iMill';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIMillStorage extends StorageClass {
-
+  private readonly translate = inject(TranslateService);
 
   /**
    * Singelton instance
@@ -32,11 +25,9 @@ export class UIMillStorage extends StorageClass {
 
     return undefined;
   }
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog,
-              private readonly translate: TranslateService) {
-    super(uiStorage, uiHelper, uiLog, 'MILL');
+  constructor() {
+    super('MILL');
+
     if (UIMillStorage.instance === undefined) {
       UIMillStorage.instance = this;
     }
@@ -72,10 +63,8 @@ export class UIMillStorage extends StorageClass {
         const millObj: Mill = new Mill();
         millObj.initializeByObject(mill);
         this.mills.push(millObj);
-
       }
     }
     return this.mills;
   }
-
 }

@@ -1,18 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIFileHelper } from '../../services/uiFileHelper';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+
 import { FileInfo } from '@capacitor/filesystem';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Settings } from '../../classes/settings/settings';
+import { HeaderComponent } from '../../components/header/header.component';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-settings-choose-automatic-backup-to-import',
   templateUrl: './settings-choose-automatic-backup-to-import.component.html',
   styleUrls: ['./settings-choose-automatic-backup-to-import.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    FormatDatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    IonCard,
+    IonCardContent,
+    IonRadioGroup,
+    IonItem,
+    IonRadio,
+    IonLabel,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonButton,
+  ],
 })
 export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  protected readonly uiHelper = inject(UIHelper);
+
   public static POPOVER_ID: string =
     'choose-automatic-backup-to-import-popover';
 
@@ -20,12 +63,7 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
 
   public foundBackupFiles: Array<FileInfo> = [];
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiHelper: UIHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

@@ -2,29 +2,57 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   ViewChild,
 } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController } from '@ionic/angular';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { Brew } from '../../../classes/brew/brew';
+import { BrewInformationComponent } from '../../../components/brew-information/brew-information.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { UIAlert } from '../../../services/uiAlert';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIWaterHelper } from '../../../services/uiWaterHelper';
 
 @Component({
   selector: 'app-bean-associated-brews',
   templateUrl: './associated-brews.component.html',
   styleUrls: ['./associated-brews.component.scss'],
-  standalone: false,
+  imports: [
+    AgVirtualScrollComponent,
+    BrewInformationComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+  ],
 })
 export class AssociatedBrewsComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiWaterHelper = inject(UIWaterHelper);
+
   public static readonly COMPONENT_ID = 'associated-brews';
   public data: Bean = new Bean();
 
@@ -34,25 +62,16 @@ export class AssociatedBrewsComponent {
   public associatedBrews: Array<Brew> = [];
 
   @ViewChild('openScrollAssociatedBrews', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public openScrollAssociatedBrews: AgVirtualSrollComponent;
+  public openScrollAssociatedBrews: AgVirtualScrollComponent;
 
   @ViewChild('associatedBrewsComponent', { read: ElementRef })
   public associatedBrewsComponent: ElementRef;
   public segmentScrollHeight: string = undefined;
 
   public isCollapsed: boolean = false;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiWaterHelper: UIWaterHelper,
-  ) {}
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
@@ -64,15 +83,15 @@ export class AssociatedBrewsComponent {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.associatedBrewsComponent.nativeElement;
-      const scrollComponent: AgVirtualSrollComponent =
+      const scrollComponent: AgVirtualScrollComponent =
         this.openScrollAssociatedBrews;
 
       if (scrollComponent) {
@@ -80,6 +99,16 @@ export class AssociatedBrewsComponent {
           el.offsetHeight - scrollComponent.el.offsetTop - 20 + 'px';
 
         this.segmentScrollHeight = scrollComponent.el.style.height;
+
+        // HACK: Manually trigger component refresh to work around initialization
+        //       bug. For some reason the scroll component sees its own height as
+        //       0 during initialization, which causes it to render 0 items. As
+        //       no changes to the component occur after initialization, no
+        //       re-render ever occurs. This forces one. The root cause for
+        //       this issue is currently unknown.
+        if (scrollComponent.items.length === 0) {
+          scrollComponent.refreshData();
+        }
         setTimeout(() => {
           /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
           const elScroll = scrollComponent.el;

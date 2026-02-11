@@ -1,7 +1,7 @@
 import { IPreparationDeviceBrew } from '../../interfaces/brew/iPreparationDeviceBrew';
 import { PreparationDeviceType } from '../preparationDevice';
-import { XeniaParams } from '../preparationDevice/xenia/xeniaDevice';
 import { MeticulousParams } from '../preparationDevice/meticulous/meticulousDevice';
+import { XeniaParams } from '../preparationDevice/xenia/xeniaDevice';
 
 export class PreparationDeviceBrew implements IPreparationDeviceBrew {
   public type: PreparationDeviceType;

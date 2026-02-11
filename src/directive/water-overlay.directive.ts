@@ -1,26 +1,28 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  inject,
+  Input,
+} from '@angular/core';
 import { NgModel } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
 
-import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Water } from '../classes/water/water';
+import { ModalController } from '@ionic/angular/standalone';
+
 import { WaterModalSelectComponent } from '../app/water-section/water/water-modal-select/water-modal-select.component';
+import { Water } from '../classes/water/water';
+import { UIWaterStorage } from '../services/uiWaterStorage';
 
-@Directive({
-  selector: '[ngModel][water-overlay]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][water-overlay]' })
 export class WaterOverlayDirective {
+  private readonly model = inject(NgModel);
+  private readonly modalController = inject(ModalController);
+  private el = inject(ElementRef);
+  private uiWaterStorage = inject(UIWaterStorage);
+
   private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean;
-
-  constructor(
-    private readonly model: NgModel,
-    private readonly modalController: ModalController,
-    private el: ElementRef,
-    private uiWaterStorage: UIWaterStorage,
-  ) {}
 
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {

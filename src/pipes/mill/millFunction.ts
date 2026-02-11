@@ -1,14 +1,10 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
-import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
 import { Mill } from '../../classes/mill/mill';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 
-@Pipe({
-  name: 'millFunctionPipe',
-  standalone: false,
-})
+@Pipe({ name: 'millFunctionPipe' })
 export class MillFunction implements PipeTransform {
   public transform(
     value: Mill,

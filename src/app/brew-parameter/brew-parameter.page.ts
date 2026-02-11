@@ -1,18 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+
+import {
+  IonCard,
+  IonCardContent,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonMenuButton,
+  NavController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'brew-parameter',
   templateUrl: './brew-parameter.page.html',
   styleUrls: ['./brew-parameter.page.scss'],
-  standalone: false,
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    HeaderComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonIcon,
+    IonCardTitle,
+    IonCardContent,
+  ],
 })
 export class BrewParameterPage implements OnInit {
-  constructor(
-    public navCtrl: NavController,
-    private readonly router: Router,
-  ) {}
+  navCtrl = inject(NavController);
+  private readonly router = inject(Router);
 
   public ngOnInit() {}
 
@@ -35,3 +60,5 @@ export class BrewParameterPage implements OnInit {
     this.router.navigateByUrl('/brew-parameter/listview');
   }
 }
+
+export default BrewParameterPage;

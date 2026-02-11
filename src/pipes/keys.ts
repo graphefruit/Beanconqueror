@@ -1,10 +1,6 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'keys',
-  standalone: false,
-})
+@Pipe({ name: 'keys' })
 export class KeysPipe implements PipeTransform {
   public transform(value, args?: Array<string>): any {
     const keys = [];

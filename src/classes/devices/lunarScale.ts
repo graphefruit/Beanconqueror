@@ -1,6 +1,6 @@
+import { AcaiaScale, EventType } from './acaia';
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { AcaiaScale, EventType } from './acaia';
 import { ScaleType } from './index';
 
 export class LunarScale extends BluetoothScale {
@@ -26,7 +26,7 @@ export class LunarScale extends BluetoothScale {
       device &&
       device.name &&
       ['ACAIA', 'LUNAR', 'PYXIS', 'PROCH', 'PEARL', 'CINCO'].includes(
-        device.name.slice(0, 5)
+        device.name.slice(0, 5),
       )
     );
   }
@@ -83,7 +83,7 @@ export class LunarScale extends BluetoothScale {
       'OnEvent received' +
         JSON.stringify(eventType) +
         ' ' +
-        JSON.stringify(data)
+        JSON.stringify(data),
     );
     switch (eventType) {
       case EventType.WEIGHT:

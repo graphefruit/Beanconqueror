@@ -1,8 +1,8 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { IConfig } from '../objectConfig/iObjectConfig';
 
 export interface IBrewVisualizer {

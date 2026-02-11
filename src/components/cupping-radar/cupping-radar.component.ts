@@ -1,24 +1,57 @@
+import { DecimalPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   EventEmitter,
+  inject,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonBadge,
+  IonCard,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonRange,
+  IonTextarea,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { informationOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
-import { ICupping } from '../../interfaces/cupping/iCupping';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { TooltipDirective } from '../../directive/tooltip.directive';
+import { ICupping } from '../../interfaces/cupping/iCupping';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'cupping-radar',
   templateUrl: './cupping-radar.component.html',
   styleUrls: ['./cupping-radar.component.scss'],
-  standalone: false,
+  imports: [
+    TooltipDirective,
+    FormsModule,
+    DecimalPipe,
+    TranslatePipe,
+    IonCard,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonTextarea,
+  ],
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
+  private uiBrewHelper = inject(UIBrewHelper);
+
   public chartEl: any = undefined;
   public model: ICupping = {
     body: 0,
@@ -40,7 +73,9 @@ export class CuppingRadarComponent implements AfterViewInit, OnInit {
   @Output() public cuppingChanged: EventEmitter<any> = new EventEmitter();
 
   private debounceCounter: number = 0;
-  constructor(private uiBrewHelper: UIBrewHelper) {}
+  constructor() {
+    addIcons({ informationOutline });
+  }
 
   public ngOnInit(): void {
     this.debounceRadar

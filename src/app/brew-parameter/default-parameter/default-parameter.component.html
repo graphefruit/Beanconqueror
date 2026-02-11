@@ -1,15 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button
-        icon="beanconqueror-back">
-      </ion-back-button>
-    </ion-buttons>
-    <ion-title style="margin-top:12px;">
-      {{"NAV_DEFAULT_PARAMETERS" | translate}}
-      <p class="subtitle">{{"PAGE_DEFAULT_PARAMETERS_DESCRIPTION" | translate }}</p>
-    </ion-title>
-  </ion-toolbar>
+  <app-header [title]="'NAV_DEFAULT_PARAMETERS' | translate" [subtitle]="'PAGE_DEFAULT_PARAMETERS_DESCRIPTION' | translate">
+    <ion-back-button header-slot="start" icon="beanconqueror-back" />
+  </app-header>
 </ion-header>
 <ion-content class="ion-padding-top">
   <default-custom-parameter [data]="settings">

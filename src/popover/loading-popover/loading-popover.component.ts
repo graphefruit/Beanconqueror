@@ -1,19 +1,35 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
-import { UILog } from '../../services/uiLog';
-import { ShareService } from '../../services/shareService/share-service.service';
-import { EventQueueService } from '../../services/queueService/queue-service.service';
-import { AppEventType } from '../../enums/appEvent/appEvent';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonButton,
+  IonContent,
+  IonFooter,
+  IonSpinner,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import stringify from 'safe-stable-stringify';
+
+import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
+import { AppEventType } from '../../enums/appEvent/appEvent';
+import { EventQueueService } from '../../services/queueService/queue-service.service';
+import { ShareService } from '../../services/shareService/share-service.service';
+import { UILog } from '../../services/uiLog';
 
 @Component({
   selector: 'loading-popover',
   templateUrl: './loading-popover.component.html',
   styleUrls: ['./loading-popover.component.scss'],
-  standalone: false,
+  imports: [TranslatePipe, IonContent, IonSpinner, IonFooter, IonButton],
 })
 export class LoadingPopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiLog = inject(UILog);
+  private shareService = inject(ShareService);
+  private eventQueue = inject(EventQueueService);
+
   public __showDismissButton: boolean = false;
   @Input('showDismissAfterSpecificTimeout')
   public showDismissAfterSpecificTimeout: boolean;
@@ -21,12 +37,6 @@ export class LoadingPopoverComponent implements OnInit {
   private timeoutFunc = null;
 
   private updatingLoadingSpinnerMessageSubscription: Subscription = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiLog: UILog,
-    private shareService: ShareService,
-    private eventQueue: EventQueueService,
-  ) {}
 
   public ngOnInit() {
     if (this.showDismissAfterSpecificTimeout) {
@@ -64,7 +74,8 @@ export class LoadingPopoverComponent implements OnInit {
 
   public async sendLogs() {
     const logs = this.uiLog.getLogs();
-    const stringifiedJSON = JSON.stringify(logs);
+    // Use safe-stable-stringify to prevent bad surprises with circular references
+    const stringifiedJSON = stringify(logs);
     const blob = new Blob([stringifiedJSON], {
       type: 'application/json',
     });

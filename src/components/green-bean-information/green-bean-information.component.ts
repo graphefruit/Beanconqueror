@@ -1,42 +1,88 @@
+import { DecimalPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 
-import { ModalController } from '@ionic/angular';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonLabel,
+  IonRow,
+  IonText,
+  ModalController,
+} from '@ionic/angular/standalone';
 
-import { GreenBean } from '../../classes/green-bean/green-bean';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
+import { GreenBeanAddComponent } from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
 import { GreenBeanPopoverActionsComponent } from '../../app/roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
-import { GreenBeanAddComponent } from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
-import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
 import { Brew } from '../../classes/brew/brew';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
+import { GreenBean } from '../../classes/green-bean/green-bean';
+import { Settings } from '../../classes/settings/settings';
+import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { GREEN_BEAN_ACTION } from '../../enums/green-beans/greenBeanAction';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIGreenBeanHelper } from '../../services/uiGreenBeanHelper';
+import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
+import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
-import { UIImage } from '../../services/uiImage';
-import { UIAlert } from '../../services/uiAlert';
-import { Settings } from '../../classes/settings/settings';
-import { GREEN_BEAN_ACTION } from '../../enums/green-beans/greenBeanAction';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
-import { NgxStarsComponent } from 'ngx-stars';
-import { UIGreenBeanHelper } from '../../services/uiGreenBeanHelper';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'green-bean-information',
   templateUrl: './green-bean-information.component.html',
   styleUrls: ['./green-bean-information.component.scss'],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    NgxStarsModule,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
+  ],
 })
 export class GreenBeanInformationComponent implements OnInit {
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiImage = inject(UIImage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiGreenBeanHelper = inject(UIGreenBeanHelper);
+
   @Input() public greenBean: GreenBean;
 
   @Output() public greenBeanAction: EventEmitter<any> = new EventEmitter();
@@ -44,19 +90,7 @@ export class GreenBeanInformationComponent implements OnInit {
   public greenBeanRating: NgxStarsComponent;
 
   public settings: Settings;
-  constructor(
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-    private readonly uiImage: UIImage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiGreenBeanHelper: UIGreenBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
   public ngOnInit() {}

@@ -1,13 +1,13 @@
 :host {
-    ion-header {
-      height:40px;
-      background-color: var(--ion-header-background-color);
-    }
+  ion-header {
+    height: 40px;
+    background-color: var(--ion-header-background-color);
+  }
 
   ion-col {
-    text-align:center;
+    text-align: center;
   }
   ion-input {
-    --padding-start:0px;
+    --padding-start: 0px;
   }
 }

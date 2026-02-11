@@ -1,21 +1,8 @@
 <ion-header>
-  <ion-toolbar>
-    @if (multiple) {
-      <ion-title>{{ "CHOOSE_BEANS" | translate }}</ion-title>
-    } @else {
-      <ion-title>{{ "CHOOSE_BEAN" | translate }}</ion-title>
-    }
-    <ion-buttons slot='start'>
-      <ion-button (click)='dismiss()' class='big-icon-only'>
-        <ion-icon name='beanconqueror-back' slot='icon-only'></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot='end'>
-      <ion-button (click)="add()" tappable class="big-add-icon" fill="clear">
-        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="(multiple ? 'CHOOSE_BEANS' : 'CHOOSE_BEAN') | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+    <app-header-button header-slot="end" icon="beanconqueror-add" (clicked)="add()" />
+  </app-header>
 </ion-header>
 <ion-content #beanContent>
 

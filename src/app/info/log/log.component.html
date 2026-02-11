@@ -1,45 +1,17 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button
-        icon="beanconqueror-back">
-      </ion-back-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="send()" icon-only>
-        <ion-icon name="send-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>
-      {{"NAV_LOGS" | translate}}
-    </ion-title>
-  </ion-toolbar>
+  <app-header [title]="'NAV_LOGS' | translate">
+    <ion-back-button header-slot="start" icon="beanconqueror-back" />
+    <app-header-button header-slot="end" icon="send-outline" buttonClass="big-icon-only" (clicked)="send()" />
+  </app-header>
 </ion-header>
 <ion-content>
   <ion-card class="ion-padding">
     @for (log of logs; track log) {
       <ion-row class="ion-padding-bottom">
         <ion-col size="12">
-          @if (log.key === LOG_ENUM.LOG) {
-            <ion-text color="dark">
-              {{log.timestamp}} -  {{log.value}}
+              <ion-text [color]="levelToColor(log.level)">
+                {{formatLogEntry(log)}}
             </ion-text>
-          }
-          @if (log.key === LOG_ENUM.INFO) {
-            <ion-text color="primary">
-              {{log.timestamp}} -  {{log.value}}
-            </ion-text>
-          }
-          @if (log.key === LOG_ENUM.WARN) {
-            <ion-text color="warning">
-              {{log.timestamp}} -  {{log.value}}
-            </ion-text>
-          }
-          @if (log.key === LOG_ENUM.ERR) {
-            <ion-text color="danger">
-              {{log.timestamp}} -  {{log.value}}
-            </ion-text>
-          }
         </ion-col>
       </ion-row>
     }

@@ -1,20 +1,20 @@
-import { MAGIC1, MAGIC2 } from './constants';
+import { Logger } from '../common/logger';
 import {
   Button,
+  DecoderResult,
+  DecoderResultType,
   Message,
   MessageType,
   ParsedMessage,
   ScaleMessageType,
   Settings,
   Units,
-  DecoderResult,
-  DecoderResultType,
 } from './common';
-import { Logger } from '../common/logger';
+import { MAGIC1, MAGIC2 } from './constants';
 
 export class Decoder {
   private readonly log: Logger;
-  private packet: ArrayBuffer = new ArrayBuffer(0);
+  private packet: Uint8Array<ArrayBuffer> = new Uint8Array(new ArrayBuffer(0));
 
   constructor() {
     this.log = new Logger('ACAIA DecodeWorker');
@@ -37,7 +37,7 @@ export class Decoder {
     const msgs: ParsedMessage[] = [];
 
     while (true) {
-      let msg;
+      let msg: ParsedMessage;
       [msg, this.packet] = this.decode(this.packet);
       if (!msg) {
         break;
@@ -54,17 +54,18 @@ export class Decoder {
       const tmp = new Uint8Array(this.packet.byteLength + buffer.byteLength);
       tmp.set(new Uint8Array(this.packet), 0);
       tmp.set(new Uint8Array(buffer), this.packet.byteLength);
-      this.packet = tmp.buffer;
+      this.packet = tmp;
     } else {
-      this.packet = buffer;
+      this.packet = new Uint8Array(buffer);
     }
   }
 
-  private decode(buffer: ArrayBuffer): [ParsedMessage, ArrayBuffer] {
-    const bytes = new Uint8Array(buffer);
-
-    let messageStart, msgType, payloadIn;
-    messageStart = -1;
+  private decode(
+    bytes: Uint8Array<ArrayBuffer>,
+  ): [ParsedMessage, Uint8Array<ArrayBuffer>] {
+    let messageStart = -1;
+    let msgType: number;
+    let payloadIn: Uint8Array<ArrayBuffer>;
 
     for (let i = 0, _pj_a = bytes.length - 1; i < _pj_a; i += 1) {
       if (bytes[i] === MAGIC1 && bytes[i + 1] === MAGIC2) {
@@ -73,13 +74,11 @@ export class Decoder {
       }
     }
     if (messageStart < 0 || bytes.length - messageStart < 6) {
-      // @ts-ignore
-      return [null, bytes.buffer];
+      return [null, bytes];
     }
     const messageEnd = messageStart + bytes[messageStart + 3] + 5;
     if (messageEnd > bytes.length) {
-      // @ts-ignore
-      return [null, bytes.buffer];
+      return [null, bytes];
     }
     if (messageStart > 0) {
       this.log.log('Ignoring ' + messageStart + ' bytes before header');
@@ -88,10 +87,9 @@ export class Decoder {
     if (cmd === 12) {
       msgType = bytes[messageStart + 4];
       payloadIn = bytes.slice(messageStart + 5, messageEnd);
-      // @ts-ignore
       return [
         this.parseMessage(msgType, payloadIn.buffer),
-        bytes.slice(messageEnd).buffer,
+        bytes.slice(messageEnd),
       ];
     }
     if (cmd === 8) {
@@ -105,21 +103,20 @@ export class Decoder {
       'Non event notification message command ' +
         cmd +
         ' ' +
-        bytes.slice(messageStart, messageEnd)
+        bytes.slice(messageStart, messageEnd),
     );
-    // @ts-ignore
-    return [null, bytes.slice(messageEnd).buffer];
+    return [null, bytes.slice(messageEnd)];
   }
 
   private parseMessage(
     msgType: ScaleMessageType,
-    buffer: ArrayBuffer
+    buffer: ArrayBuffer,
   ): Message | null {
     const payload = new Uint8Array(buffer);
 
     let weight: number | null = null;
     let button: Button | null = null;
-    let time: number = 0;
+    let time = 0;
 
     if (msgType === ScaleMessageType.WEIGHT) {
       weight = this.decodeWeight(payload);
@@ -133,7 +130,7 @@ export class Decoder {
           }
         }
         this.log.log(
-          'heartbeat response (weight: ' + weight + ' time: ' + time
+          'heartbeat response (weight: ' + weight + ' time: ' + time,
         );
       } else {
         if (msgType === ScaleMessageType.TIMER) {
@@ -248,7 +245,7 @@ export class Decoder {
         ' auto_off=' +
         autoOff +
         ' beep=' +
-        beepOn
+        beepOn,
     );
 
     this.log.log(
@@ -261,7 +258,7 @@ export class Decoder {
           payload[7],
           payload[8],
           payload[9],
-        ]
+        ],
     );
 
     return {

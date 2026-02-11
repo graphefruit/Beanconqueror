@@ -1,26 +1,71 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { BrewView } from '../../classes/brew/brewView';
-import { UIStatistic } from '../../services/uiStatistic';
-import { UIHelper } from '../../services/uiHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { Brew } from '../../classes/brew/brew';
-import { IBrew } from '../../interfaces/brew/iBrew';
+import { DecimalPipe } from '@angular/common';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCol,
+  IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonRow,
+  IonSegment,
+  IonSegmentButton,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
-import { TranslateService } from '@ngx-translate/core';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import Gradient from 'javascript-color-gradient';
-import { UIMillStorage } from '../../services/uiMillStorage';
 import currencyToSymbolMap from 'currency-symbol-map/map';
+import Gradient from 'javascript-color-gradient';
+
+import { Brew } from '../../classes/brew/brew';
+import { BrewView } from '../../classes/brew/brewView';
+import { HeaderComponent } from '../../components/header/header.component';
+import { IBrew } from '../../interfaces/brew/iBrew';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UIStatistic } from '../../services/uiStatistic';
+
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
   styleUrls: ['./statistic.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    DecimalPipe,
+    TranslatePipe,
+    HeaderComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+  ],
 })
 export class StatisticPage implements OnInit {
+  uiStatistic = inject(UIStatistic);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private translate = inject(TranslateService);
+  private readonly currencyService = inject(CurrencyService);
+
   @ViewChild('brewChart', { static: false }) public brewChart;
   @ViewChild('brewsPerDayChart', { static: false }) public brewsPerDayChart;
   @ViewChild('drinkingChart', { static: false }) public drinkingChart;
@@ -43,16 +88,6 @@ export class StatisticPage implements OnInit {
 
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
-  constructor(
-    public uiStatistic: UIStatistic,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiMillStorage: UIMillStorage,
-    private translate: TranslateService,
-    private readonly currencyService: CurrencyService,
-  ) {}
 
   public getCurrencySymbol() {
     return this.currencyService.getActualCurrencySymbol();
@@ -796,3 +831,5 @@ export class StatisticPage implements OnInit {
     );
   }
 }
+
+export default StatisticPage;

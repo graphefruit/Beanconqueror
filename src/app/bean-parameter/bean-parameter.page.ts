@@ -1,14 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+
+import {
+  IonCard,
+  IonCardContent,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonMenuButton,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'app-bean-parameter',
   templateUrl: './bean-parameter.page.html',
   styleUrls: ['./bean-parameter.page.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    HeaderComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonCard,
+    IonCardTitle,
+    IonCardContent,
+    IonItem,
+    IonIcon,
+  ],
 })
 export class BeanParameterPage {
-  constructor(private readonly router: Router) {}
+  private readonly router = inject(Router);
 
   public openManageParameters(): void {
     this.router.navigate(['/bean-parameter/manage']);

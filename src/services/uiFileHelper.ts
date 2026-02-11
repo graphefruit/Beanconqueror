@@ -1,5 +1,8 @@
-/** Core */
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+import { Platform } from '@ionic/angular/standalone';
+
 import { Capacitor, CapacitorException } from '@capacitor/core';
 import {
   Directory,
@@ -8,14 +11,11 @@ import {
   Filesystem,
   StatOptions,
 } from '@capacitor/filesystem';
-import { Platform } from '@ionic/angular';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { UILog } from './uiLog';
-
-import moment from 'moment';
-import { InstanceClass } from './instanceClass';
-
 import { Share } from '@capacitor/share';
+import moment from 'moment';
+
+import { InstanceClass } from './instanceClass';
+import { UILog } from './uiLog';
 
 export interface CreateTempCacheDirectoryResult {
   path: string;
@@ -32,13 +32,9 @@ declare let navigator: any;
   providedIn: 'root',
 })
 export class UIFileHelper extends InstanceClass {
-  constructor(
-    private readonly uiLog: UILog,
-    private readonly platform: Platform,
-    private readonly domSanitizer: DomSanitizer,
-  ) {
-    super();
-  }
+  private readonly uiLog = inject(UILog);
+  private readonly platform = inject(Platform);
+  private readonly domSanitizer = inject(DomSanitizer);
 
   public getDataDirectory(): Directory {
     if (this.platform.is('ios') && this.platform.is('capacitor')) {
@@ -145,7 +141,7 @@ export class UIFileHelper extends InstanceClass {
   public async readFileAsUint8Array(
     path: string,
     directory?: Directory,
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     this.uiLog.debug(
       'readFileAsUint8Array for path',
       path,
@@ -159,7 +155,7 @@ export class UIFileHelper extends InstanceClass {
 
   public async readInternalFileAsUint8Array(
     fileName: string,
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     this.uiLog.debug('readInternalFileAsUint8Array for fileName:', fileName);
 
     return this.readFileAsUint8Array(
@@ -767,7 +763,9 @@ export class UIFileHelper extends InstanceClass {
     };
   }
 
-  private binaryStringToUint8Array(binaryString: string): Uint8Array {
+  private binaryStringToUint8Array(
+    binaryString: string,
+  ): Uint8Array<ArrayBuffer> {
     const array = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       array[i] = binaryString.charCodeAt(i);

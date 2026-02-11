@@ -3,29 +3,62 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
+
+import {
+  IonButton,
+  IonCard,
+  IonCardHeader,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { closeOutline } from 'ionicons/icons';
+
+import { Subscription } from 'rxjs';
+
 import { Brew } from '../../../classes/brew/brew';
-import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController, Platform } from '@ionic/angular';
+import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-brew-maximize-controls',
   templateUrl: './brew-maximize-controls.component.html',
   styleUrls: ['./brew-maximize-controls.component.scss'],
-  standalone: false,
+  imports: [
+    IonHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+  ],
 })
 export class BrewMaximizeControlsComponent
   implements AfterViewInit, OnDestroy, OnInit
 {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly platform = inject(Platform);
+
   public static COMPONENT_ID: string = 'brew-maximize-controls';
 
   @Input() public brew: Brew;
@@ -40,13 +73,9 @@ export class BrewMaximizeControlsComponent
   @ViewChild('timerElement', { static: false })
   public timerElement: ElementRef;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-
-    private readonly platform: Platform,
-  ) {}
+  constructor() {
+    addIcons({ closeOutline });
+  }
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
 

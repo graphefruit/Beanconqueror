@@ -1,17 +1,16 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { Brew } from '../../classes/brew/brew';
+import { ServerBrew } from '../../classes/server/brew/brew';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
 import { UIHelper } from '../uiHelper';
-import { ServerBrew } from '../../classes/server/brew/brew';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BrewTrackingService {
-  constructor(
-    private readonly serverCommunication: ServerCommunicationService,
-    private readonly uiHelper: UIHelper
-  ) {}
+  private readonly serverCommunication = inject(ServerCommunicationService);
+  private readonly uiHelper = inject(UIHelper);
 
   /**
    * This function is on the actual pattern: fire and forget, if the user doesn't have any internet or something like this we won't recgonize nor repeat it again
@@ -34,7 +33,7 @@ export class BrewTrackingService {
             .trackBrew(serverBrew)
             .then(
               () => {},
-              () => {}
+              () => {},
             )
             .catch(() => {});
         } catch (ex) {}
@@ -73,7 +72,7 @@ export class BrewTrackingService {
 
     for (const method of _brew.method_of_preparation_tools) {
       serverBrew.method_of_preparation_tools.push(
-        _brew.getPreparationToolName(method)
+        _brew.getPreparationToolName(method),
       );
     }
 

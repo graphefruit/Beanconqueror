@@ -1,50 +1,138 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { AlertController, ModalController, Platform } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
-import { Brew } from '../../../classes/brew/brew';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { Settings } from '../../../classes/settings/settings';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import { Component, inject, Input, ViewChild } from '@angular/core';
+
+import {
+  AlertController,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonPopover,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  clipboardOutline,
+  create,
+  download,
+  expandOutline,
+  globeOutline,
+  shareSocialOutline,
+} from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
-import { UIExcel } from '../../../services/uiExcel';
-import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { UIMillHelper } from '../../../services/uiMillHelper';
-import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
+
+import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
 import {
   IBrewRealtimeWaterFlow,
   IBrewWaterFlow,
 } from '../../../classes/brew/brewFlow';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIAlert } from '../../../services/uiAlert';
-import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
-import moment from 'moment';
-
-import { UILog } from '../../../services/uiLog';
-import { Visualizer } from '../../../classes/visualizer/visualizer';
-import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
-import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { sleep } from '../../../classes/devices';
-import { ShareService } from '../../../services/shareService/share-service.service';
-import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
-import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
+import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { Settings } from '../../../classes/settings/settings';
+import { Visualizer } from '../../../classes/visualizer/visualizer';
+import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IBrew } from '../../../interfaces/brew/iBrew';
+import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
+import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { ShareService } from '../../../services/shareService/share-service.service';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIExcel } from '../../../services/uiExcel';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
+import { UIMillHelper } from '../../../services/uiMillHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
+import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
 
 declare var Plotly;
 @Component({
   selector: 'brew-detail',
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
-  standalone: false,
+  imports: [
+    BrewBrewingGraphComponent,
+    PhotoViewComponent,
+    DecimalPipe,
+    KeyValuePipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BrewFieldVisiblePipe,
+    BrewFieldOrder,
+    BrewFunction,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonLabel,
+    IonChip,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCardHeader,
+    IonCardContent,
+    IonPopover,
+    IonList,
+    IonFooter,
+  ],
 })
 export class BrewDetailComponent {
+  private readonly modalController = inject(ModalController);
+  uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
+  private readonly alertCtrl = inject(AlertController);
+  private readonly uiLog = inject(UILog);
+  private readonly shareService = inject(ShareService);
+
   public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public data: Brew = new Brew();
@@ -70,25 +158,16 @@ export class BrewDetailComponent {
   public uiShowSectionBeforeBrew: boolean = false;
   public uiShowCupping: boolean = false;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiExcel: UIExcel,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly translate: TranslateService,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly platform: Platform,
-    private readonly alertCtrl: AlertController,
-    private readonly uiLog: UILog,
-    private readonly shareService: ShareService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({
+      create,
+      globeOutline,
+      download,
+      shareSocialOutline,
+      expandOutline,
+      clipboardOutline,
+    });
   }
   public setUIParams() {
     this.uiShowSectionAfterBrew = this.showSectionAfterBrew();
@@ -264,9 +343,9 @@ export class BrewDetailComponent {
 
   public async shareFlowProfile() {
     /* const fileShare: string = this.flowProfileChartEl.toBase64Image(
-      'image/jpeg',
-      1
-    );*/
+          'image/jpeg',
+          1
+        );*/
     if (this.platform.is('ios')) {
       //#544 - we need to do it twice... don't know why, ios issue
       Plotly.Snapshot.toImage(
@@ -347,15 +426,15 @@ export class BrewDetailComponent {
       );
       // No popup needed anymore, because we share the file now
       /*if (this.platform.is('android')) {
-        const alert = await this.alertCtrl.create({
-          header: this.translate.instant('DOWNLOADED'),
-          subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-            fileName: filename,
-          }),
-          buttons: ['OK'],
-        });
-        await alert.present();
-      }*/
+              const alert = await this.alertCtrl.create({
+                header: this.translate.instant('DOWNLOADED'),
+                subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                  fileName: filename,
+                }),
+                buttons: ['OK'],
+              });
+              await alert.present();
+            }*/
     }
   }
   public async downloadFlowProfile() {

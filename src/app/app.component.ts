@@ -1,40 +1,95 @@
 import {
   AfterViewInit,
   Component,
+  inject,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { App } from '@capacitor/app';
-import { Device } from '@capacitor/device';
-import { Animation, StatusBar, Style } from '@capacitor/status-bar';
-import { Keyboard } from '@capacitor/keyboard';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 
 import {
+  IonApp,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenu,
+  IonMenuToggle,
   IonRouterOutlet,
+  IonSplitPane,
+  IonTitle,
+  IonToolbar,
   MenuController,
   ModalController,
   Platform,
-} from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  closeOutline,
+  codeSlashOutline,
+  logoDiscord,
+  logoFacebook,
+  logoInstagram,
+} from 'ionicons/icons';
+
+import { App } from '@capacitor/app';
+import { SystemBars } from '@capacitor/core';
+import { Device } from '@capacitor/device';
+import { Keyboard } from '@capacitor/keyboard';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { Animation, StatusBar, Style } from '@capacitor/status-bar';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
-/** Third party */
 import moment from 'moment';
+import { filter } from 'rxjs/operators';
+import { register } from 'swiper/element/bundle';
+
+import { Bean } from '../classes/bean/bean';
+import { BrewInstanceHelper } from '../classes/brew/brew';
+import {
+  Logger,
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  sleep,
+  TemperatureType,
+} from '../classes/devices';
+import { Mill } from '../classes/mill/mill';
+import { Preparation } from '../classes/preparation/preparation';
 import { Settings } from '../classes/settings/settings';
+import { Water } from '../classes/water/water';
+import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
+import SettingsTracking from '../data/tracking/settingsTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
+import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
+import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
 import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
 import { environment } from '../environments/environment';
+import { beanconquerorIcons } from '../generated/icon-registry';
 import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
+import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
+import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
+import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
+import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
+import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
 import { UIAnalytics } from '../services/uiAnalytics';
 import { UIBeanHelper } from '../services/uiBeanHelper';
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewHelper } from '../services/uiBrewHelper';
 import { UIBrewStorage } from '../services/uiBrewStorage';
+import { UIExportImportHelper } from '../services/uiExportImportHelper';
+import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
 import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
@@ -44,38 +99,10 @@ import { UIPreparationHelper } from '../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../services/uiPreparationStorage';
 import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
 import { UISettingsStorage } from '../services/uiSettingsStorage';
+import { UIStorage } from '../services/uiStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import {
-  Logger,
-  PressureType,
-  RefractometerType,
-  ScaleType,
-  sleep,
-  TemperatureType,
-} from '../classes/devices';
-import { UIExportImportHelper } from '../services/uiExportImportHelper';
-import { register } from 'swiper/element/bundle';
-import { UIGraphStorage } from '../services/uiGraphStorage.service';
-import { UIStorage } from '../services/uiStorage';
-import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
-import { SplashScreen } from '@capacitor/splash-screen';
-import { BrewInstanceHelper } from '../classes/brew/brew';
-import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
-import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
-import SettingsTracking from '../data/tracking/settingsTracking';
-import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
-import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
-import { filter } from 'rxjs/operators';
-import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
-import { Mill } from '../classes/mill/mill';
-import { Preparation } from '../classes/preparation/preparation';
-import { Bean } from '../classes/bean/bean';
-import { Water } from '../classes/water/water';
-import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
-import { ThemeService } from '../services/theme/theme.service';
 
 declare var window;
 
@@ -85,9 +112,61 @@ register();
   selector: 'app-root',
   templateUrl: 'app.component.html',
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    IonApp,
+    IonSplitPane,
+    IonMenu,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonMenuToggle,
+    IonItem,
+    IonLabel,
+    IonFooter,
+    IonRouterOutlet,
+  ],
 })
 export class AppComponent implements AfterViewInit {
+  private readonly router = inject(Router);
+  platform = inject(Platform);
+  private readonly uiLog = inject(UILog);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private _translate = inject(TranslateService);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly menu = inject(MenuController);
+  private readonly uiUpdate = inject(UIUpdate);
+  private readonly uiVersionStorage = inject(UiVersionStorage);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly intentHandlerService = inject(IntentHandlerService);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly cleanupService = inject(CleanupService);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiStorage = inject(UIStorage);
+  private readonly androidPlatformService = inject(AndroidPlatformService);
+  private readonly iosPlatformService = inject(IosPlatformService);
+  private readonly themeService = inject(ThemeService);
+
   public toggleAbout: boolean = false;
   @ViewChild(IonRouterOutlet, { static: false })
   public routerOutlet: IonRouterOutlet;
@@ -226,40 +305,7 @@ export class AppComponent implements AfterViewInit {
   public uiWaterSectionVisible: boolean = false;
   public uiRoastingSectionVisible: boolean = false;
 
-  constructor(
-    private readonly router: Router,
-    public platform: Platform,
-    private readonly uiLog: UILog,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert,
-    private _translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly menu: MenuController,
-    private readonly uiUpdate: UIUpdate,
-    private readonly uiVersionStorage: UiVersionStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly intentHandlerService: IntentHandlerService,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly cleanupService: CleanupService,
-    private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiStorage: UIStorage,
-    private readonly androidPlatformService: AndroidPlatformService,
-    private readonly iosPlatformService: IosPlatformService,
-    private readonly themeService: ThemeService,
-  ) {
+  constructor() {
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
@@ -274,6 +320,31 @@ export class AppComponent implements AfterViewInit {
       // Just support deeplinks on devices.
       this.intentHandlerService.attachOnHandleOpenUrl();
     }
+
+    // Add ionicons required by the app component
+    // We don't want to add all of them since the SVGs are inlined into the export
+    addIcons({
+      closeOutline,
+      logoInstagram,
+      logoFacebook,
+      codeSlashOutline,
+      logoDiscord,
+    });
+
+    // We do want to add all the paths to the custom icons though
+    this.addAllCustomIcons();
+  }
+
+  private addAllCustomIcons() {
+    // Add all custom icons here so we don't have to bother with them in other components.
+    // This isn't too bad for the bundle size as we only add the path to the custom icons
+    // anyway. This is different from the default ionicons, which are inlined into the
+    // module exports.
+    const customIcons: Record<string, string> = {};
+    for (const icon of beanconquerorIcons) {
+      customIcons[icon.name] = `/assets/custom-ion-icons/${icon.path}`;
+    }
+    addIcons(customIcons);
   }
 
   public ngOnInit() {
@@ -360,6 +431,7 @@ export class AppComponent implements AfterViewInit {
         await StatusBar.show({ animation: Animation.None });
         const statusBarStyle = Style.Default;
         await StatusBar.setStyle({ style: statusBarStyle });
+        await SystemBars.setAnimation({ animation: 'NONE' });
         if (this.platform.is('ios')) {
           await Keyboard.setAccessoryBarVisible({ isVisible: true });
         }
@@ -398,7 +470,7 @@ export class AppComponent implements AfterViewInit {
       }
 
       // Before we update and show messages, we need atleast to set one default language.
-      this._translate.setDefaultLang('en');
+      this._translate.setFallbackLang('en');
       await this._translate.use('en').toPromise();
 
       if (this.platform.is('capacitor')) {
@@ -571,18 +643,15 @@ export class AppComponent implements AfterViewInit {
                 settingLanguage = 'en';
               }
               this.uiLog.log(`Setting language: ${settingLanguage}`);
-              this._translate.setDefaultLang(settingLanguage);
+              this._translate.setFallbackLang(settingLanguage);
               settings.language = settingLanguage;
               await this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
               moment.locale(settingLanguage);
               resolve(undefined);
             } catch (ex) {
-              const exMessage: string = JSON.stringify(ex);
-              this.uiLog.error(
-                `Exception occured when setting language ${exMessage}`,
-              );
-              this._translate.setDefaultLang('en');
+              this.uiLog.error('Exception occured when setting language', ex);
+              this._translate.setFallbackLang('en');
               await this._translate.use('en').toPromise();
               moment.locale('en');
               resolve(undefined);
@@ -591,17 +660,14 @@ export class AppComponent implements AfterViewInit {
             this.uiLog.info('Language settings already existing, set language');
             const settingLanguage: string = settings.language;
             this.uiLog.log(`Setting language: ${settingLanguage}`);
-            this._translate.setDefaultLang(settingLanguage);
+            this._translate.setFallbackLang(settingLanguage);
             await this._translate.use(settingLanguage).toPromise();
             moment.locale(settingLanguage);
             resolve(undefined);
           }
         } catch (ex) {
-          const exMessage: string = JSON.stringify(ex);
-          this.uiLog.error(
-            `Exception occured when setting language ${exMessage}`,
-          );
-          this._translate.setDefaultLang('en');
+          this.uiLog.error('Exception occured when setting language', ex);
+          this._translate.setFallbackLang('en');
           settings.language = 'en';
           await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
@@ -618,7 +684,7 @@ export class AppComponent implements AfterViewInit {
           settings.language !== ''
         ) {
           this.uiLog.info(`Set language from settings: ${settings.language}`);
-          this._translate.setDefaultLang(settings.language);
+          this._translate.setFallbackLang(settings.language);
           await this._translate.use(settings.language).toPromise();
           moment.locale(settings.language);
           resolve(undefined);
@@ -626,7 +692,7 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.info(
             `Set default language from settings, because no settings set: en `,
           );
-          this._translate.setDefaultLang('en');
+          this._translate.setFallbackLang('en');
           settings.language = 'en';
           await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
@@ -966,21 +1032,21 @@ export class AppComponent implements AfterViewInit {
   private __instanceAppRating() {
     if (this.platform.is('capacitor')) {
       /** const appLanguage = this.uiSettingsStorage.getSettings().language;
-       AppRate.setPreferences({
-       usesUntilPrompt: 25,
-       storeAppURL: {
-       ios: '1445297158',
-       android: 'market://details?id=com.beanconqueror.app',
-       },
-       promptAgainForEachNewVersion: false,
-       reviewType: {
-       ios: 'AppStoreReview',
-       android: 'InAppReview',
-       },
-       useLanguage: appLanguage,
-       });
+             AppRate.setPreferences({
+             usesUntilPrompt: 25,
+             storeAppURL: {
+             ios: '1445297158',
+             android: 'market://details?id=com.beanconqueror.app',
+             },
+             promptAgainForEachNewVersion: false,
+             reviewType: {
+             ios: 'AppStoreReview',
+             android: 'InAppReview',
+             },
+             useLanguage: appLanguage,
+             });
 
-       AppRate.promptForRating(false);**/
+             AppRate.promptForRating(false);**/
     }
   }
 
