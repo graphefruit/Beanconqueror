@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 24.x
           cache: 'npm'
+      # Update npm version to at least 11.8.0, which should fix npm not liking our lockfiles
+      - run: npm install -g 'npm@^11.8.0' && npm -v
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
