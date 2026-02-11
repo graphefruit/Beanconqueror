@@ -15,7 +15,14 @@ import { FormsModule } from '@angular/forms';
 
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { waterOutline } from 'ionicons/icons';
+import {
+  beakerOutline,
+  chevronCollapseOutline,
+  chevronExpandOutline,
+  thermometerOutline,
+  timerOutline,
+  waterOutline,
+} from 'ionicons/icons';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment/moment';
@@ -236,7 +243,14 @@ export class BrewBrewingGraphComponent implements OnInit {
   public graph_frequency_update_interval: number = 150;
 
   constructor() {
-    addIcons({ waterOutline });
+    addIcons({
+      beakerOutline,
+      chevronCollapseOutline,
+      chevronExpandOutline,
+      thermometerOutline,
+      timerOutline,
+      waterOutline,
+    });
   }
 
   public ngOnInit() {

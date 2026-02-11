@@ -16,6 +16,14 @@ import {
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  analyticsOutline,
+  archive,
+  heart,
+  snowOutline,
+  trophy,
+} from 'ionicons/icons';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import * as htmlToImage from 'html-to-image';
@@ -106,6 +114,16 @@ export class BrewInformationComponent implements OnInit {
   private readonly visualizerService = inject(VisualizerService);
   private readonly uiGraphHelper = inject(UIGraphHelper);
   private readonly menu = inject(MenuController);
+
+  constructor() {
+    addIcons({
+      analyticsOutline,
+      archive,
+      heart,
+      snowOutline,
+      trophy,
+    });
+  }
 
   @Input() public brew: Brew;
   public _collapsed: boolean = undefined;
