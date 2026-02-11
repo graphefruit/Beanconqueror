@@ -16,6 +16,7 @@ import { EspressiScale } from './espressiScale';
 import { ETITemperature } from './etiTemperature';
 import { EurekaPrecisaScale } from './eurekaPrecisaScale';
 import { FelicitaScale } from './felicitaScale';
+import { FutulaScale } from './futulaScale';
 import { GeisingerThermometer } from './geisingerThermometer';
 import { JimmyScale } from './jimmyScale';
 import { LunarScale } from './lunarScale';
@@ -31,8 +32,6 @@ import { TimemoreScale } from './timemoreScale';
 import { TransducerDirectPressure } from './transducerDirectPressure';
 import { VariaAkuScale } from './variaAku';
 import { WeighMyBruScale } from './weighMyBruScale';
-import { FutulaScale } from './futulaScale';
-import { GeisingerThermometer } from './geisingerThermometer';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
