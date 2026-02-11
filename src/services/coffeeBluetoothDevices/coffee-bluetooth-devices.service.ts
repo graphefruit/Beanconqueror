@@ -36,6 +36,7 @@ import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 import { PeripheralData } from '../../classes/devices/ble.types';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 import { DecentScale } from '../../classes/devices/decentScale';
+import { FutulaScale } from '../../classes/devices/futulaScale';
 import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
 import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
@@ -677,6 +678,10 @@ export class CoffeeBluetoothDevicesService {
     if (FelicitaScale.test(deviceScale)) {
       this.logger.log('BleManager - We found a felicita scale');
       return { id: deviceScale.id, type: ScaleType.FELICITA };
+    }
+    if (FutulaScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a futula scale');
+      return { id: deviceScale.id, type: ScaleType.FUTULA };
     }
     if (EurekaPrecisaScale.test(deviceScale)) {
       this.logger.log('BleManager - We found a eureka scale');

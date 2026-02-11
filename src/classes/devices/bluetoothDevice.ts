@@ -65,7 +65,7 @@ export class BluetoothScale {
     this.scaleType = type;
     this.blueToothParentlogger = new Logger();
   }
-  public getScaleType() {
+  public getScaleType(): ScaleType | undefined {
     return this.scaleType;
   }
   public async connect() {}

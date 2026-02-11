@@ -31,6 +31,8 @@ import { TimemoreScale } from './timemoreScale';
 import { TransducerDirectPressure } from './transducerDirectPressure';
 import { VariaAkuScale } from './variaAku';
 import { WeighMyBruScale } from './weighMyBruScale';
+import { FutulaScale } from './futulaScale';
+import { GeisingerThermometer } from './geisingerThermometer';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
@@ -47,6 +49,7 @@ export enum ScaleType {
   LUNAR = 'LUNAR',
   JIMMY = 'JIMMY',
   FELICITA = 'FELICITA',
+  FUTULA = 'FUTULA',
   EUREKAPRECISA = 'EUREKAPRECISA',
   SKALE = 'SKALE',
   SMARTCHEF = 'SMARTCHEF',
@@ -95,6 +98,8 @@ export function makeDevice(
       return new JimmyScale(data, type);
     case ScaleType.FELICITA:
       return new FelicitaScale(data, type);
+    case ScaleType.FUTULA:
+      return new FutulaScale(data, type);
     case ScaleType.EUREKAPRECISA:
       return new EurekaPrecisaScale(data, type);
     case ScaleType.SKALE:

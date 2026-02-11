@@ -2523,12 +2523,17 @@ export class BrewBrewingGraphComponent implements OnInit {
           didWeReceiveAnyFlow === false &&
           this.brewComponent.timer.isTimerRunning() === false
         ) {
-          this.uiAlert.showMessage(
-            'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION',
-            'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE',
-            undefined,
-            true,
-          );
+          const isFutula = scale?.getScaleType?.() === ScaleType.FUTULA;
+
+          const titleKey = isFutula
+            ? 'SMART_SCALE_FUTULA_NO_WEIGHT_TITLE'
+            : 'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE';
+
+          const descriptionKey = isFutula
+            ? 'SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION'
+            : 'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION';
+
+          this.uiAlert.showMessage(descriptionKey, titleKey, undefined, true);
         }
       }, 5000);
     }
