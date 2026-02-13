@@ -47,6 +47,6 @@ export function parseAdvertisingManufacturerData(
   return null;
 }
 
-export function sleep(milliseconds: number): Promise<never> {
+export function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
