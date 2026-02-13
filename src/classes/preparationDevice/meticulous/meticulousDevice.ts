@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import Api, { ActionType, ProfileIdent } from '@meticulous-home/espresso-api';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
-import { Profile } from 'meticulous-typescript-profile';
+import { Profile } from '@meticulous-home/espresso-profile';
 import moment from 'moment';
 import { of } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
