@@ -67,6 +67,10 @@ ion-header {
   }
 }
 
+ion-header ion-toolbar:first-of-type {
+  padding-top:0px!important;
+}
+
 ion-content {
   --background: var(--ion-background-color);
 }
