@@ -38,6 +38,12 @@ export class UIAlert {
 
   private existingLoadingSpinners: HTMLIonModalElement[] = [];
 
+  /**
+   * Starts presenting a loading spinner popup.
+   * Resolves when the loading spinner popup has started showing.
+   *
+   * Use `hideLoadingSpinner()` to hide the spinner popup again.
+   */
   public async showLoadingSpinner(
     message = 'PLEASE_WAIT',
     translate = true,
@@ -45,6 +51,9 @@ export class UIAlert {
     await this.showLoadingMessage(message, translate, false);
   }
 
+  /**
+   * Updates the message displayed in all active loading spinner popups.
+   */
   public setLoadingSpinnerMessage(message: string, translate = false): void {
     if (this.existingLoadingSpinners.length > 0) {
       let internMessage = '';
@@ -66,6 +75,10 @@ export class UIAlert {
     return this.existingLoadingSpinners?.length > 0;
   }
 
+  /**
+   * Hides all active loading spinner popups.
+   * Resolves after all loading spinners have been hidden.
+   */
   public async hideLoadingSpinner(): Promise<void> {
     if (this.existingLoadingSpinners.length > 0) {
       for (const spinner of this.existingLoadingSpinners) {
@@ -75,6 +88,10 @@ export class UIAlert {
     }
   }
 
+  /**
+   * Shows the modal dialog for a critical error during app startup.
+   * Resolves after the modal was dismissed.
+   */
   public async showAppShetItSelfMessage(): Promise<void> {
     const modal = await this.modalController.create({
       component: FilesystemErrorPopoverComponent,
@@ -85,6 +102,10 @@ export class UIAlert {
     await modal.onWillDismiss();
   }
 
+  /**
+   * Shows an alert dialog with the given message and an OK button.
+   * Resolves after the alert modal was dismissed.
+   */
   public async showMessage(
     _message: string,
     _title?: string,
@@ -114,6 +135,10 @@ export class UIAlert {
     await alert.onDidDismiss();
   }
 
+  /**
+   * Shows a modal with the current log content.
+   * Resolves after the modal was dismissed.
+   */
   public async copyLogfiles(): Promise<void> {
     const modal = await this.modalController.create({
       component: LogTextComponent,
@@ -122,6 +147,13 @@ export class UIAlert {
     await modal.onWillDismiss();
   }
 
+  /**
+   * Shows a an alert modal for iOS IndexedDB failures. The modal will reload
+   * the page when its button is pressed.
+   *
+   * Will never resolve as the page will be reloaded when pressing the button
+   * in the modal.
+   */
   public async showIOSIndexedDBIssues(
     _message: string,
     _title?: string,
@@ -155,6 +187,13 @@ export class UIAlert {
     await alert.onDidDismiss();
   }
 
+  /**
+   * Shows a modal confirmation dialog with a message and 'OK' and 'Cancel'
+   * buttons.
+   *
+   * Resolves when the modal has been dismissed with the 'OK' button.
+   * **Rejects when the modal has been dismissed with the 'Cancel' button.**
+   */
   public async showConfirm(
     _message: string,
     _title?: string,
@@ -169,6 +208,13 @@ export class UIAlert {
     );
   }
 
+  /**
+   * Shows a modal confirmation dialog with a message and 'Yes' and 'No'
+   * buttons. The button text can be customized using the arguments.
+   *
+   * Resolves when the modal has been dismissed with the 'OK' button.
+   * **Rejects when the modal has been dismissed with the 'Cancel' button.**
+   */
   public async showConfirmWithYesNoTranslation(
     _message: string,
     _title?: string,
@@ -215,6 +261,10 @@ export class UIAlert {
     }
   }
 
+  /**
+   * Shows an alert dialog with the given message and an OK button.
+   * Resolves after the alert modal was dismissed.
+   */
   public async presentCustomPopover(
     _title: string,
     _description: string,
@@ -223,6 +273,14 @@ export class UIAlert {
     await this.showMessage(_description, _title, _okText, true);
   }
 
+  /**
+   * Starts presenting a loading spinner popup. Optionally, the popup can be
+   * configured to allow showing a dismiss button after a timeout.
+   *
+   * Resolves when the loading spinner popup has started showing.
+   *
+   * Use `hideLoadingSpinner()` to hide the spinner popup again.
+   */
   public async showLoadingMessage(
     message = 'PLEASE_WAIT',
     translate = true,
