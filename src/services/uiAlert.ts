@@ -91,6 +91,7 @@ export class UIAlert {
     _ok?: string,
     _translate?: boolean,
   ): Promise<void> {
+    let okText = this.translate.instant('OK');
     if (_translate === true) {
       _message = this.translate.instant(_message);
 
@@ -101,7 +102,6 @@ export class UIAlert {
         _ok = this.translate.instant(_ok);
       }
     }
-    let okText = 'OK';
     if (_ok) {
       okText = _ok;
     }
