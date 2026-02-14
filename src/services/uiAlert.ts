@@ -1,10 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import {
-  AlertController,
-  LoadingController,
-  ModalController,
-} from '@ionic/angular/standalone';
+import { AlertController, ModalController } from '@ionic/angular/standalone';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -15,9 +11,7 @@ import { AppEventType } from '../enums/appEvent/appEvent';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
 import { EventQueueService } from './queueService/queue-service.service';
-import { UILog } from './uiLog';
 
-declare var window;
 @Injectable({
   providedIn: 'root',
 })
@@ -25,8 +19,6 @@ export class UIAlert {
   private readonly alertController = inject(AlertController);
   private readonly translate = inject(TranslateService);
   private readonly modalController = inject(ModalController);
-  private readonly loadingController = inject(LoadingController);
-  private readonly uiLog = inject(UILog);
   private eventQueue = inject(EventQueueService);
 
   private static instance: UIAlert;
@@ -37,6 +29,7 @@ export class UIAlert {
 
     return undefined;
   }
+
   constructor() {
     if (UIAlert.instance === undefined) {
       UIAlert.instance = this;
@@ -46,26 +39,13 @@ export class UIAlert {
   private existingLoadingSpinners: HTMLIonModalElement[] = [];
 
   public async showLoadingSpinner(
-    message: string = 'PLEASE_WAIT',
-    translate: boolean = true,
-  ) {
+    message = 'PLEASE_WAIT',
+    translate = true,
+  ): Promise<void> {
     await this.showLoadingMessage(message, translate, false);
-    /**if (this.existingLoadingSpinners.length > 0) {
-          await this.hideLoadingSpinner();
-        }
-        let msg = message;
-        if (translate) {
-          msg = this.translate.instant(message);
-        }
-        const loadingSpinner = await this.loadingController.create({
-          animated: false,
-          message: msg,
-        });
-        this.existingLoadingSpinners.push(loadingSpinner);
-        loadingSpinner.present();**/
   }
 
-  public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
+  public setLoadingSpinnerMessage(message: string, translate = false): void {
     if (this.existingLoadingSpinners.length > 0) {
       let internMessage = '';
       if (translate === false) {
@@ -82,23 +62,20 @@ export class UIAlert {
     }
   }
 
-  public isLoadingSpinnerShown() {
+  public isLoadingSpinnerShown(): boolean {
     return this.existingLoadingSpinners?.length > 0;
   }
-  public async hideLoadingSpinner() {
+
+  public async hideLoadingSpinner(): Promise<void> {
     if (this.existingLoadingSpinners.length > 0) {
-      for await (const spinner of this.existingLoadingSpinners) {
+      for (const spinner of this.existingLoadingSpinners) {
         await spinner.dismiss();
-        await sleep(50);
       }
       this.existingLoadingSpinners = [];
     }
   }
 
-  /**
-   * @method showMessage
-   */
-  public async showAppShetItSelfMessage() {
+  public async showAppShetItSelfMessage(): Promise<void> {
     const modal = await this.modalController.create({
       component: FilesystemErrorPopoverComponent,
       cssClass: 'half-bottom-modal',
@@ -108,15 +85,12 @@ export class UIAlert {
     await modal.onWillDismiss();
   }
 
-  /**
-   * @method showMessage
-   */
   public async showMessage(
     _message: string,
     _title?: string,
     _ok?: string,
     _translate?: boolean,
-  ): Promise<any> {
+  ): Promise<void> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
 
@@ -127,29 +101,20 @@ export class UIAlert {
         _ok = this.translate.instant(_ok);
       }
     }
-    let okText: string = 'OK';
+    let okText = 'OK';
     if (_ok) {
       okText = _ok;
     }
-    const promise = new Promise(async (resolve, reject) => {
-      const alert = await this.alertController.create({
-        header: _title,
-        message: _message,
-        buttons: [
-          {
-            text: okText,
-            handler: () => {
-              resolve(undefined);
-            },
-          },
-        ],
-      });
-      await alert.present();
+    const alert = await this.alertController.create({
+      header: _title,
+      message: _message,
+      buttons: [{ text: okText }],
     });
-
-    return promise;
+    await alert.present();
+    await alert.onDidDismiss();
   }
-  public async copyLogfiles(): Promise<any> {
+
+  public async copyLogfiles(): Promise<void> {
     const modal = await this.modalController.create({
       component: LogTextComponent,
     });
@@ -161,7 +126,7 @@ export class UIAlert {
     _message: string,
     _title?: string,
     _translate?: boolean,
-  ): Promise<any> {
+  ): Promise<void> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
 
@@ -170,71 +135,47 @@ export class UIAlert {
       }
     }
 
-    const promise = new Promise(async (resolve, reject) => {
-      const alert = await this.alertController.create({
-        header: _title,
-        message: _message,
-        cssClass: 'ios-indexeddbissues',
-        backdropDismiss: false,
-        buttons: [
-          {
-            text: this.translate.instant('RELOAD_APP'),
-            handler: () => {
-              window.location.reload();
-              return false;
-            },
+    const alert = await this.alertController.create({
+      header: _title,
+      message: _message,
+      cssClass: 'ios-indexeddbissues',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: this.translate.instant('RELOAD_APP'),
+          handler: () => {
+            window.location.reload();
+            return false;
           },
-        ],
-      });
-      await alert.present();
+        },
+      ],
     });
-
-    return promise;
+    await alert.present();
+    // This should never resolve, as the app reloads when clicking the button
+    await alert.onDidDismiss();
   }
+
   public async showConfirm(
     _message: string,
     _title?: string,
     _translate?: boolean,
-  ): Promise<any> {
-    if (_translate === true) {
-      _message = this.translate.instant(_message);
-
-      if (_title) {
-        _title = this.translate.instant(_title);
-      }
-    }
-
-    return new Promise(async (resolve, reject) => {
-      const alert = await this.alertController.create({
-        header: _title,
-        subHeader: _message,
-        backdropDismiss: false,
-        buttons: [
-          {
-            text: this.translate.instant('NO'),
-            role: 'cancel',
-            handler: () => {
-              reject();
-            },
-          },
-          {
-            text: this.translate.instant('YES'),
-            handler: () => {
-              resolve(undefined);
-            },
-          },
-        ],
-      });
-      await alert.present();
-    });
+  ): Promise<void> {
+    await this.showConfirmWithYesNoTranslation(
+      _message,
+      _title,
+      undefined,
+      undefined,
+      _translate,
+    );
   }
+
   public async showConfirmWithYesNoTranslation(
     _message: string,
     _title?: string,
     _yesText?: string,
     _noText?: string,
     _translate?: boolean,
-  ): Promise<any> {
+  ): Promise<void> {
     let yesText = this.translate.instant('YES');
     let noText = this.translate.instant('NO');
     if (_translate === true) {
@@ -251,52 +192,51 @@ export class UIAlert {
       }
     }
 
-    return new Promise(async (resolve, reject) => {
-      const alert = await this.alertController.create({
-        header: _title,
-        subHeader: _message,
-        backdropDismiss: false,
-        buttons: [
-          {
-            text: noText,
-            role: 'cancel',
-            handler: () => {
-              reject();
-            },
-          },
-          {
-            text: yesText,
-            handler: () => {
-              resolve(undefined);
-            },
-          },
-        ],
-      });
-      await alert.present();
+    const alert = await this.alertController.create({
+      header: _title,
+      subHeader: _message,
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: noText,
+          role: 'cancel',
+        },
+        {
+          text: yesText,
+        },
+      ],
     });
+    await alert.present();
+    const { role } = await alert.onDidDismiss();
+    if (role === 'cancel') {
+      // TODO: Change this method to return a result object that callers can
+      //       check instead of using resolve() => ok; reject() => cancel
+      throw new Error('cancelled');
+    }
   }
 
   public async presentCustomPopover(
     _title: string,
     _description: string,
     _okText: string,
-  ) {
+  ): Promise<void> {
     await this.showMessage(_description, _title, _okText, true);
   }
 
   public async showLoadingMessage(
-    message: string = 'PLEASE_WAIT',
-    translate: boolean = true,
-    showDismissAfterSpecificTimeout: boolean = false,
-  ) {
-    // this.uiLog.generateExceptionLineMessage('Loading-Spinner');
+    message = 'PLEASE_WAIT',
+    translate = true,
+    showDismissAfterSpecificTimeout = false,
+  ): Promise<void> {
     if (this.existingLoadingSpinners.length > 0) {
       await this.hideLoadingSpinner();
     }
+
     let msg = message;
     if (translate) {
       msg = this.translate.instant(message);
     }
+
     const modal = await this.modalController.create({
       component: LoadingPopoverComponent,
       cssClass: 'loading-modal',
@@ -309,6 +249,6 @@ export class UIAlert {
       },
     });
     this.existingLoadingSpinners.push(modal);
-    modal.present();
+    await modal.present();
   }
 }
