@@ -6,7 +6,7 @@ import {
   Weight,
 } from './bluetoothDevice';
 import { Logger } from './common/logger';
-import {ScaleType, sleep} from './index';
+import { ScaleType, sleep } from './index';
 
 declare var ble: any;
 export class DifluidMicrobalanceTi extends BluetoothScale {

@@ -1468,7 +1468,6 @@ export class BrewBrewingGraphComponent implements OnInit {
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await sleep(200);
       await this.uiAlert.hideLoadingSpinner();
-
     } else if (
       this.flow_profile_raw?.weight.length > 0 ||
       this.flow_profile_raw?.pressureFlow.length > 0 ||

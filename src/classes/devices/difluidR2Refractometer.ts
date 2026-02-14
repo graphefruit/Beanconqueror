@@ -1,9 +1,9 @@
 import { TEST_TYPE_ENUM } from 'src/enums/settings/refractometer';
 import { PeripheralData } from './ble.types';
+import { sleep } from './common';
 import { Logger } from './common/logger';
 import { diFluid } from './diFluid/protocol';
 import { RefractometerDevice } from './refractometerBluetoothDevice';
-import {sleep} from './common';
 
 declare var ble: any;
 export class DiFluidR2Refractometer extends RefractometerDevice {
@@ -41,9 +41,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
     this.logger.log('connecting...');
     this.attachNotification();
     await sleep(100);
-    await this.setDeviceTemperatureUnit(
-      diFluid.R2.settings.temperatureUnit.C,
-    );
+    await this.setDeviceTemperatureUnit(diFluid.R2.settings.temperatureUnit.C);
   }
 
   public disconnect() {

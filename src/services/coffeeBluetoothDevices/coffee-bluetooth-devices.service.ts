@@ -29,20 +29,21 @@ import {
   makeTemperatureDevice,
   PressureType,
   RefractometerType,
-  ScaleType, sleep,
+  ScaleType,
+  sleep,
   TemperatureType,
 } from '../../classes/devices';
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 import { PeripheralData } from '../../classes/devices/ble.types';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 import { DecentScale } from '../../classes/devices/decentScale';
-import { FutulaScale } from '../../classes/devices/futulaScale';
 import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
 import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
 import { EspressiScale } from '../../classes/devices/espressiScale';
 import { EurekaPrecisaScale } from '../../classes/devices/eurekaPrecisaScale';
 import { FelicitaScale } from '../../classes/devices/felicitaScale';
+import { FutulaScale } from '../../classes/devices/futulaScale';
 import { GeisingerThermometer } from '../../classes/devices/geisingerThermometer';
 import { JimmyScale } from '../../classes/devices/jimmyScale';
 import { LunarScale } from '../../classes/devices/lunarScale';

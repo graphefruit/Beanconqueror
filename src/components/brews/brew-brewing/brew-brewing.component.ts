@@ -535,7 +535,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
       this.brewBrewingGraphEl.updateChart();
 
-
       await sleep(50);
       this.brewBrewingGraphEl.onOrientationChange();
     });

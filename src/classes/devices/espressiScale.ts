@@ -1,6 +1,6 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import {Logger, ScaleType, sleep} from './index';
+import { Logger, ScaleType, sleep } from './index';
 
 declare var ble: any;
 export class EspressiScale extends BluetoothScale {

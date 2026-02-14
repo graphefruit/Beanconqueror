@@ -207,7 +207,6 @@ export class BrewDetailComponent {
   }
 
   private async initializeFlowChartOnGraphEl() {
-
     await sleep(150);
     if (this.editActive === false) {
       if (this.brewBrewingGraphEl) {

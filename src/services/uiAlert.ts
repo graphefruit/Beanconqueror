@@ -10,12 +10,12 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
 import { AppEvent } from '../classes/appEvent/appEvent';
+import { sleep } from '../classes/devices';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
 import { EventQueueService } from './queueService/queue-service.service';
 import { UILog } from './uiLog';
-import {sleep} from '../classes/devices';
 
 declare var window;
 @Injectable({

@@ -44,7 +44,7 @@ import { Subscription } from 'rxjs';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { UIHelper } from 'src/services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
-import {BluetoothScale, sleep} from '../../../classes/devices';
+import { BluetoothScale, sleep } from '../../../classes/devices';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { Settings } from '../../../classes/settings/settings';
