@@ -29,7 +29,7 @@ import {
   makeTemperatureDevice,
   PressureType,
   RefractometerType,
-  ScaleType,
+  ScaleType, sleep,
   TemperatureType,
 } from '../../classes/devices';
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
@@ -997,29 +997,19 @@ export class CoffeeBluetoothDevicesService {
             if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
-              await new Promise((resolve) => {
-                setTimeout(async () => {
-                  resolve(undefined);
-                }, 500);
-              });
+
+              await sleep(500);
             } else if (Capacitor.getPlatform() === 'ios') {
               if (settings?.scale_type === ScaleType.LUNAR) {
                 await this.enableIOSBluetooth();
                 await this.findDeviceWithDirectId(deviceId, 6000);
                 // Give it a short delay before reconnect
-                await new Promise((resolve) => {
-                  setTimeout(async () => {
-                    resolve(undefined);
-                  }, 500);
-                });
+
+                await sleep(500);
               }
             }
 
-            await new Promise((resolve) => {
-              setTimeout(async () => {
-                resolve(undefined);
-              }, 2000);
-            });
+            await sleep(2000);
 
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectScale(
@@ -1117,18 +1107,10 @@ export class CoffeeBluetoothDevicesService {
             if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
-              await new Promise((resolve) => {
-                setTimeout(async () => {
-                  resolve(undefined);
-                }, 500);
-              });
+              await sleep(500);
             }
 
-            await new Promise((resolve) => {
-              setTimeout(async () => {
-                resolve(undefined);
-              }, 2000);
-            });
+            await sleep(2000);
 
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectPressureDevice(

@@ -492,12 +492,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     await modal.present();
     await modal.onWillDismiss().then(async () => {
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          this.brewBrewingGraphEl.onOrientationChange();
-          resolve(undefined);
-        }, 50);
-      });
+      await sleep(50);
+      this.brewBrewingGraphEl.onOrientationChange();
     });
   }
 
@@ -539,12 +535,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
       this.brewBrewingGraphEl.updateChart();
 
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          this.brewBrewingGraphEl.onOrientationChange();
-          resolve(undefined);
-        }, 50);
-      });
+
+      await sleep(50);
+      this.brewBrewingGraphEl.onOrientationChange();
     });
   }
 

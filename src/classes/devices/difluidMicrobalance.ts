@@ -1,7 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { Logger } from './common/logger';
-import { ScaleType } from './index';
+import {ScaleType, sleep} from './index';
 
 declare var ble: any;
 export class DifluidMicrobalance extends BluetoothScale {
@@ -37,12 +37,10 @@ export class DifluidMicrobalance extends BluetoothScale {
   public override async connect() {
     this.logger.log('connecting...');
     await this.attachNotification();
-    await setTimeout(async () => {
-      await this.setUnitToGram();
-    }, 100);
-    await setTimeout(async () => {
-      await this.enableAutoNotifications();
-    }, 100);
+    await sleep(100);
+    await this.setUnitToGram();
+    await sleep(100);
+    await this.enableAutoNotifications();
   }
 
   public override async tare() {

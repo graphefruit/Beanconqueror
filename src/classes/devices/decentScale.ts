@@ -1,6 +1,6 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { ScaleType } from './index';
+import {ScaleType, sleep} from './index';
 
 declare var ble: any;
 export class DecentScale extends BluetoothScale {
@@ -64,24 +64,22 @@ export class DecentScale extends BluetoothScale {
     this.setWeight(0);
 
     await this.write(this.buildTareCommand());
-    await setTimeout(async () => {
-      await this.write(this.buildTareCommand());
-    }, 200);
+    await sleep(200);
+    await this.write(this.buildTareCommand());
+
   }
 
   public override async setLed(_weightOn: boolean, _timerOn: boolean) {
     await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
 
-    await setTimeout(async () => {
-      await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
-    }, 200);
+    await sleep(200);
+    await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
   }
 
   public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
     await this.write(this.buildTimerCommand(_timer));
-    await setTimeout(async () => {
-      await this.write(this.buildTimerCommand(_timer));
-    }, 200);
+    await sleep(200);
+    await this.write(this.buildTimerCommand(_timer));
   }
 
   public override getWeight() {

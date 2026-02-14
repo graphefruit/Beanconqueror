@@ -44,7 +44,7 @@ import { Subscription } from 'rxjs';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { UIHelper } from 'src/services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
-import { BluetoothScale } from '../../../classes/devices';
+import {BluetoothScale, sleep} from '../../../classes/devices';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { Settings } from '../../../classes/settings/settings';
@@ -495,17 +495,16 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   private async __resizeCamera() {
     if (this.cameraIsVisible && Capacitor.getPlatform() !== 'web') {
-      setTimeout(async () => {
-        const rect = document
-          .getElementById('cameraPreview')
-          .getBoundingClientRect();
-        await CameraPreview.setPreviewSize({
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          y: Math.round(rect.y),
-          x: Math.round(rect.x),
-        });
-      }, 500);
+      await sleep(500);
+      const rect = document
+        .getElementById('cameraPreview')
+        .getBoundingClientRect();
+      await CameraPreview.setPreviewSize({
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        y: Math.round(rect.y),
+        x: Math.round(rect.x),
+      });
     }
   }
 

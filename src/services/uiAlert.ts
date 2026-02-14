@@ -15,6 +15,7 @@ import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-pop
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
 import { EventQueueService } from './queueService/queue-service.service';
 import { UILog } from './uiLog';
+import {sleep} from '../classes/devices';
 
 declare var window;
 @Injectable({
@@ -88,11 +89,7 @@ export class UIAlert {
     if (this.existingLoadingSpinners.length > 0) {
       for (const spinner of this.existingLoadingSpinners) {
         spinner.dismiss();
-        await new Promise(async (resolve) => {
-          setTimeout(() => {
-            resolve(undefined);
-          }, 50);
-        });
+        await sleep(50);
       }
       this.existingLoadingSpinners = [];
     }
