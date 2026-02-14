@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()"
+                  (keydown.enter)="cancel()"
+                  aria-label="{{ 'CANCEL' | translate }}"
+                  tabindex="1">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'AI_BEAN_IMPORT_MULTI' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- ARIA live region for announcements -->
+  <div aria-live="polite" aria-atomic="true" class="visually-hidden">
+    {{ screenReaderAnnouncement }}
+  </div>
+
+  <!-- Empty state -->
+  @if (photoPaths.length === 0) {
+    <div class="empty-state" role="status">
+      <ion-icon name="images-outline" class="empty-icon" aria-hidden="true"></ion-icon>
+      <p class="empty-text">{{ 'AI_IMPORT_MULTI_NO_PHOTOS_YET' | translate }}</p>
+    </div>
+  }
+
+  <!-- Photo gallery (same swiper pattern as photo-add) -->
+  @if (photoPaths.length > 0) {
+    <div class="photo-gallery">
+      <swiper-container
+        class="swiper"
+        [pagination]="{ clickable: true, draggable: true }"
+        #photoSlides
+        pager="true"
+        role="region"
+        aria-label="{{ 'AI_IMPORT_PHOTO_GALLERY' | translate }}"
+        aria-roledescription="carousel"
+        tabindex="2">
+        @for (path of photoPaths; track path; let i = $index) {
+          <swiper-slide role="group" [attr.aria-label]="('AI_IMPORT_PHOTO' | translate) + ' ' + (i + 1)">
+            <ion-button
+              (click)="removePhoto(i)"
+              (keydown.enter)="removePhoto(i)"
+              class="position-absolute-button"
+              color="danger"
+              fill="clear"
+              [attr.aria-label]="('AI_IMPORT_REMOVE_PHOTO' | translate) + ' ' + (i + 1)"
+              tabindex="3">
+              <ion-icon slot="icon-only" name="trash" aria-hidden="true"></ion-icon>
+            </ion-button>
+            <!-- Reuses existing async-image component -->
+            <async-image class="gallery-image" filePath="{{ path }}"></async-image>
+          </swiper-slide>
+        }
+      </swiper-container>
+    </div>
+  }
+
+  <!-- Add photo button -->
+  <ion-button
+    expand="block"
+    fill="outline"
+    (click)="addPhoto()"
+    (keydown.enter)="addPhoto()"
+    [disabled]="photoPaths.length >= maxPhotos"
+    class="add-photo-button"
+    #addPhotoButton
+    tabindex="4">
+    <ion-icon name="add" slot="start" aria-hidden="true"></ion-icon>
+    {{ 'AI_IMPORT_MULTI_ADD_PHOTO' | translate }} ({{ photoPaths.length }}/{{ maxPhotos }})
+  </ion-button>
+
+  <!-- Attach toggle -->
+  <ion-item lines="none" class="attach-toggle">
+    <ion-label id="attach-photos-label">{{ 'AI_IMPORT_MULTI_ATTACH_PHOTOS' | translate }}</ion-label>
+    <ion-toggle [(ngModel)]="attachPhotos"
+                aria-labelledby="attach-photos-label"
+                tabindex="5"></ion-toggle>
+  </ion-item>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button
+      expand="block"
+      (click)="startAnalysis()"
+      (keydown.enter)="startAnalysis()"
+      [disabled]="photoPaths.length === 0"
+      color="primary"
+      tabindex="6">
+      {{ 'AI_IMPORT_MULTI_START_ANALYSIS' | translate }}
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

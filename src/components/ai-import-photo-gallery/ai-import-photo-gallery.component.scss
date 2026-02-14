@@ -1,0 +1,83 @@
+:host {
+  // Screen reader only - visually hidden but accessible
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+
+    .empty-icon {
+      font-size: 64px;
+      color: var(--ion-color-medium);
+      margin-bottom: 16px;
+    }
+
+    .empty-text {
+      color: var(--ion-color-medium);
+      font-size: 14px;
+      max-width: 280px;
+    }
+  }
+
+  .photo-gallery {
+    margin-bottom: 16px;
+
+    .swiper-pagination.swiper-pagination-bullets {
+      position: relative;
+      bottom: 0;
+    }
+
+    swiper-slide {
+      position: relative;
+    }
+
+    .position-absolute-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 10;
+      --background: rgba(0, 0, 0, 0.5);
+      --border-radius: 50%;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 300px;
+      display: block;
+      object-fit: contain;
+    }
+
+    ::ng-deep async-image img {
+      width: 100%;
+      height: 300px;
+      object-fit: contain;
+    }
+  }
+
+  .add-photo-button {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .attach-toggle {
+    --background: transparent;
+  }
+
+  ion-footer ion-toolbar {
+    padding: 8px 16px;
+  }
+}
