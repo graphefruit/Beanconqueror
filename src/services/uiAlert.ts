@@ -87,8 +87,8 @@ export class UIAlert {
   }
   public async hideLoadingSpinner() {
     if (this.existingLoadingSpinners.length > 0) {
-      for (const spinner of this.existingLoadingSpinners) {
-        spinner.dismiss();
+      for await (const spinner of this.existingLoadingSpinners) {
+        await spinner.dismiss();
         await sleep(50);
       }
       this.existingLoadingSpinners = [];
