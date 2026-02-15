@@ -43,7 +43,7 @@ export class UIAlert {
     }
   }
 
-  private existingLoadingSpinners = [];
+  private existingLoadingSpinners: HTMLIonModalElement[] = [];
 
   public async showLoadingSpinner(
     message: string = 'PLEASE_WAIT',
