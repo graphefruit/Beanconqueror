@@ -19,9 +19,9 @@ PODS:
   - CapacitorCordova (8.0.2)
   - CapacitorDevice (8.0.0):
     - Capacitor
-  - CapacitorFilesystem (8.1.0):
+  - CapacitorFilesystem (8.0.0):
     - Capacitor
-    - IONFilesystemLib (~> 1.1.0)
+    - IONFilesystemLib (~> 1.0.1)
   - CapacitorGeolocation (8.0.0):
     - Capacitor
     - IONGeolocationLib (= 2.0.0)
@@ -41,7 +41,7 @@ PODS:
     - Capacitor
   - CordovaPlugins (8.0.2):
     - CapacitorCordova
-  - IONFilesystemLib (1.1.1)
+  - IONFilesystemLib (1.0.1)
   - IONGeolocationLib (2.0.0)
   - OSBarcodeLib (2.0.1)
 
@@ -126,7 +126,7 @@ SPEC CHECKSUMS:
   CapacitorCommunityKeepAwake: 332bf035bbdf0b1c244fd492b35a8a06c8802111
   CapacitorCordova: 921bdb690ebe82421b24fce45552fd3dea2ae43a
   CapacitorDevice: 9a16fb36a19ff391bf75afbe3cf16f883b3b3aa0
-  CapacitorFilesystem: a957d4a4b6860844c4eba5bf441607a5166f92a7
+  CapacitorFilesystem: 2cb7c29536024668f333266a2177f8c10bbd9c98
   CapacitorGeolocation: 8a405e707de9aff6ac9eca7f408966a370f7ca33
   CapacitorHaptics: 2079d9fa04c5a71e18663b4722323c304c58245c
   CapacitorKeyboard: d7868c079a4d5277a3deca27a10a488fcbbb8b69
@@ -136,7 +136,7 @@ SPEC CHECKSUMS:
   CapawesomeCapacitorFilePicker: cbd96b593d2bfdceb353ed161f9462ce4a9d67a9
   CapgoCameraPreview: f171281fbe832ab1a57d6cbef584677fdd27dfff
   CordovaPlugins: 002b79521e875ec5bdd022e34eaa754941f19e22
-  IONFilesystemLib: dfa8706539ac9ab77ccfd6e5b3830ce9b5e57f6c
+  IONFilesystemLib: 89258b8e3e85465da93127d25d7ce37f977e8a6f
   IONGeolocationLib: a5e40b54edc2ee9902036eda5aaa41ddf07bb68d
   OSBarcodeLib: 57987d2eb1f916f701f4554e20e349b3cb83f023
 
