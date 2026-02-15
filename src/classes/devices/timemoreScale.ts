@@ -43,12 +43,12 @@ export class TimemoreScale extends BluetoothScale {
     );
   }
 
-  public override async connect() {
+  public override connect(): void {
     this.logger.log('connecting...');
-    await this.attachNotification();
+    this.attachNotification();
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
@@ -63,7 +63,7 @@ export class TimemoreScale extends BluetoothScale {
       this.setSecondWeight(0);
     }
 
-    await this.write(new Uint8Array([0x00]));
+    this.write(new Uint8Array([0x00]));
   }
 
   public override disconnectTriggered(): void {
@@ -72,19 +72,19 @@ export class TimemoreScale extends BluetoothScale {
     this.deattachNotification();
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
     this.logger.log('Setting Timer command ' + _timer + '...');
 
     if (_timer === SCALE_TIMER_COMMAND.START) {
-      await this.write(new Uint8Array([0x08]));
+      this.write(new Uint8Array([0x08]));
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
-      await this.write(new Uint8Array([0x09]));
+      this.write(new Uint8Array([0x09]));
     } else if (_timer === SCALE_TIMER_COMMAND.RESET) {
-      await this.write(new Uint8Array([0x0a]));
+      this.write(new Uint8Array([0x0a]));
     }
   }
 
-  public async getInt(buffer: Uint8Array) {
+  public getInt(buffer: Uint8Array): number {
     const bytes = new DataView(new ArrayBuffer(buffer.length));
     let i = 0;
     const list = new Uint8Array(bytes.buffer);
@@ -112,23 +112,17 @@ export class TimemoreScale extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        TimemoreScale.SERVICE_UUID,
-        TimemoreScale.CMD_UUID,
-        _bytes.buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      TimemoreScale.SERVICE_UUID,
+      TimemoreScale.CMD_UUID,
+      _bytes.buffer,
+      (e: any) => {},
+      (e: any) => {},
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     ble.startNotification(
       this.device_id,
       TimemoreScale.SERVICE_UUID,
@@ -139,15 +133,15 @@ export class TimemoreScale extends BluetoothScale {
       (_data: any) => {},
     );
   }
-  private async parseStatusUpdate(timemoreRawStatus: Uint8Array) {
-    const weight = await this.getInt(timemoreRawStatus.slice(1, 4));
-    const weight2 = await this.getInt(timemoreRawStatus.slice(5, 8));
+  private parseStatusUpdate(timemoreRawStatus: Uint8Array) {
+    const weight = this.getInt(timemoreRawStatus.slice(1, 4));
+    const weight2 = this.getInt(timemoreRawStatus.slice(5, 8));
     this.setWeight(weight / 10);
 
     this.setSecondWeight(weight2 / 10);
   }
 
-  private async deattachNotification() {
+  private deattachNotification(): void {
     ble.stopNotification(
       this.device_id,
       TimemoreScale.SERVICE_UUID,

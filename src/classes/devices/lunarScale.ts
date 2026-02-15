@@ -35,13 +35,13 @@ export class LunarScale extends BluetoothScale {
     this.scale.disconnectTriggered();
   }
 
-  public override async connect() {
-    await this.scale.connect((_eventType: EventType, _data: any) => {
+  public override connect(): void {
+    this.scale.connect((_eventType: EventType, _data: any) => {
       this.onEvent(_eventType, _data);
     });
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.scale.tare();
 
     this.weight.smoothed = 0;
@@ -52,9 +52,9 @@ export class LunarScale extends BluetoothScale {
     this.setWeight(0);
   }
 
-  public override async setLed(_weightOn: boolean, _timerOn: boolean) {}
+  public override setLed(_weightOn: boolean, _timerOn: boolean): void {}
 
-  public override async setTimer(command: SCALE_TIMER_COMMAND) {
+  public override setTimer(command: SCALE_TIMER_COMMAND): void {
     if (this.scale.isConnected()) {
       if (command === SCALE_TIMER_COMMAND.START) {
         this.scale.startTimer();

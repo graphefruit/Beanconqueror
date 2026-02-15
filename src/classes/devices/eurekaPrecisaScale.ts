@@ -86,31 +86,31 @@ export class EurekaPrecisaScale extends BluetoothScale {
 
   // Private Methods
 
-  public override async setTimer(command: SCALE_TIMER_COMMAND) {
+  public override setTimer(command: SCALE_TIMER_COMMAND) {
     this.logger.log('Setting Timer command ' + command + '...');
 
     if (command === SCALE_TIMER_COMMAND.START) {
-      await this.startTimer();
+      this.startTimer();
     } else if (command === SCALE_TIMER_COMMAND.STOP) {
-      await this.stopTimer();
+      this.stopTimer();
     } else {
-      await this.resetTimer();
+      this.resetTimer();
     }
   }
 
-  public override async connect() {
+  public override connect() {
     this.logger.log('Connecting...');
 
-    await this.attachNotification();
+    this.attachNotification();
   }
 
   /**
    * Tares the Scale current weight to 0;
    */
-  public override async tare() {
+  public override tare() {
     this.logger.log('Taring...');
 
-    await this.write([CMD_HEADER, CMD_BASE, CMD_TARE, CMD_TARE]);
+    this.write([CMD_HEADER, CMD_BASE, CMD_TARE, CMD_TARE]);
 
     this.weight.smoothed = 0;
     this.weight.actual = 0;
@@ -133,23 +133,17 @@ export class EurekaPrecisaScale extends BluetoothScale {
    */
   //TODO write without confirm!
   private write(_bytes: number[]) {
-    return new Promise((resolve, reject) => {
-      ble.writeWithoutResponse(
-        this.device_id,
-        DATA_SERVICE,
-        CMD_CHARACTERISTIC,
-        new Uint8Array(_bytes).buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          resolve(false);
-        },
-      );
-    });
+    ble.writeWithoutResponse(
+      this.device_id,
+      DATA_SERVICE,
+      CMD_CHARACTERISTIC,
+      new Uint8Array(_bytes).buffer,
+      (e: any) => {},
+      (e: any) => {},
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     ble.startNotification(
       this.device_id,
       DATA_SERVICE,
@@ -178,19 +172,19 @@ export class EurekaPrecisaScale extends BluetoothScale {
 
   // Class Members
 
-  private async startTimer() {
+  private startTimer(): void {
     this.write([CMD_HEADER, CMD_BASE, CMD_START_TIMER, CMD_START_TIMER]);
   }
 
-  private async resetTimer() {
+  private resetTimer(): void {
     this.write([CMD_HEADER, CMD_BASE, CMD_RESET_TIMER, CMD_RESET_TIMER]);
   }
 
-  private async stopTimer() {
+  private stopTimer(): void {
     this.write([CMD_HEADER, CMD_BASE, CMD_STOP_TIMER, CMD_STOP_TIMER]);
   }
 
-  private async deattachNotification() {
+  private deattachNotification(): void {
     ble.stopNotification(
       this.device_id,
       DATA_SERVICE,

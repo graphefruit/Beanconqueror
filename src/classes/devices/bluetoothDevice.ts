@@ -68,13 +68,13 @@ export class BluetoothScale {
   public getScaleType(): ScaleType | undefined {
     return this.scaleType;
   }
-  public async connect() {}
+  public connect(): void {}
 
-  public async tare() {}
+  public tare(): void {}
 
-  public async setLed(_weightOn: boolean, _timerOn: boolean) {}
+  public setLed(_weightOn: boolean, _timerOn: boolean): void {}
 
-  public async setTimer(_timer: SCALE_TIMER_COMMAND) {}
+  public setTimer(_timer: SCALE_TIMER_COMMAND): void {}
 
   public getWeight(): number {
     return 0;

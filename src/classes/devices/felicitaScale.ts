@@ -76,31 +76,31 @@ export class FelicitaScale extends BluetoothScale {
 
   // Public Methods
 
-  public override async setTimer(command: SCALE_TIMER_COMMAND) {
+  public override setTimer(command: SCALE_TIMER_COMMAND): void {
     this.logger.log('Setting Timer command ' + command + '...');
 
     if (command === SCALE_TIMER_COMMAND.START) {
-      await this.startTimer();
+      this.startTimer();
     } else if (command === SCALE_TIMER_COMMAND.STOP) {
-      await this.stopTimer();
+      this.stopTimer();
     } else {
-      await this.resetTimer();
+      this.resetTimer();
     }
   }
 
-  public override async connect() {
+  public override connect(): void {
     this.logger.log('Connecting...');
 
-    await this.attachNotification();
+    this.attachNotification();
   }
 
   /**
    * Tares the Felicita Scale current weight to 0;
    */
-  public override async tare() {
+  public override tare(): void {
     this.logger.log('Taring...');
 
-    await this.write([CMD_TARE]);
+    this.write([CMD_TARE]);
 
     this.weight.smoothed = 0;
     this.weight.actual = 0;
@@ -113,16 +113,16 @@ export class FelicitaScale extends BluetoothScale {
   /**
    * Toggles the Felicita Scale Units between grams and ounces.
    */
-  public async toggleUnit() {
-    await this.write([CMD_TOGGLE_UNIT]);
+  public toggleUnit(): void {
+    this.write([CMD_TOGGLE_UNIT]);
   }
 
   /**
    * Toggles the Felicita Scale Precision between one and two decimal places.
    * Note: This likely depends if the Felicita Scale HW supports two decimal places, but my guess is that the BLE implementation is universal, the value at statusUpdate index 9 will not change.
    */
-  public async togglePrecision() {
-    await this.write([CMD_TOGGLE_PRECISION]);
+  public togglePrecision(): void {
+    this.write([CMD_TOGGLE_PRECISION]);
   }
 
   public override disconnectTriggered(): void {
@@ -139,25 +139,21 @@ export class FelicitaScale extends BluetoothScale {
    * @returns Asyncronous in nature, returns a callback.
    */
   private write(_bytes: number[]) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        DATA_SERVICE,
-        DATA_CHARACTERISTIC,
-        new Uint8Array(_bytes).buffer,
-        (e: any) => {
-          this.logger.debug('Write successfully');
-          resolve(true);
-        },
-        (e: any) => {
-          this.logger.debug('Write unsuccessfully');
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      DATA_SERVICE,
+      DATA_CHARACTERISTIC,
+      new Uint8Array(_bytes).buffer,
+      (e: any) => {
+        this.logger.debug('Write successfully');
+      },
+      (e: any) => {
+        this.logger.debug('Write unsuccessfully');
+      },
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     ble.startNotification(
       this.device_id,
       DATA_SERVICE,
@@ -191,19 +187,19 @@ export class FelicitaScale extends BluetoothScale {
     }
   }
 
-  private async startTimer() {
+  private startTimer(): void {
     this.logger.debug('Write - Start timer');
-    await this.write([CMD_START_TIMER]);
+    this.write([CMD_START_TIMER]);
   }
 
-  private async resetTimer() {
+  private resetTimer(): void {
     this.logger.debug('Write - Reset timer');
-    await this.write([CMD_RESET_TIMER]);
+    this.write([CMD_RESET_TIMER]);
   }
 
-  private async stopTimer() {
+  private stopTimer(): void {
     this.logger.debug('Write - Stop timer');
-    await this.write([CMD_STOP_TIMER]);
+    this.write([CMD_STOP_TIMER]);
   }
 
   /**
@@ -247,7 +243,7 @@ export class FelicitaScale extends BluetoothScale {
     return felicitaRawStatus.length == 18 ? true : false;
   }
 
-  private async deattachNotification() {
+  private deattachNotification(): void {
     ble.stopNotification(
       this.device_id,
       DATA_SERVICE,

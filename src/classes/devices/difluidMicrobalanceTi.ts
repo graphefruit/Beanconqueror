@@ -42,23 +42,21 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
 
   public override async connect() {
     this.logger.log('connecting...');
-    await this.attachNotification();
+    this.attachNotification();
     await sleep(100);
-    await this.setUnitToGram();
+    this.setUnitToGram();
     await sleep(100);
-    await this.enableAutoNotifications();
+    this.enableAutoNotifications();
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
 
-    await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x01, 0xc5]),
-    );
+    this.write(new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x01, 0xc5]));
   }
 
   public override disconnectTriggered(): void {
@@ -67,34 +65,26 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
     this.deattachNotification();
   }
 
-  public async setUnitToGram() {
-    await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x04, 0x01, 0x00, 0xc4]),
-    );
+  public setUnitToGram(): void {
+    this.write(new Uint8Array([0xdf, 0xdf, 0x01, 0x04, 0x01, 0x00, 0xc4]));
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
     this.logger.log('Setting Timer command ' + _timer + '...');
 
     if (_timer === SCALE_TIMER_COMMAND.START) {
-      await this.write(
-        new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x00, 0xc4]),
-      );
+      this.write(new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x00, 0xc4]));
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
-      await this.write(
-        new Uint8Array([0xdf, 0xdf, 0x03, 0x01, 0x01, 0x00, 0xc3]),
-      );
+      this.write(new Uint8Array([0xdf, 0xdf, 0x03, 0x01, 0x01, 0x00, 0xc3]));
     }
   }
 
-  public async enableAutoNotifications() {
+  public enableAutoNotifications(): void {
     this.logger.log('enabling auto notifications');
-    await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x01, 0xc1]),
-    );
+    this.write(new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x01, 0xc1]));
   }
 
-  public async getInt(buffer: Uint8Array) {
+  public getInt(buffer: Uint8Array): number {
     const bytes = new DataView(new ArrayBuffer(buffer.length));
     let i = 0;
     const list = new Uint8Array(bytes.buffer);
@@ -118,23 +108,17 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        DifluidMicrobalanceTi.SERVICE_UUID,
-        DifluidMicrobalanceTi.CHAR_UUID,
-        _bytes.buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      DifluidMicrobalanceTi.SERVICE_UUID,
+      DifluidMicrobalanceTi.CHAR_UUID,
+      _bytes.buffer,
+      (e: any) => {},
+      (e: any) => {},
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification() {
     ble.startNotification(
       this.device_id,
       DifluidMicrobalanceTi.SERVICE_UUID,
@@ -145,7 +129,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
       (_data: any) => {},
     );
   }
-  private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
+  private parseStatusUpdate(difluidRawStatus: Uint8Array) {
     if (
       difluidRawStatus[2] === 3 &&
       difluidRawStatus[3] === 2 &&
@@ -159,7 +143,7 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
       });
     }
     if (difluidRawStatus.length >= 19 && difluidRawStatus[3] === 0) {
-      const weight = await this.getInt(difluidRawStatus.slice(5, 9));
+      const weight = this.getInt(difluidRawStatus.slice(5, 9));
       this.setWeight(weight / 10);
     }
   }

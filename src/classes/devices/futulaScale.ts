@@ -1,7 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, Weight } from './bluetoothDevice';
-import { ScaleType } from './index';
 import { Logger } from './common/logger';
+import { ScaleType } from './index';
 
 declare var ble: any;
 
@@ -71,17 +71,17 @@ export class FutulaScale extends BluetoothScale {
 
   // Public Methods
 
-  public override async connect() {
+  public override connect(): void {
     this.logger.log('Connecting...');
 
-    await this.attachWeightNotification();
+    this.attachWeightNotification();
     this.attachBatteryNotificationOrRead();
-    await this.sendHexCommand(FutulaScale.UNIT_GRAM_COMMAND);
+    this.sendHexCommand(FutulaScale.UNIT_GRAM_COMMAND);
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.logger.log('Tare/reset');
-    await this.sendHexCommand(FutulaScale.RESET_COMMAND);
+    this.sendHexCommand(FutulaScale.RESET_COMMAND);
   }
 
   public override disconnectTriggered(): void {
@@ -91,21 +91,19 @@ export class FutulaScale extends BluetoothScale {
   }
 
   // BLE helpers
-  private sendHexCommand(hex: string): Promise<boolean> {
+  private sendHexCommand(hex: string) {
     const bytes = FutulaScale.hexToBytes(hex);
-    return new Promise((resolve) => {
-      ble.write(
-        this.device_id,
-        FutulaScale.SCALE_SERVICE,
-        FutulaScale.COMMAND_CHARACTERISTIC,
-        bytes.buffer,
-        () => resolve(true),
-        () => resolve(false),
-      );
-    });
+    ble.write(
+      this.device_id,
+      FutulaScale.SCALE_SERVICE,
+      FutulaScale.COMMAND_CHARACTERISTIC,
+      bytes.buffer,
+      () => {},
+      () => {},
+    );
   }
 
-  private async attachWeightNotification() {
+  private attachWeightNotification(): void {
     ble.startNotification(
       this.device_id,
       FutulaScale.SCALE_SERVICE,

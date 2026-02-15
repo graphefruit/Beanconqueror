@@ -35,19 +35,19 @@ export class WeighMyBruScale extends BluetoothScale {
     );
   }
 
-  public override async connect() {
+  public override connect(): void {
     this.logger.log('connecting...');
-    await this.attachNotification();
+    this.attachNotification();
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
 
-    await this.write(new Uint8Array([0x03, 0x0a, 0x01, 0x01, 0x00]));
+    this.write(new Uint8Array([0x03, 0x0a, 0x01, 0x01, 0x00]));
   }
 
   public override disconnectTriggered(): void {
@@ -55,15 +55,15 @@ export class WeighMyBruScale extends BluetoothScale {
     this.deattachNotification();
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
     this.logger.log('Setting Timer command ' + _timer + '...');
 
     if (_timer === SCALE_TIMER_COMMAND.START) {
-      await this.write(new Uint8Array([0x03, 0x0a, 0x02, 0x01, 0x00]));
+      this.write(new Uint8Array([0x03, 0x0a, 0x02, 0x01, 0x00]));
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
-      await this.write(new Uint8Array([0x03, 0x0a, 0x03, 0x01, 0x00]));
+      this.write(new Uint8Array([0x03, 0x0a, 0x03, 0x01, 0x00]));
     } else if (_timer === SCALE_TIMER_COMMAND.RESET) {
-      await this.write(new Uint8Array([0x03, 0x0a, 0x04, 0x01, 0x00]));
+      this.write(new Uint8Array([0x03, 0x0a, 0x04, 0x01, 0x00]));
     }
   }
 
@@ -80,24 +80,19 @@ export class WeighMyBruScale extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        WeighMyBruScale.SERVICE_UUID,
-        WeighMyBruScale.CMD_UUID,
-        _bytes.buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          this.logger.log('Write error', e);
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      WeighMyBruScale.SERVICE_UUID,
+      WeighMyBruScale.CMD_UUID,
+      _bytes.buffer,
+      (e: any) => {},
+      (e: any) => {
+        this.logger.log('Write error', e);
+      },
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     this.logger.logDirect('Attaching notification...');
     ble.startNotification(
       this.device_id,
@@ -112,7 +107,7 @@ export class WeighMyBruScale extends BluetoothScale {
     );
   }
 
-  private async parseStatusUpdate(weighMyBruRawStatus: Uint8Array) {
+  private parseStatusUpdate(weighMyBruRawStatus: Uint8Array) {
     // The documentation says "Weight in grams as floating-point value"
     // It doesn't specify the byte order or the length of the data.
     // Let's assume it's a 4-byte float in little-endian format.
@@ -125,7 +120,7 @@ export class WeighMyBruScale extends BluetoothScale {
     }
   }
 
-  private async deattachNotification() {
+  private deattachNotification() {
     ble.stopNotification(
       this.device_id,
       WeighMyBruScale.SERVICE_UUID,

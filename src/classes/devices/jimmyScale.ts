@@ -49,7 +49,7 @@ export class JimmyScale extends BluetoothScale {
     await this.setMode(JimmyMode.SCALE_ONLY);
   }
 
-  public override async tare() {
+  public override tare() {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
@@ -58,17 +58,17 @@ export class JimmyScale extends BluetoothScale {
 
     const tare = [0x07, 0x00];
 
-    await this.write(tare);
+    this.write(tare);
     setTimeout(() => {
       this.write(tare);
     }, 200);
   }
 
-  public override async setLed(_weightOn: boolean, _timerOn: boolean) {
+  public override setLed(_weightOn: boolean, _timerOn: boolean) {
     // no led on jimmy
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
+  public override setTimer(_timer: SCALE_TIMER_COMMAND) {
     // Jimmy scale only supports a toggle timer command [0x05, 0x00]
     // therefore we don't use its timer to avoid drift between scale timer and app timer state in case of conn problems
   }
@@ -102,7 +102,7 @@ export class JimmyScale extends BluetoothScale {
     });
   }
 
-  private async attachNotification() {
+  private attachNotification() {
     ble.startNotification(
       this.device_id,
       JimmyScale.SERVICE_UUID,

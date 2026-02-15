@@ -34,29 +34,29 @@ export class BookooScale extends BluetoothScale {
     );
   }
 
-  public override async connect() {
+  public override connect(): void {
     this.logger.log('connecting...');
-    await this.attachNotification();
+    this.attachNotification();
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
 
-    await this.write(new Uint8Array([0x03, 0x0a, 0x01, 0x00, 0x00, 0x08]));
+    this.write(new Uint8Array([0x03, 0x0a, 0x01, 0x00, 0x00, 0x08]));
   }
 
-  public async tareAndStartTimerModeAuto() {
+  public tareAndStartTimerModeAuto(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
 
-    await this.write(new Uint8Array([0x03, 0x0a, 0x07, 0x00, 0x00, 0x00]));
+    this.write(new Uint8Array([0x03, 0x0a, 0x07, 0x00, 0x00, 0x00]));
   }
 
   public override disconnectTriggered(): void {
@@ -64,15 +64,15 @@ export class BookooScale extends BluetoothScale {
     this.deattachNotification();
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
     this.logger.log('Setting Timer command ' + _timer + '...');
 
     if (_timer === SCALE_TIMER_COMMAND.START) {
-      await this.write(new Uint8Array([0x03, 0x0a, 0x04, 0x00, 0x00, 0x0a]));
+      this.write(new Uint8Array([0x03, 0x0a, 0x04, 0x00, 0x00, 0x0a]));
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
-      await this.write(new Uint8Array([0x03, 0x0a, 0x05, 0x00, 0x00, 0x0d]));
+      this.write(new Uint8Array([0x03, 0x0a, 0x05, 0x00, 0x00, 0x0d]));
     } else if (_timer === SCALE_TIMER_COMMAND.RESET) {
-      await this.write(new Uint8Array([0x03, 0x0a, 0x06, 0x00, 0x00, 0x0c]));
+      this.write(new Uint8Array([0x03, 0x0a, 0x06, 0x00, 0x00, 0x0c]));
     }
   }
 
@@ -89,23 +89,17 @@ export class BookooScale extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        BookooScale.SERVICE_UUID,
-        BookooScale.CMD_UUID,
-        _bytes.buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      BookooScale.SERVICE_UUID,
+      BookooScale.CMD_UUID,
+      _bytes.buffer,
+      (e: any) => {},
+      (e: any) => {},
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     this.logger.logDirect('Attaching notification...');
     ble.startNotification(
       this.device_id,
@@ -120,7 +114,7 @@ export class BookooScale extends BluetoothScale {
     );
   }
 
-  private async parseStatusUpdate(bookooRawStatus: Uint8Array) {
+  private parseStatusUpdate(bookooRawStatus: Uint8Array) {
     if (bookooRawStatus.length === 20) {
       this.batteryLevel = bookooRawStatus[13];
       let weight =
@@ -134,7 +128,7 @@ export class BookooScale extends BluetoothScale {
     }
   }
 
-  private async deattachNotification() {
+  private deattachNotification(): void {
     ble.stopNotification(
       this.device_id,
       BookooScale.SERVICE_UUID,

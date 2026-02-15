@@ -36,23 +36,23 @@ export class VariaAkuScale extends BluetoothScale {
     );
   }
 
-  public override async connect() {
+  public override connect(): void {
     this.logger.log('connecting...');
-    await this.attachNotification();
+    this.attachNotification();
   }
 
   private getXOR(_bytes: any) {
     return _bytes[0] ^ _bytes[1] ^ _bytes[2];
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
 
-    await this.write([0xfa, 0x82, 0x01, 0x01, this.getXOR([0x82, 0x01, 0x01])]);
+    this.write([0xfa, 0x82, 0x01, 0x01, this.getXOR([0x82, 0x01, 0x01])]);
   }
 
   public override disconnectTriggered(): void {
@@ -60,7 +60,7 @@ export class VariaAkuScale extends BluetoothScale {
     this.deattachNotification();
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
     this.logger.log('Setting Timer command ' + _timer + '...');
     if (_timer === SCALE_TIMER_COMMAND.START) {
       this.write([0xfa, 0x88, 0x01, 0x01, this.getXOR([0x88, 0x01, 0x01])]);
@@ -94,7 +94,7 @@ export class VariaAkuScale extends BluetoothScale {
     );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     ble.startNotification(
       this.device_id,
       VariaAkuScale.SERVICE_UUID,
@@ -106,7 +106,7 @@ export class VariaAkuScale extends BluetoothScale {
     );
   }
 
-  private async parseStatusUpdate(rawStatus: Uint8Array) {
+  private parseStatusUpdate(rawStatus: Uint8Array) {
     if (rawStatus[1] === 0x01) {
       const sign: number = (rawStatus[3] & 0x10) === 0 ? 1 : -1;
       const actualData =
@@ -118,7 +118,7 @@ export class VariaAkuScale extends BluetoothScale {
     }
   }
 
-  private async deattachNotification() {
+  private deattachNotification(): void {
     ble.stopNotification(
       this.device_id,
       VariaAkuScale.SERVICE_UUID,

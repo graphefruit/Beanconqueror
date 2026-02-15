@@ -1,6 +1,6 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { ScaleType, sleep } from './index';
+import { ScaleType } from './index';
 
 declare var ble: any;
 export class DecentScale extends BluetoothScale {
@@ -43,42 +43,45 @@ export class DecentScale extends BluetoothScale {
     );
   }
 
-  public override async connect() {
-    await this.setLed(true, true);
-    await this.attachNotification();
+  public override connect(): void {
+    this.setLed(true, true);
+    this.attachNotification();
 
     this.startHeartbeatMonitor();
   }
 
-  private startHeartbeatMonitor() {
+  private startHeartbeatMonitor(): void {
     this.heartbeatTimer = setInterval(() => {
       this.sendKeepAlive();
     }, 2000);
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
 
-    await this.write(this.buildTareCommand());
-    await sleep(200);
-    await this.write(this.buildTareCommand());
+    this.write(this.buildTareCommand());
+    setTimeout(() => {
+      this.write(this.buildTareCommand());
+    }, 200);
   }
 
-  public override async setLed(_weightOn: boolean, _timerOn: boolean) {
-    await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
+  public override setLed(_weightOn: boolean, _timerOn: boolean): void {
+    this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
 
-    await sleep(200);
-    await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
+    setTimeout(() => {
+      this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
+    }, 200);
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
-    await this.write(this.buildTimerCommand(_timer));
-    await sleep(200);
-    await this.write(this.buildTimerCommand(_timer));
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
+    this.write(this.buildTimerCommand(_timer));
+    setTimeout(() => {
+      this.write(this.buildTimerCommand(_timer));
+    }, 200);
   }
 
   public override getWeight() {
@@ -175,23 +178,17 @@ export class DecentScale extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        DecentScale.WRITE_SERVICE_UUID,
-        DecentScale.WRITE_CHAR_UUID,
-        _bytes.buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      DecentScale.WRITE_SERVICE_UUID,
+      DecentScale.WRITE_CHAR_UUID,
+      _bytes.buffer,
+      (e: any) => {},
+      (e: any) => {},
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     ble.startNotification(
       this.device_id,
       DecentScale.READ_SERVICE_UUID,

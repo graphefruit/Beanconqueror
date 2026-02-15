@@ -1,6 +1,6 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { ScaleType } from './index';
+import { ScaleType, sleep } from './index';
 
 declare var ble: any;
 
@@ -35,10 +35,16 @@ export class SkaleScale extends BluetoothScale {
   }
 
   public override async connect() {
-    await this.attachNotification();
+    this.attachNotification();
+    // We need to put LED on on first conneciton, aswell as starting the current weight and toggling mode to grams.
+    this.setLed(true);
+    await sleep(100);
+    this.displayCurrentWeight();
+    await sleep(100);
+    this.setGrams();
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
@@ -47,49 +53,49 @@ export class SkaleScale extends BluetoothScale {
 
     const tare = [0x10];
 
-    await this.write(tare);
+    this.write(tare);
     setTimeout(() => {
       this.write(tare);
     }, 200);
   }
 
-  public override async setLed(_on: boolean) {
+  public override setLed(_on: boolean): void {
     let ledOn = [0xed];
     if (!_on) {
       ledOn = [0xee];
     }
 
-    await this.write(ledOn);
+    this.write(ledOn);
     setTimeout(() => {
       this.write(ledOn);
     }, 200);
   }
-  public async flashDisplay() {
+  public flashDisplay(): void {
     const flash = [0x04];
 
-    await this.write(flash);
+    this.write(flash);
     setTimeout(() => {
       this.write(flash);
     }, 200);
   }
-  public async displayCurrentWeight() {
+  public displayCurrentWeight(): void {
     const currentWeight = [0xec];
 
-    await this.write(currentWeight);
+    this.write(currentWeight);
     setTimeout(() => {
       this.write(currentWeight);
     }, 200);
   }
-  public async setGrams() {
+  public setGrams(): void {
     const setGrams = [0x03];
 
-    await this.write(setGrams);
+    this.write(setGrams);
     setTimeout(() => {
       this.write(setGrams);
     }, 200);
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
     //Not supported but needed
   }
 
@@ -106,23 +112,17 @@ export class SkaleScale extends BluetoothScale {
   }
 
   private write(_bytes: number[]) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        SkaleScale.SERVICE_UUID,
-        SkaleScale.WRITE_CHAR_UUID,
-        new Uint8Array(_bytes).buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      SkaleScale.SERVICE_UUID,
+      SkaleScale.WRITE_CHAR_UUID,
+      new Uint8Array(_bytes).buffer,
+      (e: any) => {},
+      (e: any) => {},
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     ble.startNotification(
       this.device_id,
       SkaleScale.SERVICE_UUID,
@@ -132,10 +132,6 @@ export class SkaleScale extends BluetoothScale {
       },
       (_data: any) => {},
     );
-    // We need to put LED on on first conneciton, aswell as starting the current weight and toggling mode to grams.
-    await this.setLed(true);
-    await this.displayCurrentWeight();
-    await this.setGrams();
   }
 
   private parseStatusUpdate(_data: any) {

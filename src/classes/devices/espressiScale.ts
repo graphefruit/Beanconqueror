@@ -38,26 +38,28 @@ export class EspressiScale extends BluetoothScale {
     );
   }
 
-  public override async connect() {
-    await this.attachNotification();
+  public override connect(): void {
+    this.attachNotification();
   }
 
-  public override async tare() {
+  public override tare(): void {
     this.weight.smoothed = 0;
     this.weight.actual = 0;
     this.weight.oldSmoothed = 0;
     this.weight.old = 0;
     this.setWeight(0);
 
-    await this.write(this.buildTareCommand());
-    await sleep(200);
-    await this.write(this.buildTareCommand());
+    this.write(this.buildTareCommand());
+    setTimeout(() => {
+      this.write(this.buildTareCommand());
+    }, 200);
   }
 
-  public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
-    await this.write(this.buildTimerCommand(_timer));
-    await sleep(200);
-    await this.write(this.buildTimerCommand(_timer));
+  public override setTimer(_timer: SCALE_TIMER_COMMAND): void {
+    this.write(this.buildTimerCommand(_timer));
+    setTimeout(() => {
+      this.write(this.buildTimerCommand(_timer));
+    }, 200);
   }
 
   public override getWeight() {
@@ -124,23 +126,17 @@ export class EspressiScale extends BluetoothScale {
   }
 
   private write(_bytes: Uint8Array) {
-    return new Promise((resolve, reject) => {
-      ble.write(
-        this.device_id,
-        EspressiScale.WRITE_SERVICE_UUID,
-        EspressiScale.WRITE_CHAR_UUID,
-        _bytes.buffer,
-        (e: any) => {
-          resolve(true);
-        },
-        (e: any) => {
-          resolve(false);
-        },
-      );
-    });
+    ble.write(
+      this.device_id,
+      EspressiScale.WRITE_SERVICE_UUID,
+      EspressiScale.WRITE_CHAR_UUID,
+      _bytes.buffer,
+      (e: any) => {},
+      (e: any) => {},
+    );
   }
 
-  private async attachNotification() {
+  private attachNotification(): void {
     this.logger.logDirect('Attaching notification...');
     ble.startNotification(
       this.device_id,
@@ -170,7 +166,7 @@ export class EspressiScale extends BluetoothScale {
     );
   }
 
-  private async deattachNotification() {
+  private deattachNotification(): void {
     ble.stopNotification(
       this.device_id,
       EspressiScale.READ_SERVICE_UUID,
