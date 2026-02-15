@@ -206,14 +206,13 @@ export class BrewDetailComponent {
     this.loaded = true;
   }
 
-  private initializeFlowChartOnGraphEl() {
-    setTimeout(async () => {
-      if (this.editActive === false) {
-        if (this.brewBrewingGraphEl) {
-          await this.brewBrewingGraphEl?.instance();
-        }
+  private async initializeFlowChartOnGraphEl() {
+    await sleep(150);
+    if (this.editActive === false) {
+      if (this.brewBrewingGraphEl) {
+        await this.brewBrewingGraphEl?.instance();
       }
-    }, 150);
+    }
   }
 
   public copyNotesToClipboard() {

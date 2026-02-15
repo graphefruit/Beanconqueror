@@ -1011,36 +1011,24 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (_firstStart) {
         if (this.settings.bluetooth_scale_tare_on_brew === true) {
-          await new Promise((resolve) => {
-            if (scale) {
-              scale.tare();
-            }
-            setTimeout(async () => {
-              resolve(undefined);
-            }, this.settings.bluetooth_command_delay);
-          });
+          if (scale) {
+            scale.tare();
+          }
+          await sleep(this.settings.bluetooth_command_delay);
         }
 
         if (this.settings.bluetooth_scale_stop_timer_on_brew === true) {
-          await new Promise((resolve) => {
-            if (scale) {
-              scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-            }
-            setTimeout(async () => {
-              resolve(undefined);
-            }, this.settings.bluetooth_command_delay);
-          });
+          if (scale) {
+            scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+          }
+          await sleep(this.settings.bluetooth_command_delay);
         }
 
         if (this.settings.bluetooth_scale_reset_timer_on_brew === true) {
-          await new Promise((resolve) => {
-            if (scale) {
-              scale.setTimer(SCALE_TIMER_COMMAND.RESET);
-            }
-            setTimeout(async () => {
-              resolve(undefined);
-            }, this.settings.bluetooth_command_delay);
-          });
+          if (scale) {
+            scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+          }
+          await sleep(this.settings.bluetooth_command_delay);
         }
       }
       if (
@@ -1414,26 +1402,14 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (scale || pressureDevice || temperatureDevice) {
       await this.uiAlert.showLoadingSpinner();
       if (scale) {
-        await new Promise((resolve) => {
-          scale.tare();
-          setTimeout(async () => {
-            resolve(undefined);
-          }, this.settings.bluetooth_command_delay);
-        });
+        scale.tare();
+        await sleep(this.settings.bluetooth_command_delay);
 
-        await new Promise((resolve) => {
-          scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-          setTimeout(async () => {
-            resolve(undefined);
-          }, this.settings.bluetooth_command_delay);
-        });
+        scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+        await sleep(this.settings.bluetooth_command_delay);
 
-        await new Promise((resolve) => {
-          scale.setTimer(SCALE_TIMER_COMMAND.RESET);
-          setTimeout(async () => {
-            resolve(undefined);
-          }, this.settings.bluetooth_command_delay);
-        });
+        scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+        await sleep(this.settings.bluetooth_command_delay);
 
         this.deattachToWeightChange();
         this.deattachToFlowChange();
@@ -1489,14 +1465,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       ) {
         this.initializeFlowChart(false);
       }
-
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          await this.uiAlert.hideLoadingSpinner();
-          resolve(undefined);
-        }, 200);
-      });
+      await sleep(200);
+      await this.uiAlert.hideLoadingSpinner();
     } else if (
       this.flow_profile_raw?.weight.length > 0 ||
       this.flow_profile_raw?.pressureFlow.length > 0 ||
@@ -1509,13 +1480,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.flowProfileSecondTempAll = [];
       this.flowNCalculation = 0;
       this.initializeFlowChart(false);
+
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          await this.uiAlert.hideLoadingSpinner();
-          resolve(undefined);
-        }, 200);
-      });
+      await sleep(200);
+      await this.uiAlert.hideLoadingSpinner();
     }
   }
 
@@ -1600,6 +1568,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.SANREMO_YOU
     ) {
+      //Let this timeout stand, we don't want to have an await
       setTimeout(() => {
         this.brewComponent.timer.reset();
       }, 1000);
@@ -2012,12 +1981,8 @@ export class BrewBrewingGraphComponent implements OnInit {
           if (scale && scale.getWeight() !== 0) {
             await new Promise(async (resolve) => {
               await this.uiAlert.showLoadingSpinner();
-              await new Promise((_internalResolve) => {
-                scale.tare();
-                setTimeout(async () => {
-                  _internalResolve(undefined);
-                }, this.settings.bluetooth_command_delay);
-              });
+              scale.tare();
+              await sleep(this.settings.bluetooth_command_delay);
               let minimumWeightNullReports = 0;
               let weightReports = 0;
               this.deattachToScaleStartTareListening();
@@ -2376,11 +2341,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       if (scale.getScaleType() === ScaleType.VARIA_AKU) {
         //#878 When we start listening to the varia scale, somehow the tare is to slow/sensetive, and the timer directly starts when starting to listening.
-        await new Promise((resolve) => {
-          setTimeout(async () => {
-            resolve(undefined);
-          }, this.settings.bluetooth_command_delay + 500);
-        });
+        await sleep(this.settings.bluetooth_command_delay + 500);
       }
 
       this.brewComponent.timer.checkChanges();
@@ -2664,12 +2625,8 @@ export class BrewBrewingGraphComponent implements OnInit {
                   try {
                     const scale: BluetoothScale = this.bleManager.getScale();
                     if (scale && scale.getWeight() !== 0) {
-                      await new Promise((resolve) => {
-                        scale.tare();
-                        setTimeout(async () => {
-                          resolve(undefined);
-                        }, this.settings.bluetooth_command_delay);
-                      });
+                      scale.tare();
+                      await sleep(this.settings.bluetooth_command_delay);
                     }
                   } catch (ex) {}
                 }

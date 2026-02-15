@@ -53,7 +53,7 @@ import { AppEvent } from '../../classes/appEvent/appEvent';
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-import { BluetoothScale, BluetoothTypes } from '../../classes/devices';
+import { BluetoothScale, BluetoothTypes, sleep } from '../../classes/devices';
 import { Logger } from '../../classes/devices/common/logger';
 import { Graph } from '../../classes/graph/graph';
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -688,11 +688,10 @@ export class SettingsPage {
     this.debounceLanguageFilter.next(_query);
   }
 
-  public themeModeChanged(event: any): void {
-    setTimeout(async () => {
-      await this.saveSettings();
-      this.themeService.adjustTheme();
-    }, 150);
+  public async themeModeChanged(event: any) {
+    await sleep(150);
+    await this.saveSettings();
+    this.themeService.adjustTheme();
   }
 
   public setLanguage(): void {

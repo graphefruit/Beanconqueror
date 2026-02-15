@@ -491,14 +491,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
 
     await modal.present();
-    await modal.onWillDismiss().then(async () => {
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          this.brewBrewingGraphEl.onOrientationChange();
-          resolve(undefined);
-        }, 50);
-      });
-    });
+    await modal.onWillDismiss();
+    await sleep(50);
+    this.brewBrewingGraphEl.onOrientationChange();
   }
 
   public async chooseGraphToSetAsReference() {
@@ -532,20 +527,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     await modal.present();
     this.brewBrewingGraphEl.checkChanges();
-    await modal.onWillDismiss().then(async () => {
-      this.maximizeFlowGraphIsShown = false;
-      // will force rerender :D
-      this.brewBrewingGraphEl.lastChartRenderingInstance = -1;
-      // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
-      this.brewBrewingGraphEl.updateChart();
+    await modal.onWillDismiss();
+    this.maximizeFlowGraphIsShown = false;
+    // will force rerender :D
+    this.brewBrewingGraphEl.lastChartRenderingInstance = -1;
+    // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
+    this.brewBrewingGraphEl.updateChart();
 
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          this.brewBrewingGraphEl.onOrientationChange();
-          resolve(undefined);
-        }, 50);
-      });
-    });
+    await sleep(50);
+    this.brewBrewingGraphEl.onOrientationChange();
   }
 
   public ngOnDestroy() {

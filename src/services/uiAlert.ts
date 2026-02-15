@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
 import { AppEvent } from '../classes/appEvent/appEvent';
+import { sleep } from '../classes/devices';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
@@ -42,7 +43,7 @@ export class UIAlert {
     }
   }
 
-  private existingLoadingSpinners = [];
+  private existingLoadingSpinners: HTMLIonModalElement[] = [];
 
   public async showLoadingSpinner(
     message: string = 'PLEASE_WAIT',
@@ -86,13 +87,9 @@ export class UIAlert {
   }
   public async hideLoadingSpinner() {
     if (this.existingLoadingSpinners.length > 0) {
-      for (const spinner of this.existingLoadingSpinners) {
-        spinner.dismiss();
-        await new Promise(async (resolve) => {
-          setTimeout(() => {
-            resolve(undefined);
-          }, 50);
-        });
+      for await (const spinner of this.existingLoadingSpinners) {
+        await spinner.dismiss();
+        await sleep(50);
       }
       this.existingLoadingSpinners = [];
     }
