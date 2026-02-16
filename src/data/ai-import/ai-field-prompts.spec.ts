@@ -118,32 +118,21 @@ describe('ai-field-prompts', () => {
     describe('validation', () => {
       const validation = FIELD_PROMPTS['weight'].validation!;
 
-      it('should match weight with grams unit', () => {
+      it('should match weights with various units (g, kg, oz, lb)', () => {
         expect(validation.test('250g')).toBeTrue();
         expect(validation.test('250 g')).toBeTrue();
         expect(validation.test('1000g')).toBeTrue();
-      });
-
-      it('should match weight with kilograms unit', () => {
         expect(validation.test('1kg')).toBeTrue();
         expect(validation.test('1.5kg')).toBeTrue();
         expect(validation.test('2 kg')).toBeTrue();
-      });
-
-      it('should match weight with ounces unit', () => {
         expect(validation.test('12oz')).toBeTrue();
         expect(validation.test('16 oz')).toBeTrue();
-      });
-
-      it('should match weight with pounds unit', () => {
         expect(validation.test('1lb')).toBeTrue();
         expect(validation.test('2.5 lb')).toBeTrue();
       });
 
-      it('should match decimal weights', () => {
-        expect(validation.test('1.5kg')).toBeTrue();
-        expect(validation.test('0.5lb')).toBeTrue();
-        expect(validation.test('1,5kg')).toBeTrue(); // European decimal
+      it('should match European decimal separators', () => {
+        expect(validation.test('1,5kg')).toBeTrue();
       });
     });
 
@@ -288,24 +277,12 @@ describe('ai-field-prompts', () => {
         expect(postProcess(oldDate, '')).toBeNull();
       });
 
-      it('should return ISO string for valid recent dates', () => {
+      it('should return valid ISO string for recent YYYY-MM-DD dates', () => {
         // Arrange
         const recentDate = moment().subtract(1, 'week').format('YYYY-MM-DD');
 
         // Act
         const result = postProcess(recentDate, '');
-
-        // Assert - should return a valid moment format string
-        expect(result).toBeTruthy();
-        expect(moment(result).isValid()).toBeTrue();
-      });
-
-      it('should handle ISO date format (YYYY-MM-DD)', () => {
-        // Arrange - date about 2 weeks ago
-        const testDate = moment().subtract(2, 'weeks');
-
-        // Act
-        const result = postProcess(testDate.format('YYYY-MM-DD'), '');
 
         // Assert
         expect(result).toBeTruthy();

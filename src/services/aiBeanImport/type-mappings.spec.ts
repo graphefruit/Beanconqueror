@@ -4,17 +4,14 @@ import { mapToBeanMix, mapToRoastingType } from './type-mappings';
 
 describe('Type Mappings', () => {
   describe('mapToBeanMix', () => {
-    it('should map valid values to corresponding enum values', () => {
+    it('should map valid values case-insensitively to corresponding enum values', () => {
       expect(mapToBeanMix('SINGLE_ORIGIN')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
-      expect(mapToBeanMix('BLEND')).toBe(BEAN_MIX_ENUM.BLEND);
-      expect(mapToBeanMix('UNKNOWN')).toBe(BEAN_MIX_ENUM.UNKNOWN);
-    });
-
-    it('should handle case-insensitive input', () => {
       expect(mapToBeanMix('single_origin')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
       expect(mapToBeanMix('Single_Origin')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
+      expect(mapToBeanMix('BLEND')).toBe(BEAN_MIX_ENUM.BLEND);
       expect(mapToBeanMix('blend')).toBe(BEAN_MIX_ENUM.BLEND);
       expect(mapToBeanMix('Blend')).toBe(BEAN_MIX_ENUM.BLEND);
+      expect(mapToBeanMix('UNKNOWN')).toBe(BEAN_MIX_ENUM.UNKNOWN);
     });
 
     it('should handle input with spaces or hyphens instead of underscores', () => {
@@ -33,20 +30,17 @@ describe('Type Mappings', () => {
   });
 
   describe('mapToRoastingType', () => {
-    it('should map valid values to corresponding enum values', () => {
+    it('should map valid values case-insensitively to corresponding enum values', () => {
       expect(mapToRoastingType('FILTER')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
+      expect(mapToRoastingType('filter')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
+      expect(mapToRoastingType('Filter')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
       expect(mapToRoastingType('ESPRESSO')).toBe(
         BEAN_ROASTING_TYPE_ENUM.ESPRESSO,
       );
-      expect(mapToRoastingType('OMNI')).toBe(BEAN_ROASTING_TYPE_ENUM.OMNI);
-    });
-
-    it('should handle case-insensitive input', () => {
-      expect(mapToRoastingType('filter')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
-      expect(mapToRoastingType('Filter')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
       expect(mapToRoastingType('espresso')).toBe(
         BEAN_ROASTING_TYPE_ENUM.ESPRESSO,
       );
+      expect(mapToRoastingType('OMNI')).toBe(BEAN_ROASTING_TYPE_ENUM.OMNI);
       expect(mapToRoastingType('omni')).toBe(BEAN_ROASTING_TYPE_ENUM.OMNI);
     });
 

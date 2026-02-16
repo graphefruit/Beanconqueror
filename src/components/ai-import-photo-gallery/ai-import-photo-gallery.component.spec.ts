@@ -54,19 +54,11 @@ describe('AiImportPhotoGalleryComponent', () => {
   });
 
   describe('initialization', () => {
-    it('should create component with empty photoPaths array', () => {
+    it('should create component with correct defaults', () => {
       // Assert
       expect(component).toBeTruthy();
       expect(component.photoPaths).toEqual([]);
-    });
-
-    it('should initialize attachPhotos to false', () => {
-      // Assert
       expect(component.attachPhotos).toBeFalse();
-    });
-
-    it('should set maxPhotos to 4', () => {
-      // Assert
       expect(component.maxPhotos).toBe(4);
     });
   });
@@ -142,7 +134,7 @@ describe('AiImportPhotoGalleryComponent', () => {
   });
 
   describe('startAnalysis', () => {
-    it('should dismiss modal with photoPaths and attachPhotos data', () => {
+    it('should dismiss modal with photoPaths, attachPhotos, confirm role, and component ID', () => {
       // Arrange
       component.photoPaths = ['photo1.jpg', 'photo2.jpg'];
       component.attachPhotos = true;
@@ -158,36 +150,6 @@ describe('AiImportPhotoGalleryComponent', () => {
         },
         'confirm',
         AiImportPhotoGalleryComponent.COMPONENT_ID,
-      );
-    });
-
-    it('should dismiss with "confirm" role', () => {
-      // Arrange
-      component.photoPaths = ['photo1.jpg'];
-
-      // Act
-      component.startAnalysis();
-
-      // Assert
-      expect(mockModalCtrl.dismiss).toHaveBeenCalledWith(
-        jasmine.any(Object),
-        'confirm',
-        jasmine.any(String),
-      );
-    });
-
-    it('should use component ID for dismiss', () => {
-      // Arrange
-      component.photoPaths = ['photo1.jpg'];
-
-      // Act
-      component.startAnalysis();
-
-      // Assert
-      expect(mockModalCtrl.dismiss).toHaveBeenCalledWith(
-        jasmine.any(Object),
-        jasmine.any(String),
-        'ai-import-photo-gallery',
       );
     });
   });
@@ -235,7 +197,7 @@ describe('AiImportPhotoGalleryComponent', () => {
       expect(mockUIFileHelper.deleteInternalFile).toHaveBeenCalledTimes(2);
     });
 
-    it('should dismiss modal with null data', async () => {
+    it('should dismiss modal with null data, cancel role, and component ID', async () => {
       // Arrange
       component.photoPaths = [];
 
@@ -247,50 +209,6 @@ describe('AiImportPhotoGalleryComponent', () => {
         null,
         'cancel',
         AiImportPhotoGalleryComponent.COMPONENT_ID,
-      );
-    });
-
-    it('should dismiss with "cancel" role', async () => {
-      // Arrange
-      component.photoPaths = [];
-
-      // Act
-      await component.cancel();
-
-      // Assert
-      expect(mockModalCtrl.dismiss).toHaveBeenCalledWith(
-        null,
-        'cancel',
-        jasmine.any(String),
-      );
-    });
-  });
-
-  describe('attachPhotos toggle', () => {
-    it('should toggle attachPhotos property when set', () => {
-      // Arrange
-      expect(component.attachPhotos).toBeFalse();
-
-      // Act
-      component.attachPhotos = true;
-
-      // Assert
-      expect(component.attachPhotos).toBeTrue();
-    });
-
-    it('should include attachPhotos value in startAnalysis dismiss data', () => {
-      // Arrange
-      component.photoPaths = ['photo1.jpg'];
-      component.attachPhotos = true;
-
-      // Act
-      component.startAnalysis();
-
-      // Assert
-      expect(mockModalCtrl.dismiss).toHaveBeenCalledWith(
-        jasmine.objectContaining({ attachPhotos: true }),
-        jasmine.any(String),
-        jasmine.any(String),
       );
     });
   });
@@ -306,14 +224,6 @@ describe('AiImportPhotoGalleryComponent', () => {
 
       // Assert
       expect(component.cancel).toHaveBeenCalled();
-    });
-  });
-
-  describe('static properties', () => {
-    it('should have COMPONENT_ID set correctly', () => {
-      expect(AiImportPhotoGalleryComponent.COMPONENT_ID).toBe(
-        'ai-import-photo-gallery',
-      );
     });
   });
 });
