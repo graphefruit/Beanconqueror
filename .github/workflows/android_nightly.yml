@@ -3,7 +3,7 @@ name: Android Nightly Build
 on:
   push:
     branches:
-      - dev
+      - develop
 
 jobs:
   build:
