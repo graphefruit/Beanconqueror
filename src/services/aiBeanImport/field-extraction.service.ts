@@ -237,7 +237,7 @@ export class FieldExtractionService {
     params: IBeanParameter,
   ): Promise<OriginFieldsResult> {
     const result: OriginFieldsResult = {
-      beanMix: BEAN_MIX_ENUM.UNKNOWN,
+      beanMix: 'UNKNOWN' as BEAN_MIX_ENUM,
       bean_information: [],
     };
 
@@ -257,7 +257,7 @@ export class FieldExtractionService {
     result.beanMix = mapToBeanMix(beanMixRaw);
     this.uiLog.log(`Structure: beanMix=${result.beanMix}`);
 
-    if (result.beanMix === BEAN_MIX_ENUM.BLEND) {
+    if (result.beanMix === ('BLEND' as BEAN_MIX_ENUM)) {
       // BLEND: Use single JSON prompt, then filter by settings
       this.updateProgress('BLEND_ORIGINS');
       result.bean_information = await this.extractBlendOriginsFiltered(
@@ -800,19 +800,21 @@ export class FieldExtractionService {
    */
   private validateBean(bean: Bean): Bean {
     // If country detected but beanMix is null/unknown, set to SINGLE_ORIGIN
+    // Note: Uses enum key strings (e.g., 'UNKNOWN') matching the app convention
+    // where Bean constructor and UI ion-select options use key strings, not enum values.
     if (
       bean.bean_information.length === 1 &&
-      (!bean.beanMix || bean.beanMix === BEAN_MIX_ENUM.UNKNOWN)
+      (!bean.beanMix || bean.beanMix === ('UNKNOWN' as BEAN_MIX_ENUM))
     ) {
-      bean.beanMix = BEAN_MIX_ENUM.SINGLE_ORIGIN;
+      bean.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
     }
 
     // If multiple countries, ensure BLEND
     if (
       bean.bean_information.length > 1 &&
-      bean.beanMix !== BEAN_MIX_ENUM.BLEND
+      bean.beanMix !== ('BLEND' as BEAN_MIX_ENUM)
     ) {
-      bean.beanMix = BEAN_MIX_ENUM.BLEND;
+      bean.beanMix = 'BLEND' as BEAN_MIX_ENUM;
     }
 
     // Ensure at least one bean_information entry exists if any origin data
