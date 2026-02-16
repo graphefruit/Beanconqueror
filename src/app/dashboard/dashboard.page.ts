@@ -18,6 +18,7 @@ import { addIcons } from 'ionicons';
 import { giftOutline, snowOutline, thermometerOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment/moment';
 
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
@@ -36,7 +37,6 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIStatistic } from '../../services/uiStatistic';
 import { UnwrappedService } from '../../services/unwrapped/unwrapped.service';
 import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component';
-import moment from 'moment/moment';
 
 @Component({
   selector: 'dashboard',
@@ -118,6 +118,7 @@ export class DashboardPage implements OnInit {
   }
 
   public ngOnInit() {
+    console.log('log');
     this.settings = this.uiSettingsStorage.getSettings();
 
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
