@@ -4,39 +4,88 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
+
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonChip,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  closeOutline,
+  thermometerOutline,
+  timeOutline,
+  waterOutline,
+} from 'ionicons/icons';
+
+import { Capacitor } from '@capacitor/core';
+import { CameraPreview } from '@capgo/camera-preview';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+
+import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
+import { UIHelper } from 'src/services/uiHelper';
 import { Brew } from '../../../classes/brew/brew';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { BluetoothScale, sleep } from '../../../classes/devices';
+import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
-import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothScale } from '../../../classes/devices';
-
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { UIHelper } from 'src/services/uiHelper';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
-
-import { CameraPreview } from '@capgo/camera-preview';
-import { Capacitor } from '@capacitor/core';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    BrewFunction,
+    IonHeader,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonChip,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardContent,
+    IonFooter,
+  ],
 })
 export class BrewFlowComponent implements OnDestroy, OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly platform = inject(Platform);
+  private readonly ngZone = inject(NgZone);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   public static readonly COMPONENT_ID: string = 'brew-flow';
 
   @ViewChild('brewFlowContent', { read: ElementRef })
@@ -96,16 +145,9 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   public graphIconColSize: number = 2.4;
   public bluetoothSubscription: Subscription = undefined;
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform,
-    private readonly ngZone: NgZone,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ closeOutline, waterOutline, thermometerOutline, timeOutline });
   }
 
   public ngOnInit() {
@@ -278,7 +320,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
+  @HostListener('window:orientationchange')
   public onOrientationChange() {
     setTimeout(() => {
       try {
@@ -453,17 +495,16 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   private async __resizeCamera() {
     if (this.cameraIsVisible && Capacitor.getPlatform() !== 'web') {
-      setTimeout(async () => {
-        const rect = document
-          .getElementById('cameraPreview')
-          .getBoundingClientRect();
-        await CameraPreview.setPreviewSize({
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          y: Math.round(rect.y),
-          x: Math.round(rect.x),
-        });
-      }, 500);
+      await sleep(500);
+      const rect = document
+        .getElementById('cameraPreview')
+        .getBoundingClientRect();
+      await CameraPreview.setPreviewSize({
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        y: Math.round(rect.y),
+        x: Math.round(rect.x),
+      });
     }
   }
 

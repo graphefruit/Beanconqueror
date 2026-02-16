@@ -3,63 +3,82 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 
-import { ModalController, Platform } from '@ionic/angular';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonRow,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 
-import { UIToast } from '../../services/uiToast';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIAlert } from '../../services/uiAlert';
-
-import GRAPH_TRACKING from '../../data/tracking/graphTracking';
-
-import { GRAPH_ACTION } from '../../enums/graph/graphAction';
-import { UIGraphStorage } from '../../services/uiGraphStorage.service';
-import { Graph } from '../../classes/graph/graph';
-import { GraphPopoverActionsComponent } from '../../app/graph-section/graph/graph-popover-actions/graph-popover-actions.component';
-import { UIGraphHelper } from '../../services/uiGraphHelper';
-
-import { Settings } from '../../classes/settings/settings';
-import { UIFileHelper } from '../../services/uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
+
+import { GraphPopoverActionsComponent } from '../../app/graph-section/graph/graph-popover-actions/graph-popover-actions.component';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { Graph } from '../../classes/graph/graph';
+import { Settings } from '../../classes/settings/settings';
+import GRAPH_TRACKING from '../../data/tracking/graphTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { GRAPH_ACTION } from '../../enums/graph/graphAction';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIGraphHelper } from '../../services/uiGraphHelper';
+import { UIGraphStorage } from '../../services/uiGraphStorage.service';
 import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
 declare var Plotly;
 @Component({
   selector: 'graph-information-card',
   templateUrl: './graph-information-card.component.html',
   styleUrls: ['./graph-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    GraphDisplayCardComponent,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+  ],
 })
 export class GraphInformationCardComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly platform = inject(Platform);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  protected readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiHelper = inject(UIHelper);
+
   @Input() public graph: Graph;
   @Output() public graphAction: EventEmitter<any> = new EventEmitter();
 
   public settings: Settings;
 
   public radioSelection: string;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly translate: TranslateService,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiHelper: UIHelper,
-  ) {}
 
   public async ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();

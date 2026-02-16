@@ -1,7 +1,5 @@
-/** Interfaces */
-import {IMill} from '../../interfaces/mill/iMill';
-/** Classes */
-import {Config} from '../objectConfig/objectConfig';
+import { IMill } from '../../interfaces/mill/iMill';
+import { Config } from '../objectConfig/objectConfig';
 
 export class Mill implements IMill {
   public name: string;
@@ -22,9 +20,7 @@ export class Mill implements IMill {
     Object.assign(this, millObj);
   }
 
-
   public hasPhotos(): boolean {
-    return (this.attachments && this.attachments.length > 0);
+    return this.attachments && this.attachments.length > 0;
   }
-
 }

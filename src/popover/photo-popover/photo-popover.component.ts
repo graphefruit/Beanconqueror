@@ -1,20 +1,47 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import {
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Bean } from '../../classes/bean/bean';
-import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Brew } from '../../classes/brew/brew';
-import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
-import { Water } from '../../classes/water/water';
+import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { Water } from '../../classes/water/water';
+import { AsyncImageComponent } from '../../components/async-image/async-image.component';
+import { HeaderDismissButtonComponent } from '../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
   selector: 'photo-popover',
   templateUrl: './photo-popover.component.html',
   styleUrls: ['./photo-popover.component.scss'],
-  standalone: false,
+  imports: [
+    AsyncImageComponent,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+  ],
 })
 export class PhotoPopoverComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+
   public static COMPONENT_ID: string = 'photo-popover';
 
   @Input() public data:
@@ -28,7 +55,6 @@ export class PhotoPopoverComponent implements OnInit {
   @ViewChild('photoSlides', { static: false }) public photoSlides:
     | ElementRef
     | undefined;
-  constructor(private readonly modalController: ModalController) {}
   private async updateSlider() {
     if (this.photoSlides) {
       //TODO await this.photoSlides.update();

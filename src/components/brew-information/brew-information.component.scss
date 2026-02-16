@@ -1,35 +1,30 @@
-
-
 :host {
-
   ion-card-content {
     --ion-background-color: var(--ion-color-light);
   }
   .full-sized-icon {
     width: 100%;
     height: 100%;
-    max-height:60px!important;
+    max-height: 60px !important;
   }
   ion-card.brew-layout {
-    width:100%;
-    margin-top:0px;
-    margin-bottom:0px;
-    margin-left:0px;
-    margin-right:0px;
+    width: 100%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
       padding-top: var(--padding-top);
     }
     .brew-title {
-
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-
     }
-    ion-label{
-      line-height: 14px!important;
+    ion-label {
+      line-height: 14px !important;
       display: inline-block;
     }
     // Overwrite
@@ -38,10 +33,10 @@
       top: -15px;
       right: -20px;
       min-height: 20px;
-      ion-icon{
-        font-size: 18px!important;
-        width: 18px!important;
-        height: 18px!important;
+      ion-icon {
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
       }
     }
 
@@ -50,7 +45,6 @@
         padding-top: 0px !important;
         padding-bottom: 0px !important;
       }
-
     }
     ion-text {
       position: relative;
@@ -59,8 +53,6 @@
   }
 
   ion-card.dashboard-layout {
-
-
     .vr {
       border-right: 2px solid var(--ion-color-accent);
       height: 60%;
@@ -76,10 +68,10 @@
       top: -10px;
       right: -20px;
       min-height: 20px;
-      ion-icon{
-        font-size: 18px!important;
-        width: 18px!important;
-        height: 18px!important;
+      ion-icon {
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
       }
     }
 
@@ -93,7 +85,7 @@
 
     ion-col.center-col {
       display: flex;
-      align-items: center
+      align-items: center;
     }
 
     ion-list {
@@ -124,13 +116,12 @@
           margin-bottom: 0px;
         }
       }
-
     }
   }
 
   .limit-grid-overflow {
-    padding-top:0px;
-    padding-bottom:0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
     ion-text {
       white-space: nowrap;
       display: block;
@@ -145,7 +136,7 @@
 
   ::ng-deep img {
     max-height: 60px;
-    object-fit:cover;
+    object-fit: cover;
   }
 
   swiper-slide {
@@ -157,19 +148,14 @@
     height: auto;
   }
 
-  .add-bottom-spacing{
-    margin-bottom:20px;
+  .add-bottom-spacing {
+    margin-bottom: 20px;
   }
 
   .favourite-brew {
-    border: 2px solid #05C793;
+    border: 2px solid #05c793;
   }
   .best-brew {
-    border: 2px solid #AE9F87;
+    border: 2px solid #ae9f87;
   }
-
-
-
 }
-
-

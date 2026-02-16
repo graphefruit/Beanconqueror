@@ -1,18 +1,50 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
+
+import {
+  IonCard,
+  IonItem,
+  IonLabel,
+  IonReorder,
+  IonReorderGroup,
+  IonTitle,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Preparation } from '../../../classes/preparation/preparation';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { Settings } from '../../../classes/settings/settings';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+
 @Component({
   selector: 'sort-custom-parameter',
   templateUrl: './sort-custom-parameter.component.html',
   styleUrls: ['./sort-custom-parameter.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonCard,
+    IonTitle,
+    IonReorderGroup,
+    IonItem,
+    IonLabel,
+    IonReorder,
+  ],
 })
 export class SortCustomParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   public brewOrdersBefore: Array<{
     number: number;
     label: string;
@@ -31,12 +63,6 @@ export class SortCustomParameterComponent implements OnInit {
   }> = [];
 
   @Input() public data: Settings | Preparation;
-  constructor(
-    public uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {}
 
   public ngOnInit() {
     this.__initializeData();

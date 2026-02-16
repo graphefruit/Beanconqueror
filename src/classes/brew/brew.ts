@@ -1,38 +1,35 @@
-/** Interfaces */
+import moment from 'moment';
+
+import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
-import { IPreparation } from '../../interfaces/preparation/iPreparation';
-/** Classes */
-/** Third party */
-import moment from 'moment';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { IBrewCoordinates } from '../../interfaces/brew/iBrewCoordinates';
+import { ICustomInformationBrew } from '../../interfaces/brew/ICustomInformationBrew';
+import { IPreparationDeviceBrew } from '../../interfaces/brew/iPreparationDeviceBrew';
+import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
+import { ICupping } from '../../interfaces/cupping/iCupping';
+import { IFlavor } from '../../interfaces/flavor/iFlavor';
 import { IMill } from '../../interfaces/mill/iMill';
-/** Services */
+import { IPreparation } from '../../interfaces/preparation/iPreparation';
+import { IWater } from '../../interfaces/water/iWater';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { Bean } from '../bean/bean';
 import { Mill } from '../mill/mill';
 import { Config } from '../objectConfig/objectConfig';
 import { Preparation } from '../preparation/preparation';
-import { ICupping } from '../../interfaces/cupping/iCupping';
-import { IBrewCoordinates } from '../../interfaces/brew/iBrewCoordinates';
-import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { PreparationTool } from '../preparation/preparationTool';
-import { IFlavor } from '../../interfaces/flavor/iFlavor';
-import { UIWaterStorage } from '../../services/uiWaterStorage';
-
-import { IWater } from '../../interfaces/water/iWater';
 import { Water } from '../water/water';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { IPreparationDeviceBrew } from '../../interfaces/brew/iPreparationDeviceBrew';
-import { PreparationDeviceBrew } from './preparationDeviceBrew';
-import { ICustomInformationBrew } from '../../interfaces/brew/ICustomInformationBrew';
 import { CustomInformationBrew } from './customInformationBrew';
-import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
+import { PreparationDeviceBrew } from './preparationDeviceBrew';
 import { ReferenceGraph } from './referenceGraph';
-import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
-import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
+
 export class BrewInstanceHelper {
   constructor() {}
 

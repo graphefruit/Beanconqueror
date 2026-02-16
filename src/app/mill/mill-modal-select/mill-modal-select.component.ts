@@ -1,21 +1,78 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { Mill } from '../../../classes/mill/mill';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonItem,
+  IonLabel,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonSegment,
+  IonSegmentButton,
+  IonThumbnail,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Brew } from '../../../classes/brew/brew';
+import { Mill } from '../../../classes/mill/mill';
+import { Settings } from '../../../classes/settings/settings';
+import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
+import { FormatDatePipe } from '../../../pipes/formatDate';
+import { MillFunction } from '../../../pipes/mill/millFunction';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
 
 @Component({
   selector: 'mill-modal-select',
   templateUrl: './mill-modal-select.component.html',
   styleUrls: ['./mill-modal-select.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgTemplateOutlet,
+    AsyncImageComponent,
+    TranslatePipe,
+    FormatDatePipe,
+    MillFunction,
+    IonHeader,
+    IonContent,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonItem,
+    IonCheckbox,
+    IonRadio,
+    IonFooter,
+    IonRow,
+    IonCol,
+    IonThumbnail,
+    IonButton,
+  ],
 })
 export class MillModalSelectComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiMillHelper = inject(UIMillHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+
   public static COMPONENT_ID = 'mill-modal-select';
   public objs: Array<Mill> = [];
   public multipleSelection = {};
@@ -31,12 +88,7 @@ export class MillModalSelectComponent implements OnInit {
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
   public settings: Settings;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiMillHelper: UIMillHelper,
-    private readonly uiSettings: UISettingsStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
   }
 

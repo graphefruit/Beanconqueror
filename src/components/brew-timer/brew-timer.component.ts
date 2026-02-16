@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   NgZone,
   OnDestroy,
@@ -10,25 +11,40 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { Device } from '@capacitor/device';
-import { ITimer } from '../../interfaces/timer/iTimer';
-import moment from 'moment';
-import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import { IonInput, ModalController, Platform } from '@ionic/angular';
+import {
+  IonButton,
+  IonIcon,
+  IonInput,
+  IonItem,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
 
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { Settings } from '../../classes/settings/settings';
-import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { Device } from '@capacitor/device';
+import moment from 'moment';
 import { Subscription } from 'rxjs';
+
 import { BluetoothScale } from '../../classes/devices';
+import { Settings } from '../../classes/settings/settings';
+import { ITimer } from '../../interfaces/timer/iTimer';
+import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'brew-timer',
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
-  standalone: false,
+  imports: [IonItem, IonInput, IonButton, IonIcon],
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly platform = inject(Platform);
+  private readonly zone = inject(NgZone);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+
   @Input() public label: string;
 
   @Output() public timerStarted = new EventEmitter();
@@ -118,14 +134,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public bluetoothSubscription: Subscription = undefined;
 
-  constructor(
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly platform: Platform,
-    private readonly zone: NgZone,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     Device.getInfo().then((deviceInfo) => {
       this.isIos16 =

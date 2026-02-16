@@ -1,13 +1,15 @@
-import { PreparationDevice } from '../preparationDevice';
 import { HttpClient } from '@angular/common/http';
-import { Preparation } from '../../preparation/preparation';
 
-import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
-import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
-import { UILog } from '../../../services/uiLog';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
-import { SanremoShotData } from './sanremoShotData';
+
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
 import { UIAlert } from '../../../services/uiAlert';
+import { UILog } from '../../../services/uiLog';
+import { sleep } from '../../devices';
+import { Preparation } from '../../preparation/preparation';
+import { PreparationDevice } from '../preparationDevice';
+import { SanremoShotData } from './sanremoShotData';
 
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -165,6 +167,22 @@ export class SanremoYOUDevice extends PreparationDevice {
     return 0.9;
   }
 
+  public showInformationHintForBrewByWeightMode(): boolean {
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    if (connectedPreparationDevice.customParams) {
+      if (
+        connectedPreparationDevice.customParams.showHintForBaristaMode ===
+        undefined
+      ) {
+        return true;
+      }
+
+      return connectedPreparationDevice.customParams.showHintForBaristaMode;
+    }
+    return false;
+  }
+
   public getSaveLogfilesFromMachine(): boolean {
     const connectedPreparationDevice =
       this.getPreparation().connectedPreparationDevice;
@@ -195,7 +213,12 @@ export class SanremoYOUDevice extends PreparationDevice {
         .then((_response) => {
           const responseJSON = _response.data;
           const temp = responseJSON.tempBoilerCoffe;
-          const press = responseJSON.pumpPress * 10;
+
+          let press = 0;
+          if (responseJSON.pumpPress === 0) {
+          } else {
+            press = Number((responseJSON.pumpPress / 10).toFixed(2));
+          }
 
           this.temperature = temp;
           this.pressure = press;
@@ -308,13 +331,30 @@ export class SanremoYOUDevice extends PreparationDevice {
   public connectToSocket(): Promise<boolean> {
     this.logInfo('Connect to socket');
     let hasPromiseBeenCalled: boolean = false;
-    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
       if (this.socket !== undefined) {
-        if (hasPromiseBeenCalled === false) {
-          resolve(true);
-          hasPromiseBeenCalled = true;
+        this.logInfo('Socket seems like already connected');
+        //Maybe we're in connection state but the websocket is not finished yet.
+        for (let i = 0; i < 10; i++) {
+          if (i != 0) {
+            await sleep(250);
+          }
+          /**
+           * We're realy connected
+           */
+          this.logInfo(
+            'Check socket connection state ' + this.socket.readyState,
+          );
+          if (this.socket.readyState === 1) {
+            resolve(true);
+            //We can set promise been called to always true
+            hasPromiseBeenCalled = true;
+            //We can skip now.
+            return;
+          }
         }
-
+        //Seems like the readyState never gone to "1"
+        resolve(false);
         return;
       }
 
@@ -362,13 +402,25 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Listen for messages
         this.socket.onmessage = (event) => {
-          //          this.logInfo('Message from server:', event.data);
+          this.logInfo('Message from server:', event.data);
           const responseJSON = JSON.parse(event.data);
+
           if ('status' in responseJSON) {
             //Valid sanremo shot data
             let currentShotData = new SanremoShotData();
             currentShotData = responseJSON;
-            currentShotData.pumpPress = currentShotData.pumpPress * 10;
+            if (currentShotData.pumpPress === 0) {
+            } else {
+              currentShotData.pumpPress = Number(
+                (currentShotData.pumpPress / 10).toFixed(2),
+              );
+            }
+            if (this.sanremoShotData.groupStatus === 0) {
+              //Currently if the sanremo you is attached to the water line, it would report pressure like 1 bar because of the line pressure, which is correctly
+              //To avoid this kind of issue, we overwrite the pressure when the groupstatus gets to 0 we reset the press on our side :)
+              currentShotData.pumpPress = 0;
+            }
+
             this.sanremoShotData = currentShotData;
             this.sanremoShotData.localTimeString =
               new Date().toLocaleTimeString();
@@ -387,7 +439,8 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Handle errors
         this.socket.onerror = (event) => {
-          this.logInfo('WebSocket error: ', event);
+          this.logInfo('WebSocket error: ', JSON.stringify(event));
+
           if (hasPromiseBeenCalled === false) {
             resolve(false);
             hasPromiseBeenCalled = true;
@@ -398,7 +451,7 @@ export class SanremoYOUDevice extends PreparationDevice {
 
         // Handle connection close
         this.socket.onclose = (event) => {
-          this.logInfo('WebSocket closed:', event);
+          this.logInfo('WebSocket closed:', JSON.stringify(event));
           if (hasPromiseBeenCalled === false) {
             resolve(false);
             hasPromiseBeenCalled = true;
@@ -604,12 +657,15 @@ export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeightP2: number = 0;
   public stopAtWeightP3: number = 0;
   public stopAtWeightM: number = 0;
+
+  public showHintForBaristaMode: boolean = true;
   constructor() {
     this.residualLagTime = 0.9;
     this.residualLagTimeP1 = 0.9;
     this.residualLagTimeP2 = 0.9;
     this.residualLagTimeP3 = 0.9;
     this.residualLagTimeM = 0.9;
+    this.showHintForBaristaMode = true;
 
     this.selectedMode = SanremoYOUMode.LISTENING;
   }

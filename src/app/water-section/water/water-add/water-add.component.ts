@@ -1,32 +1,65 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { waterOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Water } from '../../../../classes/water/water';
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import { WATER_TYPES } from '../../../../enums/water/waterTypes';
+import { KeysPipe } from '../../../../pipes/keys';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
-import { Water } from '../../../../classes/water/water';
-import WATER_TRACKING from '../../../../data/tracking/waterTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-
-import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WaterAddTypeComponent } from '../water-add-type/water-add-type.component';
 
 @Component({
   selector: 'app-water-add',
   templateUrl: './water-add.component.html',
   styleUrls: ['./water-add.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonIcon,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+  ],
 })
 export class WaterAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID = 'water-add';
 
   public data: Water = new Water();
 
   public water_type_enums = WATER_TYPES;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  constructor() {
+    addIcons({ waterOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

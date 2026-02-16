@@ -1,28 +1,83 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonBadge,
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRange,
+  IonSelect,
+  IonSelectOption,
+  IonToggle,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+
 import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { Brew } from '../../../classes/brew/brew';
+import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
+import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
+import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
+import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
+import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
-import { Subscription } from 'rxjs';
+import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
+import { ToFixedPipe } from '../../../pipes/toFixed';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'brew-filter',
   templateUrl: './brew-filter.component.html',
   styleUrls: ['./brew-filter.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreparationOverlayDirective,
+    PreparationToolOverlayDirective,
+    BeanOverlayDirective,
+    MillOverlayDirective,
+    WaterOverlayDirective,
+    TranslatePipe,
+    ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonSelect,
+    IonToggle,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonIcon,
+    IonSelectOption,
+    IonList,
+    IonButton,
+  ],
 })
 export class BrewFilterComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly eventQueue = inject(EventQueueService);
+
   public static COMPONENT_ID = 'brew-filter';
   public settings: Settings;
 
@@ -45,16 +100,7 @@ export class BrewFilterComponent implements OnInit {
   public preparationToolsExist: boolean;
   public maxBrewRating: number;
   public filterParameterActive: boolean = false;
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly eventQueue: EventQueueService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.settings.GET_BREW_FILTER();
     this.brews = this.uiBrewStorage.getAllEntries();

@@ -1,48 +1,82 @@
+import { DecimalPipe } from '@angular/common';
 import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
-import { Bean } from '../../classes/bean/bean';
-import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+
 import {
   ActionSheetController,
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonLabel,
+  IonRow,
+  IonText,
   ModalController,
   Platform,
-} from '@ionic/angular';
-import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
-import { BeanGroup } from '../../interfaces/bean/beanGroup';
-import { BEAN_ACTION } from '../../enums/beans/beanAction';
-import { Brew } from '../../classes/brew/brew';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { NgxStarsComponent } from 'ngx-stars';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIAlert } from '../../services/uiAlert';
-import { UIToast } from '../../services/uiToast';
-import { UIImage } from '../../services/uiImage';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import BEAN_TRACKING from '../../data/tracking/beanTracking';
-import { ShareService } from '../../services/shareService/share-service.service';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
-import { ServerBean } from '../../models/bean/serverBean';
-import QR_TRACKING from '../../data/tracking/qrTracking';
-import { BeanMapper } from '../../mapper/bean/beanMapper';
-import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
-import { UIHelper } from '../../services/uiHelper';
-import { TranslateService } from '@ngx-translate/core';
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  chevronDownOutline,
+  chevronUpOutline,
+  fileTrayFullOutline,
+  flameOutline,
+  heart,
+  moon,
+  pricetagOutline,
+  qrCodeOutline,
+  shareSocialOutline,
+  snowOutline,
+} from 'ionicons/icons';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import * as htmlToImage from 'html-to-image';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
 import moment from 'moment/moment';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
+
+import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { Settings } from '../../classes/settings/settings';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
-import { CurrencyService } from '../../services/currencyService/currency.service';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { ROASTS_ENUM } from '../../enums/beans/roasts';
+import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { BeanMapper } from '../../mapper/bean/beanMapper';
+import { ServerBean } from '../../models/bean/serverBean';
+import { BeanFieldVisiblePipe } from '../../pipes/bean/beanFieldVisible';
+import { BeanFunction } from '../../pipes/bean/beanFunction';
+import { FormatDatePipe } from '../../pipes/formatDate';
+import { ToFixedPipe } from '../../pipes/toFixed';
+import { CurrencyService } from '../../services/currencyService/currency.service';
+import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
+import { ShareService } from '../../services/shareService/share-service.service';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIImage } from '../../services/uiImage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'bean-information',
@@ -51,9 +85,49 @@ import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
     './bean-information.component.scss',
     '../../theme/variables.scss',
   ],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    NgxStarsModule,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    FormatDatePipe,
+    ToFixedPipe,
+    BeanFieldVisiblePipe,
+    BeanFunction,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonIcon,
+    IonBadge,
+    IonButton,
+    IonLabel,
+    IonText,
+  ],
 })
 export class BeanInformationComponent implements OnInit {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiImage = inject(UIImage);
+  private readonly shareService = inject(ShareService);
+  private readonly serverCommunicationService = inject(
+    ServerCommunicationService,
+  );
+  readonly uiHelper = inject(UIHelper);
+  private readonly translate = inject(TranslateService);
+  private readonly platform = inject(Platform);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private actionSheetCtrl = inject(ActionSheetController);
+  private readonly currencyService = inject(CurrencyService);
+
   @Input() public bean: Bean;
   @Input() public beanGroup: BeanGroup;
   @Input() public showActions: boolean = true;
@@ -80,26 +154,20 @@ export class BeanInformationComponent implements OnInit {
   public uiCalculatedCostPerKG: number = undefined;
   public uiCurrencySymbol: string = '';
 
-  constructor(
-    private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiBeanHelper: UIBeanHelper,
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiToast: UIToast,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiImage: UIImage,
-    private readonly shareService: ShareService,
-    private readonly serverCommunicationService: ServerCommunicationService,
-    public readonly uiHelper: UIHelper,
-    private readonly translate: TranslateService,
-    private readonly platform: Platform,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private actionSheetCtrl: ActionSheetController,
-    private readonly currencyService: CurrencyService,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({
+      fileTrayFullOutline,
+      moon,
+      snowOutline,
+      flameOutline,
+      qrCodeOutline,
+      shareSocialOutline,
+      heart,
+      pricetagOutline,
+      chevronUpOutline,
+      chevronDownOutline,
+    });
   }
 
   public ngOnInit() {
@@ -303,10 +371,10 @@ export class BeanInformationComponent implements OnInit {
     await this.resetSettings();
 
     /* this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
-    this.bean.finished = true;
-    await this.uiBeanStorage.update(this.bean);
-    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    */
+        this.bean.finished = true;
+        await this.uiBeanStorage.update(this.bean);
+        this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
+        */
   }
 
   public async unarchiveBean() {
@@ -603,8 +671,8 @@ export class BeanInformationComponent implements OnInit {
   }
 
   /*
-    Deprecated right now, used by pipe
-   */
+      Deprecated right now, used by pipe
+     */
   public showCostPerKG(): boolean {
     if (
       this.bean.weight &&

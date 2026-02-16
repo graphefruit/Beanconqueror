@@ -1,4 +1,4 @@
-import {AppEventType} from '../../enums/appEvent/appEvent';
+import { AppEventType } from '../../enums/appEvent/appEvent';
 
 export class AppEvent<T> {
   constructor(
@@ -6,4 +6,3 @@ export class AppEvent<T> {
     public payload: T,
   ) {}
 }
-

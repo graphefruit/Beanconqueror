@@ -1,24 +1,81 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
-import { Preparation } from '../../../classes/preparation/preparation';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonBadge,
+  IonButton,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRange,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonToggle,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { Settings } from '../../../classes/settings/settings';
+import { ChooseDateOverlayDirective } from '../../../directive/choose-date.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
+import { KeysPipe } from '../../../pipes/keys';
+import { ToFixedPipe } from '../../../pipes/toFixed';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-bean-filter',
   templateUrl: './bean-filter.component.html',
   styleUrls: ['./bean-filter.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    ChooseDateOverlayDirective,
+    TransformDateDirective,
+    TranslatePipe,
+    KeysPipe,
+    ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonItem,
+    IonToggle,
+    IonSelect,
+    IonSelectOption,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonInput,
+    IonLabel,
+    IonRange,
+    IonIcon,
+    IonBadge,
+    IonList,
+    IonButton,
+  ],
 })
 export class BeanFilterComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
+
   public static readonly COMPONENT_ID = 'bean-filter';
   public settings: Settings;
 
@@ -37,14 +94,7 @@ export class BeanFilterComponent implements OnInit {
 
   public maxBeanRating: number = undefined;
 
-  constructor(
-    private readonly modalController: ModalController,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 

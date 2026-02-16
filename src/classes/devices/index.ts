@@ -1,35 +1,38 @@
+import { ArgosThermometer } from './argosThermometer';
+import { BasicGrillThermometer } from './basicGrillThermometer';
+import { BlackcoffeeScale } from './blackcoffeeScale';
 import { PeripheralData } from './ble.types';
 import { BluetoothScale } from './bluetoothDevice';
+import { BookooScale } from './bokooScale';
+import { BookooPressure } from './bookooPressure';
+import { CombustionThermometer } from './combustionThermometer';
 import { DecentScale } from './decentScale';
-import { FelicitaScale } from './felicitaScale';
-import { JimmyScale } from './jimmyScale';
-import { LunarScale } from './lunarScale';
-import { PressureDevice } from './pressureBluetoothDevice';
-import { PopsiclePressure } from './popsiclePressure';
-import { TransducerDirectPressure } from './transducerDirectPressure';
-import { EurekaPrecisaScale } from './eurekaPrecisaScale';
-import { PrsPressure } from './prsPressure';
-import { SkaleScale } from './skale';
-import { TemperatureDevice } from './temperatureBluetoothDevice';
-import { ETITemperature } from './etiTemperature';
-import { SmartchefScale } from './smartchefScale';
 import { DifluidMicrobalance } from './difluidMicrobalance';
-import { RefractometerDevice } from './refractometerBluetoothDevice';
-import { DiFluidR2Refractometer } from './difluidR2Refractometer';
-import { BlackcoffeeScale } from './blackcoffeeScale';
 import { DifluidMicrobalanceTi } from './difluidMicrobalanceTi';
+import { DiFluidR2Refractometer } from './difluidR2Refractometer';
 import { DiyPythonCoffeeScale } from './diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
-import { BookooPressure } from './bookooPressure';
-import { BookooScale } from './bokooScale';
-import { BasicGrillThermometer } from './basicGrillThermometer';
-import { MeaterThermometer } from './meaterThermometer';
-import { CombustionThermometer } from './combustionThermometer';
-import { ArgosThermometer } from './argosThermometer';
-import { TimemoreScale } from './timemoreScale';
-import { VariaAkuScale } from './variaAku';
 import { EspressiScale } from './espressiScale';
+import { ETITemperature } from './etiTemperature';
+import { EurekaPrecisaScale } from './eurekaPrecisaScale';
+import { FelicitaScale } from './felicitaScale';
+import { FutulaScale } from './futulaScale';
+import { GeisingerThermometer } from './geisingerThermometer';
+import { JimmyScale } from './jimmyScale';
+import { LunarScale } from './lunarScale';
+import { MeaterThermometer } from './meaterThermometer';
+import { PopsiclePressure } from './popsiclePressure';
+import { PressureDevice } from './pressureBluetoothDevice';
+import { PrsPressure } from './prsPressure';
+import { RefractometerDevice } from './refractometerBluetoothDevice';
+import { SkaleScale } from './skale';
+import { SmartchefScale } from './smartchefScale';
+import { TemperatureDevice } from './temperatureBluetoothDevice';
+import { TimemoreScale } from './timemoreScale';
+import { TransducerDirectPressure } from './transducerDirectPressure';
+import { VariaAkuScale } from './variaAku';
 import { WeighMyBruScale } from './weighMyBruScale';
+
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 
@@ -45,6 +48,7 @@ export enum ScaleType {
   LUNAR = 'LUNAR',
   JIMMY = 'JIMMY',
   FELICITA = 'FELICITA',
+  FUTULA = 'FUTULA',
   EUREKAPRECISA = 'EUREKAPRECISA',
   SKALE = 'SKALE',
   SMARTCHEF = 'SMARTCHEF',
@@ -73,6 +77,7 @@ export enum TemperatureType {
   MEATER = 'MEATER',
   COMBUSTION = 'COMBUSTION',
   ARGOS = 'ARGOS',
+  GEISINGER = 'GEISINGER',
 }
 
 export enum RefractometerType {
@@ -92,6 +97,8 @@ export function makeDevice(
       return new JimmyScale(data, type);
     case ScaleType.FELICITA:
       return new FelicitaScale(data, type);
+    case ScaleType.FUTULA:
+      return new FutulaScale(data, type);
     case ScaleType.EUREKAPRECISA:
       return new EurekaPrecisaScale(data, type);
     case ScaleType.SKALE:
@@ -156,6 +163,8 @@ export function makeTemperatureDevice(
       return new CombustionThermometer(data);
     case TemperatureType.ARGOS:
       return new ArgosThermometer(data);
+    case TemperatureType.GEISINGER:
+      return new GeisingerThermometer(data);
     default:
       return null;
   }

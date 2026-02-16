@@ -1,15 +1,13 @@
-import { PreparationDevice } from '../preparationDevice';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Preparation } from '../../preparation/preparation';
-import { MeticulousShotData } from './meticulousShotData';
+
 import Api, { ActionType, ProfileIdent } from '@meticulous-home/espresso-api';
+import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import { Profile } from '@meticulous-home/espresso-profile';
+import moment from 'moment';
+import { of } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
 
 import { IMeticulousParams } from '../../../interfaces/preparationDevices/meticulous/iMeticulousParams';
-import { Profile } from 'meticulous-typescript-profile';
-import { catchError, timeout } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
-import moment from 'moment';
 import {
   BrewFlow,
   IBrewPressureFlow,
@@ -17,6 +15,9 @@ import {
   IBrewTemperatureFlow,
   IBrewWeightFlow,
 } from '../../brew/brewFlow';
+import { Preparation } from '../../preparation/preparation';
+import { PreparationDevice } from '../preparationDevice';
+import { MeticulousShotData } from './meticulousShotData';
 
 declare var cordova;
 declare var io;
@@ -285,6 +286,7 @@ export class MeticulousDevice extends PreparationDevice {
           pressureSensor_pressure: data.sensors.p,
           flowSensor_flow: data.sensors.f,
           loadcell_weight: data.sensors.w,
+          gravimetric_flow: data.sensors.g,
           display_temp: data.sensors.t,
           extracting: data.extracting,
         };
@@ -298,6 +300,7 @@ export class MeticulousDevice extends PreparationDevice {
           currentShotData.shotTime = data.time;
           //currentShotData.temperature = data.sensors.t;
           currentShotData.extracting = data.extracting;
+          currentShotData.gravimetric_flow = data.sensors.g;
 
           this.meticulousShotData = currentShotData;
         } else {
@@ -308,6 +311,7 @@ export class MeticulousDevice extends PreparationDevice {
           this.meticulousShotData.shotTime = data.time;
           //this.meticulousShotData.temperature = data.sensors.t;
           this.meticulousShotData.extracting = data.extracting;
+          this.meticulousShotData.gravimetric_flow = data.sensors.g;
         }
       });
     });

@@ -1,18 +1,19 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { UIAnalytics } from '../uiAnalytics';
-import QR_TRACKING from '../../data/tracking/qrTracking';
 import {
   CapacitorBarcodeScanner,
   CapacitorBarcodeScannerCameraDirection,
   CapacitorBarcodeScannerTypeHint,
 } from '@capacitor/barcode-scanner';
 
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import { UIAnalytics } from '../uiAnalytics';
+
 @Injectable({
   providedIn: 'root',
 })
 export class QrScannerService {
-  constructor(private readonly uiAnalytics: UIAnalytics) {}
+  private readonly uiAnalytics = inject(UIAnalytics);
 
   public async scan(): Promise<string> {
     const scanResult = await CapacitorBarcodeScanner.scanBarcode({
@@ -22,7 +23,7 @@ export class QrScannerService {
     this.uiAnalytics.trackEvent(
       QR_TRACKING.TITLE,
       QR_TRACKING.ACTIONS.SCANNED_LINK.CATEGORY,
-      scanResult.ScanResult
+      scanResult.ScanResult,
     );
     return scanResult.ScanResult;
   }

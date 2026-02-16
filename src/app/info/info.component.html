@@ -1,12 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>
-      {{"NAV_INFORMATION_TO_APP" | translate}}
-    </ion-title>
-  </ion-toolbar>
+  <app-header [title]="'NAV_INFORMATION_TO_APP' | translate">
+    <ion-menu-button header-slot="start" />
+  </app-header>
 </ion-header>
 <ion-content>
 

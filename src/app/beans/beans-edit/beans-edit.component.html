@@ -1,12 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{"EDIT_BEAN" | translate}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="confirmDismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'EDIT_BEAN' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="confirmDismiss()" />
+  </app-header>
 </ion-header>
 @if (bean) {
   <ion-content>

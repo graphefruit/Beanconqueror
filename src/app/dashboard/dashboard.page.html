@@ -1,25 +1,21 @@
 <ion-header>
-  <ion-toolbar with-add-button>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button tappable (short-press)="addBrew()" (long-press)="longPressAdd($event)" class="big-add-icon"
-        fill="clear">
-        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>
-      {{"OVERVIEW" | translate}}
-    </ion-title>
-  </ion-toolbar>
+  <app-header [title]="'OVERVIEW' | translate">
+    <ion-menu-button header-slot="start" />
+    <app-header-button
+      header-slot="end"
+      icon="beanconqueror-add"
+      [longPressEnabled]="true"
+      (clicked)="addBrew()"
+      (longPressed)="longPressAdd($event)"
+    />
+  </app-header>
 </ion-header>
 <ion-content>
   <ion-grid>
     @if (showUnwrappedButton) {
     <ion-row>
       <ion-col size="12">
-        <ion-card class="ion-no-margin" (click)="openUnwrapped()" tappable>
+        <ion-card class="ion-no-margin" (click)="openUnwrapped(2025)" tappable>
           <ion-card-header>
             <ion-card-title>
               <ion-icon color='accent' name="gift-outline"></ion-icon>

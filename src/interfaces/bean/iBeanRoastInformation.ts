@@ -9,11 +9,11 @@ export interface IBeanRoastInformation {
   roaster_machine: string;
 
   /* The used green beans weight*/
-  green_bean_weight:number;
+  green_bean_weight: number;
 
-  outside_temperature:number;
+  outside_temperature: number;
 
-  humidity:number;
+  humidity: number;
 
   /* Inherits the bean unique id, without this id, the roast information won't be displayed **/
   bean_uuid: string;

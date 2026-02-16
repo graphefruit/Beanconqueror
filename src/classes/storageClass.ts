@@ -1,12 +1,19 @@
+import { inject } from '@angular/core';
+
+import { Observable, Subject } from 'rxjs';
+
 import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
 import { UIStorage } from '../services/uiStorage';
-import { Observable, Subject } from 'rxjs';
 
 export abstract class StorageClass {
+  protected uiStorage = inject(UIStorage);
+  protected uiHelper = inject(UIHelper);
+  protected uiLog = inject(UILog);
+
   private removeObjSubject = new Subject<any>();
   private eventSubject = new Subject<any>();
-  public DB_PATH: string = '';
+  public readonly DB_PATH: string;
   protected storedData: Array<any> = [];
 
   /**
@@ -16,12 +23,7 @@ export abstract class StorageClass {
    */
   private isInitialized: number = -1;
 
-  protected constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    protected dbPath: string
-  ) {
+  protected constructor(protected dbPath: string) {
     this.DB_PATH = dbPath;
   }
 
@@ -78,9 +80,7 @@ export abstract class StorageClass {
         await this.__save();
         this.__sendEvent('ADD');
       } catch (ex) {
-        this.uiLog.error(
-          `Storage - Add - Unsuccessfully - ${JSON.stringify(ex)}`
-        );
+        this.uiLog.error('Storage - Add - Unsuccessfully', ex);
         this.uiHelper.showAlert(ex.message, 'ADD CRITICAL ERROR');
       }
       resolve(this.uiHelper.cloneData(newEntry));
@@ -99,7 +99,7 @@ export abstract class StorageClass {
         for (let i = 0; i < this.storedData.length; i++) {
           if (this.storedData[i].config.uuid === _obj.config.uuid) {
             this.uiLog.log(
-              `Storage - Update  - Successfully - ${_obj.config.uuid}`
+              `Storage - Update  - Successfully - ${_obj.config.uuid}`,
             );
             this.storedData[i] = _obj;
             await this.__save();
@@ -111,21 +111,22 @@ export abstract class StorageClass {
         }
         if (didUpdate === false) {
           this.uiLog.error(
-            `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`
+            `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`,
           );
           this.uiHelper.showAlert(
             `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`,
-            'CRITICAL ERROR'
+            'CRITICAL ERROR',
           );
         }
         resolve(false);
       } catch (ex) {
         this.uiLog.error(
-          `Storage - Update  - Unsucessfully - Execption occured- ${ex.message}`
+          'Storage - Update  - Unsucessfully - Execption occured',
+          ex,
         );
         this.uiHelper.showAlert(
-          `Storage - Update  - Unsucessfully - Execption occured- ${ex.message}`,
-          'CRITICAL ERROR'
+          `Storage - Update  - Unsucessfully - Execption occured - ${ex.message}`,
+          'CRITICAL ERROR',
         );
         resolve(false);
       }
@@ -206,7 +207,7 @@ export abstract class StorageClass {
             this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
             try {
               this.uiLog.log(
-                `Storage successfull - ${this.DB_PATH} - Data amount: ${_data.length}`
+                `Storage successfull - ${this.DB_PATH} - Data amount: ${_data.length}`,
               );
             } catch (ex) {}
 
@@ -217,13 +218,11 @@ export abstract class StorageClass {
         },
         (e) => {
           // Error
-          this.uiLog.log(
-            `Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`
-          );
+          this.uiLog.log(`Storage error - ${this.DB_PATH}`, e);
           this.storedData = [];
           this.isInitialized = 0;
           reject();
-        }
+        },
       );
     });
     return promise;
@@ -258,32 +257,24 @@ export abstract class StorageClass {
           if (_saved === true) {
             this.uiLog.log('Storage - Save - Successfully');
           } else {
-            this.uiLog.error(
-              `Storage - Save Set - Unsuccessfully - ` + JSON.stringify(_saved)
-            );
+            this.uiLog.error('Storage - Save Set - Unsuccessfully', _saved);
             this.uiHelper.showAlert(
               'Storage - Save Set - Unsuccessfully  - ' +
                 JSON.stringify(_saved),
-              'CRITICAL ERROR'
+              'CRITICAL ERROR',
             );
           }
         },
         (e) => {
-          this.uiLog.error(
-            `Storage - Save Set Exception - Unsuccessfully - ${JSON.stringify(
-              e
-            )}`
-          );
+          this.uiLog.error('Storage - Save Set Exception - Unsuccessfully', e);
           this.uiHelper.showAlert(
             JSON.stringify(e),
-            'CRITICAL ERROR - SAVE SET'
+            'CRITICAL ERROR - SAVE SET',
           );
-        }
+        },
       );
     } catch (ex) {
-      this.uiLog.error(
-        `Storage - Save - Unsuccessfully - ${JSON.stringify(ex)}`
-      );
+      this.uiLog.error('Storage - Save - Unsuccessfully', ex);
       this.uiHelper.showAlert(ex.message, 'CRITICAL ERROR');
     }
   }

@@ -1,26 +1,35 @@
-import { Component, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../../services/uiHelper';
+import { Component, inject, Input } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
-import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
 import { ROASTING_MACHINE_ACTION } from '../../../../enums/roasting-machine/roastingMachineAction';
+import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
+import { UIHelper } from '../../../../services/uiHelper';
 
 @Component({
   selector: 'app-roasting-machine-popover-actions',
   templateUrl: './roasting-machine-popover-actions.component.html',
   styleUrls: ['./roasting-machine-popover-actions.component.scss'],
-  standalone: false,
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class RoastingMachinePopoverActionsComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static readonly COMPONENT_ID = 'roasting-machine-popover-actions';
   public data: RoastingMachine = new RoastingMachine();
 
   @Input('roastingMachine') public roastingMachine: IRoastingMachine;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {}
   public ngOnInit() {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const roastingMachine: IRoastingMachine = this.uiHelper.copyData(

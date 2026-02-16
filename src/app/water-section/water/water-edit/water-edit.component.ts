@@ -1,24 +1,81 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { ModalController } from '@ionic/angular';
+import {
+  IonButton,
+  IonCard,
+  IonCheckbox,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonSelect,
+  IonSelectOption,
+  IonTextarea,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { informationCircleOutline } from 'ionicons/icons';
 
-import { UIHelper } from '../../../../services/uiHelper';
-import { UIToast } from '../../../../services/uiToast';
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Water } from '../../../../classes/water/water';
-import { UIWaterStorage } from '../../../../services/uiWaterStorage';
-
+import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../../components/header/header.component';
+import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
+import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import { PreventCharacterDirective } from '../../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../../directive/remove-empty-number.directive';
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
-import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import { KeysPipe } from '../../../../pipes/keys';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UIToast } from '../../../../services/uiToast';
+import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 
 @Component({
   selector: 'app-water-edit',
   templateUrl: './water-edit.component.html',
   styleUrls: ['./water-edit.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PhotoAddComponent,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TranslatePipe,
+    KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonCheckbox,
+    IonLabel,
+    IonTextarea,
+    IonRow,
+    IonCol,
+    IonSelect,
+    IonSelectOption,
+    IonFooter,
+  ],
 })
 export class WaterEditComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static readonly COMPONENT_ID = 'water-edit';
   public data: Water = new Water();
 
@@ -26,13 +83,9 @@ export class WaterEditComponent {
   public waterPropertyEnum = WATER_UNIT;
   public waterPropertyTdsEnum = WATER_UNIT_TDS;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiWaterStorage: UIWaterStorage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
+  constructor() {
+    addIcons({ informationCircleOutline });
+  }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

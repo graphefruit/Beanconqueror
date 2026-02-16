@@ -1,11 +1,9 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import { IConfig } from '../objectConfig/iObjectConfig';
 import { WATER_UNIT } from '../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../enums/water/waterUnitTds';
-
-/** Enums */
+import { IConfig } from '../objectConfig/iObjectConfig';
 
 export interface IWaterVisualizer {
   name: string;

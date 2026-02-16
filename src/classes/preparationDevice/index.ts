@@ -1,10 +1,11 @@
-import { XeniaDevice } from './xenia/xeniaDevice';
-import { PreparationDevice } from './preparationDevice';
 import { HttpClient } from '@angular/common/http';
+
 import { Preparation } from '../preparation/preparation';
-import { MeticulousDevice } from './meticulous/meticulousDevice';
-import { SanremoYOUDevice } from './sanremo/sanremoYOUDevice';
 import { GaggiuinoDevice } from './gaggiuino/gaggiuinoDevice';
+import { MeticulousDevice } from './meticulous/meticulousDevice';
+import { PreparationDevice } from './preparationDevice';
+import { SanremoYOUDevice } from './sanremo/sanremoYOUDevice';
+import { XeniaDevice } from './xenia/xeniaDevice';
 
 export enum PreparationDeviceType {
   NONE = 'NONE',

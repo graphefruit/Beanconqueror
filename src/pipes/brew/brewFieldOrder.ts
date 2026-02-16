@@ -1,10 +1,6 @@
-/** Core */
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'brewFieldOrderPipe',
-  standalone: false,
-})
+@Pipe({ name: 'brewFieldOrderPipe' })
 export class BrewFieldOrder implements PipeTransform {
   public transform(value, args?: Array<any>): any {
     const _settingsOrder: number = args[0];

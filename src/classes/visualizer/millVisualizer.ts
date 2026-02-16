@@ -1,4 +1,3 @@
-/** Interfaces */
 import { IMillVisualizer } from '../../interfaces/visualizer/iMillVisualizer';
 
 export class MillVisualizer implements IMillVisualizer {

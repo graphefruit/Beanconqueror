@@ -23,6 +23,7 @@ export class SanremoShotData implements ISanremoShotData {
 
   public localTimeString: string;
   public reconnectionCounter: number;
+  public doses: { key1: number; key2: number; key3: number };
 
   constructor() {
     this.status = 0;
@@ -40,5 +41,6 @@ export class SanremoShotData implements ISanremoShotData {
     this.setPressPaddle = 0;
     this.localTimeString = '';
     this.reconnectionCounter = 0;
+    this.doses = { key1: 0, key2: 0, key3: 0 };
   }
 }

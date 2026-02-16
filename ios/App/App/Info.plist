@@ -125,5 +125,7 @@
 	<string>Location is used when enabled in settings, default off. Used for track your location where you brewed your coffee.</string>
 	<key>NFCReaderUsageDescription</key>
 	<string>NFC is used to read and write bean actions to a NFC-Chip. With this you can start directly a brew from a coffee bean / bag coming out of your freezer or hopper, or you can edit or detail view it directly.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone is used for recording the espresso-shot sounds</string>
 </dict>
 </plist>

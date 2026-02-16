@@ -4,6 +4,7 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   OnInit,
   Output,
@@ -11,14 +12,14 @@ import {
 import { NgModel } from '@angular/forms';
 
 import moment from 'moment';
-import { IFlavor } from '../interfaces/flavor/iFlavor';
-import { Brew } from '../classes/brew/brew';
 
-@Directive({
-  selector: '[transform-date]',
-  standalone: false,
-})
+import { Brew } from '../classes/brew/brew';
+import { IFlavor } from '../interfaces/flavor/iFlavor';
+
+@Directive({ selector: '[transform-date]' })
 export class TransformDateDirective implements AfterViewInit {
+  private el = inject(ElementRef);
+
   private oldModelValue: any = undefined;
 
   @Input('displayFormat') public displayFormat: string;
@@ -27,8 +28,6 @@ export class TransformDateDirective implements AfterViewInit {
   @Output() public dataChange = new EventEmitter<any>();
 
   private viewInitIntv = undefined;
-
-  constructor(private el: ElementRef) {}
 
   public ngAfterViewInit() {
     this.viewInitIntv = setInterval(() => {

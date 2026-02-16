@@ -1,20 +1,18 @@
-/** Interfaces */
-import { IPreparation } from '../../interfaces/preparation/iPreparation';
-/** Classes */
-import { Config } from '../objectConfig/objectConfig';
-import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
-import { DefaultBrewParameter } from '../parameter/defaultBrewParameter';
-import { OrderBrewParameter } from '../parameter/orderBrewParameter';
-import { ManageBrewParameter } from '../parameter/manageBrewParameter';
-import { PreparationTool } from './preparationTool';
+import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
+import { IPreparation } from '../../interfaces/preparation/iPreparation';
 import { UIHelper } from '../../services/uiHelper';
-import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
-import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
-import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
-import { PreparationDeviceType } from '../preparationDevice';
-import { PreparationDevice } from '../preparationDevice/preparationDevice';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
+import { Config } from '../objectConfig/objectConfig';
+import { DefaultBrewParameter } from '../parameter/defaultBrewParameter';
+import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
+import { ManageBrewParameter } from '../parameter/manageBrewParameter';
+import { OrderBrewParameter } from '../parameter/orderBrewParameter';
+import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
+import { PreparationDeviceType } from '../preparationDevice';
+import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
+import { PreparationDevice } from '../preparationDevice/preparationDevice';
+import { PreparationTool } from './preparationTool';
 
 export class Preparation implements IPreparation {
   public name: string;

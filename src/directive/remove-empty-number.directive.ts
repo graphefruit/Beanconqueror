@@ -1,16 +1,11 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, HostListener, inject } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-@Directive({
-  selector: '[ngModel][remove-empty-number]',
-  standalone: false,
-})
+@Directive({ selector: '[ngModel][remove-empty-number]' })
 export class RemoveEmptyNumberDirective {
-  // @Output() ngModelChange:EventEmitter<any> = new EventEmitter();
+  private readonly model = inject(NgModel);
 
-  constructor(private readonly model: NgModel) {}
-
-  @HostListener('ionFocus', ['$event.target'])
+  @HostListener('ionFocus')
   public focus(): void {
     const val: any = this.model.control.value;
     // Emit worked aswell but I don't know what its doing in depth

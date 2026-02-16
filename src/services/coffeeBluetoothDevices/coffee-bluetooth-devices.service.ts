@@ -1,12 +1,26 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, inject, Injectable } from '@angular/core';
+
 import { Capacitor } from '@capacitor/core';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, Subject } from 'rxjs';
+
+import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
+import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
 import { BluetoothScale } from 'src/classes/devices/bluetoothDevice';
-import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
-import { ETITemperature } from 'src/classes/devices/etiTemperature';
+import { BookooScale } from 'src/classes/devices/bokooScale';
+import { BookooPressure } from 'src/classes/devices/bookooPressure';
 import { Logger } from 'src/classes/devices/common/logger';
+import { DifluidMicrobalance } from 'src/classes/devices/difluidMicrobalance';
+import { DiFluidR2Refractometer } from 'src/classes/devices/difluidR2Refractometer';
+import { ETITemperature } from 'src/classes/devices/etiTemperature';
+import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { PressureDevice } from 'src/classes/devices/pressureBluetoothDevice';
 import { PrsPressure } from 'src/classes/devices/prsPressure';
-import { EurekaPrecisaScale } from '../../classes/devices/eurekaPrecisaScale';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
+import { SmartchefScale } from 'src/classes/devices/smartchefScale';
+import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
+import { TimemoreScale } from 'src/classes/devices/timemoreScale';
+import { WeighMyBruScale } from 'src/classes/devices/weighMyBruScale';
 import {
   BluetoothTypes,
   makeDevice,
@@ -16,41 +30,32 @@ import {
   PressureType,
   RefractometerType,
   ScaleType,
+  sleep,
   TemperatureType,
 } from '../../classes/devices';
-import { DecentScale } from '../../classes/devices/decentScale';
-import { TransducerDirectPressure } from '../../classes/devices/transducerDirectPressure';
-import { FelicitaScale } from '../../classes/devices/felicitaScale';
+import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 import { PeripheralData } from '../../classes/devices/ble.types';
-import { Observable, Subject } from 'rxjs';
-import { LunarScale } from '../../classes/devices/lunarScale';
-import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
-import { JimmyScale } from '../../classes/devices/jimmyScale';
-import { SkaleScale } from '../../classes/devices/skale';
-import { SmartchefScale } from 'src/classes/devices/smartchefScale';
-import { DifluidMicrobalance } from 'src/classes/devices/difluidMicrobalance';
-import { DiFluidR2Refractometer } from 'src/classes/devices/difluidR2Refractometer';
-import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
-import { UISettingsStorage } from '../uiSettingsStorage';
-import { TranslateService } from '@ngx-translate/core';
-import { UIToast } from '../uiToast';
-import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
+import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
+import { DecentScale } from '../../classes/devices/decentScale';
 import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
 import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
-import { BookooScale } from 'src/classes/devices/bokooScale';
-import { BookooPressure } from 'src/classes/devices/bookooPressure';
-import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
-import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
-import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
-import { ArgosThermometer } from '../../classes/devices/argosThermometer';
-import { TimemoreScale } from 'src/classes/devices/timemoreScale';
+import { EspressiScale } from '../../classes/devices/espressiScale';
+import { EurekaPrecisaScale } from '../../classes/devices/eurekaPrecisaScale';
+import { FelicitaScale } from '../../classes/devices/felicitaScale';
+import { FutulaScale } from '../../classes/devices/futulaScale';
+import { GeisingerThermometer } from '../../classes/devices/geisingerThermometer';
+import { JimmyScale } from '../../classes/devices/jimmyScale';
+import { LunarScale } from '../../classes/devices/lunarScale';
+import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
+import { SkaleScale } from '../../classes/devices/skale';
+import { TransducerDirectPressure } from '../../classes/devices/transducerDirectPressure';
 import { VariaAkuScale } from '../../classes/devices/variaAku';
-import { UIHelper } from '../uiHelper';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
-import { EspressiScale } from '../../classes/devices/espressiScale';
-import { WeighMyBruScale } from 'src/classes/devices/weighMyBruScale';
+import { UIHelper } from '../uiHelper';
+import { UISettingsStorage } from '../uiSettingsStorage';
+import { UIToast } from '../uiToast';
 
 declare var ble: any;
 declare var cordova: any;
@@ -70,6 +75,12 @@ export enum CoffeeBluetoothServiceEvent {
   providedIn: 'root',
 })
 export class CoffeeBluetoothDevicesService {
+  private readonly uiStettingsStorage = inject(UISettingsStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public scale: BluetoothScale | null = null;
   public pressureDevice: PressureDevice | null = null;
   public temperatureDevice: TemperatureDevice | null = null;
@@ -82,13 +93,7 @@ export class CoffeeBluetoothDevicesService {
 
   private scanBluetoothTimeout: any = null;
 
-  constructor(
-    private readonly uiStettingsStorage: UISettingsStorage,
-    private readonly translate: TranslateService,
-    private readonly uiToast: UIToast,
-    private readonly uiHelper: UIHelper,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {
+  constructor() {
     this.logger = new Logger('CoffeeBluetoothDevices');
     this.failed = false;
     this.ready = true;
@@ -494,7 +499,8 @@ export class CoffeeBluetoothDevicesService {
             BasicGrillThermometer.test(scanDevice) ||
             MeaterThermometer.test(scanDevice) ||
             CombustionThermometer.test(scanDevice) ||
-            ArgosThermometer.test(scanDevice)
+            ArgosThermometer.test(scanDevice) ||
+            GeisingerThermometer.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -674,6 +680,10 @@ export class CoffeeBluetoothDevicesService {
       this.logger.log('BleManager - We found a felicita scale');
       return { id: deviceScale.id, type: ScaleType.FELICITA };
     }
+    if (FutulaScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a futula scale');
+      return { id: deviceScale.id, type: ScaleType.FUTULA };
+    }
     if (EurekaPrecisaScale.test(deviceScale)) {
       this.logger.log('BleManager - We found a eureka scale');
       return { id: deviceScale.id, type: ScaleType.EUREKAPRECISA };
@@ -806,6 +816,12 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceTemperature.id,
         type: TemperatureType.ARGOS,
+      };
+    } else if (GeisingerThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found a Geisinger Thermometer device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.GEISINGER,
       };
     }
 
@@ -982,29 +998,19 @@ export class CoffeeBluetoothDevicesService {
             if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
-              await new Promise((resolve) => {
-                setTimeout(async () => {
-                  resolve(undefined);
-                }, 500);
-              });
+
+              await sleep(500);
             } else if (Capacitor.getPlatform() === 'ios') {
               if (settings?.scale_type === ScaleType.LUNAR) {
                 await this.enableIOSBluetooth();
                 await this.findDeviceWithDirectId(deviceId, 6000);
                 // Give it a short delay before reconnect
-                await new Promise((resolve) => {
-                  setTimeout(async () => {
-                    resolve(undefined);
-                  }, 500);
-                });
+
+                await sleep(500);
               }
             }
 
-            await new Promise((resolve) => {
-              setTimeout(async () => {
-                resolve(undefined);
-              }, 2000);
-            });
+            await sleep(2000);
 
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectScale(
@@ -1102,18 +1108,10 @@ export class CoffeeBluetoothDevicesService {
             if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
-              await new Promise((resolve) => {
-                setTimeout(async () => {
-                  resolve(undefined);
-                }, 500);
-              });
+              await sleep(500);
             }
 
-            await new Promise((resolve) => {
-              setTimeout(async () => {
-                resolve(undefined);
-              }, 2000);
-            });
+            await sleep(2000);
 
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectPressureDevice(

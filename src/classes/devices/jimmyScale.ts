@@ -1,6 +1,6 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { ScaleType } from './index';
+import { ScaleType, sleep } from './index';
 
 declare var ble: any;
 
@@ -44,10 +44,9 @@ export class JimmyScale extends BluetoothScale {
 
   public override async connect() {
     await this.attachNotification();
-    setTimeout(async () => {
-      await this.setUnit(JimmyUnit.GRAMM);
-      await this.setMode(JimmyMode.SCALE_ONLY);
-    }, 500);
+    await sleep(500);
+    await this.setUnit(JimmyUnit.GRAMM);
+    await this.setMode(JimmyMode.SCALE_ONLY);
   }
 
   public override async tare() {
@@ -98,7 +97,7 @@ export class JimmyScale extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -111,7 +110,7 @@ export class JimmyScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
 

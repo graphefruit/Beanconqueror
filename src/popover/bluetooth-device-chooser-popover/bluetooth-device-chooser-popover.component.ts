@@ -1,33 +1,85 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   NgZone,
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { BluetoothTypes, ScaleType } from '../../classes/devices';
-import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonItem,
+  IonRadio,
+  IonRadioGroup,
+  IonRow,
+  IonSpinner,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { refreshOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, Subscription } from 'rxjs';
-import { ModalController, Platform } from '@ionic/angular';
-import { UIAlert } from '../../services/uiAlert';
-import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+
+import { BluetoothTypes, ScaleType, sleep } from '../../classes/devices';
+import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { Preparation } from '../../classes/preparation/preparation';
-import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-bluetooth-device-chooser-popover',
   templateUrl: './bluetooth-device-chooser-popover.component.html',
   styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonButton,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonCard,
+    IonCardContent,
+    IonRadioGroup,
+    IonItem,
+    IonRadio,
+    IonSpinner,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BluetoothDeviceChooserPopoverComponent
   implements OnInit, OnDestroy
 {
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly modalController = inject(ModalController);
+  private readonly platform = inject(Platform);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private ngZone = inject(NgZone);
+
   public static POPOVER_ID: string = 'bluetooth-device-chooser-popover';
   @Input() public bluetoothTypeSearch: BluetoothTypes = undefined;
 
@@ -37,17 +89,9 @@ export class BluetoothDeviceChooserPopoverComponent
   private settings: Settings;
   public searchRunning: boolean = undefined;
 
-  constructor(
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly modalController: ModalController,
-    private readonly platform: Platform,
-    private readonly uiAlert: UIAlert,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetector: ChangeDetectorRef,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private ngZone: NgZone,
-  ) {}
+  constructor() {
+    addIcons({ refreshOutline });
+  }
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -259,18 +303,14 @@ export class BluetoothDeviceChooserPopoverComponent
         // Just skale and decent has an LED.
         let skipLoop = 0;
         for (let i = 0; i < 5; i++) {
-          await new Promise((resolve) => {
-            setTimeout(async () => {
-              const connectedScale = this.bleManager.getScale();
-              if (connectedScale !== null && connectedScale !== undefined) {
-                skipLoop = 1;
-                try {
-                  connectedScale.setLed(true, true);
-                } catch (ex) {}
-              }
-              resolve(undefined);
-            }, 1000);
-          });
+          await sleep(1000);
+          const connectedScale = this.bleManager.getScale();
+          if (connectedScale !== null && connectedScale !== undefined) {
+            skipLoop = 1;
+            try {
+              connectedScale.setLed(true, true);
+            } catch (ex) {}
+          }
           if (skipLoop === 1) {
             break;
           }

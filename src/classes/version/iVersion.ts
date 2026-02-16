@@ -1,8 +1,5 @@
-/** Interfaces */
-/** Enums */
-/** Classes */
-import { Config } from '../objectConfig/objectConfig';
 import { IVersion } from '../../interfaces/version/iVersion';
+import { Config } from '../objectConfig/objectConfig';
 
 export class Version implements IVersion {
   public config: Config;
@@ -60,7 +57,7 @@ export class Version implements IVersion {
    * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
    */
   private getUpdatedVersions() {
-    return ['8.5.0'];
+    return ['8.6.0'];
   }
 
   private versionCompare(_actualAppVersion, _updateVersion) {

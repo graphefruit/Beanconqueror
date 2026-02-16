@@ -1,5 +1,4 @@
 :host {
-
   ion-label {
     font-family: 'Baloo', sans-serif;
   }
@@ -11,9 +10,7 @@
       width: 128px;
       height: 128px;
       font-size: 128px;
-
     }
-
   }
   @media (max-width: 400px) {
     ion-card {
@@ -23,13 +20,10 @@
         width: 96px;
         height: 96px;
         font-size: 96px;
-
       }
     }
   }
   .preparation-add-card {
     background-color: var(--ion-color-light);
   }
-
-
 }

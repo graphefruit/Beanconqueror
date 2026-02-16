@@ -1,7 +1,6 @@
 import { LimitedPeripheralData, PeripheralData } from './ble.types';
-
-import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
 import { parseAdvertisingManufacturerData, to128bitUUID } from './common/util';
+import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
 
 declare var ble: any;
 export class PopsiclePressure extends PressureDevice {

@@ -123,7 +123,7 @@ export class TimemoreScale extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -136,7 +136,7 @@ export class TimemoreScale extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
   private async parseStatusUpdate(timemoreRawStatus: Uint8Array) {
@@ -153,7 +153,7 @@ export class TimemoreScale extends BluetoothScale {
       TimemoreScale.SERVICE_UUID,
       TimemoreScale.CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

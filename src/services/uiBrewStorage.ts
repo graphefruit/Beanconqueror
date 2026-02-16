@@ -1,12 +1,7 @@
-/** Core */
 import { Injectable } from '@angular/core';
-/** Class */
+
 import { Brew } from '../classes/brew/brew';
-/** Services */
 import { StorageClass } from '../classes/storageClass';
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
 
 @Injectable({
   providedIn: 'root',
@@ -27,12 +22,8 @@ export class UIBrewStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog
-  ) {
-    super(uiStorage, uiHelper, uiLog, 'BREWS');
+  constructor() {
+    super('BREWS');
 
     if (UIBrewStorage.instance === undefined) {
       UIBrewStorage.instance = this;
@@ -76,13 +67,8 @@ export class UIBrewStorage extends StorageClass {
   }
 
   public async update(_obj: Brew): Promise<boolean> {
-    const promise: Promise<any> = new Promise(async (resolve, reject) => {
-      _obj.fixDataTypes();
-
-      const updatingObj = this.uiHelper.cloneData(_obj);
-      const updateval: boolean = await super.update(updatingObj);
-      resolve(updateval);
-    });
-    return promise;
+    _obj.fixDataTypes();
+    const updatingObj = this.uiHelper.cloneData(_obj);
+    return await super.update(updatingObj);
   }
 }

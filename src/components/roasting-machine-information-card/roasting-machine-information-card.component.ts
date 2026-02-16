@@ -1,42 +1,72 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIToast } from '../../services/uiToast';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { UIAlert } from '../../services/uiAlert';
-import { UIImage } from '../../services/uiImage';
-import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
-import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
-import { ROASTING_MACHINE_ACTION } from '../../enums/roasting-machine/roastingMachineAction';
+import { DecimalPipe } from '@angular/common';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonLabel,
+  IonRow,
+  IonText,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { RoastingMachinePopoverActionsComponent } from '../../app/roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { Bean } from '../../classes/bean/bean';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { ROASTING_MACHINE_ACTION } from '../../enums/roasting-machine/roastingMachineAction';
+import { UIAlert } from '../../services/uiAlert';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIImage } from '../../services/uiImage';
 import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
+import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
+import { UIToast } from '../../services/uiToast';
+import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
   selector: 'roasting-machine-information-card',
   templateUrl: './roasting-machine-information-card.component.html',
   styleUrls: ['./roasting-machine-information-card.component.scss'],
-  standalone: false,
+  imports: [
+    LongPressDirective,
+    AsyncImageComponent,
+    DecimalPipe,
+    TranslatePipe,
+    IonCard,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonButton,
+    IonIcon,
+    IonLabel,
+    IonText,
+  ],
 })
 export class RoastingMachineInformationCardComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiImage = inject(UIImage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiRoastingMachineHelper = inject(UIRoastingMachineHelper);
+
   @Input() public roastingMachine: RoastingMachine;
   @Output() public roastingMachineAction: EventEmitter<any> =
     new EventEmitter();
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiAlert: UIAlert,
-    private readonly uiImage: UIImage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiRoastingMachineHelper: UIRoastingMachineHelper,
-  ) {}
 
   public async show() {
     await this.detail();

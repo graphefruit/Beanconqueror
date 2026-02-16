@@ -1,8 +1,6 @@
-import {IBeanRoastInformation} from '../../interfaces/bean/iBeanRoastInformation';
-
+import { IBeanRoastInformation } from '../../interfaces/bean/iBeanRoastInformation';
 
 export class BeanRoastInformation implements IBeanRoastInformation {
-
   public drop_temperature: number;
   public roast_length: number;
   public roaster_machine: string;
@@ -21,7 +19,7 @@ export class BeanRoastInformation implements IBeanRoastInformation {
     this.roaster_machine = '';
     this.green_bean_weight = 0;
     this.outside_temperature = 0;
-    this.humidity= 0;
+    this.humidity = 0;
     this.bean_uuid = '';
     this.first_crack_minute = 0;
     this.first_crack_temperature = 0;
@@ -32,5 +30,4 @@ export class BeanRoastInformation implements IBeanRoastInformation {
   public initializeByObject(beanObj: IBeanRoastInformation): void {
     Object.assign(this, beanObj);
   }
-
 }

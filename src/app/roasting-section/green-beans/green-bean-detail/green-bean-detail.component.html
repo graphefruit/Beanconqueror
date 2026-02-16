@@ -1,12 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{"ROASTING_SECTION.GREEN_BEAN.DETAIL" | translate}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
-        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+  <app-header [title]="'ROASTING_SECTION.GREEN_BEAN.DETAIL' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+  </app-header>
 </ion-header>
 <ion-content>
 

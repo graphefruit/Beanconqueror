@@ -1,12 +1,12 @@
 // Converted to TypeScript from Python from https://github.com/lucapinello/pyacaia
+import { Capacitor } from '@capacitor/core';
+import { memoize } from 'lodash';
+
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Characteristic } from '../ble.types';
-import {
-  MAGIC1,
-  MAGIC2,
-  PYXIS_RX_CHARACTERISTIC_UUID,
-  PYXIS_TX_CHARACTERISTIC_UUID,
-  SCALE_CHARACTERISTIC_UUID,
-} from './constants';
+import { DEBUG } from '../common/constants';
+import { Logger } from '../common/logger';
+import { sleep, to128bitUUID } from '../common/util';
 import {
   Button,
   DecoderResultType,
@@ -16,14 +16,14 @@ import {
   Units,
   WorkerResult,
 } from './common';
-import { memoize } from 'lodash';
-
-import { Logger } from '../common/logger';
-import { DEBUG } from '../common/constants';
-import { sleep, to128bitUUID } from '../common/util';
+import {
+  MAGIC1,
+  MAGIC2,
+  PYXIS_RX_CHARACTERISTIC_UUID,
+  PYXIS_TX_CHARACTERISTIC_UUID,
+  SCALE_CHARACTERISTIC_UUID,
+} from './constants';
 import { Decoder } from './decoder';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Capacitor } from '@capacitor/core';
 
 declare var window: any;
 export enum EventType {

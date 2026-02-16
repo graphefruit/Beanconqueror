@@ -1,11 +1,12 @@
 import { Capacitor } from '@capacitor/core';
+import { AdvertisementDecoder } from 'ble-central-advertisements';
+
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-
 import { TemperatureDevice } from './temperatureBluetoothDevice';
 
 declare var ble: any;
-import { AdvertisementDecoder } from 'ble-central-advertisements';
+
 export class CombustionThermometer extends TemperatureDevice {
   public static DEVICE_NAME = 'Combustion Inc';
   public static TEMPERATURE_SERVICE_UUID =
@@ -27,7 +28,7 @@ export class CombustionThermometer extends TemperatureDevice {
           if (
             bleDevice &&
             bleDevice.advertising.kCBAdvDataServiceUUIDs.indexOf(
-              '00000100-CAAB-3792-3D44-97AE51C1407A'
+              '00000100-CAAB-3792-3D44-97AE51C1407A',
             ) >= 0
           ) {
             return true;
@@ -70,13 +71,13 @@ export class CombustionThermometer extends TemperatureDevice {
 
         this.parseStatusUpdate(data);
       },
-      async (_data: any) => {}
+      async (_data: any) => {},
     );
   }
 
   private parseStatusUpdate(temperatureRawStatus: Uint8Array) {
     const lograngeArray = new Uint32Array(
-      temperatureRawStatus.slice(0, 8).buffer
+      temperatureRawStatus.slice(0, 8).buffer,
     );
 
     /**
@@ -88,7 +89,7 @@ export class CombustionThermometer extends TemperatureDevice {
     };
 
     const temperatures = this.readTemperatures(
-      temperatureRawStatus.slice(8, 21)
+      temperatureRawStatus.slice(8, 21),
     );
 
     const modeByte = temperatureRawStatus[21];
@@ -113,7 +114,7 @@ export class CombustionThermometer extends TemperatureDevice {
     virtualSensors.ambient = temperatures[virtualSensors.ambientIndex];
 
     this.logger.log(
-      'temperatureRawStatus received is: ' + temperatureRawStatus
+      'temperatureRawStatus received is: ' + temperatureRawStatus,
     );
 
     this.setTemperature(virtualSensors.core, temperatureRawStatus);
@@ -125,7 +126,7 @@ export class CombustionThermometer extends TemperatureDevice {
       CombustionThermometer.TEMPERATURE_SERVICE_UUID,
       CombustionThermometer.TEMPERATURE_CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 

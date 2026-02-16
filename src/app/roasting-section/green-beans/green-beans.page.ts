@@ -3,32 +3,73 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
+import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
-import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
-import { ModalController } from '@ionic/angular';
-import { UIAlert } from '../../../services/uiAlert';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { GreenBean } from '../../../classes/green-bean/green-bean';
-import { UIGreenBeanStorage } from '../../../services/uiGreenBeanStorage';
 import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
-import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.component';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
+import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIGreenBeanHelper } from '../../../services/uiGreenBeanHelper';
+import { UIGreenBeanStorage } from '../../../services/uiGreenBeanStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.component';
 
 @Component({
   selector: 'app-green-beans',
   templateUrl: './green-beans.page.html',
   styleUrls: ['./green-beans.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    GreenBeanInformationComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
+  ],
 })
 export class GreenBeansPage implements OnInit {
+  modalCtrl = inject(ModalController);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiGreenBeanHelper = inject(UIGreenBeanHelper);
+
   private beans: Array<GreenBean> = [];
 
   public openBeans: Array<GreenBean> = [];
@@ -42,10 +83,13 @@ export class GreenBeansPage implements OnInit {
   @ViewChild('greenBeanContent', { read: ElementRef })
   public greenBeanContent: ElementRef;
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualScrollComponent;
   public bean_segment: string = 'open';
   public archivedBeansFilter: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -57,16 +101,7 @@ export class GreenBeansPage implements OnInit {
 
   public settings: Settings;
   public segmentScrollHeight: string = undefined;
-  constructor(
-    public modalCtrl: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGreenBeanHelper: UIGreenBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
@@ -88,14 +123,14 @@ export class GreenBeansPage implements OnInit {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.greenBeanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else {
@@ -106,6 +141,16 @@ export class GreenBeansPage implements OnInit {
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
 
       this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
+      }
     }, 250);
   }
 
@@ -278,3 +323,5 @@ export class GreenBeansPage implements OnInit {
     this.__initializeBeansView('archiv');
   }
 }
+
+export default GreenBeansPage;

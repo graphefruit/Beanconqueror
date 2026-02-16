@@ -1,10 +1,10 @@
-import { PeripheralData } from './ble.types';
-
-declare var ble: any;
-
 import { EventEmitter } from '@angular/core';
+
+import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
 import { ScaleType } from './index';
+
+declare var ble: any;
 
 export enum SCALE_TIMER_COMMAND {
   STOP = 'STOP',
@@ -65,7 +65,7 @@ export class BluetoothScale {
     this.scaleType = type;
     this.blueToothParentlogger = new Logger();
   }
-  public getScaleType() {
+  public getScaleType(): ScaleType | undefined {
     return this.scaleType;
   }
   public async connect() {}

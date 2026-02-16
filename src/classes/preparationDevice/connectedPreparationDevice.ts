@@ -1,5 +1,5 @@
-import { PreparationDeviceType } from './index';
 import { IConnectedPreparationDevice } from '../../interfaces/preparationDevices/iConnectedPreparationDevice';
+import { PreparationDeviceType } from './index';
 
 export class ConnectedPreparationDevice implements IConnectedPreparationDevice {
   public type: PreparationDeviceType;

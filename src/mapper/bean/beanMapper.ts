@@ -1,11 +1,11 @@
-import { ServerBean } from '../../models/bean/serverBean';
 import { Bean } from '../../classes/bean/bean';
-import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
-import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { IAttachment } from '../../interfaces/server/iAttachment';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
+import { IAttachment } from '../../interfaces/server/iAttachment';
+import { ServerBean } from '../../models/bean/serverBean';
+import { UIFileHelper } from '../../services/uiFileHelper';
 
 export class BeanMapper {
   constructor() {}

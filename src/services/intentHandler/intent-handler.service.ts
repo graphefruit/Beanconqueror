@@ -1,43 +1,45 @@
-import { Injectable, NgZone } from '@angular/core';
-import { UIHelper } from '../uiHelper';
+import { inject, Injectable, NgZone } from '@angular/core';
 
-import { UILog } from '../uiLog';
-import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
-import { UIBeanHelper } from '../uiBeanHelper';
-import { ServerBean } from '../../models/bean/serverBean';
-import { UIAlert } from '../uiAlert';
-import QR_TRACKING from '../../data/tracking/qrTracking';
-import { UIAnalytics } from '../uiAnalytics';
-import { VisualizerService } from '../visualizerService/visualizer-service.service';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
-import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
-import { UIBrewHelper } from '../uiBrewHelper';
+
 import IntentHandlerTracking from '../../data/tracking/intentHandlerTracking';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
+import { ServerBean } from '../../models/bean/serverBean';
+import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
+import { UIAlert } from '../uiAlert';
+import { UIAnalytics } from '../uiAnalytics';
+import { UIBeanHelper } from '../uiBeanHelper';
+import { UIBrewHelper } from '../uiBrewHelper';
+import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
+import { VisualizerService } from '../visualizerService/visualizer-service.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IntentHandlerService {
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiLog = inject(UILog);
+  private readonly serverCommunicationService = inject(
+    ServerCommunicationService,
+  );
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly visualizerService = inject(VisualizerService);
+  private readonly zone = inject(NgZone);
+
   public static SUPPORTED_INTENTS = {
     ADD_BEAN_ONLINE: 'ADD_BEAN_ONLINE',
     ADD_USER_BEAN: 'ADD_USER_BEAN',
   };
-  constructor(
-    private readonly uiHelper: UIHelper,
-    private readonly uiLog: UILog,
-    private readonly serverCommunicationService: ServerCommunicationService,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly visualizerService: VisualizerService,
-    private readonly zone: NgZone,
-  ) {}
 
   public attachOnHandleOpenUrl() {
     App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
       this.zone.run(() => {
-        this.uiLog.log('Deeplink matched ' + JSON.stringify(event));
+        this.uiLog.log('Deeplink matched', event);
         this.handleDeepLink(event.url);
       });
     });

@@ -1,22 +1,38 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
+import { Component, inject, Input, OnInit } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { powerOutline, wifiOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Preparation } from '../../../classes/preparation/preparation';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { PREPARATION_ACTION } from '../../../enums/preparations/preparationAction';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { PREPARATION_ACTION } from '../../../enums/preparations/preparationAction';
+import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'preparation-popover-actions',
   templateUrl: './preparation-popover-actions.component.html',
   styleUrls: ['./preparation-popover-actions.component.scss'],
-  standalone: false,
+  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
 })
 export class PreparationPopoverActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+
   public static COMPONENT_ID: string = 'preparation-popover-actions';
   public data: Preparation = new Preparation();
   @Input('preparation') public preparation: IPreparation;
@@ -24,10 +40,9 @@ export class PreparationPopoverActionsComponent implements OnInit {
   public isMachineConnected: boolean = false;
   public isMachineTurnedOn: boolean = false;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-  ) {}
+  constructor() {
+    addIcons({ powerOutline, wifiOutline });
+  }
 
   public ionViewDidEnter(): void {}
 

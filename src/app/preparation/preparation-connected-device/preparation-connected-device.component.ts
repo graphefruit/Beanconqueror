@@ -1,30 +1,84 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCheckbox,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRange,
+  IonSelect,
+  IonSelectOption,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { checkmarkCircleOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
 import { Preparation } from '../../../classes/preparation/preparation';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { ModalController } from '@ionic/angular';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
-import { UIToast } from '../../../services/uiToast';
+import { SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Settings } from '../../../classes/settings/settings';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { environment } from '../../../environments/environment';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { ToFixedPipe } from '../../../pipes/toFixed';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { environment } from '../../../environments/environment';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
-import { SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { UIToast } from '../../../services/uiToast';
 
 @Component({
   selector: 'app-preparation-connected-device',
   templateUrl: './preparation-connected-device.component.html',
   styleUrls: ['./preparation-connected-device.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    ToFixedPipe,
+    IonHeader,
+    IonContent,
+    IonButton,
+    IonIcon,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonCard,
+    IonCardContent,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonInput,
+    IonLabel,
+    IonBadge,
+    IonRange,
+    IonCheckbox,
+  ],
 })
 export class PreparationConnectedDeviceComponent {
+  private readonly modalController = inject(ModalController);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
+  readonly uiHelper = inject(UIHelper);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   public static readonly COMPONENT_ID = 'preparation-connected-device';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -42,15 +96,9 @@ export class PreparationConnectedDeviceComponent {
     const newValue = +parsedFloat.toFixed(2);
     return `${newValue}`;
   }
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert,
-    public readonly uiHelper: UIHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-  ) {}
+  constructor() {
+    addIcons({ checkmarkCircleOutline });
+  }
 
   public ionViewWillEnter(): void {
     if (this.preparation !== undefined) {

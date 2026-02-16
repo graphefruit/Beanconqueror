@@ -1,39 +1,62 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+
+import {
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  ModalController,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { bluetoothOutline } from 'ionicons/icons';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { AppEvent } from '../../../classes/appEvent/appEvent';
+import { BluetoothTypes } from '../../../classes/devices';
 import { Settings } from '../../../classes/settings/settings';
-import { ModalController } from '@ionic/angular';
-import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAlert } from '../../../services/uiAlert';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothTypes } from '../../../classes/devices';
-import { AppEvent } from '../../../classes/appEvent/appEvent';
-import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
-import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-settings-popover-bluetooth-actions',
   templateUrl: './settings-popover-bluetooth-actions.component.html',
   styleUrls: ['./settings-popover-bluetooth-actions.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonIcon,
+  ],
 })
 export class SettingsPopoverBluetoothActionsComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly uiSettings = inject(UISettingsStorage);
+  private readonly bluetoothService = inject(CoffeeBluetoothDevicesService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly eventQueue = inject(EventQueueService);
+
   public static COMPONENT_ID = 'settings-popover-bluetooth-actions';
 
   public settings: Settings;
   public readonly BluetoothTypes = BluetoothTypes;
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage,
-    private readonly bluetoothService: CoffeeBluetoothDevicesService,
-    private readonly uiAlert: UIAlert,
-    private readonly eventQueue: EventQueueService,
-  ) {
+  constructor() {
     this.settings = this.uiSettings.getSettings();
+    addIcons({ bluetoothOutline });
   }
 
   public ionViewDidEnter(): void {}

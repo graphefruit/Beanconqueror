@@ -1,20 +1,51 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { ModalController } from '@ionic/angular';
-
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { PreparationAddTypeComponent } from '../preparation-add-type/preparation-add-type.component';
+
+import {
+  IonCard,
+  IonCardContent,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonRow,
+  ModalController,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { Preparation } from '../../../classes/preparation/preparation';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
-import { UIAnalytics } from '../../../services/uiAnalytics';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { environment } from '../../../environments/environment';
+import { KeysPipe } from '../../../pipes/keys';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { PreparationAddTypeComponent } from '../preparation-add-type/preparation-add-type.component';
+
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
   styleUrls: ['./preparation-add.component.scss'],
-  standalone: false,
+  imports: [
+    TranslatePipe,
+    KeysPipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    IonHeader,
+    IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+  ],
 })
 export class PreparationAddComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiAnalytics = inject(UIAnalytics);
+
   public static COMPONENT_ID: string = 'preparation-add';
   public data: Preparation = new Preparation();
 
@@ -26,11 +57,6 @@ export class PreparationAddComponent implements OnInit {
   public preparationForm: NgForm;
 
   @Input() private hide_toast_message: boolean;
-
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiAnalytics: UIAnalytics,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(

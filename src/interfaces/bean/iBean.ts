@@ -1,16 +1,15 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import { IConfig } from '../objectConfig/iObjectConfig';
-/** Enums */
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { ICupping } from '../cupping/iCupping';
+import { IFlavor } from '../flavor/iFlavor';
+import { IConfig } from '../objectConfig/iObjectConfig';
 import { IBeanInformation } from './iBeanInformation';
 import { IBeanRoastInformation } from './iBeanRoastInformation';
-import { IFlavor } from '../flavor/iFlavor';
-import { ICupping } from '../cupping/iCupping';
-import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 
 export interface IBean {
   name: string;

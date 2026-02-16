@@ -1,4 +1,3 @@
-
 export interface IAttachment {
   name: string;
   extension: string;

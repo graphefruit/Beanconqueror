@@ -1,4 +1,9 @@
 :host {
+  // Fix repeat icon sizing in header
+  ::ng-deep app-header-button ion-icon[name='beanconqueror-repeat'] {
+    width: 32px;
+    margin-top: 5px;
+  }
 
   ion-item {
     --border-width: 0px;
@@ -6,16 +11,13 @@
     margin-right: 16px;
   }
 
-
   ion-card {
     div.last-item {
       margin-bottom: 16px;
       /*Last one*/
       order: 10000;
     }
-
   }
-
 
   ion-card.flow-profile {
     margin: 0px;
@@ -36,40 +38,39 @@
       color: var(--ion-color-text);
       padding-bottom: 4px;
     }
-
   }
 
   ion-card.flow-profile.temperature-card {
     ion-card-header {
-      background-color: #CC3311 !important;
+      background-color: #cc3311 !important;
     }
 
     ion-icon {
-      color: #CC3311 !important;
+      color: #cc3311 !important;
     }
   }
 
   ion-card.flow-profile.pressure-card {
     ion-card-header {
-      background-color: #05C793 !important;
+      background-color: #05c793 !important;
     }
 
     ion-icon {
-      color: #05C793 !important;
+      color: #05c793 !important;
     }
 
-    ion-icon>div.icon-inner>svg.s-ion-icon>g {
-      fill: #05C793 !important;
+    ion-icon > div.icon-inner > svg.s-ion-icon > g {
+      fill: #05c793 !important;
     }
   }
 
   ion-card.flow-profile.flow-card {
     ion-card-header {
-      background-color: #09485D !important;
+      background-color: #09485d !important;
     }
 
     ion-icon {
-      color: #09485D !important;
+      color: #09485d !important;
     }
   }
 

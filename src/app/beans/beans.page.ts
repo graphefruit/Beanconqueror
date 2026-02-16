@@ -1,43 +1,92 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
+  inject,
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonContent,
+  IonHeader,
+  IonLabel,
+  IonMenuButton,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import _ from 'lodash';
+import { Subscription } from 'rxjs';
+
 import { Bean } from '../../classes/bean/bean';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
-import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
+import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
+import { HeaderButtonComponent } from '../../components/header/header-button.component';
+import { HeaderComponent } from '../../components/header/header.component';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { UILog } from '../../services/uiLog';
-import { UIAnalytics } from '../../services/uiAnalytics';
-import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
-import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
-import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
-import _ from 'lodash';
-import BEAN_TRACKING from '../../data/tracking/beanTracking';
-import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
-import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
-import { Subscription } from 'rxjs';
-import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
-import { NfcService } from '../../services/nfcService/nfc-service.service';
-
-import { UIImage } from '../../services/uiImage';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
+import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
+import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
+import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
+import { NfcService } from '../../services/nfcService/nfc-service.service';
+import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIImage } from '../../services/uiImage';
+import { UILog } from '../../services/uiLog';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
+
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    NgTemplateOutlet,
+    AgVirtualScrollComponent,
+    BeanInformationComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonMenuButton,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonSearchbar,
+  ],
 })
 export class BeansPage implements OnDestroy {
+  private readonly uiLog = inject(UILog);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly qrScannerService = inject(QrScannerService);
+  private readonly intenthandler = inject(IntentHandlerService);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly platform = inject(Platform);
+  private readonly modalController = inject(ModalController);
+  private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
+  private readonly nfcService = inject(NfcService);
+  private readonly uiImage = inject(UIImage);
+
   public beans: Array<Bean> = [];
 
   public settings: Settings;
@@ -54,15 +103,15 @@ export class BeansPage implements OnDestroy {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
   @ViewChild('archivedScroll', {
-    read: AgVirtualSrollComponent,
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public archivedScroll: AgVirtualSrollComponent;
-  @ViewChild('frozenScroll', { read: AgVirtualSrollComponent, static: false })
-  public frozenScroll: AgVirtualSrollComponent;
+  public archivedScroll: AgVirtualScrollComponent;
+  @ViewChild('frozenScroll', { read: AgVirtualScrollComponent, static: false })
+  public frozenScroll: AgVirtualScrollComponent;
 
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
@@ -98,22 +147,6 @@ export class BeansPage implements OnDestroy {
   public uiShallBarBeDisplayed: boolean = false;
   public uiIsTextSearchActive: boolean = false;
   public uiSearchText: string = '';
-
-  constructor(
-    private readonly uiLog: UILog,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly qrScannerService: QrScannerService,
-    private readonly intenthandler: IntentHandlerService,
-    private readonly uiBeanHelper: UIBeanHelper,
-    private readonly platform: Platform,
-    private readonly modalController: ModalController,
-    private readonly beanSortFilterHelper: BeanSortFilterHelperService,
-    private readonly nfcService: NfcService,
-    private readonly uiImage: UIImage,
-  ) {}
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -206,8 +239,8 @@ export class BeansPage implements OnDestroy {
   }
 
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(_event: any) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
@@ -377,9 +410,9 @@ export class BeansPage implements OnDestroy {
   }
 
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else if (this.archivedScroll !== undefined) {
@@ -391,6 +424,17 @@ export class BeansPage implements OnDestroy {
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
       this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
+      }
+
       setTimeout(() => {
         /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
         const elScroll = scrollComponent.el;
@@ -536,3 +580,5 @@ export class BeansPage implements OnDestroy {
     }
   }
 }
+
+export default BeansPage;

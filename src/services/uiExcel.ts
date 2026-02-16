@@ -1,57 +1,55 @@
-/** Core */
-import { Injectable } from '@angular/core';
-/** Services */
+import { inject, Injectable } from '@angular/core';
 
-import { UIHelper } from './uiHelper';
-import { UILog } from './uiLog';
-import { UIStorage } from './uiStorage';
+import { AlertController, Platform } from '@ionic/angular/standalone';
 
-import { AlertController, Platform } from '@ionic/angular';
-import { UIBrewStorage } from './uiBrewStorage';
 import { TranslateService } from '@ngx-translate/core';
-import { UIBeanStorage } from './uiBeanStorage';
+import moment from 'moment';
+import * as XLSX from 'xlsx';
+import type { WorkBook, WorkSheet } from 'xlsx';
+
+import { Bean } from '../classes/bean/bean';
+import { Brew } from '../classes/brew/brew';
+import { BrewFlow, IBrewWaterFlow } from '../classes/brew/brewFlow';
+import { sleep } from '../classes/devices';
+import { GreenBean } from '../classes/green-bean/green-bean';
+import { Settings } from '../classes/settings/settings';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
-import { UIPreparationStorage } from './uiPreparationStorage';
-import { UIAlert } from './uiAlert';
-import { UIFileHelper } from './uiFileHelper';
-import { UIMillStorage } from './uiMillStorage';
-import { BrewFlow, IBrewWaterFlow } from '../classes/brew/brewFlow';
-import moment from 'moment';
-import { UISettingsStorage } from './uiSettingsStorage';
-import { Settings } from '../classes/settings/settings';
-import { Brew } from '../classes/brew/brew';
-import { Bean } from '../classes/bean/bean';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
+import { UIAlert } from './uiAlert';
 import { UIBeanHelper } from './uiBeanHelper';
-import { GreenBean } from '../classes/green-bean/green-bean';
+import { UIBeanStorage } from './uiBeanStorage';
+import { UIBrewStorage } from './uiBrewStorage';
+import { UIFileHelper } from './uiFileHelper';
 import { UIGreenBeanStorage } from './uiGreenBeanStorage';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIMillStorage } from './uiMillStorage';
+import { UIPreparationStorage } from './uiPreparationStorage';
+import { UISettingsStorage } from './uiSettingsStorage';
+import { UIStorage } from './uiStorage';
 
-import { WorkBook, WorkSheet } from '../assets/ts/sheetjs-index';
-import { sleep } from '../classes/devices';
-
-declare var XLSX: any;
 @Injectable({
   providedIn: 'root',
 })
 export class UIExcel {
+  protected uiStorage = inject(UIStorage);
+  protected uiHelper = inject(UIHelper);
+  protected uiLog = inject(UILog);
+  private readonly platform = inject(Platform);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
+  private readonly uiPreparationStoraage = inject(UIPreparationStorage);
+  private readonly translate = inject(TranslateService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiBeanHelper = inject(UIBeanHelper);
+
   private settings: Settings;
-  constructor(
-    protected uiStorage: UIStorage,
-    protected uiHelper: UIHelper,
-    protected uiLog: UILog,
-    private readonly platform: Platform,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiPreparationStoraage: UIPreparationStorage,
-    private readonly translate: TranslateService,
-    private readonly uiAlert: UIAlert,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
   private write(): WorkBook {
@@ -571,15 +569,15 @@ export class UIExcel {
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
-          const alert = await this.alertCtrl.create({
-            header: this.translate.instant('DOWNLOADED'),
-            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-              fileName: filename,
-            }),
-            buttons: ['OK'],
-          });
-          await alert.present();
-        }**/
+                  const alert = await this.alertCtrl.create({
+                    header: this.translate.instant('DOWNLOADED'),
+                    subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                      fileName: filename,
+                    }),
+                    buttons: ['OK'],
+                  });
+                  await alert.present();
+                }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {
@@ -670,15 +668,15 @@ export class UIExcel {
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
-         const alert = await this.alertCtrl.create({
-         header: this.translate.instant('DOWNLOADED'),
-         subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-         fileName: filename,
-         }),
-         buttons: ['OK'],
-         });
-         await alert.present();
-         }**/
+                 const alert = await this.alertCtrl.create({
+                 header: this.translate.instant('DOWNLOADED'),
+                 subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                 fileName: filename,
+                 }),
+                 buttons: ['OK'],
+                 });
+                 await alert.present();
+                 }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {
@@ -786,15 +784,15 @@ export class UIExcel {
         await this.uiAlert.hideLoadingSpinner();
         // We share directly, so we don'T download into download folders.
         /**if (this.platform.is('android')) {
-         const alert = await this.alertCtrl.create({
-         header: this.translate.instant('DOWNLOADED'),
-         subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-         fileName: filename,
-         }),
-         buttons: ['OK'],
-         });
-         await alert.present();
-         }**/
+                 const alert = await this.alertCtrl.create({
+                 header: this.translate.instant('DOWNLOADED'),
+                 subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+                 fileName: filename,
+                 }),
+                 buttons: ['OK'],
+                 });
+                 await alert.present();
+                 }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {
@@ -1140,6 +1138,11 @@ export class UIExcel {
           bean.url = websiteEntry.toString();
         }
 
+        const rating = entry['Rating'];
+        if (rating && Number(rating) > 0) {
+          bean.rating = Number(rating);
+        }
+
         const roasterEntry = entry['Roaster'];
         if (roasterEntry) {
           bean.roaster = roasterEntry.toString();
@@ -1168,7 +1171,14 @@ export class UIExcel {
         const degreeOfRoastEntry = entry['Degree of Roast'];
         if (degreeOfRoastEntry) {
           bean.roast = degreeOfRoastEntry;
+          if (degreeOfRoastEntry === 'CUSTOM_ROAST') {
+            const customDegreeOfRoast = entry['Custom degree of Roast'];
+            if (customDegreeOfRoast) {
+              bean.roast_custom = customDegreeOfRoast;
+            }
+          }
         }
+
         const decaffeinatedEntry = entry['Decaffeinated'];
         if (decaffeinatedEntry) {
           bean.decaffeinated = decaffeinatedEntry;

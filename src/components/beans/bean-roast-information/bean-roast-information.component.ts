@@ -1,27 +1,63 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Bean } from '../../../classes/bean/bean';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonSelect,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
-import { ModalController, Platform } from '@ionic/angular';
+
+import { Bean } from '../../../classes/bean/bean';
+import { BluetoothScale } from '../../../classes/devices';
+import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { RoastingMachineOverlayDirective } from '../../../directive/roasting-machine-overlay.directive';
+import { TransformDateDirective } from '../../../directive/transform-date';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { BluetoothScale } from '../../../classes/devices';
 
 @Component({
   selector: 'bean-roast-information',
   templateUrl: './bean-roast-information.component.html',
   styleUrls: ['./bean-roast-information.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
+    TransformDateDirective,
+    RoastingMachineOverlayDirective,
+    TranslatePipe,
+    IonCard,
+    IonItem,
+    IonInput,
+    IonSelect,
+    IonButton,
+    IonIcon,
+  ],
 })
 export class BeanRoastInformationComponent implements OnInit {
+  private readonly platform = inject(Platform);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public displayingTime: string = '';
-
-  constructor(
-    private readonly platform: Platform,
-    private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService,
-  ) {}
 
   public ngOnInit() {
     this.displayingTime = moment()

@@ -1,30 +1,30 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+
 import { CapacitorCookies, CapacitorHttp } from '@capacitor/core';
-import { UIFileHelper } from '../uiFileHelper';
-import { Visualizer } from '../../classes/visualizer/visualizer';
+
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-import { UIToast } from '../uiToast';
-import { UIBrewStorage } from '../uiBrewStorage';
-import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
-import { UILog } from '../uiLog';
-import { UIBrewHelper } from '../uiBrewHelper';
+import { Visualizer } from '../../classes/visualizer/visualizer';
 import { UIAlert } from '../uiAlert';
+import { UIBrewHelper } from '../uiBrewHelper';
+import { UIBrewStorage } from '../uiBrewStorage';
+import { UIFileHelper } from '../uiFileHelper';
+import { UILog } from '../uiLog';
+import { UISettingsStorage } from '../uiSettingsStorage';
+import { UIToast } from '../uiToast';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VisualizerService {
-  constructor(
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiLog: UILog,
-    private readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiAlert: UIAlert,
-  ) {}
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiLog = inject(UILog);
+  private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiAlert = inject(UIAlert);
 
   private async readFlowProfile(_brew: Brew): Promise<BrewFlow> {
     try {
@@ -196,15 +196,12 @@ export class VisualizerService {
 
       this.uiLog.error(
         'Visualizer connection check did not return data:',
-        JSON.stringify(response),
+        response,
       );
       return false;
     } catch (errorResponse) {
       // Typical case that ends up here: wrong credentials, 401 status code
-      this.uiLog.error(
-        'Visualizer connection check errored:',
-        JSON.stringify(errorResponse),
-      );
+      this.uiLog.error('Visualizer connection check errored:', errorResponse);
       return false;
     }
   }

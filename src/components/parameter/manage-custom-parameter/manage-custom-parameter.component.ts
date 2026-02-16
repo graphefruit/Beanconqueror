@@ -1,30 +1,54 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { Settings } from '../../../classes/settings/settings';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonCard,
+  IonCheckbox,
+  IonItem,
+  IonTitle,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { Preparation } from '../../../classes/preparation/preparation';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { Settings } from '../../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'manage-custom-parameter',
   templateUrl: './manage-custom-parameter.component.html',
   styleUrls: ['./manage-custom-parameter.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    TranslatePipe,
+    IonCard,
+    IonTitle,
+    IonItem,
+    IonCheckbox,
+  ],
 })
 export class ManageCustomParameterComponent implements OnInit {
+  uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
   public debounceChanges: Subject<string> = new Subject<string>();
 
   private numerator: number = 0;
   @Input() public data: Settings | Preparation;
-  constructor(
-    public uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiAnalytics: UIAnalytics,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.debounceChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {

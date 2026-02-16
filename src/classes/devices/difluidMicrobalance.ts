@@ -1,7 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { Logger } from './common/logger';
-import { ScaleType } from './index';
+import { ScaleType, sleep } from './index';
 
 declare var ble: any;
 export class DifluidMicrobalance extends BluetoothScale {
@@ -37,12 +37,10 @@ export class DifluidMicrobalance extends BluetoothScale {
   public override async connect() {
     this.logger.log('connecting...');
     await this.attachNotification();
-    await setTimeout(async () => {
-      await this.setUnitToGram();
-    }, 100);
-    await setTimeout(async () => {
-      await this.enableAutoNotifications();
-    }, 100);
+    await sleep(100);
+    await this.setUnitToGram();
+    await sleep(100);
+    await this.enableAutoNotifications();
   }
 
   public override async tare() {
@@ -53,7 +51,7 @@ export class DifluidMicrobalance extends BluetoothScale {
     this.setWeight(0);
 
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x01, 0xc5])
+      new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x01, 0xc5]),
     );
   }
 
@@ -65,7 +63,7 @@ export class DifluidMicrobalance extends BluetoothScale {
 
   public async setUnitToGram() {
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x04, 0x01, 0x00, 0xc4])
+      new Uint8Array([0xdf, 0xdf, 0x01, 0x04, 0x01, 0x00, 0xc4]),
     );
   }
 
@@ -74,11 +72,11 @@ export class DifluidMicrobalance extends BluetoothScale {
 
     if (_timer === SCALE_TIMER_COMMAND.START) {
       await this.write(
-        new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x00, 0xc4])
+        new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x00, 0xc4]),
       );
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
       await this.write(
-        new Uint8Array([0xdf, 0xdf, 0x03, 0x01, 0x01, 0x00, 0xc3])
+        new Uint8Array([0xdf, 0xdf, 0x03, 0x01, 0x01, 0x00, 0xc3]),
       );
     }
   }
@@ -86,7 +84,7 @@ export class DifluidMicrobalance extends BluetoothScale {
   public async enableAutoNotifications() {
     this.logger.log('enabling auto notifications');
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x01, 0xc1])
+      new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x01, 0xc1]),
     );
   }
 
@@ -125,7 +123,7 @@ export class DifluidMicrobalance extends BluetoothScale {
         },
         (e: any) => {
           resolve(false);
-        }
+        },
       );
     });
   }
@@ -138,7 +136,7 @@ export class DifluidMicrobalance extends BluetoothScale {
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
-      (_data: any) => {}
+      (_data: any) => {},
     );
   }
   private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
@@ -165,7 +163,7 @@ export class DifluidMicrobalance extends BluetoothScale {
       DifluidMicrobalance.SERVICE_UUID,
       DifluidMicrobalance.CHAR_UUID,
       (e: any) => {},
-      (e: any) => {}
+      (e: any) => {},
     );
   }
 }

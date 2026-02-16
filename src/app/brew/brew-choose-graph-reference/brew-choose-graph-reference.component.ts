@@ -2,32 +2,89 @@ import {
   Component,
   ElementRef,
   HostListener,
+  inject,
   Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonButton,
+  IonCard,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonHeader,
+  IonIcon,
+  IonLabel,
+  IonRadioGroup,
+  IonRow,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton,
+  ModalController,
+  Platform,
+} from '@ionic/angular/standalone';
+
+import { TranslatePipe } from '@ngx-translate/core';
+import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+
 import { Brew } from '../../../classes/brew/brew';
-import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Settings } from '../../../classes/settings/settings';
-import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { Graph } from '../../../classes/graph/graph';
-import { UIGraphHelper } from '../../../services/uiGraphHelper';
+import { Settings } from '../../../classes/settings/settings';
+import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-reference-card/brew-graph-reference-card.component';
+import { HeaderButtonComponent } from '../../../components/header/header-button.component';
+import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIGraphHelper } from '../../../services/uiGraphHelper';
+import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
   templateUrl: './brew-choose-graph-reference.component.html',
   styleUrls: ['./brew-choose-graph-reference.component.scss'],
-  standalone: false,
+  imports: [
+    FormsModule,
+    AgVirtualScrollComponent,
+    BrewGraphReferenceCardComponent,
+    TranslatePipe,
+    HeaderComponent,
+    HeaderDismissButtonComponent,
+    HeaderButtonComponent,
+    IonHeader,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonRadioGroup,
+    IonCard,
+    IonSearchbar,
+    IonFooter,
+    IonRow,
+    IonCol,
+  ],
 })
 export class BrewChooseGraphReferenceComponent implements OnInit {
+  private readonly modalController = inject(ModalController);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly modalCtrl = inject(ModalController);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiGraphStorage = inject(UIGraphStorage);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiHelper = inject(UIHelper);
+  private readonly platform = inject(Platform);
+
   public static COMPONENT_ID: string = 'brew-choose-graph-reference';
   public brew_segment: string = 'brews-open';
   public radioSelection: string;
@@ -52,15 +109,18 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   @Input() public brew: Brew;
 
   public settings: Settings = undefined;
-  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
-  public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
-  public archivedScroll: AgVirtualSrollComponent;
-  @ViewChild('graphOpenScroll', {
-    read: AgVirtualSrollComponent,
+  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
+  public openScroll: AgVirtualScrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualScrollComponent,
     static: false,
   })
-  public graphOpenScroll: AgVirtualSrollComponent;
+  public archivedScroll: AgVirtualScrollComponent;
+  @ViewChild('graphOpenScroll', {
+    read: AgVirtualScrollComponent,
+    static: false,
+  })
+  public graphOpenScroll: AgVirtualScrollComponent;
 
   @ViewChild('brewContent', { read: ElementRef })
   public brewContent: ElementRef;
@@ -70,17 +130,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
 
   public segmentScrollHeight: string = undefined;
 
-  constructor(
-    private readonly modalController: ModalController,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiGraphHelper: UIGraphHelper,
-    private readonly uiAlert: UIAlert,
-    private readonly uiHelper: UIHelper,
-    private readonly platform: Platform,
-  ) {
+  constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -103,8 +153,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     this.retriggerScroll();
   }
   @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  @HostListener('window:orientationchange')
+  public onOrientationChange() {
     this.retriggerScroll();
   }
 
@@ -133,12 +183,12 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   }
 
   private retriggerScroll() {
-    setTimeout(async () => {
+    setTimeout(() => {
       const el = this.brewContent.nativeElement;
 
       const footerEl = this.footerContent.nativeElement;
 
-      let scrollComponent: AgVirtualSrollComponent;
+      let scrollComponent: AgVirtualScrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
       } else if (this.archivedScroll !== undefined) {
@@ -146,14 +196,26 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       } else if (this.graphOpenScroll !== undefined) {
         scrollComponent = this.graphOpenScroll;
       }
-      if (scrollComponent) {
-        scrollComponent.el.style.height =
-          el.offsetHeight -
-          footerEl.offsetHeight -
-          15 -
-          scrollComponent.el.offsetTop +
-          'px';
-        this.segmentScrollHeight = scrollComponent.el.style.height;
+      if (!scrollComponent) {
+        return;
+      }
+
+      scrollComponent.el.style.height =
+        el.offsetHeight -
+        footerEl.offsetHeight -
+        15 -
+        scrollComponent.el.offsetTop +
+        'px';
+      this.segmentScrollHeight = scrollComponent.el.style.height;
+
+      // HACK: Manually trigger component refresh to work around initialization
+      //       bug. For some reason the scroll component sees its own height as
+      //       0 during initialization, which causes it to render 0 items. As
+      //       no changes to the component occur after initialization, no
+      //       re-render ever occurs. This forces one. The root cause for
+      //       this issue is currently unknown.
+      if (scrollComponent.items.length === 0) {
+        scrollComponent.refreshData();
       }
     }, 150);
   }

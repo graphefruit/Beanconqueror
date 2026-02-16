@@ -1,51 +1,49 @@
 PODS:
-  - AparajitaCapacitorDarkMode (5.0.2):
+  - AparajitaCapacitorDarkMode (6.0.0):
     - Capacitor
-  - Capacitor (7.4.2):
+  - Capacitor (8.0.2):
     - CapacitorCordova
-  - CapacitorApp (7.0.1):
+  - CapacitorApp (8.0.0):
     - Capacitor
-  - CapacitorAppLauncher (7.0.1):
+  - CapacitorAppLauncher (8.0.0):
     - Capacitor
-  - CapacitorBarcodeScanner (2.0.3):
+  - CapacitorBarcodeScanner (3.0.2):
     - Capacitor
-    - OSBarcodeLib (~> 1.1.3)
-  - CapacitorCamera (7.0.1):
+    - OSBarcodeLib (= 2.0.1)
+  - CapacitorCamera (8.0.0):
     - Capacitor
-  - CapacitorClipboard (7.0.1):
+  - CapacitorClipboard (8.0.0):
     - Capacitor
-  - CapacitorCommunityKeepAwake (7.1.0):
+  - CapacitorCommunityKeepAwake (8.0.0):
     - Capacitor
-  - CapacitorCordova (7.4.2)
-  - CapacitorDevice (7.0.1):
+  - CapacitorCordova (8.0.2)
+  - CapacitorDevice (8.0.0):
     - Capacitor
-  - CapacitorFilesystem (7.1.3):
+  - CapacitorFilesystem (8.0.0):
     - Capacitor
-    - IONFilesystemLib (~> 1.0)
-  - CapacitorGeolocation (7.1.4):
+    - IONFilesystemLib (~> 1.0.1)
+  - CapacitorGeolocation (8.0.0):
     - Capacitor
-    - IONGeolocationLib (~> 1.0)
-  - CapacitorHaptics (7.0.1):
+    - IONGeolocationLib (= 2.0.0)
+  - CapacitorHaptics (8.0.0):
     - Capacitor
-  - CapacitorKeyboard (7.0.1):
+  - CapacitorKeyboard (8.0.0):
     - Capacitor
-  - CapacitorShare (7.0.1):
+  - CapacitorShare (8.0.0):
     - Capacitor
-  - CapacitorSplashScreen (7.0.1):
+  - CapacitorSplashScreen (8.0.0):
     - Capacitor
-  - CapacitorStatusBar (7.0.1):
+  - CapacitorStatusBar (8.0.0):
     - Capacitor
-  - CapawesomeCapacitorFilePicker (7.2.0):
+  - CapawesomeCapacitorFilePicker (8.0.1):
     - Capacitor
-  - CapgoCameraPreview (7.13.7):
+  - CapgoCameraPreview (8.0.14):
     - Capacitor
-  - CapgoCapacitorNavigationBar (7.3.18):
-    - Capacitor
-  - CordovaPlugins (7.4.4):
+  - CordovaPlugins (8.0.2):
     - CapacitorCordova
-  - IONFilesystemLib (1.0.0)
-  - IONGeolocationLib (1.0.0)
-  - OSBarcodeLib (1.1.3)
+  - IONFilesystemLib (1.0.1)
+  - IONGeolocationLib (2.0.0)
+  - OSBarcodeLib (2.0.1)
 
 DEPENDENCIES:
   - "AparajitaCapacitorDarkMode (from `../../node_modules/@aparajita/capacitor-dark-mode`)"
@@ -67,7 +65,6 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/@capawesome/capacitor-file-picker`)"
   - "CapgoCameraPreview (from `../../node_modules/@capgo/camera-preview`)"
-  - "CapgoCapacitorNavigationBar (from `../../node_modules/@capgo/capacitor-navigation-bar`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
 
 SPEC REPOS:
@@ -115,37 +112,34 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capawesome/capacitor-file-picker"
   CapgoCameraPreview:
     :path: "../../node_modules/@capgo/camera-preview"
-  CapgoCapacitorNavigationBar:
-    :path: "../../node_modules/@capgo/capacitor-navigation-bar"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
-  AparajitaCapacitorDarkMode: 00dc018a8537d45654afbea7a8535074c08973ef
-  Capacitor: 9d9e481b79ffaeacaf7a85d6a11adec32bd33b59
-  CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
-  CapacitorAppLauncher: bab4ca931a308252d2bafcb78ca6a364bd1d4c4e
-  CapacitorBarcodeScanner: 29c88bf098adb0830975d4f14c107a6bb7722e3d
-  CapacitorCamera: 6e73f1fc6c629a672658705a02409b60854bc0f1
-  CapacitorClipboard: 70bfdb42b877b320a6e511ab94fa7a6a55d57ecb
-  CapacitorCommunityKeepAwake: 05c75aab989f60e621870cf03b24a144a5544c30
-  CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
-  CapacitorDevice: c6f6d587dd310527f8a48bf09c4e7b4a4cf14329
-  CapacitorFilesystem: 0329ace667c6b971410cab3619dfb98a39cc3b86
-  CapacitorGeolocation: 32a1f849c38c72b5071de36a28ebc548ef3bb611
-  CapacitorHaptics: 1f1e17041f435d8ead9ff2a34edd592c6aa6a8d6
-  CapacitorKeyboard: 09fd91dcde4f8a37313e7f11bde553ad1ed52036
-  CapacitorShare: e573823f511f260f598d0423c33b1e3d7bbe5fd1
-  CapacitorSplashScreen: 1d67815a422a9b61539c94f283c08ed56667c0fc
-  CapacitorStatusBar: 6e7af040d8fc4dd655999819625cae9c2d74c36f
-  CapawesomeCapacitorFilePicker: 0f4a913a00e39dd77213449f0d917e92f35a5ca9
-  CapgoCameraPreview: 29d500a7567cd3005b7fe62a70baad1ee6d0c67e
-  CapgoCapacitorNavigationBar: 3c59704af4b6774bebb36beaab82643c141dfa83
-  CordovaPlugins: 7d85160adba178e1066f758c0ceb2d4aa86ed6be
-  IONFilesystemLib: ceacae793975039530458eabab0c495c70515a0d
-  IONGeolocationLib: 81f33f88d025846946de2cf63b0c7628e7c6bc9d
-  OSBarcodeLib: f2e981270a64faf476cb790864262b29ab8cd68a
+  AparajitaCapacitorDarkMode: d5f43e08965abdddef0d03deebf11ab3e8bfe75b
+  Capacitor: 2b79172ad27f3be2d103cce88b8eb9803fdcc744
+  CapacitorApp: 3963a84197280757b84f126afd1520a85ae3b092
+  CapacitorAppLauncher: 7f2330aa2d8a72a4767ab05af9df4bf68166ebf0
+  CapacitorBarcodeScanner: 421aa419ac63eeb18c7cb94ce280fa22d34e8b0b
+  CapacitorCamera: 592acb7ab9fb748e2d8571eb03af30ec4e1ace12
+  CapacitorClipboard: 61832a3722adc61afed6e0191c8a0e11ba11674d
+  CapacitorCommunityKeepAwake: 332bf035bbdf0b1c244fd492b35a8a06c8802111
+  CapacitorCordova: 921bdb690ebe82421b24fce45552fd3dea2ae43a
+  CapacitorDevice: 9a16fb36a19ff391bf75afbe3cf16f883b3b3aa0
+  CapacitorFilesystem: 2cb7c29536024668f333266a2177f8c10bbd9c98
+  CapacitorGeolocation: 8a405e707de9aff6ac9eca7f408966a370f7ca33
+  CapacitorHaptics: 2079d9fa04c5a71e18663b4722323c304c58245c
+  CapacitorKeyboard: d7868c079a4d5277a3deca27a10a488fcbbb8b69
+  CapacitorShare: 12f1d192170cbcf9f108fd675ac8e343761a4638
+  CapacitorSplashScreen: 422880d7117605c30699eb4b21644b62db42e86c
+  CapacitorStatusBar: 312e2e67928dfe9514c4a8916a1fd610552f5f35
+  CapawesomeCapacitorFilePicker: cbd96b593d2bfdceb353ed161f9462ce4a9d67a9
+  CapgoCameraPreview: f171281fbe832ab1a57d6cbef584677fdd27dfff
+  CordovaPlugins: 002b79521e875ec5bdd022e34eaa754941f19e22
+  IONFilesystemLib: 89258b8e3e85465da93127d25d7ce37f977e8a6f
+  IONGeolocationLib: a5e40b54edc2ee9902036eda5aaa41ddf07bb68d
+  OSBarcodeLib: 57987d2eb1f916f701f4554e20e349b3cb83f023
 
-PODFILE CHECKSUM: be424e3e511840cf7126fc320124f37a3a126afa
+PODFILE CHECKSUM: a2de8b44acbc16bbe33592cc7d1d7a8fe166d210
 
 COCOAPODS: 1.16.2

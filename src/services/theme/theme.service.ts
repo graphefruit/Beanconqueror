@@ -1,115 +1,134 @@
-import { Injectable } from '@angular/core';
-import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
-import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
+import { inject, Injectable } from '@angular/core';
 
 import { DarkMode } from '@aparajita/capacitor-dark-mode';
-import { Capacitor } from '@capacitor/core';
-import { UISettingsStorage } from '../uiSettingsStorage';
-import { StatusBar, Style } from '@capacitor/status-bar';
-import { NavigationBar } from '@capgo/capacitor-navigation-bar';
+import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
 import { Keyboard, KeyboardStyle } from '@capacitor/keyboard';
+import { StatusBar, Style } from '@capacitor/status-bar';
+import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
+
+import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
+import { UISettingsStorage } from '../uiSettingsStorage';
+
+interface Theme {
+  isDark: boolean;
+  statusBarStyle: Style;
+  systemBarsStyle: SystemBarsStyle;
+  statusBarColor: string;
+  navigationBarColor: string;
+  keyboardStyle: KeyboardStyle;
+}
+
+const DarkTheme: Theme = {
+  isDark: true,
+  statusBarStyle: Style.Dark,
+  systemBarsStyle: SystemBarsStyle.Dark,
+  statusBarColor: '#121212',
+  navigationBarColor: '#121212',
+  // navigationBarColor: '#222428',
+  keyboardStyle: KeyboardStyle.Dark,
+};
+
+const LightTheme: Theme = {
+  isDark: false,
+  statusBarStyle: Style.Light,
+  systemBarsStyle: SystemBarsStyle.Light,
+  statusBarColor: '#F0F0F0',
+  navigationBarColor: '#F0F0F0',
+  keyboardStyle: KeyboardStyle.Light,
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+
   private prefersDark: MediaQueryList;
 
-  private _darkMode: boolean = false;
+  private _darkMode = false;
   public isDarkMode() {
     return this._darkMode;
   }
-
-  constructor(private readonly uiSettingsStorage: UISettingsStorage) {}
   public async initialize() {
     this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    this.prefersDark.addEventListener('change', (mediaQuery) => {
-      this.adjustTheme();
+    this.prefersDark.addEventListener('change', () => {
+      void this.adjustTheme();
     });
 
-    const listener = await DarkMode.addAppearanceListener(({ dark }) => {
-      this.adjustTheme();
+    await DarkMode.addAppearanceListener(() => {
+      void this.adjustTheme();
     });
 
-    this.adjustTheme();
+    await this.adjustTheme();
   }
 
   public async initializeBeforeAppReady() {
     await DarkMode.init();
     const { dark } = await DarkMode.isDarkMode();
-    if (dark) {
-      this.toggleDarkPalette(true);
-    } else {
-      this.toggleDarkPalette(false);
-    }
+    await this.applyTheme(dark ? DarkTheme : LightTheme);
   }
 
   public async adjustTheme() {
-    const settings = await this.uiSettingsStorage.getSettings();
+    const settings = this.uiSettingsStorage.getSettings();
+
+    let isDark: boolean;
     switch (settings.theme_mode) {
       case THEME_MODE_ENUM.LIGHT:
-        this.toggleDarkPalette(false);
+        isDark = false;
         break;
       case THEME_MODE_ENUM.DARK:
-        this.toggleDarkPalette(true);
+        isDark = true;
         break;
       case THEME_MODE_ENUM.DEVICE:
         if (Capacitor.getPlatform() === 'web') {
-          this.toggleDarkPalette(this.prefersDark.matches);
+          isDark = this.prefersDark.matches;
         } else {
-          const { dark } = await DarkMode.isDarkMode();
-          if (dark) {
-            this.toggleDarkPalette(true);
-          } else {
-            this.toggleDarkPalette(false);
-          }
+          isDark = (await DarkMode.isDarkMode()).dark;
         }
         break;
     }
+
+    await this.applyTheme(isDark ? DarkTheme : LightTheme);
   }
 
   public async setLightMode() {
-    this.toggleDarkPalette(false);
+    await this.applyTheme(LightTheme);
   }
 
-  private toggleDarkPalette(shouldAdd: boolean) {
-    if (Capacitor.getPlatform() !== 'web') {
-      const isIOS = Capacitor.getPlatform() == 'ios';
-      if (shouldAdd) {
-        StatusBar.setStyle({ style: Style.Dark });
+  private async applyTheme(theme: Theme) {
+    const promises = [];
 
-        if (Capacitor.getPlatform() === 'android') {
-          AndroidNativeCalls.setStatusBarColor({ color: '#121212' });
-        } else {
-          StatusBar.setBackgroundColor({ color: '#121212' });
-        }
+    this._darkMode = theme.isDark;
+    document.documentElement.classList.toggle('ion-palette-dark', theme.isDark);
 
-        NavigationBar.setNavigationBarColor({
-          color: '#121212',
-          darkButtons: false,
-        });
-        if (isIOS) {
-          Keyboard.setStyle({ style: KeyboardStyle.Dark });
-        }
-      } else {
-        StatusBar.setStyle({ style: Style.Light });
+    const isAndroid = Capacitor.getPlatform() === 'android';
+    const isIOS = Capacitor.getPlatform() === 'ios';
+    if (isAndroid || isIOS) {
+      // Status bar handling must be done both by the legacy status bar plugin...
+      promises.push(StatusBar.setStyle({ style: theme.statusBarStyle }));
+      promises.push(
+        StatusBar.setBackgroundColor({ color: theme.statusBarColor }),
+      );
+      // ...and the new SystemBars plugin to work on all supported API levels
+      promises.push(SystemBars.setStyle({ style: theme.systemBarsStyle }));
 
-        if (Capacitor.getPlatform() === 'android') {
-          AndroidNativeCalls.setStatusBarColor({ color: '#F0F0F0' });
-        } else {
-          StatusBar.setBackgroundColor({ color: '#F0F0F0' });
-        }
+      if (isAndroid) {
+        // On Android we let the Android-specific edge-to-edge plugin handle the bar colors
+        // iOS should just work natively according to documentation.
+        promises.push(
+          EdgeToEdge.setNavigationBarColor({ color: theme.navigationBarColor }),
+        );
+        promises.push(
+          EdgeToEdge.setStatusBarColor({ color: theme.statusBarColor }),
+        );
+      }
 
-        NavigationBar.setNavigationBarColor({
-          color: '#F0F0F0',
-          darkButtons: true,
-        });
-        if (isIOS) {
-          Keyboard.setStyle({ style: KeyboardStyle.Light });
-        }
+      // Keyboard
+      if (isIOS) {
+        promises.push(Keyboard.setStyle({ style: theme.keyboardStyle }));
       }
     }
-    this._darkMode = shouldAdd;
-    document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
+    // Await all promises at the end only, the plugin calls can happen in parallel
+    await Promise.all(promises);
   }
 }

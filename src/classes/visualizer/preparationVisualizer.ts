@@ -1,6 +1,5 @@
-import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
-
+import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { IPreparationVisualizer } from '../../interfaces/visualizer/iPreparationVisualizer';
 
 export class PreparationVisualizer implements IPreparationVisualizer {
