@@ -300,10 +300,7 @@ export class BeanInformationComponent implements OnInit {
         this.setUiData();
         break;
       case BEAN_ACTION.DELETE:
-        try {
-          await this.deleteBean();
-        } catch (ex) {}
-        await this.uiAlert.hideLoadingSpinner();
+        await this.deleteBean();
         break;
       case BEAN_ACTION.BEANS_CONSUMED:
         await this.beansConsumed();
@@ -552,74 +549,72 @@ export class BeanInformationComponent implements OnInit {
     }
   }
   public async refreshDataFromQRCode() {
-    await this.uiAlert
-      .showConfirm('QR_CODE_REFRESH_DATA_MESSAGE', 'CARE', true)
-      .then(
-        async () => {
-          await this.uiAlert.showLoadingSpinner();
-          let errorOccured: boolean = false;
-          try {
-            const _scannedQRBean: ServerBean =
-              await this.serverCommunicationService.getBeanInformation(
-                this.bean.qr_code,
-              );
-            if (_scannedQRBean.error === null) {
-              this.uiAnalytics.trackEvent(
-                QR_TRACKING.TITLE,
-                QR_TRACKING.ACTIONS.REFRESH_SUCCESSFULLY,
-              );
-              this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_REFRESHED');
-              await this.uiAlert.showLoadingSpinner();
-              // Get the new bean from server, just save the uuid, all other information will be overwritten
-              const newMapper = new BeanMapper();
-              const newBean: Bean =
-                await newMapper.mapServerToClientBean(_scannedQRBean);
-              const savedUUID = this.bean.config.uuid;
-              this.bean = newBean;
-              this.bean.config.uuid = savedUUID;
-              await this.uiBeanStorage.update(this.bean);
-            } else {
-              errorOccured = true;
-            }
-          } catch (ex) {
-            errorOccured = true;
-          }
-          await this.uiAlert.hideLoadingSpinner();
-          if (errorOccured) {
-            this.uiAlert.showMessage(
-              'QR.SERVER.ERROR_OCCURED',
-              'ERROR_OCCURED',
-              undefined,
-              true,
-            );
-          }
-        },
-        () => {},
+    const choice = await this.uiAlert.showConfirm(
+      'QR_CODE_REFRESH_DATA_MESSAGE',
+      'CARE',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.showLoadingSpinner();
+    let errorOccured = false;
+    try {
+      const _scannedQRBean: ServerBean =
+        await this.serverCommunicationService.getBeanInformation(
+          this.bean.qr_code,
+        );
+      if (_scannedQRBean.error === null) {
+        this.uiAnalytics.trackEvent(
+          QR_TRACKING.TITLE,
+          QR_TRACKING.ACTIONS.REFRESH_SUCCESSFULLY,
+        );
+        this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_REFRESHED');
+        await this.uiAlert.showLoadingSpinner();
+        // Get the new bean from server, just save the uuid, all other information will be overwritten
+        const newMapper = new BeanMapper();
+        const newBean: Bean =
+          await newMapper.mapServerToClientBean(_scannedQRBean);
+        const savedUUID = this.bean.config.uuid;
+        this.bean = newBean;
+        this.bean.config.uuid = savedUUID;
+        await this.uiBeanStorage.update(this.bean);
+      } else {
+        errorOccured = true;
+      }
+    } catch {
+      errorOccured = true;
+    }
+    await this.uiAlert.hideLoadingSpinner();
+    if (errorOccured) {
+      await this.uiAlert.showMessage(
+        'QR.SERVER.ERROR_OCCURED',
+        'ERROR_OCCURED',
+        undefined,
+        true,
       );
+    }
   }
 
-  public async deleteBean(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.uiAlert
-        .showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            await this.uiAlert.showLoadingSpinner();
-            // Yes
-            this.uiAnalytics.trackEvent(
-              BEAN_TRACKING.TITLE,
-              BEAN_TRACKING.ACTIONS.DELETE,
-            );
-            await this.__deleteBean();
-            this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-            await this.resetSettings();
-            resolve(undefined);
-          },
-          () => {
-            // No
-            reject();
-          },
-        );
+  public async deleteBean(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_BEAN_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.withLoadingSpinner(async () => {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.DELETE,
+      );
+      await this.__deleteBean();
+      this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+      await this.resetSettings();
     });
   }
 

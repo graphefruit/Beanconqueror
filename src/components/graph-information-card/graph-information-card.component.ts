@@ -120,10 +120,7 @@ export class GraphInformationCardComponent implements OnInit {
         await this.edit();
         break;
       case GRAPH_ACTION.DELETE:
-        try {
-          await this.delete();
-        } catch (ex) {}
-        await this.uiAlert.hideLoadingSpinner();
+        await this.delete();
         break;
 
       case GRAPH_ACTION.ARCHIVE:
@@ -185,27 +182,23 @@ export class GraphInformationCardComponent implements OnInit {
     await this.uiGraphHelper.detailGraph(this.graph);
   }
 
-  public async delete(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.uiAlert
-        .showConfirm('DELETE_GRAPH_QUESTION', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            await this.uiAlert.showLoadingSpinner();
-            // Yes
-            this.uiAnalytics.trackEvent(
-              GRAPH_TRACKING.TITLE,
-              GRAPH_TRACKING.ACTIONS.DELETE,
-            );
-            await this.__delete();
-            this.uiToast.showInfoToast('TOAST_GRAPH_DELETED_SUCCESSFULLY');
-            resolve(undefined);
-          },
-          () => {
-            // No
-            reject();
-          },
-        );
+  public async delete(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_GRAPH_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.withLoadingSpinner(async () => {
+      this.uiAnalytics.trackEvent(
+        GRAPH_TRACKING.TITLE,
+        GRAPH_TRACKING.ACTIONS.DELETE,
+      );
+      await this.__delete();
+      this.uiToast.showInfoToast('TOAST_GRAPH_DELETED_SUCCESSFULLY');
     });
   }
 

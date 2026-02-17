@@ -82,6 +82,7 @@ import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
 import { IMill } from '../../interfaces/mill/iMill';
 import { IPreparation } from '../../interfaces/preparation/iPreparation';
 import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
+import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { KeysPipe } from '../../pipes/keys';
@@ -419,35 +420,34 @@ export class SettingsPage {
     }
   }
 
-  public checkHealthPlugin() {
+  public async checkHealthPlugin() {
     // #200 - Didn't save the settings
-    if (this.settings.track_caffeine_consumption === false) {
-      this.uiAlert
-        .showConfirm(
-          'HEALTH_KIT_QUESTION_MESSAGE',
-          'HEALTH_KIT_QUESTION_TITLE',
-          true,
-        )
-        .then(
-          () => {
-            this.uiHealthKit.requestAuthorization().then(
-              async () => {
-                // Allowed
-                this.settings.track_caffeine_consumption = true;
-                await this.saveSettings();
-              },
-              async () => {
-                // Forbidden
-                this.settings.track_caffeine_consumption = false;
-                await this.saveSettings();
-              },
-            );
-          },
-          async () => {
-            this.settings.track_caffeine_consumption = false;
-            await this.saveSettings();
-          },
-        );
+    if (this.settings.track_caffeine_consumption) {
+      return;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'HEALTH_KIT_QUESTION_MESSAGE',
+      'HEALTH_KIT_QUESTION_TITLE',
+      true,
+    );
+    if (choice === 'YES') {
+      this.uiHealthKit.requestAuthorization().then(
+        async () => {
+          // Allowed
+          this.settings.track_caffeine_consumption = true;
+          await this.saveSettings();
+        },
+        async () => {
+          // Forbidden
+          this.settings.track_caffeine_consumption = false;
+          await this.saveSettings();
+        },
+      );
+    } else {
+      // choice === NO, disable again
+      this.settings.track_caffeine_consumption = false;
+      await this.saveSettings();
     }
   }
 
@@ -1711,24 +1711,29 @@ export class SettingsPage {
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
   protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
-  public async resetGraphColor(graphType: string) {
-    try {
-      await this.uiAlert.showConfirm('SURE_QUESTION', undefined, true);
-      if (!this.settings.graph_colors) {
-        this.settings.graph_colors = JSON.parse(
-          JSON.stringify(DEFAULT_GRAPH_COLORS),
-        );
-      }
 
-      // @ts-ignore
-      if (DEFAULT_GRAPH_COLORS[graphType]) {
-        // @ts-ignore
-        this.settings.graph_colors[graphType] = JSON.parse(
-          JSON.stringify(DEFAULT_GRAPH_COLORS[graphType]),
-        );
-        this.saveSettings();
-      }
-    } catch (ex) {}
+  public async resetGraphColor(graphType: keyof IGraphColors) {
+    const choice = await this.uiAlert.showConfirm(
+      'SURE_QUESTION',
+      undefined,
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    if (!this.settings.graph_colors) {
+      this.settings.graph_colors = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS),
+      );
+    }
+
+    if (DEFAULT_GRAPH_COLORS[graphType]) {
+      this.settings.graph_colors[graphType] = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS[graphType]),
+      );
+      await this.saveSettings();
+    }
   }
 }
 

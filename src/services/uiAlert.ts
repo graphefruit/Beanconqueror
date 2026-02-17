@@ -6,11 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
 import { AppEvent } from '../classes/appEvent/appEvent';
-import { sleep } from '../classes/devices';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
 import { EventQueueService } from './queueService/queue-service.service';
+
+export type ConfirmationDialogResult = 'YES' | 'NO';
 
 @Injectable({
   providedIn: 'root',
@@ -215,15 +216,14 @@ export class UIAlert {
    * Shows a modal confirmation dialog with a message and 'OK' and 'Cancel'
    * buttons.
    *
-   * Resolves when the modal has been dismissed with the 'OK' button.
-   * **Rejects when the modal has been dismissed with the 'Cancel' button.**
+   * Resolves when the modal has been dismissed and returns the choice.
    */
   public async showConfirm(
     _message: string,
     _title?: string,
     _translate?: boolean,
-  ): Promise<void> {
-    await this.showConfirmWithYesNoTranslation(
+  ): Promise<ConfirmationDialogResult> {
+    return await this.showConfirmWithYesNoTranslation(
       _message,
       _title,
       undefined,
@@ -236,8 +236,7 @@ export class UIAlert {
    * Shows a modal confirmation dialog with a message and 'Yes' and 'No'
    * buttons. The button text can be customized using the arguments.
    *
-   * Resolves when the modal has been dismissed with the 'OK' button.
-   * **Rejects when the modal has been dismissed with the 'Cancel' button.**
+   * Resolves when the modal has been dismissed and returns the choice.
    */
   public async showConfirmWithYesNoTranslation(
     _message: string,
@@ -245,7 +244,7 @@ export class UIAlert {
     _yesText?: string,
     _noText?: string,
     _translate?: boolean,
-  ): Promise<void> {
+  ): Promise<ConfirmationDialogResult> {
     let yesText = this.translate.instant('YES');
     let noText = this.translate.instant('NO');
     if (_translate === true) {
@@ -279,9 +278,9 @@ export class UIAlert {
     await alert.present();
     const { role } = await alert.onDidDismiss();
     if (role === 'cancel') {
-      // TODO: Change this method to return a result object that callers can
-      //       check instead of using resolve() => ok; reject() => cancel
-      throw new Error('cancelled');
+      return 'NO';
+    } else {
+      return 'YES';
     }
   }
 

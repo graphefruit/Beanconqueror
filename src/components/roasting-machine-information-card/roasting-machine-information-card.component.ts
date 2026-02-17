@@ -107,10 +107,7 @@ export class RoastingMachineInformationCardComponent {
         await this.edit();
         break;
       case ROASTING_MACHINE_ACTION.DELETE:
-        try {
-          await this.delete();
-        } catch (ex) {}
-        await this.uiAlert.hideLoadingSpinner();
+        await this.delete();
         break;
       case ROASTING_MACHINE_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -167,29 +164,23 @@ export class RoastingMachineInformationCardComponent {
     await this.uiImage.viewPhotos(this.roastingMachine);
   }
 
-  public async delete(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.uiAlert
-        .showConfirm('DELETE_ROASTING_MACHINE_QUESTION', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            await this.uiAlert.showLoadingSpinner();
-            // Yes
-            this.uiAnalytics.trackEvent(
-              ROASTING_MACHINE_TRACKING.TITLE,
-              ROASTING_MACHINE_TRACKING.ACTIONS.DELETE,
-            );
-            await this.__delete();
-            this.uiToast.showInfoToast(
-              'TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY',
-            );
-            resolve(undefined);
-          },
-          () => {
-            // No
-            reject();
-          },
-        );
+  public async delete(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_ROASTING_MACHINE_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.withLoadingSpinner(async () => {
+      this.uiAnalytics.trackEvent(
+        ROASTING_MACHINE_TRACKING.TITLE,
+        ROASTING_MACHINE_TRACKING.ACTIONS.DELETE,
+      );
+      await this.__delete();
+      this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY');
     });
   }
 

@@ -452,30 +452,31 @@ export class BaristaPage implements OnInit, OnDestroy {
   }
 
   private async checkIfHintShallBeShown() {
-    if (this.isSanremoConnected()) {
-      const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
-        ?.preparationDevice as SanremoYOUDevice;
-      if (device.showInformationHintForBrewByWeightMode()) {
-        //We got no scale, so ask user to connect one.
-        try {
-          await this.uiAlert.showConfirmWithYesNoTranslation(
-            'PREPARATION_DEVICE.TYPE_SANREMO_YOU.BREW_BY_WEIGHT_HINT',
-            'INFORMATION',
-            'DONT_SHOW_AGAIN',
-            'SKIP',
-            true,
-          );
-
-          await this.brewBrewing?.brewBrewingPreparationDeviceEl.setBaristaHintHasBeenShown();
-
-          //Barista pressed don't show again.
-        } catch (ex) {
-          //Skip was pressed
-        }
-      } else {
-        //Nothing to do we already showed it
-      }
+    if (!this.isSanremoConnected()) {
+      return;
     }
+
+    const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
+      ?.preparationDevice as SanremoYOUDevice;
+    if (!device.showInformationHintForBrewByWeightMode()) {
+      //Nothing to do we already showed it
+      return;
+    }
+
+    //We got no scale, so ask user to connect one.
+    const choice = await this.uiAlert.showConfirmWithYesNoTranslation(
+      'PREPARATION_DEVICE.TYPE_SANREMO_YOU.BREW_BY_WEIGHT_HINT',
+      'INFORMATION',
+      'DONT_SHOW_AGAIN',
+      'SKIP',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    //Barista pressed don't show again.
+    await this.brewBrewing?.brewBrewingPreparationDeviceEl.setBaristaHintHasBeenShown();
   }
 
   private async checkIfScaleIsConnected() {

@@ -967,19 +967,22 @@ export class BrewBrewingGraphComponent implements OnInit {
                 this.checkChanges();
                 break;
               case SCALE_TIMER_COMMAND.RESET:
-                this.uiAlert
+                // HACK: We don't handle the rejection case for this promise
+                //       for now, as that would require refactoring this event
+                //       handler completely. Also, there really isn't much to
+                //       do in case the dialog can't be shown?
+                void this.uiAlert
                   .showConfirm(
                     'SCALE_RESET_TRIGGERED_DESCRIPTION',
                     'SCALE_RESET_TRIGGERED_TITLE',
                     true,
                   )
-                  .then(
-                    () => {
+                  .then((choice) => {
+                    if (choice === 'YES') {
                       this.brewComponent.timer.reset();
                       this.checkChanges();
-                    },
-                    () => {},
-                  );
+                    }
+                  });
 
                 break;
             }

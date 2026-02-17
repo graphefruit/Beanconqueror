@@ -195,10 +195,7 @@ export class MillInformationCardComponent implements OnInit {
         await this.edit();
         break;
       case MILL_ACTION.DELETE:
-        try {
-          await this.delete();
-        } catch (ex) {}
-        await this.uiAlert.hideLoadingSpinner();
+        await this.delete();
         break;
       case MILL_ACTION.ARCHIVE:
         await this.archive();
@@ -237,25 +234,25 @@ export class MillInformationCardComponent implements OnInit {
     await this.uiMillHelper.detailMill(this.mill);
   }
 
-  public async delete() {
-    await this.uiAlert
-      .showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true)
-      .then(
-        async () => {
-          await this.uiAlert.showLoadingSpinner();
-          // Yes
-          this.uiAnalytics.trackEvent(
-            MILL_TRACKING.TITLE,
-            MILL_TRACKING.ACTIONS.DELETE,
-          );
-          await this.__deleteMill();
-          this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
-          await this.resetSettings();
-        },
-        () => {
-          // No
-        },
+  public async delete(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_MILL_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.withLoadingSpinner(async () => {
+      this.uiAnalytics.trackEvent(
+        MILL_TRACKING.TITLE,
+        MILL_TRACKING.ACTIONS.DELETE,
       );
+      await this.__deleteMill();
+      this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
+      await this.resetSettings();
+    });
   }
   private async __deleteMill() {
     const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
