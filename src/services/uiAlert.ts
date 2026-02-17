@@ -52,6 +52,30 @@ export class UIAlert {
   }
 
   /**
+   * Executes the given action while showing a loading spinner. This function
+   * internally handles the try-finally construct for removing the spinner
+   * afterwards. If the given action returns a Promise, it will be awaited
+   * before the spinner is removed.
+   *
+   * @param action the action to run while the spinner is shown. If it returns
+   *               a Promise, it will be awaited before the spinner is removed.
+   *               If it returns a value, this function's promise will resolve
+   *               to that value.
+   */
+  public async withLoadingSpinner<T>(
+    action: () => Promise<T> | T,
+    message = 'PLEASE_WAIT',
+    translate = true,
+  ): Promise<T> {
+    try {
+      await this.showLoadingSpinner(message, translate);
+      return await action();
+    } finally {
+      await this.hideLoadingSpinner();
+    }
+  }
+
+  /**
    * Updates the message displayed in all active loading spinner popups.
    */
   public setLoadingSpinnerMessage(message: string, translate = false): void {

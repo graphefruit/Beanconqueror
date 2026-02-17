@@ -1001,17 +1001,14 @@ export class SettingsPage {
   }
 
   public async export() {
-    await this.uiAlert.showLoadingSpinner();
-    // Do an export to the default export location
-    const defaultExportPath = {
-      path: 'Download/Beanconqueror_export',
-      directory: Directory.External,
-    };
-    try {
+    await this.uiAlert.withLoadingSpinner(async () => {
+      // Do an export to the default export location
+      const defaultExportPath = {
+        path: 'Download/Beanconqueror_export',
+        directory: Directory.External,
+      };
       await this.exportToPath(defaultExportPath, true);
-    } catch (ex) {}
-
-    await this.uiAlert.hideLoadingSpinner();
+    });
   }
 
   private async exportToPath(
