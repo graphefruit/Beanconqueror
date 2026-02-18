@@ -270,6 +270,15 @@ export class UIBeanHelper {
 
       const protoBean = BeanProto.decode(encoded);
 
+      // Remove all undefined keys to prevent issues down the line. The rest
+      // of the application does not expect values to be explicitly set to
+      // undefined. Instead, the values are simply not present.
+      for (const key of Object.keys(protoBean)) {
+        if (protoBean[key] === undefined) {
+          delete protoBean[key];
+        }
+      }
+
       const bean: Bean = new Bean();
       bean.initializeBySharedProtoBean(protoBean);
       /**we don't want this property to be saved**/
