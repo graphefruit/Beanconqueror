@@ -287,11 +287,7 @@ export class UIBeanHelper {
 
       // Empty it.
       const newPredefinedFlavors = {};
-      if (
-        'cupped_flavor' in protoBean &&
-        'predefined_flavors' in protoBean.cupped_flavor &&
-        protoBean.cupped_flavor?.predefined_flavors?.length > 0
-      ) {
+      if (protoBean.cupped_flavor?.predefined_flavors?.length > 0) {
         for (const flavKey of protoBean.cupped_flavor.predefined_flavors) {
           newPredefinedFlavors[flavKey] = true;
         }
