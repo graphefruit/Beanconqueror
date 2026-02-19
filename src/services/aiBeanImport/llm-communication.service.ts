@@ -25,6 +25,8 @@ const LLM = CapgoLLM as unknown as LLMPluginWithInstructions;
 export interface LLMCommunicationOptions {
   /** Timeout in milliseconds (default: 15000) */
   timeoutMs?: number;
+  /** System-level instructions passed to the LLM session (higher priority than prompt content) */
+  instructions?: string;
   /** Logger instance for error reporting */
   logger?: { error: (msg: string) => void; log: (msg: string) => void };
 }
@@ -90,13 +92,16 @@ export async function sendLLMPrompt(
   prompt: string,
   options: LLMCommunicationOptions = {},
 ): Promise<string> {
-  const { timeoutMs = 15000, logger } = options;
+  const { timeoutMs = 15000, instructions, logger } = options;
 
   // Set up Apple Intelligence model
   await LLM.setModel({ path: 'Apple Intelligence' });
 
-  // Create chat session
-  const { id: chatId } = await LLM.createChat();
+  // Create chat session (pass instructions when provided — the native plugin
+  // feeds them to LanguageModelSession where they receive higher priority)
+  const { id: chatId } = await LLM.createChat(
+    instructions ? { instructions } : undefined,
+  );
 
   // Track the response and listeners
   let latestSnapshot = '';
