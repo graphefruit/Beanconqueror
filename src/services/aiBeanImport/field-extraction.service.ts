@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
 import {
+  BEAN_IMPORT_SYSTEM_INSTRUCTIONS,
   BLEND_ORIGINS_PROMPT_TEMPLATE,
   buildFieldPrompt,
   FIELD_PROMPTS,
@@ -491,6 +492,7 @@ export class FieldExtractionService {
   private async sendLLMMessage(prompt: string): Promise<string> {
     return sendLLMPrompt(prompt, {
       timeoutMs: LLM_TIMEOUT_PER_FIELD_MS,
+      instructions: BEAN_IMPORT_SYSTEM_INSTRUCTIONS,
       logger: this.uiLog,
     });
   }
