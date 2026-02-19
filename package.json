@@ -38,7 +38,7 @@
     "@capacitor/clipboard": "^8.0.0",
     "@capacitor/core": "^8.0.0",
     "@capacitor/device": "^8.0.0",
-    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/filesystem": "8.0.0",
     "@capacitor/geolocation": "^8.0.0",
     "@capacitor/haptics": "^8.0.0",
     "@capacitor/ios": "^8.0.0",

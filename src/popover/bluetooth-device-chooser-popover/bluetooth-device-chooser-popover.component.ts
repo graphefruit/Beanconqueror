@@ -31,7 +31,7 @@ import { refreshOutline } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, Subscription } from 'rxjs';
 
-import { BluetoothTypes, ScaleType } from '../../classes/devices';
+import { BluetoothTypes, ScaleType, sleep } from '../../classes/devices';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
@@ -303,18 +303,14 @@ export class BluetoothDeviceChooserPopoverComponent
         // Just skale and decent has an LED.
         let skipLoop = 0;
         for (let i = 0; i < 5; i++) {
-          await new Promise((resolve) => {
-            setTimeout(async () => {
-              const connectedScale = this.bleManager.getScale();
-              if (connectedScale !== null && connectedScale !== undefined) {
-                skipLoop = 1;
-                try {
-                  connectedScale.setLed(true, true);
-                } catch (ex) {}
-              }
-              resolve(undefined);
-            }, 1000);
-          });
+          await sleep(1000);
+          const connectedScale = this.bleManager.getScale();
+          if (connectedScale !== null && connectedScale !== undefined) {
+            skipLoop = 1;
+            try {
+              connectedScale.setLed(true, true);
+            } catch (ex) {}
+          }
           if (skipLoop === 1) {
             break;
           }

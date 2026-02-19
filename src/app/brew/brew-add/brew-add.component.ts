@@ -634,11 +634,8 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     if (this.brewBrewing?.timer?.isTimerRunning()) {
       this.brewBrewing.timer.pauseTimer('click');
 
-      await new Promise(async (resolve) => {
-        setTimeout(() => {
-          resolve(undefined);
-        }, 100);
-      });
+      //Don't ask we why we sleep here, but looks like we need it
+      await sleep(100);
     }
   }
 
