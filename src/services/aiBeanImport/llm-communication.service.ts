@@ -1,5 +1,27 @@
 import { CapgoLLM } from '@capgo/capacitor-llm';
 
+/**
+ * Local type extension — the native Swift plugin already supports `instructions`
+ * in `createChat()`, but the published TypeScript types don't expose the
+ * parameter yet. Cast through `unknown` to avoid `any` while preserving full
+ * type safety for every call-site in this file.
+ */
+interface LLMPluginWithInstructions {
+  setModel(options: { path: string }): Promise<void>;
+  createChat(options?: { instructions?: string }): Promise<{ id: string }>;
+  sendMessage(options: {
+    chatId: string;
+    message: string;
+  }): Promise<{ message: string }>;
+  deleteChat(options: { chatId: string }): Promise<void>;
+  addListener(
+    eventName: string,
+    callback: (event: { text?: string }) => void,
+  ): Promise<{ remove: () => Promise<void> }>;
+}
+
+const LLM = CapgoLLM as unknown as LLMPluginWithInstructions;
+
 export interface LLMCommunicationOptions {
   /** Timeout in milliseconds (default: 15000) */
   timeoutMs?: number;
@@ -71,10 +93,10 @@ export async function sendLLMPrompt(
   const { timeoutMs = 15000, logger } = options;
 
   // Set up Apple Intelligence model
-  await CapgoLLM.setModel({ path: 'Apple Intelligence' });
+  await LLM.setModel({ path: 'Apple Intelligence' });
 
   // Create chat session
-  const { id: chatId } = await CapgoLLM.createChat();
+  const { id: chatId } = await LLM.createChat();
 
   // Track the response and listeners
   let latestSnapshot = '';
@@ -106,13 +128,13 @@ export async function sendLLMPrompt(
   };
 
   // Set up listeners
-  textListener = await CapgoLLM.addListener('textFromAi', (event: any) => {
+  textListener = await LLM.addListener('textFromAi', (event: any) => {
     if (event.text) {
       latestSnapshot = event.text;
     }
   });
 
-  finishedListener = await CapgoLLM.addListener('aiFinished', () => {
+  finishedListener = await LLM.addListener('aiFinished', () => {
     resolveOnce(latestSnapshot);
   });
 
@@ -125,7 +147,7 @@ export async function sendLLMPrompt(
   }, timeoutMs);
 
   // Send message (don't await - let the promise handle completion)
-  void CapgoLLM.sendMessage({
+  void LLM.sendMessage({
     chatId,
     message: prompt,
   });
