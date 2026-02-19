@@ -1,6 +1,23 @@
 import moment from 'moment';
 
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
+
+/**
+ * System-level instructions for all bean-field extraction calls.
+ *
+ * Apple's Foundation Models give `instructions` higher priority than prompt
+ * content, so generic anti-hallucination and response-format rules live here
+ * while field-specific task descriptions stay in the per-field prompts.
+ */
+export const BEAN_IMPORT_SYSTEM_INSTRUCTIONS = `You are a coffee label data extractor. Your task is to extract structured data from OCR text captured from coffee bean labels.
+
+CRITICAL RULES — NEVER VIOLATE:
+- ONLY extract information EXPLICITLY written in the text.
+- Return NOT_FOUND for ANY field not clearly present.
+- DO NOT guess, infer, or make assumptions.
+- NEVER hallucinate or fabricate data.
+- When uncertain, ALWAYS return NOT_FOUND.
+- Respond with ONLY the requested value. No explanations, no sentences.`;
 import {
   elevationExistsInOcrText,
   sanitizeElevation,
