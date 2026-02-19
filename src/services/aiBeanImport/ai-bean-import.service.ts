@@ -14,7 +14,10 @@ import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-
 
 import { Bean } from '../../classes/bean/bean';
 import { LLM_TIMEOUT_LANGUAGE_DETECTION_MS } from '../../data/ai-import/ai-import-constants';
-import { AI_IMPORT_LANGUAGE_DETECTION_PROMPT } from '../../data/ai-import/ai-import-prompt';
+import {
+  AI_IMPORT_LANGUAGE_DETECTION_PROMPT,
+  LANGUAGE_DETECTION_INSTRUCTIONS,
+} from '../../data/ai-import/ai-import-prompt';
 import { UIAlert } from '../uiAlert';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
@@ -439,6 +442,7 @@ export class AIBeanImportService {
       // Send to LLM with timeout for language detection
       const response = await sendLLMPrompt(prompt, {
         timeoutMs: LLM_TIMEOUT_LANGUAGE_DETECTION_MS,
+        instructions: LANGUAGE_DETECTION_INSTRUCTIONS,
         logger: this.uiLog,
       });
 
