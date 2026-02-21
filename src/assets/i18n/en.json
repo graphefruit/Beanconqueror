@@ -1640,5 +1640,23 @@
     "PAGE_SETTINGS_LANGUAGE_KOREAN": "Korean",
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovak",
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japanese",
-    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russian"
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russian",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "Ethiopia, Colombia, Brazil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papua New Guinea, Hawaii, Jamaica",
+        "PROCESSING_METHODS": "Washed, Natural, Honey, Anaerobic, Carbonic Maceration, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Filter Roast, for filter, pour over, light roast, filter coffee",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Espresso Roast, for espresso, dark roast, espresso blend",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Omni Roast, versatile, all brewing methods, medium roast, all-rounder",
+        "DECAF_KEYWORDS": "Decaf, Decaffeinated, Caffeine-free",
+        "BLEND_KEYWORDS": "Blend, House Blend, Espresso Blend",
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Single Estate, Single Farm, Field Blend, Micro Lot",
+        "PRODUCER_KEYWORDS": "Producer, Produced by, Grown by, Farmer, Grower, Family, Cooperative, Coop, Association, Smallholders",
+        "ROASTDATE_KEYWORDS": "Roast date, Roasted on, Roasting date, Freshly roasted, Roasted",
+        "ROASTER_KEYWORDS": "Roasters, Roastery, Coffee, Ltd, LLC, Inc"
+    },
+    "AI_IMPORT_LANG_DETECT": {
+        "KEYWORDS": "roasted, harvest, acidity, beans, flavor, freshly",
+        "EXAMPLE": "Freshly roasted, single origin, tasting notes: berry, citrus"
+    }
 }

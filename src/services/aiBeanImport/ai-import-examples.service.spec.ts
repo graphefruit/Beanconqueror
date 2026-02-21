@@ -210,6 +210,51 @@ describe('AIImportExamplesService', () => {
     });
   });
 
+  describe('getLanguageDetectionKeywords', () => {
+    it('should return formatted keyword lines and examples, skipping languages without keywords or with load errors', async () => {
+      // Arrange — mixed set of locales: 2 valid, 1 wrong key, 1 load error
+      mockTranslate.getLangs.and.returnValue(['de', 'en', 'fr', 'es']);
+      mockTranslate.currentLoader.getTranslation.and.callFake(
+        (lang: string) => {
+          if (lang === 'de') {
+            return of({
+              AI_IMPORT_LANG_DETECT: {
+                KEYWORDS: 'Röstung, Aufbereitung',
+                EXAMPLE: 'Röstfrisch, Herkunft: Äthiopien',
+              },
+            });
+          }
+          if (lang === 'en') {
+            return of({
+              AI_IMPORT_LANG_DETECT: {
+                KEYWORDS: 'roasted, harvest',
+                EXAMPLE: 'Freshly roasted, single origin',
+              },
+            });
+          }
+          if (lang === 'fr') {
+            return of({ someOtherKey: 'foo' });
+          }
+          // 'es' fails to load
+          return throwError(() => new Error('Language not found'));
+        },
+      );
+
+      // Act
+      const result = await service.getLanguageDetectionKeywords();
+
+      // Assert
+      expect(result).toBe(
+        '- de: Röstung, Aufbereitung\n' +
+          '- en: roasted, harvest\n' +
+          '\n' +
+          'EXAMPLES:\n' +
+          '"Röstfrisch, Herkunft: Äthiopien" → de\n' +
+          '"Freshly roasted, single origin" → en',
+      );
+    });
+  });
+
   describe('mergeExamples (via getMergedExamples)', () => {
     it('should combine values from all example objects', async () => {
       // Arrange

@@ -17,12 +17,14 @@ export function createMockTranslateService(
 
   const spy = jasmine.createSpyObj('TranslateService', [
     'instant',
+    'getLangs',
   ]) as jasmine.SpyObj<TranslateService> & {
     currentLang: string;
     currentLoader: { getTranslation: jasmine.Spy };
   };
 
   spy.instant.and.callFake((key: string) => translations[key] || key);
+  spy.getLangs.and.returnValue([]);
   spy.currentLang = 'en';
   spy.currentLoader = loaderSpy;
 

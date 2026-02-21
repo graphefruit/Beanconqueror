@@ -6,11 +6,7 @@ export type AIImportStep =
   | 'init'
   | 'camera_permission'
   | 'take_photo'
-  | 'ocr_setup'
   | 'ocr'
-  | 'ocr_metadata'
-  | 'language_detection'
-  | 'multi_step_extraction'
   | 'processing';
 
 /**

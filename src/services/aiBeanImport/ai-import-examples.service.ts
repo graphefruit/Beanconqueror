@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 export interface MergedExamples {
   ORIGINS: string;
@@ -67,9 +68,9 @@ export class AIImportExamplesService {
   ): Promise<Record<string, string[]> | null> {
     try {
       // Use the translate loader directly to get translations for a specific language
-      const translations = await this.translate.currentLoader
-        .getTranslation(lang)
-        .toPromise();
+      const translations = await firstValueFrom(
+        this.translate.currentLoader.getTranslation(lang),
+      );
       const examples = translations?.AI_IMPORT_PROMPT_EXAMPLES;
 
       if (!examples || typeof examples !== 'object') {
@@ -92,6 +93,46 @@ export class AIImportExamplesService {
       // Language file doesn't exist or couldn't be loaded
       return null;
     }
+  }
+
+  /**
+   * Load language detection keywords and examples from all available locales.
+   * Iterates every locale, loads AI_IMPORT_LANG_DETECT if present,
+   * and returns a formatted string for the language detection prompt.
+   *
+   * @returns Formatted string with keyword lines and example sentences, e.g.:
+   *   "- de: Aufbereitung, Röstung, ...\n- en: roasted, harvest, ...\n\nEXAMPLES:\n\"Röstfrisch, ...\" → de"
+   */
+  public async getLanguageDetectionKeywords(): Promise<string> {
+    const keywordLines: string[] = [];
+    const exampleLines: string[] = [];
+
+    for (const lang of this.translate.getLangs()) {
+      try {
+        const translations = await firstValueFrom(
+          this.translate.currentLoader.getTranslation(lang),
+        );
+        const langDetect = translations?.AI_IMPORT_LANG_DETECT as any;
+        const keywords = langDetect?.KEYWORDS?.trim();
+        const example = langDetect?.EXAMPLE?.trim();
+
+        if (keywords) {
+          keywordLines.push(`- ${lang}: ${keywords}`);
+        }
+        if (example) {
+          exampleLines.push(`"${example}" → ${lang}`);
+        }
+      } catch {
+        // Language file doesn't exist or couldn't be loaded — skip
+      }
+    }
+
+    let result = keywordLines.join('\n');
+    if (exampleLines.length > 0) {
+      result += '\n\nEXAMPLES:\n' + exampleLines.join('\n');
+    }
+
+    return result;
   }
 
   /**

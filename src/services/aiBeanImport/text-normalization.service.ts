@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { MAX_VALID_ELEVATION_METERS } from '../../data/ai-import/ai-import-constants';
+import { isNullLikeValue } from './llm-communication.service';
 
 /**
  * Regex character class for thousand separator variants.
@@ -238,26 +239,13 @@ export function normalizeAltitudeUnit(value: string): string {
 export function sanitizeElevation(
   value: string | null | undefined,
 ): string | null {
-  // Reject null/undefined
-  if (value === null || value === undefined) {
+  // Reject null/undefined and null-like string values
+  if (isNullLikeValue(value)) {
     return null;
   }
 
   // Reject non-strings
   if (typeof value !== 'string') {
-    return null;
-  }
-
-  // Reject null-like values
-  const trimmed = value.trim().toLowerCase();
-  if (
-    trimmed === '' ||
-    trimmed === 'null' ||
-    trimmed === 'not_found' ||
-    trimmed === 'unknown' ||
-    trimmed === 'none' ||
-    trimmed === 'n/a'
-  ) {
     return null;
   }
 

@@ -18,20 +18,7 @@ Coffee labels contain mixed content:
 - DESCRIPTIVE TEXT in the target market's language (USE THIS to determine language)
 
 LANGUAGE INDICATORS - Look for these keywords:
-- GERMAN: Aufbereitung, Röstung, Herkunft, geröstet, Geschmack, Säure, Bohnen, frisch
-- FRENCH: torréfié, origine, récolte, acidité, grains, saveur, fraîchement
-- ITALIAN: tostato, raccolto, acidità, chicchi, sapore, fresco
-- SPANISH: tostado, cosecha, acidez, granos, sabor, tueste
-- PORTUGUESE: torrado, colheita, acidez, grãos, sabor, torra
-- ENGLISH: roasted, harvest, acidity, beans, flavor, freshly
-
-EXAMPLES:
-"Röstfrisch, Herkunft: Äthiopien, Aufbereitung: gewaschen" → de
-"Torréfié artisanalement, origine unique, notes florales" → fr
-"Caffè tostato fresco, acidità vivace, gusto intenso" → it
-"Tueste artesanal, origen único, notas de chocolate" → es
-"Freshly roasted, single origin, tasting notes: berry, citrus" → en
-"Café torrado na hora, origem única, notas frutadas" → pt
+{{LANGUAGE_INDICATORS}}
 
 RULES:
 - Focus on descriptive words and the keyword indicators above

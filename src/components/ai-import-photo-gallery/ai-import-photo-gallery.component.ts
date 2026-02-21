@@ -178,7 +178,7 @@ export class AiImportPhotoGalleryComponent {
               fileName,
             );
 
-            if (fileUri.path && this.photoPaths.length < this.maxPhotos) {
+            if (fileUri.path) {
               this.photoPaths.push(fileUri.path);
               this.uiLog.log(
                 `AI Import Gallery: Saved photo to ${fileUri.path}, total now: ${this.photoPaths.length}`,
@@ -247,6 +247,9 @@ export class AiImportPhotoGalleryComponent {
    * Remove a photo at the given index
    */
   public async removePhoto(index: number): Promise<void> {
+    if (index < 0 || index >= this.photoPaths.length) {
+      return;
+    }
     const path = this.photoPaths[index];
     const wasLastPhoto = this.photoPaths.length === 1;
     const wasAtEnd = index === this.photoPaths.length - 1;
@@ -366,7 +369,9 @@ export class AiImportPhotoGalleryComponent {
     setTimeout(() => {
       if (wasLastPhoto) {
         // No photos left - focus on add button
-        this.focusAddButton();
+        if (this.addPhotoButton?.nativeElement) {
+          this.addPhotoButton.nativeElement.focus();
+        }
       } else if (this.photoSlides?.nativeElement?.swiper) {
         // Photos remain - focus on appropriate slide
         const newIndex = wasAtEnd ? removedIndex - 1 : removedIndex;
@@ -381,17 +386,6 @@ export class AiImportPhotoGalleryComponent {
   }
 
   /**
-   * Focus on the add photo button
-   */
-  private focusAddButton(): void {
-    setTimeout(() => {
-      if (this.addPhotoButton?.nativeElement) {
-        this.addPhotoButton.nativeElement.focus();
-      }
-    }, 100);
-  }
-
-  /**
    * Announce to screen readers that a photo was added
    */
   private announcePhotoAdded(): void {
@@ -403,7 +397,9 @@ export class AiImportPhotoGalleryComponent {
       },
     );
     // Clear after announcement
-    setTimeout(() => (this.screenReaderAnnouncement = ''), 1000);
+    setTimeout(() => {
+      this.screenReaderAnnouncement = '';
+    }, 1000);
   }
 
   /**
@@ -422,7 +418,9 @@ export class AiImportPhotoGalleryComponent {
         },
       );
     }
-    setTimeout(() => (this.screenReaderAnnouncement = ''), 1000);
+    setTimeout(() => {
+      this.screenReaderAnnouncement = '';
+    }, 1000);
   }
 
   /**

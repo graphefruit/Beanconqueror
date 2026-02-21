@@ -113,8 +113,9 @@ export async function sendLLMPrompt(
     try {
       await textListener?.remove();
       await finishedListener?.remove();
+      await LLM.deleteChat({ chatId });
     } catch (e) {
-      logger?.error('Error cleaning up listeners: ' + e);
+      logger?.error('Error cleaning up listeners/chat: ' + e);
     }
   };
 

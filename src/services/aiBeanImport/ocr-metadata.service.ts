@@ -1,4 +1,4 @@
-import { Injectable, isDevMode } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import {
   OCR_LARGE_TEXT_AVG_MULTIPLIER,
@@ -141,14 +141,10 @@ export class OcrMetadataService {
   public shouldUseMetadata(ocrResult: TextDetectionResult): boolean {
     // Need blocks array
     if (!ocrResult.blocks) {
-      this.debugLog('blocks is undefined/null');
       return false;
     }
 
     if (ocrResult.blocks.length < OCR_MIN_BLOCKS_FOR_METADATA) {
-      this.debugLog(
-        `only ${ocrResult.blocks.length} blocks, need at least ${OCR_MIN_BLOCKS_FOR_METADATA}`,
-      );
       return false;
     }
 
@@ -157,9 +153,6 @@ export class OcrMetadataService {
       (b) => b.boundingBox && typeof b.boundingBox.bottom === 'number',
     );
     if (blocksWithBoundingBox.length < OCR_MIN_BLOCKS_FOR_METADATA) {
-      this.debugLog(
-        `only ${blocksWithBoundingBox.length} blocks have bounding boxes`,
-      );
       return false;
     }
 
@@ -170,24 +163,15 @@ export class OcrMetadataService {
     );
     const maxHeight = Math.max(...heights);
     const minHeight = Math.min(...heights);
-    this.debugLog(
-      `${blocksWithBoundingBox.length} blocks, heights min=${minHeight} max=${maxHeight} ratio=${minHeight > 0 ? (maxHeight / minHeight).toFixed(2) : 'N/A'}`,
-    );
 
     // If min is 0, avoid division by zero
     if (minHeight === 0) {
-      const useful = maxHeight > 0;
-      this.debugLog(`useful=${useful} (minHeight=0)`);
-      return useful;
+      return maxHeight > 0;
     }
 
     // If all text is similar size, metadata won't help much
     const ratio = maxHeight / minHeight;
-    const useful = ratio > OCR_SIZE_VARIATION_THRESHOLD;
-    this.debugLog(
-      `useful=${useful} (ratio ${ratio.toFixed(2)} ${useful ? '>' : '<='} threshold ${OCR_SIZE_VARIATION_THRESHOLD})`,
-    );
-    return useful;
+    return ratio > OCR_SIZE_VARIATION_THRESHOLD;
   }
 
   /**
@@ -262,14 +246,5 @@ export class OcrMetadataService {
     });
 
     return header + formattedBlocks.join('\n\n');
-  }
-
-  /**
-   * Debug logging helper - only logs in development mode.
-   */
-  private debugLog(message: string): void {
-    if (isDevMode()) {
-      console.log(`OCR metadata: ${message}`);
-    }
   }
 }

@@ -1,6 +1,16 @@
 import moment from 'moment';
 
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
+import {
+  elevationExistsInOcrText,
+  sanitizeElevation,
+  weightExistsInOcrText,
+} from '../../services/aiBeanImport/text-normalization.service';
+import {
+  MAX_BLEND_PERCENTAGE,
+  MAX_CUPPING_SCORE,
+  MIN_CUPPING_SCORE,
+} from './ai-import-constants';
 
 /**
  * System-level instructions for all bean-field extraction calls.
@@ -18,16 +28,6 @@ CRITICAL RULES — NEVER VIOLATE:
 - NEVER hallucinate or fabricate data.
 - When uncertain, ALWAYS return NOT_FOUND.
 - Respond with ONLY the requested value. No explanations, no sentences.`;
-import {
-  elevationExistsInOcrText,
-  sanitizeElevation,
-  weightExistsInOcrText,
-} from '../../services/aiBeanImport/text-normalization.service';
-import {
-  MAX_BLEND_PERCENTAGE,
-  MAX_CUPPING_SCORE,
-  MIN_CUPPING_SCORE,
-} from './ai-import-constants';
 
 /**
  * Prompt for extracting all origin attributes from a BLEND in one call.
@@ -85,13 +85,30 @@ export interface FieldPromptConfig {
   field: string;
   /** Prompt template with placeholders */
   promptTemplate: string;
-  /** i18n example key(s) to include */
-  examplesKeys?: (keyof MergedExamples)[];
   /** Validation regex pattern */
   validation?: RegExp;
   /** Post-processing function (ocrText provided for validation) */
   postProcess?: (value: string, ocrText: string) => any;
 }
+
+/**
+ * Date formats accepted for roast date parsing (tried in order).
+ * The LLM is asked to return ISO YYYY-MM-DD, but may echo the label format.
+ * Lenient parsing handles minor deviations (missing leading zeros, etc.).
+ */
+const ROAST_DATE_FORMATS = [
+  'YYYY-MM-DD', // ISO (expected LLM response)
+  'DD.MM.YYYY', // European (DE, CH, AT)
+  'DD/MM/YYYY', // European (FR, IT, ES, PT)
+  'MM/DD/YYYY', // American
+  'DD-MM-YYYY', // Various
+  'DD.MM.YY', // European short year
+  'DD/MM/YY', // European short year
+  'D.M.YYYY', // No leading zeros
+  'D/M/YYYY', // No leading zeros
+  'MMMM D, YYYY', // Written English (January 15, 2025)
+  'D MMMM YYYY', // Written European (15 January 2025)
+];
 
 /**
  * All field prompt configurations.
@@ -114,7 +131,6 @@ RESPONSE FORMAT: Return ONLY one of: SINGLE_ORIGIN, BLEND, or NOT_FOUND.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['SINGLE_ORIGIN_KEYWORDS', 'BLEND_KEYWORDS'],
     validation: /^(SINGLE_ORIGIN|BLEND)$/i,
     postProcess: (v, _ocrText) => {
       const upper = v.toUpperCase();
@@ -163,7 +179,6 @@ Use "NOT_FOUND" for any field not found.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['ROASTER_KEYWORDS'],
   },
 
   weight: {
@@ -221,11 +236,6 @@ RESPONSE FORMAT: Return ONLY one of: FILTER, ESPRESSO, OMNI, or NOT_FOUND.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: [
-      'ROASTING_TYPE_FILTER_KEYWORDS',
-      'ROASTING_TYPE_ESPRESSO_KEYWORDS',
-      'ROASTING_TYPE_OMNI_KEYWORDS',
-    ],
     validation: /^(FILTER|ESPRESSO|OMNI)$/i,
     postProcess: (v, _ocrText) => {
       const upper = v.toUpperCase();
@@ -261,7 +271,6 @@ RESPONSE FORMAT: Return ONLY one of: true, false, or NOT_FOUND.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['DECAF_KEYWORDS'],
     validation: /^(true|false)$/i,
     postProcess: (v, _ocrText) => {
       const lower = v.toLowerCase();
@@ -324,10 +333,10 @@ RESPONSE FORMAT: Return the date in ISO format (YYYY-MM-DD), or NOT_FOUND. EXCLU
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['ROASTDATE_KEYWORDS'],
     postProcess: (v, _ocrText) => {
-      // Try to parse with moment's flexible parsing
-      const parsed = moment(v);
+      // Parse with explicit date formats to avoid moment deprecation warning.
+      // Lenient mode (no strict flag) handles missing leading zeros, etc.
+      const parsed = moment(v, ROAST_DATE_FORMATS);
       if (!parsed.isValid()) {
         return null;
       }
@@ -365,7 +374,6 @@ RESPONSE FORMAT: Return ONLY the country name, or NOT_FOUND.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['ORIGINS'],
   },
 
   region: {
@@ -400,7 +408,6 @@ RESPONSE FORMAT: Return ONLY the variety name(s), or NOT_FOUND.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['VARIETIES'],
   },
 
   processing: {
@@ -417,7 +424,6 @@ RESPONSE FORMAT: Return ONLY the processing method, or NOT_FOUND.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['PROCESSING_METHODS'],
   },
 
   elevation: {
@@ -473,7 +479,6 @@ RESPONSE FORMAT: Return ONLY the producer/farmer name, or NOT_FOUND.
 
 TEXT (languages: {{LANGUAGES}}):
 {{OCR_TEXT}}`,
-    examplesKeys: ['PRODUCER_KEYWORDS'],
   },
 };
 
@@ -493,16 +498,7 @@ export function buildFieldPrompt(
 
   let prompt = config.promptTemplate;
 
-  // Replace example placeholders
-  if (config.examplesKeys) {
-    for (const key of config.examplesKeys) {
-      const placeholder = `{{${key}}}`;
-      const value = examples[key] || '';
-      prompt = prompt.replace(placeholder, value);
-    }
-  }
-
-  // Replace all example key placeholders (even if not in examplesKeys)
+  // Replace all example key placeholders
   for (const key of Object.keys(examples) as (keyof MergedExamples)[]) {
     const placeholder = `{{${key}}}`;
     if (prompt.includes(placeholder)) {

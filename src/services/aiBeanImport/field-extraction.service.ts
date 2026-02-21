@@ -1,4 +1,4 @@
-import { inject, Injectable, isDevMode } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -87,9 +87,6 @@ export class FieldExtractionService {
     languages: string[],
   ): Promise<Bean> {
     try {
-      // Debug: Log raw OCR text
-      this.debugLog('RAW OCR TEXT', ocrText);
-
       // Get user's bean customization settings
       const settings = this.uiSettingsStorage.getSettings();
       const params = settings.bean_manage_parameters;
@@ -99,7 +96,7 @@ export class FieldExtractionService {
 
       // Pre-process text
       const text = this.preProcess(ocrText, examples);
-      this.debugLog('NORMALIZED TEXT', text);
+      this.uiLog.debug('Normalized text length: ' + text.length);
 
       // Extract fields in two phases
       const topLevelFields = await this.extractTopLevelFields(
@@ -371,13 +368,12 @@ export class FieldExtractionService {
     try {
       // Build the prompt
       const prompt = buildFieldPrompt(fieldName, ocrText, examples, languages);
-      this.debugLog(`PROMPT FOR ${fieldName}`, prompt);
 
       // Send to LLM
       const response = await this.sendLLMMessage(prompt);
       const cleaned = this.cleanResponse(response);
 
-      this.debugLog(`${fieldName} response`, cleaned);
+      this.uiLog.debug(fieldName + ' response: ' + cleaned);
 
       // Handle null/not found responses (exact match only - partial NOT_FOUND handled by postProcess)
       if (isNullLikeValue(cleaned)) {
@@ -418,14 +414,13 @@ export class FieldExtractionService {
         examples,
         languages,
       );
-      this.debugLog('PROMPT FOR name_and_roaster', prompt);
 
       // Send to LLM
       const response = await this.sendLLMMessage(prompt);
       // Don't use cleanResponse - it strips colons which breaks JSON
       const trimmed = response?.trim() || '';
 
-      this.debugLog('name_and_roaster response', trimmed);
+      this.uiLog.debug('name_and_roaster response: ' + trimmed);
 
       // Parse JSON response
       return this.parseNameAndRoasterResponse(trimmed);
@@ -451,8 +446,8 @@ export class FieldExtractionService {
     }
 
     // Extract and sanitize values
-    let name = this.sanitizeNameRoasterField(parsed.name);
-    let roaster = this.sanitizeNameRoasterField(parsed.roaster);
+    let name = this.sanitizeStringField(parsed.name);
+    let roaster = this.sanitizeStringField(parsed.roaster);
 
     // Apply title case normalization
     if (name) {
@@ -463,19 +458,6 @@ export class FieldExtractionService {
     }
 
     return { name: name || '', roaster: roaster || '' };
-  }
-
-  /**
-   * Sanitize a name/roaster field value.
-   */
-  private sanitizeNameRoasterField(value: any): string {
-    if (value === null || value === undefined) return '';
-    if (typeof value !== 'string') return '';
-    const trimmed = value.trim();
-    if (isNullLikeValue(trimmed)) {
-      return '';
-    }
-    return trimmed;
   }
 
   /**
@@ -542,14 +524,12 @@ export class FieldExtractionService {
     // Build the blend-specific prompt
     const prompt = this.buildBlendOriginsPrompt(ocrText, examples, languages);
 
-    this.debugLog('BLEND ORIGINS PROMPT', prompt);
-
     // Send to LLM
     const response = await this.sendLLMMessage(prompt);
     // Note: Don't use cleanResponse here - it strips colons which breaks JSON syntax
     const trimmed = response?.trim() || '';
 
-    this.debugLog('BLEND ORIGINS RESPONSE', trimmed);
+    this.uiLog.debug('Blend origins response: ' + trimmed);
 
     // Parse JSON response (handles markdown code blocks internally)
     return this.parseBlendOriginsResponse(trimmed);
@@ -821,21 +801,7 @@ export class FieldExtractionService {
 
     // Ensure at least one bean_information entry exists if any origin data
     if (bean.bean_information.length === 0) {
-      bean.bean_information = [
-        {
-          country: '',
-          region: '',
-          farm: '',
-          farmer: '',
-          elevation: '',
-          harvest_time: '',
-          variety: '',
-          processing: '',
-          certification: '',
-          purchasing_price: 0,
-          fob_price: 0,
-        } as IBeanInformation,
-      ];
+      bean.bean_information = [this.createEmptyBeanInformation()];
     }
 
     return bean;
@@ -854,7 +820,7 @@ export class FieldExtractionService {
       let stepName = this.translate.instant(`AI_IMPORT_STEP_${stepKey}`);
       if (stepName === `AI_IMPORT_STEP_${stepKey}`) {
         // Translation not found, log warning and format the step key nicely
-        console.warn(
+        this.uiLog.warn(
           `[AI Import] Translation missing for AI_IMPORT_STEP_${stepKey}`,
         );
         stepName = stepKey
@@ -864,7 +830,7 @@ export class FieldExtractionService {
       this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${stepName}`);
     } catch (e) {
       // Log cosmetic failure but don't interrupt extraction
-      console.warn(`[AI Import] updateProgress failed for ${stepKey}: ${e}`);
+      this.uiLog.warn(`[AI Import] updateProgress failed for ${stepKey}: ${e}`);
     }
   }
 
@@ -884,7 +850,7 @@ export class FieldExtractionService {
       );
       if (fieldLabel === `AI_IMPORT_FIELD_${fieldName.toUpperCase()}`) {
         // Translation not found, log warning and format the field name nicely
-        console.warn(
+        this.uiLog.warn(
           `[AI Import] Translation missing for AI_IMPORT_FIELD_${fieldName.toUpperCase()}`,
         );
         fieldLabel = fieldName
@@ -894,31 +860,9 @@ export class FieldExtractionService {
       this.uiAlert.setLoadingSpinnerMessage(`${baseMessage} - ${fieldLabel}`);
     } catch (e) {
       // Log cosmetic failure but don't interrupt extraction
-      console.warn(
+      this.uiLog.warn(
         `[AI Import] updateFieldProgress failed for ${fieldName}: ${e}`,
       );
     }
-  }
-
-  /**
-   * Debug logging helper - only logs in development mode.
-   * Verbose output (prompts/responses) goes to console in dev mode.
-   * Essential info always goes to UILog for app debug viewer.
-   */
-  private debugLog(label: string, data?: any): void {
-    const message = `[AI Import] ${label}`;
-    if (isDevMode()) {
-      console.log(`=== ${label} ===`);
-      if (data !== undefined) {
-        console.log(data);
-      }
-      console.log(`=== END ${label} ===`);
-    }
-    // Always log to UILog for debug viewer (truncated for large data)
-    const truncatedData =
-      typeof data === 'string' && data.length > 200
-        ? data.substring(0, 200) + '...'
-        : data;
-    this.uiLog.debug(`${message}: ${truncatedData ?? ''}`);
   }
 }

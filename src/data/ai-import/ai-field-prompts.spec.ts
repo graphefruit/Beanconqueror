@@ -19,7 +19,7 @@ describe('ai-field-prompts', () => {
       ).toThrowError('Unknown field: unknownField');
     });
 
-    it('should substitute example placeholders from examplesKeys', () => {
+    it('should substitute example placeholders', () => {
       // Arrange
       const ocrText = 'Ethiopia Yirgacheffe';
 
@@ -32,20 +32,25 @@ describe('ai-field-prompts', () => {
       expect(prompt).not.toContain('{{ORIGINS}}');
     });
 
-    it('should substitute all example key placeholders even if not in examplesKeys', () => {
-      // WHY: Some prompts reference example keys inline even without declaring them in examplesKeys
-
+    it('should substitute multiple example key placeholders in a single prompt', () => {
       // Arrange
-      const ocrText = 'Decaf Ethiopia';
+      const ocrText = 'Some roasted coffee text';
 
       // Act
-      const prompt = buildFieldPrompt('decaffeinated', ocrText, mockExamples, [
-        'en',
-      ]);
+      const prompt = buildFieldPrompt(
+        'bean_roasting_type',
+        ocrText,
+        mockExamples,
+        ['en'],
+      );
 
-      // Assert - DECAF_KEYWORDS should be substituted
-      expect(prompt).toContain('Decaf');
-      expect(prompt).not.toContain('{{DECAF_KEYWORDS}}');
+      // Assert - all three roasting type example keys should be substituted
+      expect(prompt).toContain('Filter');
+      expect(prompt).toContain('Espresso');
+      expect(prompt).toContain('Omni');
+      expect(prompt).not.toContain('{{ROASTING_TYPE_FILTER_KEYWORDS}}');
+      expect(prompt).not.toContain('{{ROASTING_TYPE_ESPRESSO_KEYWORDS}}');
+      expect(prompt).not.toContain('{{ROASTING_TYPE_OMNI_KEYWORDS}}');
     });
 
     it('should substitute LANGUAGES placeholder with comma-separated list', () => {

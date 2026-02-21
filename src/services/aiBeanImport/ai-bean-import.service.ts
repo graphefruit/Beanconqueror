@@ -1,4 +1,4 @@
-import { inject, Injectable, isDevMode } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -23,6 +23,7 @@ import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
 import { UILog } from '../uiLog';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
+import { AIImportExamplesService } from './ai-import-examples.service';
 import { FieldExtractionService } from './field-extraction.service';
 import { sendLLMPrompt } from './llm-communication.service';
 import {
@@ -47,6 +48,7 @@ export class AIBeanImportService {
   private readonly fieldExtraction = inject(FieldExtractionService);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly ocrMetadata = inject(OcrMetadataService);
+  private readonly aiImportExamples = inject(AIImportExamplesService);
 
   /**
    * Check if the device supports AI-based import (Apple Intelligence on iOS 18.1+)
@@ -136,11 +138,8 @@ export class AIBeanImportService {
         this.translate.instant('AI_IMPORT_STEP_EXTRACTING'),
       );
 
-      const base64Image = imageData.base64String;
-      this.uiLog.log('Base64 image length: ' + (base64Image?.length || 0));
-
       const ocrResult = (await CapacitorPluginMlKitTextRecognition.detectText({
-        base64Image: base64Image,
+        base64Image: imageData.base64String,
       })) as TextDetectionResult;
       const rawText = ocrResult.text;
       this.uiLog.log(
@@ -165,12 +164,6 @@ export class AIBeanImportService {
       const bean = await this.processOcrAndExtractBean([ocrResult], [rawText]);
 
       await this.uiAlert.hideLoadingSpinner();
-
-      if (!bean) {
-        throw new Error(
-          'Field extraction returned null - check logs for details',
-        );
-      }
 
       return bean;
     } catch (error: unknown) {
@@ -230,16 +223,6 @@ export class AIBeanImportService {
       currentStep = 'processing';
       const bean = await this.processOcrAndExtractBean(ocrResults, rawTexts);
 
-      if (!bean) {
-        // Clean up photos if not attaching
-        if (!attachPhotos) {
-          await this.cleanupPhotos(photoPaths);
-        }
-        throw new Error(
-          'Field extraction returned null - check logs for details',
-        );
-      }
-
       // Step 3: Handle photo attachments
       if (!attachPhotos) {
         // Delete temp photos since user doesn't want attachments
@@ -281,7 +264,6 @@ export class AIBeanImportService {
         : this.ocrMetadata.enrichMultiplePhotos(ocrResults);
 
     this.uiLog.log(`Enriched text length: ${enrichedText.length}`);
-    this.debugLog('enrichedText', enrichedText);
 
     // Step 2: Prepare raw text for language detection
     const combinedRawText = this.concatenateOCRResults(rawTexts);
@@ -304,24 +286,11 @@ export class AIBeanImportService {
     );
 
     // Step 5: Extract fields
-    this.debugLog('STARTING FIELD EXTRACTION');
-    this.debugLog('languagesToUse', languagesToUse);
     this.uiAlert.setLoadingSpinnerMessage(
       this.translate.instant('AI_IMPORT_STEP_ANALYZING'),
     );
 
-    const bean = await this.fieldExtraction.extractAllFields(
-      enrichedText,
-      languagesToUse,
-    );
-
-    if (!bean) {
-      throw new Error(
-        'Field extraction returned null - check logs for details',
-      );
-    }
-
-    return bean;
+    return this.fieldExtraction.extractAllFields(enrichedText, languagesToUse);
   }
 
   /**
@@ -433,11 +402,15 @@ export class AIBeanImportService {
    */
   private async detectLanguage(ocrText: string): Promise<string | null> {
     try {
+      // Load language detection keywords from i18n
+      const languageIndicators =
+        await this.aiImportExamples.getLanguageDetectionKeywords();
+
       // Build the language detection prompt
       const prompt = AI_IMPORT_LANGUAGE_DETECTION_PROMPT.replace(
-        '{{OCR_TEXT}}',
-        ocrText,
-      );
+        '{{LANGUAGE_INDICATORS}}',
+        languageIndicators,
+      ).replace('{{OCR_TEXT}}', ocrText);
 
       // Send to LLM with timeout for language detection
       const response = await sendLLMPrompt(prompt, {
@@ -469,50 +442,19 @@ export class AIBeanImportService {
     detectedLang: string | null,
     userLang: string,
   ): string[] {
-    const languages: string[] = [];
-    const seen = new Set<string>();
-
-    // Helper to add unique language
-    const addLang = (lang: string) => {
-      if (lang && !seen.has(lang)) {
-        seen.add(lang);
-        languages.push(lang);
-      }
-    };
+    const langs = new Set<string>();
 
     // 1. Detected language first (highest probability)
     if (detectedLang) {
-      addLang(detectedLang);
+      langs.add(detectedLang);
     }
 
     // 2. English second (universal fallback, coffee industry lingua franca)
-    addLang('en');
+    langs.add('en');
 
     // 3. UI language third (user's preference, may match text)
-    addLang(userLang);
+    langs.add(userLang);
 
-    return languages;
-  }
-
-  /**
-   * Debug logging helper - only logs in development mode.
-   * Verbose output goes to console in dev mode.
-   * Essential info always goes to UILog for app debug viewer.
-   */
-  private debugLog(label: string, data?: any): void {
-    const message = `[AI Import] ${label}`;
-    if (isDevMode()) {
-      console.log(`=== ${label} ===`);
-      if (data !== undefined) {
-        console.log(data);
-      }
-      console.log(`=== END ${label} ===`);
-    }
-    // Always log to UILog for debug viewer (truncated for large data)
-    const truncatedData =
-      typeof data === 'string' && data.length > 200
-        ? data.substring(0, 200) + '...'
-        : data;
-    this.uiLog.debug(`${message}: ${truncatedData ?? ''}`);
+    return Array.from(langs);
   }
 }
