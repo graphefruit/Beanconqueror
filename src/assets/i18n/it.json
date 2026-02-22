@@ -1587,5 +1587,23 @@
     "PAGE_SETTINGS_LANGUAGE_KOREAN": "한국어",
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovenčina",
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "日本語",
-    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "русский язык"
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "русский язык",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "Etiopia, Colombia, Brasile, Kenya, Guatemala, Costa Rica, Honduras, Perù, Ruanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Messico, Bolivia, Ecuador, Papua Nuova Guinea, Hawaii, Giamaica",
+        "PROCESSING_METHODS": "Lavato, Naturale, Honey, Anaerobico, Macerazione Carbonica, Wet-Hulled, Semi-Lavato, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Tostatura filtro, per filtro, tostatura chiara, caffè filtro",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Tostatura espresso, per espresso, tostatura scura, miscela espresso",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Tostatura Omni, versatile, tutti i metodi, tostatura media",
+        "DECAF_KEYWORDS": "Decaffeinato, Senza caffeina, Decaf",
+        "BLEND_KEYWORDS": "Miscela, Blend, Miscela della casa",
+        "SINGLE_ORIGIN_KEYWORDS": "Monorigine, Single Origin, Singola piantagione, Micro Lot",
+        "PRODUCER_KEYWORDS": "Produttore, Prodotto da, Coltivato da, Agricoltore, Coltivatore, Famiglia, Cooperativa, Associazione, Piccoli produttori",
+        "ROASTDATE_KEYWORDS": "Data di tostatura, Tostato il, Tostatura, Appena tostato",
+        "ROASTER_KEYWORDS": "Torrefazione, Caffè, S.r.l., S.p.A."
+    },
+    "AI_IMPORT_LANG_DETECT": {
+        "KEYWORDS": "tostato, raccolto, acidità, chicchi, sapore, fresco",
+        "EXAMPLE": "Caffè tostato fresco, acidità vivace, gusto intenso"
+    }
 }
