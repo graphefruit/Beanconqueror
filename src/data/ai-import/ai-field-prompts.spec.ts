@@ -180,6 +180,21 @@ describe('ai-field-prompts', () => {
         expect(postProcess('1kg', 'Roasted 15.01.2025')).toBeNull();
         expect(postProcess('1kg', 'Label 1 of 2')).toBeNull();
       });
+
+      it('should accept oz/lb without OCR validation', () => {
+        // WHY: Imperial units are never hallucinated from metric labels
+        expect(postProcess('12oz', 'Coffee 12oz bag')).toBe('12oz');
+        expect(postProcess('16oz', 'Coffee 16 oz bag')).toBe('16oz');
+        expect(postProcess('1lb', 'Coffee 1lb bag')).toBe('1lb');
+        expect(postProcess('2.5 lb', 'Coffee 2.5 lb bag')).toBe('2.5 lb');
+      });
+
+      it('should accept oz/lb even when OCR text does not contain exact match', () => {
+        // WHY: This is the fix — these currently return null in the broken version
+        expect(postProcess('12oz', 'Some text 12oz more')).toBe('12oz');
+        expect(postProcess('1lb', 'Some text 1lb more')).toBe('1lb');
+        expect(postProcess('16oz', 'Different text entirely')).toBe('16oz');
+      });
     });
   });
 
