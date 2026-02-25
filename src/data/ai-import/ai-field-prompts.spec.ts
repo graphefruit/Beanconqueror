@@ -237,7 +237,8 @@ describe('ai-field-prompts', () => {
       const postProcess = FIELD_PROMPTS['cupping_points'].postProcess!;
 
       it('should return null for scores below 80', () => {
-        // WHY: SCA cupping scores range from 80-100; lower numbers are likely other data
+        // WHY: Specialty coffee scores are 80+; lower numbers on a label are unlikely
+        // to be cupping scores (they could be weight, lot numbers, etc.)
         expect(postProcess('75', '75 points')).toBeNull();
         expect(postProcess('79', '79')).toBeNull();
       });
@@ -271,13 +272,13 @@ describe('ai-field-prompts', () => {
       });
 
       it('should return null for future dates', () => {
-        // WHY: Date validation prevents expiration dates from being used as roast dates
+        // WHY: A roasting date in the future is implausible — the roasting hasn't happened yet
         const futureDate = moment().add(1, 'month').format('YYYY-MM-DD');
         expect(postProcess(futureDate, '')).toBeNull();
       });
 
       it('should return null for dates older than one year', () => {
-        // WHY: Roast dates older than 1 year are likely misread or expiration dates
+        // WHY: A roasting date older than 1 year is implausible for fresh coffee — likely a misread or a different date type
         const oldDate = moment().subtract(2, 'years').format('YYYY-MM-DD');
         expect(postProcess(oldDate, '')).toBeNull();
       });

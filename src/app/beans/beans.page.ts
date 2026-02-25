@@ -528,7 +528,7 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
       );
 
-      // Check LLM readiness first
+      // Check LLM readiness — duplicated from aiImportBean because both are independent entry points
       const readiness = await this.aiBeanImportService.checkReadiness();
       if (!readiness.ready) {
         this.uiAnalytics.trackEvent(
