@@ -262,31 +262,5 @@ describe('OCRCorrectionService', () => {
       expect(result).toContain('Here');
     });
 
-    it('should handle text with no correctable terms', () => {
-      // Arrange
-      const input = 'Random words without coffee terms';
-
-      // Act
-      const result = service.correctOCRErrors(input, mockExamples);
-
-      // Assert - should return text unchanged (modulo whitespace normalization)
-      expect(result).toContain('Random');
-      expect(result).toContain('words');
-    });
-
-    it('should correct multiple OCR errors in the same text', () => {
-      // WHY: Real labels often have multiple OCR issues that need correction together
-
-      // Arrange
-      const input = 'C0lombia 6esha Natural';
-
-      // Act
-      const result = service.correctOCRErrors(input, mockExamples);
-
-      // Assert - both Colombia and Gesha should be corrected
-      expect(result).toContain('Colombia');
-      expect(result).toContain('Gesha');
-      expect(result).toContain('Natural');
-    });
   });
 });

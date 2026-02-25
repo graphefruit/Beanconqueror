@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
 import {
-  Block,
   OcrMetadataService,
   TextDetectionResult,
 } from './ocr-metadata.service';
@@ -117,62 +116,10 @@ describe('OcrMetadataService', () => {
       expect(enriched.enrichedText).toContain('=== OCR WITH LAYOUT ===');
       expect(enriched.enrichedText).toContain('**LARGE:**');
       expect(enriched.enrichedText).toContain('ROASTER NAME');
+      expect(enriched.enrichedText).toContain('**MEDIUM:**');
       expect(enriched.enrichedText).toContain('Coffee Name');
-      expect(enriched.enrichedText).toContain('Details');
-    });
-
-    it('should classify blocks by relative height into LARGE and SMALL categories', () => {
-      // WHY: Size classification helps LLM identify headers vs body text
-
-      // Arrange
-      const largeBlock = createBlock('BIG', 0, 0, 200, 100); // Height: 100
-      const smallBlock = createBlock('small', 0, 120, 200, 140); // Height: 20
-      const result = createTextDetectionResult('BIG\nsmall', [
-        largeBlock,
-        smallBlock,
-      ]);
-
-      // Act
-      const enriched = service.enrichWithLayout(result);
-
-      // Assert
-      expect(enriched.enrichedText).toContain('**LARGE:**');
       expect(enriched.enrichedText).toContain('**SMALL:**');
-    });
-
-    it('should classify text sizes as LARGE, MEDIUM, and SMALL based on height variation', () => {
-      // Arrange
-      const result = createTextDetectionResult('Top\nMiddle\nBottom', [
-        createBlock('Top', 0, 0, 100, 80), // Height: 80 (large)
-        createBlock('Middle', 0, 100, 100, 150), // Height: 50 (medium)
-        createBlock('Bottom', 0, 220, 100, 240), // Height: 20 (small)
-      ]);
-
-      // Act
-      const enriched = service.enrichWithLayout(result);
-
-      // Assert
-      expect(enriched.enrichedText).toContain('**LARGE:**');
-      expect(enriched.enrichedText).toContain('Top');
-      expect(enriched.enrichedText).toContain('Middle');
-      expect(enriched.enrichedText).toContain('Bottom');
-    });
-
-    it('should include all block texts in output regardless of position', () => {
-      // Arrange
-      const result = createTextDetectionResult('Left\nCenter\nRight', [
-        createBlock('Left', 0, 0, 50, 80),
-        createBlock('Center', 100, 0, 200, 80),
-        createBlock('Right', 250, 0, 300, 80),
-      ]);
-
-      // Act
-      const enriched = service.enrichWithLayout(result);
-
-      // Assert
-      expect(enriched.enrichedText).toContain('Left');
-      expect(enriched.enrichedText).toContain('Center');
-      expect(enriched.enrichedText).toContain('Right');
+      expect(enriched.enrichedText).toContain('Details');
     });
   });
 
@@ -198,38 +145,17 @@ describe('OcrMetadataService', () => {
       expect(enriched).not.toContain('Label 1 of');
     });
 
-    it('should add "Label X of Y" section markers for multiple photos', () => {
-      // WHY: Section markers help LLM understand text comes from separate label photos
+    it('should add section markers and enrich each photo independently', () => {
+      // WHY: Section markers help LLM understand text comes from separate label photos,
+      // and each photo should get its own layout annotations.
 
       // Arrange
       const results: TextDetectionResult[] = [
         createTextDetectionResult('Photo 1', [
-          createBlock('BIG', 0, 0, 200, 100),
-          createBlock('small', 0, 120, 200, 140),
-        ]),
-        createTextDetectionResult('Photo 2', [
-          createBlock('Another', 0, 0, 200, 100),
-          createBlock('text', 0, 120, 200, 140),
-        ]),
-      ];
-
-      // Act
-      const enriched = service.enrichMultiplePhotos(results);
-
-      // Assert
-      expect(enriched).toContain('=== OCR WITH LAYOUT ===');
-      expect(enriched).toContain('--- Label 1 of 2 ---');
-      expect(enriched).toContain('--- Label 2 of 2 ---');
-    });
-
-    it('should enrich each photo independently with its own layout annotations', () => {
-      // Arrange
-      const results: TextDetectionResult[] = [
-        createTextDetectionResult('Photo1', [
           createBlock('TITLE', 0, 0, 200, 100),
           createBlock('detail', 0, 120, 200, 140),
         ]),
-        createTextDetectionResult('Photo2', [
+        createTextDetectionResult('Photo 2', [
           createBlock('ANOTHER', 0, 0, 200, 100),
           createBlock('info', 0, 120, 200, 140),
         ]),
@@ -238,10 +164,13 @@ describe('OcrMetadataService', () => {
       // Act
       const enriched = service.enrichMultiplePhotos(results);
 
-      // Assert - both photos should have their own layout annotations
+      // Assert - section markers and header
+      expect(enriched).toContain('=== OCR WITH LAYOUT ===');
+      expect(enriched).toContain('--- Label 1 of 2 ---');
+      expect(enriched).toContain('--- Label 2 of 2 ---');
+      // Assert - both photos enriched independently with layout annotations
       expect(enriched).toContain('TITLE');
       expect(enriched).toContain('ANOTHER');
-      // Should have at least 2 LARGE tags (one per photo)
       const largeTagCount = (enriched.match(/\*\*LARGE:\*\*/g) || []).length;
       expect(largeTagCount).toBeGreaterThanOrEqual(2);
     });
