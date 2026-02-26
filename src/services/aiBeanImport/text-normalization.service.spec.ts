@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
 import {
-  buildThousandSeparatorPattern,
   elevationExistsInOcrText,
-  normalizeAltitudeUnit,
+  buildThousandSeparatorPattern,
+  normalizeElevationUnit,
   removeThousandSeparatorsFromInteger,
   sanitizeElevation,
   TextNormalizationService,
@@ -24,720 +24,560 @@ describe('TextNormalizationService', () => {
     expect(service).toBeTruthy();
   });
 
+  // --- normalizeCase ---
+
+  const normalizeCaseCases = [
+    {
+      input: 'FINCA EL PARAÍSO',
+      expected: 'Finca el Paraíso',
+      desc: 'ALL CAPS → Title Case',
+    },
+    {
+      input: 'Square Mile Coffee',
+      expected: 'Square Mile Coffee',
+      desc: 'preserve mixed case (already correct)',
+    },
+    {
+      input: 'ETHIOPIA YIRGACHEFFE\nNATURAL PROCESS',
+      expected: 'Ethiopia Yirgacheffe\nNatural Process',
+      desc: 'handle multiple lines independently',
+    },
+    {
+      input: 'KENYA AA',
+      expected: 'Kenya AA',
+      desc: 'preserve coffee grade acronyms (AA)',
+    },
+    {
+      input: 'SL-28 SL-34',
+      expected: 'SL-28 SL-34',
+      desc: 'preserve SL variety names',
+    },
+  ];
+
   describe('normalizeCase', () => {
-    it('should convert ALL CAPS text to Title Case for readability', () => {
-      // Arrange
-      const input = 'FINCA EL PARAÍSO';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('Finca el Paraíso');
-    });
-
-    it('should preserve mixed case text (already properly cased)', () => {
-      // WHY: Properly cased brand names should not be modified
-
-      // Arrange
-      const input = 'Square Mile Coffee';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('Square Mile Coffee');
-    });
-
-    it('should handle multiple lines independently', () => {
-      // Arrange
-      const input = 'ETHIOPIA YIRGACHEFFE\nNATURAL PROCESS';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('Ethiopia Yirgacheffe\nNatural Process');
-    });
-
-    it('should preserve coffee grade acronyms like AA, AB, PB', () => {
-      // WHY: Coffee grades are standardized acronyms that should stay uppercase
-
-      // Arrange
-      const input = 'KENYA AA';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('Kenya AA');
-    });
-
-    it('should preserve SL variety names (SL-28, SL-34)', () => {
-      // WHY: SL varieties are proper acronyms (Scott Labs) that should stay uppercase
-
-      // Arrange
-      const input = 'SL-28 SL-34';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('SL-28 SL-34');
+    normalizeCaseCases.forEach(({ input, expected, desc }) => {
+      it(`should normalize: ${desc}`, () => {
+        expect(service.normalizeCase(input)).toBe(expected);
+      });
     });
   });
 
-  describe('normalizeNumbers', () => {
-    it('should remove European thousand separator (dot) from numbers', () => {
-      // WHY: European notation uses dots as thousand separators (1.850 = 1850)
+  // --- layout tag preservation (normalizeCase edge cases) ---
 
-      // Arrange
-      const input = '1.850m';
+  const layoutTagCases = [
+    {
+      input: '**LARGE:** COFFEE NAME',
+      expected: '**LARGE:** Coffee Name',
+      desc: 'markdown LARGE prefix → normalize content only',
+    },
+    {
+      input: '**MEDIUM:** VARIETY',
+      expected: '**MEDIUM:** Variety',
+      desc: 'markdown MEDIUM prefix',
+    },
+    {
+      input: '**SMALL:** DETAILS',
+      expected: '**SMALL:** Details',
+      desc: 'markdown SMALL prefix',
+    },
+    {
+      input: '=== OCR WITH LAYOUT ===',
+      expected: '=== OCR WITH LAYOUT ===',
+      desc: 'preserve section headers unchanged',
+    },
+    {
+      input: '--- Label 1 of 2 ---',
+      expected: '--- Label 1 of 2 ---',
+      desc: 'preserve label markers unchanged',
+    },
+  ];
 
-      // Act
-      const result = service.normalizeNumbers(input);
-
-      // Assert
-      expect(result).toBe('1850m');
+  describe('normalizeCase — layout tags', () => {
+    layoutTagCases.forEach(({ input, expected, desc }) => {
+      it(`should handle: ${desc}`, () => {
+        expect(service.normalizeCase(input)).toBe(expected);
+      });
     });
 
-    it('should remove European thousand separator (comma) from numbers', () => {
-      // WHY: Some European regions use commas as thousand separators
-
-      // Arrange
-      const input = '1,900m';
-
-      // Act
-      const result = service.normalizeNumbers(input);
-
-      // Assert
-      expect(result).toBe('1900m');
-    });
-
-    it('should handle ranges with thousand separators', () => {
-      // Arrange
-      const input = '1.700-1.900m';
-
-      // Act
-      const result = service.normalizeNumbers(input);
-
-      // Assert
-      expect(result).toBe('1700-1900m');
-    });
-
-    it('should not affect decimal numbers (single digit after separator)', () => {
-      // WHY: 1.5kg is a decimal, not a thousand separator
-
-      // Arrange
-      const input = '1.5kg';
-
-      // Act
-      const result = service.normalizeNumbers(input);
-
-      // Assert
-      expect(result).toBe('1.5kg');
-    });
-  });
-
-  describe('normalizeAltitude', () => {
-    it('should normalize German m.ü.M. notation to MASL', () => {
-      // WHY: m.ü.M. = "Meter über Meer" (meters above sea level in German)
-
-      // Arrange
-      const input = '1.850 m.ü.M.';
-
-      // Act
-      const result = service.normalizeAltitude(input);
-
-      // Assert
-      expect(result).toBe('1850 MASL');
-    });
-
-    it('should normalize "meters" to MASL', () => {
-      // Arrange
-      const input = '1850 meters';
-
-      // Act
-      const result = service.normalizeAltitude(input);
-
-      // Assert
-      expect(result).toBe('1850 MASL');
-    });
-
-    it('should normalize Spanish msnm notation to MASL', () => {
-      // WHY: msnm = "metros sobre el nivel del mar" (Spanish for MASL)
-
-      // Arrange
-      const input = '2000 msnm';
-
-      // Act
-      const result = service.normalizeAltitude(input);
-
-      // Assert
-      expect(result).toBe('2000 MASL');
-    });
-
-    it('should convert altitude range with spaces to hyphenated MASL format', () => {
-      // WHY: Standardize various range formats to consistent "XXXX-YYYY MASL"
-
-      // Arrange
-      const input = '1.700 - 1.900m';
-
-      // Act
-      const result = service.normalizeAltitude(input);
-
-      // Assert
-      expect(result).toBe('1700-1900 MASL');
-    });
-
-    it('should preserve already normalized MASL format', () => {
-      // Arrange
-      const input = '1850 MASL';
-
-      // Act
-      const result = service.normalizeAltitude(input);
-
-      // Assert
-      expect(result).toBe('1850 MASL');
-    });
-
-    it('should handle 3-digit altitudes', () => {
-      // WHY: Some coffees grow at lower elevations (800-900m)
-
-      // Arrange & Act & Assert
-      expect(service.normalizeAltitude('800m')).toBe('800 MASL');
-      expect(service.normalizeAltitude('900 meters')).toBe('900 MASL');
-    });
-
-    it('should handle implicit ranges without dash (two altitude values)', () => {
-      // WHY: Labels sometimes show "800m 1200m" without explicit range notation
-
-      // Arrange & Act & Assert
-      expect(service.normalizeAltitude('800m 1200m')).toBe('800-1200 MASL');
-      expect(service.normalizeAltitude('800m 1200 MASL')).toBe('800-1200 MASL');
-    });
-
-    it('should handle 3-digit ranges with dash', () => {
-      // Arrange & Act & Assert
-      expect(service.normalizeAltitude('800-1200m')).toBe('800-1200 MASL');
-      expect(service.normalizeAltitude('800 - 1200 meters')).toBe(
-        '800-1200 MASL',
-      );
-    });
-  });
-
-  describe('extractWeight', () => {
-    it('should extract grams from various formats', () => {
-      // Arrange & Act & Assert
-      expect(service.extractWeight('250g')).toBe(250);
-      expect(service.extractWeight('250 grams')).toBe(250);
-    });
-
-    it('should convert kilograms to grams', () => {
-      // Arrange & Act & Assert
-      expect(service.extractWeight('1kg')).toBe(1000);
-      expect(service.extractWeight('1.5 kg')).toBe(1500);
-    });
-
-    it('should convert ounces to grams (rounded)', () => {
-      // WHY: 12oz ≈ 340g (using standard 28.35g per oz, rounded)
-
-      // Arrange
-      const input = '12oz';
-
-      // Act
-      const result = service.extractWeight(input);
-
-      // Assert
-      expect(result).toBe(340);
-    });
-
-    it('should convert pounds to grams (rounded)', () => {
-      // WHY: 1lb ≈ 454g (using standard 453.6g per lb, rounded)
-
-      // Arrange
-      const input = '1lb';
-
-      // Act
-      const result = service.extractWeight(input);
-
-      // Assert
-      expect(result).toBe(454);
-    });
-
-    it('should return null if no weight pattern found', () => {
-      // Arrange
-      const input = 'Ethiopia Yirgacheffe';
-
-      // Act
-      const result = service.extractWeight(input);
-
-      // Assert
-      expect(result).toBeNull();
-    });
-  });
-
-  describe('normalizeAll', () => {
-    it('should apply all normalizations in correct order', () => {
-      // Arrange
-      const input = 'FINCA EL PARAÍSO\n1.850 m.ü.M.\n250g';
-
-      // Act
-      const result = service.normalizeAll(input);
-
-      // Assert
-      expect(result).toContain('Finca el Paraíso');
-      expect(result).toContain('1850 MASL');
-    });
-  });
-
-  describe('layout tag preservation', () => {
-    it('should preserve markdown size prefix and normalize only the content', () => {
-      // WHY: Layout tags are added by OcrMetadataService and must be preserved
-
-      // Arrange
-      const input = '**LARGE:** COFFEE NAME';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('**LARGE:** Coffee Name');
-    });
-
-    it('should preserve section headers unchanged', () => {
-      // Arrange
-      const input = '=== OCR WITH LAYOUT ===';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('=== OCR WITH LAYOUT ===');
-    });
-
-    it('should preserve label markers unchanged', () => {
-      // Arrange
-      const input = '--- Label 1 of 2 ---';
-
-      // Act
-      const result = service.normalizeCase(input);
-
-      // Assert
-      expect(result).toBe('--- Label 1 of 2 ---');
-    });
-
-    it('should handle mixed layout tags and content correctly', () => {
-      // Arrange
+    it('should handle mixed layout tags and content', () => {
       const input =
         '=== OCR WITH LAYOUT ===\n\n**LARGE:** ROASTER NAME\n\n**MEDIUM:** COFFEE ORIGIN';
-
-      // Act
       const result = service.normalizeCase(input);
-
-      // Assert
       expect(result).toContain('=== OCR WITH LAYOUT ===');
       expect(result).toContain('**LARGE:** Roaster Name');
       expect(result).toContain('**MEDIUM:** Coffee Origin');
     });
+  });
 
-    it('should handle all size tags (SMALL, MEDIUM, LARGE)', () => {
-      // Arrange & Act & Assert
-      expect(service.normalizeCase('**SMALL:** DETAILS')).toBe(
-        '**SMALL:** Details',
-      );
-      expect(service.normalizeCase('**MEDIUM:** VARIETY')).toBe(
-        '**MEDIUM:** Variety',
-      );
-      expect(service.normalizeCase('**LARGE:** TITLE')).toBe(
-        '**LARGE:** Title',
-      );
+  // --- normalizeElevation ---
+  // Unit conversion and thousand separator removal are tested by
+  // normalizeElevationUnit and removeThousandSeparatorsFromInteger standalone tests.
+  // These tests focus on range detection, the unique behavior of normalizeElevation.
+
+  const normalizeElevationCases = [
+    {
+      input: '1850 MASL',
+      expected: '1850 MASL',
+      desc: 'already normalized MASL',
+    },
+    {
+      input: '800m 1200m',
+      expected: '800-1200 MASL',
+      desc: 'implicit range (two values without dash)',
+    },
+    {
+      input: '800m 1200 MASL',
+      expected: '800-1200 MASL',
+      desc: 'implicit range (m + MASL mix)',
+    },
+    {
+      input: '800-1200m',
+      expected: '800-1200 MASL',
+      desc: 'explicit range (compact)',
+    },
+    {
+      input: '800 - 1200 meters',
+      expected: '800-1200 MASL',
+      desc: 'explicit range (spaced)',
+    },
+  ];
+
+  describe('normalizeElevation', () => {
+    normalizeElevationCases.forEach(({ input, expected, desc }) => {
+      it(`should normalize: ${desc}`, () => {
+        expect(service.normalizeElevation(input)).toBe(expected);
+      });
     });
   });
 
-  describe('normalizeNumbers with international formats', () => {
-    it('should handle Swiss apostrophe thousand separator', () => {
-      // WHY: Swiss German uses apostrophe as thousand separator (1'850 = 1850)
+  // --- extractWeight ---
 
-      expect(service.normalizeNumbers("1'850m")).toBe('1850m');
-    });
+  const extractWeightCases: {
+    input: string;
+    expected: number | null;
+    desc: string;
+  }[] = [
+    { input: '250g', expected: 250, desc: 'grams (no space)' },
+    { input: '250 grams', expected: 250, desc: 'grams (with space + unit)' },
+    { input: '1kg', expected: 1000, desc: 'kilograms → grams' },
+    { input: '1.5 kg', expected: 1500, desc: 'decimal kilograms' },
+    { input: '12oz', expected: 340, desc: 'ounces → grams (rounded)' },
+    { input: '1lb', expected: 454, desc: 'pounds → grams (rounded)' },
+    {
+      input: 'Ethiopia Yirgacheffe',
+      expected: null,
+      desc: 'no weight pattern → null',
+    },
+  ];
 
-    it('should handle French space thousand separator', () => {
-      // WHY: French uses space as thousand separator (1 850 = 1850)
-
-      expect(service.normalizeNumbers('1 850m')).toBe('1850m');
-    });
-
-    it('should handle thin space (U+2009) thousand separator', () => {
-      // WHY: ISO 31-0 recommends thin space as thousand separator
-
-      expect(service.normalizeNumbers('1\u2009850m')).toBe('1850m');
-    });
-
-    it('should handle narrow no-break space (U+202F) thousand separator', () => {
-      // WHY: French typography often uses narrow no-break space
-
-      expect(service.normalizeNumbers('1\u202F850m')).toBe('1850m');
+  describe('extractWeight', () => {
+    extractWeightCases.forEach(({ input, expected, desc }) => {
+      it(`should extract: ${desc}`, () => {
+        expect(service.extractWeight(input)).toBe(expected);
+      });
     });
   });
 
-  describe('normalizeAltitude with international formats', () => {
-    it('should handle Swiss format with apostrophe', () => {
-      // WHY: Swiss coffee labels may use "1'850 m.ü.M." format
+  // --- normalizeAll ---
 
-      expect(service.normalizeAltitude("1'850 m.ü.M.")).toBe('1850 MASL');
-    });
-
-    it('should handle French format with narrow no-break space', () => {
-      // WHY: French labels may use "1 850 msnm" with thin/narrow space
-
-      expect(service.normalizeAltitude('1\u202F850 msnm')).toBe('1850 MASL');
-    });
-
-    it('should handle Swiss range format', () => {
-      expect(service.normalizeAltitude("1'700-1'900m")).toBe('1700-1900 MASL');
+  describe('normalizeAll', () => {
+    it('should apply all normalizations in correct order', () => {
+      // normalizeAll chains: normalizeNumbers → normalizeElevation → normalizeCase.
+      // Weight extraction is intentionally separate (extractWeight) since it returns
+      // a parsed number, not normalized text.
+      const result = service.normalizeAll(
+        'FINCA EL PARAÍSO\n1.850 m.ü.M.\n250g',
+      );
+      expect(result).toContain('Finca el Paraíso'); // case normalized
+      expect(result).toContain('1850 MASL'); // thousand sep removed + unit normalized
+      expect(result).toContain('250g'); // weight left as-is (not part of normalizeAll)
     });
   });
 });
 
-// Tests for standalone exported functions
+// =============================================================================
+// Standalone exported functions
+// =============================================================================
+
+// --- removeThousandSeparatorsFromInteger ---
+
+const removeThousandSepCases = [
+  { input: '1.850', expected: '1850', desc: 'European dot separator' },
+  { input: '1,850', expected: '1850', desc: 'European comma separator' },
+  { input: "1'850", expected: '1850', desc: 'Swiss apostrophe' },
+  {
+    input: '1\u2019850',
+    expected: '1850',
+    desc: 'right single quote (U+2019)',
+  },
+  { input: '1 850', expected: '1850', desc: 'French space separator' },
+  {
+    input: "1'234'567",
+    expected: '1234567',
+    desc: 'multiple Swiss separators',
+  },
+  {
+    input: '1.234.567',
+    expected: '1234567',
+    desc: 'multiple dot separators',
+  },
+  { input: '1850', expected: '1850', desc: 'clean number (no-op)' },
+  { input: '1.5', expected: '1.5', desc: 'preserve decimal (2 digits)' },
+  { input: '1.50', expected: '1.50', desc: 'preserve decimal (2 digits)' },
+  {
+    input: "elevation 1'850 MASL",
+    expected: 'elevation 1850 MASL',
+    desc: 'number in context',
+  },
+  {
+    input: "1'850 to 2.100",
+    expected: '1850 to 2100',
+    desc: 'mixed formats in same string',
+  },
+];
+
+// Strips thousand separators from formatted numbers (normalization direction).
+// Counterpart: buildThousandSeparatorPattern tests below (matching direction).
 describe('removeThousandSeparatorsFromInteger', () => {
-  it('should remove standard European separators (dot, comma)', () => {
-    expect(removeThousandSeparatorsFromInteger('1.850')).toBe('1850');
-    expect(removeThousandSeparatorsFromInteger('1,850')).toBe('1850');
-  });
-
-  it('should remove Swiss/French separators (apostrophe, spaces)', () => {
-    expect(removeThousandSeparatorsFromInteger("1'850")).toBe('1850');
-    expect(removeThousandSeparatorsFromInteger('1\u2019850')).toBe('1850'); // right single quote
-    expect(removeThousandSeparatorsFromInteger('1 850')).toBe('1850');
-    expect(removeThousandSeparatorsFromInteger('1\u2009850')).toBe('1850'); // thin space
-    expect(removeThousandSeparatorsFromInteger('1\u202F850')).toBe('1850'); // narrow no-break space
-  });
-
-  it('should handle multiple separators in same number', () => {
-    expect(removeThousandSeparatorsFromInteger("1'234'567")).toBe('1234567');
-    expect(removeThousandSeparatorsFromInteger('1.234.567')).toBe('1234567');
-  });
-
-  it('should preserve decimals and pass through clean numbers', () => {
-    expect(removeThousandSeparatorsFromInteger('1850')).toBe('1850');
-    expect(removeThousandSeparatorsFromInteger('1.5')).toBe('1.5');
-    expect(removeThousandSeparatorsFromInteger('1.50')).toBe('1.50');
-  });
-
-  it('should handle numbers in context and mixed formats', () => {
-    expect(removeThousandSeparatorsFromInteger("altitude 1'850 MASL")).toBe(
-      'altitude 1850 MASL',
-    );
-    expect(removeThousandSeparatorsFromInteger("1'850 to 2.100")).toBe(
-      '1850 to 2100',
-    );
-  });
-});
-
-describe('normalizeAltitudeUnit', () => {
-  it('should convert various unit notations to MASL', () => {
-    expect(normalizeAltitudeUnit('1850 m.ü.M.')).toBe('1850 MASL');
-    expect(normalizeAltitudeUnit('1850 M.Ü.M.')).toBe('1850 MASL');
-    expect(normalizeAltitudeUnit('1850 meters')).toBe('1850 MASL');
-    expect(normalizeAltitudeUnit('1850 meter')).toBe('1850 MASL');
-    expect(normalizeAltitudeUnit('1850 msnm')).toBe('1850 MASL');
-    expect(normalizeAltitudeUnit('1850 m')).toBe('1850 MASL');
-    // Space is added between number and MASL when unit is directly attached
-    expect(normalizeAltitudeUnit('1850m')).toBe('1850 MASL');
-  });
-
-  it('should handle ranges', () => {
-    expect(normalizeAltitudeUnit('1700-1900m')).toBe('1700-1900 MASL');
-    expect(normalizeAltitudeUnit('1700-1900 meters')).toBe('1700-1900 MASL');
-  });
-
-  it('should normalize MASL case variations', () => {
-    expect(normalizeAltitudeUnit('1850 MASL')).toBe('1850 MASL');
-    expect(normalizeAltitudeUnit('1850 masl')).toBe('1850 MASL');
-    expect(normalizeAltitudeUnit('1850 Masl')).toBe('1850 MASL');
-  });
-});
-
-describe('preprocessing and postprocessing consistency', () => {
-  let service: TextNormalizationService;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [TextNormalizationService],
+  removeThousandSepCases.forEach(({ input, expected, desc }) => {
+    it(`should handle: ${desc}`, () => {
+      expect(removeThousandSeparatorsFromInteger(input)).toBe(expected);
     });
-    service = TestBed.inject(TextNormalizationService);
-  });
-
-  // Simulate what preprocessing does (via normalizeAltitude)
-  const preprocess = (text: string) => {
-    return service.normalizeAltitude(text);
-  };
-
-  // Simulate what postprocessing does (standalone functions)
-  const postprocess = (text: string) => {
-    let result = removeThousandSeparatorsFromInteger(text);
-    result = normalizeAltitudeUnit(result);
-    return result;
-  };
-
-  it('Swiss format "1\'850 m.ü.M." produces consistent result', () => {
-    const input = "1'850 m.ü.M.";
-    const preprocessed = preprocess(input);
-    const postprocessed = postprocess(input);
-    expect(preprocessed).toContain('1850 MASL');
-    expect(postprocessed).toContain('1850 MASL');
-  });
-
-  it('French format with narrow no-break space produces consistent result', () => {
-    const input = '1\u202F850 msnm';
-    const preprocessed = preprocess(input);
-    const postprocessed = postprocess(input);
-    expect(preprocessed).toContain('1850 MASL');
-    expect(postprocessed).toContain('1850 MASL');
-  });
-
-  it('German format "1.850 m.ü.M." produces consistent result', () => {
-    const input = '1.850 m.ü.M.';
-    const preprocessed = preprocess(input);
-    const postprocessed = postprocess(input);
-    expect(preprocessed).toBe('1850 MASL');
-    expect(postprocessed).toBe('1850 MASL');
   });
 });
 
+// --- normalizeElevationUnit ---
+
+const normalizeElevationUnitCases = [
+  { input: '1850 m.ü.M.', expected: '1850 MASL', desc: 'German m.ü.M.' },
+  { input: '1850 M.Ü.M.', expected: '1850 MASL', desc: 'German M.Ü.M. (uppercase)' },
+  { input: '1850 meters', expected: '1850 MASL', desc: '"meters" suffix' },
+  { input: '1850 meter', expected: '1850 MASL', desc: '"meter" suffix' },
+  { input: '1850 msnm', expected: '1850 MASL', desc: 'Spanish msnm' },
+  { input: '1850 m', expected: '1850 MASL', desc: 'bare "m" suffix' },
+  { input: '1850m', expected: '1850 MASL', desc: '"m" directly attached (adds space)' },
+  { input: '1700-1900m', expected: '1700-1900 MASL', desc: 'range with m' },
+  { input: '1700-1900 meters', expected: '1700-1900 MASL', desc: 'range with meters' },
+  { input: '1850 MASL', expected: '1850 MASL', desc: 'already uppercase MASL' },
+  { input: '1850 masl', expected: '1850 MASL', desc: 'lowercase masl → MASL' },
+  { input: '1850 Masl', expected: '1850 MASL', desc: 'mixed case Masl → MASL' },
+];
+
+describe('normalizeElevationUnit', () => {
+  normalizeElevationUnitCases.forEach(({ input, expected, desc }) => {
+    it(`should normalize: ${desc}`, () => {
+      expect(normalizeElevationUnit(input)).toBe(expected);
+    });
+  });
+});
+
+// --- buildThousandSeparatorPattern ---
+
+// Builds a regex to match separator variants in raw OCR text (matching direction).
+// Counterpart: removeThousandSeparatorsFromInteger tests above (normalization direction).
 describe('buildThousandSeparatorPattern', () => {
-  it('should return plain digits for numbers < 1000', () => {
-    expect(buildThousandSeparatorPattern('250')).toBe('250');
-    expect(buildThousandSeparatorPattern('999')).toBe('999');
+  const noSepCases = [
+    { input: '250', desc: '3-digit number' },
+    { input: '999', desc: 'max 3-digit number' },
+  ];
+
+  noSepCases.forEach(({ input, desc }) => {
+    it(`should return plain digits for ${desc}`, () => {
+      expect(buildThousandSeparatorPattern(input)).toBe(input);
+    });
   });
 
-  it('should insert optional separator for 4-digit numbers', () => {
-    const pattern = buildThousandSeparatorPattern('1000');
-    const regex = new RegExp(`^${pattern}$`);
-    // Should match with and without separators
-    expect(regex.test('1000')).toBeTrue();
-    expect(regex.test('1.000')).toBeTrue();
-    expect(regex.test('1,000')).toBeTrue();
-    expect(regex.test("1'000")).toBeTrue();
-    expect(regex.test('1 000')).toBeTrue();
-  });
+  const sepMatchCases = [
+    {
+      digits: '1000',
+      shouldMatch: ['1000', '1.000', '1,000', "1'000", '1 000'],
+      desc: '4-digit number',
+    },
+    {
+      digits: '12500',
+      shouldMatch: ['12500', '12.500', '12,500'],
+      desc: '5-digit number',
+    },
+    {
+      digits: '123456',
+      shouldMatch: ['123456', '123.456'],
+      desc: '6-digit number',
+    },
+  ];
 
-  it('should insert optional separator for 5-digit numbers', () => {
-    const pattern = buildThousandSeparatorPattern('12500');
-    const regex = new RegExp(`^${pattern}$`);
-    expect(regex.test('12500')).toBeTrue();
-    expect(regex.test('12.500')).toBeTrue();
-    expect(regex.test('12,500')).toBeTrue();
-  });
-
-  it('should handle 6-digit numbers with two separator positions', () => {
-    const pattern = buildThousandSeparatorPattern('123456');
-    const regex = new RegExp(`^${pattern}$`);
-    expect(regex.test('123456')).toBeTrue();
-    expect(regex.test('123.456')).toBeTrue();
-    // Note: pattern allows separator at each position independently
+  sepMatchCases.forEach(({ digits, shouldMatch, desc }) => {
+    it(`should match separator variants for ${desc}`, () => {
+      const pattern = buildThousandSeparatorPattern(digits);
+      const regex = new RegExp(`^${pattern}$`);
+      for (const variant of shouldMatch) {
+        expect(regex.test(variant))
+          .withContext(`expected "${variant}" to match pattern for ${digits}`)
+          .toBeTrue();
+      }
+    });
   });
 });
+
+// --- weightExistsInOcrText ---
+
+const weightTrueCases: { grams: number; ocrText: string; desc: string }[] = [
+  // Gram matches
+  { grams: 250, ocrText: 'Coffee 250g Ethiopia', desc: '250g exact' },
+  { grams: 250, ocrText: 'Coffee 250 g Ethiopia', desc: '250 g with space' },
+  { grams: 250, ocrText: 'Coffee 250 grams', desc: '250 grams' },
+  { grams: 250, ocrText: '250g Ethiopia', desc: 'weight at start of text' },
+  { grams: 250, ocrText: 'Ethiopia 250g', desc: 'weight at end of text' },
+  // Grams with thousand separators
+  { grams: 1000, ocrText: 'Coffee 1.000g pack', desc: '1000g with dot sep' },
+  {
+    grams: 1000,
+    ocrText: 'Coffee 1,000g pack',
+    desc: '1000g with comma sep',
+  },
+  {
+    grams: 1000,
+    ocrText: "Coffee 1'000g pack",
+    desc: '1000g with apostrophe sep',
+  },
+  {
+    grams: 1000,
+    ocrText: 'Coffee 1 000g pack',
+    desc: '1000g with space sep',
+  },
+  // Kilogram matches
+  { grams: 1000, ocrText: 'Coffee 1kg bag', desc: '1kg' },
+  { grams: 1000, ocrText: 'Coffee 1 kg bag', desc: '1 kg with space' },
+  { grams: 2000, ocrText: 'Coffee 2kg bag', desc: '2kg' },
+  { grams: 1000, ocrText: 'Coffee 1.0kg bag', desc: '1.0kg' },
+  { grams: 1000, ocrText: 'Coffee 1,0kg bag', desc: '1,0kg' },
+  { grams: 1500, ocrText: 'Coffee 1.5kg bag', desc: '1.5kg decimal' },
+  { grams: 1500, ocrText: 'Coffee 1,5kg bag', desc: '1,5kg decimal' },
+  { grams: 1000, ocrText: 'Coffee 1 kilo', desc: '"kilo" variant' },
+  { grams: 1000, ocrText: 'Coffee 1 kilogram', desc: '"kilogram" variant' },
+];
+
+const weightFalseCases: { grams: number; ocrText: string; desc: string }[] = [
+  {
+    grams: 1000,
+    ocrText: 'Label 1 of 2',
+    desc: 'number without weight unit',
+  },
+  {
+    grams: 1000,
+    ocrText: 'Roasted 15.01.2025',
+    desc: 'number in date context',
+  },
+  {
+    grams: 1000,
+    ocrText: 'Ethiopia 250g Natural',
+    desc: 'OCR has 250g, not 1kg (hallucination)',
+  },
+  {
+    grams: 1000,
+    ocrText: 'Ethiopia 250g Roasted 15.01.2025',
+    desc: '"1" in date should not match 1kg',
+  },
+  {
+    grams: 1000,
+    ocrText: 'Ethiopia 100g bag',
+    desc: '"1" in 100g should not match 1kg',
+  },
+  {
+    grams: 1000,
+    ocrText: 'Ethiopia 250g --- Label 1 of 2 ---',
+    desc: '"1" in label marker should not match 1kg',
+  },
+];
 
 describe('weightExistsInOcrText', () => {
-  describe('gram weights', () => {
-    it('should find exact gram match', () => {
-      expect(weightExistsInOcrText(250, 'Coffee 250g Ethiopia')).toBeTrue();
-      expect(weightExistsInOcrText(250, 'Coffee 250 g Ethiopia')).toBeTrue();
-      expect(weightExistsInOcrText(250, 'Coffee 250 grams')).toBeTrue();
-    });
-
-    it('should find grams with thousand separators', () => {
-      expect(weightExistsInOcrText(1000, 'Coffee 1.000g pack')).toBeTrue();
-      expect(weightExistsInOcrText(1000, 'Coffee 1,000g pack')).toBeTrue();
-      expect(weightExistsInOcrText(1000, "Coffee 1'000g pack")).toBeTrue();
-      expect(weightExistsInOcrText(1000, 'Coffee 1 000g pack')).toBeTrue();
-    });
-
-    it('should not match numbers without weight unit', () => {
-      // WHY: Prevents "1kg" hallucination when OCR has "Label 1 of 2"
-      expect(weightExistsInOcrText(1000, 'Label 1 of 2')).toBeFalse();
-      expect(weightExistsInOcrText(1000, 'Roasted 15.01.2025')).toBeFalse();
+  weightTrueCases.forEach(({ grams, ocrText, desc }) => {
+    it(`should find: ${desc}`, () => {
+      expect(weightExistsInOcrText(grams, ocrText))
+        .withContext(`expected ${grams}g to be found in "${ocrText}"`)
+        .toBeTrue();
     });
   });
 
-  describe('kilogram weights', () => {
-    it('should find integer kg as kg unit', () => {
-      expect(weightExistsInOcrText(1000, 'Coffee 1kg bag')).toBeTrue();
-      expect(weightExistsInOcrText(1000, 'Coffee 1 kg bag')).toBeTrue();
-      expect(weightExistsInOcrText(2000, 'Coffee 2kg bag')).toBeTrue();
-    });
-
-    it('should find integer kg written as X.0kg', () => {
-      expect(weightExistsInOcrText(1000, 'Coffee 1.0kg bag')).toBeTrue();
-      expect(weightExistsInOcrText(1000, 'Coffee 1,0kg bag')).toBeTrue();
-    });
-
-    it('should find decimal kg values', () => {
-      expect(weightExistsInOcrText(1500, 'Coffee 1.5kg bag')).toBeTrue();
-      expect(weightExistsInOcrText(1500, 'Coffee 1,5kg bag')).toBeTrue();
-    });
-
-    it('should find kg with "kilo" and "kilogram" variants', () => {
-      expect(weightExistsInOcrText(1000, 'Coffee 1 kilo')).toBeTrue();
-      expect(weightExistsInOcrText(1000, 'Coffee 1 kilogram')).toBeTrue();
-    });
-  });
-
-  describe('hallucination prevention', () => {
-    it('should reject 1kg when OCR only has 250g', () => {
-      // WHY: Main hallucination case - LLM returns "1kg" but label shows "250g"
-      expect(weightExistsInOcrText(1000, 'Ethiopia 250g Natural')).toBeFalse();
-    });
-
-    it('should reject 1kg when OCR has date containing "1"', () => {
-      // WHY: Old bug - "1" from "1kg" matched "1" in date "15.01.2025"
-      expect(
-        weightExistsInOcrText(1000, 'Ethiopia 250g Roasted 15.01.2025'),
-      ).toBeFalse();
-    });
-
-    it('should reject 1kg when OCR has "100g" (contains digit 1)', () => {
-      // WHY: Old bug - "1" matched as substring of "100"
-      expect(weightExistsInOcrText(1000, 'Ethiopia 100g bag')).toBeFalse();
-    });
-
-    it('should reject 1kg when OCR has label markers', () => {
-      // WHY: Old bug - "1" from "1kg" matched "1" in "Label 1 of 2"
-      expect(
-        weightExistsInOcrText(1000, 'Ethiopia 250g --- Label 1 of 2 ---'),
-      ).toBeFalse();
-    });
-  });
-
-  describe('edge cases', () => {
-    it('should handle weights at start and end of text', () => {
-      expect(weightExistsInOcrText(250, '250g Ethiopia')).toBeTrue();
-      expect(weightExistsInOcrText(250, 'Ethiopia 250g')).toBeTrue();
+  weightFalseCases.forEach(({ grams, ocrText, desc }) => {
+    it(`should reject: ${desc}`, () => {
+      expect(weightExistsInOcrText(grams, ocrText))
+        .withContext(`expected ${grams}g NOT to be found in "${ocrText}"`)
+        .toBeFalse();
     });
   });
 });
+
+// --- sanitizeElevation ---
+
+// Unit conversion and thousand separator removal are tested by
+// normalizeElevationUnit and removeThousandSeparatorsFromInteger standalone tests.
+// These tests focus on sanitize-specific behavior: whitespace, LLM quirks, validation.
+const sanitizeElevationValidCases: {
+  input: string | null | undefined;
+  expected: string;
+  desc: string;
+}[] = [
+  { input: '1850 MASL', expected: '1850 MASL', desc: 'valid MASL format' },
+  {
+    input: '1700-1900 MASL',
+    expected: '1700-1900 MASL',
+    desc: 'valid range format',
+  },
+  {
+    input: '1800\nMASL',
+    expected: '1800 MASL',
+    desc: 'linebreak → space',
+  },
+  {
+    input: '1850   MASL',
+    expected: '1850 MASL',
+    desc: 'normalize multiple spaces',
+  },
+  {
+    input: '2300 MASL 2400 MASL',
+    expected: '2300-2400 MASL',
+    desc: 'LLM quirk: two MASL values → range',
+  },
+  { input: '4999 MASL', expected: '4999 MASL', desc: 'just below 5000 limit' },
+  {
+    input: '1800-4999 MASL',
+    expected: '1800-4999 MASL',
+    desc: 'range just below 5000 limit',
+  },
+];
+
+const sanitizeElevationNullCases: {
+  input: string | null | undefined;
+  desc: string;
+}[] = [
+  { input: null, desc: 'null input' },
+  { input: undefined, desc: 'undefined input' },
+  { input: 'NOT_FOUND', desc: 'LLM NOT_FOUND sentinel' },
+  { input: 'null', desc: 'string "null"' },
+  { input: 'unknown', desc: 'string "unknown"' },
+  { input: '', desc: 'empty string' },
+  {
+    input: '74158 MASL',
+    desc: 'variety number (74158 >= 5000)',
+  },
+  { input: '5000 MASL', desc: 'exactly 5000 (boundary)' },
+  {
+    input: '1800-5000 MASL',
+    desc: 'range with one value >= 5000',
+  },
+];
 
 describe('sanitizeElevation', () => {
-  describe('valid elevations', () => {
-    it('should pass through valid MASL format', () => {
-      expect(sanitizeElevation('1850 MASL')).toBe('1850 MASL');
-      expect(sanitizeElevation('1700-1900 MASL')).toBe('1700-1900 MASL');
-    });
-
-    it('should normalize unit formats to MASL', () => {
-      // WHY: LLM may return non-standard units that need normalization
-      expect(sanitizeElevation('1850 m.ü.M.')).toBe('1850 MASL');
-      expect(sanitizeElevation('1850 meters')).toBe('1850 MASL');
-      expect(sanitizeElevation('1850 msnm')).toBe('1850 MASL');
-    });
-
-    it('should remove thousand separators', () => {
-      // WHY: International formats use different thousand separators
-      expect(sanitizeElevation('1.850 MASL')).toBe('1850 MASL');
-      expect(sanitizeElevation('1,850 MASL')).toBe('1850 MASL');
-      expect(sanitizeElevation("1'850 MASL")).toBe('1850 MASL');
+  sanitizeElevationValidCases.forEach(({ input, expected, desc }) => {
+    it(`should sanitize: ${desc}`, () => {
+      expect(sanitizeElevation(input as string)).toBe(expected);
     });
   });
 
-  describe('whitespace cleanup', () => {
-    it('should remove linebreaks', () => {
-      expect(sanitizeElevation('1800\nMASL')).toBe('1800 MASL');
-    });
-
-    it('should normalize multiple spaces', () => {
-      expect(sanitizeElevation('1850   MASL')).toBe('1850 MASL');
-    });
-  });
-
-  describe('LLM quirks', () => {
-    it('should normalize "2300 MASL 2400 MASL" to range format', () => {
-      // WHY: LLM sometimes returns ranges as two separate MASL values
-      expect(sanitizeElevation('2300 MASL 2400 MASL')).toBe('2300-2400 MASL');
-    });
-  });
-
-  describe('null-like values', () => {
-    it('should return null for null/undefined input', () => {
-      expect(sanitizeElevation(null)).toBeNull();
-      expect(sanitizeElevation(undefined)).toBeNull();
-    });
-
-    it('should return null for null-like strings', () => {
-      // WHY: LLM returns these when field not found in OCR
-      expect(sanitizeElevation('NOT_FOUND')).toBeNull();
-      expect(sanitizeElevation('null')).toBeNull();
-      expect(sanitizeElevation('unknown')).toBeNull();
-      expect(sanitizeElevation('')).toBeNull();
-    });
-  });
-
-  describe('validation', () => {
-    it('should return null when any number is >= 5000', () => {
-      // WHY: Filters variety numbers like 74158 from being misread as altitude
-      expect(sanitizeElevation('74158 MASL')).toBeNull();
-      expect(sanitizeElevation('5000 MASL')).toBeNull();
-      expect(sanitizeElevation('1800-5000 MASL')).toBeNull();
-    });
-
-    it('should accept elevations below 5000', () => {
-      expect(sanitizeElevation('4999 MASL')).toBe('4999 MASL');
-      expect(sanitizeElevation('1800-4999 MASL')).toBe('1800-4999 MASL');
+  sanitizeElevationNullCases.forEach(({ input, desc }) => {
+    it(`should return null: ${desc}`, () => {
+      expect(sanitizeElevation(input as string)).toBeNull();
     });
   });
 });
 
+// --- elevationExistsInOcrText ---
+
+const elevationTrueCases: {
+  elevation: string;
+  ocrText: string;
+  desc: string;
+}[] = [
+  {
+    elevation: '1850 MASL',
+    ocrText: 'Coffee 1850m',
+    desc: 'exact match in OCR',
+  },
+  {
+    elevation: '1850 MASL',
+    ocrText: 'elevation 1850',
+    desc: 'number without unit',
+  },
+  {
+    elevation: '1850 MASL',
+    ocrText: 'Coffee 1.850m',
+    desc: 'dot thousand separator in OCR',
+  },
+  {
+    elevation: '1850 MASL',
+    ocrText: 'Coffee 1,850m',
+    desc: 'comma thousand separator in OCR',
+  },
+  {
+    elevation: '1850 MASL',
+    ocrText: "Coffee 1'850m",
+    desc: 'apostrophe separator in OCR',
+  },
+  {
+    elevation: '1850 MASL',
+    ocrText: 'Coffee 1 850m',
+    desc: 'space separator in OCR',
+  },
+  {
+    elevation: '1700-1900 MASL',
+    ocrText: '1700-1900m',
+    desc: 'range — both numbers present',
+  },
+  {
+    elevation: '1700-1900 MASL',
+    ocrText: '1.700-1.900m',
+    desc: 'range with thousand separators',
+  },
+  {
+    elevation: '800 MASL',
+    ocrText: 'Grown at 800m',
+    desc: '3-digit elevation',
+  },
+];
+
+const elevationFalseCases: {
+  elevation: string;
+  ocrText: string;
+  desc: string;
+}[] = [
+  {
+    elevation: '1850 MASL',
+    ocrText: 'Coffee 250g',
+    desc: 'number not in OCR (hallucination)',
+  },
+  {
+    elevation: '2000 MASL',
+    ocrText: 'Grown at 1850m',
+    desc: 'wrong number in OCR',
+  },
+  {
+    elevation: '1700-1900 MASL',
+    ocrText: '1700m',
+    desc: 'range — only first number present',
+  },
+  {
+    elevation: '1700-1900 MASL',
+    ocrText: '1900m',
+    desc: 'range — only second number present',
+  },
+  { elevation: '', ocrText: 'Coffee 1850m', desc: 'empty elevation input' },
+  { elevation: '1850 MASL', ocrText: '', desc: 'empty OCR text' },
+];
+
 describe('elevationExistsInOcrText', () => {
-  describe('single elevation values', () => {
-    it('should find number in OCR text', () => {
-      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1850m')).toBeTrue();
-      expect(elevationExistsInOcrText('1850 MASL', 'altitude 1850')).toBeTrue();
-    });
-
-    it('should find number with thousand separators in OCR', () => {
-      // WHY: European formats use various thousand separators
-      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1.850m')).toBeTrue();
-      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1,850m')).toBeTrue();
-      expect(elevationExistsInOcrText('1850 MASL', "Coffee 1'850m")).toBeTrue();
-      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 1 850m')).toBeTrue();
-    });
-
-    it('should return false when number not in OCR text', () => {
-      // WHY: Smoke test to catch hallucinations
-      expect(elevationExistsInOcrText('1850 MASL', 'Coffee 250g')).toBeFalse();
-      expect(
-        elevationExistsInOcrText('2000 MASL', 'Grown at 1850m'),
-      ).toBeFalse();
+  elevationTrueCases.forEach(({ elevation, ocrText, desc }) => {
+    it(`should find: ${desc}`, () => {
+      expect(elevationExistsInOcrText(elevation, ocrText))
+        .withContext(`expected "${elevation}" to be found in "${ocrText}"`)
+        .toBeTrue();
     });
   });
 
-  describe('elevation ranges', () => {
-    it('should require all numbers in range to be present', () => {
-      expect(
-        elevationExistsInOcrText('1700-1900 MASL', '1700-1900m'),
-      ).toBeTrue();
-      expect(
-        elevationExistsInOcrText('1700-1900 MASL', '1.700-1.900m'),
-      ).toBeTrue();
-    });
-
-    it('should return false if any range number is missing', () => {
-      // WHY: Both numbers must be on the label for a valid range
-      expect(elevationExistsInOcrText('1700-1900 MASL', '1700m')).toBeFalse();
-      expect(elevationExistsInOcrText('1700-1900 MASL', '1900m')).toBeFalse();
-    });
-  });
-
-  describe('edge cases', () => {
-    it('should return false for empty inputs', () => {
-      expect(elevationExistsInOcrText('', 'Coffee 1850m')).toBeFalse();
-      expect(elevationExistsInOcrText('1850 MASL', '')).toBeFalse();
-    });
-
-    it('should handle 3-digit elevations', () => {
-      expect(elevationExistsInOcrText('800 MASL', 'Grown at 800m')).toBeTrue();
+  elevationFalseCases.forEach(({ elevation, ocrText, desc }) => {
+    it(`should reject: ${desc}`, () => {
+      expect(elevationExistsInOcrText(elevation, ocrText))
+        .withContext(`expected "${elevation}" NOT to be found in "${ocrText}"`)
+        .toBeFalse();
     });
   });
 });

@@ -37,7 +37,7 @@ export const OCR_SMALL_TEXT_AVG_MULTIPLIER = 0.7;
  * We use 5000m as a conservative upper bound to avoid false rejections while still
  * filtering out variety numbers that could be misread as elevations (e.g., 74158, 74110).
  * Ethiopian variety codes like "74158" commonly appear on labels and would otherwise
- * be incorrectly parsed as altitude values.
+ * be incorrectly parsed as elevation values.
  */
 export const MAX_VALID_ELEVATION_METERS = 5000;
 

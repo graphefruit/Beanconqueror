@@ -166,18 +166,18 @@ export class AIImportExamplesService {
       }
 
       // Deduplicate (case-insensitive, keep first occurrence's casing)
-      const seenLowercase = new Set<string>();
-      const deduplicatedValues: string[] = [];
+      const seen = new Set<string>();
+      const unique: string[] = [];
 
       for (const value of allValues) {
         const lowerValue = value.toLowerCase();
-        if (!seenLowercase.has(lowerValue)) {
-          seenLowercase.add(lowerValue);
-          deduplicatedValues.push(value);
+        if (!seen.has(lowerValue)) {
+          seen.add(lowerValue);
+          unique.push(value);
         }
       }
 
-      merged[key] = deduplicatedValues.join(', ');
+      merged[key] = unique.join(', ');
     }
 
     return merged;

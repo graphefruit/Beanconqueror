@@ -180,21 +180,6 @@ describe('ai-field-prompts', () => {
         expect(postProcess('1kg', 'Roasted 15.01.2025')).toBeNull();
         expect(postProcess('1kg', 'Label 1 of 2')).toBeNull();
       });
-
-      it('should accept oz/lb without OCR validation', () => {
-        // WHY: Imperial units are never hallucinated from metric labels
-        expect(postProcess('12oz', 'Coffee 12oz bag')).toBe('12oz');
-        expect(postProcess('16oz', 'Coffee 16 oz bag')).toBe('16oz');
-        expect(postProcess('1lb', 'Coffee 1lb bag')).toBe('1lb');
-        expect(postProcess('2.5 lb', 'Coffee 2.5 lb bag')).toBe('2.5 lb');
-      });
-
-      it('should accept oz/lb even when OCR text does not contain exact match', () => {
-        // WHY: This is the fix — these currently return null in the broken version
-        expect(postProcess('12oz', 'Some text 12oz more')).toBe('12oz');
-        expect(postProcess('1lb', 'Some text 1lb more')).toBe('1lb');
-        expect(postProcess('16oz', 'Different text entirely')).toBe('16oz');
-      });
     });
   });
 
@@ -252,8 +237,7 @@ describe('ai-field-prompts', () => {
       const postProcess = FIELD_PROMPTS['cupping_points'].postProcess!;
 
       it('should return null for scores below 80', () => {
-        // WHY: Specialty coffee scores are 80+; lower numbers on a label are unlikely
-        // to be cupping scores (they could be weight, lot numbers, etc.)
+        // WHY: SCA cupping scores range from 80-100; lower numbers are likely other data
         expect(postProcess('75', '75 points')).toBeNull();
         expect(postProcess('79', '79')).toBeNull();
       });
@@ -287,13 +271,13 @@ describe('ai-field-prompts', () => {
       });
 
       it('should return null for future dates', () => {
-        // WHY: A roasting date in the future is implausible — the roasting hasn't happened yet
+        // WHY: Date validation prevents expiration dates from being used as roast dates
         const futureDate = moment().add(1, 'month').format('YYYY-MM-DD');
         expect(postProcess(futureDate, '')).toBeNull();
       });
 
       it('should return null for dates older than one year', () => {
-        // WHY: A roasting date older than 1 year is implausible for fresh coffee — likely a misread or a different date type
+        // WHY: Roast dates older than 1 year are likely misread or expiration dates
         const oldDate = moment().subtract(2, 'years').format('YYYY-MM-DD');
         expect(postProcess(oldDate, '')).toBeNull();
       });

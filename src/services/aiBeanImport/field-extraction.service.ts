@@ -13,7 +13,6 @@ import {
   LLM_TIMEOUT_PER_FIELD_MS,
   MAX_BLEND_PERCENTAGE,
 } from '../../data/ai-import/ai-import-constants';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
@@ -43,7 +42,7 @@ interface TopLevelFieldsResult {
   name: string;
   roaster: string;
   weight: number;
-  bean_roasting_type?: BEAN_ROASTING_TYPE_ENUM;
+  bean_roasting_type?: any;
   aromatics?: string;
   decaffeinated?: boolean;
   cupping_points?: number;
@@ -156,6 +155,7 @@ export class FieldExtractionService {
       result.roaster = nameAndRoaster.roaster;
     }
 
+    // Weight - always extract (essential for ratios)
     this.updateFieldProgress('TOP_LEVEL', 'weight');
     const weightStr = await this.extractField(
       'weight',
@@ -255,8 +255,8 @@ export class FieldExtractionService {
     result.beanMix = mapToBeanMix(beanMixRaw);
     this.uiLog.log(`Structure: beanMix=${result.beanMix}`);
 
-    if (result.beanMix === mapToBeanMix('BLEND')) {
-      // BLEND: Extract all origins via single JSON prompt, then filter fields by user settings
+    if (result.beanMix === ('BLEND' as BEAN_MIX_ENUM)) {
+      // BLEND: Use single JSON prompt, then filter by settings
       this.updateProgress('BLEND_ORIGINS');
       result.bean_information = await this.extractBlendOriginsFiltered(
         text,
@@ -332,9 +332,9 @@ export class FieldExtractionService {
    * Pre-process OCR text before LLM extraction.
    */
   private preProcess(ocrText: string, examples: MergedExamples): string {
-    // 1. Basic normalization (numbers, altitude) - before case normalization
+    // 1. Basic normalization (numbers, elevation) - before case normalization
     let text = this.textNorm.normalizeNumbers(ocrText);
-    text = this.textNorm.normalizeAltitude(text);
+    text = this.textNorm.normalizeElevation(text);
 
     // 2. Fuzzy match known terms (uses examples vocabularies)
     text = this.ocrCorrection.correctOCRErrors(text, examples);
@@ -514,12 +514,6 @@ export class FieldExtractionService {
 
   /**
    * Extract all origin fields for a blend in one prompt.
-   *
-   * Blend labels often have sparse, scattered origin info (e.g., just country names
-   * or percentages without clear context). A single combined prompt reduces
-   * hallucinations compared to per-field extraction, because the LLM can see all
-   * origin-related text together and make consistent inferences.
-   *
    * Returns an array of partial IBeanInformation objects.
    */
   private async extractBlendOrigins(

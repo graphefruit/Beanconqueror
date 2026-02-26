@@ -202,17 +202,14 @@ TEXT (languages: {{LANGUAGES}}):
       const value = parseFloat(match[1].replace(',', '.'));
       const unit = match[2].toLowerCase();
 
-      // For oz/lb, trust the LLM — imperial units are never hallucinated
-      // from metric labels. The regex validation already confirmed valid format.
-      if (unit === 'oz' || unit === 'lb') {
-        return v;
-      }
-
-      // For g/kg, convert and validate against OCR text to catch hallucinations
-      // (e.g., LLM returning "1kg" when label shows "250g")
+      // Convert to grams for validation
       let grams: number;
       if (unit === 'kg') {
         grams = value * 1000;
+      } else if (unit === 'oz') {
+        grams = value * 28.3495;
+      } else if (unit === 'lb') {
+        grams = value * 453.592;
       } else {
         grams = value;
       }
@@ -446,7 +443,7 @@ TEXT (languages: {{LANGUAGES}}):
         return null;
       }
 
-      // Validate that this elevation actually appears in OCR text with an altitude unit
+      // Validate that this elevation actually appears in OCR text with an elevation unit
       // This prevents hallucinations where LLM returns an elevation not on the label
       if (!elevationExistsInOcrText(sanitized, ocrText)) {
         return null;

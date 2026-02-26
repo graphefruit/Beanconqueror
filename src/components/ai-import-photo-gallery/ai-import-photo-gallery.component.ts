@@ -202,6 +202,7 @@ export class AiImportPhotoGalleryComponent {
           }
         }
       }
+      // Note: CLIPBOARD option not included for AI import (less common use case)
     } catch (e: any) {
       // Option chooser dismissal - only log unexpected errors
       const isDismissal = this.isOptionChooserDismissal(e);

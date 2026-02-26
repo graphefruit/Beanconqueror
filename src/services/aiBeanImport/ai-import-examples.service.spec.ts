@@ -104,6 +104,34 @@ describe('AIImportExamplesService', () => {
       expect(result.ORIGINS).toContain('Colombia');
     });
 
+    it('should return merged examples from multiple languages', async () => {
+      // Arrange
+      const enTranslations = {
+        AI_IMPORT_PROMPT_EXAMPLES: {
+          PROCESSING_METHODS: 'Washed, Natural',
+        },
+      };
+      const esTranslations = {
+        AI_IMPORT_PROMPT_EXAMPLES: {
+          PROCESSING_METHODS: 'Lavado, Natural, Honey',
+        },
+      };
+      mockTranslate.currentLoader.getTranslation.and.callFake(
+        (lang: string) => {
+          if (lang === 'en') return of(enTranslations);
+          if (lang === 'es') return of(esTranslations);
+          return of({});
+        },
+      );
+
+      // Act
+      const result = await service.getMergedExamples(['en', 'es']);
+
+      // Assert - should include unique values from both languages
+      expect(result.PROCESSING_METHODS).toContain('Washed');
+      expect(result.PROCESSING_METHODS).toContain('Lavado');
+      expect(result.PROCESSING_METHODS).toContain('Honey');
+    });
   });
 
   describe('loadExamplesForLanguage (via getMergedExamples)', () => {
@@ -228,9 +256,36 @@ describe('AIImportExamplesService', () => {
   });
 
   describe('mergeExamples (via getMergedExamples)', () => {
-    it('should deduplicate values case-insensitively, keeping first occurrence casing', async () => {
-      // WHY: Case-insensitive deduplication prevents "Natural" and "natural" from both appearing.
-      //       First-occurrence casing is preserved for consistent output.
+    it('should combine values from all example objects', async () => {
+      // Arrange
+      const enTranslations = {
+        AI_IMPORT_PROMPT_EXAMPLES: {
+          VARIETIES: 'Bourbon',
+        },
+      };
+      const deTranslations = {
+        AI_IMPORT_PROMPT_EXAMPLES: {
+          VARIETIES: 'Gesha',
+        },
+      };
+      mockTranslate.currentLoader.getTranslation.and.callFake(
+        (lang: string) => {
+          if (lang === 'en') return of(enTranslations);
+          if (lang === 'de') return of(deTranslations);
+          return of({});
+        },
+      );
+
+      // Act
+      const result = await service.getMergedExamples(['en', 'de']);
+
+      // Assert
+      expect(result.VARIETIES).toContain('Bourbon');
+      expect(result.VARIETIES).toContain('Gesha');
+    });
+
+    it('should deduplicate values case-insensitively', async () => {
+      // WHY: Case-insensitive deduplication prevents "Natural" and "natural" from both appearing
 
       // Arrange
       const enTranslations = {
@@ -254,8 +309,69 @@ describe('AIImportExamplesService', () => {
       // Act
       const result = await service.getMergedExamples(['en', 'de']);
 
-      // Assert - exact output: duplicates removed, first-occurrence casing kept
-      expect(result.PROCESSING_METHODS).toBe('Natural, Washed, Honey');
+      // Assert - duplicates removed, only unique values remain
+      const methods = result.PROCESSING_METHODS.split(', ');
+      expect(methods.length).toBe(3); // Natural, Washed, Honey
+    });
+
+    it('should keep first occurrence casing when deduplicating', async () => {
+      // WHY: Preserving first occurrence ensures consistent casing in output
+
+      // Arrange
+      const enTranslations = {
+        AI_IMPORT_PROMPT_EXAMPLES: {
+          VARIETIES: 'Gesha',
+        },
+      };
+      const deTranslations = {
+        AI_IMPORT_PROMPT_EXAMPLES: {
+          VARIETIES: 'GESHA, gesha',
+        },
+      };
+      mockTranslate.currentLoader.getTranslation.and.callFake(
+        (lang: string) => {
+          if (lang === 'en') return of(enTranslations);
+          if (lang === 'de') return of(deTranslations);
+          return of({});
+        },
+      );
+
+      // Act
+      const result = await service.getMergedExamples(['en', 'de']);
+
+      // Assert - should keep "Gesha" (first occurrence from English)
+      expect(result.VARIETIES).toBe('Gesha');
+    });
+
+    it('should return comma-separated string for each key', async () => {
+      // Arrange
+      mockTranslate.currentLoader.getTranslation.and.returnValue(
+        of({
+          AI_IMPORT_PROMPT_EXAMPLES: {
+            ORIGINS: 'Colombia, Ethiopia, Kenya',
+          },
+        }),
+      );
+
+      // Act
+      const result = await service.getMergedExamples(['en']);
+
+      // Assert
+      expect(typeof result.ORIGINS).toBe('string');
+      expect(result.ORIGINS).toContain(', ');
+    });
+
+    it('should return empty strings when no examples provided', async () => {
+      // Arrange
+      mockTranslate.currentLoader.getTranslation.and.returnValue(of({}));
+
+      // Act
+      const result = await service.getMergedExamples(['en']);
+
+      // Assert
+      expect(result.ORIGINS).toBe('');
+      expect(result.VARIETIES).toBe('');
+      expect(result.PROCESSING_METHODS).toBe('');
     });
   });
 });

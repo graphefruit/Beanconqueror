@@ -18,6 +18,10 @@ const THOUSAND_SEPARATOR_OPTIONAL = "[.,''\u2019 \u2009\u202F]?";
  * Removes thousand separators from integer-like values in a string.
  * Handles international formats: dot, comma, apostrophe (Swiss), space (French/ISO).
  *
+ * Used to normalize OCR/LLM output that contains formatted numbers.
+ * Counterpart to {@link buildThousandSeparatorPattern}, which goes the other
+ * direction: generating a regex to match separator variants in raw OCR text.
+ *
  * @example
  *   removeThousandSeparatorsFromInteger("1.850") // → "1850"
  *   removeThousandSeparatorsFromInteger("1'234'567") // → "1234567" (Swiss)
@@ -41,6 +45,11 @@ export function removeThousandSeparatorsFromInteger(value: string): string {
 /**
  * Builds a regex pattern string that matches a number with optional thousand separators.
  * Only adds separators at valid positions (before groups of 3 digits from the right).
+ *
+ * Used for validation: given a clean number from sanitized LLM output, check whether
+ * it appears in raw OCR text (which may still contain thousand separators).
+ * Counterpart to {@link removeThousandSeparatorsFromInteger}, which goes the other
+ * direction: stripping separators from formatted numbers.
  *
  * @example
  *   buildThousandSeparatorPattern("1000") // matches: "1000", "1.000", "1,000", "1'000", "1 000"
@@ -177,18 +186,18 @@ export function elevationExistsInOcrText(
 }
 
 /**
- * Normalizes altitude unit suffixes to MASL.
+ * Normalizes elevation unit suffixes to MASL.
  * Handles: m, m.ü.M., meters, msnm (case-insensitive).
  * Works with single values and ranges.
  *
  * @example
- *   normalizeAltitudeUnit("1850 m.ü.M.") // → "1850 MASL"
- *   normalizeAltitudeUnit("1700-1900 meters") // → "1700-1900 MASL"
- *   normalizeAltitudeUnit("1850 masl") // → "1850 MASL"
- *   normalizeAltitudeUnit("1850m") // → "1850 MASL" (space added)
+ *   normalizeElevationUnit("1850 m.ü.M.") // → "1850 MASL"
+ *   normalizeElevationUnit("1700-1900 meters") // → "1700-1900 MASL"
+ *   normalizeElevationUnit("1850 masl") // → "1850 MASL"
+ *   normalizeElevationUnit("1850m") // → "1850 MASL" (space added)
  */
-export function normalizeAltitudeUnit(value: string): string {
-  // Pattern for altitude units (but not MASL itself)
+export function normalizeElevationUnit(value: string): string {
+  // Pattern for elevation units (but not MASL itself)
   // m.ü.M., msnm, meters, meter, m (when followed by space, end, or dash)
   const unitPattern = /m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$|-)/gi;
 
@@ -205,7 +214,7 @@ export function normalizeAltitudeUnit(value: string): string {
   result = result.replace(/\s+MASL/g, ' MASL');
 
   // Remove duplicate MASL (e.g., "1850 MASL MASL" → "1850 MASL")
-  result = result.replace(/(MASL\s*)+/g, 'MASL');
+  result = result.replace(/MASL(?:\s*MASL)+/g, 'MASL');
 
   return result;
 }
@@ -258,8 +267,8 @@ export function sanitizeElevation(
   // Normalize thousand separators
   cleaned = removeThousandSeparatorsFromInteger(cleaned);
 
-  // Normalize altitude units to MASL
-  cleaned = normalizeAltitudeUnit(cleaned);
+  // Normalize elevation units to MASL
+  cleaned = normalizeElevationUnit(cleaned);
 
   // Handle LLM quirk: "2300 MASL 2400 MASL" → "2300-2400 MASL"
   cleaned = cleaned.replace(/(\d+)\s*MASL\s*(\d+)\s*MASL/gi, '$1-$2 MASL');
@@ -285,7 +294,7 @@ export function sanitizeElevation(
 
 /**
  * Service for normalizing OCR text before LLM processing.
- * Handles case normalization, number formatting, and altitude standardization.
+ * Handles case normalization, number formatting, and elevation standardization.
  */
 @Injectable({
   providedIn: 'root',
@@ -439,7 +448,7 @@ export class TextNormalizationService {
   }
 
   /**
-   * Normalize altitude values to MASL format.
+   * Normalize elevation values to MASL format.
    * Examples:
    * - "1.850 m.ü.M." → "1850 MASL"
    * - "1,700 - 1,900 meters" → "1700-1900 MASL"
@@ -447,34 +456,24 @@ export class TextNormalizationService {
    * - "800m 1200m" → "800-1200 MASL" (implicit range)
    * - "1'850 m.ü.M." → "1850 MASL" (Swiss format)
    */
-  public normalizeAltitude(text: string): string {
+  public normalizeElevation(text: string): string {
     // First, normalize all thousand separators (including Swiss/French formats)
     let result = removeThousandSeparatorsFromInteger(text);
 
-    // Pattern 1: Explicit ranges with dash/en-dash
-    // e.g., "1700-1900m" → "1700-1900 MASL"
+    // Convert all elevation units to MASL
+    result = normalizeElevationUnit(result);
+
+    // Normalize explicit range dash spacing: "1700 - 1900 MASL" → "1700-1900 MASL"
     result = result.replace(
-      /(\d{3,4})\s*[-–]\s*(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$))/gi,
+      /(\d{3,4})\s*[-–]\s*(\d{3,4})\s*MASL/g,
       '$1-$2 MASL',
     );
 
-    // Pattern 2: Implicit ranges - two altitudes with units close together without dash
-    // e.g., "800m 1200m" → "800-1200 MASL"
+    // Convert implicit ranges: "800 MASL 1200 MASL" → "800-1200 MASL"
     result = result.replace(
-      /(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s))\s+(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$)|MASL)/gi,
+      /(\d{3,4})\s*MASL\s+(\d{3,4})\s*MASL/g,
       '$1-$2 MASL',
     );
-
-    // Pattern 3: Single altitudes (3-4 digit numbers with unit)
-    // e.g., "1850m" → "1850 MASL", "1850 m.ü.M." → "1850 MASL", "2000 msnm" → "2000 MASL"
-    // Negative lookahead prevents matching the start of an explicit range
-    result = result.replace(
-      /(\d{3,4})\s*(?:m\.?ü\.?M\.?|msnm|meters?(?![a-zA-Z])|m(?=\s|$))(?!\s*[-–]\s*\d)/gi,
-      '$1 MASL',
-    );
-
-    // Normalize any remaining masl case variations
-    result = result.replace(/masl/gi, 'MASL');
 
     return result;
   }
@@ -528,7 +527,7 @@ export class TextNormalizationService {
   public normalizeAll(text: string): string {
     let result = text;
     result = this.normalizeNumbers(result);
-    result = this.normalizeAltitude(result);
+    result = this.normalizeElevation(result);
     result = this.normalizeCase(result);
     return result;
   }
