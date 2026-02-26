@@ -293,7 +293,7 @@ export class Settings implements ISettings {
       profiles: [],
       rating: {
         upper: upperRating,
-        lower: -1,
+        lower: 0,
       },
     } as IBrewPageFilter;
   }

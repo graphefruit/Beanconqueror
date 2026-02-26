@@ -1104,6 +1104,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public changedRating() {
+    if (this.data.rating < 0) {
+      this.data.rating = 0;
+    }
     if (typeof this.brewStars !== 'undefined') {
       this.brewStars.setRating(this.data.rating);
     }
@@ -1670,7 +1673,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         checkData.default_last_coffee_parameters.rating) ||
       (_template === true && checkData.repeat_coffee_parameters.rating)
     ) {
-      this.data.rating = brew.rating;
+      this.data.rating = Math.max(0, brew.rating);
     }
     if (
       (_template === false && checkData.default_last_coffee_parameters.note) ||

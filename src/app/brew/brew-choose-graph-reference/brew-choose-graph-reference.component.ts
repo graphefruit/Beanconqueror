@@ -295,7 +295,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     if (checkingFilter.rating) {
       didRatingFilterChanged =
         checkingFilter.rating.upper !== this.settings?.brew_rating ||
-        checkingFilter.rating.lower !== -1;
+        checkingFilter.rating.lower !== 0;
     }
     return (
       checkingFilter.bean.length > 0 ||

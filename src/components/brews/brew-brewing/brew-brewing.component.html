@@ -415,7 +415,7 @@
         <ion-item style="" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.rating,
           choosenPreparation.brew_order.after.rating,
           choosenPreparation.use_custom_parameters])" lines="inset">
-          <ion-range [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;ppadding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;ppadding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="0" snaps="true"
                      [step]="settings.brew_rating_steps" >
             @if(maxBrewRating=== 5 && settings.brew_rating_steps === 1) {
               <div slot="end">
