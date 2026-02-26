@@ -462,9 +462,7 @@ export class BrewInformationComponent implements OnInit {
         await this.editBrew();
         break;
       case BREW_ACTION.DELETE:
-        try {
-          await this.deleteBrew();
-        } catch (ex) {}
+        await this.deleteBrew();
         break;
       case BREW_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -599,27 +597,23 @@ export class BrewInformationComponent implements OnInit {
     }
     return flavors;
   }
-  public deleteBrew(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.uiAlert
-        .showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            // Yes
-            this.uiAnalytics.trackEvent(
-              BREW_TRACKING.TITLE,
-              BREW_TRACKING.ACTIONS.DELETE,
-            );
-            await this.__deleteBrew();
-            this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
-            resolve(undefined);
-          },
-          () => {
-            // No
-            reject();
-          },
-        );
-    });
+
+  public async deleteBrew(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_BREW_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.DELETE,
+    );
+    await this.__deleteBrew();
+    this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
   }
 
   private async __deleteBrew() {

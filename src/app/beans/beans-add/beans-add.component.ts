@@ -99,9 +99,9 @@ export class BeansAddComponent implements OnInit {
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
-        (_processNextHandler) => {
-          // Don't do anything.
-          this.confirmDismiss();
+        async () => {
+          // Only go back after confirmation
+          await this.confirmDismiss();
         },
       );
     }
@@ -153,18 +153,16 @@ export class BeansAddComponent implements OnInit {
         if (params.bean_information === false && hasDataSet === true) {
           //Woopsi doopsi, user hasn't enabled the bean_information, lets display him a popover
           //#623
-          try {
-            const yes = await this.uiAlert.showConfirm(
-              'BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION',
-              'INFORMATION',
-              true,
-            );
-            this.settings.bean_manage_parameters.bean_information = true;
-            await this.uiSettingsStorage.update(this.settings);
-            //Activate
-          } catch (ex) {
-            // Don't activate
+          const choice = await this.uiAlert.showConfirm(
+            'BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION',
+            'INFORMATION',
+            true,
+          );
+          if (choice !== 'YES') {
+            return;
           }
+          this.settings.bean_manage_parameters.bean_information = true;
+          await this.uiSettingsStorage.update(this.settings);
         }
       }
     } catch (ex) {}
@@ -227,23 +225,21 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public confirmDismiss(): void {
-    if (this.settings.security_check_when_going_back === false) {
+  public async confirmDismiss(): Promise<void> {
+    if (
+      this.settings.security_check_when_going_back === false ||
+      JSON.stringify(this.data) === this.initialBeanData
+    ) {
       this.dismiss();
       return;
     }
-    if (JSON.stringify(this.data) !== this.initialBeanData) {
-      this.uiAlert
-        .showConfirm('PAGE_BEANS_DISCARD_CONFIRM', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            this.dismiss();
-          },
-          () => {
-            // No
-          },
-        );
-    } else {
+
+    const choice = await this.uiAlert.showConfirm(
+      'PAGE_BEANS_DISCARD_CONFIRM',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice === 'YES') {
       this.dismiss();
     }
   }
