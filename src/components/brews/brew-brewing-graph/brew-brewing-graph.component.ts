@@ -1878,6 +1878,25 @@ export class BrewBrewingGraphComponent implements OnInit {
                 oldSmoothed: shotData.oldSmoothedWeight,
               });
 
+              // Override weight-based flow with Meticulous gravimetric flow if available
+              if (
+                shotData.gravimetric_flow != null &&
+                shotData.gravimetric_flow !== 0
+              ) {
+                const lastRealtimeFlow =
+                  this.flow_profile_raw.realtimeFlow[
+                    this.flow_profile_raw.realtimeFlow.length - 1
+                  ];
+                if (lastRealtimeFlow) {
+                  lastRealtimeFlow.flow_value = shotData.gravimetric_flow;
+                }
+                if (this.traces.realtimeFlowTrace.y.length > 0) {
+                  this.traces.realtimeFlowTrace.y[
+                    this.traces.realtimeFlowTrace.y.length - 1
+                  ] = shotData.gravimetric_flow;
+                }
+              }
+
               //this.__setMachineWeightFlow({ actual: shotData.weight, old: shotData.weight,smoothed:100,oldSmoothed:100 });
               //this.__setMachineWaterFlow({ actual: shotData.flow, old: shotData.flow });
 

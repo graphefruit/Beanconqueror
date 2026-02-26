@@ -191,8 +191,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   public async setBaristaHintHasBeenShown() {
-    this.preparation.connectedPreparationDevice.customParams.showHintForBaristaMode =
-      false;
+    this.preparation.connectedPreparationDevice.customParams.showHintForBaristaMode = false;
     await this.uiPreparationStorage.update(this.preparation);
   }
 
@@ -605,7 +604,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           () => {},
         );
         //Third call call
-    
+
         const apiThirdCallDelayStart = moment(); // create a moment with the current time
         let apiDelayEnd;
         const delayCallTimeout = setTimeout(() => {
@@ -620,7 +619,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
           if (delta > 200) {
             apiTakesToLong = true;
           }
-    
+
           if (apiTakesToLong) {
             this.uiAlert.showMessage(
               this.translate.instant('SANREMO_API_RESPONSE_TAKE_TO_LONG', {
@@ -860,6 +859,15 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     if (_historyData.profile?.temperature) {
       this.brewComponent.data.brew_temperature =
         _historyData.profile.temperature;
+    }
+
+    /**Set the custom creation date, the user needs to activate the parameter for custom creation date**/
+    if (_historyData.time) {
+      this.brewComponent.customCreationDate = moment
+        .unix(_historyData.time)
+        .toISOString();
+    } else {
+      this.brewComponent.customCreationDate = '';
     }
 
     this.brewComponent.timer?.setTime(seconds, milliseconds);
