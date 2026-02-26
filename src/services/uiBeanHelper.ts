@@ -270,6 +270,15 @@ export class UIBeanHelper {
 
       const protoBean = BeanProto.decode(encoded);
 
+      // Remove all undefined keys to prevent issues down the line. The rest
+      // of the application does not expect values to be explicitly set to
+      // undefined. Instead, the values are simply not present.
+      for (const key of Object.keys(protoBean)) {
+        if (protoBean[key] === undefined) {
+          delete protoBean[key];
+        }
+      }
+
       const bean: Bean = new Bean();
       bean.initializeBySharedProtoBean(protoBean);
       /**we don't want this property to be saved**/
@@ -287,11 +296,7 @@ export class UIBeanHelper {
 
       // Empty it.
       const newPredefinedFlavors = {};
-      if (
-        'cupped_flavor' in protoBean &&
-        'predefined_flavors' in protoBean.cupped_flavor &&
-        protoBean.cupped_flavor?.predefined_flavors?.length > 0
-      ) {
+      if (protoBean.cupped_flavor?.predefined_flavors?.length > 0) {
         for (const flavKey of protoBean.cupped_flavor.predefined_flavors) {
           newPredefinedFlavors[flavKey] = true;
         }
