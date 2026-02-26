@@ -213,17 +213,4 @@ describe('AiImportPhotoGalleryComponent', () => {
     });
   });
 
-  describe('keyboard navigation', () => {
-    it('should call cancel() when Escape key is pressed', () => {
-      // Arrange
-      spyOn(component, 'cancel');
-      const event = new KeyboardEvent('keydown', { key: 'Escape' });
-
-      // Act
-      component.handleKeyboardNavigation(event);
-
-      // Assert
-      expect(component.cancel).toHaveBeenCalled();
-    });
-  });
 });
