@@ -64,17 +64,6 @@ export function createMockUIAlert(): jasmine.SpyObj<any> {
 }
 
 /**
- * Create a mock UISettingsStorage for testing.
- */
-export function createMockUISettingsStorage(
-  settings: any = {},
-): jasmine.SpyObj<any> {
-  const spy = jasmine.createSpyObj('UISettingsStorage', ['getSettings']);
-  spy.getSettings.and.returnValue(settings);
-  return spy;
-}
-
-/**
  * Create a mock UIImage for testing.
  */
 export function createMockUIImage(): jasmine.SpyObj<any> {
@@ -103,13 +92,3 @@ export function createMockModalController(): jasmine.SpyObj<any> {
   return jasmine.createSpyObj('ModalController', ['dismiss']);
 }
 
-/**
- * Create a mock Platform for testing.
- */
-export function createMockPlatform(
-  platforms: string[] = ['capacitor', 'ios'],
-): jasmine.SpyObj<any> {
-  const spy = jasmine.createSpyObj('Platform', ['is']);
-  spy.is.and.callFake((platform: string) => platforms.includes(platform));
-  return spy;
-}
