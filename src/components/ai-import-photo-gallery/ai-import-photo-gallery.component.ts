@@ -38,7 +38,8 @@ import {
   CameraResultType,
   CameraSource,
 } from '@capacitor/camera';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Clipboard } from '@capacitor/clipboard';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { UIAlert } from '../../services/uiAlert';
 import { UIFileHelper } from '../../services/uiFileHelper';
@@ -76,6 +77,7 @@ export class AiImportPhotoGalleryComponent {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiLog = inject(UILog);
+  private readonly translate = inject(TranslateService);
 
   public photoPaths: string[] = [];
   public attachPhotos = false;
@@ -160,8 +162,9 @@ export class AiImportPhotoGalleryComponent {
             );
           }
         }
+      } else if (option === 'CLIPBOARD') {
+        await this.addBase64ImageFromClipboard();
       }
-      // Note: CLIPBOARD option not included for AI import (less common use case)
     } catch (e: any) {
       // Option chooser dismissal - only log unexpected errors
       const isDismissal = this.isOptionChooserDismissal(e);
@@ -170,6 +173,43 @@ export class AiImportPhotoGalleryComponent {
           `AI Import Gallery: Option chooser error: ${e?.message || e}`,
         );
       }
+    }
+  }
+
+  /**
+   * Add an image from the device clipboard (base64-encoded).
+   */
+  private async addBase64ImageFromClipboard(): Promise<void> {
+    const currentData = await Clipboard.read();
+
+    if (
+      !currentData.value ||
+      currentData.value.indexOf('data:image/') === -1
+    ) {
+      this.uiAlert.showMessage(this.translate.instant('NO_IMAGE_IN_CLIPBOARD'));
+      return;
+    }
+
+    const ending =
+      currentData.value.indexOf('data:image/png;base64,') > -1
+        ? '.png'
+        : '.jpg';
+    const fileName = await this.uiFileHelper.generateInternalPath(
+      'photo',
+      ending,
+    );
+    const fileUri = await this.uiFileHelper.writeInternalFileFromBase64(
+      currentData.value,
+      fileName,
+    );
+
+    if (fileUri.path) {
+      this.photoPaths.push(fileUri.path);
+      this.uiLog.log(
+        `AI Import Gallery: Clipboard image saved to ${fileUri.path}, total now: ${this.photoPaths.length}`,
+      );
+      this.updateSlider();
+      this.focusOnNewPhoto();
     }
   }
 
