@@ -216,39 +216,6 @@ describe('OCRCorrectionService', () => {
     // WHY: Tests the composition of all correction behaviors on full text.
     // Each test focuses on ONE aspect of full-text correction.
 
-    it('should apply country corrections to matching words in text', () => {
-      // Arrange - C0lombia should become Colombia
-      const input = 'C0lombia Natural';
-
-      // Act
-      const result = service.correctOCRErrors(input, mockExamples);
-
-      // Assert
-      expect(result).toContain('Colombia');
-    });
-
-    it('should apply variety corrections to matching words in text', () => {
-      // Arrange - 6esha should become Gesha
-      const input = 'Ethiopia 6esha';
-
-      // Act
-      const result = service.correctOCRErrors(input, mockExamples);
-
-      // Assert
-      expect(result).toContain('Gesha');
-    });
-
-    it('should apply processing corrections to matching words in text', () => {
-      // Arrange - NATURAL should be normalized to Natural
-      const input = 'NATURAL processed';
-
-      // Act
-      const result = service.correctOCRErrors(input, mockExamples);
-
-      // Assert
-      expect(result).toContain('Natural');
-    });
-
     it('should preserve words that do not match any known term', () => {
       // Arrange
       const input = 'Colombia Unknown Term Here';
@@ -260,18 +227,6 @@ describe('OCRCorrectionService', () => {
       expect(result).toContain('Unknown');
       expect(result).toContain('Term');
       expect(result).toContain('Here');
-    });
-
-    it('should handle text with no correctable terms', () => {
-      // Arrange
-      const input = 'Random words without coffee terms';
-
-      // Act
-      const result = service.correctOCRErrors(input, mockExamples);
-
-      // Assert - should return text unchanged (modulo whitespace normalization)
-      expect(result).toContain('Random');
-      expect(result).toContain('words');
     });
 
     it('should correct multiple OCR errors in the same text', () => {

@@ -22,48 +22,37 @@ describe('OcrMetadataService', () => {
   });
 
   describe('shouldUseMetadata', () => {
-    it('should return false when blocks array is empty', () => {
-      // Arrange
-      const result = createTextDetectionResult('Some text', []);
+    const falsyCases = [
+      {
+        desc: 'empty blocks',
+        result: createTextDetectionResult('Some text', []),
+      },
+      {
+        desc: 'undefined blocks',
+        result: {
+          text: 'Some text',
+          blocks: undefined,
+        } as Partial<TextDetectionResult> as TextDetectionResult,
+      },
+      {
+        desc: 'single block (insufficient data for layout analysis)',
+        result: createTextDetectionResult('Text', [
+          createBlock('Text', 0, 0, 100, 50),
+        ]),
+      },
+      {
+        desc: 'similar-sized blocks (no meaningful hierarchy)',
+        result: createTextDetectionResult('Line 1\nLine 2', [
+          createBlock('Line 1', 0, 0, 100, 50),
+          createBlock('Line 2', 0, 60, 100, 110),
+        ]),
+      },
+    ];
 
-      // Act & Assert
-      expect(service.shouldUseMetadata(result)).toBeFalse();
-    });
-
-    it('should return false when blocks is undefined', () => {
-      // Arrange - Use Partial type to represent incomplete test data
-      const result = {
-        text: 'Some text',
-        blocks: undefined,
-      } as Partial<TextDetectionResult> as TextDetectionResult;
-
-      // Act & Assert
-      expect(service.shouldUseMetadata(result)).toBeFalse();
-    });
-
-    it('should return false when only one block exists (insufficient data for layout analysis)', () => {
-      // WHY: Layout analysis requires multiple blocks to detect size variations
-
-      // Arrange
-      const result = createTextDetectionResult('Text', [
-        createBlock('Text', 0, 0, 100, 50),
-      ]);
-
-      // Act & Assert
-      expect(service.shouldUseMetadata(result)).toBeFalse();
-    });
-
-    it('should return false when all blocks have similar size (no meaningful hierarchy)', () => {
-      // WHY: Similar-sized blocks indicate uniform text without headers/titles
-
-      // Arrange
-      const result = createTextDetectionResult('Line 1\nLine 2', [
-        createBlock('Line 1', 0, 0, 100, 50),
-        createBlock('Line 2', 0, 60, 100, 110),
-      ]);
-
-      // Act & Assert
-      expect(service.shouldUseMetadata(result)).toBeFalse();
+    falsyCases.forEach(({ desc, result }) => {
+      it(`should return false for ${desc}`, () => {
+        expect(service.shouldUseMetadata(result)).toBeFalse();
+      });
     });
 
     it('should return true when blocks have significant size variation (headers vs body text)', () => {

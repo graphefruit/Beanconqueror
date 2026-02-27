@@ -90,6 +90,13 @@ describe('TextNormalizationService', () => {
       expected: '--- Label 1 of 2 ---',
       desc: 'preserve label markers unchanged',
     },
+    {
+      input:
+        '=== OCR WITH LAYOUT ===\n\n**LARGE:** ROASTER NAME\n\n**MEDIUM:** COFFEE ORIGIN',
+      expected:
+        '=== OCR WITH LAYOUT ===\n\n**LARGE:** Roaster Name\n\n**MEDIUM:** Coffee Origin',
+      desc: 'mixed layout tags and content',
+    },
   ];
 
   describe('normalizeCase — layout tags', () => {
@@ -97,15 +104,6 @@ describe('TextNormalizationService', () => {
       it(`should handle: ${desc}`, () => {
         expect(service.normalizeCase(input)).toBe(expected);
       });
-    });
-
-    it('should handle mixed layout tags and content', () => {
-      const input =
-        '=== OCR WITH LAYOUT ===\n\n**LARGE:** ROASTER NAME\n\n**MEDIUM:** COFFEE ORIGIN';
-      const result = service.normalizeCase(input);
-      expect(result).toContain('=== OCR WITH LAYOUT ===');
-      expect(result).toContain('**LARGE:** Roaster Name');
-      expect(result).toContain('**MEDIUM:** Coffee Origin');
     });
   });
 
@@ -179,18 +177,26 @@ describe('TextNormalizationService', () => {
   });
 
   // --- normalizeAll ---
+  // normalizeAll chains: normalizeNumbers → normalizeElevation → normalizeCase.
+  // Weight extraction is intentionally separate (extractWeight) since it returns
+  // a parsed number, not normalized text.
+
+  const normalizeAllCases = [
+    {
+      input: 'FINCA EL PARAÍSO\n1.850 m.ü.M.\n250g',
+      expectedFragments: ['Finca el Paraíso', '1850 MASL', '250g'],
+      desc: 'case + thousand sep + elevation unit + weight preserved',
+    },
+  ];
 
   describe('normalizeAll', () => {
-    it('should apply all normalizations in correct order', () => {
-      // normalizeAll chains: normalizeNumbers → normalizeElevation → normalizeCase.
-      // Weight extraction is intentionally separate (extractWeight) since it returns
-      // a parsed number, not normalized text.
-      const result = service.normalizeAll(
-        'FINCA EL PARAÍSO\n1.850 m.ü.M.\n250g',
-      );
-      expect(result).toContain('Finca el Paraíso'); // case normalized
-      expect(result).toContain('1850 MASL'); // thousand sep removed + unit normalized
-      expect(result).toContain('250g'); // weight left as-is (not part of normalizeAll)
+    normalizeAllCases.forEach(({ input, expectedFragments, desc }) => {
+      it(`should normalize: ${desc}`, () => {
+        const result = service.normalizeAll(input);
+        for (const fragment of expectedFragments) {
+          expect(result).toContain(fragment);
+        }
+      });
     });
   });
 });

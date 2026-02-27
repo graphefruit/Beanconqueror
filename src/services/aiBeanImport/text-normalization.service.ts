@@ -5,14 +5,14 @@ import { isNullLikeValue } from './llm-communication.service';
 
 /**
  * Regex character class for thousand separator variants.
- * Includes: . , ' (apostrophe) ' (right single quote U+2019) space, thin space (U+2009), narrow no-break space (U+202F)
+ * Includes: . , ' (apostrophe) ' (right single quote U+2019) space
  */
-const THOUSAND_SEPARATOR_CHARS = "[.,''\u2019 \u2009\u202F]";
+const THOUSAND_SEPARATOR_CHARS = "[.,''\u2019 ]";
 
 /**
  * Optional thousand separator for regex patterns.
  */
-const THOUSAND_SEPARATOR_OPTIONAL = "[.,''\u2019 \u2009\u202F]?";
+const THOUSAND_SEPARATOR_OPTIONAL = "[.,''\u2019 ]?";
 
 /**
  * Removes thousand separators from integer-like values in a string.
@@ -220,7 +220,7 @@ export function normalizeElevationUnit(value: string): string {
 }
 
 /**
- * Sanitizes and validates an elevation value from LLM response.
+ * Validate and normalize a single extracted elevation value. Returns null if invalid.
  * Used by both single-origin field extraction and blend JSON parsing.
  *
  * Note: Some normalizations (thousand separators, unit normalization) are also
@@ -448,7 +448,7 @@ export class TextNormalizationService {
   }
 
   /**
-   * Normalize elevation values to MASL format.
+   * Normalize elevation formats within running text (used during OCR preprocessing). Always returns text.
    * Examples:
    * - "1.850 m.ü.M." → "1850 MASL"
    * - "1,700 - 1,900 meters" → "1700-1900 MASL"

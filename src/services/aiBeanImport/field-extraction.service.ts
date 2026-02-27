@@ -14,6 +14,7 @@ import {
   MAX_BLEND_PERCENTAGE,
 } from '../../data/ai-import/ai-import-constants';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
 import { UIAlert } from '../uiAlert';
@@ -42,7 +43,7 @@ interface TopLevelFieldsResult {
   name: string;
   roaster: string;
   weight: number;
-  bean_roasting_type?: any;
+  bean_roasting_type?: BEAN_ROASTING_TYPE_ENUM;
   aromatics?: string;
   decaffeinated?: boolean;
   cupping_points?: number;
@@ -155,7 +156,6 @@ export class FieldExtractionService {
       result.roaster = nameAndRoaster.roaster;
     }
 
-    // Weight - always extract (essential for ratios)
     this.updateFieldProgress('TOP_LEVEL', 'weight');
     const weightStr = await this.extractField(
       'weight',
@@ -235,7 +235,7 @@ export class FieldExtractionService {
     params: IBeanParameter,
   ): Promise<OriginFieldsResult> {
     const result: OriginFieldsResult = {
-      beanMix: 'UNKNOWN' as BEAN_MIX_ENUM,
+      beanMix: BEAN_MIX_ENUM.UNKNOWN,
       bean_information: [],
     };
 
@@ -255,8 +255,8 @@ export class FieldExtractionService {
     result.beanMix = mapToBeanMix(beanMixRaw);
     this.uiLog.log(`Structure: beanMix=${result.beanMix}`);
 
-    if (result.beanMix === ('BLEND' as BEAN_MIX_ENUM)) {
-      // BLEND: Use single JSON prompt, then filter by settings
+    if (result.beanMix === BEAN_MIX_ENUM.BLEND) {
+      // BLEND: Extract all blend origins, then keep only fields enabled in user settings
       this.updateProgress('BLEND_ORIGINS');
       result.bean_information = await this.extractBlendOriginsFiltered(
         text,
@@ -782,21 +782,19 @@ export class FieldExtractionService {
    */
   private validateBean(bean: Bean): Bean {
     // If country detected but beanMix is null/unknown, set to SINGLE_ORIGIN
-    // Note: Uses enum key strings (e.g., 'UNKNOWN') matching the app convention
-    // where Bean constructor and UI ion-select options use key strings, not enum values.
     if (
       bean.bean_information.length === 1 &&
-      (!bean.beanMix || bean.beanMix === ('UNKNOWN' as BEAN_MIX_ENUM))
+      (!bean.beanMix || bean.beanMix === BEAN_MIX_ENUM.UNKNOWN)
     ) {
-      bean.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
+      bean.beanMix = BEAN_MIX_ENUM.SINGLE_ORIGIN;
     }
 
     // If multiple countries, ensure BLEND
     if (
       bean.bean_information.length > 1 &&
-      bean.beanMix !== ('BLEND' as BEAN_MIX_ENUM)
+      bean.beanMix !== BEAN_MIX_ENUM.BLEND
     ) {
-      bean.beanMix = 'BLEND' as BEAN_MIX_ENUM;
+      bean.beanMix = BEAN_MIX_ENUM.BLEND;
     }
 
     // Ensure at least one bean_information entry exists if any origin data
