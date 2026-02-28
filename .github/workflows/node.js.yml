@@ -42,7 +42,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=luuciarr06_beanconqueror
-            -Dsonar.organization=luuciarr06
+            -Dsonar.organization=lricrui
             -Dsonar.sources=src
             -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.spec.ts
