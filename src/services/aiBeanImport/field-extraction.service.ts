@@ -37,6 +37,7 @@ import {
 import {
   beanMixToKeyString,
   mapToBeanMix,
+  mapToRoastingType,
   roastingTypeToKeyString,
 } from './type-mappings';
 
@@ -174,12 +175,13 @@ export class FieldExtractionService {
     // Bean roasting type
     if (params.bean_roasting_type) {
       this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
-      result.bean_roasting_type = await this.extractField(
+      const roastingTypeRaw = await this.extractField(
         'bean_roasting_type',
         text,
         examples,
         languages,
       );
+      result.bean_roasting_type = mapToRoastingType(roastingTypeRaw);
     }
 
     // Aromatics
