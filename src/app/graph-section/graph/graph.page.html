@@ -30,7 +30,7 @@
           </div>
         </div>
       }
-      <ag-virtual-scroll #openScroll [items]="openGraphs" [height]="'100vh'" min-row-height="165">
+      <ag-virtual-scroll #openScroll [items]="openGraphs" [height]="'100vh'" [min-row-height]="165">
         @for (graph of openScroll.items; track graph) {
           <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph"></graph-information-card>
         }
@@ -48,7 +48,7 @@
             </div>
           </div>
         }
-        <ag-virtual-scroll #archivedScroll [items]="finishedGraphs" [height]="'100vh'" min-row-height="165">
+        <ag-virtual-scroll #archivedScroll [items]="finishedGraphs" [height]="'100vh'" [min-row-height]="165">
           @for (graph of archivedScroll.items; track graph) {
             <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph"></graph-information-card>
           }

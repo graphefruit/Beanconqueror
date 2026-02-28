@@ -43,7 +43,7 @@
           </div>
         </div>
       }
-      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" min-row-height="165">
+      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" [min-row-height]="165">
         @for (bean of openScroll.items; track bean) {
           <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean"></green-bean-information>
         }
@@ -75,7 +75,7 @@
           </div>
         }
 
-        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="'100vh'" min-row-height="165">
+        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="'100vh'" [min-row-height]="165">
           @for (bean of archivedScroll.items; track bean) {
             <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean"></green-bean-information>
           }
