@@ -22,6 +22,7 @@ import { Brew } from '../../classes/brew/brew';
 import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
+import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 import { UIAlert } from '../../services/uiAlert';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIImage } from '../../services/uiImage';
@@ -41,9 +42,15 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);
 
-  @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
+  @Input() public data:
+    | Brew
+    | Bean
+    | GreenBean
+    | Mill
+    | Preparation
+    | RoastingMachine;
   @Output() public dataChange = new EventEmitter<
-    Brew | Bean | GreenBean | Mill | Preparation
+    Brew | Bean | GreenBean | Mill | Preparation | RoastingMachine
   >();
   @ViewChild('photoSlides', { static: false }) public photoSlides:
     | ElementRef
