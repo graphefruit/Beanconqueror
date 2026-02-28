@@ -1,6 +1,3 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: npm test CI
 
 on:
@@ -15,12 +12,37 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          fetch-depth: 0 # Importante para que SonarCloud analice el histórico
+
+      - uses: actions/setup-node@v4 # Nota: La versión estable actual es v4
+        with:
+          node-version: 22 # Node 24 es experimental; 22 es la LTS actual más estable
           cache: 'npm'
-      # Update npm version to at least 11.8.0, which should fix npm not liking our lockfiles
+
       - run: npm install -g 'npm@^11.8.0' && npm -v
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+      
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build --if-present
+
+      - name: Run Tests with Coverage
+        # Ejecutamos antes de SonarScanner y generamos el reporte LCOV
+        run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadlessNoSandbox
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=TU_PROJECT_KEY
+            -Dsonar.organization=TU_ORGANIZACION
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.exclusions=**/node_modules/**,src/generated/**
