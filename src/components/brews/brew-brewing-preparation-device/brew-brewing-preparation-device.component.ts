@@ -262,6 +262,28 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     return this.preparation?.connectedPreparationDevice.type;
   }
 
+  public isXeniaDevice(device: PreparationDevice): device is XeniaDevice {
+    return device instanceof XeniaDevice;
+  }
+
+  public isMeticulousDevice(
+    device: PreparationDevice,
+  ): device is MeticulousDevice {
+    return device instanceof MeticulousDevice;
+  }
+
+  public isSanremoYOUDevice(
+    device: PreparationDevice,
+  ): device is SanremoYOUDevice {
+    return device instanceof SanremoYOUDevice;
+  }
+
+  public isGaggiuinoDevice(
+    device: PreparationDevice,
+  ): device is GaggiuinoDevice {
+    return device instanceof GaggiuinoDevice;
+  }
+
   public async instancePreparationDevice(_brew: Brew = null) {
     /** If a user changes the preparation device, we need to unset the preparation device here firstly **/
     this.preparationDevice = undefined;
