@@ -1587,5 +1587,23 @@
     "PAGE_SETTINGS_LANGUAGE_KOREAN": "Coréen",
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovaque",
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japonais",
-    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russe"
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Russe",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "Éthiopie, Colombie, Brésil, Kenya, Guatemala, Costa Rica, Honduras, Pérou, Rwanda, Burundi, Tanzanie, Ouganda, Yémen, Indonésie, Inde, Panama, El Salvador, Nicaragua, Mexique, Bolivie, Équateur, Papouasie-Nouvelle-Guinée, Hawaï, Jamaïque",
+        "PROCESSING_METHODS": "Lavé, Naturel, Honey, Anaérobie, Macération Carbonique, Wet-Hulled, Semi-Lavé, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Torréfaction filtre, pour filtre, torréfaction claire, café filtre",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Torréfaction espresso, pour espresso, torréfaction foncée, mélange espresso",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Torréfaction Omni, polyvalent, toutes méthodes, torréfaction moyenne",
+        "DECAF_KEYWORDS": "Décaféiné, Sans caféine, Decaf",
+        "BLEND_KEYWORDS": "Mélange, Blend, Mélange maison",
+        "SINGLE_ORIGIN_KEYWORDS": "Origine unique, Single Origin, Mono-origine, Micro Lot",
+        "PRODUCER_KEYWORDS": "Producteur, Produit par, Cultivé par, Fermier, Agriculteur, Famille, Coopérative, Association, Petits producteurs",
+        "ROASTDATE_KEYWORDS": "Date de torréfaction, Torréfié le, Fraîchement torréfié, Torréfaction",
+        "ROASTER_KEYWORDS": "Torréfacteur, Café, SARL, SAS"
+    },
+    "AI_IMPORT_LANG_DETECT": {
+        "KEYWORDS": "torréfié, origine, récolte, acidité, grains, saveur, fraîchement",
+        "EXAMPLE": "Torréfié artisanalement, origine unique, notes florales"
+    }
 }

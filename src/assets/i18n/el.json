@@ -1587,5 +1587,23 @@
     "PAGE_SETTINGS_LANGUAGE_KOREAN": "Κορεάτικα",
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Σλοβακικά",
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Ιαπωνικά",
-    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Ρωσικά"
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Ρωσικά",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "Αιθιοπία, Κολομβία, Βραζιλία, Κένυα, Γουατεμάλα, Κόστα Ρίκα, Ονδούρα, Περού, Ρουάντα, Μπουρούντι, Τανζανία, Ουγκάντα, Υεμένη, Ινδονησία, Ινδία, Παναμάς, Ελ Σαλβαδόρ, Νικαράγουα, Μεξικό, Βολιβία, Ισημερινός, Παπούα Νέα Γουινέα, Χαβάη, Τζαμάικα",
+        "PROCESSING_METHODS": "Πλυμένος, Φυσικός, Honey, Αναερόβια, Ανθρακική Διαβροχή, Wet-Hulled, Ημι-πλυμένος, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Καβούρδισμα για φίλτρο, για φίλτρο, ανοιχτό καβούρδισμα, καφές φίλτρου",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Καβούρδισμα για εσπρέσο, για εσπρέσο, σκούρο καβούρδισμα, μείγμα εσπρέσο",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Καβούρδισμα Omni, ευέλικτο, για όλες τις μεθόδους, μεσαίο καβούρδισμα",
+        "DECAF_KEYWORDS": "Ντεκαφεϊνέ, Χωρίς καφεΐνη, Decaf",
+        "BLEND_KEYWORDS": "Μείγμα, Blend, Μείγμα σπιτιού",
+        "SINGLE_ORIGIN_KEYWORDS": "Μονής προέλευσης, Single Origin, Μικρή παρτίδα, Micro Lot",
+        "PRODUCER_KEYWORDS": "Παραγωγός, Παράχθηκε από, Καλλιεργήθηκε από, Αγρότης, Καλλιεργητής, Οικογένεια, Συνεταιρισμός, Ένωση, Μικροί παραγωγοί",
+        "ROASTDATE_KEYWORDS": "Ημερομηνία καβουρδίσματος, Καβούρδισμα, Φρεσκοκαβουρδισμένος",
+        "ROASTER_KEYWORDS": "Καβουρδιστήριο, Καφές, Α.Ε., Ε.Π.Ε."
+    },
+    "AI_IMPORT_LANG_DETECT": {
+        "KEYWORDS": "καβουρδισμένος, συγκομιδή, οξύτητα, κόκκοι, γεύση, φρέσκος",
+        "EXAMPLE": "Φρεσκοκαβουρδισμένος, μονής προέλευσης, νότες σοκολάτας"
+    }
 }

@@ -1,0 +1,517 @@
+import moment from 'moment';
+
+import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
+import {
+  elevationExistsInOcrText,
+  sanitizeElevation,
+  weightExistsInOcrText,
+} from '../../services/aiBeanImport/text-normalization.service';
+import {
+  MAX_BLEND_PERCENTAGE,
+  MAX_CUPPING_SCORE,
+  MIN_CUPPING_SCORE,
+} from './ai-import-constants';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
+
+/**
+ * System-level instructions for all bean-field extraction calls.
+ *
+ * Apple's Foundation Models give `instructions` higher priority than prompt
+ * content, so generic anti-hallucination and response-format rules live here
+ * while field-specific task descriptions stay in the per-field prompts.
+ */
+export const BEAN_IMPORT_SYSTEM_INSTRUCTIONS = `You are a coffee label data extractor. Your task is to extract structured data from OCR text captured from coffee bean labels.
+
+CRITICAL RULES — NEVER VIOLATE:
+- ONLY extract information EXPLICITLY written in the text.
+- Return NOT_FOUND for ANY field not clearly present.
+- DO NOT guess, infer, or make assumptions.
+- NEVER hallucinate or fabricate data.
+- When uncertain, ALWAYS return NOT_FOUND.
+- Respond with ONLY the requested value. No explanations, no sentences.`;
+
+/**
+ * Prompt for extracting all origin attributes from a BLEND in one call.
+ *
+ * Key difference from single-origin extraction:
+ * - "Arabica" IS accepted as a variety for blends (useful for Arabica/Robusta blends)
+ * - Single-origin prompt excludes "Arabica alone" as too generic, but for blends
+ *   it provides meaningful distinction between blend components
+ */
+export const BLEND_ORIGINS_PROMPT_TEMPLATE = `
+Extract origin information for this coffee BLEND.
+
+For each blend component found, extract:
+- country: The origin country (if identifiable)
+- region: The specific region
+- variety: The coffee variety/cultivar
+- processing: Processing method
+- elevation: Altitude (format: "XXXX MASL")
+- farm: Farm/estate/washing station name
+- farmer: Producer/farmer name
+- percentage: Blend percentage (e.g., "n%")
+
+TERMINOLOGY (for recognition only - do NOT use to fill missing data):
+Countries: {{ORIGINS}}
+Varieties: {{VARIETIES}}
+Processing: {{PROCESSING_METHODS}}
+
+RESPONSE FORMAT:
+Return a JSON array with one object per blend component.
+Use null for any field not found. Return at least one origin object.
+
+Schema:
+[
+  {
+    "country": string | null,
+    "region": string | null,
+    "variety": string | null,
+    "processing": string | null,
+    "elevation": string | null,
+    "farm": string | null,
+    "farmer": string | null,
+    "percentage": number | null
+  }
+]
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}
+`;
+
+/**
+ * Configuration for a field extraction prompt.
+ */
+export interface FieldPromptConfig {
+  /** Field name in Bean/IBeanInformation */
+  field: string;
+  /** Prompt template with placeholders */
+  promptTemplate: string;
+  /** Validation regex pattern */
+  validation?: RegExp;
+  /** Post-processing function (ocrText provided for validation) */
+  postProcess?: (value: string, ocrText: string) => any;
+}
+
+/**
+ * Date formats accepted for roast date parsing (tried in order).
+ * The LLM is asked to return ISO YYYY-MM-DD, but may echo the label format.
+ * Lenient parsing handles minor deviations (missing leading zeros, etc.).
+ */
+const ROAST_DATE_FORMATS = [
+  'YYYY-MM-DD', // ISO (expected LLM response)
+  'DD.MM.YYYY', // European (DE, CH, AT)
+  'DD/MM/YYYY', // European (FR, IT, ES, PT)
+  'MM/DD/YYYY', // American
+  'DD-MM-YYYY', // Various
+  'DD.MM.YY', // European short year
+  'DD/MM/YY', // European short year
+  'D.M.YYYY', // No leading zeros
+  'D/M/YYYY', // No leading zeros
+  'MMMM D, YYYY', // Written English (January 15, 2025)
+  'D MMMM YYYY', // Written European (15 January 2025)
+];
+
+/**
+ * All field prompt configurations.
+ */
+export const FIELD_PROMPTS: Record<string, FieldPromptConfig> = {
+  // Structure detection
+  beanMix: {
+    field: 'beanMix',
+    promptTemplate: `Is this coffee a single origin or a blend?
+
+SINGLE ORIGIN indicators: {{SINGLE_ORIGIN_KEYWORDS}}
+BLEND indicators: {{BLEND_KEYWORDS}}
+
+RULES:
+- SINGLE_ORIGIN: One country mentioned, or "Field Blend" (varieties from same farm)
+- BLEND: Multiple different countries, or "House Blend", "Espresso Blend"
+- EXCEPTION: "Field Blend" = SINGLE_ORIGIN (not a blend!)
+
+RESPONSE FORMAT: Return ONLY one of: SINGLE_ORIGIN, BLEND, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    validation: /^(SINGLE_ORIGIN|BLEND)$/i,
+    postProcess: (v, _ocrText) => {
+      const upper = v.toUpperCase();
+      if (upper === 'SINGLE_ORIGIN') return BEAN_MIX_ENUM.SINGLE_ORIGIN;
+      if (upper === 'BLEND') return BEAN_MIX_ENUM.BLEND;
+      return null;
+    },
+  },
+
+  // Top-level fields
+
+  // Combined name and roaster extraction
+  name_and_roaster: {
+    field: 'name_and_roaster',
+    promptTemplate: `Extract both the ROASTER (company) and COFFEE NAME from this label.
+
+LAYOUT HINTS (text is annotated with **SIZE:** tags):
+- Coffee name is often **LARGE:** text, sometimes **MEDIUM**
+- Roaster can be any size (**LARGE:**, **MEDIUM:**, or **SMALL:**), but probably not small
+- Both may appear in ALL CAPS
+
+LABEL ANATOMY - typical layout from top to bottom:
+1. ROASTER/BRAND - Usually at the very top OR at the bottom (near company info, address, website)
+2. COFFEE NAME - Prominently displayed, often just below the brand. This is the specific product name.
+3. Origin/details - Country, region, processing info
+
+DISTINGUISHING RULES:
+- ROASTER: The company that roasted/sells the coffee. Look for:
+  - Company suffixes: {{ROASTER_KEYWORDS}}
+  - Contact info nearby (website, address, social media)
+  - Text at very top or company info block at bottom
+
+- COFFEE NAME: The specific coffee product name. Often:
+  - A place name (farm, region, country)
+  - A descriptive name (blend name, farmer name)
+  - NOT followed by company suffixes
+
+CRITICAL: These must be DIFFERENT values. If you're unsure which is which:
+- The one at the very top/bottom with company indicators = ROASTER
+- The prominent one describing the specific coffee = COFFEE NAME
+
+RESPONSE FORMAT (JSON):
+{"roaster": "Company Name", "name": "Coffee Name"}
+Use "NOT_FOUND" for any field not found.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+  },
+
+  weight: {
+    field: 'weight',
+    promptTemplate: `What is the package weight?
+
+Look for weight indicators like "250g", "1kg", "12oz", "1lb".
+
+RESPONSE FORMAT: Return ONLY the number and unit as written (e.g., "250g", "12oz", "1kg"), or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    validation: /^\d+(?:[.,]\d+)?\s*(?:g|kg|oz|lb)/i,
+    postProcess: (v, ocrText) => {
+      // Parse the LLM response to get value and unit
+      const match = /^(\d+(?:[.,]\d+)?)\s*(g|kg|oz|lb)/i.exec(v);
+      if (!match) {
+        return null;
+      }
+
+      const value = parseFloat(match[1].replace(',', '.'));
+      const unit = match[2].toLowerCase();
+
+      // Convert to grams for validation
+      let grams: number;
+      if (unit === 'kg') {
+        grams = value * 1000;
+      } else if (unit === 'oz') {
+        grams = value * 28.3495;
+      } else if (unit === 'lb') {
+        grams = value * 453.592;
+      } else {
+        grams = value;
+      }
+
+      // Validate that this weight actually appears in OCR text with a weight unit
+      // This prevents hallucinations like "1kg" when OCR only contains "250g"
+      if (!weightExistsInOcrText(grams, ocrText)) {
+        return null;
+      }
+
+      return v; // Return raw string, extractWeight handles conversion
+    },
+  },
+
+  bean_roasting_type: {
+    field: 'bean_roasting_type',
+    promptTemplate: `What roast type is this coffee intended for?
+
+FILTER indicators: {{ROASTING_TYPE_FILTER_KEYWORDS}}
+ESPRESSO indicators: {{ROASTING_TYPE_ESPRESSO_KEYWORDS}}
+OMNI indicators: {{ROASTING_TYPE_OMNI_KEYWORDS}}
+
+RESPONSE FORMAT: Return ONLY one of: FILTER, ESPRESSO, OMNI, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    validation: /^(FILTER|ESPRESSO|OMNI)$/i,
+    postProcess: (v, _ocrText) => {
+      const upper = v.toUpperCase();
+      if (upper === 'FILTER') return BEAN_ROASTING_TYPE_ENUM.FILTER;
+      if (upper === 'ESPRESSO') return BEAN_ROASTING_TYPE_ENUM.ESPRESSO;
+      if (upper === 'OMNI') return BEAN_ROASTING_TYPE_ENUM.OMNI;
+      return null;
+    },
+  },
+
+  aromatics: {
+    field: 'aromatics',
+    promptTemplate: `What flavor/tasting notes are listed?
+
+Look for descriptors like fruits, chocolate, nuts, floral notes.
+Extract the flavor words as written on the label.
+
+RESPONSE FORMAT: Return ONLY comma-separated flavor notes, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+  },
+
+  decaffeinated: {
+    field: 'decaffeinated',
+    promptTemplate: `Is this coffee decaffeinated?
+
+DECAF indicators: {{DECAF_KEYWORDS}}
+
+Only return "true" if you see an explicit decaf indicator.
+
+RESPONSE FORMAT: Return ONLY one of: true, false, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    validation: /^(true|false)$/i,
+    postProcess: (v, _ocrText) => {
+      const lower = v.toLowerCase();
+      if (lower === 'true') {
+        return true;
+      }
+      if (lower === 'false') {
+        return false;
+      }
+      return null;
+    },
+  },
+
+  cupping_points: {
+    field: 'cupping_points',
+    promptTemplate: `What is the SCA cupping score or quality score?
+
+Look for: numbers between 80-99, often labeled as "SCA", "Score", "Points", "Cupping Score", "Quality Score".
+
+IMPORTANT: Do NOT confuse with weight (e.g., "100g" is weight, not a score).
+
+RESPONSE FORMAT: Return ONLY a number between 80 and 99, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    validation: /^\d+(?:[.,]\d+)?$/,
+    postProcess: (v, ocrText) => {
+      const num = parseFloat(v.replace(',', '.'));
+      if (num < MIN_CUPPING_SCORE || num >= MAX_CUPPING_SCORE) {
+        return null;
+      }
+      // Check integer part exists in OCR to prevent hallucinations
+      const intPart = Math.floor(num).toString();
+      if (!ocrText.includes(intPart)) {
+        return null;
+      }
+      return v;
+    },
+  },
+
+  roastingDate: {
+    field: 'roastingDate',
+    promptTemplate: `What is the roast date of this coffee?
+
+ROAST DATE indicators:
+{{ROASTDATE_KEYWORDS}}
+
+DATE FORMAT RECOGNITION:
+- European format: DD.MM.YYYY
+- ISO format: YYYY-MM-DD
+- American format: MM/DD/YYYY
+- Written format with month names
+- Short year: DD.MM.YY
+
+IMPORTANT:
+- Look for dates near roast-related keywords
+- Dates labeled "best before", "use by", or "expiration" are NOT roast dates
+
+RESPONSE FORMAT: Return the date in ISO format (YYYY-MM-DD), or NOT_FOUND. EXCLUDE any prefixes.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    postProcess: (v, _ocrText) => {
+      // Parse with explicit date formats to avoid moment deprecation warning.
+      // Lenient mode (no strict flag) handles missing leading zeros, etc.
+      const parsed = moment(v, ROAST_DATE_FORMATS);
+      if (!parsed.isValid()) {
+        return null;
+      }
+
+      const now = moment();
+      const oneYearAgo = moment().subtract(1, 'year');
+
+      // Reject future dates
+      if (parsed.isAfter(now)) {
+        return null;
+      }
+
+      // Reject dates older than 1 year (likely misread)
+      if (parsed.isBefore(oneYearAgo)) {
+        return null;
+      }
+
+      // Return in local timezone format (consistent with rest of app)
+      return parsed.format();
+    },
+  },
+
+  // Origin fields
+  country: {
+    field: 'country',
+    promptTemplate: `What country is this coffee from?
+
+COMMON ORIGINS (may appear in different languages):
+{{ORIGINS}}
+
+Extract the country name as written on the label.
+Extract country even if not in the common list above.
+
+RESPONSE FORMAT: Return ONLY the country name, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+  },
+
+  region: {
+    field: 'region',
+    promptTemplate: `What region or area within the country is mentioned?
+
+DO NOT guess or infer regions based on country name alone.
+
+Look for: province names, growing regions, districts, departments.
+
+RESPONSE FORMAT: Return ONLY the region name as written on the label, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    postProcess: (v, _ocrText) => {
+      // Remove "Region" suffix/prefix (case-insensitive)
+      return v.replace(/\s*\bregion\b\s*/gi, ' ').trim();
+    },
+  },
+
+  variety: {
+    field: 'variety',
+    promptTemplate: `What coffee variety or cultivar is mentioned?
+
+COMMON VARIETIES (may have spelling variations):
+{{VARIETIES}}
+
+NOTE: "Arabica" alone is too generic - look for specific variety names.
+Multiple varieties: separate with comma.
+
+RESPONSE FORMAT: Return ONLY the variety name(s), or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+  },
+
+  processing: {
+    field: 'processing',
+    promptTemplate: `What processing method was used?
+
+COMMON PROCESSING METHODS:
+{{PROCESSING_METHODS}}
+
+Extract the processing method as written on the label.
+Extract even if not in common list - experimental methods are valid.
+
+RESPONSE FORMAT: Return ONLY the processing method, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+  },
+
+  elevation: {
+    field: 'elevation',
+    promptTemplate: `What is the growing elevation/altitude?
+
+DO NOT guess typical elevations for a country or region.
+
+RESPONSE FORMAT: Return the elevation as "XXXX MASL" or "XXXX-XXXX MASL" for ranges, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+    // No validation regex - sanitizeElevation handles cleanup and validation
+    postProcess: (v, ocrText) => {
+      const sanitized = sanitizeElevation(v);
+      if (!sanitized) {
+        return null;
+      }
+
+      // Validate that this elevation actually appears in OCR text with an elevation unit
+      // This prevents hallucinations where LLM returns an elevation not on the label
+      if (!elevationExistsInOcrText(sanitized, ocrText)) {
+        return null;
+      }
+
+      return sanitized;
+    },
+  },
+
+  farm: {
+    field: 'farm',
+    promptTemplate: `What is the farm, estate, or washing station name?
+
+KEYWORDS (may be part of the farm name):
+Finca, Hacienda, Fazenda, Washing Station, Wet Mill
+
+RESPONSE FORMAT: Return ONLY the farm/station name, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+  },
+
+  farmer: {
+    field: 'farmer',
+    promptTemplate: `Who is the producer/farmer?
+
+PRODUCER LABEL INDICATORS (may appear in different languages):
+{{PRODUCER_KEYWORDS}}
+
+Look for individual names, family names, or collective/cooperative names.
+
+RESPONSE FORMAT: Return ONLY the producer/farmer name, or NOT_FOUND.
+
+TEXT (languages: {{LANGUAGES}}):
+{{OCR_TEXT}}`,
+  },
+};
+
+/**
+ * Get the prompt template for a field with examples substituted.
+ */
+export function buildFieldPrompt(
+  fieldName: string,
+  ocrText: string,
+  examples: MergedExamples,
+  languages: string[],
+): string {
+  const config = FIELD_PROMPTS[fieldName];
+  if (!config) {
+    throw new Error(`Unknown field: ${fieldName}`);
+  }
+
+  let prompt = config.promptTemplate;
+
+  // Replace all example key placeholders
+  for (const key of Object.keys(examples) as (keyof MergedExamples)[]) {
+    const placeholder = `{{${key}}}`;
+    if (prompt.includes(placeholder)) {
+      prompt = prompt.replace(placeholder, examples[key] || '');
+    }
+  }
+
+  // Replace languages placeholder (ISO format)
+  prompt = prompt.replace('{{LANGUAGES}}', languages.join(', '));
+
+  // Replace OCR text placeholder
+  prompt = prompt.replace('{{OCR_TEXT}}', ocrText);
+
+  return prompt;
+}

@@ -1577,5 +1577,23 @@
   "STATISTICS_BEANS_BY_PROCESSING": "Beans by Processing",
   "STATISTICS_BEANS_BY_ROASTER": "Beans by Roaster",
   "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": "Average Bean Rating by Country",
-  "PAGE_STATISTICS_AVG_RATING": "Average Rating"
+  "PAGE_STATISTICS_AVG_RATING": "Average Rating",
+  "AI_IMPORT_PROMPT_EXAMPLES": {
+    "ORIGINS": "إثيوبيا, كولومبيا, البرازيل, كينيا, غواتيمالا, كوستاريكا, هندوراس, بيرو, رواندا, بوروندي, تنزانيا, أوغندا, اليمن, إندونيسيا, الهند, بنما, السلفادور, نيكاراغوا, المكسيك, بوليفيا, الإكوادور, بابوا غينيا الجديدة, هاواي, جامايكا",
+    "PROCESSING_METHODS": "مغسول, طبيعي, عسلي, لاهوائي, نقع كربوني, Wet-Hulled, شبه مغسول, Pulped Natural, عسل أسود, عسل أحمر, عسل أصفر, عسل أبيض",
+    "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+    "ROASTING_TYPE_FILTER_KEYWORDS": "تحميص فلتر, للفلتر, تحميص فاتح, قهوة مفلترة",
+    "ROASTING_TYPE_ESPRESSO_KEYWORDS": "تحميص إسبريسو, للإسبريسو, تحميص غامق, خليط إسبريسو",
+    "ROASTING_TYPE_OMNI_KEYWORDS": "تحميص متعدد, متعدد الاستخدامات, لجميع طرق التحضير, تحميص متوسط",
+    "DECAF_KEYWORDS": "منزوع الكافيين, خالي من الكافيين, ديكاف",
+    "BLEND_KEYWORDS": "خليط, مزيج, خليط المنزل",
+    "SINGLE_ORIGIN_KEYWORDS": "أحادي المصدر, مزرعة واحدة, Single Origin, Micro Lot",
+    "PRODUCER_KEYWORDS": "منتج, أنتج بواسطة, مزروع بواسطة, مزارع, عائلة, تعاونية, جمعية, صغار المنتجين",
+    "ROASTDATE_KEYWORDS": "تاريخ التحميص, محمص في, تحميص, محمص طازج",
+    "ROASTER_KEYWORDS": "محمصة, قهوة, ش.م.م., ذ.م.م."
+  },
+  "AI_IMPORT_LANG_DETECT": {
+    "KEYWORDS": "محمص, حصاد, حموضة, حبوب, نكهة, طازج, تحميص",
+    "EXAMPLE": "قهوة محمصة طازجة، أصل واحد، نكهات فاكهية"
+  }
 }
