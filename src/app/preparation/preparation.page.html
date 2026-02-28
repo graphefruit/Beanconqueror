@@ -34,7 +34,7 @@
               </div>
             </div>
           }
-          <ag-virtual-scroll #openScroll [items]="openPreparationsView" [height]="'100vh'" min-row-height="186">
+          <ag-virtual-scroll #openScroll [items]="openPreparationsView" [height]="'100vh'" [min-row-height]="186">
             @for (preparation of openScroll.items; track preparation) {
               <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                 [preparation]="preparation"
@@ -55,7 +55,7 @@
               </div>
             </div>
           }
-          <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" [height]="'100vh'" min-row-height="186">
+          <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" [height]="'100vh'" [min-row-height]="186">
             @for (preparation of archivedScroll.items; track preparation) {
               <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                 [preparation]="preparation"

@@ -24,7 +24,7 @@
         <ion-radio-group [(ngModel)]="radioSelection">
           <ion-card>
             <ion-radio-group [(ngModel)]="radioSelection">
-              <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="'100vh'" min-row-height="180">
+              <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="'100vh'" [min-row-height]="180">
                 @for (graph of graphOpenScroll.items; track graph.config.uuid) {
                   <brew-graph-reference-card [graph]="graph"></brew-graph-reference-card>
                 }
@@ -54,7 +54,7 @@
           }
           @if (openBrewsView?.length > 0) {
             <ion-radio-group [(ngModel)]="radioSelection">
-              <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'" min-row-height="180">
+              <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'" [min-row-height]="180">
                 @for (brew of openScroll.items; track brew.config.uuid) {
                   <brew-graph-reference-card [brew]="brew"></brew-graph-reference-card>
                 }
@@ -94,7 +94,7 @@
           }
           @if (archiveBrewsView?.length > 0) {
             <ion-radio-group [(ngModel)]="radioSelection">
-              <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'" min-row-height="385">
+              <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'" [min-row-height]="385">
                 @for (brew of archivedScroll.items; track brew.config.uuid) {
                   <brew-graph-reference-card [brew]="brew"></brew-graph-reference-card>
                 }
