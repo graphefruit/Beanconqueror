@@ -40,11 +40,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          args: >
+         args: >
             -Dsonar.projectKey=luuciarr06_Beanconqueror
             -Dsonar.organization=lricrui
             -Dsonar.sources=src
             -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.spec.ts
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.exclusions=**/node_modules/**,src/generated/**
+            -Dsonar.projectBaseDir=.
+            -Dsonar.typescript.configurations=tsconfig.json
