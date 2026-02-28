@@ -34,7 +34,11 @@ import {
   sanitizeElevation,
   TextNormalizationService,
 } from './text-normalization.service';
-import { mapToBeanMix } from './type-mappings';
+import {
+  beanMixToKeyString,
+  mapToBeanMix,
+  roastingTypeToKeyString,
+} from './type-mappings';
 
 /**
  * Result of extracting top-level bean fields.
@@ -325,7 +329,19 @@ export class FieldExtractionService {
 
     // Final validation
     this.updateProgress('VALIDATING');
-    return this.validateBean(bean);
+    const validated = this.validateBean(bean);
+
+    // Convert enum values to key strings for UI compatibility.
+    // The UI constructs translation keys like "BEAN_MIX_" + beanMix,
+    // so it needs key strings ('BLEND') not enum values ('Blend').
+    validated.beanMix = beanMixToKeyString(validated.beanMix);
+    if (validated.bean_roasting_type) {
+      validated.bean_roasting_type = roastingTypeToKeyString(
+        validated.bean_roasting_type,
+      );
+    }
+
+    return validated;
   }
 
   /**
