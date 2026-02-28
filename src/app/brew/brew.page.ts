@@ -5,14 +5,17 @@ import {
   ElementRef,
   HostListener,
   inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSearchbar,
@@ -59,9 +62,11 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
     IonSegmentButton,
     IonLabel,
     IonSearchbar,
+    IonIcon,
+    IonButton,
   ],
 })
-export class BrewPage implements OnInit {
+export class BrewPage implements OnInit, OnDestroy {
   private readonly modalCtrl = inject(ModalController);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
@@ -69,12 +74,12 @@ export class BrewPage implements OnInit {
   uiBrewHelper = inject(UIBrewHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
 
-  public brews: Array<Brew> = [];
-  public openBrewsView: Array<Brew> = [];
-  public archiveBrewsView: Array<Brew> = [];
+  public brews: Brew[] = [];
+  public openBrewsView: Brew[] = [];
+  public archiveBrewsView: Brew[] = [];
 
-  public openBrewsLength: number = 0;
-  public archiveBrewsLength: number = 0;
+  public openBrewsLength = 0;
+  public archiveBrewsLength = 0;
 
   public brew_segment: 'open' | 'archive' = 'open';
   public segmentScrollHeight: string = undefined;
@@ -89,8 +94,8 @@ export class BrewPage implements OnInit {
   @ViewChild('brewContent', { read: ElementRef })
   public brewContent: ElementRef;
 
-  public openBrewFilterText: string = '';
-  public archivedBrewFilterText: string = '';
+  public openBrewFilterText = '';
+  public archivedBrewFilterText = '';
 
   public archivedBrewsFilter: IBrewPageFilter;
   public openBrewsFilter: IBrewPageFilter;
@@ -104,17 +109,17 @@ export class BrewPage implements OnInit {
     sort_order: BREW_SORT_ORDER.UNKOWN,
   };
 
-  public openBrewsCollapsed: boolean = false;
-  public archivedBrewsCollapsed: boolean = false;
+  public openBrewsCollapsed = false;
+  public archivedBrewsCollapsed = false;
 
   public settings: Settings;
   private brewStorageChangeSubscription: Subscription;
 
-  public uiIsSortActive: boolean = false;
-  public uiIsFilterActive: boolean = false;
-  public uiIsCollapseActive: boolean = false;
-  public uiShallBarBeDisplayed: boolean = false;
-  public uiSearchText: string = '';
+  public uiIsSortActive = false;
+  public uiIsFilterActive = false;
+  public uiIsCollapseActive = false;
+  public uiShallBarBeDisplayed = false;
+  public uiSearchText = '';
 
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -222,7 +227,7 @@ export class BrewPage implements OnInit {
   }
 
   public isCollapseActive() {
-    let collapsed: boolean = false;
+    let collapsed = false;
     if (this.brew_segment === 'open') {
       collapsed = this.openBrewsCollapsed;
     } else {
@@ -243,7 +248,7 @@ export class BrewPage implements OnInit {
 
   public isFilterActive(): boolean {
     let checkingFilter: IBrewPageFilter;
-    let checkingFilterText: string = '';
+    let checkingFilterText = '';
     if (this.brew_segment === 'open') {
       checkingFilter = this.openBrewsFilter;
       checkingFilterText = this.openBrewFilterText;
@@ -251,7 +256,7 @@ export class BrewPage implements OnInit {
       checkingFilter = this.archivedBrewsFilter;
       checkingFilterText = this.archivedBrewFilterText;
     }
-    let didRatingFilterChanged: boolean = false;
+    let didRatingFilterChanged = false;
     if (checkingFilter.rating) {
       didRatingFilterChanged =
         checkingFilter.rating.upper !== this.settings?.brew_rating ||
@@ -272,17 +277,17 @@ export class BrewPage implements OnInit {
   }
 
   public shallBarBeDisplayed() {
-    let shallBarDisplayed: boolean = false;
+    let shallBarDisplayed = false;
     if (this.settings) {
       const isOpen = this.brew_segment === 'open';
-      let checkingEntries: Array<Brew> = [];
+      let checkingEntries: Brew[] = [];
       if (isOpen) {
         checkingEntries = this.openBrewsView;
       } else {
         checkingEntries = this.archiveBrewsView;
       }
       if (checkingEntries.length <= 0) {
-        let entriesExisting: number = 0;
+        let entriesExisting = 0;
         if (isOpen) {
           entriesExisting = this.brews.filter(
             (e) =>
@@ -362,11 +367,7 @@ export class BrewPage implements OnInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.brew_filter !== undefined
-    ) {
+    if (modalData?.data?.brew_filter !== undefined) {
       if (this.brew_segment === 'open') {
         this.openBrewsFilter = modalData.data.brew_filter;
       } else {
@@ -406,8 +407,8 @@ export class BrewPage implements OnInit {
 
   private __initializeBrewView(_type: string): void {
     // sort latest to top.
-    const brewsCopy: Array<Brew> = [...this.brews];
-    let brewsFilters: Array<Brew>;
+    const brewsCopy: Brew[] = [...this.brews];
+    let brewsFilters: Brew[];
 
     const isOpen: boolean = _type === 'open';
     if (isOpen) {
@@ -495,7 +496,7 @@ export class BrewPage implements OnInit {
         (e) => filter.water.filter((z) => z === e.water).length > 0,
       );
     }
-    let sortedBrews: Array<Brew> = [];
+    let sortedBrews: Brew[] = [];
     if (
       sort.sort_order !== BREW_SORT_ORDER.UNKOWN &&
       sort.sort_after !== BREW_SORT_AFTER.UNKOWN
@@ -577,7 +578,7 @@ export class BrewPage implements OnInit {
     }
 
     //let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
-    let searchText: string = '';
+    let searchText = '';
     if (_type === 'open') {
       searchText = this.openBrewFilterText.toLowerCase();
     } else {

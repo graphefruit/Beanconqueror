@@ -9,6 +9,7 @@ import {
   IonIcon,
   IonItem,
   IonLabel,
+  IonTitle,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -39,6 +40,7 @@ import { UIHelper } from '../../../services/uiHelper';
     IonLabel,
     IonCardContent,
     HeaderComponent,
+    IonTitle,
   ],
 })
 export class LicencesComponent implements OnInit {

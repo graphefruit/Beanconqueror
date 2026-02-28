@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSegment,
@@ -55,6 +56,7 @@ import { UIWaterStorage } from '../../../services/uiWaterStorage';
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonIcon,
   ],
 })
 export class WaterPage implements OnInit {
@@ -67,10 +69,10 @@ export class WaterPage implements OnInit {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiWaterHelper = inject(UIWaterHelper);
 
-  private waters: Array<Water> = [];
+  private waters: Water[] = [];
 
-  public openWaters: Array<Water> = [];
-  public finishedWaters: Array<Water> = [];
+  public openWaters: Water[] = [];
+  public finishedWaters: Water[] = [];
 
   @ViewChild('waterContent', { read: ElementRef })
   public waterContent: ElementRef;
@@ -82,7 +84,7 @@ export class WaterPage implements OnInit {
     static: false,
   })
   public archivedScroll: AgVirtualScrollComponent;
-  public segment: string = 'open';
+  public segment = 'open';
 
   public settings: Settings;
 
@@ -151,9 +153,9 @@ export class WaterPage implements OnInit {
 
   private __initializeView(_type: string) {
     // sort latest to top.
-    const copyObj: Array<Water> = [...this.waters];
+    const copyObj: Water[] = [...this.waters];
     const isOpen: boolean = _type === 'open';
-    let sortedBeans: Array<Water>;
+    let sortedBeans: Water[];
     if (isOpen) {
       sortedBeans = copyObj.filter((w) => !w.finished);
     } else {

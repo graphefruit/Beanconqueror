@@ -10,8 +10,10 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSearchbar,
@@ -58,6 +60,8 @@ import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.compon
     IonSegmentButton,
     IonLabel,
     IonSearchbar,
+    IonIcon,
+    IonButton,
   ],
 })
 export class GreenBeansPage implements OnInit {
@@ -70,10 +74,10 @@ export class GreenBeansPage implements OnInit {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiGreenBeanHelper = inject(UIGreenBeanHelper);
 
-  private beans: Array<GreenBean> = [];
+  private beans: GreenBean[] = [];
 
-  public openBeans: Array<GreenBean> = [];
-  public finishedBeans: Array<GreenBean> = [];
+  public openBeans: GreenBean[] = [];
+  public finishedBeans: GreenBean[] = [];
 
   public openBeansFilter: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -90,14 +94,14 @@ export class GreenBeansPage implements OnInit {
     static: false,
   })
   public archivedScroll: AgVirtualScrollComponent;
-  public bean_segment: string = 'open';
+  public bean_segment = 'open';
   public archivedBeansFilter: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  public archivedBeansFilterText: string = '';
-  public openBeansFilterText: string = '';
+  public archivedBeansFilterText = '';
+  public openBeansFilterText = '';
 
   public settings: Settings;
   public segmentScrollHeight: string = undefined;
@@ -185,7 +189,7 @@ export class GreenBeansPage implements OnInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData !== undefined && modalData.data.bean_filter !== undefined) {
+    if (modalData?.data.bean_filter !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansFilter = modalData.data.bean_filter;
       } else {
@@ -226,10 +230,10 @@ export class GreenBeansPage implements OnInit {
 
   private __initializeBeansView(_type: string) {
     // sort latest to top.
-    const beansCopy: Array<GreenBean> = [...this.beans];
+    const beansCopy: GreenBean[] = [...this.beans];
     const isOpen: boolean = _type === 'open';
     let filter: IBeanPageSort;
-    let sortedBeans: Array<GreenBean>;
+    let sortedBeans: GreenBean[];
     if (isOpen) {
       filter = this.openBeansFilter;
       sortedBeans = beansCopy.filter((bean) => !bean.finished);
@@ -286,7 +290,7 @@ export class GreenBeansPage implements OnInit {
         sortedBeans.reverse();
       }
     }
-    let searchText: string = '';
+    let searchText = '';
     if (isOpen) {
       searchText = this.openBeansFilterText.toLowerCase();
     } else {
