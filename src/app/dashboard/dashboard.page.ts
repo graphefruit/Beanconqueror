@@ -10,6 +10,7 @@ import {
   IonContent,
   IonGrid,
   IonHeader,
+  IonIcon,
   IonMenuButton,
   IonRow,
   ModalController,
@@ -58,6 +59,7 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     IonCardHeader,
     IonCardTitle,
     IonCardSubtitle,
+    IonIcon,
   ],
 })
 export class DashboardPage implements OnInit {
@@ -74,9 +76,9 @@ export class DashboardPage implements OnInit {
   private readonly unwrappedService = inject(UnwrappedService);
   private readonly modalController = inject(ModalController);
 
-  public brews: Array<Brew> = [];
-  public beans: Array<Bean> = [];
-  public showUnwrappedButton: boolean = false;
+  public brews: Brew[] = [];
+  public beans: Bean[] = [];
+  public showUnwrappedButton = false;
   public leftOverBeansWeight: string = undefined;
   public leftOverFrozenBeansWeight: string = undefined;
   public getBeansCount: number = undefined;
@@ -208,8 +210,8 @@ export class DashboardPage implements OnInit {
 
   public setOpenBeansLeftOverCount() {
     // #183
-    let leftOverCount: number = 0;
-    const openBeans: Array<Bean> = this.beans.filter(
+    let leftOverCount = 0;
+    const openBeans: Bean[] = this.beans.filter(
       (bean) => !bean.finished && bean.isFrozen() === false,
     );
     for (const bean of openBeans) {
@@ -229,8 +231,8 @@ export class DashboardPage implements OnInit {
   public setOpenFrozenBeansLeftOverCount() {
     // #183
 
-    let leftOverCount: number = 0;
-    const openBeans: Array<Bean> = this.beans.filter(
+    let leftOverCount = 0;
+    const openBeans: Bean[] = this.beans.filter(
       (bean) => !bean.finished && bean.isFrozen() === true,
     );
     for (const bean of openBeans) {
@@ -248,8 +250,8 @@ export class DashboardPage implements OnInit {
   }
 
   public getUsedWeightCount(_bean: Bean): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
+    let usedWeightCount = 0;
+    const relatedBrews: Brew[] = this.uiBeanHelper.getAllBrewsForThisBean(
       _bean.config.uuid,
     );
     for (const brew of relatedBrews) {

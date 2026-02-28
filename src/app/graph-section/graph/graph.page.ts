@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSegment,
@@ -55,6 +56,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonIcon,
   ],
 })
 export class GraphPage implements OnInit {
@@ -67,10 +69,10 @@ export class GraphPage implements OnInit {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiGraphHelper = inject(UIGraphHelper);
 
-  private graphs: Array<Graph> = [];
+  private graphs: Graph[] = [];
 
-  public openGraphs: Array<Graph> = [];
-  public finishedGraphs: Array<Graph> = [];
+  public openGraphs: Graph[] = [];
+  public finishedGraphs: Graph[] = [];
 
   @ViewChild('graphContent', { read: ElementRef })
   public graphContent: ElementRef;
@@ -82,7 +84,7 @@ export class GraphPage implements OnInit {
     static: false,
   })
   public archivedScroll: AgVirtualScrollComponent;
-  public segment: string = 'open';
+  public segment = 'open';
 
   public settings: Settings;
   public segmentScrollHeight: string = undefined;
@@ -151,9 +153,9 @@ export class GraphPage implements OnInit {
 
   private __initializeView(_type: string) {
     // sort latest to top.
-    const copyObj: Array<Graph> = [...this.graphs];
+    const copyObj: Graph[] = [...this.graphs];
     const isOpen: boolean = _type === 'open';
-    let sortedBeans: Array<Graph>;
+    let sortedBeans: Graph[];
     if (isOpen) {
       sortedBeans = copyObj.filter((w) => !w.finished);
     } else {

@@ -10,6 +10,7 @@ import {
   IonIcon,
   IonItem,
   IonLabel,
+  IonTitle,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -41,12 +42,13 @@ import { UIHelper } from '../../../services/uiHelper';
     IonLabel,
     IonCardContent,
     HeaderComponent,
+    IonTitle,
   ],
 })
 export class CreditsComponent implements OnInit {
   private readonly uiHelper = inject(UIHelper);
 
-  public noCreditsToGive: boolean = true;
+  public noCreditsToGive = true;
   public credits: any = {};
 
   constructor() {

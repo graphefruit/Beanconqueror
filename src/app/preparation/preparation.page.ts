@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSegment,
@@ -53,6 +54,7 @@ import { UIToast } from '../../services/uiToast';
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonIcon,
   ],
 })
 export class PreparationPage implements OnInit {
@@ -67,11 +69,11 @@ export class PreparationPage implements OnInit {
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
 
   public settings: Settings;
-  public segment: string = 'open';
-  public preparations: Array<Preparation> = [];
+  public segment = 'open';
+  public preparations: Preparation[] = [];
 
-  public openPreparationsView: Array<Preparation> = [];
-  public archivePreparationsView: Array<Preparation> = [];
+  public openPreparationsView: Preparation[] = [];
+  public archivePreparationsView: Preparation[] = [];
 
   @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
   public openScroll: AgVirtualScrollComponent;

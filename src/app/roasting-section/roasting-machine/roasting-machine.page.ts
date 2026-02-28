@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSegment,
@@ -42,6 +43,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonIcon,
   ],
 })
 export class RoastingMachinePage implements OnInit {
@@ -54,10 +56,10 @@ export class RoastingMachinePage implements OnInit {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiRoastingMachineHelper = inject(UIRoastingMachineHelper);
 
-  public roastingMachines: Array<RoastingMachine> = [];
+  public roastingMachines: RoastingMachine[] = [];
 
   public settings: Settings;
-  public segment: string = 'open';
+  public segment = 'open';
 
   public ngOnInit(): void {}
 
@@ -66,11 +68,11 @@ export class RoastingMachinePage implements OnInit {
     this.loadRoastingMachines();
   }
 
-  public getActiveRoastingMachines(): Array<RoastingMachine> {
+  public getActiveRoastingMachines(): RoastingMachine[] {
     return this.roastingMachines.filter((machine) => !machine.finished);
   }
 
-  public getArchivedMRoastingMachines(): Array<RoastingMachine> {
+  public getArchivedMRoastingMachines(): RoastingMachine[] {
     return this.roastingMachines.filter((machine) => machine.finished);
   }
 

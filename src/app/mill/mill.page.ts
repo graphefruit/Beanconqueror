@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSegment,
@@ -52,6 +53,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonIcon,
   ],
 })
 export class MillPage implements OnInit {
@@ -64,10 +66,10 @@ export class MillPage implements OnInit {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiMillHelper = inject(UIMillHelper);
 
-  public mills: Array<Mill> = [];
+  public mills: Mill[] = [];
 
-  public openMillsView: Array<Mill> = [];
-  public archiveMillsView: Array<Mill> = [];
+  public openMillsView: Mill[] = [];
+  public archiveMillsView: Mill[] = [];
 
   @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
   public openScroll: AgVirtualScrollComponent;
@@ -80,7 +82,7 @@ export class MillPage implements OnInit {
   public millContent: ElementRef;
 
   public settings: Settings;
-  public segment: string = 'open';
+  public segment = 'open';
   public segmentScrollHeight: string = undefined;
 
   public ngOnInit(): void {}
@@ -130,11 +132,11 @@ export class MillPage implements OnInit {
     });
   }
 
-  public getActiveMills(): Array<Mill> {
+  public getActiveMills(): Mill[] {
     return this.openMillsView;
   }
 
-  public getArchivedMills(): Array<Mill> {
+  public getArchivedMills(): Mill[] {
     return this.archiveMillsView;
   }
 

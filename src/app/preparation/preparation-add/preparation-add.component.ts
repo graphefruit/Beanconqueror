@@ -8,6 +8,7 @@ import {
   IonContent,
   IonGrid,
   IonHeader,
+  IonIcon,
   IonRow,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -40,13 +41,14 @@ import { PreparationAddTypeComponent } from '../preparation-add-type/preparation
     IonCol,
     IonCard,
     IonCardContent,
+    IonIcon,
   ],
 })
 export class PreparationAddComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiAnalytics = inject(UIAnalytics);
 
-  public static COMPONENT_ID: string = 'preparation-add';
+  public static COMPONENT_ID = 'preparation-add';
   public data: Preparation = new Preparation();
 
   public preparation_types_enum = PREPARATION_TYPES;
@@ -91,7 +93,7 @@ export class PreparationAddComponent implements OnInit {
     });
     await modal.present();
     const { data } = await modal.onDidDismiss();
-    if (data && data.added === true) {
+    if (data?.added === true) {
       this.uiAnalytics.trackEvent(
         PREPARATION_TRACKING.TITLE,
         PREPARATION_TRACKING.ACTIONS.ADD_FINISH,
