@@ -76,7 +76,7 @@
     "rxjs": "^7.8.2",
     "safe-stable-stringify": "^2.5.0",
     "serialize-error": "^13.0.1",
-    "swiper": "^12.0.3",
+    "swiper": "^12.1.2",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zone.js": "^0.16.0"
   },
