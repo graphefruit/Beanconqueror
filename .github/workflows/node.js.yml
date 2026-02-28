@@ -41,7 +41,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=luuciarr06_beanconqueror
+            -Dsonar.projectKey=luuciarr06_Beanconqueror
             -Dsonar.organization=lricrui
             -Dsonar.sources=src
             -Dsonar.tests=src
