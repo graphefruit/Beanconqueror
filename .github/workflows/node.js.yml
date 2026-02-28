@@ -13,15 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Importante para que SonarCloud analice el histórico
+          fetch-depth: 0 
 
-      - uses: actions/setup-node@v4 # Nota: La versión estable actual es v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22 # Node 24 es experimental; 22 es la LTS actual más estable
+          node-version: 22 
           cache: 'npm'
 
-      - run: npm install -g 'npm@^11.8.0' && npm -v
-      
+      - name: Install latest npm
+        run: npm install -g npm@latest
+
       - name: Install dependencies
         run: npm ci
 
@@ -29,11 +30,12 @@ jobs:
         run: npm run build --if-present
 
       - name: Run Tests with Coverage
-        # Ejecutamos antes de SonarScanner y generamos el reporte LCOV
-        run: npm run test -- --code-coverage --watch=false --browsers=ChromeHeadlessNoSandbox
+        # Importante: Usamos --no-watch para asegurar que el proceso termine
+        run: npm test -- --code-coverage --no-watch --browsers=ChromeHeadlessNoSandbox
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        # Actualizado a la versión v3 para evitar errores de compatibilidad (Error 3)
+        uses: SonarSource/sonarqube-scan-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -41,8 +43,8 @@ jobs:
           args: >
             -Dsonar.projectKey=luuciarr06_beanconqueror
             -Dsonar.organization=luuciarr06
-            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
             -Dsonar.sources=src
             -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.exclusions=**/node_modules/**,src/generated/**
