@@ -268,8 +268,8 @@
                       (timerTicked)="brewTimeTicked($event)" (timerStartPressed)="timerStartPressed($event)"
                       (timerResumedPressed)="timerResumedPressed($event)" (timerStarted)="timerStarted($event)"
                       (timerResumed)="timerResumed($event)" (timerPaused)="timerPaused($event)" (timerReset)="timerReset($event)"
-                      (ignoreWeight)="ignoreWeightClicked($event)"
-                      (unignoreWeight)="unignoreWeightClicked($event)"
+                      (ignoreWeight)="ignoreWeightClicked()"
+                      (unignoreWeight)="unignoreWeightClicked()"
                       (tareScale)="tareScale($event)" [bloomTimerVisible]="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_blooming_time,
             choosenPreparation.manage_parameters.coffee_blooming_time,
             choosenPreparation.use_custom_parameters)"
@@ -556,8 +556,8 @@
                 (timerTicked)="brewTimeTicked($event)" (timerStartPressed)="timerStartPressed($event)"
                 (timerResumedPressed)="timerResumedPressed($event)" (timerStarted)="timerStarted($event)"
                 (timerResumed)="timerResumed($event)" (timerPaused)="timerPaused($event)" (timerReset)="timerReset($event)"
-                (ignoreWeight)="ignoreWeightClicked($event)"
-                (unignoreWeight)="unignoreWeightClicked($event)"
+                (ignoreWeight)="ignoreWeightClicked()"
+                (unignoreWeight)="unignoreWeightClicked()"
                 (tareScale)="tareScale($event)" [bloomTimerVisible]="false"
                 [dripTimerVisible]="false"
                 label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>
