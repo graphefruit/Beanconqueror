@@ -11,6 +11,8 @@ import {
   MAX_CUPPING_SCORE,
   MIN_CUPPING_SCORE,
 } from './ai-import-constants';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 
 /**
  * System-level instructions for all bean-field extraction calls.
@@ -134,9 +136,8 @@ TEXT (languages: {{LANGUAGES}}):
     validation: /^(SINGLE_ORIGIN|BLEND)$/i,
     postProcess: (v, _ocrText) => {
       const upper = v.toUpperCase();
-      if (upper === 'SINGLE_ORIGIN' || upper === 'BLEND') {
-        return upper;
-      }
+      if (upper === 'SINGLE_ORIGIN') return BEAN_MIX_ENUM.SINGLE_ORIGIN;
+      if (upper === 'BLEND') return BEAN_MIX_ENUM.BLEND;
       return null;
     },
   },
@@ -239,9 +240,9 @@ TEXT (languages: {{LANGUAGES}}):
     validation: /^(FILTER|ESPRESSO|OMNI)$/i,
     postProcess: (v, _ocrText) => {
       const upper = v.toUpperCase();
-      if (upper === 'FILTER' || upper === 'ESPRESSO' || upper === 'OMNI') {
-        return upper;
-      }
+      if (upper === 'FILTER') return BEAN_ROASTING_TYPE_ENUM.FILTER;
+      if (upper === 'ESPRESSO') return BEAN_ROASTING_TYPE_ENUM.ESPRESSO;
+      if (upper === 'OMNI') return BEAN_ROASTING_TYPE_ENUM.OMNI;
       return null;
     },
   },

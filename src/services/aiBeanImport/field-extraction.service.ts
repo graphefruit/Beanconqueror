@@ -36,8 +36,6 @@ import {
 } from './text-normalization.service';
 import {
   beanMixToKeyString,
-  mapToBeanMix,
-  mapToRoastingType,
   roastingTypeToKeyString,
 } from './type-mappings';
 
@@ -175,13 +173,9 @@ export class FieldExtractionService {
     // Bean roasting type
     if (params.bean_roasting_type) {
       this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
-      const roastingTypeRaw = await this.extractField(
-        'bean_roasting_type',
-        text,
-        examples,
-        languages,
-      );
-      result.bean_roasting_type = mapToRoastingType(roastingTypeRaw);
+      result.bean_roasting_type =
+        (await this.extractField('bean_roasting_type', text, examples, languages))
+        ?? BEAN_ROASTING_TYPE_ENUM.UNKNOWN;
     }
 
     // Aromatics
@@ -252,13 +246,9 @@ export class FieldExtractionService {
 
     // Detect structure (single origin vs blend)
     this.updateProgress('STRUCTURE');
-    const beanMixRaw = await this.extractField(
-      'beanMix',
-      text,
-      examples,
-      languages,
-    );
-    result.beanMix = mapToBeanMix(beanMixRaw);
+    result.beanMix =
+      (await this.extractField('beanMix', text, examples, languages))
+      ?? BEAN_MIX_ENUM.UNKNOWN;
     this.uiLog.log(`Structure: beanMix=${result.beanMix}`);
 
     if (result.beanMix === BEAN_MIX_ENUM.BLEND) {

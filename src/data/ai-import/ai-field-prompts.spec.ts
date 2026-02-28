@@ -2,6 +2,8 @@ import moment from 'moment';
 
 import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
 import { createMockExamples } from '../../services/aiBeanImport/test-utils';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { buildFieldPrompt, FIELD_PROMPTS } from './ai-field-prompts';
 
 describe('ai-field-prompts', () => {
@@ -99,16 +101,16 @@ describe('ai-field-prompts', () => {
     describe('postProcess', () => {
       const postProcess = FIELD_PROMPTS['beanMix'].postProcess!;
 
-      it('should return "SINGLE_ORIGIN" for case-insensitive match', () => {
-        expect(postProcess('single_origin', '')).toBe('SINGLE_ORIGIN');
-        expect(postProcess('SINGLE_ORIGIN', '')).toBe('SINGLE_ORIGIN');
-        expect(postProcess('Single_Origin', '')).toBe('SINGLE_ORIGIN');
+      it('should return BEAN_MIX_ENUM.SINGLE_ORIGIN for case-insensitive match', () => {
+        expect(postProcess('single_origin', '')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
+        expect(postProcess('SINGLE_ORIGIN', '')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
+        expect(postProcess('Single_Origin', '')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
       });
 
-      it('should return "BLEND" for case-insensitive match', () => {
-        expect(postProcess('blend', '')).toBe('BLEND');
-        expect(postProcess('BLEND', '')).toBe('BLEND');
-        expect(postProcess('Blend', '')).toBe('BLEND');
+      it('should return BEAN_MIX_ENUM.BLEND for case-insensitive match', () => {
+        expect(postProcess('blend', '')).toBe(BEAN_MIX_ENUM.BLEND);
+        expect(postProcess('BLEND', '')).toBe(BEAN_MIX_ENUM.BLEND);
+        expect(postProcess('Blend', '')).toBe(BEAN_MIX_ENUM.BLEND);
       });
 
       it('should return null for invalid values', () => {
@@ -187,20 +189,20 @@ describe('ai-field-prompts', () => {
     describe('postProcess', () => {
       const postProcess = FIELD_PROMPTS['bean_roasting_type'].postProcess!;
 
-      it('should return "FILTER" for case-insensitive match', () => {
-        expect(postProcess('filter', '')).toBe('FILTER');
-        expect(postProcess('FILTER', '')).toBe('FILTER');
-        expect(postProcess('Filter', '')).toBe('FILTER');
+      it('should return BEAN_ROASTING_TYPE_ENUM.FILTER for case-insensitive match', () => {
+        expect(postProcess('filter', '')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
+        expect(postProcess('FILTER', '')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
+        expect(postProcess('Filter', '')).toBe(BEAN_ROASTING_TYPE_ENUM.FILTER);
       });
 
-      it('should return "ESPRESSO" for case-insensitive match', () => {
-        expect(postProcess('espresso', '')).toBe('ESPRESSO');
-        expect(postProcess('ESPRESSO', '')).toBe('ESPRESSO');
+      it('should return BEAN_ROASTING_TYPE_ENUM.ESPRESSO for case-insensitive match', () => {
+        expect(postProcess('espresso', '')).toBe(BEAN_ROASTING_TYPE_ENUM.ESPRESSO);
+        expect(postProcess('ESPRESSO', '')).toBe(BEAN_ROASTING_TYPE_ENUM.ESPRESSO);
       });
 
-      it('should return "OMNI" for case-insensitive match', () => {
-        expect(postProcess('omni', '')).toBe('OMNI');
-        expect(postProcess('OMNI', '')).toBe('OMNI');
+      it('should return BEAN_ROASTING_TYPE_ENUM.OMNI for case-insensitive match', () => {
+        expect(postProcess('omni', '')).toBe(BEAN_ROASTING_TYPE_ENUM.OMNI);
+        expect(postProcess('OMNI', '')).toBe(BEAN_ROASTING_TYPE_ENUM.OMNI);
       });
 
       it('should return null for invalid values', () => {
