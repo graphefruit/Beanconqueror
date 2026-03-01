@@ -1,5 +1,6 @@
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   EventEmitter,
   inject,
@@ -34,6 +35,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
   imports: [AsyncImageComponent, TranslatePipe, IonItem, IonIcon, IonButton],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
   private readonly uiImage = inject(UIImage);
