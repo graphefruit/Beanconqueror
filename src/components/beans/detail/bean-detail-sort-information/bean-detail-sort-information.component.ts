@@ -35,4 +35,8 @@ export class BeanDetailSortInformationComponent implements OnInit {
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
+
+  public isBean(data: GreenBean | Bean): data is Bean {
+    return data instanceof Bean;
+  }
 }
