@@ -1,5 +1,6 @@
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   inject,
   Input,
@@ -38,6 +39,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     HeaderComponent,
     HeaderDismissButtonComponent,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PhotoPopoverComponent implements OnInit {
   private readonly modalController = inject(ModalController);
