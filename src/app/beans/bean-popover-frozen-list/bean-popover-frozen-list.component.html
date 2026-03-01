@@ -6,7 +6,7 @@
 <ion-content #beanContent>
 
   <!--- We changed back to 100vh because of rendering issues somehow...-->
-  <ag-virtual-scroll #openScroll [items]="frozenBeansList" [height]="'100vh'" min-row-height="180">
+  <ag-virtual-scroll #openScroll [items]="frozenBeansList" [height]="'100vh'" [min-row-height]="180">
     @for (bean of openScroll.items; track bean) {
       <bean-information [disabled]='true' [showActions]='false'
       [bean]="bean"></bean-information>

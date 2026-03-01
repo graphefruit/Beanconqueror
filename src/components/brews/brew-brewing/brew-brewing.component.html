@@ -151,7 +151,7 @@
           choosenPreparation.use_custom_parameters])" lines="inset">
           <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}' [(ngModel)]="data.method_of_preparation_tools"
                       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" [show-finished]="true"
-                      multiple="true" [preparation-id]="data.method_of_preparation" preparation-tool-overlay></ion-select>
+                      [multiple]="true" [preparation-id]="data.method_of_preparation" preparation-tool-overlay></ion-select>
         </ion-item>
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.water,
@@ -268,8 +268,8 @@
                       (timerTicked)="brewTimeTicked($event)" (timerStartPressed)="timerStartPressed($event)"
                       (timerResumedPressed)="timerResumedPressed($event)" (timerStarted)="timerStarted($event)"
                       (timerResumed)="timerResumed($event)" (timerPaused)="timerPaused($event)" (timerReset)="timerReset($event)"
-                      (ignoreWeight)="ignoreWeightClicked($event)"
-                      (unignoreWeight)="unignoreWeightClicked($event)"
+                      (ignoreWeight)="ignoreWeightClicked()"
+                      (unignoreWeight)="unignoreWeightClicked()"
                       (tareScale)="tareScale($event)" [bloomTimerVisible]="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_blooming_time,
             choosenPreparation.manage_parameters.coffee_blooming_time,
             choosenPreparation.use_custom_parameters)"
@@ -297,7 +297,7 @@
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.coffee_blooming_time,
           choosenPreparation.brew_order.while.coffee_blooming_time,
           choosenPreparation.use_custom_parameters])" lines="inset">
-          <timer #brewCoffeeBloomingTime hide-control-buttons="true" (timerTicked)="coffeeBloomingTimeChanged($event)"
+          <timer #brewCoffeeBloomingTime [hide-control-buttons]="true" (timerTicked)="coffeeBloomingTimeChanged($event)"
                  label-id='brewTemperatureTime' label="{{'BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}"></timer>
         </ion-item>
       }
@@ -308,7 +308,7 @@
           [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.coffee_first_drip_time,
           choosenPreparation.brew_order.while.coffee_first_drip_time,
           choosenPreparation.use_custom_parameters])" lines="inset">
-          <timer #brewFirstDripTime hide-control-buttons="true" (timerTicked)="coffeeFirstDripTimeChanged($event)"
+          <timer #brewFirstDripTime [hide-control-buttons]="true" (timerTicked)="coffeeFirstDripTimeChanged($event)"
                  label-id='brewFirstDripTime' label="{{'BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}"></timer>
         </ion-item>
       }
@@ -556,8 +556,8 @@
                 (timerTicked)="brewTimeTicked($event)" (timerStartPressed)="timerStartPressed($event)"
                 (timerResumedPressed)="timerResumedPressed($event)" (timerStarted)="timerStarted($event)"
                 (timerResumed)="timerResumed($event)" (timerPaused)="timerPaused($event)" (timerReset)="timerReset($event)"
-                (ignoreWeight)="ignoreWeightClicked($event)"
-                (unignoreWeight)="unignoreWeightClicked($event)"
+                (ignoreWeight)="ignoreWeightClicked()"
+                (unignoreWeight)="unignoreWeightClicked()"
                 (tareScale)="tareScale($event)" [bloomTimerVisible]="false"
                 [dripTimerVisible]="false"
                 label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>

@@ -5,7 +5,7 @@ import { NgModel } from '@angular/forms';
 export class MaxNumberValueDirective {
   private readonly model = inject(NgModel);
 
-  @Input('max-number-value') public value: string;
+  @Input('max-number-value') public value: number;
 
   @HostListener('ionBlur')
   public blur(): void {
@@ -24,7 +24,7 @@ export class MaxNumberValueDirective {
     // this.ngModelChange.emit(parseFloat(val));
 
     const parsedFloat: number = parseFloat(val);
-    if (parsedFloat > parseFloat(this.value)) {
+    if (parsedFloat > this.value) {
       this.model.control.setValue(0);
     } else {
       if (parsedFloat < 0) {
