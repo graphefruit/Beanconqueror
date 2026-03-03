@@ -5,6 +5,8 @@ import { PeripheralData } from './ble.types';
 import { BluetoothScale } from './bluetoothDevice';
 import { BookooScale } from './bokooScale';
 import { BookooPressure } from './bookooPressure';
+import { CoffeeSensorPressure } from './coffeeSensorPressure';
+import { CoffeeSensorTemperature } from './coffeeSensorTemperature';
 import { CombustionThermometer } from './combustionThermometer';
 import { DecentScale } from './decentScale';
 import { DifluidMicrobalance } from './difluidMicrobalance';
@@ -69,6 +71,7 @@ export enum PressureType {
   DIRECT = 'DIRECT',
   PRS = 'PRS',
   BOKOOPRESSURE = 'BOKOOPRESSURE',
+  COFFEESENSOR = 'COFFEESENSOR',
 }
 
 export enum TemperatureType {
@@ -78,6 +81,7 @@ export enum TemperatureType {
   COMBUSTION = 'COMBUSTION',
   ARGOS = 'ARGOS',
   GEISINGER = 'GEISINGER',
+  COFFEESENSOR = 'COFFEESENSOR',
 }
 
 export enum RefractometerType {
@@ -143,6 +147,8 @@ export function makePressureDevice(
       return new PrsPressure(data);
     case PressureType.BOKOOPRESSURE:
       return new BookooPressure(data);
+    case PressureType.COFFEESENSOR:
+      return new CoffeeSensorPressure(data);
     default:
       return null;
   }
@@ -165,6 +171,8 @@ export function makeTemperatureDevice(
       return new ArgosThermometer(data);
     case TemperatureType.GEISINGER:
       return new GeisingerThermometer(data);
+    case TemperatureType.COFFEESENSOR:
+      return new CoffeeSensorTemperature(data);
     default:
       return null;
   }
