@@ -32,6 +32,7 @@ import { addIcons } from 'ionicons';
 import {
   closeOutline,
   codeSlashOutline,
+  ellipsisHorizontal,
   logoDiscord,
   logoFacebook,
   logoInstagram,
@@ -325,6 +326,7 @@ export class AppComponent implements AfterViewInit {
     // We don't want to add all of them since the SVGs are inlined into the export
     addIcons({
       closeOutline,
+      ellipsisHorizontal,
       logoInstagram,
       logoFacebook,
       codeSlashOutline,
