@@ -106,7 +106,12 @@
             "polyfills": ["src/polyfills.ts"],
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
+            "codeCoverage": true,
             "codeCoverageExclude": [
+              "src/main.ts",
+              "src/polyfills.ts",
+              "src/test.ts",
+              "src/zone-flags.ts",
               "src/app/**",
               "src/components/**",
               "src/popover/**",
