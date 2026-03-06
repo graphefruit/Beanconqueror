@@ -17,8 +17,9 @@ module.exports = function (config) {
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
     },
     coverageReporter: {
-      // Forzamos la salida a la carpeta 'coverage' en la raíz del proyecto
+      // Forzamos la salida a la carpeta 'coverage' en la raÃz del proyecto
       dir: require('path').join(__dirname, '../coverage'),
+      subdir: '.',
       // lcovonly es el formato que exige SonarCloud para importar cobertura
       reporters: [
         { type: 'html' },

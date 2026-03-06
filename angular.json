@@ -115,7 +115,7 @@
               "src/app/**",
               "src/components/**",
               "src/popover/**",
-              "src/services/**",
+              
               "src/directive/**",
               "src/enums/**",
               "src/interfaces/**",
