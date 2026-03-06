@@ -11,20 +11,24 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
-      require('karma-coverage-istanbul-reporter'),
+      require('karma-coverage'),
     ],
     client: {
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
     },
-    coverageIstanbulReporter: {
+    coverageReporter: {
       // Forzamos la salida a la carpeta 'coverage' en la raíz del proyecto
       dir: require('path').join(__dirname, '../coverage'),
       // lcovonly es el formato que exige SonarCloud para importar cobertura
-      reports: ['html', 'lcovonly', 'text-summary'],
+      reporters: [
+        { type: 'html' },
+        { type: 'lcovonly' },
+        { type: 'text-summary' },
+      ],
       fixWebpackSourcePaths: true,
     },
-    // Añadimos 'coverage-istanbul' a los reporters para activar la generación
-    reporters: ['progress', 'kjhtml', 'coverage-istanbul'],
+    // Añadimos 'coverage' a los reporters para activar la generación
+    reporters: ['progress', 'kjhtml', 'coverage'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -39,6 +43,6 @@ module.exports = function (config) {
     },
     // singleRun debe ser true para que el proceso de GitHub Actions finalice tras los tests
     singleRun: true,
-    restartOnFileChange: false
+    restartOnFileChange: false,
   });
 };
