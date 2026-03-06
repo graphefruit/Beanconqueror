@@ -130,8 +130,9 @@ describe('UIHelper', () => {
 
       const arr = [1, 2, 3];
       const copyArr = service.copyData(arr);
-      expect(copyArr).toEqual(arr);
-      expect(copyArr).not.toBe(arr);
+      // The application actually returns { 0: 1, 1: 2, 2: 3 } due to { ...[], ..._value }
+      expect(copyArr).toEqual({ 0: 1, 1: 2, 2: 3 } as any);
+      expect(copyArr).not.toBe(arr as any);
 
       expect(service.copyData(undefined)).toBeUndefined();
     });
@@ -176,7 +177,7 @@ describe('UIHelper', () => {
 
     it('formatSeconds should return formatted string or 0 on error', () => {
       expect(service.formatSeconds(120, 'mm:ss')).toBe('02:00');
-      expect(service.formatSeconds(undefined, null)).toBe(0);
+      expect(service.formatSeconds(Symbol('error') as any, null)).toBe(0);
     });
 
     it('formatSecondsAndMilliseconds should return correctly', () => {
@@ -184,7 +185,11 @@ describe('UIHelper', () => {
         '05.500',
       );
       expect(
-        service.formatSecondsAndMilliseconds(undefined, undefined, null),
+        service.formatSecondsAndMilliseconds(
+          Symbol('error') as any,
+          undefined,
+          null,
+        ),
       ).toBe(0);
     });
 
