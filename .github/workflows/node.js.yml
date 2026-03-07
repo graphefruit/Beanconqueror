@@ -1,6 +1,3 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: npm test CI
 
 on:
@@ -15,12 +12,41 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          fetch-depth: 0 
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22 
           cache: 'npm'
-      # Update npm version to at least 11.8.0, which should fix npm not liking our lockfiles
-      - run: npm install -g 'npm@^11.8.0' && npm -v
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+
+      - name: Install latest npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build --if-present
+
+      - name: Run Tests with Coverage
+        # Importante: Usamos --no-watch para asegurar que el proceso termine
+        run: npm test -- --code-coverage --no-watch --browsers=ChromeHeadlessNoSandbox
+
+      - name: SonarCloud Scan
+        # Actualizado a la versión v3 para evitar errores de compatibilidad (Error 3)
+        uses: SonarSource/sonarqube-scan-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=luuciarr06_Beanconqueror
+            -Dsonar.organization=lricrui
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.spec.ts
+            -Dsonar.javascript.lcov.reportPaths=**/lcov.info
+            -Dsonar.exclusions=src/main.ts,src/polyfills.ts,src/test.ts,src/zone-flags.ts,src/app/**,src/components/**,src/popover/**,src/services/**,src/directive/**,src/enums/**,src/interfaces/**,src/models/**,src/native/**,src/generated/**,src/assets/**,src/environments/**,src/store_screens/**,src/classes/angular/**,src/classes/appEvent/**,src/classes/bean/**,src/classes/brew/**,src/classes/devices/**,src/classes/graph/**,src/classes/preparation/**,src/classes/preparationDevice/**,src/classes/roasting-machine/**,src/classes/server/**,src/classes/settings/**,src/classes/version/**,src/classes/storageClass.ts
+            -Dsonar.coverage.exclusions=**/*.spec.ts
+            -Dsonar.projectBaseDir=.
