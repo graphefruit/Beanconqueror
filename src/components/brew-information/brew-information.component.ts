@@ -5,13 +5,28 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   OnInit,
   Output,
-  SimpleChange,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 
 import {
+  IonBadge,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonChip,
+  IonCol,
+  IonGrid,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonRow,
+  IonText,
+  IonTitle,
   MenuController,
   ModalController,
   Platform,
@@ -69,7 +84,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
 import { AsyncImageComponent } from '../async-image/async-image.component';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
-declare var window;
+declare let window;
 @Component({
   selector: 'brew-information',
   templateUrl: './brew-information.component.html',
@@ -92,9 +107,23 @@ declare var window;
     BrewFunction,
     BeanFunction,
     PreparationFunction,
+    IonButton,
+    IonIcon,
+    IonBadge,
+    IonLabel,
+    IonTitle,
+    IonList,
+    IonGrid,
+    IonItem,
+    IonText,
+    IonCard,
+    IonCardContent,
+    IonRow,
+    IonCol,
+    IonChip,
   ],
 })
-export class BrewInformationComponent implements OnInit {
+export class BrewInformationComponent implements OnInit, OnChanges {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiBrewStorage = inject(UIBrewStorage);
@@ -127,7 +156,7 @@ export class BrewInformationComponent implements OnInit {
 
   @Input() public brew: Brew;
   public _collapsed: boolean = undefined;
-  @Input() public layout: string = 'brew';
+  @Input() public layout = 'brew';
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
 
@@ -147,7 +176,7 @@ export class BrewInformationComponent implements OnInit {
   @ViewChild('brewStars', { read: NgxStarsComponent, static: false })
   public brewStars: NgxStarsComponent;
 
-  @Output() public brewAction: EventEmitter<any> = new EventEmitter();
+  @Output() public brewAction = new EventEmitter<any>();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
   public bean: Bean;
@@ -161,10 +190,10 @@ export class BrewInformationComponent implements OnInit {
   public informationContainerWidth: number = undefined;
 
   public uiHasCustomRatingRange: boolean = undefined;
-  public uiCuppedBrewFlavors: Array<string> = [];
+  public uiCuppedBrewFlavors: string[] = [];
 
   @Input() set collapsed(value: boolean) {
-    let retrigger: boolean = false;
+    let retrigger = false;
     if (value !== this._collapsed && this._collapsed !== undefined) {
       //Retrigger
       retrigger = true;
@@ -249,7 +278,7 @@ export class BrewInformationComponent implements OnInit {
     return 5;
   }
 
-  public ngOnChanges(changes: SimpleChange) {
+  public ngOnChanges(changes: SimpleChanges): void {
     // changes.prop contains the old and the new value...
 
     this.resetRenderingRating();
@@ -398,7 +427,7 @@ export class BrewInformationComponent implements OnInit {
   }
 
   public async toggleBestBrew() {
-    let doOtherBestBrewsNeedsToBeDetoggled: boolean = false;
+    let doOtherBestBrewsNeedsToBeDetoggled = false;
     if (this.brew.best_brew) {
       // Its the same brew we toggle back again :)
       this.brew.best_brew = false;
@@ -588,8 +617,8 @@ export class BrewInformationComponent implements OnInit {
     //await this.shareService.shareBrew(this.brew);
   }
 
-  public getCuppedBrewFlavors(): Array<string> {
-    const flavors: Array<string> = [...this.brew.cupped_flavor.custom_flavors];
+  public getCuppedBrewFlavors(): string[] {
+    const flavors: string[] = [...this.brew.cupped_flavor.custom_flavors];
     for (const key in this.brew.cupped_flavor.predefined_flavors) {
       if (this.brew.cupped_flavor.predefined_flavors.hasOwnProperty(key)) {
         flavors.push(this.translate.instant('CUPPING_' + key));
