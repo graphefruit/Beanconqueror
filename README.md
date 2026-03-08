@@ -46,6 +46,22 @@ Whether you're looking to track your coffee journey, optimise your brews, or sim
 
 ![Beanconqueror gif](demo/Beanconqueror.gif)
 
+## Index
+- [Articles](#articles)
+- [Threads](#threads)
+- [Rankings](#rankings)
+- [Features](#features)
+- [Special thanks](#special-thanks)
+- [Getting the App](#getting-the-app)
+- [Support the project](#support-the-project)
+- [Contribution](#contribution)
+- [Statistics](#statistics)
+- [Third Party Apps](#third-party-apps)
+- [Questions](#questions)
+- [Develop on your own](#develop-on-your-own)
+- [Want to check the code quality](#want-to-check-the-code-quality)
+
+
 ## Articles
 
 - German: [iphone-ticker](https://www.iphone-ticker.de/beanconqueror-app-geheimtipp-fuer-espresso-verrueckte-168517/) [wuv](https://www.wuv.de/tech/techtaeglich_super_mario_rast_durch_berlin)
