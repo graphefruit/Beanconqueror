@@ -40,12 +40,12 @@
     </ion-row>
     <ion-row>
       @if (settings?.brew_timer_show_hours) {
-        <ion-col size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+        <ion-col size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" [max-number-value]="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       }
       @if (settings?.brew_timer_show_minutes) {
-        <ion-col  size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+        <ion-col  size="{{colSize}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       }
-      <ion-col size="{{colSize}}"><ion-input #secondInput maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col size="{{colSize}}"><ion-input #secondInput maxlength="2" [(ngModel)]="timer.SECONDS" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       @if (settings?.brew_milliseconds) {
         <ion-col  size="{{colSize}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" [max-number-value]="maxMilliSecond" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       }
