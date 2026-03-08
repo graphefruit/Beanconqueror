@@ -29,27 +29,34 @@ import { Subscription } from 'rxjs';
 
 import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
+import { AiImportPhotoGalleryComponent } from '../../components/ai-import-photo-gallery/ai-import-photo-gallery.component';
 import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
+import { AIBeanImportService } from '../../services/aiBeanImport/ai-bean-import.service';
 import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
 import { NfcService } from '../../services/nfcService/nfc-service.service';
 import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
+import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIImage } from '../../services/uiImage';
 import { UILog } from '../../services/uiLog';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BeanImportPopoverComponent } from './bean-import-popover/bean-import-popover.component';
 import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
+import { BeansAddComponent } from './beans-add/beans-add.component';
 
 @Component({
   selector: 'beans',
@@ -86,6 +93,9 @@ export class BeansPage implements OnDestroy {
   private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
   private readonly nfcService = inject(NfcService);
   private readonly uiImage = inject(UIImage);
+  private readonly aiBeanImportService = inject(AIBeanImportService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiFileHelper = inject(UIFileHelper);
 
   public beans: Array<Bean> = [];
 
@@ -407,6 +417,215 @@ export class BeansPage implements OnDestroy {
       event.stopImmediatePropagation();
     }
     await this.add();
+  }
+
+  public async openImportMenu() {
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.IMPORT_MENU_OPENED,
+    );
+    const popover = await this.modalController.create({
+      component: BeanImportPopoverComponent,
+      componentProps: {},
+      id: BeanImportPopoverComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.45],
+      initialBreakpoint: 0.45,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
+    if (data.role !== undefined) {
+      switch (data.role as BEAN_IMPORT_ACTION) {
+        case BEAN_IMPORT_ACTION.QR_SCAN:
+          await this.scanBean();
+          break;
+        case BEAN_IMPORT_ACTION.NFC_SCAN:
+          await this.scanNFC();
+          break;
+        case BEAN_IMPORT_ACTION.AI_IMPORT:
+          await this.aiImportBean();
+          break;
+        case BEAN_IMPORT_ACTION.AI_IMPORT_MULTI:
+          await this.aiImportBeanMulti();
+          break;
+      }
+    }
+  }
+
+  public async aiImportBean() {
+    if (!this.platform.is('capacitor')) {
+      return;
+    }
+
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
+      );
+
+      // Check LLM readiness first
+      const readiness = await this.aiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      // Capture and extract
+      const bean = await this.aiBeanImportService.captureAndExtractBeanData();
+
+      if (bean !== null) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
+        );
+
+        // Open bean add modal with pre-populated data
+        const modal = await this.modalController.create({
+          component: BeansAddComponent,
+          id: BeansAddComponent.COMPONENT_ID,
+          componentProps: { bean_template: bean },
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('AI bean import error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
+      );
+      // Show the actual error message for debugging
+      await this.uiAlert.showMessage(
+        `AI Import Error:\n\n${errorMessage}`,
+        'ERROR_OCCURED',
+        undefined,
+        false, // Don't translate - show raw error
+      );
+    }
+
+    this.loadBeans();
+  }
+
+  public async aiImportBeanMulti() {
+    if (!this.platform.is('capacitor')) {
+      return;
+    }
+
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
+      );
+
+      // Check LLM readiness first
+      const readiness = await this.aiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      // Present photo gallery modal
+      const modal = await this.modalController.create({
+        component: AiImportPhotoGalleryComponent,
+        id: AiImportPhotoGalleryComponent.COMPONENT_ID,
+      });
+      await modal.present();
+
+      const { data, role } = await modal.onDidDismiss();
+
+      // User cancelled or no photos collected
+      if (
+        role === 'cancel' ||
+        !data ||
+        !data.photoPaths ||
+        data.photoPaths.length === 0
+      ) {
+        return;
+      }
+
+      // Process images
+      await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
+      try {
+        const result = await this.aiBeanImportService.extractBeanDataFromImages(
+          data.photoPaths,
+          data.attachPhotos,
+        );
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (result && result.bean) {
+          this.uiAnalytics.trackEvent(
+            BEAN_TRACKING.TITLE,
+            BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
+          );
+
+          // Attach photos if user opted in (paths already in result)
+          if (result.attachmentPaths) {
+            result.bean.attachments = result.attachmentPaths;
+          }
+
+          // Open bean add modal with pre-populated data
+          const addModal = await this.modalController.create({
+            component: BeansAddComponent,
+            id: BeansAddComponent.COMPONENT_ID,
+            componentProps: { bean_template: result.bean },
+          });
+          await addModal.present();
+          await addModal.onWillDismiss();
+        }
+      } catch (error: any) {
+        await this.uiAlert.hideLoadingSpinner();
+
+        // Clean up temp files on error (if not attaching)
+        if (!data.attachPhotos) {
+          for (const path of data.photoPaths) {
+            try {
+              await this.uiFileHelper.deleteInternalFile(path);
+            } catch (e) {
+              // Ignore cleanup errors
+            }
+          }
+        }
+
+        throw error;
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('AI bean import (multi) error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
+      );
+      // Show the actual error message for debugging
+      await this.uiAlert.showMessage(
+        `AI Import Error:\n\n${errorMessage}`,
+        'ERROR_OCCURED',
+        undefined,
+        false, // Don't translate - show raw error
+      );
+    }
+
+    this.loadBeans();
   }
 
   private retriggerScroll() {

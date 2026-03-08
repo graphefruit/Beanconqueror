@@ -1,8 +1,7 @@
 <ion-header>
   <app-header [title]="'NAV_BEANS' | translate">
     <ion-menu-button header-slot="start" />
-    <app-header-button header-slot="end" icon="beanconqueror-nfc-scan" (clicked)="scanNFC()" />
-    <app-header-button header-slot="end" icon="beanconqueror-qr-code-button" (clicked)="scanBean()" />
+    <app-header-button header-slot="end" icon="ellipsis-horizontal" (clicked)="openImportMenu()" />
     <app-header-button header-slot="end" icon="beanconqueror-add" (clicked)="longPressAdd($event)" />
   </app-header>
 </ion-header>
