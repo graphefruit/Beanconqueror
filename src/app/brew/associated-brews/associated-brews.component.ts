@@ -10,6 +10,7 @@ import {
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   ModalController,
 } from '@ionic/angular/standalone';
 
@@ -42,6 +43,7 @@ import { UIWaterHelper } from '../../../services/uiWaterHelper';
     IonContent,
     HeaderComponent,
     HeaderDismissButtonComponent,
+    IonIcon,
   ],
 })
 export class AssociatedBrewsComponent {
@@ -59,7 +61,7 @@ export class AssociatedBrewsComponent {
   @Input() private readonly uuid: string;
   @Input() private readonly type: string;
 
-  public associatedBrews: Array<Brew> = [];
+  public associatedBrews: Brew[] = [];
 
   @ViewChild('openScrollAssociatedBrews', {
     read: AgVirtualScrollComponent,
@@ -71,7 +73,7 @@ export class AssociatedBrewsComponent {
   public associatedBrewsComponent: ElementRef;
   public segmentScrollHeight: string = undefined;
 
-  public isCollapsed: boolean = false;
+  public isCollapsed = false;
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(
@@ -119,7 +121,7 @@ export class AssociatedBrewsComponent {
   }
 
   public async loadBrews() {
-    let relatedBrews: Array<Brew>;
+    let relatedBrews: Brew[];
 
     if (this.type === 'preparation') {
       relatedBrews = this.uiPreparationHelper.getAllBrewsForThisPreparation(
