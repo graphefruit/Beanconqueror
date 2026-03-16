@@ -516,10 +516,10 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
       );
       await this.uiAlert.showMessage(
-        `AI Import Error:\n\n${errorMessage}`,
+        errorMessage,
         'ERROR_OCCURED',
         undefined,
-        false,
+        true,
       );
     }
   }
@@ -572,10 +572,10 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,
       );
       await this.uiAlert.showMessage(
-        `AI Import Error:\n\n${errorMessage}`,
+        errorMessage,
         'ERROR_OCCURED',
         undefined,
-        false,
+        true,
       );
     }
   }
@@ -683,10 +683,10 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
       );
       await this.uiAlert.showMessage(
-        `AI Import Error:\n\n${errorMessage}`,
+        errorMessage,
         'ERROR_OCCURED',
         undefined,
-        false,
+        true,
       );
     }
   }
@@ -781,10 +781,10 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,
       );
       await this.uiAlert.showMessage(
-        `AI Import Error:\n\n${errorMessage}`,
+        errorMessage,
         'ERROR_OCCURED',
         undefined,
-        false,
+        true,
       );
     }
   }
