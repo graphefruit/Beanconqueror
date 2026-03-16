@@ -36,6 +36,7 @@ import {
   cloudUploadOutline,
   informationCircleOutline,
   informationOutline,
+  listOutline,
   refreshOutline,
 } from 'ionicons/icons';
 
@@ -63,6 +64,7 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 import { Settings } from '../../classes/settings/settings';
 import { Water } from '../../classes/water/water';
+import { CloudModelPickerComponent } from '../../components/cloud-model-picker/cloud-model-picker.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
@@ -72,6 +74,7 @@ import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType'
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -205,6 +208,8 @@ export class SettingsPage {
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
+  public cloudAiProviderEnum = CLOUD_AI_PROVIDER_ENUM;
+
   public isScrolling: boolean = false;
 
   public readonly isAndroid: boolean;
@@ -270,6 +275,7 @@ export class SettingsPage {
       cloudUploadOutline,
       informationCircleOutline,
       informationOutline,
+      listOutline,
       refreshOutline,
     });
   }
@@ -556,6 +562,54 @@ export class SettingsPage {
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  public isAppleIntelligenceAvailable(): boolean {
+    return this.platform.is('ios') && this.platform.is('capacitor');
+  }
+
+  public onCloudAiProviderChanged(): void {
+    this.settings.cloud_ai_api_key = '';
+    this.settings.cloud_ai_model = '';
+    this.settings.cloud_ai_base_url = '';
+    this.saveSettings();
+  }
+
+  public getModelPlaceholder(): string {
+    switch (this.settings.cloud_ai_provider) {
+      case CLOUD_AI_PROVIDER_ENUM.OPENAI:
+        return 'gpt-4o-mini';
+      case CLOUD_AI_PROVIDER_ENUM.GOOGLE:
+        return 'gemini-2.0-flash';
+      case CLOUD_AI_PROVIDER_ENUM.ANTHROPIC:
+        return 'claude-sonnet-4-20250514';
+      case CLOUD_AI_PROVIDER_ENUM.MISTRAL:
+        return 'mistral-small-latest';
+      case CLOUD_AI_PROVIDER_ENUM.OPENROUTER:
+        return 'openai/gpt-4o-mini';
+      case CLOUD_AI_PROVIDER_ENUM.CUSTOM:
+        return 'model-name';
+      default:
+        return '';
+    }
+  }
+
+  public async openModelPicker() {
+    const modal = await this.modalCtrl.create({
+      component: CloudModelPickerComponent,
+      id: CloudModelPickerComponent.COMPONENT_ID,
+      componentProps: {
+        provider: this.settings.cloud_ai_provider,
+        apiKey: this.settings.cloud_ai_api_key,
+        baseUrl: this.settings.cloud_ai_base_url,
+      },
+    });
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data?.modelId) {
+      this.settings.cloud_ai_model = data.modelId;
+      this.saveSettings();
+    }
   }
 
   public async visualizerServerHasChanged() {

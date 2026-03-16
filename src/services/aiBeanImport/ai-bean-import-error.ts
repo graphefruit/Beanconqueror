@@ -7,7 +7,8 @@ export type AIImportStep =
   | 'camera_permission'
   | 'take_photo'
   | 'ocr'
-  | 'processing';
+  | 'processing'
+  | 'cloud_api';
 
 /**
  * Custom error interface for AI bean import operations.

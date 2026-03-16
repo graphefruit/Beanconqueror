@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { MAX_VALID_ELEVATION_METERS } from '../../data/ai-import/ai-import-constants';
 import { isNullLikeValue } from './llm-communication.service';
+import { parseWeightToGrams } from './weight-parsing';
 
 /**
  * Regex character class for thousand separator variants.
@@ -483,42 +484,7 @@ export class TextNormalizationService {
    * Handles various formats: "250g", "1kg", "12oz", "1lb"
    */
   public extractWeight(text: string): number | null {
-    // Match weight patterns
-    const patterns = [
-      // Grams: "250g", "250 g", "250 grams"
-      /(\d+(?:[.,]\d+)?)\s*(?:g(?:rams?)?)\b/i,
-      // Kilograms: "1kg", "1.5 kg"
-      /(\d+(?:[.,]\d+)?)\s*(?:kg|kilo(?:gram)?s?)\b/i,
-      // Ounces: "12oz", "12 oz"
-      /(\d+(?:[.,]\d+)?)\s*(?:oz|ounces?)\b/i,
-      // Pounds: "1lb", "1 lb"
-      /(\d+(?:[.,]\d+)?)\s*(?:lb|lbs?|pounds?)\b/i,
-    ];
-
-    for (const pattern of patterns) {
-      const match = text.match(pattern);
-      if (match) {
-        const value = parseFloat(match[1].replace(',', '.'));
-        const unit = match[0].toLowerCase();
-
-        if (unit.includes('kg') || unit.includes('kilo')) {
-          return Math.round(value * 1000);
-        } else if (unit.includes('oz') || unit.includes('ounce')) {
-          return Math.round(value * 28.3495);
-        } else if (
-          unit.includes('lb') ||
-          unit.includes('pound') ||
-          unit.includes('lbs')
-        ) {
-          return Math.round(value * 453.592);
-        } else {
-          // Grams
-          return Math.round(value);
-        }
-      }
-    }
-
-    return null;
+    return parseWeightToGrams(text);
   }
 
   /**

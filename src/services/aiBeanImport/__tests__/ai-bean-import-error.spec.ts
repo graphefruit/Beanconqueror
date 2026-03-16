@@ -1,4 +1,4 @@
-import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
+import { AIImportStep, createAIBeanImportError } from '../ai-bean-import-error';
 
 describe('AI Bean Import Error', () => {
   describe('createAIBeanImportError', () => {

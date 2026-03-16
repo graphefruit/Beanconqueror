@@ -6,8 +6,8 @@ import { of, throwError } from 'rxjs';
 import {
   AIImportExamplesService,
   MergedExamples,
-} from './ai-import-examples.service';
-import { createMockTranslateService } from './test-utils';
+} from '../ai-import-examples.service';
+import { createMockTranslateService } from '../test-utils';
 
 describe('AIImportExamplesService', () => {
   let service: AIImportExamplesService;

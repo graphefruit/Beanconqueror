@@ -38,10 +38,12 @@ import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
+import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { AIBeanImportService } from '../../services/aiBeanImport/ai-bean-import.service';
+import { CloudAIBeanImportService } from '../../services/aiBeanImport/cloud-ai-bean-import.service';
 import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
 import { NfcService } from '../../services/nfcService/nfc-service.service';
@@ -94,6 +96,7 @@ export class BeansPage implements OnDestroy {
   private readonly nfcService = inject(NfcService);
   private readonly uiImage = inject(UIImage);
   private readonly aiBeanImportService = inject(AIBeanImportService);
+  private readonly cloudAiBeanImportService = inject(CloudAIBeanImportService);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiFileHelper = inject(UIFileHelper);
 
@@ -457,13 +460,22 @@ export class BeansPage implements OnDestroy {
       return;
     }
 
+    if (this.isCloudProvider()) {
+      await this.aiImportBeanCloud();
+    } else {
+      await this.aiImportBeanLocal();
+    }
+
+    this.loadBeans();
+  }
+
+  private async aiImportBeanLocal() {
     try {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
       );
 
-      // Check LLM readiness first
       const readiness = await this.aiBeanImportService.checkReadiness();
       if (!readiness.ready) {
         this.uiAnalytics.trackEvent(
@@ -479,7 +491,6 @@ export class BeansPage implements OnDestroy {
         return;
       }
 
-      // Capture and extract
       const bean = await this.aiBeanImportService.captureAndExtractBeanData();
 
       if (bean !== null) {
@@ -488,7 +499,6 @@ export class BeansPage implements OnDestroy {
           BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
         );
 
-        // Open bean add modal with pre-populated data
         const modal = await this.modalController.create({
           component: BeansAddComponent,
           id: BeansAddComponent.COMPONENT_ID,
@@ -505,16 +515,69 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
       );
-      // Show the actual error message for debugging
       await this.uiAlert.showMessage(
         `AI Import Error:\n\n${errorMessage}`,
         'ERROR_OCCURED',
         undefined,
-        false, // Don't translate - show raw error
+        false,
       );
     }
+  }
 
-    this.loadBeans();
+  private async aiImportBeanCloud() {
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_START,
+      );
+
+      const readiness = this.cloudAiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      const bean =
+        await this.cloudAiBeanImportService.captureAndExtractBeanData();
+
+      if (bean !== null) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_SUCCESS,
+        );
+
+        const modal = await this.modalController.create({
+          component: BeansAddComponent,
+          id: BeansAddComponent.COMPONENT_ID,
+          componentProps: { bean_template: bean },
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('Cloud AI bean import error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,
+      );
+      await this.uiAlert.showMessage(
+        `AI Import Error:\n\n${errorMessage}`,
+        'ERROR_OCCURED',
+        undefined,
+        false,
+      );
+    }
   }
 
   public async aiImportBeanMulti() {
@@ -522,13 +585,22 @@ export class BeansPage implements OnDestroy {
       return;
     }
 
+    if (this.isCloudProvider()) {
+      await this.aiImportBeanMultiCloud();
+    } else {
+      await this.aiImportBeanMultiLocal();
+    }
+
+    this.loadBeans();
+  }
+
+  private async aiImportBeanMultiLocal() {
     try {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
       );
 
-      // Check LLM readiness first
       const readiness = await this.aiBeanImportService.checkReadiness();
       if (!readiness.ready) {
         this.uiAnalytics.trackEvent(
@@ -544,7 +616,6 @@ export class BeansPage implements OnDestroy {
         return;
       }
 
-      // Present photo gallery modal
       const modal = await this.modalController.create({
         component: AiImportPhotoGalleryComponent,
         id: AiImportPhotoGalleryComponent.COMPONENT_ID,
@@ -553,7 +624,6 @@ export class BeansPage implements OnDestroy {
 
       const { data, role } = await modal.onDidDismiss();
 
-      // User cancelled or no photos collected
       if (
         role === 'cancel' ||
         !data ||
@@ -563,7 +633,6 @@ export class BeansPage implements OnDestroy {
         return;
       }
 
-      // Process images
       await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
       try {
         const result = await this.aiBeanImportService.extractBeanDataFromImages(
@@ -578,12 +647,10 @@ export class BeansPage implements OnDestroy {
             BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
           );
 
-          // Attach photos if user opted in (paths already in result)
           if (result.attachmentPaths) {
             result.bean.attachments = result.attachmentPaths;
           }
 
-          // Open bean add modal with pre-populated data
           const addModal = await this.modalController.create({
             component: BeansAddComponent,
             id: BeansAddComponent.COMPONENT_ID,
@@ -595,7 +662,6 @@ export class BeansPage implements OnDestroy {
       } catch (error: any) {
         await this.uiAlert.hideLoadingSpinner();
 
-        // Clean up temp files on error (if not attaching)
         if (!data.attachPhotos) {
           for (const path of data.photoPaths) {
             try {
@@ -616,16 +682,118 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
       );
-      // Show the actual error message for debugging
       await this.uiAlert.showMessage(
         `AI Import Error:\n\n${errorMessage}`,
         'ERROR_OCCURED',
         undefined,
-        false, // Don't translate - show raw error
+        false,
       );
     }
+  }
 
-    this.loadBeans();
+  private async aiImportBeanMultiCloud() {
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_START,
+      );
+
+      const readiness = this.cloudAiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      const modal = await this.modalController.create({
+        component: AiImportPhotoGalleryComponent,
+        id: AiImportPhotoGalleryComponent.COMPONENT_ID,
+      });
+      await modal.present();
+
+      const { data, role } = await modal.onDidDismiss();
+
+      if (
+        role === 'cancel' ||
+        !data ||
+        !data.photoPaths ||
+        data.photoPaths.length === 0
+      ) {
+        return;
+      }
+
+      await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
+      try {
+        const result =
+          await this.cloudAiBeanImportService.extractBeanDataFromImages(
+            data.photoPaths,
+            data.attachPhotos,
+          );
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (result && result.bean) {
+          this.uiAnalytics.trackEvent(
+            BEAN_TRACKING.TITLE,
+            BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_SUCCESS,
+          );
+
+          if (result.attachmentPaths) {
+            result.bean.attachments = result.attachmentPaths;
+          }
+
+          const addModal = await this.modalController.create({
+            component: BeansAddComponent,
+            id: BeansAddComponent.COMPONENT_ID,
+            componentProps: { bean_template: result.bean },
+          });
+          await addModal.present();
+          await addModal.onWillDismiss();
+        }
+      } catch (error: any) {
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (!data.attachPhotos) {
+          for (const path of data.photoPaths) {
+            try {
+              await this.uiFileHelper.deleteInternalFile(path);
+            } catch (e) {
+              // Ignore cleanup errors
+            }
+          }
+        }
+
+        throw error;
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('Cloud AI bean import (multi) error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,
+      );
+      await this.uiAlert.showMessage(
+        `AI Import Error:\n\n${errorMessage}`,
+        'ERROR_OCCURED',
+        undefined,
+        false,
+      );
+    }
+  }
+
+  private isCloudProvider(): boolean {
+    const settings = this.uiSettingsStorage.getSettings();
+    return (
+      settings.cloud_ai_provider !== CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+    );
   }
 
   private retriggerScroll() {

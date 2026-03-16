@@ -716,6 +716,55 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card class="margin-top-20">
+    <ion-card-content>
+      <ion-card-title>{{ "CLOUD_AI_SETTINGS_TITLE" | translate }}</ion-card-title>
+      <ion-item>
+        <ion-select (ngModelChange)="onCloudAiProviderChanged()" [(ngModel)]="settings.cloud_ai_provider"
+          cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+          <div slot="label">{{ "CLOUD_AI_PROVIDER" | translate }}</div>
+          @if (isAppleIntelligenceAvailable()) {
+          <ion-select-option value="{{cloudAiProviderEnum.APPLE_INTELLIGENCE}}">{{ "CLOUD_AI_PROVIDER_APPLE_INTELLIGENCE" | translate }}</ion-select-option>
+          }
+          <ion-select-option value="{{cloudAiProviderEnum.OPENAI}}">{{ "CLOUD_AI_PROVIDER_OPENAI" | translate }}</ion-select-option>
+          <ion-select-option value="{{cloudAiProviderEnum.GOOGLE}}">{{ "CLOUD_AI_PROVIDER_GOOGLE" | translate }}</ion-select-option>
+          <ion-select-option value="{{cloudAiProviderEnum.ANTHROPIC}}">{{ "CLOUD_AI_PROVIDER_ANTHROPIC" | translate }}</ion-select-option>
+          <ion-select-option value="{{cloudAiProviderEnum.MISTRAL}}">{{ "CLOUD_AI_PROVIDER_MISTRAL" | translate }}</ion-select-option>
+          <ion-select-option value="{{cloudAiProviderEnum.OPENROUTER}}">{{ "CLOUD_AI_PROVIDER_OPENROUTER" | translate }}</ion-select-option>
+          <ion-select-option value="{{cloudAiProviderEnum.CUSTOM}}">{{ "CLOUD_AI_PROVIDER_CUSTOM" | translate }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      @if (settings.cloud_ai_provider !== cloudAiProviderEnum.APPLE_INTELLIGENCE) {
+      <ion-item>
+        <ion-input label-placement="stacked" label='{{"CLOUD_AI_API_KEY" | translate}}'
+          (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_api_key"
+          name="cloud_ai_api_key" placeholder="sk-..." spellcheck="false"
+          type="password">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label-placement="stacked" label='{{"CLOUD_AI_MODEL" | translate}}'
+          (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_model"
+          name="cloud_ai_model" [placeholder]="getModelPlaceholder()" spellcheck="false"
+          type="text">
+        </ion-input>
+        <ion-button slot="end" fill="clear" (click)="openModelPicker()">
+          <ion-icon name="list-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+      }
+      @if (settings.cloud_ai_provider === cloudAiProviderEnum.CUSTOM) {
+      <ion-item>
+        <ion-input label-placement="stacked" label='{{"CLOUD_AI_BASE_URL" | translate}}'
+          (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_base_url"
+          name="cloud_ai_base_url" placeholder="https://my-llm-server.com/v1" spellcheck="false"
+          type="text">
+        </ion-input>
+      </ion-item>
+      }
+    </ion-card-content>
+  </ion-card>
+
   }
   @case ('bluetoothscale') {
   <ion-card>

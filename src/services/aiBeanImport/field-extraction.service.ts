@@ -13,8 +13,8 @@ import {
   LLM_TIMEOUT_PER_FIELD_MS,
   MAX_BLEND_PERCENTAGE,
 } from '../../data/ai-import/ai-import-constants';
-import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
 import { UIAlert } from '../uiAlert';
@@ -25,6 +25,14 @@ import {
   MergedExamples,
 } from './ai-import-examples.service';
 import {
+  constructBeanFromExtractedData,
+  createEmptyBeanInformation,
+} from './bean-construction.service';
+import {
+  OriginFieldsResult,
+  TopLevelFieldsResult,
+} from './bean-extraction-types';
+import {
   extractJsonFromResponse,
   isNullLikeValue,
   sendLLMPrompt,
@@ -34,32 +42,6 @@ import {
   sanitizeElevation,
   TextNormalizationService,
 } from './text-normalization.service';
-import {
-  beanMixToKeyString,
-  roastingTypeToKeyString,
-} from './type-mappings';
-
-/**
- * Result of extracting top-level bean fields.
- */
-interface TopLevelFieldsResult {
-  name: string;
-  roaster: string;
-  weight: number;
-  bean_roasting_type?: BEAN_ROASTING_TYPE_ENUM;
-  aromatics?: string;
-  decaffeinated?: boolean;
-  cupping_points?: number;
-  roastingDate?: string;
-}
-
-/**
- * Result of extracting origin-related fields.
- */
-interface OriginFieldsResult {
-  beanMix: BEAN_MIX_ENUM;
-  bean_information: IBeanInformation[];
-}
 
 /**
  * Service for multi-step field extraction using focused LLM prompts.
@@ -117,7 +99,8 @@ export class FieldExtractionService {
       );
 
       // Construct and return final bean
-      return this.constructBeanFromExtractedData(topLevelFields, originFields);
+      this.updateProgress('VALIDATING');
+      return constructBeanFromExtractedData(topLevelFields, originFields);
     } catch (error: any) {
       // Unexpected error in extraction pipeline - log and return fallback bean
       this.uiLog.error(
@@ -126,7 +109,7 @@ export class FieldExtractionService {
 
       // Return minimal bean rather than crashing - allows user to manually fill fields
       const fallbackBean = new Bean();
-      fallbackBean.bean_information = [this.createEmptyBeanInformation()];
+      fallbackBean.bean_information = [createEmptyBeanInformation()];
       return fallbackBean;
     }
   }
@@ -174,8 +157,12 @@ export class FieldExtractionService {
     if (params.bean_roasting_type) {
       this.updateFieldProgress('TOP_LEVEL', 'bean_roasting_type');
       result.bean_roasting_type =
-        (await this.extractField('bean_roasting_type', text, examples, languages))
-        ?? BEAN_ROASTING_TYPE_ENUM.UNKNOWN;
+        (await this.extractField(
+          'bean_roasting_type',
+          text,
+          examples,
+          languages,
+        )) ?? BEAN_ROASTING_TYPE_ENUM.UNKNOWN;
     }
 
     // Aromatics
@@ -247,8 +234,8 @@ export class FieldExtractionService {
     // Detect structure (single origin vs blend)
     this.updateProgress('STRUCTURE');
     result.beanMix =
-      (await this.extractField('beanMix', text, examples, languages))
-      ?? BEAN_MIX_ENUM.UNKNOWN;
+      (await this.extractField('beanMix', text, examples, languages)) ??
+      BEAN_MIX_ENUM.UNKNOWN;
     this.uiLog.log(`Structure: beanMix=${result.beanMix}`);
 
     if (result.beanMix === BEAN_MIX_ENUM.BLEND) {
@@ -277,63 +264,6 @@ export class FieldExtractionService {
     }
 
     return result;
-  }
-
-  /**
-   * Construct a Bean object from extracted field data.
-   * Applies cross-field validation and ensures data consistency.
-   */
-  private constructBeanFromExtractedData(
-    topLevelFields: TopLevelFieldsResult,
-    originFields: OriginFieldsResult,
-  ): Bean {
-    const bean = new Bean();
-
-    // Assign top-level fields
-    bean.name = topLevelFields.name;
-    bean.roaster = topLevelFields.roaster;
-    bean.weight = topLevelFields.weight;
-
-    if (topLevelFields.bean_roasting_type != null) {
-      bean.bean_roasting_type = topLevelFields.bean_roasting_type;
-    }
-    if (topLevelFields.aromatics != null) {
-      bean.aromatics = topLevelFields.aromatics;
-    }
-    if (topLevelFields.decaffeinated != null) {
-      bean.decaffeinated = topLevelFields.decaffeinated;
-    }
-    if (topLevelFields.cupping_points != null) {
-      bean.cupping_points = String(topLevelFields.cupping_points);
-    }
-    if (topLevelFields.roastingDate != null) {
-      bean.roastingDate = topLevelFields.roastingDate;
-    }
-
-    // Assign origin fields
-    bean.beanMix = originFields.beanMix;
-    bean.bean_information = originFields.bean_information;
-
-    // Ensure at least one bean_information entry
-    if (bean.bean_information.length === 0) {
-      bean.bean_information = [this.createEmptyBeanInformation()];
-    }
-
-    // Final validation
-    this.updateProgress('VALIDATING');
-    const validated = this.validateBean(bean);
-
-    // Convert enum values to key strings for UI compatibility.
-    // The UI constructs translation keys like "BEAN_MIX_" + beanMix,
-    // so it needs key strings ('BLEND') not enum values ('Blend').
-    validated.beanMix = beanMixToKeyString(validated.beanMix);
-    if (validated.bean_roasting_type) {
-      validated.bean_roasting_type = roastingTypeToKeyString(
-        validated.bean_roasting_type,
-      );
-    }
-
-    return validated;
   }
 
   /**
@@ -553,7 +483,7 @@ export class FieldExtractionService {
     languages: string[],
     params: IBeanParameter,
   ): Promise<IBeanInformation> {
-    const info = this.createEmptyBeanInformation();
+    const info = createEmptyBeanInformation();
 
     // Country - always extract (essential for origin tracking)
     this.updateFieldProgress('ORIGIN', 'country');
@@ -638,7 +568,7 @@ export class FieldExtractionService {
     origin: Partial<IBeanInformation>,
     params: IBeanParameter,
   ): IBeanInformation {
-    const filtered = this.createEmptyBeanInformation();
+    const filtered = createEmptyBeanInformation();
 
     // Country - always include (essential)
     filtered.country = origin.country || '';
@@ -670,25 +600,6 @@ export class FieldExtractionService {
       info.farm ||
       info.farmer
     );
-  }
-
-  /**
-   * Create an empty IBeanInformation object with all fields initialized.
-   */
-  private createEmptyBeanInformation(): IBeanInformation {
-    return {
-      country: '',
-      region: '',
-      farm: '',
-      farmer: '',
-      elevation: '',
-      harvest_time: '',
-      variety: '',
-      processing: '',
-      certification: '',
-      purchasing_price: 0,
-      fob_price: 0,
-    } as IBeanInformation;
   }
 
   /**
@@ -730,7 +641,7 @@ export class FieldExtractionService {
     if (!parsed) {
       // JSON parse failed - return empty origin
       this.uiLog.error('Failed to parse blend origins JSON');
-      return [this.createEmptyBeanInformation()];
+      return [createEmptyBeanInformation()];
     }
 
     if (!Array.isArray(parsed)) {
@@ -742,7 +653,7 @@ export class FieldExtractionService {
     const results = parsed.map((obj) => this.sanitizeBlendOriginObject(obj));
 
     // Ensure at least one origin
-    return results.length > 0 ? results : [this.createEmptyBeanInformation()];
+    return results.length > 0 ? results : [createEmptyBeanInformation()];
   }
 
   /**
@@ -783,34 +694,6 @@ export class FieldExtractionService {
       return '';
     }
     return trimmed;
-  }
-
-  /**
-   * Cross-field validation and cleanup.
-   */
-  private validateBean(bean: Bean): Bean {
-    // If country detected but beanMix is null/unknown, set to SINGLE_ORIGIN
-    if (
-      bean.bean_information.length === 1 &&
-      (!bean.beanMix || bean.beanMix === BEAN_MIX_ENUM.UNKNOWN)
-    ) {
-      bean.beanMix = BEAN_MIX_ENUM.SINGLE_ORIGIN;
-    }
-
-    // If multiple countries, ensure BLEND
-    if (
-      bean.bean_information.length > 1 &&
-      bean.beanMix !== BEAN_MIX_ENUM.BLEND
-    ) {
-      bean.beanMix = BEAN_MIX_ENUM.BLEND;
-    }
-
-    // Ensure at least one bean_information entry exists if any origin data
-    if (bean.bean_information.length === 0) {
-      bean.bean_information = [this.createEmptyBeanInformation()];
-    }
-
-    return bean;
   }
 
   /**

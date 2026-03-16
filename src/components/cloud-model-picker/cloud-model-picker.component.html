@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()"
+                  (keydown.enter)="dismiss()"
+                  aria-label="Close">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'CLOUD_AI_SELECT_MODEL' | translate }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      (ionInput)="filterModels()"
+      [placeholder]="'CLOUD_AI_SEARCH_MODELS' | translate">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading) {
+    <div class="ion-text-center ion-padding">
+      <ion-spinner></ion-spinner>
+      <p>{{ 'CLOUD_AI_MODELS_LOADING' | translate }}</p>
+    </div>
+  }
+
+  @if (error && !loading) {
+    <div class="ion-text-center ion-padding">
+      <p>{{ 'CLOUD_AI_MODELS_LOAD_FAILED' | translate }}</p>
+    </div>
+  }
+
+  @if (!loading && !error && filteredModels.length === 0) {
+    <div class="ion-text-center ion-padding">
+      <p>{{ 'CLOUD_AI_MODELS_NONE' | translate }}</p>
+    </div>
+  }
+
+  @if (!loading && !error && filteredModels.length > 0) {
+    <ion-list>
+      @for (model of filteredModels; track model.id) {
+        <ion-item button (click)="selectModel(model)" style="--padding-start: 16px; --inner-padding-top: 2px; --inner-padding-bottom: 2px">
+          <ion-label>
+            <h2>{{ model.name }}</h2>
+            <p>{{ model.id }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>

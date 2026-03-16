@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MergedExamples } from './ai-import-examples.service';
-import { OCRCorrectionService } from './ocr-correction.service';
-import { createMockExamples } from './test-utils';
+import { MergedExamples } from '../ai-import-examples.service';
+import { OCRCorrectionService } from '../ocr-correction.service';
+import { createMockExamples } from '../test-utils';
 
 describe('OCRCorrectionService', () => {
   let service: OCRCorrectionService;

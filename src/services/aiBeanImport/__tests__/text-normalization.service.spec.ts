@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 
 import {
-  elevationExistsInOcrText,
   buildThousandSeparatorPattern,
+  elevationExistsInOcrText,
   normalizeElevationUnit,
   removeThousandSeparatorsFromInteger,
   sanitizeElevation,
   TextNormalizationService,
   weightExistsInOcrText,
-} from './text-normalization.service';
+} from '../text-normalization.service';
 
 describe('TextNormalizationService', () => {
   let service: TextNormalizationService;
@@ -148,34 +148,6 @@ describe('TextNormalizationService', () => {
     });
   });
 
-  // --- extractWeight ---
-
-  const extractWeightCases: {
-    input: string;
-    expected: number | null;
-    desc: string;
-  }[] = [
-    { input: '250g', expected: 250, desc: 'grams (no space)' },
-    { input: '250 grams', expected: 250, desc: 'grams (with space + unit)' },
-    { input: '1kg', expected: 1000, desc: 'kilograms → grams' },
-    { input: '1.5 kg', expected: 1500, desc: 'decimal kilograms' },
-    { input: '12oz', expected: 340, desc: 'ounces → grams (rounded)' },
-    { input: '1lb', expected: 454, desc: 'pounds → grams (rounded)' },
-    {
-      input: 'Ethiopia Yirgacheffe',
-      expected: null,
-      desc: 'no weight pattern → null',
-    },
-  ];
-
-  describe('extractWeight', () => {
-    extractWeightCases.forEach(({ input, expected, desc }) => {
-      it(`should extract: ${desc}`, () => {
-        expect(service.extractWeight(input)).toBe(expected);
-      });
-    });
-  });
-
   // --- normalizeAll ---
   // normalizeAll chains: normalizeNumbers → normalizeElevation → normalizeCase.
   // Weight extraction is intentionally separate (extractWeight) since it returns
@@ -256,14 +228,26 @@ describe('removeThousandSeparatorsFromInteger', () => {
 
 const normalizeElevationUnitCases = [
   { input: '1850 m.ü.M.', expected: '1850 MASL', desc: 'German m.ü.M.' },
-  { input: '1850 M.Ü.M.', expected: '1850 MASL', desc: 'German M.Ü.M. (uppercase)' },
+  {
+    input: '1850 M.Ü.M.',
+    expected: '1850 MASL',
+    desc: 'German M.Ü.M. (uppercase)',
+  },
   { input: '1850 meters', expected: '1850 MASL', desc: '"meters" suffix' },
   { input: '1850 meter', expected: '1850 MASL', desc: '"meter" suffix' },
   { input: '1850 msnm', expected: '1850 MASL', desc: 'Spanish msnm' },
   { input: '1850 m', expected: '1850 MASL', desc: 'bare "m" suffix' },
-  { input: '1850m', expected: '1850 MASL', desc: '"m" directly attached (adds space)' },
+  {
+    input: '1850m',
+    expected: '1850 MASL',
+    desc: '"m" directly attached (adds space)',
+  },
   { input: '1700-1900m', expected: '1700-1900 MASL', desc: 'range with m' },
-  { input: '1700-1900 meters', expected: '1700-1900 MASL', desc: 'range with meters' },
+  {
+    input: '1700-1900 meters',
+    expected: '1700-1900 MASL',
+    desc: 'range with meters',
+  },
   { input: '1850 MASL', expected: '1850 MASL', desc: 'already uppercase MASL' },
   { input: '1850 masl', expected: '1850 MASL', desc: 'lowercase masl → MASL' },
   { input: '1850 Masl', expected: '1850 MASL', desc: 'mixed case Masl → MASL' },

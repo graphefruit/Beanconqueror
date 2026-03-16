@@ -4,8 +4,8 @@ import {
   Block,
   OcrMetadataService,
   TextDetectionResult,
-} from './ocr-metadata.service';
-import { createBlock, createTextDetectionResult } from './test-utils';
+} from '../ocr-metadata.service';
+import { createBlock, createTextDetectionResult } from '../test-utils';
 
 describe('OcrMetadataService', () => {
   let service: OcrMetadataService;
