@@ -12,7 +12,6 @@ import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import {
   constructBeanFromExtractedData,
-  createDefaultBean,
   createEmptyBeanInformation,
 } from './bean-construction.service';
 import {
@@ -51,52 +50,47 @@ export class CloudFieldExtractionService {
     logger?: { log(msg: string): void },
   ): Promise<Bean> {
     const log = logger ?? this.uiLog ?? { log: () => {} };
-    try {
-      // 1. Build config from settings if not provided
-      if (!config) {
-        const settings = this.uiSettingsStorage!.getSettings();
-        config = {
-          provider: settings.cloud_ai_provider,
-          apiKey: settings.cloud_ai_api_key,
-          model: settings.cloud_ai_model,
-          baseUrl: settings.cloud_ai_base_url || undefined,
-        };
-      }
 
-      // 2. Build prompt
-      const userPrompt = buildCloudExtractionPrompt(ocrText);
-
-      // 3. Send to cloud LLM
-      const response = await sendCloudLLMPrompt(config, [
-        { role: 'system', content: CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS },
-        { role: 'user', content: userPrompt },
-      ]);
-
-      log.log('Cloud LLM response received, model: ' + response.model);
-      if (response.usage) {
-        log.log(
-          `Token usage: ${response.usage.prompt_tokens} prompt, ${response.usage.completion_tokens} completion`,
-        );
-      }
-
-      // 4. Parse JSON from response (handle potential markdown wrapping)
-      // LLM response is unvalidated — all field access below is defensive
-      const parsed = extractJsonFromResponse(response.content);
-      if (!parsed) {
-        log.log('Failed to parse JSON from cloud LLM response');
-        return createDefaultBean();
-      }
-
-      // 5. Map to TopLevelFieldsResult + OriginFieldsResult
-      const topLevel = this.mapTopLevelFields(parsed);
-      const origin = this.mapOriginFields(parsed);
-
-      // 6. Construct bean using shared utility
-      return constructBeanFromExtractedData(topLevel, origin);
-    } catch (error) {
-      log.log('Cloud field extraction failed: ' + error?.message);
-      return createDefaultBean();
+    // 1. Build config from settings if not provided
+    if (!config) {
+      const settings = this.uiSettingsStorage!.getSettings();
+      config = {
+        provider: settings.cloud_ai_provider,
+        apiKey: settings.cloud_ai_api_key,
+        model: settings.cloud_ai_model,
+        baseUrl: settings.cloud_ai_base_url || undefined,
+      };
     }
+
+    // 2. Build prompt
+    const userPrompt = buildCloudExtractionPrompt(ocrText);
+
+    // 3. Send to cloud LLM — throws on API errors, timeouts, network failures
+    const response = await sendCloudLLMPrompt(config, [
+      { role: 'system', content: CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS },
+      { role: 'user', content: userPrompt },
+    ]);
+
+    log.log('Cloud LLM response received, model: ' + response.model);
+    if (response.usage) {
+      log.log(
+        `Token usage: ${response.usage.prompt_tokens} prompt, ${response.usage.completion_tokens} completion`,
+      );
+    }
+
+    // 4. Parse JSON from response (handle potential markdown wrapping)
+    // LLM response is unvalidated — all field access below is defensive
+    const parsed = extractJsonFromResponse(response.content);
+    if (!parsed) {
+      throw new Error('Failed to parse JSON from cloud LLM response');
+    }
+
+    // 5. Map to TopLevelFieldsResult + OriginFieldsResult
+    const topLevel = this.mapTopLevelFields(parsed);
+    const origin = this.mapOriginFields(parsed);
+
+    // 6. Construct bean using shared utility
+    return constructBeanFromExtractedData(topLevel, origin);
   }
 
   /**

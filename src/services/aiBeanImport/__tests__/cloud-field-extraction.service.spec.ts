@@ -514,7 +514,7 @@ describe('CloudFieldExtractionService', () => {
   // ── Error handling ─────────────────────────────────────────────────
 
   describe('error handling', () => {
-    it('should return fallback empty bean on malformed JSON response', async () => {
+    it('should throw on malformed JSON response', async () => {
       // Arrange
       fetchSpy.and.returnValue(
         Promise.resolve({
@@ -528,22 +528,22 @@ describe('CloudFieldExtractionService', () => {
         } as unknown as Response),
       );
 
-      // Act
-      const bean = await service.extractAllFields(
-        'sample OCR text',
-        mockConfig,
-        mockLogger,
-      );
-
-      // Assert — should return a bean (not throw)
-      expect(bean).toBeDefined();
-      expect(bean.name).toBe('');
-      expect(mockLogger.log).toHaveBeenCalledWith(
-        'Failed to parse JSON from cloud LLM response',
-      );
+      // Act & Assert
+      try {
+        await service.extractAllFields(
+          'sample OCR text',
+          mockConfig,
+          mockLogger,
+        );
+        fail('Expected extractAllFields to throw');
+      } catch (error) {
+        expect(error.message).toBe(
+          'Failed to parse JSON from cloud LLM response',
+        );
+      }
     });
 
-    it('should return fallback empty bean on API error', async () => {
+    it('should throw on API error', async () => {
       // Arrange
       fetchSpy.and.returnValue(
         Promise.resolve({
@@ -553,41 +553,39 @@ describe('CloudFieldExtractionService', () => {
         } as unknown as Response),
       );
 
-      // Act
-      const bean = await service.extractAllFields(
-        'sample OCR text',
-        mockConfig,
-        mockLogger,
-      );
-
-      // Assert — should not throw, should return a fallback bean
-      expect(bean).toBeDefined();
-      expect(bean.name).toBe('');
-      expect(
-        mockLogger.log.calls
-          .allArgs()
-          .some((args: any[]) =>
-            String(args[0]).startsWith('Cloud field extraction failed:'),
-          ),
-      ).toBe(true);
+      // Act & Assert
+      try {
+        await service.extractAllFields(
+          'sample OCR text',
+          mockConfig,
+          mockLogger,
+        );
+        fail('Expected extractAllFields to throw');
+      } catch (error) {
+        expect(error.message).toBe(
+          'Cloud LLM API error (500): Internal server error',
+        );
+      }
     });
 
-    it('should return fallback empty bean on network error', async () => {
+    it('should throw on network error', async () => {
       // Arrange
-      fetchSpy.and.returnValue(
+      fetchSpy.and.callFake(() =>
         Promise.reject(new TypeError('Failed to fetch')),
       );
 
-      // Act
-      const bean = await service.extractAllFields(
-        'sample OCR text',
-        mockConfig,
-        mockLogger,
-      );
-
-      // Assert
-      expect(bean).toBeDefined();
-      expect(bean.name).toBe('');
+      // Act & Assert
+      try {
+        await service.extractAllFields(
+          'sample OCR text',
+          mockConfig,
+          mockLogger,
+        );
+        fail('Expected extractAllFields to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(TypeError);
+        expect(error.message).toBe('Failed to fetch');
+      }
     });
   });
 });
