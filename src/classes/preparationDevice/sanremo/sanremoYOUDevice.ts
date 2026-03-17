@@ -4,7 +4,7 @@ import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
-import { UIAlert } from '../../../services/uiAlert';
+import { ConfirmationDialogResult, UIAlert } from '../../../services/uiAlert';
 import { UILog } from '../../../services/uiLog';
 import { sleep } from '../../devices';
 import { Preparation } from '../../preparation/preparation';
@@ -48,7 +48,7 @@ export class SanremoYOUDevice extends PreparationDevice {
   private logError(...args: any[]) {
     UILog.getInstance().error('SanremoYOUDevice:', ...args);
   }
-  private raiseMessage(): Promise<any> {
+  private raiseMessage(): Promise<ConfirmationDialogResult> {
     return UIAlert.getInstance().showConfirmWithYesNoTranslation(
       'PREPARATION_DEVICE.TYPE_SANREMO_YOU.CONNECTION_LOST_PLEASE_RECONNECT',
       'ERROR',
@@ -313,12 +313,16 @@ export class SanremoYOUDevice extends PreparationDevice {
       }, timeout);
     } else {
       this.reconnectTries = this.reconnectTries + 1;
-      this.raiseMessage().then(
-        () => {
+
+      // HACK: We don't handle the rejection case for this promise for now,
+      //       as that would require changing the return type of this function
+      //       to Promise<void> and require refactoring all callers to handle
+      //       promise rejections properly.
+      void this.raiseMessage().then((choice) => {
+        if (choice === 'YES') {
           this.reconnectToSocket();
-        },
-        () => {},
-      );
+        }
+      });
     }
   }
 

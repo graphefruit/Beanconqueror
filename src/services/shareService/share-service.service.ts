@@ -106,10 +106,7 @@ export class ShareService {
     }
 
     // We need to get the key/value pairing to a simple int list.
-    if (
-      'cupped_flavor' in _bean &&
-      'predefined_flavors' in _bean.cupped_flavor
-    ) {
+    if (_bean.cupped_flavor?.predefined_flavors !== undefined) {
       const keys = Object.keys(_bean.cupped_flavor.predefined_flavors);
       protoBean.cupped_flavor.predefined_flavors = keys;
     }

@@ -125,23 +125,21 @@ export class BrewEditComponent implements OnInit {
     }
   }
 
-  public confirmDismiss(): void {
-    if (this.settings.security_check_when_going_back === false) {
+  public async confirmDismiss(): Promise<void> {
+    if (
+      this.settings.security_check_when_going_back === false ||
+      JSON.stringify(this.data) === this.initialBeanData
+    ) {
       this.dismiss();
       return;
     }
-    if (JSON.stringify(this.data) !== this.initialBeanData) {
-      this.uiAlert
-        .showConfirm('PAGE_BREW_DISCARD_CONFIRM', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            this.dismiss();
-          },
-          () => {
-            // No
-          },
-        );
-    } else {
+
+    const choice = await this.uiAlert.showConfirm(
+      'PAGE_BREW_DISCARD_CONFIRM',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice === 'YES') {
       this.dismiss();
     }
   }
@@ -285,9 +283,9 @@ export class BrewEditComponent implements OnInit {
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
-        (processNextHandler) => {
-          // Don't do anything.
-          this.confirmDismiss();
+        async () => {
+          // Only go back after confirmation
+          await this.confirmDismiss();
         },
       );
     }

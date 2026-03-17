@@ -260,10 +260,7 @@ export class PreparationInformationCardComponent implements OnInit {
         await this.repeatPreparation();
         break;
       case PREPARATION_ACTION.DELETE:
-        try {
-          await this.deletePreparation();
-        } catch (ex) {}
-        await this.uiAlert.hideLoadingSpinner();
+        await this.deletePreparation();
         break;
       case PREPARATION_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -338,25 +335,25 @@ export class PreparationInformationCardComponent implements OnInit {
     await this.uiPreparationHelper.detailPreparation(this.preparation);
   }
 
-  public async deletePreparation() {
-    await this.uiAlert
-      .showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true)
-      .then(
-        async () => {
-          await this.uiAlert.showLoadingSpinner();
-          // Yes
-          this.uiAnalytics.trackEvent(
-            PREPARATION_TRACKING.TITLE,
-            PREPARATION_TRACKING.ACTIONS.DELETE,
-          );
-          await this.__deletePreparation();
-          this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
-          await this.resetSettings();
-        },
-        () => {
-          // No
-        },
+  public async deletePreparation(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_PREPARATION_METHOD_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.withLoadingSpinner(async () => {
+      this.uiAnalytics.trackEvent(
+        PREPARATION_TRACKING.TITLE,
+        PREPARATION_TRACKING.ACTIONS.DELETE,
       );
+      await this.__deletePreparation();
+      this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
+      await this.resetSettings();
+    });
   }
 
   public async archive() {

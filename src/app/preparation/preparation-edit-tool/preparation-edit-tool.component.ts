@@ -78,51 +78,45 @@ export class PreparationEditToolComponent {
   }
 
   public async deleteTool() {
-    const relatedBrews: Array<Brew> = this.uiPreparationHelper
+    const relatedBrews: Brew[] = this.uiPreparationHelper
       .getAllBrewsForThisPreparation(this.preparation.config.uuid)
       .filter((e) =>
         e.method_of_preparation_tools.includes(this.data.config.uuid),
       );
-    await this.uiAlert
-      .showConfirm('DELETE_PREPARATION_TOOL_QUESTION', 'SURE_QUESTION', true)
-      .then(
-        async () => {
-          this.uiAnalytics.trackEvent(
-            PREPARATION_TRACKING.TITLE,
-            PREPARATION_TRACKING.ACTIONS.TOOL_DELETED,
-          );
-          if (relatedBrews.length > 0) {
-            for (const brew of relatedBrews) {
-              for (
-                let i = 0;
-                i < brew.method_of_preparation_tools.length;
-                i++
-              ) {
-                if (
-                  brew.method_of_preparation_tools[i] === this.data.config.uuid
-                ) {
-                  brew.method_of_preparation_tools.splice(i, 1);
-                  break;
-                }
-                await this.uiBrewStorage.update(brew);
-              }
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_PREPARATION_TOOL_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
 
-              // await  this.uiBrewStorage.removeByUUID(brew.config.uuid);
-            }
+    this.uiAnalytics.trackEvent(
+      PREPARATION_TRACKING.TITLE,
+      PREPARATION_TRACKING.ACTIONS.TOOL_DELETED,
+    );
+    if (relatedBrews.length > 0) {
+      for (const brew of relatedBrews) {
+        for (let i = 0; i < brew.method_of_preparation_tools.length; i++) {
+          if (brew.method_of_preparation_tools[i] === this.data.config.uuid) {
+            brew.method_of_preparation_tools.splice(i, 1);
+            break;
           }
+          await this.uiBrewStorage.update(brew);
+        }
 
-          this.clonedPreparation.deleteTool(this.data);
-          await this.uiPreparationStorage.update(this.clonedPreparation);
-          const settings: Settings = this.uiSettingsStorage.getSettings();
-          settings.resetFilter();
-          await this.uiSettingsStorage.saveSettings(settings);
+        // await  this.uiBrewStorage.removeByUUID(brew.config.uuid);
+      }
+    }
 
-          this.dismiss();
-        },
-        () => {
-          // No
-        },
-      );
+    this.clonedPreparation.deleteTool(this.data);
+    await this.uiPreparationStorage.update(this.clonedPreparation);
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    settings.resetFilter();
+    await this.uiSettingsStorage.saveSettings(settings);
+
+    this.dismiss();
   }
 
   public async archiveTool() {

@@ -11,8 +11,10 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSearchbar,
@@ -79,6 +81,8 @@ import { BeansAddComponent } from './beans-add/beans-add.component';
     IonSegmentButton,
     IonLabel,
     IonSearchbar,
+    IonIcon,
+    IonButton,
   ],
 })
 export class BeansPage implements OnDestroy {
@@ -100,16 +104,16 @@ export class BeansPage implements OnDestroy {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiFileHelper = inject(UIFileHelper);
 
-  public beans: Array<Bean> = [];
+  public beans: Bean[] = [];
 
   public settings: Settings;
 
-  public openBeans: Array<Bean | BeanGroup> = [];
-  public finishedBeans: Array<Bean | BeanGroup> = [];
-  public frozenBeans: Array<Bean | BeanGroup> = [];
-  public finishedBeansLength: number = 0;
-  public openBeansLength: number = 0;
-  public frozenBeansLength: number = 0;
+  public openBeans: (Bean | BeanGroup)[] = [];
+  public finishedBeans: (Bean | BeanGroup)[] = [];
+  public frozenBeans: (Bean | BeanGroup)[] = [];
+  public finishedBeansLength = 0;
+  public openBeansLength = 0;
+  public frozenBeansLength = 0;
 
   public openBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -139,13 +143,13 @@ export class BeansPage implements OnDestroy {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  public openBeansCollapsed: boolean = false;
-  public archivedBeansCollapsed: boolean = false;
-  public frozenBeansCollapsed: boolean = false;
+  public openBeansCollapsed = false;
+  public archivedBeansCollapsed = false;
+  public frozenBeansCollapsed = false;
 
-  public archivedBeansFilterText: string = '';
-  public openBeansFilterText: string = '';
-  public frozenBeansFilterText: string = '';
+  public archivedBeansFilterText = '';
+  public openBeansFilterText = '';
+  public frozenBeansFilterText = '';
 
   public archivedBeansFilter: IBeanPageFilter;
   public openBeansFilter: IBeanPageFilter;
@@ -154,12 +158,12 @@ export class BeansPage implements OnDestroy {
   private beanStorageChangeSubscription: Subscription;
   public segmentScrollHeight: string = undefined;
 
-  public uiIsSortActive: boolean = false;
-  public uiIsFilterActive: boolean = false;
-  public uiIsCollapseActive: boolean = false;
-  public uiShallBarBeDisplayed: boolean = false;
-  public uiIsTextSearchActive: boolean = false;
-  public uiSearchText: string = '';
+  public uiIsSortActive = false;
+  public uiIsFilterActive = false;
+  public uiIsCollapseActive = false;
+  public uiShallBarBeDisplayed = false;
+  public uiIsTextSearchActive = false;
+  public uiSearchText = '';
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -200,7 +204,7 @@ export class BeansPage implements OnDestroy {
   }
 
   public isCollapseActive() {
-    let collapsed: boolean = false;
+    let collapsed = false;
     if (this.bean_segment === 'open') {
       collapsed = this.openBeansCollapsed;
     } else if (this.bean_segment === 'archive') {
@@ -311,10 +315,10 @@ export class BeansPage implements OnDestroy {
   }
 
   public isFilterActive(): boolean {
-    let isFilterActive: boolean = false;
+    let isFilterActive = false;
 
     if (this.settings) {
-      let checkingFilter: IBeanPageFilter = this.manageFilterScope(
+      const checkingFilter: IBeanPageFilter = this.manageFilterScope(
         this.bean_segment,
       );
 
@@ -328,7 +332,7 @@ export class BeansPage implements OnDestroy {
   }
 
   public shallBarBeDisplayed() {
-    let shallBarDisplayed: boolean = false;
+    let shallBarDisplayed = false;
 
     if (this.bean_segment === 'open') {
       shallBarDisplayed = this.openBeansLength > 0;
@@ -880,7 +884,7 @@ export class BeansPage implements OnDestroy {
       filters,
     );
 
-    const groupedBeans: Array<Bean | BeanGroup> = [];
+    const groupedBeans: (Bean | BeanGroup)[] = [];
     const processedUuids = new Set<string>();
 
     for (const bean of filteredBeans) {
@@ -942,8 +946,8 @@ export class BeansPage implements OnDestroy {
     }
   }
 
-  private manageSearchTextScope(_type: string, _toLowerCase: boolean = true) {
-    let searchText: string = '';
+  private manageSearchTextScope(_type: string, _toLowerCase = true) {
+    let searchText = '';
     if (_type === 'open') {
       searchText = this.openBeansFilterText;
     } else if (_type === 'archive') {
