@@ -55,3 +55,9 @@ project(':capawesome-capacitor-file-picker').projectDir = new File('../node_modu
 
 include ':capgo-camera-preview'
 project(':capgo-camera-preview').projectDir = new File('../node_modules/@capgo/camera-preview/android')
+
+include ':capgo-capacitor-llm'
+project(':capgo-capacitor-llm').projectDir = new File('../node_modules/@capgo/capacitor-llm/android')
+
+include ':pantrist-capacitor-plugin-ml-kit-text-recognition'
+project(':pantrist-capacitor-plugin-ml-kit-text-recognition').projectDir = new File('../node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition/android')

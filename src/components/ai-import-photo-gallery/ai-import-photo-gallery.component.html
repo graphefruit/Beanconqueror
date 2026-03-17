@@ -1,14 +1,7 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="cancel()"
-                  (keydown.enter)="cancel()"
-                  aria-label="{{ 'CANCEL' | translate }}">
-        <ion-icon name="close" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>{{ 'AI_BEAN_IMPORT_MULTI' | translate }}</ion-title>
-  </ion-toolbar>
+  <app-header [title]="'AI_BEAN_IMPORT_MULTI' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="cancel()" />
+  </app-header>
 </ion-header>
 
 <ion-content class="ion-padding">
@@ -53,7 +46,8 @@
   <!-- Add photo button -->
   <ion-button
     expand="block"
-    fill="outline"
+    color="accent"
+    fill="solid"
     (click)="addPhoto()"
     (keydown.enter)="addPhoto()"
     [disabled]="photoPaths.length >= maxPhotos"
@@ -70,15 +64,19 @@
   </ion-item>
 </ion-content>
 
-<ion-footer>
-  <ion-toolbar>
-    <ion-button
-      expand="block"
-      (click)="startAnalysis()"
-      (keydown.enter)="startAnalysis()"
-      [disabled]="photoPaths.length === 0"
-      color="primary">
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+
+    <ion-button expand="block"
+                (click)="startAnalysis()"
+                (keydown.enter)="startAnalysis()"
+                [disabled]="photoPaths.length === 0"
+                color="accent">
       {{ 'AI_IMPORT_MULTI_START_ANALYSIS' | translate }}
     </ion-button>
-  </ion-toolbar>
+    </ion-col>
+</ion-row>
+
+
 </ion-footer>

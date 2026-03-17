@@ -10,12 +10,14 @@ import { FormsModule } from '@angular/forms';
 import {
   IonButton,
   IonButtons,
+  IonCol,
   IonContent,
   IonFooter,
   IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
+  IonRow,
   IonTitle,
   IonToggle,
   IonToolbar,
@@ -46,6 +48,8 @@ import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIImage } from '../../services/uiImage';
 import { UILog } from '../../services/uiLog';
 import { AsyncImageComponent } from '../async-image/async-image.component';
+import { HeaderDismissButtonComponent } from '../header/header-dismiss-button.component';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'ai-import-photo-gallery',
@@ -67,6 +71,10 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
     IonItem,
     IonLabel,
     IonToggle,
+    HeaderDismissButtonComponent,
+    HeaderComponent,
+    IonCol,
+    IonRow,
   ],
 })
 export class AiImportPhotoGalleryComponent {
@@ -182,10 +190,7 @@ export class AiImportPhotoGalleryComponent {
   private async addBase64ImageFromClipboard(): Promise<void> {
     const currentData = await Clipboard.read();
 
-    if (
-      !currentData.value ||
-      currentData.value.indexOf('data:image/') === -1
-    ) {
+    if (!currentData.value || currentData.value.indexOf('data:image/') === -1) {
       this.uiAlert.showMessage(this.translate.instant('NO_IMAGE_IN_CLIPBOARD'));
       return;
     }
