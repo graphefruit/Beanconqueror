@@ -6,6 +6,7 @@ import {
 } from '../../classes/devices';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
@@ -230,6 +231,11 @@ export interface ISettings {
   visualizer_username: string;
   visualizer_password: string;
   visualizer_upload_automatic: boolean;
+
+  cloud_ai_provider: CLOUD_AI_PROVIDER_ENUM;
+  cloud_ai_api_key: string;
+  cloud_ai_model: string;
+  cloud_ai_base_url: string;
 
   show_backup_issues: boolean;
 

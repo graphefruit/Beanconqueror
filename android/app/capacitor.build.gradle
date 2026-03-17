@@ -27,6 +27,8 @@ dependencies {
     implementation project(':capawesome-capacitor-android-edge-to-edge-support')
     implementation project(':capawesome-capacitor-file-picker')
     implementation project(':capgo-camera-preview')
+    implementation project(':capgo-capacitor-llm')
+    implementation project(':pantrist-capacitor-plugin-ml-kit-text-recognition')
     implementation "androidx.annotation:annotation:*"
     implementation "com.google.android.gms:play-services-fitness:21.1.0"
     implementation "com.google.android.gms:play-services-auth:20.2.0"

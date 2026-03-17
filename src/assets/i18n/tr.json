@@ -1587,5 +1587,23 @@
     "PAGE_SETTINGS_LANGUAGE_KOREAN": "Korece",
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovakça",
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japonca",
-    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Rusça"
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Rusça",
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": "Etiyopya, Kolombiya, Brezilya, Kenya, Guatemala, Kosta Rika, Honduras, Peru, Ruanda, Burundi, Tanzanya, Uganda, Yemen, Endonezya, Hindistan, Panama, El Salvador, Nikaragua, Meksika, Bolivya, Ekvador, Papua Yeni Gine, Hawaii, Jamaika",
+        "PROCESSING_METHODS": "Yıkanmış, Natural, Honey, Anaerobik, Karbonik Maserasyon, Wet-Hulled, Yarı Yıkanmış, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
+        "VARIETIES": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai",
+        "ROASTING_TYPE_FILTER_KEYWORDS": "Filtre kavurma, filtre için, açık kavurma, filtre kahve",
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": "Espresso kavurma, espresso için, koyu kavurma, espresso karışımı",
+        "ROASTING_TYPE_OMNI_KEYWORDS": "Omni kavurma, çok yönlü, tüm yöntemler, orta kavurma",
+        "DECAF_KEYWORDS": "Kafeinsiz, Decaf, Kafein içermez",
+        "BLEND_KEYWORDS": "Karışım, Blend, Ev karışımı",
+        "SINGLE_ORIGIN_KEYWORDS": "Single Origin, Tek köken, Micro Lot",
+        "PRODUCER_KEYWORDS": "Üretici, Üreten, Yetiştiren, Çiftçi, Aile, Kooperatif, Dernek, Küçük üreticiler",
+        "ROASTDATE_KEYWORDS": "Kavurma tarihi, Kavurulma tarihi, Kavurma, Taze kavrulmuş",
+        "ROASTER_KEYWORDS": "Kavurucu, Kahve, A.Ş., Ltd. Şti."
+    },
+    "AI_IMPORT_LANG_DETECT": {
+        "KEYWORDS": "kavrulmuş, hasat, asitlik, çekirdek, tat, taze",
+        "EXAMPLE": "Taze kavrulmuş, tek köken, tat notaları: meyve, çiçek"
+    }
 }
