@@ -1,6 +1,7 @@
 import { DecimalPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   EventEmitter,
   inject,
@@ -122,6 +123,7 @@ declare let window;
     IonCol,
     IonChip,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class BrewInformationComponent implements OnInit, OnChanges {
   private readonly uiSettingsStorage = inject(UISettingsStorage);

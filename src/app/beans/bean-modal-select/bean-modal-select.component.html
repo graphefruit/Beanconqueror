@@ -32,7 +32,7 @@
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (openBeans.length > 0) {
-            <ag-virtual-scroll #openScroll [items]='openBeans' [height]="'100vh'" min-row-height='60'>
+            <ag-virtual-scroll #openScroll [items]='openBeans' [height]="'100vh'" [min-row-height]="60">
               @for (bean of openScroll.items; track bean.config.uuid) {
                 <ion-item lines='none' tappable>
                   @if (multiple) {
@@ -71,7 +71,7 @@
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (frozenBeans.length > 0) {
-            <ag-virtual-scroll #frozenScroll [items]='frozenBeans' [height]="'100vh'" min-row-height='60'>
+            <ag-virtual-scroll #frozenScroll [items]='frozenBeans' [height]="'100vh'" [min-row-height]="60">
               @for (bean of frozenScroll.items; track bean.config.uuid) {
                 <ion-item lines='none' tappable>
                   @if (multiple) {
@@ -110,7 +110,7 @@
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar"></ng-container>
           @if (finishedBeans.length > 0) {
-            <ag-virtual-scroll #archivedScroll [items]='finishedBeans' [height]="'100vh'" min-row-height='60'>
+            <ag-virtual-scroll #archivedScroll [items]='finishedBeans' [height]="'100vh'" [min-row-height]="60">
               @for (bean of archivedScroll.items; track bean.config.uuid) {
                 <ion-item lines='none' tappable>
                   @if (multiple) {

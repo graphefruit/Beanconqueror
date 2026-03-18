@@ -28,7 +28,7 @@ export class MeticulousDevice extends PreparationDevice {
   private _isConnected: boolean = false;
   private metApi: Api = undefined;
 
-  private _profiles: Array<ProfileIdent> = [];
+  private _profiles: Array<Profile> = [];
 
   private serverURL: string = '';
 
@@ -209,7 +209,9 @@ export class MeticulousDevice extends PreparationDevice {
     try {
       if (this._profiles.length <= 0) {
         const profiles = await this.metApi.listProfiles();
-        this._profiles = profiles.data as Array<ProfileIdent>;
+
+        /** ListProfile is named as giving ProfileIntent back, but turns out it turns out <Profile> thats why we convert it **/
+        this._profiles = profiles.data as unknown as Array<Profile>;
       }
     } catch (ex) {}
   }

@@ -1,5 +1,6 @@
 import {
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   EventEmitter,
   Input,
@@ -20,6 +21,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   templateUrl: './photo-view.component.html',
   styleUrls: ['./photo-view.component.scss'],
   imports: [AsyncImageComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PhotoViewComponent implements OnInit {
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
