@@ -16,6 +16,7 @@ import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import { FormatDatePipe } from '../../../pipes/formatDate';
+import { PreparationSortFilterHelperService } from '../../../services/preparationSortFilterHelper/preparation-sort-filter-helper.service';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIHelper } from '../../../services/uiHelper';
@@ -43,6 +44,9 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiSettings = inject(UISettingsStorage);
+  private readonly preparationSortFilterHelperService = inject(
+    PreparationSortFilterHelperService,
+  );
 
   public static COMPONENT_ID: string = 'brew-choose-preparation-to-brew';
   public settings: Settings;
@@ -59,32 +63,25 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
   }
 
   public getPreparationMethods(): Array<Preparation> {
-    const allEntries = this.uiPreparationStorage
-      .getAllEntries()
-      .filter((e) => !e.finished);
+    const allEntries = this.uiPreparationStorage.getAllEntries();
+
     if (allEntries && allEntries.length > 0) {
-      let clonedEntries = this.uiHelper.cloneData(allEntries);
-      clonedEntries = clonedEntries.sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
+      const filterPreparations: Preparation[] =
+        this.preparationSortFilterHelperService.initializePreparationsView(
+          'open',
+          allEntries,
+          '',
+          this.settings.preparation_sort.OPEN,
+        );
 
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
-      return clonedEntries;
+      return filterPreparations;
     } else {
       return [];
     }
   }
 
   public choosePreparation(_prep: Preparation) {
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
         dismissed: true,
         preparation: _prep,
@@ -94,7 +91,7 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
     );
   }
   public dismiss(): void {
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
         dismissed: true,
       },

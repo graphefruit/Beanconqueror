@@ -1,0 +1,5 @@
+export enum PREPARATION_SORT_AFTER {
+  UNKOWN = 'UNKOWN',
+  NAME = 'NAME',
+  TYPE = 'TYPE',
+}
