@@ -121,6 +121,13 @@ export class BrewPage implements OnInit, OnDestroy {
   public uiShallBarBeDisplayed = false;
   public uiSearchText = '';
 
+  private savedScrollPositions: {
+    open: number;
+    archive: number;
+    openHeights: number[];
+    archiveHeights: number[];
+  } = { open: 0, archive: 0, openHeights: [], archiveHeights: [] };
+
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -140,7 +147,11 @@ export class BrewPage implements OnInit, OnDestroy {
 
     this.brewStorageChangeSubscription = this.uiBrewStorage
       .attachOnEvent()
-      .subscribe((_val) => {
+      .subscribe((val: any) => {
+        // Find if this change emitted a brew we can focus
+        if (val && val.obj && val.obj.config && val.obj.config.uuid) {
+          this.lastInteractedBrewId = val.obj.config.uuid;
+        }
         // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
         this.loadBrews();
       });
@@ -152,6 +163,7 @@ export class BrewPage implements OnInit, OnDestroy {
     } else {
       this.uiSearchText = this.archivedBrewFilterText;
     }
+    this.saveScrollPositions();
     this.retriggerScroll();
     this.setUIParams();
   }
@@ -163,14 +175,38 @@ export class BrewPage implements OnInit, OnDestroy {
     this.uiShallBarBeDisplayed = this.shallBarBeDisplayed();
   }
 
+  private retriggerScrollTimeout: any;
+
   private retriggerScroll() {
-    setTimeout(() => {
+    if (this.retriggerScrollTimeout) {
+      clearTimeout(this.retriggerScrollTimeout);
+    }
+    this.retriggerScrollTimeout = setTimeout(() => {
       const el = this.brewContent.nativeElement;
+
+      if (!el || el.offsetHeight === 0) {
+        return; // Page is hidden, avoid clearing state
+      }
+
       let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
+      if (this.brew_segment === 'open') {
         scrollComponent = this.openScroll;
+        if (this.savedScrollPositions.openHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.openHeights,
+          ];
+        }
       } else {
         scrollComponent = this.archivedScroll;
+        if (this.savedScrollPositions.archiveHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.archiveHeights,
+          ];
+        }
+      }
+
+      if (!scrollComponent) {
+        return;
       }
 
       scrollComponent.el.style.height =
@@ -187,10 +223,96 @@ export class BrewPage implements OnInit, OnDestroy {
       if (scrollComponent.items.length === 0) {
         scrollComponent.refreshData();
       }
+
+      let targetScrollTop = -1;
+
+      if (this.lastInteractedBrewId) {
+        let index = -1;
+        if (this.brew_segment === 'open') {
+          index = this.openBrewsView.findIndex(
+            (b) => b.config.uuid === this.lastInteractedBrewId,
+          );
+        } else {
+          index = this.archiveBrewsView.findIndex(
+            (b) => b.config.uuid === this.lastInteractedBrewId,
+          );
+        }
+
+        if (index > -1) {
+          const rowHeight = this.uiIsCollapseActive ? 86 : 180;
+          const heights = (scrollComponent as any).previousItemsHeight;
+
+          let exactOffset = 0;
+          if (heights && heights.length > 0) {
+            for (let i = 0; i < index; i++) {
+              exactOffset += heights[i] ? heights[i] : rowHeight;
+            }
+          } else {
+            exactOffset = index * rowHeight;
+          }
+
+          const viewportTop = this.savedScrollPositions[this.brew_segment];
+          const viewportBottom = viewportTop + el.offsetHeight;
+
+          // If the element is already comfortably on-screen, DO NOT force it to the top! Preserve original scroll!
+          if (
+            exactOffset >= viewportTop &&
+            exactOffset < viewportBottom - rowHeight
+          ) {
+            targetScrollTop = viewportTop;
+          } else {
+            targetScrollTop = exactOffset;
+          }
+        }
+      }
+
+      if (
+        targetScrollTop === -1 &&
+        this.savedScrollPositions[this.brew_segment] > 0
+      ) {
+        targetScrollTop = this.savedScrollPositions[this.brew_segment];
+      }
+
+      if (targetScrollTop >= 0) {
+        const contentHeightEl = scrollComponent.el.querySelector(
+          '.content-height',
+        ) as HTMLElement;
+        if (contentHeightEl) {
+          const h = (scrollComponent as any).previousItemsHeight;
+          const rH = this.uiIsCollapseActive ? 86 : 180;
+          let cHeight = 0;
+          if (h && h.length > 0) {
+            cHeight = h.reduce((sum, val) => sum + (val ? val : rH), 0);
+          } else {
+            cHeight =
+              ((scrollComponent as any).originalItems?.length || 0) * rH;
+          }
+          contentHeightEl.style.height = cHeight + 'px';
+        }
+        scrollComponent.el.scrollTop = targetScrollTop;
+      }
+
+      // Preserve UUID to pass into trailing block
+      const snapToId = this.lastInteractedBrewId;
+      if (snapToId) {
+        this.lastInteractedBrewId = null;
+      }
+
       setTimeout(() => {
         /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
         const elScroll = scrollComponent.el;
         elScroll.dispatchEvent(new Event('scroll'));
+
+        // Target the absolute DOM element coordinates if virtual-scroll calculation drifted slightly
+        if (snapToId) {
+          setTimeout(() => {
+            const domNode = document.getElementById('brew-' + snapToId);
+            if (domNode) {
+              // Nearest block to avoid aggressive snapping if item is already in view
+              domNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }, 50);
+        }
       }, 15);
     }, 150);
   }
@@ -206,15 +328,43 @@ export class BrewPage implements OnInit, OnDestroy {
     this.loadBrews();
   }
 
-  public async brewAction(): Promise<void> {
+  private lastInteractedBrewId: string = null;
+
+  public async brewAction(event?: any): Promise<void> {
+    if (event && event.length > 1) {
+      const action = event[0];
+      const brew = event[1];
+      if (brew && brew.config && brew.config.uuid) {
+        this.lastInteractedBrewId = brew.config.uuid;
+      }
+    }
     this.loadBrews();
   }
 
   public loadBrews(): void {
+    this.saveScrollPositions();
+
     this.__initializeBrews();
     this.retriggerScroll();
     this.setUIParams();
     this.changeDetectorRef.detectChanges();
+  }
+
+  private saveScrollPositions(): void {
+    if (this.openScroll) {
+      this.savedScrollPositions.open = this.openScroll.currentScroll;
+      const hOpen = (this.openScroll as any).previousItemsHeight;
+      if (hOpen && hOpen.length > 0 && hOpen.some((h) => h !== null)) {
+        this.savedScrollPositions.openHeights = [...hOpen];
+      }
+    }
+    if (this.archivedScroll) {
+      this.savedScrollPositions.archive = this.archivedScroll.currentScroll;
+      const hArc = (this.archivedScroll as any).previousItemsHeight;
+      if (hArc && hArc.length > 0 && hArc.some((h) => h !== null)) {
+        this.savedScrollPositions.archiveHeights = [...hArc];
+      }
+    }
   }
 
   private __initializeBrews(): void {

@@ -165,6 +165,22 @@ export class BeansPage implements OnDestroy {
   public uiIsTextSearchActive = false;
   public uiSearchText = '';
 
+  private savedScrollPositions: {
+    open: number;
+    archive: number;
+    frozen: number;
+    openHeights: number[];
+    archiveHeights: number[];
+    frozenHeights: number[];
+  } = {
+    open: 0,
+    archive: 0,
+    frozen: 0,
+    openHeights: [],
+    archiveHeights: [],
+    frozenHeights: [],
+  };
+
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBeansSort = this.settings.bean_sort.ARCHIVED;
@@ -182,7 +198,11 @@ export class BeansPage implements OnDestroy {
 
     this.beanStorageChangeSubscription = this.uiBeanStorage
       .attachOnEvent()
-      .subscribe((_val) => {
+      .subscribe((val: any) => {
+        // Find if this change emitted a bean we can focus
+        if (val && val.obj && val.obj.config && val.obj.config.uuid) {
+          this.lastInteractedBeanId = val.obj.config.uuid;
+        }
         // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
         this.loadBeans();
       });
@@ -239,19 +259,55 @@ export class BeansPage implements OnDestroy {
   }
 
   public loadBeans(): void {
+    this.saveScrollPositions();
+
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
     this.setUIParams();
   }
 
+  private saveScrollPositions(): void {
+    if (this.openScroll) {
+      this.savedScrollPositions.open = this.openScroll.currentScroll;
+      const hOpen = (this.openScroll as any).previousItemsHeight;
+      if (hOpen && hOpen.length > 0 && hOpen.some((h) => h !== null)) {
+        this.savedScrollPositions.openHeights = [...hOpen];
+      }
+    }
+    if (this.archivedScroll) {
+      this.savedScrollPositions.archive = this.archivedScroll.currentScroll;
+      const hArc = (this.archivedScroll as any).previousItemsHeight;
+      if (hArc && hArc.length > 0 && hArc.some((h) => h !== null)) {
+        this.savedScrollPositions.archiveHeights = [...hArc];
+      }
+    }
+    if (this.frozenScroll) {
+      this.savedScrollPositions.frozen = this.frozenScroll.currentScroll;
+      const hFroz = (this.frozenScroll as any).previousItemsHeight;
+      if (hFroz && hFroz.length > 0 && hFroz.some((h) => h !== null)) {
+        this.savedScrollPositions.frozenHeights = [...hFroz];
+      }
+    }
+  }
+
   public segmentChanged() {
     this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
+    this.saveScrollPositions();
     this.retriggerScroll();
     this.setUIParams();
   }
 
-  public async beanAction(): Promise<void> {
+  private lastInteractedBeanId: string = null;
+
+  public async beanAction(event?: any): Promise<void> {
+    if (event && event.length > 1) {
+      const action = event[0];
+      const bean = event[1];
+      if (bean && bean.config && bean.config.uuid) {
+        this.lastInteractedBeanId = bean.config.uuid;
+      }
+    }
     this.loadBeans();
   }
 
@@ -800,16 +856,45 @@ export class BeansPage implements OnDestroy {
     );
   }
 
+  private retriggerScrollTimeout: any;
+
   private retriggerScroll() {
-    setTimeout(() => {
+    if (this.retriggerScrollTimeout) {
+      clearTimeout(this.retriggerScrollTimeout);
+    }
+    this.retriggerScrollTimeout = setTimeout(() => {
       const el = this.beanContent.nativeElement;
+
+      if (!el || el.offsetHeight === 0) {
+        return; // Page is hidden, avoid clearing state
+      }
+
       let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
+      if (this.bean_segment === 'open') {
         scrollComponent = this.openScroll;
-      } else if (this.archivedScroll !== undefined) {
+        if (this.savedScrollPositions.openHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.openHeights,
+          ];
+        }
+      } else if (this.bean_segment === 'archive') {
         scrollComponent = this.archivedScroll;
-      } else if (this.frozenScroll !== undefined) {
+        if (this.savedScrollPositions.archiveHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.archiveHeights,
+          ];
+        }
+      } else if (this.bean_segment === 'frozen') {
         scrollComponent = this.frozenScroll;
+        if (this.savedScrollPositions.frozenHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.frozenHeights,
+          ];
+        }
+      }
+
+      if (!scrollComponent) {
+        return;
       }
 
       scrollComponent.el.style.height =
@@ -826,10 +911,103 @@ export class BeansPage implements OnDestroy {
         scrollComponent.refreshData();
       }
 
+      let targetScrollTop = -1;
+      let snapToDomId: string = null;
+
+      if (this.lastInteractedBeanId) {
+        let index = -1;
+        const viewArray =
+          this.bean_segment === 'open'
+            ? this.openBeans
+            : this.bean_segment === 'archive'
+              ? this.finishedBeans
+              : this.frozenBeans;
+
+        index = viewArray.findIndex((item) => {
+          if (item['beans']) {
+            return item['beans'].some(
+              (b) => b.config.uuid === this.lastInteractedBeanId,
+            );
+          } else {
+            return item['config']?.uuid === this.lastInteractedBeanId;
+          }
+        });
+
+        if (index > -1) {
+          const item = viewArray[index];
+          if (item['beans']) {
+            snapToDomId = 'bean-group-' + item['frozenGroupId'];
+          } else {
+            snapToDomId = 'bean-' + item['config'].uuid;
+          }
+
+          const rowHeight = this.uiIsCollapseActive ? 60 : 210;
+          const heights = (scrollComponent as any).previousItemsHeight;
+
+          let exactOffset = 0;
+          if (heights && heights.length > 0) {
+            for (let i = 0; i < index; i++) {
+              exactOffset += heights[i] ? heights[i] : rowHeight;
+            }
+          } else {
+            exactOffset = index * rowHeight;
+          }
+
+          const viewportTop = this.savedScrollPositions[this.bean_segment];
+          const viewportBottom = viewportTop + el.offsetHeight;
+
+          // Do not aggressively force an element to the uppermost viewport bounds if it is reasonably contained on-screen!
+          if (
+            exactOffset >= viewportTop &&
+            exactOffset < viewportBottom - rowHeight
+          ) {
+            targetScrollTop = viewportTop;
+          } else {
+            targetScrollTop = exactOffset;
+          }
+        }
+        this.lastInteractedBeanId = null;
+      }
+
+      if (
+        targetScrollTop === -1 &&
+        this.savedScrollPositions[this.bean_segment] > 0
+      ) {
+        targetScrollTop = this.savedScrollPositions[this.bean_segment];
+      }
+
+      if (targetScrollTop >= 0) {
+        const contentHeightEl = scrollComponent.el.querySelector(
+          '.content-height',
+        ) as HTMLElement;
+        if (contentHeightEl) {
+          const h = (scrollComponent as any).previousItemsHeight;
+          const rH = this.uiIsCollapseActive ? 60 : 210;
+          let cHeight = 0;
+          if (h && h.length > 0) {
+            cHeight = h.reduce((sum, val) => sum + (val ? val : rH), 0);
+          } else {
+            cHeight =
+              ((scrollComponent as any).originalItems?.length || 0) * rH;
+          }
+          contentHeightEl.style.height = cHeight + 'px';
+        }
+        scrollComponent.el.scrollTop = targetScrollTop;
+      }
+
       setTimeout(() => {
-        /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
         const elScroll = scrollComponent.el;
         elScroll.dispatchEvent(new Event('scroll'));
+
+        // Target the absolute DOM element coordinates
+        if (snapToDomId) {
+          setTimeout(() => {
+            const domNode = document.getElementById(snapToDomId);
+            if (domNode) {
+              domNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }, 50);
+        }
       }, 15);
     }, 250);
   }
