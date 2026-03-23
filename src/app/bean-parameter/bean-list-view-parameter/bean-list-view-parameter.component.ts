@@ -12,6 +12,7 @@ import {
   IonLabel,
   IonSegment,
   IonSegmentButton,
+  IonTitle,
 } from '@ionic/angular/standalone';
 
 import { TranslatePipe } from '@ngx-translate/core';
@@ -40,6 +41,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonCheckbox,
     IonCardContent,
     HeaderComponent,
+    IonTitle,
   ],
 })
 export class BeanListViewParameterComponent {
@@ -49,7 +51,7 @@ export class BeanListViewParameterComponent {
   public bean_segment = 'general';
   public debounceChanges: Subject<string> = new Subject<string>();
   public data: Settings;
-  private numerator: number = 0;
+  private numerator = 0;
 
   constructor() {
     this.debounceChanges

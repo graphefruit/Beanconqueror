@@ -124,10 +124,7 @@ export class WaterInformationCardComponent implements OnInit {
         await this.edit();
         break;
       case WATER_ACTION.DELETE:
-        try {
-          await this.delete();
-        } catch (ex) {}
-        await this.uiAlert.hideLoadingSpinner();
+        await this.delete();
         break;
       case WATER_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -188,27 +185,23 @@ export class WaterInformationCardComponent implements OnInit {
     await this.uiImage.viewPhotos(this.water);
   }
 
-  public async delete(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.uiAlert
-        .showConfirm('DELETE_WATER_QUESTION', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            await this.uiAlert.showLoadingSpinner();
-            // Yes
-            this.uiAnalytics.trackEvent(
-              WATER_TRACKING.TITLE,
-              WATER_TRACKING.ACTIONS.DELETE,
-            );
-            await this.__delete();
-            this.uiToast.showInfoToast('TOAST_WATER_DELETED_SUCCESSFULLY');
-            resolve(undefined);
-          },
-          () => {
-            // No
-            reject();
-          },
-        );
+  public async delete(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_WATER_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.withLoadingSpinner(async () => {
+      this.uiAnalytics.trackEvent(
+        WATER_TRACKING.TITLE,
+        WATER_TRACKING.ACTIONS.DELETE,
+      );
+      await this.__delete();
+      this.uiToast.showInfoToast('TOAST_WATER_DELETED_SUCCESSFULLY');
     });
   }
 

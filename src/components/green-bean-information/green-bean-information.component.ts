@@ -157,10 +157,7 @@ export class GreenBeanInformationComponent implements OnInit {
         await this.editBean();
         break;
       case GREEN_BEAN_ACTION.DELETE:
-        try {
-          await this.deleteBean();
-        } catch (ex) {}
-        await this.uiAlert.hideLoadingSpinner();
+        await this.deleteBean();
         break;
       case GREEN_BEAN_ACTION.BEANS_CONSUMED:
         await this.beansConsumed();
@@ -255,28 +252,24 @@ export class GreenBeanInformationComponent implements OnInit {
     await this.uiGreenBeanHelper.editGreenBean(this.greenBean);
   }
 
-  public async deleteBean(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.uiAlert
-        .showConfirm('DELETE_GREEN_BEAN_QUESTION', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            await this.uiAlert.showLoadingSpinner();
-            // Yes
-            this.uiAnalytics.trackEvent(
-              GREEN_BEAN_TRACKING.TITLE,
-              GREEN_BEAN_TRACKING.ACTIONS.DELETE,
-            );
-            await this.__deleteBean();
-            this.uiToast.showInfoToast('TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY');
-            await this.resetSettings();
-            resolve(undefined);
-          },
-          () => {
-            // No
-            reject();
-          },
-        );
+  public async deleteBean(): Promise<void> {
+    const choice = await this.uiAlert.showConfirm(
+      'DELETE_GREEN_BEAN_QUESTION',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.uiAlert.withLoadingSpinner(async () => {
+      this.uiAnalytics.trackEvent(
+        GREEN_BEAN_TRACKING.TITLE,
+        GREEN_BEAN_TRACKING.ACTIONS.DELETE,
+      );
+      await this.__deleteBean();
+      this.uiToast.showInfoToast('TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY');
+      await this.resetSettings();
     });
   }
 

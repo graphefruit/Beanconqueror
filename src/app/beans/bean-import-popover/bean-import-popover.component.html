@@ -1,0 +1,27 @@
+<ion-header translucent>
+</ion-header>
+<ion-content>
+  <ion-list lines="full">
+    <ion-item (click)="choose(getStaticActions().QR_SCAN)" (keydown.enter)="choose(getStaticActions().QR_SCAN)" button tappable>
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      <span>{{"SCAN_BEAN_QR" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().NFC_SCAN)" (keydown.enter)="choose(getStaticActions().NFC_SCAN)" button tappable>
+      <ion-icon name="beanconqueror-nfc-scan" slot="start"></ion-icon>
+      <span>{{"SCAN_BEAN_NFC" | translate}}</span>
+    </ion-item>
+    @if (isAiImportAvailable()) {
+      <ion-item (click)="choose(getStaticActions().AI_IMPORT)" (keydown.enter)="choose(getStaticActions().AI_IMPORT)" button tappable>
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        <span>{{"AI_BEAN_IMPORT" | translate}}</span>
+      </ion-item>
+      <ion-item (click)="choose(getStaticActions().AI_IMPORT_MULTI)" (keydown.enter)="choose(getStaticActions().AI_IMPORT_MULTI)" button tappable>
+        <ion-icon name="images-outline" slot="start"></ion-icon>
+        <ion-label>
+          <span>{{"AI_BEAN_IMPORT_MULTI" | translate}}</span>
+          <p>{{"AI_BEAN_IMPORT_MULTI_HINT" | translate}}</p>
+        </ion-label>
+      </ion-item>
+    }
+  </ion-list>
+</ion-content>

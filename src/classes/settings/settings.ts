@@ -5,6 +5,7 @@ import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType'
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -244,6 +245,11 @@ export class Settings implements ISettings {
   public visualizer_username: string;
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
+
+  public cloud_ai_provider: CLOUD_AI_PROVIDER_ENUM;
+  public cloud_ai_api_key: string;
+  public cloud_ai_model: string;
+  public cloud_ai_base_url: string;
 
   public show_backup_issues: boolean;
 
@@ -582,6 +588,11 @@ export class Settings implements ISettings {
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
 
+    this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+    this.cloud_ai_api_key = '';
+    this.cloud_ai_model = '';
+    this.cloud_ai_base_url = '';
+
     this.show_backup_issues = true;
 
     this.text_to_speech_active = false;
@@ -642,6 +653,27 @@ export class Settings implements ISettings {
       this.bean_visible_list_view_parameters,
       settingsObj.bean_visible_list_view_parameters,
     );
+
+    if (settingsObj.cloud_ai_provider === undefined) {
+      this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+    } else {
+      this.cloud_ai_provider = settingsObj.cloud_ai_provider;
+    }
+    if (settingsObj.cloud_ai_api_key === undefined) {
+      this.cloud_ai_api_key = '';
+    } else {
+      this.cloud_ai_api_key = settingsObj.cloud_ai_api_key;
+    }
+    if (settingsObj.cloud_ai_model === undefined) {
+      this.cloud_ai_model = '';
+    } else {
+      this.cloud_ai_model = settingsObj.cloud_ai_model;
+    }
+    if (settingsObj.cloud_ai_base_url === undefined) {
+      this.cloud_ai_base_url = '';
+    } else {
+      this.cloud_ai_base_url = settingsObj.cloud_ai_base_url;
+    }
   }
 
   public resetBeanFilter() {

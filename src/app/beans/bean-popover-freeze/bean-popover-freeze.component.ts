@@ -325,15 +325,15 @@ export class BeanPopoverFreezeComponent implements OnInit {
         await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
       } else {
         await this.uiAlert.hideLoadingSpinner();
-        try {
-          await this.uiAlert.showConfirm(
-            'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
-            'CARE',
-            true,
-          );
+        const choice = await this.uiAlert.showConfirm(
+          'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
+          'CARE',
+          true,
+        );
+        if (choice === 'YES') {
           //The bag doesn't have any brews, so just delete it.
           await this.uiBeanStorage.removeByUUID(this.bean.config.uuid);
-        } catch (ex) {
+        } else {
           //Reset the weight to zero atleast.
           this.bean.weight = 0;
           if (this.bean.bean_roast_information.green_bean_weight > 0) {

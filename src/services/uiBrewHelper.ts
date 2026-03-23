@@ -202,15 +202,14 @@ export class UIBrewHelper {
 
   public async checkIfBeanPackageIsConsumedTriggerMessageAndArchive(_bean) {
     if (this.checkIfBeanPackageIsConsumed(_bean)) {
-      try {
-        await this.uiAlert.showConfirm(
-          'BEAN_LOOKS_LIKE_CONSUMED',
-          undefined,
-          true,
-        );
-        // He said yes
+      const choice = await this.uiAlert.showConfirm(
+        'BEAN_LOOKS_LIKE_CONSUMED',
+        undefined,
+        true,
+      );
+      if (choice === 'YES') {
         await UIBeanHelper.getInstance().archiveBeanWithRatingQuestion(_bean);
-      } catch (ex) {}
+      }
     }
   }
 

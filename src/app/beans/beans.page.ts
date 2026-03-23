@@ -11,8 +11,10 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonButton,
   IonContent,
   IonHeader,
+  IonIcon,
   IonLabel,
   IonMenuButton,
   IonSearchbar,
@@ -29,27 +31,36 @@ import { Subscription } from 'rxjs';
 
 import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
+import { AiImportPhotoGalleryComponent } from '../../components/ai-import-photo-gallery/ai-import-photo-gallery.component';
 import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
+import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
+import { AIBeanImportService } from '../../services/aiBeanImport/ai-bean-import.service';
+import { CloudAIBeanImportService } from '../../services/aiBeanImport/cloud-ai-bean-import.service';
 import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
 import { NfcService } from '../../services/nfcService/nfc-service.service';
 import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
+import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIImage } from '../../services/uiImage';
 import { UILog } from '../../services/uiLog';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BeanImportPopoverComponent } from './bean-import-popover/bean-import-popover.component';
 import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
+import { BeansAddComponent } from './beans-add/beans-add.component';
 
 @Component({
   selector: 'beans',
@@ -70,6 +81,8 @@ import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.com
     IonSegmentButton,
     IonLabel,
     IonSearchbar,
+    IonIcon,
+    IonButton,
   ],
 })
 export class BeansPage implements OnDestroy {
@@ -86,17 +99,21 @@ export class BeansPage implements OnDestroy {
   private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
   private readonly nfcService = inject(NfcService);
   private readonly uiImage = inject(UIImage);
+  private readonly aiBeanImportService = inject(AIBeanImportService);
+  private readonly cloudAiBeanImportService = inject(CloudAIBeanImportService);
+  private readonly uiAlert = inject(UIAlert);
+  private readonly uiFileHelper = inject(UIFileHelper);
 
-  public beans: Array<Bean> = [];
+  public beans: Bean[] = [];
 
   public settings: Settings;
 
-  public openBeans: Array<Bean | BeanGroup> = [];
-  public finishedBeans: Array<Bean | BeanGroup> = [];
-  public frozenBeans: Array<Bean | BeanGroup> = [];
-  public finishedBeansLength: number = 0;
-  public openBeansLength: number = 0;
-  public frozenBeansLength: number = 0;
+  public openBeans: (Bean | BeanGroup)[] = [];
+  public finishedBeans: (Bean | BeanGroup)[] = [];
+  public frozenBeans: (Bean | BeanGroup)[] = [];
+  public finishedBeansLength = 0;
+  public openBeansLength = 0;
+  public frozenBeansLength = 0;
 
   public openBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -126,13 +143,13 @@ export class BeansPage implements OnDestroy {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  public openBeansCollapsed: boolean = false;
-  public archivedBeansCollapsed: boolean = false;
-  public frozenBeansCollapsed: boolean = false;
+  public openBeansCollapsed = false;
+  public archivedBeansCollapsed = false;
+  public frozenBeansCollapsed = false;
 
-  public archivedBeansFilterText: string = '';
-  public openBeansFilterText: string = '';
-  public frozenBeansFilterText: string = '';
+  public archivedBeansFilterText = '';
+  public openBeansFilterText = '';
+  public frozenBeansFilterText = '';
 
   public archivedBeansFilter: IBeanPageFilter;
   public openBeansFilter: IBeanPageFilter;
@@ -141,12 +158,12 @@ export class BeansPage implements OnDestroy {
   private beanStorageChangeSubscription: Subscription;
   public segmentScrollHeight: string = undefined;
 
-  public uiIsSortActive: boolean = false;
-  public uiIsFilterActive: boolean = false;
-  public uiIsCollapseActive: boolean = false;
-  public uiShallBarBeDisplayed: boolean = false;
-  public uiIsTextSearchActive: boolean = false;
-  public uiSearchText: string = '';
+  public uiIsSortActive = false;
+  public uiIsFilterActive = false;
+  public uiIsCollapseActive = false;
+  public uiShallBarBeDisplayed = false;
+  public uiIsTextSearchActive = false;
+  public uiSearchText = '';
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -187,7 +204,7 @@ export class BeansPage implements OnDestroy {
   }
 
   public isCollapseActive() {
-    let collapsed: boolean = false;
+    let collapsed = false;
     if (this.bean_segment === 'open') {
       collapsed = this.openBeansCollapsed;
     } else if (this.bean_segment === 'archive') {
@@ -298,10 +315,10 @@ export class BeansPage implements OnDestroy {
   }
 
   public isFilterActive(): boolean {
-    let isFilterActive: boolean = false;
+    let isFilterActive = false;
 
     if (this.settings) {
-      let checkingFilter: IBeanPageFilter = this.manageFilterScope(
+      const checkingFilter: IBeanPageFilter = this.manageFilterScope(
         this.bean_segment,
       );
 
@@ -315,7 +332,7 @@ export class BeansPage implements OnDestroy {
   }
 
   public shallBarBeDisplayed() {
-    let shallBarDisplayed: boolean = false;
+    let shallBarDisplayed = false;
 
     if (this.bean_segment === 'open') {
       shallBarDisplayed = this.openBeansLength > 0;
@@ -409,6 +426,380 @@ export class BeansPage implements OnDestroy {
     await this.add();
   }
 
+  public async openImportMenu() {
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.IMPORT_MENU_OPENED,
+    );
+    const popover = await this.modalController.create({
+      component: BeanImportPopoverComponent,
+      componentProps: {},
+      id: BeanImportPopoverComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.45],
+      initialBreakpoint: 0.45,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
+    if (data.role !== undefined) {
+      switch (data.role as BEAN_IMPORT_ACTION) {
+        case BEAN_IMPORT_ACTION.QR_SCAN:
+          await this.scanBean();
+          break;
+        case BEAN_IMPORT_ACTION.NFC_SCAN:
+          await this.scanNFC();
+          break;
+        case BEAN_IMPORT_ACTION.AI_IMPORT:
+          await this.aiImportBean();
+          break;
+        case BEAN_IMPORT_ACTION.AI_IMPORT_MULTI:
+          await this.aiImportBeanMulti();
+          break;
+      }
+    }
+  }
+
+  public async aiImportBean() {
+    if (!this.platform.is('capacitor')) {
+      return;
+    }
+
+    if (this.isCloudProvider()) {
+      await this.aiImportBeanCloud();
+    } else {
+      await this.aiImportBeanLocal();
+    }
+
+    this.loadBeans();
+  }
+
+  private async aiImportBeanLocal() {
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
+      );
+
+      const readiness = await this.aiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      const bean = await this.aiBeanImportService.captureAndExtractBeanData();
+
+      if (bean !== null) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
+        );
+
+        const modal = await this.modalController.create({
+          component: BeansAddComponent,
+          id: BeansAddComponent.COMPONENT_ID,
+          componentProps: { bean_template: bean },
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('AI bean import error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
+      );
+      await this.uiAlert.showMessage(
+        errorMessage,
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
+    }
+  }
+
+  private async aiImportBeanCloud() {
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_START,
+      );
+
+      const readiness = this.cloudAiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      const bean =
+        await this.cloudAiBeanImportService.captureAndExtractBeanData();
+
+      if (bean !== null) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_SUCCESS,
+        );
+
+        const modal = await this.modalController.create({
+          component: BeansAddComponent,
+          id: BeansAddComponent.COMPONENT_ID,
+          componentProps: { bean_template: bean },
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('Cloud AI bean import error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,
+      );
+      await this.uiAlert.showMessage(
+        errorMessage,
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
+    }
+  }
+
+  public async aiImportBeanMulti() {
+    if (!this.platform.is('capacitor')) {
+      return;
+    }
+
+    if (this.isCloudProvider()) {
+      await this.aiImportBeanMultiCloud();
+    } else {
+      await this.aiImportBeanMultiLocal();
+    }
+
+    this.loadBeans();
+  }
+
+  private async aiImportBeanMultiLocal() {
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
+      );
+
+      const readiness = await this.aiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      const modal = await this.modalController.create({
+        component: AiImportPhotoGalleryComponent,
+        id: AiImportPhotoGalleryComponent.COMPONENT_ID,
+      });
+      await modal.present();
+
+      const { data, role } = await modal.onDidDismiss();
+
+      if (
+        role === 'cancel' ||
+        !data ||
+        !data.photoPaths ||
+        data.photoPaths.length === 0
+      ) {
+        return;
+      }
+
+      await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
+      try {
+        const result = await this.aiBeanImportService.extractBeanDataFromImages(
+          data.photoPaths,
+          data.attachPhotos,
+        );
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (result && result.bean) {
+          this.uiAnalytics.trackEvent(
+            BEAN_TRACKING.TITLE,
+            BEAN_TRACKING.ACTIONS.AI_IMPORT_SUCCESS,
+          );
+
+          if (result.attachmentPaths) {
+            result.bean.attachments = result.attachmentPaths;
+          }
+
+          const addModal = await this.modalController.create({
+            component: BeansAddComponent,
+            id: BeansAddComponent.COMPONENT_ID,
+            componentProps: { bean_template: result.bean },
+          });
+          await addModal.present();
+          await addModal.onWillDismiss();
+        }
+      } catch (error: any) {
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (!data.attachPhotos) {
+          for (const path of data.photoPaths) {
+            try {
+              await this.uiFileHelper.deleteInternalFile(path);
+            } catch (e) {
+              // Ignore cleanup errors
+            }
+          }
+        }
+
+        throw error;
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('AI bean import (multi) error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_FAILED,
+      );
+      await this.uiAlert.showMessage(
+        errorMessage,
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
+    }
+  }
+
+  private async aiImportBeanMultiCloud() {
+    try {
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_START,
+      );
+
+      const readiness = this.cloudAiBeanImportService.checkReadiness();
+      if (!readiness.ready) {
+        this.uiAnalytics.trackEvent(
+          BEAN_TRACKING.TITLE,
+          BEAN_TRACKING.ACTIONS.AI_IMPORT_NOT_AVAILABLE,
+        );
+        await this.uiAlert.showMessage(
+          readiness.message,
+          'AI_IMPORT_NOT_AVAILABLE',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      const modal = await this.modalController.create({
+        component: AiImportPhotoGalleryComponent,
+        id: AiImportPhotoGalleryComponent.COMPONENT_ID,
+      });
+      await modal.present();
+
+      const { data, role } = await modal.onDidDismiss();
+
+      if (
+        role === 'cancel' ||
+        !data ||
+        !data.photoPaths ||
+        data.photoPaths.length === 0
+      ) {
+        return;
+      }
+
+      await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
+      try {
+        const result =
+          await this.cloudAiBeanImportService.extractBeanDataFromImages(
+            data.photoPaths,
+            data.attachPhotos,
+          );
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (result && result.bean) {
+          this.uiAnalytics.trackEvent(
+            BEAN_TRACKING.TITLE,
+            BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_SUCCESS,
+          );
+
+          if (result.attachmentPaths) {
+            result.bean.attachments = result.attachmentPaths;
+          }
+
+          const addModal = await this.modalController.create({
+            component: BeansAddComponent,
+            id: BeansAddComponent.COMPONENT_ID,
+            componentProps: { bean_template: result.bean },
+          });
+          await addModal.present();
+          await addModal.onWillDismiss();
+        }
+      } catch (error: any) {
+        await this.uiAlert.hideLoadingSpinner();
+
+        if (!data.attachPhotos) {
+          for (const path of data.photoPaths) {
+            try {
+              await this.uiFileHelper.deleteInternalFile(path);
+            } catch (e) {
+              // Ignore cleanup errors
+            }
+          }
+        }
+
+        throw error;
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.message || error?.toString() || 'Unknown error';
+      this.uiLog.warn('Cloud AI bean import (multi) error: ' + errorMessage);
+      this.uiAnalytics.trackEvent(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,
+      );
+      await this.uiAlert.showMessage(
+        errorMessage,
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
+    }
+  }
+
+  private isCloudProvider(): boolean {
+    const settings = this.uiSettingsStorage.getSettings();
+    return (
+      settings.cloud_ai_provider !== CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+    );
+  }
+
   private retriggerScroll() {
     setTimeout(() => {
       const el = this.beanContent.nativeElement;
@@ -493,7 +884,7 @@ export class BeansPage implements OnDestroy {
       filters,
     );
 
-    const groupedBeans: Array<Bean | BeanGroup> = [];
+    const groupedBeans: (Bean | BeanGroup)[] = [];
     const processedUuids = new Set<string>();
 
     for (const bean of filteredBeans) {
@@ -555,8 +946,8 @@ export class BeansPage implements OnDestroy {
     }
   }
 
-  private manageSearchTextScope(_type: string, _toLowerCase: boolean = true) {
-    let searchText: string = '';
+  private manageSearchTextScope(_type: string, _toLowerCase = true) {
+    let searchText = '';
     if (_type === 'open') {
       searchText = this.openBeansFilterText;
     } else if (_type === 'archive') {

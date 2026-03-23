@@ -315,9 +315,15 @@
         </ion-item>
       }
       @if(editActive===false && data.flow_profile) {
+        <!-- HACK: brewComponent property expects BrewBrewingComponent,
+                   but this component has always just passed 'this' into it.
+                   This is an error with strictTemplates. (See #1074)
+                   Fixing this in brew-brewing-graph doesn't look trivial, so
+                   for now we silence this error by casting to any with
+                   $any(this). -->
         <brew-brewing-graph [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
           choosenPreparation.brew_order.while.brew_time,
-          choosenPreparation.use_custom_parameters])" #brewBrewingGraphEl [isDetail]='true' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
+          choosenPreparation.use_custom_parameters])" #brewBrewingGraphEl [isDetail]='true' [brewComponent]='$any(this)' [(data)]='data'></brew-brewing-graph>
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_time,
         choosenPreparation.manage_parameters.brew_time,

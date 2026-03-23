@@ -46,7 +46,6 @@
               }
             ],
             "scripts": [],
-            "aot": false,
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
@@ -65,7 +64,6 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "budgets": [
                 {

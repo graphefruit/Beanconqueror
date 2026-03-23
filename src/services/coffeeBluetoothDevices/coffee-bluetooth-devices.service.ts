@@ -35,6 +35,8 @@ import {
 } from '../../classes/devices';
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 import { PeripheralData } from '../../classes/devices/ble.types';
+import { CoffeeSensorPressure } from '../../classes/devices/coffeeSensorPressure';
+import { CoffeeSensorTemperature } from '../../classes/devices/coffeeSensorTemperature';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 import { DecentScale } from '../../classes/devices/decentScale';
 import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
@@ -778,6 +780,12 @@ export class CoffeeBluetoothDevicesService {
         id: devicePressure.id,
         type: PressureType.BOKOOPRESSURE,
       };
+    } else if (CoffeeSensorPressure.test(devicePressure)) {
+      this.logger.log('BleManager - We found a CoffeeSensor pressure device ');
+      return {
+        id: devicePressure.id,
+        type: PressureType.COFFEESENSOR,
+      };
     }
 
     return undefined;
@@ -822,6 +830,14 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceTemperature.id,
         type: TemperatureType.GEISINGER,
+      };
+    } else if (CoffeeSensorTemperature.test(deviceTemperature)) {
+      this.logger.log(
+        'BleManager - We found a CoffeeSensor temperature device ',
+      );
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.COFFEESENSOR,
       };
     }
 

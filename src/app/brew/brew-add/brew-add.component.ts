@@ -218,24 +218,22 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }, 15);
   }
 
-  public confirmDismiss(): void {
-    if (this.settings.security_check_when_going_back === false) {
-      this.dismiss();
+  public async confirmDismiss(): Promise<void> {
+    if (
+      this.settings.security_check_when_going_back === false ||
+      JSON.stringify(this.data) === this.initialBeanData
+    ) {
+      await this.dismiss();
       return;
     }
-    if (JSON.stringify(this.data) !== this.initialBeanData) {
-      this.uiAlert
-        .showConfirm('PAGE_BREW_DISCARD_CONFIRM', 'SURE_QUESTION', true)
-        .then(
-          async () => {
-            this.dismiss();
-          },
-          () => {
-            // No
-          },
-        );
-    } else {
-      this.dismiss();
+
+    const choice = await this.uiAlert.showConfirm(
+      'PAGE_BREW_DISCARD_CONFIRM',
+      'SURE_QUESTION',
+      true,
+    );
+    if (choice === 'YES') {
+      await this.dismiss();
     }
   }
 
@@ -647,9 +645,9 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
-        (_processNextHandler) => {
-          // Don't do anything.
-          this.confirmDismiss();
+        async () => {
+          // Only go back after confirmation
+          await this.confirmDismiss();
         },
       );
     }

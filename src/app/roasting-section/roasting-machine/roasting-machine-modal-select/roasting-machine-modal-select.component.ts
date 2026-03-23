@@ -9,6 +9,7 @@ import {
   IonContent,
   IonFooter,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonRadio,
@@ -49,19 +50,20 @@ import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachine
     IonRow,
     IonCol,
     IonButton,
+    IonIcon,
   ],
 })
 export class RoastingMachineModalSelectComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
 
-  public static COMPONENT_ID: string = 'roasting-machine-modal-select';
-  public objs: Array<RoastingMachine> = [];
+  public static COMPONENT_ID = 'roasting-machine-modal-select';
+  public objs: RoastingMachine[] = [];
   public multipleSelection = {};
   public radioSelection: string;
-  public segment: string = 'open';
+  public segment = 'open';
   @Input() public multiple: boolean;
-  @Input() private selectedValues: Array<string>;
+  @Input() private selectedValues: string[];
   @Input() public showFinished: boolean;
 
   public ionViewDidEnter(): void {
@@ -80,16 +82,16 @@ export class RoastingMachineModalSelectComponent implements OnInit {
 
   public ngOnInit() {}
 
-  public getOpenEntries(): Array<RoastingMachine> {
+  public getOpenEntries(): RoastingMachine[] {
     return this.objs.filter((e) => !e.finished);
   }
 
-  public getArchivedEntries(): Array<RoastingMachine> {
+  public getArchivedEntries(): RoastingMachine[] {
     return this.objs.filter((e) => e.finished);
   }
 
   public async choose(): Promise<void> {
-    const chosenKeys: Array<string> = [];
+    const chosenKeys: string[] = [];
     if (this.multiple) {
       for (const key in this.multipleSelection) {
         if (this.multipleSelection[key] === true) {
@@ -99,7 +101,7 @@ export class RoastingMachineModalSelectComponent implements OnInit {
     } else {
       chosenKeys.push(this.radioSelection);
     }
-    let selected_text: string = '';
+    let selected_text = '';
 
     for (const val of chosenKeys) {
       const mill: RoastingMachine =

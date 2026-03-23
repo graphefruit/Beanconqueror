@@ -1,0 +1,50 @@
+name: Feature Request
+description: Suggest an idea or enhancement for Beanconqueror
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please read the [Contribution Guidelines](https://github.com/graphefruit/Beanconqueror/issues/723) before posting!
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Search for existing feature requests
+      description: Please search the existing issues to see if this has already been requested.
+      options:
+        - label: I have searched the existing issues.
+          required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the Feature
+      description: A clear and concise description of what you would like to be added.
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case / Why is it needed?
+      description: Explain why this feature is useful and what problem it solves. 
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often would this be used?
+      description: Please estimate how frequently you or others would use this feature.
+      options:
+        - Daily
+        - Weekly
+        - Monthly
+        - Rarely
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: A clear and concise description of any alternative solutions or features you've considered.
+    validations:
+      required: false

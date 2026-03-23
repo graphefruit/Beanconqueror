@@ -33,7 +33,7 @@
         </div>
       </div>
 }
-      <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" min-row-height="263">
+      <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" [min-row-height]="263">
         @for (mill of openScroll.items; track mill) {
 <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
 }
@@ -51,7 +51,7 @@
       </div>
 }
 
-      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" min-row-height="263">
+      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" [min-row-height]="263">
         @for (mill of archivedScroll.items; track mill) {
 <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
 }

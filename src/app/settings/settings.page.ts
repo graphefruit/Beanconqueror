@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import {
   AlertController,
+  IonAccordion,
+  IonAccordionGroup,
   IonBadge,
   IonButton,
   IonCard,
@@ -36,6 +38,7 @@ import {
   cloudUploadOutline,
   informationCircleOutline,
   informationOutline,
+  listOutline,
   refreshOutline,
 } from 'ionicons/icons';
 
@@ -63,6 +66,7 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 import { Settings } from '../../classes/settings/settings';
 import { Water } from '../../classes/water/water';
+import { CloudModelPickerComponent } from '../../components/cloud-model-picker/cloud-model-picker.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
@@ -72,6 +76,7 @@ import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType'
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -82,6 +87,7 @@ import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
 import { IMill } from '../../interfaces/mill/iMill';
 import { IPreparation } from '../../interfaces/preparation/iPreparation';
 import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
+import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { KeysPipe } from '../../pipes/keys';
@@ -152,6 +158,8 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     IonNote,
     IonList,
     IonBadge,
+    IonAccordionGroup,
+    IonAccordion,
   ],
 })
 export class SettingsPage {
@@ -196,24 +204,33 @@ export class SettingsPage {
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
   public THEME_MODE = THEME_MODE_ENUM;
 
-  public isHealthSectionAvailable: boolean = false;
-  public isTextToSpeechSectionAvailable: boolean = false;
+  public isHealthSectionAvailable = false;
+  public isTextToSpeechSectionAvailable = false;
 
   public currencies = {};
 
-  public settings_segment: string = 'general';
+  public settings_segment = 'general';
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
+
+  public cloudAiProviderEnum = CLOUD_AI_PROVIDER_ENUM;
+
   public isScrolling: boolean = false;
+
 
   public readonly isAndroid: boolean;
   public readonly isIos: boolean;
 
   private __cleanupAttachmentData(
-    _data: Array<
-      IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine
-    >,
+    _data: (
+      | IBean
+      | IBrew
+      | IMill
+      | IPreparation
+      | IGreenBean
+      | IRoastingMachine
+    )[],
   ): any {
     if (_data !== undefined && _data.length > 0) {
       for (const obj of _data) {
@@ -270,6 +287,7 @@ export class SettingsPage {
       cloudUploadOutline,
       informationCircleOutline,
       informationOutline,
+      listOutline,
       refreshOutline,
     });
   }
@@ -299,25 +317,25 @@ export class SettingsPage {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  public async findAndConnectRefractometerDevice(_retry: boolean = false) {
+  public async findAndConnectRefractometerDevice(_retry = false) {
     this.showBluetoothPopover(BluetoothTypes.TDS);
   }
 
-  public async findAndConnectTemperatureDevice(_retry: boolean = false) {
+  public async findAndConnectTemperatureDevice(_retry = false) {
     this.showBluetoothPopover(BluetoothTypes.TEMPERATURE);
   }
 
-  public async findAndConnectPressureDevice(_retry: boolean = false) {
+  public async findAndConnectPressureDevice(_retry = false) {
     this.showBluetoothPopover(BluetoothTypes.PRESSURE);
   }
 
-  public async findAndConnectScale(_retry: boolean = false) {
+  public async findAndConnectScale(_retry = false) {
     this.showBluetoothPopover(BluetoothTypes.SCALE);
   }
 
   public async disconnectDevice(_type: BluetoothTypes) {
     /** Its true, because we try to disconnect, and if this is not possible, we just still forgot the device**/
-    let disconnected: boolean = true;
+    let disconnected = true;
 
     if (_type === BluetoothTypes.SCALE) {
       this.eventQueue.dispatch(
@@ -405,8 +423,7 @@ export class SettingsPage {
         this.settings.manage_parameters.water = true;
         await this.saveSettings();
 
-        const preps: Array<Preparation> =
-          this.uiPreparationStorage.getAllEntries();
+        const preps: Preparation[] = this.uiPreparationStorage.getAllEntries();
         if (preps.length > 0) {
           for (const prep of preps) {
             prep.manage_parameters.water = true;
@@ -419,35 +436,34 @@ export class SettingsPage {
     }
   }
 
-  public checkHealthPlugin() {
+  public async checkHealthPlugin() {
     // #200 - Didn't save the settings
-    if (this.settings.track_caffeine_consumption === false) {
-      this.uiAlert
-        .showConfirm(
-          'HEALTH_KIT_QUESTION_MESSAGE',
-          'HEALTH_KIT_QUESTION_TITLE',
-          true,
-        )
-        .then(
-          () => {
-            this.uiHealthKit.requestAuthorization().then(
-              async () => {
-                // Allowed
-                this.settings.track_caffeine_consumption = true;
-                await this.saveSettings();
-              },
-              async () => {
-                // Forbidden
-                this.settings.track_caffeine_consumption = false;
-                await this.saveSettings();
-              },
-            );
-          },
-          async () => {
-            this.settings.track_caffeine_consumption = false;
-            await this.saveSettings();
-          },
-        );
+    if (this.settings.track_caffeine_consumption) {
+      return;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'HEALTH_KIT_QUESTION_MESSAGE',
+      'HEALTH_KIT_QUESTION_TITLE',
+      true,
+    );
+    if (choice === 'YES') {
+      this.uiHealthKit.requestAuthorization().then(
+        async () => {
+          // Allowed
+          this.settings.track_caffeine_consumption = true;
+          await this.saveSettings();
+        },
+        async () => {
+          // Forbidden
+          this.settings.track_caffeine_consumption = false;
+          await this.saveSettings();
+        },
+      );
+    } else {
+      // choice === NO, disable again
+      this.settings.track_caffeine_consumption = false;
+      await this.saveSettings();
     }
   }
 
@@ -558,6 +574,54 @@ export class SettingsPage {
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
+  public isAppleIntelligenceAvailable(): boolean {
+    return this.platform.is('ios') && this.platform.is('capacitor');
+  }
+
+  public onCloudAiProviderChanged(): void {
+    this.settings.cloud_ai_api_key = '';
+    this.settings.cloud_ai_model = '';
+    this.settings.cloud_ai_base_url = '';
+    this.saveSettings();
+  }
+
+  public getModelPlaceholder(): string {
+    switch (this.settings.cloud_ai_provider) {
+      case CLOUD_AI_PROVIDER_ENUM.OPENAI:
+        return 'gpt-4o-mini';
+      case CLOUD_AI_PROVIDER_ENUM.GOOGLE:
+        return 'gemini-2.0-flash';
+      case CLOUD_AI_PROVIDER_ENUM.ANTHROPIC:
+        return 'claude-sonnet-4-20250514';
+      case CLOUD_AI_PROVIDER_ENUM.MISTRAL:
+        return 'mistral-small-latest';
+      case CLOUD_AI_PROVIDER_ENUM.OPENROUTER:
+        return 'openai/gpt-4o-mini';
+      case CLOUD_AI_PROVIDER_ENUM.CUSTOM:
+        return 'model-name';
+      default:
+        return '';
+    }
+  }
+
+  public async openModelPicker() {
+    const modal = await this.modalCtrl.create({
+      component: CloudModelPickerComponent,
+      id: CloudModelPickerComponent.COMPONENT_ID,
+      componentProps: {
+        provider: this.settings.cloud_ai_provider,
+        apiKey: this.settings.cloud_ai_api_key,
+        baseUrl: this.settings.cloud_ai_base_url,
+      },
+    });
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data?.modelId) {
+      this.settings.cloud_ai_model = data.modelId;
+      this.saveSettings();
+    }
+  }
+
   public async visualizerServerHasChanged() {
     if (this.settings.visualizer_server === VISUALIZER_SERVER_ENUM.VISUALIZER) {
       this.settings.visualizer_url = 'https://visualizer.coffee/';
@@ -579,7 +643,7 @@ export class SettingsPage {
 
   public testSpeak() {
     this.textToSpeech.readAndSetTTLSettings();
-    let speakTestCount: number = 0;
+    let speakTestCount = 0;
     const testSpeakArray = ['182.5', '28', '1072', '1.2', '0.1', '203.5'];
     const speakTestIntv = setInterval(() => {
       this.textToSpeech.speak(testSpeakArray[speakTestCount]);
@@ -596,7 +660,7 @@ export class SettingsPage {
     const uploadShots = brewEntries.filter(
       (b) => b.flow_profile && !b.customInformation.visualizer_id,
     );
-    let couldABrewNotBeUploaded: boolean = false;
+    let couldABrewNotBeUploaded = false;
     await this.uiAlert.showLoadingSpinner();
     for (const shot of uploadShots) {
       try {
@@ -678,7 +742,7 @@ export class SettingsPage {
   }
   public smartScaleSupportsTwoWeight() {
     const scale: BluetoothScale = this.bleManager.getScale();
-    if (scale && scale.supportsTwoWeights === true) {
+    if (scale?.supportsTwoWeights === true) {
       return true;
     }
     return false;
@@ -720,13 +784,13 @@ export class SettingsPage {
 
     const { files: pickedFiles } = await FilePicker.pickFiles({ limit: 1 });
 
-    if (!pickedFiles || !pickedFiles[0]?.path) {
+    if (!pickedFiles?.[0]?.path) {
       return;
     }
     const pickedFile = pickedFiles[0];
     if (
-      pickedFile.mimeType.indexOf('zip') === -1 &&
-      pickedFile.mimeType.indexOf('json') === -1
+      !pickedFile.mimeType.includes('zip') &&
+      !pickedFile.mimeType.includes('json')
     ) {
       await this.uiAlert.showMessage(
         this.translate.instant('INVALID_FILE_FORMAT'),
@@ -750,8 +814,7 @@ export class SettingsPage {
       });
       directoryUri = result.uri;
     }
-    const importMode =
-      pickedFile.mimeType.indexOf('zip') !== -1 ? 'zip' : 'json';
+    const importMode = pickedFile.mimeType.includes('zip') ? 'zip' : 'json';
     await this.doImport(importMode, path, directoryUri);
   }
 
@@ -868,11 +931,7 @@ export class SettingsPage {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.choosenURI !== ''
-    ) {
+    if (modalData?.data && modalData.data.choosenURI !== '') {
       const path = modalData.data.choosenURI;
       // path/uri post-processing
       let directoryUri = path.substring(0, path.lastIndexOf('/'));
@@ -971,7 +1030,7 @@ export class SettingsPage {
     path: string;
     directory: Directory;
   }) {
-    const exportObjects: Array<any> = [
+    const exportObjects: any[] = [
       ...this.uiBeanStorage.getAllEntries(),
       ...this.uiBrewStorage.getAllEntries(),
       ...this.uiPreparationStorage.getAllEntries(),
@@ -988,7 +1047,7 @@ export class SettingsPage {
     path: string;
     directory: Directory;
   }) {
-    const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
+    const exportObjects: any[] = [...this.uiBrewStorage.getAllEntries()];
     await this._exportFlowProfiles(exportObjects, exportPath);
   }
 
@@ -996,22 +1055,19 @@ export class SettingsPage {
     path: string;
     directory: Directory;
   }) {
-    const exportObjects: Array<any> = [...this.uiGraphStorage.getAllEntries()];
+    const exportObjects: any[] = [...this.uiGraphStorage.getAllEntries()];
     await this._exportGraphProfiles(exportObjects, exportPath);
   }
 
   public async export() {
-    await this.uiAlert.showLoadingSpinner();
-    // Do an export to the default export location
-    const defaultExportPath = {
-      path: 'Download/Beanconqueror_export',
-      directory: Directory.External,
-    };
-    try {
+    await this.uiAlert.withLoadingSpinner(async () => {
+      // Do an export to the default export location
+      const defaultExportPath = {
+        path: 'Download/Beanconqueror_export',
+        directory: Directory.External,
+      };
       await this.exportToPath(defaultExportPath, true);
-    } catch (ex) {}
-
-    await this.uiAlert.hideLoadingSpinner();
+    });
   }
 
   private async exportToPath(
@@ -1091,7 +1147,7 @@ export class SettingsPage {
     await this.uiAlert.showLoadingSpinner();
     try {
       const allPreps = [];
-      let allPreparations = this.uiPreparationStorage.getAllEntries();
+      const allPreparations = this.uiPreparationStorage.getAllEntries();
 
       for (const prep of allPreparations) {
         if (
@@ -1121,9 +1177,7 @@ export class SettingsPage {
               allPreps.find(
                 (pr) => pr.config.uuid === e.method_of_preparation,
               ) &&
-              e.preparationDeviceBrew &&
-              e.preparationDeviceBrew.params &&
-              e.preparationDeviceBrew.params.brew_by_weight_active === true,
+              e.preparationDeviceBrew?.params?.brew_by_weight_active === true,
           );
       } else if (_type === 'sanremo') {
         allBrewsWithProfiles = this.uiBrewStorage
@@ -1136,13 +1190,12 @@ export class SettingsPage {
               allPreps.find(
                 (pr) => pr.config.uuid === e.method_of_preparation,
               ) &&
-              e.preparationDeviceBrew &&
-              e.preparationDeviceBrew.params &&
+              e.preparationDeviceBrew?.params &&
               e.preparationDeviceBrew.params.stopAtWeight > 0,
           );
       }
 
-      let maxEntries = 200;
+      const maxEntries = 200;
       // Just take 60, else the excel will be exploding.
       if (allBrewsWithProfiles.length > maxEntries) {
         allBrewsWithProfiles = allBrewsWithProfiles
@@ -1150,7 +1203,7 @@ export class SettingsPage {
           .slice(0, maxEntries);
       }
 
-      const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
+      const allBrewFlows: { BREW: Brew; FLOW: BrewFlow }[] = [];
       for await (const brew of allBrewsWithProfiles) {
         const flow: BrewFlow = await this.readFlowProfile(brew);
         if (flow) {
@@ -1184,7 +1237,7 @@ export class SettingsPage {
     );
   }
 
-  public async importBeansExcel(_type: string = 'roasted') {
+  public async importBeansExcel(_type = 'roasted') {
     if (this.platform.is('capacitor')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
@@ -1192,7 +1245,7 @@ export class SettingsPage {
       );
       this.uiLog.log('Import real data');
       const fileUri = await FilePicker.pickFiles({ limit: 1 });
-      if (!fileUri.files || !fileUri.files[0]?.path) {
+      if (!fileUri.files?.[0]?.path) {
         return;
       }
       if (
@@ -1242,13 +1295,13 @@ export class SettingsPage {
 
   private async _exportAttachments(
     _storedData:
-      | Array<Bean>
-      | Array<Brew>
-      | Array<Preparation>
-      | Array<Mill>
-      | Array<GreenBean>
-      | Array<RoastingMachine>
-      | Array<Water>,
+      | Bean[]
+      | Brew[]
+      | Preparation[]
+      | Mill[]
+      | GreenBean[]
+      | RoastingMachine[]
+      | Water[],
     exportPath: {
       path: string;
       directory: Directory;
@@ -1262,7 +1315,7 @@ export class SettingsPage {
   }
 
   private async _exportFlowProfiles(
-    _storedData: Array<Brew>,
+    _storedData: Brew[],
     exportPath: {
       path: string;
       directory: Directory;
@@ -1272,7 +1325,7 @@ export class SettingsPage {
   }
 
   private async _exportGraphProfiles(
-    _storedData: Array<Graph>,
+    _storedData: Graph[],
     exportPath: {
       path: string;
       directory: Directory;
@@ -1282,7 +1335,7 @@ export class SettingsPage {
   }
 
   private async exportStoredData(
-    _storedData: Array<Brew> | Array<Graph>,
+    _storedData: Brew[] | Graph[],
     exportPath: {
       path: string;
       directory: Directory;
@@ -1295,8 +1348,7 @@ export class SettingsPage {
 
       if (
         entry instanceof Brew &&
-        entry.reference_flow_profile &&
-        entry.reference_flow_profile.type ===
+        entry.reference_flow_profile?.type ===
           REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
       ) {
         await this._exportFile(
@@ -1532,23 +1584,21 @@ export class SettingsPage {
       );
 
       // When exporting the value is a number, when importing it needs to be  a string.
-      parsedContent['SETTINGS'][0]['brew_view'] =
-        parsedContent['SETTINGS'][0]['brew_view'] + '';
+      parsedContent.SETTINGS[0].brew_view =
+        parsedContent.SETTINGS[0].brew_view + '';
       this.uiLog.log('Cleaned all data');
       try {
-        if (
-          !parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined
-        ) {
+        if (!parsedContent.SETTINGS[0].brew_order.before === undefined) {
           this.uiLog.log('Old brew order structure');
           // Breaking change, we need to throw away the old order types by import
           const settingsConst = new Settings();
-          parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
+          parsedContent.SETTINGS[0].brew_order = this.uiHelper.copyData(
             settingsConst.brew_order,
           );
         }
       } catch {
         const settingsConst = new Settings();
-        parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
+        parsedContent.SETTINGS[0].brew_order = this.uiHelper.copyData(
           settingsConst.brew_order,
         );
       }
@@ -1714,24 +1764,29 @@ export class SettingsPage {
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
   protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
-  public async resetGraphColor(graphType: string) {
-    try {
-      await this.uiAlert.showConfirm('SURE_QUESTION', undefined, true);
-      if (!this.settings.graph_colors) {
-        this.settings.graph_colors = JSON.parse(
-          JSON.stringify(DEFAULT_GRAPH_COLORS),
-        );
-      }
 
-      // @ts-ignore
-      if (DEFAULT_GRAPH_COLORS[graphType]) {
-        // @ts-ignore
-        this.settings.graph_colors[graphType] = JSON.parse(
-          JSON.stringify(DEFAULT_GRAPH_COLORS[graphType]),
-        );
-        this.saveSettings();
-      }
-    } catch (ex) {}
+  public async resetGraphColor(graphType: keyof IGraphColors) {
+    const choice = await this.uiAlert.showConfirm(
+      'SURE_QUESTION',
+      undefined,
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    if (!this.settings.graph_colors) {
+      this.settings.graph_colors = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS),
+      );
+    }
+
+    if (DEFAULT_GRAPH_COLORS[graphType]) {
+      this.settings.graph_colors[graphType] = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS[graphType]),
+      );
+      await this.saveSettings();
+    }
   }
 }
 
