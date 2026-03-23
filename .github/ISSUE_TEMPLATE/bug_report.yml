@@ -40,9 +40,9 @@ body:
       label: Was this issue present in an older version?
       description: Did this issue exist in a previous release, or is it a regression?
       options:
-        - Yes
-        - No
-        - I don't know
+        - "Yes"
+        - "No"
+        - "I don't know"
     validations:
       required: true
   - type: textarea
