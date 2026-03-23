@@ -4,6 +4,8 @@ import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { PREPARATION_SORT_AFTER } from '../../enums/preparations/preparationSortAfter';
+import { PREPARATION_SORT_ORDER } from '../../enums/preparations/preparationSortOrder';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
@@ -15,6 +17,7 @@ import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
 import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import {
@@ -103,6 +106,11 @@ export class Settings implements ISettings {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
     FROZEN: IBeanPageSort;
+  };
+
+  public preparation_sort: {
+    OPEN: IPreparationPageSort;
+    ARCHIVED: IPreparationPageSort;
   };
 
   public brew_sort: {
@@ -390,6 +398,16 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageSort,
       FROZEN: {} as IBeanPageSort,
     };
+    this.preparation_sort = {
+      OPEN: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+      ARCHIVED: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+    };
     this.brew_sort = {
       OPEN: {} as IBrewPageSort,
       ARCHIVED: {} as IBrewPageSort,
@@ -501,6 +519,8 @@ export class Settings implements ISettings {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
+
+    // Left blank since we initialized preparation_sort earlier in one step
 
     this.green_bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -763,5 +783,18 @@ export class Settings implements ISettings {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
+  }
+
+  public resetPreparationSort() {
+    this.preparation_sort = {
+      OPEN: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+      ARCHIVED: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+    };
   }
 }
