@@ -31,6 +31,7 @@ import { HeaderButtonComponent } from '../../components/header/header-button.com
 import { HeaderComponent } from '../../components/header/header.component';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
+import { PREPARATION_SEGMENT } from '../../enums/preparations/preparationSegment';
 import { PREPARATION_SORT_AFTER } from '../../enums/preparations/preparationSortAfter';
 import { PREPARATION_SORT_ORDER } from '../../enums/preparations/preparationSortOrder';
 import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
@@ -81,7 +82,7 @@ export class PreparationPage {
   );
 
   public settings: Settings;
-  public segment = 'open';
+  public segment: PREPARATION_SEGMENT = PREPARATION_SEGMENT.OPEN;
   public preparations: Preparation[] = [];
 
   public openPreparationsLength = 0;
@@ -91,12 +92,12 @@ export class PreparationPage {
   public archivePreparationsView: Preparation[] = [];
 
   public openPreparationsSort: IPreparationPageSort = {
-    sort_after: PREPARATION_SORT_AFTER.UNKOWN,
-    sort_order: PREPARATION_SORT_ORDER.UNKOWN,
+    sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+    sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
   };
   public archivedPreparationsSort: IPreparationPageSort = {
-    sort_after: PREPARATION_SORT_AFTER.UNKOWN,
-    sort_order: PREPARATION_SORT_ORDER.UNKOWN,
+    sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+    sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
   };
 
   public openPreparationsFilterText = '';
@@ -186,9 +187,9 @@ export class PreparationPage {
     const newSort =
       await this.preparationSortFilterHelper.showSort(sortSegment);
     if (newSort) {
-      if (this.segment === 'open') {
+      if (this.segment === PREPARATION_SEGMENT.OPEN) {
         this.openPreparationsSort = newSort;
-      } else if (this.segment === 'archive') {
+      } else if (this.segment === PREPARATION_SEGMENT.ARCHIVE) {
         this.archivedPreparationsSort = newSort;
       }
 
@@ -201,8 +202,8 @@ export class PreparationPage {
   public isSortActive(): boolean {
     const sort = this.manageSortScope(this.segment);
     return (
-      sort.sort_order !== PREPARATION_SORT_ORDER.UNKOWN &&
-      sort.sort_after !== PREPARATION_SORT_AFTER.UNKOWN
+      sort.sort_order !== PREPARATION_SORT_ORDER.UNKNOWN &&
+      sort.sort_after !== PREPARATION_SORT_AFTER.UNKNOWN
     );
   }
 
@@ -214,9 +215,9 @@ export class PreparationPage {
   public shallBarBeDisplayed() {
     let shallBarDisplayed = false;
 
-    if (this.segment === 'open') {
+    if (this.segment === PREPARATION_SEGMENT.OPEN) {
       shallBarDisplayed = this.openPreparationsLength > 0;
-    } else if (this.segment === 'archive') {
+    } else if (this.segment === PREPARATION_SEGMENT.ARCHIVE) {
       shallBarDisplayed = this.archivePreparationsLength > 0;
     }
 
@@ -265,11 +266,11 @@ export class PreparationPage {
       0,
     );
 
-    this.__initializePreparationsView('open');
-    this.__initializePreparationsView('archive');
+    this.__initializePreparationsView(PREPARATION_SEGMENT.OPEN);
+    this.__initializePreparationsView(PREPARATION_SEGMENT.ARCHIVE);
   }
 
-  private __initializePreparationsView(_type: string) {
+  private __initializePreparationsView(_type: PREPARATION_SEGMENT) {
     const searchText = this.manageSearchTextScope(_type);
     const sort = this.manageSortScope(_type);
 
@@ -281,27 +282,30 @@ export class PreparationPage {
         sort,
       );
 
-    if (_type === 'open') {
+    if (_type === PREPARATION_SEGMENT.OPEN) {
       this.openPreparationsView = filteredPreparations;
-    } else if (_type === 'archive') {
+    } else if (_type === PREPARATION_SEGMENT.ARCHIVE) {
       this.archivePreparationsView = filteredPreparations;
     }
     this.retriggerScroll();
   }
 
-  private manageSortScope(_type: string): IPreparationPageSort {
-    if (_type === 'open') {
+  private manageSortScope(_type: PREPARATION_SEGMENT): IPreparationPageSort {
+    if (_type === PREPARATION_SEGMENT.OPEN) {
       return this.openPreparationsSort;
-    } else if (_type === 'archive') {
+    } else if (_type === PREPARATION_SEGMENT.ARCHIVE) {
       return this.archivedPreparationsSort;
     }
   }
 
-  private manageSearchTextScope(_type: string, _toLowerCase = true) {
+  private manageSearchTextScope(
+    _type: PREPARATION_SEGMENT,
+    _toLowerCase = true,
+  ) {
     let searchText = '';
-    if (_type === 'open') {
+    if (_type === PREPARATION_SEGMENT.OPEN) {
       searchText = this.openPreparationsFilterText;
-    } else if (_type === 'archive') {
+    } else if (_type === PREPARATION_SEGMENT.ARCHIVE) {
       searchText = this.archivedPreparationsFilterText;
     }
     if (_toLowerCase) {
@@ -310,10 +314,10 @@ export class PreparationPage {
     return searchText;
   }
 
-  private setSearchTextScope(_type: string, _text: string) {
-    if (_type === 'open') {
+  private setSearchTextScope(_type: PREPARATION_SEGMENT, _text: string) {
+    if (_type === PREPARATION_SEGMENT.OPEN) {
       this.openPreparationsFilterText = _text;
-    } else if (_type === 'archive') {
+    } else if (_type === PREPARATION_SEGMENT.ARCHIVE) {
       this.archivedPreparationsFilterText = _text;
     }
   }

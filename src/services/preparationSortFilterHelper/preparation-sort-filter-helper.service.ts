@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular/standalone';
 
 import { PreparationSortComponent } from '../../app/preparation/preparation-sort/preparation-sort.component';
 import { Preparation } from '../../classes/preparation/preparation';
+import { PREPARATION_SEGMENT } from '../../enums/preparations/preparationSegment';
 import { PREPARATION_SORT_AFTER } from '../../enums/preparations/preparationSortAfter';
 import { PREPARATION_SORT_ORDER } from '../../enums/preparations/preparationSortOrder';
 import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
@@ -37,7 +38,7 @@ export class PreparationSortFilterHelperService {
   }
 
   public initializePreparationsView(
-    _type: string,
+    _type: PREPARATION_SEGMENT,
     _preparations: Preparation[],
     _searchText: string,
     _sort: IPreparationPageSort,
@@ -54,12 +55,12 @@ export class PreparationSortFilterHelperService {
   }
 
   private manageFilterPreparations(
-    _type: string,
+    _type: PREPARATION_SEGMENT,
     preparationsCopy: Preparation[],
   ): Preparation[] {
-    if (_type === 'open') {
+    if (_type === PREPARATION_SEGMENT.OPEN) {
       return preparationsCopy.filter((prep) => !prep.finished);
-    } else if (_type === 'archive') {
+    } else if (_type === PREPARATION_SEGMENT.ARCHIVE) {
       return preparationsCopy.filter((prep) => prep.finished);
     }
     return preparationsCopy;
@@ -91,8 +92,8 @@ export class PreparationSortFilterHelperService {
     filterPreparations: Preparation[],
   ): Preparation[] {
     if (
-      sort.sort_order !== PREPARATION_SORT_ORDER.UNKOWN &&
-      sort.sort_after !== PREPARATION_SORT_AFTER.UNKOWN
+      sort.sort_order !== PREPARATION_SORT_ORDER.UNKNOWN &&
+      sort.sort_after !== PREPARATION_SORT_AFTER.UNKNOWN
     ) {
       switch (sort.sort_after) {
         case PREPARATION_SORT_AFTER.NAME:

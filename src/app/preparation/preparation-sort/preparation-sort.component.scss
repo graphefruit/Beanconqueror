@@ -15,5 +15,12 @@
       padding-left: 16px;
       margin-right: 8px;
     }
+
+    &.list-header-item {
+      width: 100%;
+      margin-left: 0px;
+      --background: var(--ion-color-light);
+      border: 0;
+    }
   }
 }

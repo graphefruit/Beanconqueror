@@ -15,6 +15,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { PREPARATION_SEGMENT } from '../../../enums/preparations/preparationSegment';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { PreparationSortFilterHelperService } from '../../../services/preparationSortFilterHelper/preparation-sort-filter-helper.service';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -68,7 +69,7 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
     if (allEntries && allEntries.length > 0) {
       const filterPreparations: Preparation[] =
         this.preparationSortFilterHelperService.initializePreparationsView(
-          'open',
+          PREPARATION_SEGMENT.OPEN,
           allEntries,
           '',
           this.settings.preparation_sort.OPEN,

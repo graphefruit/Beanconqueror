@@ -33,6 +33,7 @@ import { AsyncImageComponent } from '../../../components/async-image/async-image
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
+import { PREPARATION_SEGMENT } from '../../../enums/preparations/preparationSegment';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
 import { PreparationSortFilterHelperService } from '../../../services/preparationSortFilterHelper/preparation-sort-filter-helper.service';
@@ -85,7 +86,7 @@ export class PreparationModalSelectComponent implements OnInit {
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
   public radioSelection: string;
-  public preparation_segment: string = 'open';
+  public preparation_segment: PREPARATION_SEGMENT = PREPARATION_SEGMENT.OPEN;
 
   public openPreparations: Array<Preparation> = [];
   public archivedPreparations: Array<Preparation> = [];
@@ -120,7 +121,7 @@ export class PreparationModalSelectComponent implements OnInit {
 
   public getOpenPreparations(): Array<Preparation> {
     return this.preparationSortFilterHelperService.initializePreparationsView(
-      'open',
+      PREPARATION_SEGMENT.OPEN,
       this.objs,
       '',
       this.settings.preparation_sort.OPEN,
@@ -129,7 +130,7 @@ export class PreparationModalSelectComponent implements OnInit {
 
   public getArchivedPreparations(): Array<Preparation> {
     return this.preparationSortFilterHelperService.initializePreparationsView(
-      'archive',
+      PREPARATION_SEGMENT.ARCHIVE,
       this.objs,
       '',
       this.settings.preparation_sort.ARCHIVED,

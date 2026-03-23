@@ -399,8 +399,14 @@ export class Settings implements ISettings {
       FROZEN: {} as IBeanPageSort,
     };
     this.preparation_sort = {
-      OPEN: {} as IPreparationPageSort,
-      ARCHIVED: {} as IPreparationPageSort,
+      OPEN: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+      ARCHIVED: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
     };
     this.brew_sort = {
       OPEN: {} as IBrewPageSort,
@@ -514,14 +520,7 @@ export class Settings implements ISettings {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
 
-    this.preparation_sort.OPEN = {
-      sort_after: PREPARATION_SORT_AFTER.UNKOWN,
-      sort_order: PREPARATION_SORT_ORDER.UNKOWN,
-    } as IPreparationPageSort;
-    this.preparation_sort.ARCHIVED = {
-      sort_after: PREPARATION_SORT_AFTER.UNKOWN,
-      sort_order: PREPARATION_SORT_ORDER.UNKOWN,
-    } as IPreparationPageSort;
+    // Left blank since we initialized preparation_sort earlier in one step
 
     this.green_bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -788,17 +787,14 @@ export class Settings implements ISettings {
 
   public resetPreparationSort() {
     this.preparation_sort = {
-      OPEN: {} as IPreparationPageSort,
-      ARCHIVED: {} as IPreparationPageSort,
+      OPEN: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+      ARCHIVED: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
     };
-
-    this.preparation_sort.OPEN = {
-      sort_after: PREPARATION_SORT_AFTER.UNKOWN,
-      sort_order: PREPARATION_SORT_ORDER.UNKOWN,
-    } as IPreparationPageSort;
-    this.preparation_sort.ARCHIVED = {
-      sort_after: PREPARATION_SORT_AFTER.UNKOWN,
-      sort_order: PREPARATION_SORT_ORDER.UNKOWN,
-    } as IPreparationPageSort;
   }
 }

@@ -54,8 +54,8 @@ export class PreparationSortComponent implements OnInit {
   public preparationSortAfterEnum = PREPARATION_SORT_AFTER;
   public preparationSortOrderEnum = PREPARATION_SORT_ORDER;
   public filter: IPreparationPageSort = {
-    sort_order: PREPARATION_SORT_ORDER.UNKOWN,
-    sort_after: PREPARATION_SORT_AFTER.UNKOWN,
+    sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+    sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
   };
 
   @Input() public preparation_sort: any;
@@ -93,8 +93,8 @@ export class PreparationSortComponent implements OnInit {
 
   public resetFilter() {
     this.filter = {
-      sort_order: PREPARATION_SORT_ORDER.UNKOWN,
-      sort_after: PREPARATION_SORT_AFTER.UNKOWN,
+      sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
     };
     this.useFilter();
   }
@@ -102,14 +102,14 @@ export class PreparationSortComponent implements OnInit {
   public setSortOrder(_order: any) {
     this.filter.sort_order = _order;
     /**Preset the first sort if nothing is selected yet**/
-    if (this.filter.sort_after === PREPARATION_SORT_AFTER.UNKOWN) {
+    if (this.filter.sort_after === PREPARATION_SORT_AFTER.UNKNOWN) {
       this.filter.sort_after = PREPARATION_SORT_AFTER.NAME;
     }
   }
 
   public setSortAfter(_sort: any) {
     this.filter.sort_after = _sort;
-    if (this.filter.sort_order === PREPARATION_SORT_ORDER.UNKOWN) {
+    if (this.filter.sort_order === PREPARATION_SORT_ORDER.UNKNOWN) {
       this.filter.sort_order = PREPARATION_SORT_ORDER.ASCENDING;
     }
   }
