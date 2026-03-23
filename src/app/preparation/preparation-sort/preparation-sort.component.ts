@@ -19,12 +19,10 @@ import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { Settings } from '../../../classes/settings/settings';
 import { PREPARATION_SORT_AFTER } from '../../../enums/preparations/preparationSortAfter';
 import { PREPARATION_SORT_ORDER } from '../../../enums/preparations/preparationSortOrder';
 import { IPreparationPageSort } from '../../../interfaces/preparation/iPreparationPageSort';
 import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-preparation-sort',
@@ -48,7 +46,6 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 export class PreparationSortComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiHelper = inject(UIHelper);
-  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   public static readonly COMPONENT_ID = 'preparation-sort';
   public preparationSortAfterEnum = PREPARATION_SORT_AFTER;
@@ -58,27 +55,14 @@ export class PreparationSortComponent implements OnInit {
     sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
   };
 
-  @Input() public preparation_sort: any;
-
-  public settings: Settings;
+  @Input() public preparation_sort: IPreparationPageSort;
 
   constructor() {
     addIcons({ chevronDownOutline, chevronUpOutline });
   }
 
   public ngOnInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.uiHelper.copyData(this.preparation_sort);
-  }
-
-  public dismiss(): void {
-    void this.modalController.dismiss(
-      {
-        preparation_sort: undefined,
-      },
-      undefined,
-      PreparationSortComponent.COMPONENT_ID,
-    );
   }
 
   public useFilter() {
@@ -99,7 +83,7 @@ export class PreparationSortComponent implements OnInit {
     this.useFilter();
   }
 
-  public setSortOrder(_order: any) {
+  public setSortOrder(_order: PREPARATION_SORT_ORDER) {
     this.filter.sort_order = _order;
     /**Preset the first sort if nothing is selected yet**/
     if (this.filter.sort_after === PREPARATION_SORT_AFTER.UNKNOWN) {
@@ -107,18 +91,18 @@ export class PreparationSortComponent implements OnInit {
     }
   }
 
-  public setSortAfter(_sort: any) {
+  public setSortAfter(_sort: PREPARATION_SORT_AFTER) {
     this.filter.sort_after = _sort;
     if (this.filter.sort_order === PREPARATION_SORT_ORDER.UNKNOWN) {
       this.filter.sort_order = PREPARATION_SORT_ORDER.ASCENDING;
     }
   }
 
-  public isSortActive(_sort: any) {
+  public isSortActive(_sort: PREPARATION_SORT_AFTER) {
     return this.filter.sort_after === _sort;
   }
 
-  public isOrderActive(_order: any) {
+  public isOrderActive(_order: PREPARATION_SORT_ORDER) {
     return this.filter.sort_order === _order;
   }
 }
