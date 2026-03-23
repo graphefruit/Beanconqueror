@@ -36,13 +36,9 @@ import { PREPARATION_SORT_AFTER } from '../../enums/preparations/preparationSort
 import { PREPARATION_SORT_ORDER } from '../../enums/preparations/preparationSortOrder';
 import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
 import { PreparationSortFilterHelperService } from '../../services/preparationSortFilterHelper/preparation-sort-filter-helper.service';
-import { UIAlert } from '../../services/uiAlert';
-import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIToast } from '../../services/uiToast';
 
 @Component({
   selector: 'preparation',
@@ -70,12 +66,8 @@ import { UIToast } from '../../services/uiToast';
 export class PreparationPage {
   modalCtrl = inject(ModalController);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
-  private readonly uiPreparationStorage = inject(UIPreparationStorage);
-  private readonly uiAlert = inject(UIAlert);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
-  private readonly uiToast = inject(UIToast);
-  private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly preparationSortFilterHelper = inject(
     PreparationSortFilterHelperService,
@@ -83,7 +75,7 @@ export class PreparationPage {
 
   public settings: Settings;
   public segment: PREPARATION_SEGMENT = PREPARATION_SEGMENT.OPEN;
-  public preparations: Preparation[] = [];
+  private preparations: Preparation[] = [];
 
   public openPreparationsLength = 0;
   public archivePreparationsLength = 0;
@@ -252,10 +244,6 @@ export class PreparationPage {
   private __initializePreparations(): void {
     this.openPreparationsView = [];
     this.archivePreparationsView = [];
-
-    this.preparations = this.uiPreparationStorage
-      .getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
 
     this.openPreparationsLength = this.preparations.reduce(
       (n, e) => (!e.finished ? n + 1 : n),

@@ -14,8 +14,6 @@ import {
   IonRow,
   ModalController,
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -57,9 +55,7 @@ export class PreparationSortComponent implements OnInit {
 
   @Input() public preparation_sort: IPreparationPageSort;
 
-  constructor() {
-    addIcons({ chevronDownOutline, chevronUpOutline });
-  }
+  constructor() {}
 
   public ngOnInit() {
     this.filter = this.uiHelper.copyData(this.preparation_sort);
