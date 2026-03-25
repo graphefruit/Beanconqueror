@@ -181,6 +181,8 @@ export class BeansPage implements OnDestroy {
     frozenHeights: [],
   };
 
+  private forceScrollToTop = false;
+
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBeansSort = this.settings.bean_sort.ARCHIVED;
@@ -258,8 +260,22 @@ export class BeansPage implements OnDestroy {
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public loadBeans(): void {
-    this.saveScrollPositions();
+  public loadBeans(resetScroll: boolean = false): void {
+    if (resetScroll) {
+      this.forceScrollToTop = true;
+      if (this.bean_segment === 'open') {
+        this.savedScrollPositions.open = 0;
+        this.savedScrollPositions.openHeights = [];
+      } else if (this.bean_segment === 'archive') {
+        this.savedScrollPositions.archive = 0;
+        this.savedScrollPositions.archiveHeights = [];
+      } else if (this.bean_segment === 'frozen') {
+        this.savedScrollPositions.frozen = 0;
+        this.savedScrollPositions.frozenHeights = [];
+      }
+    } else {
+      this.saveScrollPositions();
+    }
 
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
@@ -331,7 +347,7 @@ export class BeansPage implements OnDestroy {
 
       await this.__saveBeanFilter();
 
-      this.loadBeans();
+      this.loadBeans(true);
     }
   }
 
@@ -353,7 +369,7 @@ export class BeansPage implements OnDestroy {
       }
       await this.__saveBeanFilter();
 
-      this.loadBeans();
+      this.loadBeans(true);
     }
   }
 
@@ -403,6 +419,17 @@ export class BeansPage implements OnDestroy {
 
   public research() {
     this.setSearchTextScope(this.bean_segment, this.uiSearchText);
+    this.forceScrollToTop = true;
+    if (this.bean_segment === 'open') {
+      this.savedScrollPositions.open = 0;
+      this.savedScrollPositions.openHeights = [];
+    } else if (this.bean_segment === 'archive') {
+      this.savedScrollPositions.archive = 0;
+      this.savedScrollPositions.archiveHeights = [];
+    } else if (this.bean_segment === 'frozen') {
+      this.savedScrollPositions.frozen = 0;
+      this.savedScrollPositions.frozenHeights = [];
+    }
     this.__initializeBeansView(this.bean_segment);
     this.setUIParams();
   }
@@ -914,7 +941,11 @@ export class BeansPage implements OnDestroy {
       let targetScrollTop = -1;
       let snapToDomId: string = null;
 
-      if (this.lastInteractedBeanId) {
+      if (this.forceScrollToTop) {
+        targetScrollTop = 0;
+        this.forceScrollToTop = false;
+        this.lastInteractedBeanId = null;
+      } else if (this.lastInteractedBeanId) {
         let index = -1;
         const viewArray =
           this.bean_segment === 'open'

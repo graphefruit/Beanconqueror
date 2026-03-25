@@ -128,6 +128,8 @@ export class BrewPage implements OnInit, OnDestroy {
     archiveHeights: number[];
   } = { open: 0, archive: 0, openHeights: [], archiveHeights: [] };
 
+  private forceScrollToTop = false;
+
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -226,7 +228,11 @@ export class BrewPage implements OnInit, OnDestroy {
 
       let targetScrollTop = -1;
 
-      if (this.lastInteractedBrewId) {
+      if (this.forceScrollToTop) {
+        targetScrollTop = 0;
+        this.forceScrollToTop = false;
+        this.lastInteractedBrewId = null;
+      } else if (this.lastInteractedBrewId) {
         let index = -1;
         if (this.brew_segment === 'open') {
           index = this.openBrewsView.findIndex(
@@ -341,8 +347,18 @@ export class BrewPage implements OnInit, OnDestroy {
     this.loadBrews();
   }
 
-  public loadBrews(): void {
-    this.saveScrollPositions();
+  public loadBrews(resetScroll: boolean = false): void {
+    if (resetScroll) {
+      this.forceScrollToTop = true;
+      this.savedScrollPositions[this.brew_segment] = 0;
+      if (this.brew_segment === 'open') {
+        this.savedScrollPositions.openHeights = [];
+      } else {
+        this.savedScrollPositions.archiveHeights = [];
+      }
+    } else {
+      this.saveScrollPositions();
+    }
 
     this.__initializeBrews();
     this.retriggerScroll();
@@ -495,7 +511,7 @@ export class BrewPage implements OnInit, OnDestroy {
 
       await this.__saveBrewFilter();
 
-      this.loadBrews();
+      this.loadBrews(true);
     }
   }
 
@@ -526,7 +542,7 @@ export class BrewPage implements OnInit, OnDestroy {
     }
     this.__saveBrewFilter();
 
-    this.loadBrews();
+    this.loadBrews(true);
   }
 
   private async __saveBrewFilter() {
@@ -548,6 +564,14 @@ export class BrewPage implements OnInit, OnDestroy {
       this.openBrewFilterText = this.uiSearchText;
     } else {
       this.archivedBrewFilterText = this.uiSearchText;
+    }
+
+    this.forceScrollToTop = true;
+    this.savedScrollPositions[this.brew_segment] = 0;
+    if (this.brew_segment === 'open') {
+      this.savedScrollPositions.openHeights = [];
+    } else {
+      this.savedScrollPositions.archiveHeights = [];
     }
 
     this.__initializeBrewView(this.brew_segment);
