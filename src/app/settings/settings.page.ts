@@ -576,7 +576,7 @@ export class SettingsPage {
     return this.platform.is('ios') && this.platform.is('capacitor');
   }
 
-  public onCloudAiProviderChanged(): void {
+  public onAiProviderChanged(): void {
     this.settings.cloud_ai_api_key = '';
     this.settings.cloud_ai_model = '';
     this.settings.cloud_ai_base_url = '';

@@ -33,13 +33,16 @@ export class CloudAIBeanImportService {
    */
   public checkReadiness(): AIReadinessResult {
     const settings = this.uiSettingsStorage.getSettings();
-    if (
-      settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE ||
-      settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER
-    ) {
+    if (settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE) {
       return {
         ready: false,
         message: this.translate.instant('APPLE_INTELLIGENCE_USE_ON_DEVICE'),
+      };
+    }
+    if (settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER) {
+      return {
+        ready: false,
+        message: this.translate.instant('CLOUD_AI_NOT_CONFIGURED'),
       };
     }
     if (!settings.cloud_ai_api_key || !settings.cloud_ai_model) {

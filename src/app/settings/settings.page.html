@@ -720,7 +720,7 @@
     <ion-card-content>
       <ion-card-title>{{ "AI_PROVIDER_SETTINGS_TITLE" | translate }}</ion-card-title>
       <ion-item>
-        <ion-select (ngModelChange)="onCloudAiProviderChanged()" [(ngModel)]="settings.ai_provider"
+        <ion-select (ngModelChange)="onAiProviderChanged()" [(ngModel)]="settings.ai_provider"
           cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
           <div slot="label">{{ "AI_PROVIDER" | translate }}</div>
           <ion-select-option value="{{aiProviderEnum.NO_PROVIDER}}">{{ "AI_PROVIDER_DISABLED" | translate }}</ion-select-option>
