@@ -3,12 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { UIAlert } from '../uiAlert';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
-import { AIReadinessResult } from './ai-bean-import.service';
+import { AIReadinessResult } from './apple-intelligence-ai-bean-import.service';
 import { CameraOcrService } from './camera-ocr.service';
 import { CloudFieldExtractionService } from './cloud-field-extraction.service';
 import {
@@ -34,9 +34,8 @@ export class CloudAIBeanImportService {
   public checkReadiness(): AIReadinessResult {
     const settings = this.uiSettingsStorage.getSettings();
     if (
-      settings.cloud_ai_provider ===
-        CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE ||
-      settings.cloud_ai_provider === CLOUD_AI_PROVIDER_ENUM.NO_PROVIDER
+      settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE ||
+      settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER
     ) {
       return {
         ready: false,

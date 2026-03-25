@@ -55,7 +55,7 @@ export class CloudFieldExtractionService {
     if (!config) {
       const settings = this.uiSettingsStorage!.getSettings();
       config = {
-        provider: settings.cloud_ai_provider,
+        provider: settings.ai_provider,
         apiKey: settings.cloud_ai_api_key,
         model: settings.cloud_ai_model,
         baseUrl: settings.cloud_ai_base_url || undefined,

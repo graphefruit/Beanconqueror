@@ -1589,7 +1589,7 @@
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japonca",
     "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Rusça",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence seçildi — cihaz üzerinde yolu kullan",
-    "CLOUD_AI_PROVIDER_DISABLED": "Devre dışı",
+    "AI_PROVIDER_DISABLED": "Devre dışı",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiyopya, Kolombiya, Brezilya, Kenya, Guatemala, Kosta Rika, Honduras, Peru, Ruanda, Burundi, Tanzanya, Uganda, Yemen, Endonezya, Hindistan, Panama, El Salvador, Nikaragua, Meksika, Bolivya, Ekvador, Papua Yeni Gine, Hawaii, Jamaika",
         "PROCESSING_METHODS": "Yıkanmış, Natural, Honey, Anaerobik, Karbonik Maserasyon, Wet-Hulled, Yarı Yıkanmış, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

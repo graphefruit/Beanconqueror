@@ -75,8 +75,8 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -213,11 +213,9 @@ export class SettingsPage {
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
-
-  public cloudAiProviderEnum = CLOUD_AI_PROVIDER_ENUM;
+  public aiProviderEnum = AI_PROVIDER_ENUM;
 
   public isScrolling: boolean = false;
-
 
   public readonly isAndroid: boolean;
   public readonly isIos: boolean;
@@ -586,18 +584,18 @@ export class SettingsPage {
   }
 
   public getModelPlaceholder(): string {
-    switch (this.settings.cloud_ai_provider) {
-      case CLOUD_AI_PROVIDER_ENUM.OPENAI:
+    switch (this.settings.ai_provider) {
+      case AI_PROVIDER_ENUM.OPENAI:
         return 'gpt-4o-mini';
-      case CLOUD_AI_PROVIDER_ENUM.GOOGLE:
+      case AI_PROVIDER_ENUM.GOOGLE:
         return 'gemini-2.0-flash';
-      case CLOUD_AI_PROVIDER_ENUM.ANTHROPIC:
+      case AI_PROVIDER_ENUM.ANTHROPIC:
         return 'claude-sonnet-4-20250514';
-      case CLOUD_AI_PROVIDER_ENUM.MISTRAL:
+      case AI_PROVIDER_ENUM.MISTRAL:
         return 'mistral-small-latest';
-      case CLOUD_AI_PROVIDER_ENUM.OPENROUTER:
+      case AI_PROVIDER_ENUM.OPENROUTER:
         return 'openai/gpt-4o-mini';
-      case CLOUD_AI_PROVIDER_ENUM.CUSTOM:
+      case AI_PROVIDER_ENUM.CUSTOM:
         return 'model-name';
       default:
         return '';
@@ -609,7 +607,7 @@ export class SettingsPage {
       component: CloudModelPickerComponent,
       id: CloudModelPickerComponent.COMPONENT_ID,
       componentProps: {
-        provider: this.settings.cloud_ai_provider,
+        provider: this.settings.ai_provider,
         apiKey: this.settings.cloud_ai_api_key,
         baseUrl: this.settings.cloud_ai_base_url,
       },

@@ -1,4 +1,4 @@
-import { CLOUD_AI_PROVIDER_ENUM } from '../../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import { CloudFieldExtractionService } from '../cloud-field-extraction.service';
 import { CloudLLMConfig } from '../cloud-llm-communication.service';
 
@@ -9,7 +9,7 @@ describe('CloudFieldExtractionService', () => {
   let fetchSpy: jasmine.Spy;
 
   const defaultConfig: CloudLLMConfig = {
-    provider: CLOUD_AI_PROVIDER_ENUM.OPENAI,
+    provider: AI_PROVIDER_ENUM.OPENAI,
     apiKey: 'test-key',
     model: 'gpt-4o',
   };

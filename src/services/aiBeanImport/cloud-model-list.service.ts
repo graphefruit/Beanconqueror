@@ -1,4 +1,4 @@
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 
 export interface CloudModel {
   id: string;
@@ -82,12 +82,12 @@ async function fetchModels(config: ProviderModelConfig): Promise<CloudModel[]> {
 }
 
 function buildProviderConfig(
-  provider: CLOUD_AI_PROVIDER_ENUM,
+  provider: AI_PROVIDER_ENUM,
   apiKey: string,
   baseUrl?: string,
 ): ProviderModelConfig | null {
   switch (provider) {
-    case CLOUD_AI_PROVIDER_ENUM.OPENAI:
+    case AI_PROVIDER_ENUM.OPENAI:
       return {
         url: 'https://api.openai.com/v1/models',
         headers: { Authorization: `Bearer ${apiKey}` },
@@ -104,7 +104,7 @@ function buildProviderConfig(
         },
       };
 
-    case CLOUD_AI_PROVIDER_ENUM.ANTHROPIC:
+    case AI_PROVIDER_ENUM.ANTHROPIC:
       return {
         url: 'https://api.anthropic.com/v1/models',
         headers: {
@@ -121,7 +121,7 @@ function buildProviderConfig(
         },
       };
 
-    case CLOUD_AI_PROVIDER_ENUM.GOOGLE:
+    case AI_PROVIDER_ENUM.GOOGLE:
       return {
         url: `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
         headers: {},
@@ -141,7 +141,7 @@ function buildProviderConfig(
         },
       };
 
-    case CLOUD_AI_PROVIDER_ENUM.MISTRAL:
+    case AI_PROVIDER_ENUM.MISTRAL:
       return {
         url: 'https://api.mistral.ai/v1/models',
         headers: { Authorization: `Bearer ${apiKey}` },
@@ -156,7 +156,7 @@ function buildProviderConfig(
         },
       };
 
-    case CLOUD_AI_PROVIDER_ENUM.OPENROUTER:
+    case AI_PROVIDER_ENUM.OPENROUTER:
       return {
         url: 'https://openrouter.ai/api/v1/models',
         headers: {},
@@ -171,7 +171,7 @@ function buildProviderConfig(
         },
       };
 
-    case CLOUD_AI_PROVIDER_ENUM.CUSTOM: {
+    case AI_PROVIDER_ENUM.CUSTOM: {
       const cleanUrl = (baseUrl ?? '').replace(/\/+$/, '');
       return {
         url: `${cleanUrl}/models`,
@@ -190,7 +190,7 @@ function buildProviderConfig(
 }
 
 export async function fetchAvailableModels(
-  provider: CLOUD_AI_PROVIDER_ENUM,
+  provider: AI_PROVIDER_ENUM,
   apiKey: string,
   baseUrl?: string,
 ): Promise<CloudModel[]> {

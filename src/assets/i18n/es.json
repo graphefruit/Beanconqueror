@@ -1589,7 +1589,7 @@
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Japonés",
     "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Ruso",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence seleccionado — usar ruta local",
-    "CLOUD_AI_PROVIDER_DISABLED": "Desactivado",
+    "AI_PROVIDER_DISABLED": "Desactivado",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopía, Colombia, Brasil, Kenia, Guatemala, Costa Rica, Honduras, Perú, Ruanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panamá, El Salvador, Nicaragua, México, Bolivia, Ecuador, Papúa Nueva Guinea, Hawái, Jamaica",
         "PROCESSING_METHODS": "Lavado, Natural, Honey, Anaeróbico, Maceración Carbónica, Wet-Hulled, Semi-Lavado, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

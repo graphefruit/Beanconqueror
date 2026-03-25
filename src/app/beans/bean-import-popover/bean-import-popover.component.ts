@@ -16,7 +16,7 @@ import { cameraOutline, imagesOutline, qrCodeOutline } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { BEAN_IMPORT_ACTION } from '../../../enums/beans/beanImportAction';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
@@ -62,18 +62,17 @@ export class BeanImportPopoverComponent implements OnInit {
       return false;
     }
     const settings = this.uiSettingsStorage.getSettings();
-    if (settings.cloud_ai_provider === CLOUD_AI_PROVIDER_ENUM.NO_PROVIDER) {
+    if (settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER) {
       return false;
     }
     if (
       this.platform.is('ios') &&
-      settings.cloud_ai_provider === CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+      settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
     ) {
       return true;
     }
     return (
-      settings.cloud_ai_provider !==
-        CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
+      settings.ai_provider !== AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
       !!settings.cloud_ai_api_key &&
       !!settings.cloud_ai_model
     );

@@ -718,24 +718,24 @@
 
   <ion-card class="margin-top-20">
     <ion-card-content>
-      <ion-card-title>{{ "CLOUD_AI_SETTINGS_TITLE" | translate }}</ion-card-title>
+      <ion-card-title>{{ "AI_PROVIDER_SETTINGS_TITLE" | translate }}</ion-card-title>
       <ion-item>
-        <ion-select (ngModelChange)="onCloudAiProviderChanged()" [(ngModel)]="settings.cloud_ai_provider"
+        <ion-select (ngModelChange)="onCloudAiProviderChanged()" [(ngModel)]="settings.ai_provider"
           cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
-          <div slot="label">{{ "CLOUD_AI_PROVIDER" | translate }}</div>
-          <ion-select-option value="{{cloudAiProviderEnum.NO_PROVIDER}}">{{ "CLOUD_AI_PROVIDER_DISABLED" | translate }}</ion-select-option>
+          <div slot="label">{{ "AI_PROVIDER" | translate }}</div>
+          <ion-select-option value="{{aiProviderEnum.NO_PROVIDER}}">{{ "AI_PROVIDER_DISABLED" | translate }}</ion-select-option>
           @if (isAppleIntelligenceAvailable()) {
-          <ion-select-option value="{{cloudAiProviderEnum.APPLE_INTELLIGENCE}}">{{ "CLOUD_AI_PROVIDER_APPLE_INTELLIGENCE" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.APPLE_INTELLIGENCE}}">{{ "AI_PROVIDER_APPLE_INTELLIGENCE" | translate }}</ion-select-option>
           }
-          <ion-select-option value="{{cloudAiProviderEnum.OPENAI}}">{{ "CLOUD_AI_PROVIDER_OPENAI" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.GOOGLE}}">{{ "CLOUD_AI_PROVIDER_GOOGLE" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.ANTHROPIC}}">{{ "CLOUD_AI_PROVIDER_ANTHROPIC" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.MISTRAL}}">{{ "CLOUD_AI_PROVIDER_MISTRAL" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.OPENROUTER}}">{{ "CLOUD_AI_PROVIDER_OPENROUTER" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.CUSTOM}}">{{ "CLOUD_AI_PROVIDER_CUSTOM" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.OPENAI}}">{{ "AI_PROVIDER_OPENAI" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.GOOGLE}}">{{ "AI_PROVIDER_GOOGLE" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.ANTHROPIC}}">{{ "AI_PROVIDER_ANTHROPIC" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.MISTRAL}}">{{ "AI_PROVIDER_MISTRAL" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.OPENROUTER}}">{{ "AI_PROVIDER_OPENROUTER" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.CUSTOM}}">{{ "AI_PROVIDER_CUSTOM" | translate }}</ion-select-option>
         </ion-select>
       </ion-item>
-      @if (settings.cloud_ai_provider !== cloudAiProviderEnum.APPLE_INTELLIGENCE && settings.cloud_ai_provider !== cloudAiProviderEnum.NO_PROVIDER) {
+      @if (settings.ai_provider !== aiProviderEnum.APPLE_INTELLIGENCE && settings.ai_provider !== aiProviderEnum.NO_PROVIDER) {
       <ion-item>
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_API_KEY" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_api_key"
@@ -754,7 +754,7 @@
         </ion-button>
       </ion-item>
       }
-      @if (settings.cloud_ai_provider === cloudAiProviderEnum.CUSTOM) {
+      @if (settings.ai_provider === aiProviderEnum.CUSTOM) {
       <ion-item>
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_BASE_URL" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_base_url"
