@@ -15,7 +15,7 @@ import {
   MAX_BATTERY_LEVEL,
   MIN_BATTERY_LEVEL,
 } from './felicita/constants';
-import { ScaleType } from './index';
+import { ScaleType } from './types';
 
 declare var ble: any;
 

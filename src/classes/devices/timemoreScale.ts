@@ -1,7 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { Logger } from './common/logger';
-import { ScaleType } from './index';
+import { ScaleType } from './types';
 
 declare var ble: any;
 export class TimemoreScale extends BluetoothScale {

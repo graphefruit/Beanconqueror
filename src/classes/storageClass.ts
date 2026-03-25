@@ -1,14 +1,13 @@
 import { inject } from '@angular/core';
 
+import { cloneDeep } from 'lodash';
 import { Observable, Subject } from 'rxjs';
 
-import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
 import { UIStorage } from '../services/uiStorage';
 
 export abstract class StorageClass {
   protected uiStorage = inject(UIStorage);
-  protected uiHelper = inject(UIHelper);
   protected uiLog = inject(UILog);
 
   private removeObjSubject = new Subject<any>();
@@ -25,6 +24,24 @@ export abstract class StorageClass {
 
   protected constructor(protected dbPath: string) {
     this.DB_PATH = dbPath;
+  }
+
+  public static cloneData<T>(value: T): T {
+    return cloneDeep(value);
+  }
+
+  public static getUnixTimestamp(): number {
+    return Math.floor(Date.now() / 1000);
+  }
+
+  /**
+   * Show an alert via UIAlert using dynamic import to avoid circular dependency.
+   * StorageClass → UIAlert → ... → UISettingsStorage → extends StorageClass
+   */
+  private showAlert(message: string, title?: string): void {
+    import('../services/uiAlert').then(({ UIAlert }) => {
+      UIAlert.getInstance()?.showMessage(message, title);
+    });
   }
 
   public async initializeStorage() {
@@ -72,18 +89,18 @@ export abstract class StorageClass {
 
   public async add(_entry): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
-      const newEntry = this.uiHelper.cloneData(_entry);
+      const newEntry = StorageClass.cloneData(_entry);
       try {
         newEntry.config.uuid = crypto.randomUUID();
-        newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+        newEntry.config.unix_timestamp = StorageClass.getUnixTimestamp();
         this.storedData.push(newEntry);
         await this.__save();
         this.__sendEvent('ADD');
       } catch (ex) {
         this.uiLog.error('Storage - Add - Unsuccessfully', ex);
-        this.uiHelper.showAlert(ex.message, 'ADD CRITICAL ERROR');
+        this.showAlert(ex.message, 'ADD CRITICAL ERROR');
       }
-      resolve(this.uiHelper.cloneData(newEntry));
+      resolve(StorageClass.cloneData(newEntry));
     });
     return promise;
   }
@@ -113,7 +130,7 @@ export abstract class StorageClass {
           this.uiLog.error(
             `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`,
           );
-          this.uiHelper.showAlert(
+          this.showAlert(
             `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`,
             'CRITICAL ERROR',
           );
@@ -124,7 +141,7 @@ export abstract class StorageClass {
           'Storage - Update  - Unsucessfully - Execption occured',
           ex,
         );
-        this.uiHelper.showAlert(
+        this.showAlert(
           `Storage - Update  - Unsucessfully - Execption occured - ${ex.message}`,
           'CRITICAL ERROR',
         );
@@ -258,7 +275,7 @@ export abstract class StorageClass {
             this.uiLog.log('Storage - Save - Successfully');
           } else {
             this.uiLog.error('Storage - Save Set - Unsuccessfully', _saved);
-            this.uiHelper.showAlert(
+            this.showAlert(
               'Storage - Save Set - Unsuccessfully  - ' +
                 JSON.stringify(_saved),
               'CRITICAL ERROR',
@@ -267,15 +284,12 @@ export abstract class StorageClass {
         },
         (e) => {
           this.uiLog.error('Storage - Save Set Exception - Unsuccessfully', e);
-          this.uiHelper.showAlert(
-            JSON.stringify(e),
-            'CRITICAL ERROR - SAVE SET',
-          );
+          this.showAlert(JSON.stringify(e), 'CRITICAL ERROR - SAVE SET');
         },
       );
     } catch (ex) {
       this.uiLog.error('Storage - Save - Unsuccessfully', ex);
-      this.uiHelper.showAlert(ex.message, 'CRITICAL ERROR');
+      this.showAlert(ex.message, 'CRITICAL ERROR');
     }
   }
 }

@@ -32,61 +32,25 @@ import { SmartchefScale } from './smartchefScale';
 import { TemperatureDevice } from './temperatureBluetoothDevice';
 import { TimemoreScale } from './timemoreScale';
 import { TransducerDirectPressure } from './transducerDirectPressure';
+import {
+  BluetoothTypes,
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  TemperatureType,
+} from './types';
 import { VariaAkuScale } from './variaAku';
 import { WeighMyBruScale } from './weighMyBruScale';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
-
-export enum BluetoothTypes {
-  SCALE = 'SCALE',
-  PRESSURE = 'PRESSURE',
-  TEMPERATURE = 'TEMPERATURE',
-  TDS = 'TDS',
-}
-
-export enum ScaleType {
-  DECENT = 'DECENT',
-  LUNAR = 'LUNAR',
-  JIMMY = 'JIMMY',
-  FELICITA = 'FELICITA',
-  FUTULA = 'FUTULA',
-  EUREKAPRECISA = 'EUREKAPRECISA',
-  SKALE = 'SKALE',
-  SMARTCHEF = 'SMARTCHEF',
-  DIFLUIDMICROBALANCE = 'DIFLUIDMIRCROBALANCE',
-  DIFLUIDMICROBALANCETI = 'DIFLUIDMIRCROBALANCETI',
-  BLACKCOFFEE = 'BLACKCOFFEE',
-  DIYPYTHONCOFFEESCALE = 'DIYPYTHONCOFFEESCALE',
-  DIYRUSTCOFFEESCALE = 'DIYRUSTCOFFEESCALE',
-  BOKOOSCALE = 'BOOKOOSCALE',
-  TIMEMORESCALE = 'TIMEMORESCALE',
-  VARIA_AKU = 'VARIA_AKU',
-  ESPRESSI = 'ESPRESSI',
-  WEIGHMYBRUSCALE = 'WEIGHMYBRUSCALE',
-}
-
-export enum PressureType {
-  POPSICLE = 'POPSICLE',
-  DIRECT = 'DIRECT',
-  PRS = 'PRS',
-  BOKOOPRESSURE = 'BOKOOPRESSURE',
-  COFFEESENSOR = 'COFFEESENSOR',
-}
-
-export enum TemperatureType {
-  ETI = 'ETI',
-  BASICGRILL = 'BASICGRILL',
-  MEATER = 'MEATER',
-  COMBUSTION = 'COMBUSTION',
-  ARGOS = 'ARGOS',
-  GEISINGER = 'GEISINGER',
-  COFFEESENSOR = 'COFFEESENSOR',
-}
-
-export enum RefractometerType {
-  R2 = 'R2',
-}
+export {
+  BluetoothTypes,
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  TemperatureType,
+} from './types';
 
 export function makeDevice(
   type: ScaleType,

@@ -1,7 +1,8 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
+import { sleep } from './common';
 import { Logger } from './common/logger';
-import { ScaleType, sleep } from './index';
+import { ScaleType } from './types';
 
 declare var ble: any;
 export class DifluidMicrobalance extends BluetoothScale {
