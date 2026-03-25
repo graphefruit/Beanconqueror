@@ -796,7 +796,9 @@ export class BeansPage implements OnDestroy {
   private isCloudProvider(): boolean {
     const settings = this.uiSettingsStorage.getSettings();
     return (
-      settings.cloud_ai_provider !== CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+      settings.cloud_ai_provider !==
+        CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
+      settings.cloud_ai_provider !== CLOUD_AI_PROVIDER_ENUM.NO_PROVIDER
     );
   }
 

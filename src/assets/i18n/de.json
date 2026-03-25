@@ -691,6 +691,8 @@
     "CLOUD_AI_MODEL": "Modell",
     "CLOUD_AI_BASE_URL": "Basis-URL",
     "CLOUD_AI_NOT_CONFIGURED": "Cloud-KI ist nicht konfiguriert. Bitte wähle einen Anbieter und gib deinen API-Schlüssel in den Einstellungen ein.",
+    "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence ausgewählt — lokalen Pfad verwenden",
+    "CLOUD_AI_PROVIDER_DISABLED": "Deaktiviert",
     "CLOUD_AI_PROVIDER_APPLE_INTELLIGENCE": "Apple Intelligence (lokal)",
     "CLOUD_AI_PROVIDER_OPENAI": "OpenAI",
     "CLOUD_AI_PROVIDER_GOOGLE": "Google Gemini",

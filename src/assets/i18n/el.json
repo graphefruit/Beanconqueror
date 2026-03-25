@@ -1588,6 +1588,8 @@
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Σλοβακικά",
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "Ιαπωνικά",
     "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "Ρωσικά",
+    "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Επιλέχθηκε Apple Intelligence — χρήση τοπικής διαδρομής",
+    "CLOUD_AI_PROVIDER_DISABLED": "Απενεργοποιημένο",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Αιθιοπία, Κολομβία, Βραζιλία, Κένυα, Γουατεμάλα, Κόστα Ρίκα, Ονδούρα, Περού, Ρουάντα, Μπουρούντι, Τανζανία, Ουγκάντα, Υεμένη, Ινδονησία, Ινδία, Παναμάς, Ελ Σαλβαδόρ, Νικαράγουα, Μεξικό, Βολιβία, Ισημερινός, Παπούα Νέα Γουινέα, Χαβάη, Τζαμάικα",
         "PROCESSING_METHODS": "Πλυμένος, Φυσικός, Honey, Αναερόβια, Ανθρακική Διαβροχή, Wet-Hulled, Ημι-πλυμένος, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

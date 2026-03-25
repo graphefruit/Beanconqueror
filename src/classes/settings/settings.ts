@@ -588,7 +588,7 @@ export class Settings implements ISettings {
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
 
-    this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+    this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.NO_PROVIDER;
     this.cloud_ai_api_key = '';
     this.cloud_ai_model = '';
     this.cloud_ai_base_url = '';
@@ -655,7 +655,7 @@ export class Settings implements ISettings {
     );
 
     if (settingsObj.cloud_ai_provider === undefined) {
-      this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+      this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.NO_PROVIDER;
     } else {
       this.cloud_ai_provider = settingsObj.cloud_ai_provider;
     }

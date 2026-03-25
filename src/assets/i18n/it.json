@@ -1588,6 +1588,8 @@
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": "Slovenčina",
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": "日本語",
     "PAGE_SETTINGS_LANGUAGE_RUSSIAN": "русский язык",
+    "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence selezionato — usa il percorso locale",
+    "CLOUD_AI_PROVIDER_DISABLED": "Disattivato",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopia, Colombia, Brasile, Kenya, Guatemala, Costa Rica, Honduras, Perù, Ruanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Messico, Bolivia, Ecuador, Papua Nuova Guinea, Hawaii, Giamaica",
         "PROCESSING_METHODS": "Lavato, Naturale, Honey, Anaerobico, Macerazione Carbonica, Wet-Hulled, Semi-Lavato, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

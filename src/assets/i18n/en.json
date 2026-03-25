@@ -691,6 +691,8 @@
     "CLOUD_AI_MODEL": "Model",
     "CLOUD_AI_BASE_URL": "Base URL",
     "CLOUD_AI_NOT_CONFIGURED": "Cloud AI is not configured. Please select a provider and enter your API key in Settings.",
+    "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence selected — use on-device path",
+    "CLOUD_AI_PROVIDER_DISABLED": "Disabled",
     "CLOUD_AI_PROVIDER_APPLE_INTELLIGENCE": "Apple Intelligence (on-device)",
     "CLOUD_AI_PROVIDER_OPENAI": "OpenAI",
     "CLOUD_AI_PROVIDER_GOOGLE": "Google Gemini",

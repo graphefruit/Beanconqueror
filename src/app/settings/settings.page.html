@@ -723,6 +723,7 @@
         <ion-select (ngModelChange)="onCloudAiProviderChanged()" [(ngModel)]="settings.cloud_ai_provider"
           cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
           <div slot="label">{{ "CLOUD_AI_PROVIDER" | translate }}</div>
+          <ion-select-option value="{{cloudAiProviderEnum.NO_PROVIDER}}">{{ "CLOUD_AI_PROVIDER_DISABLED" | translate }}</ion-select-option>
           @if (isAppleIntelligenceAvailable()) {
           <ion-select-option value="{{cloudAiProviderEnum.APPLE_INTELLIGENCE}}">{{ "CLOUD_AI_PROVIDER_APPLE_INTELLIGENCE" | translate }}</ion-select-option>
           }
@@ -734,7 +735,7 @@
           <ion-select-option value="{{cloudAiProviderEnum.CUSTOM}}">{{ "CLOUD_AI_PROVIDER_CUSTOM" | translate }}</ion-select-option>
         </ion-select>
       </ion-item>
-      @if (settings.cloud_ai_provider !== cloudAiProviderEnum.APPLE_INTELLIGENCE) {
+      @if (settings.cloud_ai_provider !== cloudAiProviderEnum.APPLE_INTELLIGENCE && settings.cloud_ai_provider !== cloudAiProviderEnum.NO_PROVIDER) {
       <ion-item>
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_API_KEY" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_api_key"

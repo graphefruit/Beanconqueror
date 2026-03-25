@@ -34,11 +34,13 @@ export class CloudAIBeanImportService {
   public checkReadiness(): AIReadinessResult {
     const settings = this.uiSettingsStorage.getSettings();
     if (
-      settings.cloud_ai_provider === CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+      settings.cloud_ai_provider ===
+        CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE ||
+      settings.cloud_ai_provider === CLOUD_AI_PROVIDER_ENUM.NO_PROVIDER
     ) {
       return {
         ready: false,
-        message: 'Apple Intelligence selected — use on-device path',
+        message: this.translate.instant('APPLE_INTELLIGENCE_USE_ON_DEVICE'),
       };
     }
     if (!settings.cloud_ai_api_key || !settings.cloud_ai_model) {
