@@ -31,7 +31,7 @@ export interface AIReadinessResult {
 @Injectable({
   providedIn: 'root',
 })
-export class AIBeanImportService {
+export class AppleIntelligenceAIBeanImportService {
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);
   private readonly platform = inject(Platform);

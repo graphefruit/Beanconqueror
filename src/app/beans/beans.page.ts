@@ -40,11 +40,11 @@ import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
-import { AIBeanImportService } from '../../services/aiBeanImport/ai-bean-import.service';
+import { AppleIntelligenceAIBeanImportService } from '../../services/aiBeanImport/apple-intelligence-ai-bean-import.service';
 import { CloudAIBeanImportService } from '../../services/aiBeanImport/cloud-ai-bean-import.service';
 import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
@@ -99,7 +99,9 @@ export class BeansPage implements OnDestroy {
   private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
   private readonly nfcService = inject(NfcService);
   private readonly uiImage = inject(UIImage);
-  private readonly aiBeanImportService = inject(AIBeanImportService);
+  private readonly appleIntelligenceImportService = inject(
+    AppleIntelligenceAIBeanImportService,
+  );
   private readonly cloudAiBeanImportService = inject(CloudAIBeanImportService);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiFileHelper = inject(UIFileHelper);
@@ -480,7 +482,8 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
       );
 
-      const readiness = await this.aiBeanImportService.checkReadiness();
+      const readiness =
+        await this.appleIntelligenceImportService.checkReadiness();
       if (!readiness.ready) {
         this.uiAnalytics.trackEvent(
           BEAN_TRACKING.TITLE,
@@ -495,7 +498,8 @@ export class BeansPage implements OnDestroy {
         return;
       }
 
-      const bean = await this.aiBeanImportService.captureAndExtractBeanData();
+      const bean =
+        await this.appleIntelligenceImportService.captureAndExtractBeanData();
 
       if (bean !== null) {
         this.uiAnalytics.trackEvent(
@@ -605,7 +609,8 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
       );
 
-      const readiness = await this.aiBeanImportService.checkReadiness();
+      const readiness =
+        await this.appleIntelligenceImportService.checkReadiness();
       if (!readiness.ready) {
         this.uiAnalytics.trackEvent(
           BEAN_TRACKING.TITLE,
@@ -639,10 +644,11 @@ export class BeansPage implements OnDestroy {
 
       await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
       try {
-        const result = await this.aiBeanImportService.extractBeanDataFromImages(
-          data.photoPaths,
-          data.attachPhotos,
-        );
+        const result =
+          await this.appleIntelligenceImportService.extractBeanDataFromImages(
+            data.photoPaths,
+            data.attachPhotos,
+          );
         await this.uiAlert.hideLoadingSpinner();
 
         if (result && result.bean) {
@@ -796,7 +802,8 @@ export class BeansPage implements OnDestroy {
   private isCloudProvider(): boolean {
     const settings = this.uiSettingsStorage.getSettings();
     return (
-      settings.cloud_ai_provider !== CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+      settings.ai_provider !== AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
+      settings.ai_provider !== AI_PROVIDER_ENUM.NO_PROVIDER
     );
   }
 

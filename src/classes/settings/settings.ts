@@ -4,8 +4,8 @@ import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -246,7 +246,7 @@ export class Settings implements ISettings {
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
 
-  public cloud_ai_provider: CLOUD_AI_PROVIDER_ENUM;
+  public ai_provider: AI_PROVIDER_ENUM;
   public cloud_ai_api_key: string;
   public cloud_ai_model: string;
   public cloud_ai_base_url: string;
@@ -588,7 +588,7 @@ export class Settings implements ISettings {
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
 
-    this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+    this.ai_provider = AI_PROVIDER_ENUM.NO_PROVIDER;
     this.cloud_ai_api_key = '';
     this.cloud_ai_model = '';
     this.cloud_ai_base_url = '';
@@ -654,10 +654,12 @@ export class Settings implements ISettings {
       settingsObj.bean_visible_list_view_parameters,
     );
 
-    if (settingsObj.cloud_ai_provider === undefined) {
-      this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+    if (settingsObj.ai_provider !== undefined) {
+      this.ai_provider = settingsObj.ai_provider;
+    } else if ((settingsObj as any).cloud_ai_provider !== undefined) {
+      this.ai_provider = (settingsObj as any).cloud_ai_provider;
     } else {
-      this.cloud_ai_provider = settingsObj.cloud_ai_provider;
+      this.ai_provider = AI_PROVIDER_ENUM.NO_PROVIDER;
     }
     if (settingsObj.cloud_ai_api_key === undefined) {
       this.cloud_ai_api_key = '';
