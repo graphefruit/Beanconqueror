@@ -30,18 +30,17 @@ export abstract class StorageClass {
     return cloneDeep(value);
   }
 
+  // Equivalent to moment().unix() — not worth the import for one line,
+  // and unix timestamp semantics are not expected to change.
   public static getUnixTimestamp(): number {
     return Math.floor(Date.now() / 1000);
   }
 
-  /**
-   * Show an alert via UIAlert using dynamic import to avoid circular dependency.
-   * StorageClass → UIAlert → ... → UISettingsStorage → extends StorageClass
-   */
-  private showAlert(message: string, title?: string): void {
-    import('../services/uiAlert').then(({ UIAlert }) => {
-      UIAlert.getInstance()?.showMessage(message, title);
-    });
+  // Dynamic import to avoid circular dependency:
+  // StorageClass → UIAlert → ... → UISettingsStorage → extends StorageClass
+  private async showAlert(message: string, title?: string): Promise<void> {
+    const { UIAlert } = await import('../services/uiAlert');
+    UIAlert.getInstance()?.showMessage(message, title);
   }
 
   public async initializeStorage() {
@@ -98,7 +97,7 @@ export abstract class StorageClass {
         this.__sendEvent('ADD');
       } catch (ex) {
         this.uiLog.error('Storage - Add - Unsuccessfully', ex);
-        this.showAlert(ex.message, 'ADD CRITICAL ERROR');
+        await this.showAlert(ex.message, 'ADD CRITICAL ERROR');
       }
       resolve(StorageClass.cloneData(newEntry));
     });
@@ -130,7 +129,7 @@ export abstract class StorageClass {
           this.uiLog.error(
             `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`,
           );
-          this.showAlert(
+          await this.showAlert(
             `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`,
             'CRITICAL ERROR',
           );
@@ -141,7 +140,7 @@ export abstract class StorageClass {
           'Storage - Update  - Unsucessfully - Execption occured',
           ex,
         );
-        this.showAlert(
+        await this.showAlert(
           `Storage - Update  - Unsucessfully - Execption occured - ${ex.message}`,
           'CRITICAL ERROR',
         );
@@ -270,26 +269,26 @@ export abstract class StorageClass {
   private async __save() {
     try {
       await this.uiStorage.set(this.DB_PATH, this.storedData).then(
-        (_saved) => {
+        async (_saved) => {
           if (_saved === true) {
             this.uiLog.log('Storage - Save - Successfully');
           } else {
             this.uiLog.error('Storage - Save Set - Unsuccessfully', _saved);
-            this.showAlert(
+            await this.showAlert(
               'Storage - Save Set - Unsuccessfully  - ' +
                 JSON.stringify(_saved),
               'CRITICAL ERROR',
             );
           }
         },
-        (e) => {
+        async (e) => {
           this.uiLog.error('Storage - Save Set Exception - Unsuccessfully', e);
-          this.showAlert(JSON.stringify(e), 'CRITICAL ERROR - SAVE SET');
+          await this.showAlert(JSON.stringify(e), 'CRITICAL ERROR - SAVE SET');
         },
       );
     } catch (ex) {
       this.uiLog.error('Storage - Save - Unsuccessfully', ex);
-      this.showAlert(ex.message, 'CRITICAL ERROR');
+      await this.showAlert(ex.message, 'CRITICAL ERROR');
     }
   }
 }
