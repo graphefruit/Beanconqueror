@@ -57,9 +57,9 @@ describe('CloudFieldExtractionService', () => {
     mockLogger = { log: jasmine.createSpy('log') };
     fetchSpy = spyOn(globalThis, 'fetch');
 
-    // Create the service without calling the constructor to avoid inject()
-    // calls that fail due to circular dependency resolution in the test bundle.
-    // Tests pass config and logger explicitly to extractAllFields().
+    // Create the service without calling the constructor because inject()
+    // requires Angular's injection context (TestBed). This test intentionally
+    // avoids TestBed for speed. Config and logger are passed explicitly.
     service = Object.create(CloudFieldExtractionService.prototype);
   });
 

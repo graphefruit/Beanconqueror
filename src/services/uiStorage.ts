@@ -5,7 +5,6 @@ import { Storage } from '@ionic/storage';
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { EventQueueService } from './queueService/queue-service.service';
-import { UIAlert } from './uiAlert';
 import { UILog } from './uiLog';
 
 @Injectable({
@@ -15,7 +14,6 @@ export class UIStorage {
   private readonly storage = inject(Storage);
   private eventQueue = inject(EventQueueService);
   private readonly uiLog = inject(UILog);
-  private readonly uiAlert = inject(UIAlert);
 
   private _storage: Storage | null = null;
 
@@ -72,17 +70,21 @@ export class UIStorage {
               _key +
               ' we stop to try getting data now 20 attempts are enough - show error',
           );
-          await this.uiAlert.showIOSIndexedDBIssues(
-            'IOS_DATABASE_ISSUE_DESCRIPTION',
-            'IOS_DATABASE_ISSUE_TITLE',
-            true,
-          );
+          await this.displayIOSIndexedDBIssue();
           throw ex;
         }
       }
     }
   }
 
+  private async displayIOSIndexedDBIssue() {
+    const { UIAlert } = await import('./uiAlert');
+    await UIAlert.getInstance()?.showIOSIndexedDBIssues(
+      'IOS_DATABASE_ISSUE_DESCRIPTION',
+      'IOS_DATABASE_ISSUE_TITLE',
+      true,
+    );
+  }
   private async internalSet(_key: string, _val: any): Promise<boolean> {
     await this._storage.set(_key, _val);
     // We just trigger storage change when the set was successfully.
@@ -132,11 +134,7 @@ export class UIStorage {
               _key +
               ' we stop to try getting data now 20 attempts are enough - show error',
           );
-          await this.uiAlert.showIOSIndexedDBIssues(
-            'IOS_DATABASE_ISSUE_DESCRIPTION',
-            'IOS_DATABASE_ISSUE_TITLE',
-            true,
-          );
+          await this.displayIOSIndexedDBIssue();
           return null;
         }
       }

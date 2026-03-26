@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import type { Bean } from '../../classes/bean/bean';
+import { Bean } from '../../classes/bean/bean';
 import {
   buildCloudExtractionPrompt,
   CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS,
