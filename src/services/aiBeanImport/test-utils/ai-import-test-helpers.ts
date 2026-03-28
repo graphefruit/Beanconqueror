@@ -4,6 +4,11 @@ import { IBeanParameter } from '../../../interfaces/parameter/iBeanParameter';
 import { MergedExamples } from '../ai-import-examples.service';
 import { Block, Line, TextDetectionResult } from '../ocr-metadata.service';
 
+interface CreateBlockOptions {
+  recognizedLanguage?: string;
+  lines?: Line[];
+}
+
 /**
  * Create a mock Block with specified bounding box.
  * @param text Block text content
@@ -11,7 +16,7 @@ import { Block, Line, TextDetectionResult } from '../ocr-metadata.service';
  * @param top Top coordinate
  * @param right Right coordinate
  * @param bottom Bottom coordinate
- * @param recognizedLanguage Optional language code (default: 'en')
+ * @param options Optional recognized language and lines
  */
 export function createBlock(
   text: string,
@@ -19,14 +24,13 @@ export function createBlock(
   top: number,
   right: number,
   bottom: number,
-  recognizedLanguage: string = 'en',
-  lines: Line[] = [],
+  options?: CreateBlockOptions,
 ): Block {
   return {
     text,
     boundingBox: { left, top, right, bottom },
-    recognizedLanguage,
-    lines,
+    recognizedLanguage: options?.recognizedLanguage ?? 'en',
+    lines: options?.lines ?? [],
   };
 }
 

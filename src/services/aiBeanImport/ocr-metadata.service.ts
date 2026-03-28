@@ -290,6 +290,14 @@ export class OcrMetadataService {
   }
 
   /**
+   * Height of a bounding box, using absolute value since coordinate system
+   * may have Y origin at bottom (top > bottom).
+   */
+  private boundingBoxHeight(box: BoundingBox): number {
+    return Math.abs(box.bottom - box.top);
+  }
+
+  /**
    * Get the representative height for a block, approximating font size.
    * Uses average line height when line bounding boxes are available,
    * otherwise falls back to the block's own bounding box height.
@@ -300,7 +308,7 @@ export class OcrMetadataService {
         .filter(
           (l) => l.boundingBox && typeof l.boundingBox.bottom === 'number',
         )
-        .map((l) => Math.abs(l.boundingBox.bottom - l.boundingBox.top));
+        .map((l) => this.boundingBoxHeight(l.boundingBox));
 
       if (lineHeights.length > 0) {
         return lineHeights.reduce((a, b) => a + b, 0) / lineHeights.length;
@@ -308,7 +316,7 @@ export class OcrMetadataService {
     }
 
     // Fallback: use block bounding box height
-    return Math.abs(block.boundingBox.bottom - block.boundingBox.top);
+    return this.boundingBoxHeight(block.boundingBox);
   }
 
   /**

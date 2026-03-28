@@ -60,18 +60,31 @@ describe('OcrMetadataService', () => {
       });
     });
 
-    it('should return true when blocks have significant size variation (headers vs body text)', () => {
-      // WHY: Size variation indicates visual hierarchy useful for field extraction
+    it('should return true when representative line heights show significant variation', () => {
+      // WHY: Block bounding boxes can be similar in height (heading 80px, paragraph 90px)
+      // but average line heights reveal the real font size difference (80px vs 15px).
 
       // Arrange
-      const largeTitle = createBlock('Big Title', 0, 0, 200, 100); // Height: 100
-      const smallBody = createBlock('Small text', 0, 110, 200, 130); // Height: 20
-      const result = createTextDetectionResult('Big Title\nSmall text', [
-        largeTitle,
-        smallBody,
+      const heading = createBlock('Big Title', 0, 0, 400, 80, {
+        lines: [createLine('Big Title', 0, 0, 400, 80)], // 1 line, avg h=80
+      });
+      const paragraph = createBlock('Small text body', 0, 100, 400, 190, {
+        lines: [
+          createLine('Small text', 0, 100, 400, 115), // h=15
+          createLine('body here', 0, 115, 400, 130), // h=15
+          createLine('more text', 0, 130, 400, 145), // h=15
+          createLine('continues', 0, 145, 400, 160), // h=15
+          createLine('even more', 0, 160, 400, 175), // h=15
+          createLine('last line', 0, 175, 400, 190), // h=15
+        ], // 6 lines, avg h=15
+      });
+      const result = createTextDetectionResult('Big Title\nSmall text body', [
+        heading,
+        paragraph,
       ]);
 
-      // Act & Assert
+      // Act & Assert — block heights 80 vs 90 (ratio 1.125 < 1.3 threshold)
+      // but representative heights 80 vs 15 (ratio 5.33 > 1.3 threshold)
       expect(service.shouldUseMetadata(result)).toBeTrue();
     });
   });
@@ -113,23 +126,6 @@ describe('OcrMetadataService', () => {
       expect(enriched.enrichedText).toContain('ROASTER NAME');
       expect(enriched.enrichedText).toContain('Coffee Name');
       expect(enriched.enrichedText).toContain('Details');
-    });
-
-    it('should include all block texts in output regardless of position', () => {
-      // Arrange
-      const result = createTextDetectionResult('Left\nCenter\nRight', [
-        createBlock('Left', 0, 0, 50, 80),
-        createBlock('Center', 100, 0, 200, 80),
-        createBlock('Right', 250, 0, 300, 80),
-      ]);
-
-      // Act
-      const enriched = service.enrichWithLayout(result);
-
-      // Assert
-      expect(enriched.enrichedText).toContain('Left');
-      expect(enriched.enrichedText).toContain('Center');
-      expect(enriched.enrichedText).toContain('Right');
     });
   });
 
@@ -222,29 +218,6 @@ describe('OcrMetadataService', () => {
       expect(multiPassResult.rawText).toBe(singlePassResult.rawText);
     });
 
-    it('should append "--- Rotated text detected ---" section when rotated results have text', () => {
-      // Arrange
-      const primary = createTextDetectionResult('Front Label', [
-        createBlock('BIG ROASTER', 0, 0, 300, 100), // Height: 100
-        createBlock('small details', 0, 120, 300, 140), // Height: 20
-      ]);
-      const rotated90 = createTextDetectionResult('Side Text', [
-        createBlock('Side Text', 0, 0, 200, 60),
-      ]);
-      const multiPass: MultiPassOcrResult = {
-        primary,
-        rotated: [rotated90],
-      };
-
-      // Act
-      const result = service.enrichWithLayoutMultiPass(multiPass);
-
-      // Assert
-      expect(result.enrichedText).toContain('--- Rotated text detected ---');
-      expect(result.enrichedText).toContain('Side Text');
-      expect(result.hasUsefulMetadata).toBeTrue();
-    });
-
     // 0° pass: avg height ~60, max height 100
     const classificationCases = [
       {
@@ -285,6 +258,7 @@ describe('OcrMetadataService', () => {
         const result = service.enrichWithLayoutMultiPass(multiPass);
 
         // Assert
+        expect(result.hasUsefulMetadata).toBeTrue();
         const rotatedSection = result.enrichedText.split(
           '--- Rotated text detected ---',
         )[1];
@@ -380,9 +354,9 @@ describe('OcrMetadataService', () => {
       // Using block height would misclassify it as LARGE.
 
       // Arrange
-      const heading = createBlock('NATURAL BLEND', 0, 0, 400, 80, 'en', [
-        createLine('NATURAL BLEND', 0, 0, 400, 80),
-      ]);
+      const heading = createBlock('NATURAL BLEND', 0, 0, 400, 80, {
+        lines: [createLine('NATURAL BLEND', 0, 0, 400, 80)],
+      });
 
       // 6 lines of small font (line height ~15 each), total block height = 90
       const description = createBlock(
@@ -391,15 +365,16 @@ describe('OcrMetadataService', () => {
         100,
         400,
         190,
-        'en',
-        [
-          createLine('Unser Natural Blend', 0, 100, 400, 115),
-          createLine('ist eine Mischung aus', 0, 115, 400, 130),
-          createLine('natürlich aufbe-', 0, 130, 400, 145),
-          createLine('reiteten Kaffees', 0, 145, 400, 160),
-          createLine('aus Brasilien und', 0, 160, 400, 175),
-          createLine('Äthiopien.', 0, 175, 400, 190),
-        ],
+        {
+          lines: [
+            createLine('Unser Natural Blend', 0, 100, 400, 115),
+            createLine('ist eine Mischung aus', 0, 115, 400, 130),
+            createLine('natürlich aufbe-', 0, 130, 400, 145),
+            createLine('reiteten Kaffees', 0, 145, 400, 160),
+            createLine('aus Brasilien und', 0, 160, 400, 175),
+            createLine('Äthiopien.', 0, 175, 400, 190),
+          ],
+        },
       );
 
       const result = createTextDetectionResult('', [heading, description]);
