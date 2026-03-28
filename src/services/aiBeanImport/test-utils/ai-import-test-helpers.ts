@@ -2,7 +2,7 @@ import { Bean } from '../../../classes/bean/bean';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../../interfaces/parameter/iBeanParameter';
 import { MergedExamples } from '../ai-import-examples.service';
-import { Block, TextDetectionResult } from '../ocr-metadata.service';
+import { Block, Line, TextDetectionResult } from '../ocr-metadata.service';
 
 /**
  * Create a mock Block with specified bounding box.
@@ -20,12 +20,31 @@ export function createBlock(
   right: number,
   bottom: number,
   recognizedLanguage: string = 'en',
+  lines: Line[] = [],
 ): Block {
   return {
     text,
     boundingBox: { left, top, right, bottom },
     recognizedLanguage,
-    lines: [],
+    lines,
+  };
+}
+
+/**
+ * Create a mock Line with specified bounding box.
+ */
+export function createLine(
+  text: string,
+  left: number,
+  top: number,
+  right: number,
+  bottom: number,
+): Line {
+  return {
+    text,
+    boundingBox: { left, top, right, bottom },
+    recognizedLanguage: 'en',
+    elements: [],
   };
 }
 

@@ -229,10 +229,9 @@ export class OcrMetadataService {
       return false;
     }
 
-    // Check for size variation
-    // Use absolute value since coordinate system may have Y origin at bottom (top > bottom)
+    // Check for size variation using representative heights (avg line height)
     const heights = blocksWithBoundingBox.map((b) =>
-      Math.abs(b.boundingBox.bottom - b.boundingBox.top),
+      this.getRepresentativeHeight(b),
     );
     const maxHeight = Math.max(...heights);
     const minHeight = Math.min(...heights);
@@ -260,16 +259,17 @@ export class OcrMetadataService {
   }
 
   /**
-   * Classify blocks by relative size based on height.
-   * Uses statistical thresholds relative to average and max.
+   * Classify blocks by relative size based on representative line height.
+   * Uses average line height within each block as a proxy for font size.
+   * Falls back to block bounding box height when line data is unavailable.
    */
   private classifySizes(blocks: Block[]): Map<Block, TextSize> {
     const sizeMap = new Map<Block, TextSize>();
 
-    // Calculate height of each block (use abs since Y origin may be at bottom)
+    // Calculate representative height of each block
     const heights = blocks.map((b) => ({
       block: b,
-      height: Math.abs(b.boundingBox.bottom - b.boundingBox.top),
+      height: this.getRepresentativeHeight(b),
     }));
 
     if (heights.length === 0) {
@@ -287,6 +287,28 @@ export class OcrMetadataService {
     }
 
     return sizeMap;
+  }
+
+  /**
+   * Get the representative height for a block, approximating font size.
+   * Uses average line height when line bounding boxes are available,
+   * otherwise falls back to the block's own bounding box height.
+   */
+  private getRepresentativeHeight(block: Block): number {
+    if (block.lines && block.lines.length > 0) {
+      const lineHeights = block.lines
+        .filter(
+          (l) => l.boundingBox && typeof l.boundingBox.bottom === 'number',
+        )
+        .map((l) => Math.abs(l.boundingBox.bottom - l.boundingBox.top));
+
+      if (lineHeights.length > 0) {
+        return lineHeights.reduce((a, b) => a + b, 0) / lineHeights.length;
+      }
+    }
+
+    // Fallback: use block bounding box height
+    return Math.abs(block.boundingBox.bottom - block.boundingBox.top);
   }
 
   /**
@@ -339,10 +361,10 @@ export class OcrMetadataService {
     blocks: Block[],
     baselineBlocks: Block[],
   ): EnrichedTextBlock[] {
-    // Compute baseline stats from 0° pass
+    // Compute baseline stats from 0° pass using representative heights
     const baselineHeights = (baselineBlocks ?? [])
       .filter((b) => b.boundingBox && typeof b.boundingBox.bottom === 'number')
-      .map((b) => Math.abs(b.boundingBox.bottom - b.boundingBox.top));
+      .map((b) => this.getRepresentativeHeight(b));
 
     // If baseline is insufficient, fall back to self-contained classification
     if (baselineHeights.length < OCR_MIN_BLOCKS_FOR_METADATA) {
@@ -354,7 +376,7 @@ export class OcrMetadataService {
       baselineHeights.reduce((a, b) => a + b, 0) / baselineHeights.length;
 
     return blocks.map((block) => {
-      const height = Math.abs(block.boundingBox.bottom - block.boundingBox.top);
+      const height = this.getRepresentativeHeight(block);
       return {
         text: block.text,
         relativeSize: this.classifyHeight(height, maxHeight, avgHeight),

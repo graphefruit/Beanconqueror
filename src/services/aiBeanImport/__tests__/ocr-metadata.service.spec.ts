@@ -6,7 +6,11 @@ import {
   OcrMetadataService,
   TextDetectionResult,
 } from '../ocr-metadata.service';
-import { createBlock, createTextDetectionResult } from '../test-utils';
+import {
+  createBlock,
+  createLine,
+  createTextDetectionResult,
+} from '../test-utils';
 
 describe('OcrMetadataService', () => {
   let service: OcrMetadataService;
@@ -109,43 +113,6 @@ describe('OcrMetadataService', () => {
       expect(enriched.enrichedText).toContain('ROASTER NAME');
       expect(enriched.enrichedText).toContain('Coffee Name');
       expect(enriched.enrichedText).toContain('Details');
-    });
-
-    it('should classify blocks by relative height into LARGE and SMALL categories', () => {
-      // WHY: Size classification helps LLM identify headers vs body text
-
-      // Arrange
-      const largeBlock = createBlock('BIG', 0, 0, 200, 100); // Height: 100
-      const smallBlock = createBlock('small', 0, 120, 200, 140); // Height: 20
-      const result = createTextDetectionResult('BIG\nsmall', [
-        largeBlock,
-        smallBlock,
-      ]);
-
-      // Act
-      const enriched = service.enrichWithLayout(result);
-
-      // Assert
-      expect(enriched.enrichedText).toContain('**LARGE:**');
-      expect(enriched.enrichedText).toContain('**SMALL:**');
-    });
-
-    it('should classify text sizes as LARGE, MEDIUM, and SMALL based on height variation', () => {
-      // Arrange
-      const result = createTextDetectionResult('Top\nMiddle\nBottom', [
-        createBlock('Top', 0, 0, 100, 80), // Height: 80 (large)
-        createBlock('Middle', 0, 100, 100, 150), // Height: 50 (medium)
-        createBlock('Bottom', 0, 220, 100, 240), // Height: 20 (small)
-      ]);
-
-      // Act
-      const enriched = service.enrichWithLayout(result);
-
-      // Assert
-      expect(enriched.enrichedText).toContain('**LARGE:**');
-      expect(enriched.enrichedText).toContain('Top');
-      expect(enriched.enrichedText).toContain('Middle');
-      expect(enriched.enrichedText).toContain('Bottom');
     });
 
     it('should include all block texts in output regardless of position', () => {
@@ -404,6 +371,64 @@ describe('OcrMetadataService', () => {
       expect(result).toContain('--- Rotated text detected ---');
       expect(result).toContain('Side A');
       expect(result).toContain('Roaster B');
+    });
+  });
+
+  describe('line-height-based classification', () => {
+    it('should classify a multi-line block by average line height, not total block height', () => {
+      // WHY: A description paragraph has many small-font lines but a tall bounding box.
+      // Using block height would misclassify it as LARGE.
+
+      // Arrange
+      const heading = createBlock('NATURAL BLEND', 0, 0, 400, 80, 'en', [
+        createLine('NATURAL BLEND', 0, 0, 400, 80),
+      ]);
+
+      // 6 lines of small font (line height ~15 each), total block height = 90
+      const description = createBlock(
+        'Unser Natural Blend ist eine Mischung aus natürlich aufbereiteten Kaffees',
+        0,
+        100,
+        400,
+        190,
+        'en',
+        [
+          createLine('Unser Natural Blend', 0, 100, 400, 115),
+          createLine('ist eine Mischung aus', 0, 115, 400, 130),
+          createLine('natürlich aufbe-', 0, 130, 400, 145),
+          createLine('reiteten Kaffees', 0, 145, 400, 160),
+          createLine('aus Brasilien und', 0, 160, 400, 175),
+          createLine('Äthiopien.', 0, 175, 400, 190),
+        ],
+      );
+
+      const result = createTextDetectionResult('', [heading, description]);
+
+      // Act
+      const enriched = service.enrichWithLayout(result);
+
+      // Assert — heading is large font, description is small font
+      expect(enriched.enrichedText).toContain('**LARGE:** NATURAL BLEND');
+      expect(enriched.enrichedText).not.toContain(
+        '**LARGE:** Unser Natural Blend',
+      );
+    });
+
+    it('should fall back to block height when block has no lines', () => {
+      // WHY: Backward compatibility — blocks without line data (e.g., from test helpers)
+      // should still classify based on block bounding box height.
+
+      // Arrange
+      const largeBlock = createBlock('BIG', 0, 0, 200, 100); // Height: 100, no lines
+      const smallBlock = createBlock('small', 0, 120, 200, 140); // Height: 20, no lines
+      const result = createTextDetectionResult('', [largeBlock, smallBlock]);
+
+      // Act
+      const enriched = service.enrichWithLayout(result);
+
+      // Assert
+      expect(enriched.enrichedText).toContain('**LARGE:** BIG');
+      expect(enriched.enrichedText).toContain('**SMALL:** small');
     });
   });
 
