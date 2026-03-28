@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
+import { MultiPassOcrResult } from '../camera-ocr.service';
 import {
   Block,
   OcrMetadataService,
@@ -233,6 +234,224 @@ describe('OcrMetadataService', () => {
       // Should have at least 2 LARGE tags (one per photo)
       const largeTagCount = (enriched.match(/\*\*LARGE:\*\*/g) || []).length;
       expect(largeTagCount).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  describe('enrichWithLayoutMultiPass', () => {
+    it('should return output identical to enrichWithLayout when no rotated results', () => {
+      // Arrange
+      const primary = createTextDetectionResult('Roaster\nCoffee Name', [
+        createBlock('Roaster', 0, 0, 200, 80),
+        createBlock('Coffee Name', 0, 100, 200, 140),
+      ]);
+      const multiPass: MultiPassOcrResult = { primary, rotated: [] };
+
+      // Act
+      const multiPassResult = service.enrichWithLayoutMultiPass(multiPass);
+      const singlePassResult = service.enrichWithLayout(primary);
+
+      // Assert
+      expect(multiPassResult.enrichedText).toBe(singlePassResult.enrichedText);
+      expect(multiPassResult.rawText).toBe(singlePassResult.rawText);
+    });
+
+    it('should append "--- Rotated text detected ---" section when rotated results have text', () => {
+      // Arrange
+      const primary = createTextDetectionResult('Front Label', [
+        createBlock('BIG ROASTER', 0, 0, 300, 100), // Height: 100
+        createBlock('small details', 0, 120, 300, 140), // Height: 20
+      ]);
+      const rotated90 = createTextDetectionResult('Side Text', [
+        createBlock('Side Text', 0, 0, 200, 60),
+      ]);
+      const multiPass: MultiPassOcrResult = {
+        primary,
+        rotated: [rotated90],
+      };
+
+      // Act
+      const result = service.enrichWithLayoutMultiPass(multiPass);
+
+      // Assert
+      expect(result.enrichedText).toContain('--- Rotated text detected ---');
+      expect(result.enrichedText).toContain('Side Text');
+      expect(result.hasUsefulMetadata).toBeTrue();
+    });
+
+    it('should classify large rotated text as LARGE using 0° pass stats', () => {
+      // Arrange: 0° pass has avg height ~60, max height 100
+      const primary = createTextDetectionResult('Front', [
+        createBlock('Title', 0, 0, 300, 100), // Height: 100
+        createBlock('Body', 0, 120, 300, 140), // Height: 20
+      ]);
+      // Rotated block with height 90 → ≥ 0.8 × 100 = 80 → LARGE
+      const rotated = createTextDetectionResult('Big Rotated', [
+        createBlock('Big Rotated', 0, 0, 200, 90),
+      ]);
+      const multiPass: MultiPassOcrResult = {
+        primary,
+        rotated: [rotated],
+      };
+
+      // Act
+      const result = service.enrichWithLayoutMultiPass(multiPass);
+
+      // Assert
+      const rotatedSection = result.enrichedText.split(
+        '--- Rotated text detected ---',
+      )[1];
+      expect(rotatedSection).toContain('**LARGE:** Big Rotated');
+    });
+
+    it('should classify small rotated text as SMALL using 0° pass stats', () => {
+      // Arrange: 0° pass has avg height 60, max height 100
+      const primary = createTextDetectionResult('Front', [
+        createBlock('Title', 0, 0, 300, 100), // Height: 100
+        createBlock('Body', 0, 120, 300, 140), // Height: 20
+      ]);
+      // Rotated block with height 30 → < 0.7 × 60 = 42 → SMALL
+      const rotated = createTextDetectionResult('Espresso', [
+        createBlock('Espresso', 0, 0, 200, 30),
+      ]);
+      const multiPass: MultiPassOcrResult = {
+        primary,
+        rotated: [rotated],
+      };
+
+      // Act
+      const result = service.enrichWithLayoutMultiPass(multiPass);
+
+      // Assert
+      const rotatedSection = result.enrichedText.split(
+        '--- Rotated text detected ---',
+      )[1];
+      expect(rotatedSection).toContain('**SMALL:** Espresso');
+    });
+
+    it('should classify medium rotated text as MEDIUM using 0° pass stats', () => {
+      // Arrange: 0° pass has avg height 60, max height 100
+      const primary = createTextDetectionResult('Front', [
+        createBlock('Title', 0, 0, 300, 100), // Height: 100
+        createBlock('Body', 0, 120, 300, 140), // Height: 20
+      ]);
+      // Rotated block with height 55 → not large (< 80, < 90), not small (≥ 42) → MEDIUM
+      const rotated = createTextDetectionResult('Filter', [
+        createBlock('Filter', 0, 0, 200, 55),
+      ]);
+      const multiPass: MultiPassOcrResult = {
+        primary,
+        rotated: [rotated],
+      };
+
+      // Act
+      const result = service.enrichWithLayoutMultiPass(multiPass);
+
+      // Assert
+      const rotatedSection = result.enrichedText.split(
+        '--- Rotated text detected ---',
+      )[1];
+      expect(rotatedSection).toContain('**MEDIUM:** Filter');
+    });
+
+    it('should fall back to independent classification when baseline has too few blocks', () => {
+      // Arrange: primary has only 1 block (below OCR_MIN_BLOCKS_FOR_METADATA)
+      const primary = createTextDetectionResult('Only', [
+        createBlock('Only', 0, 0, 100, 50),
+      ]);
+      const rotated = createTextDetectionResult('Rotated', [
+        createBlock('Big', 0, 0, 200, 100),
+        createBlock('Small', 0, 120, 200, 130),
+      ]);
+      const multiPass: MultiPassOcrResult = {
+        primary,
+        rotated: [rotated],
+      };
+
+      // Act
+      const result = service.enrichWithLayoutMultiPass(multiPass);
+
+      // Assert - should not throw and should have rotated section
+      expect(result.enrichedText).toContain('--- Rotated text detected ---');
+      expect(result.enrichedText).toContain('Big');
+      expect(result.enrichedText).toContain('Small');
+    });
+
+    it('should not append rotated section when rotated results have empty blocks', () => {
+      // Arrange
+      const primary = createTextDetectionResult('Front', [
+        createBlock('Title', 0, 0, 300, 100),
+        createBlock('Body', 0, 120, 300, 140),
+      ]);
+      const rotated = createTextDetectionResult('', []);
+      const multiPass: MultiPassOcrResult = {
+        primary,
+        rotated: [rotated],
+      };
+
+      // Act
+      const result = service.enrichWithLayoutMultiPass(multiPass);
+
+      // Assert
+      expect(result.enrichedText).not.toContain(
+        '--- Rotated text detected ---',
+      );
+    });
+  });
+
+  describe('enrichMultiplePhotosMultiPass', () => {
+    it('should return empty string for empty array', () => {
+      expect(service.enrichMultiplePhotosMultiPass([])).toBe('');
+    });
+
+    it('should delegate to enrichWithLayoutMultiPass for single result', () => {
+      // Arrange
+      const primary = createTextDetectionResult('Photo 1', [
+        createBlock('Title', 0, 0, 200, 100),
+        createBlock('Detail', 0, 120, 200, 140),
+      ]);
+      const multiPass: MultiPassOcrResult = { primary, rotated: [] };
+
+      // Act
+      const result = service.enrichMultiplePhotosMultiPass([multiPass]);
+      const expected = service.enrichWithLayoutMultiPass(multiPass);
+
+      // Assert
+      expect(result).toBe(expected.enrichedText);
+    });
+
+    it('should add "Label N of M" markers for multiple results with rotated sections', () => {
+      // Arrange
+      const photo1Primary = createTextDetectionResult('Photo1', [
+        createBlock('Roaster A', 0, 0, 300, 100),
+        createBlock('details', 0, 120, 300, 140),
+      ]);
+      const photo1Rotated = createTextDetectionResult('Side A', [
+        createBlock('Side A', 0, 0, 200, 60),
+      ]);
+      const photo1: MultiPassOcrResult = {
+        primary: photo1Primary,
+        rotated: [photo1Rotated],
+      };
+
+      const photo2Primary = createTextDetectionResult('Photo2', [
+        createBlock('Roaster B', 0, 0, 300, 100),
+        createBlock('info', 0, 120, 300, 140),
+      ]);
+      const photo2: MultiPassOcrResult = {
+        primary: photo2Primary,
+        rotated: [],
+      };
+
+      // Act
+      const result = service.enrichMultiplePhotosMultiPass([photo1, photo2]);
+
+      // Assert
+      expect(result).toContain('=== OCR WITH LAYOUT ===');
+      expect(result).toContain('--- Label 1 of 2 ---');
+      expect(result).toContain('--- Label 2 of 2 ---');
+      expect(result).toContain('--- Rotated text detected ---');
+      expect(result).toContain('Side A');
+      expect(result).toContain('Roaster B');
     });
   });
 

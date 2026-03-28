@@ -7,6 +7,7 @@ import {
   OCR_SIZE_VARIATION_THRESHOLD,
   OCR_SMALL_TEXT_AVG_MULTIPLIER,
 } from '../../data/ai-import/ai-import-constants';
+import { MultiPassOcrResult } from './camera-ocr.service';
 
 /**
  * Interfaces matching the ML Kit plugin's TypeScript definitions.
@@ -135,6 +136,78 @@ export class OcrMetadataService {
   }
 
   /**
+   * Enrich a multi-pass OCR result (single photo, multiple rotation passes).
+   * Classifies rotated-pass blocks using 0° pass height statistics as baseline.
+   * Only appends rotated text section if rotated passes found text.
+   */
+  public enrichWithLayoutMultiPass(
+    multiPass: MultiPassOcrResult,
+  ): EnrichedOCRResult {
+    // Enrich the primary (0°) pass as before
+    const primaryEnriched = this.enrichWithLayout(multiPass.primary);
+
+    // If no rotated results, return primary as-is
+    if (multiPass.rotated.length === 0) {
+      return primaryEnriched;
+    }
+
+    // Collect all rotated blocks
+    const rotatedBlocks = multiPass.rotated.flatMap((r) => r.blocks ?? []);
+    if (rotatedBlocks.length === 0) {
+      return primaryEnriched;
+    }
+
+    // Classify rotated blocks using 0° pass stats as baseline
+    const rotatedEnriched = this.classifyBlocksWithBaseline(
+      rotatedBlocks,
+      multiPass.primary.blocks,
+    );
+
+    // Format rotated blocks
+    const rotatedText = this.formatRotatedText(rotatedEnriched);
+
+    // Combine: primary text + rotated section
+    const combinedText = primaryEnriched.enrichedText + '\n\n' + rotatedText;
+    const combinedRawText =
+      primaryEnriched.rawText +
+      '\n' +
+      multiPass.rotated.map((r) => r.text).join('\n');
+
+    return {
+      rawText: combinedRawText,
+      enrichedText: combinedText,
+      hasUsefulMetadata: true,
+    };
+  }
+
+  /**
+   * Process multiple multi-pass OCR results (multi-photo flow) with layout enrichment.
+   */
+  public enrichMultiplePhotosMultiPass(
+    ocrResults: MultiPassOcrResult[],
+  ): string {
+    if (ocrResults.length === 0) {
+      return '';
+    }
+
+    if (ocrResults.length === 1) {
+      return this.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText;
+    }
+
+    const enrichedTexts = ocrResults.map((result, index) => {
+      const enriched = this.enrichWithLayoutMultiPass(result);
+      const textWithoutHeader = enriched.enrichedText.replace(
+        /^=== OCR WITH LAYOUT ===\n\n/,
+        '',
+      );
+      const marker = `--- Label ${index + 1} of ${ocrResults.length} ---`;
+      return `${marker}\n${textWithoutHeader}`;
+    });
+
+    return '=== OCR WITH LAYOUT ===\n\n' + enrichedTexts.join('\n\n');
+  }
+
+  /**
    * Determine if OCR metadata would be useful for this result.
    * Metadata is useful when there are multiple blocks with varied sizes.
    */
@@ -240,6 +313,62 @@ export class OcrMetadataService {
 
     const header = '=== OCR WITH LAYOUT ===\n\n';
 
+    const formattedBlocks = blocks.map((block) => {
+      const sizeTag = block.relativeSize.toUpperCase();
+      return `**${sizeTag}:** ${block.text}`;
+    });
+
+    return header + formattedBlocks.join('\n\n');
+  }
+
+  /**
+   * Classify blocks using external baseline statistics (from the 0° pass).
+   * Falls back to per-pass independent classification if baseline is insufficient.
+   */
+  private classifyBlocksWithBaseline(
+    blocks: Block[],
+    baselineBlocks: Block[],
+  ): EnrichedTextBlock[] {
+    // Compute baseline stats from 0° pass
+    const baselineHeights = (baselineBlocks ?? [])
+      .filter((b) => b.boundingBox && typeof b.boundingBox.bottom === 'number')
+      .map((b) => Math.abs(b.boundingBox.bottom - b.boundingBox.top));
+
+    // If baseline is insufficient, fall back to self-contained classification
+    if (baselineHeights.length < OCR_MIN_BLOCKS_FOR_METADATA) {
+      return this.classifyBlocks(blocks);
+    }
+
+    const maxHeight = Math.max(...baselineHeights);
+    const avgHeight =
+      baselineHeights.reduce((a, b) => a + b, 0) / baselineHeights.length;
+
+    return blocks.map((block) => {
+      const height = Math.abs(block.boundingBox.bottom - block.boundingBox.top);
+      let relativeSize: TextSize;
+      if (
+        height >= maxHeight * OCR_LARGE_TEXT_MAX_HEIGHT_RATIO ||
+        height >= avgHeight * OCR_LARGE_TEXT_AVG_MULTIPLIER
+      ) {
+        relativeSize = 'large';
+      } else if (height < avgHeight * OCR_SMALL_TEXT_AVG_MULTIPLIER) {
+        relativeSize = 'small';
+      } else {
+        relativeSize = 'medium';
+      }
+      return { text: block.text, relativeSize };
+    });
+  }
+
+  /**
+   * Format rotated text blocks with a section header.
+   */
+  private formatRotatedText(blocks: EnrichedTextBlock[]): string {
+    if (blocks.length === 0) {
+      return '';
+    }
+
+    const header = '--- Rotated text detected ---\n';
     const formattedBlocks = blocks.map((block) => {
       const sizeTag = block.relativeSize.toUpperCase();
       return `**${sizeTag}:** ${block.text}`;

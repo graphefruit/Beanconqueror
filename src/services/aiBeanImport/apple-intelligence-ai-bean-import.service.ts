@@ -15,13 +15,10 @@ import { UIAlert } from '../uiAlert';
 import { UILog } from '../uiLog';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
 import { AIImportExamplesService } from './ai-import-examples.service';
-import { CameraOcrService } from './camera-ocr.service';
+import { CameraOcrService, MultiPassOcrResult } from './camera-ocr.service';
 import { FieldExtractionService } from './field-extraction.service';
 import { sendLLMPrompt } from './llm-communication.service';
-import {
-  OcrMetadataService,
-  TextDetectionResult,
-} from './ocr-metadata.service';
+import { OcrMetadataService } from './ocr-metadata.service';
 
 export interface AIReadinessResult {
   ready: boolean;
@@ -189,14 +186,14 @@ export class AppleIntelligenceAIBeanImportService {
    * Takes OCR result(s), enriches with layout, detects language, and extracts fields.
    */
   private async processOcrAndExtractBean(
-    ocrResults: TextDetectionResult[],
+    ocrResults: MultiPassOcrResult[],
     rawTexts: string[],
   ): Promise<Bean> {
-    // Step 1: Enrich with layout metadata
+    // Step 1: Enrich with layout metadata (multi-pass aware)
     const enrichedText =
       ocrResults.length === 1
-        ? this.ocrMetadata.enrichWithLayout(ocrResults[0]).enrichedText
-        : this.ocrMetadata.enrichMultiplePhotos(ocrResults);
+        ? this.ocrMetadata.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText
+        : this.ocrMetadata.enrichMultiplePhotosMultiPass(ocrResults);
 
     this.uiLog.log(`Enriched text length: ${enrichedText.length}`);
 
