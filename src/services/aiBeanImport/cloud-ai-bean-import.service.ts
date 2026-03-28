@@ -171,8 +171,6 @@ export class CloudAIBeanImportService {
         ? this.ocrMetadata.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText
         : this.ocrMetadata.enrichMultiplePhotosMultiPass(ocrResults);
 
-    this.uiLog.log(`Cloud AI: Enriched text length: ${enrichedText.length}`);
-
     // Step 2: Extract fields via cloud LLM (no language detection or vocabulary needed)
     this.uiAlert.setLoadingSpinnerMessage(
       this.translate.instant('AI_IMPORT_STEP_ANALYZING'),

@@ -195,8 +195,6 @@ export class AppleIntelligenceAIBeanImportService {
         ? this.ocrMetadata.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText
         : this.ocrMetadata.enrichMultiplePhotosMultiPass(ocrResults);
 
-    this.uiLog.log(`Enriched text length: ${enrichedText.length}`);
-
     // Step 2: Prepare raw text for language detection
     const combinedRawText = this.concatenateOCRResults(rawTexts);
 
@@ -213,10 +211,6 @@ export class AppleIntelligenceAIBeanImportService {
       detectedLanguage,
       userLanguage,
     );
-    this.uiLog.log(
-      'Using languages for examples: ' + languagesToUse.join(', '),
-    );
-
     // Step 5: Extract fields
     this.uiAlert.setLoadingSpinnerMessage(
       this.translate.instant('AI_IMPORT_STEP_ANALYZING'),

@@ -76,22 +76,12 @@ export class CameraOcrService {
       await this.uiAlert.hideLoadingSpinner();
       return null;
     }
-    this.uiLog.log(
-      'CameraOcr: Photo captured, base64 length: ' +
-        imageData.base64String.length,
-    );
-
     this.uiAlert.setLoadingSpinnerMessage(
       this.translate.instant('AI_IMPORT_STEP_EXTRACTING'),
     );
 
     const ocrResult = await this.ocrWithRotations(imageData.base64String);
     const rawText = ocrResult.primary.text;
-    this.uiLog.log(
-      'CameraOcr: OCR result: ' +
-        JSON.stringify(ocrResult.primary).substring(0, 500),
-    );
-
     if (!rawText || rawText.trim() === '') {
       await this.uiAlert.hideLoadingSpinner();
       await this.uiAlert.showMessage(
@@ -126,16 +116,10 @@ export class CameraOcrService {
       );
 
       const photoPath = photoPaths[i];
-      this.uiLog.log(
-        `CameraOcr: Processing photo ${i + 1}/${photoPaths.length}, path: ${photoPath}`,
-      );
 
       let base64: string;
       try {
         base64 = await this.uiFileHelper.readInternalFileAsBase64(photoPath);
-        this.uiLog.log(
-          `CameraOcr: Photo ${i + 1} read successfully, base64 length: ${base64.length}`,
-        );
       } catch (readError: unknown) {
         const msg =
           readError instanceof Error ? readError.message : String(readError);
@@ -155,16 +139,9 @@ export class CameraOcrService {
       try {
         const ocrResult = await this.ocrWithRotations(base64);
 
-        this.uiLog.log(
-          `CameraOcr: Photo ${i + 1} OCR result: ${JSON.stringify(ocrResult.primary).substring(0, 200)}`,
-        );
-
         if (ocrResult.primary.text && ocrResult.primary.text.trim() !== '') {
           ocrResults.push(ocrResult);
           rawTexts.push(ocrResult.primary.text);
-          this.uiLog.log(
-            `CameraOcr: Photo ${i + 1} extracted ${ocrResult.primary.text.length} chars`,
-          );
         } else {
           this.uiLog.log(`CameraOcr: Photo ${i + 1} had no text`);
         }
@@ -203,9 +180,6 @@ export class CameraOcrService {
 
         if (result.text && result.text.trim() !== '') {
           rotated.push(result);
-          this.uiLog.log(
-            `CameraOcr: Rotated ${degrees}° pass found ${result.text.length} chars`,
-          );
         }
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : String(error);
@@ -223,7 +197,6 @@ export class CameraOcrService {
     for (const path of photoPaths) {
       try {
         await this.uiFileHelper.deleteInternalFile(path);
-        this.uiLog.log('CameraOcr: Deleted temp photo: ' + path);
       } catch (e) {
         this.uiLog.error('CameraOcr: Failed to delete temp photo: ' + e);
       }

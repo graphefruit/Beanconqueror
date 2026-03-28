@@ -66,12 +66,15 @@ export class CloudFieldExtractionService {
     const userPrompt = buildCloudExtractionPrompt(ocrText);
 
     // 3. Send to cloud LLM — throws on API errors, timeouts, network failures
+    log.log('[Cloud LLM] model: ' + config.model);
+    log.log('[Cloud LLM] prompt: ' + userPrompt);
+
     const response = await sendCloudLLMPrompt(config, [
       { role: 'system', content: CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS },
       { role: 'user', content: userPrompt },
     ]);
 
-    log.log('Cloud LLM response received, model: ' + response.model);
+    log.log('[Cloud LLM] response: ' + response.content);
     if (response.usage) {
       log.log(
         `Token usage: ${response.usage.prompt_tokens} prompt, ${response.usage.completion_tokens} completion`,
