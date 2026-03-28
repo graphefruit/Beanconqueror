@@ -22,21 +22,12 @@ describe('rotateBase64Image', () => {
     testBase64 = createTestJpegBase64();
   });
 
-  it('should produce a non-empty base64 string when rotated by 90°', async () => {
-    const result = await rotateBase64Image(testBase64, 90);
-    expect(result).toBeTruthy();
-    expect(result.length).toBeGreaterThan(0);
-  });
-
-  it('should produce a non-empty base64 string when rotated by 270°', async () => {
-    const result = await rotateBase64Image(testBase64, 270);
-    expect(result).toBeTruthy();
-    expect(result.length).toBeGreaterThan(0);
-  });
-
-  it('should not contain the data:image/jpeg;base64, prefix in the output', async () => {
-    const result = await rotateBase64Image(testBase64, 90);
-    expect(result).not.toContain('data:image/jpeg;base64,');
+  [90, 270].forEach((degrees) => {
+    it(`should produce a non-empty base64 string without data URL prefix when rotated by ${degrees}°`, async () => {
+      const result = await rotateBase64Image(testBase64, degrees as 90 | 270);
+      expect(result).toBeTruthy();
+      expect(result).not.toContain('data:image/jpeg;base64,');
+    });
   });
 
   it('should reject with an error when given invalid base64', async () => {

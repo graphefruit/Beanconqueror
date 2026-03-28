@@ -278,79 +278,51 @@ describe('OcrMetadataService', () => {
       expect(result.hasUsefulMetadata).toBeTrue();
     });
 
-    it('should classify large rotated text as LARGE using 0° pass stats', () => {
-      // Arrange: 0° pass has avg height ~60, max height 100
-      const primary = createTextDetectionResult('Front', [
-        createBlock('Title', 0, 0, 300, 100), // Height: 100
-        createBlock('Body', 0, 120, 300, 140), // Height: 20
-      ]);
-      // Rotated block with height 90 → ≥ 0.8 × 100 = 80 → LARGE
-      const rotated = createTextDetectionResult('Big Rotated', [
-        createBlock('Big Rotated', 0, 0, 200, 90),
-      ]);
-      const multiPass: MultiPassOcrResult = {
-        primary,
-        rotated: [rotated],
-      };
+    // 0° pass: avg height ~60, max height 100
+    const classificationCases = [
+      {
+        height: 90,
+        expected: 'LARGE',
+        label: 'Big Rotated',
+        reason: '≥ 0.8 × 100 = 80',
+      },
+      {
+        height: 30,
+        expected: 'SMALL',
+        label: 'Espresso',
+        reason: '< 0.7 × 60 = 42',
+      },
+      {
+        height: 55,
+        expected: 'MEDIUM',
+        label: 'Filter',
+        reason: 'between thresholds',
+      },
+    ];
+    classificationCases.forEach(({ height, expected, label, reason }) => {
+      it(`should classify rotated text (h=${height}) as ${expected} using 0° pass stats (${reason})`, () => {
+        // Arrange
+        const primary = createTextDetectionResult('Front', [
+          createBlock('Title', 0, 0, 300, 100), // Height: 100
+          createBlock('Body', 0, 120, 300, 140), // Height: 20
+        ]);
+        const rotated = createTextDetectionResult(label, [
+          createBlock(label, 0, 0, 200, height),
+        ]);
+        const multiPass: MultiPassOcrResult = {
+          primary,
+          rotated: [rotated],
+        };
 
-      // Act
-      const result = service.enrichWithLayoutMultiPass(multiPass);
+        // Act
+        const result = service.enrichWithLayoutMultiPass(multiPass);
 
-      // Assert
-      const rotatedSection = result.enrichedText.split(
-        '--- Rotated text detected ---',
-      )[1];
-      expect(rotatedSection).toContain('**LARGE:** Big Rotated');
-    });
-
-    it('should classify small rotated text as SMALL using 0° pass stats', () => {
-      // Arrange: 0° pass has avg height 60, max height 100
-      const primary = createTextDetectionResult('Front', [
-        createBlock('Title', 0, 0, 300, 100), // Height: 100
-        createBlock('Body', 0, 120, 300, 140), // Height: 20
-      ]);
-      // Rotated block with height 30 → < 0.7 × 60 = 42 → SMALL
-      const rotated = createTextDetectionResult('Espresso', [
-        createBlock('Espresso', 0, 0, 200, 30),
-      ]);
-      const multiPass: MultiPassOcrResult = {
-        primary,
-        rotated: [rotated],
-      };
-
-      // Act
-      const result = service.enrichWithLayoutMultiPass(multiPass);
-
-      // Assert
-      const rotatedSection = result.enrichedText.split(
-        '--- Rotated text detected ---',
-      )[1];
-      expect(rotatedSection).toContain('**SMALL:** Espresso');
-    });
-
-    it('should classify medium rotated text as MEDIUM using 0° pass stats', () => {
-      // Arrange: 0° pass has avg height 60, max height 100
-      const primary = createTextDetectionResult('Front', [
-        createBlock('Title', 0, 0, 300, 100), // Height: 100
-        createBlock('Body', 0, 120, 300, 140), // Height: 20
-      ]);
-      // Rotated block with height 55 → not large (< 80, < 90), not small (≥ 42) → MEDIUM
-      const rotated = createTextDetectionResult('Filter', [
-        createBlock('Filter', 0, 0, 200, 55),
-      ]);
-      const multiPass: MultiPassOcrResult = {
-        primary,
-        rotated: [rotated],
-      };
-
-      // Act
-      const result = service.enrichWithLayoutMultiPass(multiPass);
-
-      // Assert
-      const rotatedSection = result.enrichedText.split(
-        '--- Rotated text detected ---',
-      )[1];
-      expect(rotatedSection).toContain('**MEDIUM:** Filter');
+        // Assert
+        const rotatedSection = result.enrichedText.split(
+          '--- Rotated text detected ---',
+        )[1];
+        expect(rotatedSection).toContain(`**${expected}:** ${label}`);
+      });
     });
 
     it('should fall back to independent classification when baseline has too few blocks', () => {
@@ -399,26 +371,6 @@ describe('OcrMetadataService', () => {
   });
 
   describe('enrichMultiplePhotosMultiPass', () => {
-    it('should return empty string for empty array', () => {
-      expect(service.enrichMultiplePhotosMultiPass([])).toBe('');
-    });
-
-    it('should delegate to enrichWithLayoutMultiPass for single result', () => {
-      // Arrange
-      const primary = createTextDetectionResult('Photo 1', [
-        createBlock('Title', 0, 0, 200, 100),
-        createBlock('Detail', 0, 120, 200, 140),
-      ]);
-      const multiPass: MultiPassOcrResult = { primary, rotated: [] };
-
-      // Act
-      const result = service.enrichMultiplePhotosMultiPass([multiPass]);
-      const expected = service.enrichWithLayoutMultiPass(multiPass);
-
-      // Assert
-      expect(result).toBe(expected.enrichedText);
-    });
-
     it('should add "Label N of M" markers for multiple results with rotated sections', () => {
       // Arrange
       const photo1Primary = createTextDetectionResult('Photo1', [

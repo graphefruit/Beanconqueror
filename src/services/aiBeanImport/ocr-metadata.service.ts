@@ -282,24 +282,34 @@ export class OcrMetadataService {
     const avgHeight =
       heightValues.reduce((a, b) => a + b, 0) / heightValues.length;
 
-    // Classify each block
-    // Large: >= OCR_LARGE_TEXT_AVG_MULTIPLIER * average OR within OCR_LARGE_TEXT_MAX_HEIGHT_RATIO of max
-    // Small: < OCR_SMALL_TEXT_AVG_MULTIPLIER * average
-    // Medium: everything else
     for (const { block, height } of heights) {
-      if (
-        height >= maxHeight * OCR_LARGE_TEXT_MAX_HEIGHT_RATIO ||
-        height >= avgHeight * OCR_LARGE_TEXT_AVG_MULTIPLIER
-      ) {
-        sizeMap.set(block, 'large');
-      } else if (height < avgHeight * OCR_SMALL_TEXT_AVG_MULTIPLIER) {
-        sizeMap.set(block, 'small');
-      } else {
-        sizeMap.set(block, 'medium');
-      }
+      sizeMap.set(block, this.classifyHeight(height, maxHeight, avgHeight));
     }
 
     return sizeMap;
+  }
+
+  /**
+   * Classify a single block height against statistical thresholds.
+   * Large: >= OCR_LARGE_TEXT_AVG_MULTIPLIER × avg OR within OCR_LARGE_TEXT_MAX_HEIGHT_RATIO of max
+   * Small: < OCR_SMALL_TEXT_AVG_MULTIPLIER × avg
+   * Medium: everything else
+   */
+  private classifyHeight(
+    height: number,
+    maxHeight: number,
+    avgHeight: number,
+  ): TextSize {
+    if (
+      height >= maxHeight * OCR_LARGE_TEXT_MAX_HEIGHT_RATIO ||
+      height >= avgHeight * OCR_LARGE_TEXT_AVG_MULTIPLIER
+    ) {
+      return 'large';
+    }
+    if (height < avgHeight * OCR_SMALL_TEXT_AVG_MULTIPLIER) {
+      return 'small';
+    }
+    return 'medium';
   }
 
   /**
@@ -345,18 +355,10 @@ export class OcrMetadataService {
 
     return blocks.map((block) => {
       const height = Math.abs(block.boundingBox.bottom - block.boundingBox.top);
-      let relativeSize: TextSize;
-      if (
-        height >= maxHeight * OCR_LARGE_TEXT_MAX_HEIGHT_RATIO ||
-        height >= avgHeight * OCR_LARGE_TEXT_AVG_MULTIPLIER
-      ) {
-        relativeSize = 'large';
-      } else if (height < avgHeight * OCR_SMALL_TEXT_AVG_MULTIPLIER) {
-        relativeSize = 'small';
-      } else {
-        relativeSize = 'medium';
-      }
-      return { text: block.text, relativeSize };
+      return {
+        text: block.text,
+        relativeSize: this.classifyHeight(height, maxHeight, avgHeight),
+      };
     });
   }
 

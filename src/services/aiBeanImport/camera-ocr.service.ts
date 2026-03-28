@@ -185,6 +185,7 @@ export class CameraOcrService {
    */
   private async ocrWithRotations(base64: string): Promise<MultiPassOcrResult> {
     // Primary pass (0°)
+    // ML Kit plugin returns this shape but its TS types are wider
     const primary = (await CapacitorPluginMlKitTextRecognition.detectText({
       base64Image: base64,
     })) as TextDetectionResult;
@@ -195,6 +196,7 @@ export class CameraOcrService {
     for (const degrees of [90, 270] as const) {
       try {
         const rotatedBase64 = await rotateBase64Image(base64, degrees);
+        // ML Kit plugin returns this shape but its TS types are wider
         const result = (await CapacitorPluginMlKitTextRecognition.detectText({
           base64Image: rotatedBase64,
         })) as TextDetectionResult;
