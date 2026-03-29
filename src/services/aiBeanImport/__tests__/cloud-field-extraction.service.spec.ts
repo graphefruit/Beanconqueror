@@ -252,9 +252,7 @@ describe('CloudFieldExtractionService', () => {
       await service.extractAllFields('sample OCR text', mockConfig, mockLogger);
 
       // Assert
-      expect(mockLogger.log).toHaveBeenCalledWith(
-        'Cloud LLM response received, model: gpt-4o',
-      );
+      expect(mockLogger.log).toHaveBeenCalledWith('[Cloud LLM] model: gpt-4o');
       expect(mockLogger.log).toHaveBeenCalledWith(
         'Token usage: 100 prompt, 50 completion',
       );

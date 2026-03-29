@@ -13,16 +13,38 @@ import { UIAlert } from '../uiAlert';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
 import { UILog } from '../uiLog';
+import { rotateBase64Image } from './image-rotation';
 import { TextDetectionResult } from './ocr-metadata.service';
 
+/**
+ * Result of multi-pass OCR on a single image.
+ * The primary result (0°) is always present.
+ * Rotated results (90°/270°) are only present when they found text.
+ */
+export interface MultiPassOcrResult {
+  /** OCR result from the original (0°) image */
+  primary: TextDetectionResult;
+  /** OCR results from rotated passes (90°, 270°) — only those that found text */
+  rotated: TextDetectionResult[];
+}
+
 export interface SinglePhotoCaptureResult {
-  ocrResult: TextDetectionResult;
+  ocrResult: MultiPassOcrResult;
   rawText: string;
 }
 
 export interface MultiPhotoOcrResult {
-  ocrResults: TextDetectionResult[];
+  ocrResults: MultiPassOcrResult[];
   rawTexts: string[];
+}
+
+/**
+ * Combine all text from a multi-pass OCR result (primary + rotated passes).
+ */
+export function collectRawText(result: MultiPassOcrResult): string {
+  return [result.primary.text, ...result.rotated.map((r) => r.text)]
+    .filter((t) => t.trim())
+    .join('\n');
 }
 
 @Injectable({
@@ -63,24 +85,13 @@ export class CameraOcrService {
       await this.uiAlert.hideLoadingSpinner();
       return null;
     }
-    this.uiLog.log(
-      'CameraOcr: Photo captured, base64 length: ' +
-        imageData.base64String.length,
-    );
-
     this.uiAlert.setLoadingSpinnerMessage(
       this.translate.instant('AI_IMPORT_STEP_EXTRACTING'),
     );
 
-    const ocrResult = (await CapacitorPluginMlKitTextRecognition.detectText({
-      base64Image: imageData.base64String,
-    })) as TextDetectionResult;
-    const rawText = ocrResult.text;
-    this.uiLog.log(
-      'CameraOcr: OCR result: ' + JSON.stringify(ocrResult).substring(0, 500),
-    );
-
-    if (!rawText || rawText.trim() === '') {
+    const ocrResult = await this.ocrWithRotations(imageData.base64String);
+    const rawText = collectRawText(ocrResult);
+    if (!rawText) {
       await this.uiAlert.hideLoadingSpinner();
       await this.uiAlert.showMessage(
         'AI_IMPORT_NO_TEXT_FOUND',
@@ -102,7 +113,7 @@ export class CameraOcrService {
    * Returns only photos that produced text.
    */
   async ocrFromPhotoPaths(photoPaths: string[]): Promise<MultiPhotoOcrResult> {
-    const ocrResults: TextDetectionResult[] = [];
+    const ocrResults: MultiPassOcrResult[] = [];
     const rawTexts: string[] = [];
 
     for (let i = 0; i < photoPaths.length; i++) {
@@ -114,16 +125,10 @@ export class CameraOcrService {
       );
 
       const photoPath = photoPaths[i];
-      this.uiLog.log(
-        `CameraOcr: Processing photo ${i + 1}/${photoPaths.length}, path: ${photoPath}`,
-      );
 
       let base64: string;
       try {
         base64 = await this.uiFileHelper.readInternalFileAsBase64(photoPath);
-        this.uiLog.log(
-          `CameraOcr: Photo ${i + 1} read successfully, base64 length: ${base64.length}`,
-        );
       } catch (readError: unknown) {
         const msg =
           readError instanceof Error ? readError.message : String(readError);
@@ -141,22 +146,12 @@ export class CameraOcrService {
       }
 
       try {
-        const ocrResult = (await CapacitorPluginMlKitTextRecognition.detectText(
-          {
-            base64Image: base64,
-          },
-        )) as TextDetectionResult;
+        const ocrResult = await this.ocrWithRotations(base64);
 
-        this.uiLog.log(
-          `CameraOcr: Photo ${i + 1} OCR result: ${JSON.stringify(ocrResult).substring(0, 200)}`,
-        );
-
-        if (ocrResult.text && ocrResult.text.trim() !== '') {
+        const rawText = collectRawText(ocrResult);
+        if (rawText) {
           ocrResults.push(ocrResult);
-          rawTexts.push(ocrResult.text);
-          this.uiLog.log(
-            `CameraOcr: Photo ${i + 1} extracted ${ocrResult.text.length} chars`,
-          );
+          rawTexts.push(rawText);
         } else {
           this.uiLog.log(`CameraOcr: Photo ${i + 1} had no text`);
         }
@@ -172,13 +167,46 @@ export class CameraOcrService {
   }
 
   /**
+   * Run OCR on a base64 image at 0°, 90°, and 270°.
+   * Returns the primary (0°) result and any rotated results that found text.
+   */
+  private async ocrWithRotations(base64: string): Promise<MultiPassOcrResult> {
+    // Primary pass (0°)
+    // ML Kit plugin returns this shape but its TS types are wider
+    const primary = (await CapacitorPluginMlKitTextRecognition.detectText({
+      base64Image: base64,
+    })) as TextDetectionResult;
+
+    const rotated: TextDetectionResult[] = [];
+
+    // Rotated passes — only if primary succeeded (image is valid)
+    for (const degrees of [90, 270] as const) {
+      try {
+        const rotatedBase64 = await rotateBase64Image(base64, degrees);
+        // ML Kit plugin returns this shape but its TS types are wider
+        const result = (await CapacitorPluginMlKitTextRecognition.detectText({
+          base64Image: rotatedBase64,
+        })) as TextDetectionResult;
+
+        if (result.text && result.text.trim() !== '') {
+          rotated.push(result);
+        }
+      } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : String(error);
+        this.uiLog.error(`CameraOcr: Rotated ${degrees}° pass failed: ${msg}`);
+      }
+    }
+
+    return { primary, rotated };
+  }
+
+  /**
    * Delete temporary photo files.
    */
   async cleanupPhotos(photoPaths: string[]): Promise<void> {
     for (const path of photoPaths) {
       try {
         await this.uiFileHelper.deleteInternalFile(path);
-        this.uiLog.log('CameraOcr: Deleted temp photo: ' + path);
       } catch (e) {
         this.uiLog.error('CameraOcr: Failed to delete temp photo: ' + e);
       }

@@ -7,6 +7,7 @@ import {
   OCR_SIZE_VARIATION_THRESHOLD,
   OCR_SMALL_TEXT_AVG_MULTIPLIER,
 } from '../../data/ai-import/ai-import-constants';
+import { MultiPassOcrResult } from './camera-ocr.service';
 
 /**
  * Interfaces matching the ML Kit plugin's TypeScript definitions.
@@ -70,6 +71,8 @@ export interface EnrichedOCRResult {
  * field extraction accuracy. Converts spatial information into text annotations
  * that help the LLM understand layout context.
  */
+const LAYOUT_HEADER = '=== OCR WITH LAYOUT ===\n\n';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -122,11 +125,71 @@ export class OcrMetadataService {
     // Process each photo and combine with markers
     const enrichedTexts = ocrResults.map((result, index) => {
       const enriched = this.enrichWithLayout(result);
-      // Strip header from individual results to avoid duplication
-      const textWithoutHeader = enriched.enrichedText.replace(
-        /^=== OCR WITH LAYOUT ===\n\n/,
-        '',
-      );
+      const textWithoutHeader = this.stripLayoutHeader(enriched.enrichedText);
+      const marker = `--- Label ${index + 1} of ${ocrResults.length} ---`;
+      return `${marker}\n${textWithoutHeader}`;
+    });
+
+    return '=== OCR WITH LAYOUT ===\n\n' + enrichedTexts.join('\n\n');
+  }
+
+  /**
+   * Enrich a multi-pass OCR result (single photo, multiple rotation passes).
+   * Classifies rotated-pass blocks using 0° pass height statistics as baseline.
+   * Only appends rotated text section if rotated passes found text.
+   */
+  public enrichWithLayoutMultiPass(
+    multiPass: MultiPassOcrResult,
+  ): EnrichedOCRResult {
+    // Enrich the primary (0°) pass as before
+    const primaryEnriched = this.enrichWithLayout(multiPass.primary);
+
+    // Collect all rotated blocks — return primary as-is if none found
+    const rotatedBlocks = multiPass.rotated.flatMap((r) => r.blocks ?? []);
+    if (rotatedBlocks.length === 0) {
+      return primaryEnriched;
+    }
+
+    // Classify rotated blocks using 0° pass stats as baseline
+    const rotatedEnriched = this.classifyBlocksWithBaseline(
+      rotatedBlocks,
+      multiPass.primary.blocks,
+    );
+
+    // Format rotated blocks
+    const rotatedText = this.formatRotatedText(rotatedEnriched);
+
+    // Combine: primary text + rotated section
+    const combinedText = primaryEnriched.enrichedText + '\n\n' + rotatedText;
+    const combinedRawText =
+      primaryEnriched.rawText +
+      '\n' +
+      multiPass.rotated.map((r) => r.text).join('\n');
+
+    return {
+      rawText: combinedRawText,
+      enrichedText: combinedText,
+      hasUsefulMetadata: true,
+    };
+  }
+
+  /**
+   * Process multiple multi-pass OCR results (multi-photo flow) with layout enrichment.
+   */
+  public enrichMultiplePhotosMultiPass(
+    ocrResults: MultiPassOcrResult[],
+  ): string {
+    if (ocrResults.length === 0) {
+      return '';
+    }
+
+    if (ocrResults.length === 1) {
+      return this.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText;
+    }
+
+    const enrichedTexts = ocrResults.map((result, index) => {
+      const enriched = this.enrichWithLayoutMultiPass(result);
+      const textWithoutHeader = this.stripLayoutHeader(enriched.enrichedText);
       const marker = `--- Label ${index + 1} of ${ocrResults.length} ---`;
       return `${marker}\n${textWithoutHeader}`;
     });
@@ -156,10 +219,9 @@ export class OcrMetadataService {
       return false;
     }
 
-    // Check for size variation
-    // Use absolute value since coordinate system may have Y origin at bottom (top > bottom)
+    // Check for size variation using representative heights (avg line height)
     const heights = blocksWithBoundingBox.map((b) =>
-      Math.abs(b.boundingBox.bottom - b.boundingBox.top),
+      this.getRepresentativeHeight(b),
     );
     const maxHeight = Math.max(...heights);
     const minHeight = Math.min(...heights);
@@ -187,16 +249,17 @@ export class OcrMetadataService {
   }
 
   /**
-   * Classify blocks by relative size based on height.
-   * Uses statistical thresholds relative to average and max.
+   * Classify blocks by relative size based on representative line height.
+   * Uses average line height within each block as a proxy for font size.
+   * Falls back to block bounding box height when line data is unavailable.
    */
   private classifySizes(blocks: Block[]): Map<Block, TextSize> {
     const sizeMap = new Map<Block, TextSize>();
 
-    // Calculate height of each block (use abs since Y origin may be at bottom)
+    // Calculate representative height of each block
     const heights = blocks.map((b) => ({
       block: b,
-      height: Math.abs(b.boundingBox.bottom - b.boundingBox.top),
+      height: this.getRepresentativeHeight(b),
     }));
 
     if (heights.length === 0) {
@@ -209,24 +272,74 @@ export class OcrMetadataService {
     const avgHeight =
       heightValues.reduce((a, b) => a + b, 0) / heightValues.length;
 
-    // Classify each block
-    // Large: >= OCR_LARGE_TEXT_AVG_MULTIPLIER * average OR within OCR_LARGE_TEXT_MAX_HEIGHT_RATIO of max
-    // Small: < OCR_SMALL_TEXT_AVG_MULTIPLIER * average
-    // Medium: everything else
     for (const { block, height } of heights) {
-      if (
-        height >= maxHeight * OCR_LARGE_TEXT_MAX_HEIGHT_RATIO ||
-        height >= avgHeight * OCR_LARGE_TEXT_AVG_MULTIPLIER
-      ) {
-        sizeMap.set(block, 'large');
-      } else if (height < avgHeight * OCR_SMALL_TEXT_AVG_MULTIPLIER) {
-        sizeMap.set(block, 'small');
-      } else {
-        sizeMap.set(block, 'medium');
-      }
+      sizeMap.set(block, this.classifyHeight(height, maxHeight, avgHeight));
     }
 
     return sizeMap;
+  }
+
+  /**
+   * Height of a bounding box, using absolute value since coordinate system
+   * may have Y origin at bottom (top > bottom).
+   */
+  private boundingBoxHeight(box: BoundingBox): number {
+    return Math.abs(box.bottom - box.top);
+  }
+
+  /**
+   * Get the representative height for a block, approximating font size.
+   * Uses average line height when line bounding boxes are available,
+   * otherwise falls back to the block's own bounding box height.
+   */
+  private getRepresentativeHeight(block: Block): number {
+    if (block.lines && block.lines.length > 0) {
+      const lineHeights = block.lines
+        .filter(
+          (l) => l.boundingBox && typeof l.boundingBox.bottom === 'number',
+        )
+        .map((l) => this.boundingBoxHeight(l.boundingBox));
+
+      if (lineHeights.length > 0) {
+        return lineHeights.reduce((a, b) => a + b, 0) / lineHeights.length;
+      }
+    }
+
+    // Fallback: use block bounding box height
+    return this.boundingBoxHeight(block.boundingBox);
+  }
+
+  /**
+   * Classify a single block height against statistical thresholds.
+   * Large: >= OCR_LARGE_TEXT_AVG_MULTIPLIER × avg OR within OCR_LARGE_TEXT_MAX_HEIGHT_RATIO of max
+   * Small: < OCR_SMALL_TEXT_AVG_MULTIPLIER × avg
+   * Medium: everything else
+   */
+  private classifyHeight(
+    height: number,
+    maxHeight: number,
+    avgHeight: number,
+  ): TextSize {
+    if (
+      height >= maxHeight * OCR_LARGE_TEXT_MAX_HEIGHT_RATIO ||
+      height >= avgHeight * OCR_LARGE_TEXT_AVG_MULTIPLIER
+    ) {
+      return 'large';
+    }
+    if (height < avgHeight * OCR_SMALL_TEXT_AVG_MULTIPLIER) {
+      return 'small';
+    }
+    return 'medium';
+  }
+
+  /**
+   * Strip the layout header so individual results can be re-wrapped
+   * with section markers when combining multiple photos.
+   */
+  private stripLayoutHeader(enrichedText: string): string {
+    return enrichedText.startsWith(LAYOUT_HEADER)
+      ? enrichedText.slice(LAYOUT_HEADER.length)
+      : enrichedText;
   }
 
   /**
@@ -238,8 +351,56 @@ export class OcrMetadataService {
       return '';
     }
 
-    const header = '=== OCR WITH LAYOUT ===\n\n';
+    const header = LAYOUT_HEADER;
 
+    const formattedBlocks = blocks.map((block) => {
+      const sizeTag = block.relativeSize.toUpperCase();
+      return `**${sizeTag}:** ${block.text}`;
+    });
+
+    return header + formattedBlocks.join('\n\n');
+  }
+
+  /**
+   * Classify blocks using external baseline statistics (from the 0° pass).
+   * Falls back to per-pass independent classification if baseline is insufficient.
+   */
+  private classifyBlocksWithBaseline(
+    blocks: Block[],
+    baselineBlocks: Block[],
+  ): EnrichedTextBlock[] {
+    // Compute baseline stats from 0° pass using representative heights
+    const baselineHeights = (baselineBlocks ?? [])
+      .filter((b) => b.boundingBox && typeof b.boundingBox.bottom === 'number')
+      .map((b) => this.getRepresentativeHeight(b));
+
+    // If baseline is insufficient, fall back to self-contained classification
+    if (baselineHeights.length < OCR_MIN_BLOCKS_FOR_METADATA) {
+      return this.classifyBlocks(blocks);
+    }
+
+    const maxHeight = Math.max(...baselineHeights);
+    const avgHeight =
+      baselineHeights.reduce((a, b) => a + b, 0) / baselineHeights.length;
+
+    return blocks.map((block) => {
+      const height = this.getRepresentativeHeight(block);
+      return {
+        text: block.text,
+        relativeSize: this.classifyHeight(height, maxHeight, avgHeight),
+      };
+    });
+  }
+
+  /**
+   * Format rotated text blocks with a section header.
+   */
+  private formatRotatedText(blocks: EnrichedTextBlock[]): string {
+    if (blocks.length === 0) {
+      return '';
+    }
+
+    const header = '--- Rotated text detected ---\n';
     const formattedBlocks = blocks.map((block) => {
       const sizeTag = block.relativeSize.toUpperCase();
       return `**${sizeTag}:** ${block.text}`;

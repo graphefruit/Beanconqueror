@@ -9,12 +9,9 @@ import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
 import { AIReadinessResult } from './apple-intelligence-ai-bean-import.service';
-import { CameraOcrService } from './camera-ocr.service';
+import { CameraOcrService, MultiPassOcrResult } from './camera-ocr.service';
 import { CloudFieldExtractionService } from './cloud-field-extraction.service';
-import {
-  OcrMetadataService,
-  TextDetectionResult,
-} from './ocr-metadata.service';
+import { OcrMetadataService } from './ocr-metadata.service';
 
 @Injectable({
   providedIn: 'root',
@@ -166,15 +163,13 @@ export class CloudAIBeanImportService {
    * Enriches OCR results with layout metadata, then sends to cloud LLM.
    */
   private async processOcrAndExtractBean(
-    ocrResults: TextDetectionResult[],
+    ocrResults: MultiPassOcrResult[],
   ): Promise<Bean> {
-    // Step 1: Enrich with layout metadata
+    // Step 1: Enrich with layout metadata (multi-pass aware)
     const enrichedText =
       ocrResults.length === 1
-        ? this.ocrMetadata.enrichWithLayout(ocrResults[0]).enrichedText
-        : this.ocrMetadata.enrichMultiplePhotos(ocrResults);
-
-    this.uiLog.log(`Cloud AI: Enriched text length: ${enrichedText.length}`);
+        ? this.ocrMetadata.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText
+        : this.ocrMetadata.enrichMultiplePhotosMultiPass(ocrResults);
 
     // Step 2: Extract fields via cloud LLM (no language detection or vocabulary needed)
     this.uiAlert.setLoadingSpinnerMessage(

@@ -2,7 +2,12 @@ import { Bean } from '../../../classes/bean/bean';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { IBeanParameter } from '../../../interfaces/parameter/iBeanParameter';
 import { MergedExamples } from '../ai-import-examples.service';
-import { Block, TextDetectionResult } from '../ocr-metadata.service';
+import { Block, Line, TextDetectionResult } from '../ocr-metadata.service';
+
+interface CreateBlockOptions {
+  recognizedLanguage?: string;
+  lines?: Line[];
+}
 
 /**
  * Create a mock Block with specified bounding box.
@@ -11,7 +16,7 @@ import { Block, TextDetectionResult } from '../ocr-metadata.service';
  * @param top Top coordinate
  * @param right Right coordinate
  * @param bottom Bottom coordinate
- * @param recognizedLanguage Optional language code (default: 'en')
+ * @param options Optional recognized language and lines
  */
 export function createBlock(
   text: string,
@@ -19,13 +24,31 @@ export function createBlock(
   top: number,
   right: number,
   bottom: number,
-  recognizedLanguage: string = 'en',
+  options?: CreateBlockOptions,
 ): Block {
   return {
     text,
     boundingBox: { left, top, right, bottom },
-    recognizedLanguage,
-    lines: [],
+    recognizedLanguage: options?.recognizedLanguage ?? 'en',
+    lines: options?.lines ?? [],
+  };
+}
+
+/**
+ * Create a mock Line with specified bounding box.
+ */
+export function createLine(
+  text: string,
+  left: number,
+  top: number,
+  right: number,
+  bottom: number,
+): Line {
+  return {
+    text,
+    boundingBox: { left, top, right, bottom },
+    recognizedLanguage: 'en',
+    elements: [],
   };
 }
 
