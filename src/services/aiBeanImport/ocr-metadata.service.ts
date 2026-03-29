@@ -71,6 +71,8 @@ export interface EnrichedOCRResult {
  * field extraction accuracy. Converts spatial information into text annotations
  * that help the LLM understand layout context.
  */
+const LAYOUT_HEADER = '=== OCR WITH LAYOUT ===\n\n';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -123,11 +125,7 @@ export class OcrMetadataService {
     // Process each photo and combine with markers
     const enrichedTexts = ocrResults.map((result, index) => {
       const enriched = this.enrichWithLayout(result);
-      // Strip header from individual results to avoid duplication
-      const textWithoutHeader = enriched.enrichedText.replace(
-        /^=== OCR WITH LAYOUT ===\n\n/,
-        '',
-      );
+      const textWithoutHeader = this.stripLayoutHeader(enriched.enrichedText);
       const marker = `--- Label ${index + 1} of ${ocrResults.length} ---`;
       return `${marker}\n${textWithoutHeader}`;
     });
@@ -146,12 +144,7 @@ export class OcrMetadataService {
     // Enrich the primary (0°) pass as before
     const primaryEnriched = this.enrichWithLayout(multiPass.primary);
 
-    // If no rotated results, return primary as-is
-    if (multiPass.rotated.length === 0) {
-      return primaryEnriched;
-    }
-
-    // Collect all rotated blocks
+    // Collect all rotated blocks — return primary as-is if none found
     const rotatedBlocks = multiPass.rotated.flatMap((r) => r.blocks ?? []);
     if (rotatedBlocks.length === 0) {
       return primaryEnriched;
@@ -196,10 +189,7 @@ export class OcrMetadataService {
 
     const enrichedTexts = ocrResults.map((result, index) => {
       const enriched = this.enrichWithLayoutMultiPass(result);
-      const textWithoutHeader = enriched.enrichedText.replace(
-        /^=== OCR WITH LAYOUT ===\n\n/,
-        '',
-      );
+      const textWithoutHeader = this.stripLayoutHeader(enriched.enrichedText);
       const marker = `--- Label ${index + 1} of ${ocrResults.length} ---`;
       return `${marker}\n${textWithoutHeader}`;
     });
@@ -343,6 +333,16 @@ export class OcrMetadataService {
   }
 
   /**
+   * Strip the layout header so individual results can be re-wrapped
+   * with section markers when combining multiple photos.
+   */
+  private stripLayoutHeader(enrichedText: string): string {
+    return enrichedText.startsWith(LAYOUT_HEADER)
+      ? enrichedText.slice(LAYOUT_HEADER.length)
+      : enrichedText;
+  }
+
+  /**
    * Format enriched blocks as annotated text using markdown.
    * Each block is prefixed with **SIZE:** tag.
    */
@@ -351,7 +351,7 @@ export class OcrMetadataService {
       return '';
     }
 
-    const header = '=== OCR WITH LAYOUT ===\n\n';
+    const header = LAYOUT_HEADER;
 
     const formattedBlocks = blocks.map((block) => {
       const sizeTag = block.relativeSize.toUpperCase();

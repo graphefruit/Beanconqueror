@@ -38,6 +38,15 @@ export interface MultiPhotoOcrResult {
   rawTexts: string[];
 }
 
+/**
+ * Combine all text from a multi-pass OCR result (primary + rotated passes).
+ */
+export function collectRawText(result: MultiPassOcrResult): string {
+  return [result.primary.text, ...result.rotated.map((r) => r.text)]
+    .filter((t) => t.trim())
+    .join('\n');
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -81,8 +90,8 @@ export class CameraOcrService {
     );
 
     const ocrResult = await this.ocrWithRotations(imageData.base64String);
-    const rawText = ocrResult.primary.text;
-    if (!rawText || rawText.trim() === '') {
+    const rawText = collectRawText(ocrResult);
+    if (!rawText) {
       await this.uiAlert.hideLoadingSpinner();
       await this.uiAlert.showMessage(
         'AI_IMPORT_NO_TEXT_FOUND',
@@ -139,9 +148,10 @@ export class CameraOcrService {
       try {
         const ocrResult = await this.ocrWithRotations(base64);
 
-        if (ocrResult.primary.text && ocrResult.primary.text.trim() !== '') {
+        const rawText = collectRawText(ocrResult);
+        if (rawText) {
           ocrResults.push(ocrResult);
-          rawTexts.push(ocrResult.primary.text);
+          rawTexts.push(rawText);
         } else {
           this.uiLog.log(`CameraOcr: Photo ${i + 1} had no text`);
         }

@@ -23,10 +23,20 @@ describe('rotateBase64Image', () => {
   });
 
   [90, 270].forEach((degrees) => {
-    it(`should produce a non-empty base64 string without data URL prefix when rotated by ${degrees}°`, async () => {
+    it(`should swap dimensions of a 4×2 image to 2×4 and return raw base64 when rotated by ${degrees}°`, async () => {
       const result = await rotateBase64Image(testBase64, degrees as 90 | 270);
       expect(result).toBeTruthy();
       expect(result).not.toContain('data:image/jpeg;base64,');
+
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error('Failed to load rotated image'));
+        image.src = `data:image/jpeg;base64,${result}`;
+      });
+
+      expect(img.naturalWidth).toBe(2);
+      expect(img.naturalHeight).toBe(4);
     });
   });
 

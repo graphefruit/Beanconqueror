@@ -14,16 +14,11 @@ export function rotateBase64Image(
     img.onload = () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('Canvas 2d context unavailable'));
-        return;
-      }
-      // 90° and 270° swap width/height
       canvas.width = img.height;
       canvas.height = img.width;
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate((degrees * Math.PI) / 180);
-      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx?.translate(canvas.width / 2, canvas.height / 2);
+      ctx?.rotate((degrees * Math.PI) / 180);
+      ctx?.drawImage(img, -img.width / 2, -img.height / 2);
       const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
       resolve(dataUrl.replace(/^data:image\/jpeg;base64,/, ''));
     };
