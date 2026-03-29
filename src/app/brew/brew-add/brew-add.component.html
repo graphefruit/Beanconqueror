@@ -1,6 +1,7 @@
 <ion-header>
   <app-header [title]="'ADD_BREW' | translate">
     <app-header-dismiss-button header-slot="start" (dismissed)="confirmDismiss()" />
+    <ng-content header-slot="end">
     @if(brewBrewing?.brewBrewingPreparationDeviceEl?.uiHasAPreparationDeviceSet) {
       @if (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) {
         <ion-chip header-slot="end" outline='true' class='machine-connected'>
@@ -46,6 +47,7 @@
         </ion-chip>
       }
     }
+    </ng-content>
     @if(brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
       <app-header-button header-slot="end" icon="beanconqueror-scale-tare" buttonClass="big-icon-only" (clicked)="tareScale()" />
     }

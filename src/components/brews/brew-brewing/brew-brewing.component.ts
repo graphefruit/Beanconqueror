@@ -431,6 +431,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         await this.brewBrewingGraphEl?.instance();
       }
 
+      /** If we edit a connected preparation device, we didn't set the data we used before
+       * Adding to this, we don't do this when we're in baristamode, because else the Websocket would already trigger and connect
+       */
+      if (this.brewBrewingPreparationDeviceEl && this.baristamode === false) {
+        await this.brewBrewingPreparationDeviceEl.instancePreparationDevice(
+          this.data,
+        );
+      }
+
       this.bluetoothSubscription = this.bleManager
         .attachOnEvent()
         .subscribe((_type) => {
