@@ -91,3 +91,21 @@ export function createMockUIFileHelper(): jasmine.SpyObj<any> {
 export function createMockModalController(): jasmine.SpyObj<any> {
   return jasmine.createSpyObj('ModalController', ['dismiss']);
 }
+
+/**
+ * Create a mock UISettingsStorage for testing.
+ * Call `getSettings.and.returnValue(mySettings)` to configure the returned settings.
+ */
+export function createMockUISettingsStorage(): jasmine.SpyObj<any> {
+  return jasmine.createSpyObj('UISettingsStorage', ['getSettings']);
+}
+
+/**
+ * Create a mock UIBeanHelper for testing.
+ * fieldVisible() mirrors the real implementation: returns true if the flag is true.
+ */
+export function createMockUIBeanHelper(): jasmine.SpyObj<any> {
+  const spy = jasmine.createSpyObj('UIBeanHelper', ['fieldVisible']);
+  spy.fieldVisible.and.callFake((flag: boolean) => flag === true);
+  return spy;
+}
