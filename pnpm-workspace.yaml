@@ -1,0 +1,18 @@
+# Delay new version of libraries for 10080 minutes (7 days) in an attempt to
+# defend against increasingly common supply chain attacks on npm packages.
+# See https://pnpm.io/settings#minimumreleaseage and
+# https://pnpm.io/supply-chain-security
+minimum-release-age: 10080
+
+# Print an error for unreviewed build scripts
+strictDepBuilds: true
+
+# Allow the build scripts for the angular build dependencies listed here.
+# Do NOT blindly add new dependencies here when an error pops up. Build scripts
+# are a common supply chain attack vector for malware!
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true
+  sharp: false # As recommended by https://github.com/lovell/sharp/blob/7b4c4762432b14c62676e860c8034b5cd326f464/docs/src/content/docs/install.md?plain=1#L23
