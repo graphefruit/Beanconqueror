@@ -125,6 +125,16 @@
     "typescript-eslint": "^8.50.0"
   },
   "description": "Beanconqueror",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10.26.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "error"
+    }
+  },
   "platforms": [
     "android",
     "ios"
