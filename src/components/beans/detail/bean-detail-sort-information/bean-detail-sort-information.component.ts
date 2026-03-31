@@ -39,4 +39,8 @@ export class BeanDetailSortInformationComponent implements OnInit {
   public isBean(data: GreenBean | Bean): data is Bean {
     return data instanceof Bean;
   }
+
+  public isBlend(): boolean {
+    return this.isBean(this.data) && this.data.beanMix.toString() === 'BLEND';
+  }
 }

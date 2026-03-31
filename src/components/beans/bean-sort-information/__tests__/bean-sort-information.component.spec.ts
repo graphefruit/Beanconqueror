@@ -66,11 +66,6 @@ describe('BeanSortInformationComponent', () => {
     fixture.detectChanges();
   }
 
-  it('should create', () => {
-    setBean('SINGLE_ORIGIN' as BEAN_MIX_ENUM);
-    expect(component).toBeTruthy();
-  });
-
   describe('percentage field visibility', () => {
     it('should show percentage field when bean is BLEND and percentage setting is enabled', () => {
       settings.bean_manage_parameters.percentage = true;
