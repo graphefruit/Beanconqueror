@@ -173,7 +173,7 @@
           </ion-input>
         </ion-item>
       }
-      @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage)) {
+      @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage) && isBlend()) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_PERCENTAGE" | translate}}' #percentage="ngModel" [(ngModel)]="beanInformation.percentage" inputmode="decimal"
             placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PERCENTAGE' | translate}}" prevent-characters

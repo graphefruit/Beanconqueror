@@ -73,7 +73,7 @@
           </ion-label>
         </ion-item>
       }
-      @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage)) {
+      @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage) && isBean(data) && data.beanMix.toString() === 'BLEND') {
         <ion-item>
           <ion-label>
             <h2>{{"BEAN_DATA_PERCENTAGE" | translate}}:</h2>
