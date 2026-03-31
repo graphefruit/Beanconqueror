@@ -29,6 +29,7 @@
     "@aparajita/capacitor-dark-mode": "^6.0.0",
     "@awesome-cordova-plugins/android-permissions": "^8.1.0",
     "@awesome-cordova-plugins/core": "^8.1.0",
+    "@bufbuild/protobuf": "^2.11.0",
     "@capacitor-community/keep-awake": "^8.0.0",
     "@capacitor/android": "^8.0.0",
     "@capacitor/app": "^8.0.0",
@@ -68,6 +69,7 @@
     "community-cordova-plugin-nfc": "^1.4.0",
     "currency-symbol-map": "^5.1.0",
     "html-to-image": "^1.11.13",
+    "ionicons": "^8.0.13",
     "javascript-color-gradient": "^2.5.0",
     "localforage-cordovasqlitedriver": "^1.8.0",
     "lodash": "^4.17.21",
@@ -80,6 +82,7 @@
     "safe-stable-stringify": "^2.5.0",
     "serialize-error": "^13.0.1",
     "swiper": "^12.0.3",
+    "tslib": "^2.8.1",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zone.js": "^0.16.0"
   },
