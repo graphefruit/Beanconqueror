@@ -91,4 +91,3 @@ export function createMockUIFileHelper(): jasmine.SpyObj<any> {
 export function createMockModalController(): jasmine.SpyObj<any> {
   return jasmine.createSpyObj('ModalController', ['dismiss']);
 }
-
