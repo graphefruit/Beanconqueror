@@ -82,14 +82,14 @@
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill,
           choosenPreparation.brew_order.before.mill,
           choosenPreparation.use_custom_parameters])" lines="inset">
-          <ion-select label-placement="stacked" label='{{"BREW_DATA_MILL" | translate}}' [(ngModel)]="data.mill" mill-overlay [show-finished]="false"
+          <ion-select label-placement="stacked" label='{{"BREW_DATA_MILL" | translate}}' [(ngModel)]="data.mill" (ngModelChange)="setChoosenMill()" mill-overlay [show-finished]="false"
                       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL' | translate}}">
           </ion-select>
         </ion-item>
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_speed,
         choosenPreparation.manage_parameters.mill_speed,
-        choosenPreparation.use_custom_parameters])) {
+        choosenPreparation.use_custom_parameters]) && (!(choosenMill) || (choosenMill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_ADJUSTABLE_SPEED))) {
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_speed,
           choosenPreparation.brew_order.before.mill_speed,
           choosenPreparation.use_custom_parameters])" lines="inset">
@@ -100,7 +100,7 @@
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_timer,
         choosenPreparation.manage_parameters.mill_timer,
-        choosenPreparation.use_custom_parameters])) {
+        choosenPreparation.use_custom_parameters]) && (!(choosenMill) || (choosenMill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_TIMER))) {
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_timer,
           choosenPreparation.brew_order.before.mill_timer,
           choosenPreparation.use_custom_parameters])" lines="inset">

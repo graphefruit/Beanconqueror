@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Woda została zmodyfikowana",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Ziarno zostało zarchiwizowane",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Młynek został zarchiwizowany",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Ma regulowaną prędkość",
+    "MILL_HAS_TIMER": "Ma timer",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Metoda parzenia została zarchiwizowana",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Woda została zarchiwizowana",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g z {{gramTotal}}g ({{leftOver}}g)",

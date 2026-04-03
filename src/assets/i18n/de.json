@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Wasser editiert",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bohne archiviert",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Mühle archiviert",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Hat einstellbare Geschwindigkeit",
+    "MILL_HAS_TIMER": "Hat Timer",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Brühmethode archiviert",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Wasser archiviert",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g ({{leftOver}}g)",

@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Su düzenlendi",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Çekirdek arşivlendi",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Öğütücü arşivlendi",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Ayarlanabilir hıza sahip",
+    "MILL_HAS_TIMER": "Zamanlayıcıya sahip",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Hazırlama metodu arşivlendi",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Su arşivlendi",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g ({{leftOver}}g)",

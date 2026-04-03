@@ -59,6 +59,7 @@ import { Brew } from '../../../classes/brew/brew';
 import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { BluetoothScale, sleep } from '../../../classes/devices';
+import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
@@ -77,6 +78,7 @@ import { WaterOverlayDirective } from '../../../directive/water-overlay.directiv
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { IMill } from '../../../interfaces/mill/iMill';
@@ -85,6 +87,7 @@ import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
 import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { KeysPipe } from '../../../pipes/keys';
+import { MillFunction } from '../../../pipes/mill/millFunction';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import {
@@ -143,6 +146,7 @@ declare var cordova;
     BrewFieldVisiblePipe,
     BrewFieldOrder,
     BrewFunction,
+    MillFunction,
     IonCard,
     IonItem,
     IonInput,
@@ -247,6 +251,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public typeaheadSearch = {};
 
   public choosenPreparation: Preparation = undefined;
+  public choosenMill: Mill = undefined;
+  protected readonly MILL_FUNCTION_PIPE_ENUM = MILL_FUNCTION_PIPE_ENUM;
 
   public uiShowSectionAfterBrew: boolean = false;
   public uiShowSectionWhileBrew: boolean = false;
@@ -343,8 +349,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           await this._waiUntilGraphAndPreparationElementIsThere();
         }
         this.setChoosenPreparation();
+        this.setChoosenMill();
       } else {
         this.setChoosenPreparation();
+        this.setChoosenMill();
         if (this.timer) {
           this.timer.setTime(
             this.data.brew_time,
@@ -1768,6 +1776,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
     await popover.present();
     const data = await popover.onWillDismiss();
+  }
+
+  public setChoosenMill(): void {
+    if (this.data.mill) {
+      this.choosenMill = this.data.getMill();
+    } else {
+      this.choosenMill = undefined;
+    }
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
