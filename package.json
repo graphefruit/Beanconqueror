@@ -88,7 +88,7 @@
     "@angular-devkit/schematics": "^21.0.4",
     "@angular/build": "^21.0.4",
     "@angular/cli": "^21.0.4",
-    "@angular/compiler": "^21.0.6",
+    "@angular/compiler": "^21.2.4",
     "@angular/compiler-cli": "^21.0.6",
     "@angular/language-service": "^21.0.6",
     "@capacitor/assets": "^3.0.5",
