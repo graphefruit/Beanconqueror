@@ -170,6 +170,10 @@ export class Bean implements IBean {
     }
   }
 
+  public isBlend(): boolean {
+    return BEAN_MIX_ENUM[this.beanMix] === BEAN_MIX_ENUM.BLEND;
+  }
+
   public initializeByObject(beanObj: IBean): void {
     Object.assign(this, beanObj);
 
