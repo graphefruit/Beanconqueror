@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "A água foi editada",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "O Café foi arquivado",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "O Grinder foi arquivado",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Tem velocidade ajustável",
+    "MILL_HAS_TIMER": "Tem temporizador",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "O método de preparação foi arquivado",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "A água foi arquivada",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}} g de {{gramTotal}} g ( {{leftOver}} g)",

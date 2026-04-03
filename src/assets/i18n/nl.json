@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Water is bewerkt",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Boon is gearchiveerd",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Maler is gearchiveerd",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Heeft instelbare snelheid",
+    "MILL_HAS_TIMER": "Heeft timer",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Bereidingsmethode is gearchiveerd",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Water is gearchiveerd",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}} g van {{gramTotal}} g ( {{leftOver}} g)",

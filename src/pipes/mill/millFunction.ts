@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 import { Mill } from '../../classes/mill/mill';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
-import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
 
 @Pipe({ name: 'millFunctionPipe' })
 export class MillFunction implements PipeTransform {
@@ -18,8 +17,12 @@ export class MillFunction implements PipeTransform {
         action = arg[0];
       }
       switch (action) {
-        case PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS:
+        case MILL_FUNCTION_PIPE_ENUM.HAS_PHOTOS:
           return value.hasPhotos();
+        case MILL_FUNCTION_PIPE_ENUM.HAS_ADJUSTABLE_SPEED:
+          return value.has_adjustable_speed;
+        case MILL_FUNCTION_PIPE_ENUM.HAS_TIMER:
+          return value.has_timer;
       }
     } catch (ex) {}
   }

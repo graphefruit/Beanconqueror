@@ -9,4 +9,6 @@ export interface IMill {
   finished: boolean;
   config: IConfig;
   attachments: Array<string>;
+  has_adjustable_speed: boolean;
+  has_timer: boolean;
 }

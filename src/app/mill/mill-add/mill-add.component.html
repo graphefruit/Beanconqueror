@@ -7,6 +7,12 @@
                  autocapitalize="sentences" required>
       </ion-input>
     </ion-item>
+    <ion-item>
+      <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.has_adjustable_speed" name="has_adjustable_speed">{{"MILL_HAS_ADJUSTABLE_SPEED"|translate}}</ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.has_timer" name="has_timer">{{"MILL_HAS_TIMER"|translate}}</ion-checkbox>
+    </ion-item>
   <ion-row>
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"

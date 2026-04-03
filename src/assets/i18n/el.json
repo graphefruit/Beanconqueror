@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Το νερό έχει επεξεργαστεί",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Ο κόκκος έχει αρχειοθετηθεί",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Ο μύλος έχει αρχειοθετηθεί",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Έχει ρυθμιζόμενη ταχύτητα",
+    "MILL_HAS_TIMER": "Έχει χρονόμετρο",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Η μέθοδος παρασκευής έχει αρχειοθετηθεί",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Το νερό έχει αρχειοθετηθεί",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}γρ από {{gramTotal}}γρ ({{leftOver}}γρ)",

@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "水质已被编辑",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "咖啡豆已经归档",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "研磨机已经归档",
+    "MILL_HAS_ADJUSTABLE_SPEED": "具有可调速度",
+    "MILL_HAS_TIMER": "具有定时器",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "冲泡器具已经归档",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "水质已被编辑",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g ({{leftOver}}g)",
