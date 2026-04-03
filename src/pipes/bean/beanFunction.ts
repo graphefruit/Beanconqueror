@@ -1,16 +1,20 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 import { Bean } from '../../classes/bean/bean';
+import { GreenBean } from '../../classes/green-bean/green-bean';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 
 @Pipe({ name: 'beanFunctionPipe' })
 export class BeanFunction implements PipeTransform {
   public transform(
-    value: Bean,
+    value: Bean | GreenBean,
     arg: BEAN_FUNCTION_PIPE_ENUM | Array<BEAN_FUNCTION_PIPE_ENUM | any>,
   ): any {
     try {
+      if (!(value instanceof Bean)) {
+        return undefined;
+      }
       let action;
       if (typeof arg !== 'object') {
         action = arg;
@@ -47,6 +51,8 @@ export class BeanFunction implements PipeTransform {
           return false;
         case BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN:
           return value.isUnfrozen();
+        case BEAN_FUNCTION_PIPE_ENUM.IS_BLEND:
+          return value.isBlend();
       }
     } catch (ex) {}
   }

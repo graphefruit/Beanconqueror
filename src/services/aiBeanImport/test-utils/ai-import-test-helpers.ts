@@ -1,6 +1,3 @@
-import { Bean } from '../../../classes/bean/bean';
-import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
-import { IBeanParameter } from '../../../interfaces/parameter/iBeanParameter';
 import { MergedExamples } from '../ai-import-examples.service';
 import { Block, Line, TextDetectionResult } from '../ocr-metadata.service';
 
@@ -63,10 +60,10 @@ export function createTextDetectionResult(
 }
 
 /**
- * Create mock MergedExamples with default English values.
+ * Create MergedExamples with default English values.
  * Override specific keys as needed.
  */
-export function createMockExamples(
+export function createExamples(
   overrides: Partial<MergedExamples> = {},
 ): MergedExamples {
   return {
@@ -83,68 +80,5 @@ export function createMockExamples(
     ROASTDATE_KEYWORDS: 'Roast date, Roasted on, Freshly roasted',
     ROASTER_KEYWORDS: 'Roastery, Coffee Roasters, Kaffeerösterei',
     ...overrides,
-  };
-}
-
-/**
- * Create a mock Bean with default values.
- * Override specific properties as needed.
- */
-export function createMockBean(overrides: Partial<Bean> = {}): Bean {
-  const bean = new Bean();
-  Object.assign(bean, overrides);
-  return bean;
-}
-
-/**
- * Create a mock IBeanInformation with empty/default values.
- */
-export function createEmptyBeanInformation(): IBeanInformation {
-  return {
-    country: '',
-    region: '',
-    farm: '',
-    farmer: '',
-    elevation: '',
-    harvest_time: '',
-    variety: '',
-    processing: '',
-    certification: '',
-    purchasing_price: 0,
-    fob_price: 0,
-  } as IBeanInformation;
-}
-
-/**
- * Create mock IBeanParameter with all fields enabled.
- * Override specific fields as needed.
- */
-export function createMockBeanParams(
-  overrides: Partial<IBeanParameter> = {},
-): IBeanParameter {
-  return {
-    bean_information: true,
-    roaster: true,
-    bean_roasting_type: true,
-    aromatics: true,
-    decaffeinated: true,
-    cupping_points: true,
-    roastingDate: true,
-    region: true,
-    variety: true,
-    processing: true,
-    elevation: true,
-    farm: true,
-    farmer: true,
-    ...overrides,
-  } as IBeanParameter;
-}
-
-/**
- * Create a mock settings object with bean parameters.
- */
-export function createMockSettings(params: Partial<IBeanParameter> = {}) {
-  return {
-    bean_manage_parameters: createMockBeanParams(params),
   };
 }

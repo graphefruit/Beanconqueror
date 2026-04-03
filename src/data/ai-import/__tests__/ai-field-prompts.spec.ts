@@ -1,16 +1,16 @@
 import moment from 'moment';
 
-import { MergedExamples } from '../../services/aiBeanImport/ai-import-examples.service';
-import { createMockExamples } from '../../services/aiBeanImport/test-utils';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
-import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
-import { buildFieldPrompt, FIELD_PROMPTS } from './ai-field-prompts';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { MergedExamples } from '../../../services/aiBeanImport/ai-import-examples.service';
+import { createExamples } from '../../../services/aiBeanImport/test-utils';
+import { buildFieldPrompt, FIELD_PROMPTS } from '../ai-field-prompts';
 
 describe('ai-field-prompts', () => {
   let mockExamples: MergedExamples;
 
   beforeEach(() => {
-    mockExamples = createMockExamples();
+    mockExamples = createExamples();
   });
 
   describe('buildFieldPrompt', () => {
@@ -102,9 +102,15 @@ describe('ai-field-prompts', () => {
       const postProcess = FIELD_PROMPTS['beanMix'].postProcess!;
 
       it('should return BEAN_MIX_ENUM.SINGLE_ORIGIN for case-insensitive match', () => {
-        expect(postProcess('single_origin', '')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
-        expect(postProcess('SINGLE_ORIGIN', '')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
-        expect(postProcess('Single_Origin', '')).toBe(BEAN_MIX_ENUM.SINGLE_ORIGIN);
+        expect(postProcess('single_origin', '')).toBe(
+          BEAN_MIX_ENUM.SINGLE_ORIGIN,
+        );
+        expect(postProcess('SINGLE_ORIGIN', '')).toBe(
+          BEAN_MIX_ENUM.SINGLE_ORIGIN,
+        );
+        expect(postProcess('Single_Origin', '')).toBe(
+          BEAN_MIX_ENUM.SINGLE_ORIGIN,
+        );
       });
 
       it('should return BEAN_MIX_ENUM.BLEND for case-insensitive match', () => {
@@ -196,8 +202,12 @@ describe('ai-field-prompts', () => {
       });
 
       it('should return BEAN_ROASTING_TYPE_ENUM.ESPRESSO for case-insensitive match', () => {
-        expect(postProcess('espresso', '')).toBe(BEAN_ROASTING_TYPE_ENUM.ESPRESSO);
-        expect(postProcess('ESPRESSO', '')).toBe(BEAN_ROASTING_TYPE_ENUM.ESPRESSO);
+        expect(postProcess('espresso', '')).toBe(
+          BEAN_ROASTING_TYPE_ENUM.ESPRESSO,
+        );
+        expect(postProcess('ESPRESSO', '')).toBe(
+          BEAN_ROASTING_TYPE_ENUM.ESPRESSO,
+        );
       });
 
       it('should return BEAN_ROASTING_TYPE_ENUM.OMNI for case-insensitive match', () => {
