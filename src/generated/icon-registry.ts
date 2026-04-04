@@ -1,5 +1,5 @@
 // Auto-generated file listing all custom icons
-// Regenerate using: npm run generate-icon-registry
+// Regenerate using: pnpm run generate-icon-registry
 
 export const beanconquerorIcons = [
   {

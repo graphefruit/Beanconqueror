@@ -11,24 +11,24 @@ You need to have the following prerequisites
 
 - Git
 - Node.js (tested with version 22)
-- `npm` (tested with version 20.12.2)
+- `pnpm` (tested with version 10.33.0)
 - Android Studio (if you want to work on the Android App)
 - Xcode (if you want to work on the iOS App)
 
 ## Installing Dependencies
 
-After cloning the repository, you need to install `npm` dependencies:
+After cloning the repository, you need to install `pnpm` dependencies:
 
 ```shell
-npm install
+pnpm install
 ```
 
 ## Running tests
 
-Run unit tests through npm. These are run automatically in CI.
+Run unit tests through pnpm. These are run automatically in CI.
 
 ```shell
-npm test
+pnpm test
 ```
 
 ## Building and Running Beanconqueror
@@ -43,7 +43,7 @@ For features such as QR code scanning or Bluetooth devices you will need develop
 You can build the app in live reload mode using the following command:
 
 ```shell
-npm start
+pnpm start
 ```
 
 After that, open http://localhost:4200/ in your browser.
@@ -64,7 +64,7 @@ In essence, all of them need to perform the following steps:
 The web application bundle can be easily built using the following command:
 
 ```shell
-npm run build
+pnpm run build
 ```
 
 Make sure you are not running a live reload server in another terminal window to prevent conflicts.
@@ -72,27 +72,27 @@ Make sure you are not running a live reload server in another terminal window to
 The built bundle can be synchronized to a mobile platform project using the following command:
 
 ```shell
-npm run -- cap sync <platform> # where <platform> is either 'android' or 'ios'
+pnpm run -- cap sync <platform> # where <platform> is either 'android' or 'ios'
 ```
 
 After that, you can use the respective mobile IDE (Android Studio or Xcode) to build and deploy the app.
 To run the respective IDE, use the following command:
 
 ```shell
-npm run -- cap open <platform> # where <platform> is either 'android' or 'ios'
+pnpm run -- cap open <platform> # where <platform> is either 'android' or 'ios'
 ```
 
 If you want to, you can also run the following command to synchronize, build and directly deploy and run the app:
 
 ```shell
-npm run -- cap run <platform> # where <platform> is either 'android' or 'ios'
+pnpm run -- cap run <platform> # where <platform> is either 'android' or 'ios'
 ```
 
 Please note that the `cap` commands do not build the web bundle.
 If you want an all-in-one command, use this: (The example is for a typical `bash`-like shell)
 
 ```shell
-npm build && npm run -- cap run android
+pnpm build && pnpm run -- cap run android
 ```
 
 #### Live Reload in Native Apps
@@ -107,7 +107,7 @@ To do that, run the following command: (The example is for a typical `bash`-like
 
 ```shell
 # <platform> is either 'android' or 'ios'.
-CAPACITOR_PLATFORM_OVERRIDE=<platform> npm run -- ionic capacitor run <platform> --livereload --external
+CAPACITOR_PLATFORM_OVERRIDE=<platform> pnpm run -- ionic capacitor run <platform> --livereload --external
 ```
 
 ## Capacitor Configuration Hack
@@ -126,13 +126,13 @@ Keep this in mind if `capacitor` or `ionic` CLI commands fail in mysterious ways
 You can create a production build of the web application (which will created more optimized and minified code) using the following command:
 
 ```shell
-npm run -- build --configuration 'production'
+pnpm run -- build --configuration 'production'
 ```
 
 You then need to sync both mobile platforms again:
 
 ```shell
-npm run cap sync android && npm cap sync ios
+pnpm run cap sync android && pnpm cap sync ios
 ```
 
 After this, you can use the native IDEs to create a production-ready build of the application.
@@ -140,17 +140,17 @@ After this, you can use the native IDEs to create a production-ready build of th
 Normal debug builds can be created using the following command:
 
 ```shell
-npm run -- build  && npm run capsync
+pnpm run -- build  && pnpm run capsync
 ```
 
 Normal production builds can be created using the following command:
 
 ```shell
-npm run -- build --configuration 'production' && npm run capsync
+pnpm run -- build --configuration 'production' && pnpm run capsync
 ```
 
 Generate from the bean.proto:
 
 ```shell
- npm run generate_proto
+ pnpm run generate_proto
 ```

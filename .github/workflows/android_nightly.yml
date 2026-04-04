@@ -19,21 +19,24 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-
-      - name: Install specific npm version
-        run: npm install -g npm@11.9.0
+          cache: 'pnpm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: Build Web Assets and Sync Android
         run: |
-          npm run build
-          npx cap sync android
+          pnpm run build
+          pnpm run cap sync android
 
       - name: Make gradlew executable
         run: chmod +x android/gradlew
