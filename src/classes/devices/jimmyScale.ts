@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
-import { ScaleType, sleep } from './index';
+import { sleep } from './common';
+import { ScaleType } from './types';
 
 declare var ble: any;
 

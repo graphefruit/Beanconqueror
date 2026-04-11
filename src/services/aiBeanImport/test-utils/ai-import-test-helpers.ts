@@ -1,8 +1,10 @@
-import { Bean } from '../../../classes/bean/bean';
-import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
-import { IBeanParameter } from '../../../interfaces/parameter/iBeanParameter';
 import { MergedExamples } from '../ai-import-examples.service';
-import { Block, TextDetectionResult } from '../ocr-metadata.service';
+import { Block, Line, TextDetectionResult } from '../ocr-metadata.service';
+
+interface CreateBlockOptions {
+  recognizedLanguage?: string;
+  lines?: Line[];
+}
 
 /**
  * Create a mock Block with specified bounding box.
@@ -11,7 +13,7 @@ import { Block, TextDetectionResult } from '../ocr-metadata.service';
  * @param top Top coordinate
  * @param right Right coordinate
  * @param bottom Bottom coordinate
- * @param recognizedLanguage Optional language code (default: 'en')
+ * @param options Optional recognized language and lines
  */
 export function createBlock(
   text: string,
@@ -19,13 +21,31 @@ export function createBlock(
   top: number,
   right: number,
   bottom: number,
-  recognizedLanguage: string = 'en',
+  options?: CreateBlockOptions,
 ): Block {
   return {
     text,
     boundingBox: { left, top, right, bottom },
-    recognizedLanguage,
-    lines: [],
+    recognizedLanguage: options?.recognizedLanguage ?? 'en',
+    lines: options?.lines ?? [],
+  };
+}
+
+/**
+ * Create a mock Line with specified bounding box.
+ */
+export function createLine(
+  text: string,
+  left: number,
+  top: number,
+  right: number,
+  bottom: number,
+): Line {
+  return {
+    text,
+    boundingBox: { left, top, right, bottom },
+    recognizedLanguage: 'en',
+    elements: [],
   };
 }
 
@@ -40,10 +60,10 @@ export function createTextDetectionResult(
 }
 
 /**
- * Create mock MergedExamples with default English values.
+ * Create MergedExamples with default English values.
  * Override specific keys as needed.
  */
-export function createMockExamples(
+export function createExamples(
   overrides: Partial<MergedExamples> = {},
 ): MergedExamples {
   return {
@@ -60,68 +80,5 @@ export function createMockExamples(
     ROASTDATE_KEYWORDS: 'Roast date, Roasted on, Freshly roasted',
     ROASTER_KEYWORDS: 'Roastery, Coffee Roasters, Kaffeerösterei',
     ...overrides,
-  };
-}
-
-/**
- * Create a mock Bean with default values.
- * Override specific properties as needed.
- */
-export function createMockBean(overrides: Partial<Bean> = {}): Bean {
-  const bean = new Bean();
-  Object.assign(bean, overrides);
-  return bean;
-}
-
-/**
- * Create a mock IBeanInformation with empty/default values.
- */
-export function createEmptyBeanInformation(): IBeanInformation {
-  return {
-    country: '',
-    region: '',
-    farm: '',
-    farmer: '',
-    elevation: '',
-    harvest_time: '',
-    variety: '',
-    processing: '',
-    certification: '',
-    purchasing_price: 0,
-    fob_price: 0,
-  } as IBeanInformation;
-}
-
-/**
- * Create mock IBeanParameter with all fields enabled.
- * Override specific fields as needed.
- */
-export function createMockBeanParams(
-  overrides: Partial<IBeanParameter> = {},
-): IBeanParameter {
-  return {
-    bean_information: true,
-    roaster: true,
-    bean_roasting_type: true,
-    aromatics: true,
-    decaffeinated: true,
-    cupping_points: true,
-    roastingDate: true,
-    region: true,
-    variety: true,
-    processing: true,
-    elevation: true,
-    farm: true,
-    farmer: true,
-    ...overrides,
-  } as IBeanParameter;
-}
-
-/**
- * Create a mock settings object with bean parameters.
- */
-export function createMockSettings(params: Partial<IBeanParameter> = {}) {
-  return {
-    bean_manage_parameters: createMockBeanParams(params),
   };
 }

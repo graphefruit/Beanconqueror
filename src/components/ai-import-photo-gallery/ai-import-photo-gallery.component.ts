@@ -136,10 +136,6 @@ export class AiImportPhotoGalleryComponent {
           });
 
           if (imageData?.base64String) {
-            this.uiLog.log(
-              `AI Import Gallery: Camera returned base64, length: ${imageData.base64String.length}, format: ${imageData.format}`,
-            );
-
             // Save to internal storage
             const fileName = await this.uiFileHelper.generateInternalPath(
               'photo',
@@ -152,9 +148,6 @@ export class AiImportPhotoGalleryComponent {
 
             if (fileUri.path) {
               this.photoPaths.push(fileUri.path);
-              this.uiLog.log(
-                `AI Import Gallery: Saved photo to ${fileUri.path}, total now: ${this.photoPaths.length}`,
-              );
               this.updateSlider();
 
               // Slide to the newly added photo
@@ -210,9 +203,6 @@ export class AiImportPhotoGalleryComponent {
 
     if (fileUri.path) {
       this.photoPaths.push(fileUri.path);
-      this.uiLog.log(
-        `AI Import Gallery: Clipboard image saved to ${fileUri.path}, total now: ${this.photoPaths.length}`,
-      );
       this.updateSlider();
       this.focusOnNewPhoto();
     }

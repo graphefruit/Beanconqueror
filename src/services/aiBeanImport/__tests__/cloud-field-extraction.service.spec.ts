@@ -1,4 +1,4 @@
-import { CLOUD_AI_PROVIDER_ENUM } from '../../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import { CloudFieldExtractionService } from '../cloud-field-extraction.service';
 import { CloudLLMConfig } from '../cloud-llm-communication.service';
 
@@ -9,7 +9,7 @@ describe('CloudFieldExtractionService', () => {
   let fetchSpy: jasmine.Spy;
 
   const defaultConfig: CloudLLMConfig = {
-    provider: CLOUD_AI_PROVIDER_ENUM.OPENAI,
+    provider: AI_PROVIDER_ENUM.OPENAI,
     apiKey: 'test-key',
     model: 'gpt-4o',
   };
@@ -57,9 +57,9 @@ describe('CloudFieldExtractionService', () => {
     mockLogger = { log: jasmine.createSpy('log') };
     fetchSpy = spyOn(globalThis, 'fetch');
 
-    // Create the service without calling the constructor to avoid inject()
-    // calls that fail due to circular dependency resolution in the test bundle.
-    // Tests pass config and logger explicitly to extractAllFields().
+    // Create the service without calling the constructor because inject()
+    // requires Angular's injection context (TestBed). This test intentionally
+    // avoids TestBed for speed. Config and logger are passed explicitly.
     service = Object.create(CloudFieldExtractionService.prototype);
   });
 
@@ -252,9 +252,7 @@ describe('CloudFieldExtractionService', () => {
       await service.extractAllFields('sample OCR text', mockConfig, mockLogger);
 
       // Assert
-      expect(mockLogger.log).toHaveBeenCalledWith(
-        'Cloud LLM response received, model: gpt-4o',
-      );
+      expect(mockLogger.log).toHaveBeenCalledWith('[Cloud LLM] model: gpt-4o');
       expect(mockLogger.log).toHaveBeenCalledWith(
         'Token usage: 100 prompt, 50 completion',
       );

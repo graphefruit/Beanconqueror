@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://beanconqueror.com
+    about: Read the Beanconqueror documentation
+  - name: Community Discord
+    url: https://discord.gg/vDzA5dZjG8
+    about: Ask support questions and chat with the community on Discord
+  - name: Community Reddit
+    url: https://www.reddit.com/r/beanconqueror/
+    about: Ask support questions and discuss on Reddit

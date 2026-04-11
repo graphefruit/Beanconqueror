@@ -21,7 +21,7 @@ import { close } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import {
   CloudModel,
   fetchAvailableModels,
@@ -50,7 +50,7 @@ import {
 export class CloudModelPickerComponent implements OnInit {
   public static readonly COMPONENT_ID = 'cloud-model-picker';
 
-  @Input() provider: CLOUD_AI_PROVIDER_ENUM;
+  @Input() provider: AI_PROVIDER_ENUM;
   @Input() apiKey: string;
   @Input() baseUrl?: string;
 

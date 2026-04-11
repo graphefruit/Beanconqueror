@@ -1,7 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { Logger } from './common/logger';
-import { ScaleType } from './index';
+import { ScaleType } from './types';
 
 const DEVICE_NAME = 'CFS-9002';
 const DEVICE_NAME_SECOND = 'LSJ-001';

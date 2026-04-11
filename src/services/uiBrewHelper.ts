@@ -18,6 +18,7 @@ import { Brew } from '../classes/brew/brew';
 import { BrewFlow } from '../classes/brew/brewFlow';
 import { BluetoothScale } from '../classes/devices';
 import { PressureDevice } from '../classes/devices/pressureBluetoothDevice';
+import { Mill } from '../classes/mill/mill';
 import { Preparation } from '../classes/preparation/preparation';
 import { PreparationDeviceType } from '../classes/preparationDevice';
 import { Settings } from '../classes/settings/settings';
@@ -341,6 +342,7 @@ export class UIBrewHelper {
   }
 
   public cleanInvisibleBrewData(brew: Brew) {
+    console.log('bla');
     const settingsObj: Settings = this.uiSettingsStorage.getSettings();
     let checkData: Settings | Preparation;
     if (brew.getPreparation().use_custom_parameters === true) {
@@ -349,6 +351,8 @@ export class UIBrewHelper {
       checkData = settingsObj;
     }
 
+    const mill: Mill = brew.getMill();
+
     if (!checkData.manage_parameters.grind_size) {
       brew.grind_size = '';
     }
@@ -356,11 +360,11 @@ export class UIBrewHelper {
       brew.grind_weight = 0;
     }
 
-    if (!checkData.manage_parameters.mill_timer) {
+    if (!mill.has_timer || !checkData.manage_parameters.mill_timer) {
       brew.mill_timer = 0;
       brew.mill_timer_milliseconds = 0;
     }
-    if (!checkData.manage_parameters.mill_speed) {
+    if (!mill.has_adjustable_speed || !checkData.manage_parameters.mill_speed) {
       brew.mill_speed = 0;
     }
     if (!checkData.manage_parameters.pressure_profile) {

@@ -82,7 +82,6 @@ export class FieldExtractionService {
 
       // Pre-process text
       const text = this.preProcess(ocrText, examples);
-      this.uiLog.debug('Normalized text length: ' + text.length);
 
       // Extract fields in two phases
       const topLevelFields = await this.extractTopLevelFields(
@@ -311,8 +310,6 @@ export class FieldExtractionService {
       const response = await this.sendLLMMessage(prompt);
       const cleaned = this.cleanResponse(response);
 
-      this.uiLog.debug(fieldName + ' response: ' + cleaned);
-
       // Handle null/not found responses (exact match only - partial NOT_FOUND handled by postProcess)
       if (isNullLikeValue(cleaned)) {
         return null;
@@ -357,8 +354,6 @@ export class FieldExtractionService {
       const response = await this.sendLLMMessage(prompt);
       // Don't use cleanResponse - it strips colons which breaks JSON
       const trimmed = response?.trim() || '';
-
-      this.uiLog.debug('name_and_roaster response: ' + trimmed);
 
       // Parse JSON response
       return this.parseNameAndRoasterResponse(trimmed);
@@ -466,8 +461,6 @@ export class FieldExtractionService {
     const response = await this.sendLLMMessage(prompt);
     // Note: Don't use cleanResponse here - it strips colons which breaks JSON syntax
     const trimmed = response?.trim() || '';
-
-    this.uiLog.debug('Blend origins response: ' + trimmed);
 
     // Parse JSON response (handles markdown code blocks internally)
     return this.parseBlendOriginsResponse(trimmed);

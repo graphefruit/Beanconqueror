@@ -2,7 +2,7 @@ import { EventEmitter } from '@angular/core';
 
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-import { ScaleType } from './index';
+import { ScaleType } from './types';
 
 declare var ble: any;
 

@@ -472,8 +472,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     connectedDevice: MeticulousDevice,
     _brew: Brew = null,
   ) {
-    this.data.preparationDeviceBrew.type = PreparationDeviceType.METICULOUS;
-    this.data.preparationDeviceBrew.params = new MeticulousParams();
+    if (
+      this.data.preparationDeviceBrew.type !==
+        PreparationDeviceType.METICULOUS ||
+      !this.data.preparationDeviceBrew.params
+    ) {
+      this.data.preparationDeviceBrew.type = PreparationDeviceType.METICULOUS;
+      this.data.preparationDeviceBrew.params = new MeticulousParams();
+    }
 
     await connectedDevice.connectToSocket().then(
       async (_connected) => {
@@ -492,8 +498,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     connectedDevice: GaggiuinoDevice,
     _brew: Brew = null,
   ) {
-    this.data.preparationDeviceBrew.type = PreparationDeviceType.GAGGIUINO;
-    this.data.preparationDeviceBrew.params = new GaggiuinoParams();
+    if (
+      this.data.preparationDeviceBrew.type !==
+        PreparationDeviceType.GAGGIUINO ||
+      !this.data.preparationDeviceBrew.params
+    ) {
+      this.data.preparationDeviceBrew.type = PreparationDeviceType.GAGGIUINO;
+      this.data.preparationDeviceBrew.params = new GaggiuinoParams();
+    }
 
     await this.uiAlert.showLoadingSpinner();
     await connectedDevice.deviceConnected().then(
@@ -523,8 +535,33 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     connectedDevice: SanremoYOUDevice,
     _brew: Brew = null,
   ) {
-    this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
-    this.data.preparationDeviceBrew.params = new SanremoYOUParams();
+    if (
+      this.data.preparationDeviceBrew.type !==
+        PreparationDeviceType.SANREMO_YOU ||
+      !this.data.preparationDeviceBrew.params
+    ) {
+      this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
+      this.data.preparationDeviceBrew.params = new SanremoYOUParams();
+
+      if (this.baristamode === false && !this.isEdit) {
+        // Is add
+        const brews: Array<Brew> = this.uiHelper
+          .cloneData(this.uiBrewStorage.getAllEntries())
+          .reverse();
+        if (brews.length > 0) {
+          const foundEntry = brews.find(
+            (b) =>
+              b.preparationDeviceBrew.type ===
+              PreparationDeviceType.SANREMO_YOU,
+          );
+          if (foundEntry) {
+            this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+              foundEntry.preparationDeviceBrew,
+            );
+          }
+        }
+      }
+    }
 
     await this.uiAlert.showLoadingSpinner();
     await connectedDevice.deviceConnected().then(
@@ -579,41 +616,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
         ) {
           this.data.preparationDeviceBrew.params.stopAtWeightM =
             this.preparation.connectedPreparationDevice.customParams.stopAtWeightM;
-        }
-      }
-    }
-
-    if (this.baristamode === false) {
-      if (!this.isEdit) {
-        // If a brew was passed, we came from loading, else we just swapped the preparation toolings
-        let wasSomethingSet: boolean = false;
-        if (_brew) {
-          if (_brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE) {
-            this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-              _brew.preparationDeviceBrew,
-            );
-            wasSomethingSet = true;
-          }
-        }
-
-        if (wasSomethingSet === false) {
-          // maybe the passed brew, didn't had any params in it - why ever?!
-          // Is add
-          const brews: Array<Brew> = this.uiHelper
-            .cloneData(this.uiBrewStorage.getAllEntries())
-            .reverse();
-          if (brews.length > 0) {
-            const foundEntry = brews.find(
-              (b) =>
-                b.preparationDeviceBrew.type ===
-                PreparationDeviceType.SANREMO_YOU,
-            );
-            if (foundEntry) {
-              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                foundEntry.preparationDeviceBrew,
-              );
-            }
-          }
         }
       }
     }

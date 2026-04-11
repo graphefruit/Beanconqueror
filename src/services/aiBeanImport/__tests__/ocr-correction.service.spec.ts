@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { MergedExamples } from '../ai-import-examples.service';
 import { OCRCorrectionService } from '../ocr-correction.service';
-import { createMockExamples } from '../test-utils';
+import { createExamples } from '../test-utils';
 
 describe('OCRCorrectionService', () => {
   let service: OCRCorrectionService;
@@ -13,7 +13,7 @@ describe('OCRCorrectionService', () => {
       providers: [OCRCorrectionService],
     });
     service = TestBed.inject(OCRCorrectionService);
-    mockExamples = createMockExamples();
+    mockExamples = createExamples();
   });
 
   it('should be injectable via TestBed', () => {

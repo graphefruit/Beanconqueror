@@ -1,0 +1,80 @@
+name: Bug Report
+description: Create a report to help us improve Beanconqueror
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please read the [Contribution Guidelines](https://github.com/graphefruit/Beanconqueror/issues/723) before posting!
+        
+        This issue tracker is for bugs in Beanconqueror. Please do not use it for support questions or documentation requests.
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Search for existing issues
+      description: Please search the internet and existing issues before opening a new one. State why you are opening a new issue if similar ones exist.
+      options:
+        - label: I have searched the internet and existing issues. This bug has not been posted yet, or I have a specific reason to post it here.
+          required: true
+  - type: input
+    id: version
+    attributes:
+      label: Beanconqueror Version
+      description: Which version of Beanconqueror are you using? (e.g., 6.4.0)
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Usage System
+      description: Which platform are you experiencing this issue on?
+      options:
+        - Android
+        - iOS
+    validations:
+      required: true
+  - type: dropdown
+    id: older-version
+    attributes:
+      label: Was this issue present in an older version?
+      description: Did this issue exist in a previous release, or is it a regression?
+      options:
+        - "Yes"
+        - "No"
+        - "I don't know"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Please provide clear steps to reproduce the issue.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshot or Video
+      description: Best case scenario, provide a screenshot or a video recording demonstrating the issue.
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context, logs, or details about the problem.
+    validations:
+      required: false

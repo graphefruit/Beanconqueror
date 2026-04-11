@@ -16,7 +16,7 @@ import { cameraOutline, imagesOutline, qrCodeOutline } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { BEAN_IMPORT_ACTION } from '../../../enums/beans/beanImportAction';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
@@ -58,19 +58,24 @@ export class BeanImportPopoverComponent implements OnInit {
    * - Any platform + Capacitor with cloud AI configured
    */
   public isAiImportAvailable(): boolean {
-    if (this.platform.is('ios') && this.platform.is('capacitor')) {
+    if (!this.platform.is('capacitor')) {
+      return false;
+    }
+    const settings = this.uiSettingsStorage.getSettings();
+    if (settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER) {
+      return false;
+    }
+    if (
+      this.platform.is('ios') &&
+      settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+    ) {
       return true;
     }
-    if (this.platform.is('capacitor')) {
-      const settings = this.uiSettingsStorage.getSettings();
-      return (
-        settings.cloud_ai_provider !==
-          CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
-        !!settings.cloud_ai_api_key &&
-        !!settings.cloud_ai_model
-      );
-    }
-    return false;
+    return (
+      settings.ai_provider !== AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
+      !!settings.cloud_ai_api_key &&
+      !!settings.cloud_ai_model
+    );
   }
 
   public async choose(_type: string): Promise<void> {
