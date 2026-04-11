@@ -33,8 +33,10 @@ import { AsyncImageComponent } from '../../../components/async-image/async-image
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
+import { PREPARATION_SEGMENT } from '../../../enums/preparations/preparationSegment';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
+import { PreparationSortFilterHelperService } from '../../../services/preparationSortFilterHelper/preparation-sort-filter-helper.service';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -76,12 +78,15 @@ export class PreparationModalSelectComponent implements OnInit {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly uiSettings = inject(UISettingsStorage);
+  private readonly preparationSortFilterHelperService = inject(
+    PreparationSortFilterHelperService,
+  );
 
   public static COMPONENT_ID = 'preparation-modal-select';
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
   public radioSelection: string;
-  public preparation_segment: string = 'open';
+  public preparation_segment: PREPARATION_SEGMENT = PREPARATION_SEGMENT.OPEN;
 
   public openPreparations: Array<Preparation> = [];
   public archivedPreparations: Array<Preparation> = [];
@@ -115,39 +120,21 @@ export class PreparationModalSelectComponent implements OnInit {
   public ngOnInit() {}
 
   public getOpenPreparations(): Array<Preparation> {
-    return this.objs
-      .filter((e) => !e.finished)
-      .sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
+    return this.preparationSortFilterHelperService.initializePreparationsView(
+      PREPARATION_SEGMENT.OPEN,
+      this.objs,
+      '',
+      this.settings.preparation_sort.OPEN,
+    );
   }
 
   public getArchivedPreparations(): Array<Preparation> {
-    return this.objs
-      .filter((e) => e.finished)
-      .sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
+    return this.preparationSortFilterHelperService.initializePreparationsView(
+      PREPARATION_SEGMENT.ARCHIVE,
+      this.objs,
+      '',
+      this.settings.preparation_sort.ARCHIVED,
+    );
   }
 
   public async choose(): Promise<void> {

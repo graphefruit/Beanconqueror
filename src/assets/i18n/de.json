@@ -502,6 +502,8 @@
     "ASCENDING": "aufsteigend",
     "DESCENDING": "absteigend",
     "SORT_AFTER": "Sotieren nach",
+    "PREPARATION_SORT_NAME": "Name der Brühmethode",
+    "PREPARATION_SORT_TYPE": "Art der Brühmethode",
     "BEAN_SORT_NAME_OF_BEAN": "Name der Bohne",
     "BEAN_SORT_ROASTER": "Röster",
     "BEAN_SORT_ROASTING_DATE": "Röstdatum",

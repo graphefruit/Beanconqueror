@@ -502,6 +502,8 @@
     "ASCENDING": "Ascending",
     "DESCENDING": "Descending",
     "SORT_AFTER": "Sort after",
+    "PREPARATION_SORT_NAME": "Preparation name",
+    "PREPARATION_SORT_TYPE": "Preparation type",
     "BEAN_SORT_NAME_OF_BEAN": "Bean name",
     "BEAN_SORT_ROASTER": "Roaster",
     "BEAN_SORT_ROASTING_DATE": "Roast date",
