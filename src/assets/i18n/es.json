@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Se ha editado el agua",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Café archivado",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Molino archivado",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Tiene velocidad ajustable",
+    "MILL_HAS_TIMER": "Tiene temporizador",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Método archivado",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Se ha archivado el agua",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g de {{gramTotal}}g ({{leftOver}}g)",

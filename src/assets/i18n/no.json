@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Vann er redigert",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bønner er arkivert",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Kvern er arkivert",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Har justerbar hastighet",
+    "MILL_HAS_TIMER": "Har timer",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Bryggemetode er arkivert",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Vann er arkivert",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}} g av {{gramTotal}} g ( {{leftOver}} g)",

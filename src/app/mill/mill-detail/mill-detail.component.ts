@@ -1,8 +1,10 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import {
   IonButton,
   IonCard,
+  IonCheckbox,
   IonCol,
   IonContent,
   IonFooter,
@@ -28,6 +30,7 @@ import { UIHelper } from '../../../services/uiHelper';
   templateUrl: './mill-detail.component.html',
   styleUrls: ['./mill-detail.component.scss'],
   imports: [
+    FormsModule,
     TranslatePipe,
     HeaderComponent,
     HeaderDismissButtonComponent,
@@ -35,6 +38,7 @@ import { UIHelper } from '../../../services/uiHelper';
     IonButton,
     IonContent,
     IonCard,
+    IonCheckbox,
     IonItem,
     IonLabel,
     IonFooter,

@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Air telah diedit",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Biji telah diarsipkan",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Grinder telah diarsipkan",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Memiliki kecepatan yang dapat diatur",
+    "MILL_HAS_TIMER": "Memiliki timer",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Metode seduh telah diarsipkan",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Water telah diarsipkan",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g ({{leftOver}}g)",

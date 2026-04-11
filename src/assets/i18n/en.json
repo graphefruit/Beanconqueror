@@ -336,6 +336,8 @@
     "TOAST_WATER_EDITED_SUCCESSFULLY": "Water has been edited",
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bean has been archived",
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Grinder has been archived",
+    "MILL_HAS_ADJUSTABLE_SPEED": "Has adjustable speed",
+    "MILL_HAS_TIMER": "Has timer",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Preparation method has been archived",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Water has been archived",
     "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g ({{leftOver}}g)",

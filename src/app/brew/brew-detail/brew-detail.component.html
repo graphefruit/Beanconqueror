@@ -106,7 +106,7 @@
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_speed,
         choosenPreparation.manage_parameters.mill_speed,
-        choosenPreparation.use_custom_parameters])) {
+        choosenPreparation.use_custom_parameters]) && (!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_ADJUSTABLE_SPEED))) {
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_speed,
           choosenPreparation.brew_order.before.mill_speed,
           choosenPreparation.use_custom_parameters])">
@@ -118,7 +118,7 @@
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_timer,
         choosenPreparation.manage_parameters.mill_timer,
-        choosenPreparation.use_custom_parameters])) {
+        choosenPreparation.use_custom_parameters]) && (!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_TIMER))) {
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_timer,
           choosenPreparation.brew_order.before.mill_timer,
           choosenPreparation.use_custom_parameters])">
