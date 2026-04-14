@@ -38,6 +38,7 @@ import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationP
 import { PreparationSortFilterHelperService } from '../../services/preparationSortFilterHelper/preparation-sort-filter-helper.service';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 @Component({
@@ -69,6 +70,7 @@ export class PreparationPage {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly preparationSortFilterHelper = inject(
     PreparationSortFilterHelperService,
   );
@@ -244,7 +246,7 @@ export class PreparationPage {
   private __initializePreparations(): void {
     this.openPreparationsView = [];
     this.archivePreparationsView = [];
-
+    this.preparations = this.uiPreparationStorage.getAllEntries();
     this.openPreparationsLength = this.preparations.reduce(
       (n, e) => (!e.finished ? n + 1 : n),
       0,
