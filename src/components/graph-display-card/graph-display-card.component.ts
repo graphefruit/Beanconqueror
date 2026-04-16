@@ -146,6 +146,17 @@ export class GraphDisplayCardComponent implements OnInit {
       chartData.push(this.traces.weightTraceSecond);
       chartData.push(this.traces.realtimeFlowTraceSecond);
 
+      if (this.traces.customTraces) {
+        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
+          string,
+          any,
+        ][]) {
+          if (trace) {
+            chartData.push(trace);
+          }
+        }
+      }
+
       Plotly.newPlot(
         this.profileDiv.nativeElement,
         chartData,

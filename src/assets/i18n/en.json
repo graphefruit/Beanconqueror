@@ -1679,5 +1679,6 @@
     "AI_IMPORT_LANG_DETECT": {
         "KEYWORDS": "roasted, harvest, acidity, beans, flavor, freshly",
         "EXAMPLE": "Freshly roasted, single origin, tasting notes: berry, citrus"
-    }
+    },
+    "BREW_FLOW_WATER_DISPENSED": "Water dispensed",
 }

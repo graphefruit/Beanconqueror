@@ -206,6 +206,37 @@ export class UIExcel {
       );
     }
 
+    if (_flow.hasOwnProperty('customMetrics') && _flow.customMetrics != null) {
+      for (const [key, metricsArray] of Object.entries(_flow.customMetrics) as [
+        string,
+        any,
+      ][]) {
+        if (!metricsArray || metricsArray.length === 0) continue;
+
+        const header_custom_metric: Array<string> = [];
+        header_custom_metric.push('Timestamp');
+        header_custom_metric.push('Time');
+        header_custom_metric.push('Value');
+
+        const wsDataCustomMetric: any[][] = [header_custom_metric];
+        for (const entry of metricsArray) {
+          const wbEntry: Array<any> = [
+            entry.timestamp,
+            entry.brew_time,
+            entry.value,
+          ];
+          wsDataCustomMetric.push(wbEntry);
+        }
+        const wsCustomMetric: WorkSheet =
+          XLSX.utils.aoa_to_sheet(wsDataCustomMetric);
+        XLSX.utils.book_append_sheet(
+          wb,
+          wsCustomMetric,
+          this.translate.instant('Flow metric ') + key,
+        );
+      }
+    }
+
     if (_flow.hasOwnProperty('brewbyweight')) {
       const header_final_weight: Array<string> = [];
       header_final_weight.push('target_weight');

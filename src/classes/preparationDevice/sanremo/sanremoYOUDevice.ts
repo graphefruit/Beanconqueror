@@ -413,6 +413,13 @@ export class SanremoYOUDevice extends PreparationDevice {
             //Valid sanremo shot data
             let currentShotData = new SanremoShotData();
             currentShotData = responseJSON;
+
+            if (currentShotData.counterVol === 0) {
+              currentShotData.counterVol = Number(
+                (currentShotData.counterVol / 10).toFixed(2),
+              );
+            }
+
             if (currentShotData.pumpPress === 0) {
             } else {
               currentShotData.pumpPress = Number(

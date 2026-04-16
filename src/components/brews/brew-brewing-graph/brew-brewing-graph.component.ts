@@ -49,6 +49,7 @@ import { Brew } from '../../../classes/brew/brew';
 import {
   BrewFlow,
   IBrewByWeight,
+  IBrewCustomMetric,
   IBrewPressureFlow,
   IBrewRealtimeWaterFlow,
   IBrewTemperatureFlow,
@@ -412,9 +413,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public uiPreparationDeviceConnected: boolean = undefined;
   public uiPreparationDeviceType: PreparationDeviceType = undefined;
   public uiSmartScaleConnectedSupportsTwoWeights: boolean = undefined;
+  public uiCustomMetricsKeys: string[] = [];
 
   private async setUIParams() {
     this.uiSmartScaleConnected = this.smartScaleConnected();
+    this.uiCustomMetricsKeys = this.getCustomTraceKeys();
     this.uiPressureConnected = this.pressureDeviceConnected();
     this.uiTemperatureConnected = this.temperatureDeviceConnected();
     this.uiPreparationDeviceConnected =
@@ -576,39 +579,42 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected = false;
+    let pressureConnected = false;
+    let tempConnected = false;
+
     if (
       (this.pressureDeviceConnected() ||
         this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) &&
       this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
       bluetoothDeviceConnections += 1;
+      pressureConnected = true;
     }
     if (
       this.temperatureDeviceConnected() ||
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
     ) {
       bluetoothDeviceConnections += 1;
+      tempConnected = true;
     }
     if (this.smartScaleConnected()) {
       bluetoothDeviceConnections += 1;
       smartScaleConnected = true;
     }
 
-    if (bluetoothDeviceConnections === 3) {
+    let visualTilesCount =
+      (smartScaleConnected ? 2 : 0) +
+      (pressureConnected ? 1 : 0) +
+      (tempConnected ? 1 : 0);
+
+    if (visualTilesCount >= 4) {
       return 3;
-    } else if (bluetoothDeviceConnections === 2) {
-      if (smartScaleConnected) {
-        return 4;
-      } else {
-        return 6;
-      }
-    } else if (bluetoothDeviceConnections === 1) {
-      if (smartScaleConnected) {
-        return 6;
-      } else {
-        return 12;
-      }
+    } else if (visualTilesCount === 3) {
+      return 4;
+    } else if (visualTilesCount === 2) {
+      return 6;
     }
+    return 12;
   }
 
   private toggleGraphElementsOnBaristaMode() {
@@ -676,6 +682,18 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.traceReferences.realtimeFlowTraceSecond.visible =
           !this.traceReferences.realtimeFlowTraceSecond.visible;
       }
+    } else {
+      if (this.traces.customTraces && this.traces.customTraces[_type]) {
+        this.traces.customTraces[_type].visible =
+          !this.traces.customTraces[_type].visible;
+        if (
+          this.traceReferences.customTraces &&
+          this.traceReferences.customTraces[_type]
+        ) {
+          this.traceReferences.customTraces[_type].visible =
+            !this.traceReferences.customTraces[_type].visible;
+        }
+      }
     }
 
     if (
@@ -689,6 +707,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
     }
     this.checkChanges();
+  }
+
+  public getCustomTraceKeys(): string[] {
+    if (this.traces && this.traces.customTraces) {
+      return Object.keys(this.traces.customTraces);
+    }
+    return [];
   }
 
   public initializeFlowChart(_wait = true): void {
@@ -775,6 +800,25 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.chartData.push(this.traces.temperatureTrace);
       }
 
+      if (this.traces.customTraces) {
+        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
+          string,
+          any,
+        ][]) {
+          if (
+            this.traceReferences.customTraces &&
+            this.traceReferences.customTraces[key]
+          ) {
+            if (this.traceReferences.customTraces[key].x?.length > 0) {
+              this.chartData.push(this.traceReferences.customTraces[key]);
+            }
+          }
+          if (trace) {
+            this.chartData.push(trace);
+          }
+        }
+      }
+
       try {
         if (this.canWePlot()) {
           Plotly.newPlot(
@@ -826,16 +870,23 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.traces,
       this.graphSettings,
       this.isDetail,
+      false,
+      this.flow_profile_raw,
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType(),
     );
+    this.uiCustomMetricsKeys = this.getCustomTraceKeys();
   }
 
   private __setupReferenceGraphs() {
     this.traceReferences = this.graphHelper.initializeTraces();
+
     this.traceReferences = this.graphHelper.fillTraces(
       this.traceReferences,
       this.graphSettings,
       this.isDetail,
       true,
+      this.reference_profile_raw,
+      undefined,
     );
   }
 
@@ -1382,6 +1433,47 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               }
             }
 
+            if (this.traces.customTraces) {
+              for (const [key, trace] of Object.entries(
+                this.traces.customTraces,
+              ) as [string, any][]) {
+                if (trace && trace.y && trace.y.length > 0) {
+                  let yAxisKey = trace.yaxis.replace('y', 'yaxis');
+                  if (this.lastChartLayout[yAxisKey]) {
+                    if (
+                      this.lastChartLayout[yAxisKey].visible === false &&
+                      trace.visible
+                    ) {
+                      this.lastChartLayout[yAxisKey].visible = true;
+                      newLayoutIsNeeded = true;
+                    }
+
+                    const lastData = trace.y[trace.y.length - 1];
+                    let toleranceMinus = 1;
+
+                    if (!this.lastChartLayout[yAxisKey].range) {
+                      this.lastChartLayout[yAxisKey].range = [0, 20];
+                      newLayoutIsNeeded = true;
+                    }
+
+                    if (
+                      lastData >=
+                      this.lastChartLayout[yAxisKey].range[1] - toleranceMinus
+                    ) {
+                      if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
+                        this.lastChartLayout[yAxisKey].range[1] =
+                          lastData * 1.25;
+                      } else {
+                        this.lastChartLayout[yAxisKey].range[1] =
+                          lastData * 1.5;
+                      }
+                      newLayoutIsNeeded = true;
+                    }
+                  }
+                }
+              }
+            }
+
             if (newLayoutIsNeeded) {
               if (this.canWePlot()) {
                 Plotly.relayout(
@@ -1797,6 +1889,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               const press = prepDeviceCall.getActualShotData().pumpPress;
               this.__setPressureFlow({ actual: press, old: press });
               this.__setTemperatureFlow({ actual: temp, old: temp });
+              const waterDispensed =
+                prepDeviceCall.getActualShotData().counterVol;
+              this.__setCustomMetric('waterDispensed', waterDispensed / 10);
             }
           }, 100);
         });
@@ -3392,6 +3487,65 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.setActualPressureInformation(pressureObj.actual);
   }
 
+  private __setCustomMetric(_key: string, _value: number) {
+    const actual: number = this.uiHelper.toFixedIfNecessary(_value, 2);
+
+    const isSmartScaleConnected = this.smartScaleConnected();
+    if (this.flowTime === undefined) {
+      this.flowTime = this.brewComponent.getTime();
+      this.flowSecondTick = 0;
+    }
+    /**if (
+      this.flowTime > 0 &&
+      this.brewComponent.timer.timer.runTimer &&
+      Date.now() - this.flowTime >= this.graph_frequency_update_interval
+    ) {
+      const tileElement = document.getElementById('customMetricTile_' + _key);
+      const flowTileElement = document.getElementById('customMetricTile_Flow_' + _key);
+      let unit = this.traces.customTraces[_key]?.unit || '';
+      const text = actual + (unit ? ' ' + unit : '');
+
+      if (tileElement) {
+        tileElement.innerText = text;
+      }
+      if (flowTileElement) {
+        flowTileElement.innerText = text;
+      }
+    }**/
+
+    const actualUnixTime: number = moment(new Date())
+      .startOf('day')
+      .add('milliseconds', Date.now() - this.startingFlowTime)
+      .toDate()
+      .getTime();
+
+    if (!isSmartScaleConnected) {
+      if (this.flowTime !== this.brewComponent.getTime()) {
+        this.flowTime = this.brewComponent.getTime();
+        this.flowSecondTick = 0;
+      }
+    }
+
+    const flowTimeSecond = this.flowTime + '.' + this.flowSecondTick;
+
+    if (!this.traces.customTraces) {
+      this.traces.customTraces = {};
+    }
+    if (!this.traces.customTraces[_key]) {
+      // It should have been initialized in getChartLayout / fillTraces, but fallback:
+      this.traces.customTraces[_key] = { x: [], y: [] };
+    }
+
+    this.traces.customTraces[_key].x.push(new Date(actualUnixTime));
+    this.traces.customTraces[_key].y.push(actual);
+
+    this.pushCustomProfile(_key, flowTimeSecond, actual);
+
+    if (!isSmartScaleConnected) {
+      this.updateChart();
+    }
+  }
+
   private __setTemperatureFlow(_temperature: any) {
     // Nothing for storing etc. is done here actually
     const actual: number = this.uiHelper.toFixedIfNecessary(
@@ -4141,6 +4295,18 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     pressureFlow.old_pressure = _oldPressure;
 
     this.flow_profile_raw.pressureFlow.push(pressureFlow);
+  }
+
+  private pushCustomProfile(_key: string, _brewTime: string, _value: number) {
+    if (!this.flow_profile_raw.customMetrics[_key]) {
+      this.flow_profile_raw.customMetrics[_key] = [];
+    }
+    const customMetric: IBrewCustomMetric = {} as IBrewCustomMetric;
+    customMetric.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    customMetric.brew_time = _brewTime;
+    customMetric.value = _value;
+
+    this.flow_profile_raw.customMetrics[_key].push(customMetric);
   }
 
   private pushBrewByWeight(

@@ -39,6 +39,13 @@
         <ion-chip (click)="toggleChartLines('weightSecond')" [outline]="!this.traces.weightTraceSecond?.visible" class="weightsecond">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
         <ion-chip (click)="toggleChartLines('realtimeFlowSecond')" [outline]="!this.traces.realtimeFlowTraceSecond?.visible" class="flowrealsecond">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
       }
+      @for(key of uiCustomMetricsKeys; track key) {
+        @if(this.traces.customTraces[key]) {
+          <ion-chip (click)="toggleChartLines(key)" [outline]="!this.traces.customTraces[key]?.visible" [style]="this.traces.customTraces[key]?.visible ? '--background: ' + this.traces.customTraces[key]?.line?.color + '; --color: white;' : '--color: ' + this.traces.customTraces[key]?.line?.color + ';'">
+             {{ this.traces.customTraces[key]?.name }}
+          </ion-chip>
+        }
+      }
     </div>
   </ion-item>
 } @else {

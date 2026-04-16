@@ -7,6 +7,8 @@ export class BrewFlow {
   public pressureFlow: Array<IBrewPressureFlow>;
   public temperatureFlow: Array<IBrewTemperatureFlow>;
   public brewbyweight: Array<IBrewByWeight>;
+  public customMetrics: { [key: string]: Array<IBrewCustomMetric> };
+  public customAxes: Array<IBrewCustomAxis>;
 
   constructor() {
     this.weight = [];
@@ -17,6 +19,8 @@ export class BrewFlow {
     this.pressureFlow = [];
     this.temperatureFlow = [];
     this.brewbyweight = [];
+    this.customMetrics = {};
+    this.customAxes = [];
   }
 }
 
@@ -77,4 +81,21 @@ export interface IBrewByWeight {
   residual_lag_time: number;
   average_flow_rate: number;
   scaleType: string;
+}
+
+export interface IBrewCustomMetric {
+  value: number;
+  timestamp: string;
+  brew_time: string;
+}
+
+export interface IBrewCustomAxis {
+  key: string; // Matches the key in customMetrics[] e.g. "waterDispensed"
+  name: string; // Translated string or direct name e.g. "Counter Vol"
+  unit: string; // Unit e.g. "ml"
+  colorLight: string; // Hex color for light mode e.g. "#000000"
+  colorDark: string; // Hex color for dark mode e.g. "#ffffff"
+  yAxisRangeMin?: number; // e.g. 0
+  yAxisRangeMax?: number; // e.g. 100
+  hiddenDefault?: boolean; // If true, graph chip is outlined (not visible) initially
 }
