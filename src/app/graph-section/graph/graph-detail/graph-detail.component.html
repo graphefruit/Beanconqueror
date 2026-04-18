@@ -28,6 +28,14 @@
               [outline]="!traces.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
             translate}}</ion-chip>
           }
+          @if (traces.waterDispensedTrace?.x?.length > 0) {
+            <ion-chip (click)="toggleChartLines('waterDispensed')"
+              [outline]="!traces.waterDispensedTrace?.visible" style="--background: #0d6efd; --color: white;">{{'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate}}</ion-chip>
+          }
+          @if (traces.waterDispensedFlowSecondTrace?.x?.length > 0) {
+            <ion-chip (click)="toggleChartLines('waterDispensedFlowSecond')"
+              [outline]="!traces.waterDispensedFlowSecondTrace?.visible" style="--background: #17a2b8; --color: white;">{{'BREW_FLOW_WATER_DISPENSED_REALTIME' | translate}}</ion-chip>
+          }
           @if (traces.weightTraceSecond?.x?.length > 0) {
             <ion-chip (click)="toggleChartLines('weightSecond')" [outline]="!traces.weightTraceSecond?.visible"
             class="weightsecond">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>

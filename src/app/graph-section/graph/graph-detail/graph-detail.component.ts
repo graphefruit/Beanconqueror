@@ -182,6 +182,32 @@ export class GraphDetailComponent implements OnInit {
         this.traceReferences.realtimeFlowTraceSecond.visible =
           !this.traceReferences.realtimeFlowTraceSecond.visible;
       }
+    } else if (_type === 'waterDispensed') {
+      this.traces.waterDispensedTrace.visible =
+        !this.traces.waterDispensedTrace.visible;
+      if (this.traceReferences.waterDispensedTrace) {
+        this.traceReferences.waterDispensedTrace.visible =
+          !this.traceReferences.waterDispensedTrace.visible;
+      }
+    } else if (_type === 'waterDispensedFlowSecond') {
+      this.traces.waterDispensedFlowSecondTrace.visible =
+        !this.traces.waterDispensedFlowSecondTrace.visible;
+      if (this.traceReferences.waterDispensedFlowSecondTrace) {
+        this.traceReferences.waterDispensedFlowSecondTrace.visible =
+          !this.traceReferences.waterDispensedFlowSecondTrace.visible;
+      }
+    } else {
+      if (this.traces.customTraces && this.traces.customTraces[_type]) {
+        this.traces.customTraces[_type].visible =
+          !this.traces.customTraces[_type].visible;
+        if (
+          this.traceReferences.customTraces &&
+          this.traceReferences.customTraces[_type]
+        ) {
+          this.traceReferences.customTraces[_type].visible =
+            !this.traceReferences.customTraces[_type].visible;
+        }
+      }
     }
 
     Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
