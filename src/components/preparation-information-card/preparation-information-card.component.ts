@@ -1,10 +1,13 @@
 import {
   Component,
+  computed,
   EventEmitter,
   inject,
   Input,
   OnInit,
   Output,
+  Signal,
+  signal,
 } from '@angular/core';
 
 import {
@@ -25,17 +28,18 @@ import { wifiOutline } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { PreparationCustomParametersComponent } from '../../app/preparation/preparation-custom-parameters/preparation-custom-parameters.component';
-import { PreparationPopoverActionsComponent } from '../../app/preparation/preparation-popover-actions/preparation-popover-actions.component';
 import { Brew } from '../../classes/brew/brew';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { PreparationDevice } from '../../classes/preparationDevice/preparationDevice';
 import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { XeniaDevice } from '../../classes/preparationDevice/xenia/xeniaDevice';
 import { Settings } from '../../classes/settings/settings';
 import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../enums/preparations/preparationFunctionPipe';
+import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -47,6 +51,13 @@ import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  popoverDivider,
+  popoverHeader,
+  PopoverItem,
+} from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
@@ -215,11 +226,12 @@ export class PreparationInformationCardComponent implements OnInit {
       PREPARATION_TRACKING.TITLE,
       PREPARATION_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await this.modalController.create({
-      component: PreparationPopoverActionsComponent,
-      id: PreparationPopoverActionsComponent.COMPONENT_ID,
-      componentProps: { preparation: this.preparation },
-      cssClass: 'popover-actions',
+
+    const machineState = signal({ isConnected: false, isTurnedOn: false });
+    void this.retrieveMachineState().then((s) => machineState.set(s));
+    const popover = await ActionsPopoverComponent.create(this.modalController, {
+      id: 'preparation-popover-actions',
+      items: this.buildPreparationActions(machineState),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
@@ -232,6 +244,129 @@ export class PreparationInformationCardComponent implements OnInit {
         this.preparation,
       ]);
     }
+  }
+
+  private async retrieveMachineState(): Promise<{
+    isConnected: boolean;
+    isTurnedOn: boolean;
+  }> {
+    const NOT_CONNECTED = {
+      isConnected: false,
+      isTurnedOn: false,
+    };
+
+    const deviceType = this.preparation.connectedPreparationDevice?.type;
+    if (
+      deviceType !== PreparationDeviceType.SANREMO_YOU &&
+      deviceType !== PreparationDeviceType.XENIA
+    ) {
+      return NOT_CONNECTED;
+    }
+
+    const device = this.preparation.getConnectedDevice() as
+      | SanremoYOUDevice
+      | XeniaDevice;
+    try {
+      const connected = await device.deviceConnected();
+      if (!connected) {
+        return NOT_CONNECTED;
+      }
+
+      return {
+        isConnected: true,
+        isTurnedOn: await device.isMachineTurnedOn(),
+      };
+    } catch {
+      return NOT_CONNECTED;
+    }
+  }
+
+  private buildPreparationActions(
+    machine: Signal<{ isConnected: boolean; isTurnedOn: boolean }>,
+  ): PopoverItem[] {
+    const isEspresso =
+      this.preparation.getPresetStyleType() === PREPARATION_STYLE_TYPE.ESPRESSO;
+
+    const isConnected = computed(() => machine().isConnected);
+    const canTurnOn = computed(
+      () => machine().isConnected && !machine().isTurnedOn,
+    );
+    const canTurnOff = computed(
+      () => machine().isConnected && machine().isTurnedOn,
+    );
+
+    return [
+      popoverHeader({
+        translationKey: 'MACHINE_ACTIONS',
+        visible: isConnected,
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.TURN_MACHINE_ON,
+        translationKey: 'MACHINE_POWER_ON',
+        icon: 'power-outline',
+        lines: 'none',
+        visible: canTurnOn,
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.TURN_MACHINE_OFF,
+        translationKey: 'MACHINE_POWER_OFF',
+        icon: 'power-outline',
+        iconColor: '#CC3311',
+        lines: 'none',
+        visible: canTurnOff,
+      }),
+      popoverDivider({ visible: isConnected }),
+      // end of machine actions
+
+      popoverAction({
+        role: PREPARATION_ACTION.DETAIL,
+        translationKey: 'DETAIL',
+        icon: 'beanconqueror-detail',
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.CUSTOM_PARAMETERS,
+        translationKey: 'CUSTOM_PARAMETERS',
+        icon: 'beanconqueror-preparation-customize-parameter',
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.REPEAT,
+        translationKey: 'REPEAT',
+        icon: 'beanconqueror-repeat',
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.EDIT,
+        translationKey: 'EDIT',
+        icon: 'beanconqueror-edit',
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.SHOW_BREWS,
+        translationKey: 'POPOVER_SHOW_BREWS',
+        icon: 'beanconqueror-brew',
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.ARCHIVE,
+        translationKey: 'ARCHIVE',
+        icon: 'beanconqueror-finished',
+        visible: this.preparation.finished === false,
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.CONNECT_DEVICE,
+        translationKey: 'DEVICE_CONNECTION',
+        icon: 'wifi-outline',
+        visible: isEspresso,
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.PHOTO_GALLERY,
+        translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+        icon: 'beanconqueror-photo-gallery',
+        visible: this.preparation.attachments.length > 0,
+      }),
+      popoverAction({
+        role: PREPARATION_ACTION.DELETE,
+        translationKey: 'DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
 
   public async showPhoto(event) {
