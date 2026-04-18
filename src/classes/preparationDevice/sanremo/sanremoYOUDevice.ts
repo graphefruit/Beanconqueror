@@ -415,8 +415,15 @@ export class SanremoYOUDevice extends PreparationDevice {
             currentShotData = responseJSON;
 
             if (currentShotData.counterVol === 0) {
+            } else {
               currentShotData.counterVol = Number(
                 (currentShotData.counterVol / 10).toFixed(2),
+              );
+            }
+            if (currentShotData.realtimeFlow === 0) {
+            } else {
+              currentShotData.realtimeFlow = Number(
+                (currentShotData.realtimeFlow / 10).toFixed(2),
               );
             }
 
@@ -430,6 +437,7 @@ export class SanremoYOUDevice extends PreparationDevice {
               //Currently if the sanremo you is attached to the water line, it would report pressure like 1 bar because of the line pressure, which is correctly
               //To avoid this kind of issue, we overwrite the pressure when the groupstatus gets to 0 we reset the press on our side :)
               currentShotData.pumpPress = 0;
+              currentShotData.realtimeFlow = 0;
             }
 
             this.sanremoShotData = currentShotData;

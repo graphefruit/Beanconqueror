@@ -143,6 +143,8 @@ export class GraphDisplayCardComponent implements OnInit {
 
       chartData.push(this.traces.pressureTrace);
       chartData.push(this.traces.temperatureTrace);
+      chartData.push(this.traces.waterDispensedTrace);
+      chartData.push(this.traces.waterDispensedFlowSecondTrace);
       chartData.push(this.traces.weightTraceSecond);
       chartData.push(this.traces.realtimeFlowTraceSecond);
 

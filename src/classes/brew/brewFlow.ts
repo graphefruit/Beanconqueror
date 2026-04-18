@@ -6,6 +6,8 @@ export class BrewFlow {
   public realtimeFlowSecond: Array<IBrewRealtimeWaterFlow>;
   public pressureFlow: Array<IBrewPressureFlow>;
   public temperatureFlow: Array<IBrewTemperatureFlow>;
+  public waterDispensed: Array<IBrewWaterDispensedFlow>;
+  public waterDispensedFlowSecond: Array<IBrewWaterDispensedFlow>;
   public brewbyweight: Array<IBrewByWeight>;
   public customMetrics: { [key: string]: Array<IBrewCustomMetric> };
   public customAxes: Array<IBrewCustomAxis>;
@@ -18,6 +20,8 @@ export class BrewFlow {
     this.realtimeFlowSecond = [];
     this.pressureFlow = [];
     this.temperatureFlow = [];
+    this.waterDispensed = [];
+    this.waterDispensedFlowSecond = [];
     this.brewbyweight = [];
     this.customMetrics = {};
     this.customAxes = [];
@@ -63,6 +67,13 @@ export interface IBrewPressureFlow {
 export interface IBrewTemperatureFlow {
   actual_temperature: number;
   old_temperature: number;
+  brew_time: string;
+  timestamp: string;
+}
+
+export interface IBrewWaterDispensedFlow {
+  actual: number;
+  old: number;
   brew_time: string;
   timestamp: string;
 }

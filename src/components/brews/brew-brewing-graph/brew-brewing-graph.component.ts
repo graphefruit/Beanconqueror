@@ -682,6 +682,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.traceReferences.realtimeFlowTraceSecond.visible =
           !this.traceReferences.realtimeFlowTraceSecond.visible;
       }
+    } else if (_type === 'waterDispensed') {
+      this.traces.waterDispensedTrace.visible =
+        !this.traces.waterDispensedTrace.visible;
+      if (this.traceReferences.waterDispensedTrace) {
+        this.traceReferences.waterDispensedTrace.visible =
+          !this.traceReferences.waterDispensedTrace.visible;
+      }
+    } else if (_type === 'waterDispensedFlowSecond') {
+      this.traces.waterDispensedFlowSecondTrace.visible =
+        !this.traces.waterDispensedFlowSecondTrace.visible;
+      if (this.traceReferences.waterDispensedFlowSecondTrace) {
+        this.traceReferences.waterDispensedFlowSecondTrace.visible =
+          !this.traceReferences.waterDispensedFlowSecondTrace.visible;
+      }
     } else {
       if (this.traces.customTraces && this.traces.customTraces[_type]) {
         this.traces.customTraces[_type].visible =
@@ -798,6 +812,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       if (this.lastChartLayout.yaxis5) {
         this.chartData.push(this.traces.temperatureTrace);
+      }
+
+      if (this.lastChartLayout.yaxis6) {
+        this.chartData.push(this.traces.waterDispensedTrace);
+        this.chartData.push(this.traces.waterDispensedFlowSecondTrace);
       }
 
       if (this.traces.customTraces) {
@@ -1433,6 +1452,34 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               }
             }
 
+            if (this.traces.waterDispensedTrace?.y?.length > 0) {
+              const lastData: number =
+                this.traces.waterDispensedTrace.y[
+                  this.traces.waterDispensedTrace.y.length - 1
+                ];
+              if (lastData >= this.lastChartLayout.yaxis6.range[1] - 1) {
+                this.lastChartLayout.yaxis6.range[1] = lastData * 1.25;
+                if (!this.lastChartLayout.yaxis6.visible) {
+                  this.lastChartLayout.yaxis6.visible = true;
+                }
+                newLayoutIsNeeded = true;
+              }
+            }
+
+            if (this.traces.waterDispensedFlowSecondTrace?.y?.length > 0) {
+              const lastData: number =
+                this.traces.waterDispensedFlowSecondTrace.y[
+                  this.traces.waterDispensedFlowSecondTrace.y.length - 1
+                ];
+              if (lastData >= this.lastChartLayout.yaxis2.range[1] - 0.5) {
+                this.lastChartLayout.yaxis2.range[1] = lastData * 1.25;
+                if (!this.lastChartLayout.yaxis2.visible) {
+                  this.lastChartLayout.yaxis2.visible = true;
+                }
+                newLayoutIsNeeded = true;
+              }
+            }
+
             if (this.traces.customTraces) {
               for (const [key, trace] of Object.entries(
                 this.traces.customTraces,
@@ -1891,7 +1938,17 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               this.__setTemperatureFlow({ actual: temp, old: temp });
               const waterDispensed =
                 prepDeviceCall.getActualShotData().counterVol;
-              this.__setCustomMetric('waterDispensed', waterDispensed / 10);
+              this.__setWaterDispensedFlow({
+                actual: waterDispensed,
+                old: waterDispensed,
+              });
+
+              const realtimeFlowSecond =
+                prepDeviceCall.getActualShotData().realtimeFlow;
+              this.__setWaterDispensedFlowSecond({
+                actual: realtimeFlowSecond,
+                old: realtimeFlowSecond,
+              });
             }
           }, 100);
         });
@@ -3487,6 +3544,60 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.setActualPressureInformation(pressureObj.actual);
   }
 
+  private __setWaterDispensedFlow(_waterDispensed: any) {
+    const actual: number = this.uiHelper.toFixedIfNecessary(
+      _waterDispensed.actual,
+      2,
+    );
+
+    const isSmartScaleConnected = this.smartScaleConnected();
+    const flowTimeSecond = (this.data.brew_time_milliseconds / 1000).toFixed(1);
+
+    const actualUnixTime: number = moment(new Date())
+      .startOf('day')
+      .add('milliseconds', Date.now() - this.startingFlowTime)
+      .toDate()
+      .getTime();
+
+    this.traces.waterDispensedTrace.x.push(new Date(actualUnixTime));
+    this.traces.waterDispensedTrace.y.push(actual);
+
+    this.pushWaterDispensedProfile(flowTimeSecond, actual, _waterDispensed.old);
+
+    if (!isSmartScaleConnected) {
+      this.updateChart();
+    }
+  }
+
+  private __setWaterDispensedFlowSecond(_waterDispensedRealtime: any) {
+    const actual: number = this.uiHelper.toFixedIfNecessary(
+      _waterDispensedRealtime.actual,
+      2,
+    );
+
+    const isSmartScaleConnected = this.smartScaleConnected();
+    const flowTimeSecond = (this.data.brew_time_milliseconds / 1000).toFixed(1);
+
+    const actualUnixTime: number = moment(new Date())
+      .startOf('day')
+      .add('milliseconds', Date.now() - this.startingFlowTime)
+      .toDate()
+      .getTime();
+
+    this.traces.waterDispensedFlowSecondTrace.x.push(new Date(actualUnixTime));
+    this.traces.waterDispensedFlowSecondTrace.y.push(actual);
+
+    this.pushWaterDispensedFlowSecondProfile(
+      flowTimeSecond,
+      actual,
+      _waterDispensedRealtime.old,
+    );
+
+    if (!isSmartScaleConnected) {
+      this.updateChart();
+    }
+  }
+
   private __setCustomMetric(_key: string, _value: number) {
     const actual: number = this.uiHelper.toFixedIfNecessary(_value, 2);
 
@@ -4281,6 +4392,44 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
     brewFlow.not_mutated_weight = _notMutatedWeight;
     this.flow_profile_raw.weightSecond.push(brewFlow);
+  }
+
+  private pushWaterDispensedProfile(
+    _brewTime: string,
+    _actual: number,
+    _old: number,
+  ) {
+    if (!this.flow_profile_raw.waterDispensed) {
+      this.flow_profile_raw.waterDispensed = [];
+    }
+    const waterDispensedFlow: any = {};
+    waterDispensedFlow.timestamp =
+      this.uiHelper.getActualTimeWithMilliseconds();
+    waterDispensedFlow.brew_time = _brewTime;
+    waterDispensedFlow.actual = _actual;
+    waterDispensedFlow.old = _old;
+
+    this.flow_profile_raw.waterDispensed.push(waterDispensedFlow);
+  }
+
+  private pushWaterDispensedFlowSecondProfile(
+    _brewTime: string,
+    _actual: number,
+    _old: number,
+  ) {
+    if (!this.flow_profile_raw.waterDispensedFlowSecond) {
+      this.flow_profile_raw.waterDispensedFlowSecond = [];
+    }
+    const waterDispensedFlowSecond: any = {};
+    waterDispensedFlowSecond.timestamp =
+      this.uiHelper.getActualTimeWithMilliseconds();
+    waterDispensedFlowSecond.brew_time = _brewTime;
+    waterDispensedFlowSecond.actual = _actual;
+    waterDispensedFlowSecond.old = _old;
+
+    this.flow_profile_raw.waterDispensedFlowSecond.push(
+      waterDispensedFlowSecond,
+    );
   }
 
   private pushPressureProfile(

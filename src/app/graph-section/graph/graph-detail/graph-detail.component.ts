@@ -13,6 +13,7 @@ import {
   IonChip,
   IonCol,
   IonContent,
+  IonFooter,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -62,6 +63,7 @@ declare var Plotly;
     IonIcon,
     IonContent,
     IonSpinner,
+    IonFooter,
   ],
 })
 export class GraphDetailComponent implements OnInit {
@@ -264,6 +266,8 @@ export class GraphDetailComponent implements OnInit {
       chartData.push(this.traces.temperatureTrace);
       chartData.push(this.traces.weightTraceSecond);
       chartData.push(this.traces.realtimeFlowTraceSecond);
+      chartData.push(this.traces.waterDispensedTrace);
+      chartData.push(this.traces.waterDispensedFlowSecondTrace);
 
       if (
         this.traceReferences.weightTrace &&
@@ -285,6 +289,32 @@ export class GraphDetailComponent implements OnInit {
         this.traceReferences.temperatureTrace.x?.length > 0
       ) {
         chartData.push(this.traceReferences.temperatureTrace);
+      }
+      if (
+        this.traceReferences.waterDispensedTrace &&
+        this.traceReferences.waterDispensedTrace.x?.length > 0
+      ) {
+        chartData.push(this.traceReferences.waterDispensedTrace);
+        chartData.push(this.traceReferences.waterDispensedFlowSecondTrace);
+      }
+
+      if (this.traces.customTraces) {
+        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
+          string,
+          any,
+        ][]) {
+          if (
+            this.traceReferences.customTraces &&
+            this.traceReferences.customTraces[key]
+          ) {
+            if (this.traceReferences.customTraces[key].x?.length > 0) {
+              chartData.push(this.traceReferences.customTraces[key]);
+            }
+          }
+          if (trace) {
+            chartData.push(trace);
+          }
+        }
       }
 
       Plotly.newPlot(

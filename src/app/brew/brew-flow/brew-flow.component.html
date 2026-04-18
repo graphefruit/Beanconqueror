@@ -19,6 +19,14 @@
                       [outline]="!brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
               translate}}</ion-chip>
           }
+          @if ((brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected && brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === brewComponent.brewBrewingGraphEl.PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.waterDispensedTrace?.x?.length > 0)) {
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('waterDispensed')"
+              [outline]="!brewComponent.brewBrewingGraphEl.traces.waterDispensedTrace?.visible" style="--background: #0d6efd; --color: white;">{{'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate}}</ion-chip>
+          }
+          @if ((brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected && brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === brewComponent.brewBrewingGraphEl.PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.waterDispensedFlowSecondTrace?.x?.length > 0)) {
+            <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('waterDispensedFlowSecond')"
+              [outline]="!brewComponent.brewBrewingGraphEl.traces.waterDispensedFlowSecondTrace?.visible" style="--background: #17a2b8; --color: white;">{{'BREW_FLOW_WATER_DISPENSED_REALTIME' | translate}}</ion-chip>
+          }
           @if( brewComponent.brewBrewingGraphEl.uiSmartScaleConnectedSupportsTwoWeights || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.x?.length >0)) {
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weightSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.visible" class="weightsecond">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
             <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtimeFlowSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.visible" class="flowrealsecond">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>

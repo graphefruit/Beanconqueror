@@ -33,6 +33,8 @@ export class GraphHelperService {
     trace.temperatureTrace = undefined;
     trace.weightTraceSecond = undefined;
     trace.realtimeFlowTraceSecond = undefined;
+    trace.waterDispensedTrace = undefined;
+    trace.waterDispensedFlowSecondTrace = undefined;
     trace.customTraces = {};
     return trace;
   }
@@ -177,6 +179,40 @@ export class GraphHelperService {
       showlegend: false,
     };
 
+    traces.waterDispensedTrace = {
+      x: [],
+      y: [],
+      name: this.translate.instant('BREW_FLOW_WATER_DISPENSED_VOLUME'),
+      yaxis: 'y6',
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        shape: 'linear',
+        color: isDarkMode ? '#3b82f6' : '#0d6efd',
+        width: 2,
+      },
+      visible: _isDetail ? true : true,
+      hoverinfo: _isDetail ? 'all' : 'skip',
+      showlegend: false,
+    };
+
+    traces.waterDispensedFlowSecondTrace = {
+      x: [],
+      y: [],
+      name: this.translate.instant('BREW_FLOW_WATER_DISPENSED_REALTIME'),
+      yaxis: 'y2',
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        shape: 'linear',
+        color: isDarkMode ? '#17a2b8' : '#17a2b8',
+        width: 2,
+      },
+      visible: _isDetail ? true : true,
+      hoverinfo: _isDetail ? 'all' : 'skip',
+      showlegend: false,
+    };
+
     let customAxesToInit: Array<IBrewCustomAxis> = [];
     if (
       _rawData?.customMetrics &&
@@ -185,23 +221,12 @@ export class GraphHelperService {
       for (const key of Object.keys(_rawData.customMetrics)) {
         customAxesToInit.push({
           key: key,
-          name: key === 'waterDispensed' ? 'BREW_FLOW_WATER_DISPENSED' : key,
+          name: key,
           unit: '',
-          colorLight: key === 'waterDispensed' ? '#0d6efd' : '#000000',
-          colorDark: key === 'waterDispensed' ? '#3b82f6' : '#ffffff',
+          colorLight: '#000000',
+          colorDark: '#ffffff',
         });
       }
-    } else if (
-      !_isDetail &&
-      _preparationDeviceType === PreparationDeviceType.SANREMO_YOU
-    ) {
-      customAxesToInit.push({
-        key: 'waterDispensed',
-        name: 'BREW_FLOW_WATER_DISPENSED',
-        unit: 'ml',
-        colorLight: '#0d6efd',
-        colorDark: '#3b82f6',
-      });
     }
 
     if (!traces.customTraces) {
@@ -315,6 +340,32 @@ export class GraphHelperService {
           _traces.pressureTrace.y.push(data.actual_pressure);
         }
       }
+
+      if (_rawData.waterDispensed && _rawData.waterDispensed.length > 0) {
+        for (const data of _rawData.waterDispensed) {
+          _traces.waterDispensedTrace.x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
+          );
+          _traces.waterDispensedTrace.y.push(data.actual);
+        }
+      }
+
+      if (
+        _rawData.waterDispensedFlowSecond &&
+        _rawData.waterDispensedFlowSecond.length > 0
+      ) {
+        for (const data of _rawData.waterDispensedFlowSecond) {
+          _traces.waterDispensedFlowSecondTrace.x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
+          );
+          _traces.waterDispensedFlowSecondTrace.y.push(data.actual);
+        }
+      }
+
       if (_rawData.temperatureFlow && _rawData.temperatureFlow.length > 0) {
         for (const data of _rawData.temperatureFlow) {
           _traces.temperatureTrace.x.push(
@@ -612,6 +663,19 @@ export class GraphHelperService {
           visible: false,
           range: [0, 100],
         };
+        layout['yaxis6'] = {
+          title: '',
+          titlefont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
+          tickfont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
+          anchor: 'free',
+          overlaying: 'y',
+          side: 'right',
+          showgrid: false,
+          position: 1,
+          fixedrange: true,
+          visible: false,
+          range: [0, 100],
+        };
       }
     } else {
       layout = {
@@ -697,6 +761,20 @@ export class GraphHelperService {
         visible: true,
       };
 
+      layout['yaxis6'] = {
+        title: '',
+        titlefont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
+        tickfont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
+        anchor: 'free',
+        overlaying: 'y',
+        side: 'right',
+        showgrid: false,
+        position: 1,
+        fixedrange: false,
+        range: [0, 100],
+        visible: true,
+      };
+
       layout['yaxisWeightSecond'] = {
         title: '',
         titlefont: { color: getAxisColor('weightSecond') },
@@ -733,6 +811,15 @@ export class GraphHelperService {
         layout['yaxis5'].visible = true;
       } else {
         layout['yaxis5'].visible = false;
+      }
+
+      if (
+        _traces.waterDispensedTrace.x &&
+        _traces.waterDispensedTrace.x.length > 0
+      ) {
+        layout['yaxis6'].visible = true;
+      } else {
+        layout['yaxis6'].visible = false;
       }
 
       if (

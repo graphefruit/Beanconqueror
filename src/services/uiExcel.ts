@@ -206,6 +206,67 @@ export class UIExcel {
       );
     }
 
+    if (
+      _flow.hasOwnProperty('waterDispensed') &&
+      _flow.waterDispensed != null
+    ) {
+      const header_water_dispensed: Array<string> = [];
+      header_water_dispensed.push('Timestamp');
+      header_water_dispensed.push('Time');
+      header_water_dispensed.push('Actual');
+      header_water_dispensed.push('Old');
+
+      const wsDataWaterDispensed: any[][] = [header_water_dispensed];
+      for (const entry of _flow.waterDispensed) {
+        const wbEntry: Array<any> = [
+          entry.timestamp,
+          entry.brew_time,
+          entry.actual,
+          entry.old,
+        ];
+        wsDataWaterDispensed.push(wbEntry);
+      }
+      const wsWaterDispensed: WorkSheet =
+        XLSX.utils.aoa_to_sheet(wsDataWaterDispensed);
+      XLSX.utils.book_append_sheet(
+        wb,
+        wsWaterDispensed,
+        this.translate.instant('Flow water dispensed'),
+      );
+    }
+
+    if (
+      _flow.hasOwnProperty('waterDispensedFlowSecond') &&
+      _flow.waterDispensedFlowSecond != null
+    ) {
+      const header_water_dispensed_realtime: Array<string> = [];
+      header_water_dispensed_realtime.push('Timestamp');
+      header_water_dispensed_realtime.push('Time');
+      header_water_dispensed_realtime.push('Actual');
+      header_water_dispensed_realtime.push('Old');
+
+      const wsDataWaterDispensedRealtime: any[][] = [
+        header_water_dispensed_realtime,
+      ];
+      for (const entry of _flow.waterDispensedFlowSecond) {
+        const wbEntry: Array<any> = [
+          entry.timestamp,
+          entry.brew_time,
+          entry.actual,
+          entry.old,
+        ];
+        wsDataWaterDispensedRealtime.push(wbEntry);
+      }
+      const wsWaterDispensedRealtime: WorkSheet = XLSX.utils.aoa_to_sheet(
+        wsDataWaterDispensedRealtime,
+      );
+      XLSX.utils.book_append_sheet(
+        wb,
+        wsWaterDispensedRealtime,
+        this.translate.instant('Flow water disp. realtime'),
+      );
+    }
+
     if (_flow.hasOwnProperty('customMetrics') && _flow.customMetrics != null) {
       for (const [key, metricsArray] of Object.entries(_flow.customMetrics) as [
         string,
