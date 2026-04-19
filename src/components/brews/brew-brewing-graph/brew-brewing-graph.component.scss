@@ -29,37 +29,17 @@
     }
   }
 
-  ion-card.flow-profile.temperature-card {
+  ion-card.flow-profile.trace-card {
     ion-card-header {
-      background-color: #cc3311 !important;
+      background-color: var(--card-color) !important;
     }
 
     ion-icon {
-      color: #cc3311 !important;
-    }
-  }
-
-  ion-card.flow-profile.pressure-card {
-    ion-card-header {
-      background-color: #05c793 !important;
-    }
-
-    ion-icon {
-      color: #05c793 !important;
+      color: var(--card-color) !important;
     }
 
     ion-icon > div.icon-inner > svg.s-ion-icon > g {
-      fill: #05c793 !important;
-    }
-  }
-
-  ion-card.flow-profile.flow-card {
-    ion-card-header {
-      background-color: #09485d !important;
-    }
-
-    ion-icon {
-      color: #09485d !important;
+      fill: var(--card-color) !important;
     }
   }
 
@@ -78,33 +58,13 @@
         margin-left: 3px;
       }
     }
-    .weight-card {
+    .trace-card {
       ion-card-header {
         background-color: white !important;
-        border: 2px var(--beanconqueror-icon-color) solid;
+        border: 2px solid var(--card-color);
       }
       ion-icon {
-        color: var(--beanconqueror-icon-color) !important;
-      }
-    }
-
-    .flow-card {
-      ion-card-header {
-        background-color: white !important;
-        border: 2px #09485d solid;
-      }
-      ion-icon {
-        color: #09485d !important;
-      }
-    }
-
-    .time-card {
-      ion-card-header {
-        background-color: white !important;
-        border: 2px #5b7391 solid;
-      }
-      ion-icon {
-        color: #5b7391 !important;
+        color: var(--card-color) !important;
       }
     }
 
@@ -113,15 +73,7 @@
     }
   }
 
-  ion-card.flow-profile.weight-card {
-    ion-card-header {
-      background-color: var(--beanconqueror-icon-color) !important;
-    }
 
-    ion-icon {
-      color: var(--beanconqueror-icon-color) !important;
-    }
-  }
 
   .brew-information-panel {
     ion-icon {

@@ -1068,66 +1068,28 @@ ion-chip.machine-connected {
 ion-chip.machine-disconnected {
   background-color: rgba(204, 51, 17, 0.4);
 }
-ion-chip.weight {
-  --background: var(--beanconqueror-icon-color);
-  --color: black;
-  margin-right: 2px;
-  margin-left: 0px;
-  border: 1px solid var(--beanconqueror-icon-color);
-}
 
-ion-chip.flowcalculated {
-  --background: #7f97a2;
-  --color: white;
-  margin-right: 2px;
-  margin-left: 0px;
-  border: 1px solid #7f97a2;
-}
 
 ion-chip.chip-outline {
   /**Make it for darkmode accessable**/
   --color: var(--ion-text-color) !important;
 }
 
-ion-chip.flowreal {
-  --background: #09485d;
-  --color: white;
+ion-chip.trace-chip {
+  --color: var(--chip-color) !important;
+  border-color: var(--chip-color) !important;
+  border: 1px solid var(--chip-color) !important;
   margin-right: 2px;
   margin-left: 0px;
-  border: 1px solid #09485d;
 }
 
-ion-chip.pressure {
-  --background: #05c793;
-  --color: black;
+ion-chip.trace-chip.trace-active {
+  --background: var(--chip-color) !important;
+  --color: white !important;
   margin-right: 2px;
   margin-left: 0px;
-  border: 1px solid #05c793;
 }
 
-ion-chip.temperature {
-  --background: #cc3311;
-  --color: white;
-  margin-right: 2px;
-  margin-left: 0px;
-  border: 1px solid #cc3311;
-}
-
-ion-chip.weightsecond {
-  --background: #8f6400;
-  --color: white;
-  margin-right: 2px;
-  margin-left: 0px;
-  border: 1px solid #8f6400;
-}
-
-ion-chip.flowrealsecond {
-  --background: #1fb6ea;
-  --color: white;
-  margin-right: 2px;
-  margin-left: 0px;
-  border: 1px solid #1fb6ea;
-}
 
 .no-overflow-ellipsis {
   white-space: nowrap;
