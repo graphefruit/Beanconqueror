@@ -1408,6 +1408,80 @@
           </div>
         </ion-accordion>
 
+        <!-- Water Dispensed -->
+        <ion-accordion value="waterDispensed">
+          <ion-item slot="header" color="light">
+            <ion-label>{{"BREW_FLOW_WATER_DISPENSED_VOLUME" | translate}}</ion-label>
+            <ion-button fill="clear" slot="end"
+              (click)="resetGraphColor('waterDispensed'); $event.stopPropagation(); $event.preventDefault()">
+              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            <ion-note color="medium" class="ion-margin-bottom" style="display: block;">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              {{"SANREMO_YOU_EXCLUSIVE_METRIC_HINT" | translate:-{default: 'Just available on Sanremo YOU'} }}
+            </ion-note>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensed.active.light"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensed.active.dark"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensed.reference.light" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensed.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+          </div>
+        </ion-accordion>
+
+        <!-- Water Dispensed Realtime Flow -->
+        <ion-accordion value="waterDispensedFlowSecond">
+          <ion-item slot="header" color="light">
+            <ion-label>{{"BREW_FLOW_WATER_DISPENSED_REALTIME" | translate}}</ion-label>
+            <ion-button fill="clear" slot="end"
+              (click)="resetGraphColor('waterDispensedFlowSecond'); $event.stopPropagation(); $event.preventDefault()">
+              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            <ion-note color="medium" class="ion-margin-bottom" style="display: block;">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              {{"SANREMO_YOU_EXCLUSIVE_METRIC_HINT" | translate:-{default: 'Just available on Sanremo YOU'} }}
+            </ion-note>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.active.light"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.active.dark"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.light" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+          </div>
+        </ion-accordion>
+
       </ion-accordion-group>
     </ion-card-content>
   </ion-card>

@@ -795,6 +795,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       ) {
         this.chartData.push(this.traceReferences.temperatureTrace);
       }
+      if (
+        this.traceReferences.waterDispensedTrace &&
+        this.traceReferences.waterDispensedTrace.x?.length > 0
+      ) {
+        this.chartData.push(this.traceReferences.waterDispensedTrace);
+        this.chartData.push(this.traceReferences.waterDispensedFlowSecondTrace);
+      }
 
       this.chartData.push(this.traces.weightTrace);
       this.chartData.push(this.traces.flowPerSecondTrace);

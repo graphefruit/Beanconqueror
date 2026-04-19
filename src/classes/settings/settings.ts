@@ -642,6 +642,24 @@ export class Settings implements ISettings {
     if (!this.graph_colors) {
       this.graph_colors = JSON.parse(JSON.stringify(DEFAULT_GRAPH_COLORS));
     }
+
+    if (!this.graph_colors.waterDispensed) {
+      this.graph_colors.waterDispensed = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.waterDispensed),
+      );
+    }
+
+    if (!this.graph_colors.waterDispensedFlowSecond) {
+      this.graph_colors.waterDispensedFlowSecond = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.waterDispensedFlowSecond),
+      );
+    }
+
+    if (!this.graph_colors.customTrace) {
+      this.graph_colors.customTrace = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.customTrace),
+      );
+    }
     // We need to reassign brew order here, else the class would be dismissed.
 
     this.manage_parameters = new ManageBrewParameter();

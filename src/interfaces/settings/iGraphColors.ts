@@ -17,4 +17,7 @@ export interface IGraphColors {
   realtimeFlowSecond: IGraphColorSetting;
   pressure: IGraphColorSetting;
   temperature: IGraphColorSetting;
+  waterDispensed: IGraphColorSetting;
+  waterDispensedFlowSecond: IGraphColorSetting;
+  customTrace: IGraphColorSetting;
 }

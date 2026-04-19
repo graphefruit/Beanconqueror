@@ -188,7 +188,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: isDarkMode ? '#3b82f6' : '#0d6efd',
+        color: getColor('waterDispensed', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : true,
@@ -205,7 +205,7 @@ export class GraphHelperService {
       mode: 'lines',
       line: {
         shape: 'linear',
-        color: isDarkMode ? '#17a2b8' : '#17a2b8',
+        color: getColor('waterDispensedFlowSecond', _isReference),
         width: 2,
       },
       visible: _isDetail ? true : true,
@@ -223,8 +223,8 @@ export class GraphHelperService {
           key: key,
           name: key,
           unit: '',
-          colorLight: '#000000',
-          colorDark: '#ffffff',
+          colorLight: getColor('customTrace', _isReference),
+          colorDark: getColor('customTrace', _isReference),
         });
       }
     }
@@ -665,8 +665,8 @@ export class GraphHelperService {
         };
         layout['yaxis6'] = {
           title: '',
-          titlefont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
-          tickfont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
+          titlefont: { color: getAxisColor('waterDispensed') },
+          tickfont: { color: getAxisColor('waterDispensed') },
           anchor: 'free',
           overlaying: 'y',
           side: 'right',
@@ -763,8 +763,8 @@ export class GraphHelperService {
 
       layout['yaxis6'] = {
         title: '',
-        titlefont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
-        tickfont: { color: isDarkMode ? '#3b82f6' : '#0d6efd' },
+        titlefont: { color: getAxisColor('waterDispensed') },
+        tickfont: { color: getAxisColor('waterDispensed') },
         anchor: 'free',
         overlaying: 'y',
         side: 'right',

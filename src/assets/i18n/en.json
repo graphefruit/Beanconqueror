@@ -1681,5 +1681,6 @@
         "EXAMPLE": "Freshly roasted, single origin, tasting notes: berry, citrus"
     },
     "BREW_FLOW_WATER_DISPENSED_VOLUME": "Water dispensed",
-    "BREW_FLOW_WATER_DISPENSED_REALTIME": "Water dispensed flow"
+    "BREW_FLOW_WATER_DISPENSED_REALTIME": "Water dispensed flow",
+  "SANREMO_YOU_EXCLUSIVE_METRIC_HINT": "This graph is currently just supported for the Sanremo YOU"
 }
