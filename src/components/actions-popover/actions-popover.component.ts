@@ -12,16 +12,19 @@ import {
   IonHeader,
   IonIcon,
   IonItem,
+  IonLabel,
   IonList,
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   analyticsOutline,
+  cameraOutline,
   copyOutline,
   flameOutline,
   heart,
   heartOutline,
+  imagesOutline,
   powerOutline,
   qrCodeOutline,
   shareSocialOutline,
@@ -38,6 +41,7 @@ export interface PopoverAction {
   itemType: 'action';
   role: string;
   translationKey: string;
+  subtitleTranslationKey?: string;
   icon: string;
   iconColor?: string;
   lines?: 'full' | 'inset' | 'none';
@@ -95,7 +99,14 @@ export function popoverDivider(
                   [style.color]="item.iconColor"
                   slot="start"
                 ></ion-icon>
-                <span>{{ item.translationKey | translate }}</span>
+                @if (item.subtitleTranslationKey) {
+                  <ion-label>
+                    <span>{{ item.translationKey | translate }}</span>
+                    <p>{{ item.subtitleTranslationKey | translate }}</p>
+                  </ion-label>
+                } @else {
+                  <span>{{ item.translationKey | translate }}</span>
+                }
               </ion-item>
             }
             @case ('header') {
@@ -119,7 +130,15 @@ export function popoverDivider(
       }
     }
   `,
-  imports: [TranslatePipe, IonHeader, IonContent, IonList, IonItem, IonIcon],
+  imports: [
+    TranslatePipe,
+    IonHeader,
+    IonContent,
+    IonList,
+    IonItem,
+    IonIcon,
+    IonLabel,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActionsPopoverComponent {
@@ -140,10 +159,12 @@ export class ActionsPopoverComponent {
     // Icons referenced by any caller/user must be registered here
     addIcons({
       analyticsOutline,
+      cameraOutline,
       copyOutline,
       flameOutline,
       heart,
       heartOutline,
+      imagesOutline,
       powerOutline,
       qrCodeOutline,
       shareSocialOutline,
