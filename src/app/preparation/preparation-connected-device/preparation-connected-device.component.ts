@@ -8,6 +8,7 @@ import {
   IonCardContent,
   IonCheckbox,
   IonContent,
+  IonFooter,
   IonHeader,
   IonIcon,
   IonInput,
@@ -68,6 +69,7 @@ import { UIToast } from '../../../services/uiToast';
     IonBadge,
     IonRange,
     IonCheckbox,
+    IonFooter,
   ],
 })
 export class PreparationConnectedDeviceComponent {

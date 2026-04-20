@@ -133,6 +133,9 @@ export class BaristaPage implements OnInit, OnDestroy {
   @ViewChild('lagTimeM', { read: ElementRef })
   public lagTimeMEl: ElementRef;
 
+  @ViewChild('wifiSignal', { read: ElementRef })
+  public wifiSignalEl: ElementRef;
+
   @ViewChild('currentTemp', { read: ElementRef })
   public currentTempEl: ElementRef;
 
@@ -219,6 +222,11 @@ export class BaristaPage implements OnInit, OnDestroy {
             +shotData.tempBoilerCoffe.toFixed(2);
           this.pumpPressEl.nativeElement.innerText =
             +shotData.pumpPress.toFixed(2);
+          if (shotData.wifiSignal) {
+            this.wifiSignalEl.nativeElement.innerText = shotData.wifiSignal;
+          } else {
+            this.wifiSignalEl.nativeElement.innerText = 0;
+          }
 
           if (shotData.groupStatus === 0) {
             updateSanremoYouTicker++;

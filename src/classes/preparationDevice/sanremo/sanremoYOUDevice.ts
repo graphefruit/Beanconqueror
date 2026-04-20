@@ -440,6 +440,11 @@ export class SanremoYOUDevice extends PreparationDevice {
               currentShotData.realtimeFlow = 0;
             }
 
+            if ('wifiSignal' in responseJSON) {
+            } else {
+              currentShotData.wifiSignal = 0;
+            }
+
             this.sanremoShotData = currentShotData;
             this.sanremoShotData.localTimeString =
               new Date().toLocaleTimeString();

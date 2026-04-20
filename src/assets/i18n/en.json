@@ -1682,5 +1682,6 @@
     },
     "BREW_FLOW_WATER_DISPENSED_VOLUME": "Water dispensed",
     "BREW_FLOW_WATER_DISPENSED_REALTIME": "Water dispensed flow",
-  "SANREMO_YOU_EXCLUSIVE_METRIC_HINT": "This graph is currently just supported for the Sanremo YOU"
+  "SANREMO_YOU_EXCLUSIVE_METRIC_HINT": "This graph is currently just supported for the Sanremo YOU",
+  "WIFI_SIGNAL_STRENGTH": "Wifi dbM"
 }
