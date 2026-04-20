@@ -37,7 +37,6 @@ import { HeaderButtonComponent } from '../../components/header/header-button.com
 import { HeaderComponent } from '../../components/header/header.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
-import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
@@ -59,7 +58,6 @@ import { UIImage } from '../../services/uiImage';
 import { UILog } from '../../services/uiLog';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { BeanImportPopoverComponent } from './bean-import-popover/bean-import-popover.component';
-import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
 import { BeansAddComponent } from './beans-add/beans-add.component';
 
 @Component({
@@ -439,33 +437,6 @@ export class BeansPage implements OnDestroy {
   public async add() {
     await this.uiBeanHelper.addBean();
     this.loadBeans();
-  }
-
-  public async beanPopover() {
-    this.uiAnalytics.trackEvent(
-      BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
-    );
-    const popover = await this.modalController.create({
-      component: BeanPopoverAddComponent,
-      componentProps: {},
-      id: BeanPopoverAddComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
-      breakpoints: [0, 0.25, 0.5],
-      initialBreakpoint: 0.25,
-    });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      switch (data.role as BEAN_POPOVER_ADD_ACTION) {
-        case BEAN_POPOVER_ADD_ACTION.ADD:
-          await this.add();
-          break;
-        case BEAN_POPOVER_ADD_ACTION.SCAN:
-          await this.scanBean();
-          break;
-      }
-    }
   }
 
   public async scanNFC() {
