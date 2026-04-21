@@ -66,11 +66,11 @@ importers:
         specifier: ^8.0.2
         version: 8.0.2(@capacitor/core@8.3.1)
       '@capacitor/filesystem':
-        specifier: 8.1.2
-        version: 8.1.2(@capacitor/core@8.3.1)
+        specifier: 8.0.0
+        version: 8.0.0(@capacitor/core@8.3.1)
       '@capacitor/geolocation':
-        specifier: ^8.2.0
-        version: 8.2.0(@capacitor/core@8.3.1)
+        specifier: 8.0.0
+        version: 8.0.0(@capacitor/core@8.3.1)
       '@capacitor/haptics':
         specifier: ^8.0.2
         version: 8.0.2(@capacitor/core@8.3.1)
@@ -758,13 +758,13 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/filesystem@8.1.2':
-    resolution: {integrity: sha512-doaaMfGoFR2hWU6aV6u83I+5ZsGyJVq+Gz4r9lMpJzUKMm1eMu0hLnFdV1aXZlU9FlK/RndFrVD8oRZfNOqWgQ==}
+  '@capacitor/filesystem@8.0.0':
+    resolution: {integrity: sha512-RRGNLW9xEqvVVHGyGlfS4Oy0R3Na+bEefwZElKbex22S9eZr5cg8wc750BPPVwbcv5lf5fJymkY8x8y6UwKPyg==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/geolocation@8.2.0':
-    resolution: {integrity: sha512-N29QcoIPmme0xSxRkm7+3hjoHp6mBAOarxecvtCCZKyOBeKiJsFUq981cezg2XWBa6fhCXJMCCjQPngKK/dIag==}
+  '@capacitor/geolocation@8.0.0':
+    resolution: {integrity: sha512-ci6gOWd5/uruC3bRTxI3xFd9g82WnnJbdQxOH3oZOATNuedlaAw5c5/zXEIMYfRB7t2x1v8/N9gXkND6/nOmVQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -6291,12 +6291,12 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.3.1
 
-  '@capacitor/filesystem@8.1.2(@capacitor/core@8.3.1)':
+  '@capacitor/filesystem@8.0.0(@capacitor/core@8.3.1)':
     dependencies:
       '@capacitor/core': 8.3.1
       '@capacitor/synapse': 1.0.4
 
-  '@capacitor/geolocation@8.2.0(@capacitor/core@8.3.1)':
+  '@capacitor/geolocation@8.0.0(@capacitor/core@8.3.1)':
     dependencies:
       '@capacitor/core': 8.3.1
       '@capacitor/synapse': 1.0.4
