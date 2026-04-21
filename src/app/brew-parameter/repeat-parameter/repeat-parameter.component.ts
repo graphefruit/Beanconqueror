@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import {
   IonBackButton,
   IonContent,
+  IonFooter,
   IonHeader,
 } from '@ionic/angular/standalone';
 
@@ -24,6 +25,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonBackButton,
     IonContent,
     HeaderComponent,
+    IonFooter,
   ],
 })
 export class RepeatParameterComponent implements OnInit {
