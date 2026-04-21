@@ -1136,7 +1136,8 @@
             "NO_PROFILE": "No Profile",
             "CHOOSE_PROFILE": "Choose profile",
             "SHOT_STARTED": "Shot started",
-            "SHOT_ENDED": "Shot ended"
+            "SHOT_ENDED": "Shot ended",
+            "DATA_COULD_NOT_BE_LOADED": "Data could not be loaded, this can have multiple issues"
         },
         "TYPE_SANREMO_YOU": {
             "TITLE": "Sanremo YOU Machine",

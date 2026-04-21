@@ -113,6 +113,7 @@ export class MeticulousDevice extends PreparationDevice {
         .pipe(
           timeout(10000),
           catchError((e) => {
+            reject();
             return of(null);
           }),
         )
@@ -124,12 +125,10 @@ export class MeticulousDevice extends PreparationDevice {
             }
           },
           (error) => {
-            console.log(error);
             reject();
           },
         )
         .catch((error) => {
-          console.log(error);
           reject();
         });
     });

@@ -92,7 +92,16 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
 
   private async readHistory() {
     await this.uiAlert.showLoadingSpinner();
-    this.history = await this.meticulousDevice?.getHistory();
+    try {
+      this.history = await this.meticulousDevice?.getHistory();
+    } catch (ex) {
+      await this.uiAlert.showMessage(
+        'PREPARATION_DEVICE.TYPE_METICULOUS.DATA_COULD_NOT_BE_LOADED',
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
+    }
     await this.uiAlert.hideLoadingSpinner();
     this.retriggerScroll();
   }
