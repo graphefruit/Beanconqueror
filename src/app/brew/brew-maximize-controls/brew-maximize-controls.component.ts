@@ -16,6 +16,7 @@ import {
   IonCardHeader,
   IonCol,
   IonContent,
+  IonFooter,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -49,6 +50,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonContent,
     IonCard,
     IonCardHeader,
+    IonFooter,
   ],
 })
 export class BrewMaximizeControlsComponent
