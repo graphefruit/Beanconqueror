@@ -117,34 +117,30 @@
 
 以下、進める上で判断を確認したい点です。
 
-[Question 1] アプリ内で**未訳キーが残った場合のフォールバック**は英語 (`en`) で問題ないでしょうか？（ngx-translate の標準挙動どおり）
-[Answer 1]
+[Question 1] アプリ内で**未訳キーが残った場合のフォールバック**は英語 (`en`) で問題ないでしょうか？
+[Answer 1] はい、OK。ngx-translate の標準挙動 (`en` フォールバック) とする。
 
-[Question 2] **用語集 (glossary)** をリポジトリに `docs/i18n/ja-glossary.md` としてコミットしてよいですか？（用語の判断根拠を残すため推奨）
-[Answer 2]
+[Question 2] **用語集 (glossary)** を `docs/i18n/ja-glossary.md` としてコミットしてよいですか？
+[Answer 2] OK（後で削除する可能性あり）。
 
-[Question 3] 翻訳の**スコープ**について。`src/assets/i18n/ja.json` の全キー (約 1,500 キー) を一括で翻訳しますが、特に**優先したい画面 / 後回しでよい画面**はありますか？（例: Home / Brew / Settings を優先、AI インポート系は後回し、など）
-[Answer 3]
+[Question 3] 翻訳のスコープ・優先度について。
+[Answer 3] 特に優先指定なし。トークン上限を考慮し**グループ単位で分割コミット**する。
 
-[Question 4] **「Brews」「Beans」「Mill/Grinder」等の主要メニュー名**の方針確認です。たたき台として下記でいかがでしょうか？
-- Brews → 抽出履歴 (一覧の意味で), Brew (動作) → 抽出
+[Question 4] 主要用語の方針:
+- Brews (一覧) → 抽出履歴 / Brew (動作) → 抽出
 - Beans → 豆
 - Methods (Preparation) → 抽出方法
 - Grinders (Mill) → グラインダー
-- Water → 水
-- Statistics → 統計
-- Cupping → カッピング (カタカナ)
-- Bloom → 蒸らし (日本語訳)
+- Water → 水 / Statistics → 統計
+- Cupping → カッピング / Bloom → 蒸らし
 - TDS / EBF / EY → 英語のまま
+[Answer 4] 承認。
 
-[Answer 4]
-
-[Question 5] **アプリ名 "Beanconqueror"** は固有名詞としてそのまま英字表記でよいですか？（一般的にアプリ名は翻訳しない方針が無難）
-[Answer 5]
+[Question 5] アプリ名 "Beanconqueror" は英字のまま。
+[Answer 5] 承認。
 
 ---
 
-## 3. レビュー & 承認のお願い
+## 3. ステータス
 
-上記の計画と [Question 1〜5] の回答をいただけましたら、フェーズ A から順に着手します。
-進捗は本ファイルのチェックボックス更新と、各フェーズ完了時のレビュー依頼でご報告します。
+計画は **承認済み** (2026-04-26)。フェーズ A から実装に着手する。
