@@ -747,10 +747,24 @@ export class BeansPage implements OnDestroy {
           const addModal = await this.modalController.create({
             component: BeansAddComponent,
             id: BeansAddComponent.COMPONENT_ID,
-            componentProps: { bean_template: result.bean },
+            componentProps: {
+              bean_template: result.bean,
+              reuse_attachments: !!result.attachmentPaths?.length,
+            },
           });
           await addModal.present();
-          await addModal.onWillDismiss();
+          const { role: addRole } = await addModal.onWillDismiss();
+
+          // If user cancelled the add modal and photos were attached, clean them up
+          if (addRole !== 'saved' && result.attachmentPaths?.length) {
+            for (const path of result.attachmentPaths) {
+              try {
+                await this.uiFileHelper.deleteInternalFile(path);
+              } catch (e) {
+                // Ignore cleanup errors
+              }
+            }
+          }
         }
       } catch (error: any) {
         await this.uiAlert.hideLoadingSpinner();
@@ -845,10 +859,24 @@ export class BeansPage implements OnDestroy {
           const addModal = await this.modalController.create({
             component: BeansAddComponent,
             id: BeansAddComponent.COMPONENT_ID,
-            componentProps: { bean_template: result.bean },
+            componentProps: {
+              bean_template: result.bean,
+              reuse_attachments: !!result.attachmentPaths?.length,
+            },
           });
           await addModal.present();
-          await addModal.onWillDismiss();
+          const { role: addRole } = await addModal.onWillDismiss();
+
+          // If user cancelled the add modal and photos were attached, clean them up
+          if (addRole !== 'saved' && result.attachmentPaths?.length) {
+            for (const path of result.attachmentPaths) {
+              try {
+                await this.uiFileHelper.deleteInternalFile(path);
+              } catch (e) {
+                // Ignore cleanup errors
+              }
+            }
+          }
         }
       } catch (error: any) {
         await this.uiAlert.hideLoadingSpinner();
