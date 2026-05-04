@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { Storage } from '@ionic/storage';
+import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
@@ -18,8 +19,23 @@ export class UIStorage {
   private _storage: Storage | null = null;
 
   public async init() {
-    // If using, define drivers here: await this.storage.defineDriver(/*...*/);
+    const isNativeRuntime =
+      typeof window !== 'undefined' &&
+      typeof (window as any).Capacitor !== 'undefined' &&
+      (window as any).Capacitor.isNativePlatform?.() === true;
+
+    if (isNativeRuntime) {
+      await this.storage.defineDriver(CordovaSQLiteDriver);
+      this.uiLog.log('UIStorage - Registered Cordova SQLite driver for native runtime');
+    } else {
+      this.uiLog.log(
+        'UIStorage - Web runtime detected, skipping Cordova SQLite driver registration',
+      );
+    }
+
     this._storage = await this.storage.create();
+    const backend = await this._storage.driver();
+    this.uiLog.log(`UIStorage - Active backend: ${backend}`);
   }
 
   public getStorage() {
@@ -235,9 +251,63 @@ export class UIStorage {
     }
   }
 
+
+  private collectNonWebAttachmentPaths(
+    value: unknown,
+    findings: Set<string> = new Set<string>(),
+  ): Set<string> {
+    if (typeof value === 'string') {
+      const lower = value.toLowerCase();
+      if (
+        lower.startsWith('file://') ||
+        lower.startsWith('content://') ||
+        lower.startsWith('capacitor://')
+      ) {
+        findings.add(value);
+      }
+      return findings;
+    }
+
+    if (Array.isArray(value)) {
+      for (const entry of value) {
+        this.collectNonWebAttachmentPaths(entry, findings);
+      }
+      return findings;
+    }
+
+    if (value !== null && typeof value === 'object') {
+      for (const objValue of Object.values(value as Record<string, unknown>)) {
+        this.collectNonWebAttachmentPaths(objValue, findings);
+      }
+    }
+
+    return findings;
+  }
+
+  private logWebImportMigrationHints(data: any): void {
+    const isNativeRuntime =
+      typeof window !== 'undefined' &&
+      typeof (window as any).Capacitor !== 'undefined' &&
+      (window as any).Capacitor.isNativePlatform?.() === true;
+
+    if (isNativeRuntime) {
+      return;
+    }
+
+    const nonWebPaths = Array.from(this.collectNonWebAttachmentPaths(data));
+    if (nonWebPaths.length > 0) {
+      this.uiLog.log(
+        `UIStorage - Web import migration check: detected ${nonWebPaths.length} native file references. Attachments may need to be re-added manually in browser mode.`,
+      );
+    } else {
+      this.uiLog.log('UIStorage - Web import migration check: no native file references detected.');
+    }
+  }
+
   public async import(_data: any): Promise<any> {
     // Before we import, we do a saftey backup
     const _backup = await this.__safteyBackup();
+    this.logWebImportMigrationHints(_data);
     try {
       await this.__importBackup(_data);
 

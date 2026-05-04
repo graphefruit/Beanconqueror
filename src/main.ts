@@ -23,6 +23,23 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
+function getStorageDriverOrder(): string[] {
+  const isNativeRuntime =
+    typeof window !== 'undefined' &&
+    typeof (window as any).Capacitor !== 'undefined' &&
+    (window as any).Capacitor.isNativePlatform?.() === true;
+
+  if (isNativeRuntime) {
+    return [
+      Drivers.IndexedDB,
+      CordovaSQLiteDriver._driver,
+      Drivers.LocalStorage,
+    ];
+  }
+
+  return [Drivers.IndexedDB, Drivers.LocalStorage];
+}
+
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
@@ -37,11 +54,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       IonicStorageModule.forRoot({
         name: '__baristaDB',
-        driverOrder: [
-          Drivers.IndexedDB,
-          CordovaSQLiteDriver._driver,
-          Drivers.LocalStorage,
-        ],
+        driverOrder: getStorageDriverOrder(),
       }),
     ),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
