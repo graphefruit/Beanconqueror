@@ -23,7 +23,11 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
 import { isNativeRuntime } from './app/platform/runtime';
+import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
+import { environment } from './environments/environment';
 
 function getStorageDriverOrder(): string[] {
   if (isNativeRuntime()) {
@@ -36,11 +40,6 @@ function getStorageDriverOrder(): string[] {
 
   return [Drivers.IndexedDB, Drivers.LocalStorage];
 }
-
-import { AppComponent } from './app/app.component';
-import { routes } from './app/app.routes';
-import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
-import { environment } from './environments/environment';
 
 if (environment.production) {
   enableProdMode();
