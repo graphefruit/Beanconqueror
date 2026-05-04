@@ -434,6 +434,27 @@
       }
     </ion-card-content>
   </ion-card>
+  <ion-card class="margin-top-20">
+    <ion-card-content>
+      <ion-card-title>Web browser support</ion-card-title>
+      <ion-item lines="none">
+        <ion-label>
+          <h2>Data storage</h2>
+          <p>In browser mode, Beanconqueror stores data in IndexedDB/local browser storage for this origin only.</p>
+          <h2>Backup & restore</h2>
+          <p>Use Export regularly and keep the backup file externally (cloud drive, USB, or password manager vault). Use Import to restore.</p>
+          <h2>Mobile-only features</h2>
+          <p>Some native integrations are mobile-focused (background BLE reliability, NFC workflows, and selected file-system flows).</p>
+          <h2>Detected capabilities</h2>
+          <p>Camera: {{ browserCapabilities.camera ? 'supported' : 'not supported' }}</p>
+          <p>Bluetooth (Web BLE): {{ browserCapabilities.bluetooth ? 'supported' : 'not supported' }}</p>
+          <p>NFC (Web NFC): {{ browserCapabilities.nfc ? 'supported' : 'not supported' }}</p>
+          <p>Geolocation: {{ browserCapabilities.geolocation ? 'supported' : 'not supported' }}</p>
+          <p>Web Share: {{ browserCapabilities.share ? 'supported' : 'not supported' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
   <ion-card class="margin-top-20">
     <ion-card-content>
@@ -775,12 +796,15 @@
       </ion-card-title>
       <ion-list>
         @if (settings.scale_id === '') {
-        <ion-item lines="full" (click)="findAndConnectScale()" tappable button>
+        <ion-item lines="full" (click)="findAndConnectScale()" tappable button [disabled]="!platform.is('capacitor') && !browserCapabilities.bluetooth">
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>
           <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
         </ion-item>
+        @if (!platform.is('capacitor') && !browserCapabilities.bluetooth) {
+        <ion-note color="medium">Bluetooth is unavailable in this browser. Try Chromium with Web Bluetooth, or use the mobile app.</ion-note>
+        }
         }
         @if (settings.scale_id !== '') {
         <ion-item (click)="disconnectDevice(BluetoothTypes.SCALE)" tappable button>
@@ -1494,7 +1518,7 @@
       </ion-card-title>
       <ion-list>
         @if (settings.pressure_id === '') {
-        <ion-item lines="full" (click)="findAndConnectPressureDevice()" tappable button>
+        <ion-item lines="full" (click)="findAndConnectPressureDevice()" tappable button [disabled]="!platform.is('capacitor') && !browserCapabilities.bluetooth">
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>
@@ -1627,7 +1651,7 @@
       </ion-card-title>
       <ion-list>
         @if (settings.temperature_id === '') {
-        <ion-item lines="full" (click)="findAndConnectTemperatureDevice()" tappable button>
+        <ion-item lines="full" (click)="findAndConnectTemperatureDevice()" tappable button [disabled]="!platform.is('capacitor') && !browserCapabilities.bluetooth">
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>
@@ -1697,7 +1721,7 @@
       </ion-card-title>
       <ion-list>
         @if (settings.refractometer_id === '') {
-        <ion-item lines="full" (click)="findAndConnectRefractometerDevice()" tappable button>
+        <ion-item lines="full" (click)="findAndConnectRefractometerDevice()" tappable button [disabled]="!platform.is('capacitor') && !browserCapabilities.bluetooth">
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>

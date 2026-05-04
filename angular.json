@@ -54,6 +54,7 @@
           },
           "configurations": {
             "production": {
+              "serviceWorker": "src/ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 
 import {
   IonicRouteStrategy,
@@ -55,6 +56,10 @@ bootstrapApplication(AppComponent, {
       }),
     }),
     provideRouter(routes),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
     provideZoneChangeDetection(),
     provideIonicAngular({
       mode: 'md',
