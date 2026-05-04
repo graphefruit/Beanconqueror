@@ -436,21 +436,21 @@
   </ion-card>
   <ion-card class="margin-top-20">
     <ion-card-content>
-      <ion-card-title>Web browser support</ion-card-title>
+      <ion-card-title>{{ "WEB_BROWSER_SUPPORT_TITLE" | translate }}</ion-card-title>
       <ion-item lines="none">
         <ion-label>
-          <h2>Data storage</h2>
-          <p>In browser mode, Beanconqueror stores data in IndexedDB/local browser storage for this origin only.</p>
-          <h2>Backup & restore</h2>
-          <p>Use Export regularly and keep the backup file externally (cloud drive, USB, or password manager vault). Use Import to restore.</p>
-          <h2>Mobile-only features</h2>
-          <p>Some native integrations are mobile-focused (background BLE reliability, NFC workflows, and selected file-system flows).</p>
-          <h2>Detected capabilities</h2>
-          <p>Camera: {{ browserCapabilities.camera ? 'supported' : 'not supported' }}</p>
-          <p>Bluetooth (Web BLE): {{ browserCapabilities.bluetooth ? 'supported' : 'not supported' }}</p>
-          <p>NFC (Web NFC): {{ browserCapabilities.nfc ? 'supported' : 'not supported' }}</p>
-          <p>Geolocation: {{ browserCapabilities.geolocation ? 'supported' : 'not supported' }}</p>
-          <p>Web Share: {{ browserCapabilities.share ? 'supported' : 'not supported' }}</p>
+          <h2>{{ "WEB_BROWSER_SUPPORT_DATA_STORAGE_TITLE" | translate }}</h2>
+          <p>{{ "WEB_BROWSER_SUPPORT_DATA_STORAGE_DESCRIPTION" | translate }}</p>
+          <h2>{{ "WEB_BROWSER_SUPPORT_BACKUP_TITLE" | translate }}</h2>
+          <p>{{ "WEB_BROWSER_SUPPORT_BACKUP_DESCRIPTION" | translate }}</p>
+          <h2>{{ "WEB_BROWSER_SUPPORT_MOBILE_ONLY_TITLE" | translate }}</h2>
+          <p>{{ "WEB_BROWSER_SUPPORT_MOBILE_ONLY_DESCRIPTION" | translate }}</p>
+          <h2>{{ "WEB_BROWSER_SUPPORT_CAPABILITIES_TITLE" | translate }}</h2>
+          <p>{{ "WEB_BROWSER_CAPABILITY_CAMERA" | translate }}: {{ (browserCapabilities.camera ? 'WEB_BROWSER_CAPABILITY_SUPPORTED' : 'WEB_BROWSER_CAPABILITY_NOT_SUPPORTED') | translate }}</p>
+          <p>{{ "WEB_BROWSER_CAPABILITY_BLUETOOTH" | translate }}: {{ (browserCapabilities.bluetooth ? 'WEB_BROWSER_CAPABILITY_SUPPORTED' : 'WEB_BROWSER_CAPABILITY_NOT_SUPPORTED') | translate }}</p>
+          <p>{{ "WEB_BROWSER_CAPABILITY_NFC" | translate }}: {{ (browserCapabilities.nfc ? 'WEB_BROWSER_CAPABILITY_SUPPORTED' : 'WEB_BROWSER_CAPABILITY_NOT_SUPPORTED') | translate }}</p>
+          <p>{{ "WEB_BROWSER_CAPABILITY_GEOLOCATION" | translate }}: {{ (browserCapabilities.geolocation ? 'WEB_BROWSER_CAPABILITY_SUPPORTED' : 'WEB_BROWSER_CAPABILITY_NOT_SUPPORTED') | translate }}</p>
+          <p>{{ "WEB_BROWSER_CAPABILITY_SHARE" | translate }}: {{ (browserCapabilities.share ? 'WEB_BROWSER_CAPABILITY_SUPPORTED' : 'WEB_BROWSER_CAPABILITY_NOT_SUPPORTED') | translate }}</p>
         </ion-label>
       </ion-item>
     </ion-card-content>
@@ -803,7 +803,7 @@
           <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
         </ion-item>
         @if (!platform.is('capacitor') && !browserCapabilities.bluetooth) {
-        <ion-note color="medium">Bluetooth is unavailable in this browser. Try Chromium with Web Bluetooth, or use the mobile app.</ion-note>
+        <ion-note color="medium">{{ "WEB_BROWSER_BLUETOOTH_UNAVAILABLE_NOTE" | translate }}</ion-note>
         }
         }
         @if (settings.scale_id !== '') {

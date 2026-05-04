@@ -32,7 +32,7 @@ export class BrowserCapabilityService {
       isWeb: true,
       camera: !!(nav.mediaDevices && nav.mediaDevices.getUserMedia),
       bluetooth: !!nav.bluetooth,
-      nfc: !!nav.NDEFReader,
+      nfc: !!(window as any).NDEFReader,
       geolocation: !!nav.geolocation,
       share: typeof nav.share === 'function',
       fileSystemAccess: !!window.showOpenFilePicker,

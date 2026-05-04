@@ -314,8 +314,8 @@ export class SettingsPage {
   private async showBluetoothPopover(_type: BluetoothTypes) {
     if (!this.platform.is('capacitor') && !this.browserCapabilities.bluetooth) {
       await this.uiAlert.showMessage(
-        'Bluetooth is not available in this browser. Use a BLE-capable browser like Chromium on desktop/mobile.',
-        'Feature unavailable',
+        this.translate.instant('WEB_BROWSER_BLUETOOTH_UNAVAILABLE_ALERT'),
+        this.translate.instant('FEATURE_UNAVAILABLE'),
       );
       return;
     }
@@ -480,19 +480,34 @@ export class SettingsPage {
   }
 
   public async checkCoordinates() {
-    // Only ask for permissions when the geolocation feature is turned on and
-    // the current platform is android.
     if (!this.settings.track_brew_coordinates) {
       return;
     }
 
-    if (!this.platform.is('android') && !this.browserCapabilities.geolocation) {
+    const isWeb = !this.platform.is('capacitor');
+    if (isWeb && !this.browserCapabilities.geolocation) {
       this.settings.track_brew_coordinates = false;
       await this.saveSettings();
       await this.uiAlert.showMessage(
-        'Geolocation is unavailable in this browser. Enable it in browser settings or use the mobile app.',
-        'Feature unavailable',
+        this.translate.instant('WEB_BROWSER_GEOLOCATION_UNAVAILABLE_ALERT'),
+        this.translate.instant('FEATURE_UNAVAILABLE'),
       );
+      return;
+    }
+
+    if (isWeb) {
+      await new Promise<void>((resolve, reject) => {
+        window.navigator.geolocation.getCurrentPosition(
+          () => resolve(),
+          (error) => reject(error),
+        );
+      }).catch((error) => {
+        this.uiLog.warn('Error obtaining browser location permission:', error);
+      });
+      return;
+    }
+
+    if (!this.platform.is('android')) {
       return;
     }
 
