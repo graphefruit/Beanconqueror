@@ -35,7 +35,7 @@ environment:
   FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
 ```
 
-To consume this in Angular, ensure `src/index.html` loads `/assets/env.js` before main bundles, and read values from `window.__beanconquerorConfig` when present.
+The generated `assets/env.js` is loaded by `src/index.html` before app bootstrap. Read values from `window.__beanconquerorConfig` when adding runtime-configurable web behavior.
 
 ## Data persistence expectations
 
