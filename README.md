@@ -204,13 +204,13 @@ https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
 https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
 
+## Containerized web build
+
+For Docker/Nginx deployment artifacts (Dockerfile, compose example, SPA fallback, runtime env injection, persistence notes), see [docs/container-deployment.md](docs/container-deployment.md).
+
 ### Installing AAB on your android (mac)
 
 https://stackoverflow.com/questions/50419286/install-android-app-bundle-on-device
 brew install bundletool
 bundletool build-apks --bundle=./app.aab --output=./app.apks
 bundletool install-apks --apks=app.apks
-
-## Containerized web build
-
-For Docker/Nginx deployment artifacts (Dockerfile, compose example, SPA fallback, runtime env injection, persistence notes), see [docs/container-deployment.md](docs/container-deployment.md).
