@@ -1,0 +1,50 @@
+# Container deployment (Angular static web build)
+
+## What is included
+
+- Multi-stage Docker build: `node:20-alpine` for compile, `nginx:alpine` for runtime.
+- SPA fallback (`try_files ... /index.html`) so deep links like `/brew/123` resolve correctly.
+- Optional runtime config templating with `envsubst` into `assets/env.js`.
+- Example `docker-compose.yml` binding host port `8080` to container port `80`.
+
+## Build and run
+
+```bash
+docker compose up --build
+```
+
+Then open `http://localhost:8080`.
+
+## Runtime env templating
+
+At container start, `/docker-entrypoint.d/40-envsubst-on-template.sh` generates:
+
+- template: `/usr/share/nginx/html/assets/env.template.js`
+- output: `/usr/share/nginx/html/assets/env.js`
+
+Supported variables:
+
+- `API_BASE_URL`
+- `FEATURE_FLAGS_JSON` (must be valid JSON, e.g. `{"featureA":true}`)
+
+To consume this in Angular, ensure `src/index.html` loads `/assets/env.js` before main bundles, and read values from `window.__beanconquerorConfig` when present.
+
+## Data persistence expectations
+
+### Container filesystem / volumes
+
+This static web container does **not** require a persistent volume for normal operation. It serves immutable frontend files from the image layer.
+
+A volume is only optional if you deliberately want to:
+
+- override static files at runtime,
+- or collect custom Nginx logs outside container lifecycle.
+
+### User data in browsers
+
+Beanconqueror user data for web users is stored in the **browser storage** (e.g., IndexedDB/LocalStorage depending on app behavior), not inside the web container filesystem.
+
+That means:
+
+- Recreating or upgrading the container does not by itself erase browser-stored user data.
+- Clearing browser site data or using a different browser/device does affect availability of that user data.

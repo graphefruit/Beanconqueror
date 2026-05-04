@@ -1,0 +1,12 @@
+services:
+  beanconqueror-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: beanconqueror-web:local
+    ports:
+      - "8080:80"
+    environment:
+      API_BASE_URL: "https://api.example.com"
+      FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
+    restart: unless-stopped
