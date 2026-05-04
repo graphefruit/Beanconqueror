@@ -2,7 +2,7 @@
 
 ## What is included
 
-- Multi-stage Docker build: `node:20-alpine` for compile, `nginx:alpine` for runtime.
+- Multi-stage Docker build: `node:22-alpine` for compile, `nginx:alpine` for runtime.
 - SPA fallback (`try_files ... /index.html`) so deep links like `/brew/123` resolve correctly.
 - Optional runtime config templating with `envsubst` into `assets/env.js`.
 - Example `docker-compose.yml` binding host port `8080` to container port `80`.
@@ -19,13 +19,21 @@ Then open `http://localhost:8080`.
 
 At container start, `/docker-entrypoint.d/40-envsubst-on-template.sh` generates:
 
-- template: `/usr/share/nginx/html/assets/env.template.js`
+- template: `/tmp/env.template.js`
 - output: `/usr/share/nginx/html/assets/env.js`
 
 Supported variables:
 
-- `API_BASE_URL`
-- `FEATURE_FLAGS_JSON` (must be valid JSON, e.g. `{"featureA":true}`)
+- `API_BASE_URL` (defaults to an empty string)
+- `FEATURE_FLAGS_JSON` (defaults to `{}` and must be valid JSON, e.g. `{"featureA":true}`)
+
+Compose example:
+
+```yaml
+environment:
+  API_BASE_URL: "https://api.example.com"
+  FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
+```
 
 To consume this in Angular, ensure `src/index.html` loads `/assets/env.js` before main bundles, and read values from `window.__beanconquerorConfig` when present.
 

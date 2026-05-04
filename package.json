@@ -19,6 +19,7 @@
     "generate-icon-registry": "node tools/generate-icon-registry.mjs > src/generated/icon-registry.ts"
   },
   "private": true,
+  "packageManager": "pnpm@10.26.0",
   "dependencies": {
     "@angular/common": "^21.2.9",
     "@angular/core": "^21.2.9",

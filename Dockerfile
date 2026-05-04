@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && pnpm install --frozen-lockfile
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable && corepack prepare pnpm@10.26.0 --activate && pnpm install --frozen-lockfile
 
 COPY . .
 RUN pnpm build --configuration production
@@ -20,6 +20,6 @@ RUN chmod +x /docker-entrypoint.d/40-envsubst-on-template.sh
 # Angular application build output
 COPY --from=build /app/www/browser/ /usr/share/nginx/html/
 # Runtime template for environment overrides
-COPY docker/runtime-config/env.template.js /usr/share/nginx/html/assets/env.template.js
+COPY docker/runtime-config/env.template.js /tmp/env.template.js
 
 EXPOSE 80
