@@ -23,13 +23,10 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
-function getStorageDriverOrder(): string[] {
-  const isNativeRuntime =
-    typeof window !== 'undefined' &&
-    typeof (window as any).Capacitor !== 'undefined' &&
-    (window as any).Capacitor.isNativePlatform?.() === true;
+import { isNativeRuntime } from './app/platform/runtime';
 
-  if (isNativeRuntime) {
+function getStorageDriverOrder(): string[] {
+  if (isNativeRuntime()) {
     return [
       Drivers.IndexedDB,
       CordovaSQLiteDriver._driver,

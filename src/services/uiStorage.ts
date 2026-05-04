@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
+import { isNativeRuntime } from '../app/platform/runtime';
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { EventQueueService } from './queueService/queue-service.service';
@@ -19,12 +20,7 @@ export class UIStorage {
   private _storage: Storage | null = null;
 
   public async init() {
-    const isNativeRuntime =
-      typeof window !== 'undefined' &&
-      typeof (window as any).Capacitor !== 'undefined' &&
-      (window as any).Capacitor.isNativePlatform?.() === true;
-
-    if (isNativeRuntime) {
+    if (isNativeRuntime()) {
       await this.storage.defineDriver(CordovaSQLiteDriver);
       this.uiLog.log('UIStorage - Registered Cordova SQLite driver for native runtime');
     } else {
@@ -34,7 +30,7 @@ export class UIStorage {
     }
 
     this._storage = await this.storage.create();
-    const backend = await this._storage.driver();
+    const backend = this._storage.driver;
     this.uiLog.log(`UIStorage - Active backend: ${backend}`);
   }
 
@@ -257,7 +253,7 @@ export class UIStorage {
     findings: Set<string> = new Set<string>(),
   ): Set<string> {
     if (typeof value === 'string') {
-      const lower = value.toLowerCase();
+      const lower = value.substring(0, 12).toLowerCase();
       if (
         lower.startsWith('file://') ||
         lower.startsWith('content://') ||
@@ -285,18 +281,13 @@ export class UIStorage {
   }
 
   private logWebImportMigrationHints(data: any): void {
-    const isNativeRuntime =
-      typeof window !== 'undefined' &&
-      typeof (window as any).Capacitor !== 'undefined' &&
-      (window as any).Capacitor.isNativePlatform?.() === true;
-
-    if (isNativeRuntime) {
+    if (isNativeRuntime()) {
       return;
     }
 
     const nonWebPaths = Array.from(this.collectNonWebAttachmentPaths(data));
     if (nonWebPaths.length > 0) {
-      this.uiLog.log(
+      this.uiLog.warn(
         `UIStorage - Web import migration check: detected ${nonWebPaths.length} native file references. Attachments may need to be re-added manually in browser mode.`,
       );
     } else {
