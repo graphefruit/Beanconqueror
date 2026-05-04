@@ -9,7 +9,6 @@ import 'moment/locale/de';
 
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
-import { KeepAwake } from '@capacitor-community/keep-awake';
 import { AppLauncher } from '@capacitor/app-launcher';
 
 import { StorageClass } from '../classes/storageClass';
@@ -18,6 +17,7 @@ import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { UIToast } from './uiToast';
+import { WAKE_LOCK_PORT, WakeLockPort } from '../app/platform/ports/wake-lock.port';
 
 /**
  * Handles every helping functionalities
@@ -32,6 +32,7 @@ export class UIHelper {
   private readonly uiLog = inject(UILog);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiToast = inject(UIToast);
+  private readonly wakeLock = inject(WAKE_LOCK_PORT) as WakeLockPort;
 
   /**
    *
@@ -253,12 +254,12 @@ export class UIHelper {
 
   public deviceKeepAwake() {
     try {
-      KeepAwake.keepAwake();
+      void this.wakeLock.keepAwake();
     } catch (ex) {}
   }
   public deviceAllowSleepAgain() {
     try {
-      KeepAwake.allowSleep();
+      void this.wakeLock.allowSleep();
     } catch (ex) {}
   }
 

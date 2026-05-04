@@ -7,13 +7,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import {
-  Camera,
-  CameraDirection,
-  CameraPluginPermissions,
-  CameraResultType,
-  CameraSource,
-} from '@capacitor/camera';
+import { Camera, CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import {
   CameraPermissionType,
   PermissionStatus,
@@ -34,6 +28,7 @@ import { UIAlert } from './uiAlert';
 import { UIFileHelper } from './uiFileHelper';
 import { UIHelper } from './uiHelper';
 import { UISettingsStorage } from './uiSettingsStorage';
+import { CAMERA_SERVICE_PORT, CameraServicePort } from '../app/platform/ports/camera-service.port';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +42,7 @@ export class UIImage {
   private readonly uiAlert = inject(UIAlert);
   private readonly modalCtrl = inject(ModalController);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly cameraService = inject(CAMERA_SERVICE_PORT) as CameraServicePort;
 
   private getImageQuality(): number {
     const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -66,7 +62,11 @@ export class UIImage {
   }
 
   public async takePhoto(): Promise<string> {
-    const imageData = await Camera.getPhoto({
+    if (!this.cameraService.isSupported()) {
+      await this.uiAlert.showMessage('FEATURE_REQUIRES_MOBILE_APP', null, null, true);
+      throw new Error('Feature requires mobile app');
+    }
+    const imageData = await this.cameraService.getPhoto({
       correctOrientation: true,
       direction: CameraDirection.Rear,
       quality: this.getImageQuality(),

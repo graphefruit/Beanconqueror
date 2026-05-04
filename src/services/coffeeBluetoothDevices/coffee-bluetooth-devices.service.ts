@@ -1,6 +1,5 @@
 import { EventEmitter, inject, Injectable } from '@angular/core';
 
-import { Capacitor } from '@capacitor/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 
@@ -58,6 +57,7 @@ import { UIAnalytics } from '../uiAnalytics';
 import { UIHelper } from '../uiHelper';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIToast } from '../uiToast';
+import { SCALE_CONNECTION_PORT, ScaleConnectionPort } from '../../app/platform/ports/scale-connection.port';
 
 declare var ble: any;
 declare var cordova: any;
@@ -82,6 +82,7 @@ export class CoffeeBluetoothDevicesService {
   private readonly uiToast = inject(UIToast);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly scaleConnection = inject(SCALE_CONNECTION_PORT) as ScaleConnectionPort;
 
   public scale: BluetoothScale | null = null;
   public pressureDevice: PressureDevice | null = null;
@@ -100,7 +101,7 @@ export class CoffeeBluetoothDevicesService {
     this.failed = false;
     this.ready = true;
 
-    if (Capacitor.getPlatform() === 'android') {
+    if (this.scaleConnection.isNativePlatform()) {
       this.androidPermissions = cordova.plugins.permissions;
     }
   }
@@ -112,7 +113,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasLocationPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (Capacitor.getPlatform() === 'android') {
+        if (this.scaleConnection.isNativePlatform()) {
           this.androidPermissions.hasPermission(
             this.androidPermissions.ACCESS_FINE_LOCATION,
             (_status: any) => {
@@ -138,7 +139,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasBluetoothPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (Capacitor.getPlatform() === 'android') {
+        if (this.scaleConnection.isNativePlatform()) {
           this.androidPermissions.hasPermission(
             this.androidPermissions.BLUETOOTH_ADMIN,
             (_status: any) => {
@@ -230,7 +231,7 @@ export class CoffeeBluetoothDevicesService {
     let searchOptions: any = {
       reportDuplicates: true,
     };
-    if (Capacitor.getPlatform() === 'android') {
+    if (this.scaleConnection.isNativePlatform()) {
       searchOptions = {
         reportDuplicates: true,
       };
@@ -1011,12 +1012,12 @@ export class CoffeeBluetoothDevicesService {
           errorCallback();
 
           if (settings.scale_id && settings.scale_id === deviceId) {
-            if (Capacitor.getPlatform() === 'android') {
+            if (this.scaleConnection.isNativePlatform()) {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
 
               await sleep(500);
-            } else if (Capacitor.getPlatform() === 'ios') {
+            } else if (this.scaleConnection.isNativePlatform()) {
               if (settings?.scale_type === ScaleType.LUNAR) {
                 await this.enableIOSBluetooth();
                 await this.findDeviceWithDirectId(deviceId, 6000);
@@ -1121,7 +1122,7 @@ export class CoffeeBluetoothDevicesService {
           errorCallback();
 
           if (settings.pressure_id && settings.pressure_id === deviceId) {
-            if (Capacitor.getPlatform() === 'android') {
+            if (this.scaleConnection.isNativePlatform()) {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
               await sleep(500);

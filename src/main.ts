@@ -26,6 +26,7 @@ import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
+import { providePlatformPorts } from './app/platform/providers/platform.providers';
 import { environment } from './environments/environment';
 
 if (environment.production) {
@@ -56,6 +57,7 @@ bootstrapApplication(AppComponent, {
     }),
     provideRouter(routes),
     provideZoneChangeDetection(),
+    ...providePlatformPorts(),
     provideIonicAngular({
       mode: 'md',
       menuIcon: 'beanconqueror-menu',
