@@ -35,7 +35,7 @@ export class BrowserCapabilityService {
       nfc: !!(window as any).NDEFReader,
       geolocation: !!nav.geolocation,
       share: typeof nav.share === 'function',
-      fileSystemAccess: !!window.showOpenFilePicker,
+      fileSystemAccess: !!(window as any).showOpenFilePicker,
     };
   }
 }
