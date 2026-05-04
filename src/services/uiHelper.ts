@@ -254,12 +254,12 @@ export class UIHelper {
 
   public deviceKeepAwake() {
     try {
-      void this.wakeLock.keepAwake();
+      this.wakeLock.keepAwake().catch(() => {});
     } catch (ex) {}
   }
   public deviceAllowSleepAgain() {
     try {
-      void this.wakeLock.allowSleep();
+      this.wakeLock.allowSleep().catch(() => {});
     } catch (ex) {}
   }
 

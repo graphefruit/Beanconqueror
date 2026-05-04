@@ -101,7 +101,7 @@ export class CoffeeBluetoothDevicesService {
     this.failed = false;
     this.ready = true;
 
-    if (this.scaleConnection.isNativePlatform()) {
+    if (this.scaleConnection.isAndroid()) {
       this.androidPermissions = cordova.plugins.permissions;
     }
   }
@@ -113,7 +113,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasLocationPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (this.scaleConnection.isNativePlatform()) {
+        if (this.scaleConnection.isAndroid()) {
           this.androidPermissions.hasPermission(
             this.androidPermissions.ACCESS_FINE_LOCATION,
             (_status: any) => {
@@ -139,7 +139,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasBluetoothPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (this.scaleConnection.isNativePlatform()) {
+        if (this.scaleConnection.isAndroid()) {
           this.androidPermissions.hasPermission(
             this.androidPermissions.BLUETOOTH_ADMIN,
             (_status: any) => {
@@ -231,7 +231,7 @@ export class CoffeeBluetoothDevicesService {
     let searchOptions: any = {
       reportDuplicates: true,
     };
-    if (this.scaleConnection.isNativePlatform()) {
+    if (this.scaleConnection.isAndroid()) {
       searchOptions = {
         reportDuplicates: true,
       };
@@ -1012,12 +1012,12 @@ export class CoffeeBluetoothDevicesService {
           errorCallback();
 
           if (settings.scale_id && settings.scale_id === deviceId) {
-            if (this.scaleConnection.isNativePlatform()) {
+            if (this.scaleConnection.isAndroid()) {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
 
               await sleep(500);
-            } else if (this.scaleConnection.isNativePlatform()) {
+            } else if (this.scaleConnection.isIos()) {
               if (settings?.scale_type === ScaleType.LUNAR) {
                 await this.enableIOSBluetooth();
                 await this.findDeviceWithDirectId(deviceId, 6000);
@@ -1122,7 +1122,7 @@ export class CoffeeBluetoothDevicesService {
           errorCallback();
 
           if (settings.pressure_id && settings.pressure_id === deviceId) {
-            if (this.scaleConnection.isNativePlatform()) {
+            if (this.scaleConnection.isAndroid()) {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
               await sleep(500);

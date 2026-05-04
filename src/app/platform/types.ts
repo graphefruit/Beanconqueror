@@ -1,4 +1,11 @@
-import { CameraDirection, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
+import {
+  CameraDirection,
+  CameraPluginPermissions,
+  CameraResultType,
+  CameraSource,
+  PermissionStatus,
+  Photo,
+} from '@capacitor/camera';
 
 export type ImageOptions = {
   correctOrientation: boolean;
@@ -10,3 +17,4 @@ export type ImageOptions = {
 };
 
 export type { Photo };
+export type { CameraPluginPermissions, PermissionStatus };

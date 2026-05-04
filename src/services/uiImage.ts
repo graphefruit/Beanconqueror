@@ -7,11 +7,8 @@ import {
 } from '@ionic/angular/standalone';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { Camera, CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
-import {
-  CameraPermissionType,
-  PermissionStatus,
-} from '@capacitor/camera/dist/esm/definitions';
+import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
+import { PermissionStatus } from '@capacitor/camera/dist/esm/definitions';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -194,10 +191,11 @@ export class UIImage {
 
   public async checkCameraPermission() {
     try {
-      const permissionGiven: PermissionStatus = await Camera.checkPermissions();
+      const permissionGiven: PermissionStatus =
+        await this.cameraService.checkPermissions();
       if (permissionGiven.camera == 'denied') {
         const requestPermission: PermissionStatus =
-          await Camera.requestPermissions({ permissions: ['camera'] });
+          await this.cameraService.requestPermissions({ permissions: ['camera'] });
         if (requestPermission.camera == 'denied') {
           await this.uiAlert.showMessage(
             'NO_CAMERA_PERMISSION',
