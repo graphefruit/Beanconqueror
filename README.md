@@ -210,3 +210,10 @@ https://stackoverflow.com/questions/50419286/install-android-app-bundle-on-devic
 brew install bundletool
 bundletool build-apks --bundle=./app.aab --output=./app.apks
 bundletool install-apks --apks=app.apks
+
+
+## Browser persistence limitations
+
+When Beanconqueror runs in a browser (non-Capacitor runtime), storage uses browser-safe backends (IndexedDB with LocalStorage fallback). Data stays local to that browser profile/device unless you explicitly export/import backup files or configure sync features.
+
+Mobile exports can be imported in browser mode, but native file URI references (for example `file://`, `content://`, `capacitor://`) may not be resolvable by browsers; re-attach those files manually if needed.
