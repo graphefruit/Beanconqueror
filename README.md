@@ -1,223 +1,136 @@
-[![license](https://img.shields.io/badge/license-GPL%203.0-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html) [![Github All Releases](https://img.shields.io/github/downloads/graphefruit/beanconqueror/total.svg)](https://github.com/graphefruit/beanconqueror/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/graphefruit/beanconqueror.svg)](https://github.com/graphefruit/beanconqueror/releases)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=graphefruit_Beanconqueror&metric=alert_status)](https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror)
+# Beanconqueror Web Container
 
-# Beanconqueror
+[![license](https://img.shields.io/badge/license-GPL%203.0-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
-Beanconqueror - The Ultimate Coffee Companion
+Beanconqueror is a coffee tracking app for beans, brews, grinders, preparation methods, water recipes, roasting, tasting notes, and brew history.
 
-You’re a coffee afficiando, and so am I!
-Beanconqueror is the product of our shared love of the drink in our cups and in our hearts.
-Whether you're just starting out, or are an experienced barista, Beanconqueror will help you get the most out of your coffee.
+This fork packages Beanconqueror as a browser-based web app for Docker and Unraid. The Android and iOS project files are intentionally not part of this container-focused repository.
 
-Optimize your brews:
-Beanconqueror offers a wide range of preparation methods, including V60, Aeropress, Espresso, Orea v3, Mokkamaster and more.
-Each comes setup ready to go, or you can customize your preparation methods with just the parameters you want to use.
-This way, you can get your perfect brew every time.
+## What This Build Provides
 
-Keep track of your beans:
-Beanconqueror makes it easy to keep track of all your beans.
-You can easily scan or import detailed information of roasted coffee from your favourite roasters, or even from your own roasting setup.
-It’ll even keep track of your running total of beans so you know when you’re running low.
+- Angular/Ionic web app served by Nginx.
+- Docker image build from `Dockerfile`.
+- Docker Compose example in `docker-compose.yml`.
+- Unraid Community Applications template in `unraid/beanconqueror.xml`.
+- Runtime config injection through `/assets/env.js`.
+- Local browser storage using IndexedDB with LocalStorage fallback.
 
-Track your roasts:
-Add all the details for your green beans, roast them in batches tracking the variables you need to to maintain consistency, and automatically transfer your finished roasts to use for brewing.
+## Run With Docker
 
-Dedicated water section:
-Beanconqueror also has a dedicated water section where you can add your custom waters to be used in the brew section.
-Save all the key information for your water recipes, such as general hardness, sodium, calcium, magnesium, and more.
+```bash
+docker run --rm -p 8080:80 ghcr.io/salthepal/beanconqueror:latest
+```
 
-Flexibility and Convenience:
-Beanconqueror is available for both iOS and Android, so you can take it with you wherever you go.
-It also supports several languages, including English, German, Spanish, Chinese, and Turkish, and more will be added in the future. Beanconqueror is also Open Source and free to use.
+Open `http://localhost:8080`.
 
-Flow & Pressure Profiling:
-Beanconqueror is compatible with a range of bluetooth scales and pressure profile devices, including Decent Scale, Acaia Scales, Felicita Scales, Hiroia Jimmy, Eureka Precisa, Skale2, Smart Espresso Profiler, and Pressensor.
-It can even produce graphs to track your brew live and help you repeat your favourite brews more easily.
+## Run With Docker Compose
 
-Track your caffeine consume into Apple Health and have a look there.
+```bash
+docker compose up --build
+```
 
-Whether you're looking to track your coffee journey, optimise your brews, or simply keep track of your coffee beans, Beanconqueror has everything you need to perfect your brew from green to cup.
+Open `http://localhost:8080`.
 
-##### Follow me
+## Unraid
 
-| [Website](https://beanconqueror.com/) | [Instagram](https://www.instagram.com/beanconqueror/) | [Facebook](https://www.facebook.com/Beanconqueror/) |
+Use the template at:
 
-## Sneak preview
+```text
+unraid/beanconqueror.xml
+```
 
-![Beanconqueror gif](demo/Beanconqueror.gif)
+Default settings:
 
-## Articles
+- container port: `80`
+- host port: `8080`
+- persistent volume: none required
 
-- German: [iphone-ticker](https://www.iphone-ticker.de/beanconqueror-app-geheimtipp-fuer-espresso-verrueckte-168517/) [wuv](https://www.wuv.de/tech/techtaeglich_super_mario_rast_durch_berlin)
+Beanconqueror data is stored in browser storage, not inside the container filesystem. Recreating the container does not delete browser-stored data, but clearing site data or switching browsers/devices affects access to it.
 
-## Threads
+## Runtime Configuration
 
-- German: [Kaffee-Netz](https://www.kaffee-netz.de/threads/beanconqueror-app.111249)
-- English: [Home-Barista](https://www.home-barista.com/knockbox/beanconqueror-app-t68236.html)
-- Dutch [tweakers](https://gathering.tweakers.net/forum/list_messages/1635607/44) [koffiepraat](https://www.koffiepraat.nl/forum/viewtopic.php?t=9842)
-- Greek: [greekespresso](https://www.greekespresso.gr/forum/viewtopic.php?f=4&t=7251&p=97854&hilit=beanconqueror#p97854)
-- Turkish: [kahvekulubu](https://www.kahvekulubu.net/sosyal/threads/kahve-loglama-kayit-oneri-yontem-metodoloji.3483/)
+The container entrypoint generates `/usr/share/nginx/html/assets/env.js` from `/tmp/env.template.js`.
 
-## Rankings
+Supported variables:
 
-On January 2021, the app got a bit hyped, through german featuring articles, the top rankings because of this you find below.
+- `API_BASE_URL`: optional API base URL.
+- `FEATURE_FLAGS_JSON`: optional JSON object, default `{}`.
 
-### Android
+Example:
 
-Top charts: Eat & Drink - Rank 5
-Eat & Drink Ranking - Rank 70
+```yaml
+environment:
+  API_BASE_URL: 'https://api.example.com'
+  FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
+```
 
-### iOS
+## Browser Runtime Notes
 
-Eat & Drink Raking - Rank 36
+This build runs in a standard browser. Native mobile features are not available.
 
-## Features
+Unavailable or limited:
 
-Different features are supported by this app, a brief overview you'll find here.
+- native Android/iOS packaging
+- native Bluetooth scale bridge
+- native wake lock adapter
+- native camera adapter
+- native file URI access such as `file://`, `content://`, or `capacitor://`
 
-- Add your own beans / grinders / preparation methods
-- Record different brew-parameters like:
-  - grind size
-  - grind amount
-  - brew time
-  - first coffee drip
-  - images
-  - etc.
-- Manage your own workflow, first grind amount, then grind size? No problem
-- Archive old beans / grinders / preparation methods
-- Rate your brews
-- Cup your brews by SCA
-- Own roasting section
-- Own water section
-- Cup your brews by aromatics or flavors
-- Connect smart scales (Decent Scale, Acaia Lunar, Hiroia Jimmy, Felicita)
+Browser-supported camera, import, export, and storage behavior can still work where supported by the browser and app code.
 
-## Special thanks
+## Development
 
-- Nicola for giving the app a whole new design.
-- Frank for translating the app into spanish.
-- [Joan](https://github.com/Jglez3) - for Spanish translation
-- [Halil Portakal](https://www.kahvekulubu.net/sosyal/members/portakalhalil.3158/) for Turkish translation
-- [Jiageng Ding](https://github.com/JiagengDing) for Chinese translation
-- [Mimoja](https://github.com/Mimoja/) For supporting on Decent Scale integration & Eureka Scale support & Making Combustion.inc Bytes
-- [Silas](https://github.com/silasg) - For supporting Hiroia Jimmy Scale
-- [Mehalter](https://github.com/mehalter) - For supporting Acaia Scales
-- [Mike](https://github.com/mike1808) - For supporting Acaia Scales & DIY Pressure Sensor
-- [Myles](https://github.com/mylesagray) - For supporting Thermo Bluetooth Devices
-- [Herman](https://github.com/hermanmak) - For supporting Felicita Arc
-- [Yannick](https://github.com/randomcoffeesnob) - For supporting DiFluid Microbalance & Smart Chef Scale, BlackCoffee.IO. Also for adding Lokalise
-- [Marius](https://github.com/RagingCactus) - For porting Cordova to Capacitor & Implementing Export & Import routine back to Android
+Requirements:
 
-## Getting the App
+- Node.js `>=22`
+- pnpm `>=10.26.0`
 
-The App is a cross platform application, running on the ionic framework.
+Install dependencies:
 
-### Android
+```bash
+pnpm install
+```
 
-Download the latest version [here](https://play.google.com/store/apps/details?id=com.beanconqueror.app).
+Start dev server:
 
-If you don't want to download the app by playstore, just have a look on the [release page](https://github.com/graphefruit/Beanconqueror/releases).
+```bash
+pnpm start
+```
 
-### iOS
+Build:
 
-Download the latest version [here](https://apps.apple.com/de/app/beanconqueror/id1445297158).
+```bash
+pnpm run build
+```
 
-## :sparkling_heart: Support the project
+Test:
 
-You want to support me, to access more people to explore the world of good coffee
+```bash
+pnpm test
+```
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/LarsSaalbach) - Support me once
+Lint:
 
-[![Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://www.buymeacoffee.com/beanconqueror) - Support me once or often
+```bash
+pnpm run lint
+```
 
-Or sponsor me via Github
+## Container Details
 
-Thanks! :heart:
+More deployment notes live in [docs/container-deployment.md](docs/container-deployment.md).
 
-## Contribution
+Image publishing is handled by `.github/workflows/container-image.yml`:
 
-Before continuing it is important to note that Beanconqueror is open source available.
+- pull requests build the image without publishing
+- branch/tag/manual runs publish to GitHub Container Registry
+- `latest` is only emitted for the repository default branch
 
-I welcome pull requests, but you will be required to sign the Beanconqueror CLA before any contributions can be merged.
+## Import And Persistence
 
-## Statistics
+Mobile exports can be imported in browser mode. Native file URI references from mobile backups may not resolve in browsers; reattach affected files manually.
 
-![Graphefruit github stats](https://github-readme-stats.vercel.app/api?username=graphefruit&theme=dark&repo=Beanconqueror)
+Normal app data remains local to the browser profile. Back up data through app export flows before clearing browser storage or moving devices.
 
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=graphefruit&theme=dark)
+## License
 
-## Third Party Apps
-
-Beanconqueror Universe is growing outside :)
-Therefore some users did third party apps, where I don't have any stakes in it.
-Important: Beanconqueror doesn't take any warranty here.
-
-Add beans to share directly from a webform:
-https://beanstats.vercel.app/beanconqueror/create
-(Uses the minify-logic of the add.beanl.ink aswell)
-
-Minify your shared bean-link:
-https://add.beanl.ink/
-
-Get some more statistics:
-https://beanstats.vercel.app/
-
-## Questions
-
-### Why is image-export functionality not support on iOS?
-
-iOS filesystem is different then on Android. On iOS all image/graphs will be directly used from Files/on my device/Beanconqueror -> _._
-
-### iOS - iCloud-Backup
-
-You can backup Beanconqueror via iCloud, with this you can transfer all data to another device without any loss.
-
-### Android - Backup & Restore
-
-Have a look here: [FAQ](https://beanconqueror.com/faq)
-
-### Analytics
-
-All tracked data/analytics are visible here: ![Website](https://beanconqueror.com/data-tracking.html)
-
-### Which requirements does the app needs?
-
-The app needs access to your filesystem aswell as the camera
-
-- _Filesytem_: Needed to save images which you took on beans/brews etc or exporting your settings. - Outdated after Android 13 changes.
-- _Camera_: Needed to take picures or access the photo library to set images for your beans/brews
-- _Internet_: NOT NEEDED! But needed if you want to send me some analytics information to make the app better :)
-- _GPS_: NOT NEEDED! Activated through settings, saves the brew location
-- _Apple Health_: NOT NEEDED! Activated through settings, saves caffeine amount
-- _Wake look_: NOT NEEDED! Activated through settings, won't let your phone get into sleep mode while brewing
-- _Bluetooth_: NOT NEEDED! Activated for smart scale use.
-
-# Develop on your own
-
-Please look at [our development guide in DEVELOPING.md](DEVELOPING.md).
-
-## Want to check the code quality?
-
-https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
-
-### Github Page Hosting
-
-https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
-
-## Containerized web build
-
-For Docker/Nginx deployment artifacts (Dockerfile, compose example, SPA fallback, runtime env injection, persistence notes), see [docs/container-deployment.md](docs/container-deployment.md).
-
-### Installing AAB on your android (mac)
-
-https://stackoverflow.com/questions/50419286/install-android-app-bundle-on-device
-brew install bundletool
-bundletool build-apks --bundle=./app.aab --output=./app.apks
-bundletool install-apks --apks=app.apks
-
-
-## Browser persistence limitations
-
-When Beanconqueror runs in a browser (non-Capacitor runtime), storage uses browser-safe backends (IndexedDB with LocalStorage fallback). Data stays local to that browser profile/device unless you explicitly export/import backup files or configure sync features.
-
-Mobile exports can be imported in browser mode, but native file URI references (for example `file://`, `content://`, `capacitor://`) may not be resolvable by browsers; re-attach those files manually if needed.
+Beanconqueror is licensed under GPL-3.0. See [LICENSE](LICENSE).
