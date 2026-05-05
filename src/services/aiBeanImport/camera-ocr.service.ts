@@ -1,11 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import {
-  Camera,
-  CameraDirection,
-  CameraResultType,
-  CameraSource,
-} from '@capacitor/camera';
+import { CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { TranslateService } from '@ngx-translate/core';
 import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
 
@@ -15,6 +10,7 @@ import { UIImage } from '../uiImage';
 import { UILog } from '../uiLog';
 import { rotateBase64Image } from './image-rotation';
 import { TextDetectionResult } from './ocr-metadata.service';
+import { CAMERA_SERVICE_PORT, CameraServicePort } from '../../app/platform/ports/camera-service.port';
 
 /**
  * Result of multi-pass OCR on a single image.
@@ -56,6 +52,7 @@ export class CameraOcrService {
   private readonly translate = inject(TranslateService);
   private readonly uiLog = inject(UILog);
   private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly cameraService = inject(CAMERA_SERVICE_PORT) as CameraServicePort;
 
   /**
    * Capture a photo and run OCR on it.
@@ -72,7 +69,13 @@ export class CameraOcrService {
       return null;
     }
 
-    const imageData = await Camera.getPhoto({
+    if (!this.cameraService.isSupported()) {
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessage('FEATURE_REQUIRES_MOBILE_APP', 'AI_IMPORT_NOT_AVAILABLE', undefined, true);
+      return null;
+    }
+
+    const imageData = await this.cameraService.getPhoto({
       correctOrientation: true,
       direction: CameraDirection.Rear,
       quality: 90,
