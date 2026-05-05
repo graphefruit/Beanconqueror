@@ -125,6 +125,10 @@ import { UIUpdate } from '../../services/uiUpdate';
 import { UiVersionStorage } from '../../services/uiVersionStorage';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import {
+  BrowserCapabilities,
+  BrowserCapabilityService,
+} from '../../services/browser-capability.service';
 
 @Component({
   selector: 'settings',
@@ -196,6 +200,7 @@ export class SettingsPage {
   private readonly visualizerService = inject(VisualizerService);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly themeService = inject(ThemeService);
+  private readonly browserCapabilityService = inject(BrowserCapabilityService);
 
   public settings: Settings;
 
@@ -216,6 +221,7 @@ export class SettingsPage {
   public aiProviderEnum = AI_PROVIDER_ENUM;
 
   public isScrolling: boolean = false;
+  public browserCapabilities: BrowserCapabilities;
 
   public readonly isAndroid: boolean;
   public readonly isIos: boolean;
@@ -278,6 +284,7 @@ export class SettingsPage {
     this.isAndroid =
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
+    this.browserCapabilities = this.browserCapabilityService.getCapabilities();
     addIcons({
       bluetoothOutline,
       checkmarkCircleOutline,
@@ -305,6 +312,13 @@ export class SettingsPage {
   }
 
   private async showBluetoothPopover(_type: BluetoothTypes) {
+    if (!this.platform.is('capacitor') && !this.browserCapabilities.bluetooth) {
+      await this.uiAlert.showMessage(
+        this.translate.instant('WEB_BROWSER_BLUETOOTH_UNAVAILABLE_ALERT'),
+        this.translate.instant('FEATURE_UNAVAILABLE'),
+      );
+      return;
+    }
     const modal = await this.modalCtrl.create({
       component: BluetoothDeviceChooserPopoverComponent,
       id: BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
@@ -466,9 +480,34 @@ export class SettingsPage {
   }
 
   public async checkCoordinates() {
-    // Only ask for permissions when the geolocation feature is turned on and
-    // the current platform is android.
-    if (!this.settings.track_brew_coordinates || !this.platform.is('android')) {
+    if (!this.settings.track_brew_coordinates) {
+      return;
+    }
+
+    const isWeb = !this.platform.is('capacitor');
+    if (isWeb && !this.browserCapabilities.geolocation) {
+      this.settings.track_brew_coordinates = false;
+      await this.saveSettings();
+      await this.uiAlert.showMessage(
+        this.translate.instant('WEB_BROWSER_GEOLOCATION_UNAVAILABLE_ALERT'),
+        this.translate.instant('FEATURE_UNAVAILABLE'),
+      );
+      return;
+    }
+
+    if (isWeb) {
+      await new Promise<void>((resolve, reject) => {
+        window.navigator.geolocation.getCurrentPosition(
+          () => resolve(),
+          (error) => reject(error),
+        );
+      }).catch((error) => {
+        this.uiLog.warn('Error obtaining browser location permission:', error);
+      });
+      return;
+    }
+
+    if (!this.platform.is('android')) {
       return;
     }
 
