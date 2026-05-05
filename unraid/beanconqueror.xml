@@ -8,10 +8,10 @@
   <Support>https://github.com/salthepal/Beanconqueror/issues</Support>
   <Project>https://github.com/salthepal/Beanconqueror</Project>
   <Overview>Beanconqueror web app served as a static Nginx container for Unraid. User data is stored in browser IndexedDB/local storage, not in the container filesystem.</Overview>
-  <Category>Productivity: Tools:</Category>
+  <Category>Productivity:Tools</Category>
   <WebUI>http://[IP]:[PORT:80]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/salthepal/Beanconqueror/develop/unraid/beanconqueror.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/salthepal/Beanconqueror/develop/src/assets/icon/favicon.png</Icon>
+  <TemplateURL>https://raw.githubusercontent.com/salthepal/Beanconqueror/HEAD/unraid/beanconqueror.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/salthepal/Beanconqueror/HEAD/src/assets/icon/favicon.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>
