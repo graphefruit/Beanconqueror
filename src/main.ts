@@ -22,24 +22,14 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
-import { isNativeRuntime } from './app/platform/runtime';
 import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
 import { providePlatformPorts } from './app/platform/providers/platform.providers';
 import { environment } from './environments/environment';
 
 function getStorageDriverOrder(): string[] {
-  if (isNativeRuntime()) {
-    return [
-      Drivers.IndexedDB,
-      CordovaSQLiteDriver._driver,
-      Drivers.LocalStorage,
-    ];
-  }
-
   return [Drivers.IndexedDB, Drivers.LocalStorage];
 }
 
