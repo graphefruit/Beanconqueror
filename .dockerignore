@@ -2,9 +2,12 @@
 .gitignore
 node_modules
 www
-android/.gradle
-android/build
+android
 ios
+resources
+store_screens
+hooks
+capacitor.config.ts
 .idea
 .vscode
 coverage

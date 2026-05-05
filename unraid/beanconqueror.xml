@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Beanconqueror</Name>
+  <Repository>ghcr.io/salthepal/beanconqueror:latest</Repository>
+  <Registry>https://github.com/salthepal/Beanconqueror/pkgs/container/beanconqueror</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/salthepal/Beanconqueror/issues</Support>
+  <Project>https://github.com/salthepal/Beanconqueror</Project>
+  <Overview>Beanconqueror web app served as a static Nginx container for Unraid. User data is stored in browser IndexedDB/local storage, not in the container filesystem.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <WebUI>http://[IP]:[PORT:80]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/salthepal/Beanconqueror/develop/unraid/beanconqueror.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/salthepal/Beanconqueror/develop/src/assets/icon/favicon.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="WebUI" Target="80" Default="8080" Mode="tcp" Description="Container web interface port." Type="Port" Display="always" Required="true" Mask="false">8080</Config>
+  <Config Name="API_BASE_URL" Target="API_BASE_URL" Default="" Mode="" Description="Optional API base URL injected into /assets/env.js at container start." Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="FEATURE_FLAGS_JSON" Target="FEATURE_FLAGS_JSON" Default="{}" Mode="" Description="Optional JSON object injected into /assets/env.js at container start." Type="Variable" Display="advanced" Required="false" Mask="false">{}</Config>
+</Container>

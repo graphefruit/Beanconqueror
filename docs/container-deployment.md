@@ -15,6 +15,16 @@ docker compose up --build
 
 Then open `http://localhost:8080`.
 
+Published images are available from GitHub Container Registry:
+
+```bash
+docker run --rm -p 8080:80 ghcr.io/salthepal/beanconqueror:latest
+```
+
+## Unraid
+
+An Unraid Community Applications template is available at `unraid/beanconqueror.xml`. It exposes container port `80` as host port `8080` by default and does not require a persistent volume.
+
 ## Runtime env templating
 
 At container start, `/docker-entrypoint.d/40-envsubst-on-template.sh` generates:

@@ -1,9 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { Storage } from '@ionic/storage';
-import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
-import { isNativeRuntime } from '../app/platform/runtime';
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { EventQueueService } from './queueService/queue-service.service';
@@ -20,15 +18,9 @@ export class UIStorage {
   private _storage: Storage | null = null;
 
   public async init() {
-    if (isNativeRuntime()) {
-      await this.storage.defineDriver(CordovaSQLiteDriver);
-      this.uiLog.log('UIStorage - Registered Cordova SQLite driver for native runtime');
-    } else {
-      this.uiLog.log(
-        'UIStorage - Web runtime detected, skipping Cordova SQLite driver registration',
-      );
-    }
-
+    this.uiLog.log(
+      'UIStorage - Web runtime detected, using browser-safe storage drivers',
+    );
     this._storage = await this.storage.create();
     const backend = this._storage.driver;
     this.uiLog.log(`UIStorage - Active backend: ${backend}`);
@@ -281,10 +273,6 @@ export class UIStorage {
   }
 
   private logWebImportMigrationHints(data: any): void {
-    if (isNativeRuntime()) {
-      return;
-    }
-
     const nonWebPaths = Array.from(this.collectNonWebAttachmentPaths(data));
     if (nonWebPaths.length > 0) {
       this.uiLog.warn(

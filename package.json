@@ -14,8 +14,6 @@
     "prepare": "husky",
     "generate_proto": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto  --ts_proto_opt=snakeToCamel=false --ts_proto_opt=esModuleInterop=true --ts_proto_out ./src/generated ./src/classes/bean/bean.proto",
     "ionic": "ionic",
-    "cap": "capacitor",
-    "capsync": "capacitor sync android && capacitor sync ios",
     "generate-icon-registry": "node tools/generate-icon-registry.mjs > src/generated/icon-registry.ts"
   },
   "private": true,
@@ -31,8 +29,6 @@
     "@awesome-cordova-plugins/android-permissions": "^9.1.4",
     "@awesome-cordova-plugins/core": "^9.1.4",
     "@bufbuild/protobuf": "^2.11.0",
-    "@capacitor-community/keep-awake": "^8.0.1",
-    "@capacitor/android": "^8.3.1",
     "@capacitor/app": "^8.1.0",
     "@capacitor/app-launcher": "^8.0.1",
     "@capacitor/barcode-scanner": "^3.0.2",
@@ -43,7 +39,6 @@
     "@capacitor/filesystem": "8.0.0",
     "@capacitor/geolocation": "8.0.0",
     "@capacitor/haptics": "^8.0.2",
-    "@capacitor/ios": "^8.3.1",
     "@capacitor/keyboard": "^8.0.3",
     "@capacitor/share": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.1",
@@ -72,7 +67,6 @@
     "html-to-image": "^1.11.13",
     "ionicons": "^8.0.13",
     "javascript-color-gradient": "^2.5.0",
-    "localforage-cordovasqlitedriver": "^1.8.0",
     "lodash": "^4.18.1",
     "luxon": "^3.7.2",
     "moment": "^2.30.1",
@@ -96,8 +90,6 @@
     "@angular/compiler": "^21.2.9",
     "@angular/compiler-cli": "^21.2.9",
     "@angular/language-service": "^21.2.9",
-    "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^8.3.1",
     "@eslint/js": "^9.39.4",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@ionic/angular-toolkit": "^12.3.0",
@@ -106,10 +98,6 @@
     "@types/lodash": "^4.17.24",
     "@types/node": "^25.6.0",
     "angular-eslint": "^21.3.1",
-    "cordova-plugin-android-permissions": "^1.1.5",
-    "cordova-plugin-ble-central": "^2.0.0",
-    "cordova-plugin-health": "^2.1.1",
-    "cordova-sqlite-storage": "^7.0.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
@@ -138,10 +126,6 @@
       "onFail": "error"
     }
   },
-  "platforms": [
-    "android",
-    "ios"
-  ],
   "prettier": {
     "singleQuote": true,
     "semi": true,
