@@ -2,7 +2,7 @@ name: Container Image
 
 on:
   push:
-    branches: ['develop', 'master']
+    branches: ['develop', 'main', 'master']
     tags: ['v*.*.*']
   pull_request:
     paths:
