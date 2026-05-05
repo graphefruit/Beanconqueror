@@ -9,17 +9,26 @@ RUN corepack enable && corepack prepare pnpm@10.26.0 --activate && pnpm install 
 COPY . .
 RUN pnpm build --configuration production
 
-FROM nginx:1.27-alpine AS runtime
+FROM node:22-alpine AS api-deps
+WORKDIR /api
 
-RUN apk add --no-cache gettext
+COPY api/package.json api/package-lock.json ./
+RUN npm ci --omit=dev
+
+FROM node:22-alpine AS runtime
+
+RUN apk add --no-cache gettext nginx
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY docker/entrypoint/40-envsubst-on-template.sh /docker-entrypoint.d/40-envsubst-on-template.sh
-RUN chmod +x /docker-entrypoint.d/40-envsubst-on-template.sh
+COPY docker/entrypoint/start.sh /usr/local/bin/beanconqueror-start
+RUN chmod +x /usr/local/bin/beanconqueror-start
 
 # Angular application build output
 COPY --from=build /app/www/browser/ /usr/share/nginx/html/
 # Runtime template for environment overrides
 COPY docker/runtime-config/env.template.js /tmp/env.template.js
+COPY api /app/api
+COPY --from=api-deps /api/node_modules /app/api/node_modules
 
 EXPOSE 80
+CMD ["beanconqueror-start"]

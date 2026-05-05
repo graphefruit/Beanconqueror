@@ -1,0 +1,14 @@
+{
+  "name": "beanconqueror-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "mysql2": "3.15.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

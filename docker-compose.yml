@@ -1,12 +1,34 @@
 services:
-  beanconqueror-web:
+  beanconqueror:
     build:
       context: .
       dockerfile: Dockerfile
-    image: beanconqueror-web:local
+    image: beanconqueror:local
     ports:
-      - "8080:80"
+      - '8080:80'
     environment:
-      API_BASE_URL: "https://api.example.com"
+      API_BASE_URL: '/api'
+      DB_HOST: 'mariadb'
+      DB_PORT: '3306'
+      DB_NAME: 'beanconqueror'
+      DB_USER: 'beanconqueror'
+      DB_PASSWORD: 'beanconqueror'
+      GAGGIUINO_BASE_URL: 'http://gaggiuino.local'
       FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
+    depends_on:
+      - mariadb
     restart: unless-stopped
+
+  mariadb:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: 'beanconqueror'
+      MARIADB_USER: 'beanconqueror'
+      MARIADB_PASSWORD: 'beanconqueror'
+      MARIADB_ROOT_PASSWORD: 'change-me'
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mariadb-data:

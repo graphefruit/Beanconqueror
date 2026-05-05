@@ -1,68 +1,113 @@
-# Container deployment (Angular static web build)
+# Container Deployment
 
-## What is included
+## What Is Included
 
-- Multi-stage Docker build: `node:22-alpine` for compile, `nginx:alpine` for runtime.
-- SPA fallback (`try_files ... /index.html`) so deep links like `/brew/123` resolve correctly.
-- Optional runtime config templating with `envsubst` into `assets/env.js`.
+- Multi-stage Docker build.
+- Angular production build served by Nginx.
+- Bundled Node API proxied at `/api`.
+- MariaDB-backed app storage.
+- Local Gaggiuino API proxy/import endpoints.
+- Runtime config templating with `envsubst` into `assets/env.js`.
 - Example `docker-compose.yml` binding host port `8080` to container port `80`.
 
-## Build and run
+## Build And Run
 
 ```bash
 docker compose up --build
 ```
 
-Then open `http://localhost:8080`.
+Open `http://localhost:8080`.
 
-Published images are available from GitHub Container Registry:
+Compose starts the app and MariaDB. MariaDB data persists in the `mariadb-data` named volume.
+
+## Published Image
 
 ```bash
-docker run --rm -p 8080:80 ghcr.io/salthepal/beanconqueror:latest
+docker run --rm -p 8080:80 \
+  -e DB_HOST=mariadb \
+  -e DB_NAME=beanconqueror \
+  -e DB_USER=beanconqueror \
+  -e DB_PASSWORD=change-me \
+  -e API_BASE_URL=/api \
+  ghcr.io/salthepal/beanconqueror:latest
 ```
+
+Use this with an existing MariaDB-compatible database.
 
 ## Unraid
 
-An Unraid Community Applications template is available at `unraid/beanconqueror.xml`. It exposes container port `80` as host port `8080` by default and does not require a persistent volume.
+Template: `unraid/beanconqueror.xml`.
 
-## Runtime env templating
+Install a MariaDB container on the same server and set the Beanconqueror DB variables to match it:
 
-At container start, `/docker-entrypoint.d/40-envsubst-on-template.sh` generates:
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+
+The Beanconqueror container does not need an app-data volume for normal use. Persistent data lives in MariaDB.
+
+## Runtime Env Templating
+
+At container start, `docker/entrypoint/start.sh` generates:
 
 - template: `/tmp/env.template.js`
 - output: `/usr/share/nginx/html/assets/env.js`
 
-Supported variables:
+Supported browser config:
 
-- `API_BASE_URL` (defaults to an empty string)
-- `FEATURE_FLAGS_JSON` (defaults to `{}` and must be valid JSON, e.g. `{"featureA":true}`)
+- `API_BASE_URL` defaults to `/api`
+- `FEATURE_FLAGS_JSON` defaults to `{}`
 
-Compose example:
+Supported API config:
 
-```yaml
-environment:
-  API_BASE_URL: "https://api.example.com"
-  FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `GAGGIUINO_BASE_URL`
+- `GAGGIUINO_TIMEOUT_MS`
+
+The generated `assets/env.js` is loaded by `src/index.html` before app bootstrap.
+
+## API Endpoints
+
+Storage:
+
+- `GET /api/storage`
+- `GET /api/storage/:key`
+- `PUT /api/storage/:key`
+- `POST /api/storage/import`
+- `DELETE /api/storage`
+
+Gaggiuino:
+
+- `GET /api/gaggiuino/status`
+- `GET /api/gaggiuino/shots/latest`
+- `GET /api/gaggiuino/shots/:id`
+- `GET /api/gaggiuino/shots`
+- `POST /api/gaggiuino/shots/import-latest`
+
+## Gaggiuino Notes
+
+Default:
+
+```text
+GAGGIUINO_BASE_URL=http://gaggiuino.local
 ```
 
-The generated `assets/env.js` is loaded by `src/index.html` before app bootstrap. Read values from `window.__beanconquerorConfig` when adding runtime-configurable web behavior.
+If Docker cannot resolve mDNS, use a fixed LAN IP:
 
-## Data persistence expectations
+```text
+GAGGIUINO_BASE_URL=http://192.168.1.50
+```
 
-### Container filesystem / volumes
+Set a DHCP reservation for the Gaggiuino machine if using a LAN IP.
 
-This static web container does **not** require a persistent volume for normal operation. It serves immutable frontend files from the image layer.
+## Persistence Expectations
 
-A volume is only optional if you deliberately want to:
+Beanconqueror user data is stored in MariaDB through the bundled API. Browser storage may still be used by app code as cache or migration staging, but it is not the intended source of truth when `API_BASE_URL=/api`.
 
-- override static files at runtime,
-- or collect custom Nginx logs outside container lifecycle.
-
-### User data in browsers
-
-Beanconqueror user data for web users is stored in the **browser storage** (e.g., IndexedDB/LocalStorage depending on app behavior), not inside the web container filesystem.
-
-That means:
-
-- Recreating or upgrading the container does not by itself erase browser-stored user data.
-- Clearing browser site data or using a different browser/device does affect availability of that user data.
+Back up the MariaDB database or its volume as part of normal Unraid backup policy.

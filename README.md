@@ -4,24 +4,17 @@
 
 Beanconqueror is a coffee tracking app for beans, brews, grinders, preparation methods, water recipes, roasting, tasting notes, and brew history.
 
-This fork packages Beanconqueror as a browser-based web app for Docker and Unraid. The Android and iOS project files are intentionally not part of this container-focused repository.
+This fork packages Beanconqueror as a browser-based Docker and Unraid app with server-side MariaDB persistence and local Gaggiuino API imports.
 
 ## What This Build Provides
 
 - Angular/Ionic web app served by Nginx.
-- Docker image build from `Dockerfile`.
-- Docker Compose example in `docker-compose.yml`.
+- Bundled Node API under `/api`.
+- MariaDB-backed app storage.
+- Docker Compose example with MariaDB.
 - Unraid Community Applications template in `unraid/beanconqueror.xml`.
 - Runtime config injection through `/assets/env.js`.
-- Local browser storage using IndexedDB with LocalStorage fallback.
-
-## Run With Docker
-
-```bash
-docker run --rm -p 8080:80 ghcr.io/salthepal/beanconqueror:latest
-```
-
-Open `http://localhost:8080`.
+- Local Gaggiuino API proxy/import support.
 
 ## Run With Docker Compose
 
@@ -31,6 +24,26 @@ docker compose up --build
 
 Open `http://localhost:8080`.
 
+Compose starts:
+
+- `beanconqueror`: Nginx, Angular app, and Node API
+- `mariadb`: persistent MariaDB database
+- `mariadb-data`: database volume
+
+## Run Published Image
+
+```bash
+docker run --rm -p 8080:80 \
+  -e DB_HOST=mariadb \
+  -e DB_NAME=beanconqueror \
+  -e DB_USER=beanconqueror \
+  -e DB_PASSWORD=change-me \
+  -e API_BASE_URL=/api \
+  ghcr.io/salthepal/beanconqueror:latest
+```
+
+This command expects an existing MariaDB-compatible database reachable as `mariadb`.
+
 ## Unraid
 
 Use the template at:
@@ -39,13 +52,37 @@ Use the template at:
 unraid/beanconqueror.xml
 ```
 
-Default settings:
+Install or configure a MariaDB container on the same Unraid server, then set:
+
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+
+Default web settings:
 
 - container port: `80`
 - host port: `8080`
-- persistent volume: none required
+- API base URL: `/api`
 
-Beanconqueror data is stored in browser storage, not inside the container filesystem. Recreating the container does not delete browser-stored data, but clearing site data or switching browsers/devices affects access to it.
+Beanconqueror data is stored in MariaDB. The Beanconqueror container itself is stateless; database persistence belongs to the MariaDB container/volume.
+
+## Gaggiuino
+
+Set `GAGGIUINO_BASE_URL` to the machine API URL:
+
+```text
+http://gaggiuino.local
+```
+
+If Docker cannot resolve mDNS, use a fixed LAN IP instead:
+
+```text
+http://192.168.1.50
+```
+
+The backend talks to Gaggiuino from the server side, so browser CORS and local network restrictions do not block shot imports.
 
 ## Runtime Configuration
 
@@ -53,16 +90,11 @@ The container entrypoint generates `/usr/share/nginx/html/assets/env.js` from `/
 
 Supported variables:
 
-- `API_BASE_URL`: optional API base URL.
+- `API_BASE_URL`: browser API base URL, default `/api`.
 - `FEATURE_FLAGS_JSON`: optional JSON object, default `{}`.
-
-Example:
-
-```yaml
-environment:
-  API_BASE_URL: 'https://api.example.com'
-  FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
-```
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: MariaDB connection.
+- `GAGGIUINO_BASE_URL`: local Gaggiuino API URL.
+- `GAGGIUINO_TIMEOUT_MS`: Gaggiuino request timeout.
 
 ## Browser Runtime Notes
 
@@ -76,7 +108,7 @@ Unavailable or limited:
 - native camera adapter
 - native file URI access such as `file://`, `content://`, or `capacitor://`
 
-Browser-supported camera, import, export, and storage behavior can still work where supported by the browser and app code.
+Mobile exports can be imported in browser mode. Native file URI references from mobile backups may not resolve in browsers; reattach affected files manually.
 
 ## Development
 
@@ -91,13 +123,21 @@ Install dependencies:
 pnpm install
 ```
 
-Start dev server:
+Start frontend dev server:
 
 ```bash
 pnpm start
 ```
 
-Build:
+Run API locally:
+
+```bash
+cd api
+npm install
+npm start
+```
+
+Build frontend:
 
 ```bash
 pnpm run build
@@ -109,12 +149,6 @@ Test:
 pnpm test
 ```
 
-Lint:
-
-```bash
-pnpm run lint
-```
-
 ## Container Details
 
 More deployment notes live in [docs/container-deployment.md](docs/container-deployment.md).
@@ -124,12 +158,6 @@ Image publishing is handled by `.github/workflows/container-image.yml`:
 - pull requests build the image without publishing
 - branch/tag/manual runs publish to GitHub Container Registry
 - `latest` is only emitted for the repository default branch
-
-## Import And Persistence
-
-Mobile exports can be imported in browser mode. Native file URI references from mobile backups may not resolve in browsers; reattach affected files manually.
-
-Normal app data remains local to the browser profile. Back up data through app export flows before clearing browser storage or moving devices.
 
 ## License
 

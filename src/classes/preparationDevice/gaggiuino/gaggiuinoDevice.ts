@@ -84,6 +84,12 @@ export class GaggiuinoDevice extends PreparationDevice {
 
   public async deviceConnected(): Promise<boolean> {
     try {
+      const apiBaseUrl = this.getServerApiBaseUrl();
+      if (apiBaseUrl) {
+        const response = await fetch(`${apiBaseUrl}/gaggiuino/status`);
+        return response.status === 200;
+      }
+
       const options = {
         url: this.connectionURL + '/api/system/status',
         connectTimeout: 5000,
@@ -101,6 +107,18 @@ export class GaggiuinoDevice extends PreparationDevice {
 
   public async getShotData(_id: number) {
     try {
+      const apiBaseUrl = this.getServerApiBaseUrl();
+      if (apiBaseUrl) {
+        const response = await fetch(`${apiBaseUrl}/gaggiuino/shots/${_id}`);
+        if (response.status === 404) {
+          return null;
+        }
+        if (!response.ok) {
+          throw new Error(`Gaggiuino proxy request failed: ${response.status}`);
+        }
+        return await response.json();
+      }
+
       const options = {
         url: this.connectionURL + '/api/shots/' + _id,
         connectTimeout: 5000,
@@ -123,6 +141,16 @@ export class GaggiuinoDevice extends PreparationDevice {
   }
   public async getLastShotId(): Promise<number> {
     try {
+      const apiBaseUrl = this.getServerApiBaseUrl();
+      if (apiBaseUrl) {
+        const response = await fetch(`${apiBaseUrl}/gaggiuino/shots/latest`);
+        if (!response.ok) {
+          throw new Error(`Gaggiuino proxy request failed: ${response.status}`);
+        }
+        const responseJSON = await response.json();
+        return Number(responseJSON.lastShotId);
+      }
+
       const options = {
         url: this.connectionURL + '/api/shots/latest',
         connectTimeout: 5000,
@@ -142,6 +170,21 @@ export class GaggiuinoDevice extends PreparationDevice {
 
   private logError(...args: any[]) {
     UILog.getInstance().error('GaggiuinoDevice:', ...args);
+  }
+
+  private getServerApiBaseUrl(): string | null {
+    const config = (window as any).__beanconquerorConfig;
+    const rawBaseUrl = config?.apiBaseUrl;
+
+    if (
+      typeof rawBaseUrl !== 'string' ||
+      rawBaseUrl.trim() === '' ||
+      rawBaseUrl.includes('${')
+    ) {
+      return null;
+    }
+
+    return rawBaseUrl.trim().replace(/\/+$/, '');
   }
 }
 
