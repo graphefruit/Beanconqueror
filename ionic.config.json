@@ -1,7 +1,4 @@
 {
   "name": "beanconqueror",
-  "integrations": {
-    "capacitor": {}
-  },
   "type": "angular"
 }
