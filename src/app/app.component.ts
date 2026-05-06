@@ -77,11 +77,9 @@ import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytic
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
-import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
-import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
 import { UIAnalytics } from '../services/uiAnalytics';
@@ -164,8 +162,6 @@ export class AppComponent implements AfterViewInit {
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiStorage = inject(UIStorage);
-  private readonly androidPlatformService = inject(AndroidPlatformService);
-  private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
 
   public toggleAbout: boolean = false;
@@ -307,7 +303,6 @@ export class AppComponent implements AfterViewInit {
   public uiRoastingSectionVisible: boolean = false;
 
   constructor() {
-    // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
       const _db = window.indexedDB;

@@ -42,7 +42,6 @@ import {
   refreshOutline,
 } from 'ionicons/icons';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
@@ -95,6 +94,10 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import {
+  BrowserCapabilities,
+  BrowserCapabilityService,
+} from '../../services/browser-capability.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
@@ -125,10 +128,6 @@ import { UIUpdate } from '../../services/uiUpdate';
 import { UiVersionStorage } from '../../services/uiVersionStorage';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
-import {
-  BrowserCapabilities,
-  BrowserCapabilityService,
-} from '../../services/browser-capability.service';
 
 @Component({
   selector: 'settings',
@@ -182,7 +181,6 @@ export class SettingsPage {
   private readonly translate = inject(TranslateService);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly uiAnalytics = inject(UIAnalytics);
-  private readonly androidPermissions = inject(AndroidPermissions);
   private readonly uiUpdate = inject(UIUpdate);
   private readonly uiVersionStorage = inject(UiVersionStorage);
   private readonly uiExcel = inject(UIExcel);

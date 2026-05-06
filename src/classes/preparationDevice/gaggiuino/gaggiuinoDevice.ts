@@ -84,6 +84,17 @@ export class GaggiuinoDevice extends PreparationDevice {
 
   public async deviceConnected(): Promise<boolean> {
     try {
+      const apiBaseUrl = this.getServerApiBaseUrl();
+      if (apiBaseUrl) {
+        const response = await this.fetchServerApi(
+          `${apiBaseUrl}/gaggiuino/status`,
+        );
+        if (!response.ok) {
+          throw new Error(`Gaggiuino proxy request failed: ${response.status}`);
+        }
+        return true;
+      }
+
       const options = {
         url: this.connectionURL + '/api/system/status',
         connectTimeout: 5000,
@@ -101,6 +112,20 @@ export class GaggiuinoDevice extends PreparationDevice {
 
   public async getShotData(_id: number) {
     try {
+      const apiBaseUrl = this.getServerApiBaseUrl();
+      if (apiBaseUrl) {
+        const response = await this.fetchServerApi(
+          `${apiBaseUrl}/gaggiuino/shots/${_id}`,
+        );
+        if (response.status === 404) {
+          return null;
+        }
+        if (!response.ok) {
+          throw new Error(`Gaggiuino proxy request failed: ${response.status}`);
+        }
+        return await response.json();
+      }
+
       const options = {
         url: this.connectionURL + '/api/shots/' + _id,
         connectTimeout: 5000,
@@ -123,6 +148,18 @@ export class GaggiuinoDevice extends PreparationDevice {
   }
   public async getLastShotId(): Promise<number> {
     try {
+      const apiBaseUrl = this.getServerApiBaseUrl();
+      if (apiBaseUrl) {
+        const response = await this.fetchServerApi(
+          `${apiBaseUrl}/gaggiuino/shots/latest`,
+        );
+        if (!response.ok) {
+          throw new Error(`Gaggiuino proxy request failed: ${response.status}`);
+        }
+        const responseJSON = await response.json();
+        return Number(responseJSON.lastShotId);
+      }
+
       const options = {
         url: this.connectionURL + '/api/shots/latest',
         connectTimeout: 5000,
@@ -142,6 +179,49 @@ export class GaggiuinoDevice extends PreparationDevice {
 
   private logError(...args: any[]) {
     UILog.getInstance().error('GaggiuinoDevice:', ...args);
+  }
+
+  private getServerApiBaseUrl(): string | null {
+    const config = (window as any).__beanconquerorConfig;
+    const rawBaseUrl = config?.apiBaseUrl;
+
+    if (
+      typeof rawBaseUrl !== 'string' ||
+      rawBaseUrl.trim() === '' ||
+      rawBaseUrl.includes('${')
+    ) {
+      return null;
+    }
+
+    return rawBaseUrl.trim().replace(/\/+$/, '');
+  }
+
+  private getServerApiAuthToken(): string | null {
+    const config = (window as any).__beanconquerorConfig;
+    const rawToken = config?.apiAuthToken;
+
+    if (
+      typeof rawToken !== 'string' ||
+      rawToken.trim() === '' ||
+      rawToken.includes('${')
+    ) {
+      return null;
+    }
+
+    return rawToken.trim();
+  }
+
+  private async fetchServerApi(url: string): Promise<Response> {
+    const token = this.getServerApiAuthToken();
+    const headers: Record<string, string> = {};
+
+    if (token) {
+      headers['X-Beanconqueror-Api-Token'] = token;
+    }
+
+    return await fetch(url, {
+      headers: Object.keys(headers).length > 0 ? headers : undefined,
+    });
   }
 }
 

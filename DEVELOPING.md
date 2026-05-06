@@ -1,156 +1,74 @@
 # Developer Instructions
 
-This file contains instructions on how to perform Beanconqueror development work.
-The instructions given are very brief, but should show you how to get started.
-
-Make yourself familiar with our tech stack, which uses [Ionic](https://ionicframework.com/), [Angular](https://angular.dev/), and [Capacitor](https://capacitorjs.com/).
+Beanconqueror is maintained here as a container-focused Angular/Ionic web app with a bundled Node API and MariaDB persistence.
 
 ## Prerequisites
 
-You need to have the following prerequisites
-
 - Git
-- Node.js (tested with version 22)
-- `pnpm` (tested with version 10.33.0)
-- Android Studio (if you want to work on the Android App)
-- Xcode (if you want to work on the iOS App)
+- Node.js `>=22`
+- pnpm `>=10.26.0`
+- Docker or Docker Compose for full-stack local validation
 
-## Installing Dependencies
-
-After cloning the repository, you need to install `pnpm` dependencies:
+## Install
 
 ```shell
 pnpm install
+cd api
+npm install
 ```
 
-## Running tests
-
-Run unit tests through pnpm. These are run automatically in CI.
-
-```shell
-pnpm test
-```
-
-## Building and Running Beanconqueror
-
-You can perform most development work in a browser instead of running on Android or iOS.
-This has the advantage that builds and reloads are generally much faster than on the native platforms.
-Please note, however, that not all functionality is available in the browser.
-For features such as QR code scanning or Bluetooth devices you will need develop on the mobile platforms.
-
-### Browser
-
-You can build the app in live reload mode using the following command:
+## Frontend Development
 
 ```shell
 pnpm start
 ```
 
-After that, open http://localhost:4200/ in your browser.
-It is recommended to use the browser developer tools and select a phone preset to have a sensible layout to work with.
+Open `http://localhost:4200`.
 
-### Mobile Apps
+By default the frontend can still fall back to browser storage. For server-backed development, provide a runtime config that points `API_BASE_URL` to a running API.
 
-For mobile devices you can use multiple workflows.
-In essence, all of them need to perform the following steps:
+## API Development
 
-- Build the web application bundle
-- Copy the web application bundle to the native platform and synchronize dependencies (if required)
-- Build the native application
-- Deploy it to a test device (or emulator)
+The API expects MariaDB connection variables:
 
-#### Standalone App Workflow (Without Live Reload)
+```shell
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=beanconqueror
+DB_USER=beanconqueror
+DB_PASSWORD=beanconqueror
+GAGGIUINO_BASE_URL=http://gaggiuino.local
+```
 
-The web application bundle can be easily built using the following command:
+Run:
+
+```shell
+cd api
+npm start
+```
+
+## Full Container Stack
+
+```shell
+docker compose up --build
+```
+
+Open `http://localhost:8080`.
+
+## Checks
 
 ```shell
 pnpm run build
+pnpm test
+pnpm run lint
 ```
 
-Make sure you are not running a live reload server in another terminal window to prevent conflicts.
-
-The built bundle can be synchronized to a mobile platform project using the following command:
+API syntax check:
 
 ```shell
-pnpm run -- cap sync <platform> # where <platform> is either 'android' or 'ios'
+node --check api/src/server.js
 ```
 
-After that, you can use the respective mobile IDE (Android Studio or Xcode) to build and deploy the app.
-To run the respective IDE, use the following command:
+## Notes
 
-```shell
-pnpm run -- cap open <platform> # where <platform> is either 'android' or 'ios'
-```
-
-If you want to, you can also run the following command to synchronize, build and directly deploy and run the app:
-
-```shell
-pnpm run -- cap run <platform> # where <platform> is either 'android' or 'ios'
-```
-
-Please note that the `cap` commands do not build the web bundle.
-If you want an all-in-one command, use this: (The example is for a typical `bash`-like shell)
-
-```shell
-pnpm build && pnpm run -- cap run android
-```
-
-#### Live Reload in Native Apps
-
-If you want to use live reload for your native app, it's actually a little easier to use the `ionic` CLI.
-However, you need to understand a small quirk about our Capacitor configuration: We currently need to supply the mobile platform using an environment variable.
-To do that, run the following command: (The example is for a typical `bash`-like shell)
-
-> [!WARNING]
-> This will open the development server on your external network interface.
-> Proceed with caution, especially if you are currently on an untrusted network!
-
-```shell
-# <platform> is either 'android' or 'ios'.
-CAPACITOR_PLATFORM_OVERRIDE=<platform> pnpm run -- ionic capacitor run <platform> --livereload --external
-```
-
-## Capacitor Configuration Hack
-
-To support existing installations, we need to use very specific URL schemes and hostnames in our native apps.
-To make matters worse, these differ between Android and iOS.
-In order to make this happen, we need to employ a terrible hack in our Capacitor configuration, at least until https://github.com/ionic-team/capacitor/issues/3976 is resolved.
-
-For you as a developer, this means that almost all commands involving the `capacitor` CLI (either directly or indirectly, for example through the `ionic` CLI) need to supply the current mobile platform as an environment variable.
-That variable is called `CAPACITOR_PLATFORM_OVERRIDE` and valid values are `android` or `ios`.
-
-Keep this in mind if `capacitor` or `ionic` CLI commands fail in mysterious ways.
-
-## Create a Production build
-
-You can create a production build of the web application (which will created more optimized and minified code) using the following command:
-
-```shell
-pnpm run -- build --configuration 'production'
-```
-
-You then need to sync both mobile platforms again:
-
-```shell
-pnpm run cap sync android && pnpm cap sync ios
-```
-
-After this, you can use the native IDEs to create a production-ready build of the application.
-
-Normal debug builds can be created using the following command:
-
-```shell
-pnpm run -- build  && pnpm run capsync
-```
-
-Normal production builds can be created using the following command:
-
-```shell
-pnpm run -- build --configuration 'production' && pnpm run capsync
-```
-
-Generate from the bean.proto:
-
-```shell
- pnpm run generate_proto
-```
+Android and iOS project files are intentionally not part of this repository. Avoid reintroducing native mobile build artifacts, store screenshots, Capacitor platform directories, or mobile-only documentation.

@@ -19,14 +19,13 @@ import {
 import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
-import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
 import { providePlatformPorts } from './app/platform/providers/platform.providers';
+import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
 import { environment } from './environments/environment';
 
 function getStorageDriverOrder(): string[] {
@@ -47,7 +46,6 @@ bootstrapApplication(AppComponent, {
     ),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: ErrorHandler, useClass: BeanconquerorErrorHandler },
-    AndroidPermissions,
     provideHttpClient(withInterceptorsFromDi()),
     provideTranslateService({
       loader: provideTranslateHttpLoader({
