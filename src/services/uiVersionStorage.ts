@@ -97,6 +97,17 @@ export class UiVersionStorage extends StorageClass {
   }
 
   public async saveVersion(version: IVersion) {
-    await super.update(version);
+    const entries: Array<any> = this.getAllEntries();
+    const storedVersion = entries.find(
+      (entry) => entry?.config?.uuid === version?.config?.uuid,
+    );
+
+    if (storedVersion) {
+      await super.update(version);
+    } else {
+      const data: any = await super.add(version);
+      this.version = new Version();
+      this.version.initializeByObject(data);
+    }
   }
 }
