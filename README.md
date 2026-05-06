@@ -15,6 +15,7 @@ This fork packages Beanconqueror as a browser-based Docker and Unraid app with s
 - Unraid Community Applications template in `unraid/beanconqueror.xml`.
 - Runtime config injection through `/assets/env.js`.
 - Local Gaggiuino API proxy/import support.
+- API token protection for storage and Gaggiuino endpoints.
 
 ## Run With Docker Compose
 
@@ -91,6 +92,8 @@ The container entrypoint generates `/usr/share/nginx/html/assets/env.js` from `/
 Supported variables:
 
 - `API_BASE_URL`: browser API base URL, default `/api`.
+- `API_AUTH_TOKEN`: API token for storage and Gaggiuino endpoints. If blank, the container generates one at startup and injects it into `/assets/env.js`.
+- `CORS_ORIGINS`: comma-separated external browser origins allowed to call the API. Default is empty, which allows same-origin app use only.
 - `FEATURE_FLAGS_JSON`: optional JSON object, default `{}`.
 - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: MariaDB connection.
 - `GAGGIUINO_BASE_URL`: local Gaggiuino API URL.
@@ -99,6 +102,8 @@ Supported variables:
 ## Browser Runtime Notes
 
 This build runs in a standard browser. Native mobile features are not available.
+
+When `API_BASE_URL=/api`, existing browser storage is migrated into MariaDB once if server storage is empty. After migration, MariaDB is the source of truth.
 
 Unavailable or limited:
 

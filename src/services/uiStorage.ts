@@ -17,9 +17,11 @@ export class UIStorage {
 
   private _storage: Storage | null = null;
   private apiBaseUrl: string | null = null;
+  private apiAuthToken: string | null = null;
 
   public async init() {
     this.apiBaseUrl = this.getApiBaseUrl();
+    this.apiAuthToken = this.getApiAuthToken();
     if (this.apiBaseUrl) {
       this.uiLog.log(
         `UIStorage - Server API storage enabled: ${this.apiBaseUrl}`,
@@ -33,6 +35,10 @@ export class UIStorage {
     this._storage = await this.storage.create();
     const backend = this._storage.driver;
     this.uiLog.log(`UIStorage - Active backend: ${backend}`);
+
+    if (this.apiBaseUrl) {
+      await this.migrateBrowserStorageToServer();
+    }
   }
 
   public getStorage() {
@@ -83,7 +89,7 @@ export class UIStorage {
               _key +
               ' we stop to try getting data now 20 attempts are enough - show error',
           );
-          await this.displayIOSIndexedDBIssue();
+          await this.displayStorageIssue(ex);
           throw ex;
         }
       }
@@ -98,6 +104,23 @@ export class UIStorage {
       true,
     );
   }
+
+  private async displayStorageIssue(error?: unknown) {
+    if (!this.apiBaseUrl) {
+      await this.displayIOSIndexedDBIssue();
+      return;
+    }
+
+    const { UIAlert } = await import('./uiAlert');
+    await UIAlert.getInstance()?.showMessage(
+      'Beanconqueror cannot reach the server storage API. Check the container, MariaDB connection, and reverse proxy logs, then reload the app.',
+      'Server storage unavailable',
+      undefined,
+      false,
+    );
+    this.uiLog.error('UIStorage - Server storage unavailable', error);
+  }
+
   private async internalSet(_key: string, _val: any): Promise<boolean> {
     if (this.apiBaseUrl) {
       await this.request(`/storage/${encodeURIComponent(_key)}`, {
@@ -174,7 +197,10 @@ export class UIStorage {
               _key +
               ' we stop to try getting data now 20 attempts are enough - show error',
           );
-          await this.displayIOSIndexedDBIssue();
+          await this.displayStorageIssue(ex);
+          if (this.apiBaseUrl) {
+            throw ex;
+          }
           return null;
         }
       }
@@ -187,9 +213,7 @@ export class UIStorage {
     if (this.apiBaseUrl) {
       exportObj = await this.request('/storage', { method: 'GET' });
     } else {
-      await this._storage.forEach((_value, _key, _index) => {
-        exportObj[_key] = _value;
-      });
+      exportObj = await this.exportBrowserStorage();
     }
 
     // #520 - Remove username and password before export.
@@ -257,10 +281,12 @@ export class UIStorage {
     };
     try {
       if (this.apiBaseUrl) {
-        for (const key of Object.keys(hasDataObj)) {
-          const value = await this.get(key);
+        const keys = Object.keys(hasDataObj);
+        const values = await Promise.all(keys.map((key) => this.get(key)));
+        keys.forEach((key, index) => {
+          const value = values[index];
           hasDataObj[key] = value?.length > 0 ? value.length : 0;
-        }
+        });
 
         if (
           hasDataObj.BREWS > 0 &&
@@ -376,6 +402,50 @@ export class UIStorage {
     return await this.export();
   }
 
+  private async exportBrowserStorage(): Promise<any> {
+    const exportObj = {};
+    await this._storage.forEach((_value, _key, _index) => {
+      exportObj[_key] = _value;
+    });
+    return exportObj;
+  }
+
+  private async migrateBrowserStorageToServer(): Promise<void> {
+    try {
+      const serverVersion = await this.request('/storage/VERSION', {
+        method: 'GET',
+        allowNotFound: true,
+      });
+
+      if (serverVersion !== null) {
+        return;
+      }
+
+      const browserData = await this.exportBrowserStorage();
+      const browserVersion = browserData?.VERSION;
+      const browserHasData =
+        browserVersion?.length > 0 &&
+        browserVersion[0]?.updatedDataVersions?.length > 0;
+
+      if (!browserHasData) {
+        return;
+      }
+
+      await this.request('/storage/import', {
+        method: 'POST',
+        body: JSON.stringify(browserData),
+      });
+      this.uiLog.log(
+        'UIStorage - Migrated existing browser storage into server storage',
+      );
+    } catch (ex) {
+      this.uiLog.error(
+        'UIStorage - Browser-to-server storage migration skipped',
+        ex,
+      );
+    }
+  }
+
   private async __importBackup(_data: any): Promise<void> {
     if (this.apiBaseUrl) {
       await this.request('/storage/import', {
@@ -413,6 +483,21 @@ export class UIStorage {
     return rawBaseUrl.trim().replace(/\/+$/, '');
   }
 
+  private getApiAuthToken(): string | null {
+    const config = (window as any).__beanconquerorConfig;
+    const rawToken = config?.apiAuthToken;
+
+    if (
+      typeof rawToken !== 'string' ||
+      rawToken.trim() === '' ||
+      rawToken.includes('${')
+    ) {
+      return null;
+    }
+
+    return rawToken.trim();
+  }
+
   private async request(
     path: string,
     options: {
@@ -421,11 +506,17 @@ export class UIStorage {
       allowNotFound?: boolean;
     },
   ): Promise<any> {
+    const headers: Record<string, string> = {};
+    if (options.body) {
+      headers['Content-Type'] = 'application/json';
+    }
+    if (this.apiAuthToken) {
+      headers['X-Beanconqueror-Api-Token'] = this.apiAuthToken;
+    }
+
     const response = await fetch(`${this.apiBaseUrl}${path}`, {
       method: options.method,
-      headers: options.body
-        ? { 'Content-Type': 'application/json' }
-        : undefined,
+      headers: Object.keys(headers).length > 0 ? headers : undefined,
       body: options.body,
     });
 

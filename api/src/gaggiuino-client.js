@@ -124,10 +124,14 @@ async function importLatestShots(count) {
     id >= Math.max(1, latestShotId - limit + 1);
     id--
   ) {
-    const shot = await getShot(id);
-    if (shot) {
-      await saveShot(id, shot);
-      imported.push({ id, rawData: shot });
+    try {
+      const shot = await getShot(id);
+      if (shot) {
+        await saveShot(id, shot);
+        imported.push({ id, rawData: shot });
+      }
+    } catch (error) {
+      console.error(`Failed to import Gaggiuino shot ${id}:`, error);
     }
   }
 

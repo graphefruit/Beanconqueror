@@ -86,8 +86,13 @@ export class GaggiuinoDevice extends PreparationDevice {
     try {
       const apiBaseUrl = this.getServerApiBaseUrl();
       if (apiBaseUrl) {
-        const response = await fetch(`${apiBaseUrl}/gaggiuino/status`);
-        return response.status === 200;
+        const response = await this.fetchServerApi(
+          `${apiBaseUrl}/gaggiuino/status`,
+        );
+        if (!response.ok) {
+          throw new Error(`Gaggiuino proxy request failed: ${response.status}`);
+        }
+        return true;
       }
 
       const options = {
@@ -109,7 +114,9 @@ export class GaggiuinoDevice extends PreparationDevice {
     try {
       const apiBaseUrl = this.getServerApiBaseUrl();
       if (apiBaseUrl) {
-        const response = await fetch(`${apiBaseUrl}/gaggiuino/shots/${_id}`);
+        const response = await this.fetchServerApi(
+          `${apiBaseUrl}/gaggiuino/shots/${_id}`,
+        );
         if (response.status === 404) {
           return null;
         }
@@ -143,7 +150,9 @@ export class GaggiuinoDevice extends PreparationDevice {
     try {
       const apiBaseUrl = this.getServerApiBaseUrl();
       if (apiBaseUrl) {
-        const response = await fetch(`${apiBaseUrl}/gaggiuino/shots/latest`);
+        const response = await this.fetchServerApi(
+          `${apiBaseUrl}/gaggiuino/shots/latest`,
+        );
         if (!response.ok) {
           throw new Error(`Gaggiuino proxy request failed: ${response.status}`);
         }
@@ -185,6 +194,34 @@ export class GaggiuinoDevice extends PreparationDevice {
     }
 
     return rawBaseUrl.trim().replace(/\/+$/, '');
+  }
+
+  private getServerApiAuthToken(): string | null {
+    const config = (window as any).__beanconquerorConfig;
+    const rawToken = config?.apiAuthToken;
+
+    if (
+      typeof rawToken !== 'string' ||
+      rawToken.trim() === '' ||
+      rawToken.includes('${')
+    ) {
+      return null;
+    }
+
+    return rawToken.trim();
+  }
+
+  private async fetchServerApi(url: string): Promise<Response> {
+    const token = this.getServerApiAuthToken();
+    const headers: Record<string, string> = {};
+
+    if (token) {
+      headers['X-Beanconqueror-Api-Token'] = token;
+    }
+
+    return await fetch(url, {
+      headers: Object.keys(headers).length > 0 ? headers : undefined,
+    });
   }
 }
 

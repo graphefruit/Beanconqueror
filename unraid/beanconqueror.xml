@@ -21,6 +21,8 @@
   <Requires>MariaDB or compatible MySQL database reachable from this container.</Requires>
   <Config Name="WebUI" Target="80" Default="8080" Mode="tcp" Description="Container web interface port." Type="Port" Display="always" Required="true" Mask="false">8080</Config>
   <Config Name="API_BASE_URL" Target="API_BASE_URL" Default="/api" Mode="" Description="Browser API base URL. Keep /api when using the bundled API behind Nginx." Type="Variable" Display="advanced" Required="true" Mask="false">/api</Config>
+  <Config Name="API_AUTH_TOKEN" Target="API_AUTH_TOKEN" Default="" Mode="" Description="Optional API token. Leave blank to generate one at container startup." Type="Variable" Display="advanced" Required="false" Mask="true"/>
+  <Config Name="CORS_ORIGINS" Target="CORS_ORIGINS" Default="" Mode="" Description="Comma-separated external origins allowed to call the API. Leave blank for same-origin app use." Type="Variable" Display="advanced" Required="false" Mask="false"/>
   <Config Name="DB_HOST" Target="DB_HOST" Default="mariadb" Mode="" Description="MariaDB host/container name." Type="Variable" Display="always" Required="true" Mask="false">mariadb</Config>
   <Config Name="DB_PORT" Target="DB_PORT" Default="3306" Mode="" Description="MariaDB port." Type="Variable" Display="advanced" Required="true" Mask="false">3306</Config>
   <Config Name="DB_NAME" Target="DB_NAME" Default="beanconqueror" Mode="" Description="MariaDB database name." Type="Variable" Display="always" Required="true" Mask="false">beanconqueror</Config>

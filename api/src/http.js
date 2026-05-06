@@ -14,24 +14,26 @@ function sendNoContent(response) {
 
 function readJson(request) {
   return new Promise((resolve, reject) => {
-    let body = '';
+    const chunks = [];
+    let length = 0;
 
     request.on('data', (chunk) => {
-      body += chunk;
-      if (body.length > 20 * 1024 * 1024) {
+      chunks.push(chunk);
+      length += chunk.length;
+      if (length > 20 * 1024 * 1024) {
         reject(new Error('Request body too large'));
         request.destroy();
       }
     });
 
     request.on('end', () => {
-      if (!body) {
+      if (length === 0) {
         resolve({});
         return;
       }
 
       try {
-        resolve(JSON.parse(body));
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
       } catch (error) {
         reject(error);
       }
@@ -43,10 +45,7 @@ function readJson(request) {
 
 function applyCors(request, response, allowedOrigins) {
   const origin = request.headers.origin;
-  if (
-    origin &&
-    (allowedOrigins.length === 0 || allowedOrigins.includes(origin))
-  ) {
+  if (origin && allowedOrigins.includes(origin)) {
     response.setHeader('Access-Control-Allow-Origin', origin);
     response.setHeader('Vary', 'Origin');
   }
@@ -55,7 +54,10 @@ function applyCors(request, response, allowedOrigins) {
     'Access-Control-Allow-Methods',
     'GET,POST,PUT,DELETE,OPTIONS',
   );
-  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  response.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, X-Beanconqueror-Api-Token',
+  );
 }
 
 module.exports = { applyCors, readJson, sendJson, sendNoContent };

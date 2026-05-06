@@ -16,6 +16,7 @@ function readCsv(name) {
 
 const config = {
   port: readInteger('API_PORT', 3000),
+  apiAuthToken: process.env.API_AUTH_TOKEN || '',
   corsOrigins: readCsv('CORS_ORIGINS'),
   db: {
     host: process.env.DB_HOST || 'mariadb',

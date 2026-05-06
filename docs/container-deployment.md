@@ -8,6 +8,7 @@
 - MariaDB-backed app storage.
 - Local Gaggiuino API proxy/import endpoints.
 - Runtime config templating with `envsubst` into `assets/env.js`.
+- Token-protected API calls from the browser app to the bundled API.
 - Example `docker-compose.yml` binding host port `8080` to container port `80`.
 
 ## Build And Run
@@ -58,6 +59,7 @@ At container start, `docker/entrypoint/start.sh` generates:
 Supported browser config:
 
 - `API_BASE_URL` defaults to `/api`
+- `API_AUTH_TOKEN` is injected into browser requests. If omitted, startup generates one.
 - `FEATURE_FLAGS_JSON` defaults to `{}`
 
 Supported API config:
@@ -67,10 +69,13 @@ Supported API config:
 - `DB_NAME`
 - `DB_USER`
 - `DB_PASSWORD`
+- `CORS_ORIGINS`
 - `GAGGIUINO_BASE_URL`
 - `GAGGIUINO_TIMEOUT_MS`
 
 The generated `assets/env.js` is loaded by `src/index.html` before app bootstrap.
+
+`CORS_ORIGINS` is empty by default. Leave it empty for the bundled same-origin app. Set it only when a separate trusted origin must call the API.
 
 ## API Endpoints
 
@@ -89,6 +94,8 @@ Gaggiuino:
 - `GET /api/gaggiuino/shots/:id`
 - `GET /api/gaggiuino/shots`
 - `POST /api/gaggiuino/shots/import-latest`
+
+All storage and Gaggiuino API endpoints require `X-Beanconqueror-Api-Token` or `Authorization: Bearer <token>` when `API_AUTH_TOKEN` is set. The bundled container sets or generates this token before rendering `assets/env.js`.
 
 ## Gaggiuino Notes
 
@@ -109,5 +116,7 @@ Set a DHCP reservation for the Gaggiuino machine if using a LAN IP.
 ## Persistence Expectations
 
 Beanconqueror user data is stored in MariaDB through the bundled API. Browser storage may still be used by app code as cache or migration staging, but it is not the intended source of truth when `API_BASE_URL=/api`.
+
+If a user upgrades from browser-only storage, startup checks whether server storage is empty. When empty and existing browser data is present, that browser data is imported into MariaDB once.
 
 Back up the MariaDB database or its volume as part of normal Unraid backup policy.

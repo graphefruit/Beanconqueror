@@ -19,7 +19,7 @@ FROM node:22-alpine AS runtime
 
 RUN apk add --no-cache gettext nginx
 
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/default.conf /etc/nginx/http.d/default.conf
 COPY docker/entrypoint/start.sh /usr/local/bin/beanconqueror-start
 RUN chmod +x /usr/local/bin/beanconqueror-start
 

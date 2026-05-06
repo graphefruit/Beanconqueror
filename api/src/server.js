@@ -28,6 +28,20 @@ function getStorageKey(pathname) {
   return decodeURIComponent(pathname.substring(prefix.length));
 }
 
+function isAuthorized(request) {
+  if (!config.apiAuthToken) {
+    return true;
+  }
+
+  const headerToken = request.headers['x-beanconqueror-api-token'];
+  if (headerToken === config.apiAuthToken) {
+    return true;
+  }
+
+  const authorization = request.headers.authorization || '';
+  return authorization === `Bearer ${config.apiAuthToken}`;
+}
+
 async function handleStorage(request, response, url) {
   if (url.pathname === '/api/storage' && request.method === 'GET') {
     sendJson(response, 200, await getAllStorage());
@@ -77,7 +91,13 @@ async function handleStorage(request, response, url) {
 
 async function handleGaggiuino(request, response, url) {
   if (url.pathname === '/api/gaggiuino/status' && request.method === 'GET') {
-    sendJson(response, 200, await getStatus());
+    const status = await getStatus();
+    if (!status) {
+      sendJson(response, 404, { error: 'not_found' });
+      return true;
+    }
+
+    sendJson(response, 200, status);
     return true;
   }
 
@@ -135,6 +155,11 @@ async function route(request, response) {
 
   if (url.pathname === '/health') {
     sendJson(response, 200, { ok: true });
+    return;
+  }
+
+  if (!isAuthorized(request)) {
+    sendJson(response, 401, { error: 'unauthorized' });
     return;
   }
 

@@ -62,10 +62,12 @@ async function importStorage(data) {
     await connection.beginTransaction();
     await connection.execute('DELETE FROM app_storage');
 
-    for (const [key, value] of Object.entries(data || {})) {
-      await connection.execute(
-        'INSERT INTO app_storage (storage_key, storage_value) VALUES (?, ?)',
-        [key, serialize(value)],
+    const entries = Object.entries(data || {});
+    if (entries.length > 0) {
+      const values = entries.map(([key, value]) => [key, serialize(value)]);
+      await connection.query(
+        'INSERT INTO app_storage (storage_key, storage_value) VALUES ?',
+        [values],
       );
     }
 
