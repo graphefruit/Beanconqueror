@@ -39,6 +39,7 @@ import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
 import { Config } from '../../../classes/objectConfig/objectConfig';
 import { Settings } from '../../../classes/settings/settings';
+import { createUuid } from '../../../classes/uuid';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
@@ -262,7 +263,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
       }
     }
 
-    let groupBeanId: string = crypto.randomUUID();
+    let groupBeanId: string = createUuid();
     if (this.bean.frozenGroupId) {
       //If we froze the initial bean already, we use this as the reference again.
       groupBeanId = this.bean.frozenGroupId;

@@ -1,0 +1,191 @@
+<ion-header>
+  <app-header title="Gaggiuino" />
+</ion-header>
+
+<ion-content>
+  <ion-grid class="gaggiuino-shell">
+    <ion-row>
+      <ion-col size="12" size-lg="5">
+        <ion-card class="panel-card">
+          <ion-card-header>
+            <ion-card-title>Connection</ion-card-title>
+            <ion-card-subtitle>Server-side Gaggiuino API settings</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list lines="full">
+              <ion-item>
+                <ion-label position="stacked">Base URL</ion-label>
+                <ion-input
+                  [(ngModel)]="settings.baseUrl"
+                  inputmode="url"
+                  placeholder="http://gaggiuino.local"
+                />
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked">Timeout (ms)</ion-label>
+                <ion-input
+                  [(ngModel)]="settings.timeoutMs"
+                  min="1000"
+                  max="30000"
+                  type="number"
+                />
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked">Default grinder for imports</ion-label>
+                <ion-select
+                  [(ngModel)]="settings.designatedMillUuid"
+                  interface="popover"
+                  placeholder="Choose grinder"
+                >
+                  @for (mill of mills; track mill?.config?.uuid) {
+                  <ion-select-option [value]="mill?.config?.uuid">
+                    {{ mill?.name || "Unnamed grinder" }}
+                  </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-label>Enable auto-sync monitor</ion-label>
+                <ion-toggle [(ngModel)]="settings.autoSyncEnabled" slot="end" />
+              </ion-item>
+            </ion-list>
+
+            <div class="actions">
+              <ion-button (click)="saveSettings()" [disabled]="saving">
+                <ion-icon name="save-outline" slot="start" />
+                Save
+              </ion-button>
+              <ion-button fill="outline" (click)="checkStatus()" [disabled]="loading">
+                <ion-icon name="refresh-outline" slot="start" />
+                Test
+              </ion-button>
+            </div>
+
+            <div class="status-line">
+              @if (loading || saving) {
+              <ion-spinner name="crescent" />
+              }
+              <ion-text>{{ statusMessage }}</ion-text>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="panel-card">
+          <ion-card-header>
+            <ion-card-title>Import</ion-card-title>
+            <ion-card-subtitle>Pull stored shots and sync as brews</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item lines="full">
+              <ion-label position="stacked">Latest shots to pull</ion-label>
+              <ion-input [(ngModel)]="importCount" min="1" max="50" type="number" />
+            </ion-item>
+
+            <div class="actions">
+              <ion-button (click)="importLatest()" [disabled]="importing">
+                <ion-icon name="cloud-download-outline" slot="start" />
+                Import latest
+              </ion-button>
+              <ion-button fill="outline" (click)="syncSaved()" [disabled]="importing">
+                <ion-icon name="sync-outline" slot="start" />
+                Sync saved
+              </ion-button>
+            </div>
+
+            @if (syncMessage) {
+            <ion-note>{{ syncMessage }}</ion-note>
+            }
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="panel-card">
+          <ion-card-header>
+            <div class="card-title-row">
+              <div>
+                <ion-card-title>Auto-sync status</ion-card-title>
+                <ion-card-subtitle>Background monitor and incremental sync</ion-card-subtitle>
+              </div>
+              <ion-button fill="clear" size="small" (click)="refreshAutoSyncStatus()">
+                <ion-icon name="refresh-outline" slot="icon-only" />
+              </ion-button>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="status-line">
+              <ion-text>{{ autoSyncStatusMessage }}</ion-text>
+            </div>
+            @if (autoSyncStatus) {
+            <ion-list lines="none">
+              <ion-item>
+                <ion-label>Status</ion-label>
+                <ion-note slot="end">
+                  @if (autoSyncStatus.enabled) {
+                    @if (autoSyncStatus.online === true) { Online } @else if (autoSyncStatus.online === false) { Offline } @else { Unknown }
+                  } @else { Disabled }
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label>Last success</ion-label>
+                <ion-note slot="end">{{ formatIsoDate(autoSyncStatus.lastSuccessAt) }}</ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label>Last synced shot ID</ion-label>
+                <ion-note slot="end">{{ autoSyncStatus.lastSyncedShotId }}</ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label>Last sync result</ion-label>
+                <ion-note slot="end">
+                  +{{ autoSyncStatus.lastSyncSummary?.added || 0 }} / ~{{ autoSyncStatus.lastSyncSummary?.updated || 0 }}
+                </ion-note>
+              </ion-item>
+              @if (autoSyncStatus.lastError) {
+              <ion-item>
+                <ion-label>
+                  <h2>Last error</h2>
+                  <p>{{ autoSyncStatus.lastError }}</p>
+                </ion-label>
+              </ion-item>
+              }
+            </ion-list>
+            }
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="12" size-lg="7">
+        <ion-card class="panel-card saved-shots-card">
+          <ion-card-header>
+            <div class="card-title-row">
+              <div>
+                <ion-card-title>Saved Gaggiuino shots</ion-card-title>
+                <ion-card-subtitle>Cached in MariaDB before brew sync</ion-card-subtitle>
+              </div>
+              <ion-badge color="medium">{{ savedShots.length }}</ion-badge>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            @if (loading) {
+            <div class="empty-state">
+              <ion-spinner name="crescent" />
+            </div>
+            } @else if (savedShots.length === 0) {
+            <div class="empty-state">No saved shots yet.</div>
+            } @else {
+            <ion-list lines="full">
+              @for (shot of savedShots; track shot.id) {
+              <ion-item>
+                <ion-label>
+                  <h2>Shot #{{ shot.id }}</h2>
+                  <p>{{ shot.profileName || "Unknown profile" }}</p>
+                  <p>{{ formatShot(shot) }}</p>
+                </ion-label>
+              </ion-item>
+              }
+            </ion-list>
+            }
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

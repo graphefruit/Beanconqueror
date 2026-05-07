@@ -21,7 +21,7 @@ RUN apk add --no-cache gettext nginx
 
 COPY docker/nginx/default.conf /etc/nginx/http.d/default.conf
 COPY docker/entrypoint/start.sh /usr/local/bin/beanconqueror-start
-RUN chmod +x /usr/local/bin/beanconqueror-start
+RUN sed -i 's/\r$//' /usr/local/bin/beanconqueror-start && chmod +x /usr/local/bin/beanconqueror-start
 
 # Angular application build output
 COPY --from=build /app/www/browser/ /usr/share/nginx/html/
@@ -31,4 +31,4 @@ COPY api /app/api
 COPY --from=api-deps /api/node_modules /app/api/node_modules
 
 EXPOSE 80
-CMD ["beanconqueror-start"]
+CMD ["/usr/local/bin/beanconqueror-start"]

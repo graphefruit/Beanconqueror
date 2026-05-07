@@ -31,11 +31,7 @@ import {
 import { addIcons } from 'ionicons';
 import {
   closeOutline,
-  codeSlashOutline,
   ellipsisHorizontal,
-  logoDiscord,
-  logoFacebook,
-  logoInstagram,
 } from 'ionicons/icons';
 
 import { App } from '@capacitor/app';
@@ -65,7 +61,6 @@ import { Preparation } from '../classes/preparation/preparation';
 import { Settings } from '../classes/settings/settings';
 import { Water } from '../classes/water/water';
 import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
-import LINK_TRACKING from '../data/tracking/linkTracking';
 import SettingsTracking from '../data/tracking/settingsTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
@@ -322,10 +317,6 @@ export class AppComponent implements AfterViewInit {
     addIcons({
       closeOutline,
       ellipsisHorizontal,
-      logoInstagram,
-      logoFacebook,
-      codeSlashOutline,
-      logoDiscord,
     });
 
     // We do want to add all the paths to the custom icons though
@@ -357,6 +348,27 @@ export class AppComponent implements AfterViewInit {
 
   public dismiss() {
     this.menu.close();
+  }
+
+  public isPageActive(targetUrl: string): boolean {
+    const currentUrl = this.router.url.split('?')[0].split('#')[0];
+    const normalizedTarget = targetUrl === '/' ? '/home' : targetUrl;
+    const candidates = [normalizedTarget];
+
+    if (normalizedTarget === '/home') {
+      candidates.push('/');
+    }
+
+    return candidates.some((candidate) => {
+      if (candidate === '/') {
+        return currentUrl === '/';
+      }
+      return (
+        currentUrl === candidate ||
+        currentUrl.startsWith(`${candidate}/`) ||
+        currentUrl.startsWith(`${candidate}?`)
+      );
+    });
   }
 
   public isAndroid() {
@@ -701,6 +713,11 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkStartupView() {
+    const initialPath = window.location.pathname;
+    if (initialPath !== '/' && initialPath !== '') {
+      return;
+    }
+
     const settings: Settings = this.uiSettingsStorage.getSettings();
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
       this.uiAnalytics.trackEvent(
@@ -1164,44 +1181,6 @@ export class AppComponent implements AfterViewInit {
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
-  }
-
-  public openGithub() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.GITHUB,
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://github.com/graphefruit/Beanconqueror',
-    );
-  }
-
-  public openDiscord() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.DISCORD,
-    );
-    this.uiHelper.openExternalWebpage('https://discord.gg/vDzA5dZjG8');
-  }
-
-  public openInstagram() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.INSTAGRAM,
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://www.instagram.com/beanconqueror/',
-    );
-  }
-
-  public openFacebook() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.FACEBOOK,
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://www.facebook.com/Beanconqueror/',
-    );
   }
 
   public openPaypal() {}

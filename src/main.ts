@@ -32,9 +32,42 @@ function getStorageDriverOrder(): string[] {
   return [Drivers.IndexedDB, Drivers.LocalStorage];
 }
 
+function isServerStorageRuntime(): boolean {
+  const runtimeConfig = (window as unknown as {
+    __beanconquerorConfig?: { apiBaseUrl?: string };
+  }).__beanconquerorConfig;
+
+  const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+  return (
+    typeof rawBaseUrl === 'string' &&
+    rawBaseUrl.trim() !== '' &&
+    !rawBaseUrl.includes('${') &&
+    !rawBaseUrl.trimStart().startsWith('$')
+  );
+}
+
+function unregisterServiceWorkersForServerStorage(): void {
+  if (!isServerStorageRuntime() || !navigator.serviceWorker) {
+    return;
+  }
+
+  navigator.serviceWorker
+    .getRegistrations()
+    .then((registrations: ServiceWorkerRegistration[]) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    })
+    .catch((err: unknown) =>
+      console.warn('Failed to unregister service workers:', err),
+    );
+}
+
 if (environment.production) {
   enableProdMode();
 }
+
+unregisterServiceWorkersForServerStorage();
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -55,7 +88,7 @@ bootstrapApplication(AppComponent, {
     }),
     provideRouter(routes),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: environment.production,
+      enabled: environment.production && !isServerStorageRuntime(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
     provideZoneChangeDetection(),

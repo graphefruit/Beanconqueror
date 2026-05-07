@@ -1,4 +1,9 @@
 :host {
+  ion-tab-bar.primary-tabs {
+    box-shadow: 0px -2px 10px #00000021;
+    padding-top: 12px;
+  }
+
   ion-tab-button {
     --padding-start: 6px;
     --padding-end: 6px;
@@ -13,6 +18,33 @@
       --padding-start: 0px;
       --padding-end: 0px;
       line-height: 16px;
+    }
+  }
+
+  @media (min-width: 992px) {
+    ion-tabs {
+      padding-top: 58px;
+    }
+
+    ion-tab-bar.primary-tabs {
+      position: absolute;
+      top: 0;
+      bottom: auto;
+      left: 0;
+      right: 0;
+      height: 58px;
+      justify-content: flex-start;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--ion-color-light-shade);
+      box-shadow: none;
+    }
+
+    ion-tab-button {
+      flex: 0 0 auto;
+      max-width: 148px;
+      min-height: 58px;
+      --padding-start: 16px;
+      --padding-end: 16px;
     }
   }
 }

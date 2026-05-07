@@ -1,7 +1,14 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import {
+  IonButton,
   IonCard,
   IonCardHeader,
   IonCardSubtitle,
@@ -16,7 +23,13 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { giftOutline, snowOutline, thermometerOutline } from 'ionicons/icons';
+import {
+  giftOutline,
+  refreshOutline,
+  snowOutline,
+  syncOutline,
+  thermometerOutline,
+} from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment/moment';
@@ -59,10 +72,11 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     IonCardHeader,
     IonCardTitle,
     IonCardSubtitle,
+    IonButton,
     IonIcon,
   ],
 })
-export class DashboardPage implements OnInit {
+export class DashboardPage implements OnInit, OnDestroy {
   uiStatistic = inject(UIStatistic);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiBrewHelper = inject(UIBrewHelper);
@@ -86,9 +100,20 @@ export class DashboardPage implements OnInit {
   public getTimePassedSinceLastBrew: string = undefined;
   public getTimePassedSinceLastBrewMessage: string = undefined;
   public settings: Settings;
+  public autoSyncStatus: any = null;
+  public autoSyncLoading = false;
+  public autoSyncSyncing = false;
+  public autoSyncMessage = 'Loading auto-sync status...';
+  private autoSyncTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
-    addIcons({ giftOutline, thermometerOutline, snowOutline });
+    addIcons({
+      giftOutline,
+      thermometerOutline,
+      snowOutline,
+      refreshOutline,
+      syncOutline,
+    });
   }
 
   public async openUnwrapped(year: number) {
@@ -120,7 +145,6 @@ export class DashboardPage implements OnInit {
   }
 
   public ngOnInit() {
-    console.log('log');
     this.settings = this.uiSettingsStorage.getSettings();
 
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
@@ -138,6 +162,19 @@ export class DashboardPage implements OnInit {
     });
 
     this.showUnwrappedButton = this.showUnwrapped;
+    if (this.hasServerMode()) {
+      this.refreshAutoSyncStatus().catch(() => {});
+      this.autoSyncTimer = setInterval(() => {
+        this.refreshAutoSyncStatus().catch(() => {});
+      }, 15000);
+    }
+  }
+
+  public ngOnDestroy() {
+    if (this.autoSyncTimer) {
+      clearInterval(this.autoSyncTimer);
+      this.autoSyncTimer = null;
+    }
   }
 
   private reloadBrews() {
@@ -162,6 +199,7 @@ export class DashboardPage implements OnInit {
   public async ionViewWillEnter() {
     this.loadBeans();
     this.reloadBrews();
+    await this.refreshAutoSyncStatus().catch(() => {});
   }
   public loadBeans() {
     this.beans = this.uiBeanStorage.getAllEntries();
@@ -206,6 +244,116 @@ export class DashboardPage implements OnInit {
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
     this.loadBrews();
+  }
+
+  public async refreshAutoSyncStatus() {
+    this.autoSyncLoading = true;
+    try {
+      const status = await this.api('/api/gaggiuino/autosync-status');
+      this.autoSyncStatus = status;
+      this.autoSyncMessage = this.describeAutoSync(status);
+    } catch (error) {
+      this.autoSyncMessage = this.errorMessage(error);
+    } finally {
+      this.autoSyncLoading = false;
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
+  public async syncNow() {
+    this.autoSyncSyncing = true;
+    try {
+      const result = await this.api<{ result: { imported: number; sync: { added: number; updated: number } }; status: any }>(
+        '/api/gaggiuino/autosync-sync-now',
+        { method: 'POST', body: JSON.stringify({}) },
+      );
+      this.autoSyncStatus = result.status;
+      this.autoSyncMessage = `Sync now: imported ${result.result.imported}, added ${result.result.sync.added}, updated ${result.result.sync.updated}.`;
+    } catch (error) {
+      this.autoSyncMessage = this.errorMessage(error);
+    } finally {
+      this.autoSyncSyncing = false;
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
+  public formatAutoSyncTime(value: string | null): string {
+    if (!value) {
+      return 'Never';
+    }
+    return new Date(value).toLocaleString();
+  }
+
+  private hasServerMode(): boolean {
+    const runtimeConfig = (window as unknown as {
+      __beanconquerorConfig?: { apiBaseUrl?: string };
+    }).__beanconquerorConfig;
+    const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+    return (
+      typeof rawBaseUrl === 'string' &&
+      rawBaseUrl.trim() !== '' &&
+      !rawBaseUrl.includes('${') &&
+      !rawBaseUrl.trimStart().startsWith('$')
+    );
+  }
+
+  private async api<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const runtimeConfig = (window as unknown as {
+      __beanconquerorConfig?: { apiBaseUrl?: string; apiAuthToken?: string };
+    }).__beanconquerorConfig;
+    const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+    if (
+      !rawBaseUrl ||
+      typeof rawBaseUrl !== 'string' ||
+      rawBaseUrl.trim() === '' ||
+      rawBaseUrl.includes('${') ||
+      rawBaseUrl.trimStart().startsWith('$')
+    ) {
+      throw new Error('Server mode not configured');
+    }
+    const apiBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
+    const normalizedPath = path.startsWith('/api') ? path.slice(4) : path;
+    const headers = new Headers(options.headers);
+    headers.set('Content-Type', 'application/json');
+    if (runtimeConfig?.apiAuthToken) {
+      headers.set('X-Beanconqueror-Api-Token', runtimeConfig.apiAuthToken);
+    }
+
+    const response = await fetch(`${apiBaseUrl}${normalizedPath}`, {
+      ...options,
+      headers,
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(body?.message || body?.error || response.statusText);
+    }
+    return body as T;
+  }
+
+  private describeAutoSync(status: any): string {
+    if (!status) {
+      return 'Auto-sync status unavailable.';
+    }
+    if (!status.enabled) {
+      return 'Auto-sync disabled.';
+    }
+    if (status.running) {
+      return 'Auto-sync running...';
+    }
+    if (status.online === true) {
+      return `Auto-sync online. Next poll in ${Math.round((status.nextPollInMs || 0) / 1000)}s.`;
+    }
+    if (status.online === false) {
+      return `Auto-sync offline. Retry in ${Math.round((status.nextPollInMs || 0) / 1000)}s.`;
+    }
+    return 'Auto-sync waiting for first check.';
+  }
+
+  private errorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return String(error);
   }
 
   public setOpenBeansLeftOverCount() {

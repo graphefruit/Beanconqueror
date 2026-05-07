@@ -84,10 +84,74 @@ async function clearStorage() {
   await getPool().execute('DELETE FROM app_storage');
 }
 
+async function mergeStorageList(key, entries, identity) {
+  const current = await getStorageValue(key);
+  const list = Array.isArray(current) ? current : [];
+  const seen = new Set(list.map(identity).filter(Boolean));
+  let added = 0;
+
+  for (const entry of entries) {
+    const id = identity(entry);
+    if (!id || seen.has(id)) {
+      continue;
+    }
+
+    list.push(entry);
+    seen.add(id);
+    added++;
+  }
+
+  if (added > 0) {
+    await setStorageValue(key, list);
+  }
+
+  return { added, total: list.length };
+}
+
+async function upsertStorageList(key, entries, identity) {
+  const current = await getStorageValue(key);
+  const list = Array.isArray(current) ? current : [];
+  const indexById = new Map();
+  let added = 0;
+  let updated = 0;
+
+  list.forEach((entry, index) => {
+    const id = identity(entry);
+    if (id) {
+      indexById.set(id, index);
+    }
+  });
+
+  for (const entry of entries) {
+    const id = identity(entry);
+    if (!id) {
+      continue;
+    }
+
+    const existingIndex = indexById.get(id);
+    if (existingIndex === undefined) {
+      list.push(entry);
+      indexById.set(id, list.length - 1);
+      added++;
+    } else {
+      list[existingIndex] = entry;
+      updated++;
+    }
+  }
+
+  if (added > 0 || updated > 0) {
+    await setStorageValue(key, list);
+  }
+
+  return { added, updated, total: list.length };
+}
+
 module.exports = {
   clearStorage,
   getAllStorage,
   getStorageValue,
   importStorage,
+  mergeStorageList,
   setStorageValue,
+  upsertStorageList,
 };

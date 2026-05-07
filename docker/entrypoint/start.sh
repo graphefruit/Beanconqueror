@@ -2,8 +2,11 @@
 set -eu
 
 export API_BASE_URL="${API_BASE_URL:-/api}"
-export FEATURE_FLAGS_JSON="${FEATURE_FLAGS_JSON:-{}}"
 export API_PORT="${API_PORT:-3000}"
+if [ -z "${FEATURE_FLAGS_JSON:-}" ]; then
+  FEATURE_FLAGS_JSON='{}'
+fi
+export FEATURE_FLAGS_JSON
 if [ -z "${API_AUTH_TOKEN:-}" ]; then
   API_AUTH_TOKEN="$(od -An -tx1 -N32 /dev/urandom | tr -d ' \n')"
 fi

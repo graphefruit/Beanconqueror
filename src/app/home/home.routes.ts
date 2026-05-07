@@ -21,6 +21,10 @@ export const routes: Routes = [
     path: 'mills',
     loadComponent: () => import('../mill/mill.page'),
   },
+  {
+    path: 'gaggiuino',
+    loadComponent: () => import('../gaggiuino/gaggiuino.page'),
+  },
 ];
 
 export default routes;

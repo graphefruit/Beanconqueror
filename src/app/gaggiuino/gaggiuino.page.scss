@@ -1,0 +1,71 @@
+:host {
+  .gaggiuino-shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px;
+  }
+
+  .panel-card {
+    margin: 0 0 14px;
+  }
+
+  ion-card-title {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  ion-card-subtitle {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  ion-list {
+    padding: 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .status-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 32px;
+    margin-top: 12px;
+    color: var(--ion-color-medium);
+  }
+
+  .card-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .saved-shots-card {
+    min-height: 420px;
+  }
+
+  .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 260px;
+    color: var(--ion-color-medium);
+  }
+
+  @media (min-width: 992px) {
+    .gaggiuino-shell {
+      padding: 24px;
+    }
+
+    .panel-card {
+      border: 1px solid var(--ion-color-light-shade);
+      box-shadow: none;
+    }
+  }
+}

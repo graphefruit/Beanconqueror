@@ -1,19 +1,24 @@
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, JsonPipe } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonBadge,
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCol,
   IonContent,
   IonHeader,
+  IonItem,
   IonLabel,
+  IonList,
   IonMenuButton,
   IonRow,
   IonSegment,
   IonSegmentButton,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -24,6 +29,11 @@ import Gradient from 'javascript-color-gradient';
 import { Brew } from '../../classes/brew/brew';
 import { BrewView } from '../../classes/brew/brewView';
 import { HeaderComponent } from '../../components/header/header.component';
+import {
+  AiAnalysisConfig,
+  AiAnalysisSnapshot,
+  AiAnalysisStatus,
+} from '../../interfaces/ai/iAiAnalysis';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
@@ -41,6 +51,8 @@ import { UIStatistic } from '../../services/uiStatistic';
   imports: [
     FormsModule,
     DecimalPipe,
+    DatePipe,
+    JsonPipe,
     TranslatePipe,
     HeaderComponent,
     IonHeader,
@@ -51,6 +63,11 @@ import { UIStatistic } from '../../services/uiStatistic';
     IonLabel,
     IonRow,
     IonCol,
+    IonButton,
+    IonBadge,
+    IonList,
+    IonItem,
+    IonSpinner,
     IonCard,
     IonCardHeader,
     IonCardContent,
@@ -88,6 +105,13 @@ export class StatisticPage implements OnInit {
 
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
+  public aiStatus: AiAnalysisStatus | null = null;
+  public aiConfig: AiAnalysisConfig | null = null;
+  public aiSnapshot: AiAnalysisSnapshot | null = null;
+  public aiHistory: AiAnalysisSnapshot[] = [];
+  public aiLoading = false;
+  public aiRunning = false;
+  public aiError = '';
 
   public getCurrencySymbol() {
     return this.currencyService.getActualCurrencySymbol();
@@ -141,12 +165,12 @@ export class StatisticPage implements OnInit {
       const brewsForCountry = brews.filter((b) =>
         beansForCountry.some((bean) => bean.config.uuid === b.bean),
       );
+      if (!country || brewsForCountry.length === 0) continue;
       const totalRating = brewsForCountry.reduce(
         (acc, brew) => acc + brew.rating,
         0,
       );
       const avgRating = totalRating / brewsForCountry.length;
-      if (!country) continue;
       data.labels.push(country);
       data.datasets[0].data.push(avgRating);
     }
@@ -345,6 +369,116 @@ export class StatisticPage implements OnInit {
   }
 
   public ngOnInit() {}
+
+  public async loadAiAnalysis() {
+    this.aiLoading = true;
+    this.aiError = '';
+    try {
+      const [status, config, latest, history] = await Promise.all([
+        this.api<AiAnalysisStatus>('/api/ai-analysis/status'),
+        this.api<AiAnalysisConfig>('/api/ai-analysis/config'),
+        this.api<{ snapshot: AiAnalysisSnapshot | null }>('/api/ai-analysis/latest'),
+        this.api<{ items: AiAnalysisSnapshot[] }>(
+          '/api/ai-analysis/history?page=1&pageSize=10',
+        ),
+      ]);
+      this.aiStatus = status;
+      this.aiConfig = config;
+      this.aiSnapshot = latest?.snapshot || null;
+      this.aiHistory = Array.isArray(history?.items) ? history.items : [];
+    } catch (error) {
+      this.aiError = this.errorMessage(error);
+    } finally {
+      this.aiLoading = false;
+    }
+  }
+
+  public async runAiAnalysisNow() {
+    this.aiRunning = true;
+    this.aiError = '';
+    try {
+      await this.api('/api/ai-analysis/run-now', { method: 'POST' });
+      await this.loadAiAnalysis();
+    } catch (error) {
+      this.aiError = this.errorMessage(error);
+    } finally {
+      this.aiRunning = false;
+    }
+  }
+
+  public aiEnabledAndConfigured(): boolean {
+    return !!this.aiStatus?.enabled && !!this.aiStatus?.providerReady;
+  }
+
+  public aiHiddenBySettings(): boolean {
+    return this.aiConfig?.visibility === 'hidden';
+  }
+
+  public ratingDelta(index: number): string {
+    const current = this.aiHistory[index];
+    const previous = this.aiHistory[index + 1];
+    if (!current || !previous) {
+      return '';
+    }
+    const nextValue = current.summary?.avgRating;
+    const prevValue = previous.summary?.avgRating;
+    if (nextValue === null || nextValue === undefined) {
+      return '';
+    }
+    if (prevValue === null || prevValue === undefined) {
+      return '';
+    }
+    const delta = nextValue - prevValue;
+    if (delta === 0) {
+      return '0.00';
+    }
+    const sign = delta > 0 ? '+' : '';
+    return `${sign}${delta.toFixed(2)}`;
+  }
+
+  private async api<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const runtimeConfig = (window as unknown as {
+      __beanconquerorConfig?: { apiBaseUrl?: string; apiAuthToken?: string };
+    }).__beanconquerorConfig;
+    const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+    if (
+      !rawBaseUrl ||
+      typeof rawBaseUrl !== 'string' ||
+      rawBaseUrl.trim() === '' ||
+      rawBaseUrl.includes('${') ||
+      rawBaseUrl.trimStart().startsWith('$')
+    ) {
+      throw new Error('Server mode not configured');
+    }
+    const apiBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
+    const normalizedPath = path.startsWith('/api') ? path.slice(4) : path;
+    const headers = new Headers(options.headers);
+    headers.set('Content-Type', 'application/json');
+
+    if (runtimeConfig?.apiAuthToken) {
+      headers.set('X-Beanconqueror-Api-Token', runtimeConfig.apiAuthToken);
+    }
+
+    const response = await fetch(`${apiBaseUrl}${normalizedPath}`, {
+      ...options,
+      headers,
+    });
+    const body = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(body?.message || body?.error || response.statusText);
+    }
+
+    return body as T;
+  }
+
+  private errorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return String(error);
+  }
 
   private __getBrewsSortedForMonth(): Array<BrewView> {
     const brewViews: Array<BrewView> = [];

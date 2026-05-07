@@ -58,6 +58,7 @@ export class Settings implements ISettings {
   public bean_visible_list_view_parameters: BeanListViewParameter;
   public config: Config;
   public language: string;
+  public default_bean: string;
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
   public brew_milliseconds: boolean;
@@ -341,6 +342,7 @@ export class Settings implements ISettings {
     this.bean_visible_list_view_parameters = new BeanListViewParameter();
 
     this.language = '';
+    this.default_bean = '';
     this.matomo_analytics = undefined;
     this.matomo_analytics_id = '';
     this.matomo_analytics_last_question = 0;
@@ -597,7 +599,7 @@ export class Settings implements ISettings {
     this.refractometer_stay_connected = false;
     this.refractometer_log = false;
 
-    this.currency = 'EUR';
+    this.currency = 'USD';
     this.brew_milliseconds_leading_digits = 3;
     this.best_brew = false;
 

@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -88,6 +88,10 @@ import { IPreparation } from '../../interfaces/preparation/iPreparation';
 import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
 import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
+import {
+  AiAnalysisConfig,
+  AiAnalysisStatus,
+} from '../../interfaces/ai/iAiAnalysis';
 import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { KeysPipe } from '../../pipes/keys';
 import { ToFixedPipe } from '../../pipes/toFixed';
@@ -137,6 +141,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     FormsModule,
     TooltipDirective,
     DecimalPipe,
+    DatePipe,
     TranslatePipe,
     KeysPipe,
     ToFixedPipe,
@@ -220,9 +225,14 @@ export class SettingsPage {
 
   public isScrolling: boolean = false;
   public browserCapabilities: BrowserCapabilities;
+  public readonly showPressureDeviceSettings = false;
+  public readonly showTemperatureDeviceSettings = false;
+  public readonly showRefractometerDeviceSettings = false;
 
   public readonly isAndroid: boolean;
   public readonly isIos: boolean;
+  public aiAnalysisConfig: AiAnalysisConfig | null = null;
+  public aiAnalysisStatus: AiAnalysisStatus | null = null;
 
   private __cleanupAttachmentData(
     _data: (
@@ -293,6 +303,7 @@ export class SettingsPage {
       listOutline,
       refreshOutline,
     });
+    this.loadAiAnalysisConfig().catch(() => {});
   }
 
   public handleScrollStart() {
@@ -605,8 +616,22 @@ export class SettingsPage {
   }
 
   public async saveSettings() {
+    const activeBeanUuids = this.getOpenBeans().map((bean) => bean.config.uuid);
+    if (
+      this.settings.default_bean &&
+      !activeBeanUuids.includes(this.settings.default_bean)
+    ) {
+      this.settings.default_bean = '';
+    }
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  public getOpenBeans(): Bean[] {
+    return this.uiBeanStorage
+      .getAllEntries()
+      .filter((bean) => !bean.finished)
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   public isAppleIntelligenceAvailable(): boolean {
@@ -655,6 +680,98 @@ export class SettingsPage {
       this.settings.cloud_ai_model = data.modelId;
       this.saveSettings();
     }
+  }
+
+  public async loadAiAnalysisConfig() {
+    try {
+      this.aiAnalysisConfig =
+        await this.api<AiAnalysisConfig>('/api/ai-analysis/config');
+      this.aiAnalysisStatus =
+        await this.api<AiAnalysisStatus>('/api/ai-analysis/status');
+    } catch (error) {
+      this.aiAnalysisConfig = {
+        enabled: false,
+        cadenceHours: 24,
+        retentionCount: 30,
+        visibility: 'visible',
+      };
+      this.aiAnalysisStatus = null;
+      this.uiLog.warn('AI analysis config load failed', error);
+    }
+  }
+
+  public aiAnalysisConfigIsValid(): boolean {
+    if (this.settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER) {
+      return false;
+    }
+    if (this.settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE) {
+      return false;
+    }
+    if (!this.settings.cloud_ai_api_key || !this.settings.cloud_ai_model) {
+      return false;
+    }
+    if (
+      this.settings.ai_provider === AI_PROVIDER_ENUM.CUSTOM &&
+      !this.settings.cloud_ai_base_url
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  public async saveAiAnalysisConfig() {
+    if (!this.aiAnalysisConfig) {
+      return;
+    }
+    if (this.aiAnalysisConfig.enabled && !this.aiAnalysisConfigIsValid()) {
+      this.aiAnalysisConfig.enabled = false;
+      await this.uiAlert.showMessage(
+        'Set provider, API key, and model before enabling AI analysis schedule.',
+      );
+    }
+    this.aiAnalysisConfig = await this.api<AiAnalysisConfig>(
+      '/api/ai-analysis/config',
+      {
+      method: 'PUT',
+      body: JSON.stringify(this.aiAnalysisConfig),
+      },
+    );
+    this.aiAnalysisStatus =
+      await this.api<AiAnalysisStatus>('/api/ai-analysis/status');
+  }
+
+  private async api<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const runtimeConfig = (window as unknown as {
+      __beanconquerorConfig?: { apiBaseUrl?: string; apiAuthToken?: string };
+    }).__beanconquerorConfig;
+    const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+    if (
+      !rawBaseUrl ||
+      typeof rawBaseUrl !== 'string' ||
+      rawBaseUrl.trim() === '' ||
+      rawBaseUrl.includes('${') ||
+      rawBaseUrl.trimStart().startsWith('$')
+    ) {
+      throw new Error('Server mode not configured');
+    }
+    const apiBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
+    const normalizedPath = path.startsWith('/api') ? path.slice(4) : path;
+    const headers = new Headers(options.headers);
+    headers.set('Content-Type', 'application/json');
+
+    if (runtimeConfig?.apiAuthToken) {
+      headers.set('X-Beanconqueror-Api-Token', runtimeConfig.apiAuthToken);
+    }
+
+    const response = await fetch(`${apiBaseUrl}${normalizedPath}`, {
+      ...options,
+      headers,
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(body?.message || body?.error || response.statusText);
+    }
+    return body as T;
   }
 
   public async visualizerServerHasChanged() {
@@ -1313,7 +1430,6 @@ export class SettingsPage {
         const reader = new FileReader();
 
         reader.onload = () => {
-          debugger;
           const arrayBuffer = reader.result as ArrayBuffer;
           if (_type === 'roasted') {
             this.uiExcel.importBeansByExcel(arrayBuffer);

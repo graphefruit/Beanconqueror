@@ -153,11 +153,17 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     // Initialize to standard in drop down
     this.settings = this.uiSettingsStorage.getSettings();
 
-    // Get first entry
-    this.data.bean = this.uiBeanStorage
+    const openBeans = this.uiBeanStorage
       .getAllEntries()
       .filter((bean) => !bean.finished)
-      .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
+      .sort((a, b) => a.name.localeCompare(b.name));
+    const configuredDefaultBean = this.settings.default_bean;
+    const hasConfiguredDefaultBean = openBeans.some(
+      (bean) => bean.config.uuid === configuredDefaultBean,
+    );
+    this.data.bean = hasConfiguredDefaultBean
+      ? configuredDefaultBean
+      : openBeans[0]?.config?.uuid;
 
     this.data.method_of_preparation = this.uiPreparationStorage
       .getAllEntries()
