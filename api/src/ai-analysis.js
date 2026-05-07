@@ -321,7 +321,13 @@ async function callAi(settings, payload) {
   }
 
   const content = body?.choices?.[0]?.message?.content || '{}';
-  return { skipped: false, output: JSON.parse(content) };
+  let output;
+  try {
+    output = JSON.parse(content);
+  } catch {
+    throw new Error(`ai_response_not_json: ${content.slice(0, 200)}`);
+  }
+  return { skipped: false, output };
 }
 
 function mergeRecommendations(baseline, aiOutput) {

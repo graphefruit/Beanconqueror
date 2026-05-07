@@ -51,11 +51,16 @@ function unregisterServiceWorkersForServerStorage(): void {
     return;
   }
 
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (const registration of registrations) {
-      registration.unregister();
-    }
-  });
+  navigator.serviceWorker
+    .getRegistrations()
+    .then((registrations: ServiceWorkerRegistration[]) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    })
+    .catch((err: unknown) =>
+      console.warn('Failed to unregister service workers:', err),
+    );
 }
 
 if (environment.production) {

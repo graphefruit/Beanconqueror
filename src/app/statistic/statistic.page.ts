@@ -165,12 +165,12 @@ export class StatisticPage implements OnInit {
       const brewsForCountry = brews.filter((b) =>
         beansForCountry.some((bean) => bean.config.uuid === b.bean),
       );
+      if (!country || brewsForCountry.length === 0) continue;
       const totalRating = brewsForCountry.reduce(
         (acc, brew) => acc + brew.rating,
         0,
       );
       const avgRating = totalRating / brewsForCountry.length;
-      if (!country) continue;
       data.labels.push(country);
       data.datasets[0].data.push(avgRating);
     }

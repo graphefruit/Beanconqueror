@@ -1430,7 +1430,6 @@ export class SettingsPage {
         const reader = new FileReader();
 
         reader.onload = () => {
-          debugger;
           const arrayBuffer = reader.result as ArrayBuffer;
           if (_type === 'roasted') {
             this.uiExcel.importBeansByExcel(arrayBuffer);

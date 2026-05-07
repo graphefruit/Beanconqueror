@@ -310,6 +310,7 @@ function startGaggiuinoAutoSyncMonitor() {
   let consecutiveFailures = 0;
 
   const schedule = (delayMs) => {
+    if (timer) clearTimeout(timer);
     const delay = clampInterval(delayMs, config.gaggiuino.autoSyncIntervalMs);
     timer = setTimeout(runTick, delay);
     updateAutoSyncState({
@@ -397,6 +398,7 @@ function startAiAnalysisMonitor() {
   let consecutiveFailures = 0;
 
   const schedule = async (delayMs) => {
+    if (timer) clearTimeout(timer);
     const aiConfig = await getAiAnalysisConfig();
     const cadenceMs = clampInterval(
       aiConfig.cadenceHours * 60 * 60 * 1000,
