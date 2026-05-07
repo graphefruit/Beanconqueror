@@ -316,7 +316,7 @@ function startGaggiuinoAutoSyncMonitor() {
       enabled: true,
       running,
       nextPollInMs: delay,
-    }).catch(() => {});
+    }).catch((err) => console.error('Failed to update auto-sync state:', err));
   };
 
   const runTick = async () => {
@@ -331,7 +331,7 @@ function startGaggiuinoAutoSyncMonitor() {
       enabled: true,
       running: true,
       lastCheckedAt: checkedAt,
-    }).catch(() => {});
+    }).catch((err) => console.error('Failed to update auto-sync state:', err));
 
     let nextDelay = config.gaggiuino.autoSyncIntervalMs;
 
@@ -346,8 +346,7 @@ function startGaggiuinoAutoSyncMonitor() {
           consecutiveFailures: 0,
           lastError: '',
           nextPollInMs: config.gaggiuino.autoSyncIntervalMs,
-        }).catch(() => {});
-        schedule(config.gaggiuino.autoSyncIntervalMs);
+        }).catch((err) => console.error('Failed to update auto-sync state:', err));
         return;
       }
 
@@ -367,7 +366,7 @@ function startGaggiuinoAutoSyncMonitor() {
         lastError: '',
         lastImportedCount: result.imported.length,
         lastSyncSummary: result.sync,
-      }).catch(() => {});
+      }).catch((err) => console.error('Failed to update auto-sync state:', err));
     } catch (error) {
       consecutiveFailures++;
       const multiplier = Math.min(2 ** Math.min(consecutiveFailures, 6), 64);
@@ -382,7 +381,7 @@ function startGaggiuinoAutoSyncMonitor() {
         running: false,
         consecutiveFailures,
         lastError: error?.message || String(error),
-      }).catch(() => {});
+      }).catch((err) => console.error('Failed to update auto-sync state:', err));
     } finally {
       running = false;
       schedule(nextDelay);
@@ -409,7 +408,7 @@ function startAiAnalysisMonitor() {
 
   const runTick = async () => {
     if (running) {
-      schedule(60 * 1000).catch(() => {});
+      schedule(60 * 1000).catch((err) => console.error('AI analysis schedule error:', err));
       return;
     }
     running = true;
@@ -423,15 +422,11 @@ function startAiAnalysisMonitor() {
       );
 
       if (!aiConfig.enabled) {
-        running = false;
-        schedule(nextDelay).catch(() => {});
         return;
       }
 
       const lastRunAt = status.lastRunAt ? new Date(status.lastRunAt).getTime() : 0;
       if (lastRunAt > 0 && Date.now() - lastRunAt < nextDelay) {
-        running = false;
-        schedule(nextDelay).catch(() => {});
         return;
       }
 
@@ -443,18 +438,18 @@ function startAiAnalysisMonitor() {
       nextDelay = Math.min(6 * 60 * 60 * 1000, nextDelay * multiplier);
     } finally {
       running = false;
-      schedule(nextDelay).catch(() => {});
+      schedule(nextDelay).catch((err) => console.error('AI analysis schedule error:', err));
     }
   };
 
-  schedule(10 * 1000).catch(() => {});
+  schedule(10 * 1000).catch((err) => console.error('AI analysis schedule error:', err));
 }
 
 async function start() {
   await migrate();
   const settings = await getGaggiuinoSettings();
   await updateAutoSyncState({ enabled: settings.autoSyncEnabled, running: false }).catch(
-    () => {},
+    (err) => console.error('Failed to initialize auto-sync state:', err),
   );
 
   const server = http.createServer((request, response) => {

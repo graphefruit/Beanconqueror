@@ -187,6 +187,19 @@ export class UIFileHelper extends InstanceClass {
   public async readInternalJSONFile(path: string): Promise<any> {
     this.uiLog.debug('readInternalJSONFile for path', path);
     if (!this.platform.is('capacitor')) {
+      const runtimeConfig = (window as unknown as {
+        __beanconquerorConfig?: { apiBaseUrl?: string };
+      }).__beanconquerorConfig;
+      const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+      if (
+        !rawBaseUrl ||
+        typeof rawBaseUrl !== 'string' ||
+        rawBaseUrl.trim() === '' ||
+        rawBaseUrl.includes('${') ||
+        rawBaseUrl.trimStart().startsWith('$')
+      ) {
+        throw new Error('Server mode not configured: cannot read internal JSON file');
+      }
       return this.readServerStoredJSONFile(path);
     }
 
@@ -197,7 +210,7 @@ export class UIFileHelper extends InstanceClass {
     const runtimeConfig = (window as unknown as {
       __beanconquerorConfig?: { apiBaseUrl?: string; apiAuthToken?: string };
     }).__beanconquerorConfig;
-    const apiBaseUrl = runtimeConfig?.apiBaseUrl || '/api';
+    const apiBaseUrl = (runtimeConfig?.apiBaseUrl || '').trim().replace(/\/+$/, '');
     const headers = new Headers();
 
     if (runtimeConfig?.apiAuthToken) {

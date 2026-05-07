@@ -162,10 +162,12 @@ export class DashboardPage implements OnInit, OnDestroy {
     });
 
     this.showUnwrappedButton = this.showUnwrapped;
-    this.refreshAutoSyncStatus().catch(() => {});
-    this.autoSyncTimer = setInterval(() => {
+    if (this.hasServerMode()) {
       this.refreshAutoSyncStatus().catch(() => {});
-    }, 15000);
+      this.autoSyncTimer = setInterval(() => {
+        this.refreshAutoSyncStatus().catch(() => {});
+      }, 15000);
+    }
   }
 
   public ngOnDestroy() {
@@ -282,11 +284,34 @@ export class DashboardPage implements OnInit, OnDestroy {
     return new Date(value).toLocaleString();
   }
 
+  private hasServerMode(): boolean {
+    const runtimeConfig = (window as unknown as {
+      __beanconquerorConfig?: { apiBaseUrl?: string };
+    }).__beanconquerorConfig;
+    const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+    return (
+      typeof rawBaseUrl === 'string' &&
+      rawBaseUrl.trim() !== '' &&
+      !rawBaseUrl.includes('${') &&
+      !rawBaseUrl.trimStart().startsWith('$')
+    );
+  }
+
   private async api<T>(path: string, options: RequestInit = {}): Promise<T> {
     const runtimeConfig = (window as unknown as {
       __beanconquerorConfig?: { apiBaseUrl?: string; apiAuthToken?: string };
     }).__beanconquerorConfig;
-    const apiBaseUrl = runtimeConfig?.apiBaseUrl || '/api';
+    const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+    if (
+      !rawBaseUrl ||
+      typeof rawBaseUrl !== 'string' ||
+      rawBaseUrl.trim() === '' ||
+      rawBaseUrl.includes('${') ||
+      rawBaseUrl.trimStart().startsWith('$')
+    ) {
+      throw new Error('Server mode not configured');
+    }
+    const apiBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
     const normalizedPath = path.startsWith('/api') ? path.slice(4) : path;
     const headers = new Headers(options.headers);
     headers.set('Content-Type', 'application/json');

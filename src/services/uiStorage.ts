@@ -475,7 +475,8 @@ export class UIStorage {
     if (
       typeof rawBaseUrl !== 'string' ||
       rawBaseUrl.trim() === '' ||
-      rawBaseUrl.includes('${')
+      rawBaseUrl.includes('${') ||
+      rawBaseUrl.trimStart().startsWith('$')
     ) {
       return null;
     }
@@ -490,7 +491,8 @@ export class UIStorage {
     if (
       typeof rawToken !== 'string' ||
       rawToken.trim() === '' ||
-      rawToken.includes('${')
+      rawToken.includes('${') ||
+      rawToken.trimStart().startsWith('$')
     ) {
       return null;
     }

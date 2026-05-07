@@ -288,7 +288,17 @@ export class GaggiuinoPage implements OnInit, OnDestroy {
     const runtimeConfig = (window as unknown as {
       __beanconquerorConfig?: { apiBaseUrl?: string; apiAuthToken?: string };
     }).__beanconquerorConfig;
-    const apiBaseUrl = runtimeConfig?.apiBaseUrl || '/api';
+    const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+    if (
+      !rawBaseUrl ||
+      typeof rawBaseUrl !== 'string' ||
+      rawBaseUrl.trim() === '' ||
+      rawBaseUrl.includes('${') ||
+      rawBaseUrl.trimStart().startsWith('$')
+    ) {
+      throw new Error('Server mode not configured');
+    }
+    const apiBaseUrl = rawBaseUrl.trim().replace(/\/+$/, '');
     const normalizedPath = path.startsWith('/api') ? path.slice(4) : path;
     const headers = new Headers(options.headers);
     headers.set('Content-Type', 'application/json');

@@ -37,7 +37,13 @@ function isServerStorageRuntime(): boolean {
     __beanconquerorConfig?: { apiBaseUrl?: string };
   }).__beanconquerorConfig;
 
-  return !!runtimeConfig?.apiBaseUrl;
+  const rawBaseUrl = runtimeConfig?.apiBaseUrl;
+  return (
+    typeof rawBaseUrl === 'string' &&
+    rawBaseUrl.trim() !== '' &&
+    !rawBaseUrl.includes('${') &&
+    !rawBaseUrl.trimStart().startsWith('$')
+  );
 }
 
 function unregisterServiceWorkersForServerStorage(): void {

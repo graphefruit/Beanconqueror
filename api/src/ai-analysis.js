@@ -1,7 +1,7 @@
 const { getStorageValue, setStorageValue } = require('./storage-repository');
 
 const STORAGE_KEYS = {
-  BREWS: 'BREW',
+  BREWS: 'BREWS',
   SETTINGS: 'SETTINGS',
   CONFIG: 'AI_ANALYSIS_CONFIG',
   STATUS: 'AI_ANALYSIS_STATUS',
@@ -36,7 +36,7 @@ function parseSeconds(value) {
   if (/^\d+(\.\d+)?$/.test(text)) {
     return Number(text);
   }
-  const parts = text.split(':').map((part) => Number(part));
+  const parts = text.split(':').map((part) => (part.trim() === '' ? NaN : Number(part)));
   if (parts.some((part) => !Number.isFinite(part))) {
     return null;
   }
@@ -242,7 +242,11 @@ function buildFeaturePayload(brews) {
       beverage,
       ratio,
       brewTimeSeconds: parseSeconds(brew?.brew_time),
-      firstDripSeconds: parseSeconds(brew?.first_drip_time ?? brew?.first_drip),
+      firstDripSeconds: parseSeconds(
+        brew?.coffee_first_drip_time != null
+          ? brew.coffee_first_drip_time + (brew.coffee_first_drip_time_milliseconds || 0) / 1000
+          : null,
+      ),
       rating: valueOrNull(brew?.rating),
       note: brew?.note || '',
       cuppingPoints: valueOrNull(brew?.cupping_points),
