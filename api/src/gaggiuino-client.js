@@ -310,6 +310,7 @@ function createGaggiuinoPreparation() {
     grind_weight: true,
     mill: true,
     pressure_profile: true,
+    rating: true,
   };
 
   return {
