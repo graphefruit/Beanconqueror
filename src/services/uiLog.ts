@@ -42,30 +42,34 @@ export class UILog {
     return this.logs;
   }
 
+  private sanitizeMessage(msg: string): string {
+    return msg.replace(/[\r\n]/g, ' ');
+  }
+
   public debug(_message: string, ...optionalParams: unknown[]): void {
     this.generateLogMessage(LogLevel.LOG, _message, ...optionalParams);
     if (!this.disabled) {
-      console.log(_message, ...optionalParams);
+      console.log(this.sanitizeMessage(_message), ...optionalParams);
     }
   }
   public log(_message: string, ...optionalParams: unknown[]): void {
     this.generateLogMessage(LogLevel.LOG, _message, ...optionalParams);
     if (!this.disabled) {
-      console.log(_message, ...optionalParams);
+      console.log(this.sanitizeMessage(_message), ...optionalParams);
     }
   }
 
   public info(_message: string, ...optionalParams: unknown[]): void {
     this.generateLogMessage(LogLevel.INFO, _message, ...optionalParams);
     if (this.disabled === false && console.info) {
-      console.info(_message, ...optionalParams);
+      console.info(this.sanitizeMessage(_message), ...optionalParams);
     }
   }
 
   public error(_message: string, ...optionalParams: unknown[]): void {
     this.generateLogMessage(LogLevel.ERR, _message, ...optionalParams);
     if (this.disabled === false && console.error) {
-      console.error(_message, ...optionalParams);
+      console.error(this.sanitizeMessage(_message), ...optionalParams);
     }
   }
 
@@ -81,7 +85,7 @@ export class UILog {
   public warn(_message: string, ...optionalParams: unknown[]): void {
     this.generateLogMessage(LogLevel.WARN, _message, ...optionalParams);
     if (this.disabled === false && console.warn) {
-      console.warn(_message, ...optionalParams);
+      console.warn(this.sanitizeMessage(_message), ...optionalParams);
     }
   }
 
