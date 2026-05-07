@@ -26,10 +26,14 @@ function normalizeBaseUrl(baseUrl) {
 
 async function getGaggiuinoSettings() {
   const settings = await getStorageValue(GAGGIUINO_SETTINGS_KEY);
+  const parsedTimeoutMs = Number(settings?.timeoutMs);
   return {
-    baseUrl: settings?.baseUrl || config.gaggiuino.baseUrl,
-    timeoutMs: Number(settings?.timeoutMs) || config.gaggiuino.timeoutMs,
-    designatedMillUuid: settings?.designatedMillUuid || GAGGIUINO_MILL_UUID,
+    baseUrl: settings?.baseUrl ?? config.gaggiuino.baseUrl,
+    timeoutMs: Number.isFinite(parsedTimeoutMs)
+      ? parsedTimeoutMs
+      : config.gaggiuino.timeoutMs,
+    designatedMillUuid:
+      settings?.designatedMillUuid ?? GAGGIUINO_MILL_UUID,
     autoSyncEnabled:
       settings?.autoSyncEnabled !== undefined
         ? Boolean(settings.autoSyncEnabled)
@@ -38,30 +42,28 @@ async function getGaggiuinoSettings() {
 }
 
 async function updateGaggiuinoSettings(settings) {
-  const existing = (await getStorageValue(GAGGIUINO_SETTINGS_KEY)) || {};
+  const current = await getGaggiuinoSettings();
+  const parsedTimeoutMs = Number(settings?.timeoutMs);
   const nextSettings = {
     baseUrl: String(
-      settings?.baseUrl ?? existing.baseUrl ?? config.gaggiuino.baseUrl,
+      settings?.baseUrl ?? current.baseUrl,
     ).trim(),
     timeoutMs: Math.max(
       1000,
       Math.min(
-        Number(settings?.timeoutMs ?? existing.timeoutMs) ||
-          config.gaggiuino.timeoutMs,
+        Number.isFinite(parsedTimeoutMs)
+          ? parsedTimeoutMs
+          : current.timeoutMs,
         30000,
       ),
     ),
     designatedMillUuid: String(
-      settings?.designatedMillUuid ??
-        existing.designatedMillUuid ??
-        GAGGIUINO_MILL_UUID,
+      settings?.designatedMillUuid ?? current.designatedMillUuid,
     ).trim(),
     autoSyncEnabled:
       settings?.autoSyncEnabled !== undefined
         ? Boolean(settings.autoSyncEnabled)
-        : existing.autoSyncEnabled !== undefined
-          ? Boolean(existing.autoSyncEnabled)
-          : config.gaggiuino.autoSyncEnabled,
+        : current.autoSyncEnabled,
   };
 
   if (!nextSettings.baseUrl.startsWith('http')) {
