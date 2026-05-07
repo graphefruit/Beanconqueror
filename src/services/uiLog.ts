@@ -42,30 +42,38 @@ export class UILog {
     return this.logs;
   }
 
+  private sanitizeMessage(msg: string): string {
+    return msg.replace(/[\r\n]/g, ' ');
+  }
+
   public debug(_message: string, ...optionalParams: unknown[]): void {
-    this.generateLogMessage(LogLevel.LOG, _message, ...optionalParams);
+    const msg = this.sanitizeMessage(_message);
+    this.generateLogMessage(LogLevel.LOG, msg, ...optionalParams);
     if (!this.disabled) {
-      console.log(_message, ...optionalParams);
+      console.log(msg, ...optionalParams);
     }
   }
   public log(_message: string, ...optionalParams: unknown[]): void {
-    this.generateLogMessage(LogLevel.LOG, _message, ...optionalParams);
+    const msg = this.sanitizeMessage(_message);
+    this.generateLogMessage(LogLevel.LOG, msg, ...optionalParams);
     if (!this.disabled) {
-      console.log(_message, ...optionalParams);
+      console.log(msg, ...optionalParams);
     }
   }
 
   public info(_message: string, ...optionalParams: unknown[]): void {
-    this.generateLogMessage(LogLevel.INFO, _message, ...optionalParams);
+    const msg = this.sanitizeMessage(_message);
+    this.generateLogMessage(LogLevel.INFO, msg, ...optionalParams);
     if (this.disabled === false && console.info) {
-      console.info(_message, ...optionalParams);
+      console.info(msg, ...optionalParams);
     }
   }
 
   public error(_message: string, ...optionalParams: unknown[]): void {
-    this.generateLogMessage(LogLevel.ERR, _message, ...optionalParams);
+    const msg = this.sanitizeMessage(_message);
+    this.generateLogMessage(LogLevel.ERR, msg, ...optionalParams);
     if (this.disabled === false && console.error) {
-      console.error(_message, ...optionalParams);
+      console.error(msg, ...optionalParams);
     }
   }
 
@@ -79,9 +87,10 @@ export class UILog {
   }
 
   public warn(_message: string, ...optionalParams: unknown[]): void {
-    this.generateLogMessage(LogLevel.WARN, _message, ...optionalParams);
+    const msg = this.sanitizeMessage(_message);
+    this.generateLogMessage(LogLevel.WARN, msg, ...optionalParams);
     if (this.disabled === false && console.warn) {
-      console.warn(_message, ...optionalParams);
+      console.warn(msg, ...optionalParams);
     }
   }
 
