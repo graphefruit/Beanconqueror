@@ -11,9 +11,9 @@
   </app-header>
 </ion-header>
 <ion-content>
-  <ion-grid>
+  <ion-grid class="dashboard-grid">
     @if (showUnwrappedButton) {
-    <ion-row>
+    <ion-row class="dashboard-summary-row">
       <ion-col size="12">
         <ion-card class="ion-no-margin" (click)="openUnwrapped(2025)" tappable>
           <ion-card-header>
@@ -52,8 +52,6 @@
           </ion-card-header>
         </ion-card>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col size="6" size-lg="3">
         <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin" tappable>
           <ion-card-header class="ion-no-padding ion-no-margin">
@@ -88,16 +86,44 @@
         </ion-card>
       </ion-col>
     </ion-row>
+    <ion-row class="dashboard-summary-row">
+      <ion-col size="12">
+        <ion-card class="ion-no-margin autosync-card">
+          <ion-card-header>
+            <ion-card-title>Gaggiuino Auto-sync</ion-card-title>
+            <ion-card-subtitle>{{ autoSyncMessage }}</ion-card-subtitle>
+            @if (autoSyncStatus) {
+            <ion-card-subtitle>
+              Last success: {{ formatAutoSyncTime(autoSyncStatus.lastSuccessAt) }}
+              · Shot ID: {{ autoSyncStatus.lastSyncedShotId || 0 }}
+            </ion-card-subtitle>
+            }
+            <div class="autosync-actions">
+              <ion-button fill="outline" size="small" (click)="refreshAutoSyncStatus()" [disabled]="autoSyncLoading">
+                <ion-icon name="refresh-outline" slot="start" />
+                Refresh
+              </ion-button>
+              <ion-button size="small" (click)="syncNow()" [disabled]="autoSyncSyncing">
+                <ion-icon name="sync-outline" slot="start" />
+                Sync now
+              </ion-button>
+            </div>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 
-  <div class="ion-padding-horizontal ion-padding-top">
+  <div class="ion-padding-horizontal ion-padding-top dashboard-recent-header">
     <h4 class="ion-no-margin">{{"PAGE_HOME_LAST_BREWS" | translate}}</h4>
   </div>
   @if (brews?.length > 0) {
-  @for(brew of brews; track brew.config.uuid) {
-  <brew-information [layout]="'dashboard'" (brewAction)="brewAction($event[0],$event[1])"
-    [brew]="brew"></brew-information>
-  }
+  <div class="dashboard-brews-grid">
+    @for(brew of brews; track brew.config.uuid) {
+    <brew-information [layout]="'dashboard'" (brewAction)="brewAction($event[0],$event[1])"
+      [brew]="brew"></brew-information>
+    }
+  </div>
   } @else {
   <div class="ion-padding ion-text-center">
     <div>

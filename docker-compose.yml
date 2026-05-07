@@ -14,9 +14,21 @@ services:
       DB_USER: 'beanconqueror'
       DB_PASSWORD: 'beanconqueror'
       GAGGIUINO_BASE_URL: 'http://gaggiuino.local'
+      GAGGIUINO_AUTOSYNC_ENABLED: 'true'
+      GAGGIUINO_AUTOSYNC_INTERVAL_MS: '30000'
+      GAGGIUINO_AUTOSYNC_MAX_BACKOFF_MS: '300000'
+      GAGGIUINO_AUTOSYNC_BATCH_SIZE: '10'
+      GAGGIUINO_AUTOSYNC_INITIAL_IMPORT_COUNT: '6'
       FEATURE_FLAGS_JSON: '{"brewSharing":true,"betaFlow":false}'
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1/health']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     restart: unless-stopped
 
   mariadb:
@@ -28,6 +40,12 @@ services:
       MARIADB_ROOT_PASSWORD: 'change-me'
     volumes:
       - mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     restart: unless-stopped
 
 volumes:

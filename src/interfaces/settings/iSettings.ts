@@ -28,6 +28,7 @@ export interface ISettings {
   date_format: string;
 
   language: string;
+  default_bean: string;
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
   repeat_coffee_parameters: IBrewParameter;

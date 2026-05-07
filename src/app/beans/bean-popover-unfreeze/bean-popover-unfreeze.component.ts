@@ -24,6 +24,7 @@ import moment from 'moment';
 import { Bean } from '../../../classes/bean/bean';
 import { Config } from '../../../classes/objectConfig/objectConfig';
 import { Settings } from '../../../classes/settings/settings';
+import { createUuid } from '../../../classes/uuid';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { UIAlert } from '../../../services/uiAlert';
@@ -137,7 +138,7 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
       await this.uiAlert.showLoadingSpinner();
       // Partial unfreeze
       if (!this.bean.frozenGroupId) {
-        this.bean.frozenGroupId = crypto.randomUUID();
+        this.bean.frozenGroupId = createUuid();
         // Update the original bean immediately so the ID is persisted
         await this.uiBeanStorage.update(this.bean);
       }

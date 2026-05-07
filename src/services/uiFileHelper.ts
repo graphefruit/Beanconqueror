@@ -16,6 +16,7 @@ import moment from 'moment';
 
 import { InstanceClass } from './instanceClass';
 import { UILog } from './uiLog';
+import { createUuid } from '../classes/uuid';
 
 export interface CreateTempCacheDirectoryResult {
   path: string;
@@ -185,7 +186,54 @@ export class UIFileHelper extends InstanceClass {
 
   public async readInternalJSONFile(path: string): Promise<any> {
     this.uiLog.debug('readInternalJSONFile for path', path);
+    if (!this.platform.is('capacitor')) {
+      return this.readServerStoredJSONFile(path);
+    }
+
     return this.readJSONFile(path, this.getDataDirectory());
+  }
+
+  private async readServerStoredJSONFile(path: string): Promise<any> {
+    const runtimeConfig = (window as unknown as {
+      __beanconquerorConfig?: { apiBaseUrl?: string; apiAuthToken?: string };
+    }).__beanconquerorConfig;
+    const apiBaseUrl = runtimeConfig?.apiBaseUrl || '/api';
+    const headers = new Headers();
+
+    if (runtimeConfig?.apiAuthToken) {
+      headers.set('X-Beanconqueror-Api-Token', runtimeConfig.apiAuthToken);
+    }
+
+    const storageKey = `FILE:${this.normalizeFileName(path)}`;
+    const response = await fetch(
+      `${apiBaseUrl}/storage/${encodeURIComponent(storageKey)}`,
+      { headers },
+    );
+    const body = await response.json().catch(() => ({}));
+
+    if (response.ok) {
+      return body.value;
+    }
+
+    // Some reverse-proxy setups reject encoded slash keys in path segments.
+    // Fallback to full storage map lookup for FILE:* entries.
+    const mapResponse = await fetch(`${apiBaseUrl}/storage`, { headers });
+    const mapBody = await mapResponse.json().catch(() => ({}));
+    if (!mapResponse.ok) {
+      throw new Error(
+        mapBody?.message || mapBody?.error || mapResponse.statusText,
+      );
+    }
+
+    if (
+      mapBody &&
+      Object.prototype.hasOwnProperty.call(mapBody, storageKey) &&
+      mapBody[storageKey] !== undefined
+    ) {
+      return mapBody[storageKey];
+    }
+
+    throw new Error(body?.message || body?.error || response.statusText);
   }
 
   public async writeFileFromBase64(
@@ -335,7 +383,7 @@ export class UIFileHelper extends InstanceClass {
     );
     let generatedFileName: string;
     while (true) {
-      const uuid = crypto.randomUUID();
+      const uuid = createUuid();
       generatedFileName = `${prefix}_${uuid}${fileExtension}`;
       const fileExists = await this.fileExists({
         path: generatedFileName,

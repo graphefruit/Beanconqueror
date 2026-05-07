@@ -45,7 +45,7 @@
   @switch (brew_segment) {
     @case ('open') {
       @if (openBrewsView?.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true) {
-        <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+        <div class="ion-justify-content-end container brew-toolbar-container">
           <ng-container [ngTemplateOutlet]="brewSearchToolbar"></ng-container>
 
         </div>
@@ -73,7 +73,7 @@
     @case ('archive') {
       @if (settings?.show_archived_brews) {
         @if (archiveBrewsView?.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true) {
-          <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+          <div class="ion-justify-content-end container brew-toolbar-container">
             <ng-container [ngTemplateOutlet]="brewSearchToolbar"></ng-container>
           </div>
         }

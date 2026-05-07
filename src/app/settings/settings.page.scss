@@ -1,4 +1,26 @@
 :host {
+  ion-segment {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  ion-card {
+    max-width: 1320px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+  }
+
+  ion-card-content {
+    padding: 14px;
+  }
+
+  ion-card-title {
+    margin-bottom: 8px;
+  }
+
   ion-accordion.accordion-expanded {
     div[slot='content'] {
       border: 1px solid var(--ion-color-accent-secondary);
@@ -42,6 +64,32 @@
     h2 {
       text-overflow: clip;
       white-space: break-spaces;
+    }
+  }
+
+  @media (min-width: 992px) {
+    ion-segment {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    ion-card-content {
+      padding: 18px;
+    }
+
+    ion-item {
+      --min-height: 48px;
+    }
+
+    ion-item .ion-label h2 {
+      font-size: 15px;
+      line-height: 20px;
+    }
+
+    ion-note,
+    ion-item .ion-label p {
+      font-size: 13px;
+      line-height: 18px;
     }
   }
 }

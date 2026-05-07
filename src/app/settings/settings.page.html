@@ -14,18 +14,27 @@
       <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="ai">
+      <ion-label>AI</ion-label>
+    </ion-segment-button>
+    @if (showPressureDeviceSettings) {
     <ion-segment-button value="bluetoothpressure">
       <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE" | translate }}
       </ion-label>
     </ion-segment-button>
+    }
+    @if (showTemperatureDeviceSettings) {
     <ion-segment-button value="bluetoothtemperature">
       <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE" | translate }}
       </ion-label>
     </ion-segment-button>
+    }
+    @if (showRefractometerDeviceSettings) {
     <ion-segment-button value="bluetoothrefractometer">
       <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER" | translate }}
       </ion-label>
     </ion-segment-button>
+    }
   </ion-segment>
   @switch (settings_segment) {
   @case ('general') {
@@ -162,6 +171,16 @@
           <ion-select-option value="YYYY-MM-DD">YYYY-MM-DD</ion-select-option>
           <ion-select-option value="YYYY/MM/DD">YYYY/MM/DD</ion-select-option>
 
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.default_bean"
+          cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+          <div slot="label">{{ "PAGE_SETTINGS_DEFAULT_BEAN" | translate }}</div>
+          <ion-select-option value="">{{ "PAGE_SETTINGS_DEFAULT_BEAN_NONE" | translate }}</ion-select-option>
+          @for (bean of getOpenBeans(); track bean.config.uuid) {
+          <ion-select-option [value]="bean.config.uuid">{{ bean.name }}</ion-select-option>
+          }
         </ion-select>
       </ion-item>
       <ion-item lines="none">
@@ -737,6 +756,8 @@
     </ion-card-content>
   </ion-card>
 
+  }
+  @case ('ai') {
   <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{ "AI_PROVIDER_SETTINGS_TITLE" | translate }}</ion-card-title>
@@ -784,9 +805,62 @@
         </ion-input>
       </ion-item>
       }
+      @if (aiAnalysisConfig) {
+      <ion-item>
+        <ion-checkbox
+          label-placement='start'
+          [(ngModel)]="aiAnalysisConfig.enabled"
+          (ngModelChange)="saveAiAnalysisConfig()"
+          [disabled]="!aiAnalysisConfigIsValid()">
+          <div class='ion-label'>Enable scheduled AI shot analysis</div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          label-placement="stacked"
+          label="Run cadence (hours)"
+          type="number"
+          min="1"
+          max="168"
+          [(ngModel)]="aiAnalysisConfig.cadenceHours"
+          (ngModelChange)="saveAiAnalysisConfig()">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input
+          label-placement="stacked"
+          label="Snapshot retention count"
+          type="number"
+          min="1"
+          max="365"
+          [(ngModel)]="aiAnalysisConfig.retentionCount"
+          (ngModelChange)="saveAiAnalysisConfig()">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select [(ngModel)]="aiAnalysisConfig.visibility" (ngModelChange)="saveAiAnalysisConfig()">
+          <div slot="label">Statistics AI visibility</div>
+          <ion-select-option value="visible">Visible</ion-select-option>
+          <ion-select-option value="hidden">Hidden</ion-select-option>
+        </ion-select>
+      </ion-item>
+      @if (aiAnalysisStatus?.lastRunAt) {
+      <ion-item lines="none">
+        <ion-note color="medium">
+          Last run: {{ aiAnalysisStatus.lastRunAt | date:'short' }} | Health: {{ aiAnalysisStatus.health }}
+        </ion-note>
+      </ion-item>
+      }
+      @if (!aiAnalysisConfigIsValid()) {
+      <ion-item lines="none">
+        <ion-note color="warning">
+          Configure provider, API key, and model to enable scheduling.
+        </ion-note>
+      </ion-item>
+      }
+      }
     </ion-card-content>
   </ion-card>
-
   }
   @case ('bluetoothscale') {
   <ion-card>
@@ -1511,6 +1585,7 @@
   </ion-card>
   }
   @case ('bluetoothpressure') {
+  @if (showPressureDeviceSettings) {
   <ion-card>
     <ion-card-content>
       <ion-card-title>
@@ -1643,7 +1718,9 @@
     </ion-card-content>
   </ion-card>
   }
+  }
   @case ('bluetoothtemperature') {
+  @if (showTemperatureDeviceSettings) {
   <ion-card>
     <ion-card-content>
       <ion-card-title>
@@ -1713,7 +1790,9 @@
 
   </ion-card>
   }
+  }
   @case ('bluetoothrefractometer') {
+  @if (showRefractometerDeviceSettings) {
   <ion-card>
     <ion-card-content>
       <ion-card-title>
@@ -1798,6 +1877,7 @@
     </ion-card-content>
 
   </ion-card>
+  }
   }
   }
 </ion-content>

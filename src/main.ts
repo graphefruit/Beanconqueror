@@ -32,9 +32,31 @@ function getStorageDriverOrder(): string[] {
   return [Drivers.IndexedDB, Drivers.LocalStorage];
 }
 
+function isServerStorageRuntime(): boolean {
+  const runtimeConfig = (window as unknown as {
+    __beanconquerorConfig?: { apiBaseUrl?: string };
+  }).__beanconquerorConfig;
+
+  return !!runtimeConfig?.apiBaseUrl;
+}
+
+function unregisterServiceWorkersForServerStorage(): void {
+  if (!isServerStorageRuntime() || !navigator.serviceWorker) {
+    return;
+  }
+
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
+
 if (environment.production) {
   enableProdMode();
 }
+
+unregisterServiceWorkersForServerStorage();
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -55,7 +77,7 @@ bootstrapApplication(AppComponent, {
     }),
     provideRouter(routes),
     provideServiceWorker('ngsw-worker.js', {
-      enabled: environment.production,
+      enabled: environment.production && !isServerStorageRuntime(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
     provideZoneChangeDetection(),

@@ -4,11 +4,11 @@ import {
   HostListener,
   inject,
   Input,
+  OnChanges,
   OnInit,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
-
-import { Platform } from '@ionic/angular/standalone';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 
@@ -27,10 +27,9 @@ declare var Plotly;
   styleUrls: ['./graph-display-card.component.scss'],
   imports: [],
 })
-export class GraphDisplayCardComponent implements OnInit {
+export class GraphDisplayCardComponent implements OnInit, OnChanges {
   private readonly uiHelper = inject(UIHelper);
   private readonly uiFileHelper = inject(UIFileHelper);
-  private readonly platform = inject(Platform);
   private readonly graphHelper = inject(GraphHelperService);
 
   @Input() public flowProfileData: any;
@@ -56,6 +55,29 @@ export class GraphDisplayCardComponent implements OnInit {
   public profileDiv: ElementRef;
 
   public async ngOnInit() {
+    await this.loadFlowSource();
+    setTimeout(() => {
+      this.initializeFlowChart();
+    }, 50);
+  }
+
+  public async ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes['flowProfilePath'] ||
+      changes['flowProfileData'] ||
+      changes['meticulousHistoryData'] ||
+      changes['gaggiuinoHistoryData']
+    ) {
+      await this.loadFlowSource();
+      setTimeout(() => {
+        this.initializeFlowChart();
+      }, 50);
+    }
+  }
+
+  private async loadFlowSource() {
+    this.flow_profile_raw = new BrewFlow();
+
     if (this.flowProfilePath) {
       await this.readFlowProfile();
     } else if (this.flowProfileData) {
@@ -71,9 +93,6 @@ export class GraphDisplayCardComponent implements OnInit {
         this.gaggiuinoHistoryData.data,
       );**/
     }
-    setTimeout(() => {
-      this.initializeFlowChart();
-    }, 50);
   }
 
   @HostListener('window:resize')
@@ -171,14 +190,6 @@ export class GraphDisplayCardComponent implements OnInit {
   }
 
   private async readFlowProfile() {
-    if (!this.platform.is('capacitor')) {
-      const dummyData = (
-        await import('../../assets/BeanconquerorFlowTestDataFourth.json')
-      ).default;
-      this.flow_profile_raw = dummyData as any;
-      return;
-    }
-
     if (this.flowProfilePath === '') {
       return;
     }

@@ -143,7 +143,7 @@ ion-segment-button {
 
   --color: var(--ion-text-color);
   --color-checked: var(--ion-color-accent-secondary);
-  --indicator-color: var(--ion-color-accent-secondary);
+  --indicator-color: var(--ion-color-accent);
 
   ion-label,
   .ion-label {
@@ -153,7 +153,7 @@ ion-segment-button {
 .ion-palette-dark {
   ion-segment-button {
     --color: var(--ion-text-color);
-    --color-checked: var(--ion-color-accent);
+    --color-checked: var(--ion-color-accent-secondary);
     --indicator-color: var(--ion-color-accent);
   }
   ion-card {
@@ -378,11 +378,13 @@ ion-split-pane {
       ion-item {
         text-align: left;
         --background: var(--ion-color-light);
-        --border-radius: 6px;
-        --min-height: 42px;
-        margin: 2px 12px;
+        --border-radius: 10px;
+        --min-height: 44px;
+        margin: 4px 10px;
         --padding-start: 16px;
         --padding-end: 16px;
+        font-size: 17px;
+        letter-spacing: 0;
       }
       ion-list {
         background: var(--ion-color-light) !important;
@@ -406,9 +408,25 @@ ion-split-pane {
 }
 
 ion-menu ion-item.active {
-  --background: var(--ion-background-color);
-  color: var(--ion-color-accent-secondary);
-  font-weight: bold;
+  --background: #e7f2f5;
+  --color: #173548;
+  color: #173548;
+  font-weight: 700;
+  border-left: 4px solid #28c2ad;
+}
+
+ion-menu ion-item.active ion-label {
+  color: #173548 !important;
+}
+
+ion-menu ion-content ion-item {
+  transition: background-color 120ms ease, color 120ms ease,
+    border-color 120ms ease;
+}
+
+ion-menu ion-content ion-item:not(.active):hover {
+  --background: #f3f7f9;
+  --color: #1f3f53;
 }
 
 ion-menu:host .menu-inner {
@@ -456,6 +474,15 @@ ion-menu:host .menu-inner {
     height: 40px;
     font-size: 16px;
     --box-shadow: none;
+    --border-radius: 8px;
+  }
+  ion-button.button-solid {
+    --background: var(--ion-color-accent-secondary);
+    --color: #f4fbff;
+  }
+  ion-button.button-outline {
+    --border-color: var(--ion-color-accent-secondary);
+    --color: var(--ion-color-accent-secondary);
   }
   ion-button ion-icon[slot='icon-only'] {
     font-size: 28px;
@@ -972,10 +999,14 @@ ion-menu:host .menu-inner {
 
   ion-toggle {
     --track-background: var(--ion-color-inactive);
-    --track-background-checked: var(--ion-color-accent);
+    --track-background-checked: color-mix(
+      in srgb,
+      var(--ion-color-accent) 30%,
+      #ffffff
+    );
 
     --handle-background: var(--ion-color-inactive);
-    --handle-background-checked: var(--ion-color-accent);
+    --handle-background-checked: var(--ion-color-accent-secondary);
   }
   .disablePointerEvents {
     pointer-events: none;
@@ -1168,7 +1199,7 @@ ion-chip.trace-chip {
 }
 
 ion-chip.trace-chip.trace-active {
-  --background: var(--chip-color) !important;
+  --background: var(--chip-color, var(--ion-color-accent-secondary)) !important;
   --color: white !important;
   margin-right: 2px;
   margin-left: 0px;

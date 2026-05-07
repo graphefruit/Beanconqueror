@@ -436,11 +436,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   private async readReferenceFlowProfile(_brew: Brew) {
-    if (!this.platform.is('capacitor')) {
-      this.reference_profile_raw = await this.readDummyFlowProfile();
-      return;
-    }
-
     if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
       let referencePath = '';
       const uuid = _brew.reference_flow_profile.uuid;
@@ -3453,10 +3448,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   private async returnFlowProfile(_flowProfile: string): Promise<any> {
-    if (!this.platform.is('capacitor')) {
-      return this.readDummyFlowProfile();
-    }
-
     if (_flowProfile === '') {
       throw new Error('_flowProfile is empty');
     }
@@ -3471,6 +3462,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   public async readFlowProfile() {
     const flowProfilePath =
+      this.data.flow_profile ||
       'brews/' + this.data.config.uuid + '_flow_profile.json';
     try {
       const jsonParsed =
@@ -3483,6 +3475,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     try {
       if (this.data.flow_profile !== '') {
         const flowProfilePath =
+          this.data.flow_profile ||
           'brews/' + this.data.config.uuid + '_flow_profile.json';
         await this.uiFileHelper.deleteInternalFile(flowProfilePath);
       }

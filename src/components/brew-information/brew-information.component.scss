@@ -18,13 +18,18 @@
       padding-bottom: 0px;
       padding-top: var(--padding-top);
     }
+    .brew-header-row {
+      min-height: 60px;
+      height: auto;
+    }
+
     .brew-title {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
     }
     ion-label {
-      line-height: 14px !important;
+      line-height: 1.2 !important;
       display: inline-block;
     }
     // Overwrite
@@ -48,7 +53,7 @@
     }
     ion-text {
       position: relative;
-      top: -5px;
+      top: 0;
     }
   }
 
@@ -157,5 +162,37 @@
   }
   .best-brew {
     border: 2px solid #ae9f87;
+  }
+
+  @media (min-width: 992px) {
+    ion-card.brew-layout {
+      border-radius: 8px;
+
+      ion-card-content {
+        padding: 12px;
+        padding-bottom: 2px;
+      }
+
+      ion-text {
+        top: -2px;
+      }
+
+      .button-top-absolute {
+        right: -14px;
+      }
+    }
+
+    .limit-grid-overflow ion-col {
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+
+    .limit-grid-overflow ion-text {
+      line-height: 18px;
+    }
+
+    ::ng-deep img {
+      max-height: 72px;
+    }
   }
 }

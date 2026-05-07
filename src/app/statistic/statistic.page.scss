@@ -6,4 +6,23 @@
     background-color: var(--ion-color-accent) !important;
     color: var(--ion-text-color);
   }
+  .ai-analysis-shell {
+    .ai-loading {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .ai-status-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .ai-error {
+      color: var(--ion-color-danger);
+      margin-top: 8px;
+    }
+  }
 }

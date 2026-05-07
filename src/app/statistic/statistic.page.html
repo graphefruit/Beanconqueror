@@ -25,6 +25,9 @@
       <ion-label>{{"STATISTIC_TAB_GRINDERS" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="AI" (click)="loadAiAnalysis()">
+      <ion-label>AI Analysis</ion-label>
+    </ion-segment-button>
   </ion-segment>
 
   <div>
@@ -209,6 +212,80 @@
               <canvas #grinderUsageTimelineChart style="min-height:300px"></canvas>
             </ion-card-content>
           </ion-card>
+        </div>
+      }
+      @case ('AI') {
+        <div class="ai-analysis-shell">
+          <ion-card>
+            <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">AI Shot Analysis</ion-card-header>
+            <ion-card-content>
+              @if (aiLoading) {
+                <div class="ai-loading"><ion-spinner></ion-spinner><span>Loading analysis...</span></div>
+              } @else {
+                @if (aiHiddenBySettings()) {
+                  <p>AI analysis visibility hidden in Settings.</p>
+                } @else {
+                <div class="ai-status-row">
+                  <ion-badge [color]="aiStatus?.health === 'ok' ? 'success' : (aiStatus?.health === 'error' ? 'danger' : 'medium')">
+                    {{ aiStatus?.health || 'idle' }}
+                  </ion-badge>
+                  <div>Last run: {{ aiStatus?.lastRunAt ? (aiStatus.lastRunAt | date:'short') : 'Never' }}</div>
+                </div>
+                <ion-button size="small" (click)="runAiAnalysisNow()" [disabled]="aiRunning">
+                  @if (aiRunning) { Running... } @else { Run analysis now }
+                </ion-button>
+                @if (!aiEnabledAndConfigured()) {
+                  <p>Analysis schedule disabled or AI provider config missing in Settings.</p>
+                }
+                @if (aiError) {
+                  <p class="ai-error">{{ aiError }}</p>
+                }
+                }
+              }
+            </ion-card-content>
+          </ion-card>
+
+          @if (aiSnapshot && !aiHiddenBySettings()) {
+            <ion-card>
+              <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">Top Recommendations</ion-card-header>
+              <ion-card-content>
+                <ion-list>
+                  @for (recommendation of aiSnapshot.recommendations; track recommendation.action) {
+                    <ion-item>
+                      <ion-label>
+                        <h2>{{ recommendation.action }}</h2>
+                        <p>{{ recommendation.rationale }}</p>
+                        <p>Priority: {{ recommendation.priority }} | Confidence: {{ recommendation.confidence }}</p>
+                        @if (recommendation.evidenceMetrics) {
+                          <p>Evidence: {{ recommendation.evidenceMetrics | json }}</p>
+                        }
+                      </ion-label>
+                    </ion-item>
+                  }
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+
+            <ion-card>
+              <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">Recent Snapshots</ion-card-header>
+              <ion-card-content>
+                <ion-list>
+                  @for (entry of aiHistory; track entry.id) {
+                    <ion-item>
+                      <ion-label>
+                        <h3>{{ entry.createdAt | date:'short' }}</h3>
+                        <p>Recommendations: {{ entry?.recommendations?.length || 0 }}</p>
+                        <p>Average rating: {{ entry?.summary?.avgRating || 'n/a' }}</p>
+                        @if (ratingDelta($index)) {
+                          <p>Rating delta vs previous: {{ ratingDelta($index) }}</p>
+                        }
+                      </ion-label>
+                    </ion-item>
+                  }
+                </ion-list>
+              </ion-card-content>
+            </ion-card>
+          }
         </div>
       }
     }

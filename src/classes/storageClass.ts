@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 
 import { UILog } from '../services/uiLog';
 import { UIStorage } from '../services/uiStorage';
+import { createUuid } from './uuid';
 
 export abstract class StorageClass {
   protected uiStorage = inject(UIStorage);
@@ -34,28 +35,6 @@ export abstract class StorageClass {
   // and unix timestamp semantics are not expected to change.
   public static getUnixTimestamp(): number {
     return Math.floor(Date.now() / 1000);
-  }
-
-  private static createUUID(): string {
-    if (crypto?.randomUUID) {
-      return crypto.randomUUID();
-    }
-
-    const randomValues = crypto?.getRandomValues?.(new Uint8Array(16));
-    if (randomValues) {
-      randomValues[6] = (randomValues[6] & 0x0f) | 0x40;
-      randomValues[8] = (randomValues[8] & 0x3f) | 0x80;
-      const hex = Array.from(randomValues, (value) =>
-        value.toString(16).padStart(2, '0'),
-      );
-      return `${hex.slice(0, 4).join('')}-${hex.slice(4, 6).join('')}-${hex.slice(6, 8).join('')}-${hex.slice(8, 10).join('')}-${hex.slice(10, 16).join('')}`;
-    }
-
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
-      const random = Math.floor(Math.random() * 16);
-      const value = char === 'x' ? random : (random & 0x3) | 0x8;
-      return value.toString(16);
-    });
   }
 
   // Dynamic import to avoid circular dependency:
@@ -112,7 +91,7 @@ export abstract class StorageClass {
     const promise = new Promise(async (resolve, reject) => {
       const newEntry = StorageClass.cloneData(_entry);
       try {
-        newEntry.config.uuid = StorageClass.createUUID();
+        newEntry.config.uuid = createUuid();
         newEntry.config.unix_timestamp = StorageClass.getUnixTimestamp();
         this.storedData.push(newEntry);
         await this.__save();

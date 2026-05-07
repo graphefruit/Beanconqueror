@@ -1,8 +1,14 @@
 :host {
+  .dashboard-grid {
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
   ion-card.dashboard {
     text-align: center;
     padding: 12px;
     height: 100%;
+    border-radius: 8px;
 
     ion-card-title {
       color: var(--ion-color-accent-secondary);
@@ -36,7 +42,37 @@
     --ion-grid-column-padding: 5px;
   }
 
+  .dashboard-recent-header,
+  .dashboard-brews-grid {
+    max-width: 1320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .dashboard-brews-grid {
+    padding-bottom: 16px;
+  }
+
+  .autosync-card {
+    ion-card-header {
+      gap: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .autosync-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
   @media (min-width: 992px) {
+    .dashboard-summary-row {
+      align-items: stretch;
+    }
+
     ion-card.dashboard {
       min-height: 128px;
       display: flex;
@@ -56,6 +92,14 @@
 
     ion-grid {
       --ion-grid-column-padding: 8px;
+    }
+  }
+
+  @media (min-width: 1240px) {
+    .dashboard-brews-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
   }
 
