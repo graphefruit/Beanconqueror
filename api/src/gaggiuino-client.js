@@ -38,19 +38,30 @@ async function getGaggiuinoSettings() {
 }
 
 async function updateGaggiuinoSettings(settings) {
+  const existing = (await getStorageValue(GAGGIUINO_SETTINGS_KEY)) || {};
   const nextSettings = {
-    baseUrl: String(settings?.baseUrl || config.gaggiuino.baseUrl).trim(),
+    baseUrl: String(
+      settings?.baseUrl ?? existing.baseUrl ?? config.gaggiuino.baseUrl,
+    ).trim(),
     timeoutMs: Math.max(
       1000,
-      Math.min(Number(settings?.timeoutMs) || config.gaggiuino.timeoutMs, 30000),
+      Math.min(
+        Number(settings?.timeoutMs ?? existing.timeoutMs) ||
+          config.gaggiuino.timeoutMs,
+        30000,
+      ),
     ),
     designatedMillUuid: String(
-      settings?.designatedMillUuid || GAGGIUINO_MILL_UUID,
+      settings?.designatedMillUuid ??
+        existing.designatedMillUuid ??
+        GAGGIUINO_MILL_UUID,
     ).trim(),
     autoSyncEnabled:
       settings?.autoSyncEnabled !== undefined
         ? Boolean(settings.autoSyncEnabled)
-        : config.gaggiuino.autoSyncEnabled,
+        : existing.autoSyncEnabled !== undefined
+          ? Boolean(existing.autoSyncEnabled)
+          : config.gaggiuino.autoSyncEnabled,
   };
 
   if (!nextSettings.baseUrl.startsWith('http')) {
