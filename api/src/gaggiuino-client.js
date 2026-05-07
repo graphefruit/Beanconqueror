@@ -322,7 +322,7 @@ function createGaggiuinoPreparation() {
     use_custom_parameters: true,
     manage_parameters: visibleParameters,
     default_last_coffee_parameters: visibleParameters,
-    visible_list_view_parameters: {},
+    visible_list_view_parameters: { rating: true },
     repeat_coffee_parameters: { repeat_coffee_active: false },
     brew_order: {},
     tools: [],
