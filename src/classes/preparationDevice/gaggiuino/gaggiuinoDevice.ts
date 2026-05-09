@@ -216,7 +216,7 @@ export class GaggiuinoDevice extends PreparationDevice {
     const headers: Record<string, string> = {};
 
     if (token) {
-      headers['X-Beanconqueror-Api-Token'] = token;
+      headers['X-Beanconqueror-Client-Token'] = token;
     }
 
     return await fetch(url, {

@@ -7,17 +7,30 @@ if [ -z "${FEATURE_FLAGS_JSON:-}" ]; then
   FEATURE_FLAGS_JSON='{}'
 fi
 export FEATURE_FLAGS_JSON
-if [ -z "${API_AUTH_TOKEN:-}" ]; then
-  API_AUTH_TOKEN="$(od -An -tx1 -N32 /dev/urandom | tr -d ' \n')"
+export API_CLIENT_TOKEN
+
+if [ "${NODE_ENV:-production}" != "development" ]; then
+  if [ -z "${SESSION_SIGNING_SECRET:-}" ]; then
+    echo "SESSION_SIGNING_SECRET is required outside development."
+    exit 1
+  fi
+  if [ "${DB_PASSWORD:-}" = "beanconqueror" ] || [ "${MARIADB_ROOT_PASSWORD:-}" = "change-me" ]; then
+    echo "Refusing insecure default DB credentials outside development."
+    exit 1
+  fi
+else
+  if [ -z "${SESSION_SIGNING_SECRET:-}" ]; then
+    SESSION_SIGNING_SECRET="$(od -An -tx1 -N32 /dev/urandom | tr -d ' \n')"
+  fi
 fi
-export API_AUTH_TOKEN
+export SESSION_SIGNING_SECRET
 
 envsubst < /tmp/env.template.js > /usr/share/nginx/html/assets/env.js
 
 node /app/api/src/server.js &
 api_pid="$!"
 
-nginx -g 'daemon off;' &
+nginx -g 'pid /tmp/nginx.pid; daemon off;' &
 nginx_pid="$!"
 
 terminate() {
@@ -28,7 +41,17 @@ terminate() {
 trap 'terminate; exit 143' TERM INT
 
 set +e
-wait -n "$api_pid" "$nginx_pid"
-status="$?"
+while kill -0 "$api_pid" 2>/dev/null && kill -0 "$nginx_pid" 2>/dev/null; do
+  sleep 1
+done
+
+if ! kill -0 "$api_pid" 2>/dev/null; then
+  wait "$api_pid"
+  status="$?"
+else
+  wait "$nginx_pid"
+  status="$?"
+fi
+
 terminate
 exit "$status"

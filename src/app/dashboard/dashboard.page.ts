@@ -316,7 +316,7 @@ export class DashboardPage implements OnInit, OnDestroy {
     const headers = new Headers(options.headers);
     headers.set('Content-Type', 'application/json');
     if (runtimeConfig?.apiAuthToken) {
-      headers.set('X-Beanconqueror-Api-Token', runtimeConfig.apiAuthToken);
+      headers.set('X-Beanconqueror-Client-Token', runtimeConfig.apiAuthToken);
     }
 
     const response = await fetch(`${apiBaseUrl}${normalizedPath}`, {
