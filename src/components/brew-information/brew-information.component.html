@@ -12,7 +12,7 @@
           <ion-card class='long-card brew-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" style='z-index:-1'>
             <ion-card-content class='no-ion-col-vertical-padding ion-padding-top' >
               @if (informationContainerWidth) {
-                <graph-display-card [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+                <graph-display-card [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile' [brew]="brew"></graph-display-card>
               }
             </ion-card-content>
           </ion-card>

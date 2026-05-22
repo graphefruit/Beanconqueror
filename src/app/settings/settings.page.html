@@ -1483,6 +1483,71 @@
         </ion-accordion>
 
       </ion-accordion-group>
+
+      <ion-item class="margin-top-10">
+        <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+          [(ngModel)]="settings.brew_event_markers_enabled">
+          <div class='ion-label'>{{ "PAGE_SETTINGS_BREW_EVENT_MARKERS_ENABLED" | translate }}</div>
+        </ion-checkbox>
+      </ion-item>
+
+      @if (settings.brew_event_markers_enabled) {
+      <ion-item>
+        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_event_markers_mode"
+          cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+          <div slot="label">{{ "PAGE_SETTINGS_BREW_EVENT_MARKERS_MODE" | translate }}</div>
+          <ion-select-option value="line">{{ "PAGE_SETTINGS_BREW_EVENT_MARKERS_MODE_LINE" | translate }}</ion-select-option>
+          <ion-select-option value="region">{{ "PAGE_SETTINGS_BREW_EVENT_MARKERS_MODE_REGION" | translate }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-accordion-group>
+        <ion-accordion value="bloomMarker">
+          <ion-item slot="header" color="light">
+            <ion-label>{{ "PAGE_SETTINGS_BREW_EVENT_MARKERS_BLOOM_COLOR" | translate }}</ion-label>
+            <ion-button fill="clear" slot="end"
+              (click)="resetGraphColor('bloomMarker'); $event.stopPropagation(); $event.preventDefault()">
+              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.bloomMarker.active.light" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.bloomMarker.active.dark" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+          </div>
+        </ion-accordion>
+
+        <ion-accordion value="firstDripMarker">
+          <ion-item slot="header" color="light">
+            <ion-label>{{ "PAGE_SETTINGS_BREW_EVENT_MARKERS_FIRST_DRIP_COLOR" | translate }}</ion-label>
+            <ion-button fill="clear" slot="end"
+              (click)="resetGraphColor('firstDripMarker'); $event.stopPropagation(); $event.preventDefault()">
+              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.firstDripMarker.active.light" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.firstDripMarker.active.dark" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+      }
+
     </ion-card-content>
   </ion-card>
   }

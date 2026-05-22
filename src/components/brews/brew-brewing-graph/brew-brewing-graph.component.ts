@@ -845,6 +845,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         }
       }
 
+      const eventMarkers = this.graphHelper.getEventMarkerShapes(
+        this.data,
+        this.settings,
+      );
+      this.lastChartLayout.shapes = [
+        ...(this.lastChartLayout.shapes ?? []),
+        ...eventMarkers.shapes,
+      ];
+      this.lastChartLayout.annotations = [
+        ...(this.lastChartLayout.annotations ?? []),
+        ...eventMarkers.annotations,
+      ];
+
       try {
         if (this.canWePlot()) {
           Plotly.newPlot(
@@ -934,6 +947,37 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     );
 
     return layout;
+  }
+
+  public updateEventMarkers(): void {
+    if (!this.lastChartLayout || !this.profileDiv?.nativeElement) {
+      return;
+    }
+
+    const markerCustomIds = [
+      'bloomShape',
+      'firstDripShape',
+      'bloomAnnotation',
+      'firstDripAnnotation',
+    ];
+
+    this.lastChartLayout.shapes = (this.lastChartLayout.shapes ?? []).filter(
+      (s: any) => !markerCustomIds.includes(s.customId),
+    );
+    this.lastChartLayout.annotations = (
+      this.lastChartLayout.annotations ?? []
+    ).filter((a: any) => !markerCustomIds.includes(a.customId));
+
+    const markers = this.graphHelper.getEventMarkerShapes(
+      this.data,
+      this.settings,
+    );
+    this.lastChartLayout.shapes.push(...markers.shapes);
+    this.lastChartLayout.annotations.push(...markers.annotations);
+
+    setTimeout(() => {
+      Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+    });
   }
 
   public drawTargetWeight(_targetWeight: number) {
@@ -4024,6 +4068,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           // The first time we set the weight, we have one sec delay, because of this do it -1 second
 
           this.brewComponent.setCoffeeDripTime(undefined);
+          this.updateEventMarkers();
 
           this.checkChanges();
         }
@@ -4667,6 +4712,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public coffeeFirstDripTimeChanged(_event): void {
+    this.updateEventMarkers();
     if (
       !this.smartScaleConnected() &&
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&

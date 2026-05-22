@@ -12,6 +12,7 @@ import { Platform } from '@ionic/angular/standalone';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 
+import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
 import { Settings } from '../../classes/settings/settings';
@@ -19,6 +20,7 @@ import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyl
 import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 declare var Plotly;
 @Component({
@@ -32,6 +34,7 @@ export class GraphDisplayCardComponent implements OnInit {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly platform = inject(Platform);
   private readonly graphHelper = inject(GraphHelperService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   @Input() public flowProfileData: any;
   @Input() public flowProfilePath: any;
@@ -43,6 +46,7 @@ export class GraphDisplayCardComponent implements OnInit {
   @Input() public chartHeight: number;
 
   @Input() public staticChart: boolean = false;
+  @Input() public brew: Brew | null = null;
 
   public flow_profile_raw: BrewFlow = new BrewFlow();
 
@@ -140,6 +144,18 @@ export class GraphDisplayCardComponent implements OnInit {
       ];
 
       const layout = this.getChartLayout();
+
+      if (this.brew) {
+        const markers = this.graphHelper.getEventMarkerShapes(
+          this.brew,
+          this.uiSettingsStorage.getSettings(),
+        );
+        layout.shapes = [...(layout.shapes ?? []), ...markers.shapes];
+        layout.annotations = [
+          ...(layout.annotations ?? []),
+          ...markers.annotations,
+        ];
+      }
 
       chartData.push(this.traces.pressureTrace);
       chartData.push(this.traces.temperatureTrace);
