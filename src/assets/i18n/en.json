@@ -1659,6 +1659,7 @@
     "GRAPH_REFERENCE_LIGHT_MODE": "Reference (Light)",
     "GRAPH_REFERENCE_DARK_MODE": "Reference (Dark)",
     "GRAPH_COLORS": "Graph colors",
+    "PAGE_SETTINGS_BREW_EVENT_MARKERS_TITLE": "Brew event markers",
     "PAGE_SETTINGS_BREW_EVENT_MARKERS_ENABLED": "Show bloom and first-drip markers on chart",
     "PAGE_SETTINGS_BREW_EVENT_MARKERS_MODE": "Marker style",
     "PAGE_SETTINGS_BREW_EVENT_MARKERS_MODE_LINE": "Vertical lines",
