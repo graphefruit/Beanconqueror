@@ -184,6 +184,9 @@ export class Settings implements ISettings {
   public wake_lock: boolean;
   public security_check_when_going_back: boolean;
 
+  public brew_event_markers_enabled: boolean;
+  public brew_event_markers_mode: string;
+
   public show_roasting_section: boolean;
   public show_water_section: boolean;
   public show_cupping_section: boolean;
@@ -367,6 +370,9 @@ export class Settings implements ISettings {
     this.brew_save_automatic_active_delay = 5;
 
     this.track_caffeine_consumption = false;
+
+    this.brew_event_markers_enabled = false;
+    this.brew_event_markers_mode = 'line';
 
     this.show_roasting_section = false;
     this.show_water_section = false;
@@ -658,6 +664,18 @@ export class Settings implements ISettings {
     if (!this.graph_colors.customTrace) {
       this.graph_colors.customTrace = JSON.parse(
         JSON.stringify(DEFAULT_GRAPH_COLORS.customTrace),
+      );
+    }
+
+    if (!this.graph_colors.bloomMarker) {
+      this.graph_colors.bloomMarker = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.bloomMarker),
+      );
+    }
+
+    if (!this.graph_colors.firstDripMarker) {
+      this.graph_colors.firstDripMarker = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.firstDripMarker),
       );
     }
     // We need to reassign brew order here, else the class would be dismissed.

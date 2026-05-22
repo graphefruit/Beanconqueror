@@ -39,4 +39,12 @@ export const DEFAULT_GRAPH_COLORS = {
     active: { light: '#000000', dark: '#ffffff' },
     reference: { light: '#808080', dark: '#808080' },
   },
+  bloomMarker: {
+    active: { light: '#C9A84C', dark: '#C9A84C' },
+    reference: { light: '#C9A84C', dark: '#C9A84C' },
+  },
+  firstDripMarker: {
+    active: { light: '#0ABFCC', dark: '#0ABFCC' },
+    reference: { light: '#0ABFCC', dark: '#0ABFCC' },
+  },
 };
