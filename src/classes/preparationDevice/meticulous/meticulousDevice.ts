@@ -1,11 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import Api, { ActionType, ProfileIdent } from '@meticulous-home/espresso-api';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { Profile } from '@meticulous-home/espresso-profile';
 import moment from 'moment';
-import { of } from 'rxjs';
-import { catchError, timeout } from 'rxjs/operators';
 
 import { IMeticulousParams } from '../../../interfaces/preparationDevices/meticulous/iMeticulousParams';
 import {
@@ -23,14 +21,14 @@ declare var cordova;
 declare var io;
 
 export class MeticulousDevice extends PreparationDevice {
+  public static readonly PAGE_SIZE = 3;
+
   private socket: any = undefined;
   private meticulousShotData: MeticulousShotData = undefined;
   private _isConnected: boolean = false;
   private metApi: Api = undefined;
 
   private _profiles: Array<Profile> = [];
-
-  private serverURL: string = '';
 
   public static returnBrewFlowForShotData(_shotData) {
     const newMoment = moment(new Date()).startOf('day');
@@ -89,50 +87,26 @@ export class MeticulousDevice extends PreparationDevice {
       undefined,
       _preparation.connectedPreparationDevice.url,
     );
-    this.serverURL = _preparation.connectedPreparationDevice.url;
-
     if (typeof cordova !== 'undefined') {
     }
   }
-  public getHistory() {
-    const promise = new Promise<any>((resolve, reject) => {
-      const httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-        }),
-      };
-      this.httpClient
-        .post(
-          this.serverURL + '/api/v1/history',
-          {
-            sort: 'desc',
-            max_results: 20,
-          },
-          httpOptions,
-        )
-        .pipe(
-          timeout(10000),
-          catchError((e) => {
-            reject();
-            return of(null);
-          }),
-        )
-        .toPromise()
-        .then(
-          (data: any) => {
-            if (data && data.history) {
-              resolve(data.history);
-            }
-          },
-          (error) => {
-            reject();
-          },
-        )
-        .catch((error) => {
-          reject();
-        });
-    });
-    return promise;
+  public async getHistory(
+    endDate?: number,
+    profileFilter?: string,
+  ): Promise<HistoryListingEntry[]> {
+    const params: any = {
+      query: profileFilter ?? '',
+      ids: [],
+      order_by: ['date'],
+      sort: 'desc',
+      max_results: MeticulousDevice.PAGE_SIZE,
+      dump_data: true,
+    };
+    if (endDate !== undefined) {
+      params.end_date = endDate;
+    }
+    const response = await this.metApi.searchHistory(params);
+    return (response?.data?.history as unknown as HistoryListingEntry[]) ?? [];
   }
 
   public getActualShotData() {
