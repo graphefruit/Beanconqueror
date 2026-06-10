@@ -71,4 +71,9 @@ export interface IBean {
    * kg CO2e /kg for emission data.
    */
   co2e_kg: number;
+
+  /**
+   * Origin of the bean (e.g. "Ethiopia", "Single Origin Ethiopia Yirgacheffe")
+   */
+  origin: string;
 }

@@ -38,6 +38,7 @@ export class BeanListViewParameter implements IBeanParameter {
   public bestDate: boolean;
   public openDate: boolean;
   public co2e_kg: boolean;
+  public origin: boolean;
 
   constructor() {
     this.name = true;
@@ -76,6 +77,7 @@ export class BeanListViewParameter implements IBeanParameter {
     this.bestDate = false;
     this.openDate = false;
     this.co2e_kg = false;
+    this.origin = false;
   }
 
   public activateAll() {
@@ -114,5 +116,6 @@ export class BeanListViewParameter implements IBeanParameter {
     this.bestDate = true;
     this.openDate = true;
     this.co2e_kg = true;
+    this.origin = true;
   }
 }

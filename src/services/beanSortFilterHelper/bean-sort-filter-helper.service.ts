@@ -125,6 +125,7 @@ export class BeanSortFilterHelperService {
             e.note?.toLowerCase().includes(searchStr) ||
             e.name?.toLowerCase().includes(searchStr) ||
             e.roaster?.toLowerCase().includes(searchStr) ||
+            e.origin?.toLowerCase().includes(searchStr) ||
             e.aromatics?.toLowerCase().includes(searchStr) ||
             e.bean_information?.find((bi) => {
               return (

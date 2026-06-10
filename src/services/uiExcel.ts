@@ -410,6 +410,7 @@ export class UIExcel {
     const header: Array<string> = [];
 
     header.push(this.translate.instant('BEAN_DATA_NAME'));
+    header.push(this.translate.instant('BEAN_DATA_ORIGIN'));
     header.push(this.translate.instant('BEAN_DATA_ROASTER'));
     header.push(this.translate.instant('BEAN_DATA_ROASTING_DATE'));
     header.push(this.translate.instant('BEAN_DATA_ROASTING_TYPE'));
@@ -435,6 +436,7 @@ export class UIExcel {
     for (const bean of this.uiBeanStorage.getAllEntries()) {
       const entry: Array<any> = [
         bean.name,
+        bean.origin,
         bean.roaster,
         this.uiHelper.formateDatestr(
           bean.roastingDate,
@@ -1233,6 +1235,11 @@ export class UIExcel {
         const rating = entry['Rating'];
         if (rating && Number(rating) > 0) {
           bean.rating = Number(rating);
+        }
+
+        const originEntry = entry['Origin'];
+        if (originEntry) {
+          bean.origin = originEntry.toString();
         }
 
         const roasterEntry = entry['Roaster'];

@@ -765,6 +765,7 @@ export class BrewPage implements OnInit, OnDestroy {
           e.getPreparation().name.toLowerCase().includes(searchText) ||
           e.getBean().name.toLowerCase().includes(searchText) ||
           e.getBean().roaster.toLowerCase().includes(searchText) ||
+          e.getBean().origin?.toLowerCase().includes(searchText) ||
           e.getBean().bean_information?.find((bi) => {
             return (
               bi?.variety?.toLowerCase().includes(searchText) ||

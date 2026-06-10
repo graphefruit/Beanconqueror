@@ -16,6 +16,7 @@ export class ServerBean {
   public url: string;
   public ean_article_number: string;
   public co2e_kg: number;
+  public origin: string;
   public bean_information: Array<{
     country: string;
     region: string;

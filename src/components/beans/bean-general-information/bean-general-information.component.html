@@ -6,6 +6,14 @@
       </ion-input>
     </ion-item>
   }
+  @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.origin])) {
+    <ion-item>
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_ORIGIN" | translate}}' #origin="ngModel" [(ngModel)]="data.origin" autocapitalize="sentences"
+        name="origin" placeholder="{{"BEAN.PLACE_HOLDER.BEAN_DATA_ORIGIN" | translate}}" spellcheck="false"
+        type="text">
+      </ion-input>
+    </ion-item>
+  }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roaster])) {
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #roaster="ngModel" (ionFocus)="onRoasterSearchFocus($event);" (ionBlur)="onRoasterSearchLeave($event)" (ionInput)="onRoasterSearchChange($event)" [(ngModel)]="data.roaster" autocapitalize="sentences"

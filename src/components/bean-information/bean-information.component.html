@@ -173,6 +173,21 @@
                 }
               </ion-col>
               }
+              @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.origin])) {
+              <ion-col size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_ORIGIN" | translate}}</ion-label>
+                <br />
+                @if (bean.origin) {
+                <ion-text>
+                  {{bean.origin}}</ion-text>
+                }
+                @if (!bean.origin) {
+                <ion-text>
+                  -
+                </ion-text>
+                }
+              </ion-col>
+              }
               @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roaster])) {
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>

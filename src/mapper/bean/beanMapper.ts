@@ -33,6 +33,7 @@ export class BeanMapper {
           newBean.roastingDate = _userSharedBean.roastingDate;
         }
         newBean.url = _userSharedBean.url;
+        newBean.origin = _userSharedBean.origin;
 
         newBean.beanMix = _userSharedBean.beanMix;
         newBean.roast = _userSharedBean.roast;
@@ -89,6 +90,9 @@ export class BeanMapper {
 
         if ('co2e_kg' in _serverResponse) {
           newBean.co2e_kg = _serverResponse.co2e_kg;
+        }
+        if ('origin' in _serverResponse) {
+          newBean.origin = _serverResponse.origin;
         }
         if (
           _serverResponse.roastingDate !== null &&

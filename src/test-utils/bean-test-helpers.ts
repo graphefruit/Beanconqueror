@@ -41,6 +41,7 @@ export function createBeanParams(
   return {
     bean_information: true,
     roaster: true,
+    origin: true,
     bean_roasting_type: true,
     aromatics: true,
     decaffeinated: true,

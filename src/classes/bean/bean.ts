@@ -72,6 +72,7 @@ export class Bean implements IBean {
   public bestDate: string;
   public openDate: string;
 
+  public origin: string;
   public co2e_kg: number;
 
   constructor() {
@@ -135,6 +136,7 @@ export class Bean implements IBean {
     this.bestDate = '';
     this.openDate = '';
 
+    this.origin = '';
     this.co2e_kg = 0;
   }
 

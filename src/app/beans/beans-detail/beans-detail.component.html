@@ -115,6 +115,14 @@
                 </ion-label>
               </ion-item>
             }
+            @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.origin])) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BEAN_DATA_ORIGIN" | translate}}:</h2>
+                  <h3>{{data.origin}}</h3>
+                </ion-label>
+              </ion-item>
+            }
             @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roaster])) {
               <ion-item>
                 <ion-label>
