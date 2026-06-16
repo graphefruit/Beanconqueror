@@ -6,6 +6,7 @@ import { Clipboard } from '@capacitor/clipboard';
 import moment from 'moment';
 
 import 'moment/locale/de';
+import 'moment/locale/ja';
 
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
