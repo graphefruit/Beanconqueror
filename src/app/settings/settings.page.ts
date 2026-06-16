@@ -36,6 +36,7 @@ import {
   checkmarkCircleOutline,
   chevronForwardOutline,
   cloudUploadOutline,
+  flashOutline,
   informationCircleOutline,
   informationOutline,
   listOutline,
@@ -43,6 +44,7 @@ import {
 } from 'ionicons/icons';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { CapacitorHttp } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
@@ -64,6 +66,7 @@ import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { buildWebhookHeaders } from '../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../classes/settings/settings';
 import { Water } from '../../classes/water/water';
 import { CloudModelPickerComponent } from '../../components/cloud-model-picker/cloud-model-picker.component';
@@ -283,6 +286,7 @@ export class SettingsPage {
       checkmarkCircleOutline,
       chevronForwardOutline,
       cloudUploadOutline,
+      flashOutline,
       informationCircleOutline,
       informationOutline,
       listOutline,
@@ -1751,6 +1755,34 @@ export class SettingsPage {
     } else {
       this.uiAlert.showMessage(
         'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
+        undefined,
+        undefined,
+        true,
+      );
+    }
+  }
+
+  public isWebhookUrlHttp(): boolean {
+    return (
+      this.settings.brew_by_weight_webhook?.url?.trim().startsWith('http://') ??
+      false
+    );
+  }
+
+  public async testBrewByWeightWebhook() {
+    const url = this.settings.brew_by_weight_webhook?.url?.trim();
+    if (!url) {
+      return;
+    }
+    try {
+      await CapacitorHttp.get({
+        url,
+        headers: buildWebhookHeaders(this.settings.brew_by_weight_webhook),
+      });
+      this.uiToast.showInfoToastBottom('BREW_BY_WEIGHT_WEBHOOK.TEST_SUCCESS');
+    } catch (_err) {
+      this.uiAlert.showMessage(
+        'BREW_BY_WEIGHT_WEBHOOK.TEST_FAILED',
         undefined,
         undefined,
         true,

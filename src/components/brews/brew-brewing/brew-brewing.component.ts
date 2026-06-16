@@ -904,6 +904,34 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       } catch (ex) {}
 
+      // Webhook predictive lag learning — mirrors the Sanremo block above.
+      // Runs only when predictiveMode is on and there's brewbyweight data
+      // (i.e. the webhook's calculateBrewByWeight path ran this shot).
+      try {
+        const webhookCfg =
+          this.uiSettingsStorage.getSettings().brew_by_weight_webhook;
+        if (
+          webhookCfg?.active &&
+          webhookCfg.predictiveMode &&
+          this.brewBrewingGraphEl.flow_profile_raw?.brewbyweight?.length > 0
+        ) {
+          const currentLag = webhookCfg.learnedLagTime ?? 0.5;
+          const newLag = this.calculateNextResidualLagTime(
+            this.brewBrewingGraphEl.flow_profile_raw,
+            currentLag,
+          );
+          if (newLag !== currentLag) {
+            this.uiLog.log(
+              `[Webhook BBW] Auto-adjusting lag from ${currentLag}s to ${newLag}s`,
+            );
+            webhookCfg.learnedLagTime = newLag;
+            await this.uiSettingsStorage.saveSettings(
+              this.uiSettingsStorage.getSettings(),
+            );
+          }
+        }
+      } catch (ex) {}
+
       try {
         const shotWeight = this.data.brew_beverage_quantity;
         const avgFlow = this.uiHelper.toFixedIfNecessary(

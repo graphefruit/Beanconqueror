@@ -610,6 +610,131 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card class="margin-top-20">
+    <ion-card-content>
+      <ion-card-title>{{ "PAGE_SETTINGS_BREW_BY_WEIGHT_WEBHOOK_SECTION" | translate }}</ion-card-title>
+      <ion-item>
+        <ion-checkbox label-placement="start" (ngModelChange)="saveSettings();"
+          [(ngModel)]="settings.brew_by_weight_webhook.active">
+          <div class="ion-label">
+            <h2>{{ "BREW_BY_WEIGHT_WEBHOOK.ACTIVATE" | translate }}</h2>
+            <p>{{ "BREW_BY_WEIGHT_WEBHOOK.ACTIVATE_TOOLTIP" | translate }}</p>
+          </div>
+        </ion-checkbox>
+      </ion-item>
+      @if (settings.brew_by_weight_webhook.active) {
+      <div>
+        <!-- Default target weight — pre-fills brew_beverage_quantity each shot -->
+        <ion-item>
+          <ion-input label-placement="stacked"
+            label='{{ "BREW_BY_WEIGHT_WEBHOOK.DEFAULT_TARGET_WEIGHT" | translate }}'
+            (ngModelChange)="saveSettings();"
+            [(ngModel)]="settings.brew_by_weight_webhook.defaultTargetWeight"
+            name="brew_by_weight_webhook_default_target"
+            inputmode="decimal" type="text" remove-empty-number prevent-characters>
+            <ion-note slot="helper">{{ "BREW_BY_WEIGHT_WEBHOOK.DEFAULT_TARGET_WEIGHT_TOOLTIP" | translate }}</ion-note>
+          </ion-input>
+        </ion-item>
+
+        <!-- Predictive mode toggle -->
+        <ion-item>
+          <ion-checkbox label-placement="start" (ngModelChange)="saveSettings();"
+            [(ngModel)]="settings.brew_by_weight_webhook.predictiveMode">
+            <div class="ion-label">
+              <h2>{{ "BREW_BY_WEIGHT_WEBHOOK.PREDICTIVE_MODE" | translate }}</h2>
+              <p>{{ "BREW_BY_WEIGHT_WEBHOOK.PREDICTIVE_MODE_TOOLTIP" | translate }}</p>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+
+        <!-- URL + clearly labelled test button -->
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.URL" | translate }}'
+            (ngModelChange)="saveSettings();" #brew_by_weight_webhook_url="ngModel"
+            [(ngModel)]="settings.brew_by_weight_webhook.url"
+            name="brew_by_weight_webhook_url"
+            placeholder='{{ "BREW_BY_WEIGHT_WEBHOOK.URL_PLACEHOLDER" | translate }}'
+            spellcheck="false" autocapitalize="none" type="url">
+          </ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-button (click)="testBrewByWeightWebhook()" fill="outline" expand="block" style="width:100%">
+            <ion-icon name="flash-outline" slot="start"></ion-icon>
+            {{ "BREW_BY_WEIGHT_WEBHOOK.TEST" | translate }}
+          </ion-button>
+        </ion-item>
+
+        <!-- Auth type selector -->
+        <ion-item>
+          <ion-select label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.AUTH_TYPE" | translate }}'
+            (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.authType"
+            name="brew_by_weight_webhook_auth_type"
+            cancelText="{{ 'CANCEL' | translate }}" okText="{{ 'CHOOSE' | translate }}"
+            style="padding-left:0px!important;width:100%;min-width:100%;">
+            <ion-select-option value="none">{{ "BREW_BY_WEIGHT_WEBHOOK.AUTH_NONE" | translate }}</ion-select-option>
+            <ion-select-option value="bearer">{{ "BREW_BY_WEIGHT_WEBHOOK.AUTH_BEARER" | translate }}</ion-select-option>
+            <ion-select-option value="basic">{{ "BREW_BY_WEIGHT_WEBHOOK.AUTH_BASIC" | translate }}</ion-select-option>
+            <ion-select-option value="header">{{ "BREW_BY_WEIGHT_WEBHOOK.AUTH_HEADER" | translate }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- http:// + auth warning -->
+        @if (settings.brew_by_weight_webhook.authType !== 'none' && isWebhookUrlHttp()) {
+        <ion-item lines="none" color="warning">
+          <ion-icon name="warning-outline" slot="start"></ion-icon>
+          <ion-label class="ion-text-wrap">
+            <p>{{ "BREW_BY_WEIGHT_WEBHOOK.HTTP_AUTH_WARNING" | translate }}</p>
+          </ion-label>
+        </ion-item>
+        }
+
+        <!-- Bearer token -->
+        @if (settings.brew_by_weight_webhook.authType === 'bearer') {
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.BEARER_TOKEN" | translate }}'
+            (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.bearerToken"
+            name="brew_by_weight_webhook_bearer" spellcheck="false" type="password">
+          </ion-input>
+        </ion-item>
+        }
+
+        <!-- Basic auth -->
+        @if (settings.brew_by_weight_webhook.authType === 'basic') {
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.BASIC_USERNAME" | translate }}'
+            (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.basicUsername"
+            name="brew_by_weight_webhook_basic_user" spellcheck="false" autocapitalize="none" type="text">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.BASIC_PASSWORD" | translate }}'
+            (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.basicPassword"
+            name="brew_by_weight_webhook_basic_pass" spellcheck="false" type="password">
+          </ion-input>
+        </ion-item>
+        }
+
+        <!-- Custom header -->
+        @if (settings.brew_by_weight_webhook.authType === 'header') {
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.CUSTOM_HEADER_NAME" | translate }}'
+            (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.customHeaderName"
+            name="brew_by_weight_webhook_header_name" spellcheck="false" autocapitalize="none" type="text"
+            placeholder='{{ "BREW_BY_WEIGHT_WEBHOOK.CUSTOM_HEADER_NAME_PLACEHOLDER" | translate }}'>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.CUSTOM_HEADER_VALUE" | translate }}'
+            (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.customHeaderValue"
+            name="brew_by_weight_webhook_header_value" spellcheck="false" type="password">
+          </ion-input>
+        </ion-item>
+        }
+      </div>
+      }
+    </ion-card-content>
+  </ion-card>
+
   @if (isTextToSpeechSectionAvailable) {
   <ion-card class="margin-top-20">
     <ion-card-content>
