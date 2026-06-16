@@ -14,6 +14,7 @@ import { DifluidMicrobalanceTi } from './difluidMicrobalanceTi';
 import { DiFluidR2Refractometer } from './difluidR2Refractometer';
 import { DiyPythonCoffeeScale } from './diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
+import { EmberThermometer } from './emberThermometer';
 import { EspressiScale } from './espressiScale';
 import { ETITemperature } from './etiTemperature';
 import { EurekaPrecisaScale } from './eurekaPrecisaScale';
@@ -137,6 +138,8 @@ export function makeTemperatureDevice(
       return new GeisingerThermometer(data);
     case TemperatureType.COFFEESENSOR:
       return new CoffeeSensorTemperature(data);
+    case TemperatureType.EMBER:
+      return new EmberThermometer(data);
     default:
       return null;
   }
