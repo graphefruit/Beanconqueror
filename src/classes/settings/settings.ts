@@ -19,7 +19,10 @@ import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
 import { IGraphColors } from '../../interfaces/settings/iGraphColors';
-import { ISettings } from '../../interfaces/settings/iSettings';
+import {
+  BrewByWeightWebhookConfig,
+  ISettings,
+} from '../../interfaces/settings/iSettings';
 import {
   PressureType,
   RefractometerType,
@@ -253,6 +256,8 @@ export class Settings implements ISettings {
   public visualizer_username: string;
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
+
+  public brew_by_weight_webhook: BrewByWeightWebhookConfig;
 
   public ai_provider: AI_PROVIDER_ENUM;
   public cloud_ai_api_key: string;
@@ -608,6 +613,20 @@ export class Settings implements ISettings {
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
 
+    this.brew_by_weight_webhook = {
+      active: false,
+      url: '',
+      authType: 'none',
+      bearerToken: '',
+      basicUsername: '',
+      basicPassword: '',
+      customHeaderName: '',
+      customHeaderValue: '',
+      defaultTargetWeight: 0,
+      predictiveMode: false,
+      learnedLagTime: 0,
+    };
+
     this.ai_provider = AI_PROVIDER_ENUM.NO_PROVIDER;
     this.cloud_ai_api_key = '';
     this.cloud_ai_model = '';
@@ -713,6 +732,35 @@ export class Settings implements ISettings {
       this.cloud_ai_base_url = '';
     } else {
       this.cloud_ai_base_url = settingsObj.cloud_ai_base_url;
+    }
+
+    // Migration: v1 used flat fields (brew_by_weight_webhook_active / _url).
+    // v2 uses a nested config object. If the stored object pre-dates this
+    // change the field will be undefined, so initialize with safe defaults.
+    if (!settingsObj.brew_by_weight_webhook) {
+      this.brew_by_weight_webhook = {
+        active: false,
+        url: '',
+        authType: 'none',
+        bearerToken: '',
+        basicUsername: '',
+        basicPassword: '',
+        customHeaderName: '',
+        customHeaderValue: '',
+        defaultTargetWeight: 0,
+        predictiveMode: false,
+        learnedLagTime: 0,
+      };
+    } else {
+      if (this.brew_by_weight_webhook.defaultTargetWeight === undefined) {
+        this.brew_by_weight_webhook.defaultTargetWeight = 0;
+      }
+      if (this.brew_by_weight_webhook.predictiveMode === undefined) {
+        this.brew_by_weight_webhook.predictiveMode = false;
+      }
+      if (this.brew_by_weight_webhook.learnedLagTime === undefined) {
+        this.brew_by_weight_webhook.learnedLagTime = 0.5;
+      }
     }
   }
 
