@@ -45,6 +45,7 @@ import { DecentScale } from '../../classes/devices/decentScale';
 import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
 import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
+import { EmberThermometer } from '../../classes/devices/emberThermometer';
 import { EspressiScale } from '../../classes/devices/espressiScale';
 import { EurekaPrecisaScale } from '../../classes/devices/eurekaPrecisaScale';
 import { FelicitaScale } from '../../classes/devices/felicitaScale';
@@ -524,7 +525,8 @@ export class CoffeeBluetoothDevicesService {
             MeaterThermometer.test(scanDevice) ||
             CombustionThermometer.test(scanDevice) ||
             ArgosThermometer.test(scanDevice) ||
-            GeisingerThermometer.test(scanDevice)
+            GeisingerThermometer.test(scanDevice) ||
+            EmberThermometer.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -881,6 +883,12 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceTemperature.id,
         type: TemperatureType.COFFEESENSOR,
+      };
+    } else if (EmberThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found an Ember Thermometer device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.EMBER,
       };
     }
 
