@@ -51,6 +51,11 @@ import { EurekaPrecisaScale } from '../../classes/devices/eurekaPrecisaScale';
 import { FelicitaScale } from '../../classes/devices/felicitaScale';
 import { FutulaScale } from '../../classes/devices/futulaScale';
 import { GeisingerThermometer } from '../../classes/devices/geisingerThermometer';
+import { InkbirdIbbqThermometer } from '../../classes/devices/inkbirdIbbqThermometer';
+import { InkbirdIht2pbThermometer } from '../../classes/devices/inkbirdIht2pbThermometer';
+import { InkbirdInt11IBThermometer } from '../../classes/devices/inkbirdInt11IBThermometer';
+import { InkbirdInt11PBThermometer } from '../../classes/devices/inkbirdInt11PBThermometer';
+import { InkbirdTnt11BThermometer } from '../../classes/devices/inkbirdTnt11BThermometer';
 import { JimmyScale } from '../../classes/devices/jimmyScale';
 import { LunarScale } from '../../classes/devices/lunarScale';
 import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
@@ -526,7 +531,12 @@ export class CoffeeBluetoothDevicesService {
             CombustionThermometer.test(scanDevice) ||
             ArgosThermometer.test(scanDevice) ||
             GeisingerThermometer.test(scanDevice) ||
-            EmberThermometer.test(scanDevice)
+            EmberThermometer.test(scanDevice) ||
+            InkbirdInt11IBThermometer.test(scanDevice) ||
+            InkbirdInt11PBThermometer.test(scanDevice) ||
+            InkbirdIht2pbThermometer.test(scanDevice) ||
+            InkbirdIbbqThermometer.test(scanDevice) ||
+            InkbirdTnt11BThermometer.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -889,6 +899,38 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceTemperature.id,
         type: TemperatureType.EMBER,
+      };
+    } else if (InkbirdInt11IBThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found an INKBIRD INT-11I-B device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.INKBIRD_INT11IB,
+      };
+    } else if (InkbirdInt11PBThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found an INKBIRD INT-11P-B device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.INKBIRD_INT11PB,
+      };
+    } else if (InkbirdIht2pbThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found an INKBIRD IHT-2PB device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.INKBIRD_IHT2PB,
+      };
+    } else if (InkbirdIbbqThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found an INKBIRD iBBQ device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.INKBIRD_IBBQ,
+      };
+    } else if (InkbirdTnt11BThermometer.test(deviceTemperature)) {
+      this.logger.log(
+        'BleManager - We found an INKBIRD TNT-11-B (BG-BT1W) device ',
+      );
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.INKBIRD_TNT11B,
       };
     }
 
