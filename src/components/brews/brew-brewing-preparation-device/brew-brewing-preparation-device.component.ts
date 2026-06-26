@@ -897,11 +897,21 @@ export class BrewBrewingPreparationDeviceComponent
   }
 
   public async importShotFromMeticulous() {
+    const meticulousDevice = this.preparationDevice as MeticulousDevice;
+    const chosenProfileId = (
+      this.data.preparationDeviceBrew.params as MeticulousParams
+    )?.chosenProfileId;
+    const profileFilter = chosenProfileId
+      ? meticulousDevice.getProfiles().find((p) => p.id === chosenProfileId)
+          ?.name
+      : undefined;
+
     const modal = await this.modalController.create({
       component: BrewModalImportShotMeticulousComponent,
       id: BrewModalImportShotMeticulousComponent.COMPONENT_ID,
       componentProps: {
-        meticulousDevice: this.preparationDevice as MeticulousDevice,
+        meticulousDevice,
+        profileFilter,
       },
     });
 
@@ -1114,6 +1124,11 @@ export class BrewBrewingPreparationDeviceComponent
     if (_historyData.profile?.temperature) {
       this.brewComponent.data.brew_temperature =
         _historyData.profile.temperature;
+    }
+    if (_historyData.profile?.id) {
+      (
+        this.data.preparationDeviceBrew.params as MeticulousParams
+      ).chosenProfileId = _historyData.profile.id;
     }
 
     /**Set the custom creation date, the user needs to activate the parameter for custom creation date**/

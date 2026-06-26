@@ -4,6 +4,7 @@ import {
   HostListener,
   inject,
   Input,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -59,7 +60,9 @@ import { UIHelper } from '../../../services/uiHelper';
     IonCol,
   ],
 })
-export class BrewModalImportShotMeticulousComponent implements OnInit {
+export class BrewModalImportShotMeticulousComponent
+  implements OnInit, OnDestroy
+{
   private readonly modalController = inject(ModalController);
   readonly uiHelper = inject(UIHelper);
   private readonly uiAlert = inject(UIAlert);
@@ -67,8 +70,14 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-meticulous';
 
   @Input() public meticulousDevice: MeticulousDevice;
+  @Input() public profileFilter: string | undefined;
   public radioSelection: string;
-  public history: Array<HistoryListingEntry> = [];
+  public history: HistoryListingEntry[] = [];
+  public hasMore = true;
+  public isLoadingMore = false;
+
+  private lastEntryTime: number | undefined;
+  private boundScrollHandler: ((event: Event) => void) | undefined;
 
   @ViewChild('ionItemEl', { read: ElementRef, static: false })
   public ionItemEl: ElementRef;
@@ -90,10 +99,25 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
     this.readHistory();
   }
 
+  public ngOnDestroy() {
+    if (this.shotDataScroll && this.boundScrollHandler) {
+      this.shotDataScroll.el.removeEventListener(
+        'scroll',
+        this.boundScrollHandler,
+      );
+    }
+  }
+
   private async readHistory() {
     await this.uiAlert.showLoadingSpinner();
     try {
-      this.history = await this.meticulousDevice?.getHistory();
+      const results = await this.meticulousDevice?.getHistory(
+        undefined,
+        this.profileFilter,
+      );
+      this.history = results ?? [];
+      this.lastEntryTime = this.history[this.history.length - 1]?.time;
+      this.hasMore = this.history.length >= MeticulousDevice.PAGE_SIZE;
     } catch (ex) {
       await this.uiAlert.showMessage(
         'PREPARATION_DEVICE.TYPE_METICULOUS.DATA_COULD_NOT_BE_LOADED',
@@ -105,6 +129,36 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
     await this.uiAlert.hideLoadingSpinner();
     this.retriggerScroll();
   }
+
+  public async loadMoreHistory() {
+    if (
+      !this.hasMore ||
+      this.isLoadingMore ||
+      this.lastEntryTime === undefined
+    ) {
+      return;
+    }
+    this.isLoadingMore = true;
+    try {
+      const results = await this.meticulousDevice?.getHistory(
+        this.lastEntryTime,
+        this.profileFilter,
+      );
+      const allResults = results ?? [];
+      const newEntries = allResults.filter(
+        (entry) => !this.history.some((existing) => existing.id === entry.id),
+      );
+      this.history = [...this.history, ...newEntries];
+      this.lastEntryTime = this.history[this.history.length - 1]?.time;
+      this.hasMore =
+        allResults.length >= MeticulousDevice.PAGE_SIZE &&
+        newEntries.length > 0;
+    } catch (ex) {
+      // silently fail — scroll triggers a retry naturally
+    }
+    this.isLoadingMore = false;
+  }
+
   @HostListener('window:resize')
   @HostListener('window:orientationchange')
   public onOrientationChange() {
@@ -132,7 +186,22 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
       if (scrollComponent.items.length === 0) {
         scrollComponent.refreshData();
       }
+
+      this.attachScrollListener();
     }, 150);
+  }
+
+  private attachScrollListener() {
+    if (this.boundScrollHandler || !this.shotDataScroll) {
+      return;
+    }
+    this.boundScrollHandler = (event: Event) => {
+      const target = event.target as HTMLElement;
+      if (target.scrollHeight - target.scrollTop - target.clientHeight < 100) {
+        this.loadMoreHistory();
+      }
+    };
+    this.shotDataScroll.el.addEventListener('scroll', this.boundScrollHandler);
   }
 
   public getElementOffsetWidth() {
