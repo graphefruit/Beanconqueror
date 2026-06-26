@@ -30,22 +30,27 @@ import { RefractometerDevice } from './refractometerBluetoothDevice';
 import { SkaleScale } from './skale';
 import { SmartchefScale } from './smartchefScale';
 import { TemperatureDevice } from './temperatureBluetoothDevice';
+import { TimemoreBasicScale } from './timemoreBasicScale';
+import { TimemoreDotScale } from './timemoreDotScale';
 import { TimemoreScale } from './timemoreScale';
 import { TransducerDirectPressure } from './transducerDirectPressure';
 import {
   BluetoothTypes,
+  MachineType,
   PressureType,
   RefractometerType,
   ScaleType,
   TemperatureType,
 } from './types';
 import { VariaAkuScale } from './variaAku';
+import { WeighMasterScale } from './weighMasterScale';
 import { WeighMyBruScale } from './weighMyBruScale';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 export {
   BluetoothTypes,
+  MachineType,
   PressureType,
   RefractometerType,
   ScaleType,
@@ -87,12 +92,18 @@ export function makeDevice(
       return new BookooScale(data, type);
     case ScaleType.TIMEMORESCALE:
       return new TimemoreScale(data, type);
+    case ScaleType.TIMEMORE_BASIC:
+      return new TimemoreBasicScale(data, type);
+    case ScaleType.TIMEMORE_DOT:
+      return new TimemoreDotScale(data, type);
     case ScaleType.VARIA_AKU:
       return new VariaAkuScale(data, type);
     case ScaleType.ESPRESSI:
       return new EspressiScale(data, type);
     case ScaleType.WEIGHMYBRUSCALE:
       return new WeighMyBruScale(data, type);
+    case ScaleType.WEIGHMASTER:
+      return new WeighMasterScale(data, type);
     default:
       return null;
   }

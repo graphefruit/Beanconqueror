@@ -19,6 +19,8 @@ import {
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { bluetoothOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
@@ -98,6 +100,7 @@ export class BrewEditComponent implements OnInit {
   public readonly PreparationDeviceType = PreparationDeviceType;
   @Input('brew') public brew: IBrew;
   constructor() {
+    addIcons({ bluetoothOutline });
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
   }

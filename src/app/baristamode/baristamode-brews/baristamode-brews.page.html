@@ -1,0 +1,24 @@
+<ion-header>
+  <app-header [title]="'NAV_BARISTAMODE_BREWS' | translate">
+    <ion-menu-button header-slot="start" />
+  </app-header>
+</ion-header>
+<ion-content #brewContent>
+  @if (brews?.length == 0) {
+    <div class="ion-padding ion-text-center">
+      <div>
+        <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+      </div>
+      <div class="text-color-inactive ion-margin-top">
+        {{ "PAGE_BREWS_NO_ENTRIES" | translate }}
+      </div>
+    </div>
+  }
+
+  <ag-virtual-scroll #brewsScroll [items]="brews" [height]="'100vh'"
+                     [min-row-height]="180">
+    @for (brew of brewsScroll.items; track brew) {
+      <baristamode-brew-information [brew]="brew"></baristamode-brew-information>
+    }
+  </ag-virtual-scroll>
+</ion-content>

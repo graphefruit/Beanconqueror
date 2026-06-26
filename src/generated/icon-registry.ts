@@ -423,8 +423,16 @@ export const beanconquerorIcons = [
     path: 'beanconqueror-preparation-xenia.svg',
   },
   {
+    name: 'beanconqueror-preparation-move2',
+    path: 'beanconqueror-preparation-move2.svg',
+  },
+  {
     name: 'beanconqueror-preparation',
     path: 'beanconqueror-preparation.svg',
+  },
+  {
+    name: 'beanconqueror-profitec-logo',
+    path: 'beanconqueror-profitec-logo.svg',
   },
   {
     name: 'beanconqueror-pressure',

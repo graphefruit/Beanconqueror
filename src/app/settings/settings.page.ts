@@ -1503,8 +1503,6 @@ export class SettingsPage {
     const dummyData = (await import('../../assets/BeanconquerorTestData.json'))
       .default;
 
-    console.log(dummyData);
-
     if (dummyData.SETTINGS[0].brew_order.before === undefined) {
       this.uiLog.log('Old brew order structure');
       // Breaking change, we need to throw away the old order types by import

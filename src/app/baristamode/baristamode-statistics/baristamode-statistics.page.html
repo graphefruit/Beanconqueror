@@ -1,0 +1,204 @@
+<ion-header>
+  <app-header [title]="'BARISTAMODE_STATISTICS.TITLE' | translate">
+    <ion-menu-button header-slot="start" />
+  </app-header>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-grid>
+    <!-- All-Time Cumulative Section -->
+    <h4 class="section-title ion-no-margin">{{"STATISTIC_TAB_GENERAL" | translate}}</h4>
+    <div style="height: 10px;"></div>
+    <ion-row>
+      <ion-col size="6" class="ion-text-center">
+        <ion-card class="dashboard-stats-card ion-no-margin">
+          <ion-card-header class="ion-no-padding ion-no-margin">
+            <ion-card-title class="stat-value">
+              {{ totalBrewsCount }}
+            </ion-card-title>
+            <ion-card-subtitle class="stat-label">
+              {{ "BARISTAMODE_STATISTICS.TOTAL_BREWS" | translate }}
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" class="ion-text-center">
+        <ion-card class="dashboard-stats-card ion-no-margin">
+          <ion-card-header class="ion-no-padding ion-no-margin">
+            <ion-card-title class="stat-value">
+              {{ averageAbsoluteOffset | number : '1.2-2' }}g
+            </ion-card-title>
+            <ion-card-subtitle class="stat-label">
+              {{ "BARISTAMODE_STATISTICS.AVG_OFFSET" | translate }}
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" class="ion-text-center">
+        <ion-card class="dashboard-stats-card ion-no-margin">
+          <ion-card-header class="ion-no-padding ion-no-margin">
+            <ion-card-title class="stat-value">
+              {{ overallHitRate | number : '1.1-1' }}%
+            </ion-card-title>
+            <ion-card-subtitle class="stat-label">
+              {{ "BARISTAMODE_STATISTICS.HIT_RATE" | translate }}
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" class="ion-text-center">
+        <ion-card class="dashboard-stats-card ion-no-margin">
+          <ion-card-header class="ion-no-padding ion-no-margin">
+            <ion-card-title class="stat-value">
+              {{ averageBrewTime | number : '1.1-1' }}s
+            </ion-card-title>
+            <ion-card-subtitle class="stat-label">
+              {{ "BARISTAMODE_STATISTICS.AVG_TIME" | translate }}
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" class="ion-text-center">
+        <ion-card class="dashboard-stats-card ion-no-margin">
+          <ion-card-header class="ion-no-padding ion-no-margin">
+            <ion-card-title class="stat-value">
+              {{ (totalWaterIntake / 1000) | number : '1.2-2' }} L
+            </ion-card-title>
+            <ion-card-subtitle class="stat-label">
+              {{ "BARISTAMODE_STATISTICS.ALL_TIME_WATER" | translate }}
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" class="ion-text-center">
+        <ion-card class="dashboard-stats-card ion-no-margin">
+          <ion-card-header class="ion-no-padding ion-no-margin">
+            <ion-card-title class="stat-value">
+              {{ (totalLiquidProduced / 1000) | number : '1.2-2' }} kg
+            </ion-card-title>
+            <ion-card-subtitle class="stat-label">
+              {{ "BARISTAMODE_STATISTICS.ALL_TIME_LIQUID" | translate }}
+            </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <div class="divider-line"></div>
+
+    <!-- Segment Filter Section -->
+    <ion-segment [(ngModel)]="segment" (ionChange)="onSegmentChange()" class="ion-margin-bottom font-medium">
+      <ion-segment-button value="DAILY">
+        <ion-label>{{ "BARISTAMODE_STATISTICS.DAILY" | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="WEEKLY">
+        <ion-label>{{ "BARISTAMODE_STATISTICS.WEEKLY" | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="MONTHLY">
+        <ion-label>{{ "BARISTAMODE_STATISTICS.MONTHLY" | translate }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Active Time Window Metrics -->
+    @if (totalBrewsCount > 0) {
+      <div>
+        <ion-row>
+          <ion-col size="6" class="ion-text-center">
+            <ion-card class="dashboard-stats-card ion-no-margin">
+              <ion-card-header class="ion-no-padding ion-no-margin">
+                <ion-card-title class="stat-value">
+                  {{ activeBrewsCount }}
+                </ion-card-title>
+                <ion-card-subtitle class="stat-label">
+                  {{ "BARISTAMODE_STATISTICS.TOTAL_BREWS" | translate }}
+                </ion-card-subtitle>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="6" class="ion-text-center">
+            <ion-card class="dashboard-stats-card ion-no-margin">
+              <ion-card-header class="ion-no-padding ion-no-margin">
+                <ion-card-title class="stat-value">
+                  {{ activeAvgTime | number : '1.1-1' }}s
+                </ion-card-title>
+                <ion-card-subtitle class="stat-label">
+                  {{ "BARISTAMODE_STATISTICS.AVG_TIME" | translate }}
+                </ion-card-subtitle>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="6" class="ion-text-center">
+            <ion-card class="dashboard-stats-card ion-no-margin">
+              <ion-card-header class="ion-no-padding ion-no-margin">
+                <ion-card-title class="stat-value">
+                  {{ activeAvgOffset | number : '1.2-2' }}g
+                </ion-card-title>
+                <ion-card-subtitle class="stat-label">
+                  {{ "BARISTAMODE_STATISTICS.AVG_OFFSET" | translate }}
+                </ion-card-subtitle>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="6" class="ion-text-center">
+            <ion-card class="dashboard-stats-card ion-no-margin">
+              <ion-card-header class="ion-no-padding ion-no-margin">
+                <ion-card-title class="stat-value">
+                  {{ activeHitRate | number : '1.1-1' }}%
+                </ion-card-title>
+                <ion-card-subtitle class="stat-label">
+                  {{ "BARISTAMODE_STATISTICS.HIT_RATE" | translate }}
+                </ion-card-subtitle>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
+        <!-- Charts Layout -->
+        <ion-card class="chart-card">
+          <ion-card-header class="chart-header">
+            {{ "BARISTAMODE_STATISTICS.ACCURACY_BREAKDOWN" | translate }}
+          </ion-card-header>
+          <ion-card-content class="chart-content">
+            <div class="chart-container">
+              <canvas #accuracyChart></canvas>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="chart-card">
+          <ion-card-header class="chart-header">
+            {{ "BARISTAMODE_STATISTICS.BREWS_COUNT_BY_PROFILE" | translate }}
+          </ion-card-header>
+          <ion-card-content class="chart-content">
+            <div class="chart-container">
+              <canvas #profileTimelineChart></canvas>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="chart-card">
+          <ion-card-header class="chart-header">
+            {{ "BARISTAMODE_STATISTICS.WATER_BEVERAGE_CROSS_CHART" | translate }}
+          </ion-card-header>
+          <ion-card-content class="chart-content">
+            <div class="chart-container">
+              <canvas #waterBeverageChart></canvas>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    } @else {
+      <div class="no-brews-msg ion-text-center ion-padding">
+        <p>{{ "NO_BREWS_FOUND" | translate }}</p>
+      </div>
+    }
+  </ion-grid>
+</ion-content>

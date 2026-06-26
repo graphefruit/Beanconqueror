@@ -184,9 +184,7 @@ export class MeticulousDevice extends PreparationDevice {
       const loadProfile = await this.metApi.loadProfileByID(_profileId);
       const profile = loadProfile.data as unknown as Profile;
       return profile;
-    } catch (ex) {
-      console.log(ex.message);
-    }
+    } catch (ex) {}
     return undefined;
   }
 
@@ -302,6 +300,9 @@ export class MeticulousDevice extends PreparationDevice {
           //currentShotData.temperature = data.sensors.t;
           currentShotData.extracting = data.extracting;
           currentShotData.gravimetric_flow = data.sensors.g;
+
+          currentShotData.loaded_profile = data.loaded_profile;
+          currentShotData.profile_id = data.id;
 
           this.meticulousShotData = currentShotData;
         } else {

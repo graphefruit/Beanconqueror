@@ -79,13 +79,6 @@
                 <data android:host="beanconqueror.com" android:pathPrefix="/app/roaster/bean" android:scheme="https" />
             </intent-filter>
             <!-- ionic-plugin-deeplinks end -->
-            <!--Nfc Plugin https://developer.android.com/develop/connectivity/nfc/nfc?hl=de#ndef-disc -->
-            <!--https://github.com/EYALIN/community-cordova-plugin-nfc-->
-            <intent-filter>
-                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
         </activity>
 
         <provider

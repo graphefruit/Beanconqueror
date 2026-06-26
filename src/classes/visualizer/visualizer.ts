@@ -1,5 +1,6 @@
 import { IVisualizer } from '../../interfaces/visualizer/iVisualizer';
 import { Bean } from '../bean/bean';
+import BaristamodeBrew from '../brew/baristamodeBrew';
 import { Brew } from '../brew/brew';
 import { BrewFlow } from '../brew/brewFlow';
 import { Mill } from '../mill/mill';
@@ -33,7 +34,7 @@ export class Visualizer implements IVisualizer {
     this.visualizerId = '';
   }
 
-  public mapBrew(brew: Brew) {
+  public mapBrew(brew: Brew | BaristamodeBrew) {
     Object.keys(this.brew).map((_key) => {
       if (brew.hasOwnProperty(_key)) {
         // We added this, because we have one key - the "EY" field, which is not existing on the normal brew one.

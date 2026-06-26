@@ -15,6 +15,9 @@ export class MeticulousShotData implements IMeticulousShotData {
   public gravimetric_flow: number;
 
   public extracting: boolean;
+
+  public loaded_profile: string;
+  public profile_id: string;
   constructor() {
     this.status = '';
     this.shotTime = 0;
@@ -27,6 +30,8 @@ export class MeticulousShotData implements IMeticulousShotData {
     this.smoothedWeight = 0;
     this.oldSmoothedWeight = 0;
     this.extracting = false;
+    this.loaded_profile = '';
+    this.profile_id = '';
   }
 
   protected calculateSmoothedWeight(

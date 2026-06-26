@@ -10,6 +10,7 @@ import {
 
 import {
   IonContent,
+  IonFooter,
   IonHeader,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -38,6 +39,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     IonContent,
     HeaderComponent,
     HeaderDismissButtonComponent,
+    IonFooter,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

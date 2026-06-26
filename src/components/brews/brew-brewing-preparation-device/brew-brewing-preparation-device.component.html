@@ -284,5 +284,41 @@
           <span>{{ "IMPORT_SHOT_FROM_GAGGIUINO" | translate }}</span>
         </ion-item>
       </ion-card>
+  } @else if (isMove2Device(preparationDevice)) {
+      <ion-card class="popover" style="display:flex; flex-direction: column;">
+        <ion-item lines="none">
+          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_MOVE2.TITLE" | translate }}</span>
+        </ion-item>
+        <ion-item lines="{{data.preparationDeviceBrew.params.remotePreinfusionEnable ? 'inset' : 'none'}}">
+          <ion-checkbox [(ngModel)]="data.preparationDeviceBrew.params.remotePreinfusionEnable">{{
+              "PREPARATION_DEVICE.TYPE_MOVE2.REMOTE_PREINFUSION_ENABLE" | translate
+            }}
+          </ion-checkbox>
+        </ion-item>
+        @if (data.preparationDeviceBrew.params.remotePreinfusionEnable) {
+          <ion-item lines="inset">
+            <ion-input [label]="'PREPARATION_DEVICE.TYPE_MOVE2.PREINFUSION_PAUSE_START' | translate"
+                       label-placement="stacked"
+                       (ionBlur)='preinfusionPauseStartBlur()'
+                       [(ngModel)]="data.preparationDeviceBrew.params.preinfusionPauseStart" inputmode="decimal"
+                       prevent-characters remove-empty-number type="text"></ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-input [label]="'PREPARATION_DEVICE.TYPE_MOVE2.PREINFUSION_PAUSE_TIME' | translate"
+                       label-placement="stacked"
+                       (ionBlur)='preinfusionPauseTimeBlur()'
+                       [(ngModel)]="data.preparationDeviceBrew.params.preinfusionPauseTime" inputmode="decimal"
+                       prevent-characters remove-empty-number type="text"></ion-input>
+          </ion-item>
+        }
+        <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="inset">
+          <ion-input [label]="'PREPARATION_DEVICE.TYPE_MOVE2.STOP_AT_WEIGHT' | translate"
+                     label-placement="stacked"
+                     (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.stopAtWeight)'
+                     [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeight" inputmode="decimal"
+                     prevent-characters
+                     remove-empty-number tabIndex="1" type="text"></ion-input>
+        </ion-item>
+      </ion-card>
   }
 }

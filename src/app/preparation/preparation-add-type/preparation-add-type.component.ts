@@ -122,7 +122,8 @@ export class PreparationAddTypeComponent implements OnInit {
       this.data.type === PREPARATION_TYPES.METICULOUS ||
       this.data.type === PREPARATION_TYPES.XENIA ||
       this.data.type === PREPARATION_TYPES.SANREMO_YOU ||
-      this.data.type === PREPARATION_TYPES.GAGGIUINO
+      this.data.type === PREPARATION_TYPES.GAGGIUINO ||
+      this.data.type === PREPARATION_TYPES.MOVE2
     ) {
       await this.uiPreparationHelper.connectDevice(newPreparation);
     }

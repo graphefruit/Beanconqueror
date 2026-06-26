@@ -22,6 +22,10 @@
             <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
             <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
           }
+          @case (PreparationDeviceType.MOVE2) {
+            <ion-icon name="beanconqueror-profitec-logo" size='large'></ion-icon>
+            <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
+          }
         }
         </ion-chip>
       } @else {
@@ -42,6 +46,10 @@
             @case (PreparationDeviceType.GAGGIUINO) {
               <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+            }
+            @case (PreparationDeviceType.MOVE2) {
+              <ion-icon name="beanconqueror-profitec-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
             }
           }
         </ion-chip>

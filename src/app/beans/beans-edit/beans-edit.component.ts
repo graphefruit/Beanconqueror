@@ -27,6 +27,7 @@ import { BeanSortInformationComponent } from '../../../components/beans/bean-sor
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -138,10 +139,32 @@ export class BeansEditComponent implements OnInit {
   }
 
   private async __editBean() {
+    const originalFrozenGroupId = this.bean.frozenGroupId;
+    if (!this.data.frozenDate && !this.data.unfrozenDate) {
+      this.data.frozenGroupId = '';
+      this.data.frozenId = '';
+      this.data.frozenStorageType = BEAN_FREEZING_STORAGE_ENUM.UNKNOWN;
+    }
     if (this.data.frozenDate && this.data.frozenId === '') {
       this.data.frozenId = this.uiBeanHelper.generateFrozenId();
     }
     await this.uiBeanStorage.update(this.data);
+
+    if (originalFrozenGroupId && !this.data.frozenGroupId) {
+      const remainingBeans = this.uiBeanStorage
+        .getAllEntries()
+        .filter(
+          (b) =>
+            b.frozenGroupId === originalFrozenGroupId &&
+            b.config.uuid !== this.data.config.uuid,
+        );
+      if (remainingBeans.length === 1) {
+        const lastBean = remainingBeans[0];
+        lastBean.frozenGroupId = '';
+        await this.uiBeanStorage.update(lastBean);
+      }
+    }
+
     this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,

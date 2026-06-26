@@ -342,7 +342,6 @@ export class UIBrewHelper {
   }
 
   public cleanInvisibleBrewData(brew: Brew) {
-    console.log('bla');
     const settingsObj: Settings = this.uiSettingsStorage.getSettings();
     let checkData: Settings | Preparation;
     if (brew.getPreparation().use_custom_parameters === true) {
@@ -637,6 +636,30 @@ export class UIBrewHelper {
     const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
     if (bean) {
       await this.choosePreparationMethodAndStartBrew(bean);
+    }
+  }
+
+  public async repeatLastBrewForBeanByInternalShareCode(
+    internalBeanShareCode: string,
+  ) {
+    const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
+    if (bean) {
+      const beanHelper = UIBeanHelper.getInstance();
+      let associatedBrews: Array<Brew> = beanHelper
+        ? beanHelper.getAllBrewsForThisBean(bean.config.uuid)
+        : [];
+      associatedBrews = associatedBrews.filter(
+        (e) =>
+          e.getBean().finished === false &&
+          e.getMill().finished === false &&
+          e.getPreparation().finished === false,
+      );
+      if (associatedBrews.length > 0) {
+        associatedBrews = UIBrewHelper.sortBrews(associatedBrews);
+        await this.repeatBrew(associatedBrews[0]);
+      } else {
+        await this.addBrewWithPresetBean(bean);
+      }
     }
   }
 

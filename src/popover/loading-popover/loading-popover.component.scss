@@ -5,4 +5,12 @@
     align-items: center;
     height: 100%;
   }
+  ion-content {
+    min-height: 100px!important;
+    span {
+
+      word-wrap: break-word;
+      word-break:break-word;
+    }
+  }
 }

@@ -3,6 +3,7 @@ export enum BluetoothTypes {
   PRESSURE = 'PRESSURE',
   TEMPERATURE = 'TEMPERATURE',
   TDS = 'TDS',
+  MACHINE = 'MACHINE',
 }
 
 export enum ScaleType {
@@ -21,9 +22,12 @@ export enum ScaleType {
   DIYRUSTCOFFEESCALE = 'DIYRUSTCOFFEESCALE',
   BOKOOSCALE = 'BOOKOOSCALE',
   TIMEMORESCALE = 'TIMEMORESCALE',
+  TIMEMORE_BASIC = 'TIMEMORE_BASIC',
+  TIMEMORE_DOT = 'TIMEMORE_DOT',
   VARIA_AKU = 'VARIA_AKU',
   ESPRESSI = 'ESPRESSI',
   WEIGHMYBRUSCALE = 'WEIGHMYBRUSCALE',
+  WEIGHMASTER = 'WEIGHMASTER',
 }
 
 export enum PressureType {
@@ -46,4 +50,8 @@ export enum TemperatureType {
 
 export enum RefractometerType {
   R2 = 'R2',
+}
+
+export enum MachineType {
+  MOVE2 = 'MOVE2',
 }

@@ -454,8 +454,13 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
         const ratioEl = this.smartScaleBrewRatio?.nativeElement;
         if (ratioEl) {
-          ratioEl.textContent =
-            '(' + this.brewComponent.data.getBrewRatio() + ')';
+          const grindWeight = this.brewComponent.data.grind_weight;
+          let ratioText = '1 / ?';
+          const scaleWeight = _val.scaleWeight;
+          if (scaleWeight > 0 && grindWeight > 0) {
+            ratioText = '1 / ' + (scaleWeight / grindWeight).toFixed(2);
+          }
+          ratioEl.textContent = '(' + ratioText + ')';
         }
       }
     });

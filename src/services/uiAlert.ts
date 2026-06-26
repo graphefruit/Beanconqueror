@@ -332,4 +332,37 @@ export class UIAlert {
     this.existingLoadingSpinners.push(modal);
     await modal.present();
   }
+
+  public async showLoadingMessageWithCustomTimeout(
+    message = 'PLEASE_WAIT',
+    translate = true,
+    showDismissAfterSpecificTimeout = false,
+    timeout = 2000,
+  ): Promise<any> {
+    if (this.existingLoadingSpinners.length > 0) {
+      await this.hideLoadingSpinner();
+    }
+    let msg = message;
+    if (translate) {
+      msg = this.translate.instant(message);
+    }
+
+    const modal = await this.modalController.create({
+      component: LoadingPopoverComponent,
+      cssClass: 'loading-modal',
+      animated: false,
+      backdropDismiss: false,
+      showBackdrop: true,
+      componentProps: {
+        showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
+        dismissTimeoutInMilliseconds: timeout,
+        showLogs: false,
+        message: msg,
+      },
+    });
+    this.existingLoadingSpinners.push(modal);
+    await modal.present();
+    const dismissMessage = await modal.onWillDismiss();
+    return dismissMessage.data;
+  }
 }

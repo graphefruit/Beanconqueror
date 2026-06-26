@@ -120,7 +120,6 @@ export class DashboardPage implements OnInit {
   }
 
   public ngOnInit() {
-    console.log('log');
     this.settings = this.uiSettingsStorage.getSettings();
 
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {

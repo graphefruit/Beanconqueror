@@ -69,23 +69,17 @@ export class GeisingerThermometer extends TemperatureDevice {
   }
 
   private attachNotification() {
-    debugger;
-    console.log('blaaa');
     ble.startNotification(
       this.device_id,
       GeisingerThermometer.SERVICE_UUID,
       GeisingerThermometer.TEMPERATURE_CHAR_UUID,
 
       async (_data: any) => {
-        this.showAlert(
-          'Connection successfully, parsing data: ' + JSON.stringify(_data),
-        );
         this.logger.info('Parsing temp: ' + _data);
         this.parseTemperatureUpdate(new Uint8Array(_data));
       },
 
       (_data: any) => {
-        this.showAlert('Error parsing temp: ' + JSON.stringify(_data));
         this.logger.error('Error parsing temp: ' + JSON.stringify(_data));
       },
     );

@@ -19,6 +19,7 @@ import {
   makePreparationDevice,
   PreparationDeviceType,
 } from '../classes/preparationDevice';
+import { BluetoothPreparationDevice } from '../classes/preparationDevice/bluetoothPreparationDevice';
 import { PreparationDevice } from '../classes/preparationDevice/preparationDevice';
 import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import { UIAnalytics } from './uiAnalytics';
@@ -180,14 +181,25 @@ export class UIPreparationHelper {
   public getConnectedDevice(_preparation: Preparation): PreparationDevice {
     if (
       _preparation.connectedPreparationDevice.type !==
-        PreparationDeviceType.NONE &&
-      _preparation.connectedPreparationDevice.url
+      PreparationDeviceType.NONE
     ) {
-      return makePreparationDevice(
+      // For HTTP-based devices: require a URL
+      // For Bluetooth-based devices: require a bluetoothId (first-class field
+      //   or backwards-compatible location in customParams)
+      const candidate = makePreparationDevice(
         _preparation.connectedPreparationDevice.type,
         this.httpClient,
         _preparation,
       );
+      if (!candidate) {
+        return null;
+      }
+      if (candidate instanceof BluetoothPreparationDevice) {
+        // Bluetooth device is ready when it has an ID
+        return candidate.getBluetoothId() ? candidate : null;
+      }
+      // HTTP device is ready when it has a URL
+      return _preparation.connectedPreparationDevice.url ? candidate : null;
     }
     return null;
   }

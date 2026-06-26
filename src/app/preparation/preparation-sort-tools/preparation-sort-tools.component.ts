@@ -9,6 +9,7 @@ import {
 import {
   IonCard,
   IonContent,
+  IonFooter,
   IonHeader,
   IonItem,
   IonLabel,
@@ -39,6 +40,7 @@ import { UIHelper } from '../../../services/uiHelper';
     IonItem,
     IonLabel,
     IonReorder,
+    IonFooter,
   ],
 })
 export class PreparationSortToolsComponent implements OnInit {

@@ -5,6 +5,7 @@ import {
   IonCardContent,
   IonCol,
   IonContent,
+  IonFooter,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -44,6 +45,7 @@ import { WaterAddTypeComponent } from '../water-add-type/water-add-type.componen
     IonCol,
     IonCard,
     IonCardContent,
+    IonFooter,
   ],
 })
 export class WaterAddComponent implements OnInit {
