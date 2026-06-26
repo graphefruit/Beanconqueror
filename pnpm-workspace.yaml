@@ -2,7 +2,7 @@
 # defend against increasingly common supply chain attacks on npm packages.
 # See https://pnpm.io/settings#minimumreleaseage and
 # https://pnpm.io/supply-chain-security
-minimum-release-age: 10080
+minimumReleaseAge: 10080
 
 # Print an error for unreviewed build scripts
 strictDepBuilds: true
