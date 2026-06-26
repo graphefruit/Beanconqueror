@@ -10,6 +10,7 @@ import { ManageBrewParameter } from '../parameter/manageBrewParameter';
 import { OrderBrewParameter } from '../parameter/orderBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { PreparationDeviceType } from '../preparationDevice';
+import { BluetoothPreparationDevice } from '../preparationDevice/bluetoothPreparationDevice';
 import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
 import { PreparationDevice } from '../preparationDevice/preparationDevice';
 import { PreparationTool } from './preparationTool';
@@ -170,6 +171,8 @@ export class Preparation implements IPreparation {
         return PREPARATION_STYLE_TYPE.ESPRESSO;
       case PREPARATION_TYPES.GAGGIUINO:
         return PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.MOVE2:
+        return PREPARATION_STYLE_TYPE.ESPRESSO;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
     }
@@ -262,6 +265,8 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-xenia';
       case PREPARATION_TYPES.GAGGIUINO:
         return 'beanconqueror-preparation-gaggiuino';
+      case PREPARATION_TYPES.MOVE2:
+        return 'beanconqueror-preparation-move2';
       default:
         return 'beanconqueror-preparation-custom';
     }

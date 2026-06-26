@@ -34,6 +34,7 @@ import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { TooltipDirective } from '../../../directive/tooltip.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { environment } from '../../../environments/environment';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { KeysPipe } from '../../../pipes/keys';
 import { UIAlert } from '../../../services/uiAlert';
@@ -90,8 +91,20 @@ export class PreparationEditComponent implements OnInit {
   @Input() private preparation: IPreparation;
   public preparationTypeEnum = PREPARATION_TYPES;
   public nextToolName: string = '';
+  public ENVIRONMENT = environment;
   constructor() {
     addIcons({ swapVerticalOutline, informationOutline });
+  }
+
+  public individualPreparationVisible(_key) {
+    if (_key === 'SANREMO_YOU' || _key === 'MOVE2') {
+      /** Fixed keys here, else we would check all**/
+      if (this.ENVIRONMENT.FEATURES_ACTIVE[_key] === true) {
+        return true;
+      }
+      return false;
+    }
+    return true;
   }
 
   public ionViewWillEnter(): void {

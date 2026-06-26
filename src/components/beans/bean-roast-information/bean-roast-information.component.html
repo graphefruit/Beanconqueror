@@ -41,11 +41,10 @@
     }
   </ion-item>
   <ion-item>
-    <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.FIRST_CRACK_MINUTE" | translate}}' #first_crack_minute="ngModel" [(ngModel)]="data.bean_roast_information.first_crack_minute" autocapitalize="off" inputmode="decimal"
-      name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.FIRST_CRACK_MINUTE' | translate}}"
-      prevent-characters remove-empty-number spellcheck="false"
-      type="text">
-    </ion-input>
+    <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.WEIGHT_LOSS" | translate}}' readonly [value]="getWeightLoss()"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.FIRST_CRACK_MINUTE" | translate}}' readonly (click)="showFirstCrackOverlay($event);" [(data)]="displayingFirstCrack" [transform-date] displayFormat="H:mm:ss" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.FIRST_CRACK_MINUTE' | translate}}"></ion-input>
   </ion-item>
   <ion-item>
     <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.FIRST_CRACK_TEMPERATURE" | translate}}' #first_crack_temperature="ngModel" [(ngModel)]="data.bean_roast_information.first_crack_temperature" autocapitalize="off" inputmode="decimal"
@@ -55,11 +54,7 @@
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.SECOND_CRACK_MINUTE" | translate}}' #second_crack_minute="ngModel" [(ngModel)]="data.bean_roast_information.second_crack_minute" autocapitalize="off" inputmode="decimal"
-      name="second_crack_minute" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.SECOND_CRACK_MINUTE' | translate}}"
-      prevent-characters remove-empty-number spellcheck="false"
-      type="text">
-    </ion-input>
+    <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.SECOND_CRACK_MINUTE" | translate}}' readonly (click)="showSecondCrackOverlay($event);" [(data)]="displayingSecondCrack" [transform-date] displayFormat="H:mm:ss" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.SECOND_CRACK_MINUTE' | translate}}"></ion-input>
   </ion-item>
   <ion-item>
     <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.SECOND_CRACK_TEMPERATURE" | translate}}' #second_crack_temperature="ngModel" [(ngModel)]="data.bean_roast_information.second_crack_temperature" autocapitalize="off" inputmode="decimal"

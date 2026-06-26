@@ -636,6 +636,9 @@ export class UIExcel {
   }
 
   public async exportBrewFlowProfile(_flow: BrewFlow) {
+    if (!_flow) {
+      return;
+    }
     await this.uiAlert.showLoadingSpinner();
     const wb: WorkBook = this.generateBrewFlowProfileRaw(_flow);
 

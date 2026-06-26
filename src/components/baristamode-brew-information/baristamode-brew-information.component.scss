@@ -1,0 +1,60 @@
+:host {
+  ion-card-content {
+    --ion-background-color: var(--ion-color-light);
+  }
+
+  ion-card.brew-layout {
+    width: 100%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    ion-card-content {
+      padding: 8px;
+      padding-bottom: 0px;
+      padding-top: var(--padding-top);
+    }
+    .brew-title {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    ion-label {
+      line-height: 14px !important;
+      display: inline-block;
+    }
+
+    .no-ion-col-vertical-padding {
+      ion-col {
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+      }
+    }
+    ion-text {
+      position: relative;
+      top: -5px;
+    }
+  }
+
+  .limit-grid-overflow {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    ion-text {
+      white-space: nowrap;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  swiper-slide {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .add-bottom-spacing {
+    margin-bottom: 20px;
+  }
+}

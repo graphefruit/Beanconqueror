@@ -1,0 +1,34 @@
+<ion-header translucent>
+</ion-header>
+<ion-content>
+  <ion-list lines="full">
+    @if (data.flow_profile) {
+      <ion-item (click)="choose(getStaticActions().SHOW_GRAPH)" button tappable>
+        <ion-icon name="analytics-outline" slot="start"></ion-icon>
+        <span>{{"SHOW_GRAPH" | translate}}</span>
+      </ion-item>
+    }
+    @if (data.flow_profile) {
+      <ion-item (click)="choose(getStaticActions().DOWNLOAD_XLSX)" button tappable>
+        <ion-icon name="download" slot="start"></ion-icon>
+        <span>{{"DOWNLOAD_XLSX" | translate}}</span>
+      </ion-item>
+    }
+    @if (hasFlowProfile() && settings.visualizer_active && settings.visualizer_upload_automatic === false && settings.visualizer_username && settings.visualizer_password && !data?.customInformation?.visualizer_id) {
+      <ion-item (click)="choose(getStaticActions().VISUALIZER)" button tappable>
+        <ion-icon name="beanconqueror-visualizer" slot="start"></ion-icon>
+        <span>{{"MANUAL_EXPORT_TO_VISUALIZER" | translate}}</span>
+      </ion-item>
+    }
+    @if (data?.customInformation?.visualizer_id) {
+      <ion-item (click)="choose(getStaticActions().SHOW_VISUALIZER)" button tappable>
+        <ion-icon name="beanconqueror-visualizer-logo" slot="start"></ion-icon>
+        <span>{{"SHOW_VISUALIZER" | translate}}</span>
+      </ion-item>
+    }
+    <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
+      <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>
+    </ion-item>
+  </ion-list>
+</ion-content>

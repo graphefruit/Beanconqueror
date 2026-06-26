@@ -63,6 +63,7 @@ import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { Settings } from '../../../classes/settings/settings';
@@ -441,8 +442,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       /** If we edit a connected preparation device, we didn't set the data we used before
        * Adding to this, we don't do this when we're in baristamode, because else the Websocket would already trigger and connect
+       * 26.04.26 - if we wouldn't check isEdit here, we instance the methods twice.
        */
-      if (this.brewBrewingPreparationDeviceEl && this.baristamode === false) {
+      if (
+        this.isEdit === true &&
+        this.brewBrewingPreparationDeviceEl &&
+        this.baristamode === false
+      ) {
         await this.brewBrewingPreparationDeviceEl.instancePreparationDevice(
           this.data,
         );
@@ -870,16 +876,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async timerPaused(_event) {
     await this.brewBrewingGraphEl.timerPaused(_event);
     if (this.baristamode) {
+      const prepSanremoDeviceCall: SanremoYOUDevice = this
+        .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
+
+      const lastRunnedProgramm: number =
+        prepSanremoDeviceCall.lastRunnedProgramm;
+      const shotData: SanremoShotData =
+        prepSanremoDeviceCall.getActualShotData();
       try {
         if (
           this.brewBrewingGraphEl.flow_profile_raw &&
           this.brewBrewingGraphEl.flow_profile_raw.weight.length > 0
         ) {
-          const prepSanremoDeviceCall: SanremoYOUDevice = this
-            .brewBrewingPreparationDeviceEl
-            .preparationDevice as SanremoYOUDevice;
-
-          const lastRunnedProgramm = prepSanremoDeviceCall.lastRunnedProgramm;
           let oldResidualLagTime =
             prepSanremoDeviceCall.getResidualLagTimeByProgram(
               lastRunnedProgramm,
@@ -916,10 +924,37 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           avgFlow,
           this.data.brew_time,
         );
+
+        let desired_beverage_quantity: number = 0;
+        let usedProfile: string = '';
+        if (prepSanremoDeviceCall.lastRunnedProgramm === 1) {
+          usedProfile = 'P1';
+          desired_beverage_quantity =
+            this.data.preparationDeviceBrew.params.stopAtWeightP1;
+        } else if (prepSanremoDeviceCall.lastRunnedProgramm === 2) {
+          usedProfile = 'P2';
+          desired_beverage_quantity =
+            this.data.preparationDeviceBrew.params.stopAtWeightP2;
+        } else if (prepSanremoDeviceCall.lastRunnedProgramm === 3) {
+          usedProfile = 'P3';
+          desired_beverage_quantity =
+            this.data.preparationDeviceBrew.params.stopAtWeightP3;
+        } else if (prepSanremoDeviceCall.lastRunnedProgramm === 4) {
+          usedProfile = 'M';
+          desired_beverage_quantity =
+            this.data.preparationDeviceBrew.params.stopAtWeightM;
+        }
+
         this.lastShotInformation.emit({
           shotWeight: shotWeight,
           avgFlow: avgFlow,
-          brewtime: this.data.brew_time,
+          brew: this.uiHelper.cloneData(this.data),
+          flowProfile: this.uiHelper.cloneData(
+            this.brewBrewingGraphEl.flow_profile_raw,
+          ),
+          shotData: shotData,
+          desiredWeight: desired_beverage_quantity,
+          usedProfile: usedProfile,
         });
       } catch (ex) {}
     }

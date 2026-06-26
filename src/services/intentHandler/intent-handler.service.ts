@@ -178,6 +178,13 @@ export class IntentHandlerService {
                 await this.uiBrewHelper.startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
                   id,
                 );
+              } else if (
+                (action as BEAN_CODE_ACTION) ===
+                BEAN_CODE_ACTION.REPEAT_LAST_BREW
+              ) {
+                await this.uiBrewHelper.repeatLastBrewForBeanByInternalShareCode(
+                  id,
+                );
               }
             }
           } else {

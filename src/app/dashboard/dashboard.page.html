@@ -43,7 +43,7 @@
         </ion-card>
       </ion-col>
       <ion-col size="6">
-        <ion-card [routerLink]="['/statistic']" class="dashboard ion-no-margin no-border" tappable>
+        <ion-card [routerLink]="['/statistic']" class="dashboard ion-no-margin" tappable>
           <ion-card-header class="ion-no-padding ion-no-margin">
             <ion-card-title>{{getTimePassedSinceLastBrew}}</ion-card-title>
             <ion-card-subtitle>
@@ -69,7 +69,7 @@
         </ion-card>
       </ion-col>
       <ion-col size="6">
-        <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin no-border" tappable>
+        <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin" tappable>
           <ion-card-header class="ion-no-padding ion-no-margin">
             <ion-card-title>
               @if(settings.freeze_coffee_beans) {

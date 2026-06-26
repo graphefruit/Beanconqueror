@@ -11,8 +11,10 @@
         <ion-select label-placement="stacked" label='{{"PREPARATION_TYPE" | translate}}' #type="ngModel" [(ngModel)]="data.type" cancelText="{{'CANCEL'| translate }}" name="type"
           (ngModelChange)="typeChanged()"  okText="{{'CHOOSE'| translate }}">
           @for (key of preparationTypeEnum | keys; track key) {
-            <ion-select-option
-            value="{{key}}">{{'PREPARATION_TYPE_' + key | translate}}</ion-select-option>
+            @if (individualPreparationVisible(key)) {
+              <ion-select-option
+              value="{{key}}">{{'PREPARATION_TYPE_' + key | translate}}</ion-select-option>
+            }
           }
         </ion-select>
       </ion-item>
