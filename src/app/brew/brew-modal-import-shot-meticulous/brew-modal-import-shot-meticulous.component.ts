@@ -25,7 +25,6 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
@@ -72,10 +71,11 @@ export class BrewModalImportShotMeticulousComponent
   @Input() public meticulousDevice: MeticulousDevice;
   @Input() public profileFilter: string | undefined;
   public radioSelection: string;
-  public history: HistoryListingEntry[] = [];
+  public history: any[] = [];
   public hasMore = true;
   public isLoadingMore = false;
-
+  private isDestroyed = false;
+  private isBatchLoadingDetails = false;
   private lastEntryTime: number | undefined;
   private boundScrollHandler: ((event: Event) => void) | undefined;
 
@@ -96,10 +96,11 @@ export class BrewModalImportShotMeticulousComponent
   public segmentScrollHeight: string = undefined;
 
   public ngOnInit() {
-    this.readHistory();
+    void this.readHistory();
   }
 
   public ngOnDestroy() {
+    this.isDestroyed = true;
     if (this.shotDataScroll && this.boundScrollHandler) {
       this.shotDataScroll.el.removeEventListener(
         'scroll',
@@ -118,6 +119,7 @@ export class BrewModalImportShotMeticulousComponent
       this.history = results ?? [];
       this.lastEntryTime = this.history[this.history.length - 1]?.time;
       this.hasMore = this.history.length >= MeticulousDevice.PAGE_SIZE;
+      void this.loadHistoryDetailsInBackground();
     } catch (ex) {
       await this.uiAlert.showMessage(
         'PREPARATION_DEVICE.TYPE_METICULOUS.DATA_COULD_NOT_BE_LOADED',
@@ -153,10 +155,43 @@ export class BrewModalImportShotMeticulousComponent
       this.hasMore =
         allResults.length >= MeticulousDevice.PAGE_SIZE &&
         newEntries.length > 0;
+      void this.loadHistoryDetailsInBackground();
     } catch (ex) {
       // silently fail — scroll triggers a retry naturally
     }
     this.isLoadingMore = false;
+  }
+
+  private async loadHistoryDetailsInBackground() {
+    if (this.isBatchLoadingDetails) {
+      return;
+    }
+    this.isBatchLoadingDetails = true;
+    try {
+      const currentHistory = [...this.history];
+      for (const entry of currentHistory) {
+        if (this.isDestroyed) {
+          break;
+        }
+        if (entry && !entry.data) {
+          try {
+            const details = await this.meticulousDevice?.getHistoryEntryDetails(
+              entry.id,
+            );
+            if (details?.data) {
+              const updatedEntry = { ...entry, data: details.data };
+              this.history = this.history.map((item) =>
+                item.id === entry.id ? updatedEntry : item,
+              );
+            }
+          } catch {
+            // ignore error
+          }
+        }
+      }
+    } finally {
+      this.isBatchLoadingDetails = false;
+    }
   }
 
   @HostListener('window:resize')
@@ -188,6 +223,7 @@ export class BrewModalImportShotMeticulousComponent
       }
 
       this.attachScrollListener();
+      this.checkAndLoadMoreIfNeeded();
     }, 150);
   }
 
@@ -198,10 +234,32 @@ export class BrewModalImportShotMeticulousComponent
     this.boundScrollHandler = (event: Event) => {
       const target = event.target as HTMLElement;
       if (target.scrollHeight - target.scrollTop - target.clientHeight < 100) {
-        this.loadMoreHistory();
+        void this.loadMoreHistory();
       }
     };
     this.shotDataScroll.el.addEventListener('scroll', this.boundScrollHandler);
+  }
+
+  private checkAndLoadMoreIfNeeded() {
+    setTimeout(() => {
+      void this.doCheckAndLoadMoreIfNeeded();
+    }, 150);
+  }
+
+  private async doCheckAndLoadMoreIfNeeded() {
+    if (
+      this.isDestroyed ||
+      !this.shotDataScroll ||
+      !this.hasMore ||
+      this.isLoadingMore
+    ) {
+      return;
+    }
+    const target = this.shotDataScroll.el;
+    if (target && target.scrollHeight - target.clientHeight < 100) {
+      await this.loadMoreHistory();
+      this.checkAndLoadMoreIfNeeded();
+    }
   }
 
   public getElementOffsetWidth() {
@@ -212,7 +270,7 @@ export class BrewModalImportShotMeticulousComponent
   }
 
   public dismiss(): void {
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
         dismissed: true,
       },
@@ -229,7 +287,7 @@ export class BrewModalImportShotMeticulousComponent
         break;
       }
     }
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
         choosenHistory: returningData,
         dismissed: true,

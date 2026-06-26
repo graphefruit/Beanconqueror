@@ -4,7 +4,10 @@ import {
   HostListener,
   inject,
   Input,
+  OnChanges,
+  OnDestroy,
   OnInit,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 
@@ -27,7 +30,7 @@ declare var Plotly;
   styleUrls: ['./graph-display-card.component.scss'],
   imports: [],
 })
-export class GraphDisplayCardComponent implements OnInit {
+export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
   private readonly uiHelper = inject(UIHelper);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly platform = inject(Platform);
@@ -74,6 +77,21 @@ export class GraphDisplayCardComponent implements OnInit {
     setTimeout(() => {
       this.initializeFlowChart();
     }, 50);
+  }
+
+  public ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes &&
+      changes['meticulousHistoryData'] &&
+      !changes['meticulousHistoryData'].firstChange
+    ) {
+      if (this.meticulousHistoryData) {
+        this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
+          this.meticulousHistoryData.data,
+        );
+        this.initializeFlowChart();
+      }
+    }
   }
 
   @HostListener('window:resize')

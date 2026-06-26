@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 
 import Api, { ActionType, ProfileIdent } from '@meticulous-home/espresso-api';
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import {
+  HistoryEntry,
+  HistoryListingEntry,
+} from '@meticulous-home/espresso-api/dist/types';
 import { Profile } from '@meticulous-home/espresso-profile';
 import moment from 'moment';
 
@@ -21,7 +24,7 @@ declare var cordova;
 declare var io;
 
 export class MeticulousDevice extends PreparationDevice {
-  public static readonly PAGE_SIZE = 3;
+  public static readonly PAGE_SIZE = 20;
 
   private socket: any = undefined;
   private meticulousShotData: MeticulousShotData = undefined;
@@ -33,6 +36,10 @@ export class MeticulousDevice extends PreparationDevice {
   public static returnBrewFlowForShotData(_shotData) {
     const newMoment = moment(new Date()).startOf('day');
     const newBrewFlow = new BrewFlow();
+
+    if (!_shotData) {
+      return newBrewFlow;
+    }
 
     for (const entry of _shotData as any) {
       const shotEntry: any = entry.shot;
@@ -100,13 +107,30 @@ export class MeticulousDevice extends PreparationDevice {
       order_by: ['date'],
       sort: 'desc',
       max_results: MeticulousDevice.PAGE_SIZE,
-      dump_data: true,
+      dump_data: false,
     };
     if (endDate !== undefined) {
       params.end_date = endDate;
     }
     const response = await this.metApi.searchHistory(params);
     return (response?.data?.history as unknown as HistoryListingEntry[]) ?? [];
+  }
+
+  public async getHistoryEntryDetails(
+    id: string,
+  ): Promise<HistoryEntry | undefined> {
+    const response = await this.metApi.searchHistory({
+      query: '',
+      ids: [id],
+      order_by: ['date'],
+      sort: 'desc',
+      max_results: 1,
+      dump_data: true,
+    });
+    if (response?.data?.history && response.data.history.length > 0) {
+      return response.data.history[0];
+    }
+    return undefined;
   }
 
   public getActualShotData() {
