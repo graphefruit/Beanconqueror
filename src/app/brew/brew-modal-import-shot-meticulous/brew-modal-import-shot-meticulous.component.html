@@ -14,7 +14,7 @@
               <h2>{{entry.profile.name}}</h2>
               <div class='font-size-16'>{{this.uiHelper.formatTimeNumber(entry.time * 1000)}}</div>
               </ion-grid>
-              <graph-display-card [chartWidth]='getElementOffsetWidth()' [meticulousHistoryData]='entry'></graph-display-card>
+              <graph-display-card [chartWidth]='chartWidth' [meticulousHistoryData]='entry' [meticulousDevice]='meticulousDevice'></graph-display-card>
             </ion-radio>
           </ion-item>
         }

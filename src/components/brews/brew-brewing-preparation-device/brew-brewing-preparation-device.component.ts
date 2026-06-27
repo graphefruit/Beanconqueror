@@ -227,6 +227,19 @@ export class BrewBrewingPreparationDeviceComponent
     return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
+  /**
+   * Whether the "Profile" brew parameter is active for the current brew,
+   * mirroring the brewFieldVisiblePipe logic: a preparation using custom
+   * parameters overrides the global setting.
+   */
+  private isProfileParameterActive(): boolean {
+    const preparation = this.getPreparation();
+    if (preparation?.use_custom_parameters) {
+      return preparation.manage_parameters.pressure_profile;
+    }
+    return this.settings.manage_parameters.pressure_profile;
+  }
+
   public async instance() {
     await this.instancePreparationDevice(this.data);
   }
@@ -1118,17 +1131,12 @@ export class BrewBrewingPreparationDeviceComponent
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
     this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
 
-    if (_historyData.profile?.name) {
+    if (_historyData.profile?.name && this.isProfileParameterActive()) {
       this.brewComponent.data.pressure_profile = _historyData.profile.name;
     }
     if (_historyData.profile?.temperature) {
       this.brewComponent.data.brew_temperature =
         _historyData.profile.temperature;
-    }
-    if (_historyData.profile?.id) {
-      (
-        this.data.preparationDeviceBrew.params as MeticulousParams
-      ).chosenProfileId = _historyData.profile.id;
     }
 
     /**Set the custom creation date, the user needs to activate the parameter for custom creation date**/

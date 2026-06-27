@@ -72,10 +72,10 @@ export class BrewModalImportShotMeticulousComponent
   @Input() public profileFilter: string | undefined;
   public radioSelection: string;
   public history: any[] = [];
+  public chartWidth = 0;
   public hasMore = true;
   public isLoadingMore = false;
   private isDestroyed = false;
-  private isBatchLoadingDetails = false;
   private lastEntryTime: number | undefined;
   private boundScrollHandler: ((event: Event) => void) | undefined;
 
@@ -119,7 +119,6 @@ export class BrewModalImportShotMeticulousComponent
       this.history = results ?? [];
       this.lastEntryTime = this.history[this.history.length - 1]?.time;
       this.hasMore = this.history.length >= MeticulousDevice.PAGE_SIZE;
-      void this.loadHistoryDetailsInBackground();
     } catch (ex) {
       await this.uiAlert.showMessage(
         'PREPARATION_DEVICE.TYPE_METICULOUS.DATA_COULD_NOT_BE_LOADED',
@@ -155,43 +154,10 @@ export class BrewModalImportShotMeticulousComponent
       this.hasMore =
         allResults.length >= MeticulousDevice.PAGE_SIZE &&
         newEntries.length > 0;
-      void this.loadHistoryDetailsInBackground();
     } catch (ex) {
       // silently fail — scroll triggers a retry naturally
     }
     this.isLoadingMore = false;
-  }
-
-  private async loadHistoryDetailsInBackground() {
-    if (this.isBatchLoadingDetails) {
-      return;
-    }
-    this.isBatchLoadingDetails = true;
-    try {
-      const currentHistory = [...this.history];
-      for (const entry of currentHistory) {
-        if (this.isDestroyed) {
-          break;
-        }
-        if (entry && !entry.data) {
-          try {
-            const details = await this.meticulousDevice?.getHistoryEntryDetails(
-              entry.id,
-            );
-            if (details?.data) {
-              const updatedEntry = { ...entry, data: details.data };
-              this.history = this.history.map((item) =>
-                item.id === entry.id ? updatedEntry : item,
-              );
-            }
-          } catch {
-            // ignore error
-          }
-        }
-      }
-    } finally {
-      this.isBatchLoadingDetails = false;
-    }
   }
 
   @HostListener('window:resize')
@@ -222,6 +188,7 @@ export class BrewModalImportShotMeticulousComponent
         scrollComponent.refreshData();
       }
 
+      this.updateChartWidth();
       this.attachScrollListener();
       this.checkAndLoadMoreIfNeeded();
     }, 150);
@@ -262,11 +229,14 @@ export class BrewModalImportShotMeticulousComponent
     }
   }
 
-  public getElementOffsetWidth() {
-    if (this.ionItemEl?.nativeElement?.offsetWidth) {
-      return this.ionItemEl?.nativeElement?.offsetWidth - 50;
-    }
-    return 0;
+  // Cache the chart width into a property rather than binding a layout-reading
+  // method in the template. Reading offsetWidth during change detection returns
+  // different values before and after layout, which triggers
+  // ExpressionChangedAfterItHasBeenCheckedError. This runs inside the
+  // retriggerScroll/resize timeouts, i.e. its own change detection cycle.
+  private updateChartWidth() {
+    const offsetWidth = this.ionItemEl?.nativeElement?.offsetWidth;
+    this.chartWidth = offsetWidth ? offsetWidth - 50 : 0;
   }
 
   public dismiss(): void {
@@ -278,7 +248,7 @@ export class BrewModalImportShotMeticulousComponent
       BrewModalImportShotMeticulousComponent.COMPONENT_ID,
     );
   }
-  public choose(): void {
+  public async choose(): Promise<void> {
     let returningData;
 
     for (const entry of this.history) {
@@ -287,6 +257,22 @@ export class BrewModalImportShotMeticulousComponent
         break;
       }
     }
+
+    // The selected entry's shot data is loaded lazily once its card renders.
+    // Guarantee it is present before handing the entry back to the importer.
+    if (returningData && !returningData.data) {
+      try {
+        const details = await this.meticulousDevice?.getHistoryEntryDetails(
+          returningData.id,
+        );
+        if (details?.data) {
+          returningData.data = details.data;
+        }
+      } catch {
+        // ignore - importer guards against missing data
+      }
+    }
+
     void this.modalController.dismiss(
       {
         choosenHistory: returningData,
