@@ -72,6 +72,7 @@ export class BrewModalImportShotMeticulousComponent
   @Input() public profileFilter: string | undefined;
   public radioSelection: string;
   public history: any[] = [];
+  public chartWidth = 0;
   public hasMore = true;
   public isLoadingMore = false;
   private isDestroyed = false;
@@ -187,6 +188,7 @@ export class BrewModalImportShotMeticulousComponent
         scrollComponent.refreshData();
       }
 
+      this.updateChartWidth();
       this.attachScrollListener();
       this.checkAndLoadMoreIfNeeded();
     }, 150);
@@ -227,11 +229,14 @@ export class BrewModalImportShotMeticulousComponent
     }
   }
 
-  public getElementOffsetWidth() {
-    if (this.ionItemEl?.nativeElement?.offsetWidth) {
-      return this.ionItemEl?.nativeElement?.offsetWidth - 50;
-    }
-    return 0;
+  // Cache the chart width into a property rather than binding a layout-reading
+  // method in the template. Reading offsetWidth during change detection returns
+  // different values before and after layout, which triggers
+  // ExpressionChangedAfterItHasBeenCheckedError. This runs inside the
+  // retriggerScroll/resize timeouts, i.e. its own change detection cycle.
+  private updateChartWidth() {
+    const offsetWidth = this.ionItemEl?.nativeElement?.offsetWidth;
+    this.chartWidth = offsetWidth ? offsetWidth - 50 : 0;
   }
 
   public dismiss(): void {
