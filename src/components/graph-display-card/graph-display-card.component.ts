@@ -40,6 +40,7 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public flowProfilePath: any;
 
   @Input() public meticulousHistoryData: HistoryListingEntry;
+  @Input() public meticulousDevice: MeticulousDevice;
   @Input() public gaggiuinoHistoryData: BrewFlow;
 
   @Input() public chartWidth: number;
@@ -64,6 +65,7 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
     } else if (this.flowProfileData) {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
     } else if (this.meticulousHistoryData) {
+      await this.ensureMeticulousShotData();
       this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
         this.meticulousHistoryData.data,
       );
@@ -91,6 +93,33 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
         );
         this.initializeFlowChart();
       }
+    }
+  }
+
+  /**
+   * History listing entries are loaded without their shot data for
+   * performance. When a card is actually rendered we lazily fetch the detail
+   * for its own entry and cache it back onto the entry (mutating in place, so
+   * the owning list keeps a stable object reference and the virtual scroll is
+   * not reset).
+   */
+  private async ensureMeticulousShotData() {
+    if (
+      !this.meticulousHistoryData ||
+      this.meticulousHistoryData.data ||
+      !this.meticulousDevice
+    ) {
+      return;
+    }
+    try {
+      const details = await this.meticulousDevice.getHistoryEntryDetails(
+        this.meticulousHistoryData.id,
+      );
+      if (details?.data) {
+        (this.meticulousHistoryData as any).data = details.data;
+      }
+    } catch {
+      // ignore - an empty graph will be rendered
     }
   }
 
