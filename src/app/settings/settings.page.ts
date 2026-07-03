@@ -54,6 +54,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { AppEvent } from '../../classes/appEvent/appEvent';
 import { Bean } from '../../classes/bean/bean';
+import BaristamodeBrew from '../../classes/brew/baristamodeBrew';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { BluetoothScale, BluetoothTypes, sleep } from '../../classes/devices';
@@ -102,6 +103,7 @@ import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.
 import { ThemeService } from '../../services/theme/theme.service';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBaristamodeBrewStorage } from '../../services/uiBaristamodeBrewStorage';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIExcel } from '../../services/uiExcel';
@@ -172,6 +174,7 @@ export class SettingsPage {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBaristamodeBrewStorage = inject(UIBaristamodeBrewStorage);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiLog = inject(UILog);
@@ -1057,6 +1060,16 @@ export class SettingsPage {
     await this._exportGraphProfiles(exportObjects, exportPath);
   }
 
+  private async exportBaristamodeFlowProfiles(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
+    const exportObjects: any[] = [
+      ...this.uiBaristamodeBrewStorage.getAllEntries(),
+    ];
+    await this.exportStoredData(exportObjects, exportPath);
+  }
+
   public async export() {
     await this.uiAlert.withLoadingSpinner(async () => {
       // Do an export to the default export location
@@ -1097,6 +1110,7 @@ export class SettingsPage {
       await this.exportAttachments(exportPath);
       await this.exportFlowProfiles(exportPath);
       await this.exportGraphProfiles(exportPath);
+      await this.exportBaristamodeFlowProfiles(exportPath);
     }
 
     await this.uiFileHelper.exportFile(
@@ -1333,7 +1347,7 @@ export class SettingsPage {
   }
 
   private async exportStoredData(
-    _storedData: Brew[] | Graph[],
+    _storedData: Brew[] | Graph[] | BaristamodeBrew[],
     exportPath: {
       path: string;
       directory: Directory;
@@ -1441,6 +1455,17 @@ export class SettingsPage {
     for (const entry of _storedData) {
       if (entry.flow_profile) {
         await this._importFile(entry.flow_profile, _importDirectory);
+      }
+    }
+  }
+
+  private async _importBaristamodeFlowProfileFiles(
+    _storedData: BaristamodeBrew[],
+    _importDirectory: string,
+  ) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile && entry.flow_profile.length) {
+        await this._importFile(entry.getGraphPath(), _importDirectory);
       }
     }
   }
@@ -1629,6 +1654,13 @@ export class SettingsPage {
 
             const graphData = this.uiGraphStorage.getAllEntries();
             await this._importGraphProfileFiles(graphData, _importDirectory);
+
+            const baristamodeBrewsData =
+              this.uiBaristamodeBrewStorage.getAllEntries();
+            await this._importBaristamodeFlowProfileFiles(
+              baristamodeBrewsData,
+              _importDirectory,
+            );
           }
 
           if (
@@ -1711,6 +1743,7 @@ export class SettingsPage {
     await this.uiRoastingMachineStorage.reinitializeStorage();
     await this.uiWaterStorage.reinitializeStorage();
     await this.uiGraphStorage.reinitializeStorage();
+    await this.uiBaristamodeBrewStorage.reinitializeStorage();
 
     // Wait for every necessary service to be ready before starting the app
     // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -1727,6 +1760,8 @@ export class SettingsPage {
       this.uiRoastingMachineStorage.storageReady();
     const waterStorageCallback = this.uiWaterStorage.storageReady();
     const graphStorageCallback = this.uiGraphStorage.storageReady();
+    const baristamodeBrewStorageCallback =
+      this.uiBaristamodeBrewStorage.storageReady();
 
     await Promise.all([
       beanStorageReadyCallback,
@@ -1739,6 +1774,7 @@ export class SettingsPage {
       roastingMachineStorageCallback,
       waterStorageCallback,
       graphStorageCallback,
+      baristamodeBrewStorageCallback,
     ]);
     await this.uiUpdate.checkUpdate();
   }
