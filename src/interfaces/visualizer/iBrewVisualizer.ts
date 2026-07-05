@@ -4,6 +4,7 @@
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { IConfig } from '../objectConfig/iObjectConfig';
+import { IVisualizerPreparationTool } from './iPreparationVisualizer';
 
 export interface IBrewVisualizer {
   // Properties
@@ -116,4 +117,10 @@ export interface IBrewVisualizer {
 
   /*** this is calculcated **/
   ey: number;
+
+  /**
+   * Names of the preparation tools that were actually selected for this brew
+   * (subset of the parent preparation's tool catalog). Empty when none picked.
+   */
+  used_preparation_tools: IVisualizerPreparationTool[];
 }
