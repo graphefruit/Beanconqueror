@@ -209,8 +209,22 @@ export class BaristamodeStatisticsPage implements OnDestroy {
       return brewDate.isSameOrAfter(startDate);
     });
 
-    this.calculateActiveWindowMetrics(filteredBrews);
-    this.renderAccuracyChart(filteredBrews);
+    let cardStartDate = moment();
+    if (this.segment === 'DAILY') {
+      cardStartDate = moment().startOf('day');
+    } else if (this.segment === 'WEEKLY') {
+      cardStartDate = moment().startOf('isoWeek');
+    } else if (this.segment === 'MONTHLY') {
+      cardStartDate = moment().startOf('month');
+    }
+
+    const cardBrews = allBrews.filter((brew) => {
+      const brewDate = moment.unix(brew.config.unix_timestamp);
+      return brewDate.isSameOrAfter(cardStartDate);
+    });
+
+    this.calculateActiveWindowMetrics(cardBrews);
+    this.renderAccuracyChart(cardBrews);
     this.renderProfileTimelineChart(filteredBrews, startDate);
     this.renderWaterBeverageChart(filteredBrews);
   }
