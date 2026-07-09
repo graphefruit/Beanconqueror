@@ -250,11 +250,11 @@
     "CUPPING_SCORE_FLAVOR_TOOLTIP": "口の中での総合的な印象で、他の全評価を含みます。4 つの基本味（酸味・甘み・塩味・苦み）と多くの二次的な味があります。",
     "CUPPING_SCORE_BODY_TOOLTIP": "「マウスフィール」とも呼ばれ、ボディは抽出されたコーヒーの重さと濃度の感覚です。カップ内の可溶性固形物の割合によって決まります。",
     "CUPPING_SCORE_FINISH_TOOLTIP": "コーヒーを飲み込んだ後に残る、または現れる味わい。飲み終わってから数分後まで続くこともあります。",
-    "CUPPING_SCORE_SWEETNESS_TOOLTIP": "甘みはコーヒーにおいてほぼ常に望ましい品質です。「素朴な甘み」「ほろ苦い甘み」などと表現されることもあります。",
-    "CUPPING_SCORE_CLEAN_CUP_TOOLTIP": "「クリーンカップ」はコーヒーが汚れていないという意味ではありません。フレーバーのクリーンさに関するもので、生っぽいコーヒーが「クリーンでない」とされることがあります。",
+    "CUPPING_SCORE_SWEETNESS_TOOLTIP": "甘みはコーヒーにおいてほぼ常に望ましい品質です。「素朴な甘み」や「ほろ苦い甘み」といった婉曲的な表現で語られる場合もあります。ヨーロッパ菓子、上質なキャンディ、白砂糖のような精製された甘みは高く評価され、果糖に由来する複雑な甘みも同様です。麦芽糖のようなモルティな甘みは伝統的ではありませんが望ましい要素であり、蜂蜜のような甘みも非常に純粋でクリーンなものから、複雑で素朴、やや酵母感のあるものまで幅があります。基本的に、甘みがカップの重要な魅力であれば高く評価されます。",
+    "CUPPING_SCORE_CLEAN_CUP_TOOLTIP": "「クリーンカップ」は、コーヒーに汚れがないという文字どおりの意味ではありません。フレーバー上のクリーンさを指します。生っぽい、ファンキーで「クリーンでない」とされるコーヒーでも、その風味が非常に望ましい場合があります。たとえばスマトラ産のウェットハル、エチオピアやイエメン産のナチュラル精製のようなタイプです。",
     "CUPPING_SCORE_COMPLEXITY_TOOLTIP": "複雑さは「フレーバー」と「フィニッシュ」スコアを補完し、多様なフレーバーの重なりを表します。カップの中に発見がたくさんあることを示します。",
-    "CUPPING_SCORE_UNIFORMITY_TOOLTIP": "均一性はカップごとの違いを指します。ナチュラル精製は水洗式よりも均一性が低い傾向があります。",
-    "CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP": "SCAA システムと Cup of Excellence の採点を基に作られています。カッパーが、合計スコアが全体的な印象を正確に反映しているか確認するための項目です。",
+    "CUPPING_SCORE_UNIFORMITY_TOOLTIP": "均一性はカップごとの差を指します。ナチュラル精製のコーヒーは、水洗式のコーヒーより本質的に均一性が低い場合があります。ときどきばらつきがあっても素晴らしい風味を持つロットを避けるべきではありません。この項目は、評価対象の各ロットについて複数のカップを用意するカッピング手順の中で採点されます。",
+    "CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP": "これは SCAA システムと Cup of Excellence の採点（「総合点」と呼ばれることもあります）を基にしています。カッパーが、合計スコアがカップ全体の印象を正しく伝えているかを確認するための項目です。この方法を「点数合わせ」と批判することもできますし、ある意味ではその通りです。ただし、望む合計点にするために各カテゴリの点数を変えること（酸味が 7 だと分かっているのに 9 を付けるなど）や、本来 90 点に値するコーヒーが 84 点になってしまうことの方がはるかに問題です。カッパーズ補正の具体的な数値が 5 でも 8 でも重要ではありません。合計スコアがコーヒー品質の正しい印象を与えることが目的です。",
     "CUPPING_SCORE_TOOLTIP": "100〜95 = 卓越, 90〜94 = 傑出, 85〜89 = 非常に良い, 80〜84 = 良い, 75〜79 = 普通, 70〜74 = 不十分",
     "DETAIL_BREW": "抽出の詳細",
     "DETAIL_BEAN": "豆の詳細",
@@ -290,7 +290,7 @@
     "WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE": "解析・トラッキング",
     "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": "アプリ・ウェブサイト・将来のサービスを継続的に改善するために、アプリの使用データを収集します。個人情報は一切収集しません。",
     "ANALYTICS_INFORMATION_TITLE": "解析・トラッキング",
-    "ANALYTICS_INFORMATION_DESCRIPTION": "お客様のデータのセキュリティとプライバシーは最優先事項です。<br/><br/>そのため、Google Analytics からデータセキュリティとプライバシーに配慮したオープンソースサービスに移行しました。送信されるデータは匿名化されており、個人の特定はできません。",
+    "ANALYTICS_INFORMATION_DESCRIPTION": "ご存じのとおり、お客様のデータのセキュリティとプライバシーは最優先事項です。<br/><br/>そのため、Google Analytics から、データセキュリティとプライバシーに配慮したオープンソースサービス Matomo に移行しました。Matomo は自社サーバーでホストしているため、データの所有権を完全に保持しています。<br/><br/>トラッキングするパラメータは変更しておらず、個人情報を追跡しないことを引き続きお約束します。<br/><br/>トラッキング対象のパラメータについてはウェブサイトで確認できます。また、100% オープンソースのソースコードも確認できます。<br/><br/>ご質問がありますか？<br/><br/>お気軽にお問い合わせください。",
     "ACTIVATE": "有効にする",
     "DO_NOT_ACTIVE": "有効にしない",
     "WELCOME_PAGE_BEAN_TITLE": "豆",
@@ -340,7 +340,7 @@
     "MILL_HAS_TIMER": "タイマー付き",
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "抽出方法をアーカイブしました",
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "水をアーカイブしました",
-    "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g / {{gramTotal}}g 使用済み（残り {{leftOver}}g）",
+    "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g / {{gramTotal}}g 使用済み - 残り {{leftOver}}g",
     "PREPARATION_TYPE_CUSTOM_PREPARATION": "カスタム抽出方法",
     "PREPARATION_TYPE_AEROPRESS": "エアロプレス",
     "PREPARATION_TYPE_V60": "V60",
@@ -481,7 +481,7 @@
     "CUSTOM_MANAGE_PARAMETERS": "管理",
     "CUSTOM_SORT_PARAMETERS": "並び替え",
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "抽出方法ごとのカスタムパラメータ",
-    "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "抽出方法ごとにカスタムパラメータを設定できます。「方法」画面で対象の抽出方法のメニューを開き「パラメータをカスタマイズ」を選択してください。",
+    "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "抽出方法ごとにカスタムパラメータを設定しますか？「方法」画面に移動し、対象の抽出方法のメニューを開いて「パラメータをカスタマイズ」を選択してください。そこで、この抽出方法で使用するパラメータを選択できます。",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "湯量（エスプレッソには使用しません）",
     "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "ファーストドリップ時間（エスプレッソのみ）",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "抽出方法（有効な場合のみ編集可）",
@@ -577,7 +577,8 @@
                 "FIRST_CRACK_TEMPERATURE": "ハゼ（1ハゼ）の温度",
                 "SECOND_CRACK_TEMPERATURE": "2ハゼの温度",
                 "SECOND_CRACK_MINUTE": "2ハゼの時間"
-            }
+            },
+            "WEIGHT_LOSS": "重量減少"
         }
     },
     "PAGE_SETTINGS_MANAGE_SECTIONS": "追加セクション",
@@ -1104,7 +1105,8 @@
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous",
             "SANREMO_YOU": "Sanremo YOU",
-            "GAGGIUINO": "Gaggiuino"
+            "GAGGIUINO": "Gaggiuino",
+            "MOVE2": "Move 2"
         },
         "URL": "URL",
         "CHOOSE_DEVICE": "デバイスを選択",
@@ -1166,6 +1168,19 @@
         },
         "TYPE_GAGGIUINO": {
             "TITLE": "Gaggiuino マシン"
+        },
+        "TYPE_MOVE2": {
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Move 2 に接続できませんでした。マシンに十分近づき、Bluetooth が有効になっていることを確認してください。",
+            "RECONNECT_ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Move 2 に再接続できませんでした。マシンに十分近づき、Bluetooth が有効になっていることを確認してください。",
+            "RECONNECTION_COULD_BE_ESTABLISHED": "再接続に成功しました",
+            "STOP_AT_WEIGHT": "重量で停止",
+            "TITLE": "Move 2",
+            "SHOT_ENDED": "ショット終了",
+            "SHOT_STARTED": "ショット開始",
+            "TRYING_ESTABLISHING_CONNECTION": "Move 2 への接続を確立しています。しばらく時間がかかる場合があります。",
+            "REMOTE_PREINFUSION_ENABLE": "プレインフュージョンを有効化",
+            "PREINFUSION_PAUSE_START": "プレインフュージョン一時停止開始 (秒.秒)",
+            "PREINFUSION_PAUSE_TIME": "プレインフュージョン一時停止時間 (秒.秒)"
         }
     },
     "DEVICE_CONNECTION": "デバイス接続",
@@ -1341,7 +1356,7 @@
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "抽出開始までスピナーを表示するディレイ時間を設定します",
     "STARTING_IN": "開始まで... {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "注意！！！！！ - データベース接続が失われました",
-    "IOS_DATABASE_ISSUE_DESCRIPTION": "データベースへの接続が失われました。これは Apple システムの未解決のバグによるものです。データを失わないよう、Beanconqueror を強制終了して再起動してください。",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "データベースへの接続が失われました。これは Apple システムの未解決のバグが原因であり、Beanconqueror の管理外で発生しています。データ損失を防ぐため、ただちに Beanconqueror アプリを強制終了してから再度開いてください。",
     "RELOAD_APP": "今すぐ再起動",
     "WATER_TYPE_ADD_CUSTOM": "カスタム水を追加",
     "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE": "Third Wave Water - クラシック浅煎りプロファイル",
@@ -1482,7 +1497,8 @@
         "START_BREW_CHOOSE_PREPARATION": "抽出を開始し、抽出方法を選択",
         "DETAIL": "詳細表示",
         "EDIT": "豆を編集",
-        "CHOOSE_ACTION": "スキャン時のアクションを選択"
+        "CHOOSE_ACTION": "スキャン時のアクションを選択",
+        "REPEAT_LAST_BREW": "前回の抽出を繰り返す"
     },
     "DOWNLOAD_QR_CODE": "QR コードをダウンロード",
     "NFC": {
@@ -1632,6 +1648,47 @@
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": "豆の一部を解凍する",
     "LAST_COMMUNICATION": "最終通信",
     "UPDATE_TEXT_TITLE_TITLE": {
+        "8.7.0": {
+            "TITLE": "バージョン 8.7.0: 新機能",
+            "DESCRIPTION": [
+                "<b>Sanremo YOU</b>",
+                "バリスタモードでのショットトラッキングと基本的な分析を追加しました",
+                "注湯量と注湯流量のトラッキングを追加しました",
+                "",
+                "<b>Meticulous</b>",
+                "ショットをインポートする際にカスタム抽出時間が保持されるようになりました",
+                "ショットインポート時の読み込みを高速化しました",
+                "",
+                "<b>抽出</b>",
+                "抽出比率がリアルタイムで更新されるようになりました",
+                "",
+                "<b>グラインダー</b>",
+                "グラインダーに調整可能な回転速度とタイマー設定を追加しました – Silas に感謝します",
+                "",
+                "<b>豆</b>",
+                "AI でコーヒーバッグをスキャンしてアプリにインポートできるようになりました（プロバイダーを選択し、API キーを追加してください）– Silas に感謝します",
+                "新しい NFC アクション: 前回の抽出を繰り返す",
+                "冷凍／解凍日がクリアされたときに冷凍アイコンが削除されるようになりました",
+                "",
+                "<b>焙煎</b>",
+                "1ハゼと2ハゼに分・秒単位の精度を追加しました",
+                "重量減少の計算を追加しました",
+                "",
+                "<b>スケール</b>",
+                "Timemore DOT と Basic のサポートを追加しました",
+                "Mantabrew のサポートを追加しました",
+                "",
+                "<b>言語</b>",
+                "日本語サポートを追加しました – nyagasan に感謝します",
+                "チェコ語サポートを追加しました – Miroslav に感謝します",
+                "",
+                "<b>フレームワーク</b>",
+                "フレームワークとアプリ全体の改善に協力してくれた RagingCactus に大きな感謝を送ります",
+                "",
+                "<b>その他</b>",
+                "軽微な修正と改善"
+            ]
+        },
         "8.6.0": {
             "TITLE": "バージョン 8.6.0: 新機能",
             "DESCRIPTION": [
@@ -1684,5 +1741,32 @@
     "BREW_FLOW_WATER_DISPENSED_VOLUME": "注湯量",
     "BREW_FLOW_WATER_DISPENSED_REALTIME": "注湯流量",
     "SANREMO_YOU_EXCLUSIVE_METRIC_HINT": "このグラフは現在 Sanremo YOU のみサポートされています",
-    "WIFI_SIGNAL_STRENGTH": "Wi-Fi 強度 (dBm)"
+    "WIFI_SIGNAL_STRENGTH": "Wi-Fi 強度 (dBm)",
+    "BARISTAMODE_STATISTICS": {
+        "TITLE": "バリスタモード統計",
+        "TOTAL_BREWS": "総抽出回数",
+        "AVG_OFFSET": "平均ずれ量",
+        "HIT_RATE": "ヒット率 (±0.5g)",
+        "ALL_TIME_WATER": "累計投入水量",
+        "ALL_TIME_LIQUID": "累計抽出液量",
+        "AVG_TIME": "平均抽出時間",
+        "ACCURACY_BREAKDOWN": "精度の内訳",
+        "BREWS_COUNT_BY_PROFILE": "圧力プロファイル別の抽出回数",
+        "WATER_BEVERAGE_CROSS_CHART": "平均投入水量と抽出液量",
+        "PERFECT": "完璧 (≤0.2g)",
+        "EXCELLENT": "優秀 (0.2g-0.5g)",
+        "GOOD": "良好 (0.5g-1.0g)",
+        "MISS": "ミス (>1.0g)",
+        "AVG_WATER": "平均投入水量 (ml)",
+        "AVG_BEVERAGE": "平均飲料重量 (g)",
+        "RATIO": "比率 (水 / 抽出液)",
+        "DAILY": "日別",
+        "WEEKLY": "週別",
+        "MONTHLY": "月別"
+    },
+    "PREPARATION_TYPE_MOVE2": "MOVE 2",
+    "PAGE_SETTINGS_LANGUAGE_CZECH": "チェコ語",
+    "NAV_BARISTAMODE_BREWS": "抽出",
+    "BREW_DATA_WATER_VOLUME_INTAKE": "投入水量",
+    "BREW_DATA_DESIRED_BEVERAGE_QUANTITY": "目標飲料量"
 }
