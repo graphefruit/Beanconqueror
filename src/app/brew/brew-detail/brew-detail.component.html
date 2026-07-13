@@ -106,7 +106,7 @@
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_speed,
         choosenPreparation.manage_parameters.mill_speed,
-        choosenPreparation.use_custom_parameters])) {
+        choosenPreparation.use_custom_parameters]) && (!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_ADJUSTABLE_SPEED))) {
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_speed,
           choosenPreparation.brew_order.before.mill_speed,
           choosenPreparation.use_custom_parameters])">
@@ -118,7 +118,7 @@
       }
       @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_timer,
         choosenPreparation.manage_parameters.mill_timer,
-        choosenPreparation.use_custom_parameters])) {
+        choosenPreparation.use_custom_parameters]) && (!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_TIMER))) {
         <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_timer,
           choosenPreparation.brew_order.before.mill_timer,
           choosenPreparation.use_custom_parameters])">
@@ -466,9 +466,9 @@
           choosenPreparation.use_custom_parameters])" lines="inset">
           <ion-label>
             <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
-            <h3>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds]}}</h3>
+            <h3>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity]}}</h3>
           </ion-label>
-          @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds])) {
+          @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity])) {
             <ion-button style="margin-left:0px;"
                         (click)="showExtractionChart($event)" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
                         tappable>

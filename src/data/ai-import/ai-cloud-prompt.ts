@@ -44,7 +44,7 @@ Use "NOT_FOUND" for any field not clearly present.
   "aromatics": "Comma-separated flavor/tasting notes",
   "decaffeinated": true or false,
   "cupping_points": numeric score (typically 80-100),
-  "roasting_date": "YYYY-MM-DD (use today's date to resolve ambiguous date formats — the roasting date is most likely within the past year and never in the future)",
+  "roasting_date": "YYYY-MM-DD — the roasting date. Use today's date to resolve ambiguous date formats. If no explicit roast date is found but the label states a best-before/use-by/expiration date AND explicitly states the time between roasting and that date (e.g., 'roasted 12 months before best before date' — note this may be stated in the local language of the label), calculate the roast date by subtracting the stated period from the best-before date. The roasting date is most likely within the past year and never in the future. NOT_FOUND if neither an explicit roast date nor a calculable one is present.",
   "bean_mix": "SINGLE_ORIGIN or BLEND",
   "origins": [
     {

@@ -4,6 +4,7 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -29,11 +30,12 @@ import { addIcons } from 'ionicons';
 import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
 
 import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
+import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { Brew } from '../../../classes/brew/brew';
 import {
   BrewFlow,
@@ -45,6 +47,7 @@ import {
 import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBrew';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { BluetoothPreparationDevice } from '../../../classes/preparationDevice/bluetoothPreparationDevice';
 import {
   GaggiuinoDevice,
   GaggiuinoParams,
@@ -54,6 +57,10 @@ import {
   MeticulousDevice,
   MeticulousParams,
 } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import {
+  Move2Device,
+  Move2Params,
+} from '../../../classes/preparationDevice/move2/move2Device';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
 import {
   SanremoYOUDevice,
@@ -66,8 +73,10 @@ import {
 import { Settings } from '../../../classes/settings/settings';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -102,7 +111,9 @@ import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
     IonCardContent,
   ],
 })
-export class BrewBrewingPreparationDeviceComponent implements OnInit {
+export class BrewBrewingPreparationDeviceComponent
+  implements OnInit, OnDestroy
+{
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiBrewStorage = inject(UIBrewStorage);
@@ -113,8 +124,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly modalController = inject(ModalController);
   readonly uiBrewHelper = inject(UIBrewHelper);
-  private readonly translate = inject(TranslateService);
-
   @Input() public data: Brew;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
@@ -126,7 +135,10 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     | XeniaDevice
     | MeticulousDevice
     | SanremoYOUDevice
-    | GaggiuinoDevice = undefined;
+    | GaggiuinoDevice
+    | Move2Device = undefined;
+
+  public activeConnectingDevice: PreparationDevice = undefined;
 
   public preparation: Preparation = undefined;
   public settings: Settings = undefined;
@@ -139,6 +151,9 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   public uiPreparationDeviceConnected: boolean = undefined;
   public uiPreparationDeviceType: PreparationDeviceType = undefined;
   public uiHasAPreparationDeviceSet: boolean = undefined;
+
+  private eventQueue = inject(EventQueueService);
+
   constructor() {
     addIcons({ cloudDownloadOutline, informationCircleOutline });
   }
@@ -212,6 +227,19 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
+  /**
+   * Whether the "Profile" brew parameter is active for the current brew,
+   * mirroring the brewFieldVisiblePipe logic: a preparation using custom
+   * parameters overrides the global setting.
+   */
+  private isProfileParameterActive(): boolean {
+    const preparation = this.getPreparation();
+    if (preparation?.use_custom_parameters) {
+      return preparation.manage_parameters.pressure_profile;
+    }
+    return this.settings.manage_parameters.pressure_profile;
+  }
+
   public async instance() {
     await this.instancePreparationDevice(this.data);
   }
@@ -226,7 +254,10 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     if (connectedType === PreparationDeviceType.XENIA) {
       targetWeight =
         this.data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber;
-    } else if (connectedType === PreparationDeviceType.SANREMO_YOU) {
+    } else if (
+      connectedType === PreparationDeviceType.SANREMO_YOU ||
+      connectedType === PreparationDeviceType.MOVE2
+    ) {
       targetWeight = this.data.preparationDeviceBrew?.params.stopAtWeight;
     }
     return targetWeight;
@@ -284,13 +315,22 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     return device instanceof GaggiuinoDevice;
   }
 
+  public isMove2Device(device: PreparationDevice): device is Move2Device {
+    return device instanceof Move2Device;
+  }
+
   public async instancePreparationDevice(_brew: Brew = null) {
+    /**
+     * If we change the preparation device, we may have the previous device still connected, so disconnect it.
+     */
+    await this.disconnectCurrentDevice();
     /** If a user changes the preparation device, we need to unset the preparation device here firstly **/
     this.preparationDevice = undefined;
     this.preparation = this.data.getPreparation();
     const connectedDevice: PreparationDevice =
       this.uiPreparationHelper.getConnectedDevice(this.preparation);
     if (connectedDevice) {
+      this.activeConnectingDevice = connectedDevice;
       if (connectedDevice instanceof XeniaDevice) {
         await this.instanceXeniaPreparationDevice(connectedDevice, _brew);
       } else if (connectedDevice instanceof MeticulousDevice) {
@@ -299,6 +339,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
         await this.instanceSanremoYOUPreparationDevice(connectedDevice, _brew);
       } else if (connectedDevice instanceof GaggiuinoDevice) {
         await this.instanceGaggiuinoPreparationDevice(connectedDevice, _brew);
+      } else if (connectedDevice instanceof Move2Device) {
+        await this.instanceMove2PreparationDevice(connectedDevice, _brew);
       }
 
       this.checkChanges();
@@ -462,24 +504,223 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     }, 15);
   }
 
-  private async disconnectMeticulousPreparationDevice() {
-    const prepDevice: MeticulousDevice = this
-      .preparationDevice as MeticulousDevice;
-    prepDevice.disconnectSocket();
+  private async disconnectCurrentDevice() {
+    const device = this.preparationDevice || this.activeConnectingDevice;
+    if (device) {
+      if (device instanceof BluetoothPreparationDevice) {
+        device.destroy();
+      } else if (device instanceof MeticulousDevice) {
+        device.disconnectSocket();
+      } else if (device instanceof SanremoYOUDevice) {
+        device.disconnectSocket();
+      }
+    }
+    this.preparationDevice = undefined;
+    this.activeConnectingDevice = undefined;
+  }
+
+  public async ngOnDestroy() {
+    await this.disconnectCurrentDevice();
+  }
+
+  private async instanceMove2PreparationDevice(
+    connectedDevice: Move2Device,
+    _brew: Brew = null,
+  ) {
+    if (
+      this.data.preparationDeviceBrew.type !== PreparationDeviceType.MOVE2 ||
+      !this.data.preparationDeviceBrew.params
+    ) {
+      this.data.preparationDeviceBrew.type = PreparationDeviceType.MOVE2;
+      this.data.preparationDeviceBrew.params = new Move2Params();
+
+      if (!this.isEdit) {
+        if (
+          _brew?.preparationDeviceBrew?.type === PreparationDeviceType.MOVE2 &&
+          _brew?.preparationDeviceBrew.params
+        ) {
+          this.data.preparationDeviceBrew.params =
+            _brew?.preparationDeviceBrew.params;
+        } else {
+          // Is add
+          const brews: Array<Brew> = this.uiHelper
+            .cloneData(this.uiBrewStorage.getAllEntries())
+            .reverse();
+          if (brews.length > 0) {
+            const foundEntry = brews.find(
+              (b) =>
+                b.preparationDeviceBrew.type === PreparationDeviceType.MOVE2,
+            );
+            if (foundEntry) {
+              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                foundEntry.preparationDeviceBrew,
+              );
+            }
+          }
+        }
+      }
+    }
+
+    await this.uiAlert.showLoadingSpinner(
+      'PREPARATION_DEVICE.TYPE_MOVE2.TRYING_ESTABLISHING_CONNECTION',
+      true,
+    );
+
+    const connected = await new Promise<boolean>((resolve) => {
+      let successCallback = () => {
+        // Resolve the await and immediately overwrite both callbacks so that
+        // any subsequent auto-reconnect cycles are silent no-ops.
+        resolve(true);
+        successCallback = () => {};
+        errorCallback = () => {};
+      };
+      let errorCallback = () => {
+        // All retries exhausted – resolve false and silence future calls.
+        connectedDevice.destroy();
+        resolve(false);
+        successCallback = () => {};
+        errorCallback = () => {};
+      };
+
+      let hasAutoDisconnectBeenCalled: boolean = false;
+      let ignoreAutoReconnect: boolean = false;
+
+      connectedDevice.connect(
+        () => {
+          successCallback();
+        },
+        () => {
+          errorCallback();
+        },
+        () => {
+          if (!ignoreAutoReconnect) {
+            /**User dismissed, even so we may connected, ignore it because we throw away the screen **/
+            // Re-initialize the flow chart so the graph component picks up the MOVE2
+            // device and renders the pressure / temperature chips and axes.
+            // This is needed when the preparation is switched mid-brew (the graph's
+            // instance() already ran without MOVE2, so it missed the MOVE2 setup).
+            //this.brewComponent.brewBrewingGraphEl?.initializeFlowChart();
+            this.uiToast.showInfoToast(
+              'PREPARATION_DEVICE.TYPE_MOVE2.RECONNECTION_COULD_BE_ESTABLISHED',
+            );
+            this.uiAlert.hideLoadingSpinner();
+          }
+          /**Reset**/
+          hasAutoDisconnectBeenCalled = false;
+        },
+        async () => {
+          if (!hasAutoDisconnectBeenCalled) {
+            hasAutoDisconnectBeenCalled = true;
+            // Re-initialize the flow chart so the graph component picks up the MOVE2
+            // device and renders the pressure / temperature chips and axes.
+            // This is needed when the preparation is switched mid-brew (the graph's
+            // instance() already ran without MOVE2, so it missed the MOVE2 setup).
+            //this.brewComponent.brewBrewingGraphEl?.initializeFlowChart();
+
+            if (!this.brewComponent.timer.isTimerRunning()) {
+              // Only show the alert if the timer is not running, else we may have already started a brew and the user would get confused if we show an alert in the middle of the brew, even so the device got reconnected.
+              const dismissedData =
+                await this.uiAlert.showLoadingMessageWithCustomTimeout(
+                  'PREPARATION_DEVICE.TYPE_MOVE2.RECONNECT_ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+                  true,
+                  true,
+                  5000,
+                );
+              if (dismissedData && dismissedData?.dismissed) {
+                ignoreAutoReconnect = true;
+                /**
+                 * This event is grabbed on brew-add screen, so when the preparation cant be connected why ever we close the screen then.
+                 */
+                this.eventQueue.dispatch(
+                  new AppEvent(AppEventType.CLOSE_BREW_SCREEN, undefined),
+                );
+              }
+            }
+          }
+        },
+      );
+    });
+
+    await this.uiAlert.hideLoadingSpinner();
+
+    if (connected) {
+      this.preparationDevice = connectedDevice as Move2Device;
+      // Re-initialize the flow chart so the graph component picks up the MOVE2
+      // device and renders the pressure / temperature chips and axes.
+      // This is needed when the preparation is switched mid-brew (the graph's
+      // instance() already ran without MOVE2, so it missed the MOVE2 setup).
+      this.brewComponent.brewBrewingGraphEl?.initializeFlowChart();
+    } else {
+      this.uiAlert.showMessage(
+        'PREPARATION_DEVICE.TYPE_MOVE2.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+        'CARE',
+        'OK',
+        true,
+      );
+    }
   }
 
   private async instanceMeticulousPreparationDevice(
     connectedDevice: MeticulousDevice,
     _brew: Brew = null,
   ) {
-    this.data.preparationDeviceBrew.type = PreparationDeviceType.METICULOUS;
-    this.data.preparationDeviceBrew.params = new MeticulousParams();
+    if (
+      this.data.preparationDeviceBrew.type !==
+        PreparationDeviceType.METICULOUS ||
+      !this.data.preparationDeviceBrew.params
+    ) {
+      this.data.preparationDeviceBrew.type = PreparationDeviceType.METICULOUS;
+      this.data.preparationDeviceBrew.params = new MeticulousParams();
+
+      if (!this.isEdit) {
+        if (
+          _brew?.preparationDeviceBrew?.type ===
+            PreparationDeviceType.METICULOUS &&
+          _brew?.preparationDeviceBrew.params
+        ) {
+          this.data.preparationDeviceBrew.params =
+            _brew?.preparationDeviceBrew.params;
+        } else {
+          /** Just if we don't have a chosenProfile find one :)**/
+          // Is add
+          const brews: Array<Brew> = this.uiHelper
+            .cloneData(this.uiBrewStorage.getAllEntries())
+            .reverse();
+          if (brews.length > 0) {
+            const foundEntry = brews.find(
+              (b) =>
+                b.preparationDeviceBrew.type ===
+                PreparationDeviceType.METICULOUS,
+            );
+            if (foundEntry) {
+              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                foundEntry.preparationDeviceBrew,
+              );
+            }
+          }
+        }
+      }
+    }
 
     await connectedDevice.connectToSocket().then(
       async (_connected) => {
         if (_connected) {
           this.preparationDevice = connectedDevice as MeticulousDevice;
-          this.preparationDevice.loadProfiles();
+          await this.preparationDevice.loadProfiles();
+
+          /**Check if this profile is still existing, if yes, preset, if not cancel**/
+          const profileFound = this.preparationDevice
+            .getProfiles()
+            .find(
+              (e) =>
+                e.id === this.data.preparationDeviceBrew.params.chosenProfileId,
+            );
+          if (profileFound) {
+            //Everything great
+          } else {
+            //Revert to zero
+            this.data.preparationDeviceBrew.params.chosenProfileId = '';
+          }
         }
       },
       () => {
@@ -492,8 +733,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     connectedDevice: GaggiuinoDevice,
     _brew: Brew = null,
   ) {
-    this.data.preparationDeviceBrew.type = PreparationDeviceType.GAGGIUINO;
-    this.data.preparationDeviceBrew.params = new GaggiuinoParams();
+    if (
+      this.data.preparationDeviceBrew.type !==
+        PreparationDeviceType.GAGGIUINO ||
+      !this.data.preparationDeviceBrew.params
+    ) {
+      this.data.preparationDeviceBrew.type = PreparationDeviceType.GAGGIUINO;
+      this.data.preparationDeviceBrew.params = new GaggiuinoParams();
+    }
 
     await this.uiAlert.showLoadingSpinner();
     await connectedDevice.deviceConnected().then(
@@ -523,8 +770,42 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     connectedDevice: SanremoYOUDevice,
     _brew: Brew = null,
   ) {
-    this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
-    this.data.preparationDeviceBrew.params = new SanremoYOUParams();
+    if (
+      this.data.preparationDeviceBrew.type !==
+        PreparationDeviceType.SANREMO_YOU ||
+      !this.data.preparationDeviceBrew.params
+    ) {
+      this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
+      this.data.preparationDeviceBrew.params = new SanremoYOUParams();
+
+      if (this.baristamode === false && !this.isEdit) {
+        if (
+          _brew?.preparationDeviceBrew?.type ===
+            PreparationDeviceType.SANREMO_YOU &&
+          _brew?.preparationDeviceBrew.params
+        ) {
+          this.data.preparationDeviceBrew.params =
+            _brew?.preparationDeviceBrew.params;
+        } else {
+          // Is add
+          const brews: Array<Brew> = this.uiHelper
+            .cloneData(this.uiBrewStorage.getAllEntries())
+            .reverse();
+          if (brews.length > 0) {
+            const foundEntry = brews.find(
+              (b) =>
+                b.preparationDeviceBrew.type ===
+                PreparationDeviceType.SANREMO_YOU,
+            );
+            if (foundEntry) {
+              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                foundEntry.preparationDeviceBrew,
+              );
+            }
+          }
+        }
+      }
+    }
 
     await this.uiAlert.showLoadingSpinner();
     await connectedDevice.deviceConnected().then(
@@ -583,41 +864,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       }
     }
 
-    if (this.baristamode === false) {
-      if (!this.isEdit) {
-        // If a brew was passed, we came from loading, else we just swapped the preparation toolings
-        let wasSomethingSet: boolean = false;
-        if (_brew) {
-          if (_brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE) {
-            this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-              _brew.preparationDeviceBrew,
-            );
-            wasSomethingSet = true;
-          }
-        }
-
-        if (wasSomethingSet === false) {
-          // maybe the passed brew, didn't had any params in it - why ever?!
-          // Is add
-          const brews: Array<Brew> = this.uiHelper
-            .cloneData(this.uiBrewStorage.getAllEntries())
-            .reverse();
-          if (brews.length > 0) {
-            const foundEntry = brews.find(
-              (b) =>
-                b.preparationDeviceBrew.type ===
-                PreparationDeviceType.SANREMO_YOU,
-            );
-            if (foundEntry) {
-              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                foundEntry.preparationDeviceBrew,
-              );
-            }
-          }
-        }
-      }
-    }
-
     return;
     /**
         // Seccond call
@@ -664,11 +910,21 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   public async importShotFromMeticulous() {
+    const meticulousDevice = this.preparationDevice as MeticulousDevice;
+    const chosenProfileId = (
+      this.data.preparationDeviceBrew.params as MeticulousParams
+    )?.chosenProfileId;
+    const profileFilter = chosenProfileId
+      ? meticulousDevice.getProfiles().find((p) => p.id === chosenProfileId)
+          ?.name
+      : undefined;
+
     const modal = await this.modalController.create({
       component: BrewModalImportShotMeticulousComponent,
       id: BrewModalImportShotMeticulousComponent.COMPONENT_ID,
       componentProps: {
-        meticulousDevice: this.preparationDevice as MeticulousDevice,
+        meticulousDevice,
+        profileFilter,
       },
     });
 
@@ -875,7 +1131,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
     this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
 
-    if (_historyData.profile?.name) {
+    if (_historyData.profile?.name && this.isProfileParameterActive()) {
       this.brewComponent.data.pressure_profile = _historyData.profile.name;
     }
     if (_historyData.profile?.temperature) {
@@ -906,6 +1162,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       return PreparationDeviceType.METICULOUS;
     } else if (this.preparationDevice instanceof SanremoYOUDevice) {
       return PreparationDeviceType.SANREMO_YOU;
+    } else if (this.preparationDevice instanceof Move2Device) {
+      return PreparationDeviceType.MOVE2;
     }
     return PreparationDeviceType.NONE;
   }
@@ -918,6 +1176,58 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  public preinfusionPauseStartBlur() {
+    const params = this.data.preparationDeviceBrew.params as Move2Params;
+    if (
+      params &&
+      params.preinfusionPauseStart !== undefined &&
+      params.preinfusionPauseStart !== null
+    ) {
+      let val = params.preinfusionPauseStart;
+      if (typeof val === 'string') {
+        val = parseFloat((val as string).replace(/,/g, '.'));
+      }
+      if (!isNaN(val)) {
+        // Truncate to one decimal place, e.g. 2.98 -> 2.9
+        val = Math.floor(val * 10) / 10;
+        if (val < 0.1) {
+          val = 0.1;
+        } else if (val > 30) {
+          val = 30;
+        }
+        params.preinfusionPauseStart = val;
+      } else {
+        params.preinfusionPauseStart = 0.1;
+      }
+    }
+  }
+
+  public preinfusionPauseTimeBlur() {
+    const params = this.data.preparationDeviceBrew.params as Move2Params;
+    if (
+      params &&
+      params.preinfusionPauseTime !== undefined &&
+      params.preinfusionPauseTime !== null
+    ) {
+      let val = params.preinfusionPauseTime;
+      if (typeof val === 'string') {
+        val = parseFloat((val as string).replace(/,/g, '.'));
+      }
+      if (!isNaN(val)) {
+        // Truncate to one decimal place, e.g. 2.98 -> 2.9
+        val = Math.floor(val * 10) / 10;
+        if (val < 0.1) {
+          val = 0.1;
+        } else if (val > 30) {
+          val = 30;
+        }
+        params.preinfusionPauseTime = val;
+      } else {
+        params.preinfusionPauseTime = 0.1;
+      }
+    }
   }
 
   public checkXeniaScripts() {

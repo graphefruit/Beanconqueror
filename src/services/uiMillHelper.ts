@@ -56,7 +56,7 @@ export class UIMillHelper {
       id: MillAddComponent.COMPONENT_ID,
       componentProps: { hide_toast_message: _hideToastMessage },
       breakpoints: [0, 0.35, 0.5, 0.75, 1],
-      initialBreakpoint: 0.35,
+      initialBreakpoint: 0.5,
     });
     await modal.present();
     await modal.onWillDismiss();

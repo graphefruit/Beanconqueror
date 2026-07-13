@@ -1,11 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import Api, { ActionType, ProfileIdent } from '@meticulous-home/espresso-api';
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import {
+  HistoryEntry,
+  HistoryListingEntry,
+} from '@meticulous-home/espresso-api/dist/types';
 import { Profile } from '@meticulous-home/espresso-profile';
 import moment from 'moment';
-import { of } from 'rxjs';
-import { catchError, timeout } from 'rxjs/operators';
 
 import { IMeticulousParams } from '../../../interfaces/preparationDevices/meticulous/iMeticulousParams';
 import {
@@ -23,6 +24,8 @@ declare var cordova;
 declare var io;
 
 export class MeticulousDevice extends PreparationDevice {
+  public static readonly PAGE_SIZE = 20;
+
   private socket: any = undefined;
   private meticulousShotData: MeticulousShotData = undefined;
   private _isConnected: boolean = false;
@@ -30,11 +33,13 @@ export class MeticulousDevice extends PreparationDevice {
 
   private _profiles: Array<Profile> = [];
 
-  private serverURL: string = '';
-
   public static returnBrewFlowForShotData(_shotData) {
     const newMoment = moment(new Date()).startOf('day');
     const newBrewFlow = new BrewFlow();
+
+    if (!_shotData) {
+      return newBrewFlow;
+    }
 
     for (const entry of _shotData as any) {
       const shotEntry: any = entry.shot;
@@ -89,51 +94,43 @@ export class MeticulousDevice extends PreparationDevice {
       undefined,
       _preparation.connectedPreparationDevice.url,
     );
-    this.serverURL = _preparation.connectedPreparationDevice.url;
-
     if (typeof cordova !== 'undefined') {
     }
   }
-  public getHistory() {
-    const promise = new Promise<any>((resolve, reject) => {
-      const httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-        }),
-      };
-      this.httpClient
-        .post(
-          this.serverURL + '/api/v1/history',
-          {
-            sort: 'desc',
-            max_results: 20,
-          },
-          httpOptions,
-        )
-        .pipe(
-          timeout(10000),
-          catchError((e) => {
-            return of(null);
-          }),
-        )
-        .toPromise()
-        .then(
-          (data: any) => {
-            if (data && data.history) {
-              resolve(data.history);
-            }
-          },
-          (error) => {
-            console.log(error);
-            reject();
-          },
-        )
-        .catch((error) => {
-          console.log(error);
-          reject();
-        });
+  public async getHistory(
+    endDate?: number,
+    profileFilter?: string,
+  ): Promise<HistoryListingEntry[]> {
+    const params: any = {
+      query: profileFilter ?? '',
+      ids: [],
+      order_by: ['date'],
+      sort: 'desc',
+      max_results: MeticulousDevice.PAGE_SIZE,
+      dump_data: false,
+    };
+    if (endDate !== undefined) {
+      params.end_date = endDate;
+    }
+    const response = await this.metApi.searchHistory(params);
+    return (response?.data?.history as unknown as HistoryListingEntry[]) ?? [];
+  }
+
+  public async getHistoryEntryDetails(
+    id: string,
+  ): Promise<HistoryEntry | undefined> {
+    const response = await this.metApi.searchHistory({
+      query: '',
+      ids: [id],
+      order_by: ['date'],
+      sort: 'desc',
+      max_results: 1,
+      dump_data: true,
     });
-    return promise;
+    if (response?.data?.history && response.data.history.length > 0) {
+      return response.data.history[0];
+    }
+    return undefined;
   }
 
   public getActualShotData() {
@@ -185,9 +182,7 @@ export class MeticulousDevice extends PreparationDevice {
       const loadProfile = await this.metApi.loadProfileByID(_profileId);
       const profile = loadProfile.data as unknown as Profile;
       return profile;
-    } catch (ex) {
-      console.log(ex.message);
-    }
+    } catch (ex) {}
     return undefined;
   }
 
@@ -303,6 +298,9 @@ export class MeticulousDevice extends PreparationDevice {
           //currentShotData.temperature = data.sensors.t;
           currentShotData.extracting = data.extracting;
           currentShotData.gravimetric_flow = data.sensors.g;
+
+          currentShotData.loaded_profile = data.loaded_profile;
+          currentShotData.profile_id = data.id;
 
           this.meticulousShotData = currentShotData;
         } else {

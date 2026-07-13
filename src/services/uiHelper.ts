@@ -6,13 +6,14 @@ import { Clipboard } from '@capacitor/clipboard';
 import moment from 'moment';
 
 import 'moment/locale/de';
+import 'moment/locale/ja';
 
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { KeepAwake } from '@capacitor-community/keep-awake';
 import { AppLauncher } from '@capacitor/app-launcher';
-import { cloneDeep } from 'lodash';
 
+import { StorageClass } from '../classes/storageClass';
 import { UIAlert } from './uiAlert';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
@@ -68,7 +69,7 @@ export class UIHelper {
   };
 
   public static getUnixTimestamp(): number {
-    return moment().unix();
+    return StorageClass.getUnixTimestamp();
   }
 
   /**
@@ -76,8 +77,7 @@ export class UIHelper {
    * @param _value
    */
   public cloneData(_value) {
-    const clone = cloneDeep(_value);
-    return clone;
+    return StorageClass.cloneData(_value);
   }
 
   private getSettingsStorageInstance(): UISettingsStorage {
@@ -125,7 +125,7 @@ export class UIHelper {
     this.uiAlert.showMessage(_message, _title);
   }
   public getUnixTimestamp(): number {
-    return moment().unix();
+    return StorageClass.getUnixTimestamp();
   }
 
   public isToday(_unix: number): boolean {

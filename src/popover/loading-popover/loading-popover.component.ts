@@ -4,6 +4,7 @@ import {
   IonButton,
   IonContent,
   IonFooter,
+  IonHeader,
   IonSpinner,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -22,7 +23,14 @@ import { UILog } from '../../services/uiLog';
   selector: 'loading-popover',
   templateUrl: './loading-popover.component.html',
   styleUrls: ['./loading-popover.component.scss'],
-  imports: [TranslatePipe, IonContent, IonSpinner, IonFooter, IonButton],
+  imports: [
+    TranslatePipe,
+    IonContent,
+    IonSpinner,
+    IonFooter,
+    IonButton,
+    IonHeader,
+  ],
 })
 export class LoadingPopoverComponent implements OnInit {
   private readonly modalController = inject(ModalController);
@@ -33,6 +41,13 @@ export class LoadingPopoverComponent implements OnInit {
   public __showDismissButton: boolean = false;
   @Input('showDismissAfterSpecificTimeout')
   public showDismissAfterSpecificTimeout: boolean;
+
+  @Input('dismissTimeoutInMilliseconds')
+  public dismissTimeoutInMilliseconds: number = 10000;
+
+  @Input('showLogs')
+  public showLogs: boolean = true;
+
   @Input('message') public message: string;
   private timeoutFunc = null;
 
@@ -42,7 +57,7 @@ export class LoadingPopoverComponent implements OnInit {
     if (this.showDismissAfterSpecificTimeout) {
       this.timeoutFunc = setTimeout(() => {
         this.showDismissButton();
-      }, 10000);
+      }, this.dismissTimeoutInMilliseconds);
     }
     const eventSubs = this.eventQueue.on(
       AppEventType.UPDATE_LOADING_SPINNER_MESSAGE,

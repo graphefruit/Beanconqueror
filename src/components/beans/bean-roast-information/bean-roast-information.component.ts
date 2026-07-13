@@ -58,11 +58,21 @@ export class BeanRoastInformationComponent implements OnInit {
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public displayingTime: string = '';
+  public displayingFirstCrack: string = '';
+  public displayingSecondCrack: string = '';
 
   public ngOnInit() {
     this.displayingTime = moment()
       .startOf('day')
       .add('seconds', this.data.bean_roast_information.roast_length)
+      .toISOString();
+    this.displayingFirstCrack = moment()
+      .startOf('day')
+      .add('seconds', this.data.bean_roast_information.first_crack_minute || 0)
+      .toISOString();
+    this.displayingSecondCrack = moment()
+      .startOf('day')
+      .add('seconds', this.data.bean_roast_information.second_crack_minute || 0)
       .toISOString();
   }
   public smartScaleConnected() {
@@ -119,5 +129,92 @@ export class BeanRoastInformationComponent implements OnInit {
         )
         .asSeconds();
     }
+  }
+
+  private _overLayFirstCrackShown: boolean = false;
+  public async showFirstCrackOverlay(_event) {
+    if (this._overLayFirstCrackShown === true) {
+      return;
+    }
+    this._overLayFirstCrackShown = true;
+
+    _event.stopPropagation();
+    _event.stopImmediatePropagation();
+
+    const modal = await this.modalCtrl.create({
+      component: DatetimePopoverComponent,
+      id: 'datetime-popover',
+      cssClass: 'popover-actions',
+      animated: false,
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
+      componentProps: { displayingTime: this.displayingFirstCrack },
+    });
+    await modal.present();
+    const modalData = await modal.onWillDismiss();
+    this._overLayFirstCrackShown = false;
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.displayingTime !== undefined
+    ) {
+      this.displayingFirstCrack = modalData.data.displayingTime;
+      this.data.bean_roast_information.first_crack_minute = moment
+        .duration(
+          moment(modalData.data.displayingTime).diff(
+            moment(modalData.data.displayingTime).startOf('day'),
+          ),
+        )
+        .asSeconds();
+    }
+  }
+
+  private _overLaySecondCrackShown: boolean = false;
+  public async showSecondCrackOverlay(_event) {
+    if (this._overLaySecondCrackShown === true) {
+      return;
+    }
+    this._overLaySecondCrackShown = true;
+
+    _event.stopPropagation();
+    _event.stopImmediatePropagation();
+
+    const modal = await this.modalCtrl.create({
+      component: DatetimePopoverComponent,
+      id: 'datetime-popover',
+      cssClass: 'popover-actions',
+      animated: false,
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
+      componentProps: { displayingTime: this.displayingSecondCrack },
+    });
+    await modal.present();
+    const modalData = await modal.onWillDismiss();
+    this._overLaySecondCrackShown = false;
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.displayingTime !== undefined
+    ) {
+      this.displayingSecondCrack = modalData.data.displayingTime;
+      this.data.bean_roast_information.second_crack_minute = moment
+        .duration(
+          moment(modalData.data.displayingTime).diff(
+            moment(modalData.data.displayingTime).startOf('day'),
+          ),
+        )
+        .asSeconds();
+    }
+  }
+
+  public getWeightLoss(): string {
+    const green = Number(this.data?.bean_roast_information?.green_bean_weight);
+    const roasted = Number(this.data?.weight);
+    if (green > 0 && roasted > 0 && green >= roasted) {
+      const loss = green - roasted;
+      const pct = (loss / green) * 100;
+      return `${pct.toFixed(2)}% (${loss.toFixed(1)}g)`;
+    }
+    return '-';
   }
 }

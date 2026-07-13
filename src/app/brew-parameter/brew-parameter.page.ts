@@ -6,6 +6,7 @@ import {
   IonCardContent,
   IonCardTitle,
   IonContent,
+  IonFooter,
   IonHeader,
   IonIcon,
   IonItem,
@@ -33,6 +34,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     IonIcon,
     IonCardTitle,
     IonCardContent,
+    IonFooter,
   ],
 })
 export class BrewParameterPage implements OnInit {

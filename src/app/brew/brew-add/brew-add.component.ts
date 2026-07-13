@@ -21,6 +21,8 @@ import {
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { bluetoothOutline } from 'ionicons/icons';
 
 import { Geolocation } from '@capacitor/geolocation';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -147,9 +149,12 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private disableHardwareBack;
   public bluetoothSubscription: Subscription = undefined;
   public automaticSaveSubscription: Subscription = undefined;
+  public closeBrewScreenSubscription: Subscription = undefined;
+
   public readonly PreparationDeviceType = PreparationDeviceType;
 
   constructor() {
+    addIcons({ bluetoothOutline });
     // Initialize to standard in drop down
     this.settings = this.uiSettingsStorage.getSettings();
 
@@ -172,6 +177,11 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     const eventSubs = this.eventQueue.on(AppEventType.BREW_AUTOMATIC_SAVE);
     this.automaticSaveSubscription = eventSubs.subscribe((event) => {
       this.finish(true);
+    });
+
+    const eventCloseScreen = this.eventQueue.on(AppEventType.CLOSE_BREW_SCREEN);
+    this.closeBrewScreenSubscription = eventCloseScreen.subscribe((event) => {
+      this.dismiss();
     });
   }
   @HostListener('window:keyboardWillShow')
@@ -664,6 +674,15 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;
     }
+    if (this.closeBrewScreenSubscription) {
+      this.closeBrewScreenSubscription.unsubscribe();
+      this.closeBrewScreenSubscription = undefined;
+    }
+    if (this.automaticSaveSubscription) {
+      this.automaticSaveSubscription.unsubscribe();
+      this.automaticSaveSubscription = undefined;
+    }
+
     this.deattachBrewAutoSave();
   }
 }

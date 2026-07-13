@@ -30,63 +30,32 @@ import { RefractometerDevice } from './refractometerBluetoothDevice';
 import { SkaleScale } from './skale';
 import { SmartchefScale } from './smartchefScale';
 import { TemperatureDevice } from './temperatureBluetoothDevice';
+import { TimemoreBasicScale } from './timemoreBasicScale';
+import { TimemoreDotScale } from './timemoreDotScale';
 import { TimemoreScale } from './timemoreScale';
 import { TransducerDirectPressure } from './transducerDirectPressure';
+import {
+  BluetoothTypes,
+  MachineType,
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  TemperatureType,
+} from './types';
 import { VariaAkuScale } from './variaAku';
+import { WeighMasterScale } from './weighMasterScale';
 import { WeighMyBruScale } from './weighMyBruScale';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
-
-export enum BluetoothTypes {
-  SCALE = 'SCALE',
-  PRESSURE = 'PRESSURE',
-  TEMPERATURE = 'TEMPERATURE',
-  TDS = 'TDS',
-}
-
-export enum ScaleType {
-  DECENT = 'DECENT',
-  LUNAR = 'LUNAR',
-  JIMMY = 'JIMMY',
-  FELICITA = 'FELICITA',
-  FUTULA = 'FUTULA',
-  EUREKAPRECISA = 'EUREKAPRECISA',
-  SKALE = 'SKALE',
-  SMARTCHEF = 'SMARTCHEF',
-  DIFLUIDMICROBALANCE = 'DIFLUIDMIRCROBALANCE',
-  DIFLUIDMICROBALANCETI = 'DIFLUIDMIRCROBALANCETI',
-  BLACKCOFFEE = 'BLACKCOFFEE',
-  DIYPYTHONCOFFEESCALE = 'DIYPYTHONCOFFEESCALE',
-  DIYRUSTCOFFEESCALE = 'DIYRUSTCOFFEESCALE',
-  BOKOOSCALE = 'BOOKOOSCALE',
-  TIMEMORESCALE = 'TIMEMORESCALE',
-  VARIA_AKU = 'VARIA_AKU',
-  ESPRESSI = 'ESPRESSI',
-  WEIGHMYBRUSCALE = 'WEIGHMYBRUSCALE',
-}
-
-export enum PressureType {
-  POPSICLE = 'POPSICLE',
-  DIRECT = 'DIRECT',
-  PRS = 'PRS',
-  BOKOOPRESSURE = 'BOKOOPRESSURE',
-  COFFEESENSOR = 'COFFEESENSOR',
-}
-
-export enum TemperatureType {
-  ETI = 'ETI',
-  BASICGRILL = 'BASICGRILL',
-  MEATER = 'MEATER',
-  COMBUSTION = 'COMBUSTION',
-  ARGOS = 'ARGOS',
-  GEISINGER = 'GEISINGER',
-  COFFEESENSOR = 'COFFEESENSOR',
-}
-
-export enum RefractometerType {
-  R2 = 'R2',
-}
+export {
+  BluetoothTypes,
+  MachineType,
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  TemperatureType,
+} from './types';
 
 export function makeDevice(
   type: ScaleType,
@@ -123,12 +92,18 @@ export function makeDevice(
       return new BookooScale(data, type);
     case ScaleType.TIMEMORESCALE:
       return new TimemoreScale(data, type);
+    case ScaleType.TIMEMORE_BASIC:
+      return new TimemoreBasicScale(data, type);
+    case ScaleType.TIMEMORE_DOT:
+      return new TimemoreDotScale(data, type);
     case ScaleType.VARIA_AKU:
       return new VariaAkuScale(data, type);
     case ScaleType.ESPRESSI:
       return new EspressiScale(data, type);
     case ScaleType.WEIGHMYBRUSCALE:
       return new WeighMyBruScale(data, type);
+    case ScaleType.WEIGHMASTER:
+      return new WeighMasterScale(data, type);
     default:
       return null;
   }

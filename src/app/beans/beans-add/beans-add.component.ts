@@ -82,6 +82,7 @@ export class BeansAddComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-add';
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
+  @Input() private readonly reuse_attachments: boolean = false;
   @Input() private readonly server_bean: ServerBean;
   @Input() private readonly user_shared_bean: Bean;
 
@@ -299,13 +300,13 @@ export class BeansAddComponent implements OnInit {
     }
 
     this.uiBeanHelper.logUsedBeanParameters();
-    this.dismiss();
+    this.dismiss('saved');
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');
     }
   }
 
-  public dismiss(): void {
+  public dismiss(role?: string): void {
     try {
       if (this.settings.security_check_when_going_back === true) {
         this.disableHardwareBack.unsubscribe();
@@ -315,7 +316,7 @@ export class BeansAddComponent implements OnInit {
       {
         dismissed: true,
       },
-      undefined,
+      role,
       BeansAddComponent.COMPONENT_ID,
     );
   }
@@ -346,7 +347,7 @@ export class BeansAddComponent implements OnInit {
     this.data.cupping_points = _bean.cupping_points;
     this.data.roast_range = _bean.roast_range;
 
-    if (!this.user_shared_bean) {
+    if (!this.user_shared_bean && !this.reuse_attachments) {
       const copyAttachments = [];
       for (const attachment of _bean.attachments) {
         try {
@@ -357,7 +358,8 @@ export class BeansAddComponent implements OnInit {
       }
       this.data.attachments = copyAttachments;
     } else {
-      //We already downloaded the attachments in the uiBeanHelper, so duplicating it internaly wouldn't be a good idea
+      // For user_shared_bean: attachments already downloaded, no duplication needed.
+      // For reuse_attachments (AI import): photos are already in place, reuse them directly.
       this.data.attachments = _bean.attachments;
     }
 

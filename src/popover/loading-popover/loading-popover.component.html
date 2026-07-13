@@ -1,3 +1,5 @@
+<ion-header>
+</ion-header>
 <ion-content>
   <div class='loading-popover-center'>
     <div class='loading-popover-center' style='max-width:90%;'>
@@ -9,7 +11,10 @@
   <ion-footer class="ion-no-border">
     <ion-button (click)="ok()" color="accent" expand="block"
     type="submit">{{"CANCEL" | translate}}</ion-button>
-    <ion-button (click)="sendLogs()" color="accent" expand="block"
-    type="submit">{{"SEND_LOGS" | translate}}</ion-button>
+
+    @if(showLogs) {
+    <ion-button (click)="sendLogs()" color="accent" expand="block" type="submit">{{"SEND_LOGS" | translate}}</ion-button>
+    }
+
   </ion-footer>
 }

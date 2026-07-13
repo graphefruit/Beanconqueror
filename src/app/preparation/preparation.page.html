@@ -9,12 +9,28 @@
     <ion-segment-button value="open">
       <ion-label>
         {{"CURRENT" | translate }}
+        <br />
+        @if (openPreparationsView?.length !== openPreparationsLength) {
+        <span class="value">
+          ( {{ openPreparationsView?.length }} / {{ openPreparationsLength }} )
+        </span>
+        } @else {
+        <span class="value">( {{ openPreparationsLength }} )</span>
+        }
       </ion-label>
     </ion-segment-button>
     @if (settings?.show_archived_preparations) {
       <ion-segment-button value="archive">
         <ion-label>
           {{"TAB_ARCHIVE" | translate }}
+          <br />
+          @if (archivePreparationsView?.length !== archivePreparationsLength) {
+          <span class="value">
+            ( {{ archivePreparationsView?.length }} / {{ archivePreparationsLength }} )
+          </span>
+          } @else {
+          <span class="value">( {{ archivePreparationsLength }} )</span>
+          }
         </ion-label>
       </ion-segment-button>
     }
@@ -24,6 +40,11 @@
     @switch (segment) {
       @case ('open') {
         <div>
+          @if (openPreparationsView?.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsSortActive) {
+            <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+              <ng-container [ngTemplateOutlet]="preparationSearchToolbar"></ng-container>
+            </div>
+          }
           @if (openPreparationsView?.length == 0) {
             <div class="ion-padding ion-text-center">
               <div>
@@ -45,6 +66,11 @@
       }
       @case ('archive') {
         <div >
+          @if (archivePreparationsView?.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsSortActive) {
+            <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+              <ng-container [ngTemplateOutlet]="preparationSearchToolbar"></ng-container>
+            </div>
+          }
           @if (archivePreparationsView?.length == 0) {
             <div class="ion-padding ion-text-center">
               <div>
@@ -69,3 +95,16 @@
 
 
 </ion-content>
+
+<ng-template #preparationSearchToolbar>
+  <ion-searchbar (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
+    class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
+    search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+  <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+    @if (uiIsSortActive) {
+    <ion-icon name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+    } @else {
+    <ion-icon name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+    }
+  </ion-button>
+</ng-template>

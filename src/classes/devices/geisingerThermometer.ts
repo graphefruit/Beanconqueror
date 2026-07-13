@@ -7,8 +7,7 @@ declare var ble: any;
 export class GeisingerThermometer extends TemperatureDevice {
   public static DEVICE_NAME = 'Geisinger Bruehthermometer';
   public static SERVICE_UUID = 'b04f237a-b949-4e36-bf48-500017b198ee';
-  public static TEMPERATURE_CHAR_UUID =
-    '0xD76A5CBF-5981-4AC1-B288-917872EC2449';
+  public static TEMPERATURE_CHAR_UUID = 'd76a5cbf-5981-4ac1-b288-917872ec2449';
   public static RUNTIME_CHAR_UUID =
     'ae87a94d-ac58-4c03-ad80-6c9843facc9c'.toUpperCase();
   public static BATTERY_CHAR_UUID =
@@ -70,8 +69,6 @@ export class GeisingerThermometer extends TemperatureDevice {
   }
 
   private attachNotification() {
-    debugger;
-    console.log('blaaa');
     ble.startNotification(
       this.device_id,
       GeisingerThermometer.SERVICE_UUID,
@@ -86,6 +83,11 @@ export class GeisingerThermometer extends TemperatureDevice {
         this.logger.error('Error parsing temp: ' + JSON.stringify(_data));
       },
     );
+  }
+
+  private async showAlert(_message: string) {
+    const { UIAlert } = await import('../../services/uiAlert');
+    UIAlert.getInstance()?.showMessage(_message, 'Info');
   }
 
   private parseTemperatureUpdate(data: Uint8Array) {

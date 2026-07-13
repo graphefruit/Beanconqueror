@@ -69,6 +69,7 @@ export class UIUpdate {
         'UPDATE_12',
         'UPDATE_13',
         'UPDATE_14',
+        'UPDATE_15',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -96,6 +97,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_12', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_13', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_14', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_15', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -307,8 +309,7 @@ export class UIUpdate {
                 settings.brew_beverage_quantity;
 
               // This will be fixed value
-              settings.default_last_coffee_parameters.method_of_preparation =
-                true;
+              settings.default_last_coffee_parameters.method_of_preparation = true;
 
               // With this property there also came the change that we moved all parameters to manage_parameters
               await this.uiSettingsStorage.saveSettings(settings);
@@ -594,6 +595,33 @@ export class UIUpdate {
             delete settings_v14.brew_display_bean_image;
             await this.uiSettingsStorage.saveSettings(settings_v14);
             break;
+          case 'UPDATE_15':
+            const beans_v15: Array<Bean> = this.uiBeanStorage.getAllEntries();
+            for (const bean of beans_v15) {
+              let updated = false;
+              if (
+                bean.bean_roast_information &&
+                bean.bean_roast_information.first_crack_minute
+              ) {
+                bean.bean_roast_information.first_crack_minute = Math.round(
+                  bean.bean_roast_information.first_crack_minute * 60,
+                );
+                updated = true;
+              }
+              if (
+                bean.bean_roast_information &&
+                bean.bean_roast_information.second_crack_minute
+              ) {
+                bean.bean_roast_information.second_crack_minute = Math.round(
+                  bean.bean_roast_information.second_crack_minute * 60,
+                );
+                updated = true;
+              }
+              if (updated) {
+                await this.uiBeanStorage.update(bean);
+              }
+            }
+            break;
           default:
             break;
         }
@@ -648,7 +676,7 @@ export class UIUpdate {
         versionCode = (await App.getInfo()).version;
       } else {
         // Hardcored for testing
-        versionCode = '8.6.0';
+        versionCode = '8.7.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

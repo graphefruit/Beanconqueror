@@ -127,6 +127,8 @@
           <ion-select-option value="no">{{ "PAGE_SETTINGS_LANGUAGE_NORWEGIAN" | translate }}</ion-select-option>
           <ion-select-option value="pt">{{ "PAGE_SETTINGS_LANGUAGE_PORTUGUESE" | translate }}</ion-select-option>
           <ion-select-option value="el">{{ "PAGE_SETTINGS_LANGUAGE_GREEK" | translate }}</ion-select-option>
+          <ion-select-option value="cs">{{ "PAGE_SETTINGS_LANGUAGE_CZECH" | translate }}</ion-select-option>
+          <ion-select-option value="ja">{{ "PAGE_SETTINGS_LANGUAGE_JAPANESE" | translate }}</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
@@ -718,23 +720,24 @@
 
   <ion-card class="margin-top-20">
     <ion-card-content>
-      <ion-card-title>{{ "CLOUD_AI_SETTINGS_TITLE" | translate }}</ion-card-title>
+      <ion-card-title>{{ "AI_PROVIDER_SETTINGS_TITLE" | translate }}</ion-card-title>
       <ion-item>
-        <ion-select (ngModelChange)="onCloudAiProviderChanged()" [(ngModel)]="settings.cloud_ai_provider"
+        <ion-select (ngModelChange)="onAiProviderChanged()" [(ngModel)]="settings.ai_provider"
           cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
-          <div slot="label">{{ "CLOUD_AI_PROVIDER" | translate }}</div>
+          <div slot="label">{{ "AI_PROVIDER" | translate }}</div>
+          <ion-select-option value="{{aiProviderEnum.NO_PROVIDER}}">{{ "AI_PROVIDER_DISABLED" | translate }}</ion-select-option>
           @if (isAppleIntelligenceAvailable()) {
-          <ion-select-option value="{{cloudAiProviderEnum.APPLE_INTELLIGENCE}}">{{ "CLOUD_AI_PROVIDER_APPLE_INTELLIGENCE" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.APPLE_INTELLIGENCE}}">{{ "AI_PROVIDER_APPLE_INTELLIGENCE" | translate }}</ion-select-option>
           }
-          <ion-select-option value="{{cloudAiProviderEnum.OPENAI}}">{{ "CLOUD_AI_PROVIDER_OPENAI" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.GOOGLE}}">{{ "CLOUD_AI_PROVIDER_GOOGLE" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.ANTHROPIC}}">{{ "CLOUD_AI_PROVIDER_ANTHROPIC" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.MISTRAL}}">{{ "CLOUD_AI_PROVIDER_MISTRAL" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.OPENROUTER}}">{{ "CLOUD_AI_PROVIDER_OPENROUTER" | translate }}</ion-select-option>
-          <ion-select-option value="{{cloudAiProviderEnum.CUSTOM}}">{{ "CLOUD_AI_PROVIDER_CUSTOM" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.OPENAI}}">{{ "AI_PROVIDER_OPENAI" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.GOOGLE}}">{{ "AI_PROVIDER_GOOGLE" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.ANTHROPIC}}">{{ "AI_PROVIDER_ANTHROPIC" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.MISTRAL}}">{{ "AI_PROVIDER_MISTRAL" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.OPENROUTER}}">{{ "AI_PROVIDER_OPENROUTER" | translate }}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.CUSTOM}}">{{ "AI_PROVIDER_CUSTOM" | translate }}</ion-select-option>
         </ion-select>
       </ion-item>
-      @if (settings.cloud_ai_provider !== cloudAiProviderEnum.APPLE_INTELLIGENCE) {
+      @if (settings.ai_provider !== aiProviderEnum.APPLE_INTELLIGENCE && settings.ai_provider !== aiProviderEnum.NO_PROVIDER) {
       <ion-item>
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_API_KEY" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_api_key"
@@ -753,7 +756,7 @@
         </ion-button>
       </ion-item>
       }
-      @if (settings.cloud_ai_provider === cloudAiProviderEnum.CUSTOM) {
+      @if (settings.ai_provider === aiProviderEnum.CUSTOM) {
       <ion-item>
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_BASE_URL" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_base_url"
@@ -1403,6 +1406,80 @@
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
                 [(ngModel)]="settings.graph_colors.temperature.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+          </div>
+        </ion-accordion>
+
+        <!-- Water Dispensed -->
+        <ion-accordion value="waterDispensed">
+          <ion-item slot="header" color="light">
+            <ion-label>{{"BREW_FLOW_WATER_DISPENSED_VOLUME" | translate}}</ion-label>
+            <ion-button fill="clear" slot="end"
+              (click)="resetGraphColor('waterDispensed'); $event.stopPropagation(); $event.preventDefault()">
+              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            <ion-note color="medium" class="ion-margin-bottom" style="display: block;">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              {{"SANREMO_YOU_EXCLUSIVE_METRIC_HINT" | translate:-{default: 'Just available on Sanremo YOU'} }}
+            </ion-note>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensed.active.light"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensed.active.dark"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensed.reference.light" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensed.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+          </div>
+        </ion-accordion>
+
+        <!-- Water Dispensed Realtime Flow -->
+        <ion-accordion value="waterDispensedFlowSecond">
+          <ion-item slot="header" color="light">
+            <ion-label>{{"BREW_FLOW_WATER_DISPENSED_REALTIME" | translate}}</ion-label>
+            <ion-button fill="clear" slot="end"
+              (click)="resetGraphColor('waterDispensedFlowSecond'); $event.stopPropagation(); $event.preventDefault()">
+              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            <ion-note color="medium" class="ion-margin-bottom" style="display: block;">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              {{"SANREMO_YOU_EXCLUSIVE_METRIC_HINT" | translate:-{default: 'Just available on Sanremo YOU'} }}
+            </ion-note>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.active.light"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.active.dark"
+                (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.light" (ionBlur)="saveSettings()"></ion-input>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
+              <ion-input class="margin-top-5" type="color"
+                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.dark" (ionBlur)="saveSettings()"></ion-input>
             </ion-item>
           </div>
         </ion-accordion>

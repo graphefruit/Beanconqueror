@@ -13,6 +13,12 @@
         </ion-input>
       </ion-item>
       <ion-item>
+        <ion-checkbox justify="start" label-placement="start" #has_adjustable_speed="ngModel" [(ngModel)]="data.has_adjustable_speed" name="has_adjustable_speed">{{"MILL_HAS_ADJUSTABLE_SPEED"|translate}}</ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-checkbox justify="start" label-placement="start" #has_timer="ngModel" [(ngModel)]="data.has_timer" name="has_timer">{{"MILL_HAS_TIMER"|translate}}</ion-checkbox>
+      </ion-item>
+      <ion-item>
         <ion-checkbox  justify="start" label-placement="start" #finished="ngModel" [(ngModel)]="data.finished" name="finished">{{"ARCHIVED"|translate}}?</ion-checkbox>
       </ion-item>
       <ion-item lines="none">

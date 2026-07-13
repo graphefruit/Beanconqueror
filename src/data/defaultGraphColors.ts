@@ -27,4 +27,16 @@ export const DEFAULT_GRAPH_COLORS = {
     active: { light: '#CC3311', dark: '#CC3311' },
     reference: { light: '#eaad9f', dark: '#eaad9f' },
   },
+  waterDispensed: {
+    active: { light: '#0d6efd', dark: '#3b82f6' },
+    reference: { light: '#b6d4fe', dark: '#86b7fe' },
+  },
+  waterDispensedFlowSecond: {
+    active: { light: '#17a2b8', dark: '#17a2b8' },
+    reference: { light: '#99d9e4', dark: '#99d9e4' },
+  },
+  customTrace: {
+    active: { light: '#000000', dark: '#ffffff' },
+    reference: { light: '#808080', dark: '#808080' },
+  },
 };

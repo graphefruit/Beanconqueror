@@ -206,6 +206,98 @@ export class UIExcel {
       );
     }
 
+    if (
+      _flow.hasOwnProperty('waterDispensed') &&
+      _flow.waterDispensed != null
+    ) {
+      const header_water_dispensed: Array<string> = [];
+      header_water_dispensed.push('Timestamp');
+      header_water_dispensed.push('Time');
+      header_water_dispensed.push('Actual');
+      header_water_dispensed.push('Old');
+
+      const wsDataWaterDispensed: any[][] = [header_water_dispensed];
+      for (const entry of _flow.waterDispensed) {
+        const wbEntry: Array<any> = [
+          entry.timestamp,
+          entry.brew_time,
+          entry.actual,
+          entry.old,
+        ];
+        wsDataWaterDispensed.push(wbEntry);
+      }
+      const wsWaterDispensed: WorkSheet =
+        XLSX.utils.aoa_to_sheet(wsDataWaterDispensed);
+      XLSX.utils.book_append_sheet(
+        wb,
+        wsWaterDispensed,
+        this.translate.instant('Flow water dispensed'),
+      );
+    }
+
+    if (
+      _flow.hasOwnProperty('waterDispensedFlowSecond') &&
+      _flow.waterDispensedFlowSecond != null
+    ) {
+      const header_water_dispensed_realtime: Array<string> = [];
+      header_water_dispensed_realtime.push('Timestamp');
+      header_water_dispensed_realtime.push('Time');
+      header_water_dispensed_realtime.push('Actual');
+      header_water_dispensed_realtime.push('Old');
+
+      const wsDataWaterDispensedRealtime: any[][] = [
+        header_water_dispensed_realtime,
+      ];
+      for (const entry of _flow.waterDispensedFlowSecond) {
+        const wbEntry: Array<any> = [
+          entry.timestamp,
+          entry.brew_time,
+          entry.actual,
+          entry.old,
+        ];
+        wsDataWaterDispensedRealtime.push(wbEntry);
+      }
+      const wsWaterDispensedRealtime: WorkSheet = XLSX.utils.aoa_to_sheet(
+        wsDataWaterDispensedRealtime,
+      );
+      XLSX.utils.book_append_sheet(
+        wb,
+        wsWaterDispensedRealtime,
+        this.translate.instant('Flow water disp. realtime'),
+      );
+    }
+
+    if (_flow.hasOwnProperty('customMetrics') && _flow.customMetrics != null) {
+      for (const [key, metricsArray] of Object.entries(_flow.customMetrics) as [
+        string,
+        any,
+      ][]) {
+        if (!metricsArray || metricsArray.length === 0) continue;
+
+        const header_custom_metric: Array<string> = [];
+        header_custom_metric.push('Timestamp');
+        header_custom_metric.push('Time');
+        header_custom_metric.push('Value');
+
+        const wsDataCustomMetric: any[][] = [header_custom_metric];
+        for (const entry of metricsArray) {
+          const wbEntry: Array<any> = [
+            entry.timestamp,
+            entry.brew_time,
+            entry.value,
+          ];
+          wsDataCustomMetric.push(wbEntry);
+        }
+        const wsCustomMetric: WorkSheet =
+          XLSX.utils.aoa_to_sheet(wsDataCustomMetric);
+        XLSX.utils.book_append_sheet(
+          wb,
+          wsCustomMetric,
+          this.translate.instant('Flow metric ') + key,
+        );
+      }
+    }
+
     if (_flow.hasOwnProperty('brewbyweight')) {
       const header_final_weight: Array<string> = [];
       header_final_weight.push('target_weight');
@@ -544,6 +636,9 @@ export class UIExcel {
   }
 
   public async exportBrewFlowProfile(_flow: BrewFlow) {
+    if (!_flow) {
+      return;
+    }
     await this.uiAlert.showLoadingSpinner();
     const wb: WorkBook = this.generateBrewFlowProfileRaw(_flow);
 

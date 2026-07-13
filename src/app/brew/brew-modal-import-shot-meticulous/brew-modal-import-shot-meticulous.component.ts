@@ -4,6 +4,7 @@ import {
   HostListener,
   inject,
   Input,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -24,7 +25,6 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
@@ -59,7 +59,9 @@ import { UIHelper } from '../../../services/uiHelper';
     IonCol,
   ],
 })
-export class BrewModalImportShotMeticulousComponent implements OnInit {
+export class BrewModalImportShotMeticulousComponent
+  implements OnInit, OnDestroy
+{
   private readonly modalController = inject(ModalController);
   readonly uiHelper = inject(UIHelper);
   private readonly uiAlert = inject(UIAlert);
@@ -67,8 +69,15 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-meticulous';
 
   @Input() public meticulousDevice: MeticulousDevice;
+  @Input() public profileFilter: string | undefined;
   public radioSelection: string;
-  public history: Array<HistoryListingEntry> = [];
+  public history: any[] = [];
+  public chartWidth = 0;
+  public hasMore = true;
+  public isLoadingMore = false;
+  private isDestroyed = false;
+  private lastEntryTime: number | undefined;
+  private boundScrollHandler: ((event: Event) => void) | undefined;
 
   @ViewChild('ionItemEl', { read: ElementRef, static: false })
   public ionItemEl: ElementRef;
@@ -87,15 +96,70 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   public segmentScrollHeight: string = undefined;
 
   public ngOnInit() {
-    this.readHistory();
+    void this.readHistory();
+  }
+
+  public ngOnDestroy() {
+    this.isDestroyed = true;
+    if (this.shotDataScroll && this.boundScrollHandler) {
+      this.shotDataScroll.el.removeEventListener(
+        'scroll',
+        this.boundScrollHandler,
+      );
+    }
   }
 
   private async readHistory() {
     await this.uiAlert.showLoadingSpinner();
-    this.history = await this.meticulousDevice?.getHistory();
+    try {
+      const results = await this.meticulousDevice?.getHistory(
+        undefined,
+        this.profileFilter,
+      );
+      this.history = results ?? [];
+      this.lastEntryTime = this.history[this.history.length - 1]?.time;
+      this.hasMore = this.history.length >= MeticulousDevice.PAGE_SIZE;
+    } catch (ex) {
+      await this.uiAlert.showMessage(
+        'PREPARATION_DEVICE.TYPE_METICULOUS.DATA_COULD_NOT_BE_LOADED',
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
+    }
     await this.uiAlert.hideLoadingSpinner();
     this.retriggerScroll();
   }
+
+  public async loadMoreHistory() {
+    if (
+      !this.hasMore ||
+      this.isLoadingMore ||
+      this.lastEntryTime === undefined
+    ) {
+      return;
+    }
+    this.isLoadingMore = true;
+    try {
+      const results = await this.meticulousDevice?.getHistory(
+        this.lastEntryTime,
+        this.profileFilter,
+      );
+      const allResults = results ?? [];
+      const newEntries = allResults.filter(
+        (entry) => !this.history.some((existing) => existing.id === entry.id),
+      );
+      this.history = [...this.history, ...newEntries];
+      this.lastEntryTime = this.history[this.history.length - 1]?.time;
+      this.hasMore =
+        allResults.length >= MeticulousDevice.PAGE_SIZE &&
+        newEntries.length > 0;
+    } catch (ex) {
+      // silently fail — scroll triggers a retry naturally
+    }
+    this.isLoadingMore = false;
+  }
+
   @HostListener('window:resize')
   @HostListener('window:orientationchange')
   public onOrientationChange() {
@@ -123,18 +187,60 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
       if (scrollComponent.items.length === 0) {
         scrollComponent.refreshData();
       }
+
+      this.updateChartWidth();
+      this.attachScrollListener();
+      this.checkAndLoadMoreIfNeeded();
     }, 150);
   }
 
-  public getElementOffsetWidth() {
-    if (this.ionItemEl?.nativeElement?.offsetWidth) {
-      return this.ionItemEl?.nativeElement?.offsetWidth - 50;
+  private attachScrollListener() {
+    if (this.boundScrollHandler || !this.shotDataScroll) {
+      return;
     }
-    return 0;
+    this.boundScrollHandler = (event: Event) => {
+      const target = event.target as HTMLElement;
+      if (target.scrollHeight - target.scrollTop - target.clientHeight < 100) {
+        void this.loadMoreHistory();
+      }
+    };
+    this.shotDataScroll.el.addEventListener('scroll', this.boundScrollHandler);
+  }
+
+  private checkAndLoadMoreIfNeeded() {
+    setTimeout(() => {
+      void this.doCheckAndLoadMoreIfNeeded();
+    }, 150);
+  }
+
+  private async doCheckAndLoadMoreIfNeeded() {
+    if (
+      this.isDestroyed ||
+      !this.shotDataScroll ||
+      !this.hasMore ||
+      this.isLoadingMore
+    ) {
+      return;
+    }
+    const target = this.shotDataScroll.el;
+    if (target && target.scrollHeight - target.clientHeight < 100) {
+      await this.loadMoreHistory();
+      this.checkAndLoadMoreIfNeeded();
+    }
+  }
+
+  // Cache the chart width into a property rather than binding a layout-reading
+  // method in the template. Reading offsetWidth during change detection returns
+  // different values before and after layout, which triggers
+  // ExpressionChangedAfterItHasBeenCheckedError. This runs inside the
+  // retriggerScroll/resize timeouts, i.e. its own change detection cycle.
+  private updateChartWidth() {
+    const offsetWidth = this.ionItemEl?.nativeElement?.offsetWidth;
+    this.chartWidth = offsetWidth ? offsetWidth - 50 : 0;
   }
 
   public dismiss(): void {
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
         dismissed: true,
       },
@@ -142,7 +248,7 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
       BrewModalImportShotMeticulousComponent.COMPONENT_ID,
     );
   }
-  public choose(): void {
+  public async choose(): Promise<void> {
     let returningData;
 
     for (const entry of this.history) {
@@ -151,7 +257,23 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
         break;
       }
     }
-    this.modalController.dismiss(
+
+    // The selected entry's shot data is loaded lazily once its card renders.
+    // Guarantee it is present before handing the entry back to the importer.
+    if (returningData && !returningData.data) {
+      try {
+        const details = await this.meticulousDevice?.getHistoryEntryDetails(
+          returningData.id,
+        );
+        if (details?.data) {
+          returningData.data = details.data;
+        }
+      } catch {
+        // ignore - importer guards against missing data
+      }
+    }
+
+    void this.modalController.dismiss(
       {
         choosenHistory: returningData,
         dismissed: true,

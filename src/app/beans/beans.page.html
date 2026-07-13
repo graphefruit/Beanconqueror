@@ -72,10 +72,10 @@
   <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" [min-row-height]="uiIsCollapseActive?60:210">
     @for (item of openScroll.items; track item) {
     @if (item['beans']) {
-    <bean-information [collapsed]='uiIsCollapseActive' (beanAction)="beanAction()" [bean]="item['beans'][0]"
+    <bean-information [id]="'bean-group-' + item['frozenGroupId']" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item['beans'][0]"
       [beanGroup]="item"></bean-information>
     } @else {
-    <bean-information [collapsed]='uiIsCollapseActive' (beanAction)="beanAction()" [bean]="item"></bean-information>
+    <bean-information [id]="'bean-' + item['config'].uuid" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item"></bean-information>
     }
     }
   </ag-virtual-scroll>
@@ -101,10 +101,10 @@
     [min-row-height]="uiIsCollapseActive?60:210">
     @for (item of frozenScroll.items; track item) {
     @if (item['beans']) {
-    <bean-information [collapsed]='uiIsCollapseActive' (beanAction)="beanAction()" [bean]="item['beans'][0]"
+    <bean-information [id]="'bean-group-' + item['frozenGroupId']" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item['beans'][0]"
       [beanGroup]="item"></bean-information>
     } @else {
-    <bean-information [collapsed]='uiIsCollapseActive' (beanAction)="beanAction()" [bean]="item"></bean-information>
+    <bean-information [id]="'bean-' + item['config'].uuid" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item"></bean-information>
     }
     }
   </ag-virtual-scroll>
@@ -132,10 +132,10 @@
     [min-row-height]="uiIsCollapseActive?60:210">
     @for (item of archivedScroll.items; track item) {
     @if (item['beans']) {
-    <bean-information [collapsed]='uiIsCollapseActive' (beanAction)="beanAction()" [bean]="item['beans'][0]"
+    <bean-information [id]="'bean-group-' + item['frozenGroupId']" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item['beans'][0]"
       [beanGroup]="item"></bean-information>
     } @else {
-    <bean-information [collapsed]='uiIsCollapseActive' (beanAction)="beanAction()" [bean]="item"></bean-information>
+    <bean-information [id]="'bean-' + item['config'].uuid" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item"></bean-information>
     }
     }
   </ag-virtual-scroll>

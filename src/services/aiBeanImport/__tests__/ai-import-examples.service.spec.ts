@@ -3,11 +3,11 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
+import { createMockTranslateService } from '../../../test-utils';
 import {
   AIImportExamplesService,
   MergedExamples,
 } from '../ai-import-examples.service';
-import { createMockTranslateService } from '../test-utils';
 
 describe('AIImportExamplesService', () => {
   let service: AIImportExamplesService;

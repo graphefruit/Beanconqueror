@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: npm test CI
+name: pnpm test CI
 
 on:
   push:
@@ -15,12 +15,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: 'npm'
-      # Update npm version to at least 11.8.0, which should fix npm not liking our lockfiles
-      - run: npm install -g 'npm@^11.8.0' && npm -v
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm run build
+      - run: pnpm test

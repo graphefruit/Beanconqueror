@@ -17,6 +17,12 @@
         <pre>{{data.note}}</pre>
       </ion-label>
     </ion-item>
+    <ion-item class="ion-margin-bottom">
+      <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.has_adjustable_speed" disabled="true">{{"MILL_HAS_ADJUSTABLE_SPEED" | translate}}:</ion-checkbox>
+    </ion-item>
+    <ion-item class="ion-margin-bottom">
+      <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.has_timer" disabled="true">{{"MILL_HAS_TIMER" | translate}}:</ion-checkbox>
+    </ion-item>
   </ion-card>
 
 </ion-content>

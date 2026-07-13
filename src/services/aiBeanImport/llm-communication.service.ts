@@ -28,7 +28,11 @@ export interface LLMCommunicationOptions {
   /** System-level instructions passed to the LLM session (higher priority than prompt content) */
   instructions?: string;
   /** Logger instance for error reporting */
-  logger?: { error: (msg: string) => void; log: (msg: string) => void };
+  logger?: {
+    error: (msg: string) => void;
+    log: (msg: string) => void;
+    debug?: (msg: string) => void;
+  };
 }
 
 /**
@@ -115,7 +119,10 @@ export async function sendLLMPrompt(
       await finishedListener?.remove();
       await LLM.deleteChat({ chatId });
     } catch (e) {
-      logger?.error('Error cleaning up listeners/chat: ' + e);
+      // Suppress "not implemented" error from deleteChat on iOS
+      if (!String(e).includes('not implemented')) {
+        logger?.debug?.('Cleanup warning: ' + e);
+      }
     }
   };
 
@@ -128,6 +135,7 @@ export async function sendLLMPrompt(
   const resolveOnce = (value: string) => {
     if (!resolved) {
       resolved = true;
+      logger?.log('[Apple Intelligence] response: ' + value);
       void cleanup();
       resolvePromise(value);
     }
@@ -153,6 +161,7 @@ export async function sendLLMPrompt(
   }, timeoutMs);
 
   // Send message (don't await - let the promise handle completion)
+  logger?.log('[Apple Intelligence] prompt: ' + prompt);
   void LLM.sendMessage({
     chatId,
     message: prompt,

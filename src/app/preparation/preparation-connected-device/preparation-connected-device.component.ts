@@ -8,6 +8,7 @@ import {
   IonCardContent,
   IonCheckbox,
   IonContent,
+  IonFooter,
   IonHeader,
   IonIcon,
   IonInput,
@@ -23,9 +24,11 @@ import { checkmarkCircleOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { BluetoothTypes } from '../../../classes/devices/types';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { Move2Params } from '../../../classes/preparationDevice/move2/move2Device';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
 import { SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
@@ -37,6 +40,7 @@ import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes'
 import { environment } from '../../../environments/environment';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
@@ -68,6 +72,7 @@ import { UIToast } from '../../../services/uiToast';
     IonBadge,
     IonRange,
     IonCheckbox,
+    IonFooter,
   ],
 })
 export class PreparationConnectedDeviceComponent {
@@ -123,6 +128,10 @@ export class PreparationConnectedDeviceComponent {
         this.data.connectedPreparationDevice.customParams =
           new SanremoYOUParams();
       }
+      if (this.data.type === PREPARATION_TYPES.MOVE2) {
+        this.data.connectedPreparationDevice.type = PreparationDeviceType.MOVE2;
+        this.data.connectedPreparationDevice.customParams = new Move2Params();
+      }
     }
   }
 
@@ -134,6 +143,38 @@ export class PreparationConnectedDeviceComponent {
       undefined,
       PreparationConnectedDeviceComponent.COMPONENT_ID,
     );
+  }
+
+  public deviceTypeChanged() {
+    if (
+      this.data.connectedPreparationDevice.type ===
+      PreparationDeviceType.METICULOUS
+    ) {
+      this.data.connectedPreparationDevice.customParams =
+        new MeticulousParams();
+    } else if (
+      this.data.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+    ) {
+      this.data.connectedPreparationDevice.customParams = new XeniaParams();
+    } else if (
+      this.data.connectedPreparationDevice.type ===
+      PreparationDeviceType.SANREMO_YOU
+    ) {
+      this.data.connectedPreparationDevice.customParams =
+        new SanremoYOUParams();
+    } else if (
+      this.data.connectedPreparationDevice.type === PreparationDeviceType.MOVE2
+    ) {
+      this.data.connectedPreparationDevice.customParams = new Move2Params();
+    } else if (
+      this.data.connectedPreparationDevice.type ===
+        PreparationDeviceType.NONE ||
+      this.data.connectedPreparationDevice.type ===
+        PreparationDeviceType.GAGGIUINO
+    ) {
+      this.data.connectedPreparationDevice.customParams = {};
+    }
+    this.save();
   }
 
   public async save(_checkURL: boolean = true) {
@@ -227,6 +268,19 @@ export class PreparationConnectedDeviceComponent {
               'http://' + this.data.connectedPreparationDevice.url;
           }
         }
+        if (
+          this.data.connectedPreparationDevice.type ===
+          PreparationDeviceType.MOVE2
+        ) {
+          if (
+            this.data.connectedPreparationDevice.customParams
+              .residualLagTime === undefined ||
+            this.data.connectedPreparationDevice.customParams
+              .residualLagTime === 0
+          ) {
+            this.data.connectedPreparationDevice.customParams.residualLagTime = 0.5;
+          }
+        }
       }
       if (
         this.data.connectedPreparationDevice.type !== PreparationDeviceType.NONE
@@ -241,6 +295,9 @@ export class PreparationConnectedDeviceComponent {
         await this.uiSettingsStorage.update(settings);
       }
       await this.uiPreparationStorage.update(this.data);
+      if (this.preparation) {
+        (this.preparation as Preparation).initializeByObject(this.data);
+      }
     }, 150);
   }
 
@@ -264,6 +321,27 @@ export class PreparationConnectedDeviceComponent {
         },
       );
     }
+  }
+
+  public async searchMachineDevice() {
+    const modal = await this.modalController.create({
+      component: BluetoothDeviceChooserPopoverComponent,
+      id: BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
+      componentProps: { bluetoothTypeSearch: BluetoothTypes.MACHINE },
+    });
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data?.device) {
+      this.data.connectedPreparationDevice.bluetoothId = data.device.id;
+      this.data.connectedPreparationDevice.bluetoothName = data.device.name;
+      this.save(false);
+    }
+  }
+
+  public async disconnectMachineDevice() {
+    this.data.connectedPreparationDevice.bluetoothId = '';
+    this.data.connectedPreparationDevice.bluetoothName = '';
+    this.save(false);
   }
 
   public ngOnInit() {}

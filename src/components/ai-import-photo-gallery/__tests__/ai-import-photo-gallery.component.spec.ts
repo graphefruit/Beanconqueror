@@ -5,18 +5,18 @@ import { ModalController } from '@ionic/angular/standalone';
 
 import { TranslateModule } from '@ngx-translate/core';
 
+import { UIAlert } from '../../../services/uiAlert';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIImage } from '../../../services/uiImage';
+import { UILog } from '../../../services/uiLog';
 import {
   createMockModalController,
   createMockUIAlert,
   createMockUIFileHelper,
   createMockUIImage,
   createMockUILog,
-} from '../../services/aiBeanImport/test-utils';
-import { UIAlert } from '../../services/uiAlert';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIImage } from '../../services/uiImage';
-import { UILog } from '../../services/uiLog';
-import { AiImportPhotoGalleryComponent } from './ai-import-photo-gallery.component';
+} from '../../../test-utils';
+import { AiImportPhotoGalleryComponent } from '../ai-import-photo-gallery.component';
 
 describe('AiImportPhotoGalleryComponent', () => {
   let component: AiImportPhotoGalleryComponent;
@@ -212,5 +212,4 @@ describe('AiImportPhotoGalleryComponent', () => {
       );
     });
   });
-
 });

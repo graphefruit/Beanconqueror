@@ -13,4 +13,5 @@ export interface ISanremoShotData {
   realtimeFlow: number;
   setPressPaddle: number;
   localTimeString: string;
+  wifiSignal: number;
 }

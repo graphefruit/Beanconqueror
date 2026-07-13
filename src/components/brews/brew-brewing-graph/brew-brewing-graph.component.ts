@@ -49,6 +49,7 @@ import { Brew } from '../../../classes/brew/brew';
 import {
   BrewFlow,
   IBrewByWeight,
+  IBrewCustomMetric,
   IBrewPressureFlow,
   IBrewRealtimeWaterFlow,
   IBrewTemperatureFlow,
@@ -69,6 +70,10 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { MeticulousShotData } from '../../../classes/preparationDevice/meticulous/meticulousShotData';
+import {
+  Move2Device,
+  Move2Params,
+} from '../../../classes/preparationDevice/move2/move2Device';
 import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
@@ -239,6 +244,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private xeniaOverviewInterval: any = undefined;
   private meticulousInterval: any = undefined;
   private sanremoYOUFetchingInterval: any = undefined;
+  private move2FetchingInterval: any = undefined;
 
   public lastChartLayout: any = undefined;
   public lastChartRenderingInstance = 0;
@@ -335,7 +341,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
         (prepDeviceType === PreparationDeviceType.METICULOUS ||
           prepDeviceType === PreparationDeviceType.XENIA ||
-          prepDeviceType === PreparationDeviceType.SANREMO_YOU)
+          prepDeviceType === PreparationDeviceType.SANREMO_YOU ||
+          prepDeviceType === PreparationDeviceType.MOVE2)
       ) {
         isSomethingConnected = true;
       }
@@ -412,9 +419,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public uiPreparationDeviceConnected: boolean = undefined;
   public uiPreparationDeviceType: PreparationDeviceType = undefined;
   public uiSmartScaleConnectedSupportsTwoWeights: boolean = undefined;
+  public uiCustomMetricsKeys: string[] = [];
 
   private async setUIParams() {
     this.uiSmartScaleConnected = this.smartScaleConnected();
+    this.uiCustomMetricsKeys = this.getCustomTraceKeys();
     this.uiPressureConnected = this.pressureDeviceConnected();
     this.uiTemperatureConnected = this.temperatureDeviceConnected();
     this.uiPreparationDeviceConnected =
@@ -576,39 +585,42 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected = false;
+    let pressureConnected = false;
+    let tempConnected = false;
+
     if (
       (this.pressureDeviceConnected() ||
         this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()) &&
       this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
       bluetoothDeviceConnections += 1;
+      pressureConnected = true;
     }
     if (
       this.temperatureDeviceConnected() ||
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
     ) {
       bluetoothDeviceConnections += 1;
+      tempConnected = true;
     }
     if (this.smartScaleConnected()) {
       bluetoothDeviceConnections += 1;
       smartScaleConnected = true;
     }
 
-    if (bluetoothDeviceConnections === 3) {
+    let visualTilesCount =
+      (smartScaleConnected ? 2 : 0) +
+      (pressureConnected ? 1 : 0) +
+      (tempConnected ? 1 : 0);
+
+    if (visualTilesCount >= 4) {
       return 3;
-    } else if (bluetoothDeviceConnections === 2) {
-      if (smartScaleConnected) {
-        return 4;
-      } else {
-        return 6;
-      }
-    } else if (bluetoothDeviceConnections === 1) {
-      if (smartScaleConnected) {
-        return 6;
-      } else {
-        return 12;
-      }
+    } else if (visualTilesCount === 3) {
+      return 4;
+    } else if (visualTilesCount === 2) {
+      return 6;
     }
+    return 12;
   }
 
   private toggleGraphElementsOnBaristaMode() {
@@ -676,6 +688,32 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.traceReferences.realtimeFlowTraceSecond.visible =
           !this.traceReferences.realtimeFlowTraceSecond.visible;
       }
+    } else if (_type === 'waterDispensed') {
+      this.traces.waterDispensedTrace.visible =
+        !this.traces.waterDispensedTrace.visible;
+      if (this.traceReferences.waterDispensedTrace) {
+        this.traceReferences.waterDispensedTrace.visible =
+          !this.traceReferences.waterDispensedTrace.visible;
+      }
+    } else if (_type === 'waterDispensedFlowSecond') {
+      this.traces.waterDispensedFlowSecondTrace.visible =
+        !this.traces.waterDispensedFlowSecondTrace.visible;
+      if (this.traceReferences.waterDispensedFlowSecondTrace) {
+        this.traceReferences.waterDispensedFlowSecondTrace.visible =
+          !this.traceReferences.waterDispensedFlowSecondTrace.visible;
+      }
+    } else {
+      if (this.traces.customTraces && this.traces.customTraces[_type]) {
+        this.traces.customTraces[_type].visible =
+          !this.traces.customTraces[_type].visible;
+        if (
+          this.traceReferences.customTraces &&
+          this.traceReferences.customTraces[_type]
+        ) {
+          this.traceReferences.customTraces[_type].visible =
+            !this.traceReferences.customTraces[_type].visible;
+        }
+      }
     }
 
     if (
@@ -689,6 +727,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
     }
     this.checkChanges();
+  }
+
+  public getCustomTraceKeys(): string[] {
+    if (this.traces && this.traces.customTraces) {
+      return Object.keys(this.traces.customTraces);
+    }
+    return [];
   }
 
   public initializeFlowChart(_wait = true): void {
@@ -756,6 +801,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       ) {
         this.chartData.push(this.traceReferences.temperatureTrace);
       }
+      if (
+        this.traceReferences.waterDispensedTrace &&
+        this.traceReferences.waterDispensedTrace.x?.length > 0
+      ) {
+        this.chartData.push(this.traceReferences.waterDispensedTrace);
+        this.chartData.push(this.traceReferences.waterDispensedFlowSecondTrace);
+      }
 
       this.chartData.push(this.traces.weightTrace);
       this.chartData.push(this.traces.flowPerSecondTrace);
@@ -773,6 +825,30 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       if (this.lastChartLayout.yaxis5) {
         this.chartData.push(this.traces.temperatureTrace);
+      }
+
+      if (this.lastChartLayout.yaxis6) {
+        this.chartData.push(this.traces.waterDispensedTrace);
+        this.chartData.push(this.traces.waterDispensedFlowSecondTrace);
+      }
+
+      if (this.traces.customTraces) {
+        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
+          string,
+          any,
+        ][]) {
+          if (
+            this.traceReferences.customTraces &&
+            this.traceReferences.customTraces[key]
+          ) {
+            if (this.traceReferences.customTraces[key].x?.length > 0) {
+              this.chartData.push(this.traceReferences.customTraces[key]);
+            }
+          }
+          if (trace) {
+            this.chartData.push(trace);
+          }
+        }
       }
 
       try {
@@ -826,16 +902,23 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.traces,
       this.graphSettings,
       this.isDetail,
+      false,
+      this.flow_profile_raw,
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType(),
     );
+    this.uiCustomMetricsKeys = this.getCustomTraceKeys();
   }
 
   private __setupReferenceGraphs() {
     this.traceReferences = this.graphHelper.initializeTraces();
+
     this.traceReferences = this.graphHelper.fillTraces(
       this.traceReferences,
       this.graphSettings,
       this.isDetail,
       true,
+      this.reference_profile_raw,
+      undefined,
     );
   }
 
@@ -1190,7 +1273,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         avgFlowEl.textContent = 'Ø ' + avgFlow + ' g/s';
         const ratioEl = this.smartScaleBrewRatio?.nativeElement;
         if (ratioEl) {
-          ratioEl.textContent = '(' + this.data.getBrewRatio() + ')';
+          const grindWeight = this.data.grind_weight;
+          let ratioText = '1 / ?';
+          if (actualScaleWeight > 0 && grindWeight > 0) {
+            ratioText = '1 / ' + (actualScaleWeight / grindWeight).toFixed(2);
+          }
+          ratioEl.textContent = '(' + ratioText + ')';
         }
       } catch (ex) {}
     });
@@ -1382,6 +1470,75 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               }
             }
 
+            if (this.traces.waterDispensedTrace?.y?.length > 0) {
+              const lastData: number =
+                this.traces.waterDispensedTrace.y[
+                  this.traces.waterDispensedTrace.y.length - 1
+                ];
+              if (lastData >= this.lastChartLayout.yaxis6.range[1] - 1) {
+                this.lastChartLayout.yaxis6.range[1] = lastData * 1.25;
+                if (!this.lastChartLayout.yaxis6.visible) {
+                  this.lastChartLayout.yaxis6.visible = true;
+                }
+                newLayoutIsNeeded = true;
+              }
+            }
+
+            if (this.traces.waterDispensedFlowSecondTrace?.y?.length > 0) {
+              const lastData: number =
+                this.traces.waterDispensedFlowSecondTrace.y[
+                  this.traces.waterDispensedFlowSecondTrace.y.length - 1
+                ];
+              if (lastData >= this.lastChartLayout.yaxis2.range[1] - 0.5) {
+                this.lastChartLayout.yaxis2.range[1] = lastData * 1.25;
+                if (!this.lastChartLayout.yaxis2.visible) {
+                  this.lastChartLayout.yaxis2.visible = true;
+                }
+                newLayoutIsNeeded = true;
+              }
+            }
+
+            if (this.traces.customTraces) {
+              for (const [key, trace] of Object.entries(
+                this.traces.customTraces,
+              ) as [string, any][]) {
+                if (trace && trace.y && trace.y.length > 0) {
+                  let yAxisKey = trace.yaxis.replace('y', 'yaxis');
+                  if (this.lastChartLayout[yAxisKey]) {
+                    if (
+                      this.lastChartLayout[yAxisKey].visible === false &&
+                      trace.visible
+                    ) {
+                      this.lastChartLayout[yAxisKey].visible = true;
+                      newLayoutIsNeeded = true;
+                    }
+
+                    const lastData = trace.y[trace.y.length - 1];
+                    let toleranceMinus = 1;
+
+                    if (!this.lastChartLayout[yAxisKey].range) {
+                      this.lastChartLayout[yAxisKey].range = [0, 20];
+                      newLayoutIsNeeded = true;
+                    }
+
+                    if (
+                      lastData >=
+                      this.lastChartLayout[yAxisKey].range[1] - toleranceMinus
+                    ) {
+                      if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
+                        this.lastChartLayout[yAxisKey].range[1] =
+                          lastData * 1.25;
+                      } else {
+                        this.lastChartLayout[yAxisKey].range[1] =
+                          lastData * 1.5;
+                      }
+                      newLayoutIsNeeded = true;
+                    }
+                  }
+                }
+              }
+            }
+
             if (newLayoutIsNeeded) {
               if (this.canWePlot()) {
                 Plotly.relayout(
@@ -1406,6 +1563,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public async timerReset(_event) {
+    this.machineStopScriptWasTriggered = false;
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
@@ -1430,6 +1588,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         if (this.baristamode) {
           this.startFetchingDataFromSanremoYOU();
         }
+      } else if (deviceType === PreparationDeviceType.MOVE2) {
+        this.stopFetchingDataFromMove2();
       }
     }
 
@@ -1617,18 +1777,39 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.stopFetchingDataFromMeticulous();
     }
 
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.MOVE2
+    ) {
+      if (
+        _event !== 'shot_ended' &&
+        this.machineStopScriptWasTriggered === false
+      ) {
+        this.machineStopScriptWasTriggered = true;
+        this.uiLog.log(`MOVE2 - Pause button pressed, stop shot`);
+        const prepDeviceCall: Move2Device = this.brewComponent
+          ?.brewBrewingPreparationDeviceEl?.preparationDevice as Move2Device;
+        prepDeviceCall.stopShot();
+      }
+      this.stopFetchingDataFromMove2();
+    }
+
     if (!this.platform.is('capacitor')) {
       window.clearInterval(this.graphTimerTest);
     }
   }
 
   public async timerResumed(_event) {
+    this.machineStopScriptWasTriggered = false;
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
+    const prepDeviceConnected =
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected();
 
-    if (scale || pressureDevice || temperatureDevice) {
+    if (scale || pressureDevice || temperatureDevice || prepDeviceConnected) {
       if (scale) {
         scale.setTimer(SCALE_TIMER_COMMAND.START);
       }
@@ -1797,6 +1978,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               const press = prepDeviceCall.getActualShotData().pumpPress;
               this.__setPressureFlow({ actual: press, old: press });
               this.__setTemperatureFlow({ actual: temp, old: temp });
+              const waterDispensed =
+                prepDeviceCall.getActualShotData().counterVol;
+              this.__setWaterDispensedFlow({
+                actual: waterDispensed,
+                old: waterDispensed,
+              });
+
+              const realtimeFlowSecond =
+                prepDeviceCall.getActualShotData().realtimeFlow;
+              this.__setWaterDispensedFlowSecond({
+                actual: realtimeFlowSecond,
+                old: realtimeFlowSecond,
+              });
             }
           }, 100);
         });
@@ -1861,6 +2055,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               prepDeviceCall.getActualShotData();
 
             if (shotData.extracting === true && hasShotStarted === false) {
+              this.data.pressure_profile = shotData.loaded_profile;
               this.uiAlert.hideLoadingSpinner();
               this.uiToast.showInfoToast(
                 'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_STARTED',
@@ -2012,6 +2207,32 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
+  public startFetchingDataFromMove2() {
+    const prepDeviceCall: Move2Device = this.brewComponent
+      ?.brewBrewingPreparationDeviceEl?.preparationDevice as Move2Device;
+
+    // To continuously poll the updated pressure from the class property:
+    this.stopFetchingDataFromMove2();
+    this.ngZone.runOutsideAngular(() => {
+      this.move2FetchingInterval = setInterval(() => {
+        const pressure = prepDeviceCall.getPressure();
+        let temperature = prepDeviceCall.getTemperature();
+
+        this.__setPressureFlow({ actual: pressure, old: pressure });
+        if (temperature !== undefined) {
+          this.__setTemperatureFlow({ actual: temperature, old: temperature });
+        }
+      }, 100);
+    });
+  }
+
+  public stopFetchingDataFromMove2() {
+    if (this.move2FetchingInterval !== undefined) {
+      clearInterval(this.move2FetchingInterval);
+      this.move2FetchingInterval = undefined;
+    }
+  }
+
   public stopFetchingDataFromMeticulous() {
     if (this.meticulousInterval !== undefined) {
       clearInterval(this.meticulousInterval);
@@ -2080,10 +2301,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       //Maybe we got temperature threshold, bar threshold, and weight threshold, it could be three triggers. so we ignore that one
       return;
     }
+    this.machineStopScriptWasTriggered = false;
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
+    const prepDeviceConnected =
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected();
     if (!this.platform.is('capacitor')) {
       let weight = 0;
       let realtime_flow = 0;
@@ -2142,7 +2366,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       });
     }
 
-    if (scale || pressureDevice || temperatureDevice) {
+    if (scale || pressureDevice || temperatureDevice || prepDeviceConnected) {
       this.lastChartRenderingInstance = -1;
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
@@ -2153,7 +2377,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
         if (!this.baristamode) {
           //Just show overlay if not in barista mode
-          if (scale || temperatureDevice) {
+          if (scale || temperatureDevice || prepDeviceConnected) {
             this.brewComponent.maximizeFlowGraph();
           } else {
             if (
@@ -2355,6 +2579,33 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       if (this.baristamode === false) {
         this.startFetchingDataFromSanremoYOU();
       }
+    } else if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.MOVE2
+    ) {
+      const prepDeviceCall: Move2Device = this.brewComponent
+        .brewBrewingPreparationDeviceEl.preparationDevice as Move2Device;
+
+      prepDeviceCall
+        .startShot(this.data.preparationDeviceBrew.params as Move2Params)
+        .catch((_msg) => {
+          this.uiLog.log('We could not start shot on move2: ' + _msg);
+          this.uiToast.showInfoToast(
+            'We could not start shot on move2: ' + _msg,
+            false,
+          );
+        });
+
+      if (
+        this.settings.bluetooth_scale_maximize_on_start_timer === true &&
+        this.brewComponent.maximizeFlowGraphIsShown === false &&
+        !this.baristamode
+      ) {
+        this.brewComponent.maximizeFlowGraph();
+      }
+
+      this.startFetchingDataFromMove2();
     }
   }
 
@@ -3020,6 +3271,24 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
+  private triggerStopShotOnMove2(_actualScaleWeight) {
+    const prepDeviceCall: Move2Device = this.brewComponent
+      .brewBrewingPreparationDeviceEl.preparationDevice as Move2Device;
+
+    this.uiLog.log(`MOVE2 Stop: ${_actualScaleWeight}`);
+    prepDeviceCall.stopShot();
+    this.uiToast.showInfoToast('PREPARATION_DEVICE.TYPE_MOVE2.SHOT_ENDED');
+
+    if (
+      this.settings.bluetooth_scale_espresso_stop_on_no_weight_change === false
+    ) {
+      this.stopFetchingDataFromMove2();
+      this.brewComponent.timer.pauseTimer('shot_ended');
+    } else {
+      // We wait for the normal "hasEspressoShotEnded" to stop the graph and fetching
+    }
+  }
+
   public attachToScaleWeightChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
     const preparationStyleType = this.data.getPreparation().style_type;
@@ -3060,6 +3329,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               .brewBrewingPreparationDeviceEl
               .preparationDevice as SanremoYOUDevice;
             residual_lag_time = prepSanremoDeviceCall.getResidualLagTime();
+            targetWeight = this.data.preparationDeviceBrew.params.stopAtWeight;
+            brewByWeightActive = true;
+            break;
+          case PreparationDeviceType.MOVE2:
+            const prepMove2DeviceCall: Move2Device = this.brewComponent
+              .brewBrewingPreparationDeviceEl.preparationDevice as Move2Device;
+            residual_lag_time = prepMove2DeviceCall.getResidualLagTime();
             targetWeight = this.data.preparationDeviceBrew.params.stopAtWeight;
             brewByWeightActive = true;
             break;
@@ -3107,6 +3383,25 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               if (thresholdHit) {
                 this.machineStopScriptWasTriggered = true;
                 this.triggerStopShotOnXenia(_val.actual);
+              }
+            }
+          } else if (
+            this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
+              PreparationDeviceType.MOVE2 &&
+            targetWeight > 0
+          ) {
+            const thresholdHit = this.calculateBrewByWeight(
+              _val.actual,
+              residual_lag_time,
+              targetWeight,
+              brewByWeightActive,
+              scale,
+            );
+
+            if (this.machineStopScriptWasTriggered === false) {
+              if (thresholdHit) {
+                this.machineStopScriptWasTriggered = true;
+                this.triggerStopShotOnMove2(_val.actual);
               }
             }
           } else if (
@@ -3261,6 +3556,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.stopFetchingAndSettingDataFromXenia();
     this.stopFetchingDataFromMeticulous();
     this.stopFetchingDataFromSanremoYOU();
+    this.stopFetchingDataFromMove2();
 
     if (this.settings?.text_to_speech_active) {
       this.textToSpeech.end();
@@ -3284,6 +3580,18 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         const prepDeviceCall: SanremoYOUDevice = this.brewComponent
           .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
         prepDeviceCall.disconnectSocket();
+      } catch (ex) {}
+    }
+
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.MOVE2
+    ) {
+      try {
+        const prepDeviceCall: Move2Device = this.brewComponent
+          .brewBrewingPreparationDeviceEl.preparationDevice as Move2Device;
+        prepDeviceCall.destroy();
       } catch (ex) {}
     }
   }
@@ -3390,6 +3698,119 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
 
     this.setActualPressureInformation(pressureObj.actual);
+  }
+
+  private __setWaterDispensedFlow(_waterDispensed: any) {
+    const actual: number = this.uiHelper.toFixedIfNecessary(
+      _waterDispensed.actual,
+      2,
+    );
+
+    const isSmartScaleConnected = this.smartScaleConnected();
+    const flowTimeSecond = (this.data.brew_time_milliseconds / 1000).toFixed(1);
+
+    const actualUnixTime: number = moment(new Date())
+      .startOf('day')
+      .add('milliseconds', Date.now() - this.startingFlowTime)
+      .toDate()
+      .getTime();
+
+    this.traces.waterDispensedTrace.x.push(new Date(actualUnixTime));
+    this.traces.waterDispensedTrace.y.push(actual);
+
+    this.pushWaterDispensedProfile(flowTimeSecond, actual, _waterDispensed.old);
+
+    if (!isSmartScaleConnected) {
+      this.updateChart();
+    }
+  }
+
+  private __setWaterDispensedFlowSecond(_waterDispensedRealtime: any) {
+    const actual: number = this.uiHelper.toFixedIfNecessary(
+      _waterDispensedRealtime.actual,
+      2,
+    );
+
+    const isSmartScaleConnected = this.smartScaleConnected();
+    const flowTimeSecond = (this.data.brew_time_milliseconds / 1000).toFixed(1);
+
+    const actualUnixTime: number = moment(new Date())
+      .startOf('day')
+      .add('milliseconds', Date.now() - this.startingFlowTime)
+      .toDate()
+      .getTime();
+
+    this.traces.waterDispensedFlowSecondTrace.x.push(new Date(actualUnixTime));
+    this.traces.waterDispensedFlowSecondTrace.y.push(actual);
+
+    this.pushWaterDispensedFlowSecondProfile(
+      flowTimeSecond,
+      actual,
+      _waterDispensedRealtime.old,
+    );
+
+    if (!isSmartScaleConnected) {
+      this.updateChart();
+    }
+  }
+
+  private __setCustomMetric(_key: string, _value: number) {
+    const actual: number = this.uiHelper.toFixedIfNecessary(_value, 2);
+
+    const isSmartScaleConnected = this.smartScaleConnected();
+    if (this.flowTime === undefined) {
+      this.flowTime = this.brewComponent.getTime();
+      this.flowSecondTick = 0;
+    }
+    /**if (
+      this.flowTime > 0 &&
+      this.brewComponent.timer.timer.runTimer &&
+      Date.now() - this.flowTime >= this.graph_frequency_update_interval
+    ) {
+      const tileElement = document.getElementById('customMetricTile_' + _key);
+      const flowTileElement = document.getElementById('customMetricTile_Flow_' + _key);
+      let unit = this.traces.customTraces[_key]?.unit || '';
+      const text = actual + (unit ? ' ' + unit : '');
+
+      if (tileElement) {
+        tileElement.innerText = text;
+      }
+      if (flowTileElement) {
+        flowTileElement.innerText = text;
+      }
+    }**/
+
+    const actualUnixTime: number = moment(new Date())
+      .startOf('day')
+      .add('milliseconds', Date.now() - this.startingFlowTime)
+      .toDate()
+      .getTime();
+
+    if (!isSmartScaleConnected) {
+      if (this.flowTime !== this.brewComponent.getTime()) {
+        this.flowTime = this.brewComponent.getTime();
+        this.flowSecondTick = 0;
+      }
+    }
+
+    const flowTimeSecond = this.flowTime + '.' + this.flowSecondTick;
+
+    if (!this.traces.customTraces) {
+      this.traces.customTraces = {};
+    }
+    if (!this.traces.customTraces[_key]) {
+      // It should have been initialized in getChartLayout / fillTraces, but fallback:
+      this.traces.customTraces[_key] = { x: [], y: [] };
+    }
+
+    this.traces.customTraces[_key].x.push(new Date(actualUnixTime));
+    this.traces.customTraces[_key].y.push(actual);
+
+    this.pushCustomProfile(_key, flowTimeSecond, actual);
+
+    if (!isSmartScaleConnected) {
+      this.updateChart();
+    }
   }
 
   private __setTemperatureFlow(_temperature: any) {
@@ -3788,6 +4209,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       ) {
         this.stopFetchingDataFromSanremoYOU();
       }
+      if (
+        this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected() &&
+        this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
+          PreparationDeviceType.MOVE2
+      ) {
+        this.stopFetchingDataFromMove2();
+      }
 
       let isMeticulous = false;
 
@@ -3996,6 +4424,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       return false;
     }
 
+    // NEW GUARD: Do not end the shot if the machine is still actively extracting in Barista Mode
+    if (this.baristamode) {
+      const prepEl = this.brewComponent.brewBrewingPreparationDeviceEl;
+      if (
+        prepEl.preparationDeviceConnected() &&
+        prepEl.getPreparationDeviceType() === PreparationDeviceType.SANREMO_YOU
+      ) {
+        const prepDevice = prepEl.preparationDevice as SanremoYOUDevice;
+        if (prepDevice.getActualShotData().statusPhase !== 0) {
+          return false;
+        }
+      }
+    }
+
     if (
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change ===
         false ||
@@ -4129,6 +4571,44 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.flow_profile_raw.weightSecond.push(brewFlow);
   }
 
+  private pushWaterDispensedProfile(
+    _brewTime: string,
+    _actual: number,
+    _old: number,
+  ) {
+    if (!this.flow_profile_raw.waterDispensed) {
+      this.flow_profile_raw.waterDispensed = [];
+    }
+    const waterDispensedFlow: any = {};
+    waterDispensedFlow.timestamp =
+      this.uiHelper.getActualTimeWithMilliseconds();
+    waterDispensedFlow.brew_time = _brewTime;
+    waterDispensedFlow.actual = _actual;
+    waterDispensedFlow.old = _old;
+
+    this.flow_profile_raw.waterDispensed.push(waterDispensedFlow);
+  }
+
+  private pushWaterDispensedFlowSecondProfile(
+    _brewTime: string,
+    _actual: number,
+    _old: number,
+  ) {
+    if (!this.flow_profile_raw.waterDispensedFlowSecond) {
+      this.flow_profile_raw.waterDispensedFlowSecond = [];
+    }
+    const waterDispensedFlowSecond: any = {};
+    waterDispensedFlowSecond.timestamp =
+      this.uiHelper.getActualTimeWithMilliseconds();
+    waterDispensedFlowSecond.brew_time = _brewTime;
+    waterDispensedFlowSecond.actual = _actual;
+    waterDispensedFlowSecond.old = _old;
+
+    this.flow_profile_raw.waterDispensedFlowSecond.push(
+      waterDispensedFlowSecond,
+    );
+  }
+
   private pushPressureProfile(
     _brewTime: string,
     _actualPressure: number,
@@ -4141,6 +4621,18 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     pressureFlow.old_pressure = _oldPressure;
 
     this.flow_profile_raw.pressureFlow.push(pressureFlow);
+  }
+
+  private pushCustomProfile(_key: string, _brewTime: string, _value: number) {
+    if (!this.flow_profile_raw.customMetrics[_key]) {
+      this.flow_profile_raw.customMetrics[_key] = [];
+    }
+    const customMetric: IBrewCustomMetric = {} as IBrewCustomMetric;
+    customMetric.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    customMetric.brew_time = _brewTime;
+    customMetric.value = _value;
+
+    this.flow_profile_raw.customMetrics[_key].push(customMetric);
   }
 
   private pushBrewByWeight(
@@ -4420,19 +4912,16 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         prepDeviceCall?.lastRunnedProgramm;
       if (prepDeviceCall.lastRunnedProgramm === 1) {
         this.lastShotEl.nativeElement.innerText = 'P1';
-      }
-      if (prepDeviceCall.lastRunnedProgramm === 2) {
+      } else if (prepDeviceCall.lastRunnedProgramm === 2) {
         this.lastShotEl.nativeElement.innerText = 'P2';
-      }
-      if (prepDeviceCall.lastRunnedProgramm === 3) {
+      } else if (prepDeviceCall.lastRunnedProgramm === 3) {
         this.lastShotEl.nativeElement.innerText = 'P3';
-      }
-      if (prepDeviceCall.lastRunnedProgramm === 4) {
+      } else if (prepDeviceCall.lastRunnedProgramm === 4) {
         this.lastShotEl.nativeElement.innerText = 'M';
       }
 
       this.shotVolumeEl.nativeElement.innerText =
-        (prepDeviceCall.getActualShotData().counterVol / 10).toFixed(2) + 'ml';
+        prepDeviceCall.getActualShotData().counterVol + 'ml';
 
       for (let i = 1; i < 5; i++) {
         document.getElementById('statusPhase' + i).classList.remove('active');

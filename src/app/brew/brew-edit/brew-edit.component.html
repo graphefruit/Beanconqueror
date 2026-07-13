@@ -1,6 +1,7 @@
 <ion-header>
   <app-header [title]="'EDIT_BREW' | translate">
     <app-header-dismiss-button header-slot="start" (dismissed)="confirmDismiss()" />
+    <ng-template header-slot="end">
     @if(brewBrewing?.brewBrewingPreparationDeviceEl?.uiHasAPreparationDeviceSet) {
       @if (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) {
         <ion-chip header-slot="end" outline='true' class='machine-connected'>
@@ -20,6 +21,10 @@
             @case (PreparationDeviceType.GAGGIUINO) {
               <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+            }
+            @case (PreparationDeviceType.MOVE2) {
+              <ion-icon name="beanconqueror-move2-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
             }
           }
         </ion-chip>
@@ -42,10 +47,15 @@
               <ion-icon name="beanconqueror-gaggiuino-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
             }
+            @case (PreparationDeviceType.MOVE2) {
+              <ion-icon name="beanconqueror-move2-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
+            }
           }
         </ion-chip>
       }
     }
+    </ng-template>
     @if(brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
       <app-header-button header-slot="end" icon="beanconqueror-scale-tare" buttonClass="big-icon-only" (clicked)="tareScale()" />
     }

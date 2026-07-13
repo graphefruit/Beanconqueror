@@ -9,7 +9,7 @@ import {
   IonTabs,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { waterOutline } from 'ionicons/icons';
+import { statsChartOutline, waterOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -31,7 +31,7 @@ export class BaristamodePage implements OnInit {
   public ngOnInit(): void {}
 
   constructor() {
-    addIcons({ waterOutline });
+    addIcons({ waterOutline, statsChartOutline });
   }
 }
 

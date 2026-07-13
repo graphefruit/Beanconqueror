@@ -30,20 +30,38 @@ import {
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { download } from 'ionicons/icons';
 
 import { App } from '@capacitor/app';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
+import { Bean } from '../../../classes/bean/bean';
+import BaristamodeBrew from '../../../classes/brew/baristamodeBrew';
 import { Brew } from '../../../classes/brew/brew';
-import { BluetoothScale, BluetoothTypes } from '../../../classes/devices';
+import { BrewFlow } from '../../../classes/brew/brewFlow';
+import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
+import {
+  BluetoothScale,
+  BluetoothTypes,
+  sleep,
+} from '../../../classes/devices';
+import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { LongPressDirective } from '../../../directive/long-press.directive';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
+import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import {
@@ -51,12 +69,17 @@ import {
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewStorage';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIExcel } from '../../../services/uiExcel';
+import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
 declare var Plotly;
@@ -99,7 +122,11 @@ export class BaristaPage implements OnInit, OnDestroy {
   private readonly modalController = inject(ModalController);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly uiAlert = inject(UIAlert);
-
+  private readonly uiBaristamodeBrewStorage = inject(UIBaristamodeBrewStorage);
+  private readonly uiExcel = inject(UIExcel);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiLog = inject(UILog);
+  private readonly visualizerService = inject(VisualizerService);
   public data: Brew = new Brew();
 
   @ViewChild('ionHeader', { read: ElementRef, static: true })
@@ -133,6 +160,9 @@ export class BaristaPage implements OnInit, OnDestroy {
   @ViewChild('lagTimeM', { read: ElementRef })
   public lagTimeMEl: ElementRef;
 
+  @ViewChild('wifiSignal', { read: ElementRef })
+  public wifiSignalEl: ElementRef;
+
   @ViewChild('currentTemp', { read: ElementRef })
   public currentTempEl: ElementRef;
 
@@ -141,7 +171,10 @@ export class BaristaPage implements OnInit, OnDestroy {
 
   @Output() public lastShot = new EventEmitter();
 
+  private settings: Settings;
+
   constructor() {
+    addIcons({ download });
     // Get first entry
     this.data.bean = this.uiBeanStorage
       .getAllEntries()
@@ -162,7 +195,25 @@ export class BaristaPage implements OnInit, OnDestroy {
       .filter((e) => !e.finished)
       .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
+    this.settings = this.uiSettingsStorage.getSettings();
     this.__attachOnDeviceResume();
+
+    /**  const brewObj: BaristamodeBrew = new BaristamodeBrew();
+
+    brewObj.brew_time =1
+    brewObj.brew_time_milliseconds = 2
+
+    brewObj.brew_beverage_quantity = 3
+    brewObj.brew_beverage_quantity_type = BREW_QUANTITY_TYPES_ENUM.GR;
+
+
+    brewObj.pressure_profile ="P1";
+    brewObj.desired_beverage_quantity =5
+
+    brewObj.brew_temperature = 6
+    brewObj.water_volume_intake =7
+
+     this.uiBaristamodeBrewStorage.add(brewObj);**/
   }
 
   async ngOnInit() {
@@ -219,6 +270,11 @@ export class BaristaPage implements OnInit, OnDestroy {
             +shotData.tempBoilerCoffe.toFixed(2);
           this.pumpPressEl.nativeElement.innerText =
             +shotData.pumpPress.toFixed(2);
+          if (shotData.wifiSignal) {
+            this.wifiSignalEl.nativeElement.innerText = shotData.wifiSignal;
+          } else {
+            this.wifiSignalEl.nativeElement.innerText = 0;
+          }
 
           if (shotData.groupStatus === 0) {
             updateSanremoYouTicker++;
@@ -403,13 +459,112 @@ export class BaristaPage implements OnInit, OnDestroy {
     }
   }
 
-  public lastShotInformation(_data) {
+  public lastShotInformation(_data: {
+    shotWeight: number;
+    avgFlow: number;
+    brew: Brew;
+    flowProfile: BrewFlow;
+    shotData: SanremoShotData;
+    desiredWeight: number;
+    usedProfile: string;
+  }) {
     this.showLagTime();
-    /**
-        this.lastShotWeight.nativeElement.innerHTML = _data.shotWeight;
-        this.lastShotFlow.nativeElement.innerHTML = 'Ø ' + _data.avgFlow + ' g/s';
-        this.lastShotBrewTime.nativeElement.innerHTML = _data.brewtime;**/
+
+    void this.saveBaristamodeBrew(_data);
   }
+
+  private async saveBaristamodeBrew(_data: {
+    shotWeight: number;
+    avgFlow: number;
+    brew: Brew;
+    flowProfile: BrewFlow;
+    shotData: SanremoShotData;
+    desiredWeight: number;
+    usedProfile: string;
+  }) {
+    try {
+      const brewObj: BaristamodeBrew = new BaristamodeBrew();
+
+      brewObj.brew_time = _data.brew.brew_time;
+      brewObj.brew_time_milliseconds = _data.brew.brew_time_milliseconds;
+
+      brewObj.brew_beverage_quantity = _data.shotWeight;
+      brewObj.brew_beverage_quantity_type = BREW_QUANTITY_TYPES_ENUM.GR;
+
+      brewObj.pressure_profile = _data.usedProfile;
+      brewObj.desired_beverage_quantity = _data.desiredWeight;
+
+      brewObj.brew_temperature = _data.brew.brew_temperature;
+      brewObj.water_volume_intake = _data.shotData.counterVol;
+
+      brewObj.method_of_preparation = _data.brew.method_of_preparation;
+
+      const addedBrewObj: BaristamodeBrew =
+        await this.uiBaristamodeBrewStorage.add(brewObj);
+
+      await this.manageFlowProfile(addedBrewObj, _data.flowProfile);
+
+      this.manageUploadToVisualizer(addedBrewObj);
+    } catch (ex) {}
+  }
+  private manageUploadToVisualizer(addedBrewObj: BaristamodeBrew): void {
+    if (
+      this.settings.visualizer_active &&
+      this.settings.visualizer_upload_automatic
+    ) {
+      if (addedBrewObj.flow_profile) {
+        this.uiLog.log('Upload shot to visualizer');
+        this.visualizerService.uploadBaristamodeBrewToVisualizer(addedBrewObj);
+      } else {
+        this.uiLog.log('No flow profile given, dont upload');
+      }
+    } else {
+      this.uiLog.log('Visualizer not active or upload automatic not activated');
+    }
+  }
+
+  private hasAnyFlowProfileRequisites(flowProfile: BrewFlow) {
+    return (
+      flowProfile.weight.length > 0 ||
+      flowProfile.pressureFlow.length > 0 ||
+      flowProfile.temperatureFlow.length > 0
+    );
+  }
+  /**
+   * This function is triggered outside of add/edit component, because the uuid is not existing on adding at start
+   * @param _uuid
+   */
+  public async saveFlowProfile(
+    addedBrewObj: BaristamodeBrew,
+    _flowProfile: BrewFlow,
+  ): Promise<string> {
+    try {
+      const savingPath = addedBrewObj.getGraphPath();
+      await this.uiFileHelper.writeInternalFileFromText(
+        JSON.stringify(_flowProfile),
+        savingPath,
+      );
+      return savingPath;
+    } catch (ex) {
+      return '';
+    }
+  }
+  private async manageFlowProfile(
+    addedBrewObj: BaristamodeBrew,
+    flowProfile: BrewFlow,
+  ) {
+    if (this.hasAnyFlowProfileRequisites(flowProfile)) {
+      const savedPath: string = await this.saveFlowProfile(
+        addedBrewObj,
+        flowProfile,
+      );
+      if (savedPath !== '') {
+        addedBrewObj.flow_profile = savedPath;
+        await this.uiBaristamodeBrewStorage.update(addedBrewObj);
+      }
+    }
+  }
+
   private showLagTime() {
     const device = this.brewBrewing?.brewBrewingPreparationDeviceEl
       ?.preparationDevice as SanremoYOUDevice;

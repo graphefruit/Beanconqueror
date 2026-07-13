@@ -1,0 +1,81 @@
+:host {
+  ion-grid {
+    --ion-grid-column-padding: 5px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+
+  .dashboard-stats-card {
+    text-align: center;
+    padding: 12px;
+    height: 100%;
+
+    // Inherit from standard ion-card
+    background-color: var(--ion-color-light);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    color: var(--ion-text-color);
+    outline: none;
+
+  }
+
+  .stat-value {
+    color: var(--ion-color-accent-secondary) !important;
+    font-size: 24px !important;
+    font-weight: bold !important;
+    letter-spacing: -1.05px !important;
+  }
+
+  .stat-label {
+    color: #938f89 !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    text-transform: none !important;
+    margin-top: 4px !important;
+  }
+
+  .divider-line {
+    height: 1px;
+    background: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.08);
+    margin: 16px 5px;
+  }
+
+
+
+  /* Chart Styles */
+  .chart-card {
+    margin: 12px 5px;
+    background-color: var(--ion-color-light);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+
+  .chart-header {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 14px 16px 8px 16px;
+    color: var(--ion-text-color, #000000);
+    border-bottom: 1px solid rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.05);
+  }
+
+  .chart-content {
+    padding: 16px 12px;
+  }
+
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 230px;
+  }
+
+  .no-brews-msg {
+    color: var(--ion-color-medium, #666666);
+    font-size: 0.95rem;
+    margin-top: 40px;
+  }
+}

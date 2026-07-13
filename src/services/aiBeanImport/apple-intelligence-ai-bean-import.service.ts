@@ -15,13 +15,10 @@ import { UIAlert } from '../uiAlert';
 import { UILog } from '../uiLog';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
 import { AIImportExamplesService } from './ai-import-examples.service';
-import { CameraOcrService } from './camera-ocr.service';
+import { CameraOcrService, MultiPassOcrResult } from './camera-ocr.service';
 import { FieldExtractionService } from './field-extraction.service';
 import { sendLLMPrompt } from './llm-communication.service';
-import {
-  OcrMetadataService,
-  TextDetectionResult,
-} from './ocr-metadata.service';
+import { OcrMetadataService } from './ocr-metadata.service';
 
 export interface AIReadinessResult {
   ready: boolean;
@@ -31,7 +28,7 @@ export interface AIReadinessResult {
 @Injectable({
   providedIn: 'root',
 })
-export class AIBeanImportService {
+export class AppleIntelligenceAIBeanImportService {
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);
   private readonly platform = inject(Platform);
@@ -189,16 +186,14 @@ export class AIBeanImportService {
    * Takes OCR result(s), enriches with layout, detects language, and extracts fields.
    */
   private async processOcrAndExtractBean(
-    ocrResults: TextDetectionResult[],
+    ocrResults: MultiPassOcrResult[],
     rawTexts: string[],
   ): Promise<Bean> {
-    // Step 1: Enrich with layout metadata
+    // Step 1: Enrich with layout metadata (multi-pass aware)
     const enrichedText =
       ocrResults.length === 1
-        ? this.ocrMetadata.enrichWithLayout(ocrResults[0]).enrichedText
-        : this.ocrMetadata.enrichMultiplePhotos(ocrResults);
-
-    this.uiLog.log(`Enriched text length: ${enrichedText.length}`);
+        ? this.ocrMetadata.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText
+        : this.ocrMetadata.enrichMultiplePhotosMultiPass(ocrResults);
 
     // Step 2: Prepare raw text for language detection
     const combinedRawText = this.concatenateOCRResults(rawTexts);
@@ -216,10 +211,6 @@ export class AIBeanImportService {
       detectedLanguage,
       userLanguage,
     );
-    this.uiLog.log(
-      'Using languages for examples: ' + languagesToUse.join(', '),
-    );
-
     // Step 5: Extract fields
     this.uiAlert.setLoadingSpinnerMessage(
       this.translate.instant('AI_IMPORT_STEP_ANALYZING'),

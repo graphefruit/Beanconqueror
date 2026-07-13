@@ -61,12 +61,12 @@
         </div>
       }
 
-      <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'"
-                         [min-row-height]="uiIsCollapseActive?86:180">
-        @for (brew of openScroll.items; track brew) {
-          <brew-information [collapsed]='uiIsCollapseActive' (brewAction)="brewAction()"
-                            [brew]="brew"></brew-information>
-        }
+        <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'"
+                           [min-row-height]="uiIsCollapseActive?86:180">
+          @for (brew of openScroll.items; track brew) {
+            <brew-information [id]="'brew-' + brew.config.uuid" [collapsed]='uiIsCollapseActive' (brewAction)="brewAction($event)"
+                              [brew]="brew"></brew-information>
+          }
       </ag-virtual-scroll>
 
     }
@@ -91,7 +91,7 @@
         <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'"
                            [min-row-height]="uiIsCollapseActive?86:180">
           @for (brew of archivedScroll.items; track brew) {
-            <brew-information [collapsed]='uiIsCollapseActive' (brewAction)="brewAction()"
+            <brew-information [id]="'brew-' + brew.config.uuid" [collapsed]='uiIsCollapseActive' (brewAction)="brewAction($event)"
                               [brew]="brew"></brew-information>
           }
         </ag-virtual-scroll>

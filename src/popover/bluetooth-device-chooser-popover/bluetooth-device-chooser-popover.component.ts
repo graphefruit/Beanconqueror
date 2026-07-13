@@ -235,6 +235,20 @@ export class BluetoothDeviceChooserPopoverComponent
           await this.connectTemperature(choosenDevice);
         } else if (this.bluetoothTypeSearch === BluetoothTypes.TDS) {
           await this.connectRefractometer(choosenDevice);
+        } else if (this.bluetoothTypeSearch === BluetoothTypes.MACHINE) {
+          /**
+           * After thats not the normal routine, jump out here and return the choosen mac.
+           */
+          this.modalController.dismiss(
+            {
+              dismissed: true,
+              device: choosenDevice,
+            },
+            undefined,
+            BluetoothDeviceChooserPopoverComponent.POPOVER_ID,
+          );
+          await this.uiAlert.hideLoadingSpinner();
+          return;
         }
         await this.uiAlert.hideLoadingSpinner();
       }

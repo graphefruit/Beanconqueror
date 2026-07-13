@@ -1,4 +1,4 @@
-import { CLOUD_AI_PROVIDER_ENUM } from '../../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import {
   CloudLLMConfig,
   CloudLLMMessage,
@@ -22,7 +22,7 @@ describe('cloud-llm-communication.service', () => {
     overrides: Partial<CloudLLMConfig> = {},
   ): CloudLLMConfig {
     return {
-      provider: CLOUD_AI_PROVIDER_ENUM.OPENAI,
+      provider: AI_PROVIDER_ENUM.OPENAI,
       apiKey: 'test-api-key',
       model: 'gpt-4o',
       ...overrides,
@@ -51,7 +51,7 @@ describe('cloud-llm-communication.service', () => {
     it('should build correct request for OpenAI', async () => {
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.OPENAI,
+        provider: AI_PROVIDER_ENUM.OPENAI,
       });
       fetchSpy.and.returnValue(
         Promise.resolve(
@@ -82,7 +82,7 @@ describe('cloud-llm-communication.service', () => {
     it('should build correct request for Google (Gemini via OpenAI-compatible endpoint)', async () => {
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.GOOGLE,
+        provider: AI_PROVIDER_ENUM.GOOGLE,
         model: 'gemini-2.0-flash',
       });
       fetchSpy.and.returnValue(
@@ -114,7 +114,7 @@ describe('cloud-llm-communication.service', () => {
 
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.ANTHROPIC,
+        provider: AI_PROVIDER_ENUM.ANTHROPIC,
         model: 'claude-sonnet-4-20250514',
       });
       fetchSpy.and.returnValue(
@@ -148,7 +148,7 @@ describe('cloud-llm-communication.service', () => {
     it('should build correct request for OpenRouter', async () => {
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.OPENROUTER,
+        provider: AI_PROVIDER_ENUM.OPENROUTER,
         model: 'anthropic/claude-sonnet-4-20250514',
       });
       fetchSpy.and.returnValue(
@@ -177,7 +177,7 @@ describe('cloud-llm-communication.service', () => {
     it('should strip trailing slash from custom base URL', async () => {
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.CUSTOM,
+        provider: AI_PROVIDER_ENUM.CUSTOM,
         model: 'my-model',
         baseUrl: 'https://my-llm.example.com/api/',
       });
@@ -201,7 +201,7 @@ describe('cloud-llm-communication.service', () => {
     it('should send Anthropic body without system message when none provided', async () => {
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.ANTHROPIC,
+        provider: AI_PROVIDER_ENUM.ANTHROPIC,
         model: 'claude-sonnet-4-20250514',
       });
       const userOnly: CloudLLMMessage[] = [userMessage];
@@ -278,7 +278,7 @@ describe('cloud-llm-communication.service', () => {
 
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.ANTHROPIC,
+        provider: AI_PROVIDER_ENUM.ANTHROPIC,
         model: 'claude-sonnet-4-20250514',
       });
       fetchSpy.and.returnValue(
@@ -328,7 +328,7 @@ describe('cloud-llm-communication.service', () => {
     it('should handle empty Anthropic content array gracefully', async () => {
       // Arrange
       const config = createConfig({
-        provider: CLOUD_AI_PROVIDER_ENUM.ANTHROPIC,
+        provider: AI_PROVIDER_ENUM.ANTHROPIC,
         model: 'claude-sonnet-4-20250514',
       });
       fetchSpy.and.returnValue(

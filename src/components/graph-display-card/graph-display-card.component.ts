@@ -4,7 +4,10 @@ import {
   HostListener,
   inject,
   Input,
+  OnChanges,
+  OnDestroy,
   OnInit,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 
@@ -27,7 +30,7 @@ declare var Plotly;
   styleUrls: ['./graph-display-card.component.scss'],
   imports: [],
 })
-export class GraphDisplayCardComponent implements OnInit {
+export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
   private readonly uiHelper = inject(UIHelper);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly platform = inject(Platform);
@@ -37,6 +40,7 @@ export class GraphDisplayCardComponent implements OnInit {
   @Input() public flowProfilePath: any;
 
   @Input() public meticulousHistoryData: HistoryListingEntry;
+  @Input() public meticulousDevice: MeticulousDevice;
   @Input() public gaggiuinoHistoryData: BrewFlow;
 
   @Input() public chartWidth: number;
@@ -61,6 +65,7 @@ export class GraphDisplayCardComponent implements OnInit {
     } else if (this.flowProfileData) {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
     } else if (this.meticulousHistoryData) {
+      await this.ensureMeticulousShotData();
       this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
         this.meticulousHistoryData.data,
       );
@@ -74,6 +79,48 @@ export class GraphDisplayCardComponent implements OnInit {
     setTimeout(() => {
       this.initializeFlowChart();
     }, 50);
+  }
+
+  public ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes &&
+      changes['meticulousHistoryData'] &&
+      !changes['meticulousHistoryData'].firstChange
+    ) {
+      if (this.meticulousHistoryData) {
+        this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
+          this.meticulousHistoryData.data,
+        );
+        this.initializeFlowChart();
+      }
+    }
+  }
+
+  /**
+   * History listing entries are loaded without their shot data for
+   * performance. When a card is actually rendered we lazily fetch the detail
+   * for its own entry and cache it back onto the entry (mutating in place, so
+   * the owning list keeps a stable object reference and the virtual scroll is
+   * not reset).
+   */
+  private async ensureMeticulousShotData() {
+    if (
+      !this.meticulousHistoryData ||
+      this.meticulousHistoryData.data ||
+      !this.meticulousDevice
+    ) {
+      return;
+    }
+    try {
+      const details = await this.meticulousDevice.getHistoryEntryDetails(
+        this.meticulousHistoryData.id,
+      );
+      if (details?.data) {
+        (this.meticulousHistoryData as any).data = details.data;
+      }
+    } catch {
+      // ignore - an empty graph will be rendered
+    }
   }
 
   @HostListener('window:resize')
@@ -143,8 +190,21 @@ export class GraphDisplayCardComponent implements OnInit {
 
       chartData.push(this.traces.pressureTrace);
       chartData.push(this.traces.temperatureTrace);
+      chartData.push(this.traces.waterDispensedTrace);
+      chartData.push(this.traces.waterDispensedFlowSecondTrace);
       chartData.push(this.traces.weightTraceSecond);
       chartData.push(this.traces.realtimeFlowTraceSecond);
+
+      if (this.traces.customTraces) {
+        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
+          string,
+          any,
+        ][]) {
+          if (trace) {
+            chartData.push(trace);
+          }
+        }
+      }
 
       Plotly.newPlot(
         this.profileDiv.nativeElement,

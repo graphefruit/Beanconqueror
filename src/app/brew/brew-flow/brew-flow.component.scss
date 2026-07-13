@@ -103,57 +103,17 @@
     }
   }
 
-  ion-card.flow-profile.temperature-card {
+  ion-card.flow-profile.trace-card {
     ion-card-header {
-      background-color: #cc3311 !important;
+      background-color: var(--card-color) !important;
     }
 
     ion-icon {
-      color: #cc3311 !important;
-    }
-  }
-
-  ion-card.flow-profile.pressure-card {
-    ion-card-header {
-      background-color: #05c793 !important;
-    }
-
-    ion-icon {
-      color: #05c793 !important;
+      color: var(--card-color) !important;
     }
 
     ion-icon > div.icon-inner > svg.s-ion-icon > g {
-      fill: #05c793 !important;
-    }
-  }
-
-  ion-card.flow-profile.flow-card {
-    ion-card-header {
-      background-color: #09485d !important;
-    }
-
-    ion-icon {
-      color: #09485d !important;
-    }
-  }
-
-  ion-card.flow-profile.flow-avg-card {
-    ion-card-header {
-      background-color: #7f97a2 !important;
-    }
-
-    ion-icon {
-      color: #7f97a2 !important;
-    }
-  }
-
-  ion-card.flow-profile.weight-card {
-    ion-card-header {
-      background-color: var(--beanconqueror-icon-color) !important;
-    }
-
-    ion-icon {
-      color: var(--beanconqueror-icon-color) !important;
+      fill: var(--card-color) !important;
     }
   }
 }

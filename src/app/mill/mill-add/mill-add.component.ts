@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonButton,
+  IonCheckbox,
   IonCol,
   IonContent,
   IonHeader,
@@ -34,6 +35,7 @@ import { UIToast } from '../../../services/uiToast';
     IonContent,
     IonItem,
     IonInput,
+    IonCheckbox,
     IonRow,
     IonCol,
     IonButton,
@@ -85,5 +87,8 @@ export class MillAddComponent implements OnInit {
       MillAddComponent.COMPONENT_ID,
     );
   }
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.data.has_adjustable_speed = false;
+    this.data.has_timer = false;
+  }
 }

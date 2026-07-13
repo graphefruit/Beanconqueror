@@ -457,6 +457,12 @@ export class UIBeanHelper {
           },
         },
         {
+          text: this.translate.instant('BEAN_CODE_ACTION.REPEAT_LAST_BREW'),
+          data: {
+            action: BEAN_CODE_ACTION.REPEAT_LAST_BREW,
+          },
+        },
+        {
           text: this.translate.instant('BEAN_CODE_ACTION.EDIT'),
           data: {
             action: BEAN_CODE_ACTION.EDIT,

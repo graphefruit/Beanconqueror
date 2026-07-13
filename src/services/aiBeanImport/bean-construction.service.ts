@@ -1,4 +1,4 @@
-import type { Bean } from '../../classes/bean/bean';
+import { Bean } from '../../classes/bean/bean';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
@@ -22,72 +22,17 @@ export function createEmptyBeanInformation(): IBeanInformation {
     variety: '',
     processing: '',
     certification: '',
+    percentage: 0,
     purchasing_price: 0,
     fob_price: 0,
-  } as IBeanInformation;
+  };
 }
 
 /**
- * Create an empty Bean-compatible object with all default values.
- *
- * Uses a plain object because importing the Bean class at runtime
- * pulls in its full dependency tree (Angular services, Config, etc.)
- * which causes "Bean is not a constructor" in Karma tests.
+ * Create an empty Bean with all default values.
  */
 export function createDefaultBean(): Bean {
-  return {
-    name: '',
-    buyDate: '',
-    roastingDate: '',
-    note: '',
-    roaster: '',
-    config: { uuid: '', unix_timestamp: 0, attachments: [] },
-    roast: 'UNKNOWN',
-    roast_range: 0,
-    roast_custom: '',
-    beanMix: 'SINGLE_ORIGIN',
-    aromatics: '',
-    weight: 0,
-    finished: false,
-    cost: 0,
-    attachments: [],
-    decaffeinated: false,
-    cupping_points: '',
-    bean_roasting_type: 'UNKNOWN',
-    bean_information: [],
-    url: '',
-    ean_article_number: '',
-    bean_roast_information: {},
-    rating: 0,
-    qr_code: '',
-    internal_share_code: '',
-    favourite: false,
-    shared: false,
-    cupping: {
-      body: 0,
-      brightness: 0,
-      clean_cup: 0,
-      complexity: 0,
-      cuppers_correction: 0,
-      dry_fragrance: 0,
-      finish: 0,
-      flavor: 0,
-      sweetness: 0,
-      uniformity: 0,
-      wet_aroma: 0,
-      notes: '',
-    },
-    cupped_flavor: { predefined_flavors: {}, custom_flavors: [] },
-    frozenDate: '',
-    unfrozenDate: '',
-    frozenId: '',
-    frozenGroupId: '',
-    frozenStorageType: 'UNKNOWN',
-    frozenNote: '',
-    bestDate: '',
-    openDate: '',
-    co2e_kg: 0,
-  } as unknown as Bean;
+  return new Bean();
 }
 
 /**

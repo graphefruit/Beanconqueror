@@ -1,4 +1,4 @@
-import { CLOUD_AI_PROVIDER_ENUM } from '../../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import { fetchAvailableModels } from '../cloud-model-list.service';
 
 describe('cloud-model-list.service', () => {
@@ -22,7 +22,7 @@ describe('cloud-model-list.service', () => {
   describe('shared behaviors', () => {
     interface ProviderCase {
       label: string;
-      provider: CLOUD_AI_PROVIDER_ENUM;
+      provider: AI_PROVIDER_ENUM;
       apiKey: string;
       baseUrl?: string;
       emptyResponse: object;
@@ -35,7 +35,7 @@ describe('cloud-model-list.service', () => {
     const providerCases: ProviderCase[] = [
       {
         label: 'OpenAI',
-        provider: CLOUD_AI_PROVIDER_ENUM.OPENAI,
+        provider: AI_PROVIDER_ENUM.OPENAI,
         apiKey: 'test-key',
         emptyResponse: { data: [] },
         sortResponse: {
@@ -51,7 +51,7 @@ describe('cloud-model-list.service', () => {
       },
       {
         label: 'Anthropic',
-        provider: CLOUD_AI_PROVIDER_ENUM.ANTHROPIC,
+        provider: AI_PROVIDER_ENUM.ANTHROPIC,
         apiKey: 'test-key',
         emptyResponse: { data: [] },
         sortResponse: {
@@ -70,7 +70,7 @@ describe('cloud-model-list.service', () => {
       },
       {
         label: 'Google Gemini',
-        provider: CLOUD_AI_PROVIDER_ENUM.GOOGLE,
+        provider: AI_PROVIDER_ENUM.GOOGLE,
         apiKey: 'test-key',
         emptyResponse: { models: [] },
         sortResponse: {
@@ -99,7 +99,7 @@ describe('cloud-model-list.service', () => {
       },
       {
         label: 'Mistral',
-        provider: CLOUD_AI_PROVIDER_ENUM.MISTRAL,
+        provider: AI_PROVIDER_ENUM.MISTRAL,
         apiKey: 'test-key',
         emptyResponse: { data: [] },
         sortResponse: {
@@ -111,7 +111,7 @@ describe('cloud-model-list.service', () => {
       },
       {
         label: 'OpenRouter',
-        provider: CLOUD_AI_PROVIDER_ENUM.OPENROUTER,
+        provider: AI_PROVIDER_ENUM.OPENROUTER,
         apiKey: '',
         emptyResponse: { data: [] },
         sortResponse: {
@@ -127,7 +127,7 @@ describe('cloud-model-list.service', () => {
       },
       {
         label: 'Custom',
-        provider: CLOUD_AI_PROVIDER_ENUM.CUSTOM,
+        provider: AI_PROVIDER_ENUM.CUSTOM,
         apiKey: 'test-key',
         baseUrl: 'https://custom.example.com/v1',
         emptyResponse: { data: [] },
@@ -146,7 +146,7 @@ describe('cloud-model-list.service', () => {
           Promise.reject(new TypeError('Failed to fetch')),
         );
         const models = await fetchAvailableModels(
-          CLOUD_AI_PROVIDER_ENUM.OPENAI,
+          AI_PROVIDER_ENUM.OPENAI,
           'test-key',
         );
         expect(models).toEqual([]);
@@ -154,7 +154,7 @@ describe('cloud-model-list.service', () => {
 
       it('should return empty array for unknown provider', async () => {
         const models = await fetchAvailableModels(
-          'UNKNOWN' as CLOUD_AI_PROVIDER_ENUM,
+          'UNKNOWN' as AI_PROVIDER_ENUM,
           'key',
         );
         expect(models).toEqual([]);
@@ -239,7 +239,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.OPENROUTER,
+        AI_PROVIDER_ENUM.OPENROUTER,
         '',
       );
 
@@ -278,7 +278,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.OPENAI,
+        AI_PROVIDER_ENUM.OPENAI,
         'test-key',
       );
 
@@ -308,7 +308,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.OPENAI,
+        AI_PROVIDER_ENUM.OPENAI,
         'test-key',
       );
 
@@ -337,7 +337,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.ANTHROPIC,
+        AI_PROVIDER_ENUM.ANTHROPIC,
         'test-key',
       );
 
@@ -359,7 +359,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.ANTHROPIC,
+        AI_PROVIDER_ENUM.ANTHROPIC,
         'test-key',
       );
 
@@ -397,7 +397,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.GOOGLE,
+        AI_PROVIDER_ENUM.GOOGLE,
         'test-key',
       );
 
@@ -429,7 +429,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.MISTRAL,
+        AI_PROVIDER_ENUM.MISTRAL,
         'test-key',
       );
 
@@ -453,7 +453,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.MISTRAL,
+        AI_PROVIDER_ENUM.MISTRAL,
         'test-key',
       );
 
@@ -476,7 +476,7 @@ describe('cloud-model-list.service', () => {
 
       // Act
       const models = await fetchAvailableModels(
-        CLOUD_AI_PROVIDER_ENUM.CUSTOM,
+        AI_PROVIDER_ENUM.CUSTOM,
         'key',
         'https://my-server.example.com/v1',
       );

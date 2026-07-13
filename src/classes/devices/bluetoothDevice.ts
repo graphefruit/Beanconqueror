@@ -2,7 +2,7 @@ import { EventEmitter } from '@angular/core';
 
 import { PeripheralData } from './ble.types';
 import { Logger } from './common/logger';
-import { ScaleType } from './index';
+import { ScaleType } from './types';
 
 declare var ble: any;
 
@@ -64,6 +64,7 @@ export class BluetoothScale {
     } catch (ex) {}
     this.scaleType = type;
     this.blueToothParentlogger = new Logger();
+    // this.blueToothParentlogger.enableNoLogOnThisClass();
   }
   public getScaleType(): ScaleType | undefined {
     return this.scaleType;

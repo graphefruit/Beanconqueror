@@ -85,6 +85,7 @@ import { IosPlatformService } from '../services/iosPlatform/ios-platform.service
 import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
 import { UIAnalytics } from '../services/uiAnalytics';
+import { UIBaristamodeBrewStorage } from '../services/uiBaristamodeBrewStorage';
 import { UIBeanHelper } from '../services/uiBeanHelper';
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewHelper } from '../services/uiBrewHelper';
@@ -139,6 +140,7 @@ export class AppComponent implements AfterViewInit {
   platform = inject(Platform);
   private readonly uiLog = inject(UILog);
   private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiBaristamodeBrewStorage = inject(UIBaristamodeBrewStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiMillStorage = inject(UIMillStorage);
@@ -495,6 +497,7 @@ export class AppComponent implements AfterViewInit {
         await this.uiRoastingMachineStorage.initializeStorage();
         await this.uiWaterStorage.initializeStorage();
         await this.uiGraphStorage.initializeStorage();
+        await this.uiBaristamodeBrewStorage.initializeStorage();
 
         // Wait for every necessary service to be ready before starting the app
         // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -512,6 +515,8 @@ export class AppComponent implements AfterViewInit {
           this.uiRoastingMachineStorage.storageReady();
         const waterStorageCallback = this.uiWaterStorage.storageReady();
         const graphStorageCallback = this.uiGraphStorage.storageReady();
+        const baristamodeBrewStorageCallback =
+          this.uiBaristamodeBrewStorage.storageReady();
 
         Promise.all([
           beanStorageReadyCallback,
@@ -524,6 +529,7 @@ export class AppComponent implements AfterViewInit {
           roastingMachineStorageCallback,
           waterStorageCallback,
           graphStorageCallback,
+          baristamodeBrewStorageCallback,
         ]).then(
           async () => {
             this.uiLog.log('App finished loading');
@@ -641,6 +647,10 @@ export class AppComponent implements AfterViewInit {
                 settingLanguage = 'pt';
               } else if (systemLanguage === 'el') {
                 settingLanguage = 'el';
+              } else if (systemLanguage === 'cs') {
+                settingLanguage = 'cs';
+              } else if (systemLanguage === 'ja') {
+                settingLanguage = 'ja';
               } else {
                 settingLanguage = 'en';
               }

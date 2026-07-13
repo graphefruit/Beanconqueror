@@ -177,9 +177,46 @@ export class BeansDetailComponent implements OnInit {
       .seconds(this.data.bean_roast_information.roast_length)
       .format('HH:mm:ss');
   }
+
+  public getFirstCrackMinuteFormat() {
+    if (
+      !this.data.bean_roast_information ||
+      !this.data.bean_roast_information.first_crack_minute
+    ) {
+      return '-';
+    }
+    return moment(new Date())
+      .startOf('day')
+      .seconds(this.data.bean_roast_information.first_crack_minute)
+      .format('HH:mm:ss');
+  }
+
+  public getSecondCrackMinuteFormat() {
+    if (
+      !this.data.bean_roast_information ||
+      !this.data.bean_roast_information.second_crack_minute
+    ) {
+      return '-';
+    }
+    return moment(new Date())
+      .startOf('day')
+      .seconds(this.data.bean_roast_information.second_crack_minute)
+      .format('HH:mm:ss');
+  }
   public hasCustomRatingRange(): boolean {
     return (
       this.settings?.bean_rating !== 5 || this.settings.bean_rating_steps !== 1
     );
+  }
+
+  public getWeightLoss(): string {
+    const green = Number(this.data?.bean_roast_information?.green_bean_weight);
+    const roasted = Number(this.data?.weight);
+    if (green > 0 && roasted > 0 && green >= roasted) {
+      const loss = green - roasted;
+      const pct = (loss / green) * 100;
+      return `${pct.toFixed(2)}% (${loss.toFixed(1)}g)`;
+    }
+    return '-';
   }
 }

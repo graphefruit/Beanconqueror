@@ -12,8 +12,8 @@ import { UILog } from '../uiLog';
 import { UIToast } from '../uiToast';
 
 /**https://github.com/EYALIN/community-cordova-plugin-nfc**/
-declare var nfc;
-declare var ndef;
+/** The plugin only clobbers NfcPlugin globally (not nfc/ndef). Use NfcPlugin.**/
+declare var NfcPlugin;
 @Injectable({
   providedIn: 'root',
 })
@@ -34,9 +34,13 @@ export class NfcService {
   constructor() {
     if (this.platform.is('capacitor')) {
       this.uiHelper.isBeanconqurorAppReady().then(async () => {
-        this.nfcEnabled = await this.getEnabledState();
-        if (this.isNFCEnabled) {
-          this.listenToNFCAndroid();
+        if (this.platform.is('android')) {
+          this.nfcEnabled = await this.getEnabledState();
+          if (this.nfcEnabled) {
+            this.listenToNFCAndroid();
+          }
+        } else {
+          this.nfcEnabled = true;
         }
       });
     }
@@ -48,7 +52,7 @@ export class NfcService {
 
   private async getEnabledState(): Promise<boolean> {
     const enabled: boolean = await new Promise((resolve, _reject) => {
-      nfc.enabled(
+      NfcPlugin.enabled(
         () => {
           resolve(true);
         },
@@ -76,7 +80,7 @@ export class NfcService {
         //IOS
         // Async Await
         try {
-          let tag = await nfc.scanTag();
+          let tag = await NfcPlugin.scanTag();
           this.__handleNFCData(tag);
         } catch (ex) {
           this.uiLog.error("We couldn't read NFC-Tag: " + ex.message);
@@ -100,7 +104,7 @@ export class NfcService {
   private listenToNFCAndroid() {
     /**The issue with the plugin is that we can deattach but if we reattach the old handling instance is still given, therefore we make our own implemenntation logic, just attach once, and toggle.**/
     if (this.didAndroidAttachToListener === false) {
-      nfc.addNdefListener(
+      NfcPlugin.addNdefListener(
         (_data) => {
           this.androidMessageSubject.next({ tag: _data.tag });
         },
@@ -116,9 +120,11 @@ export class NfcService {
   private __handleNFCData(_tag) {
     this.uiLog.log('We read NFC-Tag', _tag);
     if (_tag) {
-      let data = ndef.textHelper.decodePayload(_tag.ndefMessage[0].payload);
+      let data = NfcPlugin.NdefPlugin.textHelper.decodePayload(
+        _tag.ndefMessage[0].payload,
+      );
       /**We dont use bytes to string because somehow ascis came into play
-            let data = nfc.bytesToString(_tag.ndefMessage[0].payload)**/
+            let data = NfcPlugin.bytesToString(_tag.ndefMessage[0].payload)**/
       this.intentHandler.handleDeepLink(data);
     } else {
       this.uiLog.error('No data found on NFC-Tag');
@@ -141,8 +147,8 @@ export class NfcService {
     }
   }
   private __writeInternal(_text: string) {
-    let record = [ndef.textRecord(_text)];
-    nfc.write(
+    let record = [NfcPlugin.NdefPlugin.textRecord(_text)];
+    NfcPlugin.write(
       record,
       (success) => {
         this.uiLog.log('NFC-Date wrote successfully: ' + _text);

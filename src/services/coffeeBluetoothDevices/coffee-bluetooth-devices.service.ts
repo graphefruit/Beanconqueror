@@ -19,10 +19,13 @@ import { PrsPressure } from 'src/classes/devices/prsPressure';
 import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { SmartchefScale } from 'src/classes/devices/smartchefScale';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
+import { TimemoreBasicScale } from 'src/classes/devices/timemoreBasicScale';
+import { TimemoreDotScale } from 'src/classes/devices/timemoreDotScale';
 import { TimemoreScale } from 'src/classes/devices/timemoreScale';
 import { WeighMyBruScale } from 'src/classes/devices/weighMyBruScale';
 import {
   BluetoothTypes,
+  MachineType,
   makeDevice,
   makePressureDevice,
   makeRefractometerDevice,
@@ -53,6 +56,8 @@ import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
 import { SkaleScale } from '../../classes/devices/skale';
 import { TransducerDirectPressure } from '../../classes/devices/transducerDirectPressure';
 import { VariaAkuScale } from '../../classes/devices/variaAku';
+import { WeighMasterScale } from '../../classes/devices/weighMasterScale';
+import { Move2Device } from '../../classes/preparationDevice/move2/move2Device';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import { UIAnalytics } from '../uiAnalytics';
 import { UIHelper } from '../uiHelper';
@@ -95,16 +100,31 @@ export class CoffeeBluetoothDevicesService {
 
   private scanBluetoothTimeout: any = null;
 
+  /**
+   * Singelton instance
+   */
+  public static instance: CoffeeBluetoothDevicesService;
+
   constructor() {
     this.logger = new Logger('CoffeeBluetoothDevices');
     this.failed = false;
     this.ready = true;
 
+    if (CoffeeBluetoothDevicesService.instance === undefined) {
+      CoffeeBluetoothDevicesService.instance = this;
+    }
+
     if (Capacitor.getPlatform() === 'android') {
       this.androidPermissions = cordova.plugins.permissions;
     }
   }
+  public static getInstance(): CoffeeBluetoothDevicesService {
+    if (CoffeeBluetoothDevicesService.instance) {
+      return CoffeeBluetoothDevicesService.instance;
+    }
 
+    return undefined;
+  }
   public attachOnEvent(): Observable<CoffeeBluetoothServiceEvent> {
     return this.eventSubject.asObservable();
   }
@@ -219,7 +239,7 @@ export class CoffeeBluetoothDevicesService {
     const devicesFound: Array<any> = [];
     const stopScanningAndFinish = async () => {
       this.logger.log(
-        'Error called or timeout' + _timeout + ' milliseconds exceeded',
+        'Error called or timeout ' + _timeout + ' milliseconds exceeded',
       );
       this.stopScanning();
       if (_finishedFunction) {
@@ -273,6 +293,8 @@ export class CoffeeBluetoothDevicesService {
             type = this.getTemperatureDeviceType(scanDevice);
           } else if (_searchingType === BluetoothTypes.TDS) {
             type = this.getRefractometerDeviceType(scanDevice);
+          } else if (_searchingType === BluetoothTypes.MACHINE) {
+            type = this.getMachineDeviceType(scanDevice);
           }
 
           if (type) {
@@ -744,6 +766,20 @@ export class CoffeeBluetoothDevicesService {
         type: ScaleType.TIMEMORESCALE,
       };
     }
+    if (TimemoreBasicScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a Timemore Basic scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.TIMEMORE_BASIC,
+      };
+    }
+    if (TimemoreDotScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a Timemore Dot scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.TIMEMORE_DOT,
+      };
+    }
     if (VariaAkuScale.test(deviceScale)) {
       this.logger.log('BleManager - We found a Varia AKU scale');
       return {
@@ -756,6 +792,13 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceScale.id,
         type: ScaleType.WEIGHMYBRUSCALE,
+      };
+    }
+    if (WeighMasterScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a WeighMaster scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.WEIGHMASTER,
       };
     }
 
@@ -847,6 +890,15 @@ export class CoffeeBluetoothDevicesService {
     if (DiFluidR2Refractometer.test(deviceRefractometer)) {
       this.logger.log('BleManager - We found a Difluid R2 device ');
       return { id: deviceRefractometer.id, type: RefractometerType.R2 };
+    }
+
+    return undefined;
+  }
+
+  public getMachineDeviceType(deviceMachine) {
+    if (Move2Device.test(deviceMachine)) {
+      this.logger.log('BleManager - We found a MOVE2 device ');
+      return { id: deviceMachine.id, type: MachineType.MOVE2 };
     }
 
     return undefined;

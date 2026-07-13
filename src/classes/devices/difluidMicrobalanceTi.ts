@@ -5,8 +5,9 @@ import {
   TimerEvent,
   Weight,
 } from './bluetoothDevice';
+import { sleep } from './common';
 import { Logger } from './common/logger';
-import { ScaleType, sleep } from './index';
+import { ScaleType } from './types';
 
 declare var ble: any;
 export class DifluidMicrobalanceTi extends BluetoothScale {

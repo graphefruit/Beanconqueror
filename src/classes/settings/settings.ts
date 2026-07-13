@@ -4,8 +4,10 @@ import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
+import { PREPARATION_SORT_AFTER } from '../../enums/preparations/preparationSortAfter';
+import { PREPARATION_SORT_ORDER } from '../../enums/preparations/preparationSortOrder';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -15,6 +17,7 @@ import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
+import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
 import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import {
@@ -103,6 +106,11 @@ export class Settings implements ISettings {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
     FROZEN: IBeanPageSort;
+  };
+
+  public preparation_sort: {
+    OPEN: IPreparationPageSort;
+    ARCHIVED: IPreparationPageSort;
   };
 
   public brew_sort: {
@@ -246,7 +254,7 @@ export class Settings implements ISettings {
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
 
-  public cloud_ai_provider: CLOUD_AI_PROVIDER_ENUM;
+  public ai_provider: AI_PROVIDER_ENUM;
   public cloud_ai_api_key: string;
   public cloud_ai_model: string;
   public cloud_ai_base_url: string;
@@ -390,6 +398,16 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageSort,
       FROZEN: {} as IBeanPageSort,
     };
+    this.preparation_sort = {
+      OPEN: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+      ARCHIVED: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+    };
     this.brew_sort = {
       OPEN: {} as IBrewPageSort,
       ARCHIVED: {} as IBrewPageSort,
@@ -502,6 +520,8 @@ export class Settings implements ISettings {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
 
+    // Left blank since we initialized preparation_sort earlier in one step
+
     this.green_bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -588,7 +608,7 @@ export class Settings implements ISettings {
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
 
-    this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+    this.ai_provider = AI_PROVIDER_ENUM.NO_PROVIDER;
     this.cloud_ai_api_key = '';
     this.cloud_ai_model = '';
     this.cloud_ai_base_url = '';
@@ -622,6 +642,24 @@ export class Settings implements ISettings {
     if (!this.graph_colors) {
       this.graph_colors = JSON.parse(JSON.stringify(DEFAULT_GRAPH_COLORS));
     }
+
+    if (!this.graph_colors.waterDispensed) {
+      this.graph_colors.waterDispensed = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.waterDispensed),
+      );
+    }
+
+    if (!this.graph_colors.waterDispensedFlowSecond) {
+      this.graph_colors.waterDispensedFlowSecond = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.waterDispensedFlowSecond),
+      );
+    }
+
+    if (!this.graph_colors.customTrace) {
+      this.graph_colors.customTrace = JSON.parse(
+        JSON.stringify(DEFAULT_GRAPH_COLORS.customTrace),
+      );
+    }
     // We need to reassign brew order here, else the class would be dismissed.
 
     this.manage_parameters = new ManageBrewParameter();
@@ -654,10 +692,12 @@ export class Settings implements ISettings {
       settingsObj.bean_visible_list_view_parameters,
     );
 
-    if (settingsObj.cloud_ai_provider === undefined) {
-      this.cloud_ai_provider = CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE;
+    if (settingsObj.ai_provider !== undefined) {
+      this.ai_provider = settingsObj.ai_provider;
+    } else if ((settingsObj as any).cloud_ai_provider !== undefined) {
+      this.ai_provider = (settingsObj as any).cloud_ai_provider;
     } else {
-      this.cloud_ai_provider = settingsObj.cloud_ai_provider;
+      this.ai_provider = AI_PROVIDER_ENUM.NO_PROVIDER;
     }
     if (settingsObj.cloud_ai_api_key === undefined) {
       this.cloud_ai_api_key = '';
@@ -763,5 +803,18 @@ export class Settings implements ISettings {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
+  }
+
+  public resetPreparationSort() {
+    this.preparation_sort = {
+      OPEN: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+      ARCHIVED: {
+        sort_after: PREPARATION_SORT_AFTER.UNKNOWN,
+        sort_order: PREPARATION_SORT_ORDER.UNKNOWN,
+      },
+    };
   }
 }

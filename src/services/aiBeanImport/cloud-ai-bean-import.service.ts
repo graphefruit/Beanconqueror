@@ -3,18 +3,15 @@ import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { UIAlert } from '../uiAlert';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
-import { AIReadinessResult } from './ai-bean-import.service';
-import { CameraOcrService } from './camera-ocr.service';
+import { AIReadinessResult } from './apple-intelligence-ai-bean-import.service';
+import { CameraOcrService, MultiPassOcrResult } from './camera-ocr.service';
 import { CloudFieldExtractionService } from './cloud-field-extraction.service';
-import {
-  OcrMetadataService,
-  TextDetectionResult,
-} from './ocr-metadata.service';
+import { OcrMetadataService } from './ocr-metadata.service';
 
 @Injectable({
   providedIn: 'root',
@@ -33,12 +30,16 @@ export class CloudAIBeanImportService {
    */
   public checkReadiness(): AIReadinessResult {
     const settings = this.uiSettingsStorage.getSettings();
-    if (
-      settings.cloud_ai_provider === CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
-    ) {
+    if (settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE) {
       return {
         ready: false,
-        message: 'Apple Intelligence selected — use on-device path',
+        message: this.translate.instant('APPLE_INTELLIGENCE_USE_ON_DEVICE'),
+      };
+    }
+    if (settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER) {
+      return {
+        ready: false,
+        message: this.translate.instant('CLOUD_AI_NOT_CONFIGURED'),
       };
     }
     if (!settings.cloud_ai_api_key || !settings.cloud_ai_model) {
@@ -162,15 +163,13 @@ export class CloudAIBeanImportService {
    * Enriches OCR results with layout metadata, then sends to cloud LLM.
    */
   private async processOcrAndExtractBean(
-    ocrResults: TextDetectionResult[],
+    ocrResults: MultiPassOcrResult[],
   ): Promise<Bean> {
-    // Step 1: Enrich with layout metadata
+    // Step 1: Enrich with layout metadata (multi-pass aware)
     const enrichedText =
       ocrResults.length === 1
-        ? this.ocrMetadata.enrichWithLayout(ocrResults[0]).enrichedText
-        : this.ocrMetadata.enrichMultiplePhotos(ocrResults);
-
-    this.uiLog.log(`Cloud AI: Enriched text length: ${enrichedText.length}`);
+        ? this.ocrMetadata.enrichWithLayoutMultiPass(ocrResults[0]).enrichedText
+        : this.ocrMetadata.enrichMultiplePhotosMultiPass(ocrResults);
 
     // Step 2: Extract fields via cloud LLM (no language detection or vocabulary needed)
     this.uiAlert.setLoadingSpinnerMessage(

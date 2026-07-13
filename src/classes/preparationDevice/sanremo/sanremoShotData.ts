@@ -25,6 +25,8 @@ export class SanremoShotData implements ISanremoShotData {
   public reconnectionCounter: number;
   public doses: { key1: number; key2: number; key3: number };
 
+  /**With API 0.14.0 available**/
+  public wifiSignal: number;
   constructor() {
     this.status = 0;
     this.description = 'OFF';
@@ -42,5 +44,6 @@ export class SanremoShotData implements ISanremoShotData {
     this.localTimeString = '';
     this.reconnectionCounter = 0;
     this.doses = { key1: 0, key2: 0, key3: 0 };
+    this.wifiSignal = 0;
   }
 }

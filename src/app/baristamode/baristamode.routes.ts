@@ -10,6 +10,15 @@ export const routes: Routes = [
     path: 'barista',
     loadComponent: () => import('./barista/barista.page'),
   },
+  {
+    path: 'brews',
+    loadComponent: () => import('./baristamode-brews/baristamode-brews.page'),
+  },
+  {
+    path: 'statistics',
+    loadComponent: () =>
+      import('./baristamode-statistics/baristamode-statistics.page'),
+  },
 ];
 
 export default routes;

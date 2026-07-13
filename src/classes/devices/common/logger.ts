@@ -6,9 +6,13 @@ export class Logger {
   private static logSubject = new Subject<{ type: string; log: string }>();
   private static __isLogEnabled: boolean = true;
   private prefix: string;
+  private noLoggingOnThisClass: boolean = false;
 
   constructor(prefix = 'DEFAULT') {
     this.prefix = prefix;
+  }
+  public enableNoLogOnThisClass() {
+    this.noLoggingOnThisClass = true;
   }
 
   public static attachOnLog(): Observable<{ type: string; log: string }> {
@@ -28,24 +32,36 @@ export class Logger {
   }
 
   public log(...args: any) {
+    if (this.noLoggingOnThisClass) {
+      return;
+    }
     if (this.isLogEnabled() || DEBUG) {
       Logger.__sendLog('LOG', `${this.prefix}: ${JSON.stringify(args)}`);
     }
   }
 
   public info(...args: any) {
+    if (this.noLoggingOnThisClass) {
+      return;
+    }
     if (this.isLogEnabled() || DEBUG) {
       Logger.__sendLog('INFO', `${this.prefix}: ${JSON.stringify(args)}`);
     }
   }
 
   public error(...args: any) {
+    if (this.noLoggingOnThisClass) {
+      return;
+    }
     if (this.isLogEnabled() || DEBUG) {
       Logger.__sendLog('ERROR', `${this.prefix}: ${JSON.stringify(args)}`);
     }
   }
 
   public debug(...args: any) {
+    if (this.noLoggingOnThisClass) {
+      return;
+    }
     if (this.isLogEnabled() || DEBUG) {
       Logger.__sendLog('DEBUG', `${this.prefix}: ${JSON.stringify(args)}`);
     }

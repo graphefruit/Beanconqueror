@@ -40,11 +40,11 @@ import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
-import { AIBeanImportService } from '../../services/aiBeanImport/ai-bean-import.service';
+import { AppleIntelligenceAIBeanImportService } from '../../services/aiBeanImport/apple-intelligence-ai-bean-import.service';
 import { CloudAIBeanImportService } from '../../services/aiBeanImport/cloud-ai-bean-import.service';
 import { BeanSortFilterHelperService } from '../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
@@ -99,7 +99,9 @@ export class BeansPage implements OnDestroy {
   private readonly beanSortFilterHelper = inject(BeanSortFilterHelperService);
   private readonly nfcService = inject(NfcService);
   private readonly uiImage = inject(UIImage);
-  private readonly aiBeanImportService = inject(AIBeanImportService);
+  private readonly appleIntelligenceImportService = inject(
+    AppleIntelligenceAIBeanImportService,
+  );
   private readonly cloudAiBeanImportService = inject(CloudAIBeanImportService);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiFileHelper = inject(UIFileHelper);
@@ -165,6 +167,24 @@ export class BeansPage implements OnDestroy {
   public uiIsTextSearchActive = false;
   public uiSearchText = '';
 
+  private savedScrollPositions: {
+    open: number;
+    archive: number;
+    frozen: number;
+    openHeights: number[];
+    archiveHeights: number[];
+    frozenHeights: number[];
+  } = {
+    open: 0,
+    archive: 0,
+    frozen: 0,
+    openHeights: [],
+    archiveHeights: [],
+    frozenHeights: [],
+  };
+
+  private forceScrollToTop = false;
+
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBeansSort = this.settings.bean_sort.ARCHIVED;
@@ -182,7 +202,11 @@ export class BeansPage implements OnDestroy {
 
     this.beanStorageChangeSubscription = this.uiBeanStorage
       .attachOnEvent()
-      .subscribe((_val) => {
+      .subscribe((val: any) => {
+        // Find if this change emitted a bean we can focus
+        if (val && val.obj && val.obj.config && val.obj.config.uuid) {
+          this.lastInteractedBeanId = val.obj.config.uuid;
+        }
         // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
         this.loadBeans();
       });
@@ -238,20 +262,70 @@ export class BeansPage implements OnDestroy {
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public loadBeans(): void {
+  public loadBeans(resetScroll: boolean = false): void {
+    if (resetScroll) {
+      this.forceScrollToTop = true;
+      if (this.bean_segment === 'open') {
+        this.savedScrollPositions.open = 0;
+        this.savedScrollPositions.openHeights = [];
+      } else if (this.bean_segment === 'archive') {
+        this.savedScrollPositions.archive = 0;
+        this.savedScrollPositions.archiveHeights = [];
+      } else if (this.bean_segment === 'frozen') {
+        this.savedScrollPositions.frozen = 0;
+        this.savedScrollPositions.frozenHeights = [];
+      }
+    } else {
+      this.saveScrollPositions();
+    }
+
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
     this.setUIParams();
   }
 
+  private saveScrollPositions(): void {
+    if (this.openScroll) {
+      this.savedScrollPositions.open = this.openScroll.currentScroll;
+      const hOpen = (this.openScroll as any).previousItemsHeight;
+      if (hOpen && hOpen.length > 0 && hOpen.some((h) => h !== null)) {
+        this.savedScrollPositions.openHeights = [...hOpen];
+      }
+    }
+    if (this.archivedScroll) {
+      this.savedScrollPositions.archive = this.archivedScroll.currentScroll;
+      const hArc = (this.archivedScroll as any).previousItemsHeight;
+      if (hArc && hArc.length > 0 && hArc.some((h) => h !== null)) {
+        this.savedScrollPositions.archiveHeights = [...hArc];
+      }
+    }
+    if (this.frozenScroll) {
+      this.savedScrollPositions.frozen = this.frozenScroll.currentScroll;
+      const hFroz = (this.frozenScroll as any).previousItemsHeight;
+      if (hFroz && hFroz.length > 0 && hFroz.some((h) => h !== null)) {
+        this.savedScrollPositions.frozenHeights = [...hFroz];
+      }
+    }
+  }
+
   public segmentChanged() {
     this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
+    this.saveScrollPositions();
     this.retriggerScroll();
     this.setUIParams();
   }
 
-  public async beanAction(): Promise<void> {
+  private lastInteractedBeanId: string = null;
+
+  public async beanAction(event?: any): Promise<void> {
+    if (event && event.length > 1) {
+      const action = event[0];
+      const bean = event[1];
+      if (bean && bean.config && bean.config.uuid) {
+        this.lastInteractedBeanId = bean.config.uuid;
+      }
+    }
     this.loadBeans();
   }
 
@@ -275,7 +349,7 @@ export class BeansPage implements OnDestroy {
 
       await this.__saveBeanFilter();
 
-      this.loadBeans();
+      this.loadBeans(true);
     }
   }
 
@@ -297,7 +371,7 @@ export class BeansPage implements OnDestroy {
       }
       await this.__saveBeanFilter();
 
-      this.loadBeans();
+      this.loadBeans(true);
     }
   }
 
@@ -347,6 +421,17 @@ export class BeansPage implements OnDestroy {
 
   public research() {
     this.setSearchTextScope(this.bean_segment, this.uiSearchText);
+    this.forceScrollToTop = true;
+    if (this.bean_segment === 'open') {
+      this.savedScrollPositions.open = 0;
+      this.savedScrollPositions.openHeights = [];
+    } else if (this.bean_segment === 'archive') {
+      this.savedScrollPositions.archive = 0;
+      this.savedScrollPositions.archiveHeights = [];
+    } else if (this.bean_segment === 'frozen') {
+      this.savedScrollPositions.frozen = 0;
+      this.savedScrollPositions.frozenHeights = [];
+    }
     this.__initializeBeansView(this.bean_segment);
     this.setUIParams();
   }
@@ -480,7 +565,8 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
       );
 
-      const readiness = await this.aiBeanImportService.checkReadiness();
+      const readiness =
+        await this.appleIntelligenceImportService.checkReadiness();
       if (!readiness.ready) {
         this.uiAnalytics.trackEvent(
           BEAN_TRACKING.TITLE,
@@ -495,7 +581,8 @@ export class BeansPage implements OnDestroy {
         return;
       }
 
-      const bean = await this.aiBeanImportService.captureAndExtractBeanData();
+      const bean =
+        await this.appleIntelligenceImportService.captureAndExtractBeanData();
 
       if (bean !== null) {
         this.uiAnalytics.trackEvent(
@@ -605,7 +692,8 @@ export class BeansPage implements OnDestroy {
         BEAN_TRACKING.ACTIONS.AI_IMPORT_START,
       );
 
-      const readiness = await this.aiBeanImportService.checkReadiness();
+      const readiness =
+        await this.appleIntelligenceImportService.checkReadiness();
       if (!readiness.ready) {
         this.uiAnalytics.trackEvent(
           BEAN_TRACKING.TITLE,
@@ -639,10 +727,11 @@ export class BeansPage implements OnDestroy {
 
       await this.uiAlert.showLoadingSpinner('AI_IMPORT_STEP_EXTRACTING', true);
       try {
-        const result = await this.aiBeanImportService.extractBeanDataFromImages(
-          data.photoPaths,
-          data.attachPhotos,
-        );
+        const result =
+          await this.appleIntelligenceImportService.extractBeanDataFromImages(
+            data.photoPaths,
+            data.attachPhotos,
+          );
         await this.uiAlert.hideLoadingSpinner();
 
         if (result && result.bean) {
@@ -658,10 +747,24 @@ export class BeansPage implements OnDestroy {
           const addModal = await this.modalController.create({
             component: BeansAddComponent,
             id: BeansAddComponent.COMPONENT_ID,
-            componentProps: { bean_template: result.bean },
+            componentProps: {
+              bean_template: result.bean,
+              reuse_attachments: !!result.attachmentPaths?.length,
+            },
           });
           await addModal.present();
-          await addModal.onWillDismiss();
+          const { role: addRole } = await addModal.onWillDismiss();
+
+          // If user cancelled the add modal and photos were attached, clean them up
+          if (addRole !== 'saved' && result.attachmentPaths?.length) {
+            for (const path of result.attachmentPaths) {
+              try {
+                await this.uiFileHelper.deleteInternalFile(path);
+              } catch (e) {
+                // Ignore cleanup errors
+              }
+            }
+          }
         }
       } catch (error: any) {
         await this.uiAlert.hideLoadingSpinner();
@@ -756,10 +859,24 @@ export class BeansPage implements OnDestroy {
           const addModal = await this.modalController.create({
             component: BeansAddComponent,
             id: BeansAddComponent.COMPONENT_ID,
-            componentProps: { bean_template: result.bean },
+            componentProps: {
+              bean_template: result.bean,
+              reuse_attachments: !!result.attachmentPaths?.length,
+            },
           });
           await addModal.present();
-          await addModal.onWillDismiss();
+          const { role: addRole } = await addModal.onWillDismiss();
+
+          // If user cancelled the add modal and photos were attached, clean them up
+          if (addRole !== 'saved' && result.attachmentPaths?.length) {
+            for (const path of result.attachmentPaths) {
+              try {
+                await this.uiFileHelper.deleteInternalFile(path);
+              } catch (e) {
+                // Ignore cleanup errors
+              }
+            }
+          }
         }
       } catch (error: any) {
         await this.uiAlert.hideLoadingSpinner();
@@ -796,20 +913,50 @@ export class BeansPage implements OnDestroy {
   private isCloudProvider(): boolean {
     const settings = this.uiSettingsStorage.getSettings();
     return (
-      settings.cloud_ai_provider !== CLOUD_AI_PROVIDER_ENUM.APPLE_INTELLIGENCE
+      settings.ai_provider !== AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
+      settings.ai_provider !== AI_PROVIDER_ENUM.NO_PROVIDER
     );
   }
 
+  private retriggerScrollTimeout: any;
+
   private retriggerScroll() {
-    setTimeout(() => {
+    if (this.retriggerScrollTimeout) {
+      clearTimeout(this.retriggerScrollTimeout);
+    }
+    this.retriggerScrollTimeout = setTimeout(() => {
       const el = this.beanContent.nativeElement;
+
+      if (!el || el.offsetHeight === 0) {
+        return; // Page is hidden, avoid clearing state
+      }
+
       let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
+      if (this.bean_segment === 'open') {
         scrollComponent = this.openScroll;
-      } else if (this.archivedScroll !== undefined) {
+        if (this.savedScrollPositions.openHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.openHeights,
+          ];
+        }
+      } else if (this.bean_segment === 'archive') {
         scrollComponent = this.archivedScroll;
-      } else if (this.frozenScroll !== undefined) {
+        if (this.savedScrollPositions.archiveHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.archiveHeights,
+          ];
+        }
+      } else if (this.bean_segment === 'frozen') {
         scrollComponent = this.frozenScroll;
+        if (this.savedScrollPositions.frozenHeights?.length) {
+          (scrollComponent as any).previousItemsHeight = [
+            ...this.savedScrollPositions.frozenHeights,
+          ];
+        }
+      }
+
+      if (!scrollComponent) {
+        return;
       }
 
       scrollComponent.el.style.height =
@@ -826,10 +973,107 @@ export class BeansPage implements OnDestroy {
         scrollComponent.refreshData();
       }
 
+      let targetScrollTop = -1;
+      let snapToDomId: string = null;
+
+      if (this.forceScrollToTop) {
+        targetScrollTop = 0;
+        this.forceScrollToTop = false;
+        this.lastInteractedBeanId = null;
+      } else if (this.lastInteractedBeanId) {
+        let index = -1;
+        const viewArray =
+          this.bean_segment === 'open'
+            ? this.openBeans
+            : this.bean_segment === 'archive'
+              ? this.finishedBeans
+              : this.frozenBeans;
+
+        index = viewArray.findIndex((item) => {
+          if (item['beans']) {
+            return item['beans'].some(
+              (b) => b.config.uuid === this.lastInteractedBeanId,
+            );
+          } else {
+            return item['config']?.uuid === this.lastInteractedBeanId;
+          }
+        });
+
+        if (index > -1) {
+          const item = viewArray[index];
+          if (item['beans']) {
+            snapToDomId = 'bean-group-' + item['frozenGroupId'];
+          } else {
+            snapToDomId = 'bean-' + item['config'].uuid;
+          }
+
+          const rowHeight = this.uiIsCollapseActive ? 60 : 210;
+          const heights = (scrollComponent as any).previousItemsHeight;
+
+          let exactOffset = 0;
+          if (heights && heights.length > 0) {
+            for (let i = 0; i < index; i++) {
+              exactOffset += heights[i] ? heights[i] : rowHeight;
+            }
+          } else {
+            exactOffset = index * rowHeight;
+          }
+
+          const viewportTop = this.savedScrollPositions[this.bean_segment];
+          const viewportBottom = viewportTop + el.offsetHeight;
+
+          // Do not aggressively force an element to the uppermost viewport bounds if it is reasonably contained on-screen!
+          if (
+            exactOffset >= viewportTop &&
+            exactOffset < viewportBottom - rowHeight
+          ) {
+            targetScrollTop = viewportTop;
+          } else {
+            targetScrollTop = exactOffset;
+          }
+        }
+        this.lastInteractedBeanId = null;
+      }
+
+      if (
+        targetScrollTop === -1 &&
+        this.savedScrollPositions[this.bean_segment] > 0
+      ) {
+        targetScrollTop = this.savedScrollPositions[this.bean_segment];
+      }
+
+      if (targetScrollTop >= 0) {
+        const contentHeightEl = scrollComponent.el.querySelector(
+          '.content-height',
+        ) as HTMLElement;
+        if (contentHeightEl) {
+          const h = (scrollComponent as any).previousItemsHeight;
+          const rH = this.uiIsCollapseActive ? 60 : 210;
+          let cHeight = 0;
+          if (h && h.length > 0) {
+            cHeight = h.reduce((sum, val) => sum + (val ? val : rH), 0);
+          } else {
+            cHeight =
+              ((scrollComponent as any).originalItems?.length || 0) * rH;
+          }
+          contentHeightEl.style.height = cHeight + 'px';
+        }
+        scrollComponent.el.scrollTop = targetScrollTop;
+      }
+
       setTimeout(() => {
-        /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
         const elScroll = scrollComponent.el;
         elScroll.dispatchEvent(new Event('scroll'));
+
+        // Target the absolute DOM element coordinates
+        if (snapToDomId) {
+          setTimeout(() => {
+            const domNode = document.getElementById(snapToDomId);
+            if (domNode) {
+              domNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }, 50);
+        }
       }, 15);
     }, 250);
   }

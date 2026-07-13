@@ -57,7 +57,7 @@ export class Version implements IVersion {
    * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
    */
   private getUpdatedVersions() {
-    return ['8.6.0'];
+    return ['8.7.0'];
   }
 
   private versionCompare(_actualAppVersion, _updateVersion) {

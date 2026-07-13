@@ -6,6 +6,7 @@ import {
   IonCardContent,
   IonCol,
   IonContent,
+  IonFooter,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -42,6 +43,7 @@ import { PreparationAddTypeComponent } from '../preparation-add-type/preparation
     IonCard,
     IonCardContent,
     IonIcon,
+    IonFooter,
   ],
 })
 export class PreparationAddComponent implements OnInit {
@@ -68,8 +70,9 @@ export class PreparationAddComponent implements OnInit {
   }
 
   public individualPreparationVisible(_key) {
-    if (_key === 'SANREMO_YOU') {
-      if (this.ENVIRONMENT.FEATURES_ACTIVE.SANREMO_YOU === true) {
+    if (_key === 'SANREMO_YOU' || _key === 'MOVE2') {
+      /** Fixed keys here, else we would check all**/
+      if (this.ENVIRONMENT.FEATURES_ACTIVE[_key] === true) {
         return true;
       }
       return false;

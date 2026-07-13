@@ -1,7 +1,7 @@
 @for (beanInformation of this.data.bean_information; track beanInformation; let first = $first; let i = $index; let last = $last) {
   <ion-card style="padding-bottom:6px; display:flex; flex-direction: column;">
     <ion-item  class="ion-padding-top" lines="none" tappable>
-      @if (isBean(data) && data.beanMix.toString() === 'BLEND') {
+      @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
         <span class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
       }
       @else {
@@ -73,7 +73,7 @@
           </ion-label>
         </ion-item>
       }
-      @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage)) {
+      @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage) && (data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
         <ion-item>
           <ion-label>
             <h2>{{"BEAN_DATA_PERCENTAGE" | translate}}:</h2>

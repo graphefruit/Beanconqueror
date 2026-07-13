@@ -9,6 +9,7 @@ import {
 
 import {
   IonContent,
+  IonFooter,
   IonHeader,
   IonIcon,
   ModalController,
@@ -44,6 +45,7 @@ import { UIWaterHelper } from '../../../services/uiWaterHelper';
     HeaderComponent,
     HeaderDismissButtonComponent,
     IonIcon,
+    IonFooter,
   ],
 })
 export class AssociatedBrewsComponent {

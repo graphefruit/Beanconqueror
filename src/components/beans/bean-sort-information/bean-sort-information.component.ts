@@ -28,9 +28,10 @@ import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
-import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 import { BeanInformation } from '../../../generated/src/classes/bean/bean';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
+import { BeanFunction } from '../../../pipes/bean/beanFunction';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
@@ -45,6 +46,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     TranslatePipe,
+    BeanFunction,
     IonCard,
     IonItem,
     IonButton,
@@ -63,6 +65,7 @@ export class BeanSortInformationComponent implements OnInit {
   @Input() public data: Bean | GreenBean;
   @Output() public dataChange = new EventEmitter<Bean | GreenBean>();
   public settings: Settings = undefined;
+  public BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 
   public typeaheadSearch = {};
 
@@ -89,13 +92,6 @@ export class BeanSortInformationComponent implements OnInit {
     );
     this.data.bean_information.push(clonedData);
     // this.data.bean_information.splice(_index, 1);
-  }
-  public isBlend() {
-    if (this.data instanceof Bean) {
-      // #193
-      return BEAN_MIX_ENUM[this.data.beanMix] === BEAN_MIX_ENUM.BLEND;
-    }
-    return false;
   }
 
   public onSearchChange(_type: string, event: any) {

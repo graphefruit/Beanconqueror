@@ -6,6 +6,7 @@ import {
   IonCardContent,
   IonCheckbox,
   IonContent,
+  IonFooter,
   IonHeader,
   IonItem,
   IonLabel,
@@ -52,6 +53,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonFooter,
   ],
 })
 export class PreparationCustomParametersComponent implements OnInit {

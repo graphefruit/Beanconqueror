@@ -11,6 +11,7 @@ import {
 import {
   IonCard,
   IonContent,
+  IonFooter,
   IonHeader,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -36,6 +37,7 @@ declare var Plotly;
     IonCard,
     HeaderComponent,
     HeaderDismissButtonComponent,
+    IonFooter,
   ],
 })
 export class BrewPopoverExtractionComponent implements OnInit {

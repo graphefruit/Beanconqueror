@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { HelperWaterHardnessComponent } from './helper-water-hardness.component';
+import { HelperWaterHardnessComponent } from '../helper-water-hardness.component';
 
 describe('HelperWaterHardnessComponent', () => {
   let component: HelperWaterHardnessComponent;

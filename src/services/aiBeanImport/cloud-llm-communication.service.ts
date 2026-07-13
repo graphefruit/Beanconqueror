@@ -1,7 +1,7 @@
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 
 export interface CloudLLMConfig {
-  provider: CLOUD_AI_PROVIDER_ENUM;
+  provider: AI_PROVIDER_ENUM;
   apiKey: string;
   model: string;
   baseUrl?: string; // for CUSTOM provider
@@ -137,10 +137,10 @@ class AnthropicProtocol implements ProviderProtocol {
 
 function createProtocol(config: CloudLLMConfig): ProviderProtocol {
   switch (config.provider) {
-    case CLOUD_AI_PROVIDER_ENUM.ANTHROPIC:
+    case AI_PROVIDER_ENUM.ANTHROPIC:
       return new AnthropicProtocol(config.apiKey);
 
-    case CLOUD_AI_PROVIDER_ENUM.OPENROUTER:
+    case AI_PROVIDER_ENUM.OPENROUTER:
       return new OpenAICompatibleProtocol(
         'https://openrouter.ai/api/v1',
         config.apiKey,
@@ -150,25 +150,25 @@ function createProtocol(config: CloudLLMConfig): ProviderProtocol {
         },
       );
 
-    case CLOUD_AI_PROVIDER_ENUM.CUSTOM:
+    case AI_PROVIDER_ENUM.CUSTOM:
       return new OpenAICompatibleProtocol(
         (config.baseUrl ?? '').replace(/\/+$/, ''),
         config.apiKey,
       );
 
-    case CLOUD_AI_PROVIDER_ENUM.GOOGLE:
+    case AI_PROVIDER_ENUM.GOOGLE:
       return new OpenAICompatibleProtocol(
         'https://generativelanguage.googleapis.com/v1beta/openai',
         config.apiKey,
       );
 
-    case CLOUD_AI_PROVIDER_ENUM.MISTRAL:
+    case AI_PROVIDER_ENUM.MISTRAL:
       return new OpenAICompatibleProtocol(
         'https://api.mistral.ai/v1',
         config.apiKey,
       );
 
-    case CLOUD_AI_PROVIDER_ENUM.OPENAI:
+    case AI_PROVIDER_ENUM.OPENAI:
     default:
       return new OpenAICompatibleProtocol(
         'https://api.openai.com/v1',

@@ -55,6 +55,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
+import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -62,6 +63,7 @@ import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
 import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { FormatDatePipe } from '../../../pipes/formatDate';
+import { MillFunction } from '../../../pipes/mill/millFunction';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -94,6 +96,7 @@ declare var Plotly;
     BrewFieldVisiblePipe,
     BrewFieldOrder,
     BrewFunction,
+    MillFunction,
     HeaderComponent,
     HeaderDismissButtonComponent,
     HeaderButtonComponent,
@@ -516,6 +519,7 @@ export class BrewDetailComponent {
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;
+  protected readonly MILL_FUNCTION_PIPE_ENUM = MILL_FUNCTION_PIPE_ENUM;
   protected readonly PreparationDeviceType = PreparationDeviceType;
   protected readonly PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   protected readonly SanremoYOUMode = SanremoYOUMode;

@@ -54,6 +54,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { AppEvent } from '../../classes/appEvent/appEvent';
 import { Bean } from '../../classes/bean/bean';
+import BaristamodeBrew from '../../classes/brew/baristamodeBrew';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { BluetoothScale, BluetoothTypes, sleep } from '../../classes/devices';
@@ -75,8 +76,8 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
+import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { CLOUD_AI_PROVIDER_ENUM } from '../../enums/settings/cloudAiProvider';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -102,6 +103,7 @@ import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.
 import { ThemeService } from '../../services/theme/theme.service';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBaristamodeBrewStorage } from '../../services/uiBaristamodeBrewStorage';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIExcel } from '../../services/uiExcel';
@@ -172,6 +174,7 @@ export class SettingsPage {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly uiBaristamodeBrewStorage = inject(UIBaristamodeBrewStorage);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiLog = inject(UILog);
@@ -213,11 +216,9 @@ export class SettingsPage {
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
-
-  public cloudAiProviderEnum = CLOUD_AI_PROVIDER_ENUM;
+  public aiProviderEnum = AI_PROVIDER_ENUM;
 
   public isScrolling: boolean = false;
-
 
   public readonly isAndroid: boolean;
   public readonly isIos: boolean;
@@ -578,7 +579,7 @@ export class SettingsPage {
     return this.platform.is('ios') && this.platform.is('capacitor');
   }
 
-  public onCloudAiProviderChanged(): void {
+  public onAiProviderChanged(): void {
     this.settings.cloud_ai_api_key = '';
     this.settings.cloud_ai_model = '';
     this.settings.cloud_ai_base_url = '';
@@ -586,18 +587,18 @@ export class SettingsPage {
   }
 
   public getModelPlaceholder(): string {
-    switch (this.settings.cloud_ai_provider) {
-      case CLOUD_AI_PROVIDER_ENUM.OPENAI:
+    switch (this.settings.ai_provider) {
+      case AI_PROVIDER_ENUM.OPENAI:
         return 'gpt-4o-mini';
-      case CLOUD_AI_PROVIDER_ENUM.GOOGLE:
+      case AI_PROVIDER_ENUM.GOOGLE:
         return 'gemini-2.0-flash';
-      case CLOUD_AI_PROVIDER_ENUM.ANTHROPIC:
+      case AI_PROVIDER_ENUM.ANTHROPIC:
         return 'claude-sonnet-4-20250514';
-      case CLOUD_AI_PROVIDER_ENUM.MISTRAL:
+      case AI_PROVIDER_ENUM.MISTRAL:
         return 'mistral-small-latest';
-      case CLOUD_AI_PROVIDER_ENUM.OPENROUTER:
+      case AI_PROVIDER_ENUM.OPENROUTER:
         return 'openai/gpt-4o-mini';
-      case CLOUD_AI_PROVIDER_ENUM.CUSTOM:
+      case AI_PROVIDER_ENUM.CUSTOM:
         return 'model-name';
       default:
         return '';
@@ -609,7 +610,7 @@ export class SettingsPage {
       component: CloudModelPickerComponent,
       id: CloudModelPickerComponent.COMPONENT_ID,
       componentProps: {
-        provider: this.settings.cloud_ai_provider,
+        provider: this.settings.ai_provider,
         apiKey: this.settings.cloud_ai_api_key,
         baseUrl: this.settings.cloud_ai_base_url,
       },
@@ -1059,6 +1060,16 @@ export class SettingsPage {
     await this._exportGraphProfiles(exportObjects, exportPath);
   }
 
+  private async exportBaristamodeFlowProfiles(exportPath: {
+    path: string;
+    directory: Directory;
+  }) {
+    const exportObjects: any[] = [
+      ...this.uiBaristamodeBrewStorage.getAllEntries(),
+    ];
+    await this.exportStoredData(exportObjects, exportPath);
+  }
+
   public async export() {
     await this.uiAlert.withLoadingSpinner(async () => {
       // Do an export to the default export location
@@ -1099,6 +1110,7 @@ export class SettingsPage {
       await this.exportAttachments(exportPath);
       await this.exportFlowProfiles(exportPath);
       await this.exportGraphProfiles(exportPath);
+      await this.exportBaristamodeFlowProfiles(exportPath);
     }
 
     await this.uiFileHelper.exportFile(
@@ -1335,7 +1347,7 @@ export class SettingsPage {
   }
 
   private async exportStoredData(
-    _storedData: Brew[] | Graph[],
+    _storedData: Brew[] | Graph[] | BaristamodeBrew[],
     exportPath: {
       path: string;
       directory: Directory;
@@ -1447,6 +1459,17 @@ export class SettingsPage {
     }
   }
 
+  private async _importBaristamodeFlowProfileFiles(
+    _storedData: BaristamodeBrew[],
+    _importDirectory: string,
+  ) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile && entry.flow_profile.length) {
+        await this._importFile(entry.getGraphPath(), _importDirectory);
+      }
+    }
+  }
+
   private async _importFile(
     internalPathToImportTo: string,
     importDirectory: string,
@@ -1504,8 +1527,6 @@ export class SettingsPage {
     // Dynamically import the data here to avoid including it in the normal application bundle
     const dummyData = (await import('../../assets/BeanconquerorTestData.json'))
       .default;
-
-    console.log(dummyData);
 
     if (dummyData.SETTINGS[0].brew_order.before === undefined) {
       this.uiLog.log('Old brew order structure');
@@ -1633,6 +1654,13 @@ export class SettingsPage {
 
             const graphData = this.uiGraphStorage.getAllEntries();
             await this._importGraphProfileFiles(graphData, _importDirectory);
+
+            const baristamodeBrewsData =
+              this.uiBaristamodeBrewStorage.getAllEntries();
+            await this._importBaristamodeFlowProfileFiles(
+              baristamodeBrewsData,
+              _importDirectory,
+            );
           }
 
           if (
@@ -1715,6 +1743,7 @@ export class SettingsPage {
     await this.uiRoastingMachineStorage.reinitializeStorage();
     await this.uiWaterStorage.reinitializeStorage();
     await this.uiGraphStorage.reinitializeStorage();
+    await this.uiBaristamodeBrewStorage.reinitializeStorage();
 
     // Wait for every necessary service to be ready before starting the app
     // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -1731,6 +1760,8 @@ export class SettingsPage {
       this.uiRoastingMachineStorage.storageReady();
     const waterStorageCallback = this.uiWaterStorage.storageReady();
     const graphStorageCallback = this.uiGraphStorage.storageReady();
+    const baristamodeBrewStorageCallback =
+      this.uiBaristamodeBrewStorage.storageReady();
 
     await Promise.all([
       beanStorageReadyCallback,
@@ -1743,6 +1774,7 @@ export class SettingsPage {
       roastingMachineStorageCallback,
       waterStorageCallback,
       graphStorageCallback,
+      baristamodeBrewStorageCallback,
     ]);
     await this.uiUpdate.checkUpdate();
   }

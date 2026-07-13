@@ -18,6 +18,7 @@ import { Brew } from '../classes/brew/brew';
 import { BrewFlow } from '../classes/brew/brewFlow';
 import { BluetoothScale } from '../classes/devices';
 import { PressureDevice } from '../classes/devices/pressureBluetoothDevice';
+import { Mill } from '../classes/mill/mill';
 import { Preparation } from '../classes/preparation/preparation';
 import { PreparationDeviceType } from '../classes/preparationDevice';
 import { Settings } from '../classes/settings/settings';
@@ -349,6 +350,8 @@ export class UIBrewHelper {
       checkData = settingsObj;
     }
 
+    const mill: Mill = brew.getMill();
+
     if (!checkData.manage_parameters.grind_size) {
       brew.grind_size = '';
     }
@@ -356,11 +359,11 @@ export class UIBrewHelper {
       brew.grind_weight = 0;
     }
 
-    if (!checkData.manage_parameters.mill_timer) {
+    if (!mill.has_timer || !checkData.manage_parameters.mill_timer) {
       brew.mill_timer = 0;
       brew.mill_timer_milliseconds = 0;
     }
-    if (!checkData.manage_parameters.mill_speed) {
+    if (!mill.has_adjustable_speed || !checkData.manage_parameters.mill_speed) {
       brew.mill_speed = 0;
     }
     if (!checkData.manage_parameters.pressure_profile) {
@@ -633,6 +636,30 @@ export class UIBrewHelper {
     const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
     if (bean) {
       await this.choosePreparationMethodAndStartBrew(bean);
+    }
+  }
+
+  public async repeatLastBrewForBeanByInternalShareCode(
+    internalBeanShareCode: string,
+  ) {
+    const bean = this.findBeanByInternalShareCode(internalBeanShareCode);
+    if (bean) {
+      const beanHelper = UIBeanHelper.getInstance();
+      let associatedBrews: Array<Brew> = beanHelper
+        ? beanHelper.getAllBrewsForThisBean(bean.config.uuid)
+        : [];
+      associatedBrews = associatedBrews.filter(
+        (e) =>
+          e.getBean().finished === false &&
+          e.getMill().finished === false &&
+          e.getPreparation().finished === false,
+      );
+      if (associatedBrews.length > 0) {
+        associatedBrews = UIBrewHelper.sortBrews(associatedBrews);
+        await this.repeatBrew(associatedBrews[0]);
+      } else {
+        await this.addBrewWithPresetBean(bean);
+      }
     }
   }
 
