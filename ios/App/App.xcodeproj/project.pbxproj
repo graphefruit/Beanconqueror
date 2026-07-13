@@ -373,7 +373,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 8.6.2;
+				MARKETING_VERSION = 8.7.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -399,7 +399,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 8.6.2;
+				MARKETING_VERSION = 8.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
