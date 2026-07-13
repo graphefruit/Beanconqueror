@@ -1,0 +1,4957 @@
+{
+    "NAV_MENU": {
+        "translation": "Menu"
+    },
+    "NAV_HOME": {
+        "translation": "Domov"
+    },
+    "NAV_SETTINGS": {
+        "translation": "Nastavenia"
+    },
+    "NAV_BREWS": {
+        "translation": "Pripravené kávy"
+    },
+    "NAV_BEANS": {
+        "translation": "Zrná"
+    },
+    "NAV_PREPARATION": {
+        "translation": "Metódy"
+    },
+    "NAV_MILL": {
+        "translation": "Mlynčeky"
+    },
+    "NAV_ABOUT_US": {
+        "translation": "O nás"
+    },
+    "NAV_CONTACT": {
+        "translation": "Kontakt"
+    },
+    "NAV_PRIVACY": {
+        "translation": "Súkromie"
+    },
+    "NAV_CREDITS": {
+        "translation": "Poďakovania"
+    },
+    "NAV_TERMS": {
+        "translation": "Podmienky a pravidlá"
+    },
+    "NAV_THANKS": {
+        "translation": "Vďaka!"
+    },
+    "NAV_LICENCES": {
+        "translation": "Licencie OSS"
+    },
+    "NAV_STATISTICS": {
+        "translation": "Štatistiky"
+    },
+    "NAV_IMPRESSUM": {
+        "translation": "Impressum"
+    },
+    "NAV_COOKIE": {
+        "translation": "Cookies"
+    },
+    "NAV_LOGS": {
+        "translation": "Logy"
+    },
+    "NAV_BREW_PARAMS": {
+        "translation": "Parametre prípravy"
+    },
+    "NAV_INFORMATION_TO_APP": {
+        "translation": "O Beanconqueror"
+    },
+    "NAV_WATER_SECTION": {
+        "translation": "Voda"
+    },
+    "NAV_HELPER": {
+        "translation": "Výpočty"
+    },
+    "POPOVER_BREWS_OPTION_REPEAT": {
+        "translation": "Opakovať"
+    },
+    "POPOVER_BREWS_OPTION_DETAIL": {
+        "translation": "Detaily"
+    },
+    "DETAIL": {
+        "translation": "Detaily"
+    },
+    "POPOVER_BREWS_OPTION_EDIT": {
+        "translation": "Upraviť"
+    },
+    "POPOVER_BREWS_OPTION_DELETE": {
+        "translation": "Vymazať"
+    },
+    "POPOVER_BREWS_OPTION_PHOTO_GALLERY": {
+        "translation": "Fotogaléria"
+    },
+    "POPOVER_BREWS_OPTION_CUPPING": {
+        "translation": "Cupping"
+    },
+    "POPOVER_BREWS_OPTION_MAP_COORDINATES": {
+        "translation": "Ukázať na mape"
+    },
+    "POPOVER_BREWS_OPTION_FAST_REPEAT": {
+        "translation": "Rýchle opakovanie prípravy"
+    },
+    "PAGE_BREWS_NO_ENTRIES": {
+        "translation": "Zatiaľ neboli pridané žiadne prípravy kávy"
+    },
+    "PAGE_BREWS_NO_ARCHIVED_ENTRIES": {
+        "translation": "Zatiaľ ste nearchivovali žiadne prípravy"
+    },
+    "CANT_START_NEW_BREW_TITLE": {
+        "translation": "Niečo tu chýba..."
+    },
+    "CANT_START_NEW_BREW_DESCRIPTION": {
+        "translation": "Pre začiatok vytvorte popis k jednému druhu kávových zŕn, jednej metóde prípravy a jednému mlynčeku. Pomocou menu prejdite medzi kategóriami a pridajte tieto informácie."
+    },
+    "PAGE_HOME_WELCOME_GREETINGS": {
+        "translation": "Teší nás!"
+    },
+    "PAGE_HOME_TOTAL_BREW": {
+        "translation": "Príprava"
+    },
+    "PAGE_HOME_TOTAL_BREWS": {
+        "translation": "Prípravy"
+    },
+    "PAGE_HOME_BEAN_EXPLORED": {
+        "translation": "Zrná preskúmané"
+    },
+    "PAGE_HOME_BEANS_EXPLORED": {
+        "translation": "Zrná preskúmané"
+    },
+    "PAGE_HOME_LAST_BREWS": {
+        "translation": "Posledné prípravy"
+    },
+    "PAGE_HOME_LAST_BREW": {
+        "translation": "Posledná príprava"
+    },
+    "PAGE_HOME_DIFFERENT_PREPARATION_METHODS": {
+        "translation": "Rôzne metódy prípravy"
+    },
+    "PAGE_HOME_DIFFERENT_MILLS": {
+        "translation": "Rôzne mlynčeky"
+    },
+    "PAGE_HOME_SUPPORTER": {
+        "translation": "Podporovateľ aplikácie"
+    },
+    "PAGE_HOME_START_BREW": {
+        "translation": "Začnite s prípravou"
+    },
+    "PAGE_BEANS_LIST_OBTAINABLE": {
+        "translation": "Dostupné"
+    },
+    "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS": {
+        "translation": "Došli vám čerstvé zrná!"
+    },
+    "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS": {
+        "translation": "Nemáte žiadne archivované zrná."
+    },
+    "PAGE_MILL_LIST_NO_MILL_EXISTING": {
+        "translation": "Zatiaľ ste nepridali žiadne mlynčeky."
+    },
+    "PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING": {
+        "translation": "Zatiaľ ste nepridali žiadne metódy prípravy."
+    },
+    "PAGE_CONTACT_SUGGESTIONS_QUESTIONS_WISHES": {
+        "translation": "Návrhy, otázky, bugy alebo žiadosti?"
+    },
+    "PAGE_THANKS_THANKS_FOR_YOUR_SUPPORT": {
+        "translation": "Ďakujeme za vašu podporu!"
+    },
+    "PAGE_SETTINGS_LANGUAGE": {
+        "translation": "Nastavenia jazyka"
+    },
+    "PAGE_SETTINGS_LANGUAGE_GERMAN": {
+        "translation": "Nemčina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_ENGLISH": {
+        "translation": "Angličtina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_SPANISH": {
+        "translation": "Španielčina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_TURKISH": {
+        "translation": "Turečtina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_CHINESE": {
+        "translation": "Čínština"
+    },
+    "PAGE_SETTINGS_GENERAL_SETTINGS": {
+        "translation": "Všeobecné nastavenia"
+    },
+    "PAGE_SETTINGS_TRANSFER": {
+        "translation": "Preniesť údaje"
+    },
+    "PAGE_SETTINGS_PRESET_LAST_BREW": {
+        "translation": "Prednastavené hodnoty?"
+    },
+    "PAGE_SETTINGS_DISPLAY": {
+        "translation": "Zobrazenie"
+    },
+    "PAGE_SETTINGS_DISPLAY_SINGLE_PAGE": {
+        "translation": "Jedna stránka"
+    },
+    "PAGE_SETTINGS_DISPLAY_PAGING": {
+        "translation": "Stránkovanie"
+    },
+    "PAGE_SETTINGS_STARTUP_VIEW": {
+        "translation": "Úvodná stránka"
+    },
+    "PAGE_SETTINGS_ANALYTICS_INFORMATION": {
+        "translation": "Analytika"
+    },
+    "PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP": {
+        "translation": "Stlačte i pre viac informácií"
+    },
+    "PAGE_SETTINGS_TRACK_BREW_COORDINATES": {
+        "translation": "Uložiť zemepisnú polohu prípravy"
+    },
+    "PAGE_SETTINGS_FAST_REPEAT": {
+        "translation": "Rýchle opakovanie prípravy"
+    },
+    "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION": {
+        "translation": "Sledovať spotrebu kofeínu"
+    },
+    "PAGE_SETTINGS_WAKE_LOCK": {
+        "translation": "Udržiavať displej aktívny počas prípravy"
+    },
+    "PAGE_SETTINGS_CURRENCY": {
+        "translation": "Mena"
+    },
+    "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": {
+        "translation": "Metódy prípravy"
+    },
+    "PAGE_STATISTICS_TOTAL_GROUND_BEANS": {
+        "translation": "Celkom mletých zŕn"
+    },
+    "PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE": {
+        "translation": "Peňazí minutých na zrná"
+    },
+    "PAGE_STATISTICS_DRUNKEN_BREWS": {
+        "translation": "Pripravených káv celkovo"
+    },
+    "PAGE_STATISTICS_BREW_PROCESSES": {
+        "translation": "Príprav spolu"
+    },
+    "PAGE_STATISTICS_DRUNKEN_QUANTITY": {
+        "translation": "Vypité množstvo"
+    },
+    "PAGE_STATISTICS_BEAN_WEIGHT_USED": {
+        "translation": "Celkové množstvo premletého zrna"
+    },
+    "PAGE_BREW_TEXT_INFORMATION_FROM_ROASTER": {
+        "translation": "Informácie o pražiarovi"
+    },
+    "PAGE_ABOUT_NO_VERSION_AVAILABLE": {
+        "translation": "Nie je k dispozícii žiadna verzia"
+    },
+    "PAGE_ABOUT_APP_VERSION": {
+        "translation": "Verzia aplikácie"
+    },
+    "PAGE_LICENCES_WEBSITE": {
+        "translation": "Webová stránka"
+    },
+    "BEAN_DATA_ROAST_NAME": {
+        "translation": "Stupeň praženia"
+    },
+    "BEAN_DATA_CUSTOM_ROAST_NAME": {
+        "translation": "Vlastný stupeň praženia"
+    },
+    "BEAN_DATA_ROASTING_DATE": {
+        "translation": "Dátum praženia"
+    },
+    "BEAN_DATA_ROASTER": {
+        "translation": "Pražiar"
+    },
+    "BEAN_DATA_VARIETY": {
+        "translation": "Odroda"
+    },
+    "BEAN_DATA_PROCESSING": {
+        "translation": "Spracovanie"
+    },
+    "BEAN_DATA_COUNTRY": {
+        "translation": "Krajina"
+    },
+    "BEAN_DATA_MIX": {
+        "translation": "Zmes"
+    },
+    "BEAN_DATA_AROMATICS": {
+        "translation": "Chuťový profil"
+    },
+    "BEAN_DATA_WEIGHT": {
+        "translation": "Váha"
+    },
+    "BEAN_DATA_COST": {
+        "translation": "Cena"
+    },
+    "BEAN_DATA_NAME": {
+        "translation": "Názov"
+    },
+    "BEAN_DATA_REGION": {
+        "translation": "Región"
+    },
+    "BEAN_DATA_FARM": {
+        "translation": "Farma"
+    },
+    "BEAN_DATA_FARMER": {
+        "translation": "Farmár"
+    },
+    "BEAN_DATA_ELEVATION": {
+        "translation": "Nadmorská výška"
+    },
+    "BEAN_DATA_HARVEST_TIME": {
+        "translation": "Zber"
+    },
+    "BEAN_DATA_PERCENTAGE": {
+        "translation": "Podiel"
+    },
+    "BEAN_DATA_CERTIFICATION": {
+        "translation": "Certifikácia zŕn"
+    },
+    "BEAN_DATA_ROASTING_TYPE": {
+        "translation": "Typ praženia"
+    },
+    "BEAN_DATA_DECAFFEINATED": {
+        "translation": "Zbavená kofeínu"
+    },
+    "BEAN_DATA_URL": {
+        "translation": "Webstránka"
+    },
+    "BEAN_DATA_EAN": {
+        "translation": "EAN \/ Číslo artiklu"
+    },
+    "BEAN_DATA_PURCHASING_PRICE": {
+        "translation": "Nákupná cena"
+    },
+    "BEAN_DATA_FOB_PRICE": {
+        "translation": "FOB cena"
+    },
+    "BEAN_DATA_CUPPING_POINTS": {
+        "translation": "Cuppingové skóre"
+    },
+    "BREW_DATA_CUSTOM_BREW_TIME": {
+        "translation": "Vlastný čas prípravy"
+    },
+    "BREW_CREATION_DATE": {
+        "translation": "Dátum vytvorenia"
+    },
+    "REPEAT": {
+        "translation": "Opakovať"
+    },
+    "EDIT": {
+        "translation": "Upraviť"
+    },
+    "DELETE": {
+        "translation": "Vymazať"
+    },
+    "FINISHED": {
+        "translation": "Archivovať"
+    },
+    "NOTES": {
+        "translation": "Poznámky"
+    },
+    "ADD_PHOTO": {
+        "translation": "Pridať fotografiu"
+    },
+    "CANCEL": {
+        "translation": "Zrušiť"
+    },
+    "GENERATE": {
+        "translation": "Generovať"
+    },
+    "SAVE": {
+        "translation": "Uložiť"
+    },
+    "ADD_SOMETHING": {
+        "translation": "Pridať"
+    },
+    "CONTACT": {
+        "translation": "Kontakt"
+    },
+    "NAME": {
+        "translation": "Meno"
+    },
+    "IMPORT": {
+        "translation": "Importovať"
+    },
+    "EXPORT": {
+        "translation": "Exportovať"
+    },
+    "VIEW": {
+        "translation": "Zobraziť"
+    },
+    "ARCHIVE": {
+        "translation": "Archív"
+    },
+    "CURRENT": {
+        "translation": "Súčasný"
+    },
+    "BACK": {
+        "translation": "Späť"
+    },
+    "CLOSE": {
+        "translation": "Zatvoriť"
+    },
+    "DAY": {
+        "translation": "Deň"
+    },
+    "BREW_DATA_TEMPERATURE_TIME": {
+        "translation": "Teplota Čas"
+    },
+    "BREW_DATA_SURF_TIME": {
+        "translation": "Čas surfovania"
+    },
+    "BREW_DATA_TIME": {
+        "translation": "Čas"
+    },
+    "BREW_DATA_GRIND_SIZE": {
+        "translation": "Nastavenie mletia"
+    },
+    "BREW_DATA_GRIND_WEIGHT": {
+        "translation": "Mletá káva (gr)"
+    },
+    "BREW_DATA_IN_OUT_BR": {
+        "translation": "Vstup\/výstup (BR)"
+    },
+    "BREW_DATA_NOTES": {
+        "translation": "Poznámky"
+    },
+    "BREW_DATA_PREPARATION_METHOD": {
+        "translation": "Metóda prípravy"
+    },
+    "BREW_DATA_MILL": {
+        "translation": "Mlynček"
+    },
+    "BREW_DATA_MILL_SPEED": {
+        "translation": "Rýchlosť mletia (rpm)"
+    },
+    "BREW_DATA_MILL_TIMER": {
+        "translation": "Čas mletia"
+    },
+    "BREW_DATA_BREW_QUANTITY": {
+        "translation": "Množstvo vody"
+    },
+    "BREW_DATA_BEAN_TYPE": {
+        "translation": "Typ zrna"
+    },
+    "BREW_DATA_BREW_TEMPERATURE": {
+        "translation": "Teplota prípravy"
+    },
+    "BREW_DATA_PRESSURE_PROFILE": {
+        "translation": "Profil"
+    },
+    "BREW_DATA_COFFEE_TYPE": {
+        "translation": "Typ kávy"
+    },
+    "BREW_DATA_COFFEE_CONCENTRATION": {
+        "translation": "Koncentrácia kávy"
+    },
+    "BREW_DATA_COFFEE_FIRST_DRIP_TIME": {
+        "translation": "Čas prvých kvapiek"
+    },
+    "BREW_DATA_COFFEE_BLOOMING_TIME": {
+        "translation": "Čas bloomingu \/ predinfúzie"
+    },
+    "BREW_DATA_ATTACHMENTS": {
+        "translation": "Prílohy \/ fotografie"
+    },
+    "BREW_DATA_RATING": {
+        "translation": "Hodnotenie"
+    },
+    "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": {
+        "translation": "Čas prípravy kávy"
+    },
+    "BREW_DATA_TDS": {
+        "translation": "Celkový počet rozpustených pevných látok (TDS) %"
+    },
+    "BREW_DATA_CALCULATED_EXTRACTION_YIELD": {
+        "translation": "Výťažok %"
+    },
+    "BREW_INFORMATION_BREW_RATIO": {
+        "translation": "Pomer"
+    },
+    "BREW_INFORMATION_BEAN_AGE": {
+        "translation": "Vek zŕn"
+    },
+    "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": {
+        "translation": "Typ množstva"
+    },
+    "BREW_DATA_TDS_EY": {
+        "translation": "TDS \/ %EY"
+    },
+    "BREW_DATA_BREW_BEVERAGE_QUANTITY": {
+        "translation": "Množstvo nápoja"
+    },
+    "BREW_DATA_PREPARATION_METHOD_TOOL": {
+        "translation": "Pomôcky pre prípravu"
+    },
+    "BREW_DATA_WATER": {
+        "translation": "Voda"
+    },
+    "BREW_DATA_BEAN_WEIGHT_IN": {
+        "translation": "Váha zŕn (g)"
+    },
+    "BREW_DATA_VESSEL": {
+        "translation": "Nádoba"
+    },
+    "BREW_DATA_VESSEL_WEIGHT": {
+        "translation": "Váha nádoby"
+    },
+    "BREW_DATA_VESSEL_NAME": {
+        "translation": "Meno nádoby"
+    },
+    "BREW_DATA_FLAVOR": {
+        "translation": "Chuť"
+    },
+    "BREW_DATA_FLOW_PROFILE": {
+        "translation": "Prietok"
+    },
+    "ONE_DAY": {
+        "translation": "Deň"
+    },
+    "DAYS": {
+        "translation": "Dni"
+    },
+    "ONE_HOUR": {
+        "translation": "hodina"
+    },
+    "HOURS": {
+        "translation": "hodiny"
+    },
+    "ONE_MINUTE": {
+        "translation": "minúta"
+    },
+    "MINUTES": {
+        "translation": "minúty"
+    },
+    "WITHOUT_COFFEE": {
+        "translation": "bez kávy"
+    },
+    "NOT_FOUND": {
+        "translation": "Nenájdené"
+    },
+    "INVALID_FILE_FORMAT": {
+        "translation": "Neplatný formát súboru"
+    },
+    "FILE_NOT_FOUND_INFORMATION": {
+        "translation": "Súbor nebol nájdený"
+    },
+    "ERROR_ON_FILE_READING": {
+        "translation": "Chyba pri čítaní súboru"
+    },
+    "IMPORT_SUCCESSFULLY": {
+        "translation": "Import úspešný"
+    },
+    "IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED": {
+        "translation": "Import neúspešný, žiadne údaje neboli zmenené"
+    },
+    "INVALID_FILE_DATA": {
+        "translation": "Neplatný obsah súboru"
+    },
+    "DOWNLOADED": {
+        "translation": "Stiahnuté"
+    },
+    "FILE_DOWNLOADED_SUCCESSFULLY": {
+        "translation": "Súbor '{{fileName}}' bol úspešne stiahnutý do vášho priečinka Stiahnuté!"
+    },
+    "NO": {
+        "translation": "Nie"
+    },
+    "YES": {
+        "translation": "Áno"
+    },
+    "SURE_QUESTION": {
+        "translation": "Ste si istí?"
+    },
+    "DELETE_BREW_QUESTION": {
+        "translation": "Vymazať prípravu?"
+    },
+    "DELETE_BEAN_QUESTION": {
+        "translation": "Zmazať tieto zrná? Všetky prípravy spojené s nimi budú tiež vymazané!"
+    },
+    "DELETE_GREEN_BEAN_QUESTION": {
+        "translation": "Zmazať toto zelené zrno? Všetky pražené zrná a prípravy spojené s ním budú tiež vymazané!"
+    },
+    "DELETE_MILL_QUESTION": {
+        "translation": "Zmazať tento mlynček? Všetky prípravy spojené s ním budú tiež vymazané!"
+    },
+    "DELETE_PREPARATION_METHOD_QUESTION": {
+        "translation": "Zmazať metódu prípravy? Všetky prípravy spojené s ňou budú tiež vymazané!"
+    },
+    "DELETE_PREPARATION_TOOL_QUESTION": {
+        "translation": "Zmazať pomôcku pre prípravu? Všetky prípravy spojené s ňou budú tiež vymazané!"
+    },
+    "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": {
+        "translation": "Aplikácia sa nemohla správne spustiť kvôli chýbajúcemu súborovému systému"
+    },
+    "CARE": {
+        "translation": "Starostlivosť"
+    },
+    "ERROR_OCCURED": {
+        "translation": "Vyskytla sa chyba"
+    },
+    "CSV_FILE_NOT_DOWNLOADED": {
+        "translation": "Súbor CSV nebolo možné stiahnuť!"
+    },
+    "CSV_FILE_DOWNLOADED_SUCCESSFULLY": {
+        "translation": "CSV súbor '{{fileName}}' bol úspešne uložený do vášho priečinka stiahnutých súborov!"
+    },
+    "ADD_BREW": {
+        "translation": "Pridať prípravu"
+    },
+    "CHOOSE": {
+        "translation": "Vybrať"
+    },
+    "CHOOSE_PHOTO_OR_LIBRARY": {
+        "translation": "Odfoťte fotografiu alebo vyberte z galérie."
+    },
+    "RECORD": {
+        "translation": "Odfotiť"
+    },
+    "PAGE_BEAN_INFORMATION": {
+        "translation": "Informácie o zrnách"
+    },
+    "PAGE_BEAN_INFORMATION_GOOD_BREWS": {
+        "translation": "Dobrých"
+    },
+    "PAGE_BEAN_INFORMATION_BAD_BREWS": {
+        "translation": "Zlých"
+    },
+    "PAGE_BEAN_INFORMATION_COUNT_BREWS": {
+        "translation": "Celkom pripravených"
+    },
+    "INFORMATION": {
+        "translation": "Informácie"
+    },
+    "PAGE_BEAN_BREW_CHART_TITLE": {
+        "translation": "Prehľad príprav týchto zŕn"
+    },
+    "PAGE_BEAN_INFORMATION_AWESOME_BREWS": {
+        "translation": "Úžasné"
+    },
+    "PAGE_BEAN_INFORMATION_NORMAL_BREWS": {
+        "translation": "Obyčajné"
+    },
+    "PAGE_BEAN_INFORMATION_NOT_RATED_BREWS": {
+        "translation": "Nehodnotené"
+    },
+    "PAGE_PREPARATION_INFORMATION_BREWS_DONE": {
+        "translation": "Pripravených touto metódou"
+    },
+    "PAGE_PREPARATION_INFORMATION_BREWED_QUANTITY": {
+        "translation": "Pripravené množstvo"
+    },
+    "PAGE_PREPARATION_INFORMATION_GRIND_WEIGHT": {
+        "translation": "Spotrebovaná hmotnosť zrna"
+    },
+    "PAGE_PREPARATION_INFORMATION_TIME_SPENT_BREWING": {
+        "translation": "Čas strávený prípravou"
+    },
+    "PAGE_PREPARATION_INFORMATION": {
+        "translation": "Informácie o príprave"
+    },
+    "SECONDS": {
+        "translation": "Sekundy"
+    },
+    "PAGE_MILL_INFORMATION": {
+        "translation": "Informácie o mlynčeku"
+    },
+    "PAGE_MILL_INFORMATION_BREWS_DONE": {
+        "translation": "Pripravených s týmto mlynčekom"
+    },
+    "PAGE_MILL_INFORMATION_GRIND_WEIGHT": {
+        "translation": "Hmotnosť namletého zrna"
+    },
+    "PAGE_HELPER_WATER_HARDNESS": {
+        "translation": "Tvrdosť vody"
+    },
+    "PAGE_HELPER_WATER_HARDNESS_CA_CONTENTS": {
+        "translation": "Obsah vápnika mg\/l"
+    },
+    "PAGE_HELPER_WATER_HARDNESS_MG_CONTENTS": {
+        "translation": "Obsah horčíka mg\/l"
+    },
+    "PAGE_HELPER_WATER_HARDNESS_GERMAN_HARDNESS": {
+        "translation": "Tvrdosť v nemeckých stupňoch"
+    },
+    "PAGE_HELPER_WATER_HARDNESS_TOTAL_HARDNESS": {
+        "translation": "Celková tvrdosť"
+    },
+    "PAGE_HELPER_BREW_RATIO": {
+        "translation": "Pomer"
+    },
+    "PAGE_HELPER_BREW_RATIO_GROUND_COFFEE": {
+        "translation": "Mletá káva (gr)"
+    },
+    "PAGE_HELPER_BREW_RATIO_WATER": {
+        "translation": "Tekutina (gr\/ml)"
+    },
+    "PAGE_HELPER_BREW_RATIO_CALCULATED": {
+        "translation": "Vypočítaný pomer extrakcie"
+    },
+    "PAGE_SETTINGS_SHOW_ARCHIVED_BREWS": {
+        "translation": "Zobrazovať archivované prípravy"
+    },
+    "PAGE_SETTINGS_SHOW_ARCHIVED_BEANS": {
+        "translation": "Zobrazovať archivované zrná"
+    },
+    "PAGE_SETTINGS_SHOW_ARCHIVED_GREEN_BEANS": {
+        "translation": "Zobrazovať archivované zelené zrno"
+    },
+    "CUPPING_SCORE": {
+        "translation": "Skóre"
+    },
+    "CUPPING_SCORE_DRY_FRAGRANCE": {
+        "translation": "Vôňa za sucha"
+    },
+    "CUPPING_SCORE_WET_AROMA": {
+        "translation": "Vôňa za mokra"
+    },
+    "CUPPING_SCORE_BRIGHTNESS": {
+        "translation": "Acidita"
+    },
+    "CUPPING_SCORE_FLAVOR": {
+        "translation": "Chuť"
+    },
+    "CUPPING_SCORE_BODY": {
+        "translation": "Telo"
+    },
+    "CUPPING_SCORE_FINISH": {
+        "translation": "Dochuť"
+    },
+    "CUPPING_SCORE_SWEETNESS": {
+        "translation": "Sladkosť"
+    },
+    "CUPPING_SCORE_CLEAN_CUP": {
+        "translation": "Čistota"
+    },
+    "CUPPING_SCORE_COMPLEXITY": {
+        "translation": "Komplexnosť"
+    },
+    "CUPPING_SCORE_UNIFORMITY": {
+        "translation": "Jednotnosť"
+    },
+    "CUPPING_SCORE_CUPPERS_CORRECTION": {
+        "translation": "Cupperova korekcia"
+    },
+    "CUPPING_SCORE_DRY_FRAGRANCE_TOOLTIP": {
+        "translation": "Označuje arómu suchej mletej kávy pred pridaním horúcej vody."
+    },
+    "CUPPING_SCORE_WET_AROMA_TOOLTIP": {
+        "translation": "Vôňa mokrej mletej kávy po pridaní horúcej vody."
+    },
+    "CUPPING_SCORE_BRIGHTNESS_TOOLTIP": {
+        "translation": "Acidita je chuť jasných tónov v káve spôsobená súborom kyselín chlorogénovej, citrónovej, chinínovej, octovej a ďalších, ktoré cítiť najmä v prednej časti úst a jazyka. (Je to dobrá vlastnosť; nesúvisí s horkosťou kávy a nie je priamo zodpovedná za žalúdočné ťažkosti). Acidita je cenená mnohými cuppermi a priamo súvisí s kvalitou kávy, pretože je produktom vplyvu nadmorskej výšky pri pestovaní kávy."
+    },
+    "CUPPING_SCORE_FLAVOR_TOOLTIP": {
+        "translation": "Toto je celkový dojem v ústach vrátane všetkých ostatných hodnotení. Existujú 4 skupiny „primárnych chutí“ (kyslá, sladká, slaná, horká) a mnoho „sekundárnych chutí“."
+    },
+    "CUPPING_SCORE_BODY_TOOLTIP": {
+        "translation": "Často nazývané „pocit v ústach“ (mouthfeel), telo je pocit hmotnosti a hustoty pripravenej kávy spôsobený percentom rozpustných pevných látok v šálke vrátane všetkých extrahovaných organických zlúčenín (spôsob prípravy a množstvo použitej mletej kávy to výrazne ovplyvňuje). Telo hodnotíme nižšie, pretože kávy s ľahkým telom vôbec nie sú zlé a pri niektorých krajinách pôvodu ľahšie telo najlepšie sedí k celkovému charakteru šálky."
+    },
+    "CUPPING_SCORE_FINISH_TOOLTIP": {
+        "translation": "Pretrvávajúce alebo vznikajúce chute, ktoré sa objavia po vyprázdnení úst. Patrí sem aj čas, keď káva opúšťa ústa, až do niekoľkých minút po nej... to je dôvod, prečo mnohí cupperi prehodnocujú hodnotenie dochuti, keď po minúte alebo dvoch stále pociťujú pozitívnu chuť."
+    },
+    "CUPPING_SCORE_SWEETNESS_TOOLTIP": {
+        "translation": "Sladkosť je v káve takmer vždy žiaducou vlastnosťou, aj napriek eufemistickám opisom ako „rustikálna sladkosť“ alebo „horká sladkosť“. Môžete si všimnúť, že rafinovaná sladkosť (myslite na európske pečivo, jemné cukríky, biely cukor, čistú sladkosť) je vysoko hodnotená, rovnako ako komplexná sladkosť z ovocných cukrov (fruktóza). Sladová sladkosť (maltóza) je menej tradičná, ale celkom žiaduca a môže byť od čistého medu až po komplexnú, rustikálnu, takmer kvasnicovú. V zásade platí, že ak je sladkosť v šálke kľúčová, bude hodnotená dobre."
+    },
+    "CUPPING_SCORE_CLEAN_CUP_TOOLTIP": {
+        "translation": "Všimnite si, že „čistá šálka“ neznamená, že v káve nie sú nečistoty. Ide len o chuť, pretože aj surové, funky kávy, ktoré sú chuťovo „nečisté“ môžu byť celkom žiaduce, ako napríklad mokro spracovaná indonézska káva zo Sumatry alebo sucho spracované etiópske a jemenské druhy."
+    },
+    "CUPPING_SCORE_COMPLEXITY_TOOLTIP": {
+        "translation": "Komplexnosť dopĺňa hodnotenia „chuť“ a „dochuť“, aby vyjadrila mnohé alebo vrstvené chute. Znamená to, že v šálke je toho veľa na objavenie. Na druhej strane, jednoduché kávy môžu byť úľavou po nadmernom vystavení sa mnohým silným, intenzívnym a komplexným kávam."
+    },
+    "CUPPING_SCORE_UNIFORMITY_TOOLTIP": {
+        "translation": "Jednotnosť sa vzťahuje na rozdiely medzi jednotlivými šálkami. Sucho spracované kávy môžu byť od prírody menej jednotné ako mokro spracované kávy. Nikdy sa nevyhýbame lotu, ktorý má fantastickú chuť, ale s občasnými odchýlkami. Toto sa hodnotí počas cuppingového protokolu, kde sa z každého posudzovaného lotu pripraví viacero šálok."
+    },
+    "CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP": {
+        "translation": "Toto je adaptované zo systému SCAA a bodovania Cup of Excellence (niekedy sa to nazýva „Celkové body“). Umožňuje to špecialistovi zabezpečiť, aby súhrnné skóre správne vyjadrovalo celkový dojem zo šálky. Môžete tento prístup kritizovať a považovať ho za „falšovanie“ celkového skóre. V istom zmysle by ste mali pravdu... ale bolo by oveľa horšie zmeniť skóre kategórie, aby ste dosiahli požadovaný celkový výsledok (dať káve 9 za kyslosť, keď viete, že je to 7), alebo naopak, aby káva, ktorá si absolútne zaslúži 90, skončila na 84. Konkrétne číslo cupperovej korekcie nie je dôležité, či už je to 5 alebo 8... myšlienka je, že celkové skóre poskytuje správny dojem o kvalite kávy."
+    },
+    "CUPPING_SCORE_TOOLTIP": {
+        "translation": "100-95 = Ohromujúce, 90-94 = Vynikajúce, 85-89 = Veľmi dobré, 80-84 = Dobré, 75-79 = Uspokojivé, 70-74 = Slabé"
+    },
+    "DETAIL_BREW": {
+        "translation": "Detaily prípravy"
+    },
+    "DETAIL_BEAN": {
+        "translation": "Podrobnosti o zrnách"
+    },
+    "DETAIL_MILL": {
+        "translation": "Detaily mlynčeka"
+    },
+    "DETAIL_PREPARATION": {
+        "translation": "Detaily prípravy"
+    },
+    "EDIT_BREW": {
+        "translation": "Upraviť prípravu"
+    },
+    "ADD_BEAN": {
+        "translation": "Pridať zrno"
+    },
+    "EDIT_BEAN": {
+        "translation": "Upraviť zrno"
+    },
+    "ADD_PREPARATION": {
+        "translation": "Pridať spôsob prípravy"
+    },
+    "EDIT_PREPARATION": {
+        "translation": "Upraviť spôsob prípravy"
+    },
+    "ADD_MILL": {
+        "translation": "Pridať mlynček"
+    },
+    "EDIT_MILL": {
+        "translation": "Upraviť mlynček"
+    },
+    "USE_FILTER": {
+        "translation": "Použiť filter"
+    },
+    "RESET_FILTER": {
+        "translation": "Zrušiť filter"
+    },
+    "COFFEE_GRAMS_GRINDED": {
+        "translation": "Gramy namleté"
+    },
+    "BEANS_USED": {
+        "translation": "Spotrebovaných zŕn"
+    },
+    "BREW_HEADER_BEFORE_BREW": {
+        "translation": "Pred prípravou"
+    },
+    "BREW_HEADER_WHILE_BREW": {
+        "translation": "Počas prípravy"
+    },
+    "BREW_HEADER_AFTER_BREW": {
+        "translation": "Po príprave"
+    },
+    "BREW_HEADER_CUPPING": {
+        "translation": "Ochutnávanie"
+    },
+    "BEANS_CONSUMED": {
+        "translation": "Archív"
+    },
+    "NAV_MANAGE_PARAMETERS": {
+        "translation": "Spravovať parametre"
+    },
+    "NAV_SORT_PARAMETERS": {
+        "translation": "Zoradiť parametre"
+    },
+    "NAV_DEFAULT_PARAMETERS": {
+        "translation": "Definovať predvolené parametre"
+    },
+    "PAGE_SORT_PARAMETERS_DESCRIPTION": {
+        "translation": "Potiahnite a pustite parametre, aby ste určili poradie, v akom sa budú zobrazovať."
+    },
+    "PAGE_MANAGE_PARAMETERS_DESCRIPTION": {
+        "translation": "Označte, ktoré parametre sa majú zobrazovať pri úprave informácií o príprave."
+    },
+    "PAGE_DEFAULT_PARAMETERS_DESCRIPTION": {
+        "translation": "Označte, ktoré parametre majú predvolene obsahovať poslednú použitú hodnotu."
+    },
+    "SORT_PARAMETERS_BEFORE": {
+        "translation": "Pred prípravou"
+    },
+    "SORT_PARAMETERS_MEANWHILE": {
+        "translation": "Počas prípravy"
+    },
+    "SORT_PARAMETERS_AFTER": {
+        "translation": "Po príprave"
+    },
+    "MORE_INFORMATION": {
+        "translation": "Viac informácií"
+    },
+    "UNDERSTOOD": {
+        "translation": "Rozumiem"
+    },
+    "WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE": {
+        "translation": "Analytika a sledovanie"
+    },
+    "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": {
+        "translation": "Chceme pre vás neustále zlepšovať aplikáciu, webové stránky a naše budúce služby. Na tento účel potrebujeme sledovať niektoré údaje o tom, ako používate aplikáciu a jej funkcie. Sľubujeme však, že nikdy nebudeme sledovať žiadne osobné údaje. Na zabezpečenie týchto sľubov používame Matomo, open source službu zameranú na bezpečnosť údajov a ochranu súkromia, ktorá je umiestnená na našom vlastnom serveri - to zaručuje, že údaje vlastníme len my. Na našej webovej stránke nájdete všetky informácie o parametroch, ktoré sledujeme a tiež si môžete pozrieť zdrojový kód, ktorý je 100 % otvorený. Máte otázky? Potom nás neváhajte kontaktovať."
+    },
+    "ANALYTICS_INFORMATION_TITLE": {
+        "translation": "Analytika a sledovanie"
+    },
+    "ANALYTICS_INFORMATION_DESCRIPTION": {
+        "translation": "Ako viete, bezpečnosť vašich údajov a vaše súkromie sú našou najvyššou prioritou.<br\/><br\/>Z tohto dôvodu sme prešli od služby Google Analytics k open source službe Matomo zameranej na bezpečnosť údajov a súkromie, ktorá je umiestnená na našom vlastnom serveri - to znamená, že máme plné vlastníctvo údajov.<br\/><br\/>Sledované parametre sa nezmenili a stále sľubujeme, že nikdy nebudeme sledovať žiadne osobné údaje.<br\/><br\/>Na našej webovej stránke nájdete všetky informácie o sledovaných parametroch a navyše si môžete pozrieť zdrojový kód, ktorý je 100 % otvorený.<br\/><br\/>Máte otázky?<br\/><br\/>Tak nás neváhajte kontaktovať."
+    },
+    "ACTIVATE": {
+        "translation": "Aktivovať"
+    },
+    "DO_NOT_ACTIVE": {
+        "translation": "Neaktivovať"
+    },
+    "WELCOME_PAGE_BEAN_TITLE": {
+        "translation": "Zrná"
+    },
+    "WELCOME_PAGE_BEAN_DESCRIPTION": {
+        "translation": "Príprava kávy bez zŕn je tak trochu zložitá. Ak chcete začať, pridajte prvé zrná!"
+    },
+    "WELCOME_PAGE_BEAN_ADD": {
+        "translation": "Pridať zrná"
+    },
+    "SKIP": {
+        "translation": "Preskočiť"
+    },
+    "WELCOME_PAGE_PREPARATION_TITLE": {
+        "translation": "Metóda prípravy"
+    },
+    "WELCOME_PAGE_PREPARATION_DESCRIPTION": {
+        "translation": "V60, Aeropress, Espresso - existuje mnoho spôsobov prípravy kávy. Pridajte aspoň jeden."
+    },
+    "WELCOME_PAGE_PREPARATION_ADD": {
+        "translation": "Pridať spôsob prípravy"
+    },
+    "WELCOME_PAGE_MILL_TITLE": {
+        "translation": "Mlynček"
+    },
+    "WELCOME_PAGE_MILL_DESCRIPTION": {
+        "translation": "Takmer hotovo, ale potrebujete niečo na namletie zŕn! Pridajte aspoň jeden mlynček."
+    },
+    "WELCOME_PAGE_MILL_ADD": {
+        "translation": "Pridať mlynček"
+    },
+    "WELCOME_PAGE_TITLE": {
+        "translation": "Vitajte!"
+    },
+    "WELCOME_PAGE_BEAN_HEADLINE": {
+        "translation": "Prvé zrná"
+    },
+    "WELCOME_PAGE_PREPARATION_HEADLINE": {
+        "translation": "Pridajte spôsob prípravy"
+    },
+    "WELCOME_PAGE_MILL_HEADLINE": {
+        "translation": "Prvý mlynček"
+    },
+    "WELCOME_PAGE_LETS_START_HEADLINE": {
+        "translation": "Teraz sa môžeme pustiť do prípravy!"
+    },
+    "WELCOME_PAGE_LETS_START_TITLE": {
+        "translation": "Teraz sa môžeme pustiť do prípravy!"
+    },
+    "WELCOME_PAGE_LETS_START_DESCRIPTION": {
+        "translation": "Gratulujeme, ste pripravení na najlepšiu kávu svojho života. Prajeme vám veľa zábavy a šírte lásku k dobrej káve!"
+    },
+    "PREPARATION_TYPE": {
+        "translation": "Metóda prípravy"
+    },
+    "PREPARATION_TYPE_NAME": {
+        "translation": "Meno"
+    },
+    "ARCHIVED": {
+        "translation": "Archivované"
+    },
+    "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS": {
+        "translation": "Zobraziť archivované metódy prípravy"
+    },
+    "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS": {
+        "translation": "Zobraziť archivované mlynčeky"
+    },
+    "PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING": {
+        "translation": "Zatiaľ neboli archivované žiadne mlynčeky."
+    },
+    "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": {
+        "translation": "Nemáte archivované žiadne metódy prípravy."
+    },
+    "TOAST_BREW_ADDED_SUCCESSFULLY": {
+        "translation": "Príprava bola úspešne pridaná"
+    },
+    "TOAST_BREW_REPEATED_SUCCESSFULLY": {
+        "translation": "Príprava bola úspešne zopakovaná"
+    },
+    "TOAST_BEAN_ADDED_SUCCESSFULLY": {
+        "translation": "Zrno bolo úspešne pridané"
+    },
+    "TOAST_MILL_ADDED_SUCCESSFULLY": {
+        "translation": "Mlynček bol úspešne pridaný"
+    },
+    "TOAST_PREPARATION_ADDED_SUCCESSFULLY": {
+        "translation": "Metóda prípravy bola úspešne pridaná"
+    },
+    "TOAST_WATER_ADDED_SUCCESSFULLY": {
+        "translation": "Voda bola úspešne pridaná"
+    },
+    "TOAST_BREW_DELETED_SUCCESSFULLY": {
+        "translation": "Príprava bola vymazaná"
+    },
+    "TOAST_BEAN_DELETED_SUCCESSFULLY": {
+        "translation": "Zrno bolo odstránené"
+    },
+    "TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY": {
+        "translation": "Zelené zrno bolo odstránené"
+    },
+    "TOAST_MILL_DELETED_SUCCESSFULLY": {
+        "translation": "Mlynček bol odstránený"
+    },
+    "TOAST_WATER_DELETED_SUCCESSFULLY": {
+        "translation": "Voda bola odstránená"
+    },
+    "TOAST_PREPARATION_DELETED_SUCCESSFULLY": {
+        "translation": "Metóda prípravy bola odstránená"
+    },
+    "TOAST_BREW_EDITED_SUCCESSFULLY": {
+        "translation": "Príprava bola upravená"
+    },
+    "TOAST_BEAN_EDITED_SUCCESSFULLY": {
+        "translation": "Zrno bolo upravené"
+    },
+    "TOAST_MILL_EDITED_SUCCESSFULLY": {
+        "translation": "Mlynček bol upravený"
+    },
+    "TOAST_PREPARATION_EDITED_SUCCESSFULLY": {
+        "translation": "Metóda prípravy bola upravená"
+    },
+    "TOAST_WATER_EDITED_SUCCESSFULLY": {
+        "translation": "Voda bola upravená"
+    },
+    "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": {
+        "translation": "Zrno bolo archivované"
+    },
+    "TOAST_MILL_ARCHIVED_SUCCESSFULLY": {
+        "translation": "Mlynček bol archivovaný"
+    },
+    "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": {
+        "translation": "Metóda prípravy bola archivovaná"
+    },
+    "TOAST_WATER_ARCHIVED_SUCCESSFULLY": {
+        "translation": "Voda bola archivovaná"
+    },
+    "BEAN_WEIGHT_ALREADY_USED": {
+        "translation": "{{gramUsed}}g z {{gramTotal}}g ({{leftOver}}g)"
+    },
+    "PREPARATION_TYPE_CUSTOM_PREPARATION": {
+        "translation": "Vlastná metóda prípravy"
+    },
+    "PREPARATION_TYPE_AEROPRESS": {
+        "translation": "Aeropress"
+    },
+    "PREPARATION_TYPE_V60": {
+        "translation": "V60"
+    },
+    "PREPARATION_TYPE_CHEMEX": {
+        "translation": "Chemex"
+    },
+    "PREPARATION_TYPE_BIALETTI": {
+        "translation": "Bialetti"
+    },
+    "PREPARATION_TYPE_PORTAFILTER": {
+        "translation": "Espresso kávovar"
+    },
+    "PREPARATION_TYPE_KALITA_WAVE": {
+        "translation": "Kalita Wave"
+    },
+    "PREPARATION_TYPE_FRENCH_PRESS": {
+        "translation": "French Press"
+    },
+    "PREPARATION_TYPE_SWANNECK": {
+        "translation": "Labutí krk"
+    },
+    "PREPARATION_TYPE_DRIPPER": {
+        "translation": "Dripper"
+    },
+    "PREPARATION_TYPE_DELTER_PRESS": {
+        "translation": "Delter Press"
+    },
+    "PREPARATION_TYPE_COLD_BREW": {
+        "translation": "Cold Brew"
+    },
+    "PREPARATION_TYPE_AEROPRESS_INVERTED": {
+        "translation": "Invertovaný Aeropress"
+    },
+    "PREPARATION_TYPE_TURKISH": {
+        "translation": "Turecká"
+    },
+    "PREPARATION_TYPE_BLUE_DRIPPER": {
+        "translation": "Blue Dripper"
+    },
+    "PREPARATION_TYPE_ADD_CUSTOM": {
+        "translation": "Pridať vlastnú metódu"
+    },
+    "PREPARATION_TYPE_GINA": {
+        "translation": "Gina"
+    },
+    "PREPARATION_TYPE_KONO": {
+        "translation": "Kono"
+    },
+    "PREPARATION_TYPE_ORIGAMI": {
+        "translation": "Origami"
+    },
+    "PREPARATION_TYPE_CAFELAT": {
+        "translation": "Cafelat"
+    },
+    "PREPARATION_TYPE_OREA": {
+        "translation": "Orea"
+    },
+    "PREPARATION_TYPE_COLD_DRIP": {
+        "translation": "Cold drip"
+    },
+    "PREPARATION_TYPE_HAND_LEVER": {
+        "translation": "Ručná páka"
+    },
+    "PREPARATION_TYPE_FLAIR": {
+        "translation": "Flair"
+    },
+    "PREPARATION_TYPE_APRIL_BREWER": {
+        "translation": "April Brewer"
+    },
+    "PREPARATION_TYPE_ESPRO_BLOOM": {
+        "translation": "Espro Bloom"
+    },
+    "PREPARATION_TYPE_FELLOW_STAGG": {
+        "translation": "Fellow Stagg"
+    },
+    "PREPARATION_TYPE_HSIAO_50": {
+        "translation": "Hsiao 50"
+    },
+    "PREPARATION_TYPE_KARLSBADER_KANNE": {
+        "translation": "Karlsbader"
+    },
+    "PREPARATION_TYPE_MOCCA_MASTER": {
+        "translation": "Mocca Master"
+    },
+    "PREPARATION_TYPE_SIPHON": {
+        "translation": "Syphon"
+    },
+    "CHOOSE_BEANS": {
+        "translation": "Vyberte zrná"
+    },
+    "CHOOSE_BEAN": {
+        "translation": "Vyberte zrno"
+    },
+    "CHOOSE_WATERS": {
+        "translation": "Vyberte vody"
+    },
+    "CHOOSE_WATER": {
+        "translation": "Vyberte vodu"
+    },
+    "CHOOSE_PREPARATIONS": {
+        "translation": "Vyberte metódy prípravy"
+    },
+    "CHOOSE_PREPARATION": {
+        "translation": "Vyberte metódu prípravy"
+    },
+    "CHOOSE_MILLS": {
+        "translation": "Vyberte mlynčeky"
+    },
+    "CHOOSE_MILL": {
+        "translation": "Vyberte mlynček"
+    },
+    "BEAN": {
+        "PLACE_HOLDER": {
+            "BEAN_DATA_NAME": {
+                "translation": "Pridajte meno"
+            },
+            "BEAN_DATA_ROAST_NAME": {
+                "translation": "Pridajte stupeň praženia"
+            },
+            "BEAN_DATA_ROASTING_DATE": {
+                "translation": "Kedy bolo zrno pražené?"
+            },
+            "BEAN_DATA_ROASTER": {
+                "translation": "Kto pražil zrno?"
+            },
+            "BEAN_DATA_VARIETY": {
+                "translation": "Pridajte odrodu kávy"
+            },
+            "BEAN_DATA_PROCESSING": {
+                "translation": "Spravovanie kávy, napr. premyté (washed)"
+            },
+            "BEAN_DATA_COUNTRY": {
+                "translation": "Aký je pôvod zrna?"
+            },
+            "BEAN_DATA_MIX": {
+                "translation": "Aký je pomer zložiek zmesi?"
+            },
+            "BEAN_DATA_AROMATICS": {
+                "translation": "Pridajte príchute"
+            },
+            "BEAN_DATA_WEIGHT": {
+                "translation": "Váha zrna"
+            },
+            "BEAN_DATA_COST": {
+                "translation": "Koľko stálo zrno?"
+            },
+            "BEAN_DATA_REGION": {
+                "translation": "Pridajte región"
+            },
+            "BEAN_DATA_FARM": {
+                "translation": "Pridajte farmu"
+            },
+            "BEAN_DATA_FARMER": {
+                "translation": "Pridajte farmára"
+            },
+            "BEAN_DATA_ELEVATION": {
+                "translation": "V akej nadmorskej výške bolo zrno vypestované?"
+            },
+            "BEAN_DATA_HARVEST_TIME": {
+                "translation": "Kedy bolo zrno zberané?"
+            },
+            "BEAN_DATA_BUY_DATE": {
+                "translation": "Kedy bolo zrno kúpené?"
+            },
+            "BEAN_DATA_PERCENTAGE": {
+                "translation": "Pridajte podiel tohto zrna v zmesi"
+            },
+            "BEAN_DATA_CERTIFICATION": {
+                "translation": "Pridajte certifikáciu zrna (napr. fair trade, bio)"
+            },
+            "BEAN_DATA_ROASTING_TYPE": {
+                "translation": "Pridajte typ praženia"
+            },
+            "BEAN_DATA_DECAFFEINATED": {
+                "translation": "Je táto káva zbavená kofeínu?"
+            },
+            "BEAN_DATA_URL": {
+                "translation": "Pridajte odkaz na webovú stránku"
+            },
+            "BEAN_DATA_EAN": {
+                "translation": "Pridajte EAN alebo číslo artiklu"
+            },
+            "BEAN_DATA_CUPPING_POINTS": {
+                "translation": "Pridajte cuppingové skóre"
+            },
+            "BEAN_DATA_PURCHASING_PRICE": {
+                "translation": "Pridajte nákupnú cenu"
+            },
+            "BEAN_DATA_FOB_PRICE": {
+                "translation": "Pridajte cenu FOB"
+            },
+            "NOTES": {
+                "translation": "Pridajte poznámky k tomuto zrnu"
+            },
+            "CHOOSE_DATA_ROASTER": {
+                "translation": "Vyberte pražiara"
+            },
+            "CHOOSE_DATA_ROASTING_TYPE": {
+                "translation": "Vyberte typ praženia"
+            },
+            "BEAN_DATA_BEST_DATE": {
+                "translation": ""
+            },
+            "BEAN_DATA_OPEN_DATE": {
+                "translation": ""
+            },
+            "FROZEN_NOTES": {
+                "translation": ""
+            }
+        }
+    },
+    "PREPARATION": {
+        "PLACE_HOLDER": {
+            "PREPARATION_TYPE_NAME": {
+                "translation": "Pridať meno"
+            },
+            "NOTES": {
+                "translation": "Pridajte poznámky k tejto metóde prípravy"
+            }
+        }
+    },
+    "MILL": {
+        "PLACE_HOLDER": {
+            "NAME": {
+                "translation": "Pridať meno"
+            },
+            "NOTES": {
+                "translation": "Pridajte poznámky k tomuto mlynčeku"
+            }
+        }
+    },
+    "BREW": {
+        "PLACE_HOLDER": {
+            "BREW_DATA_GRIND_SIZE": {
+                "translation": "Zadajte nastavenie mletia"
+            },
+            "BREW_DATA_GRIND_WEIGHT": {
+                "translation": "Zadajte množstvo kávy (gr)"
+            },
+            "BREW_DATA_BREW_TEMPERATURE": {
+                "translation": "Zadajte teplotu prípravy"
+            },
+            "BREW_DATA_PREPARATION_METHOD": {
+                "translation": "Vyberte metódu prípravy"
+            },
+            "BREW_DATA_BEAN_TYPE": {
+                "translation": "Vyberte zrná"
+            },
+            "BREW_DATA_MILL": {
+                "translation": "Vyberte mlynček"
+            },
+            "BREW_DATA_MILL_SPEED": {
+                "translation": "Zadajte rýchlosť mletia"
+            },
+            "BREW_DATA_MILL_TIMER": {
+                "translation": "Zadajte čas mletia"
+            },
+            "BREW_DATA_PRESSURE_PROFILE": {
+                "translation": "Profil tlaku\/prietoku, metodika prípravy"
+            },
+            "BREW_DATA_TEMPERATURE_TIME": {
+                "translation": "Zadajte čas, počas ktorého sa stroj mohol zahrievať"
+            },
+            "BREW_DATA_COFFEE_BLOOMING_TIME": {
+                "translation": "Aká dlhá bola doba bloomingu?"
+            },
+            "BREW_DATA_COFFEE_FIRST_DRIP_TIME": {
+                "translation": "Kedy sa objavila prvá kvapka?"
+            },
+            "BREW_DATA_BREW_QUANTITY": {
+                "translation": "Koľko vody ste použili na prípravu?"
+            },
+            "BREW_DATA_COFFEE_TYPE": {
+                "translation": "Zadajte štýl kávy (napr. ristretto)"
+            },
+            "BREW_DATA_COFFEE_CONCENTRATION": {
+                "translation": "Zadajte koncentráciu kávy"
+            },
+            "BREW_DATA_TDS": {
+                "translation": "Aké bolo meranie celkových rozpustených pevných látok (TDS)?"
+            },
+            "BREW_DATA_NOTES": {
+                "translation": "Pridajte poznámky k tejto príprave"
+            },
+            "BREW_DATA_BREW_BEVERAGE_QUANTITY": {
+                "translation": "Pridajte celkové množstvo nápoja"
+            },
+            "BREW_DATA_PREPARATION_METHOD_TOOL": {
+                "translation": "Prosím vyberte si pomôcky pre prípravu"
+            },
+            "BREW_DATA_WATER": {
+                "translation": "Vyberte použitú vodu"
+            },
+            "BREW_DATA_BEAN_WEIGHT_IN": {
+                "translation": "Akú hmotnosť zrna ste použili?"
+            }
+        }
+    },
+    "ROASTED_BEFORE": {
+        "translation": "Pražené pred"
+    },
+    "DAY_OLD": {
+        "translation": "deň staré"
+    },
+    "DAYS_OLD": {
+        "translation": "dní staré"
+    },
+    "BEANS_AMOUNT_USED": {
+        "translation": "Spotrebované"
+    },
+    "CUPPING_BREW": {
+        "translation": "Tasting"
+    },
+    "COFFEE_DRUNKEN_QUANTITY": {
+        "translation": "Vypitá káva"
+    },
+    "IMAGE_DELETED": {
+        "translation": "Obrázok bol odstránený"
+    },
+    "IMAGE_NOT_DELETED": {
+        "translation": "Obrázok nemohol byť odstránený"
+    },
+    "EXTERNAL_STORAGE_NOT_SUPPORTED": {
+        "translation": "Prepáčte, externé úložiská nepodporujeme"
+    },
+    "BEANS_ARCHIVED": {
+        "translation": "Archivované"
+    },
+    "TAB_ARCHIVE": {
+        "translation": "Archív"
+    },
+    "TODAY": {
+        "translation": "Dnes"
+    },
+    "PLEASE_WAIT": {
+        "translation": "Počkajte, prosím..."
+    },
+    "PREPARATION_STYLE_POUR_OVER": {
+        "translation": "Zalievaná"
+    },
+    "PREPARATION_STYLE_ESPRESSO": {
+        "translation": "Espresso"
+    },
+    "PREPARATION_STYLE_FULL_IMMERSION": {
+        "translation": "Imerzia (ponorenie)"
+    },
+    "PREPARATION_STYLE_PERCOLATION": {
+        "translation": "Perkolácia (prietok)"
+    },
+    "PREPARATION_TYPE_STYLE": {
+        "translation": "Štýl prípravy"
+    },
+    "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": {
+        "translation": "Aktivuje novú položku v menu - pomocou nej môžete prípravu kávy opakovať identicky."
+    },
+    "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": {
+        "translation": "Uložiť geolokačné dáta ku každej príprave."
+    },
+    "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": {
+        "translation": "Sledovať skonzumovené množstvo kofeínu"
+    },
+    "UPDATE_TITLE": {
+        "translation": "Čo je nové?"
+    },
+    "NEXT": {
+        "translation": "Ďalej"
+    },
+    "CUSTOM_PARAMETERS": {
+        "translation": "Prispôsobiť parametre"
+    },
+    "CUSTOM_DEFAULT_PARAMETERS": {
+        "translation": "Predvolené"
+    },
+    "CUSTOM_MANAGE_PARAMETERS": {
+        "translation": "Spravovať"
+    },
+    "CUSTOM_SORT_PARAMETERS": {
+        "translation": "Zoradiť"
+    },
+    "BREW_PARAMETER_CUSTOMIZE_TITLE": {
+        "translation": "Vlastné parametre pre každú metódu prípravy"
+    },
+    "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": {
+        "translation": "Chcete si vybrať vlastné parametre pre každú metódu prípravy? Prejdite na „Metódy“, otvorte ponuku konkrétnej metódy prípravy a vyberte možnosť „Prispôsobiť parametre“. Tam si môžete vybrať, ktoré parametre sa použijú pre túto metódu!"
+    },
+    "BREW_DATA_BREW_QUANTITY_TOOLTIP": {
+        "translation": "Množstvo vody (nepoužiteľné pre espresso)"
+    },
+    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": {
+        "translation": "Čas prvých kvapiek (len espresso)"
+    },
+    "BREW_DATA_PREPARATION_METHOD_TOOLTIP": {
+        "translation": "Príprava (prispôsobiteľná iba vtedy, keď je aktívna)"
+    },
+    "PAGE_SETTINGS_GENERAL": {
+        "translation": "Všeobecné nastavenia"
+    },
+    "EDIT_PREPARATION_CUSTOM_PARAMETERS": {
+        "translation": "Prispôsobiť parametre"
+    },
+    "ENABLE_PREPARATION_CUSTOM_PARAMETERS": {
+        "translation": "Použiť vlastné parametre"
+    },
+    "BEAN_ADD_ANOTHER_SORT": {
+        "translation": "Pridať ďalší typ zŕn"
+    },
+    "BEAN_SORT": {
+        "translation": "Typ zŕn"
+    },
+    "BEAN_SORT_INFORMATION": {
+        "translation": "Informácie o odrode"
+    },
+    "BEAN_SORT_MORE_INFORMATION": {
+        "translation": "Viac informácií"
+    },
+    "NAVIGATE_TO_PREPARATION_METHODS": {
+        "translation": "Prejdite na metódy prípravy"
+    },
+    "PREPARATION_TOOLS": {
+        "translation": "Pomôcky pre prípravu"
+    },
+    "PREPARATION_TOOLS_INFORMATION": {
+        "translation": "Pridajte rôzne sitká, nástroje WDT pre váš kávovar; látkové, papierové alebo sieťové filtre pre prelievanú kávu atď."
+    },
+    "PREPARATION_TOOLS_PLACEHOLDER": {
+        "translation": "Papierový alebo látkový filter, VST 20g, 14g sitko atď."
+    },
+    "PREPARATION_PARAMETERS_CUSTOMIZED": {
+        "translation": "Parametre prispôsobené"
+    },
+    "BEANS_WEIGHT_AVAILABLE": {
+        "translation": "Zŕn dostupných"
+    },
+    "SORT_ORDER": {
+        "translation": "Zmeniť poradie zoradenia"
+    },
+    "ASCENDING": {
+        "translation": "Vzostupne"
+    },
+    "DESCENDING": {
+        "translation": "Zostupne"
+    },
+    "SORT_AFTER": {
+        "translation": "Triediť po"
+    },
+    "BEAN_SORT_NAME_OF_BEAN": {
+        "translation": "Meno zŕn"
+    },
+    "BEAN_SORT_ROASTER": {
+        "translation": "Pražiar"
+    },
+    "BEAN_SORT_ROASTING_DATE": {
+        "translation": "Dátum praženia"
+    },
+    "BEAN_TAB_ROAST_INFORMATION": {
+        "translation": "Informácie o pražení"
+    },
+    "BEAN_TAB_GENERAL_INFORMATION": {
+        "translation": "Všeobecné"
+    },
+    "BEAN_TAB_SORT_INFORMATION": {
+        "translation": "Informácie o odrode"
+    },
+    "PAGE_SETTINGS_MANAGE_ARCHIVE": {
+        "translation": "Spravovať archív"
+    },
+    "LAST_USE": {
+        "translation": "Naposledy použité"
+    },
+    "SEARCH": {
+        "translation": "Vyhľadávanie"
+    },
+    "OVERVIEW": {
+        "translation": "Prehľad"
+    },
+    "BEAN_HEADER_ADDITIONALE_INFORMATION": {
+        "translation": "Ďalšie informácie"
+    },
+    "THREE_DEE_TOUCH_ACTION_BREW": {
+        "translation": "Príprava"
+    },
+    "THREE_DEE_TOUCH_ACTION_BEAN": {
+        "translation": "Zrná"
+    },
+    "THREE_DEE_TOUCH_ACTION_PREPARATION": {
+        "translation": "Metóda prípravy"
+    },
+    "THREE_DEE_TOUCH_ACTION_MILL": {
+        "translation": "Mlynček"
+    },
+    "PAGE_CREDITS_NOT_EXISTING": {
+        "translation": "Bez obsahu"
+    },
+    "TIMER_HOUR": {
+        "translation": "Hodiny"
+    },
+    "TIMER_MINUTES": {
+        "translation": "Minúty"
+    },
+    "TIMER_SECONDS": {
+        "translation": "Sekundy"
+    },
+    "EXCEL": {
+        "BEAN": {
+            "CREATION_DATE": {
+                "translation": "Dátum vytvorenia"
+            },
+            "ID": {
+                "translation": "ID zŕn"
+            }
+        },
+        "PREPARATION": {
+            "CREATION_DATE": {
+                "translation": "Dátum vytvorenia"
+            },
+            "ID": {
+                "translation": "ID prípravy"
+            }
+        },
+        "GRINDER": {
+            "CREATION_DATE": {
+                "translation": "Dátum vytvorenia"
+            },
+            "ID": {
+                "translation": "ID mlynčeka"
+            }
+        }
+    },
+    "EXCEL_EXPORT": {
+        "translation": "Export do Excelu"
+    },
+    "HEALTH_KIT_QUESTION_TITLE": {
+        "translation": "Sledovať spotrebu kofeínu"
+    },
+    "HEALTH_KIT_QUESTION_MESSAGE": {
+        "translation": "Po aktivácii sa približný obsah kofeínu z každého nápoja automaticky uloží do aplikácie Apple Health"
+    },
+    "NAV_ROASTING_SECTION": {
+        "translation": "Praženie zŕn"
+    },
+    "ROASTING_SECTION": {
+        "NAV_GREEN_BEANS": {
+            "translation": "Zelené zrná"
+        },
+        "NAV_ROASTING_MACHINE": {
+            "translation": "Pražičky"
+        },
+        "ROASTING_MACHINE": {
+            "TOTAL_ROAST_QUANTITY": {
+                "translation": "Celková upražená hmotnosť"
+            },
+            "TOTAL_ROAST_COUNT": {
+                "translation": "Počet pražení"
+            }
+        },
+        "GREEN_BEAN": {
+            "ADD": {
+                "translation": "Pridať"
+            },
+            "EDIT": {
+                "translation": "Upraviť"
+            },
+            "DETAIL": {
+                "translation": "Podrobnosti o zelenom zrne"
+            },
+            "ROASTABLE": {
+                "translation": "Pražiteľné"
+            },
+            "NO_ROASTS_YET": {
+                "translation": "Zatiaľ žiadne praženia"
+            }
+        },
+        "BEAN": {
+            "DROP_TEMPERATURE": {
+                "translation": "Finálna teplota praženia"
+            },
+            "ROAST_LENGTH": {
+                "translation": "Dĺžka praženia"
+            },
+            "ROASTER_MACHINE": {
+                "translation": "Pražička"
+            },
+            "GREEN_BEAN_WEIGHT": {
+                "translation": "Hmotnosť zeleného zrna"
+            },
+            "OUTSIDE_TEMPERATURE": {
+                "translation": "Okolitá teplota"
+            },
+            "HUMIDITY": {
+                "translation": "Vlhkosť"
+            },
+            "FIRST_CRACK_MINUTE": {
+                "translation": "Minúta prvého cracku"
+            },
+            "FIRST_CRACK_TEMPERATURE": {
+                "translation": "Teplota prvého cracku"
+            },
+            "SECOND_CRACK_MINUTE": {
+                "translation": "Minúta druhého cracku"
+            },
+            "SECOND_CRACK_TEMPERATURE": {
+                "translation": "Teplota druhého cracku"
+            },
+            "PLACE_HOLDER": {
+                "DROP_TEMPERATURE": {
+                    "translation": "Finálna teplota praženia"
+                },
+                "ROAST_LENGTH": {
+                    "translation": "Dĺžka praženia"
+                },
+                "ROASTER_MACHINE": {
+                    "translation": "Pražička"
+                },
+                "GREEN_BEAN_WEIGHT": {
+                    "translation": "Hmotnosť zeleného zrna"
+                },
+                "OUTSIDE_TEMPERATURE": {
+                    "translation": "Okolitá teplota"
+                },
+                "HUMIDITY": {
+                    "translation": "Vlhkosť"
+                },
+                "FIRST_CRACK_MINUTE": {
+                    "translation": "Minúta prvého cracku"
+                },
+                "FIRST_CRACK_TEMPERATURE": {
+                    "translation": "Teplota prvého cracku"
+                },
+                "SECOND_CRACK_TEMPERATURE": {
+                    "translation": "Teplota druhého cracku"
+                },
+                "SECOND_CRACK_MINUTE": {
+                    "translation": "Minúta druhého cracku"
+                }
+            },
+            "WEIGHT_LOSS": {
+                "translation": ""
+            }
+        }
+    },
+    "PAGE_SETTINGS_MANAGE_SECTIONS": {
+        "translation": "Viac sekcií"
+    },
+    "PAGE_SETTINGS_SHOW_ROASTING_SECTION": {
+        "translation": "Aktivovať sekciu praženia"
+    },
+    "PAGE_SETTINGS_SHOW_WATER_SECTION": {
+        "translation": "Aktivovať sekciu vody"
+    },
+    "PAGE_SETTINGS_SHOW_CUPPING_SECTION": {
+        "translation": "Aktivovať sekciu cuppingu"
+    },
+    "BEAN_DATA_BUY_DATE": {
+        "translation": "Dátum nákupu"
+    },
+    "BEAN_SORT_CREATION_DATE": {
+        "translation": "Dátum vytvorenia"
+    },
+    "BEAN_SORT_PURCHASE_DATE": {
+        "translation": "Dátum nákupu"
+    },
+    "BEAN_ROAST_COUNT": {
+        "translation": "Počet pražení"
+    },
+    "TRANSFER_ROAST": {
+        "translation": "Praženie"
+    },
+    "BEAN_TAB_LINKED_ROASTS": {
+        "translation": "Praženia"
+    },
+    "BEAN_DATA_WEIGHT_AFTER_ROASTING": {
+        "translation": "Hmotnosť po upražení"
+    },
+    "TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY": {
+        "translation": "Zelené zrno pridané"
+    },
+    "TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY": {
+        "translation": "Zelené zrno upravené"
+    },
+    "TOAST_GREEN_BEAN_ARCHIVED_SUCCESSFULLY": {
+        "translation": "Zelené zrno archivované"
+    },
+    "TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY": {
+        "translation": "Pražička pridaná"
+    },
+    "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": {
+        "translation": "Pražička upravená"
+    },
+    "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": {
+        "translation": "Pražička archivovaná"
+    },
+    "DELETE_ROASTING_MACHINE_QUESTION": {
+        "translation": "Zmazať túto pražičku? Všetky pražené zrná spojené s ňou budú aktualizované, ale nie vymazané"
+    },
+    "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": {
+        "translation": "Pražička vymazaná"
+    },
+    "EDIT_ROASTING_MACHINE": {
+        "translation": "Upraviť"
+    },
+    "DETAIL_ROASTING_MACHINE": {
+        "translation": "Podrobnosti pražičky"
+    },
+    "DELETE_WATER_QUESTION": {
+        "translation": "Zmazať túto vodu? Všetky prípravy spojené s ňou budú aktualizované, ale nie vymazané"
+    },
+    "ROASTING_MACHINE": {
+        "PLACE_HOLDER": {
+            "NAME": {
+                "translation": "Pridať meno"
+            },
+            "NOTES": {
+                "translation": "Pridajte poznámky k tejto pražičke"
+            }
+        }
+    },
+    "NAV_ROASTING_MACHINE": {
+        "translation": "Pražičky"
+    },
+    "PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING": {
+        "translation": "Nepridali ste pražičku"
+    },
+    "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": {
+        "translation": "Nearchivovali ste pražičku"
+    },
+    "CHOOSE_ROASTING_MACHINES": {
+        "translation": "Vyberte pražičku"
+    },
+    "CHOOSE_ROASTING_MACHINE": {
+        "translation": "Vyberte pražičku"
+    },
+    "POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE": {
+        "translation": "Obľúbené"
+    },
+    "TOAST_BREW_FAVOURITE_ADDED": {
+        "translation": "Pridané medzi obľúbené"
+    },
+    "TOAST_BREW_FAVOURITE_REMOVED": {
+        "translation": "Odstránené z obľúbených"
+    },
+    "BREW_FILTER_JUST_FAVOURITE": {
+        "translation": "Obľúbené"
+    },
+    "STATISTICS_PREPARATION_USAGES": {
+        "translation": "Použitie metódy prípravy"
+    },
+    "STATISTICS_PREPARATION_TIMELINE_USAGES": {
+        "translation": "História používania metódy prípravy"
+    },
+    "STATISTICS_GRINDER_TIMELINE_USAGES": {
+        "translation": "História používania mlynčeka"
+    },
+    "ACCEPT": {
+        "translation": "Prijať"
+    },
+    "STATISTIC_TAB_GENERAL": {
+        "translation": "Všeobecné"
+    },
+    "STATISTIC_TAB_BREWS": {
+        "translation": "Prípravy"
+    },
+    "STATISTIC_TAB_BEANS": {
+        "translation": "Zrná"
+    },
+    "STATISTIC_TAB_PREPARATIONS": {
+        "translation": "Metódy prípravy"
+    },
+    "STATISTIC_TAB_GRINDERS": {
+        "translation": "Mlynčeky"
+    },
+    "PAGE_STATISTICS_BREW_PER_DAYPROCESSES": {
+        "translation": "Príprav za deň"
+    },
+    "PAGE_STATISTICS_BREW_TIME": {
+        "translation": "Čas strávený prípravou"
+    },
+    "PAGE_STATISTICS_PHOTOS_TAKEN": {
+        "translation": "Nasnímané fotografie"
+    },
+    "PAGE_SETTINGS_IMAGE_QUALITY": {
+        "translation": "Kvalita fotografií"
+    },
+    "PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP": {
+        "translation": "Definujte, v akej kvalite sa majú obrázky ukladať. Môže to znížiť spotrebu dát."
+    },
+    "PAGE_SETTINGS_BREW_RATING": {
+        "translation": "Hodnotenie prípravy"
+    },
+    "PAGE_SETTINGS_BREW_RATING_TOOLTIP": {
+        "translation": "Nie je pre vás predvolených ‚-1 až 5‘ správnou stupnicou? Môžete namiesto toho použiť stupnicu ‚-1 až 100‘."
+    },
+    "UPDATE_ENTRY_OF": {
+        "translation": "Aktualizovať záznam {{index}} z {{count}}"
+    },
+    "WEBSITE": {
+        "translation": "Webstránka"
+    },
+    "SHARE": {
+        "translation": "Zdieľať"
+    },
+    "ANDROID_FILE_ACCESS_NEEDED_TITLE": {
+        "translation": "Vyžaduje sa prístup k zdieľaniu súborov"
+    },
+    "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": {
+        "translation": "Aby aplikácia mohla plne fungovať, žiadame vás o autorizáciu prístupu k súborom. V opačnom prípade budú s používaním aplikácie problémy. Je to potrebné najmä pre systém automatického zálohovania."
+    },
+    "COULD_NOT_ACCESS_FILE": {
+        "translation": "K vybranému súboru sa nám nepodarilo získať prístup"
+    },
+    "WRONG_FILE_FORMAT": {
+        "translation": "Zvolili ste súbor v nepodporovanom formáte"
+    },
+    "SCAN_BEAN": {
+        "translation": "Skenovať balenie"
+    },
+    "CLEAR": {
+        "translation": "Vyčistiť"
+    },
+    "BEAN_LOOKS_LIKE_CONSUMED": {
+        "translation": "Zdá sa, že tieto zrná sú minuté, chcete ich archivovať?"
+    },
+    "CUPPING_1": {
+        "translation": "Ovocné"
+    },
+    "CUPPING_2": {
+        "translation": "Citrus"
+    },
+    "CUPPING_3": {
+        "translation": "Citrón a limonáda"
+    },
+    "CUPPING_4": {
+        "translation": "Limetka"
+    },
+    "CUPPING_5": {
+        "translation": "Grapefruit"
+    },
+    "CUPPING_6": {
+        "translation": "Klementínka"
+    },
+    "CUPPING_7": {
+        "translation": "Tangerínka"
+    },
+    "CUPPING_8": {
+        "translation": "Mandarínka"
+    },
+    "CUPPING_9": {
+        "translation": "Pomaranč"
+    },
+    "CUPPING_10": {
+        "translation": "Jablko\/hruška"
+    },
+    "CUPPING_11": {
+        "translation": "Zelené jablko"
+    },
+    "CUPPING_12": {
+        "translation": "Červené jablko"
+    },
+    "CUPPING_13": {
+        "translation": "Žltý melón"
+    },
+    "CUPPING_14": {
+        "translation": "Melón vodový"
+    },
+    "CUPPING_15": {
+        "translation": "Melón žltý medový (Honeydew)"
+    },
+    "CUPPING_16": {
+        "translation": "Cantaloupe"
+    },
+    "CUPPING_17": {
+        "translation": "Hrozná"
+    },
+    "CUPPING_18": {
+        "translation": "Biele hrozno"
+    },
+    "CUPPING_19": {
+        "translation": "Zelené hrozno"
+    },
+    "CUPPING_20": {
+        "translation": "Červené hrozno"
+    },
+    "CUPPING_21": {
+        "translation": "Hrozno Concord"
+    },
+    "CUPPING_22": {
+        "translation": "Tropické ovocie"
+    },
+    "CUPPING_23": {
+        "translation": "Liči"
+    },
+    "CUPPING_24": {
+        "translation": "Karambola"
+    },
+    "CUPPING_25": {
+        "translation": "Tamarind"
+    },
+    "CUPPING_26": {
+        "translation": "Marakuja"
+    },
+    "CUPPING_27": {
+        "translation": "Ananás"
+    },
+    "CUPPING_28": {
+        "translation": "Mango"
+    },
+    "CUPPING_29": {
+        "translation": "Papája"
+    },
+    "CUPPING_30": {
+        "translation": "Kiwi"
+    },
+    "CUPPING_31": {
+        "translation": "Banán"
+    },
+    "CUPPING_32": {
+        "translation": "Kokos"
+    },
+    "CUPPING_33": {
+        "translation": "Kôstkové ovocie"
+    },
+    "CUPPING_34": {
+        "translation": "Broskyne"
+    },
+    "CUPPING_35": {
+        "translation": "Nektarinky"
+    },
+    "CUPPING_36": {
+        "translation": "Marhule"
+    },
+    "CUPPING_37": {
+        "translation": "Slivky"
+    },
+    "CUPPING_38": {
+        "translation": "Čerešne"
+    },
+    "CUPPING_39": {
+        "translation": "Višne"
+    },
+    "CUPPING_40": {
+        "translation": "Bobuľové"
+    },
+    "CUPPING_41": {
+        "translation": "Brusnice"
+    },
+    "CUPPING_42": {
+        "translation": "Maliny"
+    },
+    "CUPPING_43": {
+        "translation": "Jahody"
+    },
+    "CUPPING_44": {
+        "translation": "Čučoriedky"
+    },
+    "CUPPING_45": {
+        "translation": "Červené ríbezle"
+    },
+    "CUPPING_46": {
+        "translation": "Čierne ríbezle"
+    },
+    "CUPPING_47": {
+        "translation": "Sušené ovocie"
+    },
+    "CUPPING_48": {
+        "translation": "Zlaté hrozienka"
+    },
+    "CUPPING_49": {
+        "translation": "Hrozienka"
+    },
+    "CUPPING_50": {
+        "translation": "Sušené figy"
+    },
+    "CUPPING_51": {
+        "translation": "Sušené datle"
+    },
+    "CUPPING_52": {
+        "translation": "Sušené slivky"
+    },
+    "CUPPING_53": {
+        "translation": "Sladké a pražené tóny"
+    },
+    "CUPPING_54": {
+        "translation": "Čokoláda"
+    },
+    "CUPPING_55": {
+        "translation": "Kakaové hroty"
+    },
+    "CUPPING_56": {
+        "translation": "Horká čokoláda"
+    },
+    "CUPPING_57": {
+        "translation": "Čokoláda na pečenie"
+    },
+    "CUPPING_58": {
+        "translation": "Horkosladká čokoláda"
+    },
+    "CUPPING_59": {
+        "translation": "Kakaový prášok"
+    },
+    "CUPPING_60": {
+        "translation": "Mliečna čokoláda"
+    },
+    "CUPPING_61": {
+        "translation": "Orechové"
+    },
+    "CUPPING_62": {
+        "translation": "Vlašské orechy"
+    },
+    "CUPPING_63": {
+        "translation": "Arašidy"
+    },
+    "CUPPING_64": {
+        "translation": "Kešu"
+    },
+    "CUPPING_65": {
+        "translation": "Pekanové orechy"
+    },
+    "CUPPING_66": {
+        "translation": "Lieskové orechy"
+    },
+    "CUPPING_67": {
+        "translation": "Mandle"
+    },
+    "CUPPING_68": {
+        "translation": "Obilniny a cereálie"
+    },
+    "CUPPING_69": {
+        "translation": "Sladké chlebové pečivo"
+    },
+    "CUPPING_70": {
+        "translation": "Granola"
+    },
+    "CUPPING_71": {
+        "translation": "Grahamové sušienky"
+    },
+    "CUPPING_72": {
+        "translation": "Raž"
+    },
+    "CUPPING_73": {
+        "translation": "Pšenica"
+    },
+    "CUPPING_74": {
+        "translation": "Jačmeň"
+    },
+    "CUPPING_75": {
+        "translation": "Čerstvý chlieb"
+    },
+    "CUPPING_76": {
+        "translation": "Sladké a cukrové"
+    },
+    "CUPPING_77": {
+        "translation": "Vanilka"
+    },
+    "CUPPING_78": {
+        "translation": "Nugát"
+    },
+    "CUPPING_79": {
+        "translation": "Med"
+    },
+    "CUPPING_80": {
+        "translation": "Maslo"
+    },
+    "CUPPING_81": {
+        "translation": "Krém"
+    },
+    "CUPPING_82": {
+        "translation": "Marshmallow"
+    },
+    "CUPPING_83": {
+        "translation": "Cukrová trstina"
+    },
+    "CUPPING_84": {
+        "translation": "Hnedý cukor"
+    },
+    "CUPPING_85": {
+        "translation": "Karamel"
+    },
+    "CUPPING_86": {
+        "translation": "Javorový sirup"
+    },
+    "CUPPING_87": {
+        "translation": "Melasa"
+    },
+    "CUPPING_88": {
+        "translation": "Kola"
+    },
+    "CUPPING_89": {
+        "translation": "Pražené"
+    },
+    "CUPPING_90": {
+        "translation": "Hrianky"
+    },
+    "CUPPING_91": {
+        "translation": "Spálený cukor"
+    },
+    "CUPPING_92": {
+        "translation": "Dymové"
+    },
+    "CUPPING_93": {
+        "translation": "Uhlíkové"
+    },
+    "CUPPING_94": {
+        "translation": "Zeleninové, slané a korenisté"
+    },
+    "CUPPING_95": {
+        "translation": "Korenie"
+    },
+    "CUPPING_96": {
+        "translation": "Čierne korenie"
+    },
+    "CUPPING_97": {
+        "translation": "Biele korenie"
+    },
+    "CUPPING_98": {
+        "translation": "Škorica"
+    },
+    "CUPPING_99": {
+        "translation": "Koriander"
+    },
+    "CUPPING_100": {
+        "translation": "Zázvor"
+    },
+    "CUPPING_101": {
+        "translation": "Muškátový oriešok"
+    },
+    "CUPPING_102": {
+        "translation": "Kari"
+    },
+    "CUPPING_103": {
+        "translation": "Sladké drievko a aníz"
+    },
+    "CUPPING_104": {
+        "translation": "Klinček"
+    },
+    "CUPPING_105": {
+        "translation": "Slané"
+    },
+    "CUPPING_106": {
+        "translation": "Kožovité"
+    },
+    "CUPPING_107": {
+        "translation": "Mäsovité"
+    },
+    "CUPPING_108": {
+        "translation": "Sójová omáčka"
+    },
+    "CUPPING_109": {
+        "translation": "Sušené paradajky"
+    },
+    "CUPPING_110": {
+        "translation": "Paradajky"
+    },
+    "CUPPING_111": {
+        "translation": "Rastlinné, zemité, bylinné"
+    },
+    "CUPPING_112": {
+        "translation": "Pôda"
+    },
+    "CUPPING_113": {
+        "translation": "Čerstvé drevo"
+    },
+    "CUPPING_114": {
+        "translation": "Céder"
+    },
+    "CUPPING_115": {
+        "translation": "Tabak"
+    },
+    "CUPPING_116": {
+        "translation": "Seno \/ slama"
+    },
+    "CUPPING_117": {
+        "translation": "Listová zelenina"
+    },
+    "CUPPING_118": {
+        "translation": "Olivy"
+    },
+    "CUPPING_119": {
+        "translation": "Zelené korenie"
+    },
+    "CUPPING_120": {
+        "translation": "Tekvica"
+    },
+    "CUPPING_121": {
+        "translation": "Huby"
+    },
+    "CUPPING_122": {
+        "translation": "Sladký hrášok"
+    },
+    "CUPPING_123": {
+        "translation": "Cukrový (snehový) hrášok"
+    },
+    "CUPPING_124": {
+        "translation": "Trávnaté"
+    },
+    "CUPPING_125": {
+        "translation": "Kôpor"
+    },
+    "CUPPING_126": {
+        "translation": "Šalvia"
+    },
+    "CUPPING_127": {
+        "translation": "Mäta"
+    },
+    "CUPPING_128": {
+        "translation": "Zelený čaj"
+    },
+    "CUPPING_129": {
+        "translation": "Čierny čaj"
+    },
+    "CUPPING_130": {
+        "translation": "Chmeľ"
+    },
+    "CUPPING_131": {
+        "translation": "Bergamot"
+    },
+    "CUPPING_132": {
+        "translation": "Kvetinové"
+    },
+    "CUPPING_133": {
+        "translation": "Florálne"
+    },
+    "CUPPING_134": {
+        "translation": "Ibištek"
+    },
+    "CUPPING_135": {
+        "translation": "Šípky"
+    },
+    "CUPPING_136": {
+        "translation": "Levanduľa"
+    },
+    "CUPPING_137": {
+        "translation": "Magnólia"
+    },
+    "CUPPING_138": {
+        "translation": "Jazmínový zemolez"
+    },
+    "CUPPING_139": {
+        "translation": "Pomarančový kvet"
+    },
+    "CUPPING_140": {
+        "translation": "Citrónová tráva"
+    },
+    "WATER_SECTION": {
+        "NAV_WATER": {
+            "translation": "Voda"
+        },
+        "YOU_GOT_NO_ARCHIVED_WATER": {
+            "translation": "Zatiaľ ste nearchivovali žiadnu vodu"
+        },
+        "YOU_GOT_NO_WATER": {
+            "translation": "Zatiaľ ste nepridali žiadnu vodu"
+        },
+        "CATEGORY_INFORMATION": {
+            "translation": "Informácie o vode"
+        },
+        "CATEGORY_GENERAL": {
+            "translation": "Všeobecné"
+        },
+        "WATER_BOTTLE_EXPLANATION": {
+            "translation": "Fľaše s vodou najčastejšie uvádzajú koncentráciu v jednotkách ppm = mg\/l"
+        },
+        "USED_TIMES": {
+            "translation": "Počet použití"
+        },
+        "AMOUNT": {
+            "translation": "Použité množstvo"
+        },
+        "WATER": {
+            "GENERAL_HARDNESS": {
+                "translation": "Celková tvrdosť (CT \/ GH)"
+            },
+            "TOTAL_ALKALINITY": {
+                "translation": "Celková zásaditosť (KH)"
+            },
+            "CALCIUM": {
+                "translation": "Vápnik (Ca)"
+            },
+            "MAGNESIUM": {
+                "translation": "Horčík (Mg)"
+            },
+            "SODIUM": {
+                "translation": "Sodík (Na)"
+            },
+            "TDS": {
+                "translation": "Celkový obsah rozpustených pevných látok (TDS)"
+            },
+            "UNITS": {
+                "translation": "Jednotky"
+            },
+            "PLACE_HOLDER": {
+                "GENERAL_HARDNESS": {
+                    "translation": "Všeobecná tvrdosť"
+                },
+                "TOTAL_ALKALINITY": {
+                    "translation": "Celková zásaditosť"
+                },
+                "CALCIUM": {
+                    "translation": "Vápnik (Ca)"
+                },
+                "MAGNESIUM": {
+                    "translation": "Horčík (Mg)"
+                },
+                "SODIUM": {
+                    "translation": "Sodík (Na)"
+                },
+                "TDS": {
+                    "translation": "Celkový obsah rozpustených pevných látok (TDS)"
+                },
+                "NAME": {
+                    "translation": "Pridajte meno vody"
+                },
+                "NOTES": {
+                    "translation": "Pridajte poznámky k vode"
+                },
+                "POTASSIUM": {
+                    "translation": "Draslík (K)"
+                },
+                "CHLORIDE": {
+                    "translation": "Chloridy (Cl)"
+                },
+                "SULFATE": {
+                    "translation": "Sírany (SO4)"
+                }
+            },
+            "WATER_UNIT": {
+                "UNKNOWN": {
+                    "translation": "Neznámy"
+                },
+                "PPM": {
+                    "translation": "ppm ako CaCO3"
+                },
+                "MG_L": {
+                    "translation": "mg\/l"
+                },
+                "MMOL_L": {
+                    "translation": "mmol\/l"
+                },
+                "DH": {
+                    "translation": "°dH"
+                }
+            },
+            "POTASSIUM": {
+                "translation": "Draslík (K)"
+            },
+            "CHLORIDE": {
+                "translation": "Chloridy (Cl)"
+            },
+            "SULFATE": {
+                "translation": "Sírany (SO4)"
+            }
+        }
+    },
+    "BREW_BRIX_CALCULATION": {
+        "translation": "Brixove stupne"
+    },
+    "SET_TDS": {
+        "translation": "Nastaviť TDS"
+    },
+    "TOTAL_WEIGHT": {
+        "translation": "Celková hmotnosť"
+    },
+    "CALCULATED_WEIGHT": {
+        "translation": "Vypočítaná hmotnosť"
+    },
+    "SET_WEIGHT": {
+        "translation": "Nastavená hmotnosť"
+    },
+    "ADD_FLAVORS_AROMAS_TITLE": {
+        "translation": "Vône \/ chute"
+    },
+    "CUSTOM_FLAVORS_AROMAS": {
+        "translation": "Individuálna vôňa"
+    },
+    "CUSTOM_FLAVORS_AROMAS_PLACEHOLDER": {
+        "translation": "Pridajte svoju individuálnu vôňu"
+    },
+    "PREDEFINED_FLAVORS_AROMAS": {
+        "translation": "Bežné vône"
+    },
+    "ADD_AROMA_FLAVOR": {
+        "translation": "Pridanie vôní\/chutí"
+    },
+    "BEAN_WEIGHT_IN_PLACEHOLDER": {
+        "translation": "Zrno vybraté z obalu"
+    },
+    "VESSEL_PLACEHOLDER": {
+        "translation": "Meno nádoby a jej prázdna váha"
+    },
+    "GRIND_WEIGHT_PLACEHOLDER": {
+        "translation": "Hmotnosť mletých zŕn použitých na prípravu nápoja"
+    },
+    "PRESET_BREW_TITLE": {
+        "translation": "Použiť poslednú prípravu ako prednastavené hodnoty"
+    },
+    "CUPPING_BREW_TAB_AROMA": {
+        "translation": "Aróma"
+    },
+    "CUPPING_BREW_TAB_TASTING": {
+        "translation": "Systematický cupping"
+    },
+    "WATER_PLACEHOLDER": {
+        "translation": "Pre plnú funkčnosť aktivujte sekciu Voda v ponuke nastavení"
+    },
+    "PAGE_SETTINGS_SCALES": {
+        "translation": "Váhy"
+    },
+    "CONNECT": {
+        "translation": "Pripojiť"
+    },
+    "DISCONNECT": {
+        "translation": "Odpojiť"
+    },
+    "SCALE": {
+        "BLUETOOTH_SCAN_RUNNING": {
+            "translation": "Vyhľadávanie váhy až do 60s"
+        },
+        "BLUETOOTH_NOT_ENABLED": {
+            "translation": "Bluetooth nie je zapnutý, zapnite ho pre správne fungovanie"
+        },
+        "CONNECTION_NOT_ESTABLISHED": {
+            "translation": "Váha nebola nájdená alebo sa nepodarilo nadviazať spojenie"
+        },
+        "CONNECTED_SUCCESSFULLY": {
+            "translation": "Váha pripojená"
+        },
+        "DISCONNECTED_SUCCESSFULLY": {
+            "translation": "Váha odpojená"
+        },
+        "DISCONNECTED_UNPLANNED": {
+            "translation": "Váha sa neočakávane odpojila"
+        },
+        "REQUEST_PERMISSION": {
+            "LOCATION": {
+                "translation": "Na nájdenie Bluetooth váh potrebuje aplikácia prístup k polohe."
+            },
+            "BLUETOOTH": {
+                "translation": "Na nájdenie Bluetooth váh potrebuje aplikácia prístup k Bluetooth"
+            }
+        },
+        "INFORMATION_DESCRIPTION": {
+            "translation": "Podporované váhy sú: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io, Bookoo Mini Scale, Timemore Black Mirror 2 a Eureka Precisa. Poznámka: Ak Eureka Precisa nameria zápornú hodnotu, časovač sa zastaví."
+        }
+    },
+    "QR": {
+        "WRONG_QRCODE_DESCRIPTION": {
+            "translation": "Neplatný QR kód alebo nerozpoznaný obsah"
+        },
+        "WRONG_QRCODE_TITLE": {
+            "translation": "Chyba"
+        },
+        "WRONG_LINK_DESCRIPTION": {
+            "translation": "Neplatný QR odkaz"
+        },
+        "WRONG_LINK_TITLE": {
+            "translation": "Chyba"
+        },
+        "SERVER": {
+            "ERROR_OCCURED": {
+                "translation": "Vyskytla sa chyba, QR kód sa nepodarilo prečítať, skúste to prosím znova."
+            },
+            "BEAN_NOT_APPROVED": {
+                "translation": "Zrná ešte neboli schválené, skúste to znova neskôr."
+            }
+        },
+        "BEAN_SUCCESSFULLY_SCANNED": {
+            "translation": "Zrná boli úspešne naskenované"
+        },
+        "BEAN_SUCCESSFULLY_REFRESHED": {
+            "translation": "Zrná boli úspešne aktualizované"
+        },
+        "IMAGES_GETTING_DOWNLOADED": {
+            "translation": "Sťahovanie obrázkov"
+        }
+    },
+    "RETRY_CONNECT": {
+        "translation": "Znovu skúsiť pripojenie"
+    },
+    "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": {
+        "translation": "Udržujte váhu pripojenú, aj keď je aplikácia spustená na pozadí"
+    },
+    "BREW_FLOW_WEIGHT": {
+        "translation": "Hmotnosť"
+    },
+    "BREW_FLOW_WEIGHT_PER_SECOND": {
+        "translation": "Prietok (vyhladený)"
+    },
+    "ROAST_TYPE_UNKNOWN": {
+        "translation": "Neznáme"
+    },
+    "ROAST_TYPE_CINNAMON_ROAST": {
+        "translation": "Škoricové praženie"
+    },
+    "ROAST_TYPE_AMERICAN_ROAST": {
+        "translation": "Americké praženie"
+    },
+    "ROAST_TYPE_NEW_ENGLAND_ROAST": {
+        "translation": "New England praženie"
+    },
+    "ROAST_TYPE_HALF_CITY_ROAST": {
+        "translation": "Praženie Half City"
+    },
+    "ROAST_TYPE_MODERATE_LIGHT_ROAST": {
+        "translation": "Stredne-svetlé praženie"
+    },
+    "ROAST_TYPE_CITY_ROAST": {
+        "translation": "Praženie City"
+    },
+    "ROAST_TYPE_CITY_PLUS_ROAST": {
+        "translation": "Praženie City+"
+    },
+    "ROAST_TYPE_FULL_CITY_ROAST": {
+        "translation": "Praženie Full City"
+    },
+    "ROAST_TYPE_FULL_CITY_PLUS_ROAST": {
+        "translation": "Praženie Full City+"
+    },
+    "ROAST_TYPE_ITALIAN_ROAST": {
+        "translation": "Talianske praženie"
+    },
+    "ROAST_TYPE_VIEANNA_ROAST": {
+        "translation": "Viedenské praženie"
+    },
+    "ROAST_TYPE_FRENCH_ROAST": {
+        "translation": "Francúzske praženie"
+    },
+    "ROAST_TYPE_CUSTOM_ROAST": {
+        "translation": "Vlastné"
+    },
+    "BEAN_MIX_UNKNOWN": {
+        "translation": "Neznáme"
+    },
+    "BEAN_MIX_SINGLE_ORIGIN": {
+        "translation": "Single Origin"
+    },
+    "BEAN_MIX_BLEND": {
+        "translation": "Zmes"
+    },
+    "BEAN_ROASTING_TYPE_FILTER": {
+        "translation": "Filter"
+    },
+    "BEAN_ROASTING_TYPE_ESPRESSO": {
+        "translation": "Espresso"
+    },
+    "BEAN_ROASTING_TYPE_OMNI": {
+        "translation": "Omni"
+    },
+    "BEAN_ROASTING_TYPE_UNKNOWN": {
+        "translation": "Neznáme"
+    },
+    "SMART_SCALE_LOG": {
+        "translation": "Aktivovanie logovacích súborov pre inteligentné váhy (len pre debugovanie)"
+    },
+    "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": {
+        "translation": "Pomôcka pre prípravu upravená"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": {
+        "translation": "Bluetooth váha"
+    },
+    "PAGE_SETTINGS_TAB_GENERAL": {
+        "translation": "Všeobecné"
+    },
+    "SMART_SCALE_TARE_ON_BREW": {
+        "translation": "Pri novej príprave vynulovať váhu"
+    },
+    "SMART_SCALE_TARE_ON_START_TIMER": {
+        "translation": "Vynulovať váhu pri spustení časovača"
+    },
+    "PAGE_SETTINGS_BREW_RATING_STEPS": {
+        "translation": "Kroky hodnotenia"
+    },
+    "BREW_AVG_FLOW_WEIGHT_PER_SECOND": {
+        "translation": "Ø prietok"
+    },
+    "CUSTOM_LIST_VIEW_PARAMETERS": {
+        "translation": "Parametre zobrazenia zoznamu"
+    },
+    "NAV_LIST_VIEW_CUSTOM_PARAMETERS": {
+        "translation": "Parametre zobrazenia zoznamu"
+    },
+    "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": {
+        "translation": "Rozhodnite, ktoré parametre sa majú zobraziť na dlaždiciach zoznamu"
+    },
+    "BREW_DATA_VESSEL_NAME_WEIGHT": {
+        "translation": "Názov nádoby \/ váha"
+    },
+    "IGNORE_NEGATIVE_VALUES": {
+        "translation": "Ignorovať záporné hodnoty hmotnosti"
+    },
+    "IGNORE_ANOMALY_VALUES": {
+        "translation": "Ignorovať anomálne hodnoty"
+    },
+    "IGNORE_ANOMALY_VALUES_TOOLTIP": {
+        "translation": "Napríklad: Premiešavanie šálky krúžením"
+    },
+    "TOAST_BEAN_FAVOURITE_ADDED": {
+        "translation": "Pridané medzi obľúbené"
+    },
+    "TOAST_BEAN_FAVOURITE_REMOVED": {
+        "translation": "Odstránené z obľúbených"
+    },
+    "QR_CODE_SCANNER_INFORMATION_TITLE": {
+        "translation": "QR kód"
+    },
+    "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": {
+        "translation": "Všetky informácie o naskenovaných zrnách pochádzajú priamo z pražiarne. <br\/> Ak nájdete nesprávne alebo zavádzajúce informácie, informujte ma, prosím, e-mailom: info@beanconqueror.com."
+    },
+    "DONT_SHOW_AGAIN": {
+        "translation": "Nezobrazovať znova"
+    },
+    "ARCHIVED_TOOLS": {
+        "translation": "Archivované pomôcky"
+    },
+    "UNARCHIVE": {
+        "translation": "Obnoviť"
+    },
+    "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": {
+        "translation": ""
+    },
+    "COPY": {
+        "translation": ""
+    },
+    "TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY": {
+        "translation": ""
+    },
+    "PREPARATION_TYPE_CAFEC_FLOWER": {
+        "translation": ""
+    },
+    "PREPARATION_TYPE_DECEMBER_DRIPPER": {
+        "translation": ""
+    },
+    "PREPARATION_TYPE_DECENT_ESPRESSO": {
+        "translation": ""
+    },
+    "PREPARATION_TYPE_HARIO_SWITCH": {
+        "translation": ""
+    },
+    "PREPARATION_TYPE_HARIO_WOODNECK": {
+        "translation": "Hario Woodneck"
+    },
+    "PREPARATION_TYPE_RATIO_SIX_COFFEE_BREWER": {
+        "translation": "Ratio Six Coffee Brewer"
+    },
+    "PREPARATION_TYPE_ROK": {
+        "translation": "ROK"
+    },
+    "PREPARATION_TYPE_TORNADO_DUO": {
+        "translation": "Tornado Duo"
+    },
+    "PREPARATION_TYPE_TRICOLATE": {
+        "translation": "Tricolate"
+    },
+    "QR_CODE_REFRESH_DATA_MESSAGE": {
+        "translation": "Všetky informácie o týchto zrnách budú prepísané, pokračovať?"
+    },
+    "POPOVER_QR_CODE_REFRESH": {
+        "translation": "Znovu načítať údaje"
+    },
+    "BREW_FLOW_WEIGHT_REALTIME": {
+        "translation": "Prietok (v reálnom čase)"
+    },
+    "SMART_SCALE_STOP_TIMER_ON_BREW": {
+        "translation": "Pri novej príprave zastaviť časovač váhy"
+    },
+    "SMART_SCALE_RESET_TIMER_ON_BREW": {
+        "translation": "Pri novej príprave vynulovať časovač váhy"
+    },
+    "BREW_PRESSURE_FLOW": {
+        "translation": "Tlak"
+    },
+    "BREW_TEMPERATURE_REALTIME": {
+        "translation": "Teplota"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER": {
+        "translation": "Zobraziť grafy pre filter"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": {
+        "translation": "Zobraziť grafy pre espresso"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": {
+        "translation": "Tlakové zariadenie"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": {
+        "translation": "Teplotné zariadenie"
+    },
+    "PRESSURE_LOG": {
+        "translation": "Aktivovať logovacie súbory pre tlakové zariadenie"
+    },
+    "PRESSURE_THRESHOLD_ACTIVE": {
+        "translation": "Spustiť časovač pri preddefinovanom tlaku"
+    },
+    "PRESSURE_THRESHOLD_BAR": {
+        "translation": "Tlaková hranica spustenia"
+    },
+    "TIMER_MILLISECONDS": {
+        "translation": "ms"
+    },
+    "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": {
+        "translation": "Milisekundy?"
+    },
+    "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": {
+        "translation": "Použiť milisekundy pre presnejšiu analýzu svojich príprav"
+    },
+    "PAGE_SETTINGS_BEAN_RATING": {
+        "translation": "Hodnotenie zŕn"
+    },
+    "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": {
+        "translation": "Nie je pre vás predvolených ‚0 až 5‘ správnou stupnicou? Môžete namiesto toho použiť stupnicu ‚0 až 100‘."
+    },
+    "PAGE_SETTINGS_BEAN_RATING_STEPS": {
+        "translation": "Kroky hodnotenia zŕn"
+    },
+    "COFFEE_GRAMS_BREWED": {
+        "translation": "Gramy pripravené"
+    },
+    "SMART_SCALE_MAXIMIZE_ON_START_TIMER": {
+        "translation": "Maximalizovať grafiku v reálnom čase pri spustení časovača"
+    },
+    "PRESSURE": {
+        "CONNECTION_NOT_ESTABLISHED": {
+            "translation": "Tlakové zariadenie nebolo nájdené alebo sa nepodarilo nadviazať spojenie"
+        },
+        "CONNECTED_SUCCESSFULLY": {
+            "translation": "Tlakové zariadenie pripojené"
+        },
+        "DISCONNECTED_SUCCESSFULLY": {
+            "translation": "Tlakové zariadenie odpojené"
+        },
+        "DISCONNECTED_UNPLANNED": {
+            "translation": "Tlakové zariadenie sa neočakávane odpojilo"
+        },
+        "STAY_CONNECTED_ON_APP_MINIMIZE": {
+            "translation": "Udržujte tlakové zariadenie pripojené, aj keď je aplikácia spustená na pozadí"
+        },
+        "INFORMATION_DESCRIPTION": {
+            "translation": "Podporované zariadenia sú: Popsicle, Pressensor, Smart Espresso Profiler, Bookoo Espresso Monitor"
+        },
+        "BLUETOOTH_SCAN_RUNNING": {
+            "translation": "Vyhľadávanie tlakového zariadenia až do 60s"
+        },
+        "BLUETOOTH_NOT_ENABLED": {
+            "translation": "Bluetooth nie je zapnutý, zapnite ho pre správne fungovanie"
+        },
+        "REQUEST_PERMISSION": {
+            "LOCATION": {
+                "translation": "Na nájdenie tlakových zariadení potrebuje aplikácia prístup k polohe."
+            },
+            "BLUETOOTH": {
+                "translation": "Na nájdenie tlakových zariadení potrebuje aplikácia prístup k Bluetooth"
+            }
+        }
+    },
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": {
+        "translation": "Opätovne pripojiť váhu"
+    },
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": {
+        "translation": "Opätovne pripojiť tlakové zariadenie"
+    },
+    "POPOVER_SHOW_BREWS": {
+        "translation": "Zobraziť prípravy"
+    },
+    "LAST_USED_GRIND_SIZE_SETTING": {
+        "translation": "Posledné nastavenie mletia"
+    },
+    "LAST_USED_BEAN": {
+        "translation": "Posledné zrná"
+    },
+    "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": {
+        "translation": "Koľko desatinných miest by sa malo zobrazovať?"
+    },
+    "SMART_SCALE_COMMAND_DELAY": {
+        "translation": "Oneskorenie príkazu"
+    },
+    "SMART_SCALE_COMMAND_DELAY_TOOLTIP": {
+        "translation": "Koľko času by malo uplynúť medzi jednotlivými príkazmi Bluetooth?"
+    },
+    "SUPPORT_ME": {
+        "translation": "Dar"
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": {
+        "translation": "Zobrazenie obrázkov zŕn pri prípravách?"
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": {
+        "translation": "Ak existuje obrázok zrna, použije sa namiesto obrázka metódy prípravy."
+    },
+    "DOWNLOAD_XLSX": {
+        "translation": "Stiahnuť Excel"
+    },
+    "DOWNLOAD_JSON": {
+        "translation": "Stiahnuť JSON"
+    },
+    "NAV_BEAN_PARAMS": {
+        "translation": "Parametre zŕn"
+    },
+    "BEAN_DATA_ROAST_NAME_TYPE": {
+        "translation": "Typ praženia"
+    },
+    "ENABLE_BEAN_SORT_INFORMATION": {
+        "translation": "Zapnúť informácie o odrode"
+    },
+    "BEAN_SORT_MIX": {
+        "translation": "Zmes zŕn"
+    },
+    "PAGE_MANAGE_BEAN_PARAMETERS_DESCRIPTION": {
+        "translation": "Označte parametre, ktoré sa majú zobraziť pri úprave informácií o zrnách."
+    },
+    "PAGE_BEAN_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": {
+        "translation": "Určte parametre, ktoré sa majú zobraziť v zoznamoch pre zrná"
+    },
+    "BEAN_DATA_NAME_TOOLTIP": {
+        "translation": "Meno zŕn"
+    },
+    "BEAN_DATA_ROASTER_TOOLTIP": {
+        "translation": "Kto je pražiarom"
+    },
+    "BEAN_DATA_BUY_DATE_TOOLTIP": {
+        "translation": "Kedy ste kúpili zrná"
+    },
+    "BEAN_DATA_ROASTING_DATE_TOOLTIP": {
+        "translation": "Aký je dátum praženia zŕn"
+    },
+    "BEAN_DATA_ROASTING_TYPE_TOOLTIP": {
+        "translation": "Na aký spôsob prípravy boli tieto zrná pražené, napr. filter"
+    },
+    "BEAN_DATA_ROAST_NAME_TOOLTIP": {
+        "translation": "Aký je stupeň praženia týchto zŕn"
+    },
+    "BEAN_DATA_ROAST_NAME_TYPE_TOOLTIP": {
+        "translation": "Aký typ praženia (škoricové, New England, atď.)"
+    },
+    "BREW_DATA_RATING_TOOLTIP": {
+        "translation": "Vaše hodnotenie"
+    },
+    "BEAN_SORT_MIX_TOOLTIP": {
+        "translation": "Sú zrná zmesou?"
+    },
+    "BEAN_DATA_WEIGHT_TOOLTIP": {
+        "translation": "Koľko zrná vážia"
+    },
+    "BEAN_DATA_COST_TOOLTIP": {
+        "translation": "Koľko zrná stáli"
+    },
+    "BEAN_DATA_AROMATICS_TOOLTIP": {
+        "translation": "Aké arómy\/chute majú zrná"
+    },
+    "BEAN_DATA_CUPPING_POINTS_TOOLTIP": {
+        "translation": "Koľko cuppingových bodov získali tieto zrná"
+    },
+    "BEAN_DATA_DECAFFEINATED_TOOLTIP": {
+        "translation": "Sú tieto zrná zbavené kofeínu?"
+    },
+    "BEAN_DATA_URL_TOOLTIP": {
+        "translation": "URL adresa obchodu"
+    },
+    "BEAN_DATA_EAN_TOOLTIP": {
+        "translation": "EAN\/Číslo artiklu"
+    },
+    "NOTES_TOOLTIP": {
+        "translation": "Poznámky zaznamenané"
+    },
+    "BREW_DATA_ATTACHMENTS_TOOLTIP": {
+        "translation": "Priložiť fotografie?"
+    },
+    "ENABLE_BEAN_SORT_INFORMATION_TOOLTIP": {
+        "translation": "Podrobnejšie informácie o zrne, odkiaľ pochádza, kedy bolo zbierané atď."
+    },
+    "BEAN_DATA_COUNTRY_TOOLTIP": {
+        "translation": "Z ktorej krajiny zrná pochádzajú"
+    },
+    "BEAN_DATA_REGION_TOOLTIP": {
+        "translation": "Z ktorého regiónu zrná pochádzajú"
+    },
+    "BEAN_DATA_FARM_TOOLTIP": {
+        "translation": "Z ktorej farmy zrná pochádzajú"
+    },
+    "BEAN_DATA_FARMER_TOOLTIP": {
+        "translation": "Kto pestoval tieto zrná"
+    },
+    "BEAN_DATA_ELEVATION_TOOLTIP": {
+        "translation": "V akej nadmorskej výške zrná rástli"
+    },
+    "BEAN_DATA_PROCESSING_TOOLTIP": {
+        "translation": "Ako boli zrná spracované (natural, washed, atď.)"
+    },
+    "BEAN_DATA_VARIETY_TOOLTIP": {
+        "translation": "Odroda kávy (napr. SL28)"
+    },
+    "BEAN_DATA_HARVEST_TIME_TOOLTIP": {
+        "translation": "V ktorom roku\/mesiaci boli tieto zrná zozbierané"
+    },
+    "BEAN_DATA_PERCENTAGE_TOOLTIP": {
+        "translation": "Aký podiel týchto zŕn je v zmesi"
+    },
+    "BEAN_DATA_CERTIFICATION_TOOLTIP": {
+        "translation": "Aké certifikácie majú tieto zrná (napr. fairtrade)"
+    },
+    "BEAN_DATA_PURCHASING_PRICE_TOOLTIP": {
+        "translation": "Aká bola nákupná cena od pražiarne"
+    },
+    "BEAN_DATA_FOB_PRICE_TOOLTIP": {
+        "translation": "Aká bola cena FOB (Free-On-Board) pri nákupe pražiarňou"
+    },
+    "BEAN_PARAMETER_CUSTOMIZE_TITLE": {
+        "translation": "Prispôsobte informácie, ktoré chcete použiť pre zrná"
+    },
+    "BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION": {
+        "translation": "O zrnách je možné zadať alebo použiť množstvo informácií. Vyberte si vlastné parametre, ktoré chcete vyplniť a ktoré chcete zobraziť."
+    },
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE": {
+        "translation": "Resetujte časovač!"
+    },
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": {
+        "translation": "Keďže ste pripojili Bluetooth zariadenie, musíte najprv vynulovať časovač a až potom môžete začať"
+    },
+    "BREW_FILTER_JUST_CHART_DATA": {
+        "translation": "Len grafy"
+    },
+    "SCALE_RESET_TRIGGERED_DESCRIPTION": {
+        "translation": ""
+    },
+    "SCALE_RESET_TRIGGERED_TITLE": {
+        "translation": "Resetovať?"
+    },
+    "NAV_REPEAT_PARAMETERS": {
+        "translation": ""
+    },
+    "PAGE_REPEAT_PARAMETERS_DESCRIPTION": {
+        "translation": ""
+    },
+    "CUSTOM_REPEAT_PARAMETERS": {
+        "translation": ""
+    },
+    "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": {
+        "translation": "Aktivovať prispôsobené opakovanie?"
+    },
+    "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": {
+        "translation": "Numerická klávesnica na nastavenie mletia?"
+    },
+    "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": {
+        "translation": "Chcete pri zadávaní nastavení mletia použiť numerickú klávesnicu namiesto celej klávesnice?"
+    },
+    "PREPARATION_DEVICE": {
+        "TYPE": {
+            "NONE": {
+                "translation": "Žiadne"
+            },
+            "XENIA": {
+                "translation": "Xenia"
+            },
+            "METICULOUS": {
+                "translation": "Meticulous"
+            },
+            "SANREMO_YOU": {
+                "translation": "Sanremo YOU"
+            },
+            "GAGGIUINO": {
+                "translation": "Gaggiuino"
+            },
+            "MOVE2": {
+                "translation": ""
+            }
+        },
+        "URL": {
+            "translation": "URL"
+        },
+        "CHOOSE_DEVICE": {
+            "translation": "Vyberte zariadenie"
+        },
+        "CONNECTION": {
+            "UNSUCCESFULLY": {
+                "translation": "Nepodarilo sa nadviazať spojenie so zariadením"
+            },
+            "SUCCESFULLY": {
+                "translation": "Pripojenie k zariadeniu bolo úspešné"
+            }
+        },
+        "TYPE_XENIA": {
+            "TITLE": {
+                "translation": "Stroj Xenia"
+            },
+            "PRESS_START_SCRIPT": {
+                "translation": "Spustiť skript pri štarte"
+            },
+            "FIRST_DRIP_SCRIPT": {
+                "translation": "Spustiť skript pri prvých kvapkách"
+            },
+            "SCRIPT_AT_WEIGHT": {
+                "translation": "Hmotnosť pre vykonanie skriptu"
+            },
+            "SCRIPT_LIST_GENERAL_0": {
+                "translation": "Nič"
+            },
+            "SCRIPT_LIST_GENERAL_1": {
+                "translation": "Espresso, 25 sekúnd"
+            },
+            "SCRIPT_LIST_GENERAL_2": {
+                "translation": "Espresso, nekonečné"
+            },
+            "SCRIPT_LIST_GENERAL_STOP": {
+                "translation": "Zastaviť shot"
+            },
+            "CHOOSE_SCRIPT_AT_WEIGHT": {
+                "translation": "Vyberte skript pre dosiahnutú hmotnosť"
+            },
+            "ERROR_NOT_ALL_SCRIPTS_FOUND": {
+                "translation": "Jeden alebo viac skriptov sa nepodarilo nájsť, boli resetované"
+            },
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
+                "translation": "Pripojenie ku kávovaru Xenia sa nepodarilo nadviazať. Uistite sa, že ste pripojení k správnej sieti (LAN), či ste zadali správnu IP adresu atď."
+            },
+            "CHECKING_CONNECTION_TO_PORTAFILTER": {
+                "translation": "Kontroluje sa pripojenie ku Xenia"
+            },
+            "GRABING_SCRIPTS": {
+                "translation": "Načítanie skriptov z Xenia"
+            },
+            "BREW_BY_WEIGHT_ACTIVE": {
+                "translation": ""
+            }
+        },
+        "API_VERSION": {
+            "translation": ""
+        },
+        "RESIDUAL_LAG_TIME": {
+            "translation": ""
+        },
+        "RESIDUAL_LAG_TIME_DESCRIPTION": {
+            "translation": ""
+        },
+        "TYPE_METICULOUS": {
+            "TITLE": {
+                "translation": "Stroj Meticulous"
+            },
+            "NO_PROFILE": {
+                "translation": "Bez profilu"
+            },
+            "CHOOSE_PROFILE": {
+                "translation": "Vyberte profil"
+            },
+            "SHOT_STARTED": {
+                "translation": "Shot začatý"
+            },
+            "SHOT_ENDED": {
+                "translation": "Shot ukončený"
+            },
+            "DATA_COULD_NOT_BE_LOADED": {
+                "translation": ""
+            }
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": {
+                "translation": "Stroj Sanremo YOU"
+            },
+            "STOP_AT_WEIGHT": {
+                "translation": "Zastaviť pri hmotnosti"
+            },
+            "SELECT_MODE": {
+                "translation": "Vyberte režim"
+            },
+            "MODE_LISTENING": {
+                "translation": "Načúvanie"
+            },
+            "MODE_CONTROL": {
+                "translation": "Kontrola"
+            },
+            "MANUAL_CONTROLLING": {
+                "translation": ""
+            },
+            "PROFILE_P1_CONTROLLING": {
+                "translation": ""
+            },
+            "PROFILE_P2_CONTROLLING": {
+                "translation": ""
+            },
+            "PROFILE_P3_CONTROLLING": {
+                "translation": ""
+            },
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": {
+                "translation": ""
+            },
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": {
+                "translation": ""
+            },
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
+                "translation": ""
+            },
+            "MODE_LISTENING_AND_CONTROLLING": {
+                "translation": "Počúvanie a kontrola"
+            },
+            "SHOT_STARTED": {
+                "translation": "Shot začatý"
+            },
+            "SHOT_ENDED": {
+                "translation": "Shot ukončený"
+            },
+            "CONNECTION_LOST_PLEASE_RECONNECT": {
+                "translation": "Spojenie so Sanremo YOU sa stratilo, prosím, obnovte ho pomocou tlačidla."
+            },
+            "RECONNECT_NEEDED": {
+                "translation": "Potrebné opätovné pripojenie"
+            },
+            "RECONNECT": {
+                "translation": "Opätovné pripojenie"
+            },
+            "ENTER_TARGET_BREW_WEIGHT": {
+                "translation": "Zadajte cieľovú hmotnosť nápoja v gramoch"
+            },
+            "LAST_SHOT": {
+                "translation": "Posledný shot"
+            },
+            "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": {
+                "translation": "Baristamode pracuje len s pripojenou váhou, pripojte nejakú"
+            },
+            "WE_COULD_NOT_CONNECT": {
+                "translation": "Nepodarilo sa pripojiť k zariadeniu"
+            },
+            "BREW_BY_WEIGHT_HINT": {
+                "translation": "Naprogramovaný objem v ml musí byť vyšší ako cieľová hmotnosť v gramoch, aby sa shot zastavil na určenej hmotnosti. Ak to tak nie je, upravte objem v ml."
+            }
+        },
+        "TYPE_GAGGIUINO": {
+            "TITLE": {
+                "translation": "Stroj s Gaggiuinom"
+            }
+        },
+        "TYPE_MOVE2": {
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
+                "translation": ""
+            },
+            "RECONNECT_ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
+                "translation": ""
+            },
+            "RECONNECTION_COULD_BE_ESTABLISHED": {
+                "translation": ""
+            },
+            "STOP_AT_WEIGHT": {
+                "translation": ""
+            },
+            "TITLE": {
+                "translation": ""
+            },
+            "SHOT_ENDED": {
+                "translation": ""
+            },
+            "SHOT_STARTED": {
+                "translation": ""
+            },
+            "TRYING_ESTABLISHING_CONNECTION": {
+                "translation": ""
+            },
+            "REMOTE_PREINFUSION_ENABLE": {
+                "translation": ""
+            },
+            "PREINFUSION_PAUSE_START": {
+                "translation": ""
+            },
+            "PREINFUSION_PAUSE_TIME": {
+                "translation": ""
+            }
+        }
+    },
+    "DEVICE_CONNECTION": {
+        "translation": "Pripojenie zariadenia"
+    },
+    "PREPARATION_DEVICE_CONNECTION": {
+        "translation": "Pripojenie zariadenia"
+    },
+    "MANUAL_EXPORT_TO_VISUALIZER": {
+        "translation": "Export do aplikácie Visualizer"
+    },
+    "ONLY_FAVOURITES": {
+        "translation": "Iba obľúbené"
+    },
+    "TEMPERATURE": {
+        "CONNECTION_NOT_ESTABLISHED": {
+            "translation": "Teplotné zariadenie nebolo nájdené alebo sa nepodarilo nadviazať spojenie"
+        },
+        "CONNECTED_SUCCESSFULLY": {
+            "translation": "Teplotné zariadenie pripojené"
+        },
+        "DISCONNECTED_SUCCESSFULLY": {
+            "translation": "Teplotné zariadenie odpojené"
+        },
+        "DISCONNECTED_UNPLANNED": {
+            "translation": "Teplotné zariadenie sa neočakávane odpojilo"
+        },
+        "STAY_CONNECTED_ON_APP_MINIMIZE": {
+            "translation": ""
+        },
+        "INFORMATION_DESCRIPTION": {
+            "translation": ""
+        },
+        "BLUETOOTH_SCAN_RUNNING": {
+            "translation": ""
+        },
+        "BLUETOOTH_NOT_ENABLED": {
+            "translation": ""
+        },
+        "REQUEST_PERMISSION": {
+            "LOCATION": {
+                "translation": ""
+            },
+            "BLUETOOTH": {
+                "translation": ""
+            }
+        },
+        "LOG": {
+            "translation": ""
+        },
+        "THRESHOLD_ACTIVE": {
+            "translation": ""
+        },
+        "THRESHOLD_TEMP": {
+            "translation": ""
+        }
+    },
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": {
+        "translation": ""
+    },
+    "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": {
+        "translation": ""
+    },
+    "PRESSURE_MESSAGE_AFTER_CONNECTION": {
+        "translation": ""
+    },
+    "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": {
+        "translation": ""
+    },
+    "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": {
+        "translation": ""
+    },
+    "SHARE_BEAN_URL": {
+        "translation": "Zdieľať ako URL"
+    },
+    "SHARE_BEAN_IMAGE": {
+        "translation": "Zdieľať ako obrázok"
+    },
+    "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": {
+        "translation": ""
+    },
+    "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": {
+        "translation": ""
+    },
+    "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": {
+        "translation": ""
+    },
+    "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": {
+        "translation": ""
+    },
+    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": {
+        "translation": ""
+    },
+    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": {
+        "translation": ""
+    },
+    "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": {
+        "translation": ""
+    },
+    "ONLY_BEST_BREWS": {
+        "translation": "Len najlepšie prípravy"
+    },
+    "POPOVER_BEST_BREW": {
+        "translation": "Najlepšia príprava"
+    },
+    "PAGE_SETTINGS_BEST_BREW": {
+        "translation": "Aktivovať najlepšie prípravy"
+    },
+    "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": {
+        "translation": "Označte si svoju najlepšiu prípravu pre konkrétne zrná. Každé zrná môžu mať iba jednu najlepšiu prípravu namiesto viacerých obľúbených."
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": {
+        "translation": ""
+    },
+    "REFRACTOMETER": {
+        "CONNECTION_NOT_ESTABLISHED": {
+            "translation": ""
+        },
+        "CONNECTED_SUCCESSFULLY": {
+            "translation": ""
+        },
+        "DISCONNECTED_SUCCESSFULLY": {
+            "translation": ""
+        },
+        "DISCONNECTED_UNPLANNED": {
+            "translation": "Refraktometer sa neočakávane odpojil"
+        },
+        "STAY_CONNECTED_ON_APP_MINIMIZE": {
+            "translation": "Udržujte refraktometer pripojený, aj keď je aplikácia spustená na pozadí"
+        },
+        "INFORMATION_DESCRIPTION": {
+            "translation": "Podporované zariadenia sú: DiFluid R2"
+        },
+        "BLUETOOTH_SCAN_RUNNING": {
+            "translation": "Vyhľadávanie refraktometra až do 60s"
+        },
+        "BLUETOOTH_NOT_ENABLED": {
+            "translation": "Bluetooth nie je zapnutý, zapnite ho pre správne fungovanie"
+        },
+        "REQUEST_PERMISSION": {
+            "LOCATION": {
+                "translation": "Na nájdenie refraktometrov potrebuje aplikácia prístup k polohe."
+            },
+            "BLUETOOTH": {
+                "translation": "Na nájdenie refraktometrov potrebuje aplikácia prístup k Bluetooth"
+            }
+        },
+        "LOG": {
+            "translation": "Aktivovať logovacie súbory pre refraktometer"
+        },
+        "READ_END": {
+            "translation": "Test ukončený - výsledok prijatý"
+        },
+        "TEST_TYPE": {
+            "translation": "Typ testu"
+        },
+        "TEST_TYPES": {
+            "SINGLE": {
+                "translation": "Jeden"
+            },
+            "AVERAGE": {
+                "translation": "Priemer"
+            }
+        },
+        "AUTO_TEST": {
+            "translation": "Automatický test"
+        },
+        "AUTO_TEST_DESCRIPTION": {
+            "translation": "Automatické vykonanie opakovaného testu pri zistení zmeny teploty, kým sa nenájde stabilná hodnota TDS\/teploty"
+        },
+        "TEST_NUMBER": {
+            "translation": "Počet testov"
+        }
+    },
+    "COPIED_TO_CLIPBOARD_SUCCESSFULLY": {
+        "translation": "Pridané do schránky"
+    },
+    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": {
+        "translation": "Nebolo možné pridať do schránky"
+    },
+    "PAGE_SETTINGS_LANGUAGE_FRENCH": {
+        "translation": "Francúzština"
+    },
+    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": {
+        "translation": "Dáta nie je možné uložiť kvôli obmedzeniam systému Android"
+    },
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": {
+        "translation": "Váš telefón so systémom Android nepodporuje externé súborové systémy, takže si budete musieť stiahnuť súbor ZIP bez mediálnych súborov. Viac informácií nájdete na stránke https:\/\/beanconqueror.com\/faq."
+    },
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": {
+        "translation": "Bezpečnostná správa pred ukončením?"
+    },
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": {
+        "translation": "Skontrolujte, či sa údaje nezmenili pri pridávaní\/úprave zŕn alebo príprav; ak áno, pri návrate späť sa zobrazí bezpečnostné upozornenie."
+    },
+    "PAGE_BEANS_DISCARD_CONFIRM": {
+        "translation": "Informácie o zrnách boli zmenené. Naozaj chcete opustiť stránku bez uloženia?"
+    },
+    "PAGE_BREW_DISCARD_CONFIRM": {
+        "translation": "Informácie o príprave boli zmenené. Naozaj chcete opustiť stránku bez uloženia?"
+    },
+    "NO_ENTRIES_FOUND": {
+        "translation": "Záznamy nenájdené"
+    },
+    "POPOVER_BEANS_OPTION_REPEAT": {
+        "translation": "Opakovať poslednú prípravu"
+    },
+    "REPEAT_LAST_BREW": {
+        "translation": "Opakovať poslednú prípravu"
+    },
+    "REPEAT_BEST_BREW": {
+        "translation": "Opakovať najlepšiu prípravu"
+    },
+    "PAGE_SETTINGS_VISUALIZER_SECTION": {
+        "translation": "Visualizer"
+    },
+    "VISUALIZER": {
+        "ACTIVATE": {
+            "translation": "Aktivovať Visualizer"
+        },
+        "CHOOSE_SERVER": {
+            "translation": "Výber servera"
+        },
+        "CONNECTION": {
+            "UNSUCCESSFULLY": {
+                "translation": "Spojenie sa nepodarilo nadviazať."
+            },
+            "SUCCESSFULLY": {
+                "translation": "Spojenie bolo možné nadviazať."
+            }
+        },
+        "SERVER": {
+            "VISUALIZER": {
+                "translation": "Server Visualizera"
+            },
+            "CUSTOM": {
+                "translation": "Vlastný server"
+            }
+        },
+        "SHOT": {
+            "UPLOAD_SUCCESSFULLY": {
+                "translation": "Príprava nahraná do Visualizera."
+            },
+            "UPLOAD_UNSUCCESSFULLY": {
+                "translation": ""
+            }
+        },
+        "URL": {
+            "translation": ""
+        },
+        "USERNAME": {
+            "translation": "Používateľské meno"
+        },
+        "PASSWORD": {
+            "translation": "Heslo"
+        },
+        "UPLOAD_AUTOMATIC": {
+            "translation": "Nahrať každú prípravu automaticky?"
+        },
+        "UPLOAD_AUTOMATIC_TOOLTIP": {
+            "translation": ""
+        },
+        "UPLOAD_ALL": {
+            "translation": ""
+        },
+        "NOT_ALL_SHOTS_UPLOADED": {
+            "translation": ""
+        },
+        "ALL_SHOTS_UPLOADED": {
+            "translation": ""
+        }
+    },
+    "SMART_SCALE_AUTO_START_LISTENING": {
+        "translation": ""
+    },
+    "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": {
+        "translation": ""
+    },
+    "CHOOSE_REFERENCE_GRAPH": {
+        "translation": ""
+    },
+    "RESET": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION": {
+        "translation": "Nastavte počiatočnú veľkosť osí pre filter aj espresso."
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": {
+        "translation": "Filter – hmotnosť"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": {
+        "translation": "Filter – prietok"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": {
+        "translation": "Espresso – hmotnosť"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": {
+        "translation": "Espresso – prietok"
+    },
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT": {
+        "translation": ""
+    },
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": {
+        "translation": ""
+    },
+    "BREWS_ACTIVE": {
+        "translation": ""
+    },
+    "BREWS_ARCHIVED": {
+        "translation": ""
+    },
+    "GRAPHS": {
+        "translation": "Grafy"
+    },
+    "GRAPH_SECTION": {
+        "NAV_GRAPH": {
+            "translation": "Grafy"
+        },
+        "NO_ARCHIVED_ENTRIES": {
+            "translation": ""
+        },
+        "NO_ENTRIES": {
+            "translation": ""
+        },
+        "SECTION_HAS_BEEN_ACTIVATED": {
+            "translation": ""
+        }
+    },
+    "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": {
+        "translation": ""
+    },
+    "TOAST_GRAPH_DELETED_SUCCESSFULLY": {
+        "translation": "Graf odstránený"
+    },
+    "TOAST_GRAPH_EDITED_SUCCESSFULLY": {
+        "translation": "Graf upravený"
+    },
+    "TOAST_GRAPH_ADD_SUCCESSFULLY": {
+        "translation": "Graf pridaný"
+    },
+    "NAV_GRAPH_SECTION": {
+        "translation": "Grafy"
+    },
+    "DELETE_GRAPH_QUESTION": {
+        "translation": "Chcete tento graf odstrániť?"
+    },
+    "PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS": {
+        "translation": "Zobraziť archivované grafy"
+    },
+    "PAGE_SETTINGS_SHOW_GRAPH_SECTION": {
+        "translation": "Aktivovať sekciu grafov"
+    },
+    "EDIT_GRAPH": {
+        "translation": "Upraviť graf"
+    },
+    "ADD_GRAPH": {
+        "translation": "Pridať graf"
+    },
+    "GRAPH": {
+        "PLACE_HOLDER": {
+            "NAME": {
+                "translation": "Názov grafu"
+            },
+            "NOTES": {
+                "translation": "Poznámky"
+            }
+        },
+        "UPLOAD": {
+            "translation": "Nahrať graf"
+        },
+        "DELETE": {
+            "translation": "Odstrániť graf"
+        },
+        "UPLOAD_DESCRIPTION": {
+            "translation": "Importujte súbor .JSON, ktorý si môžete stiahnuť v zobrazení podrobností o príprave. Môžete tiež importovať aj grafy typu .JSON zdieľané komunitou."
+        }
+    },
+    "SHOW_VISUALIZER": {
+        "translation": "Zobraziť Visualizer"
+    },
+    "NO_BREWS_FOUND": {
+        "translation": "Neboli nájdené žiadne prípravy"
+    },
+    "NO_GRAPHS_FOUND": {
+        "translation": "Neboli nájdené žiadne grafy"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": {
+        "translation": "Definujte maximum časovej osi grafu"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": {
+        "translation": "Nastavte maximálny počet sekúnd na časovej osi pre filtrovanú kávu aj espresso."
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": {
+        "translation": "Filter - normálna obrazovka"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": {
+        "translation": "Filter - celá obrazovka"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": {
+        "translation": "Espresso - normálna obrazovka"
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN": {
+        "translation": "Espresso - celá obrazovku"
+    },
+    "PAGE_SETTINGS_DATE_FORMAT": {
+        "translation": "Formát dátumu"
+    },
+    "PAGE_SETTINGS_LANGUAGE_FRANCE": {
+        "translation": "Français"
+    },
+    "PAGE_SETTINGS_LANGUAGE_INDONESIA": {
+        "translation": "Indonézština"
+    },
+    "EXTRACTION_CHART_TITLE": {
+        "translation": "Graf extrakcie"
+    },
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": {
+        "translation": "Zobraziť problémy so zálohovaním"
+    },
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": {
+        "translation": ""
+    },
+    "AUTOMATIC_BACKUP_DID_FAIL": {
+        "translation": ""
+    },
+    "INTERNAL_BACKUP_DID_FAIL": {
+        "translation": ""
+    },
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": {
+        "translation": ""
+    },
+    "SEND_LOGS": {
+        "translation": ""
+    },
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": {
+        "translation": "Taliančina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_POLISH": {
+        "translation": "Poľština"
+    },
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": {
+        "translation": "Pred začatím musíte najprv resetovať časovač"
+    },
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": {
+        "translation": "Hraničná hmotnosť prvých kvapiek"
+    },
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": {
+        "translation": "Pri akej hmotnosti na váhe sa majú zaznamenať prvé kvapky? Predvolené: >= 0,1 g"
+    },
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": {
+        "translation": ""
+    },
+    "STARTING_IN": {
+        "translation": "Začína za... {{time}}"
+    },
+    "IOS_DATABASE_ISSUE_TITLE": {
+        "translation": "POZOR !!!!! - STRATA SPOJENIA S DATABÁZOU"
+    },
+    "IOS_DATABASE_ISSUE_DESCRIPTION": {
+        "translation": ""
+    },
+    "RELOAD_APP": {
+        "translation": "Znova načítať aplikáciu"
+    },
+    "WATER_TYPE_ADD_CUSTOM": {
+        "translation": "Vlastná voda"
+    },
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE": {
+        "translation": "Third Wave Water - Classic Light Roast Profile"
+    },
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE": {
+        "translation": "Third Wave Water - Medium Roast Profile"
+    },
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE": {
+        "translation": "Third Wave Water - Dark Roast Profile"
+    },
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE": {
+        "translation": "Third Wave Water - Espresso Machine Profile"
+    },
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE": {
+        "translation": ""
+    },
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE": {
+        "translation": ""
+    },
+    "ADD_WATER": {
+        "translation": "Pridať vodu"
+    },
+    "EXTRACTION_CHART_LABEL_STRONG_UNDEREXTRACTED": {
+        "translation": "SILNÉ<br>podextrahované"
+    },
+    "EXTRACTION_CHART_LABEL_STRONG": {
+        "translation": "SILNÉ<br>"
+    },
+    "EXTRACTION_CHART_LABEL_STRONG_HARSH": {
+        "translation": "SILNÉ<br>príkre"
+    },
+    "EXTRACTION_CHART_LABEL_UNDEREXTRACTED": {
+        "translation": "podextrahované"
+    },
+    "EXTRACTION_CHART_LABEL_IDEAL": {
+        "translation": "IDEÁLNE"
+    },
+    "EXTRACTION_CHART_LABEL_HARSH": {
+        "translation": "príkre"
+    },
+    "EXTRACTION_CHART_LABEL_WEAK_UNDEREXTRACTED": {
+        "translation": "SLABÉ<br>podextrahované"
+    },
+    "EXTRACTION_CHART_LABEL_WEAK": {
+        "translation": "SLABÉ<br>"
+    },
+    "EXTRACTION_CHART_LABEL_WEAK_HARSH": {
+        "translation": "SLABÉ<br>príkre"
+    },
+    "PAGE_SETTINGS_TEXT_TO_SPEECH_SECTION": {
+        "translation": "Prevod textu na reč"
+    },
+    "TEXT_TO_SPEECH": {
+        "ACTIVATE": {
+            "translation": "Aktivovať Text na reč"
+        },
+        "BREW_STARTED": {
+            "translation": "Príprava začatá"
+        },
+        "BREW_ENDED": {
+            "translation": "Príprava ukončená"
+        },
+        "TIME": {
+            "translation": "Čas"
+        },
+        "SPEAK_EVERY_MS": {
+            "translation": "Hovoriť každú zvolenú milisekundu"
+        },
+        "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": {
+            "translation": "Nasledujúce čísla budú vyslovené v teste"
+        },
+        "TEST_SPEAK": {
+            "translation": "Spustiť test"
+        },
+        "PITCH": {
+            "translation": "Výška tónu"
+        },
+        "RATE": {
+            "translation": "Rýchlosť"
+        }
+    },
+    "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": {
+        "translation": "Haptická spätná väzba"
+    },
+    "HAPTIC_FEEDBACK": {
+        "ACTIVATE": {
+            "translation": "Aktivovať haptickú spätnú väzbu"
+        },
+        "BREW_STARTED": {
+            "translation": "Vibrovať pri spustení prípravy"
+        },
+        "BREW_STOPPED": {
+            "translation": "Vibrovať pri ukončení prípravy"
+        },
+        "TARE": {
+            "translation": "Vibrovať pri vynulovaní váhy"
+        }
+    },
+    "CONNECTED": {
+        "translation": "Pripojené"
+    },
+    "DISCONNECTED": {
+        "translation": "Odpojené"
+    },
+    "EXPERIMENTAL_FEATURE_DISCLAIMER": {
+        "translation": "Toto je experimentálna funkcia"
+    },
+    "SHOW_HOURS": {
+        "translation": "Zobraziť hodiny"
+    },
+    "SHOW_MINUTES": {
+        "translation": "Zobraziť minúty"
+    },
+    "BEANS_UNARCHIVE": {
+        "translation": "Zrušiť archiváciu"
+    },
+    "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": {
+        "translation": "Zrná boli odarchivované"
+    },
+    "WATER_TYPE_PURE_COFFEE_WATER": {
+        "translation": "Pure Coffee Water"
+    },
+    "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": {
+        "translation": "empirical water GLACIAL"
+    },
+    "WATER_TYPE_EMPIRICAL_WATER_SPRING": {
+        "translation": "empirical water SPRING"
+    },
+    "SORT_PREPARATION_TOOLS": {
+        "translation": ""
+    },
+    "PREPARATION_TYPE_METICULOUS": {
+        "translation": "Meticulous"
+    },
+    "EXPORT_CAUTION": {
+        "translation": ""
+    },
+    "POPOVER_FREEZE_COFFEE_BEAN": {
+        "translation": ""
+    },
+    "POPOVER_UNFREEZE_COFFEE_BEAN": {
+        "translation": ""
+    },
+    "BEAN_POPOVER_EDIT_FREEZE_DATE": {
+        "translation": "Upraviť dátum zmrazenia"
+    },
+    "BEAN_POPOVER_EDIT_UNFREEZE_DATE": {
+        "translation": "Upraviť dátum rozmrazenia"
+    },
+    "BEAN_POPOVER_LEFT_UNFROZEN": {
+        "translation": "Ponechané nezmrazené"
+    },
+    "BEAN_POPOVER_FREEZE_PARTIAL_BAG": {
+        "translation": "Zmraziť čiastočné vrecko (g)"
+    },
+    "FROZEN_BEANS": {
+        "translation": "Zmrazené"
+    },
+    "BEAN_TAB_FROZEN_INFORMATION": {
+        "translation": ""
+    },
+    "BEAN_POPOVER_FROZEN_BAGS": {
+        "translation": "Zamrazené vrecká"
+    },
+    "BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE": {
+        "translation": "Chystáte sa zmraziť celé vrecko a nenašli sme žiadne pripravené nápoje, chcete pôvodné vrecko vymazať?"
+    },
+    "CREATE_FROZEN_BEANS": {
+        "translation": "Vytvoriť zrná"
+    },
+    "BEAN_POPOVER_COPY_ATTACHMENTS": {
+        "translation": "Kopírovať prílohy"
+    },
+    "BEAN_POPOVER_COPY_ATTACHMENTS_DESCRIPTION": {
+        "translation": "Kopírovanie príloh je deaktivované, kým je táto funkcia v počiatočnej fáze"
+    },
+    "BEAN_DATA_FROZEN_DATE": {
+        "translation": "Dátum zmrazenia"
+    },
+    "BEAN_DATA_UNFROZEN_DATE": {
+        "translation": "Dátum rozmrazenia"
+    },
+    "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS": {
+        "translation": "Nemáte žiadne zamrazené zrná"
+    },
+    "BEAN_DATA_FROZEN_ID": {
+        "translation": "ID zamrazeného"
+    },
+    "PAGE_SETTINGS_MANAGE_FEATURES": {
+        "translation": "Spravovať funkcie"
+    },
+    "ACTIVE_BEAN_FREEZING_FEATURE": {
+        "translation": "Aktivovať zamrazovanie zŕn"
+    },
+    "NAV_FROZEN_BEANS_LIST": {
+        "translation": "Zoznam zamrazených zŕn"
+    },
+    "BEAN_BREW_LIST_VIEW_PARAMETERS": {
+        "translation": ""
+    },
+    "BEAN_AGE_BY_BREW_DATE": {
+        "translation": ""
+    },
+    "BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE": {
+        "translation": ""
+    },
+    "BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT": {
+        "translation": "Nemožno zmraziť vrecko, ktorého zostatková hmotnosť je nulová"
+    },
+    "BEAN_DATA_BEST_DATE": {
+        "translation": "Odporúčaný dátum"
+    },
+    "BEAN_DATA_BEST_DATE_TOOLTIP": {
+        "translation": "Kedy je odporúčaný dátum použitia zŕn?"
+    },
+    "BEAN_DATA_OPEN_DATE": {
+        "translation": "Dátum otvorenia vrecka"
+    },
+    "BEAN_DATA_OPEN_DATE_TOOLTIP": {
+        "translation": "Kedy ste otvorili toto vrecko zŕn?"
+    },
+    "BEAN_FREEZING_STORAGE_TYPE_UNKNOWN": {
+        "translation": "Neznámy"
+    },
+    "BEAN_FREEZING_STORAGE_TYPE_COFFEE_BAG": {
+        "translation": "Vrecko na kávu"
+    },
+    "BEAN_FREEZING_STORAGE_TYPE_COFFEE_JAR": {
+        "translation": "Dóza na kávu"
+    },
+    "BEAN_FREEZING_STORAGE_TYPE_ZIP_LOCK": {
+        "translation": "Zipsový uzáver"
+    },
+    "BEAN_FREEZING_STORAGE_TYPE_VACUUM_SEALED": {
+        "translation": "Vákuovo uzavreté"
+    },
+    "BEAN_FREEZING_STORAGE_TYPE_TUBE": {
+        "translation": "Tuba"
+    },
+    "BEAN_DATA_FROZEN_STORAGE_TYPE": {
+        "translation": "Typ skladovania pri zamrazení"
+    },
+    "PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": {
+        "translation": ""
+    },
+    "BEAN_DATA_FROZEN_NOTE": {
+        "translation": ""
+    },
+    "IGNORE_NEGATIVE_VALUES_DESCRIPTION": {
+        "translation": ""
+    },
+    "IGNORE_ANOMALY_VALUES_DESCRIPTION": {
+        "translation": ""
+    },
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": {
+        "translation": ""
+    },
+    "IMPORT_SHOT_FROM_METICULOUS": {
+        "translation": "Importovať shot"
+    },
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": {
+        "translation": ""
+    },
+    "IMPORT_UNSUCCESSFULLY": {
+        "translation": "Import neúspešný"
+    },
+    "BEAN_LIST": {
+        "translation": "Zoznam zŕn"
+    },
+    "IMPORT_ROASTED_BEANS_EXCEL": {
+        "translation": ""
+    },
+    "IMPORT_GREEN_BEANS_EXCEL": {
+        "translation": ""
+    },
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": {
+        "translation": ""
+    },
+    "OK": {
+        "translation": "OK"
+    },
+    "BEAN_SORT_BEAN_AGE": {
+        "translation": "Vek zŕn"
+    },
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": {
+        "translation": ""
+    },
+    "PREPARATION_TYPE_SANREMO_YOU": {
+        "translation": "Sanremo YOU"
+    },
+    "PREPARATION_TYPE_XENIA": {
+        "translation": "Xenia"
+    },
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": {
+        "translation": ""
+    },
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": {
+        "translation": "Holandčina"
+    },
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": {
+        "translation": ""
+    },
+    "SHOW_GRAPH": {
+        "translation": ""
+    },
+    "FULL_IMPORT_FROM_DIRECTORY": {
+        "translation": ""
+    },
+    "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": {
+        "translation": ""
+    },
+    "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": {
+        "translation": ""
+    },
+    "FULL_EXPORT_TO_DIRECTORY": {
+        "translation": ""
+    },
+    "FULL_EXPORT_TO_DIRECTORY_DESCRIPTION": {
+        "translation": ""
+    },
+    "FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS": {
+        "translation": ""
+    },
+    "EXPORT_COMPLETED": {
+        "translation": ""
+    },
+    "BLUETOOTH_NOT_ENABLED": {
+        "translation": ""
+    },
+    "SEARCH_BLUETOOTH_DEVICES": {
+        "translation": ""
+    },
+    "CONNECT_SCALE": {
+        "translation": ""
+    },
+    "CONNECT_PRESSURE": {
+        "translation": ""
+    },
+    "CONNECT_TEMPERATURE": {
+        "translation": ""
+    },
+    "CONNECT_REFRACTOMETER": {
+        "translation": ""
+    },
+    "DISCONNECT_SCALE": {
+        "translation": ""
+    },
+    "DISCONNECT_PRESSURE": {
+        "translation": ""
+    },
+    "DISCONNECT_TEMPERATURE": {
+        "translation": ""
+    },
+    "DISCONNECT_REFRACTOMETER": {
+        "translation": ""
+    },
+    "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": {
+        "translation": ""
+    },
+    "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": {
+        "translation": ""
+    },
+    "BLUETOOTH_REQUEST_PERMISSION": {
+        "LOCATION": {
+            "translation": ""
+        },
+        "BLUETOOTH": {
+            "translation": ""
+        }
+    },
+    "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": {
+        "translation": ""
+    },
+    "BEAN_CODE_ACTION": {
+        "TITLE": {
+            "translation": ""
+        },
+        "START_BREW": {
+            "translation": ""
+        },
+        "START_BREW_CHOOSE_PREPARATION": {
+            "translation": ""
+        },
+        "DETAIL": {
+            "translation": "Detailné zobrazenie"
+        },
+        "EDIT": {
+            "translation": "Upraviť zrná"
+        },
+        "CHOOSE_ACTION": {
+            "translation": "Vyberte akciu pri skenovaní"
+        },
+        "REPEAT_LAST_BREW": {
+            "translation": ""
+        }
+    },
+    "DOWNLOAD_QR_CODE": {
+        "translation": "Stiahnuť QR kód"
+    },
+    "NFC": {
+        "PLEASE_ENABLED_NFC_DESCRIPTION": {
+            "translation": "Prosím, povoľte NFC, inak túto funkciu nie je možné použiť"
+        },
+        "WRITE_COMPLETED_DESCRIPTION": {
+            "translation": "Značka NFC bola úspešne zapísaná"
+        },
+        "WRITE_COMPLETED_TITLE": {
+            "translation": "Zápis dokončený"
+        },
+        "WRITE_UNCOMPLETED_DESCRIPTION": {
+            "translation": "Značku NFC nebolo možné zapísať"
+        },
+        "WRITE_UNCOMPLETED_TITLE": {
+            "translation": "Zápis zlyhal"
+        },
+        "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": {
+            "translation": "Podržte prosím svoju značku pri čítačke"
+        },
+        "WRITE_NFC_TAG": {
+            "translation": "Zápis značky NFC"
+        }
+    },
+    "BREW_FLOW_WEIGHT_REALTIME_SECOND": {
+        "translation": "Prietok (v reálnom čase, výstupný)"
+    },
+    "BREW_FLOW_WEIGHT_SECOND": {
+        "translation": "Hmotnosť (výstupná)"
+    },
+    "BEAN_WEIGHT_IN_PLACEHOLDER_NO_BR": {
+        "translation": "Tento parameter sa nepoužíva na výpočet pomeru prípravy"
+    },
+    "EXTEND_SORT_AFTER": {
+        "translation": "Rozšírené triedenie"
+    },
+    "BEAN_SORT_BEAN_ROASTING_TYPE": {
+        "translation": "Typ praženia"
+    },
+    "BEAN_SORT_WEIGHT": {
+        "translation": "Hmotnosť"
+    },
+    "BEAN_SORT_AROMATICS": {
+        "translation": "Chuťový profil"
+    },
+    "BEAN_SORT_INFORMATION_COUNTRY": {
+        "translation": "Krajina"
+    },
+    "BEAN_SORT_INFORMATION_REGION": {
+        "translation": "Región"
+    },
+    "BEAN_SORT_INFORMATION_VARIETY": {
+        "translation": "Odroda"
+    },
+    "BEAN_SORT_INFORMATION_PROCESSING": {
+        "translation": "Spracovanie"
+    },
+    "BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED": {
+        "translation": ""
+    },
+    "EXPORT_CAUTION_IOS": {
+        "translation": "iOS: Ak chcete nastaviť nový telefón, najlepší a najjednoduchší spôsob je použiť zálohu iCloud"
+    },
+    "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": {
+        "translation": "Nórčina"
+    },
+    "VISUALIZER_SHOT_IMPORT_FAILED": {
+        "translation": "Import shotu z Visualizera zlyhal"
+    },
+    "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": {
+        "translation": "Portugalčina"
+    },
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": {
+        "translation": ""
+    },
+    "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": {
+        "translation": ""
+    },
+    "BEAN_SORT_WEIGHT_REMAINING": {
+        "translation": "Zostávajúca hmotnosť"
+    },
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": {
+        "translation": "Režim pripojenia Acaia"
+    },
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": {
+        "translation": "Ak sa vaša váha neustále pripája a odpája, skúste nastaviť režim na V1 a upraviť časovač srdcového tepu a príkazov. Týmto sa prepne na starý postup pripájania."
+    },
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": {
+        "translation": "V2 - Nový režim pripojenia"
+    },
+    "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": {
+        "translation": "V1 - Starý režim pripojenia"
+    },
+    "BEAN_DATA_CO2E_KG": {
+        "translation": "CO2e (kg) na kg praženej kávy"
+    },
+    "BEAN_DATA_CO2E_KG_TOOLTIP": {
+        "translation": "Uvoľnený CO2e (kg) na kg praženej kávy"
+    },
+    "BEAN_SORT_RECENTLY_USED": {
+        "translation": "Naposledy použité"
+    },
+    "BEAN_CODE_ON_ACTION_SCANNED_TITLE": {
+        "translation": "Vyberte akciu"
+    },
+    "GRAPH_UPDATE_INTERVAL_TITLE": {
+        "translation": ""
+    },
+    "GRAPH_UPDATE_INTERVAL_DESCRIPTION": {
+        "translation": ""
+    },
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": {
+        "translation": "Interval frekvencie aktualizácie grafu"
+    },
+    "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": {
+        "translation": "Obnovovať vo vybranom milisekundovom intervale"
+    },
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": {
+        "translation": "Automaticky uložiť prípravu"
+    },
+    "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": {
+        "translation": "Uloženie prípravy automaticky po uplynutí určitého časového intervalu. Táto akcia sa vykoná po pozastavení časovača prípravy"
+    },
+    "SAVE_NOW": {
+        "translation": "Uložiť teraz"
+    },
+    "SAVING_BREW_COUNTDOWN": {
+        "translation": "Príprava bude uložená za {{time}}"
+    },
+    "PREPARATION_TYPE_GAGGIUINO": {
+        "translation": "Gaggiuino"
+    },
+    "IMPORT_SHOT_FROM_GAGGIUINO": {
+        "translation": "Importovať shot z Gaggiuina"
+    },
+    "NAV_BARISTAMODE_SECTION": {
+        "translation": "Baristamode"
+    },
+    "PRESSURE_THRESHOLD_STOP_ACTIVE": {
+        "translation": "Zastavenie časovača s preddefinovaným tlakom"
+    },
+    "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": {
+        "translation": "Toto nastavenie sa používa iba pre prípravy typu „espresso“. Príprava sa zastaví iba po uplynutí minimálne 10 sekúnd a minimálne raz po dosiahnutí tlaku 1 bar. Po splnení týchto podmienok sa skontroluje nastavená minimálna prahová hodnota tlaku a ak sa dosiahne, príprava sa zastaví. POZOR: Toto sa neuplatní, ak máte pripojenú inteligentnú váhu."
+    },
+    "ANALYTICS_INFORMATION": {
+        "translation": "<h1>Vaša kávová cesta s BeanConqueror<\/h1><p>Paráda! Už ste objavili <b>{{BEANS_COUNT}}<\/b> zŕn a pripravili z nich <b>{{BREWS_COUNT}}<\/b> lahodných šálok kávy. To z vás robí skutočného kávového bádateľa!<\/p><h2>Spoločne formujeme budúcnosť kávy<\/h2><p>Predstavte si toto: Iba 4 % našej komunity sa s nami delí o svoje skúsenosti. To je ako keby ste sa snažili zdokonaliť recept len s jednou ingredienciou! Vaše údaje o prípravách sú ako malé poklady, ktoré nám pomáhajú urobiť z BeanConqueror nástroj, po akom túžite.<\/p><h3>Spoločne môžeme:<\/h3><ul><li>Objaviť ideálne parametre pre každú odrodu kávových zŕn<\/li><li>Vypracovať vedecky podložené príručky pre začiatočníkov vo svete kávy<\/li><li>Zmapovať komplexné vzťahy medzi premennými prípravy a chuťovými profilmi<\/li><li>Urobte z BeanConquerora ešte intuitívnejšieho spoločníka na vašej kávovej ceste<\/li><\/ul><h2>Váš príspevok je cenný:<\/h2><p>Aktivujte zdieľanie údajov teraz alebo neskôr v nastaveniach. Každý spoločný zážitok obohacuje naše kolektívne znalosti o káve a je stavebným kameňom pre budúcnosť BeanConqueror!<\/p><h2>Vaše súkromie je pre nás dôležité<\/h2><p>Ako nemecký tím v srdci Európy berieme vaše súkromie veľmi vážne. Prenášame iba anonymizované údaje, ktoré neumožňujú vyvodiť žiadne závery o vašej identite. Všetky podrobnosti nájdete na webovej stránke BeanConqueror.<\/p><h2>Staňte sa súčasťou evolúcie BeanConqueror!<\/h2>"
+    },
+    "ANALYTICS_INFORMATION_ABOUT": {
+        "translation": "{{analyticsId}} - ID služby Analytics nie je prepojené s osobnými údajmi; osobná identifikácia nie je možná."
+    },
+    "BEAN_DATA_AVERAGE_BREW_RATING": {
+        "translation": "Priemerné hodnotenie prípravy"
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": {
+        "translation": "Vyberte typ obrázka zobrazeného pri príprave"
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": {
+        "translation": "Metóda"
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": {
+        "translation": "Zrná"
+    },
+    "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BREW": {
+        "translation": "Príprava"
+    },
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": {
+        "translation": "Informácie o pripojení zariadenia Bluetooth"
+    },
+    "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": {
+        "translation": "Zobrazuje informácie o pripojení a odpojení zariadenia (zariadení) Bluetooth."
+    },
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": {
+        "translation": "Kvalita obrazu v percentách"
+    },
+    "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": {
+        "translation": "Maximálna veľkosť obrázka v megabajtoch"
+    },
+    "POPOVER_COPY_FROZEN_ID": {
+        "translation": "Kopírovať zmrazené ID"
+    },
+    "MACHINE_ACTIONS": {
+        "translation": "Akcie stroja"
+    },
+    "MACHINE_POWER_ON": {
+        "translation": "Zapnúť"
+    },
+    "MACHINE_POWER_OFF": {
+        "translation": "Vypnúť"
+    },
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": {
+        "translation": "Stroj bol úspešne zapnutý"
+    },
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": {
+        "translation": "Stroj bol úspešne vypnutý"
+    },
+    "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": {
+        "translation": "Stroj nebolo možné zapnúť"
+    },
+    "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": {
+        "translation": "Stroj nebolo možné vypnúť"
+    },
+    "FREEZE_BEAN": {
+        "translation": "Zmraziť zrná"
+    },
+    "BEAN_HAS_BEEN_FROZEN": {
+        "translation": "Zrná boli zmrazené"
+    },
+    "FIND_AUTOMATIC_BACKUP_FILES": {
+        "translation": "Nájsť a importovať súbor automatickej zálohy"
+    },
+    "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": {
+        "translation": "Vyberte a naimportujte súbor automatickej zálohy z internej pamäti zariadenia"
+    },
+    "NO_AUTOMATIC_BACKUPS_FOUND": {
+        "translation": "Žiadne automatické zálohy"
+    },
+    "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": {
+        "translation": "Ak došlo k strate dát a nič sa tu nezobrazuje, obráťte sa na oficiálnu podporu"
+    },
+    "IMPORT_AUTOMATIC_BACKUP_FILE": {
+        "translation": "Importuj súbor automatickej zálohy"
+    },
+    "CLIPBOARD": {
+        "translation": "Schránka"
+    },
+    "NO_IMAGE_IN_CLIPBOARD": {
+        "translation": "V schránke nie je žiadny obrázok"
+    },
+    "PAGE_SETTINGS_THEME_MODE_LIGHT": {
+        "translation": "Svetlý režim"
+    },
+    "PAGE_SETTINGS_THEME_MODE_DARK": {
+        "translation": "Tmavý režim"
+    },
+    "PAGE_SETTINGS_THEME_MODE_DEVICE": {
+        "translation": "Predvolené nastavenie systému"
+    },
+    "PAGE_SETTINGS_THEME_MODE": {
+        "translation": "Režim témy"
+    },
+    "STATISTICS_BEANS_BY_COUNTRY": {
+        "translation": "Zrná podľa krajiny"
+    },
+    "STATISTICS_BEANS_BY_PROCESSING": {
+        "translation": "Zrná podľa spracovania"
+    },
+    "STATISTICS_BEANS_BY_ROASTER": {
+        "translation": "Zrná podľa pražiara"
+    },
+    "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": {
+        "translation": "Priemerné hodnotenie zŕn podľa krajiny"
+    },
+    "PAGE_STATISTICS_AVG_RATING": {
+        "translation": "Priemerné hodnotenie"
+    },
+    "PAGE_SETTINGS_LANGUAGE_GREEK": {
+        "translation": "Gréčtina"
+    },
+    "NO_CAMERA_PERMISSION": {
+        "translation": "Nie je udelené povolenie kamery, povoľte ho v operačnom systéme"
+    },
+    "UNWRAPPED": {
+        "BUTTON": {
+            "TITLE": {
+                "translation": "Rozbaľte svoj rok!"
+            },
+            "SUBTITLE": {
+                "translation": "Pozrite si svoj kávový rok!"
+            }
+        },
+        "INTRO": {
+            "TITLE": {
+                "translation": "Váš kávový rok"
+            },
+            "SUBTITLE": {
+                "translation": "Pozrime sa, čo ste pripravili v {{year}}"
+            }
+        },
+        "NUMBERS": {
+            "TITLE": {
+                "translation": "Čísla"
+            },
+            "BEANS": {
+                "translation": "Zŕn zaznamenaných"
+            },
+            "WEIGHT": {
+                "translation": "Celková hmotnosť"
+            },
+            "BREWS": {
+                "translation": "Celkom pripravených"
+            },
+            "COST": {
+                "translation": "Celkom utratených"
+            }
+        },
+        "INSIGHTS": {
+            "TITLE": {
+                "translation": "Postrehy"
+            },
+            "CAFFEINE": {
+                "translation": "Príjem kofeínu"
+            },
+            "AVG_BREWS": {
+                "translation": "Priemerný počet príprav\/deň"
+            },
+            "BUSIEST_DAY": {
+                "translation": "Najrušnejší deň"
+            },
+            "PEAK_HOUR": {
+                "translation": "Hodina špičky"
+            }
+        },
+        "MAP": {
+            "TITLE": {
+                "translation": "Kávová cesta"
+            },
+            "COUNTRIES": {
+                "translation": "Krajiny"
+            }
+        },
+        "ROASTERS": {
+            "TITLE": {
+                "translation": "Najobľúbenejší pražiari"
+            },
+            "ROASTERS": {
+                "translation": "Pražiari"
+            }
+        },
+        "PREPARATIONS": {
+            "TITLE": {
+                "translation": "Najobľúbenejšie metódy prípravy"
+            }
+        },
+        "VARIETIES": {
+            "TITLE": {
+                "translation": "Najobľúbenejšie odrody"
+            }
+        },
+        "PROCESSING": {
+            "TITLE": {
+                "translation": "Najobľúbenejšia metóda spracovania"
+            }
+        },
+        "GRINDERS": {
+            "TITLE": {
+                "translation": "Najpoužívanejšie mlynčeky"
+            }
+        },
+        "FAVORITES": {
+            "TITLE": {
+                "translation": "Vaše obľúbené"
+            },
+            "ROAST": {
+                "translation": "Obľúbené praženie"
+            },
+            "RATING": {
+                "translation": "Priemerné hodnotenie"
+            },
+            "EXPENSIVE": {
+                "translation": "Najdrahšie zrná"
+            },
+            "BEST_BEAN": {
+                "translation": "Najvyššie hodnotené zrná"
+            }
+        },
+        "SUMMARY": {
+            "TITLE": {
+                "translation": "A je to za nami!"
+            }
+        }
+    },
+    "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": {
+        "translation": "Zrná boli rozmrazené"
+    },
+    "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": {
+        "translation": "Zrná boli čiastočne rozmrazené"
+    },
+    "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": {
+        "translation": "Rozmraziť časť zŕn"
+    },
+    "LAST_COMMUNICATION": {
+        "translation": "Posledná komunikácia"
+    },
+    "GRAPH_ACTIVE_LIGHT_MODE": {
+        "translation": "Aktívne (svetlý)"
+    },
+    "GRAPH_ACTIVE_DARK_MODE": {
+        "translation": "Aktívne (tmavý)"
+    },
+    "GRAPH_REFERENCE_LIGHT_MODE": {
+        "translation": "Referencia (svetlý)"
+    },
+    "GRAPH_REFERENCE_DARK_MODE": {
+        "translation": "Referencia (tmavý)"
+    },
+    "GRAPH_COLORS": {
+        "translation": "Farby grafu"
+    },
+    "PAGE_SETTINGS_LANGUAGE_KOREAN": {
+        "translation": "Kórejčina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_SLOVAK": {
+        "translation": "Slovenčina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_JAPANESE": {
+        "translation": "Japončina"
+    },
+    "PAGE_SETTINGS_LANGUAGE_RUSSIAN": {
+        "translation": "Ruština"
+    },
+    "MILL_HAS_ADJUSTABLE_SPEED": {
+        "translation": ""
+    },
+    "MILL_HAS_TIMER": {
+        "translation": ""
+    },
+    "PREPARATION_SORT_NAME": {
+        "translation": ""
+    },
+    "PREPARATION_SORT_TYPE": {
+        "translation": ""
+    },
+    "SCAN_BEAN_QR": {
+        "translation": ""
+    },
+    "SCAN_BEAN_NFC": {
+        "translation": ""
+    },
+    "AI_BEAN_IMPORT": {
+        "translation": ""
+    },
+    "AI_BEAN_IMPORT_MULTI": {
+        "translation": ""
+    },
+    "AI_BEAN_IMPORT_MULTI_HINT": {
+        "translation": ""
+    },
+    "AI_IMPORT_MULTI_NO_PHOTOS_YET": {
+        "translation": ""
+    },
+    "AI_IMPORT_MULTI_ADD_PHOTO": {
+        "translation": ""
+    },
+    "AI_IMPORT_MULTI_START_ANALYSIS": {
+        "translation": ""
+    },
+    "AI_IMPORT_MULTI_ATTACH_PHOTOS": {
+        "translation": ""
+    },
+    "AI_IMPORT_MULTI_PROCESSING_PHOTO": {
+        "translation": ""
+    },
+    "AI_IMPORT_REMOVE_PHOTO": {
+        "translation": ""
+    },
+    "AI_IMPORT_PHOTO_GALLERY": {
+        "translation": ""
+    },
+    "AI_IMPORT_PHOTO": {
+        "translation": ""
+    },
+    "AI_IMPORT_NOT_AVAILABLE": {
+        "translation": ""
+    },
+    "AI_IMPORT_NOT_AVAILABLE_BROWSER": {
+        "translation": ""
+    },
+    "AI_IMPORT_NOT_AVAILABLE_ANDROID": {
+        "translation": ""
+    },
+    "AI_IMPORT_REQUIRES_APPLE_INTELLIGENCE": {
+        "translation": ""
+    },
+    "AI_IMPORT_ERROR": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_CAPTURING": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_EXTRACTING": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_ANALYZING": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_DETECTING_LANGUAGE": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_LANGUAGE": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_STRUCTURE": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_NAME_AND_ROASTER": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_WEIGHT": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_ROAST_TYPE": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_AROMATICS": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_DECAF": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_ORIGIN": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_VALIDATING": {
+        "translation": ""
+    },
+    "AI_IMPORT_STEP_BLEND_ORIGINS": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_WEIGHT": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_BEAN_ROASTING_TYPE": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_AROMATICS": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_DECAFFEINATED": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_BEANMIX": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_ORIGINCOUNT": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_COUNTRY": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_REGION": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_VARIETY": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_PROCESSING": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_ELEVATION": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_FARM": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_FARMER": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_ROASTINGDATE": {
+        "translation": ""
+    },
+    "AI_IMPORT_FIELD_CUPPING_POINTS": {
+        "translation": ""
+    },
+    "AI_IMPORT_NO_TEXT_FOUND": {
+        "translation": ""
+    },
+    "AI_PROVIDER_SETTINGS_TITLE": {
+        "translation": ""
+    },
+    "AI_PROVIDER": {
+        "translation": ""
+    },
+    "CLOUD_AI_API_KEY": {
+        "translation": ""
+    },
+    "CLOUD_AI_MODEL": {
+        "translation": ""
+    },
+    "CLOUD_AI_BASE_URL": {
+        "translation": ""
+    },
+    "CLOUD_AI_NOT_CONFIGURED": {
+        "translation": ""
+    },
+    "APPLE_INTELLIGENCE_USE_ON_DEVICE": {
+        "translation": ""
+    },
+    "AI_PROVIDER_DISABLED": {
+        "translation": ""
+    },
+    "AI_PROVIDER_APPLE_INTELLIGENCE": {
+        "translation": ""
+    },
+    "AI_PROVIDER_OPENAI": {
+        "translation": ""
+    },
+    "AI_PROVIDER_GOOGLE": {
+        "translation": ""
+    },
+    "AI_PROVIDER_ANTHROPIC": {
+        "translation": ""
+    },
+    "AI_PROVIDER_MISTRAL": {
+        "translation": ""
+    },
+    "AI_PROVIDER_OPENROUTER": {
+        "translation": ""
+    },
+    "AI_PROVIDER_CUSTOM": {
+        "translation": ""
+    },
+    "CLOUD_AI_SELECT_MODEL": {
+        "translation": ""
+    },
+    "CLOUD_AI_SEARCH_MODELS": {
+        "translation": ""
+    },
+    "CLOUD_AI_MODELS_LOADING": {
+        "translation": ""
+    },
+    "CLOUD_AI_MODELS_LOAD_FAILED": {
+        "translation": ""
+    },
+    "CLOUD_AI_MODELS_NONE": {
+        "translation": ""
+    },
+    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": {
+        "translation": ""
+    },
+    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": {
+        "translation": ""
+    },
+    "AI_IMPORT_PROMPT_EXAMPLES": {
+        "ORIGINS": {
+            "translation": ""
+        },
+        "PROCESSING_METHODS": {
+            "translation": ""
+        },
+        "VARIETIES": {
+            "translation": ""
+        },
+        "ROASTING_TYPE_FILTER_KEYWORDS": {
+            "translation": ""
+        },
+        "ROASTING_TYPE_ESPRESSO_KEYWORDS": {
+            "translation": ""
+        },
+        "ROASTING_TYPE_OMNI_KEYWORDS": {
+            "translation": ""
+        },
+        "DECAF_KEYWORDS": {
+            "translation": ""
+        },
+        "BLEND_KEYWORDS": {
+            "translation": ""
+        },
+        "SINGLE_ORIGIN_KEYWORDS": {
+            "translation": ""
+        },
+        "PRODUCER_KEYWORDS": {
+            "translation": ""
+        },
+        "ROASTDATE_KEYWORDS": {
+            "translation": ""
+        },
+        "ROASTER_KEYWORDS": {
+            "translation": ""
+        }
+    },
+    "AI_IMPORT_LANG_DETECT": {
+        "KEYWORDS": {
+            "translation": ""
+        },
+        "EXAMPLE": {
+            "translation": ""
+        }
+    },
+    "BREW_FLOW_WATER_DISPENSED_VOLUME": {
+        "translation": ""
+    },
+    "BREW_FLOW_WATER_DISPENSED_REALTIME": {
+        "translation": ""
+    },
+    "SANREMO_YOU_EXCLUSIVE_METRIC_HINT": {
+        "translation": ""
+    },
+    "WIFI_SIGNAL_STRENGTH": {
+        "translation": ""
+    },
+    "BARISTAMODE_STATISTICS": {
+        "TITLE": {
+            "translation": ""
+        },
+        "TOTAL_BREWS": {
+            "translation": ""
+        },
+        "AVG_OFFSET": {
+            "translation": ""
+        },
+        "HIT_RATE": {
+            "translation": ""
+        },
+        "ALL_TIME_WATER": {
+            "translation": ""
+        },
+        "ALL_TIME_LIQUID": {
+            "translation": ""
+        },
+        "AVG_TIME": {
+            "translation": ""
+        },
+        "ACCURACY_BREAKDOWN": {
+            "translation": ""
+        },
+        "BREWS_COUNT_BY_PROFILE": {
+            "translation": ""
+        },
+        "WATER_BEVERAGE_CROSS_CHART": {
+            "translation": ""
+        },
+        "PERFECT": {
+            "translation": ""
+        },
+        "EXCELLENT": {
+            "translation": ""
+        },
+        "GOOD": {
+            "translation": ""
+        },
+        "MISS": {
+            "translation": ""
+        },
+        "AVG_WATER": {
+            "translation": ""
+        },
+        "AVG_BEVERAGE": {
+            "translation": ""
+        },
+        "RATIO": {
+            "translation": ""
+        },
+        "DAILY": {
+            "translation": "Denne"
+        },
+        "WEEKLY": {
+            "translation": "Týždenne"
+        },
+        "MONTHLY": {
+            "translation": "Mesačne"
+        }
+    },
+    "PREPARATION_TYPE_MOVE2": {
+        "translation": "MOVE 2"
+    },
+    "PAGE_SETTINGS_LANGUAGE_CZECH": {
+        "translation": "Čeština"
+    },
+    "NAV_BARISTAMODE_BREWS": {
+        "translation": "Prípravy"
+    },
+    "BREW_DATA_WATER_VOLUME_INTAKE": {
+        "translation": ""
+    },
+    "BREW_DATA_DESIRED_BEVERAGE_QUANTITY": {
+        "translation": "Požadované množstvo nápoja"
+    },
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "8.7.0": {
+            "TITLE": {
+                "translation": "Verzia 8.7.0: Čo je nové"
+            },
+            "DESCRIPTION": [
+                {
+                    "translation": "<b>Sanremo YOU<\/b>"
+                },
+                {
+                    "translation": "Pridaná podpora sledovania shotov a základnej analytiky v režime Barista"
+                },
+                {
+                    "translation": "Pridané sledovanie objemu vody a objemového prietoku"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Meticulous<\/b>"
+                },
+                {
+                    "translation": "Pri importovaní shotov sa teraz zachová vlastný čas prípravy"
+                },
+                {
+                    "translation": "Rýchlejšie načítavanie pri importe shotov"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Príprava<\/b>"
+                },
+                {
+                    "translation": "Pomer prípravy sa teraz aktualizuje v reálnom čase"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Mlynček<\/b>"
+                },
+                {
+                    "translation": "Pridané nastavenia rýchlosti a časovača pre mlynčeky – vďaka Silasovi"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Zrná<\/b>"
+                },
+                {
+                    "translation": "Pomocou umelej inteligencie naskenujte obal od kávy a nahrajte ho do aplikácie (vyberte si poskytovateľa a pridajte svoj API kľúč) – vďaka Silasovi"
+                },
+                {
+                    "translation": "Nová akcia NFC: opakovanie poslednej prípravy"
+                },
+                {
+                    "translation": "Ikona zmrazenia sa teraz odstráni, keď sa vymažú dátumy zmrazenia\/rozmrazenia"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Praženie<\/b>"
+                },
+                {
+                    "translation": "Bola pridaná presnosť na minúty a sekundy pre prvý a druhý crack"
+                },
+                {
+                    "translation": "Pridaný výpočet úbytku hmotnosti"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Váhy<\/b>"
+                },
+                {
+                    "translation": "Pridaná podpora pre Timemore DOT a Basic"
+                },
+                {
+                    "translation": "Pridaná podpora pre Mantabrew"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Jazyky<\/b>"
+                },
+                {
+                    "translation": "Pridaná podpora pre češtinu – vďaka nyagasan"
+                },
+                {
+                    "translation": "Pridaná podpora pre češtinu – vďaka Miroslavovi"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Framework<\/b>"
+                },
+                {
+                    "translation": "Veľká vďaka RagingCactus za pomoc pri vylepšovaní frameworku a aplikácie ako celku"
+                },
+                {
+                    "translation": ""
+                },
+                {
+                    "translation": "<b>Iné<\/b>"
+                },
+                {
+                    "translation": "Drobné opravy a vylepšenia"
+                }
+            ]
+        }
+    }
+}

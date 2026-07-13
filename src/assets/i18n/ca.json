@@ -555,10 +555,10 @@
         "translation": ""
     },
     "NO": {
-        "translation": ""
+        "translation": "No"
     },
     "YES": {
-        "translation": ""
+        "translation": "Si"
     },
     "SURE_QUESTION": {
         "translation": ""
@@ -588,7 +588,7 @@
         "translation": ""
     },
     "ERROR_OCCURED": {
-        "translation": ""
+        "translation": "S'ha produït un error"
     },
     "CSV_FILE_NOT_DOWNLOADED": {
         "translation": ""
@@ -597,13 +597,13 @@
         "translation": ""
     },
     "ADD_BREW": {
-        "translation": ""
+        "translation": "Afegir preparació"
     },
     "CHOOSE": {
-        "translation": ""
+        "translation": "Escollir"
     },
     "CHOOSE_PHOTO_OR_LIBRARY": {
-        "translation": ""
+        "translation": "Fer foto o escollir-ne una de la galeria"
     },
     "RECORD": {
         "translation": ""
@@ -1226,13 +1226,13 @@
                 "translation": ""
             },
             "BEAN_DATA_BEST_DATE": {
-                "translation": "ما أفضل تاريخ لاستهلاك القهوة؟"
+                "translation": ""
             },
             "BEAN_DATA_OPEN_DATE": {
-                "translation": "متى فتحت كيس القهوة؟"
+                "translation": ""
             },
             "FROZEN_NOTES": {
-                "translation": "أضف ملاحظات لما جمدت من قهوة، مثل المكان وغيره"
+                "translation": ""
             }
         }
     },
@@ -2342,10 +2342,10 @@
                     "translation": ""
                 },
                 "CHLORIDE": {
-                    "translation": "الكلوريد (Cl)"
+                    "translation": ""
                 },
                 "SULFATE": {
-                    "translation": "الكبريتات (SO4)"
+                    "translation": ""
                 }
             },
             "WATER_UNIT": {
@@ -2369,10 +2369,10 @@
                 "translation": ""
             },
             "CHLORIDE": {
-                "translation": "الكلوريد (Cl)"
+                "translation": ""
             },
             "SULFATE": {
-                "translation": "الكبريتات (SO4)"
+                "translation": ""
             }
         }
     },
@@ -2982,7 +2982,7 @@
                 "translation": ""
             },
             "GAGGIUINO": {
-                "translation": ""
+                "translation": "Gaggiuino"
             },
             "MOVE2": {
                 "translation": ""
@@ -3162,16 +3162,16 @@
                 "translation": ""
             },
             "STOP_AT_WEIGHT": {
-                "translation": ""
+                "translation": "Para en arribar al pes"
             },
             "TITLE": {
                 "translation": ""
             },
             "SHOT_ENDED": {
-                "translation": ""
+                "translation": "Preparació acabada"
             },
             "SHOT_STARTED": {
-                "translation": ""
+                "translation": "Preparació iniciada"
             },
             "TRYING_ESTABLISHING_CONNECTION": {
                 "translation": ""
@@ -3476,16 +3476,16 @@
         "translation": ""
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": {
-        "translation": ""
+        "translation": "Filtre - Pes"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": {
-        "translation": ""
+        "translation": "Filtre - Flux"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": {
-        "translation": ""
+        "translation": "Espresso - Pes"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": {
-        "translation": ""
+        "translation": "Espresso - Flux"
     },
     "SMART_SCALE_IGNORE_INCOMING_WEIGHT": {
         "translation": ""
@@ -3626,7 +3626,7 @@
         "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": {
-        "translation": "Italiano"
+        "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_POLISH": {
         "translation": ""
@@ -3732,46 +3732,46 @@
             "translation": ""
         },
         "TEST_SPEAK": {
-            "translation": "اختبر الكلام"
+            "translation": ""
         },
         "PITCH": {
-            "translation": "النبرة"
+            "translation": ""
         },
         "RATE": {
-            "translation": "المعدل"
+            "translation": ""
         }
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": {
-        "translation": "رد الفعل الاهتزازي"
+        "translation": ""
     },
     "HAPTIC_FEEDBACK": {
         "ACTIVATE": {
-            "translation": "فعّل رد الفعل الاهتزازي"
+            "translation": ""
         },
         "BREW_STARTED": {
-            "translation": "اهتز عند بداية التحضير"
+            "translation": ""
         },
         "BREW_STOPPED": {
-            "translation": "اهتز عند إنهاء التحضير"
+            "translation": ""
         },
         "TARE": {
-            "translation": "اهتز عند معايرة الميزان"
+            "translation": ""
         }
     },
     "CONNECTED": {
-        "translation": "موصول"
+        "translation": ""
     },
     "DISCONNECTED": {
-        "translation": "افصل"
+        "translation": ""
     },
     "EXPERIMENTAL_FEATURE_DISCLAIMER": {
-        "translation": "ميزة تجريبية"
+        "translation": ""
     },
     "SHOW_HOURS": {
-        "translation": "أظهر الساعات"
+        "translation": ""
     },
     "SHOW_MINUTES": {
-        "translation": "أظهر الدقائق"
+        "translation": ""
     },
     "BEANS_UNARCHIVE": {
         "translation": ""
@@ -3789,40 +3789,40 @@
         "translation": ""
     },
     "SORT_PREPARATION_TOOLS": {
-        "translation": "رتب أدوات التحضير"
+        "translation": ""
     },
     "PREPARATION_TYPE_METICULOUS": {
-        "translation": "دقيق"
+        "translation": ""
     },
     "EXPORT_CAUTION": {
         "translation": ""
     },
     "POPOVER_FREEZE_COFFEE_BEAN": {
-        "translation": "جمد البن"
+        "translation": ""
     },
     "POPOVER_UNFREEZE_COFFEE_BEAN": {
-        "translation": "فك تجميد البن"
+        "translation": ""
     },
     "BEAN_POPOVER_EDIT_FREEZE_DATE": {
-        "translation": "تعديل تاريخ التجميد"
+        "translation": ""
     },
     "BEAN_POPOVER_EDIT_UNFREEZE_DATE": {
-        "translation": "تعديل تاريخ فك التجميد"
+        "translation": ""
     },
     "BEAN_POPOVER_LEFT_UNFROZEN": {
-        "translation": "متروك بلا تجميد"
+        "translation": ""
     },
     "BEAN_POPOVER_FREEZE_PARTIAL_BAG": {
-        "translation": "جمد الكيس جزئيا"
+        "translation": ""
     },
     "FROZEN_BEANS": {
-        "translation": "مجمد"
+        "translation": ""
     },
     "BEAN_TAB_FROZEN_INFORMATION": {
-        "translation": "معلومات مجمدة"
+        "translation": ""
     },
     "BEAN_POPOVER_FROZEN_BAGS": {
-        "translation": "أكياس مجمدة"
+        "translation": ""
     },
     "BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE": {
         "translation": ""
@@ -3831,25 +3831,25 @@
         "translation": ""
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS": {
-        "translation": "نسخ المرفقات"
+        "translation": ""
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS_DESCRIPTION": {
         "translation": ""
     },
     "BEAN_DATA_FROZEN_DATE": {
-        "translation": "تاريخ التجميد"
+        "translation": ""
     },
     "BEAN_DATA_UNFROZEN_DATE": {
         "translation": ""
     },
     "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS": {
-        "translation": "ما قهوة مجمدة عندك"
+        "translation": ""
     },
     "BEAN_DATA_FROZEN_ID": {
         "translation": ""
     },
     "PAGE_SETTINGS_MANAGE_FEATURES": {
-        "translation": "إدارة الميزات"
+        "translation": ""
     },
     "ACTIVE_BEAN_FREEZING_FEATURE": {
         "translation": ""
@@ -3867,58 +3867,58 @@
         "translation": ""
     },
     "BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT": {
-        "translation": "لا تستطيع التثبيت، فلم يبق شيء في الكيس"
+        "translation": ""
     },
     "BEAN_DATA_BEST_DATE": {
         "translation": ""
     },
     "BEAN_DATA_BEST_DATE_TOOLTIP": {
-        "translation": "ما أفضل تاريخ لاستهلاك القهوة؟"
+        "translation": ""
     },
     "BEAN_DATA_OPEN_DATE": {
-        "translation": "تاريخ فتح الكيس"
+        "translation": ""
     },
     "BEAN_DATA_OPEN_DATE_TOOLTIP": {
-        "translation": "متى فتحت كيس القهوة؟"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_UNKNOWN": {
-        "translation": "مجهول"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_COFFEE_BAG": {
-        "translation": "كيس قهوة"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_COFFEE_JAR": {
-        "translation": "مرطبان قهوة"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_ZIP_LOCK": {
-        "translation": "قفل بسحاب"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_VACUUM_SEALED": {
-        "translation": "مغلق بالتفريغ"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_TUBE": {
-        "translation": "أنبوب"
+        "translation": ""
     },
     "BEAN_DATA_FROZEN_STORAGE_TYPE": {
-        "translation": "تثبيت نوع التخزين"
+        "translation": ""
     },
     "PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE": {
-        "translation": "غيّرت أقصى حد للتقييمات، لكن قيّمت تحضيرًا بتقييم أعلى، فلن يعرضوا بالتصفية العادية"
+        "translation": ""
     },
     "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": {
-        "translation": "غيّرت أقصى حد للتقييمات لكن قيّمت بنّا بتقييم أعلى، فلن يعرضوا بالتصفية العادية"
+        "translation": ""
     },
     "BEAN_DATA_FROZEN_NOTE": {
         "translation": ""
     },
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": {
-        "translation": "بتفعيل ذا، يتأخر الرسم البياني ثانية"
+        "translation": ""
     },
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": {
-        "translation": "بتفعيل ذا، يتأخر الرسم البياني ثانية"
+        "translation": ""
     },
     "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": {
-        "translation": "احفظ السجلات بعد حفظ تحضير"
+        "translation": ""
     },
     "IMPORT_SHOT_FROM_METICULOUS": {
         "translation": ""
@@ -4311,19 +4311,19 @@
         "translation": ""
     },
     "STATISTICS_BEANS_BY_COUNTRY": {
-        "translation": "Beans by Country"
+        "translation": ""
     },
     "STATISTICS_BEANS_BY_PROCESSING": {
-        "translation": "Beans by Processing"
+        "translation": ""
     },
     "STATISTICS_BEANS_BY_ROASTER": {
-        "translation": "Beans by Roaster"
+        "translation": ""
     },
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": {
-        "translation": "Average Bean Rating by Country"
+        "translation": ""
     },
     "PAGE_STATISTICS_AVG_RATING": {
-        "translation": "Average Rating"
+        "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_GREEK": {
         "translation": ""
@@ -4481,10 +4481,10 @@
         "translation": ""
     },
     "MILL_HAS_ADJUSTABLE_SPEED": {
-        "translation": "لديه سرعة قابلة للتعديل"
+        "translation": ""
     },
     "MILL_HAS_TIMER": {
-        "translation": "لديه مؤقت"
+        "translation": ""
     },
     "PREPARATION_SORT_NAME": {
         "translation": ""
@@ -4637,10 +4637,10 @@
         "translation": ""
     },
     "AI_PROVIDER_SETTINGS_TITLE": {
-        "translation": "استيراد حبوب القهوة بالذكاء الاصطناعي"
+        "translation": ""
     },
     "AI_PROVIDER": {
-        "translation": "المزوّد"
+        "translation": ""
     },
     "CLOUD_AI_API_KEY": {
         "translation": ""
@@ -4655,31 +4655,31 @@
         "translation": ""
     },
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": {
-        "translation": "تم اختيار Apple Intelligence — استخدم المسار المحلي"
+        "translation": ""
     },
     "AI_PROVIDER_DISABLED": {
-        "translation": "معطّل"
+        "translation": ""
     },
     "AI_PROVIDER_APPLE_INTELLIGENCE": {
-        "translation": "Apple Intelligence (على الجهاز)"
+        "translation": ""
     },
     "AI_PROVIDER_OPENAI": {
-        "translation": "OpenAI"
+        "translation": ""
     },
     "AI_PROVIDER_GOOGLE": {
-        "translation": "Google Gemini"
+        "translation": ""
     },
     "AI_PROVIDER_ANTHROPIC": {
-        "translation": "Anthropic Claude"
+        "translation": ""
     },
     "AI_PROVIDER_MISTRAL": {
-        "translation": "Mistral AI"
+        "translation": ""
     },
     "AI_PROVIDER_OPENROUTER": {
-        "translation": "OpenRouter"
+        "translation": ""
     },
     "AI_PROVIDER_CUSTOM": {
-        "translation": "نقطة نهاية مخصصة"
+        "translation": ""
     },
     "CLOUD_AI_SELECT_MODEL": {
         "translation": ""
@@ -4704,48 +4704,48 @@
     },
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": {
-            "translation": "إثيوبيا, كولومبيا, البرازيل, كينيا, غواتيمالا, كوستاريكا, هندوراس, بيرو, رواندا, بوروندي, تنزانيا, أوغندا, اليمن, إندونيسيا, الهند, بنما, السلفادور, نيكاراغوا, المكسيك, بوليفيا, الإكوادور, بابوا غينيا الجديدة, هاواي, جامايكا"
+            "translation": ""
         },
         "PROCESSING_METHODS": {
-            "translation": "مغسول, طبيعي, عسلي, لاهوائي, نقع كربوني, Wet-Hulled, شبه مغسول, Pulped Natural, عسل أسود, عسل أحمر, عسل أصفر, عسل أبيض"
+            "translation": ""
         },
         "VARIETIES": {
-            "translation": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai"
+            "translation": ""
         },
         "ROASTING_TYPE_FILTER_KEYWORDS": {
-            "translation": "تحميص فلتر, للفلتر, تحميص فاتح, قهوة مفلترة"
+            "translation": ""
         },
         "ROASTING_TYPE_ESPRESSO_KEYWORDS": {
-            "translation": "تحميص إسبريسو, للإسبريسو, تحميص غامق, خليط إسبريسو"
+            "translation": ""
         },
         "ROASTING_TYPE_OMNI_KEYWORDS": {
-            "translation": "تحميص متعدد, متعدد الاستخدامات, لجميع طرق التحضير, تحميص متوسط"
+            "translation": ""
         },
         "DECAF_KEYWORDS": {
-            "translation": "منزوع الكافيين, خالي من الكافيين, ديكاف"
+            "translation": ""
         },
         "BLEND_KEYWORDS": {
-            "translation": "خليط, مزيج, خليط المنزل"
+            "translation": ""
         },
         "SINGLE_ORIGIN_KEYWORDS": {
-            "translation": "أحادي المصدر, مزرعة واحدة, Single Origin, Micro Lot"
+            "translation": ""
         },
         "PRODUCER_KEYWORDS": {
-            "translation": "منتج, أنتج بواسطة, مزروع بواسطة, مزارع, عائلة, تعاونية, جمعية, صغار المنتجين"
+            "translation": ""
         },
         "ROASTDATE_KEYWORDS": {
-            "translation": "تاريخ التحميص, محمص في, تحميص, محمص طازج"
+            "translation": ""
         },
         "ROASTER_KEYWORDS": {
-            "translation": "محمصة, قهوة, ش.م.م., ذ.م.م."
+            "translation": ""
         }
     },
     "AI_IMPORT_LANG_DETECT": {
         "KEYWORDS": {
-            "translation": "محمص, حصاد, حموضة, حبوب, نكهة, طازج, تحميص"
+            "translation": ""
         },
         "EXAMPLE": {
-            "translation": "قهوة محمصة طازجة، أصل واحد، نكهات فاكهية"
+            "translation": ""
         }
     },
     "BREW_FLOW_WATER_DISPENSED_VOLUME": {
@@ -4807,149 +4807,149 @@
             "translation": ""
         },
         "AVG_BEVERAGE": {
-            "translation": ""
+            "translation": "Pes mitjà de la preparació (g)"
         },
         "RATIO": {
-            "translation": ""
+            "translation": "Ràtio (Aigua \/ Líquid)"
         },
         "DAILY": {
-            "translation": ""
+            "translation": "Diari"
         },
         "WEEKLY": {
-            "translation": ""
+            "translation": "Setmanal"
         },
         "MONTHLY": {
-            "translation": ""
+            "translation": "Mensual"
         }
     },
     "PREPARATION_TYPE_MOVE2": {
         "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_CZECH": {
-        "translation": ""
+        "translation": "Txec"
     },
     "NAV_BARISTAMODE_BREWS": {
-        "translation": ""
+        "translation": "Preparacions"
     },
     "BREW_DATA_WATER_VOLUME_INTAKE": {
         "translation": ""
     },
     "BREW_DATA_DESIRED_BEVERAGE_QUANTITY": {
-        "translation": ""
+        "translation": "Quantitat de beguda desitjada"
     },
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.7.0": {
             "TITLE": {
-                "translation": ""
+                "translation": "Versió 8.7.0: Novetats"
             },
             "DESCRIPTION": [
                 {
-                    "translation": ""
+                    "translation": "<b>Sanremo YOU<\/b>"
                 },
                 {
                     "translation": ""
                 },
                 {
-                    "translation": ""
+                    "translation": "S'ha afegit el volum d'aigua i seguiment del flux"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Meticulous<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "Ara es conserva el temps de preparació personalitat quan s'importen preparacions"
                 },
                 {
-                    "translation": ""
+                    "translation": "Importació de preparacions més ràpida"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Preparació<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "El ràtio de la preparació ara s'actualitza en temps real"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Molinet<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "S'han afegit paràmetres de velocitat i temps per a molins, gràcies a Silas"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Cafè<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "Fes servir IA per escanejar una bossa de cafè i importa-la a l'aplicació (escull el teu proveïdor de IA i agrega la clau API) - Gràcies a Silas"
                 },
                 {
-                    "translation": ""
+                    "translation": "Nova acció de NFC: repeteix l'última preparació"
                 },
                 {
-                    "translation": ""
+                    "translation": "L'icona de congelat ara desapareix quan es borra la data de congelat\/descongelat "
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Torrat<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "S'ha afegit precisió en minuts i segons pel primer i segon crack"
                 },
                 {
-                    "translation": ""
+                    "translation": "S'ha afegit el càlcul de la pèrdua de pes"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Balança<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "Afegit suport per Timemore DOT i Basic"
                 },
                 {
-                    "translation": ""
+                    "translation": "Afegit suport per Mantabrew"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Idiomes<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "Afegit suport japonès - gràcies a nyagasan"
                 },
                 {
-                    "translation": ""
+                    "translation": "Afegit suport txec - gràcies a Miroslav"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Entorn de treball<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "Moltes gràcies a RagingCactus per les millores al marc i estructura de l'aplicació en general"
                 },
                 {
-                    "translation": ""
+                    "translation": "Buit"
                 },
                 {
-                    "translation": ""
+                    "translation": "<b>Altres<\/b>"
                 },
                 {
-                    "translation": ""
+                    "translation": "Correccions i millores menors"
                 }
             ]
         }
