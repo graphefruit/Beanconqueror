@@ -1,27 +1,27 @@
 {
     "NAV_MENU": {
-        "translation": ""
+        "translation": "메뉴"
     },
     "NAV_HOME": {
-        "translation": ""
+        "translation": "홈"
     },
     "NAV_SETTINGS": {
-        "translation": ""
+        "translation": "세팅"
     },
     "NAV_BREWS": {
-        "translation": ""
+        "translation": "추출"
     },
     "NAV_BEANS": {
-        "translation": ""
+        "translation": "원두"
     },
     "NAV_PREPARATION": {
-        "translation": ""
+        "translation": "커피 도구"
     },
     "NAV_MILL": {
-        "translation": ""
+        "translation": "그라인더"
     },
     "NAV_ABOUT_US": {
-        "translation": ""
+        "translation": "우리에 대해"
     },
     "NAV_CONTACT": {
         "translation": ""
@@ -48,25 +48,25 @@
         "translation": ""
     },
     "NAV_COOKIE": {
-        "translation": ""
+        "translation": "쿠키"
     },
     "NAV_LOGS": {
-        "translation": ""
+        "translation": "로그"
     },
     "NAV_BREW_PARAMS": {
         "translation": ""
     },
     "NAV_INFORMATION_TO_APP": {
-        "translation": ""
+        "translation": "빈컨쿼러에 대해"
     },
     "NAV_WATER_SECTION": {
-        "translation": ""
+        "translation": "물"
     },
     "NAV_HELPER": {
         "translation": ""
     },
     "POPOVER_BREWS_OPTION_REPEAT": {
-        "translation": ""
+        "translation": "반복"
     },
     "POPOVER_BREWS_OPTION_DETAIL": {
         "translation": ""
@@ -75,16 +75,16 @@
         "translation": ""
     },
     "POPOVER_BREWS_OPTION_EDIT": {
-        "translation": ""
+        "translation": "수정"
     },
     "POPOVER_BREWS_OPTION_DELETE": {
-        "translation": ""
+        "translation": "삭제"
     },
     "POPOVER_BREWS_OPTION_PHOTO_GALLERY": {
-        "translation": ""
+        "translation": "사진 갤러리"
     },
     "POPOVER_BREWS_OPTION_CUPPING": {
-        "translation": ""
+        "translation": "커핑"
     },
     "POPOVER_BREWS_OPTION_MAP_COORDINATES": {
         "translation": ""
@@ -159,28 +159,28 @@
         "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE": {
-        "translation": ""
+        "translation": "언어 설정"
     },
     "PAGE_SETTINGS_LANGUAGE_GERMAN": {
-        "translation": ""
+        "translation": "독일어"
     },
     "PAGE_SETTINGS_LANGUAGE_ENGLISH": {
-        "translation": ""
+        "translation": "영어"
     },
     "PAGE_SETTINGS_LANGUAGE_SPANISH": {
-        "translation": ""
+        "translation": "스페인어"
     },
     "PAGE_SETTINGS_LANGUAGE_TURKISH": {
-        "translation": ""
+        "translation": "튀르키예어"
     },
     "PAGE_SETTINGS_LANGUAGE_CHINESE": {
-        "translation": ""
+        "translation": "중국어"
     },
     "PAGE_SETTINGS_GENERAL_SETTINGS": {
         "translation": ""
     },
     "PAGE_SETTINGS_TRANSFER": {
-        "translation": ""
+        "translation": "데이터 전송"
     },
     "PAGE_SETTINGS_PRESET_LAST_BREW": {
         "translation": ""
@@ -198,7 +198,7 @@
         "translation": ""
     },
     "PAGE_SETTINGS_ANALYTICS_INFORMATION": {
-        "translation": ""
+        "translation": "분석"
     },
     "PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP": {
         "translation": ""
@@ -240,16 +240,16 @@
         "translation": ""
     },
     "PAGE_BREW_TEXT_INFORMATION_FROM_ROASTER": {
-        "translation": ""
+        "translation": "로스터리 정보"
     },
     "PAGE_ABOUT_NO_VERSION_AVAILABLE": {
         "translation": ""
     },
     "PAGE_ABOUT_APP_VERSION": {
-        "translation": ""
+        "translation": "앱 버젼"
     },
     "PAGE_LICENCES_WEBSITE": {
-        "translation": ""
+        "translation": "웹사이트"
     },
     "BEAN_DATA_ROAST_NAME": {
         "translation": ""
@@ -258,19 +258,19 @@
         "translation": ""
     },
     "BEAN_DATA_ROASTING_DATE": {
-        "translation": ""
+        "translation": "로스팅 날짜"
     },
     "BEAN_DATA_ROASTER": {
-        "translation": ""
+        "translation": "로스터리"
     },
     "BEAN_DATA_VARIETY": {
-        "translation": ""
+        "translation": "품종"
     },
     "BEAN_DATA_PROCESSING": {
-        "translation": ""
+        "translation": "가공 방식"
     },
     "BEAN_DATA_COUNTRY": {
-        "translation": ""
+        "translation": "국가"
     },
     "BEAN_DATA_MIX": {
         "translation": ""
@@ -279,31 +279,31 @@
         "translation": ""
     },
     "BEAN_DATA_WEIGHT": {
-        "translation": ""
+        "translation": "무게"
     },
     "BEAN_DATA_COST": {
-        "translation": ""
+        "translation": "가격"
     },
     "BEAN_DATA_NAME": {
-        "translation": ""
+        "translation": "이름"
     },
     "BEAN_DATA_REGION": {
-        "translation": ""
+        "translation": "지역"
     },
     "BEAN_DATA_FARM": {
-        "translation": ""
+        "translation": "농장"
     },
     "BEAN_DATA_FARMER": {
-        "translation": ""
+        "translation": "생산자"
     },
     "BEAN_DATA_ELEVATION": {
-        "translation": ""
+        "translation": "고도"
     },
     "BEAN_DATA_HARVEST_TIME": {
-        "translation": ""
+        "translation": "수확 일자"
     },
     "BEAN_DATA_PERCENTAGE": {
-        "translation": ""
+        "translation": "혼합 비율"
     },
     "BEAN_DATA_CERTIFICATION": {
         "translation": ""
@@ -312,19 +312,19 @@
         "translation": ""
     },
     "BEAN_DATA_DECAFFEINATED": {
-        "translation": ""
+        "translation": "디카페인"
     },
     "BEAN_DATA_URL": {
-        "translation": ""
+        "translation": "웹사이트"
     },
     "BEAN_DATA_EAN": {
         "translation": ""
     },
     "BEAN_DATA_PURCHASING_PRICE": {
-        "translation": ""
+        "translation": "구입 가격"
     },
     "BEAN_DATA_FOB_PRICE": {
-        "translation": ""
+        "translation": "FOB 가격"
     },
     "BEAN_DATA_CUPPING_POINTS": {
         "translation": ""
@@ -339,37 +339,37 @@
         "translation": ""
     },
     "EDIT": {
-        "translation": ""
+        "translation": "편집"
     },
     "DELETE": {
-        "translation": ""
+        "translation": "삭제"
     },
     "FINISHED": {
         "translation": ""
     },
     "NOTES": {
-        "translation": ""
+        "translation": "메모"
     },
     "ADD_PHOTO": {
-        "translation": ""
+        "translation": "사진 추가하기"
     },
     "CANCEL": {
-        "translation": ""
+        "translation": "취소"
     },
     "GENERATE": {
-        "translation": ""
+        "translation": "생성"
     },
     "SAVE": {
-        "translation": ""
+        "translation": "저장"
     },
     "ADD_SOMETHING": {
-        "translation": ""
+        "translation": "추가"
     },
     "CONTACT": {
         "translation": ""
     },
     "NAME": {
-        "translation": ""
+        "translation": "이름"
     },
     "IMPORT": {
         "translation": ""
@@ -1226,13 +1226,13 @@
                 "translation": ""
             },
             "BEAN_DATA_BEST_DATE": {
-                "translation": "ما أفضل تاريخ لاستهلاك القهوة؟"
+                "translation": ""
             },
             "BEAN_DATA_OPEN_DATE": {
-                "translation": "متى فتحت كيس القهوة؟"
+                "translation": ""
             },
             "FROZEN_NOTES": {
-                "translation": "أضف ملاحظات لما جمدت من قهوة، مثل المكان وغيره"
+                "translation": ""
             }
         }
     },
@@ -2342,10 +2342,10 @@
                     "translation": ""
                 },
                 "CHLORIDE": {
-                    "translation": "الكلوريد (Cl)"
+                    "translation": ""
                 },
                 "SULFATE": {
-                    "translation": "الكبريتات (SO4)"
+                    "translation": ""
                 }
             },
             "WATER_UNIT": {
@@ -2369,10 +2369,10 @@
                 "translation": ""
             },
             "CHLORIDE": {
-                "translation": "الكلوريد (Cl)"
+                "translation": ""
             },
             "SULFATE": {
-                "translation": "الكبريتات (SO4)"
+                "translation": ""
             }
         }
     },
@@ -3626,7 +3626,7 @@
         "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": {
-        "translation": "Italiano"
+        "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_POLISH": {
         "translation": ""
@@ -3732,46 +3732,46 @@
             "translation": ""
         },
         "TEST_SPEAK": {
-            "translation": "اختبر الكلام"
+            "translation": ""
         },
         "PITCH": {
-            "translation": "النبرة"
+            "translation": ""
         },
         "RATE": {
-            "translation": "المعدل"
+            "translation": ""
         }
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": {
-        "translation": "رد الفعل الاهتزازي"
+        "translation": ""
     },
     "HAPTIC_FEEDBACK": {
         "ACTIVATE": {
-            "translation": "فعّل رد الفعل الاهتزازي"
+            "translation": ""
         },
         "BREW_STARTED": {
-            "translation": "اهتز عند بداية التحضير"
+            "translation": ""
         },
         "BREW_STOPPED": {
-            "translation": "اهتز عند إنهاء التحضير"
+            "translation": ""
         },
         "TARE": {
-            "translation": "اهتز عند معايرة الميزان"
+            "translation": ""
         }
     },
     "CONNECTED": {
-        "translation": "موصول"
+        "translation": ""
     },
     "DISCONNECTED": {
-        "translation": "افصل"
+        "translation": ""
     },
     "EXPERIMENTAL_FEATURE_DISCLAIMER": {
-        "translation": "ميزة تجريبية"
+        "translation": ""
     },
     "SHOW_HOURS": {
-        "translation": "أظهر الساعات"
+        "translation": ""
     },
     "SHOW_MINUTES": {
-        "translation": "أظهر الدقائق"
+        "translation": ""
     },
     "BEANS_UNARCHIVE": {
         "translation": ""
@@ -3789,40 +3789,40 @@
         "translation": ""
     },
     "SORT_PREPARATION_TOOLS": {
-        "translation": "رتب أدوات التحضير"
+        "translation": ""
     },
     "PREPARATION_TYPE_METICULOUS": {
-        "translation": "دقيق"
+        "translation": ""
     },
     "EXPORT_CAUTION": {
         "translation": ""
     },
     "POPOVER_FREEZE_COFFEE_BEAN": {
-        "translation": "جمد البن"
+        "translation": ""
     },
     "POPOVER_UNFREEZE_COFFEE_BEAN": {
-        "translation": "فك تجميد البن"
+        "translation": ""
     },
     "BEAN_POPOVER_EDIT_FREEZE_DATE": {
-        "translation": "تعديل تاريخ التجميد"
+        "translation": ""
     },
     "BEAN_POPOVER_EDIT_UNFREEZE_DATE": {
-        "translation": "تعديل تاريخ فك التجميد"
+        "translation": ""
     },
     "BEAN_POPOVER_LEFT_UNFROZEN": {
-        "translation": "متروك بلا تجميد"
+        "translation": ""
     },
     "BEAN_POPOVER_FREEZE_PARTIAL_BAG": {
-        "translation": "جمد الكيس جزئيا"
+        "translation": ""
     },
     "FROZEN_BEANS": {
-        "translation": "مجمد"
+        "translation": ""
     },
     "BEAN_TAB_FROZEN_INFORMATION": {
-        "translation": "معلومات مجمدة"
+        "translation": ""
     },
     "BEAN_POPOVER_FROZEN_BAGS": {
-        "translation": "أكياس مجمدة"
+        "translation": ""
     },
     "BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE": {
         "translation": ""
@@ -3831,25 +3831,25 @@
         "translation": ""
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS": {
-        "translation": "نسخ المرفقات"
+        "translation": ""
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS_DESCRIPTION": {
         "translation": ""
     },
     "BEAN_DATA_FROZEN_DATE": {
-        "translation": "تاريخ التجميد"
+        "translation": ""
     },
     "BEAN_DATA_UNFROZEN_DATE": {
         "translation": ""
     },
     "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS": {
-        "translation": "ما قهوة مجمدة عندك"
+        "translation": ""
     },
     "BEAN_DATA_FROZEN_ID": {
         "translation": ""
     },
     "PAGE_SETTINGS_MANAGE_FEATURES": {
-        "translation": "إدارة الميزات"
+        "translation": ""
     },
     "ACTIVE_BEAN_FREEZING_FEATURE": {
         "translation": ""
@@ -3867,58 +3867,58 @@
         "translation": ""
     },
     "BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT": {
-        "translation": "لا تستطيع التثبيت، فلم يبق شيء في الكيس"
+        "translation": ""
     },
     "BEAN_DATA_BEST_DATE": {
         "translation": ""
     },
     "BEAN_DATA_BEST_DATE_TOOLTIP": {
-        "translation": "ما أفضل تاريخ لاستهلاك القهوة؟"
+        "translation": ""
     },
     "BEAN_DATA_OPEN_DATE": {
-        "translation": "تاريخ فتح الكيس"
+        "translation": ""
     },
     "BEAN_DATA_OPEN_DATE_TOOLTIP": {
-        "translation": "متى فتحت كيس القهوة؟"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_UNKNOWN": {
-        "translation": "مجهول"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_COFFEE_BAG": {
-        "translation": "كيس قهوة"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_COFFEE_JAR": {
-        "translation": "مرطبان قهوة"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_ZIP_LOCK": {
-        "translation": "قفل بسحاب"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_VACUUM_SEALED": {
-        "translation": "مغلق بالتفريغ"
+        "translation": ""
     },
     "BEAN_FREEZING_STORAGE_TYPE_TUBE": {
-        "translation": "أنبوب"
+        "translation": ""
     },
     "BEAN_DATA_FROZEN_STORAGE_TYPE": {
-        "translation": "تثبيت نوع التخزين"
+        "translation": ""
     },
     "PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE": {
-        "translation": "غيّرت أقصى حد للتقييمات، لكن قيّمت تحضيرًا بتقييم أعلى، فلن يعرضوا بالتصفية العادية"
+        "translation": ""
     },
     "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": {
-        "translation": "غيّرت أقصى حد للتقييمات لكن قيّمت بنّا بتقييم أعلى، فلن يعرضوا بالتصفية العادية"
+        "translation": ""
     },
     "BEAN_DATA_FROZEN_NOTE": {
         "translation": ""
     },
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": {
-        "translation": "بتفعيل ذا، يتأخر الرسم البياني ثانية"
+        "translation": ""
     },
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": {
-        "translation": "بتفعيل ذا، يتأخر الرسم البياني ثانية"
+        "translation": ""
     },
     "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": {
-        "translation": "احفظ السجلات بعد حفظ تحضير"
+        "translation": ""
     },
     "IMPORT_SHOT_FROM_METICULOUS": {
         "translation": ""
@@ -4254,55 +4254,55 @@
         "translation": ""
     },
     "MACHINE_POWER_ON": {
-        "translation": ""
+        "translation": "전원 켜기"
     },
     "MACHINE_POWER_OFF": {
-        "translation": ""
+        "translation": "전원 끄기"
     },
     "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": {
-        "translation": ""
+        "translation": "머신 전원이 켜졌습니다."
     },
     "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": {
-        "translation": ""
+        "translation": "머신 전원이 꺼졌습니다."
     },
     "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": {
-        "translation": ""
+        "translation": "머신 전원을 켤 수 없음"
     },
     "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": {
-        "translation": ""
+        "translation": "머신 전원을 끌 수 없음"
     },
     "FREEZE_BEAN": {
-        "translation": ""
+        "translation": "원두 냉동하기"
     },
     "BEAN_HAS_BEEN_FROZEN": {
-        "translation": ""
+        "translation": "원두가 냉동되었습니다."
     },
     "FIND_AUTOMATIC_BACKUP_FILES": {
-        "translation": ""
+        "translation": "자동 백업 파일 찾기 및 가져오기"
     },
     "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": {
-        "translation": ""
+        "translation": "내부 저장소에서 자동 백업 파일을 검색하고 가져오기"
     },
     "NO_AUTOMATIC_BACKUPS_FOUND": {
-        "translation": ""
+        "translation": "생성된 자동 백업이 없음"
     },
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": {
-        "translation": ""
+        "translation": "데이터가 유실되었으나 이곳에서 찾을 수 없는 경우, 공식 고객 지원을 통해 문의해 주세요."
     },
     "IMPORT_AUTOMATIC_BACKUP_FILE": {
-        "translation": ""
+        "translation": "자동 백업 파일 가져오기"
     },
     "CLIPBOARD": {
-        "translation": ""
+        "translation": "클립보드"
     },
     "NO_IMAGE_IN_CLIPBOARD": {
-        "translation": ""
+        "translation": "클립보드에 복사된 이미지 없음"
     },
     "PAGE_SETTINGS_THEME_MODE_LIGHT": {
-        "translation": ""
+        "translation": "라이트 모드"
     },
     "PAGE_SETTINGS_THEME_MODE_DARK": {
-        "translation": ""
+        "translation": "다크 모드"
     },
     "PAGE_SETTINGS_THEME_MODE_DEVICE": {
         "translation": ""
@@ -4311,19 +4311,19 @@
         "translation": ""
     },
     "STATISTICS_BEANS_BY_COUNTRY": {
-        "translation": "Beans by Country"
+        "translation": ""
     },
     "STATISTICS_BEANS_BY_PROCESSING": {
-        "translation": "Beans by Processing"
+        "translation": ""
     },
     "STATISTICS_BEANS_BY_ROASTER": {
-        "translation": "Beans by Roaster"
+        "translation": ""
     },
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": {
-        "translation": "Average Bean Rating by Country"
+        "translation": ""
     },
     "PAGE_STATISTICS_AVG_RATING": {
-        "translation": "Average Rating"
+        "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_GREEK": {
         "translation": ""
@@ -4350,36 +4350,36 @@
         },
         "NUMBERS": {
             "TITLE": {
-                "translation": ""
+                "translation": "주요 통계"
             },
             "BEANS": {
-                "translation": ""
+                "translation": "경험한 원두"
             },
             "WEIGHT": {
-                "translation": ""
+                "translation": "총 원두 사용량"
             },
             "BREWS": {
-                "translation": ""
+                "translation": "총 추출 횟수"
             },
             "COST": {
-                "translation": ""
+                "translation": "총 지출 금액"
             }
         },
         "INSIGHTS": {
             "TITLE": {
-                "translation": ""
+                "translation": "통계"
             },
             "CAFFEINE": {
-                "translation": ""
+                "translation": "카페인 섭취량"
             },
             "AVG_BREWS": {
-                "translation": ""
+                "translation": "일평균 추출 횟수"
             },
             "BUSIEST_DAY": {
-                "translation": ""
+                "translation": "최다 기록일"
             },
             "PEAK_HOUR": {
-                "translation": ""
+                "translation": "주요 추출 시간대"
             }
         },
         "MAP": {
@@ -4429,10 +4429,10 @@
                 "translation": ""
             },
             "EXPENSIVE": {
-                "translation": ""
+                "translation": "가장 비싼 원두"
             },
             "BEST_BEAN": {
-                "translation": ""
+                "translation": "최고의 원두"
             }
         },
         "SUMMARY": {
@@ -4469,22 +4469,22 @@
         "translation": ""
     },
     "PAGE_SETTINGS_LANGUAGE_KOREAN": {
-        "translation": ""
+        "translation": "한국어"
     },
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": {
-        "translation": ""
+        "translation": "슬로바키아어"
     },
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": {
-        "translation": ""
+        "translation": "일본어"
     },
     "PAGE_SETTINGS_LANGUAGE_RUSSIAN": {
-        "translation": ""
+        "translation": "러시아어"
     },
     "MILL_HAS_ADJUSTABLE_SPEED": {
-        "translation": "لديه سرعة قابلة للتعديل"
+        "translation": ""
     },
     "MILL_HAS_TIMER": {
-        "translation": "لديه مؤقت"
+        "translation": ""
     },
     "PREPARATION_SORT_NAME": {
         "translation": ""
@@ -4637,10 +4637,10 @@
         "translation": ""
     },
     "AI_PROVIDER_SETTINGS_TITLE": {
-        "translation": "استيراد حبوب القهوة بالذكاء الاصطناعي"
+        "translation": ""
     },
     "AI_PROVIDER": {
-        "translation": "المزوّد"
+        "translation": ""
     },
     "CLOUD_AI_API_KEY": {
         "translation": ""
@@ -4655,31 +4655,31 @@
         "translation": ""
     },
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": {
-        "translation": "تم اختيار Apple Intelligence — استخدم المسار المحلي"
+        "translation": ""
     },
     "AI_PROVIDER_DISABLED": {
-        "translation": "معطّل"
+        "translation": ""
     },
     "AI_PROVIDER_APPLE_INTELLIGENCE": {
-        "translation": "Apple Intelligence (على الجهاز)"
+        "translation": ""
     },
     "AI_PROVIDER_OPENAI": {
-        "translation": "OpenAI"
+        "translation": ""
     },
     "AI_PROVIDER_GOOGLE": {
-        "translation": "Google Gemini"
+        "translation": ""
     },
     "AI_PROVIDER_ANTHROPIC": {
-        "translation": "Anthropic Claude"
+        "translation": ""
     },
     "AI_PROVIDER_MISTRAL": {
-        "translation": "Mistral AI"
+        "translation": ""
     },
     "AI_PROVIDER_OPENROUTER": {
-        "translation": "OpenRouter"
+        "translation": ""
     },
     "AI_PROVIDER_CUSTOM": {
-        "translation": "نقطة نهاية مخصصة"
+        "translation": ""
     },
     "CLOUD_AI_SELECT_MODEL": {
         "translation": ""
@@ -4704,48 +4704,48 @@
     },
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": {
-            "translation": "إثيوبيا, كولومبيا, البرازيل, كينيا, غواتيمالا, كوستاريكا, هندوراس, بيرو, رواندا, بوروندي, تنزانيا, أوغندا, اليمن, إندونيسيا, الهند, بنما, السلفادور, نيكاراغوا, المكسيك, بوليفيا, الإكوادور, بابوا غينيا الجديدة, هاواي, جامايكا"
+            "translation": ""
         },
         "PROCESSING_METHODS": {
-            "translation": "مغسول, طبيعي, عسلي, لاهوائي, نقع كربوني, Wet-Hulled, شبه مغسول, Pulped Natural, عسل أسود, عسل أحمر, عسل أصفر, عسل أبيض"
+            "translation": ""
         },
         "VARIETIES": {
-            "translation": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai"
+            "translation": ""
         },
         "ROASTING_TYPE_FILTER_KEYWORDS": {
-            "translation": "تحميص فلتر, للفلتر, تحميص فاتح, قهوة مفلترة"
+            "translation": ""
         },
         "ROASTING_TYPE_ESPRESSO_KEYWORDS": {
-            "translation": "تحميص إسبريسو, للإسبريسو, تحميص غامق, خليط إسبريسو"
+            "translation": ""
         },
         "ROASTING_TYPE_OMNI_KEYWORDS": {
-            "translation": "تحميص متعدد, متعدد الاستخدامات, لجميع طرق التحضير, تحميص متوسط"
+            "translation": ""
         },
         "DECAF_KEYWORDS": {
-            "translation": "منزوع الكافيين, خالي من الكافيين, ديكاف"
+            "translation": ""
         },
         "BLEND_KEYWORDS": {
-            "translation": "خليط, مزيج, خليط المنزل"
+            "translation": ""
         },
         "SINGLE_ORIGIN_KEYWORDS": {
-            "translation": "أحادي المصدر, مزرعة واحدة, Single Origin, Micro Lot"
+            "translation": ""
         },
         "PRODUCER_KEYWORDS": {
-            "translation": "منتج, أنتج بواسطة, مزروع بواسطة, مزارع, عائلة, تعاونية, جمعية, صغار المنتجين"
+            "translation": ""
         },
         "ROASTDATE_KEYWORDS": {
-            "translation": "تاريخ التحميص, محمص في, تحميص, محمص طازج"
+            "translation": ""
         },
         "ROASTER_KEYWORDS": {
-            "translation": "محمصة, قهوة, ش.م.م., ذ.م.م."
+            "translation": ""
         }
     },
     "AI_IMPORT_LANG_DETECT": {
         "KEYWORDS": {
-            "translation": "محمص, حصاد, حموضة, حبوب, نكهة, طازج, تحميص"
+            "translation": ""
         },
         "EXAMPLE": {
-            "translation": "قهوة محمصة طازجة، أصل واحد، نكهات فاكهية"
+            "translation": ""
         }
     },
     "BREW_FLOW_WATER_DISPENSED_VOLUME": {

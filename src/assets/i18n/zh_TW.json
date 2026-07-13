@@ -1,117 +1,117 @@
 {
     "NAV_MENU": {
-        "translation": "菜单"
+        "translation": "菜單"
     },
     "NAV_HOME": {
-        "translation": "主页"
+        "translation": "主頁"
     },
     "NAV_SETTINGS": {
-        "translation": "设置"
+        "translation": "設置"
     },
     "NAV_BREWS": {
-        "translation": "冲泡"
+        "translation": "萃取"
     },
     "NAV_BEANS": {
         "translation": "咖啡豆"
     },
     "NAV_PREPARATION": {
-        "translation": "冲泡方法"
+        "translation": "萃取方法"
     },
     "NAV_MILL": {
-        "translation": "磨豆机"
+        "translation": "磨豆機"
     },
     "NAV_ABOUT_US": {
-        "translation": "关于我们"
+        "translation": "關於我們"
     },
     "NAV_CONTACT": {
-        "translation": "联系方式"
+        "translation": "聯繫方式"
     },
     "NAV_PRIVACY": {
-        "translation": "隐私"
+        "translation": "私隱"
     },
     "NAV_CREDITS": {
-        "translation": "Credits"
+        "translation": "貢獻者"
     },
     "NAV_TERMS": {
-        "translation": "团队和贡献者"
+        "translation": "團隊和貢獻者"
     },
     "NAV_THANKS": {
-        "translation": "谢谢!"
+        "translation": "謝謝!"
     },
     "NAV_LICENCES": {
-        "translation": "开源许可证"
+        "translation": "開源許可證"
     },
     "NAV_STATISTICS": {
-        "translation": "数据统计"
+        "translation": "資料統計"
     },
     "NAV_IMPRESSUM": {
-        "translation": "公司信息"
+        "translation": "公司資訊"
     },
     "NAV_COOKIE": {
-        "translation": "缓存文件"
+        "translation": "快取檔案"
     },
     "NAV_LOGS": {
-        "translation": "日志"
+        "translation": "日誌"
     },
     "NAV_BREW_PARAMS": {
-        "translation": "冲泡参数"
+        "translation": "萃取參數"
     },
     "NAV_INFORMATION_TO_APP": {
-        "translation": "关于软件"
+        "translation": "關於軟體"
     },
     "NAV_WATER_SECTION": {
-        "translation": "水质"
+        "translation": "水質"
     },
     "NAV_HELPER": {
-        "translation": "计算"
+        "translation": "計算"
     },
     "POPOVER_BREWS_OPTION_REPEAT": {
-        "translation": "复制"
+        "translation": "複製"
     },
     "POPOVER_BREWS_OPTION_DETAIL": {
-        "translation": "详情"
+        "translation": "詳情"
     },
     "DETAIL": {
-        "translation": "详情"
+        "translation": "詳情"
     },
     "POPOVER_BREWS_OPTION_EDIT": {
-        "translation": "编辑"
+        "translation": "編輯"
     },
     "POPOVER_BREWS_OPTION_DELETE": {
-        "translation": "删除"
+        "translation": "刪除"
     },
     "POPOVER_BREWS_OPTION_PHOTO_GALLERY": {
-        "translation": "图库"
+        "translation": "圖庫"
     },
     "POPOVER_BREWS_OPTION_CUPPING": {
-        "translation": "品尝"
+        "translation": "品嘗"
     },
     "POPOVER_BREWS_OPTION_MAP_COORDINATES": {
-        "translation": "在地图上展示"
+        "translation": "在地圖上展示"
     },
     "POPOVER_BREWS_OPTION_FAST_REPEAT": {
-        "translation": "快速复制"
+        "translation": "快速複製"
     },
     "PAGE_BREWS_NO_ENTRIES": {
-        "translation": "目前还没有添加冲泡方式"
+        "translation": "目前還沒有添加萃取方式"
     },
     "PAGE_BREWS_NO_ARCHIVED_ENTRIES": {
-        "translation": "目前还没有完成过一次冲泡"
+        "translation": "目前還沒有完成過一次萃取"
     },
     "CANT_START_NEW_BREW_TITLE": {
-        "translation": "这儿少了点什么 ..."
+        "translation": "這兒少了點什麼 ..."
     },
     "CANT_START_NEW_BREW_DESCRIPTION": {
-        "translation": "使用软件前，请至少添加一种咖啡豆、一种冲泡方式和一个研磨机。 你可以使用菜单跳转到不同的类别以添加上述信息。"
+        "translation": "使用軟體前，請至少添加一種咖啡豆、一種萃取方式和一個研磨機。 你可以使用功能表跳轉到不同的類別以添加上述資訊。"
     },
     "PAGE_HOME_WELCOME_GREETINGS": {
-        "translation": "终于等到你来了！"
+        "translation": "終於等到你來了！"
     },
     "PAGE_HOME_TOTAL_BREW": {
-        "translation": "冲泡"
+        "translation": "萃取"
     },
     "PAGE_HOME_TOTAL_BREWS": {
-        "translation": "冲泡次数"
+        "translation": "萃取次數"
     },
     "PAGE_HOME_BEAN_EXPLORED": {
         "translation": "款咖啡豆"
@@ -120,46 +120,46 @@
         "translation": "款咖啡豆"
     },
     "PAGE_HOME_LAST_BREWS": {
-        "translation": "冲泡记录"
+        "translation": "萃取記錄"
     },
     "PAGE_HOME_LAST_BREW": {
-        "translation": "上一次冲泡"
+        "translation": "上一次萃取"
     },
     "PAGE_HOME_DIFFERENT_PREPARATION_METHODS": {
-        "translation": "不同的冲泡方式"
+        "translation": "不同的萃取方式"
     },
     "PAGE_HOME_DIFFERENT_MILLS": {
-        "translation": "不同的磨豆机"
+        "translation": "不同的磨豆機"
     },
     "PAGE_HOME_SUPPORTER": {
-        "translation": "软件支持"
+        "translation": "軟體支援"
     },
     "PAGE_HOME_START_BREW": {
-        "translation": "开始冲泡"
+        "translation": "開始萃取"
     },
     "PAGE_BEANS_LIST_OBTAINABLE": {
         "translation": "可用"
     },
     "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS": {
-        "translation": "咖啡豆没货啦，快买一点新的吧!"
+        "translation": "咖啡豆沒貨啦，快買一點新的吧!"
     },
     "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS": {
-        "translation": "目前还没有一包已经喝完的咖啡。"
+        "translation": "目前還沒有一包已經喝完的咖啡。"
     },
     "PAGE_MILL_LIST_NO_MILL_EXISTING": {
-        "translation": "你还没有添加任何一个磨豆机"
+        "translation": "你還沒有添加任何一個磨豆機"
     },
     "PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING": {
-        "translation": "你还没有添加任何一个冲泡方式"
+        "translation": "你還沒有添加任何一個萃取方式"
     },
     "PAGE_CONTACT_SUGGESTIONS_QUESTIONS_WISHES": {
-        "translation": "建议、问题或请求?"
+        "translation": "建議、問題或請求?"
     },
     "PAGE_THANKS_THANKS_FOR_YOUR_SUPPORT": {
-        "translation": "感谢你的支持"
+        "translation": "感謝你的支持"
     },
     "PAGE_SETTINGS_LANGUAGE": {
-        "translation": "语言偏好"
+        "translation": "語言偏好"
     },
     "PAGE_SETTINGS_LANGUAGE_GERMAN": {
         "translation": "German"
@@ -171,91 +171,91 @@
         "translation": "Spanish"
     },
     "PAGE_SETTINGS_LANGUAGE_TURKISH": {
-        "translation": "土耳其语"
+        "translation": "土耳其語"
     },
     "PAGE_SETTINGS_LANGUAGE_CHINESE": {
-        "translation": "汉语"
+        "translation": "漢語"
     },
     "PAGE_SETTINGS_GENERAL_SETTINGS": {
-        "translation": "常规设置"
+        "translation": "常規設置"
     },
     "PAGE_SETTINGS_TRANSFER": {
-        "translation": "数据转移"
+        "translation": "資料轉移"
     },
     "PAGE_SETTINGS_PRESET_LAST_BREW": {
-        "translation": "使用预设值?"
+        "translation": "使用預設值?"
     },
     "PAGE_SETTINGS_DISPLAY": {
-        "translation": "显示方式"
+        "translation": "顯示方式"
     },
     "PAGE_SETTINGS_DISPLAY_SINGLE_PAGE": {
-        "translation": "单页"
+        "translation": "單頁"
     },
     "PAGE_SETTINGS_DISPLAY_PAGING": {
-        "translation": "连续页面"
+        "translation": "連續頁面"
     },
     "PAGE_SETTINGS_STARTUP_VIEW": {
-        "translation": "起始页"
+        "translation": "起始頁"
     },
     "PAGE_SETTINGS_ANALYTICS_INFORMATION": {
         "translation": "分析"
     },
     "PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP": {
-        "translation": "按 i 了解更多信息"
+        "translation": "按 i 瞭解更多資訊"
     },
     "PAGE_SETTINGS_TRACK_BREW_COORDINATES": {
-        "translation": "保存冲泡经纬度"
+        "translation": "保存萃取經緯度"
     },
     "PAGE_SETTINGS_FAST_REPEAT": {
-        "translation": "快速复制"
+        "translation": "快速複製"
     },
     "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION": {
-        "translation": "保存咖啡因信息"
+        "translation": "保存咖啡因資訊"
     },
     "PAGE_SETTINGS_WAKE_LOCK": {
-        "translation": "冲泡时屏幕保持常亮"
+        "translation": "萃取時螢幕保持常亮"
     },
     "PAGE_SETTINGS_CURRENCY": {
-        "translation": "货币单位"
+        "translation": "貨幣單位"
     },
     "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": {
-        "translation": "冲泡器具"
+        "translation": "萃取器具"
     },
     "PAGE_STATISTICS_TOTAL_GROUND_BEANS": {
-        "translation": "研磨的咖啡豆总计"
+        "translation": "研磨的咖啡豆總計"
     },
     "PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE": {
-        "translation": "购买咖啡豆总费用"
+        "translation": "購買咖啡豆總費用"
     },
     "PAGE_STATISTICS_DRUNKEN_BREWS": {
-        "translation": "冲泡总数"
+        "translation": "萃取總數"
     },
     "PAGE_STATISTICS_BREW_PROCESSES": {
-        "translation": "总冲泡次数"
+        "translation": "總萃取次數"
     },
     "PAGE_STATISTICS_DRUNKEN_QUANTITY": {
         "translation": "咖啡豆消耗量"
     },
     "PAGE_STATISTICS_BEAN_WEIGHT_USED": {
-        "translation": "咖啡豆研磨总量"
+        "translation": "咖啡豆研磨總量"
     },
     "PAGE_BREW_TEXT_INFORMATION_FROM_ROASTER": {
         "translation": "烘焙信息"
     },
     "PAGE_ABOUT_NO_VERSION_AVAILABLE": {
-        "translation": "没有可用的版本"
+        "translation": "沒有可用的版本"
     },
     "PAGE_ABOUT_APP_VERSION": {
-        "translation": "软件版本"
+        "translation": "軟體版本"
     },
     "PAGE_LICENCES_WEBSITE": {
-        "translation": "网站"
+        "translation": "網站"
     },
     "BEAN_DATA_ROAST_NAME": {
         "translation": "烘焙程度"
     },
     "BEAN_DATA_CUSTOM_ROAST_NAME": {
-        "translation": "自定义烘焙温度"
+        "translation": "自訂烘焙溫度"
     },
     "BEAN_DATA_ROASTING_DATE": {
         "translation": "烘焙日期"
@@ -264,91 +264,91 @@
         "translation": "烘焙者"
     },
     "BEAN_DATA_VARIETY": {
-        "translation": "品种"
+        "translation": "品種"
     },
     "BEAN_DATA_PROCESSING": {
-        "translation": "处理法"
+        "translation": "處理法"
     },
     "BEAN_DATA_COUNTRY": {
-        "translation": "国家"
+        "translation": "國家"
     },
     "BEAN_DATA_MIX": {
-        "translation": "单一产地\/拼配"
+        "translation": "單一產地\/拼配"
     },
     "BEAN_DATA_AROMATICS": {
-        "translation": "风味味谱"
+        "translation": "風味味譜"
     },
     "BEAN_DATA_WEIGHT": {
         "translation": "重量"
     },
     "BEAN_DATA_COST": {
-        "translation": "花销"
+        "translation": "花銷"
     },
     "BEAN_DATA_NAME": {
-        "translation": "咖啡豆名称"
+        "translation": "咖啡豆名稱"
     },
     "BEAN_DATA_REGION": {
-        "translation": "地区"
+        "translation": "地區"
     },
     "BEAN_DATA_FARM": {
-        "translation": "庄园"
+        "translation": "莊園"
     },
     "BEAN_DATA_FARMER": {
-        "translation": "农场主"
+        "translation": "農場主"
     },
     "BEAN_DATA_ELEVATION": {
         "translation": "海拔"
     },
     "BEAN_DATA_HARVEST_TIME": {
-        "translation": "收获日期"
+        "translation": "收穫日期"
     },
     "BEAN_DATA_PERCENTAGE": {
         "translation": "百分比"
     },
     "BEAN_DATA_CERTIFICATION": {
-        "translation": "咖啡豆认证"
+        "translation": "咖啡豆認證"
     },
     "BEAN_DATA_ROASTING_TYPE": {
-        "translation": "烘焙用于"
+        "translation": "烘焙用於"
     },
     "BEAN_DATA_DECAFFEINATED": {
-        "translation": "无咖啡因"
+        "translation": "無咖啡因"
     },
     "BEAN_DATA_URL": {
-        "translation": "网站"
+        "translation": "網站"
     },
     "BEAN_DATA_EAN": {
-        "translation": "条形码"
+        "translation": "條碼"
     },
     "BEAN_DATA_PURCHASING_PRICE": {
-        "translation": "购买价格"
+        "translation": "購買價格"
     },
     "BEAN_DATA_FOB_PRICE": {
-        "translation": "离岸价"
+        "translation": "離岸價"
     },
     "BEAN_DATA_CUPPING_POINTS": {
-        "translation": "杯测分数"
+        "translation": "杯測分數"
     },
     "BREW_DATA_CUSTOM_BREW_TIME": {
-        "translation": "自定义冲泡时间"
+        "translation": "自訂萃取時間"
     },
     "BREW_CREATION_DATE": {
-        "translation": "创建日期"
+        "translation": "創建日期"
     },
     "REPEAT": {
-        "translation": "重复"
+        "translation": "重複"
     },
     "EDIT": {
-        "translation": "编辑"
+        "translation": "編輯"
     },
     "DELETE": {
-        "translation": "删除"
+        "translation": "刪除"
     },
     "FINISHED": {
-        "translation": "归档"
+        "translation": "歸檔"
     },
     "NOTES": {
-        "translation": "笔记"
+        "translation": "筆記"
     },
     "ADD_PHOTO": {
         "translation": "添加照片"
@@ -366,46 +366,46 @@
         "translation": "添加"
     },
     "CONTACT": {
-        "translation": "联系"
+        "translation": "聯繫"
     },
     "NAME": {
-        "translation": "名称"
+        "translation": "名稱"
     },
     "IMPORT": {
-        "translation": "导入"
+        "translation": "導入"
     },
     "EXPORT": {
-        "translation": "导出"
+        "translation": "匯出"
     },
     "VIEW": {
         "translation": "查看"
     },
     "ARCHIVE": {
-        "translation": "归档"
+        "translation": "歸檔"
     },
     "CURRENT": {
-        "translation": "当前"
+        "translation": "當前"
     },
     "BACK": {
         "translation": "返回"
     },
     "CLOSE": {
-        "translation": "关闭"
+        "translation": "關閉"
     },
     "DAY": {
         "translation": "日"
     },
     "BREW_DATA_TEMPERATURE_TIME": {
-        "translation": "温度时间"
+        "translation": "溫度時間"
     },
     "BREW_DATA_SURF_TIME": {
-        "translation": "冲泡时间"
+        "translation": "萃取時間"
     },
     "BREW_DATA_TIME": {
-        "translation": "时间"
+        "translation": "時間"
     },
     "BREW_DATA_GRIND_SIZE": {
-        "translation": "研磨设置"
+        "translation": "研磨設置"
     },
     "BREW_DATA_GRIND_WEIGHT": {
         "translation": "咖啡粉 (gr)"
@@ -414,82 +414,82 @@
         "translation": "入\/出 (BR)"
     },
     "BREW_DATA_NOTES": {
-        "translation": "笔记"
+        "translation": "筆記"
     },
     "BREW_DATA_PREPARATION_METHOD": {
-        "translation": "冲泡器具"
+        "translation": "萃取器具"
     },
     "BREW_DATA_MILL": {
-        "translation": "磨豆机"
+        "translation": "磨豆機"
     },
     "BREW_DATA_MILL_SPEED": {
         "translation": "研磨速度 (rpm)"
     },
     "BREW_DATA_MILL_TIMER": {
-        "translation": "研磨时间"
+        "translation": "研磨時間"
     },
     "BREW_DATA_BREW_QUANTITY": {
         "translation": "水量"
     },
     "BREW_DATA_BEAN_TYPE": {
-        "translation": "咖啡豆类型"
+        "translation": "咖啡豆類型"
     },
     "BREW_DATA_BREW_TEMPERATURE": {
-        "translation": "冲泡温度"
+        "translation": "萃取溫度"
     },
     "BREW_DATA_PRESSURE_PROFILE": {
-        "translation": "冲泡参数"
+        "translation": "萃取參數"
     },
     "BREW_DATA_COFFEE_TYPE": {
-        "translation": "咖啡类型"
+        "translation": "咖啡類型"
     },
     "BREW_DATA_COFFEE_CONCENTRATION": {
-        "translation": "咖啡浓度"
+        "translation": "咖啡濃度"
     },
     "BREW_DATA_COFFEE_FIRST_DRIP_TIME": {
         "translation": "第一滴咖啡落下"
     },
     "BREW_DATA_COFFEE_BLOOMING_TIME": {
-        "translation": "闷蒸\/预浸泡时间"
+        "translation": "悶蒸\/預浸泡時間"
     },
     "BREW_DATA_ATTACHMENTS": {
         "translation": "附件\/照片"
     },
     "BREW_DATA_RATING": {
-        "translation": "评分"
+        "translation": "評分"
     },
     "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": {
-        "translation": "萃取时间"
+        "translation": "萃取時間"
     },
     "BREW_DATA_TDS": {
-        "translation": "总溶解固体"
+        "translation": "總溶解固體"
     },
     "BREW_DATA_CALCULATED_EXTRACTION_YIELD": {
         "translation": "萃取率 %"
     },
     "BREW_INFORMATION_BREW_RATIO": {
-        "translation": "冲泡率"
+        "translation": "萃取率"
     },
     "BREW_INFORMATION_BEAN_AGE": {
-        "translation": "豆龄"
+        "translation": "豆齡"
     },
     "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": {
-        "translation": "计数类型"
+        "translation": "計數類型"
     },
     "BREW_DATA_TDS_EY": {
         "translation": "TDS \/ %EY"
     },
     "BREW_DATA_BREW_BEVERAGE_QUANTITY": {
-        "translation": "冲泡出的咖啡"
+        "translation": "萃取出的咖啡"
     },
     "BREW_DATA_PREPARATION_METHOD_TOOL": {
-        "translation": "冲泡器具"
+        "translation": "萃取器具"
     },
     "BREW_DATA_WATER": {
-        "translation": "水质"
+        "translation": "水質"
     },
     "BREW_DATA_BEAN_WEIGHT_IN": {
-        "translation": "咖啡豆数量 (gr)"
+        "translation": "咖啡豆數量 (gr)"
     },
     "BREW_DATA_VESSEL": {
         "translation": "Server"
@@ -501,7 +501,7 @@
         "translation": "Server name"
     },
     "BREW_DATA_FLAVOR": {
-        "translation": "风味"
+        "translation": "風味"
     },
     "BREW_DATA_FLOW_PROFILE": {
         "translation": "Flow"
@@ -513,46 +513,46 @@
         "translation": "天"
     },
     "ONE_HOUR": {
-        "translation": "小时"
+        "translation": "小時"
     },
     "HOURS": {
-        "translation": "小时"
+        "translation": "小時"
     },
     "ONE_MINUTE": {
-        "translation": "分钟"
+        "translation": "分鐘"
     },
     "MINUTES": {
-        "translation": "分钟"
+        "translation": "分鐘"
     },
     "WITHOUT_COFFEE": {
-        "translation": "没冲咖啡"
+        "translation": "沒沖咖啡"
     },
     "NOT_FOUND": {
         "translation": "未找到"
     },
     "INVALID_FILE_FORMAT": {
-        "translation": "文件格式无效"
+        "translation": "檔案格式無效"
     },
     "FILE_NOT_FOUND_INFORMATION": {
         "translation": "文件未找到"
     },
     "ERROR_ON_FILE_READING": {
-        "translation": "读取文件数据时出错"
+        "translation": "讀取檔資料時出錯"
     },
     "IMPORT_SUCCESSFULLY": {
-        "translation": "导入成功"
+        "translation": "導入成功"
     },
     "IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED": {
-        "translation": "导入不成功，没有数据被更改"
+        "translation": "導入不成功，沒有資料被更改"
     },
     "INVALID_FILE_DATA": {
-        "translation": "无效的文件内容"
+        "translation": "無效的檔內容"
     },
     "DOWNLOADED": {
-        "translation": "下载"
+        "translation": "下載"
     },
     "FILE_DOWNLOADED_SUCCESSFULLY": {
-        "translation": "文件 '{{fileName}}' 已成功下载到您的下载文件夹！"
+        "translation": "檔 '{{fileName}}' 已成功下載到您的下載檔案夾！"
     },
     "NO": {
         "translation": "不"
@@ -561,52 +561,52 @@
         "translation": "是"
     },
     "SURE_QUESTION": {
-        "translation": "确定吗?"
+        "translation": "確定嗎?"
     },
     "DELETE_BREW_QUESTION": {
-        "translation": "删除本次冲泡?"
+        "translation": "刪除本次萃取?"
     },
     "DELETE_BEAN_QUESTION": {
-        "translation": "确定要删除这款咖啡豆吗？ 所有相关的冲泡数据也将被删除！"
+        "translation": "確定要刪除這款咖啡豆嗎？ 所有相關的萃取資料也將被刪除！"
     },
     "DELETE_GREEN_BEAN_QUESTION": {
-        "translation": "确定要删除这款生豆吗？ 所有相关的咖啡豆以及冲泡数据都将被删除！"
+        "translation": "確定要刪除這款生豆嗎？ 所有相關的咖啡豆以及萃取資料都將被刪除！"
     },
     "DELETE_MILL_QUESTION": {
-        "translation": "确定要删除这个研磨机吗？ 所有相关的冲泡数据也将被删除！"
+        "translation": "確定要刪除這個研磨機嗎？ 所有相關的萃取資料也將被刪除！"
     },
     "DELETE_PREPARATION_METHOD_QUESTION": {
-        "translation": "确定要删除这个器具吗？ 所有相关的冲泡数据也将被删除！"
+        "translation": "確定要刪除這個器具嗎？ 所有相關的萃取資料也將被刪除！"
     },
     "DELETE_PREPARATION_TOOL_QUESTION": {
-        "translation": "确定要删除这个工具吗？ 所有相关的冲泡数据也将被删除。"
+        "translation": "確定要刪除這個工具嗎？ 所有相關的萃取資料也將被刪除。"
     },
     "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": {
-        "translation": "由于缺少文件系统，应用程序无法正确启动"
+        "translation": "由於缺少檔案系統，應用程式無法正確啟動"
     },
     "CARE": {
-        "translation": "关心"
+        "translation": "關心"
     },
     "ERROR_OCCURED": {
-        "translation": "出现错误"
+        "translation": "出現錯誤"
     },
     "CSV_FILE_NOT_DOWNLOADED": {
-        "translation": "CSV 文件无法下载！"
+        "translation": "CSV 文件無法下載！"
     },
     "CSV_FILE_DOWNLOADED_SUCCESSFULLY": {
-        "translation": "CSV 文件 '{{fileName}}' 已成功下载到您的下载文件夹！"
+        "translation": "CSV 檔 '{{fileName}}' 已成功下載到您的下載檔案夾！"
     },
     "ADD_BREW": {
-        "translation": "添加冲泡"
+        "translation": "添加萃取"
     },
     "CHOOSE": {
-        "translation": "选择"
+        "translation": "選擇"
     },
     "CHOOSE_PHOTO_OR_LIBRARY": {
-        "translation": "拍摄照片或从相册选择"
+        "translation": "拍攝照片或從相冊選擇"
     },
     "RECORD": {
-        "translation": "拍摄"
+        "translation": "拍攝"
     },
     "PAGE_BEAN_INFORMATION": {
         "translation": "咖啡豆信息"
@@ -618,34 +618,34 @@
         "translation": "差的"
     },
     "PAGE_BEAN_INFORMATION_COUNT_BREWS": {
-        "translation": "总冲泡次数"
+        "translation": "總萃取次數"
     },
     "INFORMATION": {
         "translation": "信息"
     },
     "PAGE_BEAN_BREW_CHART_TITLE": {
-        "translation": "该款咖啡豆的冲泡概述"
+        "translation": "該款咖啡豆的萃取概述"
     },
     "PAGE_BEAN_INFORMATION_AWESOME_BREWS": {
-        "translation": "令人惊叹"
+        "translation": "令人驚歎"
     },
     "PAGE_BEAN_INFORMATION_NORMAL_BREWS": {
-        "translation": "感觉普通"
+        "translation": "感覺普通"
     },
     "PAGE_BEAN_INFORMATION_NOT_RATED_BREWS": {
-        "translation": "不做评价"
+        "translation": "不做評價"
     },
     "PAGE_PREPARATION_INFORMATION_BREWS_DONE": {
-        "translation": "用这种器具冲泡"
+        "translation": "用這種器具萃取"
     },
     "PAGE_PREPARATION_INFORMATION_BREWED_QUANTITY": {
-        "translation": "冲泡数量"
+        "translation": "萃取數量"
     },
     "PAGE_PREPARATION_INFORMATION_GRIND_WEIGHT": {
         "translation": "消耗的豆子重量"
     },
     "PAGE_PREPARATION_INFORMATION_TIME_SPENT_BREWING": {
-        "translation": "总冲泡时间"
+        "translation": "總萃取時間"
     },
     "PAGE_PREPARATION_INFORMATION": {
         "translation": "器具信息"
@@ -654,10 +654,10 @@
         "translation": "秒"
     },
     "PAGE_MILL_INFORMATION": {
-        "translation": "磨豆机信息"
+        "translation": "磨豆機信息"
     },
     "PAGE_MILL_INFORMATION_BREWS_DONE": {
-        "translation": "使用这个磨豆机"
+        "translation": "使用這個磨豆機"
     },
     "PAGE_MILL_INFORMATION_GRIND_WEIGHT": {
         "translation": "消耗的豆子重量"
@@ -666,16 +666,16 @@
         "translation": "水的硬度"
     },
     "PAGE_HELPER_WATER_HARDNESS_CA_CONTENTS": {
-        "translation": "钙含量 mg\/l"
+        "translation": "鈣含量 mg\/l"
     },
     "PAGE_HELPER_WATER_HARDNESS_MG_CONTENTS": {
-        "translation": "镁含量 mg\/l"
+        "translation": "鎂含量 mg\/l"
     },
     "PAGE_HELPER_WATER_HARDNESS_GERMAN_HARDNESS": {
         "translation": "°dH"
     },
     "PAGE_HELPER_WATER_HARDNESS_TOTAL_HARDNESS": {
-        "translation": "总硬度"
+        "translation": "總硬度"
     },
     "PAGE_HELPER_BREW_RATIO": {
         "translation": "粉液比"
@@ -684,196 +684,196 @@
         "translation": "咖啡粉重 (gr)"
     },
     "PAGE_HELPER_BREW_RATIO_WATER": {
-        "translation": "液体 (g\/mL)"
+        "translation": "液體 (g\/mL)"
     },
     "PAGE_HELPER_BREW_RATIO_CALCULATED": {
-        "translation": "计算出的粉液比"
+        "translation": "計算出的粉液比"
     },
     "PAGE_SETTINGS_SHOW_ARCHIVED_BREWS": {
-        "translation": "显示已经归档的冲泡"
+        "translation": "顯示已經歸檔的萃取"
     },
     "PAGE_SETTINGS_SHOW_ARCHIVED_BEANS": {
-        "translation": "显示已经归档的咖啡豆"
+        "translation": "顯示已經歸檔的咖啡豆"
     },
     "PAGE_SETTINGS_SHOW_ARCHIVED_GREEN_BEANS": {
-        "translation": "显示已经归档的生豆"
+        "translation": "顯示已經歸檔的生豆"
     },
     "CUPPING_SCORE": {
-        "translation": "分数"
+        "translation": "分數"
     },
     "CUPPING_SCORE_DRY_FRAGRANCE": {
-        "translation": "干香"
+        "translation": "幹香"
     },
     "CUPPING_SCORE_WET_AROMA": {
-        "translation": "湿香"
+        "translation": "濕香"
     },
     "CUPPING_SCORE_BRIGHTNESS": {
         "translation": "明亮度"
     },
     "CUPPING_SCORE_FLAVOR": {
-        "translation": "风味"
+        "translation": "風味"
     },
     "CUPPING_SCORE_BODY": {
         "translation": "醇厚度"
     },
     "CUPPING_SCORE_FINISH": {
-        "translation": "尾韵"
+        "translation": "尾韻"
     },
     "CUPPING_SCORE_SWEETNESS": {
         "translation": "甜度"
     },
     "CUPPING_SCORE_CLEAN_CUP": {
-        "translation": "干净度"
+        "translation": "乾淨度"
     },
     "CUPPING_SCORE_COMPLEXITY": {
-        "translation": "复杂度"
+        "translation": "複雜度"
     },
     "CUPPING_SCORE_UNIFORMITY": {
         "translation": "一致性"
     },
     "CUPPING_SCORE_CUPPERS_CORRECTION": {
-        "translation": "杯测矫正"
+        "translation": "杯測矯正"
     },
     "CUPPING_SCORE_DRY_FRAGRANCE_TOOLTIP": {
-        "translation": "指加入热水前，干磨咖啡的气味"
+        "translation": "指加入熱水前，幹磨咖啡的氣味"
     },
     "CUPPING_SCORE_WET_AROMA_TOOLTIP": {
-        "translation": "指加入热水后，湿咖啡研磨的气味。"
+        "translation": "指加入熱水後，濕咖啡研磨的氣味。"
     },
     "CUPPING_SCORE_BRIGHTNESS_TOOLTIP": {
-        "translation": "酸度是由一组绿原酸、柠檬酸、奎宁酸、乙酸等引起的咖啡中尖锐的高调味道，主要在口腔和舌头的前部感觉到。 （质量很好；与咖啡的苦味无关，也不会直接导致胃部不适）。 酸度受到许多杯测者的重视，并且直接关系到杯子的质量，因为酸度是高海拔种植的产物。"
+        "translation": "酸度是由一組綠原酸、檸檬酸、奎寧酸、乙酸等引起的咖啡中尖銳的高調味道，主要在口腔和舌頭的前部感覺到。 （品質很好；與咖啡的苦味無關，也不會直接導致胃部不適）。 酸度受到許多杯測者的重視，並且直接關係到杯子的品質，因為酸度是高海拔種植的產物。"
     },
     "CUPPING_SCORE_FLAVOR_TOOLTIP": {
-        "translation": "这是口中的整体印象，包括所有其他评级。 有 4 种“主要味道”组（酸、甜、咸、苦）和许多“次要味道”。"
+        "translation": "這是口中的整體印象，包括所有其他評級。 有 4 種“主要味道”組（酸、甜、鹹、苦）和許多“次要味道”。"
     },
     "CUPPING_SCORE_BODY_TOOLTIP": {
-        "translation": "通常被称为“口感”，主体是冲泡咖啡的重量和厚度感，由杯子中可溶性固体的百分比引起，包括提取的所有有机化合物（冲泡方法和使用的磨碎咖啡量会影响这一点 大大）。 我们对 Body 的评分较低，因为清淡的咖啡肯定不错，而且在某些原产地，较轻的酒体最适合整体杯子的特性。"
+        "translation": "通常被稱為“口感”，主體是萃取咖啡的重量和厚度感，由杯子中可溶性固體的百分比引起，包括提取的所有有機化合物（萃取方法和使用的磨碎咖啡量會影響這一點 大大）。 我們對 Body 的評分較低，因為清淡的咖啡肯定不錯，而且在某些原產地，較輕的酒體最適合整體杯子的特性。"
     },
     "CUPPING_SCORE_FINISH_TOOLTIP": {
-        "translation": "口腔清洁后的挥之不去的或新出现的味道。 这包括咖啡从嘴里流出到几分钟后的时间……这就是为什么你会发现很多杯测者在一两分钟后仍然体验到积极的味道时会修改回味分数的原因。"
+        "translation": "口腔清潔後的揮之不去的或新出現的味道。 這包括咖啡從嘴裡流出到幾分鐘後的時間……這就是為什麼你會發現很多杯測者在一兩分鐘後仍然體驗到積極的味道時會修改回味分數的原因。"
     },
     "CUPPING_SCORE_SWEETNESS_TOOLTIP": {
-        "translation": "甜味几乎总是咖啡的理想品质，即使它被委婉地描述为“质朴的甜味”或“苦乐参半”。你可能会注意到精致的甜味（想想欧洲糕点、精美的糖果、白糖、 纯甜味）得分高，以及来自水果糖（果糖）的复杂甜味。 麦芽甜味（麦芽糖）不太传统，但非常令人向往，蜂蜜的范围从非常纯净干净到复杂、质朴的几乎是酵母味。 基本上，如果甜度是杯子的关键，它会被评为很好。"
+        "translation": "甜味幾乎總是咖啡的理想品質，即使它被委婉地描述為“質樸的甜味”或“苦樂參半”。你可能會注意到精緻的甜味（想想歐洲糕點、精美的糖果、白糖、 純甜味）得分高，以及來自水果糖（果糖）的複雜甜味。 麥芽甜味（麥芽糖）不太傳統，但非常令人嚮往，蜂蜜的範圍從非常純淨乾淨到複雜、質樸的幾乎是酵母味。 基本上，如果甜度是杯子的關鍵，它會被評為很好。"
     },
     "CUPPING_SCORE_CLEAN_CUP_TOOLTIP": {
-        "translation": "请注意，“干净的杯子”并不意味着咖啡上没有污垢。 它只是关于风味和“不干净”的原始、时髦的咖啡，而且风味也可能非常理想，例如来自苏门答腊的湿法去壳印度尼西亚咖啡，或干加工的埃塞俄比亚和也门类型。"
+        "translation": "請注意，“乾淨的杯子”並不意味著咖啡上沒有污垢。 它只是關於風味和“不乾淨”的原始、時髦的咖啡，而且風味也可能非常理想，例如來自蘇門答臘的濕法去殼印尼咖啡，或幹加工的衣索比亞和葉門類型。"
     },
     "CUPPING_SCORE_COMPLEXITY_TOOLTIP": {
-        "translation": "复杂性与“风味”和“完成”分数相得益彰，以传达多种风味的多样性或层次感。 这意味着在杯子里有很多发现。 再说一次，简单的咖啡可以在过度暴露于许多强大的、强烈的、复杂的咖啡后得到解脱。"
+        "translation": "複雜性與“風味”和“完成”分數相得益彰，以傳達多種風味的多樣性或層次感。 這意味著在杯子裡有很多發現。 再說一次，簡單的咖啡可以在過度暴露於許多強大的、強烈的、複雜的咖啡後得到解脫。"
     },
     "CUPPING_SCORE_UNIFORMITY_TOOLTIP": {
-        "translation": "均匀度是指杯与杯之间的差异。 干法咖啡在本质上可能不如湿法咖啡均匀。 如果偶尔放弃的话，我们永远不会避免很多味道很好的东西。 这是在杯测方案中进行评分的，其中每个被审查的批次都制作了多个杯子。"
+        "translation": "均勻度是指杯與杯之間的差異。 幹法咖啡在本質上可能不如濕法咖啡均勻。 如果偶爾放棄的話，我們永遠不會避免很多味道很好的東西。 這是在杯測方案中進行評分的，其中每個被審查的批次都製作了多個杯子。"
     },
     "CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP": {
-        "translation": "这改编自 SCAA 系统和卓越杯评分（他们有时称其为“总分”）。 它允许杯测者确保总分正确传达杯子的整体印象。 你可能会批评这种方法，并认为它是“捏造”的。 在某种程度上，你是对的......但是改变类别分数以达到所需的总分（当你知道它是 7 时，给咖啡的酸度为 9）会更糟糕，或者相反，有一个 绝对值得 90 分的咖啡最终以 84 分结束。具体的 Cupper 校正数无关紧要，无论是 5 还是 8 ......这个想法是总分给出了咖啡质量的正确印象。"
+        "translation": "這改編自 SCAA 系統和卓越杯評分（他們有時稱其為“總分”）。 它允許杯測者確保總分正確傳達杯子的整體印象。 你可能會批評這種方法，並認為它是“捏造”的。 在某種程度上，你是對的......但是改變類別分數以達到所需的總分（當你知道它是 7 時，給咖啡的酸度為 9）會更糟糕，或者相反，有一個 絕對值得 90 分的咖啡最終以 84 分結束。具體的 Cupper 校正數無關緊要，無論是 5 還是 8 ......這個想法是總分給出了咖啡品質的正確印象。"
     },
     "CUPPING_SCORE_TOOLTIP": {
-        "translation": "100-95 = 令人震惊，90-94 = 杰出，85-89 = 非常好，80-84 = 好，75-79 = 一般，70-74 = 差"
+        "translation": "100-95 = 令人震驚，90-94 = 傑出，85-89 = 非常好，80-84 = 好，75-79 = 一般，70-74 = 差"
     },
     "DETAIL_BREW": {
-        "translation": "冲泡详情"
+        "translation": "萃取詳情"
     },
     "DETAIL_BEAN": {
-        "translation": "咖啡豆详情"
+        "translation": "咖啡豆詳情"
     },
     "DETAIL_MILL": {
-        "translation": "研磨机详情"
+        "translation": "研磨機詳情"
     },
     "DETAIL_PREPARATION": {
-        "translation": "准备冲泡"
+        "translation": "準備萃取"
     },
     "EDIT_BREW": {
-        "translation": "编辑冲泡"
+        "translation": "編輯萃取"
     },
     "ADD_BEAN": {
         "translation": "添加咖啡豆"
     },
     "EDIT_BEAN": {
-        "translation": "编辑咖啡豆"
+        "translation": "編輯咖啡豆"
     },
     "ADD_PREPARATION": {
-        "translation": "添加冲泡器具"
+        "translation": "添加萃取器具"
     },
     "EDIT_PREPARATION": {
-        "translation": "编辑冲泡器具"
+        "translation": "編輯萃取器具"
     },
     "ADD_MILL": {
-        "translation": "新增研磨机"
+        "translation": "新增研磨機"
     },
     "EDIT_MILL": {
-        "translation": "编辑研磨机"
+        "translation": "編輯研磨機"
     },
     "USE_FILTER": {
-        "translation": "应用筛选"
+        "translation": "應用篩選"
     },
     "RESET_FILTER": {
-        "translation": "重置筛选"
+        "translation": "重置篩選"
     },
     "COFFEE_GRAMS_GRINDED": {
-        "translation": "研磨咖啡豆总克数"
+        "translation": "研磨咖啡豆總克數"
     },
     "BEANS_USED": {
-        "translation": "研磨咖啡豆种类"
+        "translation": "研磨咖啡豆種類"
     },
     "BREW_HEADER_BEFORE_BREW": {
-        "translation": "冲泡前"
+        "translation": "萃取前"
     },
     "BREW_HEADER_WHILE_BREW": {
-        "translation": "冲泡时"
+        "translation": "萃取時"
     },
     "BREW_HEADER_AFTER_BREW": {
-        "translation": "冲泡后"
+        "translation": "萃取後"
     },
     "BREW_HEADER_CUPPING": {
-        "translation": "品尝"
+        "translation": "品嘗"
     },
     "BEANS_CONSUMED": {
-        "translation": "归档"
+        "translation": "歸檔"
     },
     "NAV_MANAGE_PARAMETERS": {
-        "translation": "管理参数"
+        "translation": "管理參數"
     },
     "NAV_SORT_PARAMETERS": {
-        "translation": "参数排序"
+        "translation": "參數排序"
     },
     "NAV_DEFAULT_PARAMETERS": {
-        "translation": "定义默认参数"
+        "translation": "定義默認參數"
     },
     "PAGE_SORT_PARAMETERS_DESCRIPTION": {
-        "translation": "拖放参数以定义它们将显示的顺序"
+        "translation": "拖放參數以定義它們將顯示的順序"
     },
     "PAGE_MANAGE_PARAMETERS_DESCRIPTION": {
-        "translation": "编辑冲泡信息时要显示的数据"
+        "translation": "編輯萃取資訊時要顯示的資料"
     },
     "PAGE_DEFAULT_PARAMETERS_DESCRIPTION": {
-        "translation": "标记哪些参数应默认为最后使用的值"
+        "translation": "標記哪些參數應預設為最後使用的值"
     },
     "SORT_PARAMETERS_BEFORE": {
-        "translation": "冲泡前"
+        "translation": "萃取前"
     },
     "SORT_PARAMETERS_MEANWHILE": {
-        "translation": "冲泡时"
+        "translation": "萃取時"
     },
     "SORT_PARAMETERS_AFTER": {
-        "translation": "冲泡后"
+        "translation": "萃取後"
     },
     "MORE_INFORMATION": {
-        "translation": "更多信息"
+        "translation": "更多資訊"
     },
     "UNDERSTOOD": {
-        "translation": "了解"
+        "translation": "瞭解"
     },
     "WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE": {
-        "translation": "分析和跟踪"
+        "translation": "分析和跟蹤"
     },
     "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": {
-        "translation": "我们希望不断改进应用程序、网站和我们未来为您提供的服务。 为此，我们需要跟踪您如何使用该应用程序及其功能的一些数据。 但我们承诺，我们永远不会追踪任何个人数据。 为了确保这些承诺，我们使用 Matomo，一个以数据安全和隐私为中心的开源服务，该服务托管在我们自己的服务器上 - 这确保只有我们拥有数据所有权。 我们的网站提供有关我们跟踪的参数的所有信息，此外，您可以查看 100% 开源的源代码。 如果你有任何问题，请随时与我们联系。"
+        "translation": "我們希望不斷改進應用程式、網站和我們未來為您提供的服務。 為此，我們需要跟蹤您如何使用該應用程式及其功能的一些資料。 但我們承諾，我們永遠不會追蹤任何個人資料。 為了確保這些承諾，我們使用 Matomo，一個以資料安全和隱私為中心的開源服務，該服務託管在我們自己的伺服器上 - 這確保只有我們擁有資料所有權。 我們的網站提供有關我們跟蹤的參數的所有資訊，此外，您可以查看 100% 開源的原始程式碼。 如果你有任何問題，請隨時與我們聯繫。"
     },
     "ANALYTICS_INFORMATION_TITLE": {
-        "translation": "分析和跟踪"
+        "translation": "分析和跟蹤"
     },
     "ANALYTICS_INFORMATION_DESCRIPTION": {
-        "translation": "如您所知，您的数据和隐私的安全是我们的首要任务。<br\/><br\/>因此，我们已从 Google Analytics 切换到以数据安全和隐私为重点的开源服务 Matomo，该服务由托管 在我们自己的服务器上 - 这意味着我们拥有完整的数据所有权。<br\/><br\/>跟踪的参数没有改变，我们仍然承诺永远不会跟踪任何个人数据。<br\/>我们的网站提供了我们跟踪的参数的所有信息，此外您可以查看100％开源的源代码。<br\/><br\/>您有问题吗？<br\/><br\/>联系我们。"
+        "translation": "如您所知，您的資料和隱私的安全是我們的首要任務。<br\/><br\/>因此，我們已從 Google Analytics 切換到以資料安全和隱私為重點的開源服務 Matomo，該服務由託管 在我們自己的伺服器上 - 這意味著我們擁有完整的資料所有權。<br\/><br\/>跟蹤的參數沒有改變，我們仍然承諾永遠不會跟蹤任何個人資料。<br\/>我們的網站提供了我們跟蹤的參數的所有資訊，此外您可以查看100％開源的原始程式碼。<br\/><br\/>您有問題嗎？<br\/><br\/>聯繫我們。"
     },
     "ACTIVATE": {
         "translation": "分析"
@@ -885,438 +885,438 @@
         "translation": "咖啡豆"
     },
     "WELCOME_PAGE_BEAN_DESCRIPTION": {
-        "translation": "用咖啡豆来冲泡咖啡有点复杂。 请添加您的第一种咖啡豆以开始使用！"
+        "translation": "用咖啡豆來萃取咖啡有點複雜。 請添加您的第一種咖啡豆以開始使用！"
     },
     "WELCOME_PAGE_BEAN_ADD": {
         "translation": "添加咖啡豆"
     },
     "SKIP": {
-        "translation": "跳过"
+        "translation": "跳過"
     },
     "WELCOME_PAGE_PREPARATION_TITLE": {
-        "translation": "冲泡器具"
+        "translation": "萃取器具"
     },
     "WELCOME_PAGE_PREPARATION_DESCRIPTION": {
-        "translation": "V60滤杯, 爱乐压, 手冲式 - 冲泡咖啡的方式有很多种。请添加至少一个冲泡器具"
+        "translation": "V60濾杯, 愛樂壓, 手沖式 - 萃取咖啡的方式有很多種。請添加至少一個萃取器具"
     },
     "WELCOME_PAGE_PREPARATION_ADD": {
-        "translation": "添加冲泡器具"
+        "translation": "添加萃取器具"
     },
     "WELCOME_PAGE_MILL_TITLE": {
-        "translation": "研磨机"
+        "translation": "研磨機"
     },
     "WELCOME_PAGE_MILL_DESCRIPTION": {
-        "translation": "就快要完成了，但你需要一些东西来研磨咖啡豆！请添加至少一台研磨机"
+        "translation": "就快要完成了，但你需要一些東西來研磨咖啡豆！請添加至少一台研磨機"
     },
     "WELCOME_PAGE_MILL_ADD": {
-        "translation": "新增研磨机"
+        "translation": "新增研磨機"
     },
     "WELCOME_PAGE_TITLE": {
-        "translation": "欢迎!"
+        "translation": "歡迎!"
     },
     "WELCOME_PAGE_BEAN_HEADLINE": {
         "translation": "第一款咖啡豆"
     },
     "WELCOME_PAGE_PREPARATION_HEADLINE": {
-        "translation": "添加冲泡器具"
+        "translation": "添加萃取器具"
     },
     "WELCOME_PAGE_MILL_HEADLINE": {
-        "translation": "第一个研磨机"
+        "translation": "第一個研磨機"
     },
     "WELCOME_PAGE_LETS_START_HEADLINE": {
-        "translation": "现在我们开始吧!"
+        "translation": "現在我們開始吧!"
     },
     "WELCOME_PAGE_LETS_START_TITLE": {
-        "translation": "现在我们开始吧!"
+        "translation": "現在我們開始吧!"
     },
     "WELCOME_PAGE_LETS_START_DESCRIPTION": {
-        "translation": "恭喜，你已经准备好做你一生中最好的咖啡了。玩得开心，传播对好咖啡的热爱！"
+        "translation": "恭喜，你已經準備好做你一生中最好的咖啡了。玩得開心，傳播對好咖啡的熱愛！"
     },
     "PREPARATION_TYPE": {
-        "translation": "制作类型"
+        "translation": "製作類型"
     },
     "PREPARATION_TYPE_NAME": {
-        "translation": "名称"
+        "translation": "名稱"
     },
     "ARCHIVED": {
-        "translation": "归档"
+        "translation": "歸檔"
     },
     "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS": {
-        "translation": "显示归档的冲泡器具"
+        "translation": "顯示歸檔的萃取器具"
     },
     "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS": {
-        "translation": "显示归档的冲泡研磨机"
+        "translation": "顯示歸檔的萃取研磨機"
     },
     "PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING": {
-        "translation": "你还没有归档任何一个研磨机"
+        "translation": "你還沒有歸檔任何一個研磨機"
     },
     "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": {
-        "translation": "你还没有归档任何一种器具"
+        "translation": "你還沒有歸檔任何一種器具"
     },
     "TOAST_BREW_ADDED_SUCCESSFULLY": {
-        "translation": "冲泡添加成功"
+        "translation": "萃取添加成功"
     },
     "TOAST_BREW_REPEATED_SUCCESSFULLY": {
-        "translation": "冲泡复制成功"
+        "translation": "萃取複製成功"
     },
     "TOAST_BEAN_ADDED_SUCCESSFULLY": {
         "translation": "咖啡豆添加成功"
     },
     "TOAST_MILL_ADDED_SUCCESSFULLY": {
-        "translation": "新的研磨机已添加成功"
+        "translation": "新的研磨機已添加成功"
     },
     "TOAST_PREPARATION_ADDED_SUCCESSFULLY": {
-        "translation": "冲泡器具添加成功"
+        "translation": "萃取器具添加成功"
     },
     "TOAST_WATER_ADDED_SUCCESSFULLY": {
-        "translation": "水质添加成功"
+        "translation": "水質添加成功"
     },
     "TOAST_BREW_DELETED_SUCCESSFULLY": {
-        "translation": "冲泡记录已被删除"
+        "translation": "萃取記錄已被刪除"
     },
     "TOAST_BEAN_DELETED_SUCCESSFULLY": {
-        "translation": "咖啡豆已被删除"
+        "translation": "咖啡豆已被刪除"
     },
     "TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY": {
-        "translation": "生豆已被删除"
+        "translation": "生豆已被刪除"
     },
     "TOAST_MILL_DELETED_SUCCESSFULLY": {
-        "translation": "研磨机已被删除"
+        "translation": "研磨機已被刪除"
     },
     "TOAST_WATER_DELETED_SUCCESSFULLY": {
-        "translation": "水质已被删除"
+        "translation": "水質已被刪除"
     },
     "TOAST_PREPARATION_DELETED_SUCCESSFULLY": {
-        "translation": "冲泡器具已被删除"
+        "translation": "萃取器具已被刪除"
     },
     "TOAST_BREW_EDITED_SUCCESSFULLY": {
-        "translation": "冲泡记录已被编辑"
+        "translation": "萃取記錄已被編輯"
     },
     "TOAST_BEAN_EDITED_SUCCESSFULLY": {
-        "translation": "咖啡豆已被编辑"
+        "translation": "咖啡豆已被編輯"
     },
     "TOAST_MILL_EDITED_SUCCESSFULLY": {
-        "translation": "研磨机已被编辑"
+        "translation": "研磨機已被編輯"
     },
     "TOAST_PREPARATION_EDITED_SUCCESSFULLY": {
-        "translation": "器具已被编辑"
+        "translation": "器具已被編輯"
     },
     "TOAST_WATER_EDITED_SUCCESSFULLY": {
-        "translation": "水质已被编辑"
+        "translation": "水質已被編輯"
     },
     "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": {
-        "translation": "咖啡豆已经归档"
+        "translation": "咖啡豆已經歸檔"
     },
     "TOAST_MILL_ARCHIVED_SUCCESSFULLY": {
-        "translation": "研磨机已经归档"
+        "translation": "研磨機已經歸檔"
     },
     "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": {
-        "translation": "冲泡器具已经归档"
+        "translation": "萃取器具已經歸檔"
     },
     "TOAST_WATER_ARCHIVED_SUCCESSFULLY": {
-        "translation": "水质已被编辑"
+        "translation": "水質已被編輯"
     },
     "BEAN_WEIGHT_ALREADY_USED": {
         "translation": "{{gramUsed}}g of {{gramTotal}}g ({{leftOver}}g)"
     },
     "PREPARATION_TYPE_CUSTOM_PREPARATION": {
-        "translation": "自定义冲泡器具"
+        "translation": "自訂萃取器具"
     },
     "PREPARATION_TYPE_AEROPRESS": {
-        "translation": "爱乐压"
+        "translation": "愛樂壓"
     },
     "PREPARATION_TYPE_V60": {
-        "translation": "V60滤杯"
+        "translation": "V60濾杯"
     },
     "PREPARATION_TYPE_CHEMEX": {
         "translation": "Chemex"
     },
     "PREPARATION_TYPE_BIALETTI": {
-        "translation": "比乐蒂\/摩卡壶"
+        "translation": "比樂蒂\/摩卡壺"
     },
     "PREPARATION_TYPE_PORTAFILTER": {
-        "translation": "过滤手柄"
+        "translation": "過濾手柄"
     },
     "PREPARATION_TYPE_KALITA_WAVE": {
         "translation": "蛋糕杯"
     },
     "PREPARATION_TYPE_FRENCH_PRESS": {
-        "translation": "法压壶"
+        "translation": "法壓壺"
     },
     "PREPARATION_TYPE_SWANNECK": {
         "translation": "Swanneck"
     },
     "PREPARATION_TYPE_DRIPPER": {
-        "translation": "聪明杯"
+        "translation": "聰明杯"
     },
     "PREPARATION_TYPE_DELTER_PRESS": {
-        "translation": "D特压(Delder Press)"
+        "translation": "D特壓(Delder Press)"
     },
     "PREPARATION_TYPE_COLD_BREW": {
         "translation": "冷萃"
     },
     "PREPARATION_TYPE_AEROPRESS_INVERTED": {
-        "translation": "爱乐压倒压法"
+        "translation": "愛樂壓倒壓法"
     },
     "PREPARATION_TYPE_TURKISH": {
-        "translation": "极细研磨"
+        "translation": "極細研磨"
     },
     "PREPARATION_TYPE_BLUE_DRIPPER": {
-        "translation": "蓝瓶子滤杯"
+        "translation": "藍瓶子濾杯"
     },
     "PREPARATION_TYPE_ADD_CUSTOM": {
-        "translation": "添加自定义器具"
+        "translation": "添加自訂器具"
     },
     "PREPARATION_TYPE_GINA": {
-        "translation": "Gina智能咖啡机"
+        "translation": "Gina智能咖啡機"
     },
     "PREPARATION_TYPE_KONO": {
-        "translation": "KONO滤杯"
+        "translation": "KONO濾杯"
     },
     "PREPARATION_TYPE_ORIGAMI": {
-        "translation": "折纸滤杯"
+        "translation": "折紙濾杯"
     },
     "PREPARATION_TYPE_CAFELAT": {
-        "translation": "Cafelat拉杆咖啡机"
+        "translation": "Cafelat拉杆咖啡機"
     },
     "PREPARATION_TYPE_OREA": {
-        "translation": "Orea滤杯"
+        "translation": "Orea濾杯"
     },
     "PREPARATION_TYPE_COLD_DRIP": {
         "translation": "冰滴"
     },
     "PREPARATION_TYPE_HAND_LEVER": {
-        "translation": "手压式"
+        "translation": "手壓式"
     },
     "PREPARATION_TYPE_FLAIR": {
-        "translation": "Flair手压意式咖啡机"
+        "translation": "Flair手壓意式咖啡機"
     },
     "PREPARATION_TYPE_APRIL_BREWER": {
-        "translation": "April Brewer滤杯"
+        "translation": "April Brewer濾杯"
     },
     "PREPARATION_TYPE_ESPRO_BLOOM": {
-        "translation": "Espro Bloom滤杯"
+        "translation": "Espro Bloom濾杯"
     },
     "PREPARATION_TYPE_FELLOW_STAGG": {
-        "translation": "Fellow Stagg温控咖啡壶"
+        "translation": "Fellow Stagg溫控咖啡壺"
     },
     "PREPARATION_TYPE_HSIAO_50": {
-        "translation": "Hsiao 50滤杯"
+        "translation": "Hsiao 50濾杯"
     },
     "PREPARATION_TYPE_KARLSBADER_KANNE": {
         "translation": "Karlsbader"
     },
     "PREPARATION_TYPE_MOCCA_MASTER": {
-        "translation": "Mocca Master滴漏式咖啡机"
+        "translation": "Mocca Master滴漏式咖啡機"
     },
     "PREPARATION_TYPE_SIPHON": {
         "translation": "虹吸式"
     },
     "CHOOSE_BEANS": {
-        "translation": "选择咖啡豆"
+        "translation": "選擇咖啡豆"
     },
     "CHOOSE_BEAN": {
-        "translation": "选择咖啡豆"
+        "translation": "選擇咖啡豆"
     },
     "CHOOSE_WATERS": {
-        "translation": "选择水质"
+        "translation": "選擇水質"
     },
     "CHOOSE_WATER": {
-        "translation": "选择水质"
+        "translation": "選擇水質"
     },
     "CHOOSE_PREPARATIONS": {
-        "translation": "选择冲泡器具"
+        "translation": "選擇萃取器具"
     },
     "CHOOSE_PREPARATION": {
-        "translation": "选择冲泡器具"
+        "translation": "選擇萃取器具"
     },
     "CHOOSE_MILLS": {
-        "translation": "选择研磨机"
+        "translation": "選擇研磨機"
     },
     "CHOOSE_MILL": {
-        "translation": "选择研磨机"
+        "translation": "選擇研磨機"
     },
     "BEAN": {
         "PLACE_HOLDER": {
             "BEAN_DATA_NAME": {
-                "translation": "添加咖啡豆的名称"
+                "translation": "添加咖啡豆的名稱"
             },
             "BEAN_DATA_ROAST_NAME": {
-                "translation": "添加烘焙温度"
+                "translation": "添加烘焙溫度"
             },
             "BEAN_DATA_ROASTING_DATE": {
-                "translation": "请输入咖啡豆的烘焙日期"
+                "translation": "請輸入咖啡豆的烘焙日期"
             },
             "BEAN_DATA_ROASTER": {
-                "translation": "请输入烘焙者的名称"
+                "translation": "請輸入烘焙者的名稱"
             },
             "BEAN_DATA_VARIETY": {
-                "translation": "添加咖啡品种"
+                "translation": "添加咖啡品種"
             },
             "BEAN_DATA_PROCESSING": {
-                "translation": "请输入咖啡豆的处理方法，如：水洗"
+                "translation": "請輸入咖啡豆的處理方法，如：水洗"
             },
             "BEAN_DATA_COUNTRY": {
-                "translation": "它起源于哪儿？"
+                "translation": "它起源於哪兒？"
             },
             "BEAN_DATA_MIX": {
-                "translation": "什么是混合比例？"
+                "translation": "什麼是混合比例？"
             },
             "BEAN_DATA_AROMATICS": {
-                "translation": "描述它的风味吧"
+                "translation": "描述它的風味吧"
             },
             "BEAN_DATA_WEIGHT": {
-                "translation": "咖啡豆的总重量"
+                "translation": "咖啡豆的總重量"
             },
             "BEAN_DATA_COST": {
-                "translation": "购入这款咖啡豆花费了多少钱？"
+                "translation": "購入這款咖啡豆花費了多少錢？"
             },
             "BEAN_DATA_REGION": {
-                "translation": "添加它的产区"
+                "translation": "添加它的產區"
             },
             "BEAN_DATA_FARM": {
-                "translation": "添加它的庄园\/农场"
+                "translation": "添加它的莊園\/農場"
             },
             "BEAN_DATA_FARMER": {
-                "translation": "添加它的种植者名称"
+                "translation": "添加它的種植者名稱"
             },
             "BEAN_DATA_ELEVATION": {
-                "translation": "请输入咖啡豆的生长海拔"
+                "translation": "請輸入咖啡豆的生長海拔"
             },
             "BEAN_DATA_HARVEST_TIME": {
-                "translation": "请输入咖啡豆的收获日期"
+                "translation": "請輸入咖啡豆的收穫日期"
             },
             "BEAN_DATA_BUY_DATE": {
-                "translation": "请输入咖啡豆的购买日期"
+                "translation": "請輸入咖啡豆的購買日期"
             },
             "BEAN_DATA_PERCENTAGE": {
-                "translation": "添加该款咖啡豆在此包装中的占比(主要用于拼配包装填写)"
+                "translation": "添加該款咖啡豆在此包裝中的占比(主要用於拼配包裝填寫)"
             },
             "BEAN_DATA_CERTIFICATION": {
-                "translation": "添加豆类认证 (例如：fair trade, bio)"
+                "translation": "添加豆類認證 (例如：fair trade, bio)"
             },
             "BEAN_DATA_ROASTING_TYPE": {
-                "translation": "添加烘焙类型"
+                "translation": "添加烘焙類型"
             },
             "BEAN_DATA_DECAFFEINATED": {
-                "translation": "这款咖啡不含咖啡因"
+                "translation": "這款咖啡不含咖啡因"
             },
             "BEAN_DATA_URL": {
-                "translation": "添加网站链接"
+                "translation": "添加網站連結"
             },
             "BEAN_DATA_EAN": {
-                "translation": "添加条形码"
+                "translation": "添加條碼"
             },
             "BEAN_DATA_CUPPING_POINTS": {
-                "translation": "添加它的杯测分数"
+                "translation": "添加它的杯測分數"
             },
             "BEAN_DATA_PURCHASING_PRICE": {
-                "translation": "添加购买价格"
+                "translation": "添加購買價格"
             },
             "BEAN_DATA_FOB_PRICE": {
-                "translation": "添加离岸价格"
+                "translation": "添加離岸價格"
             },
             "NOTES": {
-                "translation": "为咖啡豆添加注释"
+                "translation": "為咖啡豆添加注釋"
             },
             "CHOOSE_DATA_ROASTER": {
-                "translation": "添加烘焙机"
+                "translation": "添加烘焙機"
             },
             "CHOOSE_DATA_ROASTING_TYPE": {
-                "translation": "选择烘焙类型"
+                "translation": "選擇烘焙類型"
             },
             "BEAN_DATA_BEST_DATE": {
-                "translation": "咖啡豆的最佳日期是什么时候？"
+                "translation": "咖啡豆的最佳日期是什麼時候？"
             },
             "BEAN_DATA_OPEN_DATE": {
-                "translation": "豆袋是什么时候开封的"
+                "translation": "豆袋是什麼時候開封的"
             },
             "FROZEN_NOTES": {
-                "translation": "对冷冻咖啡有任何备注吗？比如你存放在哪个冰箱中"
+                "translation": "對冷凍咖啡有任何備註嗎？比如你存放在哪個冰箱中"
             }
         }
     },
     "PREPARATION": {
         "PLACE_HOLDER": {
             "PREPARATION_TYPE_NAME": {
-                "translation": "添加名称"
+                "translation": "添加名稱"
             },
             "NOTES": {
-                "translation": "为冲泡器具添加注释"
+                "translation": "為萃取器具添加注釋"
             }
         }
     },
     "MILL": {
         "PLACE_HOLDER": {
             "NAME": {
-                "translation": "添加名称"
+                "translation": "添加名稱"
             },
             "NOTES": {
-                "translation": "为研磨机添加注释"
+                "translation": "為研磨機添加注釋"
             }
         }
     },
     "BREW": {
         "PLACE_HOLDER": {
             "BREW_DATA_GRIND_SIZE": {
-                "translation": "输入研磨设置，如：5"
+                "translation": "輸入研磨設置，如：5"
             },
             "BREW_DATA_GRIND_WEIGHT": {
-                "translation": "输入此次冲泡咖啡的咖啡粉克数 (gr)"
+                "translation": "輸入此次萃取咖啡的咖啡粉克數 (gr)"
             },
             "BREW_DATA_BREW_TEMPERATURE": {
-                "translation": "输入冲泡温度"
+                "translation": "輸入萃取溫度"
             },
             "BREW_DATA_PREPARATION_METHOD": {
-                "translation": "选择冲泡器具"
+                "translation": "選擇萃取器具"
             },
             "BREW_DATA_BEAN_TYPE": {
-                "translation": "选择咖啡豆"
+                "translation": "選擇咖啡豆"
             },
             "BREW_DATA_MILL": {
-                "translation": "选择一个研磨机"
+                "translation": "選擇一個研磨機"
             },
             "BREW_DATA_MILL_SPEED": {
-                "translation": "输入研磨机的研磨速度"
+                "translation": "輸入研磨機的研磨速度"
             },
             "BREW_DATA_MILL_TIMER": {
-                "translation": "输入研磨所花费的时间"
+                "translation": "輸入研磨所花費的時間"
             },
             "BREW_DATA_PRESSURE_PROFILE": {
-                "translation": "压强\/流量曲线，冲泡建议等"
+                "translation": "壓強\/流量曲線，萃取建議等"
             },
             "BREW_DATA_TEMPERATURE_TIME": {
-                "translation": "请输入加热器具的时间"
+                "translation": "請輸入加熱器具的時間"
             },
             "BREW_DATA_COFFEE_BLOOMING_TIME": {
-                "translation": "请输入闷蒸\/预浸泡所花费的时间"
+                "translation": "請輸入悶蒸\/預浸泡所花費的時間"
             },
             "BREW_DATA_COFFEE_FIRST_DRIP_TIME": {
-                "translation": "咖啡的第一滴水是什么时候出现的？"
+                "translation": "咖啡的第一滴水是什麼時候出現的？"
             },
             "BREW_DATA_BREW_QUANTITY": {
-                "translation": "冲泡时用了多少水？"
+                "translation": "萃取時用了多少水？"
             },
             "BREW_DATA_COFFEE_TYPE": {
-                "translation": "输入咖啡类型 (e.g. ristretto)"
+                "translation": "輸入咖啡類型 (e.g. ristretto)"
             },
             "BREW_DATA_COFFEE_CONCENTRATION": {
-                "translation": "输入咖啡浓度"
+                "translation": "輸入咖啡濃度"
             },
             "BREW_DATA_TDS": {
-                "translation": "总共溶解了多少固体？"
+                "translation": "總共溶解了多少固體？"
             },
             "BREW_DATA_NOTES": {
-                "translation": "为这次冲泡添加注释"
+                "translation": "為這次萃取添加注釋"
             },
             "BREW_DATA_BREW_BEVERAGE_QUANTITY": {
-                "translation": "冲泡完成以后，得到了多少的咖啡液？"
+                "translation": "萃取完成以後，得到了多少的咖啡液？"
             },
             "BREW_DATA_PREPARATION_METHOD_TOOL": {
-                "translation": "请选择你的冲泡器具"
+                "translation": "請選擇你的萃取器具"
             },
             "BREW_DATA_WATER": {
-                "translation": "选择此次使用的水质"
+                "translation": "選擇此次使用的水質"
             },
             "BREW_DATA_BEAN_WEIGHT_IN": {
                 "translation": "你使用了多少咖啡豆? (gr)"
@@ -1336,133 +1336,133 @@
         "translation": "已使用"
     },
     "CUPPING_BREW": {
-        "translation": "品尝"
+        "translation": "品嘗"
     },
     "COFFEE_DRUNKEN_QUANTITY": {
         "translation": "咖啡液"
     },
     "IMAGE_DELETED": {
-        "translation": "图片已删除"
+        "translation": "圖片已刪除"
     },
     "IMAGE_NOT_DELETED": {
-        "translation": "图片无法删除"
+        "translation": "圖片無法刪除"
     },
     "EXTERNAL_STORAGE_NOT_SUPPORTED": {
         "translation": "抱歉，不支持外部故事"
     },
     "BEANS_ARCHIVED": {
-        "translation": "已归档"
+        "translation": "已歸檔"
     },
     "TAB_ARCHIVE": {
-        "translation": "归档"
+        "translation": "歸檔"
     },
     "TODAY": {
         "translation": "今日"
     },
     "PLEASE_WAIT": {
-        "translation": "请稍等..."
+        "translation": "請稍等..."
     },
     "PREPARATION_STYLE_POUR_OVER": {
-        "translation": "手冲咖啡"
+        "translation": "手沖咖啡"
     },
     "PREPARATION_STYLE_ESPRESSO": {
-        "translation": "意式浓缩"
+        "translation": "意式濃縮"
     },
     "PREPARATION_STYLE_FULL_IMMERSION": {
         "translation": "全浸泡"
     },
     "PREPARATION_STYLE_PERCOLATION": {
-        "translation": "渗滤式"
+        "translation": "滲濾式"
     },
     "PREPARATION_TYPE_STYLE": {
-        "translation": "冲泡方式"
+        "translation": "萃取方式"
     },
     "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": {
-        "translation": "开启一个新的菜单条目 - 使用它您可以直接复制冲泡。"
+        "translation": "開啟一個新的功能表條目 - 使用它您可以直接複製萃取。"
     },
     "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": {
-        "translation": "保存每次冲泡时的经纬度"
+        "translation": "保存每次萃取時的經緯度"
     },
     "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": {
-        "translation": "节省消耗的咖啡因量"
+        "translation": "節省消耗的咖啡因量"
     },
     "UPDATE_TITLE": {
-        "translation": "有什么新玩意儿?"
+        "translation": "有什麼新玩意兒?"
     },
     "NEXT": {
-        "translation": "下一个"
+        "translation": "下一個"
     },
     "CUSTOM_PARAMETERS": {
-        "translation": "自定义参数"
+        "translation": "自訂參數"
     },
     "CUSTOM_DEFAULT_PARAMETERS": {
-        "translation": "默认"
+        "translation": "默認"
     },
     "CUSTOM_MANAGE_PARAMETERS": {
         "translation": "管理"
     },
     "CUSTOM_SORT_PARAMETERS": {
-        "translation": "种类"
+        "translation": "種類"
     },
     "BREW_PARAMETER_CUSTOMIZE_TITLE": {
-        "translation": "自定义每种冲泡器具的参数"
+        "translation": "自訂每種萃取器具的參數"
     },
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": {
-        "translation": "您想为每种冲泡器具选择自定义参数吗？跳转到“器具”，打开具体冲泡器具的选项，选择“自定义参数”。现在您可以选择将用于此准备的参数！"
+        "translation": "您想為每種萃取器具選擇自訂參數嗎？跳轉到“器具”，打開具體萃取器具的選項，選擇“自訂參數”。現在您可以選擇將用於此準備的參數！"
     },
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": {
-        "translation": "不能用于意式浓缩咖啡的水量"
+        "translation": "不能用於意式濃縮咖啡的水量"
     },
     "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": {
-        "translation": "咖啡首滴时间（仅适用于浓缩咖啡或特定过滤方法）"
+        "translation": "咖啡首滴時間（僅適用於濃縮咖啡或特定過濾方法）"
     },
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": {
-        "translation": "冲泡活动时可自定义"
+        "translation": "萃取活動時可自訂"
     },
     "PAGE_SETTINGS_GENERAL": {
-        "translation": "常规设置"
+        "translation": "常規設置"
     },
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": {
-        "translation": "自定义参数"
+        "translation": "自訂參數"
     },
     "ENABLE_PREPARATION_CUSTOM_PARAMETERS": {
-        "translation": "使用个人参数"
+        "translation": "使用個人參數"
     },
     "BEAN_ADD_ANOTHER_SORT": {
-        "translation": "添加另一种类"
+        "translation": "添加另一種類"
     },
     "BEAN_SORT": {
-        "translation": "种类"
+        "translation": "種類"
     },
     "BEAN_SORT_INFORMATION": {
-        "translation": "变化信息"
+        "translation": "變化資訊"
     },
     "BEAN_SORT_MORE_INFORMATION": {
-        "translation": "更多信息"
+        "translation": "更多資訊"
     },
     "NAVIGATE_TO_PREPARATION_METHODS": {
-        "translation": "跳转到冲泡页面"
+        "translation": "跳轉到萃取頁面"
     },
     "PREPARATION_TOOLS": {
-        "translation": "冲泡器具"
+        "translation": "萃取器具"
     },
     "PREPARATION_TOOLS_INFORMATION": {
-        "translation": "为您的过滤器添加不同的容器. 对于 V60 滤杯 或 123 添加例如 布、纸或网状过滤器"
+        "translation": "為您的篩檢程式添加不同的容器. 對於 V60 濾杯 或 123 添加例如 布、紙或網狀篩檢程式"
     },
     "PREPARATION_TOOLS_PLACEHOLDER": {
-        "translation": "纸或布过滤器、VST-20g、14g-Basket等。"
+        "translation": "紙或布篩檢程式、VST-20g、14g-Basket等。"
     },
     "PREPARATION_PARAMETERS_CUSTOMIZED": {
-        "translation": "参数自定义"
+        "translation": "參數自訂"
     },
     "BEANS_WEIGHT_AVAILABLE": {
         "translation": "可用的咖啡豆"
     },
     "SORT_ORDER": {
-        "translation": "改变顺序"
+        "translation": "改變順序"
     },
     "ASCENDING": {
-        "translation": "升序"
+        "translation": "昇冪"
     },
     "DESCENDING": {
         "translation": "倒序"
@@ -1471,10 +1471,10 @@
         "translation": "排序"
     },
     "BEAN_SORT_NAME_OF_BEAN": {
-        "translation": "咖啡豆名称"
+        "translation": "咖啡豆名稱"
     },
     "BEAN_SORT_ROASTER": {
-        "translation": "烘焙机"
+        "translation": "烘焙機"
     },
     "BEAN_SORT_ROASTING_DATE": {
         "translation": "烘焙日期"
@@ -1483,13 +1483,13 @@
         "translation": "烘焙信息"
     },
     "BEAN_TAB_GENERAL_INFORMATION": {
-        "translation": "常规"
+        "translation": "常規"
     },
     "BEAN_TAB_SORT_INFORMATION": {
-        "translation": "品种信息"
+        "translation": "品種資訊"
     },
     "PAGE_SETTINGS_MANAGE_ARCHIVE": {
-        "translation": "管理归档"
+        "translation": "管理歸檔"
     },
     "LAST_USE": {
         "translation": "上一次使用在"
@@ -1498,31 +1498,31 @@
         "translation": "搜索"
     },
     "OVERVIEW": {
-        "translation": "概览"
+        "translation": "概覽"
     },
     "BEAN_HEADER_ADDITIONALE_INFORMATION": {
-        "translation": "附加信息"
+        "translation": "附加資訊"
     },
     "THREE_DEE_TOUCH_ACTION_BREW": {
-        "translation": "冲泡"
+        "translation": "萃取"
     },
     "THREE_DEE_TOUCH_ACTION_BEAN": {
         "translation": "咖啡豆"
     },
     "THREE_DEE_TOUCH_ACTION_PREPARATION": {
-        "translation": "冲泡器具"
+        "translation": "萃取器具"
     },
     "THREE_DEE_TOUCH_ACTION_MILL": {
-        "translation": "研磨机"
+        "translation": "研磨機"
     },
     "PAGE_CREDITS_NOT_EXISTING": {
-        "translation": "无内容"
+        "translation": "無內容"
     },
     "TIMER_HOUR": {
-        "translation": "小时"
+        "translation": "小時"
     },
     "TIMER_MINUTES": {
-        "translation": "分钟"
+        "translation": "分鐘"
     },
     "TIMER_SECONDS": {
         "translation": "秒"
@@ -1530,37 +1530,37 @@
     "EXCEL": {
         "BEAN": {
             "CREATION_DATE": {
-                "translation": "创建日期"
+                "translation": "創建日期"
             },
             "ID": {
-                "translation": "咖啡豆编号"
+                "translation": "咖啡豆編號"
             }
         },
         "PREPARATION": {
             "CREATION_DATE": {
-                "translation": "创建日期"
+                "translation": "創建日期"
             },
             "ID": {
-                "translation": "器具编号"
+                "translation": "器具編號"
             }
         },
         "GRINDER": {
             "CREATION_DATE": {
-                "translation": "创建日期"
+                "translation": "創建日期"
             },
             "ID": {
-                "translation": "工厂编号"
+                "translation": "工廠編號"
             }
         }
     },
     "EXCEL_EXPORT": {
-        "translation": "导出为Excel"
+        "translation": "匯出為Excel"
     },
     "HEALTH_KIT_QUESTION_TITLE": {
-        "translation": "节省咖啡因消耗"
+        "translation": "節省咖啡因消耗"
     },
     "HEALTH_KIT_QUESTION_MESSAGE": {
-        "translation": "通过启用，每次冲泡中占用的咖啡因将自动保存在 Apple Health 中"
+        "translation": "通過啟用，每次萃取中佔用的咖啡因將自動保存在 Apple Health 中"
     },
     "NAV_ROASTING_SECTION": {
         "translation": "烘焙"
@@ -1570,14 +1570,14 @@
             "translation": "生豆"
         },
         "NAV_ROASTING_MACHINE": {
-            "translation": "烘焙机"
+            "translation": "烘焙機"
         },
         "ROASTING_MACHINE": {
             "TOTAL_ROAST_QUANTITY": {
                 "translation": "烘焙出的咖啡豆"
             },
             "TOTAL_ROAST_COUNT": {
-                "translation": "烘焙次数"
+                "translation": "烘焙次數"
             }
         },
         "GREEN_BEAN": {
@@ -1585,106 +1585,106 @@
                 "translation": "添加"
             },
             "EDIT": {
-                "translation": "编辑"
+                "translation": "編輯"
             },
             "DETAIL": {
-                "translation": "生豆详情"
+                "translation": "生豆詳情"
             },
             "ROASTABLE": {
                 "translation": "待烘焙"
             },
             "NO_ROASTS_YET": {
-                "translation": "目前还没有烘焙"
+                "translation": "目前還沒有烘焙"
             }
         },
         "BEAN": {
             "DROP_TEMPERATURE": {
-                "translation": "烘焙的最终温度"
+                "translation": "烘焙的最終溫度"
             },
             "ROAST_LENGTH": {
-                "translation": "烘焙时长"
+                "translation": "烘焙時長"
             },
             "ROASTER_MACHINE": {
-                "translation": "烘焙机"
+                "translation": "烘焙機"
             },
             "GREEN_BEAN_WEIGHT": {
                 "translation": "生豆重量"
             },
             "OUTSIDE_TEMPERATURE": {
-                "translation": "气温"
+                "translation": "氣溫"
             },
             "HUMIDITY": {
-                "translation": "湿度"
+                "translation": "濕度"
             },
             "FIRST_CRACK_MINUTE": {
-                "translation": "一爆分钟"
+                "translation": "一爆分鐘"
             },
             "FIRST_CRACK_TEMPERATURE": {
-                "translation": "一爆温度"
+                "translation": "一爆溫度"
             },
             "SECOND_CRACK_MINUTE": {
-                "translation": "二爆分钟"
+                "translation": "二爆分鐘"
             },
             "SECOND_CRACK_TEMPERATURE": {
-                "translation": "二爆温度"
+                "translation": "二爆溫度"
             },
             "PLACE_HOLDER": {
                 "DROP_TEMPERATURE": {
-                    "translation": "烘焙的最终温度"
+                    "translation": "烘焙的最終溫度"
                 },
                 "ROAST_LENGTH": {
-                    "translation": "烘焙时长"
+                    "translation": "烘焙時長"
                 },
                 "ROASTER_MACHINE": {
-                    "translation": "烘焙机"
+                    "translation": "烘焙機"
                 },
                 "GREEN_BEAN_WEIGHT": {
                     "translation": "生豆重量"
                 },
                 "OUTSIDE_TEMPERATURE": {
-                    "translation": "气温"
+                    "translation": "氣溫"
                 },
                 "HUMIDITY": {
-                    "translation": "湿度"
+                    "translation": "濕度"
                 },
                 "FIRST_CRACK_MINUTE": {
-                    "translation": "一爆分钟"
+                    "translation": "一爆分鐘"
                 },
                 "FIRST_CRACK_TEMPERATURE": {
-                    "translation": "一爆温度"
+                    "translation": "一爆溫度"
                 },
                 "SECOND_CRACK_TEMPERATURE": {
-                    "translation": "二爆温度"
+                    "translation": "二爆溫度"
                 },
                 "SECOND_CRACK_MINUTE": {
-                    "translation": "二爆分钟"
+                    "translation": "二爆分鐘"
                 }
             },
             "WEIGHT_LOSS": {
-                "translation": "减重"
+                "translation": "減重"
             }
         }
     },
     "PAGE_SETTINGS_MANAGE_SECTIONS": {
-        "translation": "更多选项卡"
+        "translation": "更多選項卡"
     },
     "PAGE_SETTINGS_SHOW_ROASTING_SECTION": {
-        "translation": "启用烘焙选项卡"
+        "translation": "啟用烘焙選項卡"
     },
     "PAGE_SETTINGS_SHOW_WATER_SECTION": {
-        "translation": "启用水质选项卡"
+        "translation": "啟用水質選項卡"
     },
     "PAGE_SETTINGS_SHOW_CUPPING_SECTION": {
-        "translation": "启用杯测选项"
+        "translation": "啟用杯測選項"
     },
     "BEAN_DATA_BUY_DATE": {
-        "translation": "购买日期"
+        "translation": "購買日期"
     },
     "BEAN_SORT_CREATION_DATE": {
-        "translation": "创建日期"
+        "translation": "創建日期"
     },
     "BEAN_SORT_PURCHASE_DATE": {
-        "translation": "购买日期"
+        "translation": "購買日期"
     },
     "BEAN_ROAST_COUNT": {
         "translation": "烘焙度"
@@ -1696,164 +1696,164 @@
         "translation": "烘焙"
     },
     "BEAN_DATA_WEIGHT_AFTER_ROASTING": {
-        "translation": "烘焙后的重量"
+        "translation": "烘焙後的重量"
     },
     "TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY": {
         "translation": "生豆已添加成功"
     },
     "TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY": {
-        "translation": "生豆已编辑成功"
+        "translation": "生豆已編輯成功"
     },
     "TOAST_GREEN_BEAN_ARCHIVED_SUCCESSFULLY": {
-        "translation": "生豆已归档成功"
+        "translation": "生豆已歸檔成功"
     },
     "TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY": {
-        "translation": "烘焙机已添加成功"
+        "translation": "烘焙機已添加成功"
     },
     "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": {
-        "translation": "烘焙机已编辑成功"
+        "translation": "烘焙機已編輯成功"
     },
     "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": {
-        "translation": "烘焙机已归档成功"
+        "translation": "烘焙機已歸檔成功"
     },
     "DELETE_ROASTING_MACHINE_QUESTION": {
-        "translation": "删除烘焙机？所有相关已经烘焙后的咖啡豆都将更新，不会被删除"
+        "translation": "刪除烘焙機？所有相關已經烘焙後的咖啡豆都將更新，不會被刪除"
     },
     "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": {
-        "translation": "烘焙机已删除成功"
+        "translation": "烘焙機已刪除成功"
     },
     "EDIT_ROASTING_MACHINE": {
-        "translation": "编辑"
+        "translation": "編輯"
     },
     "DETAIL_ROASTING_MACHINE": {
-        "translation": "烘焙详情"
+        "translation": "烘焙詳情"
     },
     "DELETE_WATER_QUESTION": {
-        "translation": "删除水质？所有相关已经烘焙后的咖啡豆都将更新，不会被删除"
+        "translation": "刪除水質？所有相關已經烘焙後的咖啡豆都將更新，不會被刪除"
     },
     "ROASTING_MACHINE": {
         "PLACE_HOLDER": {
             "NAME": {
-                "translation": "添加名称"
+                "translation": "添加名稱"
             },
             "NOTES": {
-                "translation": "为烘焙机添加注释"
+                "translation": "為烘焙機添加注釋"
             }
         }
     },
     "NAV_ROASTING_MACHINE": {
-        "translation": "烘焙机"
+        "translation": "烘焙機"
     },
     "PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING": {
-        "translation": "您没有添加任何烘焙机"
+        "translation": "您沒有添加任何烘焙機"
     },
     "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": {
-        "translation": "您没有归档任何烘焙机"
+        "translation": "您沒有歸檔任何烘焙機"
     },
     "CHOOSE_ROASTING_MACHINES": {
-        "translation": "选择烘焙机"
+        "translation": "選擇烘焙機"
     },
     "CHOOSE_ROASTING_MACHINE": {
-        "translation": "选择烘焙机"
+        "translation": "選擇烘焙機"
     },
     "POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE": {
-        "translation": "喜爱"
+        "translation": "喜愛"
     },
     "TOAST_BREW_FAVOURITE_ADDED": {
-        "translation": "已添加为喜爱"
+        "translation": "已添加為喜愛"
     },
     "TOAST_BREW_FAVOURITE_REMOVED": {
-        "translation": "已从喜爱中删除"
+        "translation": "已從喜愛中刪除"
     },
     "BREW_FILTER_JUST_FAVOURITE": {
-        "translation": "喜爱"
+        "translation": "喜愛"
     },
     "STATISTICS_PREPARATION_USAGES": {
         "translation": "器具用途"
     },
     "STATISTICS_PREPARATION_TIMELINE_USAGES": {
-        "translation": "器具的使用历史"
+        "translation": "器具的使用歷史"
     },
     "STATISTICS_GRINDER_TIMELINE_USAGES": {
-        "translation": "研磨机的使用历史"
+        "translation": "研磨機的使用歷史"
     },
     "ACCEPT": {
         "translation": "接受"
     },
     "STATISTIC_TAB_GENERAL": {
-        "translation": "常规"
+        "translation": "常規"
     },
     "STATISTIC_TAB_BREWS": {
-        "translation": "冲泡"
+        "translation": "萃取"
     },
     "STATISTIC_TAB_BEANS": {
         "translation": "咖啡豆"
     },
     "STATISTIC_TAB_PREPARATIONS": {
-        "translation": "冲泡器具"
+        "translation": "萃取器具"
     },
     "STATISTIC_TAB_GRINDERS": {
-        "translation": "研磨机"
+        "translation": "研磨機"
     },
     "PAGE_STATISTICS_BREW_PER_DAYPROCESSES": {
-        "translation": "每天冲泡"
+        "translation": "每天萃取"
     },
     "PAGE_STATISTICS_BREW_TIME": {
-        "translation": "冲泡时间"
+        "translation": "萃取時間"
     },
     "PAGE_STATISTICS_PHOTOS_TAKEN": {
-        "translation": "拍摄的照片"
+        "translation": "拍攝的照片"
     },
     "PAGE_SETTINGS_IMAGE_QUALITY": {
-        "translation": "图像质量"
+        "translation": "圖像品質"
     },
     "PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP": {
-        "translation": "定义图像加载质量，这可以降低您的数据使用量。"
+        "translation": "定義圖像載入品質，這可以降低您的資料使用量。"
     },
     "PAGE_SETTINGS_BREW_RATING": {
-        "translation": "冲泡评分"
+        "translation": "萃取評分"
     },
     "PAGE_SETTINGS_BREW_RATING_TOOLTIP": {
-        "translation": "对冲泡进行-1到5分的评分太少了吗？你最高可以设置到100的评分区间"
+        "translation": "對萃取進行-1到5分的評分太少了嗎？你最高可以設置到100的評分區間"
     },
     "UPDATE_ENTRY_OF": {
         "translation": "Update entry {{index}} of {{count}}"
     },
     "WEBSITE": {
-        "translation": "网站"
+        "translation": "網站"
     },
     "SHARE": {
         "translation": "分享"
     },
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": {
-        "translation": "需要授权文件访问权限"
+        "translation": "需要授權檔存取權限"
     },
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": {
-        "translation": "为了让应用程序充分发挥作用，我们需要您授权文件访问。 否则应用程序内会有部分功能受限。 这是自动备份功能所需要的权限。"
+        "translation": "為了讓應用程式充分發揮作用，我們需要您授權檔訪問。 否則應用程式內會有部分功能受限。 這是自動備份功能所需要的許可權。"
     },
     "COULD_NOT_ACCESS_FILE": {
-        "translation": "我们无法访问所选文件"
+        "translation": "我們無法訪問所選檔"
     },
     "WRONG_FILE_FORMAT": {
-        "translation": "您选择了不受支持的文件格式"
+        "translation": "您選擇了不受支持的檔案格式"
     },
     "SCAN_BEAN": {
-        "translation": "扫描包"
+        "translation": "掃描包"
     },
     "CLEAR": {
         "translation": "清除"
     },
     "BEAN_LOOKS_LIKE_CONSUMED": {
-        "translation": "这包咖啡豆看起来已经完全消耗了，要将它归档吗？"
+        "translation": "這包咖啡豆看起來已經完全消耗了，要將它歸檔嗎？"
     },
     "CUPPING_1": {
         "translation": "水果(Fruit)"
     },
     "CUPPING_2": {
-        "translation": "柑橘类(Citrus)"
+        "translation": "柑橘類(Citrus)"
     },
     "CUPPING_3": {
-        "translation": "柠檬和柠檬水(Lemo)"
+        "translation": "檸檬和檸檬水(Lemo)"
     },
     "CUPPING_4": {
         "translation": "酸橙(Lime)"
@@ -1871,16 +1871,16 @@
         "translation": "砂糖橘(Mandarin orange)"
     },
     "CUPPING_9": {
-        "translation": "橙子(Orange)"
+        "translation": "柳丁(Orange)"
     },
     "CUPPING_10": {
-        "translation": "苹果\/梨(Apple\/pear)"
+        "translation": "蘋果\/梨(Apple\/pear)"
     },
     "CUPPING_11": {
-        "translation": "绿苹果(Green apple)"
+        "translation": "綠蘋果(Green apple)"
     },
     "CUPPING_12": {
-        "translation": "红苹果(Red apple)"
+        "translation": "紅蘋果(Red apple)"
     },
     "CUPPING_13": {
         "translation": "瓜(Melon)"
@@ -1901,22 +1901,22 @@
         "translation": "白葡萄(White grape)"
     },
     "CUPPING_19": {
-        "translation": "绿葡萄(Green grape)"
+        "translation": "綠葡萄(Green grape)"
     },
     "CUPPING_20": {
-        "translation": "红葡萄(Red grape)"
+        "translation": "紅葡萄(Red grape)"
     },
     "CUPPING_21": {
-        "translation": "康科德葡萄(Concord grape)"
+        "translation": "康科特葡萄(Concord grape)"
     },
     "CUPPING_22": {
-        "translation": "热带水果(Tropical fruit)"
+        "translation": "熱帶水果(Tropical fruit)"
     },
     "CUPPING_23": {
         "translation": "荔枝(Lychee)"
     },
     "CUPPING_24": {
-        "translation": "杨桃(Star fruit)"
+        "translation": "楊桃(Star fruit)"
     },
     "CUPPING_25": {
         "translation": "酸角(Tamarind)"
@@ -1925,7 +1925,7 @@
         "translation": "百香果(Passion fruit)"
     },
     "CUPPING_27": {
-        "translation": "菠萝(Pineapple)"
+        "translation": "鳳梨(Pineapple)"
     },
     "CUPPING_28": {
         "translation": "芒果(Mango)"
@@ -1934,7 +1934,7 @@
         "translation": "木瓜(Papaya)"
     },
     "CUPPING_30": {
-        "translation": "猕猴桃(Kiwi)"
+        "translation": "獼猴桃(Kiwi)"
     },
     "CUPPING_31": {
         "translation": "香蕉(Banana)"
@@ -1958,13 +1958,13 @@
         "translation": "李子(Plum)"
     },
     "CUPPING_38": {
-        "translation": "樱桃(Cherry)"
+        "translation": "櫻桃(Cherry)"
     },
     "CUPPING_39": {
-        "translation": "黑樱桃(Black cherry)"
+        "translation": "黑櫻桃(Black cherry)"
     },
     "CUPPING_40": {
-        "translation": "浆果类(Berry)"
+        "translation": "漿果類(Berry)"
     },
     "CUPPING_41": {
         "translation": "蔓越莓(Cranberry)"
@@ -1976,31 +1976,31 @@
         "translation": "草莓(Strawberry)"
     },
     "CUPPING_44": {
-        "translation": "蓝莓(Blueberry)"
+        "translation": "藍莓(Blueberry)"
     },
     "CUPPING_45": {
-        "translation": "红加仑(Red currant)"
+        "translation": "紅加侖(Red currant)"
     },
     "CUPPING_46": {
-        "translation": "黑加仑(Black currant)"
+        "translation": "黑加侖(Black currant)"
     },
     "CUPPING_47": {
-        "translation": "干果类(Dried fruit)"
+        "translation": "乾果類(Dried fruit)"
     },
     "CUPPING_48": {
-        "translation": "红葡萄干(Golden raisin)"
+        "translation": "紅葡萄乾(Golden raisin)"
     },
     "CUPPING_49": {
-        "translation": "葡萄干(Raisin)"
+        "translation": "葡萄乾(Raisin)"
     },
     "CUPPING_50": {
-        "translation": "无花果干(Dried fig)"
+        "translation": "無花果幹(Dried fig)"
     },
     "CUPPING_51": {
-        "translation": "枣干(ried dates)"
+        "translation": "棗幹(ried dates)"
     },
     "CUPPING_52": {
-        "translation": "梅干(Prune)"
+        "translation": "梅幹(Prune)"
     },
     "CUPPING_53": {
         "translation": "甜味和烘培(Sweet & Roasting Notes)"
@@ -2009,25 +2009,25 @@
         "translation": "巧克力(Chocolate)"
     },
     "CUPPING_55": {
-        "translation": "可可碎(Cacao nibs)"
+        "translation": "可哥碎(Cacao nibs)"
     },
     "CUPPING_56": {
         "translation": "黑巧(Dark chocolate)"
     },
     "CUPPING_57": {
-        "translation": "贝克巧克力(Bakers chocolate)"
+        "translation": "貝克巧克力(Bakers chocolate)"
     },
     "CUPPING_58": {
         "translation": "苦甜巧克力(Bittersweet chocolate)"
     },
     "CUPPING_59": {
-        "translation": "可可粉(Cocoa powder)"
+        "translation": "可哥粉(Cocoa powder)"
     },
     "CUPPING_60": {
         "translation": "牛奶巧克力(Milk chocolate)"
     },
     "CUPPING_61": {
-        "translation": "坚果类(Nut)"
+        "translation": "堅果類(Nut)"
     },
     "CUPPING_62": {
         "translation": "核桃(Walnut)"
@@ -2048,43 +2048,43 @@
         "translation": "杏仁(Almond)"
     },
     "CUPPING_68": {
-        "translation": "谷物(Grain & Cereal)"
+        "translation": "穀物(Grain & Cereal)"
     },
     "CUPPING_69": {
         "translation": "Sweet bread pastry"
     },
     "CUPPING_70": {
-        "translation": "格兰诺拉麦片(Granola)"
+        "translation": "格蘭諾拉麥片(Granola)"
     },
     "CUPPING_71": {
-        "translation": "全麦饼干(Graham cracker)"
+        "translation": "全麥餅乾(Graham cracker)"
     },
     "CUPPING_72": {
-        "translation": "黑麦(Rye)"
+        "translation": "黑麥(Rye)"
     },
     "CUPPING_73": {
-        "translation": "小麦(Wheat)"
+        "translation": "小麥(Wheat)"
     },
     "CUPPING_74": {
-        "translation": "大麦(Barley)"
+        "translation": "大麥(Barley)"
     },
     "CUPPING_75": {
-        "translation": "新鲜面包(Fresh bread)"
+        "translation": "新鮮麵包(Fresh bread)"
     },
     "CUPPING_76": {
-        "translation": "甜味和糖类(Sweet & Sugary)"
+        "translation": "甜味和糖類(Sweet & Sugary)"
     },
     "CUPPING_77": {
         "translation": "香草(Vanila)"
     },
     "CUPPING_78": {
-        "translation": "牛轧糖(Nougat)"
+        "translation": "牛軋糖(Nougat)"
     },
     "CUPPING_79": {
         "translation": "蜂蜜(Honey)"
     },
     "CUPPING_80": {
-        "translation": "黄油(Butter)"
+        "translation": "黃油(Butter)"
     },
     "CUPPING_81": {
         "translation": "奶油(Cream)"
@@ -2096,19 +2096,19 @@
         "translation": "甘蔗(Sugarcane)"
     },
     "CUPPING_84": {
-        "translation": "红糖(Brown sugar)"
+        "translation": "紅糖(Brown sugar)"
     },
     "CUPPING_85": {
         "translation": "焦糖(Caramel)"
     },
     "CUPPING_86": {
-        "translation": "枫糖浆(Maple syrup)"
+        "translation": "楓糖漿(Maple syrup)"
     },
     "CUPPING_87": {
-        "translation": "糖浆(Molasses)"
+        "translation": "糖漿(Molasses)"
     },
     "CUPPING_88": {
-        "translation": "可乐(Cola)"
+        "translation": "可樂(Cola)"
     },
     "CUPPING_89": {
         "translation": "烘焙(Roast)"
@@ -2120,13 +2120,13 @@
         "translation": "焦糖(Burnt sugar)"
     },
     "CUPPING_92": {
-        "translation": "烟熏(Smokey)"
+        "translation": "煙熏(Smokey)"
     },
     "CUPPING_93": {
         "translation": "木炭(Carbon)"
     },
     "CUPPING_94": {
-        "translation": "植物、咸味食物和香料(Vegetal, Savory & Spices)"
+        "translation": "植物、鹹味食物和香料(Vegetal, Savory & Spices)"
     },
     "CUPPING_95": {
         "translation": "香料(Spice)"
@@ -2144,7 +2144,7 @@
         "translation": "芫荽、香菜(Coriander)"
     },
     "CUPPING_100": {
-        "translation": "生姜(Ginger)"
+        "translation": "生薑(Ginger)"
     },
     "CUPPING_101": {
         "translation": "肉豆蔻(Nutmeg)"
@@ -2159,7 +2159,7 @@
         "translation": "丁香(Clove)"
     },
     "CUPPING_105": {
-        "translation": "咸味食物(Savory)"
+        "translation": "鹹味食物(Savory)"
     },
     "CUPPING_106": {
         "translation": "皮革味(Leathery)"
@@ -2168,37 +2168,37 @@
         "translation": "肉味(Meat-like)"
     },
     "CUPPING_108": {
-        "translation": "酱油(Soy sauce)"
+        "translation": "醬油(Soy sauce)"
     },
     "CUPPING_109": {
-        "translation": "番茄干(Sundried tomato)"
+        "translation": "番茄幹(Sundried tomato)"
     },
     "CUPPING_110": {
         "translation": "番茄(Tomato)"
     },
     "CUPPING_111": {
-        "translation": "植物泥土草药(Vegetal Earthy Herb)"
+        "translation": "植物泥土草藥(Vegetal Earthy Herb)"
     },
     "CUPPING_112": {
         "translation": "土壤(Soil)"
     },
     "CUPPING_113": {
-        "translation": "新鲜木材(Fresh wood)"
+        "translation": "新鮮木材(Fresh wood)"
     },
     "CUPPING_114": {
         "translation": "雪松(Cedar)"
     },
     "CUPPING_115": {
-        "translation": "烟草(Tobacco)"
+        "translation": "煙草(Tobacco)"
     },
     "CUPPING_116": {
-        "translation": "干草\/稻草(Hay \/ straw)"
+        "translation": "乾草\/稻草(Hay \/ straw)"
     },
     "CUPPING_117": {
-        "translation": "绿叶蔬菜(Leafy greens)"
+        "translation": "綠葉蔬菜(Leafy greens)"
     },
     "CUPPING_118": {
-        "translation": "橄榄(Olive)"
+        "translation": "橄欖(Olive)"
     },
     "CUPPING_119": {
         "translation": "青椒(Green pepper)"
@@ -2213,7 +2213,7 @@
         "translation": "甜豌豆(Sweet pea)"
     },
     "CUPPING_123": {
-        "translation": "荷兰豆(Snow pea)"
+        "translation": "荷蘭豆(Snow pea)"
     },
     "CUPPING_124": {
         "translation": "草(Grassy)"
@@ -2228,10 +2228,10 @@
         "translation": "薄荷(Mint)"
     },
     "CUPPING_128": {
-        "translation": "绿茶(Green tea)"
+        "translation": "綠茶(Green tea)"
     },
     "CUPPING_129": {
-        "translation": "红茶(Black tea)"
+        "translation": "紅茶(Black tea)"
     },
     "CUPPING_130": {
         "translation": "啤酒花(Hops)"
@@ -2240,7 +2240,7 @@
         "translation": "佛手柑(Bergamot)"
     },
     "CUPPING_132": {
-        "translation": "花类(Flowery)"
+        "translation": "花類(Flowery)"
     },
     "CUPPING_133": {
         "translation": "花(Floral)"
@@ -2249,16 +2249,16 @@
         "translation": "木槿花(Hibiscus)"
     },
     "CUPPING_135": {
-        "translation": "蔷薇果(Rose hips)"
+        "translation": "薔薇果(Rose hips)"
     },
     "CUPPING_136": {
         "translation": "薰衣草(Lavender)"
     },
     "CUPPING_137": {
-        "translation": "木兰花(Magnolia)"
+        "translation": "木蘭花(Magnolia)"
     },
     "CUPPING_138": {
-        "translation": "茉莉、金银花(Jasmine honeysuckle)"
+        "translation": "茉莉、金銀花(Jasmine honeysuckle)"
     },
     "CUPPING_139": {
         "translation": "橙花(Orange blossom)"
@@ -2268,25 +2268,25 @@
     },
     "WATER_SECTION": {
         "NAV_WATER": {
-            "translation": "水质"
+            "translation": "水質"
         },
         "YOU_GOT_NO_ARCHIVED_WATER": {
-            "translation": "你还没有归档任何水质"
+            "translation": "你還沒有歸檔任何水質"
         },
         "YOU_GOT_NO_WATER": {
-            "translation": "你还没有添加任何水质"
+            "translation": "你還沒有添加任何水質"
         },
         "CATEGORY_INFORMATION": {
-            "translation": "水质信息"
+            "translation": "水質信息"
         },
         "CATEGORY_GENERAL": {
-            "translation": "常规"
+            "translation": "常規"
         },
         "WATER_BOTTLE_EXPLANATION": {
-            "translation": "水质通常以 ppm = mg\/L 为单位表示浓度"
+            "translation": "水質通常以 ppm = mg\/L 為單位表示濃度"
         },
         "USED_TIMES": {
-            "translation": "使用次数"
+            "translation": "使用次數"
         },
         "AMOUNT": {
             "translation": "已使用量"
@@ -2296,56 +2296,56 @@
                 "translation": "一般硬度 (GH)"
             },
             "TOTAL_ALKALINITY": {
-                "translation": "总碱度 (KH)"
+                "translation": "總鹼度(KH)"
             },
             "CALCIUM": {
-                "translation": "钙 (Ca)"
+                "translation": "鈣(Ca)"
             },
             "MAGNESIUM": {
-                "translation": "镁 (Mg)"
+                "translation": "鎂 (Mg)"
             },
             "SODIUM": {
-                "translation": "钠 (Na)"
+                "translation": "鈉 (Na)"
             },
             "TDS": {
-                "translation": "总溶解固体 (TDS)"
+                "translation": "總溶解固體 (TDS)"
             },
             "UNITS": {
-                "translation": "单位"
+                "translation": "單位"
             },
             "PLACE_HOLDER": {
                 "GENERAL_HARDNESS": {
                     "translation": "一般硬度"
                 },
                 "TOTAL_ALKALINITY": {
-                    "translation": "总碱度"
+                    "translation": "總鹼度"
                 },
                 "CALCIUM": {
-                    "translation": "钙 (Ca)"
+                    "translation": "鈣 (Ca)"
                 },
                 "MAGNESIUM": {
-                    "translation": "镁 (Mg)"
+                    "translation": "鎂 (Mg)"
                 },
                 "SODIUM": {
-                    "translation": "钠 (Na)"
+                    "translation": "鈉 (Na)"
                 },
                 "TDS": {
-                    "translation": "总溶解固体 (TDS)"
+                    "translation": "總溶解固體 (TDS)"
                 },
                 "NAME": {
-                    "translation": "新增水质名称"
+                    "translation": "新增水質名稱"
                 },
                 "NOTES": {
-                    "translation": "为水质添加注释"
+                    "translation": "為水質添加注釋"
                 },
                 "POTASSIUM": {
-                    "translation": "钾 (K)"
+                    "translation": "鉀 (K)"
                 },
                 "CHLORIDE": {
-                    "translation": "氯离子(Cl)"
+                    "translation": "氯離子(Cl)"
                 },
                 "SULFATE": {
-                    "translation": "硫酸盐(SO4)"
+                    "translation": "硫酸鹽(SO4)"
                 }
             },
             "WATER_UNIT": {
@@ -2353,7 +2353,7 @@
                     "translation": "未知"
                 },
                 "PPM": {
-                    "translation": "以CaCO3计量ppm"
+                    "translation": "以CaCO3計量ppm"
                 },
                 "MG_L": {
                     "translation": "mg\/L"
@@ -2366,13 +2366,13 @@
                 }
             },
             "POTASSIUM": {
-                "translation": "钾 (K)"
+                "translation": "鉀 (K)"
             },
             "CHLORIDE": {
-                "translation": "氯离子(Cl)"
+                "translation": "氯離子(Cl)"
             },
             "SULFATE": {
-                "translation": "硫酸盐(SO4)"
+                "translation": "硫酸鹽(SO4)"
             }
         }
     },
@@ -2380,129 +2380,129 @@
         "translation": "白利糖度"
     },
     "SET_TDS": {
-        "translation": "设置 TDS"
+        "translation": "設定 TDS"
     },
     "TOTAL_WEIGHT": {
-        "translation": "总重量"
+        "translation": "總重量"
     },
     "CALCULATED_WEIGHT": {
-        "translation": "计算重量"
+        "translation": "計算重量"
     },
     "SET_WEIGHT": {
-        "translation": "设置重量"
+        "translation": "設定重量"
     },
     "ADD_FLAVORS_AROMAS_TITLE": {
-        "translation": "香气\/风味"
+        "translation": "香氣\/風味"
     },
     "CUSTOM_FLAVORS_AROMAS": {
-        "translation": "自定义香气"
+        "translation": "个别香气"
     },
     "CUSTOM_FLAVORS_AROMAS_PLACEHOLDER": {
-        "translation": "以自己的语言描述它的香气"
+        "translation": "自訂香氣描述"
     },
     "PREDEFINED_FLAVORS_AROMAS": {
-        "translation": "常见香气"
+        "translation": "常見香氣"
     },
     "ADD_AROMA_FLAVOR": {
-        "translation": "添加香气\/风味"
+        "translation": "新增香氣\/風味"
     },
     "BEAN_WEIGHT_IN_PLACEHOLDER": {
-        "translation": "从包装取出的咖啡豆"
+        "translation": "從包裝取出的咖啡豆"
     },
     "VESSEL_PLACEHOLDER": {
-        "translation": "容器名和净重"
+        "translation": "容器名和淨重"
     },
     "GRIND_WEIGHT_PLACEHOLDER": {
-        "translation": "用于冲泡的咖啡粉的重量"
+        "translation": "用於萃取的咖啡粉的重量"
     },
     "PRESET_BREW_TITLE": {
-        "translation": "使用最后一次冲泡作为预设"
+        "translation": "預設為上一次的萃取"
     },
     "CUPPING_BREW_TAB_AROMA": {
-        "translation": "香气"
+        "translation": "香氣"
     },
     "CUPPING_BREW_TAB_TASTING": {
-        "translation": "系统性杯测"
+        "translation": "系統性杯測"
     },
     "WATER_PLACEHOLDER": {
-        "translation": "如需完整功能，请在设置菜单中激活水质部分"
+        "translation": "如需完整功能，請在設置功能表中啟動水質部分"
     },
     "PAGE_SETTINGS_SCALES": {
-        "translation": "电子秤"
+        "translation": "電子秤"
     },
     "CONNECT": {
-        "translation": "连接"
+        "translation": "連接"
     },
     "DISCONNECT": {
-        "translation": "断开连接"
+        "translation": "斷開連接"
     },
     "SCALE": {
         "BLUETOOTH_SCAN_RUNNING": {
-            "translation": "正在搜索附件的电子秤, 请稍等60秒"
+            "translation": "正在搜索附件的電子秤, 請稍等60秒"
         },
         "BLUETOOTH_NOT_ENABLED": {
-            "translation": "未开启蓝牙，请开启蓝牙以进行搜索"
+            "translation": "未開啟藍牙，請開啟藍牙以進行搜索"
         },
         "CONNECTION_NOT_ESTABLISHED": {
-            "translation": "附近找不到电子秤或是无法建立连接"
+            "translation": "附近找不到電子秤或是無法建立連接"
         },
         "CONNECTED_SUCCESSFULLY": {
-            "translation": "电子秤已连接"
+            "translation": "電子秤已連接"
         },
         "DISCONNECTED_SUCCESSFULLY": {
-            "translation": "电子秤已断开连接"
+            "translation": "電子秤已斷開連接"
         },
         "DISCONNECTED_UNPLANNED": {
-            "translation": "电子秤意外断开"
+            "translation": "電子秤意外斷開"
         },
         "REQUEST_PERMISSION": {
             "LOCATION": {
-                "translation": "软件需要位置权限来搜索电子秤"
+                "translation": "軟件需要位置權限來搜索電子秤"
             },
             "BLUETOOTH": {
-                "translation": "软件需要蓝牙权限来搜索蓝牙电子秤"
+                "translation": "軟件需要藍牙權限來搜索藍牙電子秤"
             }
         },
         "INFORMATION_DESCRIPTION": {
-            "translation": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti, Smartchef Scale (V1), Blackcoffee.io, Bookoo Mini Scale and Eureka Precisa. 注意：如果 Eureka Precisa 接收到负值，计时器会停止"
+            "translation": "支援的電子秤: Decent 電子秤, Acaia 電子秤, Felicita 電子秤以及 Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti, Smartchef Scale (V1), Blackcoffee.io, Bookoo Mini Scale and Eureka Precisa. 如果 Eureka Precisa 接收到負數值，計時器會停止"
         }
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": {
-            "translation": "错误的二维码或错误的内容"
+            "translation": "錯誤的二維碼或錯誤的內容"
         },
         "WRONG_QRCODE_TITLE": {
-            "translation": "错误"
+            "translation": "錯誤"
         },
         "WRONG_LINK_DESCRIPTION": {
-            "translation": "错误的应用链接"
+            "translation": "錯誤的應用連結"
         },
         "WRONG_LINK_TITLE": {
-            "translation": "错误"
+            "translation": "錯誤"
         },
         "SERVER": {
             "ERROR_OCCURED": {
-                "translation": "出现错误，无法读取二维码，请重试。"
+                "translation": "出現錯誤，無法讀取二維碼，請重試。"
             },
             "BEAN_NOT_APPROVED": {
-                "translation": "Bean has not been approved yet, please try later again"
+                "translation": "未准使用此咖啡豆，請稍後再試。"
             }
         },
         "BEAN_SUCCESSFULLY_SCANNED": {
-            "translation": "咖啡豆扫描成功"
+            "translation": "咖啡豆掃描成功"
         },
         "BEAN_SUCCESSFULLY_REFRESHED": {
-            "translation": "Bean successfully refreshed"
+            "translation": "成功更新咖啡豆"
         },
         "IMAGES_GETTING_DOWNLOADED": {
-            "translation": "正在下载的图像"
+            "translation": "正在下載的圖像"
         }
     },
     "RETRY_CONNECT": {
-        "translation": "重试连接"
+        "translation": "重試連接"
     },
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": {
-        "translation": "即使应用程序被最小化\/非活动状态，也让电子秤连接"
+        "translation": "即使應用程式被最小化\/非活動狀態，也讓電子秤連接"
     },
     "BREW_FLOW_WEIGHT": {
         "translation": "重量"
@@ -2514,58 +2514,58 @@
         "translation": "不清楚"
     },
     "ROAST_TYPE_CINNAMON_ROAST": {
-        "translation": "浅烘焙(Cimon Roast)"
+        "translation": "肉桂烘焙(Cimon Roast)"
     },
     "ROAST_TYPE_AMERICAN_ROAST": {
         "translation": "美式烘焙(American Roast)"
     },
     "ROAST_TYPE_NEW_ENGLAND_ROAST": {
-        "translation": "新英格兰烘焙(New England Roast)"
+        "translation": "新英格蘭烘焙(New England Roast)"
     },
     "ROAST_TYPE_HALF_CITY_ROAST": {
         "translation": "半城市烘焙(Half City Roast)"
     },
     "ROAST_TYPE_MODERATE_LIGHT_ROAST": {
-        "translation": "Moderate-Light Roast"
+        "translation": "中淺度烘焙(Moderate-Light Roast)"
     },
     "ROAST_TYPE_CITY_ROAST": {
-        "translation": "中深度烘焙(City Roast)"
+        "translation": "城市烘焙(City Roast)"
     },
     "ROAST_TYPE_CITY_PLUS_ROAST": {
-        "translation": "City+ Roast"
+        "translation": "城市+烘焙(City+ Roast)"
     },
     "ROAST_TYPE_FULL_CITY_ROAST": {
-        "translation": "微深度烘焙(Full City Roast)"
+        "translation": "全城市烘焙(Full City Roast)"
     },
     "ROAST_TYPE_FULL_CITY_PLUS_ROAST": {
-        "translation": "深度烘焙(Full City + Roast)"
+        "translation": "全城市+烘焙(Full City Roast)"
     },
     "ROAST_TYPE_ITALIAN_ROAST": {
-        "translation": "极深度烘焙(Italian Roast)"
+        "translation": "意式烘焙(Italian Roast)"
     },
     "ROAST_TYPE_VIEANNA_ROAST": {
-        "translation": "维也纳烘焙(Vienna Roast)"
+        "translation": "維也納烘焙(Vienna Roast)"
     },
     "ROAST_TYPE_FRENCH_ROAST": {
         "translation": "法式烘焙(French Roast)"
     },
     "ROAST_TYPE_CUSTOM_ROAST": {
-        "translation": "自定义"
+        "translation": "自訂"
     },
     "BEAN_MIX_UNKNOWN": {
         "translation": "不清楚"
     },
     "BEAN_MIX_SINGLE_ORIGIN": {
-        "translation": "单一产地"
+        "translation": "單一產地"
     },
     "BEAN_MIX_BLEND": {
         "translation": "拼配"
     },
     "BEAN_ROASTING_TYPE_FILTER": {
-        "translation": "滴滤式\/Filter"
+        "translation": "過濾式\/Filter"
     },
     "BEAN_ROASTING_TYPE_ESPRESSO": {
-        "translation": "意式浓缩\/Espresso"
+        "translation": "意式濃縮\/Espresso"
     },
     "BEAN_ROASTING_TYPE_OMNI": {
         "translation": "均可\/Omni"
@@ -2574,151 +2574,151 @@
         "translation": "不清楚"
     },
     "SMART_SCALE_LOG": {
-        "translation": "为智能电子秤激活日志文件（仅用于发送日志进行调试)"
+        "translation": "為智慧電子秤啟動日誌檔（僅用於發送日誌進行調試)"
     },
     "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": {
-        "translation": "杯测工具编辑"
+        "translation": "杯測工具編輯"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": {
-        "translation": "蓝牙电子秤"
+        "translation": "藍牙電子秤"
     },
     "PAGE_SETTINGS_TAB_GENERAL": {
-        "translation": "常规"
+        "translation": "常規"
     },
     "SMART_SCALE_TARE_ON_BREW": {
-        "translation": "在开始新的冲泡时去皮"
+        "translation": "在開始新的萃取時去皮"
     },
     "SMART_SCALE_TARE_ON_START_TIMER": {
-        "translation": "当定时器启动时去皮"
+        "translation": "當計時器啟動時去皮"
     },
     "PAGE_SETTINGS_BREW_RATING_STEPS": {
-        "translation": "评级步骤"
+        "translation": "評級步驟"
     },
     "BREW_AVG_FLOW_WEIGHT_PER_SECOND": {
         "translation": "Ø 流速"
     },
     "CUSTOM_LIST_VIEW_PARAMETERS": {
-        "translation": "列表视图参数"
+        "translation": "列表視圖參數"
     },
     "NAV_LIST_VIEW_CUSTOM_PARAMETERS": {
-        "translation": "列表视图参数"
+        "translation": "列表視圖參數"
     },
     "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": {
-        "translation": "决定你的咖啡冲泡的哪个参数，应该显示在列表视图上"
+        "translation": "決定你的咖啡萃取的哪個參數，應該顯示在清單視圖上"
     },
     "BREW_DATA_VESSEL_NAME_WEIGHT": {
-        "translation": "容器 名称\/重量"
+        "translation": "容器 名稱\/重量"
     },
     "IGNORE_NEGATIVE_VALUES": {
-        "translation": "忽略负重量值"
+        "translation": "忽略負重量值"
     },
     "IGNORE_ANOMALY_VALUES": {
-        "translation": "忽略异常值"
+        "translation": "忽略異常值"
     },
     "IGNORE_ANOMALY_VALUES_TOOLTIP": {
-        "translation": "例如：在秤上旋转杯子"
+        "translation": "例如：在秤上旋轉杯子"
     },
     "TOAST_BEAN_FAVOURITE_ADDED": {
-        "translation": "喜爱已添加"
+        "translation": "喜愛已添加"
     },
     "TOAST_BEAN_FAVOURITE_REMOVED": {
-        "translation": "喜爱已移除"
+        "translation": "喜愛已移除"
     },
     "QR_CODE_SCANNER_INFORMATION_TITLE": {
-        "translation": "二维码"
+        "translation": "二維碼"
     },
     "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": {
-        "translation": "所有扫描的咖啡豆信息都直接来自烘焙店。 <br\/> 如果您发现错误或误导性信息，请通过电子邮件通知我: info@beanconqueror.com."
+        "translation": "所有掃描的咖啡豆資訊都直接來自烘焙店。 <br\/> 如果您發現錯誤或誤導性資訊，請通過電子郵件通知我: info@beanconqueror.com."
     },
     "DONT_SHOW_AGAIN": {
-        "translation": "不再显示"
+        "translation": "不再顯示"
     },
     "ARCHIVED_TOOLS": {
-        "translation": "归档工具"
+        "translation": "歸檔工具"
     },
     "UNARCHIVE": {
-        "translation": "取消归档"
+        "translation": "取消歸檔"
     },
     "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": {
-        "translation": "在仪表盘上显示已归档的冲泡"
+        "translation": "在儀錶盤上顯示已歸檔的萃取"
     },
     "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": {
-        "translation": "已归档的冲泡应该显示在主页上吗？"
+        "translation": "已歸檔的萃取應該顯示在主頁上嗎？"
     },
     "COPY": {
-        "translation": "复制"
+        "translation": "複製"
     },
     "TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY": {
-        "translation": "杯测方法复制成功"
+        "translation": "杯測方法複製成功"
     },
     "PREPARATION_TYPE_CAFEC_FLOWER": {
-        "translation": "Cafec 花辦滤杯(Cafec Flower)"
+        "translation": "Cafec 花辦濾杯(Cafec Flower)"
     },
     "PREPARATION_TYPE_DECEMBER_DRIPPER": {
-        "translation": "December 可调咖啡滤杯(December Dripper)"
+        "translation": "December 可調咖啡濾杯(December Dripper)"
     },
     "PREPARATION_TYPE_DECENT_ESPRESSO": {
         "translation": "Decent Espresso"
     },
     "PREPARATION_TYPE_HARIO_SWITCH": {
-        "translation": "Hario Switch 聪明杯"
+        "translation": "Hario Switch 聰明杯"
     },
     "PREPARATION_TYPE_HARIO_WOODNECK": {
-        "translation": "Hario Woodneck 滤布"
+        "translation": "Hario Woodneck 濾布"
     },
     "PREPARATION_TYPE_RATIO_SIX_COFFEE_BREWER": {
         "translation": "Ratio Six Coffee Brewer"
     },
     "PREPARATION_TYPE_ROK": {
-        "translation": "ROK 手压咖啡机"
+        "translation": "ROK 手壓咖啡機"
     },
     "PREPARATION_TYPE_TORNADO_DUO": {
         "translation": "Tornado Duo"
     },
     "PREPARATION_TYPE_TRICOLATE": {
-        "translation": "Tricolate 聪明杯"
+        "translation": "Tricolate 聰明杯"
     },
     "QR_CODE_REFRESH_DATA_MESSAGE": {
-        "translation": "咖啡豆的所有信息将会被修改，现在开始？"
+        "translation": "咖啡豆的所有資訊將會被修改，現在開始？"
     },
     "POPOVER_QR_CODE_REFRESH": {
-        "translation": "重载数据"
+        "translation": "重載數據"
     },
     "BREW_FLOW_WEIGHT_REALTIME": {
-        "translation": "Flow (真实时间)"
+        "translation": "Flow (真實時間)"
     },
     "SMART_SCALE_STOP_TIMER_ON_BREW": {
-        "translation": "在新的冲泡时停止电子秤计时"
+        "translation": "在新的萃取時停止電子秤計時"
     },
     "SMART_SCALE_RESET_TIMER_ON_BREW": {
-        "translation": "在新的冲泡时重置电子秤计时"
+        "translation": "在新的萃取時重置電子秤計時"
     },
     "BREW_PRESSURE_FLOW": {
-        "translation": "压强设备"
+        "translation": "壓強設備"
     },
     "BREW_TEMPERATURE_REALTIME": {
-        "translation": "温度"
+        "translation": "溫度"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER": {
-        "translation": "展示手冲图表"
+        "translation": "展示手沖圖表"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": {
-        "translation": "展示意式浓缩图表"
+        "translation": "展示意式濃縮圖表"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": {
-        "translation": "压强设备"
+        "translation": "壓強設備"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": {
-        "translation": "温度设备"
+        "translation": "溫度設備"
     },
     "PRESSURE_LOG": {
-        "translation": "启用压强设备日志"
+        "translation": "啟用壓強設備日誌"
     },
     "PRESSURE_THRESHOLD_ACTIVE": {
-        "translation": "在预定义压强开始计时"
+        "translation": "在預定義壓強開始計時"
     },
     "PRESSURE_THRESHOLD_BAR": {
-        "translation": "压强阈值"
+        "translation": "壓強閾值"
     },
     "TIMER_MILLISECONDS": {
         "translation": "毫秒"
@@ -2727,250 +2727,250 @@
         "translation": "毫秒?"
     },
     "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": {
-        "translation": "使用毫秒更精准的分析每次冲泡"
+        "translation": "使用毫秒更精准的分析每次萃取"
     },
     "PAGE_SETTINGS_BEAN_RATING": {
-        "translation": "咖啡豆评分"
+        "translation": "咖啡豆評分"
     },
     "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": {
-        "translation": "五分制不适合你的话可以使用百分制"
+        "translation": "五分制不適合你的話可以使用百分制"
     },
     "PAGE_SETTINGS_BEAN_RATING_STEPS": {
-        "translation": "咖啡豆评分间隔"
+        "translation": "咖啡豆評分間隔"
     },
     "COFFEE_GRAMS_BREWED": {
-        "translation": "冲泡克数"
+        "translation": "萃取克數"
     },
     "SMART_SCALE_MAXIMIZE_ON_START_TIMER": {
-        "translation": "开始计时图表中的最大真实时间"
+        "translation": "開始計時圖表中的最大真實時間"
     },
     "PRESSURE": {
         "CONNECTION_NOT_ESTABLISHED": {
-            "translation": "没找到压强设备或者没有建立连接"
+            "translation": "沒找到壓強設備或者沒有建立連接"
         },
         "CONNECTED_SUCCESSFULLY": {
-            "translation": "压强设备已连接"
+            "translation": "壓強設備已連接"
         },
         "DISCONNECTED_SUCCESSFULLY": {
-            "translation": "压强设备未连接"
+            "translation": "壓強設備未連接"
         },
         "DISCONNECTED_UNPLANNED": {
-            "translation": "压强设备意外断开连接"
+            "translation": "壓強設備意外斷開連接"
         },
         "STAY_CONNECTED_ON_APP_MINIMIZE": {
-            "translation": "即使应用在后台也保持压强设备的连接"
+            "translation": "即使應用在後臺也保持壓強設備的連接"
         },
         "INFORMATION_DESCRIPTION": {
-            "translation": "支持设备: Popsicle, Pressensor, Smart Espresso Profiler, Bookoo Espresso Monitor"
+            "translation": "支援設備: Popsicle, Pressensor, Smart Espresso Profiler, Bookoo Espresso Monitor"
         },
         "BLUETOOTH_SCAN_RUNNING": {
-            "translation": "压强设备搜索将会花费60秒, 稍等"
+            "translation": "壓強設備搜索將會花費60秒, 稍等"
         },
         "BLUETOOTH_NOT_ENABLED": {
-            "translation": "蓝牙未开启，请开启以正常工作"
+            "translation": "藍牙未開啟，請開啟以正常工作"
         },
         "REQUEST_PERMISSION": {
             "LOCATION": {
-                "translation": "应用需要位置权限以搜索压强设备"
+                "translation": "應用需要位置許可權以搜索壓強設備"
             },
             "BLUETOOTH": {
-                "translation": "应用需要蓝牙权限以搜索压强设备"
+                "translation": "應用需要藍牙許可權以搜索壓強設備"
             }
         }
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": {
-        "translation": "重连电子秤"
+        "translation": "重連電子秤"
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": {
-        "translation": "重连压强设备"
+        "translation": "重連壓強設備"
     },
     "POPOVER_SHOW_BREWS": {
-        "translation": "显示冲泡"
+        "translation": "顯示萃取"
     },
     "LAST_USED_GRIND_SIZE_SETTING": {
-        "translation": "上次研磨设置"
+        "translation": "上次的研磨設置"
     },
     "LAST_USED_BEAN": {
         "translation": "上次的咖啡豆"
     },
     "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": {
-        "translation": "显示多少位小数？"
+        "translation": "顯示多少位元小數？"
     },
     "SMART_SCALE_COMMAND_DELAY": {
-        "translation": "命令延迟"
+        "translation": "命令延遲"
     },
     "SMART_SCALE_COMMAND_DELAY_TOOLTIP": {
-        "translation": "相邻蓝牙命令之间应间隔多少时间？"
+        "translation": "相鄰藍牙命令之間應間隔多少時間？"
     },
     "SUPPORT_ME": {
         "translation": "捐助"
     },
     "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": {
-        "translation": "显示咖啡豆图片吗？"
+        "translation": "顯示咖啡豆圖片嗎？"
     },
     "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": {
-        "translation": "如果存在咖啡豆图像将使用该图像，而不是预置图像"
+        "translation": "如果存在咖啡豆圖像將使用該圖像，而不是預置圖像"
     },
     "DOWNLOAD_XLSX": {
-        "translation": "下载 excel"
+        "translation": "下載 Excel檔"
     },
     "DOWNLOAD_JSON": {
-        "translation": "下载 JSON"
+        "translation": "下載 JSON檔"
     },
     "NAV_BEAN_PARAMS": {
-        "translation": "咖啡豆参数"
+        "translation": "咖啡豆參數"
     },
     "BEAN_DATA_ROAST_NAME_TYPE": {
-        "translation": "烘焙类型"
+        "translation": "烘焙類型"
     },
     "ENABLE_BEAN_SORT_INFORMATION": {
-        "translation": "启用品种信息"
+        "translation": "啟用品種資訊"
     },
     "BEAN_SORT_MIX": {
         "translation": "咖啡豆混合"
     },
     "PAGE_MANAGE_BEAN_PARAMETERS_DESCRIPTION": {
-        "translation": "编辑咖啡豆信息时要显示的参数。"
+        "translation": "編輯咖啡豆資訊時要顯示的參數。"
     },
     "PAGE_BEAN_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": {
-        "translation": "决定在列表上显示哪些咖啡豆参数。"
+        "translation": "決定在清單上顯示哪些咖啡豆參數。"
     },
     "BEAN_DATA_NAME_TOOLTIP": {
-        "translation": "咖啡豆包装上的名称"
+        "translation": "咖啡豆包裝上的名稱"
     },
     "BEAN_DATA_ROASTER_TOOLTIP": {
-        "translation": "谁烘焙了这些咖啡豆"
+        "translation": "誰烘焙了這些咖啡豆"
     },
     "BEAN_DATA_BUY_DATE_TOOLTIP": {
-        "translation": "购买咖啡豆的日期"
+        "translation": "購買咖啡豆的日期"
     },
     "BEAN_DATA_ROASTING_DATE_TOOLTIP": {
         "translation": "咖啡豆的烘焙日期"
     },
     "BEAN_DATA_ROASTING_TYPE_TOOLTIP": {
-        "translation": "此咖啡豆烘焙用于哪种冲泡方式，例如滤泡"
+        "translation": "此咖啡豆烘焙用於哪種萃取方式，例如濾泡"
     },
     "BEAN_DATA_ROAST_NAME_TOOLTIP": {
         "translation": "咖啡豆的烘焙程度是多少"
     },
     "BEAN_DATA_ROAST_NAME_TYPE_TOOLTIP": {
-        "translation": "烘焙类型是什么？（肉桂，新英格兰等）"
+        "translation": "烘焙類型是什麼？（肉桂，新英格蘭等）"
     },
     "BREW_DATA_RATING_TOOLTIP": {
-        "translation": "您的评分"
+        "translation": "您的評分"
     },
     "BEAN_SORT_MIX_TOOLTIP": {
-        "translation": "这是否为混合咖啡豆？"
+        "translation": "這是否為混合咖啡豆？"
     },
     "BEAN_DATA_WEIGHT_TOOLTIP": {
         "translation": "咖啡豆的重量"
     },
     "BEAN_DATA_COST_TOOLTIP": {
-        "translation": "咖啡豆的价格"
+        "translation": "咖啡豆的價格"
     },
     "BEAN_DATA_AROMATICS_TOOLTIP": {
-        "translation": "这种咖啡豆有哪些香气\/口味"
+        "translation": "這種咖啡豆有哪些香氣\/口味"
     },
     "BEAN_DATA_CUPPING_POINTS_TOOLTIP": {
-        "translation": "这种咖啡豆的杯测分数"
+        "translation": "這種咖啡豆的杯測分數"
     },
     "BEAN_DATA_DECAFFEINATED_TOOLTIP": {
-        "translation": "这款咖啡豆是否已去咖啡因？"
+        "translation": "這款咖啡豆是否已去咖啡因？"
     },
     "BEAN_DATA_URL_TOOLTIP": {
-        "translation": "购物网站的 URL, 例如"
+        "translation": "購物網站的 URL, 例如"
     },
     "BEAN_DATA_EAN_TOOLTIP": {
-        "translation": "The ean\/article number"
+        "translation": "EAN 條碼編號"
     },
     "NOTES_TOOLTIP": {
-        "translation": "需要记录的注释"
+        "translation": "需要記錄的注釋"
     },
     "BREW_DATA_ATTACHMENTS_TOOLTIP": {
         "translation": "附加照片？"
     },
     "ENABLE_BEAN_SORT_INFORMATION_TOOLTIP": {
-        "translation": "更深入的咖啡豆信息，包括它们来自哪里、何时收获等。"
+        "translation": "更深入的咖啡豆資訊，包括它們來自哪裡、何時收穫等。"
     },
     "BEAN_DATA_COUNTRY_TOOLTIP": {
-        "translation": "这些咖啡豆来自哪个国家"
+        "translation": "這些咖啡豆來自哪個國家"
     },
     "BEAN_DATA_REGION_TOOLTIP": {
-        "translation": "这些咖啡豆来自哪个地区"
+        "translation": "這些咖啡豆來自哪個地區"
     },
     "BEAN_DATA_FARM_TOOLTIP": {
-        "translation": "这些咖啡豆来自哪个农场"
+        "translation": "這些咖啡豆來自哪個農場"
     },
     "BEAN_DATA_FARMER_TOOLTIP": {
-        "translation": "这些咖啡豆来自哪个农场主"
+        "translation": "這些咖啡豆來自哪個農場主"
     },
     "BEAN_DATA_ELEVATION_TOOLTIP": {
-        "translation": "这些咖啡豆生长的海拔"
+        "translation": "這些咖啡豆生長的海拔"
     },
     "BEAN_DATA_PROCESSING_TOOLTIP": {
-        "translation": "这些咖啡豆是如何加工的（自然处理，水洗等）"
+        "translation": "這些咖啡豆是如何加工的（自然處理，水洗等）"
     },
     "BEAN_DATA_VARIETY_TOOLTIP": {
-        "translation": "咖啡品种（例如 SL28) "
+        "translation": "咖啡品種（例如 SL28)"
     },
     "BEAN_DATA_HARVEST_TIME_TOOLTIP": {
-        "translation": "这些咖啡豆是在什么年月收获的"
+        "translation": "這些咖啡豆是在什麼年月收穫的"
     },
     "BEAN_DATA_PERCENTAGE_TOOLTIP": {
-        "translation": "这些咖啡豆占咖啡袋的百分比"
+        "translation": "這些咖啡豆占咖啡袋的百分比"
     },
     "BEAN_DATA_CERTIFICATION_TOOLTIP": {
-        "translation": "这些咖啡豆有哪些认证（例如 fairtrade) "
+        "translation": "這些咖啡豆有哪些認證（例如 fairtrade)"
     },
     "BEAN_DATA_PURCHASING_PRICE_TOOLTIP": {
-        "translation": "这种咖啡豆的采购价格"
+        "translation": "這種咖啡豆的採購價格"
     },
     "BEAN_DATA_FOB_PRICE_TOOLTIP": {
-        "translation": "在咖啡烘焙商购买时的离岸价"
+        "translation": "在咖啡烘焙商購買時的離岸價"
     },
     "BEAN_PARAMETER_CUSTOMIZE_TITLE": {
-        "translation": "自定义您要使用的咖啡豆信息"
+        "translation": "自訂您要使用的咖啡豆資訊"
     },
     "BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION": {
-        "translation": "可以输入或使用更多的咖啡豆信息。选择您要填写和要显示的参数"
+        "translation": "可以輸入或使用更多的咖啡豆信息。選擇您要填寫和要顯示的參數"
     },
     "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE": {
-        "translation": "重置计时器！"
+        "translation": "重置計時器！"
     },
     "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": {
-        "translation": "因为您连接了蓝牙设备，您需要在启动之前先重置计时器。"
+        "translation": "因為您連接了藍牙設備，您需要在啟動之前先重置計時器。"
     },
     "BREW_FILTER_JUST_CHART_DATA": {
-        "translation": "仅图表数据"
+        "translation": "僅圖表資料"
     },
     "SCALE_RESET_TRIGGERED_DESCRIPTION": {
-        "translation": "蓝牙秤想要重置应用程序计时器以及冲泡图表，您是否确定要继续？"
+        "translation": "藍牙秤想要重置應用程式計時器以及萃取圖表，您是否確定要繼續？"
     },
     "SCALE_RESET_TRIGGERED_TITLE": {
         "translation": "重置？"
     },
     "NAV_REPEAT_PARAMETERS": {
-        "translation": "定义重复参数"
+        "translation": "定義重複參數"
     },
     "PAGE_REPEAT_PARAMETERS_DESCRIPTION": {
-        "translation": "标记当您重复特定酿造时应预设哪些参数。"
+        "translation": "標記當您重複特定釀造時應預設哪些參數。"
     },
     "CUSTOM_REPEAT_PARAMETERS": {
-        "translation": "重复"
+        "translation": "重複"
     },
     "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": {
-        "translation": "启用自定义重复？"
+        "translation": "啟用自訂重複？"
     },
     "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": {
-        "translation": "研磨设置使用数字键盘？"
+        "translation": "研磨設置使用數位鍵盤？"
     },
     "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": {
-        "translation": "您想为研磨设置使用数字键盘，而不是使用整个键盘吗？"
+        "translation": "您想為研磨設置使用數位鍵盤，而不是使用整個鍵盤嗎？"
     },
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": {
-                "translation": "None"
+                "translation": "沒有"
             },
             "XENIA": {
                 "translation": "Xenia"
@@ -2989,110 +2989,110 @@
             }
         },
         "URL": {
-            "translation": "Url"
+            "translation": "URL"
         },
         "CHOOSE_DEVICE": {
-            "translation": "选择设备"
+            "translation": "選擇設備"
         },
         "CONNECTION": {
             "UNSUCCESFULLY": {
-                "translation": "无法连接到设备"
+                "translation": "無法連接到設備"
             },
             "SUCCESFULLY": {
-                "translation": "已成功连接到设备"
+                "translation": "已成功連接到設備"
             }
         },
         "TYPE_XENIA": {
             "TITLE": {
-                "translation": "Xenia Machine"
+                "translation": "Xenia 機器"
             },
             "PRESS_START_SCRIPT": {
-                "translation": "设备启动时执行脚本"
+                "translation": "設備啟動時執行腳本"
             },
             "FIRST_DRIP_SCRIPT": {
-                "translation": "首滴时执行脚本"
+                "translation": "首滴時執行腳本"
             },
             "SCRIPT_AT_WEIGHT": {
-                "translation": "在指定重量执行脚本"
+                "translation": "在指定重量執行腳本"
             },
             "SCRIPT_LIST_GENERAL_0": {
-                "translation": "无"
+                "translation": "無"
             },
             "SCRIPT_LIST_GENERAL_1": {
-                "translation": "浓缩咖啡 (Espresso), 25 秒"
+                "translation": "濃縮咖啡 (Espresso), 25 秒"
             },
             "SCRIPT_LIST_GENERAL_2": {
-                "translation": "浓缩咖啡 (Espresso), 无限时间"
+                "translation": "濃縮咖啡 (Espresso), 無限時間"
             },
             "SCRIPT_LIST_GENERAL_STOP": {
                 "translation": "停止"
             },
             "CHOOSE_SCRIPT_AT_WEIGHT": {
-                "translation": "选择达到重量后的脚本"
+                "translation": "選擇達到重量後的腳本"
             },
             "ERROR_NOT_ALL_SCRIPTS_FOUND": {
-                "translation": "无法找到脚本，它们已被重置"
+                "translation": "無法找到腳本，它們已被重置"
             },
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
-                "translation": "无法建立与 Xenia 的连接。请确保您在正确的网络 (WLAN) 中, 如果您排除了网络问题, 请检查其他问题。"
+                "translation": "無法建立與 Xenia 的連接。請確保您在正確的網路 (WLAN) 中, 如果您排除了網路問題, 請檢查其他問題。"
             },
             "CHECKING_CONNECTION_TO_PORTAFILTER": {
-                "translation": "正在检查与 Xenia 的连接"
+                "translation": "正在檢查與 Xenia 的連接"
             },
             "GRABING_SCRIPTS": {
-                "translation": "已从 Xenia 加载脚本"
+                "translation": "已從 Xenia 載入腳本"
             },
             "BREW_BY_WEIGHT_ACTIVE": {
-                "translation": "按重量启动冲泡"
+                "translation": "按重量啟動萃取"
             }
         },
         "API_VERSION": {
-            "translation": "Api 版本"
+            "translation": "API 版本"
         },
         "RESIDUAL_LAG_TIME": {
-            "translation": "残留延迟时间"
+            "translation": "殘留延遲時間"
         },
         "RESIDUAL_LAG_TIME_DESCRIPTION": {
-            "translation": "设置时间以匹配剩余的水量。使用无底手柄时，你需要设定一个较短的时间；使用有底手柄时，则需要设定一个较长的时间。如果秤的重量数据传输的越慢，你需要调整的时间就越多"
+            "translation": "設置時間以匹配剩餘的水量。使用無底手柄時，你需要設定一個較短的時間；使用有底手柄時，則需要設定一個較長的時間。如果秤的重量資料傳輸的越慢，你需要調整的時間就越多"
         },
         "TYPE_METICULOUS": {
             "TITLE": {
-                "translation": "Meticulous 咖啡机"
+                "translation": "Meticulous 咖啡機"
             },
             "NO_PROFILE": {
-                "translation": "无配置文件"
+                "translation": "無設定檔"
             },
             "CHOOSE_PROFILE": {
-                "translation": "选择配置文件"
+                "translation": "選擇設定檔"
             },
             "SHOT_STARTED": {
-                "translation": "萃取开始"
+                "translation": "萃取開始"
             },
             "SHOT_ENDED": {
-                "translation": "萃取结束"
+                "translation": "萃取結束"
             },
             "DATA_COULD_NOT_BE_LOADED": {
-                "translation": "数据加载失败，可能有多种状况。"
+                "translation": "資料載入失敗，可能有多種狀況。"
             }
         },
         "TYPE_SANREMO_YOU": {
             "TITLE": {
-                "translation": "Sanremo YOU 咖啡机"
+                "translation": "Sanremo YOU 咖啡機"
             },
             "STOP_AT_WEIGHT": {
-                "translation": "达到重量后停止"
+                "translation": "達到重量後停止"
             },
             "SELECT_MODE": {
-                "translation": "选择模式"
+                "translation": "選擇模式"
             },
             "MODE_LISTENING": {
-                "translation": "监听中"
+                "translation": "聆聽中"
             },
             "MODE_CONTROL": {
                 "translation": "控制"
             },
             "MANUAL_CONTROLLING": {
-                "translation": "手动控制"
+                "translation": "手動控制"
             },
             "PROFILE_P1_CONTROLLING": {
                 "translation": "配置P1 控制"
@@ -3104,46 +3104,46 @@
                 "translation": "配置P3 控制"
             },
             "NO_PROFILE_TARGET_WEIGHT_INFORMATION": {
-                "translation": "您未定义目标重量，所选配置文件将被完全执行"
+                "translation": "您未定義目標重量，所選設定檔將被完全執行"
             },
             "NO_MANUAL_TARGET_WEIGHT_INFORMATION": {
-                "translation": "您未定义目标重量，请手动停止萃取"
+                "translation": "您未定義目標重量，請手動停止萃取"
             },
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
-                "translation": "无法建立与Sanremo YOU机器的连接。请确保您已连接到正确的网络（局域网），并确认已输入正确的IP地址等信息"
+                "translation": "無法建立與Sanremo YOU機器的連接。請確保您已連接到正確的網路（局域網），並確認已輸入正確的IP位址等資訊"
             },
             "MODE_LISTENING_AND_CONTROLLING": {
-                "translation": "监听和控制"
+                "translation": "監聽和控制"
             },
             "SHOT_STARTED": {
-                "translation": "开始萃取"
+                "translation": "開始萃取"
             },
             "SHOT_ENDED": {
-                "translation": "结束萃取"
+                "translation": "結束萃取"
             },
             "CONNECTION_LOST_PLEASE_RECONNECT": {
-                "translation": "遗憾的是，与Sanremo YOU的连接已中断，请点击按钮重新连接。"
+                "translation": "遺憾的是，與Sanremo YOU的連接已中斷，請點擊按鈕重新連接。"
             },
             "RECONNECT_NEEDED": {
-                "translation": "需要重新连接"
+                "translation": "需要重新連接"
             },
             "RECONNECT": {
-                "translation": "重新连接"
+                "translation": "重新連接"
             },
             "ENTER_TARGET_BREW_WEIGHT": {
-                "translation": "以克为单位输入目标萃取量"
+                "translation": "以克為單位輸入目標萃取量"
             },
             "LAST_SHOT": {
                 "translation": "上一杯"
             },
             "NO_SCALE_CONNECTED_PLEASE_CONNECT_ONE": {
-                "translation": "Baristamode is just working with connected scale, please connect one"
+                "translation": "連接了電子秤才能使用咖啡師模式，請連接一台"
             },
             "WE_COULD_NOT_CONNECT": {
-                "translation": "我们无法连接到机器。"
+                "translation": "我們無法連接到機器。"
             },
             "BREW_BY_WEIGHT_HINT": {
-                "translation": "The programmed volume in ml must be higher than the target weight in grams for the shot to stop at the set weight. If its not the case, please adjust the volume in ml."
+                "translation": "設定的容量(mL)必須高於目標重量(g)，萃取才能在設定的重量停止。否則，請調整容量(mL)。"
             }
         },
         "TYPE_GAGGIUINO": {
@@ -3153,543 +3153,543 @@
         },
         "TYPE_MOVE2": {
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
-                "translation": "无法连接 Move 2，请确保您与机器距离足够近及已开启蓝牙。"
+                "translation": "無法連接 Move 2，請確保您與機器距離足夠近及已開啟藍牙。"
             },
             "RECONNECT_ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": {
-                "translation": "无法重新连接 Move 2，请确保您与机器距离足够近及已开启蓝牙。"
+                "translation": "無法重新連接 Move 2，請確保您與機器距離足夠近及已開啟藍牙。"
             },
             "RECONNECTION_COULD_BE_ESTABLISHED": {
-                "translation": "重新连接成功"
+                "translation": "重新連接成功"
             },
             "STOP_AT_WEIGHT": {
-                "translation": "达到目標重量后停止"
+                "translation": "達到目標重量後停止"
             },
             "TITLE": {
                 "translation": "Move 2"
             },
             "SHOT_ENDED": {
-                "translation": "萃取结束"
+                "translation": "萃取結束"
             },
             "SHOT_STARTED": {
-                "translation": "萃取开始"
+                "translation": "萃取開始"
             },
             "TRYING_ESTABLISHING_CONNECTION": {
-                "translation": "正尝试连接Move 2 ，需要一些时间。"
+                "translation": "正嘗試連接Move 2，需要一些時間。"
             },
             "REMOTE_PREINFUSION_ENABLE": {
-                "translation": "启用预泡浸"
+                "translation": "啟用預泡浸"
             },
             "PREINFUSION_PAUSE_START": {
-                "translation": "预泡浸暂停开始 (s.s)"
+                "translation": "預泡浸暫停開始 (s,s)"
             },
             "PREINFUSION_PAUSE_TIME": {
-                "translation": "预泡浸暂停时间"
+                "translation": "預泡浸暫停時間"
             }
         }
     },
     "DEVICE_CONNECTION": {
-        "translation": "设备连接"
+        "translation": "設備連接"
     },
     "PREPARATION_DEVICE_CONNECTION": {
-        "translation": "冲泡设备已连接"
+        "translation": "萃取設備已連接"
     },
     "MANUAL_EXPORT_TO_VISUALIZER": {
-        "translation": "导出到可视化工具"
+        "translation": "匯出到視覺化工具"
     },
     "ONLY_FAVOURITES": {
-        "translation": "仅收藏"
+        "translation": "僅收藏"
     },
     "TEMPERATURE": {
         "CONNECTION_NOT_ESTABLISHED": {
-            "translation": "温度设备未找到或无法建立连接"
+            "translation": "溫度設備未找到或無法建立連接"
         },
         "CONNECTED_SUCCESSFULLY": {
-            "translation": "温度设备已连接"
+            "translation": "溫度設備已連接"
         },
         "DISCONNECTED_SUCCESSFULLY": {
-            "translation": "温度设备已断开连接"
+            "translation": "溫度設備已斷開連接"
         },
         "DISCONNECTED_UNPLANNED": {
-            "translation": "温度设备意外断开连接"
+            "translation": "溫度設備意外斷開連接"
         },
         "STAY_CONNECTED_ON_APP_MINIMIZE": {
-            "translation": "即使应用程序在后台，也保持温度计连接"
+            "translation": "即使應用程式在後臺，也保持溫度計連接"
         },
         "INFORMATION_DESCRIPTION": {
-            "translation": "支持的设备有：ETI 公司的蓝牙温度计（如ThermaQ Blue、BlueTherm等）、Combustion 公司的设备，以及Meater温度计（不支持Meater+或Meater 2型号）"
+            "translation": "支援的設備有：ETI 公司的藍牙溫度計（如ThermaQ Blue、BlueTherm等）、Combustion 公司的設備，以及Meater溫度計（不支持Meater+或Meater 2型號）"
         },
         "BLUETOOTH_SCAN_RUNNING": {
-            "translation": "将搜索温度设备60秒, 请稍等"
+            "translation": "將搜索溫度設備60秒, 請稍等"
         },
         "BLUETOOTH_NOT_ENABLED": {
-            "translation": "蓝牙未启动，请启动以使其正常工作"
+            "translation": "藍牙未啟動，請啟動以使其正常工作"
         },
         "REQUEST_PERMISSION": {
             "LOCATION": {
-                "translation": "为了查找温度设备，应用程序需要访问位置信息。"
+                "translation": "為了查找溫度設備，應用程式需要訪問位置資訊。"
             },
             "BLUETOOTH": {
-                "translation": "为了查找温度设备，应用程序需要访问蓝牙。"
+                "translation": "為了查找溫度設備，應用程式需要訪問藍牙。"
             }
         },
         "LOG": {
-            "translation": "为温度设备激活日志文件"
+            "translation": "為溫度設備啟動日誌檔"
         },
         "THRESHOLD_ACTIVE": {
-            "translation": "使用预定义的温度启动计时器"
+            "translation": "使用預定義的溫度啟動計時器"
         },
         "THRESHOLD_TEMP": {
-            "translation": "温度阈值"
+            "translation": "溫度閾值"
         }
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": {
-        "translation": "重新连接温度设备"
+        "translation": "重新連接溫度設備"
     },
     "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": {
-        "translation": "压力设备仅在 'espresso' 模式中可用"
+        "translation": "壓力設備僅在 'espresso' 模式中可用"
     },
     "PRESSURE_MESSAGE_AFTER_CONNECTION": {
-        "translation": "已知行为 (在分析中): 请注意, 如果您重启手机或长时间未使用应用程序, 则连接可能需要更长时间 (30 秒至 1 分钟) "
+        "translation": "已知行為 (在分析中): 請注意, 如果您重啟手機或長時間未使用應用程式, 則連接可能需要更長時間 (30 秒至 1 分鐘)"
     },
     "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": {
-        "translation": "Heartbeat 计时器 - 仅适用于Acaia电子秤"
+        "translation": "Hearbeat 計時器 - 只供 Acaia 電子秤使用"
     },
     "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": {
-        "translation": "只适用于Acaia电子秤！旧款Acaia电子秤需要一个 heartbeat讯号，如果你遇到问题，尝试将 Heartbeat 频率设置得更高。"
+        "translation": "只适用于Acaia電子秤！舊款Acaia電子秤需要一個 heartbeat訊號，如果你遇到問題，嘗試將 Heartbeat 頻率設指得更高。"
     },
     "SHARE_BEAN_URL": {
         "translation": "以URL方式分享"
     },
     "SHARE_BEAN_IMAGE": {
-        "translation": "以图像方式分享"
+        "translation": "以圖像方式分享"
     },
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": {
-        "translation": "浓缩咖啡 - 自动停止冲泡"
+        "translation": "濃縮咖啡 - 自動停止萃取"
     },
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": {
-        "translation": "此设置仅适用于'浓缩咖啡'类型的冲泡方式。当不再检测到流量变化时，冲泡将自动停止。"
+        "translation": "此設置僅適用於'濃縮咖啡'類型的萃取方式。當不再檢測到流量變化時，萃取將自動停止。"
     },
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": {
-        "translation": "该值将用于计算所有冲泡方式的冲泡比例，但不适用于'浓缩咖啡'类型。"
+        "translation": "該值將用於計算所有萃取方式的萃取比例，但不適用於'濃縮咖啡'類型。"
     },
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": {
-        "translation": "该值仅用于计算'浓缩咖啡'类型的冲泡方式的冲泡比例。"
+        "translation": "該值僅用於計算'濃縮咖啡'類型的萃取方式的萃取比例。"
     },
     "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": {
-        "translation": "看起来你的蓝牙秤没有正确连接到 Beanconqueror。这在大多数情况下发生在使用带有Acaia电子秤的iOS设备上，请重新连接秤，并确保重量数据已更新。"
+        "translation": "看起來你的藍牙秤沒有正確連接到 Beanconqueror。這在大多數情況下發生在使用帶有Acaia電子秤的iOS設備上，請重新連接秤，並確保重量資料已更新。"
     },
     "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": {
-        "translation": "没有重量数值？"
+        "translation": "沒有重量數值？"
     },
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": {
-        "translation": "停止冲泡所需的最小流量？冲泡将仅在达到至少5秒和5克或研磨重量的1:1冲泡比例时停止。之后，将检查设置的最小流量。"
+        "translation": "停止萃取所需的最小流量？萃取將僅在達到至少5秒和5克或研磨重量的1:1萃取比例時停止。之後，將檢查設置的最小流量。"
     },
     "ONLY_BEST_BREWS": {
-        "translation": "只显示最佳冲泡"
+        "translation": "只顯示最佳萃取"
     },
     "POPOVER_BEST_BREW": {
-        "translation": "最佳冲泡"
+        "translation": "最佳萃取"
     },
     "PAGE_SETTINGS_BEST_BREW": {
-        "translation": "启用最佳冲泡"
+        "translation": "啟用最佳萃取"
     },
     "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": {
-        "translation": "为特定的咖啡豆标记您的最佳冲泡。每种咖啡豆只能有一个最佳冲泡。"
+        "translation": "為特定的咖啡豆標記您的最佳萃取。每種咖啡豆只能有一個最佳萃取。"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": {
-        "translation": "浓度仪设备"
+        "translation": "濃度儀設備"
     },
     "REFRACTOMETER": {
         "CONNECTION_NOT_ESTABLISHED": {
-            "translation": "未找到浓度仪，或无法建立连接"
+            "translation": "未找到濃度儀，或無法建立連接"
         },
         "CONNECTED_SUCCESSFULLY": {
-            "translation": "浓度仪设备已连接"
+            "translation": "濃度儀設備已連接"
         },
         "DISCONNECTED_SUCCESSFULLY": {
-            "translation": "浓度仪已断开连接"
+            "translation": "濃度儀已斷開連接"
         },
         "DISCONNECTED_UNPLANNED": {
-            "translation": "浓度仪意外断开连接"
+            "translation": "濃度儀意外斷開連接"
         },
         "STAY_CONNECTED_ON_APP_MINIMIZE": {
-            "translation": "即使应用程序在后台运行，也能保持折光仪连接"
+            "translation": "即使應用程式在後臺運行，也能保持折光儀連接"
         },
         "INFORMATION_DESCRIPTION": {
-            "translation": "支持的设备: DiFluid R2"
+            "translation": "支援的設備: DiFluid R2"
         },
         "BLUETOOTH_SCAN_RUNNING": {
-            "translation": "搜索浓度仪设备, 最长时间为60秒"
+            "translation": "搜索濃度儀設備, 最長時間為60秒"
         },
         "BLUETOOTH_NOT_ENABLED": {
-            "translation": "未激活蓝牙，请激活以正常工作"
+            "translation": "未啟動藍牙，請啟動以正常工作"
         },
         "REQUEST_PERMISSION": {
             "LOCATION": {
-                "translation": "为了找到浓度仪，应用需要访问位置信息。"
+                "translation": "為了找到濃度儀，應用需要訪問位置資訊。"
             },
             "BLUETOOTH": {
-                "translation": "为了找到浓度仪，应用需要访问蓝牙"
+                "translation": "為了找到濃度儀，應用需要訪問藍牙"
             }
         },
         "LOG": {
-            "translation": "为浓度仪启用日志文件"
+            "translation": "為濃度儀啟用日誌檔"
         },
         "READ_END": {
-            "translation": "测试完成 - 收到结果"
+            "translation": "測試完成 - 收到結果"
         },
         "TEST_TYPE": {
-            "translation": "测试类型"
+            "translation": "測試類型"
         },
         "TEST_TYPES": {
             "SINGLE": {
-                "translation": "单一"
+                "translation": "單一"
             },
             "AVERAGE": {
                 "translation": "平均"
             }
         },
         "AUTO_TEST": {
-            "translation": "自动测试"
+            "translation": "自動測試"
         },
         "AUTO_TEST_DESCRIPTION": {
-            "translation": "当检测到温度变化时，自动执行循环测试，直至找到稳定的TDS\/温度值"
+            "translation": "當檢測到溫度變化時，自動執行迴圈測試，直至找到穩定的TDS\/溫度值"
         },
         "TEST_NUMBER": {
-            "translation": "测试次数"
+            "translation": "測試次數"
         }
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": {
-        "translation": "已复制到剪贴板"
+        "translation": "已複製到剪貼板"
     },
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": {
-        "translation": "无法复制到剪贴板"
+        "translation": "無法複製到剪貼板"
     },
     "PAGE_SETTINGS_LANGUAGE_FRENCH": {
-        "translation": "法语"
+        "translation": "法語"
     },
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": {
-        "translation": "由于Android限制，无法保存数据"
+        "translation": "由於Android限制，無法保存資料"
     },
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": {
-        "translation": "您的Android手机不支持外部文件系统，因此您需要下载不带媒体文件的ZIP文件。更多信息，请访问https:\/\/beanconqueror.com\/faq。"
+        "translation": "您的Android手機不支持外部檔案系統，因此您需要下載不帶媒體檔的ZIP檔。更多資訊，請訪問https:\/\/beanconqueror.com\/faq。"
     },
     "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": {
-        "translation": "退出前进行安全检查？"
+        "translation": "退出前進行安全檢查？"
     },
     "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": {
-        "translation": "在冲泡\/添加\/编辑咖啡豆时检查数据是否已更改；如果是，则在返回时显示安全警告。"
+        "translation": "在萃取\/添加\/編輯咖啡豆時檢查資料是否已更改；如果是，則在返回時顯示安全警告。"
     },
     "PAGE_BEANS_DISCARD_CONFIRM": {
-        "translation": "咖啡豆信息已更改。确定要在不保存的情况下离开页面吗？"
+        "translation": "咖啡豆信息已更改。確定要在不保存的情況下離開頁面嗎？"
     },
     "PAGE_BREW_DISCARD_CONFIRM": {
-        "translation": "冲泡信息已修改。确定要在不保存的情况下离开页面吗？"
+        "translation": "萃取資訊已修改。確定要在不保存的情況下離開頁面嗎？"
     },
     "NO_ENTRIES_FOUND": {
-        "translation": "未找到条目"
+        "translation": "未找到條目"
     },
     "POPOVER_BEANS_OPTION_REPEAT": {
-        "translation": "重复上次冲泡"
+        "translation": "重複上次萃取"
     },
     "REPEAT_LAST_BREW": {
-        "translation": "重复上次冲泡"
+        "translation": "重複上次萃取"
     },
     "REPEAT_BEST_BREW": {
-        "translation": "重复最佳冲泡"
+        "translation": "重複最佳萃取"
     },
     "PAGE_SETTINGS_VISUALIZER_SECTION": {
-        "translation": "可视化器"
+        "translation": "視覺化器"
     },
     "VISUALIZER": {
         "ACTIVATE": {
-            "translation": "激活可视化器"
+            "translation": "啟動視覺化器"
         },
         "CHOOSE_SERVER": {
-            "translation": "选择服务器"
+            "translation": "選擇伺服器"
         },
         "CONNECTION": {
             "UNSUCCESSFULLY": {
-                "translation": "无法建立连接。"
+                "translation": "無法建立連接。"
             },
             "SUCCESSFULLY": {
-                "translation": "连接成功建立。"
+                "translation": "連接成功建立。"
             }
         },
         "SERVER": {
             "VISUALIZER": {
-                "translation": "可视化器服务器"
+                "translation": "視覺化器伺服器"
             },
             "CUSTOM": {
-                "translation": "自定义服务器"
+                "translation": "自訂伺服器"
             }
         },
         "SHOT": {
             "UPLOAD_SUCCESSFULLY": {
-                "translation": "冲泡已上传到可视化器。"
+                "translation": "萃取已上傳到視覺化器。"
             },
             "UPLOAD_UNSUCCESSFULLY": {
-                "translation": "无法将冲泡上传到可视化器。"
+                "translation": "無法將萃取上傳到視覺化器。"
             }
         },
         "URL": {
-            "translation": "服务器URL"
+            "translation": "伺服器URL"
         },
         "USERNAME": {
-            "translation": "用户名"
+            "translation": "用戶名"
         },
         "PASSWORD": {
-            "translation": "密码"
+            "translation": "密碼"
         },
         "UPLOAD_AUTOMATIC": {
-            "translation": "自动上传每次冲泡？"
+            "translation": "自動上傳每次萃取？"
         },
         "UPLOAD_AUTOMATIC_TOOLTIP": {
-            "translation": "保存冲泡时，请确保您有活动的互联网连接。"
+            "translation": "保存萃取時，請確保您有活動的互聯網連接。"
         },
         "UPLOAD_ALL": {
-            "translation": "上传所有冲泡"
+            "translation": "上傳所有萃取"
         },
         "NOT_ALL_SHOTS_UPLOADED": {
-            "translation": "无法上传所有冲泡"
+            "translation": "無法上傳所有萃取"
         },
         "ALL_SHOTS_UPLOADED": {
-            "translation": "所有冲泡已上传"
+            "translation": "所有萃取已上傳"
         }
     },
     "SMART_SCALE_AUTO_START_LISTENING": {
-        "translation": "自动启动计时器？"
+        "translation": "自動啟動計時器？"
     },
     "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": {
-        "translation": "当达到以下重量值时自动启动计时器"
+        "translation": "當達到以下重量值時自動啟動計時器"
     },
     "CHOOSE_REFERENCE_GRAPH": {
-        "translation": "选择参考图"
+        "translation": "選擇參考圖"
     },
     "RESET": {
         "translation": "重置"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS": {
-        "translation": "定义图的起始轴"
+        "translation": "定義圖的起始軸"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION": {
-        "translation": "为过滤和浓缩设置轴的起始尺寸。"
+        "translation": "為過濾和濃縮設置軸的起始尺寸。"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": {
-        "translation": "过滤 - 重量"
+        "translation": "過濾 - 重量"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": {
-        "translation": "过滤 - 流速"
+        "translation": "過濾 - 流速"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": {
-        "translation": "浓缩 - 重量"
+        "translation": "濃縮 - 重量"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": {
-        "translation": "浓缩 - 流速"
+        "translation": "濃縮 - 流速"
     },
     "SMART_SCALE_IGNORE_INCOMING_WEIGHT": {
-        "translation": "忽略当前传输的重量。"
+        "translation": "忽略當前傳輸的重量。"
     },
     "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": {
-        "translation": "在冲泡部分会出现一个新按钮，它将忽略来自蓝牙秤的新重量值。"
+        "translation": "在萃取部分會出現一個新按鈕，它將忽略來自藍牙秤的新重量值。"
     },
     "BREWS_ACTIVE": {
-        "translation": "激活的冲泡"
+        "translation": "啟動的萃取"
     },
     "BREWS_ARCHIVED": {
-        "translation": "已归档的冲泡"
+        "translation": "已歸檔的萃取"
     },
     "GRAPHS": {
-        "translation": "图形"
+        "translation": "圖形"
     },
     "GRAPH_SECTION": {
         "NAV_GRAPH": {
-            "translation": "图形"
+            "translation": "圖形"
         },
         "NO_ARCHIVED_ENTRIES": {
-            "translation": "没有已归档的条目"
+            "translation": "沒有已歸檔的條目"
         },
         "NO_ENTRIES": {
-            "translation": "没有条目"
+            "translation": "沒有條目"
         },
         "SECTION_HAS_BEEN_ACTIVATED": {
-            "translation": "图形部分已激活"
+            "translation": "圖形部分已啟動"
         }
     },
     "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": {
-        "translation": "图表已归档"
+        "translation": "圖表已歸檔"
     },
     "TOAST_GRAPH_DELETED_SUCCESSFULLY": {
-        "translation": "图表已删除"
+        "translation": "圖表已刪除"
     },
     "TOAST_GRAPH_EDITED_SUCCESSFULLY": {
-        "translation": "图表已编辑"
+        "translation": "圖表已編輯"
     },
     "TOAST_GRAPH_ADD_SUCCESSFULLY": {
-        "translation": "图表已添加"
+        "translation": "圖表已添加"
     },
     "NAV_GRAPH_SECTION": {
-        "translation": "图表"
+        "translation": "圖表"
     },
     "DELETE_GRAPH_QUESTION": {
-        "translation": "您要删除此图表吗？"
+        "translation": "您要刪除此圖表嗎？"
     },
     "PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS": {
-        "translation": "显示已归档的图表"
+        "translation": "顯示已歸檔的圖表"
     },
     "PAGE_SETTINGS_SHOW_GRAPH_SECTION": {
-        "translation": "激活图表部分"
+        "translation": "啟動圖表部分"
     },
     "EDIT_GRAPH": {
-        "translation": "编辑图表"
+        "translation": "編輯圖表"
     },
     "ADD_GRAPH": {
-        "translation": "添加图表"
+        "translation": "添加圖表"
     },
     "GRAPH": {
         "PLACE_HOLDER": {
             "NAME": {
-                "translation": "图表名称"
+                "translation": "圖表名稱"
             },
             "NOTES": {
-                "translation": "注释"
+                "translation": "注釋"
             }
         },
         "UPLOAD": {
-            "translation": "上传图表"
+            "translation": "上傳圖表"
         },
         "DELETE": {
-            "translation": "删除图表"
+            "translation": "刪除圖表"
         },
         "UPLOAD_DESCRIPTION": {
-            "translation": "导入一个.JSON文件，您可以在冲泡详细视图中下载。或者，您还可以导入社区共享的.JSON类型的图形。"
+            "translation": "導入一個.JSON檔，您可以在萃取詳細視圖中下載。或者，您還可以導入社區共用的.JSON類型的圖形。"
         }
     },
     "SHOW_VISUALIZER": {
-        "translation": "显示可视化器"
+        "translation": "顯示視覺化器"
     },
     "NO_BREWS_FOUND": {
-        "translation": "未找到冲泡"
+        "translation": "未找到萃取"
     },
     "NO_GRAPHS_FOUND": {
-        "translation": "未找到图表"
+        "translation": "未找到圖表"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": {
-        "translation": "定义图表的最大时间轴"
+        "translation": "定義圖表的最大時間軸"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": {
-        "translation": "设置过滤器和浓缩咖啡时间轴的最大秒数。"
+        "translation": "設置篩檢程式和濃縮咖啡時間軸的最大秒數。"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": {
-        "translation": "过滤器 - 普通屏幕"
+        "translation": "篩檢程式 - 普通螢幕"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": {
-        "translation": "过滤器 - 全屏"
+        "translation": "篩檢程式 - 全屏"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": {
-        "translation": "浓缩咖啡 - 正常屏幕"
+        "translation": "濃縮咖啡 - 正常螢幕"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN": {
-        "translation": "浓缩咖啡 - 全屏"
+        "translation": "濃縮咖啡 - 全屏"
     },
     "PAGE_SETTINGS_DATE_FORMAT": {
         "translation": "日期格式"
     },
     "PAGE_SETTINGS_LANGUAGE_FRANCE": {
-        "translation": "法语"
+        "translation": "法語"
     },
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": {
-        "translation": "印度尼西亚语"
+        "translation": "印尼語"
     },
     "EXTRACTION_CHART_TITLE": {
-        "translation": "Extraction Chart"
+        "translation": "萃取率圖表"
     },
     "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": {
-        "translation": "显示备份问题"
+        "translation": "顯示備份問題"
     },
     "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": {
-        "translation": "如果无法将备份写入文件系统，则会出现弹窗"
+        "translation": "如果無法將備份寫入檔案系統，則會出現彈窗"
     },
     "AUTOMATIC_BACKUP_DID_FAIL": {
-        "translation": "自动备份未成功，请确保备份有效！可在设置中关闭此信息"
+        "translation": "自動備份未成功，請確保備份有效！可在設置中關閉此資訊"
     },
     "INTERNAL_BACKUP_DID_FAIL": {
-        "translation": "内部备份未成功，请确保备份有效！可在设置中关闭此信息"
+        "translation": "內部備份未成功，請確保備份有效！可在設置中關閉此資訊"
     },
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": {
-        "translation": "无法保存 ZIP 文件！可在设置中关闭此信息"
+        "translation": "無法保存 ZIP 檔！可在設置中關閉此資訊"
     },
     "SEND_LOGS": {
-        "translation": "发送日志"
+        "translation": "發送日誌"
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": {
-        "translation": "重新连接折射仪设备"
+        "translation": "重新連接折射儀設備"
     },
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": {
         "translation": "Italiano"
     },
     "PAGE_SETTINGS_LANGUAGE_POLISH": {
-        "translation": "波兰语"
+        "translation": "波蘭語"
     },
     "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": {
-        "translation": "在开始之前，您需要先重置计时器"
+        "translation": "在開始之前，您需要先重置計時器"
     },
     "SMART_SCALE_FIRST_DRIP_THRESHOLD": {
-        "translation": "滴液开始的阈值"
+        "translation": "滴液開始的閾值"
     },
     "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": {
-        "translation": "秤显示达到多少克时，才开始识别滴液开始？默认值：大于等于0.1克"
+        "translation": "秤顯示達到多少克時，才開始識別滴液開始？預設值：大於等於0.1克"
     },
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": {
-        "translation": "开始冲泡延迟"
+        "translation": "開始萃取延遲"
     },
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": {
-        "translation": "设置一个延迟时间，在开始冲泡前将显示一个加载图标"
+        "translation": "設置一個延遲時間，在開始萃取前將顯示一個載入圖示"
     },
     "STARTING_IN": {
-        "translation": "从 {{time}} 开始"
+        "translation": "從 {{time}} 開始"
     },
     "IOS_DATABASE_ISSUE_TITLE": {
-        "translation": "注意 !!!!! - 数据库连接丢失"
+        "translation": "注意 !!!!! - 資料庫連接丟失"
     },
     "IOS_DATABASE_ISSUE_DESCRIPTION": {
-        "translation": "我们很遗憾地通知您，我们遇到了无法连接数据库的问题。这个问题是由于苹果系统中一个未解决的漏洞导致的，超出了Beanconqueror的控制范围。为了防止可能的数据丢失，我们恳请您立即强制关闭Beanconqueror应用程序，然后再重新打开它。"
+        "translation": "我們很遺憾地通知您，我們遇到了無法連接資料庫的問題。這個問題是由於蘋果系統中一個未解決的漏洞導致的，超出了Beanconqueror的控制範圍。為了防止可能的資料丟失，我們懇請您立即強制關閉Beanconqueror應用程式，然後再重新打開它。"
     },
     "RELOAD_APP": {
-        "translation": "加载应用程序中"
+        "translation": "正在載入應用程式"
     },
     "WATER_TYPE_ADD_CUSTOM": {
-        "translation": "定制水"
+        "translation": "自訂水質"
     },
     "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE": {
-        "translation": "Third Wave Water - Classic Light Roast Profile"
+        "translation": "第三波水 - 經典輕度烘焙描述檔"
     },
     "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE": {
-        "translation": "Third Wave Water - Medium Roast Profile"
+        "translation": "第三波水 - 中度烘焙描述檔"
     },
     "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE": {
-        "translation": "Third Wave Water - Dark Roast Profile"
+        "translation": "第三波水 - 深度烘焙描述檔"
     },
     "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE": {
-        "translation": "Third Wave Water - Espresso Machine Profile"
+        "translation": "第三波水 - 意式烘焙描述檔"
     },
     "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE": {
-        "translation": "Third Wave Water -Cold Brew Profile"
+        "translation": "第三波水 - 冷萃取描述檔"
     },
     "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE": {
-        "translation": "Third Wave Water - Low Acid Profile"
+        "translation": "第三波水 - 低酸度描述檔"
     },
     "ADD_WATER": {
-        "translation": "添加水"
+        "translation": "新增水質"
     },
     "EXTRACTION_CHART_LABEL_STRONG_UNDEREXTRACTED": {
-        "translation": "强<br>萃取不足"
+        "translation": "強<br>萃取不足"
     },
     "EXTRACTION_CHART_LABEL_STRONG": {
-        "translation": "强<br>"
+        "translation": "強<br>"
     },
     "EXTRACTION_CHART_LABEL_STRONG_HARSH": {
-        "translation": "強<br>苦涩"
+        "translation": "強<br>苦澀"
     },
     "EXTRACTION_CHART_LABEL_UNDEREXTRACTED": {
         "translation": "萃取不足"
@@ -3698,7 +3698,7 @@
         "translation": "理想"
     },
     "EXTRACTION_CHART_LABEL_HARSH": {
-        "translation": "苦涩"
+        "translation": "苦澀"
     },
     "EXTRACTION_CHART_LABEL_WEAK_UNDEREXTRACTED": {
         "translation": "弱<br>萃取不足"
@@ -3707,80 +3707,80 @@
         "translation": "弱<br>"
     },
     "EXTRACTION_CHART_LABEL_WEAK_HARSH": {
-        "translation": "弱<br>苦涩"
+        "translation": "弱<br>苦澀"
     },
     "PAGE_SETTINGS_TEXT_TO_SPEECH_SECTION": {
-        "translation": "文字转语音"
+        "translation": "文字轉語音"
     },
     "TEXT_TO_SPEECH": {
         "ACTIVATE": {
-            "translation": "激活文本转语音"
+            "translation": "啟動文本轉語音"
         },
         "BREW_STARTED": {
-            "translation": "冲泡开始"
+            "translation": "萃取開始"
         },
         "BREW_ENDED": {
-            "translation": "冲泡结束"
+            "translation": "萃取結束"
         },
         "TIME": {
-            "translation": "时间"
+            "translation": "時間"
         },
         "SPEAK_EVERY_MS": {
-            "translation": "每隔选定的毫秒讲话一次"
+            "translation": "每隔選定的毫秒講話一次"
         },
         "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": {
-            "translation": "以下数字将进行语音测试"
+            "translation": "以下數位將進行語音測試"
         },
         "TEST_SPEAK": {
-            "translation": "开始测试讲话"
+            "translation": "開始測試講話"
         },
         "PITCH": {
-            "translation": "声调"
+            "translation": "聲調"
         },
         "RATE": {
             "translation": "速度"
         }
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": {
-        "translation": "触觉反馈"
+        "translation": "觸覺回饋"
     },
     "HAPTIC_FEEDBACK": {
         "ACTIVATE": {
-            "translation": "激活触觉反馈"
+            "translation": "啟動觸覺回饋"
         },
         "BREW_STARTED": {
-            "translation": "冲泡开始时振动"
+            "translation": "萃取開始時振動"
         },
         "BREW_STOPPED": {
-            "translation": "冲泡停止时振动"
+            "translation": "萃取停止時振動"
         },
         "TARE": {
-            "translation": "秤重时振动"
+            "translation": "秤重時振動"
         }
     },
     "CONNECTED": {
-        "translation": "已连接"
+        "translation": "已連接"
     },
     "DISCONNECTED": {
-        "translation": "已断开连接"
+        "translation": "已斷開連接"
     },
     "EXPERIMENTAL_FEATURE_DISCLAIMER": {
-        "translation": "这是一个实验性功能"
+        "translation": "這是一個實驗性功能"
     },
     "SHOW_HOURS": {
-        "translation": "显示小时"
+        "translation": "顯示小時"
     },
     "SHOW_MINUTES": {
-        "translation": "显示分钟"
+        "translation": "顯示分鐘"
     },
     "BEANS_UNARCHIVE": {
-        "translation": "取消归档"
+        "translation": "取消歸檔"
     },
     "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": {
-        "translation": "咖啡豆已经取消归档"
+        "translation": "咖啡豆已經取消歸檔"
     },
     "WATER_TYPE_PURE_COFFEE_WATER": {
-        "translation": "Pure Coffee Water"
+        "translation": "純咖啡水"
     },
     "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": {
         "translation": "empirical water GLACIAL"
@@ -3789,97 +3789,97 @@
         "translation": "empirical water SPRING"
     },
     "SORT_PREPARATION_TOOLS": {
-        "translation": "整理准备工具"
+        "translation": "整理準備工具"
     },
     "PREPARATION_TYPE_METICULOUS": {
         "translation": "Meticulous"
     },
     "EXPORT_CAUTION": {
-        "translation": "导出仅导出数据库，不包括图片和流速配置文件，如果需要这些内容，请访问Gitbook获取更多信息"
+        "translation": "匯出僅匯出資料庫，不包括圖片和流速設定檔，如果需要這些內容，請訪問Gitbook獲取更多資訊"
     },
     "POPOVER_FREEZE_COFFEE_BEAN": {
-        "translation": "冷冻咖啡豆"
+        "translation": "冷凍咖啡豆"
     },
     "POPOVER_UNFREEZE_COFFEE_BEAN": {
-        "translation": "解冻咖啡豆"
+        "translation": "解凍咖啡豆"
     },
     "BEAN_POPOVER_EDIT_FREEZE_DATE": {
-        "translation": "编辑冷冻日期"
+        "translation": "編輯冷凍日期"
     },
     "BEAN_POPOVER_EDIT_UNFREEZE_DATE": {
-        "translation": "编辑解冻日期"
+        "translation": "編輯解凍日期"
     },
     "BEAN_POPOVER_LEFT_UNFROZEN": {
-        "translation": "离开解冻"
+        "translation": "離開解凍"
     },
     "BEAN_POPOVER_FREEZE_PARTIAL_BAG": {
-        "translation": "冷冻部分袋子 (g)"
+        "translation": "冷凍部分袋子 (g)"
     },
     "FROZEN_BEANS": {
-        "translation": "冷冻"
+        "translation": "冷凍"
     },
     "BEAN_TAB_FROZEN_INFORMATION": {
-        "translation": "冷冻信息"
+        "translation": "冷凍信息"
     },
     "BEAN_POPOVER_FROZEN_BAGS": {
-        "translation": "冷冻袋"
+        "translation": "冷凍袋"
     },
     "BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE": {
-        "translation": "你要把整袋冷冻起来，但我们没有发现用它做过任何冲泡，你想删除到原来的袋子吗？"
+        "translation": "你要把整袋冷凍起來，但我們沒有發現用它做過任何萃取，你想刪除到原來的袋子嗎？"
     },
     "CREATE_FROZEN_BEANS": {
-        "translation": "创建豆子"
+        "translation": "創建豆子"
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS": {
-        "translation": "复制附件"
+        "translation": "複製附件"
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS_DESCRIPTION": {
-        "translation": "复制附件在此功能开始时已停用"
+        "translation": "複製附件在此功能開始時已停用"
     },
     "BEAN_DATA_FROZEN_DATE": {
-        "translation": "冷冻日期"
+        "translation": "冷凍日期"
     },
     "BEAN_DATA_UNFROZEN_DATE": {
-        "translation": "解冻日期"
+        "translation": "解凍日期"
     },
     "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS": {
-        "translation": "您没有冷冻豆"
+        "translation": "您沒有冷凍豆"
     },
     "BEAN_DATA_FROZEN_ID": {
-        "translation": "冷冻ID"
+        "translation": "冷凍ID"
     },
     "PAGE_SETTINGS_MANAGE_FEATURES": {
         "translation": "管理功能"
     },
     "ACTIVE_BEAN_FREEZING_FEATURE": {
-        "translation": "开始咖啡豆的冷冻"
+        "translation": "開始咖啡豆的冷凍"
     },
     "NAV_FROZEN_BEANS_LIST": {
-        "translation": "冷冻豆清单"
+        "translation": "冷凍豆清單"
     },
     "BEAN_BREW_LIST_VIEW_PARAMETERS": {
-        "translation": "冲泡的咖啡豆信息"
+        "translation": "萃取的咖啡豆信息"
     },
     "BEAN_AGE_BY_BREW_DATE": {
-        "translation": "按冲泡日期计算的豆龄"
+        "translation": "按萃取日期計算的豆齡"
     },
     "BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE": {
-        "translation": "您冷冻保存咖啡将导致您此支咖啡的剩馀重量为零，但您却冲煮了此咖啡，请立即对其进行评分并将其归档"
+        "translation": "您冷凍保存咖啡將導致您此支咖啡的剩餘重量為零，但您卻沖煮了此咖啡，請立即對其進行評分並將其歸檔"
     },
     "BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT": {
-        "translation": "无法冷冻，因为此咖啡剩余重量为零"
+        "translation": "無法冷凍，因為此咖啡剩餘重量為零"
     },
     "BEAN_DATA_BEST_DATE": {
-        "translation": "咖啡最佳饮用时间"
+        "translation": "咖啡最佳飲用時間"
     },
     "BEAN_DATA_BEST_DATE_TOOLTIP": {
-        "translation": "咖啡最佳饮用时间"
+        "translation": "咖啡最佳飲用時間"
     },
     "BEAN_DATA_OPEN_DATE": {
-        "translation": "咖啡开封时间"
+        "translation": "咖啡開封時間"
     },
     "BEAN_DATA_OPEN_DATE_TOOLTIP": {
-        "translation": "咖啡开封时间"
+        "translation": "咖啡開封時間"
     },
     "BEAN_FREEZING_STORAGE_TYPE_UNKNOWN": {
         "translation": "未知"
@@ -3891,7 +3891,7 @@
         "translation": "罐子"
     },
     "BEAN_FREEZING_STORAGE_TYPE_ZIP_LOCK": {
-        "translation": "夹链袋"
+        "translation": "夾鏈袋"
     },
     "BEAN_FREEZING_STORAGE_TYPE_VACUUM_SEALED": {
         "translation": "真空密封"
@@ -3900,55 +3900,55 @@
         "translation": "管"
     },
     "BEAN_DATA_FROZEN_STORAGE_TYPE": {
-        "translation": "冷冻储存类型"
+        "translation": "冷凍儲存類型"
     },
     "PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE": {
-        "translation": "您已更改您的咖啡豆评分最高值，但您已对咖啡豆的评分高于您设置的评分最高值，因此它们不会通过正常过滤设置显示。"
+        "translation": "您已更改您的咖啡豆評分最高值，但您已對咖啡豆的評分高於您設置的評分最高值，因此它們不會通過正常過濾設置顯示。"
     },
     "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": {
-        "translation": "您已更改您的咖啡豆评分最高值，但您已对咖啡豆的评分高于您设置的评分最高值，因此它们不会通过正常过滤设置显示。"
+        "translation": "您已更改您的咖啡豆評分最高值，但您已對咖啡豆的評分高於您設置的評分最高值，因此它們不會通過正常過濾設置顯示。"
     },
     "BEAN_DATA_FROZEN_NOTE": {
-        "translation": "冰冻风味叙述"
+        "translation": "冰凍風味敘述"
     },
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": {
-        "translation": "激活此功能后，图表将落后一秒"
+        "translation": "啟動此功能後，圖表將落後一秒"
     },
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": {
-        "translation": "激活此功能后，图表将落后一秒"
+        "translation": "啟動此功能後，圖表將落後一秒"
     },
     "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": {
-        "translation": "保存冲泡时保存机器日志"
+        "translation": "保存萃取時保存機器日誌"
     },
     "IMPORT_SHOT_FROM_METICULOUS": {
-        "translation": "导入一个冲泡记录"
+        "translation": "導入一個萃取記錄"
     },
     "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": {
-        "translation": "所有在excel列表中找到的条目，都被转换成新的豆子，享受美味的冲泡！"
+        "translation": "所有在excel列表中找到的條目，都被轉換成新的豆子，享受美味的萃取！"
     },
     "IMPORT_UNSUCCESSFULLY": {
-        "translation": "导入失败"
+        "translation": "導入失敗"
     },
     "BEAN_LIST": {
         "translation": "咖啡豆列表"
     },
     "IMPORT_ROASTED_BEANS_EXCEL": {
-        "translation": "通过 Excel 表格导入咖啡熟豆"
+        "translation": "透過 Excel 表格導入咖啡熟豆"
     },
     "IMPORT_GREEN_BEANS_EXCEL": {
-        "translation": "通过 Excel 表格导入咖啡生豆"
+        "translation": "透過 Excel 表格導入咖啡生豆"
     },
     "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": {
-        "translation": "看起来所选择的excel文件是损坏的，有错误的数据，错误的结构，或者是错误的选择。因此，没有豆子可以导入。"
+        "translation": "看起來所選擇的excel檔是損壞的，有錯誤的資料，錯誤的結構，或者是錯誤的選擇。因此，沒有豆子可以導入。"
     },
     "OK": {
         "translation": "可以"
     },
     "BEAN_SORT_BEAN_AGE": {
-        "translation": "豆龄"
+        "translation": "豆齡"
     },
     "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": {
-        "translation": "所有在excel列表中找到的条目，已经转化为新的生豆，祝你烘焙成功！"
+        "translation": "所有在excel列表中找到的條目，已經轉化為新的生豆，祝你烘焙成功！"
     },
     "PREPARATION_TYPE_SANREMO_YOU": {
         "translation": "Sanremo YOU"
@@ -3957,154 +3957,154 @@
         "translation": "Xenia"
     },
     "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": {
-        "translation": "您正在添加一个包含各种信息的豆子，但是这些参数没有被激活。你想现在激活它们吗？"
+        "translation": "您正在添加一個包含各種資訊的豆子，但是這些參數沒有被啟動。你想現在啟動它們嗎？"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": {
-        "translation": "定义压力图表的坐标轴"
+        "translation": "定義壓力圖表的坐標軸"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": {
-        "translation": "设置坐标轴的起始大小和末端的压力"
+        "translation": "設置坐標軸的起始大小和末端的壓力"
     },
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": {
-        "translation": "压力坐标轴"
+        "translation": "壓力坐標軸"
     },
     "PAGE_SETTINGS_LANGUAGE_DUTCH": {
-        "translation": "荷兰语"
+        "translation": "荷蘭語"
     },
     "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": {
-        "translation": "下载导入模板"
+        "translation": "下載導入範本"
     },
     "SHOW_GRAPH": {
-        "translation": "显示图表"
+        "translation": "顯示圖表"
     },
     "FULL_IMPORT_FROM_DIRECTORY": {
-        "translation": "从目录中完整导入"
+        "translation": "從目錄中完整導入"
     },
     "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION": {
-        "translation": "从所选目录中导入所有数据（包括所有图片和流速配置文件）。"
+        "translation": "從所選目錄中導入所有資料（包括所有圖片和流速設定檔）。"
     },
     "FULL_IMPORT_FROM_DIRECTORY_FILE_NOT_FOUND": {
-        "translation": "在选定的目录中找不到{{fileName}}。请选择一个不同的目录。"
+        "translation": "在選定的目錄中找不到{{fileName}}。請選擇一個不同的目錄。"
     },
     "FULL_EXPORT_TO_DIRECTORY": {
-        "translation": "完整导出到目录"
+        "translation": "完整匯出到目錄"
     },
     "FULL_EXPORT_TO_DIRECTORY_DESCRIPTION": {
-        "translation": "导出所有数据（包括所有图片和流速配置文件）到指定目录。"
+        "translation": "匯出所有資料（包括所有圖片和流速設定檔）到指定目錄。"
     },
     "FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS": {
-        "translation": "{{fileName}}已存在于所选目录中。请清理目录后再试。"
+        "translation": "{{fileName}}已存在於所選目錄中。請清理目錄後再試。"
     },
     "EXPORT_COMPLETED": {
-        "translation": "导出完成。"
+        "translation": "匯出完成。"
     },
     "BLUETOOTH_NOT_ENABLED": {
-        "translation": "蓝牙未激活，请激活才能正常工作"
+        "translation": "藍牙未啟動，請啟動才能正常工作"
     },
     "SEARCH_BLUETOOTH_DEVICES": {
-        "translation": "搜索蓝牙设备"
+        "translation": "搜索藍牙設備"
     },
     "CONNECT_SCALE": {
-        "translation": "连接咖啡秤"
+        "translation": "連接咖啡秤"
     },
     "CONNECT_PRESSURE": {
-        "translation": "连接压力表"
+        "translation": "連接壓力錶"
     },
     "CONNECT_TEMPERATURE": {
-        "translation": "连接温度计"
+        "translation": "連接溫度計"
     },
     "CONNECT_REFRACTOMETER": {
-        "translation": "连接折射仪"
+        "translation": "連接折射儀"
     },
     "DISCONNECT_SCALE": {
-        "translation": "断开咖啡秤"
+        "translation": "斷開咖啡秤"
     },
     "DISCONNECT_PRESSURE": {
-        "translation": "断开压力表"
+        "translation": "斷開壓力錶"
     },
     "DISCONNECT_TEMPERATURE": {
-        "translation": "断开温度计"
+        "translation": "斷開溫度計"
     },
     "DISCONNECT_REFRACTOMETER": {
-        "translation": "断开折射仪"
+        "translation": "斷開折射儀"
     },
     "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": {
-        "translation": "我们没有找到任何支持的蓝牙设备，请重试"
+        "translation": "我們沒有找到任何支援的藍牙設備，請重試"
     },
     "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": {
-        "translation": "最大化时隐藏值卡"
+        "translation": "最大化時隱藏值卡"
     },
     "BLUETOOTH_REQUEST_PERMISSION": {
         "LOCATION": {
-            "translation": "要找到蓝牙设备，app需要访问位置权限。"
+            "translation": "要找到藍牙設備，app需要訪問位置許可權。"
         },
         "BLUETOOTH": {
-            "translation": "要找到蓝牙设备，app需要访问蓝牙权限"
+            "translation": "要找到藍牙設備，app需要訪問藍牙許可權"
         }
     },
     "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": {
-        "translation": "生成二维码\/NFC"
+        "translation": "生成二維碼\/NFC"
     },
     "BEAN_CODE_ACTION": {
         "TITLE": {
-            "translation": "咖啡豆 QR\/NFC 码操作"
+            "translation": "咖啡豆 QR\/NFC 碼操作"
         },
         "START_BREW": {
-            "translation": "开始萃取"
+            "translation": "開始萃取"
         },
         "START_BREW_CHOOSE_PREPARATION": {
-            "translation": "开始冲煮并选择预浸泡的方法"
+            "translation": "開始沖煮並選擇預浸泡的方法"
         },
         "DETAIL": {
-            "translation": "详情页"
+            "translation": "詳情頁"
         },
         "EDIT": {
-            "translation": "编辑咖啡豆"
+            "translation": "編輯咖啡豆"
         },
         "CHOOSE_ACTION": {
-            "translation": "选择扫描"
+            "translation": "選擇掃描"
         },
         "REPEAT_LAST_BREW": {
-            "translation": "重复上次萃取"
+            "translation": "重複上次萃取"
         }
     },
     "DOWNLOAD_QR_CODE": {
-        "translation": "下载二维码"
+        "translation": "下載二維碼"
     },
     "NFC": {
         "PLEASE_ENABLED_NFC_DESCRIPTION": {
-            "translation": "请启用NFC，否则无法使用此功能"
+            "translation": "請啟用 NFC，否則無法使用此功能。"
         },
         "WRITE_COMPLETED_DESCRIPTION": {
-            "translation": "NFC标签写入成功"
+            "translation": "NFC標籤寫入成功"
         },
         "WRITE_COMPLETED_TITLE": {
-            "translation": "写入完成"
+            "translation": "寫入完成"
         },
         "WRITE_UNCOMPLETED_DESCRIPTION": {
-            "translation": "NFC标签无法被写入"
+            "translation": "NFC標籤無法被寫入"
         },
         "WRITE_UNCOMPLETED_TITLE": {
-            "translation": "写入失败"
+            "translation": "寫入失敗"
         },
         "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": {
-            "translation": "请把你的标签放在读取器上"
+            "translation": "請將你的標籤放近讀卡機。"
         },
         "WRITE_NFC_TAG": {
-            "translation": "写入NFC标签"
+            "translation": "寫入 NFC 標籤"
         }
     },
     "BREW_FLOW_WEIGHT_REALTIME_SECOND": {
-        "translation": "流速（实时，输出）"
+        "translation": "流速（即時，輸出）"
     },
     "BREW_FLOW_WEIGHT_SECOND": {
-        "translation": "重量（输出）"
+        "translation": "重量（輸出）"
     },
     "BEAN_WEIGHT_IN_PLACEHOLDER_NO_BR": {
-        "translation": "该参数不用于冲煮比例计算"
+        "translation": "該參數不用於沖煮比例計算"
     },
     "EXTEND_SORT_AFTER": {
-        "translation": "扩展排序"
+        "translation": "擴展排序"
     },
     "BEAN_SORT_BEAN_ROASTING_TYPE": {
         "translation": "烘焙度"
@@ -4113,91 +4113,91 @@
         "translation": "重量"
     },
     "BEAN_SORT_AROMATICS": {
-        "translation": "风味描述"
+        "translation": "風味描述"
     },
     "BEAN_SORT_INFORMATION_COUNTRY": {
-        "translation": "国家"
+        "translation": "國家"
     },
     "BEAN_SORT_INFORMATION_REGION": {
-        "translation": "地区"
+        "translation": "地區"
     },
     "BEAN_SORT_INFORMATION_VARIETY": {
-        "translation": "品种"
+        "translation": "品種"
     },
     "BEAN_SORT_INFORMATION_PROCESSING": {
-        "translation": "处理中"
+        "translation": "處理中"
     },
     "BLUETOOTH_NEGATIVE_OR_ANOMALY_VALUES_DISABLED": {
-        "translation": "由于一些问题，该功能已被禁用。请使用 “忽略当前重量 ”解决方案，它的效果会好很多"
+        "translation": "由於一些問題，該功能已被禁用。請使用 “忽略當前重量 ”解決方案，它的效果會好很多"
     },
     "EXPORT_CAUTION_IOS": {
-        "translation": "iOS：如果你想设置一部新手机，最好和最简单的方法是使用iCloud备份"
+        "translation": "iOS：如果你想設置一部新手機，最好和最簡單的方法是使用iCloud備份"
     },
     "PAGE_SETTINGS_LANGUAGE_NORWEGIAN": {
-        "translation": "挪威语"
+        "translation": "挪威語"
     },
     "VISUALIZER_SHOT_IMPORT_FAILED": {
-        "translation": "Visualizer冲煮记录导入失败"
+        "translation": "Visualizer沖煮記錄導入失敗"
     },
     "PAGE_SETTINGS_LANGUAGE_PORTUGUESE": {
-        "translation": "葡萄牙语"
+        "translation": "葡萄牙語"
     },
     "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_TITLE": {
         "translation": "重量加倍-秤上2杯中的1杯"
     },
     "SMART_SCALE_ESPRESSO_WEIGHT_DOUBLING_JUST_ONE_CUP_DESCRIPTION": {
-        "translation": "如果你的秤上只有一个杯子，你可以启用这个设置。这允许你在冲泡过程中激活一个复选框，当你有两个杯子，但只有一个在秤上。当启用此设置时，重量将自动加倍，以模拟秤上存在两个杯子。"
+        "translation": "如果你的秤上只有一個杯子，你可以啟用這個設置。這允許你在萃取過程中啟動一個核取方塊，當你有兩個杯子，但只有一個在秤上。當啟用此設置時，重量將自動加倍，以模擬秤上存在兩個杯子。"
     },
     "BEAN_SORT_WEIGHT_REMAINING": {
-        "translation": "剩余的重量"
+        "translation": "剩餘的重量"
     },
     "SMART_SCALE_ACAIA_CONNECTION_MODE_TITLE": {
-        "translation": "Acaia连接方式"
+        "translation": "Acaia連接方式"
     },
     "SMART_SCALE_ACAIA_CONNECTION_MODE_DESCRIPTION": {
-        "translation": "如果您的秤保持连接和断开，请尝试将模式设置为V1并调整心跳和命令计时器。这将切换到旧的连接例程。"
+        "translation": "如果您的秤保持連接和斷開，請嘗試將模式設置為V1並調整心跳和命令計時器。這將切換到舊的連接常式。"
     },
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V2": {
-        "translation": "V2—新的连接方式"
+        "translation": "V2—新的連接方式"
     },
     "SMART_SCALE_ACAIA_CONNECTION_MODE_V1": {
-        "translation": "V1 -旧连接方式"
+        "translation": "V1 -舊連接方式"
     },
     "BEAN_DATA_CO2E_KG": {
         "translation": "每公斤烘焙咖啡的CO2e （公斤）"
     },
     "BEAN_DATA_CO2E_KG_TOOLTIP": {
-        "translation": "每千克烘焙咖啡所释放的 CO2e （kg）"
+        "translation": "每千克烘焙咖啡所釋放的 CO2e （kg）"
     },
     "BEAN_SORT_RECENTLY_USED": {
         "translation": "上一次使用"
     },
     "BEAN_CODE_ON_ACTION_SCANNED_TITLE": {
-        "translation": "选择操作"
+        "translation": "選擇操作"
     },
     "GRAPH_UPDATE_INTERVAL_TITLE": {
-        "translation": "图表更新间隔"
+        "translation": "圖表更新間隔"
     },
     "GRAPH_UPDATE_INTERVAL_DESCRIPTION": {
-        "translation": "仅当流式传输时的图表滞后（主要发生在较旧的平板电脑或手机上）时，请使用此操作。如果您没有遇到任何问题，则可以忽略此功能。"
+        "translation": "僅當資料流時的圖表滯後（主要發生在較舊的平板電腦或手機上）時，請使用此操作。如果您沒有遇到任何問題，則可以忽略此功能。"
     },
     "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": {
-        "translation": "图表更新频率间隔"
+        "translation": "圖表更新頻率間隔"
     },
     "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION": {
-        "translation": "以选定的毫秒间隔刷新"
+        "translation": "以選定的毫秒間隔刷新"
     },
     "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_TITLE": {
-        "translation": "自动保存冲煮"
+        "translation": "自動保存沖煮"
     },
     "PAGE_SETTINGS_BREW_TIMER_SAVE_AUTOMATIC_DESCRIPTION": {
-        "translation": "在经过特定的时间间隔后自动保存冲煮。此操作将在暂停冲煮计时器后执行"
+        "translation": "在經過特定的時間間隔後自動保存沖煮。此操作將在暫停沖煮計時器後執行"
     },
     "SAVE_NOW": {
-        "translation": "当前保存"
+        "translation": "當前保存"
     },
     "SAVING_BREW_COUNTDOWN": {
-        "translation": "在{{time}}保存冲煮"
+        "translation": "在{{time}}保存沖煮"
     },
     "PREPARATION_TYPE_GAGGIUINO": {
         "translation": "Gaggiuino"
@@ -4206,28 +4206,28 @@
         "translation": "Import a shot from Gaggiuino"
     },
     "NAV_BARISTAMODE_SECTION": {
-        "translation": "咖啡师模式"
+        "translation": "咖啡師模式"
     },
     "PRESSURE_THRESHOLD_STOP_ACTIVE": {
-        "translation": "带预设压力的定时器停止功能"
+        "translation": "帶預設壓力的計時器停止功能"
     },
     "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": {
-        "translation": "此设置仅适用于“意式浓缩咖啡”类型的冲煮。冲煮过程仅在满足以下条件后才会停止：至少经过10秒，且压力至少达到1巴。当这些条件满足后，将检查在此处设置的最小压力阈值，若达到该阈值，冲煮过程将停止。 注意：若连接了智能秤，此设置将不生效"
+        "translation": "此設置僅適用於“意式濃縮咖啡”類型的沖煮。沖煮過程僅在滿足以下條件後才會停止：至少經過10秒，且壓力至少達到1巴。當這些條件滿足後，將檢查在此處設置的最小壓力閾值，若達到該閾值，沖煮過程將停止。 注意：若連接了智能秤，此設置將不生效"
     },
     "ANALYTICS_INFORMATION": {
-        "translation": "<h1>与BeanConqueror共度的咖啡之旅<\/h1><p>哇！你已经发现了<b>{{BEANS_COUNT}}<\/b>咖啡豆和冲泡的<b>{{BREWS_COUNT}}<\/b>从他们那里品尝到美味的咖啡。这让你成为真正的咖啡探索者！<\/p><h2>携手共创咖啡的未来<\/h2><p>想象一下：我们社区中只有4%的成员愿意与我们分享他们的使用体验。这就像试图用一种原料来完善一道菜肴！你们的酿造数据就像是珍贵的宝藏，帮助我们把BeanConqueror打造成你们想要的工具。<\/p><h3>携手，我们可以：<\/h3><ul><li>为每种咖啡豆品种确定理想的参数<\/li><li>制定基于科学研究的咖啡入门指南<\/li><li>绘制冲泡变量与风味特征之间的复杂关系图<\/li><li>让BeanConqueror成为您咖啡之旅中更加直观的得力助手。<\/li><\/ul><h2>您的贡献非常宝贵：<\/h2><p>现在或稍后在设置中启用数据共享。每次共享的体验都能丰富我们的咖啡知识库，并为BeanConqueror的未来发展奠定基础！<\/p><h2>您的隐私对我们至关重要<\/h2><p>作为欧洲心脏地带的一支德国团队，我们非常重视您的隐私。我们仅传输经过匿名处理的数据，这些数据无法用于推断您的身份。您可以在BeanConqueror网站上找到所有详细信息。<\/p><h2>加入BeanConqueror的进化之旅！<\/h2>"
+        "translation": "<h1>與BeanConqueror共度的咖啡之旅<\/h1><p>哇！你已經發現了<b>{{BEANS_COUNT}}<\/b>咖啡豆和萃取的<b>{{BREWS_COUNT}}<\/b>從他們那裡品嘗到美味的咖啡。這讓你成為真正的咖啡探索者！<\/p><h2>攜手共創咖啡的未來<\/h2><p>想像一下：我們社區中只有4%的成員願意與我們分享他們的使用體驗。這就像試圖用一種原料來完善一道菜肴！你們的釀造資料就像是珍貴的寶藏，幫助我們把BeanConqueror打造成你們想要的工具。<\/p><h3>攜手，我們可以：<\/h3><ul><li>為每種咖啡豆品種確定理想的參數<\/li><li>制定基於科學研究的咖啡入門指南<\/li><li>繪製萃取變數與風味特徵之間的複雜關係圖<\/li><li>讓BeanConqueror成為您咖啡之旅中更加直觀的得力助手。<\/li><\/ul><h2>您的貢獻非常寶貴：<\/h2><p>現在或稍後在設置中啟用資料共用。每次共用的體驗都能豐富我們的咖啡知識庫，並為BeanConqueror的未來發展奠定基礎！<\/p><h2>您的隱私對我們至關重要<\/h2><p>作為歐洲心臟地帶的一支德國團隊，我們非常重視您的隱私。我們僅傳輸經過匿名處理的資料，這些資料無法用於推斷您的身份。您可以在BeanConqueror網站上找到所有詳細資訊。<\/p><h2>加入BeanConqueror的進化之旅！<\/h2>"
     },
     "ANALYTICS_INFORMATION_ABOUT": {
-        "translation": "{{analyticsId}} - Analytics id 未与个人数据相关联；无法进行个人身份识别。"
+        "translation": "{{analyticsId}} - Analytics id 未與個人資料相關聯；無法進行個人身份識別。"
     },
     "BEAN_DATA_AVERAGE_BREW_RATING": {
-        "translation": "平均萃取评分"
+        "translation": "平均萃取評分"
     },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_TITLE": {
-        "translation": "选择显示图片类型的冲泡方式"
+        "translation": "選擇顯示圖片類型的萃取方式"
     },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_PREPARATION": {
-        "translation": "准备"
+        "translation": "準備"
     },
     "PAGE_SETTINGS_BREW_DISPLAY_IMAGE_TYPE_BEAN": {
         "translation": "咖啡豆"
@@ -4236,67 +4236,67 @@
         "translation": "萃取"
     },
     "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_TITLE": {
-        "translation": "蓝牙设备连接信息"
+        "translation": "藍牙設備連接資訊"
     },
     "BLUETOOTH_DEVICE_SHOW_CONNECTION_MESSAGE_DESCRIPTION": {
-        "translation": "显示蓝牙设备连接和断开连接的信息"
+        "translation": "顯示藍牙設備連接和斷開連接的資訊"
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE": {
-        "translation": "图像质量（百分比）"
+        "translation": "圖像品質（百分比）"
     },
     "BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB": {
-        "translation": "最大图像大小（以兆字节为单位）"
+        "translation": "最大圖像大小（以百萬位元組為單位）"
     },
     "POPOVER_COPY_FROZEN_ID": {
-        "translation": "复制冷冻ID"
+        "translation": "複製冷凍ID"
     },
     "MACHINE_ACTIONS": {
-        "translation": "机器操作"
+        "translation": "機器操作"
     },
     "MACHINE_POWER_ON": {
-        "translation": "电源打开"
+        "translation": "電源打開"
     },
     "MACHINE_POWER_OFF": {
-        "translation": "电源关闭"
+        "translation": "電源關閉"
     },
     "TOAST_PREPARATION_MACHINE_TURNED_ON_SUCCESSFULLY": {
-        "translation": "机器打开成功"
+        "translation": "機器打開成功"
     },
     "TOAST_PREPARATION_MACHINE_TURNED_OFF_SUCCESSFULLY": {
-        "translation": "机器关闭成功"
+        "translation": "機器關閉成功"
     },
     "TOAST_PREPARATION_MACHINE_TURNED_ON_UNSUCCESSFULLY": {
-        "translation": "机器打开失败"
+        "translation": "機器打開失敗"
     },
     "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": {
-        "translation": "机器无法关闭"
+        "translation": "機器無法關閉"
     },
     "FREEZE_BEAN": {
-        "translation": "冷冻豆"
+        "translation": "冷凍豆"
     },
     "BEAN_HAS_BEEN_FROZEN": {
-        "translation": "豆子已经被冻结"
+        "translation": "豆子已經被凍結"
     },
     "FIND_AUTOMATIC_BACKUP_FILES": {
-        "translation": "查找并导入自动备份文件"
+        "translation": "查找並導入自動備份檔案"
     },
     "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": {
-        "translation": "在设备内部存储中搜索自动备份文件，选择一个并导入它。"
+        "translation": "在設備內部存儲中搜索自動備份檔案，選擇一個並導入它。"
     },
     "NO_AUTOMATIC_BACKUPS_FOUND": {
-        "translation": "没有找到自动备份文件"
+        "translation": "沒有找到自動備份檔案"
     },
     "NO_AUTOMATIC_BACKUPS_FOUND_DESCRIPTION": {
-        "translation": "如果您遭遇了数据丢失，且在此未找到相关数据，请通过官方支持渠道进行处理。"
+        "translation": "如果您遭遇了資料丟失，且在此未找到相關資料，請通過官方支援管道進行處理。"
     },
     "IMPORT_AUTOMATIC_BACKUP_FILE": {
-        "translation": "导入自动备份文件"
+        "translation": "導入自動備份檔案"
     },
     "CLIPBOARD": {
         "translation": "剪切板"
     },
     "NO_IMAGE_IN_CLIPBOARD": {
-        "translation": "剪贴板中没有图像"
+        "translation": "剪貼板中沒有圖像"
     },
     "PAGE_SETTINGS_THEME_MODE_LIGHT": {
         "translation": "白天模式"
@@ -4305,13 +4305,13 @@
         "translation": "黑夜模式"
     },
     "PAGE_SETTINGS_THEME_MODE_DEVICE": {
-        "translation": "系统默认"
+        "translation": "系統預設"
     },
     "PAGE_SETTINGS_THEME_MODE": {
-        "translation": "主题模式"
+        "translation": "主題模式"
     },
     "STATISTICS_BEANS_BY_COUNTRY": {
-        "translation": "咖啡豆的国家"
+        "translation": "咖啡豆的國家"
     },
     "STATISTICS_BEANS_BY_PROCESSING": {
         "translation": "咖啡豆加工"
@@ -4320,49 +4320,49 @@
         "translation": "烘焙豆"
     },
     "STATISTICS_BEANS_AVG_RATING_BY_COUNTRY": {
-        "translation": "各国咖啡豆平均评分"
+        "translation": "各國平均豆類評分"
     },
     "PAGE_STATISTICS_AVG_RATING": {
-        "translation": "平均评分"
+        "translation": "平均評分"
     },
     "PAGE_SETTINGS_LANGUAGE_GREEK": {
-        "translation": "希腊语"
+        "translation": "希臘語"
     },
     "NO_CAMERA_PERMISSION": {
-        "translation": "未授予相机权限，请在操作系统中启用。"
+        "translation": "未授予相機許可權，請在作業系統中啟用。"
     },
     "UNWRAPPED": {
         "BUTTON": {
             "TITLE": {
-                "translation": "揭开你这一年的面纱！"
+                "translation": "揭開你這一年的面紗！"
             },
             "SUBTITLE": {
-                "translation": "来看看你这一年的咖啡生涯吧！"
+                "translation": "來看看你這一年的咖啡生涯吧！"
             }
         },
         "INTRO": {
             "TITLE": {
-                "translation": "你的咖啡年资"
+                "translation": "你的咖啡年資"
             },
             "SUBTITLE": {
-                "translation": "让我们看看你冲煮了什么 {{year}}"
+                "translation": "讓我們看看你沖煮了什麼 {{year}}"
             }
         },
         "NUMBERS": {
             "TITLE": {
-                "translation": "数字"
+                "translation": "數字"
             },
             "BEANS": {
-                "translation": "豆类追踪"
+                "translation": "正在追蹤的咖啡豆"
             },
             "WEIGHT": {
-                "translation": "总重量"
+                "translation": "總重量"
             },
             "BREWS": {
-                "translation": "总萃取次数"
+                "translation": "總萃取次數"
             },
             "COST": {
-                "translation": "总花费"
+                "translation": "總支出"
             }
         },
         "INSIGHTS": {
@@ -4370,7 +4370,7 @@
                 "translation": "洞察"
             },
             "CAFFEINE": {
-                "translation": "咖啡因摄入量"
+                "translation": "咖啡因攝入量"
             },
             "AVG_BREWS": {
                 "translation": "平均每日萃取量"
@@ -4379,60 +4379,60 @@
                 "translation": "最繁忙的一天"
             },
             "PEAK_HOUR": {
-                "translation": "高峰时段"
+                "translation": "繁忙時間"
             }
         },
         "MAP": {
             "TITLE": {
-                "translation": "咖啡旅程"
+                "translation": "咖啡之旅"
             },
             "COUNTRIES": {
-                "translation": "国家"
+                "translation": "國家"
             }
         },
         "ROASTERS": {
             "TITLE": {
-                "translation": "顶级烘焙商"
+                "translation": "頂級烘焙商"
             },
             "ROASTERS": {
-                "translation": "烘焙师"
+                "translation": "烘焙師"
             }
         },
         "PREPARATIONS": {
             "TITLE": {
-                "translation": "顶级准备"
+                "translation": "頂級準備"
             }
         },
         "VARIETIES": {
             "TITLE": {
-                "translation": "顶级品种"
+                "translation": "頂級品種"
             }
         },
         "PROCESSING": {
             "TITLE": {
-                "translation": "顶级处理法"
+                "translation": "頂級處理法"
             }
         },
         "GRINDERS": {
             "TITLE": {
-                "translation": "顶级磨豆机"
+                "translation": "頂級磨豆機"
             }
         },
         "FAVORITES": {
             "TITLE": {
-                "translation": "你喜爱的"
+                "translation": "你喜愛的"
             },
             "ROAST": {
-                "translation": "喜欢的烘焙"
+                "translation": "喜愛的烘焙"
             },
             "RATING": {
-                "translation": "平均评分"
+                "translation": "平均評分"
             },
             "EXPENSIVE": {
-                "translation": "最贵的咖啡豆"
+                "translation": "最貴的咖啡豆"
             },
             "BEST_BEAN": {
-                "translation": "评分最高的咖啡豆"
+                "translation": "評價最高的咖啡豆"
             }
         },
         "SUMMARY": {
@@ -4442,16 +4442,16 @@
         }
     },
     "TOAST_BEAN_UNFROZEN_SUCCESSFULLY": {
-        "translation": "咖啡豆已经解冻了"
+        "translation": "咖啡豆已經解凍了。"
     },
     "TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY": {
-        "translation": "咖啡豆已部分解冻"
+        "translation": "咖啡豆已經部分解凍了。"
     },
     "POPOVER_UNFREEZE_PARTIAL_COFFEE_BEAN": {
-        "translation": "解冻部分咖啡豆"
+        "translation": "解凍部分咖啡豆"
     },
     "LAST_COMMUNICATION": {
-        "translation": "最后一次通讯"
+        "translation": "最後一次通訊"
     },
     "GRAPH_ACTIVE_LIGHT_MODE": {
         "translation": "Active (Light)"
@@ -4463,106 +4463,106 @@
         "translation": "参考(淺色)"
     },
     "GRAPH_REFERENCE_DARK_MODE": {
-        "translation": "参考(深色)"
+        "translation": "參考(深色)"
     },
     "GRAPH_COLORS": {
-        "translation": "图表颜色"
+        "translation": "圖表顏色"
     },
     "PAGE_SETTINGS_LANGUAGE_KOREAN": {
-        "translation": "韩语"
+        "translation": "韓語"
     },
     "PAGE_SETTINGS_LANGUAGE_SLOVAK": {
-        "translation": "斯洛伐克语"
+        "translation": "斯洛伐克語"
     },
     "PAGE_SETTINGS_LANGUAGE_JAPANESE": {
-        "translation": "日语"
+        "translation": "日語"
     },
     "PAGE_SETTINGS_LANGUAGE_RUSSIAN": {
-        "translation": "俄语"
+        "translation": "俄語"
     },
     "MILL_HAS_ADJUSTABLE_SPEED": {
-        "translation": "可调节速度"
+        "translation": "可調節速度"
     },
     "MILL_HAS_TIMER": {
-        "translation": "具有定时器"
+        "translation": "有定時器"
     },
     "PREPARATION_SORT_NAME": {
-        "translation": "准备名称"
+        "translation": "準備名稱"
     },
     "PREPARATION_SORT_TYPE": {
-        "translation": "准备类型"
+        "translation": "準備類別"
     },
     "SCAN_BEAN_QR": {
-        "translation": "扫描二维码"
+        "translation": "掃描二維碼"
     },
     "SCAN_BEAN_NFC": {
-        "translation": "扫描 NFC 标签"
+        "translation": "掃描NFC標籤"
     },
     "AI_BEAN_IMPORT": {
-        "translation": "基于 AI 的导入"
+        "translation": "基於AI的導入"
     },
     "AI_BEAN_IMPORT_MULTI": {
-        "translation": "基于 AI 的导入(多张照片)"
+        "translation": "基於AI的導入(多張照片)"
     },
     "AI_BEAN_IMPORT_MULTI_HINT": {
-        "translation": "适用于正反两面均有信息的标签"
+        "translation": "適用於正反兩面均有信息的標簽"
     },
     "AI_IMPORT_MULTI_NO_PHOTOS_YET": {
-        "translation": "尚未添加照片。点击下方按钮拍照或从相册中选择照片。"
+        "translation": "尚未添加照片。點擊下方按鈕拍照或從相簿中選擇照片。"
     },
     "AI_IMPORT_MULTI_ADD_PHOTO": {
         "translation": "添加照片"
     },
     "AI_IMPORT_MULTI_START_ANALYSIS": {
-        "translation": "开始分析"
+        "translation": "開始分析"
     },
     "AI_IMPORT_MULTI_ATTACH_PHOTOS": {
         "translation": "加入咖啡豆的照片"
     },
     "AI_IMPORT_MULTI_PROCESSING_PHOTO": {
-        "translation": "正处理 {{total}}张照片中的第{{current}}张"
+        "translation": "正處理 {{total}}張照片中的第{{current}}張"
     },
     "AI_IMPORT_REMOVE_PHOTO": {
         "translation": "移除照片"
     },
     "AI_IMPORT_PHOTO_GALLERY": {
-        "translation": "照片库"
+        "translation": "照片庫"
     },
     "AI_IMPORT_PHOTO": {
         "translation": "照片"
     },
     "AI_IMPORT_NOT_AVAILABLE": {
-        "translation": "不能使用AI汇入"
+        "translation": "不能使用AI匯入"
     },
     "AI_IMPORT_NOT_AVAILABLE_BROWSER": {
-        "translation": "基于 AI 的汇入功能仅限于移动装置使用。"
+        "translation": "基於 AI 的匯入功能僅限於移動裝置使用。"
     },
     "AI_IMPORT_NOT_AVAILABLE_ANDROID": {
-        "translation": "目前，基于 AI 的汇入功能仅适用于已启用 Apple Intelligence 的 iOS 设备。未来的更新可能会支持 Android。"
+        "translation": "目前，基於 AI 的匯入功能僅適用於已啟用 Apple Intelligence 的 iOS 設備。未來的更新可能會支持 Android。"
     },
     "AI_IMPORT_REQUIRES_APPLE_INTELLIGENCE": {
-        "translation": "基于 AI 的汇入功能需使用 Apple Intelligence，此功能可在 iOS 18.1 及以上版本的设备上使用。要启用 Apple Intelligence：\n\n进入“设置”\n轻点“Apple Intelligence 与 Siri”\n启用 Apple Intelligence\n等待下载完成\n启用后，您可以返回此处使用基于 AI 的咖啡豆汇入功能。"
+        "translation": "基於 AI 的匯入功能需使用 Apple Intelligence，此功能可在 iOS 18.1 及以上版本的設備上使用。要啟用 Apple Intelligence：\n\n進入“設置”\n輕點“Apple Intelligence 與 Siri”\n啟用 Apple Intelligence\n等待下載完成\n啟用後，您可以返回此處使用基於 AI 的咖啡豆匯入功能。"
     },
     "AI_IMPORT_ERROR": {
-        "translation": "使用AI 汇入時发生错误。请重试。"
+        "translation": "使用AI 匯入時發生錯誤。請重試。"
     },
     "AI_IMPORT_STEP_CAPTURING": {
-        "translation": "正在拍摄图像……"
+        "translation": "正在拍攝圖像……"
     },
     "AI_IMPORT_STEP_EXTRACTING": {
-        "translation": "正从图像中提取文字……"
+        "translation": "正從圖像中提取文字……"
     },
     "AI_IMPORT_STEP_ANALYZING": {
-        "translation": "人工智能分析……（可能要重试）"
+        "translation": "人工智慧分析……（可能要重試）"
     },
     "AI_IMPORT_STEP_DETECTING_LANGUAGE": {
-        "translation": "正侦测语言……"
+        "translation": "正偵測語言……"
     },
     "AI_IMPORT_STEP_LANGUAGE": {
-        "translation": "语言"
+        "translation": "語言"
     },
     "AI_IMPORT_STEP_STRUCTURE": {
-        "translation": "结构"
+        "translation": "結構"
     },
     "AI_IMPORT_STEP_NAME_AND_ROASTER": {
         "translation": "AI_IMPORT_STEP_NAME_AND_ROASTER"
@@ -4571,7 +4571,7 @@
         "translation": "重量"
     },
     "AI_IMPORT_STEP_ROAST_TYPE": {
-        "translation": "烘焙种类"
+        "translation": "烘焙類型"
     },
     "AI_IMPORT_STEP_AROMATICS": {
         "translation": "芳香烴"
@@ -4580,19 +4580,19 @@
         "translation": "去咖啡因"
     },
     "AI_IMPORT_STEP_ORIGIN": {
-        "translation": "产地"
+        "translation": "產地"
     },
     "AI_IMPORT_STEP_VALIDATING": {
-        "translation": "验证中"
+        "translation": "驗證中"
     },
     "AI_IMPORT_STEP_BLEND_ORIGINS": {
-        "translation": "拼配品种"
+        "translation": "拼配品種"
     },
     "AI_IMPORT_FIELD_WEIGHT": {
         "translation": "重量"
     },
     "AI_IMPORT_FIELD_BEAN_ROASTING_TYPE": {
-        "translation": "烘焙种类"
+        "translation": "烘焙類型"
     },
     "AI_IMPORT_FIELD_AROMATICS": {
         "translation": "芳香烴"
@@ -4601,61 +4601,61 @@
         "translation": "去咖啡因"
     },
     "AI_IMPORT_FIELD_BEANMIX": {
-        "translation": "咖啡豆种类"
+        "translation": "咖啡豆種類"
     },
     "AI_IMPORT_FIELD_ORIGINCOUNT": {
-        "translation": "品种数量"
+        "translation": "品𥍽數量"
     },
     "AI_IMPORT_FIELD_COUNTRY": {
-        "translation": "国家"
+        "translation": "國家"
     },
     "AI_IMPORT_FIELD_REGION": {
-        "translation": "地区"
+        "translation": "地區"
     },
     "AI_IMPORT_FIELD_VARIETY": {
-        "translation": "品种"
+        "translation": "品種"
     },
     "AI_IMPORT_FIELD_PROCESSING": {
-        "translation": "处理方式"
+        "translation": "處理方式"
     },
     "AI_IMPORT_FIELD_ELEVATION": {
         "translation": "海拔"
     },
     "AI_IMPORT_FIELD_FARM": {
-        "translation": "农场"
+        "translation": "農場"
     },
     "AI_IMPORT_FIELD_FARMER": {
-        "translation": "农夫"
+        "translation": "農夫"
     },
     "AI_IMPORT_FIELD_ROASTINGDATE": {
         "translation": "烘焙日期"
     },
     "AI_IMPORT_FIELD_CUPPING_POINTS": {
-        "translation": "杯测分数"
+        "translation": "杯測分數"
     },
     "AI_IMPORT_NO_TEXT_FOUND": {
-        "translation": "无法从图像中提取文字。请确保标签清晰可见后并重试。"
+        "translation": "無法從圖像中提取文字。請確保標籤清晰可見後並重試。"
     },
     "AI_PROVIDER_SETTINGS_TITLE": {
-        "translation": "AI 咖啡豆导入"
+        "translation": "AI咖啡豆匯入"
     },
     "AI_PROVIDER": {
-        "translation": "提供商"
+        "translation": "供應商"
     },
     "CLOUD_AI_API_KEY": {
-        "translation": "API密钥"
+        "translation": "API金鑰"
     },
     "CLOUD_AI_MODEL": {
-        "translation": "型号"
+        "translation": "型號"
     },
     "CLOUD_AI_BASE_URL": {
-        "translation": "基础网址"
+        "translation": "基礎網址"
     },
     "CLOUD_AI_NOT_CONFIGURED": {
-        "translation": "未设置云AI。请在“设置”中选择供应商并输入您的API密钥。"
+        "translation": "未設置雲AI。請在「設定」中選擇供應商並輸入您的API金鑰。"
     },
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": {
-        "translation": "已选择 Apple Intelligence — 使用本地路径"
+        "translation": "已選擇 Apple Intelligence — 使用本地路徑"
     },
     "AI_PROVIDER_DISABLED": {
         "translation": "已停用"
@@ -4679,47 +4679,47 @@
         "translation": "OpenRouter"
     },
     "AI_PROVIDER_CUSTOM": {
-        "translation": "自定节点"
+        "translation": "自訂節點"
     },
     "CLOUD_AI_SELECT_MODEL": {
-        "translation": "选择模型"
+        "translation": "選擇模型"
     },
     "CLOUD_AI_SEARCH_MODELS": {
         "translation": "搜尋模型..."
     },
     "CLOUD_AI_MODELS_LOADING": {
-        "translation": "正在加载可用模型..."
+        "translation": "正在載入可用模型..."
     },
     "CLOUD_AI_MODELS_LOAD_FAILED": {
-        "translation": "无法加载模型。请手动输入模型名称。"
+        "translation": "模型載入失敗。請手動輸入模型名稱。"
     },
     "CLOUD_AI_MODELS_NONE": {
         "translation": "未找到模型。"
     },
     "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": {
-        "translation": "尚未称重"
+        "translation": "尚未稱重"
     },
     "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": {
-        "translation": "这款电子秤在重量有变化时才会开始传送数据。开始萃取前将一个杯子放在电子秤上以确保一切准备就绪。"
+        "translation": "這款電子秤在重量有變化時才會開始傳送數據。開始萃取前將一個杯子放在電子秤上以確保一切準備就緒。"
     },
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": {
-            "translation": "埃塞俄比亚, 哥伦比亚, 巴西, 肯尼亚, 危地马拉, 哥斯达黎加, 洪都拉斯, 秘鲁, 卢旺达, 布隆迪, 坦桑尼亚, 乌干达, 也门, 印度尼西亚, 印度, 巴拿马, 萨尔瓦多, 尼加拉瓜, 墨西哥, 玻利维亚, 厄瓜多尔, 巴布亚新几内亚, 夏威夷, 牙买加"
+            "translation": "衣索比亞, 哥倫比亞, 巴西, 肯亞, 瓜地馬拉, 哥斯大黎加, 洪都拉斯, 秘魯, 盧旺達, 布隆迪, 坦尚尼亞, 烏干達, 葉門, 印尼, 印度, 巴拿馬, 薩爾瓦多, 尼加拉瓜, 墨西哥, 玻利維亞, 厄瓜多爾, 巴布亞紐幾內亞, 夏威夷, 牙買加"
         },
         "PROCESSING_METHODS": {
-            "translation": "水洗, 日晒, 蜜处理, 厌氧发酵, 二氧化碳浸渍, 湿刨法, 半水洗, Pulped Natural, 黑蜜, 红蜜, 黄蜜, 白蜜"
+            "translation": "水洗, 日曬, 蜜處理, 厭氧發酵, 二氧化碳浸漬, 濕刨法, 半水洗, Pulped Natural, 黑蜜, 紅蜜, 黃蜜, 白蜜"
         },
         "VARIETIES": {
             "translation": "Robusta, Canephora, Liberica, Excelsa, Eugenioides, Typica, Bourbon, Red Bourbon, Yellow Bourbon, Pink Bourbon, Orange Bourbon, Bourbon Pointu, Laurina, Caturra, Catuai, Catuaí, Villa Sarchi, Gesha, Geisha, SL28, SL-28, SL 28, SL34, SL-34, SL 34, SL14, Maragogipe, Maragogype, Pacamara, Pacas, Pache, Tekisic, Mundo Novo, Catimor, Sarchimor, Timor Hybrid, Hibrido de Timor, Castillo, Colombia, Tabi, Cenicafe 1, Parainema, Obata, Obatã, Marsellesa, Lempira, IHCAFE 90, Costa Rica 95, Ethiopian Heirloom, Heirloom, Landraces, Landrace, Wush Wush, Sidra, Ruiru 11, Ruiru11, Batian, K7, Java, Blue Mountain, Kona, Acaia, Acaiá, Icatu, Topazio, Topázio, Maracaturra, F1 Hybrid, Centroamericano, Starmaya, Catucai"
         },
         "ROASTING_TYPE_FILTER_KEYWORDS": {
-            "translation": "手冲烘焙, 适合手冲, 浅烘焙, 手冲咖啡"
+            "translation": "手沖烘焙, 適合手沖, 淺烘焙, 手沖咖啡"
         },
         "ROASTING_TYPE_ESPRESSO_KEYWORDS": {
-            "translation": "意式烘焙, 适合意式, 深烘焙, 意式拼配"
+            "translation": "意式烘焙, 適合意式, 深烘焙, 意式拼配"
         },
         "ROASTING_TYPE_OMNI_KEYWORDS": {
-            "translation": "全能烘焙, 多用途, 所有冲煮方式, 中度烘焙"
+            "translation": "全能烘焙, 多用途, 所有沖煮方式, 中度烘焙"
         },
         "DECAF_KEYWORDS": {
             "translation": "去咖啡因, 已去咖啡因, 無咖啡因"
@@ -4728,24 +4728,24 @@
             "translation": "拼配, 店家拼配, 意式拼配"
         },
         "SINGLE_ORIGIN_KEYWORDS": {
-            "translation": "单品, 单一产地, 精品批次, Micro Lot"
+            "translation": "單品, 單一產地, 精品批次, 微批次"
         },
         "PRODUCER_KEYWORDS": {
-            "translation": "生产者, 生产商, 种植者, 农民, 农户, 家族, 合作社, 协会, 小农户"
+            "translation": "生產者, 生產商, 種植者, 農民, 農戶, 家族, 合作社, 協會, 小農戶"
         },
         "ROASTDATE_KEYWORDS": {
-            "translation": "烘焙日期、烘焙于、烘焙日期、新鲜烘焙、烘焙"
+            "translation": "烘焙日期、烘焙時間、烘焙日期、新鮮烘焙、烘焙"
         },
         "ROASTER_KEYWORDS": {
-            "translation": "烘焙师、烘焙厂、咖啡、有限公司、有限责任公司、股份有限公司"
+            "translation": "烘焙師,烘焙廠,咖啡,有限公司,有限責任公司,股份有限公司"
         }
     },
     "AI_IMPORT_LANG_DETECT": {
         "KEYWORDS": {
-            "translation": "烘焙, 收获, 酸度, 咖啡豆, 风味, 新鲜"
+            "translation": "烘焙, 收穫, 酸度, 咖啡豆, 風味, 新鮮"
         },
         "EXAMPLE": {
-            "translation": "新鲜烘焙，单一产地，风味：浆果，柑橘"
+            "translation": "新鮮烘焙，單一產地，風味：漿果，柑橘"
         }
     },
     "BREW_FLOW_WATER_DISPENSED_VOLUME": {
@@ -4755,17 +4755,17 @@
         "translation": "出水量"
     },
     "SANREMO_YOU_EXCLUSIVE_METRIC_HINT": {
-        "translation": "此图表目前仅支持 Sanremo YOU​​。"
+        "translation": "此圖表目前僅支援 Sanremo YOU。"
     },
     "WIFI_SIGNAL_STRENGTH": {
         "translation": "Wifi dbM"
     },
     "BARISTAMODE_STATISTICS": {
         "TITLE": {
-            "translation": "咖啡师模式统计数据"
+            "translation": "咖啡師模式統計數據"
         },
         "TOTAL_BREWS": {
-            "translation": "总萃取量"
+            "translation": "總萃取量"
         },
         "AVG_OFFSET": {
             "translation": "平均偏差"
@@ -4774,49 +4774,49 @@
             "translation": "命中率(±0.5g)"
         },
         "ALL_TIME_WATER": {
-            "translation": "全时进水量"
+            "translation": "全時進水量"
         },
         "ALL_TIME_LIQUID": {
-            "translation": "全时间液体产出"
+            "translation": "全時間液體產出"
         },
         "AVG_TIME": {
-            "translation": "平均萃取时间"
+            "translation": "平均萃取時間"
         },
         "ACCURACY_BREAKDOWN": {
-            "translation": "准确率明细"
+            "translation": "準確率明細"
         },
         "BREWS_COUNT_BY_PROFILE": {
-            "translation": "按压力描述档进行萃取"
+            "translation": "按壓力描述檔進行萃取"
         },
         "WATER_BEVERAGE_CROSS_CHART": {
-            "translation": "平均水与液体产量"
+            "translation": "平均水與液體產量"
         },
         "PERFECT": {
             "translation": "完美（≤0.2克）"
         },
         "EXCELLENT": {
-            "translation": "极佳（0.2克-0.5克）"
+            "translation": "極佳（0.2克-0.5克）"
         },
         "GOOD": {
             "translation": "良好(0.5g-1.0g)"
         },
         "MISS": {
-            "translation": "失误(>1.0g)"
+            "translation": "失誤(>1.0g)"
         },
         "AVG_WATER": {
             "translation": "平均注水量 (mL)"
         },
         "AVG_BEVERAGE": {
-            "translation": "平均饮料重量（克）"
+            "translation": "平均飲料重量（克）"
         },
         "RATIO": {
-            "translation": "比例（水\/液体）"
+            "translation": "比例（水\/液體）"
         },
         "DAILY": {
             "translation": "每日"
         },
         "WEEKLY": {
-            "translation": "每周"
+            "translation": "每週"
         },
         "MONTHLY": {
             "translation": "每月"
@@ -4832,10 +4832,10 @@
         "translation": "萃取"
     },
     "BREW_DATA_WATER_VOLUME_INTAKE": {
-        "translation": "进水量"
+        "translation": "進水量"
     },
     "BREW_DATA_DESIRED_BEVERAGE_QUANTITY": {
-        "translation": "所需饮料量"
+        "translation": "所需飲料量"
     },
     "UPDATE_TEXT_TITLE_TITLE": {
         "8.7.0": {
@@ -4847,10 +4847,10 @@
                     "translation": "<b>Sanremo YOU<\/b>"
                 },
                 {
-                    "translation": "于咖啡师模式中加入了萃取追踪支持及基本分析"
+                    "translation": "於咖啡師模式中加入了萃取追蹤支援及基本分析"
                 },
                 {
-                    "translation": "加入了水容量及流量追踪"
+                    "translation": "加入了水容量及流量追蹤"
                 },
                 {
                     "translation": ""
@@ -4859,10 +4859,10 @@
                     "translation": "<b>Meticulous<\/b>"
                 },
                 {
-                    "translation": "汇入萃取记录时，现已会保留自定义的萃取时间。"
+                    "translation": "匯入萃取記錄時，現已會保留自訂的萃取時間。"
                 },
                 {
-                    "translation": "汇入萃取记录时更快的加载"
+                    "translation": "匯入萃取記錄時更快的載入"
                 },
                 {
                     "translation": ""
@@ -4871,16 +4871,16 @@
                     "translation": "<b>研磨<\/b>"
                 },
                 {
-                    "translation": "冲煮粉水比現在为即时更新"
+                    "translation": "萃取比例現為即時更新"
                 },
                 {
                     "translation": ""
                 },
                 {
-                    "translation": "<b>磨豆机<\/b>"
+                    "translation": "<b>磨豆機<\/b>"
                 },
                 {
-                    "translation": "现可调节磨豆机的速度和时间——感谢 Silas"
+                    "translation": "現可調節磨豆機的速度和時間——感謝 Silas"
                 },
                 {
                     "translation": ""
@@ -4889,13 +4889,13 @@
                     "translation": "<b>咖啡豆<\/b>"
                 },
                 {
-                    "translation": "使用AI扫描咖啡袋并匯入程序（选择您的供应商并添加您的 API 密钥）——感谢 Silas"
+                    "translation": "使用AI掃描咖啡袋并匯入程序（選擇你的供應商並添加您的 API 密鑰）——感謝Silas"
                 },
                 {
-                    "translation": "新增 NFC 操作：重复上次萃取"
+                    "translation": "新增 NFC 操作：重複上次萃取"
                 },
                 {
-                    "translation": "冻结\/解冻日期清除后，冻结图标将被移除。"
+                    "translation": "凍結\/解凍日期清除後，凍結圖示會被移除。"
                 },
                 {
                     "translation": ""
@@ -4904,10 +4904,10 @@
                     "translation": "<b>烘焙<\/b>"
                 },
                 {
-                    "translation": "增加了对一爆和二爆的分秒计"
+                    "translation": "增加了對一爆和二爆的分秒計"
                 },
                 {
-                    "translation": "新增减重计算"
+                    "translation": "新增減重計算"
                 },
                 {
                     "translation": ""
@@ -4916,22 +4916,22 @@
                     "translation": "<b>比例<\/b>"
                 },
                 {
-                    "translation": "新支持Timemore DOT 和 Basic"
+                    "translation": "新支援Timemore DOT 和 Basic"
                 },
                 {
-                    "translation": "新支持Mantabrew"
+                    "translation": "新支援Mantabrew"
                 },
                 {
                     "translation": ""
                 },
                 {
-                    "translation": "<b>语言<\/b>"
+                    "translation": "<b>語言<\/b>"
                 },
                 {
-                    "translation": "新支持日语 - 感谢 nyagasan"
+                    "translation": "新支援日語 - 感謝 nyagasan"
                 },
                 {
-                    "translation": "新支持捷克语 – 感谢 Miroslav"
+                    "translation": "新支援捷克語 – 感謝 Miroslav"
                 },
                 {
                     "translation": ""
@@ -4940,7 +4940,7 @@
                     "translation": "<b>框架<\/b>"
                 },
                 {
-                    "translation": "特别感谢 RagingCactus 帮助改进了框架和整个应用。"
+                    "translation": "特別感謝 RagingCactus 幫助改進了框架和整個應用。"
                 },
                 {
                     "translation": ""
@@ -4949,7 +4949,7 @@
                     "translation": "<b>其他<\/b>"
                 },
                 {
-                    "translation": "小幅修复和改进"
+                    "translation": "微幅修正及改進"
                 }
             ]
         }
