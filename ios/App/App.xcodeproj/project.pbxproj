@@ -368,12 +368,18 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = W8B7XY7WGY;
+				ENABLE_DEBUG_DYLIB = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Beanconqueror;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 8.7.0;
+				MARKETING_VERSION = 8.7.1;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-weak_framework",
+					SwiftUICore,
+				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -394,12 +400,18 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = W8B7XY7WGY;
+				ENABLE_DEBUG_DYLIB = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Beanconqueror;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 8.7.0;
+				MARKETING_VERSION = 8.7.1;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-weak_framework",
+					SwiftUICore,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
