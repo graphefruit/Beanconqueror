@@ -773,7 +773,48 @@ export class SettingsPage {
 
   public async import(): Promise<void> {
     if (!this.platform.is('capacitor')) {
-      this.__importDummyData();
+      const element = document.createElement('div');
+      element.innerHTML = '<input type="file" accept=".zip" id="importZip">';
+      const fileInput = element.firstChild as HTMLInputElement;
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) {
+          return;
+        }
+
+        if (
+          file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase() !==
+          'zip'
+        ) {
+          void this.uiAlert.showMessage(
+            this.translate.instant('INVALID_FILE_FORMAT'),
+          );
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            await this.uiAlert.showLoadingSpinner();
+            const arrayBuffer = reader.result as ArrayBuffer;
+            const parsedJSON =
+              await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                arrayBuffer,
+              );
+            await this.__importJSON(parsedJSON, '');
+          } catch (error) {
+            this.uiLog.error('Error while importing ZIP on web:', error);
+            await this.uiAlert.hideLoadingSpinner();
+            await this.uiAlert.showMessage(
+              this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`,
+            );
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+
+      fileInput.click();
       return;
     }
 
@@ -1634,7 +1675,7 @@ export class SettingsPage {
           this.uiAnalytics.disableTracking();
           this.__initializeSettings();
 
-          if (!isIOS) {
+          if (!isIOS && this.platform.is('capacitor')) {
             const brewsData = this.uiBrewStorage.getAllEntries();
             const importAttachmentCollections = [
               brewsData,
