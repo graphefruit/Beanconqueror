@@ -1,0 +1,17 @@
+:host {
+  ion-item {
+    --border-width: 0px;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  ion-range {
+    --bar-background: var(--ion-color-light-shade, #e0e0e0);
+    --bar-background-active: var(--ion-color-accent, var(--ion-color-primary));
+    --bar-height: 6px;
+    --knob-background: var(--ion-color-accent, var(--ion-color-primary));
+    --knob-size: 24px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+}

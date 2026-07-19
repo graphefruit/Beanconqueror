@@ -120,6 +120,11 @@
     "CANCEL": "Abbrechen",
     "GENERATE": "Anlegen",
     "SAVE": "Speichern",
+    "CUT_FLOW_PROFILE": "Flussprofil zuschneiden",
+    "CUT_FLOW_PROFILE_NEW_WEIGHT": "Neues Gewicht",
+    "CUT_FLOW_PROFILE_NEW_DURATION": "Neue Dauer",
+    "CUT_FLOW_PROFILE_LEFT_RIGHT": "Links/rechts Abschnitt (Start - Ende)",
+
     "ADD_SOMETHING": "Hinzufügen",
     "CONTACT": "Kontakt",
     "NAME": "Name",

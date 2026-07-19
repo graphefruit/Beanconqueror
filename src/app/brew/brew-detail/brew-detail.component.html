@@ -270,7 +270,7 @@
           choosenPreparation.use_custom_parameters])">
           <ion-grid class="ion-text-center" style="padding-left: 0px; padding-right: 0px; padding-top: 0px;">
             <ion-row class="ion-no-padding">
-              <ion-col size="5">
+              <ion-col size="4">
                 <ion-card class="flow-profile ion-text-center" style="height: 100%;">
                   <ion-card-header>
                     <div>Ø&nbsp;{{getAvgFlow()| toFixed: 2}} g/s</div>
@@ -299,6 +299,11 @@
                     </ion-content>
                   </ng-template>
                 </ion-popover>
+              </ion-col>
+              <ion-col size="2" style="margin:auto">
+                <ion-button (click)="cutFlowProfile($event)" tappable fill="clear">
+                  <ion-icon name="cut-outline" slot="icon-only"></ion-icon>
+                </ion-button>
               </ion-col>
               <ion-col size="2" style="margin:auto">
                 <ion-button (click)="shareFlowProfile()" tappable fill="clear">
