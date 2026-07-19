@@ -2,6 +2,7 @@ import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import {
   CloudLLMConfig,
   CloudLLMMessage,
+  resetTemperatureSupportCache,
   sendCloudLLMPrompt,
 } from '../cloud-llm-communication.service';
 
@@ -40,6 +41,10 @@ describe('cloud-llm-communication.service', () => {
 
   beforeEach(() => {
     fetchSpy = spyOn(globalThis, 'fetch');
+    // The temperature-support cache is module-level state that persists
+    // across tests; reset it so combinations remembered by one test do
+    // not leak into another.
+    resetTemperatureSupportCache();
   });
 
   // ── Request building per provider ──────────────────────────────────
@@ -415,6 +420,88 @@ describe('cloud-llm-communication.service', () => {
       await expectAsync(sendCloudLLMPrompt(config, messages)).toBeRejectedWith(
         jasmine.any(TypeError),
       );
+    });
+  });
+
+  // ── Temperature compatibility ──────────────────────────────────────
+
+  describe('temperature compatibility', () => {
+    // WHY: The newest models (Claude Sonnet 5, OpenAI GPT-5.x, ...) reject
+    // the `temperature` parameter with a 400. We send it best-effort, drop
+    // it and retry once when rejected, and remember the model so later
+    // requests skip it.
+
+    const temperatureRejection = () =>
+      mockFetchResponse(
+        {
+          error: {
+            type: 'invalid_request_error',
+            message: '`temperature` is deprecated for this model.',
+          },
+        },
+        400,
+      );
+
+    const success = (model: string) =>
+      mockFetchResponse({
+        choices: [{ message: { content: 'response' } }],
+        model,
+      });
+
+    it('should drop temperature and retry when rejected with a 400', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5.6-terra' });
+      fetchSpy.and.returnValues(
+        Promise.resolve(temperatureRejection()),
+        Promise.resolve(success('gpt-5.6-terra')),
+      );
+
+      // Act
+      const result = await sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      expect(result.content).toBe('response');
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+      // First attempt includes temperature, retry omits it.
+      const firstBody = JSON.parse(fetchSpy.calls.argsFor(0)[1].body);
+      const retryBody = JSON.parse(fetchSpy.calls.argsFor(1)[1].body);
+      expect(firstBody.temperature).toBe(0.1);
+      expect(retryBody.temperature).toBeUndefined();
+    });
+
+    it('should remember the model and skip temperature on later requests', async () => {
+      // Arrange: first request rejects then succeeds, populating the cache.
+      const config = createConfig({ model: 'gpt-5.6-terra' });
+      fetchSpy.and.returnValues(
+        Promise.resolve(temperatureRejection()),
+        Promise.resolve(success('gpt-5.6-terra')),
+      );
+      await sendCloudLLMPrompt(config, messages);
+
+      // Act: a second request to the same model.
+      fetchSpy.calls.reset();
+      fetchSpy.and.returnValue(Promise.resolve(success('gpt-5.6-terra')));
+      await sendCloudLLMPrompt(config, messages);
+
+      // Assert: no temperature sent, and no retry needed (single call).
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      const body = JSON.parse(fetchSpy.calls.argsFor(0)[1].body);
+      expect(body.temperature).toBeUndefined();
+    });
+
+    it('should not retry on a 400 unrelated to temperature', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-4o' });
+      fetchSpy.and.returnValue(
+        Promise.resolve(
+          mockFetchResponse({ error: { message: 'invalid model' } }, 400),
+        ),
+      );
+
+      // Act & Assert
+      await expectAsync(sendCloudLLMPrompt(config, messages)).toBeRejected();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

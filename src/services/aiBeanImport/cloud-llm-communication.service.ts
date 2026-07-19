@@ -28,7 +28,11 @@ export interface CloudLLMResponse {
 interface ProviderProtocol {
   readonly url: string;
   readonly headers: Record<string, string>;
-  buildRequestBody(model: string, messages: CloudLLMMessage[]): object;
+  buildRequestBody(
+    model: string,
+    messages: CloudLLMMessage[],
+    includeTemperature: boolean,
+  ): object;
   parseResponse(body: unknown): CloudLLMResponse;
 }
 
@@ -65,11 +69,19 @@ class OpenAICompatibleProtocol implements ProviderProtocol {
     };
   }
 
-  buildRequestBody(model: string, messages: CloudLLMMessage[]): object {
+  buildRequestBody(
+    model: string,
+    messages: CloudLLMMessage[],
+    includeTemperature: boolean,
+  ): object {
     return {
       model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
-      temperature: 0.1,
+      // A low temperature keeps extraction deterministic, but the newest
+      // models (e.g. OpenAI GPT-5.x) reject the parameter outright. It is
+      // dropped and the request retried when the API rejects it — see
+      // sendCloudLLMPrompt.
+      ...(includeTemperature ? { temperature: 0.1 } : {}),
     };
   }
 
@@ -105,13 +117,21 @@ class AnthropicProtocol implements ProviderProtocol {
     };
   }
 
-  buildRequestBody(model: string, messages: CloudLLMMessage[]): object {
+  buildRequestBody(
+    model: string,
+    messages: CloudLLMMessage[],
+    includeTemperature: boolean,
+  ): object {
     const systemMsg = messages.find((m) => m.role === 'system');
     const userMsgs = messages.filter((m) => m.role !== 'system');
     return {
       model,
       max_tokens: 4096,
-      temperature: 0.1,
+      // A low temperature keeps extraction deterministic, but the newest
+      // models (e.g. Claude Sonnet 5, Opus 4.7+) reject the parameter
+      // outright. It is dropped and the request retried when the API
+      // rejects it — see sendCloudLLMPrompt.
+      ...(includeTemperature ? { temperature: 0.1 } : {}),
       system: systemMsg?.content ?? '',
       messages: userMsgs.map((m) => ({ role: m.role, content: m.content })),
     };
@@ -177,21 +197,62 @@ function createProtocol(config: CloudLLMConfig): ProviderProtocol {
   }
 }
 
+// ── Temperature compatibility tracking ───────────────────────────────
+//
+// The newest model generations (Claude Sonnet 5 / Opus 4.7+, OpenAI
+// GPT-5.x, ...) have removed the `temperature` sampling parameter and
+// reject any request that sends it with an HTTP 400. Rather than maintain
+// a hard-coded model list, we send temperature best-effort and, when a
+// model rejects it, remember that provider+model so subsequent requests
+// skip it. This keeps the deterministic low temperature on every model
+// that honours it and self-heals for models that do not.
+
+const temperatureUnsupportedModels = new Set<string>();
+
+/** Cache key identifying a provider+model combination. */
+function providerModelKey(config: CloudLLMConfig): string {
+  return `${config.provider}:${config.model}`;
+}
+
+/** HTTP error carrying the status and raw body for post-hoc inspection. */
+class CloudLLMHttpError extends Error {
+  constructor(
+    readonly status: number,
+    readonly body: string,
+  ) {
+    super(`Cloud LLM API error (${status}): ${body}`);
+    this.name = 'CloudLLMHttpError';
+  }
+}
+
+/** True when an error is a 400 that names the temperature parameter. */
+function isTemperatureRejection(error: unknown): boolean {
+  return (
+    error instanceof CloudLLMHttpError &&
+    error.status === 400 &&
+    /temperature/i.test(error.body)
+  );
+}
+
+/** Clears the temperature-support cache. Test-only. */
+export function resetTemperatureSupportCache(): void {
+  temperatureUnsupportedModels.clear();
+}
+
 // ── Public API ───────────────────────────────────────────────────────
 
-/**
- * Send a prompt to a cloud LLM provider and return the response.
- *
- * Protocol details (URL, headers, body format, response parsing) are
- * handled by provider-specific config classes. This function handles
- * only fetch, timeout, and error handling.
- */
-export async function sendCloudLLMPrompt(
-  config: CloudLLMConfig,
+/** Perform a single request attempt: fetch, timeout, and error handling. */
+async function sendOnce(
+  protocol: ProviderProtocol,
+  model: string,
   messages: CloudLLMMessage[],
+  includeTemperature: boolean,
 ): Promise<CloudLLMResponse> {
-  const protocol = createProtocol(config);
-  const requestBody = protocol.buildRequestBody(config.model, messages);
+  const requestBody = protocol.buildRequestBody(
+    model,
+    messages,
+    includeTemperature,
+  );
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
@@ -207,7 +268,7 @@ export async function sendCloudLLMPrompt(
 
     if (!response.ok) {
       const errorBody = await response.text().catch(() => '');
-      throw new Error(`Cloud LLM API error (${response.status}): ${errorBody}`);
+      throw new CloudLLMHttpError(response.status, errorBody);
     }
 
     const body: unknown = await response.json();
@@ -219,6 +280,35 @@ export async function sendCloudLLMPrompt(
       throw new Error('Cloud LLM request timed out after 30 seconds');
     }
 
+    throw error;
+  }
+}
+
+/**
+ * Send a prompt to a cloud LLM provider and return the response.
+ *
+ * Protocol details (URL, headers, body format, response parsing) are
+ * handled by provider-specific config classes. This function handles
+ * fetch, timeout, error handling, and the temperature-rejection retry:
+ * if a model rejects `temperature` with a 400, the parameter is dropped,
+ * the request is retried once, and the provider+model is remembered so
+ * future requests skip it.
+ */
+export async function sendCloudLLMPrompt(
+  config: CloudLLMConfig,
+  messages: CloudLLMMessage[],
+): Promise<CloudLLMResponse> {
+  const protocol = createProtocol(config);
+  const key = providerModelKey(config);
+  const includeTemperature = !temperatureUnsupportedModels.has(key);
+
+  try {
+    return await sendOnce(protocol, config.model, messages, includeTemperature);
+  } catch (error) {
+    if (includeTemperature && isTemperatureRejection(error)) {
+      temperatureUnsupportedModels.add(key);
+      return await sendOnce(protocol, config.model, messages, false);
+    }
     throw error;
   }
 }
