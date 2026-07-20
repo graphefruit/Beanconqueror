@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -13,6 +14,7 @@ import {
 } from '@angular/core';
 
 import {
+  IonBadge,
   IonButton,
   IonCard,
   IonCardContent,
@@ -24,6 +26,9 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonRange,
   IonRow,
   ModalController,
   Platform,
@@ -52,6 +57,7 @@ import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/bre
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { AnnotationGraphHelperService } from '../../../services/annotationGraphHelper/annotation-graph-helper.service';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
@@ -75,6 +81,11 @@ declare var Plotly;
     IonCardHeader,
     IonCardContent,
     IonFooter,
+    IonRange,
+    DecimalPipe,
+    IonBadge,
+    IonItem,
+    IonLabel,
   ],
 })
 export class BrewFlowComponent implements OnDestroy, OnInit {
@@ -85,6 +96,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   private readonly platform = inject(Platform);
   private readonly ngZone = inject(NgZone);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly annotationGraphHelper = inject(AnnotationGraphHelperService);
 
   public static readonly COMPONENT_ID: string = 'brew-flow';
 
@@ -120,6 +132,12 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   public gaugeValue = 0;
   public gaugeLabel = '';
   public gaugeSize = 50;
+
+  public minTimeMs: number = 0;
+  public maxTimeMs: number = 0;
+  public maxSliderTime: number = 0;
+  public sliderValue: number = 0;
+  public sliderValueString: string = '0.0s';
 
   @ViewChild('smartScaleWeightDetail', { read: ElementRef })
   public smartScaleWeightDetail: ElementRef;
@@ -284,6 +302,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     setTimeout(() => {
       if (!this.isDetail) {
         this.brewComponent.brewBrewingGraphEl.updateChart();
+      } else {
+        this.initSliderRange();
       }
     }, 150);
   }
@@ -607,6 +627,16 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public dismiss() {
+    try {
+      const graphEl = this.brewComponent?.brewBrewingGraphEl;
+      if (graphEl) {
+        this.annotationGraphHelper.clearSliderLineAndAnnotations(
+          graphEl.profileDiv?.nativeElement,
+          graphEl.lastChartLayout,
+        );
+      }
+    } catch (ex) {}
+
     this.brewComponent.brewBrewingGraphEl.canvaContainer.nativeElement.append(
       this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
     );
@@ -620,6 +650,43 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       },
       undefined,
       BrewFlowComponent.COMPONENT_ID,
+    );
+  }
+
+  public initSliderRange() {
+    if (!this.isDetail) return;
+    const graphEl = this.brewComponent?.brewBrewingGraphEl;
+    const chartData = graphEl?.chartData;
+    const range = this.annotationGraphHelper.getSliderRange(
+      chartData,
+      this.brew?.brew_time,
+    );
+
+    this.minTimeMs = range.minTimeMs;
+    this.maxTimeMs = range.maxTimeMs;
+    this.maxSliderTime = range.maxSliderTime;
+    this.sliderValue = 0;
+    this.sliderValueString = '0.0s';
+  }
+
+  public onSliderChange(event: any) {
+    this.sliderValue = event.detail.value;
+    this.sliderValueString = this.sliderValue.toFixed(1) + 's';
+    this.updateSliderLineAndAnnotations();
+  }
+
+  public updateSliderLineAndAnnotations() {
+    const graphEl = this.brewComponent?.brewBrewingGraphEl;
+    if (!graphEl || !graphEl.profileDiv?.nativeElement) return;
+
+    this.annotationGraphHelper.updateSliderLineAndAnnotations(
+      graphEl.profileDiv.nativeElement,
+      graphEl.lastChartLayout,
+      graphEl.chartData,
+      graphEl.traces,
+      graphEl.traceReferences,
+      this.sliderValue,
+      this.minTimeMs,
     );
   }
 

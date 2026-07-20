@@ -437,7 +437,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   private async readDummyFlowProfile(): Promise<any> {
     return (
-      await import('../../../assets/BeanconquerorFlowTestDataSecond.json')
+      await import('../../../assets/BeanconquerorFlowTestDataFourth.json')
     ).default;
   }
 
@@ -3619,6 +3619,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public async readFlowProfile() {
+    if (!this.platform.is('capacitor')) {
+      this.flow_profile_raw = await this.readDummyFlowProfile();
+    }
     const flowProfilePath =
       'brews/' + this.data.config.uuid + '_flow_profile.json';
     try {
