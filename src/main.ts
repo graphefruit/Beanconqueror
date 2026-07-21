@@ -49,6 +49,11 @@ bootstrapApplication(AppComponent, {
     AndroidPermissions,
     provideHttpClient(withInterceptorsFromDi()),
     provideTranslateService({
+      // The app will set the user-preferred language later, this is just a default
+      lang: 'en',
+      // The app will never change the fallback language
+      fallbackLang: 'en',
+
       loader: provideTranslateHttpLoader({
         prefix: './assets/i18n/',
         suffix: '.json',
