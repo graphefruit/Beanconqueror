@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -9,6 +10,7 @@ import {
 } from '@angular/core';
 
 import {
+  IonBadge,
   IonButton,
   IonChip,
   IonCol,
@@ -17,6 +19,9 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonRange,
   IonRow,
   IonSpinner,
   ModalController,
@@ -37,6 +42,7 @@ import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
 import { IBrew } from '../../../../interfaces/brew/iBrew';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
+import { AnnotationGraphHelperService } from '../../../../services/annotationGraphHelper/annotation-graph-helper.service';
 import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -53,6 +59,7 @@ declare var Plotly;
   templateUrl: './graph-detail.component.html',
   styleUrls: ['./graph-detail.component.scss'],
   imports: [
+    DecimalPipe,
     TranslatePipe,
     IonHeader,
     IonGrid,
@@ -64,6 +71,10 @@ declare var Plotly;
     IonContent,
     IonSpinner,
     IonFooter,
+    IonItem,
+    IonLabel,
+    IonBadge,
+    IonRange,
   ],
 })
 export class GraphDetailComponent implements OnInit {
@@ -79,6 +90,8 @@ export class GraphDetailComponent implements OnInit {
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiAlert = inject(UIAlert);
 
+  private readonly annotationGraphHelper = inject(AnnotationGraphHelperService);
+
   public static COMPONENT_ID = 'graph-detail';
   public flow_profile_raw: BrewFlow = new BrewFlow();
 
@@ -88,6 +101,13 @@ export class GraphDetailComponent implements OnInit {
   public traceReferences: any = {};
   public lastChartLayout: any = undefined;
   public flowProfileLoading: boolean = true;
+
+  public maxSliderTime: number = 0;
+  public sliderValue: number = 0;
+  public sliderValueString: string = '0.0s';
+  public minTimeMs: number = 0;
+  public maxTimeMs: number = 0;
+  public chartData: any[] = [];
 
   public reference_profile_raw: BrewFlow = new BrewFlow();
 
@@ -211,6 +231,7 @@ export class GraphDetailComponent implements OnInit {
     }
 
     Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+    this.updateSliderLineAndAnnotations();
   }
 
   @HostListener('window:resize')
@@ -343,6 +364,8 @@ export class GraphDetailComponent implements OnInit {
         }
       }
 
+      this.chartData = chartData;
+
       Plotly.newPlot(
         this.profileDiv.nativeElement,
         chartData,
@@ -350,6 +373,8 @@ export class GraphDetailComponent implements OnInit {
         this.getChartConfig(),
       );
       this.flowProfileLoading = false;
+      this.initSliderRange();
+      this.updateSliderLineAndAnnotations();
     }, 100);
   }
 
@@ -419,7 +444,44 @@ export class GraphDetailComponent implements OnInit {
     await this.uiAlert.hideLoadingSpinner();
   }
 
+  public initSliderRange() {
+    const range = this.annotationGraphHelper.getSliderRange(
+      this.chartData,
+      this.brew?.brew_time,
+    );
+
+    this.minTimeMs = range.minTimeMs;
+    this.maxTimeMs = range.maxTimeMs;
+    this.maxSliderTime = range.maxSliderTime;
+    this.sliderValue = 0;
+    this.sliderValueString = '0.0s';
+  }
+
+  public onSliderChange(event: any) {
+    this.sliderValue = event.detail.value;
+    this.sliderValueString = this.sliderValue.toFixed(1) + 's';
+    this.updateSliderLineAndAnnotations();
+  }
+
+  public updateSliderLineAndAnnotations() {
+    if (!this.profileDiv?.nativeElement || !this.lastChartLayout) return;
+
+    this.annotationGraphHelper.updateSliderLineAndAnnotations(
+      this.profileDiv.nativeElement,
+      this.lastChartLayout,
+      this.chartData,
+      this.traces,
+      this.traceReferences,
+      this.sliderValue,
+      this.minTimeMs,
+    );
+  }
+
   public ngOnDestroy() {
+    this.annotationGraphHelper.clearSliderLineAndAnnotations(
+      this.profileDiv?.nativeElement,
+      this.lastChartLayout,
+    );
     try {
       Plotly.purge(this.profileDiv.nativeElement);
     } catch (ex) {}

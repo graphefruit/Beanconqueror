@@ -63,7 +63,28 @@
     <div  #profileDiv></div>
   </div>
 </ion-content>
-<!--Empty ion-footer is needed for correct resizing of the page -->
-<ion-footer>
+<ion-footer class="ion-no-border" style="min-height:72px;">
+  <ion-grid class="no-margin ion-no-padding">
+    <ion-row>
+      <ion-col size="12">
+        <ion-item lines="none">
+          <ion-label>{{ "BREW_GRAPH_TIME_SLIDER" | translate }}&nbsp;<ion-badge
+            style="vertical-align: top;">{{sliderValue | number:'1.3-3'  }}s
+          </ion-badge>
+          </ion-label>
+        </ion-item>
+        <ion-item style="top:-10px;" lines="none">
+          <ion-range
+            [min]="0"
+            [step]="0.001"
+            [max]="maxSliderTime"
+            [value]="sliderValue"
+            (ionInput)="onSliderChange($event)">
+          </ion-range>
+        </ion-item>
 
+      </ion-col>
+
+    </ion-row>
+  </ion-grid>
 </ion-footer>
