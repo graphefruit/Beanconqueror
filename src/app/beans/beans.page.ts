@@ -31,13 +31,17 @@ import { Subscription } from 'rxjs';
 
 import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../../components/actions-popover/actions-popover.component';
 import { AiImportPhotoGalleryComponent } from '../../components/ai-import-photo-gallery/ai-import-photo-gallery.component';
 import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
-import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
@@ -58,8 +62,6 @@ import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIImage } from '../../services/uiImage';
 import { UILog } from '../../services/uiLog';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { BeanImportPopoverComponent } from './bean-import-popover/bean-import-popover.component';
-import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
 import { BeansAddComponent } from './beans-add/beans-add.component';
 
 @Component({
@@ -441,33 +443,6 @@ export class BeansPage implements OnDestroy {
     this.loadBeans();
   }
 
-  public async beanPopover() {
-    this.uiAnalytics.trackEvent(
-      BEAN_TRACKING.TITLE,
-      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
-    );
-    const popover = await this.modalController.create({
-      component: BeanPopoverAddComponent,
-      componentProps: {},
-      id: BeanPopoverAddComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
-      breakpoints: [0, 0.25, 0.5],
-      initialBreakpoint: 0.25,
-    });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      switch (data.role as BEAN_POPOVER_ADD_ACTION) {
-        case BEAN_POPOVER_ADD_ACTION.ADD:
-          await this.add();
-          break;
-        case BEAN_POPOVER_ADD_ACTION.SCAN:
-          await this.scanBean();
-          break;
-      }
-    }
-  }
-
   public async scanNFC() {
     if (this.platform.is('capacitor')) {
       try {
@@ -516,11 +491,9 @@ export class BeansPage implements OnDestroy {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.IMPORT_MENU_OPENED,
     );
-    const popover = await this.modalController.create({
-      component: BeanImportPopoverComponent,
-      componentProps: {},
-      id: BeanImportPopoverComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalController, {
+      id: 'bean-import-popover',
+      items: this.buildImportActions(),
       breakpoints: [0, 0.45],
       initialBreakpoint: 0.45,
     });
@@ -542,6 +515,53 @@ export class BeansPage implements OnDestroy {
           break;
       }
     }
+  }
+
+  private buildImportActions(): PopoverAction[] {
+    const isAiImportAvailable = this.isAiImportAvailable();
+
+    return [
+      popoverAction({
+        role: BEAN_IMPORT_ACTION.QR_SCAN,
+        translationKey: 'SCAN_BEAN_QR',
+        icon: 'qr-code-outline',
+      }),
+      popoverAction({
+        role: BEAN_IMPORT_ACTION.NFC_SCAN,
+        translationKey: 'SCAN_BEAN_NFC',
+        icon: 'beanconqueror-nfc-scan',
+      }),
+      popoverAction({
+        role: BEAN_IMPORT_ACTION.AI_IMPORT,
+        translationKey: 'AI_BEAN_IMPORT',
+        icon: 'camera-outline',
+        visible: isAiImportAvailable,
+      }),
+      popoverAction({
+        role: BEAN_IMPORT_ACTION.AI_IMPORT_MULTI,
+        translationKey: 'AI_BEAN_IMPORT_MULTI',
+        subtitleTranslationKey: 'AI_BEAN_IMPORT_MULTI_HINT',
+        icon: 'images-outline',
+        visible: isAiImportAvailable,
+      }),
+    ];
+  }
+
+  private isAiImportAvailable(): boolean {
+    if (!this.platform.is('capacitor')) {
+      return false;
+    }
+
+    const settings = this.uiSettingsStorage.getSettings();
+    if (settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER) {
+      return false;
+    }
+
+    if (settings.ai_provider === AI_PROVIDER_ENUM.APPLE_INTELLIGENCE) {
+      return this.platform.is('ios');
+    }
+
+    return !!settings.cloud_ai_api_key && !!settings.cloud_ai_model;
   }
 
   public async aiImportBean() {

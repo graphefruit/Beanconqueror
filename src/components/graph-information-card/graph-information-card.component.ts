@@ -24,7 +24,6 @@ import {
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GraphPopoverActionsComponent } from '../../app/graph-section/graph/graph-popover-actions/graph-popover-actions.component';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Graph } from '../../classes/graph/graph';
 import { Settings } from '../../classes/settings/settings';
@@ -40,6 +39,11 @@ import { UIGraphStorage } from '../../services/uiGraphStorage.service';
 import { UIHelper } from '../../services/uiHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../actions-popover/actions-popover.component';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
 declare var Plotly;
@@ -95,11 +99,9 @@ export class GraphInformationCardComponent implements OnInit {
       GRAPH_TRACKING.TITLE,
       GRAPH_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await this.modalController.create({
-      component: GraphPopoverActionsComponent,
-      componentProps: { graph: this.graph },
-      id: GraphPopoverActionsComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalController, {
+      id: 'graph-popover-actions',
+      items: this.buildGraphActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
@@ -109,6 +111,37 @@ export class GraphInformationCardComponent implements OnInit {
       await this.internalAction(data.role as GRAPH_ACTION);
       this.graphAction.emit([data.role as GRAPH_ACTION, this.graph]);
     }
+  }
+
+  private buildGraphActions(): PopoverAction[] {
+    return [
+      popoverAction({
+        role: GRAPH_ACTION.DETAIL,
+        translationKey: 'DETAIL',
+        icon: 'beanconqueror-detail',
+      }),
+      popoverAction({
+        role: GRAPH_ACTION.EDIT,
+        translationKey: 'EDIT',
+        icon: 'beanconqueror-edit',
+      }),
+      popoverAction({
+        role: GRAPH_ACTION.SHARE,
+        translationKey: 'SHARE',
+        icon: 'share-social-outline',
+      }),
+      popoverAction({
+        role: GRAPH_ACTION.ARCHIVE,
+        translationKey: 'ARCHIVE',
+        icon: 'beanconqueror-finished',
+        visible: this.graph.finished === false,
+      }),
+      popoverAction({
+        role: GRAPH_ACTION.DELETE,
+        translationKey: 'DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
 
   private async internalAction(action: GRAPH_ACTION) {

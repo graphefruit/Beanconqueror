@@ -45,7 +45,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import * as htmlToImage from 'html-to-image';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
-import { BrewPopoverActionsComponent } from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
@@ -82,6 +81,11 @@ import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
@@ -307,13 +311,9 @@ export class BrewInformationComponent implements OnInit, OnChanges {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
-    const popover = await this.modalCtrl.create({
-      component: BrewPopoverActionsComponent,
-      animated: true,
-      componentProps: { brew: this.brew },
-      id: BrewPopoverActionsComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalCtrl, {
+      id: 'brew-popover-actions',
+      items: this.buildBrewActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
@@ -323,6 +323,118 @@ export class BrewInformationComponent implements OnInit, OnChanges {
       await this.internalBrewAction(data.role as BREW_ACTION);
       this.brewAction.emit([data.role as BREW_ACTION, this.brew]);
     }
+  }
+
+  private buildBrewActions(): PopoverAction[] {
+    const preparation = this.brew.getPreparation();
+    const hasFlowProfile =
+      !!this.brew.flow_profile && this.brew.flow_profile.length > 0;
+    const hasVisualizerId = !!this.brew.customInformation?.visualizer_id;
+    const hasCoordinates =
+      this.settings.track_brew_coordinates &&
+      this.brew.coordinates.latitude !== undefined &&
+      this.brew.coordinates.latitude !== null &&
+      this.brew.coordinates.latitude !== 0;
+    const ratingEnabled = this.uiBrewHelper.fieldVisible(
+      this.settings.manage_parameters.rating,
+      preparation.manage_parameters.rating,
+      preparation.use_custom_parameters,
+    );
+    const canExportToVisualizer =
+      hasFlowProfile &&
+      this.settings.visualizer_active &&
+      this.settings.visualizer_upload_automatic === false &&
+      !!this.settings.visualizer_username &&
+      !!this.settings.visualizer_password &&
+      !hasVisualizerId;
+
+    return [
+      popoverAction({
+        role: BREW_ACTION.REPEAT,
+        translationKey: 'POPOVER_BREWS_OPTION_REPEAT',
+        icon: 'beanconqueror-repeat',
+      }),
+      popoverAction({
+        role: BREW_ACTION.FAST_REPEAT,
+        translationKey: 'POPOVER_BREWS_OPTION_FAST_REPEAT',
+        icon: 'beanconqueror-fast-repeat',
+        visible: this.settings.fast_brew_repeat && !this.brew.isArchived(),
+      }),
+      popoverAction({
+        role: BREW_ACTION.TOGGLE_FAVOURITE,
+        translationKey: 'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE',
+        icon: this.brew.favourite ? 'heart' : 'heart-outline',
+      }),
+      popoverAction({
+        role: BREW_ACTION.TOGGLE_BEST_BREW,
+        translationKey: 'POPOVER_BEST_BREW',
+        icon: this.brew.best_brew ? 'trophy' : 'trophy-outline',
+        visible: this.settings.best_brew,
+      }),
+      popoverAction({
+        role: BREW_ACTION.DETAIL,
+        translationKey: 'POPOVER_BREWS_OPTION_DETAIL',
+        icon: 'beanconqueror-detail',
+      }),
+      popoverAction({
+        role: BREW_ACTION.EDIT,
+        translationKey: 'POPOVER_BREWS_OPTION_EDIT',
+        icon: 'beanconqueror-edit',
+      }),
+      popoverAction({
+        role: BREW_ACTION.RATING,
+        translationKey: 'BREW_DATA_RATING',
+        icon: 'beanconqueror-brew-rating-empty',
+        visible: ratingEnabled,
+      }),
+      popoverAction({
+        role: BREW_ACTION.CUPPING,
+        translationKey: 'POPOVER_BREWS_OPTION_CUPPING',
+        icon: 'beanconqueror-cupping',
+      }),
+      /* Disabled because it's not easy to render shadow DOM components to an image
+      popoverAction({
+        role: BREW_ACTION.SHARE,
+        translationKey: 'SHARE',
+        icon: 'share-social-outline',
+      }),
+      */
+      popoverAction({
+        role: BREW_ACTION.SHOW_MAP_COORDINATES,
+        translationKey: 'POPOVER_BREWS_OPTION_MAP_COORDINATES',
+        icon: 'beanconqueror-map',
+        visible: hasCoordinates,
+      }),
+      popoverAction({
+        role: BREW_ACTION.PHOTO_GALLERY,
+        translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+        icon: 'beanconqueror-photo-gallery',
+        visible: this.brew.attachments.length > 0,
+      }),
+      popoverAction({
+        role: BREW_ACTION.VISUALIZER,
+        translationKey: 'MANUAL_EXPORT_TO_VISUALIZER',
+        icon: 'beanconqueror-visualizer',
+        visible: canExportToVisualizer,
+      }),
+      popoverAction({
+        role: BREW_ACTION.SHOW_VISUALIZER,
+        translationKey: 'SHOW_VISUALIZER',
+        icon: 'beanconqueror-visualizer-logo',
+        visible: hasVisualizerId,
+      }),
+      popoverAction({
+        role: BREW_ACTION.SHOW_GRAPH,
+        translationKey: 'SHOW_GRAPH',
+        icon: 'analytics-outline',
+        visible: !!this.brew.flow_profile,
+      }),
+      popoverAction({
+        role: BREW_ACTION.DELETE,
+        translationKey: 'POPOVER_BREWS_OPTION_DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
 
   public async showVisualizerShot() {
