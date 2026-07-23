@@ -3,12 +3,19 @@ import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../classes/bean/bean';
+import { STATISTIC_BEAN_DATE_FIELD_ENUM } from '../enums/settings/statisticBeanDateField';
 import { IBean } from '../interfaces/bean/iBean';
 import { IBrew } from '../interfaces/brew/iBrew';
 import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
 import { IMill } from '../interfaces/mill/iMill';
 import { IPreparation } from '../interfaces/preparation/iPreparation';
 import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
+import {
+  filterBeansByRange,
+  filterByConfigTimestamp,
+  getDefaultStatisticDateRange,
+  IStatisticDateRange,
+} from './statistic/statistic-date-range';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIGreenBeanStorage } from './uiGreenBeanStorage';
@@ -32,9 +39,35 @@ export class UIStatistic {
   private readonly uiSettings = inject(UISettingsStorage);
   private readonly translate = inject(TranslateService);
 
+  private activeDateRange: IStatisticDateRange = getDefaultStatisticDateRange();
+
+  public setDateRange(range: IStatisticDateRange): void {
+    this.activeDateRange = range;
+  }
+
+  private getBrewsInRange(): Array<IBrew> {
+    return filterByConfigTimestamp(
+      this.uiBrewStorage.getAllEntries(),
+      this.activeDateRange,
+    );
+  }
+
+  private getBeansInRange(): Array<Bean> {
+    const field = this.uiSettings.getSettings().statistic_bean_date_field;
+    return filterBeansByRange(
+      this.uiBeanStorage.getAllEntries(),
+      this.activeDateRange,
+      field,
+    );
+  }
+
   public getSpentMoneyForCoffeeBeans(): number {
     let costs: number = 0;
-    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+    const beans: Array<Bean> = filterBeansByRange(
+      this.uiBeanStorage.getAllEntries(),
+      this.activeDateRange,
+      STATISTIC_BEAN_DATE_FIELD_ENUM.BUY,
+    );
     for (const i of beans) {
       if (i.cost !== undefined && i.cost > 0) {
         costs += i.cost;
@@ -45,11 +78,11 @@ export class UIStatistic {
   }
 
   public getBrewsDrunk(): number {
-    return this.uiBrewStorage.getAllEntries().length;
+    return this.getBrewsInRange().length;
   }
 
   public getBeansCount(): number {
-    const allBeans = this.uiBeanStorage.getAllEntries();
+    const allBeans = this.getBeansInRange();
 
     const allBeansWithoutFrozenId = allBeans.filter((e) => !e.frozenGroupId);
     const allBeansWithFrozenId = new Set(
@@ -59,11 +92,17 @@ export class UIStatistic {
   }
 
   public getPreparationsCount(): number {
-    return this.uiPreparationStorage.getAllEntries().length;
+    return filterByConfigTimestamp(
+      this.uiPreparationStorage.getAllEntries(),
+      this.activeDateRange,
+    ).length;
   }
 
   public getMillsCount(): number {
-    return this.uiMillStorage.getAllEntries().length;
+    return filterByConfigTimestamp(
+      this.uiMillStorage.getAllEntries(),
+      this.activeDateRange,
+    ).length;
   }
 
   public getLastDrunkBrewTimestamp(): string {
@@ -184,7 +223,7 @@ export class UIStatistic {
    * Returns in KG
    */
   public getTotalGround(): number {
-    const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+    const brews: Array<IBrew> = this.getBrewsInRange();
     if (brews.length > 0) {
       let sum = 0;
       for (const brew of brews) {
@@ -205,7 +244,7 @@ export class UIStatistic {
    * Retruns in kg/litres
    */
   public getTotalDrunk(): number {
-    const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+    const brews: Array<IBrew> = this.getBrewsInRange();
     if (brews.length > 0) {
       let sum = 0;
       for (const brew of brews) {
@@ -222,7 +261,7 @@ export class UIStatistic {
   }
 
   public brewedTime() {
-    const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+    const brews: Array<IBrew> = this.getBrewsInRange();
     if (brews.length > 0) {
       let sum = 0;
       for (const brew of brews) {
@@ -236,12 +275,30 @@ export class UIStatistic {
     const allEntries: Array<
       IBrew | IMill | IPreparation | IBean | IGreenBean | IRoastingMachine
     > = [
-      ...this.uiBrewStorage.getAllEntries(),
-      ...this.uiMillStorage.getAllEntries(),
-      ...this.uiPreparationStorage.getAllEntries(),
-      ...this.uiBeanStorage.getAllEntries(),
-      ...this.uiGreenBeanStorage.getAllEntries(),
-      ...this.uiRoastingMachineStorage.getAllEntries(),
+      ...filterByConfigTimestamp(
+        this.uiBrewStorage.getAllEntries(),
+        this.activeDateRange,
+      ),
+      ...filterByConfigTimestamp(
+        this.uiMillStorage.getAllEntries(),
+        this.activeDateRange,
+      ),
+      ...filterByConfigTimestamp(
+        this.uiPreparationStorage.getAllEntries(),
+        this.activeDateRange,
+      ),
+      ...filterByConfigTimestamp(
+        this.uiBeanStorage.getAllEntries(),
+        this.activeDateRange,
+      ),
+      ...filterByConfigTimestamp(
+        this.uiGreenBeanStorage.getAllEntries(),
+        this.activeDateRange,
+      ),
+      ...filterByConfigTimestamp(
+        this.uiRoastingMachineStorage.getAllEntries(),
+        this.activeDateRange,
+      ),
     ];
 
     if (allEntries.length > 0) {
