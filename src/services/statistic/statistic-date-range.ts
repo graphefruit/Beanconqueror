@@ -93,10 +93,13 @@ export function resolveBeanRangeDate(
     isoField = bean.openDate;
   }
 
-  if (isoField !== undefined && isoField !== null && isoField !== '') {
-    return moment(isoField).unix();
+  if (isoField) {
+    const parsed = moment(isoField);
+    if (parsed.isValid()) {
+      return parsed.unix();
+    }
   }
-  // ADDED, or fallback when the chosen field is empty.
+  // ADDED, or fallback when the chosen field is empty/invalid.
   return bean.config.unix_timestamp;
 }
 

@@ -122,6 +122,12 @@ export class StatisticPage implements OnInit {
 
   public ionViewDidEnter(): void {}
 
+  public ionViewWillEnter(): void {
+    this.rangeMode = 'ALL';
+    this.dateRange = getDefaultStatisticDateRange();
+    this.uiStatistic.setDateRange(this.dateRange);
+  }
+
   public onRangeModeChange(mode: STATISTIC_RANGE_MODE): void {
     this.rangeMode = mode;
     if (mode !== 'CUSTOM') {

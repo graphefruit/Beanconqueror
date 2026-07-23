@@ -142,6 +142,15 @@ describe('statistic-date-range', () => {
         resolveBeanRangeDate(bean, STATISTIC_BEAN_DATE_FIELD_ENUM.BUY),
       ).toBe(4242);
     });
+
+    it('falls back to config.unix_timestamp when the chosen field is an invalid date', () => {
+      const bean = new Bean();
+      bean.config.unix_timestamp = 4242;
+      bean.roastingDate = 'not-a-date';
+      expect(
+        resolveBeanRangeDate(bean, STATISTIC_BEAN_DATE_FIELD_ENUM.ROAST),
+      ).toBe(4242);
+    });
   });
 
   describe('filterBeansByRange', () => {
