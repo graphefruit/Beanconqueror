@@ -25,12 +25,14 @@ import currencyToSymbolMap from 'currency-symbol-map/map';
 import Gradient from 'javascript-color-gradient';
 import moment from 'moment';
 
+import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewView } from '../../classes/brew/brewView';
 import { HeaderComponent } from '../../components/header/header.component';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import {
+  filterBeansByRange,
   filterByConfigTimestamp,
   getDefaultStatisticDateRange,
   IStatisticDateRange,
@@ -43,6 +45,7 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIHelper } from '../../services/uiHelper';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIStatistic } from '../../services/uiStatistic';
 
 @Component({
@@ -77,6 +80,7 @@ export class StatisticPage implements OnInit {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
   private translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
 
@@ -172,6 +176,16 @@ export class StatisticPage implements OnInit {
     this.chartRegistry[key] = new Chart(nativeElement, config);
   }
 
+  private __getBeansInRange(): Array<Bean> {
+    const field =
+      this.uiSettingsStorage.getSettings().statistic_bean_date_field;
+    return filterBeansByRange(
+      this.uiBeanStorage.getAllEntries(),
+      this.dateRange,
+      field,
+    );
+  }
+
   public loadBrewCharts() {
     setTimeout(() => {
       this.__loadDrinkingChart();
@@ -190,7 +204,10 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadAvgBeanRatingByCountryChart(): void {
-    const brews = this.uiBrewStorage.getAllEntries();
+    const brews = filterByConfigTimestamp(
+      this.uiBrewStorage.getAllEntries(),
+      this.dateRange,
+    );
     const beans = this.__getBeansFromBrews(brews);
     const countries = Array.from(
       new Set(
@@ -222,7 +239,8 @@ export class StatisticPage implements OnInit {
         (acc, brew) => acc + brew.rating,
         0,
       );
-      const avgRating = totalRating / brewsForCountry.length;
+      const avgRating =
+        brewsForCountry.length > 0 ? totalRating / brewsForCountry.length : 0;
       if (!country) continue;
       data.labels.push(country);
       data.datasets[0].data.push(avgRating);
@@ -248,7 +266,7 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByRoasterChart(): void {
-    const beans = this.uiBeanStorage.getAllEntries();
+    const beans = this.__getBeansInRange();
     const roasters = Array.from(
       new Set(beans.map((b) => b.roaster).filter((r) => r)),
     );
@@ -298,7 +316,7 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByProcessingChart(): void {
-    const beans = this.uiBeanStorage.getAllEntries();
+    const beans = this.__getBeansInRange();
     const processings = Array.from(
       new Set(
         beans
@@ -355,7 +373,7 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByCountryChart(): void {
-    const beans = this.uiBeanStorage.getAllEntries();
+    const beans = this.__getBeansInRange();
     const countries = Array.from(
       new Set(
         beans
