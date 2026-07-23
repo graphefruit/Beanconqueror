@@ -10,6 +10,7 @@ import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { STATISTIC_BEAN_DATE_FIELD_ENUM } from '../../enums/settings/statisticBeanDateField';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
@@ -41,6 +42,7 @@ export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
   public date_format: string;
+  public statistic_bean_date_field: STATISTIC_BEAN_DATE_FIELD_ENUM;
 
   public matomo_analytics: boolean;
   public matomo_analytics_id: string;
@@ -328,6 +330,7 @@ export class Settings implements ISettings {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
     this.date_format = 'DD.MM.YYYY';
+    this.statistic_bean_date_field = STATISTIC_BEAN_DATE_FIELD_ENUM.ADDED;
     this.config = new Config();
 
     this.manage_parameters = new ManageBrewParameter();

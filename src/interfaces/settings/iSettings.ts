@@ -8,6 +8,7 @@ import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType'
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { STATISTIC_BEAN_DATE_FIELD_ENUM } from '../../enums/settings/statisticBeanDateField';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
 import { IBeanPageSort } from '../bean/iBeanPageSort';
@@ -26,6 +27,7 @@ export interface ISettings {
   brew_view: BREW_VIEW_ENUM;
   startup_view: STARTUP_VIEW_ENUM;
   date_format: string;
+  statistic_bean_date_field: STATISTIC_BEAN_DATE_FIELD_ENUM;
 
   language: string;
   manage_parameters: IBrewParameter;
