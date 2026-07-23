@@ -141,9 +141,12 @@ export class BrewModalImportShotMeticulousComponent
     }
     this.isLoadingMore = true;
     try {
+      /**
+       * Search all profiles everytime
+       */
       const results = await this.meticulousDevice?.getHistory(
         this.lastEntryTime,
-        this.profileFilter,
+        '',
       );
       const allResults = results ?? [];
       const newEntries = allResults.filter(
