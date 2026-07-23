@@ -125,6 +125,15 @@ describe('statistic-date-range', () => {
       ).toBe(nowUnix);
     });
 
+    it('uses openDate for OPEN when populated', () => {
+      const bean = new Bean();
+      bean.config.unix_timestamp = 4242;
+      bean.openDate = moment.unix(nowUnix).format();
+      expect(
+        resolveBeanRangeDate(bean, STATISTIC_BEAN_DATE_FIELD_ENUM.OPEN),
+      ).toBe(nowUnix);
+    });
+
     it('falls back to config.unix_timestamp when the chosen field is empty', () => {
       const bean = new Bean();
       bean.config.unix_timestamp = 4242;
@@ -152,6 +161,18 @@ describe('statistic-date-range', () => {
       );
       expect(result.length).toBe(1);
       expect(result[0]).toBe(inBean);
+    });
+
+    it('returns all beans when mode is ALL, ignoring bounds', () => {
+      const bean = new Bean();
+      bean.config.unix_timestamp = 4242;
+      bean.buyDate = moment.unix(nowUnix).subtract(5, 'year').format();
+      const result = filterBeansByRange(
+        [bean],
+        { mode: 'ALL', start: nowUnix, end: nowUnix },
+        STATISTIC_BEAN_DATE_FIELD_ENUM.BUY,
+      );
+      expect(result.length).toBe(1);
     });
   });
 });
