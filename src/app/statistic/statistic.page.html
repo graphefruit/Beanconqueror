@@ -27,6 +27,50 @@
     </ion-segment-button>
   </ion-segment>
 
+  <ion-segment scrollable="true" [(ngModel)]="rangeMode"
+    (ngModelChange)="onRangeModeChange($event)" class="ion-padding-vertical" style="padding-top:0px;">
+    <ion-segment-button value="ALL">
+      <ion-label>{{"STATISTIC_RANGE_ALL_TIME" | translate}}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="THIS_MONTH">
+      <ion-label>{{"STATISTIC_RANGE_THIS_MONTH" | translate}}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="LAST_MONTH">
+      <ion-label>{{"STATISTIC_RANGE_LAST_MONTH" | translate}}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="THIS_YEAR">
+      <ion-label>{{"STATISTIC_RANGE_THIS_YEAR" | translate}}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="CUSTOM">
+      <ion-label>{{"STATISTIC_RANGE_CUSTOM" | translate}}</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  @if (rangeMode === 'CUSTOM') {
+    <ion-row class="ion-align-items-center">
+      <ion-col size="6">
+        <ion-label>{{"STATISTIC_RANGE_FROM" | translate}}</ion-label>
+        <ion-datetime-button datetime="statisticRangeStart"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="statisticRangeStart" presentation="date"
+              [(ngModel)]="customStart" (ionChange)="onCustomDateChange()"></ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>{{"STATISTIC_RANGE_TO" | translate}}</ion-label>
+        <ion-datetime-button datetime="statisticRangeEnd"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="statisticRangeEnd" presentation="date"
+              [(ngModel)]="customEnd" (ionChange)="onCustomDateChange()"></ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </ion-col>
+    </ion-row>
+  }
+
   <div>
     @switch (segment) {
       @case ('GENERAL') {
