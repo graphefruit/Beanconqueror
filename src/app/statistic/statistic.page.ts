@@ -143,7 +143,7 @@ export class StatisticPage implements OnInit {
     }
   }
 
-  public onCustomDateChange(): void {
+  private __applyCustomRange(): void {
     if (this.customStart && this.customEnd) {
       this.dateRange = {
         mode: 'CUSTOM',
@@ -163,7 +163,7 @@ export class StatisticPage implements OnInit {
     // Month/year navigation also fires ionChange; only commit + close the
     // popover when the user actually taps a day within the shown month.
     if (isDaySelection) {
-      this.onCustomDateChange();
+      this.__applyCustomRange();
       popover.dismiss();
     }
   }
@@ -175,7 +175,7 @@ export class StatisticPage implements OnInit {
     );
     this.lastCustomEnd = this.customEnd;
     if (isDaySelection) {
-      this.onCustomDateChange();
+      this.__applyCustomRange();
       popover.dismiss();
     }
   }
