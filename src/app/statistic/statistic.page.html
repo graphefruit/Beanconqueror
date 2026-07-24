@@ -51,22 +51,24 @@
       <ion-col size="6">
         <ion-label>{{"STATISTIC_RANGE_FROM" | translate}}</ion-label>
         <ion-datetime-button datetime="statisticRangeStart"></ion-datetime-button>
-        <ion-modal [keepContentsMounted]="true">
+        <ion-popover #startDatePopover [keepContentsMounted]="true" side="bottom" alignment="start">
           <ng-template>
             <ion-datetime id="statisticRangeStart" presentation="date"
-              [(ngModel)]="customStart" (ionChange)="onCustomDateChange()"></ion-datetime>
+              [(ngModel)]="customStart"
+              (ionChange)="onCustomStartChanged(startDatePopover)"></ion-datetime>
           </ng-template>
-        </ion-modal>
+        </ion-popover>
       </ion-col>
       <ion-col size="6">
         <ion-label>{{"STATISTIC_RANGE_TO" | translate}}</ion-label>
         <ion-datetime-button datetime="statisticRangeEnd"></ion-datetime-button>
-        <ion-modal [keepContentsMounted]="true">
+        <ion-popover #endDatePopover [keepContentsMounted]="true" side="bottom" alignment="start">
           <ng-template>
             <ion-datetime id="statisticRangeEnd" presentation="date"
-              [(ngModel)]="customEnd" (ionChange)="onCustomDateChange()"></ion-datetime>
+              [(ngModel)]="customEnd"
+              (ionChange)="onCustomEndChanged(endDatePopover)"></ion-datetime>
           </ng-template>
-        </ion-modal>
+        </ion-popover>
       </ion-col>
     </ion-row>
   }

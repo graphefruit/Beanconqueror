@@ -13,7 +13,7 @@ import {
   IonHeader,
   IonLabel,
   IonMenuButton,
-  IonModal,
+  IonPopover,
   IonRow,
   IonSegment,
   IonSegmentButton,
@@ -70,7 +70,7 @@ import { UIStatistic } from '../../services/uiStatistic';
     IonCardContent,
     IonDatetime,
     IonDatetimeButton,
-    IonModal,
+    IonPopover,
   ],
 })
 export class StatisticPage implements OnInit {
@@ -111,6 +111,10 @@ export class StatisticPage implements OnInit {
   public dateRange: IStatisticDateRange = getDefaultStatisticDateRange();
   public customStart: string = moment().startOf('month').format();
   public customEnd: string = moment().endOf('day').format();
+  // Previous picker values, used to tell a day tap (same year+month) apart
+  // from month/year navigation (which also fires ionChange).
+  private lastCustomStart: string = this.customStart;
+  private lastCustomEnd: string = this.customEnd;
 
   // Keep references so charts can be destroyed before re-render (Chart.js
   // throws "Canvas is already in use" otherwise).
@@ -148,6 +152,41 @@ export class StatisticPage implements OnInit {
       };
       this.__applyDateRange();
     }
+  }
+
+  public onCustomStartChanged(popover: IonPopover): void {
+    const isDaySelection = this.__isSameYearMonth(
+      this.customStart,
+      this.lastCustomStart,
+    );
+    this.lastCustomStart = this.customStart;
+    // Month/year navigation also fires ionChange; only commit + close the
+    // popover when the user actually taps a day within the shown month.
+    if (isDaySelection) {
+      this.onCustomDateChange();
+      popover.dismiss();
+    }
+  }
+
+  public onCustomEndChanged(popover: IonPopover): void {
+    const isDaySelection = this.__isSameYearMonth(
+      this.customEnd,
+      this.lastCustomEnd,
+    );
+    this.lastCustomEnd = this.customEnd;
+    if (isDaySelection) {
+      this.onCustomDateChange();
+      popover.dismiss();
+    }
+  }
+
+  private __isSameYearMonth(a: string, b: string): boolean {
+    if (!a || !b) {
+      return false;
+    }
+    const aM = moment(a);
+    const bM = moment(b);
+    return aM.year() === bM.year() && aM.month() === bM.month();
   }
 
   private __applyDateRange(): void {
