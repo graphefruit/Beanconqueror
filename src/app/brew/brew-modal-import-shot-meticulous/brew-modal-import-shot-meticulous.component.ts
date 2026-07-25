@@ -69,7 +69,6 @@ export class BrewModalImportShotMeticulousComponent
   public static COMPONENT_ID: string = 'brew-modal-import-shot-meticulous';
 
   @Input() public meticulousDevice: MeticulousDevice;
-  @Input() public profileFilter: string | undefined;
   public radioSelection: string;
   public history: any[] = [];
   public chartWidth = 0;
@@ -112,10 +111,7 @@ export class BrewModalImportShotMeticulousComponent
   private async readHistory() {
     await this.uiAlert.showLoadingSpinner();
     try {
-      const results = await this.meticulousDevice?.getHistory(
-        undefined,
-        this.profileFilter,
-      );
+      const results = await this.meticulousDevice?.getHistory();
       this.history = results ?? [];
       this.lastEntryTime = this.history[this.history.length - 1]?.time;
       this.hasMore = this.history.length >= MeticulousDevice.PAGE_SIZE;
@@ -141,12 +137,8 @@ export class BrewModalImportShotMeticulousComponent
     }
     this.isLoadingMore = true;
     try {
-      /**
-       * Search all profiles everytime
-       */
       const results = await this.meticulousDevice?.getHistory(
         this.lastEntryTime,
-        '',
       );
       const allResults = results ?? [];
       const newEntries = allResults.filter(

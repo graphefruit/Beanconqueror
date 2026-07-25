@@ -911,20 +911,14 @@ export class BrewBrewingPreparationDeviceComponent
 
   public async importShotFromMeticulous() {
     const meticulousDevice = this.preparationDevice as MeticulousDevice;
-    const chosenProfileId = (
-      this.data.preparationDeviceBrew.params as MeticulousParams
-    )?.chosenProfileId;
-    const profileFilter = chosenProfileId
-      ? meticulousDevice.getProfiles().find((p) => p.id === chosenProfileId)
-          ?.name
-      : undefined;
 
+    // The chosen profile is only used for the brew itself, it deliberately does
+    // not narrow down the shot history: users expect to see every shot here.
     const modal = await this.modalController.create({
       component: BrewModalImportShotMeticulousComponent,
       id: BrewModalImportShotMeticulousComponent.COMPONENT_ID,
       componentProps: {
         meticulousDevice,
-        profileFilter,
       },
     });
 

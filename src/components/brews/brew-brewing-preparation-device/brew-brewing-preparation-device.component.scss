@@ -5,6 +5,23 @@
     margin-right: 16px;
   }
 
+  /* Compact "- or -" divider between two alternative actions inside a card */
+  .or-separator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 16px;
+    color: var(--ion-color-medium);
+    font-size: 12px;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid var(--ion-color-light-shade);
+    }
+  }
+
   ion-col.active {
     color: black !important;
     ion-card {
