@@ -734,9 +734,8 @@ export class Settings implements ISettings {
       this.cloud_ai_base_url = settingsObj.cloud_ai_base_url;
     }
 
-    // Migration: v1 used flat fields (brew_by_weight_webhook_active / _url).
-    // v2 uses a nested config object. If the stored object pre-dates this
-    // change the field will be undefined, so initialize with safe defaults.
+    // Field does not exist in any previously-released settings version —
+    // initialize with safe defaults for users upgrading from an older build.
     if (!settingsObj.brew_by_weight_webhook) {
       this.brew_by_weight_webhook = {
         active: false,
