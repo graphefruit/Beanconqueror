@@ -1,5 +1,11 @@
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  ViewChild,
+} from '@angular/core';
 
 import {
   AlertController,
@@ -137,6 +143,7 @@ export class BrewDetailComponent {
   private readonly platform = inject(Platform);
   private readonly alertCtrl = inject(AlertController);
   private readonly uiLog = inject(UILog);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly shareService = inject(ShareService);
   private readonly uiBrewStorage = inject(UIBrewStorage);
 
@@ -570,10 +577,12 @@ export class BrewDetailComponent {
 
     if (result.role === 'save' && result.data) {
       try {
-        await this.uiFileHelper.writeInternalFileFromText(
-          JSON.stringify(result.data.flowProfile),
-          this.data.flow_profile,
-        );
+        try {
+          await this.uiFileHelper.writeInternalFileFromText(
+            JSON.stringify(result.data.flowProfile),
+            this.data.flow_profile,
+          );
+        } catch (ex) {}
 
         this.data.brew_time = result.data.brew_time;
         this.data.brew_time_milliseconds = result.data.brew_time_milliseconds;
@@ -587,6 +596,18 @@ export class BrewDetailComponent {
           }
         }
 
+        if (result.data.coffee_first_drip_time !== undefined) {
+          this.data.coffee_first_drip_time = result.data.coffee_first_drip_time;
+          this.data.coffee_first_drip_time_milliseconds =
+            result.data.coffee_first_drip_time_milliseconds;
+        }
+
+        if (result.data.coffee_blooming_time !== undefined) {
+          this.data.coffee_blooming_time = result.data.coffee_blooming_time;
+          this.data.coffee_blooming_time_milliseconds =
+            result.data.coffee_blooming_time_milliseconds;
+        }
+
         if (this.brew) {
           this.brew.brew_time = result.data.brew_time;
           this.brew.brew_time_milliseconds = result.data.brew_time_milliseconds;
@@ -598,10 +619,32 @@ export class BrewDetailComponent {
               this.brew.brew_quantity = result.data.finalWeight;
             }
           }
+          if (result.data.coffee_first_drip_time !== undefined) {
+            this.brew.coffee_first_drip_time =
+              result.data.coffee_first_drip_time;
+            this.brew.coffee_first_drip_time_milliseconds =
+              result.data.coffee_first_drip_time_milliseconds;
+          }
+          if (result.data.coffee_blooming_time !== undefined) {
+            this.brew.coffee_blooming_time = result.data.coffee_blooming_time;
+            this.brew.coffee_blooming_time_milliseconds =
+              result.data.coffee_blooming_time_milliseconds;
+          }
+        }
+
+        const updatedData = new Brew();
+        updatedData.initializeByObject(this.data);
+        this.data = updatedData;
+
+        if (this.brew) {
+          const updatedBrew = new Brew();
+          updatedBrew.initializeByObject(this.brew as Brew);
+          this.brew = updatedBrew;
         }
 
         await this.uiBrewStorage.update(this.data);
         await this.initializeFlowChartOnGraphEl();
+        this.cdr.detectChanges();
       } catch (err) {
         this.uiLog.error('Failed to save cut flow profile: ' + err.message);
       }

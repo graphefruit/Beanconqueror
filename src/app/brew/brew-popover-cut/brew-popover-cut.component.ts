@@ -323,6 +323,7 @@ export class BrewPopoverCutComponent implements OnInit {
       this.flowProfile,
       this.cutRange.lower,
       this.cutRange.upper,
+      this.brew,
     );
     const duration = this.cutRange.upper - this.cutRange.lower;
 
@@ -332,6 +333,12 @@ export class BrewPopoverCutComponent implements OnInit {
         brew_time: Math.round(duration),
         brew_time_milliseconds: Math.round(duration * 1000),
         finalWeight: cutResult.finalWeight,
+        coffee_first_drip_time: cutResult.coffee_first_drip_time,
+        coffee_first_drip_time_milliseconds:
+          cutResult.coffee_first_drip_time_milliseconds,
+        coffee_blooming_time: cutResult.coffee_blooming_time,
+        coffee_blooming_time_milliseconds:
+          cutResult.coffee_blooming_time_milliseconds,
       },
       'save',
       BrewPopoverCutComponent.COMPONENT_ID,
@@ -354,7 +361,15 @@ export class BrewPopoverCutComponent implements OnInit {
     flowProfile: BrewFlow,
     lower: number,
     upper: number,
-  ): { flowProfile: BrewFlow; finalWeight?: number } {
+    brew: Brew = this.brew,
+  ): {
+    flowProfile: BrewFlow;
+    finalWeight?: number;
+    coffee_first_drip_time?: number;
+    coffee_first_drip_time_milliseconds?: number;
+    coffee_blooming_time?: number;
+    coffee_blooming_time_milliseconds?: number;
+  } {
     let globalMinTime = lower;
     let found = false;
     let minTime = Infinity;
@@ -409,7 +424,7 @@ export class BrewPopoverCutComponent implements OnInit {
     }
 
     const shiftSeconds = globalMinTime;
-    const shiftMs = shiftSeconds * 1000;
+    const shiftMs = Math.round(shiftSeconds * 1000);
 
     const processArray = <T extends { brew_time: string; timestamp: string }>(
       arr: T[],
@@ -602,9 +617,46 @@ export class BrewPopoverCutComponent implements OnInit {
           .actual_weight;
     }
 
+    let coffee_first_drip_time = brew?.coffee_first_drip_time ?? 0;
+    let coffee_first_drip_time_milliseconds =
+      brew?.coffee_first_drip_time_milliseconds ?? 0;
+    let coffee_blooming_time = brew?.coffee_blooming_time ?? 0;
+    let coffee_blooming_time_milliseconds =
+      brew?.coffee_blooming_time_milliseconds ?? 0;
+
+    if (coffee_first_drip_time > 0 || coffee_first_drip_time_milliseconds > 0) {
+      const currentFirstDripMs =
+        coffee_first_drip_time * 1000 + coffee_first_drip_time_milliseconds;
+      const newFirstDripMs = currentFirstDripMs - shiftMs;
+      if (newFirstDripMs <= 0) {
+        coffee_first_drip_time = 0;
+        coffee_first_drip_time_milliseconds = 0;
+      } else {
+        coffee_first_drip_time = Math.floor(newFirstDripMs / 1000);
+        coffee_first_drip_time_milliseconds = Math.round(newFirstDripMs % 1000);
+      }
+    }
+
+    if (coffee_blooming_time > 0 || coffee_blooming_time_milliseconds > 0) {
+      const currentBloomingMs =
+        coffee_blooming_time * 1000 + coffee_blooming_time_milliseconds;
+      const newBloomingMs = currentBloomingMs - shiftMs;
+      if (newBloomingMs <= 0) {
+        coffee_blooming_time = 0;
+        coffee_blooming_time_milliseconds = 0;
+      } else {
+        coffee_blooming_time = Math.floor(newBloomingMs / 1000);
+        coffee_blooming_time_milliseconds = Math.round(newBloomingMs % 1000);
+      }
+    }
+    debugger;
     return {
       flowProfile: newProfile,
       finalWeight: finalWeight,
+      coffee_first_drip_time,
+      coffee_first_drip_time_milliseconds,
+      coffee_blooming_time,
+      coffee_blooming_time_milliseconds,
     };
   }
 }
