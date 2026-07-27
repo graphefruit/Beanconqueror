@@ -203,7 +203,6 @@ export class BrewPopoverCutComponent implements OnInit {
 
   public initializeChart() {
     try {
-      debugger;
       const el = this.cutChartContent.nativeElement;
       const chartWidth = el.offsetWidth || 300;
       const chartHeight = 200;
@@ -649,7 +648,7 @@ export class BrewPopoverCutComponent implements OnInit {
         coffee_blooming_time_milliseconds = Math.round(newBloomingMs % 1000);
       }
     }
-    debugger;
+
     return {
       flowProfile: newProfile,
       finalWeight: finalWeight,
