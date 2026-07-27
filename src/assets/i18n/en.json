@@ -1379,6 +1379,7 @@
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind",
     "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Save the machine logs when saving a brew",
     "IMPORT_SHOT_FROM_METICULOUS": "Import a shot",
+    "OR": "or",
     "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "All found entries in the excel list, have been transformed into new beans, enjoy a tasty brew!",
     "IMPORT_UNSUCCESSFULLY": "Import not successful",
     "BEAN_LIST": "Bean list",

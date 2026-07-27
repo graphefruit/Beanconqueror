@@ -97,12 +97,9 @@ export class MeticulousDevice extends PreparationDevice {
     if (typeof cordova !== 'undefined') {
     }
   }
-  public async getHistory(
-    endDate?: number,
-    profileFilter?: string,
-  ): Promise<HistoryListingEntry[]> {
+  public async getHistory(endDate?: number): Promise<HistoryListingEntry[]> {
     const params: any = {
-      query: profileFilter ?? '',
+      query: '',
       ids: [],
       order_by: ['date'],
       sort: 'desc',
