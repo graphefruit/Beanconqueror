@@ -1,5 +1,13 @@
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 
+const DEFAULT_TEMPERATURE = 0.1;
+const TEMPERATURE_REJECTION_WORDING =
+  /(?:unsupported|not supported|deprecated|only\s+(?:the\s+)?default)/i;
+
+type BuildOptions = {
+  readonly includeTemperature: boolean;
+};
+
 export interface CloudLLMConfig {
   provider: AI_PROVIDER_ENUM;
   apiKey: string;
@@ -18,6 +26,15 @@ export interface CloudLLMResponse {
   usage?: { prompt_tokens: number; completion_tokens: number };
 }
 
+class CloudLLMHttpError extends Error {
+  constructor(
+    readonly status: number,
+    readonly body: string,
+  ) {
+    super(`Cloud LLM API error (${status}): ${body}`);
+  }
+}
+
 // ── Provider protocol config ─────────────────────────────────────────
 //
 // Each provider config defines URL, headers, request body shape, and
@@ -28,7 +45,11 @@ export interface CloudLLMResponse {
 interface ProviderProtocol {
   readonly url: string;
   readonly headers: Record<string, string>;
-  buildRequestBody(model: string, messages: CloudLLMMessage[]): object;
+  buildRequestBody(
+    model: string,
+    messages: CloudLLMMessage[],
+    options: BuildOptions,
+  ): object;
   parseResponse(body: unknown): CloudLLMResponse;
 }
 
@@ -65,11 +86,17 @@ class OpenAICompatibleProtocol implements ProviderProtocol {
     };
   }
 
-  buildRequestBody(model: string, messages: CloudLLMMessage[]): object {
+  buildRequestBody(
+    model: string,
+    messages: CloudLLMMessage[],
+    options: BuildOptions,
+  ): object {
     return {
       model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
-      temperature: 0.1,
+      ...(options.includeTemperature
+        ? { temperature: DEFAULT_TEMPERATURE }
+        : {}),
     };
   }
 
@@ -105,13 +132,19 @@ class AnthropicProtocol implements ProviderProtocol {
     };
   }
 
-  buildRequestBody(model: string, messages: CloudLLMMessage[]): object {
+  buildRequestBody(
+    model: string,
+    messages: CloudLLMMessage[],
+    options: BuildOptions,
+  ): object {
     const systemMsg = messages.find((m) => m.role === 'system');
     const userMsgs = messages.filter((m) => m.role !== 'system');
     return {
       model,
       max_tokens: 4096,
-      temperature: 0.1,
+      ...(options.includeTemperature
+        ? { temperature: DEFAULT_TEMPERATURE }
+        : {}),
       system: systemMsg?.content ?? '',
       messages: userMsgs.map((m) => ({ role: m.role, content: m.content })),
     };
@@ -177,6 +210,68 @@ function createProtocol(config: CloudLLMConfig): ProviderProtocol {
   }
 }
 
+// ── Transport and retry policy ──────────────────────────────────────
+
+function hasStructuredTemperatureParameter(body: string): boolean {
+  try {
+    const parsedBody: unknown = JSON.parse(body);
+    return dig(parsedBody, 'error', 'param') === 'temperature';
+  } catch {
+    return false;
+  }
+}
+
+function isTemperatureRejection(error: unknown): boolean {
+  if (!(error instanceof CloudLLMHttpError) || error.status !== 400) {
+    return false;
+  }
+
+  if (hasStructuredTemperatureParameter(error.body)) {
+    return true;
+  }
+
+  return (
+    /temperature/i.test(error.body) &&
+    TEMPERATURE_REJECTION_WORDING.test(error.body)
+  );
+}
+
+async function sendOnce(
+  protocol: ProviderProtocol,
+  model: string,
+  messages: CloudLLMMessage[],
+  options: BuildOptions,
+): Promise<CloudLLMResponse> {
+  const requestBody = protocol.buildRequestBody(model, messages, options);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const response = await fetch(protocol.url, {
+      method: 'POST',
+      headers: protocol.headers,
+      body: JSON.stringify(requestBody),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => '');
+      throw new CloudLLMHttpError(response.status, errorBody);
+    }
+
+    const body: unknown = await response.json();
+    return protocol.parseResponse(body);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Cloud LLM request timed out after 30 seconds');
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 // ── Public API ───────────────────────────────────────────────────────
 
 /**
@@ -191,34 +286,18 @@ export async function sendCloudLLMPrompt(
   messages: CloudLLMMessage[],
 ): Promise<CloudLLMResponse> {
   const protocol = createProtocol(config);
-  const requestBody = protocol.buildRequestBody(config.model, messages);
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
 
   try {
-    const response = await fetch(protocol.url, {
-      method: 'POST',
-      headers: protocol.headers,
-      body: JSON.stringify(requestBody),
-      signal: controller.signal,
+    return await sendOnce(protocol, config.model, messages, {
+      includeTemperature: true,
     });
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => '');
-      throw new Error(`Cloud LLM API error (${response.status}): ${errorBody}`);
+  } catch (error: unknown) {
+    if (!isTemperatureRejection(error)) {
+      throw error;
     }
 
-    const body: unknown = await response.json();
-    return protocol.parseResponse(body);
-  } catch (error) {
-    clearTimeout(timeout);
-
-    if (error.name === 'AbortError') {
-      throw new Error('Cloud LLM request timed out after 30 seconds');
-    }
-
-    throw error;
+    return sendOnce(protocol, config.model, messages, {
+      includeTemperature: false,
+    });
   }
 }

@@ -348,6 +348,173 @@ describe('cloud-llm-communication.service', () => {
     });
   });
 
+  // ── Temperature fallback ───────────────────────────────────────────
+
+  describe('temperature fallback', () => {
+    it('should retry without temperature after a structured parameter rejection', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5' });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse(
+            {
+              error: {
+                param: 'temperature',
+                message: 'Unsupported parameter: temperature',
+              },
+            },
+            400,
+          ),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Retried response' } }],
+            model: 'gpt-5',
+          }),
+        ),
+      );
+
+      // Act
+      const result = await sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      const firstBody = JSON.parse(fetchSpy.calls.argsFor(0)[1].body);
+      const secondBody = JSON.parse(fetchSpy.calls.argsFor(1)[1].body);
+      expect(result.content).toBe('Retried response');
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+      expect(firstBody.temperature).toBe(0.1);
+      expect(secondBody.temperature).toBeUndefined();
+    });
+
+    it('should retry without temperature after an Anthropic deprecation error', async () => {
+      // Arrange
+      const config = createConfig({
+        provider: AI_PROVIDER_ENUM.ANTHROPIC,
+        model: 'claude-opus-4-1',
+      });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse(
+            {
+              error: {
+                type: 'invalid_request_error',
+                message: '`temperature` is deprecated for this model',
+              },
+            },
+            400,
+          ),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            content: [{ text: 'Retried Anthropic response' }],
+            model: 'claude-opus-4-1',
+          }),
+        ),
+      );
+
+      // Act
+      const result = await sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      const firstBody = JSON.parse(fetchSpy.calls.argsFor(0)[1].body);
+      const secondBody = JSON.parse(fetchSpy.calls.argsFor(1)[1].body);
+      expect(result.content).toBe('Retried Anthropic response');
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+      expect(firstBody.temperature).toBe(0.1);
+      expect(secondBody.temperature).toBeUndefined();
+    });
+
+    it('should not retry when a bad request only mentions temperature', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5' });
+      fetchSpy.and.returnValue(
+        Promise.resolve(
+          mockFetchResponse(
+            { error: { message: 'Temperature must be between 0 and 2' } },
+            400,
+          ),
+        ),
+      );
+
+      // Act
+      const request = sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      await expectAsync(request).toBeRejectedWithError(
+        'Cloud LLM API error (400): {"error":{"message":"Temperature must be between 0 and 2"}}',
+      );
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not retry an unrelated bad request', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5' });
+      fetchSpy.and.returnValue(
+        Promise.resolve(
+          mockFetchResponse(
+            { error: { param: 'messages', message: 'Messages are required' } },
+            400,
+          ),
+        ),
+      );
+
+      // Act
+      const request = sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      await expectAsync(request).toBeRejectedWithError(
+        'Cloud LLM API error (400): {"error":{"param":"messages","message":"Messages are required"}}',
+      );
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not retry a non-400 temperature rejection', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5' });
+      fetchSpy.and.returnValue(
+        Promise.resolve(
+          mockFetchResponse(
+            { error: { message: 'Temperature is not supported' } },
+            422,
+          ),
+        ),
+      );
+
+      // Act
+      const request = sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      await expectAsync(request).toBeRejectedWithError(
+        'Cloud LLM API error (422): {"error":{"message":"Temperature is not supported"}}',
+      );
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should propagate a failed retry without making a third request', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5' });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse({ error: { param: 'temperature' } }, 400),
+        ),
+        Promise.resolve({
+          ok: false,
+          status: 503,
+          text: () => Promise.resolve('Retry unavailable'),
+        } as unknown as Response),
+      );
+
+      // Act
+      const request = sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      await expectAsync(request).toBeRejectedWithError(
+        'Cloud LLM API error (503): Retry unavailable',
+      );
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
   // ── Error handling ─────────────────────────────────────────────────
 
   describe('error handling', () => {
