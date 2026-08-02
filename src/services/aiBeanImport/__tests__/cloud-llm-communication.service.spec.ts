@@ -38,6 +38,24 @@ describe('cloud-llm-communication.service', () => {
     } as unknown as Response;
   }
 
+  function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+  }
+
+  function requestBodyForCall(callIndex: number): Record<string, unknown> {
+    const serializedBody: unknown = fetchSpy.calls.argsFor(callIndex)[1].body;
+    if (typeof serializedBody !== 'string') {
+      throw new Error(`Fetch call ${callIndex} has no serialized body`);
+    }
+
+    const body: unknown = JSON.parse(serializedBody);
+    if (!isRecord(body)) {
+      throw new Error(`Fetch call ${callIndex} body is not an object`);
+    }
+
+    return body;
+  }
+
   beforeEach(() => {
     fetchSpy = spyOn(globalThis, 'fetch');
   });
@@ -378,8 +396,8 @@ describe('cloud-llm-communication.service', () => {
       const result = await sendCloudLLMPrompt(config, messages);
 
       // Assert
-      const firstBody = JSON.parse(fetchSpy.calls.argsFor(0)[1].body);
-      const secondBody = JSON.parse(fetchSpy.calls.argsFor(1)[1].body);
+      const firstBody = requestBodyForCall(0);
+      const secondBody = requestBodyForCall(1);
       expect(result.content).toBe('Retried response');
       expect(fetchSpy).toHaveBeenCalledTimes(2);
       expect(firstBody.temperature).toBe(0.1);
@@ -416,8 +434,8 @@ describe('cloud-llm-communication.service', () => {
       const result = await sendCloudLLMPrompt(config, messages);
 
       // Assert
-      const firstBody = JSON.parse(fetchSpy.calls.argsFor(0)[1].body);
-      const secondBody = JSON.parse(fetchSpy.calls.argsFor(1)[1].body);
+      const firstBody = requestBodyForCall(0);
+      const secondBody = requestBodyForCall(1);
       expect(result.content).toBe('Retried Anthropic response');
       expect(fetchSpy).toHaveBeenCalledTimes(2);
       expect(firstBody.temperature).toBe(0.1);
