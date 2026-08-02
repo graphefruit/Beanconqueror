@@ -685,6 +685,48 @@ describe('cloud-llm-communication.service', () => {
       expect(requestBodyForCall(2).temperature).toBe(0.1);
     });
 
+    it('should isolate learned state between different providers', async () => {
+      // Arrange
+      const openAIConfig = createConfig({ model: 'shared-provider-model' });
+      const customConfig = createConfig({
+        provider: AI_PROVIDER_ENUM.CUSTOM,
+        model: 'shared-provider-model',
+        baseUrl: 'https://api.openai.com/v1',
+      });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse({ error: { param: 'temperature' } }, 400),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Retry response' } }],
+            model: 'shared-provider-model',
+          }),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Other provider response' } }],
+            model: 'shared-provider-model',
+          }),
+        ),
+      );
+
+      // Act
+      await sendCloudLLMPrompt(openAIConfig, messages);
+      const result = await sendCloudLLMPrompt(customConfig, messages);
+
+      // Assert
+      expect(result.content).toBe('Other provider response');
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(fetchSpy.calls.argsFor(0)[0]).toBe(
+        'https://api.openai.com/v1/chat/completions',
+      );
+      expect(fetchSpy.calls.argsFor(2)[0]).toBe(
+        'https://api.openai.com/v1/chat/completions',
+      );
+      expect(requestBodyForCall(2).temperature).toBe(0.1);
+    });
+
     it('should isolate learned state between different models', async () => {
       // Arrange
       const firstConfig = createConfig({ model: 'gpt-5-model-a' });
