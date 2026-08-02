@@ -43,8 +43,7 @@ class CloudLLMHttpError extends Error {
 // ── Provider protocol config ─────────────────────────────────────────
 //
 // Each provider config defines URL, headers, request body shape, and
-// response parsing. The shared sendCloudLLMPrompt function handles
-// fetch, timeout, and error handling — protocol details stay here.
+// response parsing. Transport and fallback policies stay separate below.
 
 /** Protocol-level config that describes how to talk to a specific LLM API. */
 interface ProviderProtocol {
@@ -314,8 +313,8 @@ export function resetTemperatureRejectionCache(): void {
  * Send a prompt to a cloud LLM provider and return the response.
  *
  * Protocol details (URL, headers, body format, response parsing) are
- * handled by provider-specific config classes. This function handles
- * only fetch, timeout, and error handling.
+ * handled by provider-specific config classes. This function coordinates
+ * session learning and the optional parameter fallback.
  */
 export async function sendCloudLLMPrompt(
   config: CloudLLMConfig,

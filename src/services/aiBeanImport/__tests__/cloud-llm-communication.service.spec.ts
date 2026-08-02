@@ -30,12 +30,16 @@ describe('cloud-llm-communication.service', () => {
     };
   }
 
-  function mockFetchResponse(body: object, status = 200): Response {
+  function mockFetchResponse(
+    body: object,
+    status = 200,
+    responseText = JSON.stringify(body),
+  ): Response {
     return {
       ok: status >= 200 && status < 300,
       status,
       json: () => Promise.resolve(body),
-      text: () => Promise.resolve(JSON.stringify(body)),
+      text: () => Promise.resolve(responseText),
     } as unknown as Response;
   }
 
@@ -542,11 +546,7 @@ describe('cloud-llm-communication.service', () => {
         Promise.resolve(
           mockFetchResponse({ error: { param: 'temperature' } }, 400),
         ),
-        Promise.resolve({
-          ok: false,
-          status: 503,
-          text: () => Promise.resolve('Retry unavailable'),
-        } as unknown as Response),
+        Promise.resolve(mockFetchResponse({}, 503, 'Retry unavailable')),
       );
 
       // Act
@@ -766,11 +766,7 @@ describe('cloud-llm-communication.service', () => {
         Promise.resolve(
           mockFetchResponse({ error: { param: 'temperature' } }, 400),
         ),
-        Promise.resolve({
-          ok: false,
-          status: 503,
-          text: () => Promise.resolve('Retry unavailable'),
-        } as unknown as Response),
+        Promise.resolve(mockFetchResponse({}, 503, 'Retry unavailable')),
         Promise.resolve(
           mockFetchResponse({
             choices: [{ message: { content: 'Later response' } }],
