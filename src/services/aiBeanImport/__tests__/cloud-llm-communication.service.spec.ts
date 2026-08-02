@@ -488,6 +488,31 @@ describe('cloud-llm-communication.service', () => {
       expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
 
+    it('should not combine unrelated terms from separate error fields', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5' });
+      fetchSpy.and.returnValue(
+        Promise.resolve(
+          mockFetchResponse(
+            {
+              error: { message: 'The requested model is unsupported' },
+              request: { temperature: 0.1 },
+            },
+            400,
+          ),
+        ),
+      );
+
+      // Act
+      const request = sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      await expectAsync(request).toBeRejectedWithError(
+        'Cloud LLM API error (400): {"error":{"message":"The requested model is unsupported"},"request":{"temperature":0.1}}',
+      );
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
     it('should not retry a non-400 temperature rejection', async () => {
       // Arrange
       const config = createConfig({ model: 'gpt-5' });

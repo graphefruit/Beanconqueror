@@ -1,8 +1,12 @@
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 
 const DEFAULT_TEMPERATURE = 0.1;
-const TEMPERATURE_REJECTION_WORDING =
-  /(?:unsupported|not supported|deprecated|only\s+(?:the\s+)?default)/i;
+const TEMPERATURE_REJECTION_PATTERNS: readonly RegExp[] = [
+  /["'`]?\btemperature\b["'`]?(?:\s+(?:parameter|setting|value))?\s+(?:is\s+)?(?:unsupported|not supported|deprecated)\b/i,
+  /\b(?:unsupported|not supported|deprecated)\b(?:\s+(?:parameter|setting|value))?[\s:'"`-]*\btemperature\b["'`]?/i,
+  /\btemperature\b[\s\S]{0,160}\bonly\s+(?:the\s+)?default\b/i,
+  /\bonly\s+(?:the\s+)?default\b[\s\S]{0,160}\btemperature\b/i,
+];
 const temperatureRejectingIdentities = new Set<string>();
 
 type BuildOptions = {
@@ -222,6 +226,25 @@ function hasStructuredTemperatureParameter(body: string): boolean {
   }
 }
 
+function extractErrorMessage(body: string): string {
+  try {
+    const parsedBody: unknown = JSON.parse(body);
+    if (typeof parsedBody === 'string') {
+      return parsedBody;
+    }
+
+    const nestedMessage = dig(parsedBody, 'error', 'message');
+    if (typeof nestedMessage === 'string') {
+      return nestedMessage;
+    }
+
+    const topLevelMessage = dig(parsedBody, 'message');
+    return typeof topLevelMessage === 'string' ? topLevelMessage : '';
+  } catch {
+    return body;
+  }
+}
+
 function providerEndpointModelIdentity(
   provider: AI_PROVIDER_ENUM,
   endpoint: string,
@@ -239,9 +262,9 @@ function isTemperatureRejection(error: unknown): boolean {
     return true;
   }
 
-  return (
-    /temperature/i.test(error.body) &&
-    TEMPERATURE_REJECTION_WORDING.test(error.body)
+  const errorMessage = extractErrorMessage(error.body);
+  return TEMPERATURE_REJECTION_PATTERNS.some((pattern) =>
+    pattern.test(errorMessage),
   );
 }
 
