@@ -9,9 +9,9 @@ const TEMPERATURE_REJECTION_PATTERNS: readonly RegExp[] = [
 ];
 const temperatureRejectingIdentities = new Set<string>();
 
-type BuildOptions = {
+interface BuildOptions {
   readonly includeTemperature: boolean;
-};
+}
 
 export interface CloudLLMConfig {
   provider: AI_PROVIDER_ENUM;
