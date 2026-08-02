@@ -2,6 +2,7 @@ import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
 import {
   CloudLLMConfig,
   CloudLLMMessage,
+  resetTemperatureRejectionCache,
   sendCloudLLMPrompt,
 } from '../cloud-llm-communication.service';
 
@@ -57,6 +58,7 @@ describe('cloud-llm-communication.service', () => {
   }
 
   beforeEach(() => {
+    resetTemperatureRejectionCache();
     fetchSpy = spyOn(globalThis, 'fetch');
   });
 
@@ -533,6 +535,203 @@ describe('cloud-llm-communication.service', () => {
     });
   });
 
+  // ── Session learning ───────────────────────────────────────────────
+
+  describe('temperature rejection learning', () => {
+    it('should omit temperature on a later call for the same identity', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5-session-learning' });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse({ error: { param: 'temperature' } }, 400),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Retry response' } }],
+            model: 'gpt-5-session-learning',
+          }),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Learned response' } }],
+            model: 'gpt-5-session-learning',
+          }),
+        ),
+      );
+
+      // Act
+      await sendCloudLLMPrompt(config, messages);
+      const result = await sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      expect(result.content).toBe('Learned response');
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(requestBodyForCall(0).temperature).toBe(0.1);
+      expect(requestBodyForCall(1).temperature).toBeUndefined();
+      expect(requestBodyForCall(2).temperature).toBeUndefined();
+    });
+
+    it('should share learned state across equivalent custom endpoint URLs', async () => {
+      // Arrange
+      const firstConfig = createConfig({
+        provider: AI_PROVIDER_ENUM.CUSTOM,
+        model: 'custom-session-model',
+        baseUrl: 'https://custom.example.com/v1/',
+      });
+      const equivalentConfig = createConfig({
+        provider: AI_PROVIDER_ENUM.CUSTOM,
+        model: 'custom-session-model',
+        baseUrl: 'https://custom.example.com/v1',
+      });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse({ error: { param: 'temperature' } }, 400),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Retry response' } }],
+            model: 'custom-session-model',
+          }),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Equivalent response' } }],
+            model: 'custom-session-model',
+          }),
+        ),
+      );
+
+      // Act
+      await sendCloudLLMPrompt(firstConfig, messages);
+      const result = await sendCloudLLMPrompt(equivalentConfig, messages);
+
+      // Assert
+      expect(result.content).toBe('Equivalent response');
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(fetchSpy.calls.argsFor(0)[0]).toBe(
+        'https://custom.example.com/v1/chat/completions',
+      );
+      expect(fetchSpy.calls.argsFor(2)[0]).toBe(
+        'https://custom.example.com/v1/chat/completions',
+      );
+      expect(requestBodyForCall(2).temperature).toBeUndefined();
+    });
+
+    it('should isolate learned state between different custom endpoints', async () => {
+      // Arrange
+      const firstConfig = createConfig({
+        provider: AI_PROVIDER_ENUM.CUSTOM,
+        model: 'shared-model-name',
+        baseUrl: 'https://first.example.com/v1',
+      });
+      const otherEndpointConfig = createConfig({
+        provider: AI_PROVIDER_ENUM.CUSTOM,
+        model: 'shared-model-name',
+        baseUrl: 'https://second.example.com/v1',
+      });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse({ error: { param: 'temperature' } }, 400),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Retry response' } }],
+            model: 'shared-model-name',
+          }),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Other endpoint response' } }],
+            model: 'shared-model-name',
+          }),
+        ),
+      );
+
+      // Act
+      await sendCloudLLMPrompt(firstConfig, messages);
+      const result = await sendCloudLLMPrompt(otherEndpointConfig, messages);
+
+      // Assert
+      expect(result.content).toBe('Other endpoint response');
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(fetchSpy.calls.argsFor(2)[0]).toBe(
+        'https://second.example.com/v1/chat/completions',
+      );
+      expect(requestBodyForCall(2).temperature).toBe(0.1);
+    });
+
+    it('should isolate learned state between different models', async () => {
+      // Arrange
+      const firstConfig = createConfig({ model: 'gpt-5-model-a' });
+      const otherModelConfig = createConfig({ model: 'gpt-5-model-b' });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse({ error: { param: 'temperature' } }, 400),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Retry response' } }],
+            model: 'gpt-5-model-a',
+          }),
+        ),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Other model response' } }],
+            model: 'gpt-5-model-b',
+          }),
+        ),
+      );
+
+      // Act
+      await sendCloudLLMPrompt(firstConfig, messages);
+      const result = await sendCloudLLMPrompt(otherModelConfig, messages);
+
+      // Assert
+      expect(result.content).toBe('Other model response');
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(requestBodyForCall(2).temperature).toBe(0.1);
+    });
+
+    it('should retain learned state when the parameter-free retry fails', async () => {
+      // Arrange
+      const config = createConfig({ model: 'gpt-5-failed-retry-learning' });
+      fetchSpy.and.returnValues(
+        Promise.resolve(
+          mockFetchResponse({ error: { param: 'temperature' } }, 400),
+        ),
+        Promise.resolve({
+          ok: false,
+          status: 503,
+          text: () => Promise.resolve('Retry unavailable'),
+        } as unknown as Response),
+        Promise.resolve(
+          mockFetchResponse({
+            choices: [{ message: { content: 'Later response' } }],
+            model: 'gpt-5-failed-retry-learning',
+          }),
+        ),
+      );
+
+      // Act
+      const firstError: unknown = await sendCloudLLMPrompt(
+        config,
+        messages,
+      ).catch((error: unknown) => error);
+      const result = await sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      expect(firstError).toEqual(jasmine.any(Error));
+      expect(firstError).toEqual(
+        jasmine.objectContaining({
+          message: 'Cloud LLM API error (503): Retry unavailable',
+        }),
+      );
+      expect(result.content).toBe('Later response');
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+      expect(requestBodyForCall(2).temperature).toBeUndefined();
+    });
+  });
+
   // ── Error handling ─────────────────────────────────────────────────
 
   describe('error handling', () => {
@@ -583,10 +782,14 @@ describe('cloud-llm-communication.service', () => {
       );
       fetchSpy.and.returnValue(Promise.reject(abortError));
 
-      // Act & Assert
-      await expectAsync(
-        sendCloudLLMPrompt(config, messages),
-      ).toBeRejectedWithError('Cloud LLM request timed out after 30 seconds');
+      // Act
+      const request = sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      await expectAsync(request).toBeRejectedWithError(
+        'Cloud LLM request timed out after 30 seconds',
+      );
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should re-throw network errors as-is', async () => {
@@ -596,10 +799,12 @@ describe('cloud-llm-communication.service', () => {
         Promise.reject(new TypeError('Failed to fetch')),
       );
 
-      // Act & Assert
-      await expectAsync(sendCloudLLMPrompt(config, messages)).toBeRejectedWith(
-        jasmine.any(TypeError),
-      );
+      // Act
+      const request = sendCloudLLMPrompt(config, messages);
+
+      // Assert
+      await expectAsync(request).toBeRejectedWith(jasmine.any(TypeError));
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

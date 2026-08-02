@@ -3,6 +3,7 @@ import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 const DEFAULT_TEMPERATURE = 0.1;
 const TEMPERATURE_REJECTION_WORDING =
   /(?:unsupported|not supported|deprecated|only\s+(?:the\s+)?default)/i;
+const temperatureRejectingIdentities = new Set<string>();
 
 type BuildOptions = {
   readonly includeTemperature: boolean;
@@ -221,6 +222,14 @@ function hasStructuredTemperatureParameter(body: string): boolean {
   }
 }
 
+function providerEndpointModelIdentity(
+  provider: AI_PROVIDER_ENUM,
+  endpoint: string,
+  model: string,
+): string {
+  return JSON.stringify([provider, endpoint, model]);
+}
+
 function isTemperatureRejection(error: unknown): boolean {
   if (!(error instanceof CloudLLMHttpError) || error.status !== 400) {
     return false;
@@ -274,6 +283,10 @@ async function sendOnce(
 
 // ── Public API ───────────────────────────────────────────────────────
 
+export function resetTemperatureRejectionCache(): void {
+  temperatureRejectingIdentities.clear();
+}
+
 /**
  * Send a prompt to a cloud LLM provider and return the response.
  *
@@ -286,16 +299,23 @@ export async function sendCloudLLMPrompt(
   messages: CloudLLMMessage[],
 ): Promise<CloudLLMResponse> {
   const protocol = createProtocol(config);
+  const identity = providerEndpointModelIdentity(
+    config.provider,
+    protocol.url,
+    config.model,
+  );
+  const includeTemperature = !temperatureRejectingIdentities.has(identity);
 
   try {
     return await sendOnce(protocol, config.model, messages, {
-      includeTemperature: true,
+      includeTemperature,
     });
   } catch (error: unknown) {
-    if (!isTemperatureRejection(error)) {
+    if (!includeTemperature || !isTemperatureRejection(error)) {
       throw error;
     }
 
+    temperatureRejectingIdentities.add(identity);
     return sendOnce(protocol, config.model, messages, {
       includeTemperature: false,
     });
