@@ -257,6 +257,44 @@ describe('CloudFieldExtractionService', () => {
         'Token usage: 100 prompt, 50 completion',
       );
     });
+
+    it('logs when a rejected temperature triggers a retry without it', async () => {
+      // Arrange
+      const config = {
+        ...mockConfig,
+        model: 'temperature-log-test-model',
+      };
+      const responseContent = JSON.stringify({
+        name: 'Test',
+        roaster: 'Test',
+        bean_mix: 'SINGLE_ORIGIN',
+        origins: [],
+      });
+      fetchSpy.and.returnValues(
+        Promise.resolve({
+          ok: false,
+          status: 400,
+          text: () => Promise.resolve('{"error":{"param":"temperature"}}'),
+        } as unknown as Response),
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              choices: [{ message: { content: responseContent } }],
+              model: config.model,
+            }),
+        } as unknown as Response),
+      );
+
+      // Act
+      await service.extractAllFields('sample OCR text', config, mockLogger);
+
+      // Assert
+      expect(mockLogger.log).toHaveBeenCalledWith(
+        '[Cloud LLM] Temperature rejected; retrying without temperature',
+      );
+    });
   });
 
   // ── NOT_FOUND handling ─────────────────────────────────────────────

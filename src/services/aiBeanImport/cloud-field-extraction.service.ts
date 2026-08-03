@@ -80,7 +80,7 @@ export class CloudFieldExtractionService {
         { role: 'system', content: CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS },
         { role: 'user', content: userPrompt },
       ],
-      this.createDiagnosticHandler(),
+      this.createDiagnosticHandler(log),
     );
 
     log.log('[Cloud LLM] response: ' + response.content);
@@ -105,18 +105,24 @@ export class CloudFieldExtractionService {
     return constructBeanFromExtractedData(topLevel, origin);
   }
 
-  private createDiagnosticHandler(): CloudLLMDiagnosticHandler | undefined {
+  private createDiagnosticHandler(logger: {
+    log(msg: string): void;
+  }): CloudLLMDiagnosticHandler {
     const uiAnalytics = this.uiAnalytics;
-    if (!uiAnalytics) {
-      return undefined;
-    }
 
-    return (event) =>
-      uiAnalytics.trackEvent(
+    return (event) => {
+      if (event.type === 'temperature_fallback_started') {
+        logger.log(
+          '[Cloud LLM] Temperature rejected; retrying without temperature',
+        );
+      }
+
+      uiAnalytics?.trackEvent(
         this.categoryForDiagnostic(event),
         event.provider,
         event.model,
       );
+    };
   }
 
   private categoryForDiagnostic(event: CloudLLMDiagnosticEvent): string {
