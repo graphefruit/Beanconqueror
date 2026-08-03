@@ -25,6 +25,22 @@ export interface CloudLLMMessage {
   content: string;
 }
 
+export type CloudLLMDiagnosticEvent =
+  | {
+      readonly type: 'request_started';
+      readonly provider: AI_PROVIDER_ENUM;
+      readonly model: string;
+    }
+  | {
+      readonly type: 'temperature_fallback_started';
+      readonly provider: AI_PROVIDER_ENUM;
+      readonly model: string;
+    };
+
+export type CloudLLMDiagnosticHandler = (
+  event: CloudLLMDiagnosticEvent,
+) => void;
+
 export interface CloudLLMResponse {
   content: string;
   model: string;
@@ -319,6 +335,7 @@ export function resetTemperatureRejectionCache(): void {
 export async function sendCloudLLMPrompt(
   config: CloudLLMConfig,
   messages: CloudLLMMessage[],
+  onDiagnosticEvent?: CloudLLMDiagnosticHandler,
 ): Promise<CloudLLMResponse> {
   const protocol = createProtocol(config);
   const identity = providerEndpointModelIdentity(
@@ -327,6 +344,12 @@ export async function sendCloudLLMPrompt(
     config.model,
   );
   const includeTemperature = !temperatureRejectingIdentities.has(identity);
+
+  onDiagnosticEvent?.({
+    type: 'request_started',
+    provider: config.provider,
+    model: config.model,
+  });
 
   try {
     return await sendOnce(protocol, config.model, messages, {
@@ -338,6 +361,11 @@ export async function sendCloudLLMPrompt(
     }
 
     temperatureRejectingIdentities.add(identity);
+    onDiagnosticEvent?.({
+      type: 'temperature_fallback_started',
+      provider: config.provider,
+      model: config.model,
+    });
     return sendOnce(protocol, config.model, messages, {
       includeTemperature: false,
     });
