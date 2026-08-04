@@ -1038,7 +1038,8 @@
             "METICULOUS": "Meticulous",
             "SANREMO_YOU": "Sanremo YOU",
             "GAGGIUINO": "Gaggiuino",
-            "MOVE2": "Move 2"
+            "MOVE2": "Move 2",
+            "GAGGIMATE": "GaggiMate"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1113,6 +1114,14 @@
             "REMOTE_PREINFUSION_ENABLE": "Enable Preinfusion",
             "PREINFUSION_PAUSE_START": "Preinfusion Pause Start (s.s)",
             "PREINFUSION_PAUSE_TIME": "Preinfusion Pause Time (s.s)"
+        },
+        "TYPE_GAGGIMATE": {
+          "TITLE": "GaggiMate Machine",
+          "LATEST_SHOTS": "Latest Shots",
+          "LATEST_SHOTS_DESCRIPTION": "Select how many latest shots to load from GaggiMate to the importer",
+          "ERROR_RECENT_SHOT_LIST_UNAVAILABLE": "Recent shots list unavailable, check the firmware version of your GaggiMate",
+          "ERROR_RECENT_SHOT_LIST_EMPTY": "No shots available",
+          "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED" : "Connection could not be established to GaggiMate, please check your network connection, the url in the \"device connection\" settings, and GaggiMate firmware version"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1753,5 +1762,7 @@
             ]
         }
     },
+  "PREPARATION_TYPE_GAGGIMATE": "GaggiMate",
+  "IMPORT_SHOT_FROM_GAGGIMATE": "Import a shot from GaggiMate",
   "BREW_GRAPH_TIME_SLIDER": "Time slider"
 }

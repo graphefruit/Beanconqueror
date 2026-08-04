@@ -26,6 +26,10 @@
             <ion-icon name="beanconqueror-profitec-logo" size='large'></ion-icon>
             <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
           }
+          @case (PreparationDeviceType.GAGGIMATE) {
+            <ion-icon name="beanconqueror-gaggimate-logo" size='large'></ion-icon>
+            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+          }
         }
         </ion-chip>
       } @else {
@@ -50,6 +54,10 @@
             @case (PreparationDeviceType.MOVE2) {
               <ion-icon name="beanconqueror-profitec-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
+            }
+            @case (PreparationDeviceType.GAGGIMATE) {
+              <ion-icon name="beanconqueror-gaggimate-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
             }
           }
         </ion-chip>

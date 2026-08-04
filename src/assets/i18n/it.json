@@ -120,6 +120,10 @@
     "CANCEL": "Annulla",
     "GENERATE": "Genera",
     "SAVE": "Salva",
+    "CUT_FLOW_PROFILE": "Taglia profilo flusso",
+    "CUT_FLOW_PROFILE_NEW_WEIGHT": "Anteprima nuovo peso",
+    "CUT_FLOW_PROFILE_NEW_DURATION": "Nuova durata",
+    "CUT_FLOW_PROFILE_LEFT_RIGHT": "Taglia da sinistra e destra (Inizio e Fine)",
     "ADD_SOMETHING": "Aggiungi",
     "CONTACT": "Contatti",
     "NAME": "Nome",
@@ -1034,7 +1038,8 @@
             "METICULOUS": "Meticulous",
             "SANREMO_YOU": "Sanremo YOU",
             "GAGGIUINO": "Gaggiuino",
-            "MOVE2": "Move 2"
+            "MOVE2": "Move 2",
+            "GAGGIMATE": "GaggiMate"
         },
         "URL": "URL",
         "CHOOSE_DEVICE": "Scegli dispositivo",
@@ -1109,6 +1114,14 @@
             "REMOTE_PREINFUSION_ENABLE": "Abilita preinfusione",
             "PREINFUSION_PAUSE_START": "Inizio della pausa in preinfusione (s)",
             "PREINFUSION_PAUSE_TIME": "Durata della pausa in preinfusione (s)"
+        },
+        "TYPE_GAGGIMATE": {
+            "TITLE": "GaggiMate",
+            "LATEST_SHOTS": "Ultime estrazioni",
+            "LATEST_SHOTS_DESCRIPTION": "Seleziona quante ultime estrazioni caricare da GaggiMate nell'importatore",
+            "ERROR_RECENT_SHOT_LIST_UNAVAILABLE": "Lista ultime estrazioni non disponibile, controlla la versione firmware di GaggiMate",
+            "ERROR_RECENT_SHOT_LIST_EMPTY": "Nessuna estrazione disponibile",
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED" : "Impossibile stabilire una connessione con GaggiMate, controlla la tua connessione alla rete, l'indirizzo url in \"connessione dispositivi\" e la versione del firmware di GaggiMate"
         }
     },
     "DEVICE_CONNECTION": "Connessione dispositivi",
@@ -1375,6 +1388,7 @@
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Attivando questa opzione, il grafico avrà un secondo di ritardo",
     "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Salva i log della macchina al salvataggio della preparazione",
     "IMPORT_SHOT_FROM_METICULOUS": "Importa un'estrazione",
+    "OR": "o",
     "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Tutte le voci dell'excel, sono state importate, buona preparazione!",
     "IMPORT_UNSUCCESSFULLY": "Importazione fallita",
     "BEAN_LIST": "Lista caffè",
@@ -1473,6 +1487,8 @@
     "SAVING_BREW_COUNTDOWN": "Salvataggio della preparazione tra {{time}}",
     "PREPARATION_TYPE_GAGGIUINO": "Gaggiuino",
     "IMPORT_SHOT_FROM_GAGGIUINO": "Import a shot from Gaggiuino",
+    "PREPARATION_TYPE_GAGGIMATE": "GaggiMate",
+    "IMPORT_SHOT_FROM_GAGGIMATE": "Importa un'estrazione da GaggiMate",
     "NAV_BARISTAMODE_SECTION": "Baristamode",
     "PRESSURE_THRESHOLD_STOP_ACTIVE": "Stop timer with predefined pressure",
     "PRESSURE_THRESHOLD_STOP_ACTIVE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will only be stopped when a minimum of 10 seconds has passed, and minimum one time 1 bar of pressure has been reached.After those conditions are met, the minimum pressure threshold rate set here will be checked and if reached the brew will be stopped. ATTENTION: This won't take effect if you have a smart scale connected.",
@@ -1747,5 +1763,6 @@
                 "Correzioni minori"
             ]
         }
-    }
+    },
+    "BREW_GRAPH_TIME_SLIDER": "Cursore tempo"
 }
