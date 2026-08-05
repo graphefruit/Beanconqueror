@@ -7,7 +7,9 @@ declare var ble: any;
 /**
  * INKBIRD INT-11I-B Bluetooth food thermometer.
  *
- * Protocol verified by nRF Connect capture (2026-06-16).
+ * Protocol verified by nRF Connect capture (2026-06-16), and the full
+ * integration tested end-to-end on physical hardware on Android:
+ * device scan, connect, and live temperature in the brew graph.
  *
  * BLE topology:
  *   Service:               0000ff00-0000-1000-8000-00805f9b34fb

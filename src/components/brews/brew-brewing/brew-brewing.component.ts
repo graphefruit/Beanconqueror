@@ -916,8 +916,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // Runs only when predictiveMode is on and there's brewbyweight data
       // (i.e. the webhook's calculateBrewByWeight path ran this shot).
       try {
-        const webhookCfg =
-          this.uiSettingsStorage.getSettings().brew_by_weight_webhook;
+        const webhookCfg = this.settings.brew_by_weight_webhook;
         if (
           webhookCfg?.active &&
           webhookCfg.predictiveMode &&
@@ -933,9 +932,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               `[Webhook BBW] Auto-adjusting lag from ${currentLag}s to ${newLag}s`,
             );
             webhookCfg.learnedLagTime = newLag;
-            await this.uiSettingsStorage.saveSettings(
-              this.uiSettingsStorage.getSettings(),
-            );
+            await this.uiSettingsStorage.saveSettings(this.settings);
           }
         }
       } catch (ex) {}

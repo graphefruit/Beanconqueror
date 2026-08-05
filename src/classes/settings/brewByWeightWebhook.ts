@@ -1,3 +1,4 @@
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { BrewByWeightWebhookConfig } from '../../interfaces/settings/iSettings';
 
 /**
@@ -14,13 +15,13 @@ export function buildWebhookHeaders(
   const headers: Record<string, string> = {};
 
   switch (cfg.authType) {
-    case 'bearer':
+    case WEBHOOK_AUTH_TYPE_ENUM.BEARER:
       if (cfg.bearerToken) {
         headers['Authorization'] = `Bearer ${cfg.bearerToken}`;
       }
       break;
 
-    case 'basic':
+    case WEBHOOK_AUTH_TYPE_ENUM.BASIC:
       if (cfg.basicUsername || cfg.basicPassword) {
         // btoa is available in the Capacitor WebView. For non-ASCII passwords
         // this may need unescape(encodeURIComponent(...)) wrapping in future.
@@ -29,13 +30,13 @@ export function buildWebhookHeaders(
       }
       break;
 
-    case 'header':
+    case WEBHOOK_AUTH_TYPE_ENUM.HEADER:
       if (cfg.customHeaderName && cfg.customHeaderValue) {
         headers[cfg.customHeaderName] = cfg.customHeaderValue;
       }
       break;
 
-    case 'none':
+    case WEBHOOK_AUTH_TYPE_ENUM.NONE:
     default:
       break;
   }

@@ -303,15 +303,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
 
-    // Pre-fill brew_beverage_quantity from webhook default target weight
+    // Pre-fill brew_beverage_quantity from the webhook default target weight
     // when the brew modal opens, so the user sees it before starting.
-    // Only applies when the field is not already set (new brew).
+    //
+    // This deliberately also overwrites a value carried over from a repeated
+    // brew. That carried-over value is the previous shot's *actual yield*,
+    // not a target, so the configured default is the more meaningful starting
+    // point whenever the webhook is active.
+    //
+    // Per-brew override still works: timerStarted() reads whatever is in the
+    // field at brew start, so anything the user types after the modal opens
+    // takes precedence over this default.
     const cfg = this.settings?.brew_by_weight_webhook;
-    if (
-      cfg?.active &&
-      cfg.defaultTargetWeight > 0 &&
-      this.data?.brew_beverage_quantity === 0
-    ) {
+    if (this.data && cfg?.active && cfg.defaultTargetWeight > 0) {
       this.data.brew_beverage_quantity = cfg.defaultTargetWeight;
     }
 
@@ -3514,12 +3518,14 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         // pushing brewbyweight frames for post-brew lag learning. Only when
         // no prep device connected (avoids duplicate frames).
         // Direct mode: simple actual >= target.
+        // Cheapest and most-selective check first: the large majority of
+        // users never enable this, so bail out before doing any further work.
         if (
-          this.brewComponent.timer.isTimerRunning() &&
           this.settings.brew_by_weight_webhook?.active &&
-          this.settings.brew_by_weight_webhook?.url?.trim() &&
+          this.webhookFired === false &&
           this.webhookTargetWeight > 0 &&
-          this.webhookFired === false
+          this.settings.brew_by_weight_webhook?.url?.trim() &&
+          this.brewComponent.timer.isTimerRunning()
         ) {
           const cfg = this.settings.brew_by_weight_webhook;
           let webhookThresholdHit: boolean;

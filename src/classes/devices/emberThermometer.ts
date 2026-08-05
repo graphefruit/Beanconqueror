@@ -32,11 +32,10 @@ export class EmberThermometer extends TemperatureDevice {
     this.connect();
   }
 
-  // TODO: unverified against a real Ember Cup. Both branches below are
-  // best-guesses - once you have a real scanDevice object (log it from
-  // scanTemperatureDevices()), confirm device.name actually contains
-  // "ember" and/or that device.services / advertising.kCBAdvDataServiceUUIDs
-  // is populated pre-connection on Android and iOS, and adjust accordingly.
+  // Verified on Android against a real Ember Cup 2: device.name contains
+  // "ember" pre-connection, so the name check below is the primary match.
+  // The service-UUID branch is a fallback for devices that advertise
+  // services but report no name.
   public static test(device: any): boolean {
     if (!device) {
       return false;

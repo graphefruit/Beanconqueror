@@ -85,6 +85,7 @@ import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
@@ -218,6 +219,7 @@ export class SettingsPage {
   public settings_segment = 'general';
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
+  public webhookAuthTypeEnum = WEBHOOK_AUTH_TYPE_ENUM;
 
   public aiProviderEnum = AI_PROVIDER_ENUM;
 
@@ -1834,6 +1836,22 @@ export class SettingsPage {
         true,
       );
     }
+  }
+
+  /**
+   * Users routinely omit the scheme when typing a LAN address like
+   * "192.168.1.50/relay/0?turn=off". CapacitorHttp requires an absolute URL,
+   * so normalise on blur. http:// is the correct default here because this
+   * feature targets local smart plugs and relays, which rarely serve https.
+   */
+  public normalizeWebhookUrl(): void {
+    const cfg = this.settings.brew_by_weight_webhook;
+    const url = cfg?.url?.trim();
+    if (!url || url.includes('://')) {
+      return;
+    }
+    cfg.url = `http://${url}`;
+    this.saveSettings();
   }
 
   public isWebhookUrlHttp(): boolean {

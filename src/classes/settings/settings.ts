@@ -12,6 +12,7 @@ import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
@@ -616,7 +617,7 @@ export class Settings implements ISettings {
     this.brew_by_weight_webhook = {
       active: false,
       url: '',
-      authType: 'none',
+      authType: WEBHOOK_AUTH_TYPE_ENUM.NONE,
       bearerToken: '',
       basicUsername: '',
       basicPassword: '',
@@ -740,7 +741,7 @@ export class Settings implements ISettings {
       this.brew_by_weight_webhook = {
         active: false,
         url: '',
-        authType: 'none',
+        authType: WEBHOOK_AUTH_TYPE_ENUM.NONE,
         bearerToken: '',
         basicUsername: '',
         basicPassword: '',

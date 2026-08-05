@@ -9,6 +9,7 @@ import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
 import { IBeanPageSort } from '../bean/iBeanPageSort';
 import { IBrewGraphs } from '../brew/iBrewGraphs';
@@ -20,12 +21,10 @@ import { IBrewParameter } from '../parameter/iBrewParameter';
 import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
 import { IGraphColors } from './iGraphColors';
 
-export type WebhookAuthType = 'none' | 'bearer' | 'basic' | 'header';
-
 export interface BrewByWeightWebhookConfig {
   active: boolean;
   url: string;
-  authType: WebhookAuthType;
+  authType: WEBHOOK_AUTH_TYPE_ENUM;
   bearerToken: string;
   basicUsername: string;
   basicPassword: string;
