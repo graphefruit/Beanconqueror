@@ -2213,10 +2213,17 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
     // To continuously poll the updated pressure from the class property:
     this.stopFetchingDataFromMove2();
+    let grabbedFirstTimeTemperature = undefined;
     this.ngZone.runOutsideAngular(() => {
       this.move2FetchingInterval = setInterval(() => {
         const pressure = prepDeviceCall.getPressure();
-        let temperature = prepDeviceCall.getTemperature();
+
+        let temperature = 0;
+        if (grabbedFirstTimeTemperature === undefined) {
+          grabbedFirstTimeTemperature = prepDeviceCall.getTemperature();
+        }
+        //The temperature would drop, because the temperature is taken out of the boiler, so we sample the first grabbed temperature.
+        temperature = grabbedFirstTimeTemperature;
 
         this.__setPressureFlow({ actual: pressure, old: pressure });
         if (temperature !== undefined) {
