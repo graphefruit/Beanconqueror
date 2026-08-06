@@ -755,6 +755,13 @@
           <ion-icon name="list-outline"></ion-icon>
         </ion-button>
       </ion-item>
+      <ion-item>
+        <ion-textarea label-placement="stacked" label='{{"CLOUD_AI_PROMPT_APPENDIX" | translate}}'
+          placeholder='{{"CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER" | translate}}'
+          (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_prompt_appendix"
+          name="cloud_ai_prompt_appendix" [autoGrow]="true" rows="4">
+        </ion-textarea>
+      </ion-item>
       }
       @if (settings.ai_provider === aiProviderEnum.CUSTOM) {
       <ion-item>

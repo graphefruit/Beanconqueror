@@ -235,6 +235,7 @@ export interface ISettings {
   ai_provider: AI_PROVIDER_ENUM;
   cloud_ai_api_key: string;
   cloud_ai_model: string;
+  cloud_ai_prompt_appendix: string;
   cloud_ai_base_url: string;
 
   show_backup_issues: boolean;

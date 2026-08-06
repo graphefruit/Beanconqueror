@@ -257,6 +257,7 @@ export class Settings implements ISettings {
   public ai_provider: AI_PROVIDER_ENUM;
   public cloud_ai_api_key: string;
   public cloud_ai_model: string;
+  public cloud_ai_prompt_appendix: string;
   public cloud_ai_base_url: string;
 
   public show_backup_issues: boolean;
@@ -611,6 +612,7 @@ export class Settings implements ISettings {
     this.ai_provider = AI_PROVIDER_ENUM.NO_PROVIDER;
     this.cloud_ai_api_key = '';
     this.cloud_ai_model = '';
+    this.cloud_ai_prompt_appendix = '';
     this.cloud_ai_base_url = '';
 
     this.show_backup_issues = true;
@@ -708,6 +710,11 @@ export class Settings implements ISettings {
       this.cloud_ai_model = '';
     } else {
       this.cloud_ai_model = settingsObj.cloud_ai_model;
+    }
+    if (settingsObj.cloud_ai_prompt_appendix === undefined) {
+      this.cloud_ai_prompt_appendix = '';
+    } else {
+      this.cloud_ai_prompt_appendix = settingsObj.cloud_ai_prompt_appendix;
     }
     if (settingsObj.cloud_ai_base_url === undefined) {
       this.cloud_ai_base_url = '';
