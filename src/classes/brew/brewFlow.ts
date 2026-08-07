@@ -8,6 +8,8 @@ export class BrewFlow {
   public temperatureFlow: Array<IBrewTemperatureFlow>;
   public waterDispensed: Array<IBrewWaterDispensedFlow>;
   public waterDispensedFlowSecond: Array<IBrewWaterDispensedFlow>;
+  public basketTemperatureFlow: Array<IBrewTemperatureFlow>;
+  public targetTemperatureFlow: Array<IBrewTemperatureFlow>;
   public brewbyweight: Array<IBrewByWeight>;
   public customMetrics: { [key: string]: Array<IBrewCustomMetric> };
   public customAxes: Array<IBrewCustomAxis>;
@@ -22,6 +24,8 @@ export class BrewFlow {
     this.temperatureFlow = [];
     this.waterDispensed = [];
     this.waterDispensedFlowSecond = [];
+    this.basketTemperatureFlow = [];
+    this.targetTemperatureFlow = [];
     this.brewbyweight = [];
     this.customMetrics = {};
     this.customAxes = [];
