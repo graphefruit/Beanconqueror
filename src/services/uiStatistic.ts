@@ -53,7 +53,7 @@ export class UIStatistic {
   }
 
   private getBeansInRange(): Array<Bean> {
-    const field = this.uiSettings.getSettings().statistic_bean_date_field;
+    const field = this.uiSettings.getSettings().statistics.bean_date_field;
     return filterBeansByRange(
       this.uiBeanStorage.getAllEntries(),
       this.activeDateRange,

@@ -223,7 +223,7 @@ export class StatisticPage implements OnInit {
 
   private __getBeansInRange(): Array<Bean> {
     const field =
-      this.uiSettingsStorage.getSettings().statistic_bean_date_field;
+      this.uiSettingsStorage.getSettings().statistics.bean_date_field;
     return filterBeansByRange(
       this.uiBeanStorage.getAllEntries(),
       this.dateRange,
