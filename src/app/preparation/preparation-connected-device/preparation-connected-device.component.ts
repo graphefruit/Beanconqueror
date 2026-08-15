@@ -177,8 +177,7 @@ export class PreparationConnectedDeviceComponent {
       this.data.connectedPreparationDevice.type ===
       PreparationDeviceType.GAGGIMATE
     ) {
-      // this.data.connectedPreparationDevice.customParams =
-      //   new GaggimateParams();
+      this.data.connectedPreparationDevice.customParams = new GaggimateParams();
     } else if (
       this.data.connectedPreparationDevice.type ===
         PreparationDeviceType.NONE ||
@@ -297,28 +296,6 @@ export class PreparationConnectedDeviceComponent {
     }, 150);
   }
 
-  /*  private normalizeUrl() {
-    let url = this.data?.connectedPreparationDevice?.url;
-
-    // if there's no url do nothing
-    if (url) {
-      url = url.trim();
-
-      // If the protocol is missing, default to http://
-      if (!/^https?:\/\//i.test(url)) {
-        url = `http://${url}`;
-      }
-
-      if (/^https?:\/\/!*$/i.test(url)) {
-        // If the address is incomplete (only protocol) set to empty string
-        this.data.connectedPreparationDevice.url = '';
-      } else if (/^https?:\/\/.+/i.test(url)) {
-        // If the url starts with protocol and has a path, strip trailing slashes if any
-        this.data.connectedPreparationDevice.url = url.replace(/\/+$/, '');
-      }
-    }
-  }*/
-
   private normalizeUrl(inputUrl: string) {
     // const inputUrl = this.data?.connectedPreparationDevice?.url;
 
@@ -333,18 +310,15 @@ export class PreparationConnectedDeviceComponent {
 
     // If missing protocol, default to http://
     if (!HAS_PROTOCOL.test(url)) {
-      console.log('miss prot');
       url = `http://${url}`;
     }
 
     // If incomplete (only protocol), clear it
     if (IS_INCOMPLETE.test(url)) {
-      console.log('inc prot');
       return '';
     }
 
     // Strip trailing slashes from valid URLs
-    console.log('url ' + url.replace(/\/+$/, ''));
     return url.replace(/\/+$/, '');
   }
 
