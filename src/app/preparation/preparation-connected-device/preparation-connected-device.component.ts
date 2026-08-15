@@ -204,7 +204,9 @@ export class PreparationConnectedDeviceComponent {
           if (this.data.connectedPreparationDevice.url === '') {
             this.data.connectedPreparationDevice.url = 'http://xenia.local';
           } else {
-            this.normalizeUrl();
+            this.data.connectedPreparationDevice.url = this.normalizeUrl(
+              this.data.connectedPreparationDevice.url,
+            );
           }
           if (
             this.data.connectedPreparationDevice.customParams.apiVersion ===
@@ -225,19 +227,25 @@ export class PreparationConnectedDeviceComponent {
           this.data.connectedPreparationDevice.type ===
           PreparationDeviceType.METICULOUS
         ) {
-          this.normalizeUrl();
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
         }
         if (
           this.data.connectedPreparationDevice.type ===
           PreparationDeviceType.SANREMO_YOU
         ) {
-          this.normalizeUrl();
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
         }
         if (
           this.data.connectedPreparationDevice.type ===
           PreparationDeviceType.GAGGIUINO
         ) {
-          this.normalizeUrl();
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
         }
         if (
           this.data.connectedPreparationDevice.type ===
@@ -257,7 +265,9 @@ export class PreparationConnectedDeviceComponent {
           PreparationDeviceType.GAGGIMATE
         ) {
           // Check the device url format
-          this.normalizeUrl();
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
           if (
             this.data.connectedPreparationDevice.customParams
               .latestShotsToImport === undefined ||
@@ -287,7 +297,7 @@ export class PreparationConnectedDeviceComponent {
     }, 150);
   }
 
-  private normalizeUrl() {
+  /*  private normalizeUrl() {
     let url = this.data?.connectedPreparationDevice?.url;
 
     // if there's no url do nothing
@@ -299,7 +309,7 @@ export class PreparationConnectedDeviceComponent {
         url = `http://${url}`;
       }
 
-      if (/^https?:\/\/*$/i.test(url)) {
+      if (/^https?:\/\/!*$/i.test(url)) {
         // If the address is incomplete (only protocol) set to empty string
         this.data.connectedPreparationDevice.url = '';
       } else if (/^https?:\/\/.+/i.test(url)) {
@@ -307,6 +317,35 @@ export class PreparationConnectedDeviceComponent {
         this.data.connectedPreparationDevice.url = url.replace(/\/+$/, '');
       }
     }
+  }*/
+
+  private normalizeUrl(inputUrl: string) {
+    // const inputUrl = this.data?.connectedPreparationDevice?.url;
+
+    const PROTOCOL_PATTERN = '(https?|wss?)';
+    const HAS_PROTOCOL = new RegExp(`^${PROTOCOL_PATTERN}:\\/\\/`, 'i');
+    const IS_INCOMPLETE = new RegExp(`^${PROTOCOL_PATTERN}:\\/*$`, 'i');
+
+    // if there's no url do nothing
+    if (!inputUrl) return '';
+
+    let url = inputUrl.trim();
+
+    // If missing protocol, default to http://
+    if (!HAS_PROTOCOL.test(url)) {
+      console.log('miss prot');
+      url = `http://${url}`;
+    }
+
+    // If incomplete (only protocol), clear it
+    if (IS_INCOMPLETE.test(url)) {
+      console.log('inc prot');
+      return '';
+    }
+
+    // Strip trailing slashes from valid URLs
+    console.log('url ' + url.replace(/\/+$/, ''));
+    return url.replace(/\/+$/, '');
   }
 
   public checkURL(): void {
