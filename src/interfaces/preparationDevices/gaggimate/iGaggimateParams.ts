@@ -3,4 +3,5 @@ export interface IGaggimateParams {
   chosenProfileName: string;
   shotId: number;
   latestShotsToImport: number;
+  confirmDuplicateImport: boolean;
 }

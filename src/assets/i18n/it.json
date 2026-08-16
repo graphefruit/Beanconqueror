@@ -1121,7 +1121,9 @@
             "LATEST_SHOTS_DESCRIPTION": "Seleziona quante ultime estrazioni caricare da GaggiMate nell'importatore",
             "ERROR_RECENT_SHOT_LIST_UNAVAILABLE": "Lista ultime estrazioni non disponibile, controlla la versione firmware di GaggiMate",
             "ERROR_RECENT_SHOT_LIST_EMPTY": "Nessuna estrazione disponibile",
-            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED" : "Impossibile stabilire una connessione con GaggiMate, controlla la tua connessione alla rete, l'indirizzo url in \"connessione dispositivi\" e la versione del firmware di GaggiMate"
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED" : "Impossibile stabilire una connessione con GaggiMate, controlla la tua connessione alla rete, l'indirizzo url in \"connessione dispositivi\" e la versione del firmware di GaggiMate",
+            "IMPORT_BREW_DISCARD_DUPLICATE_POPUP_MESSAGE": "Questa estrazione è già stata importata, vuoi importarla di nuovo?",
+            "CONFIRM_DUPLICATE_IMPORT": "Conferma se un'estrazione già importata deve essere importata di nuovo"
         }
     },
     "DEVICE_CONNECTION": "Connessione dispositivi",

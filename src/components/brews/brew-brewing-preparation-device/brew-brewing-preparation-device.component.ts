@@ -1218,9 +1218,31 @@ export class BrewBrewingPreparationDeviceComponent
     }
   }
 
-  private generateShotFlowProfileFromGaggimateData(
+  private async generateShotFlowProfileFromGaggimateData(
     shotData: GaggimateShotData,
   ) {
+    if (
+      this.preparation.connectedPreparationDevice.customParams
+        .confirmDuplicateImport
+    ) {
+      // If a shot has been already imported, ask if it should be imported again (id check)
+      const isDuplicate = this.uiBrewStorage
+        .getAllEntries()
+        .some(
+          (brew) => brew.preparationDeviceBrew.params.shotId === shotData.id,
+        );
+
+      if (isDuplicate) {
+        const choice = await this.uiAlert.showConfirm(
+          'PREPARATION_DEVICE.TYPE_GAGGIMATE.IMPORT_BREW_DISCARD_DUPLICATE_POPUP_MESSAGE',
+          'SURE_QUESTION',
+          true,
+        );
+
+        if (choice === 'NO') return;
+      }
+    }
+
     const newBrewFlow = shotData.brewFlow;
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
 
