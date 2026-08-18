@@ -17,6 +17,7 @@ import {
   IonRange,
   IonSelect,
   IonSelectOption,
+  IonToggle,
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -74,6 +75,7 @@ import { UIToast } from '../../../services/uiToast';
     IonRange,
     IonCheckbox,
     IonFooter,
+    IonToggle,
   ],
 })
 export class PreparationConnectedDeviceComponent {

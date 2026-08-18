@@ -1123,7 +1123,9 @@
             "ERROR_RECENT_SHOT_LIST_EMPTY": "Nessuna estrazione disponibile",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED" : "Impossibile stabilire una connessione con GaggiMate, controlla la tua connessione alla rete, l'indirizzo url in \"connessione dispositivi\" e la versione del firmware di GaggiMate",
             "IMPORT_BREW_DISCARD_DUPLICATE_POPUP_MESSAGE": "Questa estrazione è già stata importata, vuoi importarla di nuovo?",
-            "CONFIRM_DUPLICATE_IMPORT": "Conferma se un'estrazione già importata deve essere importata di nuovo"
+            "CONFIRM_DUPLICATE_IMPORT": "Conferma se un'estrazione già importata deve essere importata di nuovo",
+            "IMPORT_BREW_DISCARD_ADD_MISSING_BEAN": "Non trovo il caffè di questa estrazione. Vuoi aggiungerlo?",
+            "CONFIRM_BEAN_ADD": "Chiede se aggiungere un caffè non trovato"
         }
     },
     "DEVICE_CONNECTION": "Connessione dispositivi",

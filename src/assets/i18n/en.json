@@ -1123,7 +1123,9 @@
           "ERROR_RECENT_SHOT_LIST_EMPTY": "No shots available",
           "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED" : "Connection could not be established to GaggiMate, please check your network connection, the url in the \"device connection\" settings, and GaggiMate firmware version",
           "IMPORT_BREW_DISCARD_DUPLICATE_POPUP_MESSAGE": "This shot has already been imported, do you want to import it again?",
-          "CONFIRM_DUPLICATE_IMPORT": "Confirm if an already imported shot should be imported again"
+          "CONFIRM_DUPLICATE_IMPORT": "Confirm if an already imported shot should be imported again",
+          "IMPORT_BREW_DISCARD_ADD_MISSING_BEAN": "This shot bean is missing. Do you want to add them?",
+          "CONFIRM_BEAN_ADD": "Ask if a missing bean should be added"
         }
     },
     "DEVICE_CONNECTION": "Device connection",

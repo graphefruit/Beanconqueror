@@ -4,4 +4,5 @@ export interface IGaggimateParams {
   shotId: number;
   latestShotsToImport: number;
   confirmDuplicateImport: boolean;
+  confirmBeanAdd: boolean;
 }

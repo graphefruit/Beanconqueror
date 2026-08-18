@@ -39,6 +39,7 @@ import { BrewModalImportShotGaggimateComponent } from '../../../app/brew/brew-mo
 import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
 import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
+import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
 import {
   BrewFlow,
@@ -1264,15 +1265,44 @@ export class BrewBrewingPreparationDeviceComponent
 
     // Select the bean, if any, from the storage based on GM shot notes
     if (shotData.notes?.beanType) {
-      const foundBean = this.uiBeanStorage
+      const beanName = shotData.notes?.beanType;
+
+      const beanExists = this.uiBeanStorage
         .getAllEntries()
         .filter(
           (bean) =>
-            bean.name.toLocaleLowerCase() ===
-            shotData.notes?.beanType?.toLocaleLowerCase(),
+            bean.name.toLocaleLowerCase() === beanName.toLocaleLowerCase(),
         )
         .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
-      if (foundBean) this.brewComponent.data.bean = foundBean;
+      if (beanExists) {
+        // set the bean for the shot
+        this.brewComponent.data.bean = beanExists;
+      } else if (
+        this.preparation.connectedPreparationDevice.customParams.confirmBeanAdd
+      ) {
+        // Ask if the missing bean must be added to the BQ database
+        const confirm = await this.uiAlert.showConfirm(
+          'PREPARATION_DEVICE.TYPE_GAGGIMATE.IMPORT_BREW_DISCARD_ADD_MISSING_BEAN',
+          beanName,
+          true,
+        );
+
+        if (confirm !== 'YES') return;
+
+        try {
+          await this.uiAlert.showLoadingSpinner('ADD_BEAN');
+          // Add the bean to db
+          const addedBean = await this.uiBeanStorage.add(
+            Object.assign(new Bean(), { name: beanName }),
+          );
+          if (addedBean?.config?.uuid) {
+            // set the bean for the shot
+            this.brewComponent.data.bean = addedBean.config.uuid;
+          }
+        } finally {
+          await this.uiAlert.hideLoadingSpinner();
+        }
+      }
     }
 
     /**Set the custom creation date, the user needs to activate the parameter for custom creation date**/

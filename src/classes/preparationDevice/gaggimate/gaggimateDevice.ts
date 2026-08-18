@@ -183,6 +183,7 @@ export class GaggimateParams implements IGaggimateParams {
   public shotId: number;
   public latestShotsToImport: number;
   public confirmDuplicateImport: boolean;
+  public confirmBeanAdd: boolean;
 
   constructor() {
     this.chosenProfileId = '';
@@ -190,5 +191,6 @@ export class GaggimateParams implements IGaggimateParams {
     this.shotId = 0;
     this.latestShotsToImport = 1;
     this.confirmDuplicateImport = true;
+    this.confirmBeanAdd = true;
   }
 }
