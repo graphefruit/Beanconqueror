@@ -129,7 +129,7 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
           const data = recentShotsArray[i];
 
           if (data !== null) {
-            GaggimateShotDataEntry.id = data.id;
+            GaggimateShotDataEntry.id = Number(data.id); // force id as a number
             GaggimateShotDataEntry.timestamp = data.timestamp;
             GaggimateShotDataEntry.profile = data.profile;
             GaggimateShotDataEntry.profileId = data.profileId;
