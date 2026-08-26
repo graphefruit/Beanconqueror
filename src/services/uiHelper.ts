@@ -14,6 +14,7 @@ import 'moment/locale/fr';
 import 'moment/locale/id';
 import 'moment/locale/pl';
 import 'moment/locale/nl';
+import 'moment/locale/nb';
 import 'moment/locale/pt';
 import 'moment/locale/el';
 import 'moment/locale/cs';
@@ -139,14 +140,21 @@ export class UIHelper {
     return StorageClass.getUnixTimestamp();
   }
 
+  /**
+   * Set the moment locale based on the provided locale string.
+   * If the provided locale is 'no' (Norwegian), it will be fixed to 'nb' for moment.js.
+   * If the provided locale is not available, it will default to 'en'.
+   * @param locale The locale string to get for moment.js.
+   */
   public setMomentLocale(locale: string): string {
     const normalizedLocale = locale?.toLowerCase();
+    const momentLocale = normalizedLocale === 'no' ? 'nb' : normalizedLocale;
     const availableLocale = moment
       .locales()
       .find(
         (loadedLocale) =>
-          loadedLocale.toLowerCase() === normalizedLocale ||
-          loadedLocale.toLowerCase().split('-')[0] === normalizedLocale,
+          loadedLocale.toLowerCase() === momentLocale ||
+          loadedLocale.toLowerCase().split('-')[0] === momentLocale,
       );
     const selectedLocale = availableLocale ?? 'en';
 
