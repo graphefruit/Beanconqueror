@@ -139,6 +139,21 @@ export class UIHelper {
     return StorageClass.getUnixTimestamp();
   }
 
+  public setMomentLocale(locale: string): string {
+    const normalizedLocale = locale?.toLowerCase();
+    const availableLocale = moment
+      .locales()
+      .find(
+        (loadedLocale) =>
+          loadedLocale.toLowerCase() === normalizedLocale ||
+          loadedLocale.toLowerCase().split('-')[0] === normalizedLocale,
+      );
+    const selectedLocale = availableLocale ?? 'en';
+
+    moment.locale(selectedLocale);
+    return selectedLocale;
+  }
+
   public isToday(_unix: number): boolean {
     return moment.unix(moment().unix()).isSame(moment.unix(_unix), 'd');
   }
