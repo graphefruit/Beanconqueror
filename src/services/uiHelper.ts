@@ -6,6 +6,17 @@ import { Clipboard } from '@capacitor/clipboard';
 import moment from 'moment';
 
 import 'moment/locale/de';
+import 'moment/locale/it';
+import 'moment/locale/es';
+import 'moment/locale/tr';
+import 'moment/locale/zh-cn';
+import 'moment/locale/fr';
+import 'moment/locale/id';
+import 'moment/locale/pl';
+import 'moment/locale/nl';
+import 'moment/locale/pt';
+import 'moment/locale/el';
+import 'moment/locale/cs';
 import 'moment/locale/ja';
 
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
