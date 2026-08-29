@@ -17,12 +17,15 @@ CRITICAL RULES — NEVER VIOLATE:
  *
  * @param ocrText - OCR text from the coffee bag label, optionally annotated
  *                  with **LARGE:**, **MEDIUM:**, **SMALL:** size markers.
+ * @param promptAppendix - Optional user instructions appended to the prompt.
  * @returns The complete prompt string ready to send to the model.
  */
-export function buildCloudExtractionPrompt(ocrText: string): string {
+export function buildCloudExtractionPrompt(
+  ocrText: string,
+  promptAppendix: string = '',
+): string {
   const today = new Date().toISOString().slice(0, 10);
-
-  return `Today's date is ${today}.
+  const basePrompt = `Today's date is ${today}.
 The following text was extracted via OCR from a coffee bean bag label.
 Due to OCR, individual characters might be misread (e.g., 0↔O, 1↔l, 5↔S, 8↔B, rn↔m).
 Please account for these potential misreadings when interpreting the text.
@@ -61,4 +64,11 @@ Use "NOT_FOUND" for any field not clearly present.
 }
 
 For blends: one object per component in "origins". For single origin: one object.`;
+
+  const trimmedAppendix = promptAppendix.trim();
+  if (trimmedAppendix === '') {
+    return basePrompt;
+  }
+
+  return `${basePrompt}\n\nAdditional extraction instructions from the user:\n${trimmedAppendix}`;
 }

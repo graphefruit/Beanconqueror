@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "Aanbieder",
     "CLOUD_AI_API_KEY": "API-sleutel",
     "CLOUD_AI_MODEL": "Model",
+    "CLOUD_AI_PROMPT_APPENDIX": "Aangepaste promptbijlage",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Aanvullende instructies die aan elke cloud-AI-prompt voor bonenextractie worden toegevoegd",
     "CLOUD_AI_BASE_URL": "Basis-URL",
     "CLOUD_AI_NOT_CONFIGURED": "Cloud AI is niet geconfigureerd. Selecteer een provider en voer je API-sleutel in onder ‘Instellingen’.",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence geselecteerd — gebruik lokaal pad",

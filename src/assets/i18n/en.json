@@ -1643,6 +1643,8 @@
     "AI_PROVIDER": "Provider",
     "CLOUD_AI_API_KEY": "API Key",
     "CLOUD_AI_MODEL": "Model",
+    "CLOUD_AI_PROMPT_APPENDIX": "Custom prompt appendix",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Additional instructions appended to every cloud AI bean extraction prompt",
     "CLOUD_AI_BASE_URL": "Base URL",
     "CLOUD_AI_NOT_CONFIGURED": "Cloud AI is not configured. Please select a provider and enter your API key in Settings.",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence selected — use on-device path",

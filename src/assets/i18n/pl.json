@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "Dostawca",
     "CLOUD_AI_API_KEY": "Klucz API",
     "CLOUD_AI_MODEL": "Model",
+    "CLOUD_AI_PROMPT_APPENDIX": "Niestandardowy dodatek do promptu",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Dodatkowe instrukcje dołączane do każdego promptu ekstrakcji ziaren przez AI w chmurze",
     "CLOUD_AI_BASE_URL": "Adres URL bazowy",
     "CLOUD_AI_NOT_CONFIGURED": "Usługa Cloud AI nie została skonfigurowana. Wybierz dostawcę i wprowadź swój klucz API w sekcji „Ustawienia”.",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Wybrano Apple Intelligence — użyj ścieżki lokalnej",

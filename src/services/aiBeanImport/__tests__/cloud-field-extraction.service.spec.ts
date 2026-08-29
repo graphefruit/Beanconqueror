@@ -1,4 +1,10 @@
+import { TestBed } from '@angular/core/testing';
+
+import { Settings } from '../../../classes/settings/settings';
 import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
+import { UIAnalytics } from '../../uiAnalytics';
+import { UILog } from '../../uiLog';
+import { UISettingsStorage } from '../../uiSettingsStorage';
 import { CloudFieldExtractionService } from '../cloud-field-extraction.service';
 import { CloudLLMConfig } from '../cloud-llm-communication.service';
 
@@ -231,6 +237,51 @@ describe('CloudFieldExtractionService', () => {
 
       // Assert
       expect(bean.decaffeinated).toBe(true);
+    });
+
+    it('appends the stored prompt appendix to the request and prompt log', async () => {
+      // Arrange
+      const settings = new Settings();
+      settings.cloud_ai_prompt_appendix = 'Prioritize explicit farm names.';
+      TestBed.configureTestingModule({
+        providers: [
+          CloudFieldExtractionService,
+          {
+            provide: UISettingsStorage,
+            useValue: { getSettings: () => settings },
+          },
+          { provide: UILog, useValue: null },
+          { provide: UIAnalytics, useValue: null },
+        ],
+      });
+      const injectedService = TestBed.inject(CloudFieldExtractionService);
+      mockFetchWithBeanJson({
+        name: 'Test',
+        roaster: 'Test',
+        bean_mix: 'SINGLE_ORIGIN',
+        origins: [],
+      });
+      const expectedSuffix =
+        'Additional extraction instructions from the user:\n' +
+        'Prioritize explicit farm names.';
+
+      // Act
+      await injectedService.extractAllFields(
+        'sample OCR text',
+        mockConfig,
+        mockLogger,
+      );
+
+      // Assert
+      const requestOptions = fetchSpy.calls.mostRecent().args[1];
+      const requestBody = JSON.parse(String(requestOptions.body));
+      const userMessage = requestBody.messages.find(
+        (message) => message.role === 'user',
+      );
+      expect(userMessage.content.endsWith(expectedSuffix)).toBe(true);
+      expect(mockLogger.log).toHaveBeenCalledWith(
+        jasmine.stringMatching(expectedSuffix),
+      );
     });
 
     it('should log token usage when available', async () => {

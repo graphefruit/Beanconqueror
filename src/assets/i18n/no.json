@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "Leverandør",
     "CLOUD_AI_API_KEY": "API-nøkkel",
     "CLOUD_AI_MODEL": "Modell",
+    "CLOUD_AI_PROMPT_APPENDIX": "Egendefinert prompt-tillegg",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Tilleggsinstruksjoner som legges til hver sky-AI-prompt for bønneekstraksjon",
     "CLOUD_AI_BASE_URL": "Base URL",
     "CLOUD_AI_NOT_CONFIGURED": "Cloud AI er ikke konfigurert. Velg en tjeneste og skriv inn API-nøkkelen din i Innstillinger.",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence valgt — bruk lokal bane",
