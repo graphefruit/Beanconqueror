@@ -1702,7 +1702,7 @@
         "MISS": "Miss (>1.0g)",
         "AVG_WATER": "Avg Water Intake (mL)",
         "AVG_BEVERAGE": "Avg Beverage Weight (g)",
-        "RATIO": "Ratio (Water \/ Liquid)",
+        "RATIO": "Ratio (Water / Liquid)",
         "DAILY": "Daily",
         "WEEKLY": "Weekly",
         "MONTHLY": "Monthly"
@@ -1755,5 +1755,31 @@
             ]
         }
     },
-  "BREW_GRAPH_TIME_SLIDER": "Time slider"
+    "BREW_GRAPH_TIME_SLIDER": "Time slider",
+    "PAGE_SETTINGS_BREW_BY_WEIGHT_WEBHOOK_SECTION": "Brew by Weight Webhook",
+    "BREW_BY_WEIGHT_WEBHOOK": {
+        "ACTIVATE": "Enable webhook on target weight reached",
+        "ACTIVATE_TOOLTIP": "When the brew reaches the target weight, an HTTP GET request is sent to the configured URL. Use this to trigger a smart plug or relay to stop the machine.",
+        "URL": "Webhook URL",
+        "URL_PLACEHOLDER": "e.g. http://192.168.1.x/relay/0?turn=off",
+        "AUTH_TYPE": "Authentication",
+        "AUTH_NONE": "None",
+        "AUTH_BEARER": "Bearer Token",
+        "AUTH_BASIC": "Basic Auth",
+        "AUTH_HEADER": "Custom Header",
+        "BEARER_TOKEN": "Bearer Token",
+        "BASIC_USERNAME": "Username",
+        "BASIC_PASSWORD": "Password",
+        "CUSTOM_HEADER_NAME": "Header Name",
+        "CUSTOM_HEADER_NAME_PLACEHOLDER": "e.g. X-API-Key",
+        "CUSTOM_HEADER_VALUE": "Header Value",
+        "HTTP_AUTH_WARNING": "Warning: sending credentials over http:// may be intercepted. Use https:// or ensure you are on a trusted local network.",
+        "TEST": "Test webhook",
+        "TEST_SUCCESS": "Webhook fired successfully.",
+        "TEST_FAILED": "Webhook could not be reached. Check the URL and your network.",
+        "DEFAULT_TARGET_WEIGHT": "Default target weight (g)",
+        "DEFAULT_TARGET_WEIGHT_TOOLTIP": "Pre-fills the target weight each time you start a brew. You can still override it per-brew. Set to 0 to disable.",
+        "PREDICTIVE_MODE": "Predictive stop (learns from each brew)",
+        "PREDICTIVE_MODE_TOOLTIP": "Instead of firing at exactly the target weight, the app fires slightly early to compensate for drip-through. The lead time is learned automatically across shots — set 36g, first shot delivers 38g, next shot ~37g, converging to 36g."
+    }
 }

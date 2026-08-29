@@ -37,6 +37,7 @@ import {
   checkmarkCircleOutline,
   chevronForwardOutline,
   cloudUploadOutline,
+  flashOutline,
   informationCircleOutline,
   informationOutline,
   listOutline,
@@ -44,6 +45,7 @@ import {
 } from 'ionicons/icons';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { CapacitorHttp } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
@@ -66,6 +68,7 @@ import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { buildWebhookHeaders } from '../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../classes/settings/settings';
 import { Water } from '../../classes/water/water';
 import { CloudModelPickerComponent } from '../../components/cloud-model-picker/cloud-model-picker.component';
@@ -83,6 +86,7 @@ import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
@@ -217,6 +221,7 @@ export class SettingsPage {
   public settings_segment = 'general';
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
+  public webhookAuthTypeEnum = WEBHOOK_AUTH_TYPE_ENUM;
 
   public aiProviderEnum = AI_PROVIDER_ENUM;
 
@@ -288,6 +293,7 @@ export class SettingsPage {
       checkmarkCircleOutline,
       chevronForwardOutline,
       cloudUploadOutline,
+      flashOutline,
       informationCircleOutline,
       informationOutline,
       listOutline,
@@ -1826,6 +1832,50 @@ export class SettingsPage {
     } else {
       this.uiAlert.showMessage(
         'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
+        undefined,
+        undefined,
+        true,
+      );
+    }
+  }
+
+  /**
+   * Users routinely omit the scheme when typing a LAN address like
+   * "192.168.1.50/relay/0?turn=off". CapacitorHttp requires an absolute URL,
+   * so normalise on blur. http:// is the correct default here because this
+   * feature targets local smart plugs and relays, which rarely serve https.
+   */
+  public normalizeWebhookUrl(): void {
+    const cfg = this.settings.brew_by_weight_webhook;
+    const url = cfg?.url?.trim();
+    if (!url || url.includes('://')) {
+      return;
+    }
+    cfg.url = `http://${url}`;
+    this.saveSettings();
+  }
+
+  public isWebhookUrlHttp(): boolean {
+    return (
+      this.settings.brew_by_weight_webhook?.url?.trim().startsWith('http://') ??
+      false
+    );
+  }
+
+  public async testBrewByWeightWebhook() {
+    const url = this.settings.brew_by_weight_webhook?.url?.trim();
+    if (!url) {
+      return;
+    }
+    try {
+      await CapacitorHttp.get({
+        url,
+        headers: buildWebhookHeaders(this.settings.brew_by_weight_webhook),
+      });
+      this.uiToast.showInfoToastBottom('BREW_BY_WEIGHT_WEBHOOK.TEST_SUCCESS');
+    } catch (_err) {
+      this.uiAlert.showMessage(
+        'BREW_BY_WEIGHT_WEBHOOK.TEST_FAILED',
         undefined,
         undefined,
         true,
