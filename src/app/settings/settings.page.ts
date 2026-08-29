@@ -81,6 +81,7 @@ import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { STATISTIC_BEAN_DATE_FIELD_ENUM } from '../../enums/settings/statisticBeanDateField';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { IBean } from '../../interfaces/bean/iBean';
@@ -1837,6 +1838,8 @@ export class SettingsPage {
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
   protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
+  protected readonly STATISTIC_BEAN_DATE_FIELD_ENUM =
+    STATISTIC_BEAN_DATE_FIELD_ENUM;
 
   public async resetGraphColor(graphType: keyof IGraphColors) {
     const choice = await this.uiAlert.showConfirm(

@@ -539,6 +539,26 @@
 
   <ion-card class="margin-top-20">
     <ion-card-content>
+      <ion-card-title>{{ "PAGE_SETTINGS_MANAGE_STATISTICS" | translate }}</ion-card-title>
+      <ion-item>
+        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.statistics.bean_date_field"
+          cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+          <div slot="label">{{ "PAGE_SETTINGS_STATISTIC_BEAN_DATE_FIELD" | translate }}</div>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.ADDED}}">{{
+            "PAGE_SETTINGS_STATISTIC_BEAN_DATE_FIELD_ADDED" | translate }}</ion-select-option>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.ROAST}}">{{
+            "PAGE_SETTINGS_STATISTIC_BEAN_DATE_FIELD_ROAST" | translate }}</ion-select-option>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.BUY}}">{{
+            "PAGE_SETTINGS_STATISTIC_BEAN_DATE_FIELD_BUY" | translate }}</ion-select-option>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.OPEN}}">{{
+            "PAGE_SETTINGS_STATISTIC_BEAN_DATE_FIELD_OPEN" | translate }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="margin-top-20">
+    <ion-card-content>
       <ion-card-title>{{ "PAGE_SETTINGS_VISUALIZER_SECTION" | translate }}</ion-card-title>
       <ion-item>
         <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
