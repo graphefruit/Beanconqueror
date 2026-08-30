@@ -9,6 +9,9 @@ export class GaggimateParser {
   readonly WEIGHT_SCALE = 10;
   readonly RESISTANCE_SCALE = 100;
 
+  readonly MAX_SHOT_VERSION_SUPPORTED = 5;
+  readonly MAX_INDEX_VERSION_SUPPORTED = 1;
+
   // Field bit positions (must match shot_log_format.h)
   readonly FIELD_BITS = {
     T: 0, // tick
@@ -208,6 +211,13 @@ export class GaggimateParser {
       );
 
     const version = view.getUint8(4);
+
+    if (version > this.MAX_SHOT_VERSION_SUPPORTED) {
+      throw new Error(
+        `Unsupported shot:${id}.  version: ${version}, max version supported: ${this.MAX_SHOT_VERSION_SUPPORTED}`,
+      );
+    }
+
     const deviceSampleSize = view.getUint8(5); // reserved0 holds sample size
     const headerSize = view.getUint16(6, true);
 
@@ -352,32 +362,37 @@ export class GaggimateParser {
   }
 
   /**
-   * Filter out deleted entries and convert to frontend format
+   * Check the Index version and filter out deleted entries and convert to frontend format
    * @param {Object} indexData - Parsed index data from parseBinaryIndex
    * @returns {Array} Array of shot objects for frontend use
    */
   public indexToShotList(indexData) {
-    return indexData.entries
-      .filter((entry) => !entry.deleted)
-      .map((entry) => ({
-        id: entry.id.toString(),
-        profile: entry.profileName,
-        profileId: entry.profileId,
-        timestamp: entry.timestamp,
-        duration: entry.duration,
-        samples: 0, // Not available in index, filled when loading full shot
-        volume: entry.volume,
-        rating: entry.rating > 0 ? entry.rating : null, // Only include rating if > 0
-        incomplete: entry.incomplete,
-        avgTemp: entry.avgTemp,
-        maxPressure: entry.maxPressure,
-        avgFlow: entry.avgFlow,
-        hasNotes: entry.hasNotes,
-        notes: null,
-        loaded: false,
-        data: null,
-      }))
-      .sort((a, b) => b.timestamp - a.timestamp); // Most recent first
+    if (indexData.header?.version <= this.MAX_INDEX_VERSION_SUPPORTED) {
+      return indexData.entries
+        .filter((entry) => !entry.deleted)
+        .map((entry) => ({
+          id: entry.id.toString(),
+          profile: entry.profileName,
+          profileId: entry.profileId,
+          timestamp: entry.timestamp,
+          duration: entry.duration,
+          samples: 0, // Not available in index, filled when loading full shot
+          volume: entry.volume,
+          rating: entry.rating > 0 ? entry.rating : null, // Only include rating if > 0
+          incomplete: entry.incomplete,
+          avgTemp: entry.avgTemp,
+          maxPressure: entry.maxPressure,
+          avgFlow: entry.avgFlow,
+          hasNotes: entry.hasNotes,
+          notes: null,
+          loaded: false,
+          data: null,
+        }))
+        .sort((a, b) => b.timestamp - a.timestamp); // Most recent first
+    }
+    throw new Error(
+      `Unsupported shot index version: ${indexData.header.version}, max version supported: ${this.MAX_INDEX_VERSION_SUPPORTED}`,
+    );
   }
 
   private decodeCString(bytes) {
