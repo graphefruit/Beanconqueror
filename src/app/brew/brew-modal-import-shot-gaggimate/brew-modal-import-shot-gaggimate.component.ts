@@ -130,7 +130,7 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
 
           if (data !== null) {
             // TODO : For future release, if a shot has been already imported ask if it should be imported again (id check)
-            GaggimateShotDataEntry.id = data.id;
+            GaggimateShotDataEntry.id = Number(data.id); // force id as a number
             GaggimateShotDataEntry.timestamp = data.timestamp;
             GaggimateShotDataEntry.profile = data.profile;
             GaggimateShotDataEntry.profileId = data.profileId;
