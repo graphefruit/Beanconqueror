@@ -1,6 +1,9 @@
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
-import { IPreparationVisualizer } from '../../interfaces/visualizer/iPreparationVisualizer';
+import {
+  IPreparationVisualizer,
+  IVisualizerPreparationTool,
+} from '../../interfaces/visualizer/iPreparationVisualizer';
 
 export class PreparationVisualizer implements IPreparationVisualizer {
   public name: string;
@@ -8,10 +11,13 @@ export class PreparationVisualizer implements IPreparationVisualizer {
   public style_type: PREPARATION_STYLE_TYPE;
   public type: PREPARATION_TYPES;
 
+  public tools: IVisualizerPreparationTool[];
+
   constructor() {
     this.name = '';
 
     this.type = 'CUSTOM_PREPARATION' as PREPARATION_TYPES;
     this.style_type = undefined;
+    this.tools = [];
   }
 }
