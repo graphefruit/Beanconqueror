@@ -1643,6 +1643,8 @@
     "AI_PROVIDER": "Anbieter",
     "CLOUD_AI_API_KEY": "API-Schlüssel",
     "CLOUD_AI_MODEL": "Modell",
+    "CLOUD_AI_PROMPT_APPENDIX": "Benutzerdefinierter Prompt-Anhang",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Zusätzliche Anweisungen, die an jeden Cloud-KI-Prompt zur Bohnenextraktion angehängt werden",
     "CLOUD_AI_BASE_URL": "Basis-URL",
     "CLOUD_AI_NOT_CONFIGURED": "Cloud-KI ist nicht konfiguriert. Bitte wähle einen Anbieter und gib deinen API-Schlüssel in den Einstellungen ein.",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence ausgewählt — lokalen Pfad verwenden",

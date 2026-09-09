@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "Poskytovatel",
     "CLOUD_AI_API_KEY": "Klíč API",
     "CLOUD_AI_MODEL": "Model",
+    "CLOUD_AI_PROMPT_APPENDIX": "Vlastní dodatek k výzvě",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Další pokyny připojené ke každé výzvě cloudové AI pro extrakci údajů o kávových zrnech",
     "CLOUD_AI_BASE_URL": "Základní URL",
     "CLOUD_AI_NOT_CONFIGURED": "Cloudová AI není nakonfigurována. Vyberte prosím poskytovatele a zadejte svůj klíč API v nastavení.",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Vybráno Apple Intelligence – použít cestu v zařízení",

@@ -12,6 +12,7 @@ import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
@@ -19,7 +20,10 @@ import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { IBrewPageSort } from '../../interfaces/brew/iBrewPageSort';
 import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
 import { IGraphColors } from '../../interfaces/settings/iGraphColors';
-import { ISettings } from '../../interfaces/settings/iSettings';
+import {
+  BrewByWeightWebhookConfig,
+  ISettings,
+} from '../../interfaces/settings/iSettings';
 import {
   PressureType,
   RefractometerType,
@@ -254,9 +258,12 @@ export class Settings implements ISettings {
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
 
+  public brew_by_weight_webhook: BrewByWeightWebhookConfig;
+
   public ai_provider: AI_PROVIDER_ENUM;
   public cloud_ai_api_key: string;
   public cloud_ai_model: string;
+  public cloud_ai_prompt_appendix: string;
   public cloud_ai_base_url: string;
 
   public show_backup_issues: boolean;
@@ -608,9 +615,24 @@ export class Settings implements ISettings {
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
 
+    this.brew_by_weight_webhook = {
+      active: false,
+      url: '',
+      authType: WEBHOOK_AUTH_TYPE_ENUM.NONE,
+      bearerToken: '',
+      basicUsername: '',
+      basicPassword: '',
+      customHeaderName: '',
+      customHeaderValue: '',
+      defaultTargetWeight: 0,
+      predictiveMode: false,
+      learnedLagTime: 0,
+    };
+
     this.ai_provider = AI_PROVIDER_ENUM.NO_PROVIDER;
     this.cloud_ai_api_key = '';
     this.cloud_ai_model = '';
+    this.cloud_ai_prompt_appendix = '';
     this.cloud_ai_base_url = '';
 
     this.show_backup_issues = true;
@@ -709,10 +731,43 @@ export class Settings implements ISettings {
     } else {
       this.cloud_ai_model = settingsObj.cloud_ai_model;
     }
+    if (settingsObj.cloud_ai_prompt_appendix === undefined) {
+      this.cloud_ai_prompt_appendix = '';
+    } else {
+      this.cloud_ai_prompt_appendix = settingsObj.cloud_ai_prompt_appendix;
+    }
     if (settingsObj.cloud_ai_base_url === undefined) {
       this.cloud_ai_base_url = '';
     } else {
       this.cloud_ai_base_url = settingsObj.cloud_ai_base_url;
+    }
+
+    // Field does not exist in any previously-released settings version —
+    // initialize with safe defaults for users upgrading from an older build.
+    if (!settingsObj.brew_by_weight_webhook) {
+      this.brew_by_weight_webhook = {
+        active: false,
+        url: '',
+        authType: WEBHOOK_AUTH_TYPE_ENUM.NONE,
+        bearerToken: '',
+        basicUsername: '',
+        basicPassword: '',
+        customHeaderName: '',
+        customHeaderValue: '',
+        defaultTargetWeight: 0,
+        predictiveMode: false,
+        learnedLagTime: 0,
+      };
+    } else {
+      if (this.brew_by_weight_webhook.defaultTargetWeight === undefined) {
+        this.brew_by_weight_webhook.defaultTargetWeight = 0;
+      }
+      if (this.brew_by_weight_webhook.predictiveMode === undefined) {
+        this.brew_by_weight_webhook.predictiveMode = false;
+      }
+      if (this.brew_by_weight_webhook.learnedLagTime === undefined) {
+        this.brew_by_weight_webhook.learnedLagTime = 0.5;
+      }
     }
   }
 

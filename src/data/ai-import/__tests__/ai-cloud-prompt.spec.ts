@@ -78,5 +78,48 @@ describe('Cloud Bean Import Prompt', () => {
       expect(prompt).toContain('--- OCR TEXT ---');
       expect(prompt).toContain('--- END OCR TEXT ---');
     });
+
+    it('omits the prompt appendix heading when no appendix is provided', () => {
+      // Arrange
+      const heading = 'Additional extraction instructions from the user:';
+
+      // Act
+      const result = buildCloudExtractionPrompt(sampleOcrText);
+
+      // Assert
+      expect(result).not.toContain(heading);
+    });
+
+    it('preserves the normal prompt ending for empty appendices', () => {
+      // Arrange
+      const expectedEnding =
+        'For blends: one object per component in "origins". For single origin: one object.';
+
+      // Act
+      const emptyResult = buildCloudExtractionPrompt(sampleOcrText, '');
+      const whitespaceResult = buildCloudExtractionPrompt(
+        sampleOcrText,
+        '  \n\t  ',
+      );
+
+      // Assert
+      expect(emptyResult.endsWith(expectedEnding)).toBe(true);
+      expect(whitespaceResult.endsWith(expectedEnding)).toBe(true);
+    });
+
+    it('appends a trimmed prompt appendix as the final prompt content', () => {
+      // Arrange
+      const appendix = '  Prefer the farm name.\n\nKeep  internal spacing.  \n';
+      const expectedSuffix =
+        'For blends: one object per component in "origins". For single origin: one object.\n\n' +
+        'Additional extraction instructions from the user:\n' +
+        'Prefer the farm name.\n\nKeep  internal spacing.';
+
+      // Act
+      const result = buildCloudExtractionPrompt(sampleOcrText, appendix);
+
+      // Assert
+      expect(result.endsWith(expectedSuffix)).toBe(true);
+    });
   });
 });
