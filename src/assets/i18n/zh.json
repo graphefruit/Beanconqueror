@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "提供商",
     "CLOUD_AI_API_KEY": "API密钥",
     "CLOUD_AI_MODEL": "型号",
+    "CLOUD_AI_PROMPT_APPENDIX": "自定义提示词附录",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "附加到每个云端 AI 咖啡豆信息提取提示词的额外说明",
     "CLOUD_AI_BASE_URL": "基础网址",
     "CLOUD_AI_NOT_CONFIGURED": "未设置云AI。请在“设置”中选择供应商并输入您的API密钥。",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "已选择 Apple Intelligence — 使用本地路径",

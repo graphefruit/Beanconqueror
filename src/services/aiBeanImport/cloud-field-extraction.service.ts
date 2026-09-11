@@ -55,10 +55,13 @@ export class CloudFieldExtractionService {
     logger?: { log(msg: string): void },
   ): Promise<Bean> {
     const log = logger ?? this.uiLog ?? { log: () => {} };
+    const settings = this.uiSettingsStorage?.getSettings();
 
     // 1. Build config from settings if not provided
     if (!config) {
-      const settings = this.uiSettingsStorage!.getSettings();
+      if (settings === undefined) {
+        throw new Error('Cloud LLM settings are unavailable');
+      }
       config = {
         provider: settings.ai_provider,
         apiKey: settings.cloud_ai_api_key,
@@ -68,7 +71,10 @@ export class CloudFieldExtractionService {
     }
 
     // 2. Build prompt
-    const userPrompt = buildCloudExtractionPrompt(ocrText);
+    const userPrompt = buildCloudExtractionPrompt(
+      ocrText,
+      settings?.cloud_ai_prompt_appendix ?? '',
+    );
 
     // 3. Send to cloud LLM — throws on API errors, timeouts, network failures
     log.log('[Cloud LLM] model: ' + config.model);
