@@ -919,7 +919,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             this.updateChart(true);
           }
         }, 250);
-      } catch (ex) {}
+      } catch (ex) {
+        //
+      }
     }, timeout);
   }
 

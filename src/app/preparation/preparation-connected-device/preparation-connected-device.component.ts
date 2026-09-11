@@ -27,6 +27,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { BluetoothTypes } from '../../../classes/devices/types';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { GaggimateParams } from '../../../classes/preparationDevice/gaggimate/gaggimateDevice';
 import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { Move2Params } from '../../../classes/preparationDevice/move2/move2Device';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
@@ -132,6 +133,12 @@ export class PreparationConnectedDeviceComponent {
         this.data.connectedPreparationDevice.type = PreparationDeviceType.MOVE2;
         this.data.connectedPreparationDevice.customParams = new Move2Params();
       }
+      if (this.data.type === PREPARATION_TYPES.GAGGIMATE) {
+        this.data.connectedPreparationDevice.type =
+          PreparationDeviceType.GAGGIMATE;
+        this.data.connectedPreparationDevice.customParams =
+          new GaggimateParams();
+      }
     }
   }
 
@@ -168,6 +175,11 @@ export class PreparationConnectedDeviceComponent {
       this.data.connectedPreparationDevice.customParams = new Move2Params();
     } else if (
       this.data.connectedPreparationDevice.type ===
+      PreparationDeviceType.GAGGIMATE
+    ) {
+      this.data.connectedPreparationDevice.customParams = new GaggimateParams();
+    } else if (
+      this.data.connectedPreparationDevice.type ===
         PreparationDeviceType.NONE ||
       this.data.connectedPreparationDevice.type ===
         PreparationDeviceType.GAGGIUINO
@@ -191,19 +203,9 @@ export class PreparationConnectedDeviceComponent {
           if (this.data.connectedPreparationDevice.url === '') {
             this.data.connectedPreparationDevice.url = 'http://xenia.local';
           } else {
-            if (
-              this.data.connectedPreparationDevice.url.endsWith('/') === true
-            ) {
-              this.data.connectedPreparationDevice.url =
-                this.data.connectedPreparationDevice.url.slice(0, -1);
-            }
-            if (
-              this.data.connectedPreparationDevice.url.startsWith('http') ===
-              false
-            ) {
-              this.data.connectedPreparationDevice.url =
-                'http://' + this.data.connectedPreparationDevice.url;
-            }
+            this.data.connectedPreparationDevice.url = this.normalizeUrl(
+              this.data.connectedPreparationDevice.url,
+            );
           }
           if (
             this.data.connectedPreparationDevice.customParams.apiVersion ===
@@ -224,49 +226,25 @@ export class PreparationConnectedDeviceComponent {
           this.data.connectedPreparationDevice.type ===
           PreparationDeviceType.METICULOUS
         ) {
-          if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
-            this.data.connectedPreparationDevice.url =
-              this.data.connectedPreparationDevice.url.slice(0, -1);
-          }
-          if (
-            this.data.connectedPreparationDevice.url.startsWith('http') ===
-            false
-          ) {
-            this.data.connectedPreparationDevice.url =
-              'http://' + this.data.connectedPreparationDevice.url;
-          }
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
         }
         if (
           this.data.connectedPreparationDevice.type ===
           PreparationDeviceType.SANREMO_YOU
         ) {
-          if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
-            this.data.connectedPreparationDevice.url =
-              this.data.connectedPreparationDevice.url.slice(0, -1);
-          }
-          if (
-            this.data.connectedPreparationDevice.url.startsWith('http') ===
-            false
-          ) {
-            this.data.connectedPreparationDevice.url =
-              'http://' + this.data.connectedPreparationDevice.url;
-          }
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
         }
         if (
           this.data.connectedPreparationDevice.type ===
           PreparationDeviceType.GAGGIUINO
         ) {
-          if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
-            this.data.connectedPreparationDevice.url =
-              this.data.connectedPreparationDevice.url.slice(0, -1);
-          }
-          if (
-            this.data.connectedPreparationDevice.url.startsWith('http') ===
-            false
-          ) {
-            this.data.connectedPreparationDevice.url =
-              'http://' + this.data.connectedPreparationDevice.url;
-          }
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
         }
         if (
           this.data.connectedPreparationDevice.type ===
@@ -279,6 +257,23 @@ export class PreparationConnectedDeviceComponent {
               .residualLagTime === 0
           ) {
             this.data.connectedPreparationDevice.customParams.residualLagTime = 0.5;
+          }
+        }
+        if (
+          this.data.connectedPreparationDevice.type ===
+          PreparationDeviceType.GAGGIMATE
+        ) {
+          // Check the device url format
+          this.data.connectedPreparationDevice.url = this.normalizeUrl(
+            this.data.connectedPreparationDevice.url,
+          );
+          if (
+            this.data.connectedPreparationDevice.customParams
+              .latestShotsToImport === undefined ||
+            this.data.connectedPreparationDevice.customParams
+              .latestShotsToImport === 0
+          ) {
+            this.data.connectedPreparationDevice.customParams.latestShotsToImport = 1;
           }
         }
       }
@@ -299,6 +294,32 @@ export class PreparationConnectedDeviceComponent {
         (this.preparation as Preparation).initializeByObject(this.data);
       }
     }, 150);
+  }
+
+  private normalizeUrl(inputUrl: string) {
+    // const inputUrl = this.data?.connectedPreparationDevice?.url;
+
+    const PROTOCOL_PATTERN = '(https?|wss?)';
+    const HAS_PROTOCOL = new RegExp(`^${PROTOCOL_PATTERN}:\\/\\/`, 'i');
+    const IS_INCOMPLETE = new RegExp(`^${PROTOCOL_PATTERN}:\\/*$`, 'i');
+
+    // if there's no url do nothing
+    if (!inputUrl) return '';
+
+    let url = inputUrl.trim();
+
+    // If missing protocol, default to http://
+    if (!HAS_PROTOCOL.test(url)) {
+      url = `http://${url}`;
+    }
+
+    // If incomplete (only protocol), clear it
+    if (IS_INCOMPLETE.test(url)) {
+      return '';
+    }
+
+    // Strip trailing slashes from valid URLs
+    return url.replace(/\/+$/, '');
   }
 
   public checkURL(): void {
