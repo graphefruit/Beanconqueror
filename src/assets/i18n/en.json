@@ -932,6 +932,7 @@
     "PREPARATION_TYPE_ROK": "ROK",
     "PREPARATION_TYPE_TORNADO_DUO": "Tornado Duo",
     "PREPARATION_TYPE_TRICOLATE": "Tricolate",
+    "PREPARATION_TYPE_OXO_RAPID_BREWER": "Oxo Rapid Brewer",
     "QR_CODE_REFRESH_DATA_MESSAGE": "All information for this bean will be overwritten, continue?",
     "POPOVER_QR_CODE_REFRESH": "Reload data",
     "BREW_FLOW_WEIGHT_REALTIME": "Flow (Realtime)",

@@ -379,6 +379,10 @@ export const beanconquerorIcons = [
     path: 'beanconqueror-preparation-origami.svg',
   },
   {
+    name: 'beanconqueror-preparation-oxo-rapid-brewer',
+    path: 'beanconqueror-preparation-oxo-rapid-brewer.svg',
+  },
+  {
     name: 'beanconqueror-preparation-portafilter',
     path: 'beanconqueror-preparation-portafilter.svg',
   },
