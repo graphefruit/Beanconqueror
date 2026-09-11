@@ -654,7 +654,7 @@ export class AppComponent implements AfterViewInit {
               settings.language = settingLanguage;
               await this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
-              moment.locale(settingLanguage);
+              this.uiHelper.setMomentLocale(settingLanguage);
               resolve(undefined);
             } catch (ex) {
               this.uiLog.error('Exception occured when setting language', ex);
@@ -667,7 +667,7 @@ export class AppComponent implements AfterViewInit {
             const settingLanguage: string = settings.language;
             this.uiLog.log(`Setting language: ${settingLanguage}`);
             await this._translate.use(settingLanguage).toPromise();
-            moment.locale(settingLanguage);
+            this.uiHelper.setMomentLocale(settingLanguage);
             resolve(undefined);
           }
         } catch (ex) {
@@ -689,7 +689,7 @@ export class AppComponent implements AfterViewInit {
         ) {
           this.uiLog.info(`Set language from settings: ${settings.language}`);
           await this._translate.use(settings.language).toPromise();
-          moment.locale(settings.language);
+          this.uiHelper.setMomentLocale(settings.language);
           resolve(undefined);
         } else {
           this.uiLog.info(
@@ -698,7 +698,7 @@ export class AppComponent implements AfterViewInit {
           settings.language = 'en';
           await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
-          moment.locale(settings.language);
+          this.uiHelper.setMomentLocale(settings.language);
           resolve(undefined);
         }
       }
