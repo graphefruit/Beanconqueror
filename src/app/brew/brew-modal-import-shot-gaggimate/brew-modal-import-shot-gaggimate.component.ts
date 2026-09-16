@@ -129,7 +129,6 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
           const data = recentShotsArray[i];
 
           if (data !== null) {
-            // TODO : For future release, if a shot has been already imported ask if it should be imported again (id check)
             GaggimateShotDataEntry.id = Number(data.id); // force id as a number
             GaggimateShotDataEntry.timestamp = data.timestamp;
             GaggimateShotDataEntry.profile = data.profile;
@@ -215,6 +214,7 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
       BrewModalImportShotGaggimateComponent.COMPONENT_ID,
     );
   }
+
   public choose(): void {
     let returningData;
     for (const entry of this.history) {

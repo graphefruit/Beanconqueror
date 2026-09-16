@@ -200,6 +200,16 @@
                         [step]="1" >
           </ion-range>
         </ion-item>
+        <ion-item lines="none">
+          <ion-toggle [checked]="true" label-placement='start' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.confirmDuplicateImport" >
+            <div class='ion-label'>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.CONFIRM_DUPLICATE_IMPORT" | translate}}</div>
+          </ion-toggle>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-toggle [checked]="true" label-placement='start' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.confirmBeanAdd" >
+            <div class='ion-label'>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.CONFIRM_BEAN_ADD" | translate}}</div>
+          </ion-toggle>
+        </ion-item>
       }
 
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.MOVE2) {
