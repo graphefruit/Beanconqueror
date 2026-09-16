@@ -1271,7 +1271,8 @@ export class BrewBrewingPreparationDeviceComponent
         .getAllEntries()
         .filter(
           (bean) =>
-            bean.name.toLocaleLowerCase() === beanName.toLocaleLowerCase(),
+            bean.name.toLocaleLowerCase() === beanName.toLocaleLowerCase() &&
+            !bean.finished,
         )
         .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
       if (beanExists) {
