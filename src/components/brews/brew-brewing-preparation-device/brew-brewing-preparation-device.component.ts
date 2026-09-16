@@ -31,9 +31,7 @@ import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { TranslatePipe } from '@ngx-translate/core';
-import { round } from 'lodash';
 import moment from 'moment';
-import { NgxStarsComponent } from 'ngx-stars';
 
 import { BrewModalImportShotGaggimateComponent } from '../../../app/brew/brew-modal-import-shot-gaggimate/brew-modal-import-shot-gaggimate.component';
 import { BrewModalImportShotGaggiuinoComponent } from '../../../app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component';
@@ -90,7 +88,6 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIHelper } from '../../../services/uiHelper';
-import { UILog } from '../../../services/uiLog';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -664,7 +661,7 @@ export class BrewBrewingPreparationDeviceComponent
     await this.uiAlert.hideLoadingSpinner();
 
     if (connected) {
-      this.preparationDevice = connectedDevice;
+      this.preparationDevice = connectedDevice as Move2Device;
       // Re-initialize the flow chart so the graph component picks up the MOVE2
       // device and renders the pressure / temperature chips and axes.
       // This is needed when the preparation is switched mid-brew (the graph's
@@ -725,7 +722,7 @@ export class BrewBrewingPreparationDeviceComponent
     await connectedDevice.connectToSocket().then(
       async (_connected) => {
         if (_connected) {
-          this.preparationDevice = connectedDevice;
+          this.preparationDevice = connectedDevice as MeticulousDevice;
           await this.preparationDevice.loadProfiles();
 
           /**Check if this profile is still existing, if yes, preset, if not cancel**/
@@ -766,7 +763,7 @@ export class BrewBrewingPreparationDeviceComponent
     await connectedDevice.deviceConnected().then(
       async () => {
         await this.uiAlert.hideLoadingSpinner();
-        this.preparationDevice = connectedDevice;
+        this.preparationDevice = connectedDevice as GaggiuinoDevice;
       },
       async () => {
         await this.uiAlert.hideLoadingSpinner();
@@ -831,7 +828,7 @@ export class BrewBrewingPreparationDeviceComponent
     await connectedDevice.deviceConnected().then(
       async () => {
         await this.uiAlert.hideLoadingSpinner();
-        this.preparationDevice = connectedDevice;
+        this.preparationDevice = connectedDevice as SanremoYOUDevice;
       },
       async () => {
         await this.uiAlert.hideLoadingSpinner();
@@ -946,7 +943,7 @@ export class BrewBrewingPreparationDeviceComponent
     await connectedDevice.deviceConnected().then(
       async () => {
         await this.uiAlert.hideLoadingSpinner();
-        this.preparationDevice = connectedDevice;
+        this.preparationDevice = connectedDevice as GaggimateDevice;
       },
       async () => {
         await this.uiAlert.hideLoadingSpinner();
@@ -1334,7 +1331,6 @@ export class BrewBrewingPreparationDeviceComponent
   }
 
   public preparationDeviceConnected(): boolean {
-    // UILog.getInstance().error('TEST:', [this.preparationDevice, this.data.preparationDeviceBrew.type]);
     if (
       this.preparationDevice &&
       this.data.preparationDeviceBrew.type !== PreparationDeviceType.NONE
