@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "Proveedor",
     "CLOUD_AI_API_KEY": "Clave API",
     "CLOUD_AI_MODEL": "Modelo",
+    "CLOUD_AI_PROMPT_APPENDIX": "Apéndice personalizado del prompt",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Instrucciones adicionales añadidas a cada prompt de extracción de granos con IA en la nube",
     "CLOUD_AI_BASE_URL": "Dirección URL",
     "CLOUD_AI_NOT_CONFIGURED": "La IA en la nube no está configurada. Selecciona un proveedor e introduce tu clave API en ajustes.",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence seleccionado — usar ruta local",

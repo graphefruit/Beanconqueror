@@ -5,9 +5,11 @@ import {
   buildCloudExtractionPrompt,
   CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS,
 } from '../../data/ai-import/ai-cloud-prompt';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
+import { UIAnalytics } from '../uiAnalytics';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import {
@@ -20,6 +22,8 @@ import {
 } from './bean-extraction-types';
 import {
   CloudLLMConfig,
+  CloudLLMDiagnosticEvent,
+  CloudLLMDiagnosticHandler,
   sendCloudLLMPrompt,
 } from './cloud-llm-communication.service';
 import {
@@ -33,6 +37,7 @@ import { parseWeightToGrams } from './weight-parsing';
 export class CloudFieldExtractionService {
   private uiSettingsStorage = inject(UISettingsStorage, { optional: true });
   private uiLog = inject(UILog, { optional: true });
+  private uiAnalytics = inject(UIAnalytics, { optional: true });
 
   /**
    * Extract all bean fields from OCR text using a cloud LLM.
@@ -50,10 +55,13 @@ export class CloudFieldExtractionService {
     logger?: { log(msg: string): void },
   ): Promise<Bean> {
     const log = logger ?? this.uiLog ?? { log: () => {} };
+    const settings = this.uiSettingsStorage?.getSettings();
 
     // 1. Build config from settings if not provided
     if (!config) {
-      const settings = this.uiSettingsStorage!.getSettings();
+      if (settings === undefined) {
+        throw new Error('Cloud LLM settings are unavailable');
+      }
       config = {
         provider: settings.ai_provider,
         apiKey: settings.cloud_ai_api_key,
@@ -63,16 +71,23 @@ export class CloudFieldExtractionService {
     }
 
     // 2. Build prompt
-    const userPrompt = buildCloudExtractionPrompt(ocrText);
+    const userPrompt = buildCloudExtractionPrompt(
+      ocrText,
+      settings?.cloud_ai_prompt_appendix ?? '',
+    );
 
     // 3. Send to cloud LLM — throws on API errors, timeouts, network failures
     log.log('[Cloud LLM] model: ' + config.model);
     log.log('[Cloud LLM] prompt: ' + userPrompt);
 
-    const response = await sendCloudLLMPrompt(config, [
-      { role: 'system', content: CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS },
-      { role: 'user', content: userPrompt },
-    ]);
+    const response = await sendCloudLLMPrompt(
+      config,
+      [
+        { role: 'system', content: CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS },
+        { role: 'user', content: userPrompt },
+      ],
+      this.createDiagnosticHandler(log),
+    );
 
     log.log('[Cloud LLM] response: ' + response.content);
     if (response.usage) {
@@ -94,6 +109,32 @@ export class CloudFieldExtractionService {
 
     // 6. Construct bean using shared utility
     return constructBeanFromExtractedData(topLevel, origin);
+  }
+
+  private createDiagnosticHandler(logger: {
+    log(msg: string): void;
+  }): CloudLLMDiagnosticHandler {
+    const uiAnalytics = this.uiAnalytics;
+
+    return (event) => {
+      if (event.type === 'temperature_fallback_started') {
+        logger.log(
+          '[Cloud LLM] Temperature rejected; retrying without temperature',
+        );
+      }
+
+      uiAnalytics?.trackEvent(
+        this.categoryForDiagnostic(event),
+        event.provider,
+        event.model,
+      );
+    };
+  }
+
+  private categoryForDiagnostic(event: CloudLLMDiagnosticEvent): string {
+    return event.type === 'request_started'
+      ? BEAN_TRACKING.CATEGORIES.AI_IMPORT_MODEL_USAGE
+      : BEAN_TRACKING.CATEGORIES.AI_IMPORT_TEMPERATURE_FALLBACK;
   }
 
   /**

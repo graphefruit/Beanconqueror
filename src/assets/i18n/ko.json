@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "",
     "CLOUD_AI_API_KEY": "",
     "CLOUD_AI_MODEL": "",
+    "CLOUD_AI_PROMPT_APPENDIX": "사용자 지정 프롬프트 부록",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "모든 클라우드 AI 원두 추출 프롬프트에 추가되는 지침",
     "CLOUD_AI_BASE_URL": "",
     "CLOUD_AI_NOT_CONFIGURED": "",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "",
