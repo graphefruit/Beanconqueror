@@ -8,7 +8,7 @@ export const environment = {
   API_URL: 'https://backend.beanconqueror.com/',
   FEATURES_ACTIVE: {
     SANREMO_YOU: true,
-    MOVE2: false,
+    MOVE2: true,
   },
 };
 
