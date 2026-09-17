@@ -24,7 +24,7 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { GaggimateDevice } from '../../../classes/preparationDevice/gaggimate/gaggimateDevice';
@@ -61,6 +61,8 @@ import { UIHelper } from '../../../services/uiHelper';
 })
 export class BrewModalImportShotGaggimateComponent implements OnInit {
   private readonly modalController = inject(ModalController);
+  private readonly translate = inject(TranslateService);
+
   readonly uiHelper = inject(UIHelper);
   private readonly uiAlert = inject(UIAlert);
 
@@ -158,13 +160,28 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
             alldatatoPush.push(GaggimateShotDataEntry);
           }
         } catch (error) {
-          // console.error(There was a problem with the fetch operation for id ${id}:, error);
+          console.error(`There was a problem fetching from GaggiMate:`, error);
         }
       }
     }
 
-    /**We need to grab all data before we can push it else the virtual scrolling has issues **/
-    this.history = alldatatoPush;
+    if (alldatatoPush.length > 0) {
+      /**We need to grab all data before we can push it else the virtual scrolling has issues **/
+      this.history = alldatatoPush;
+    } else {
+      await this.uiAlert.showMessage(
+        this.translate.instant(
+          'PREPARATION_DEVICE.TYPE_GAGGIMATE.ERROR_RECENT_SHOT_LIST_EMPTY_POSSIBLE_VERSION_MISMATCH',
+          {
+            maxShotVersionSupported:
+              this.gaggimateDevice.maxShotVersionSupported,
+          },
+        ),
+        'CARE',
+        'OK',
+        true,
+      );
+    }
   }
 
   @HostListener('window:resize')

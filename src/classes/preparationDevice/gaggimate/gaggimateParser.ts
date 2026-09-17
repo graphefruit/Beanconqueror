@@ -9,7 +9,7 @@ export class GaggimateParser {
   readonly WEIGHT_SCALE = 10;
   readonly RESISTANCE_SCALE = 100;
 
-  readonly MAX_SHOT_VERSION_SUPPORTED = 5;
+  readonly MAX_SHOT_VERSION_SUPPORTED = 7;
   readonly MAX_INDEX_VERSION_SUPPORTED = 1;
 
   // Field bit positions (must match shot_log_format.h)
@@ -27,6 +27,7 @@ export class GaggimateParser {
     EV: 10, // estimated weight
     PR: 11, // puck resistance
     SI: 12, // system info (v2+)
+    WP: 13, // cumulative water pumped
     // Phase number moved to header transitions in v5+
   };
 
@@ -89,6 +90,11 @@ export class GaggimateParser {
         volumetricAvailable: !!(val & 0x0008),
         extendedRecording: !!(val & 0x0010),
       }),
+    },
+    [this.FIELD_BITS.WP]: {
+      name: 'wp',
+      type: 'uint16',
+      scale: this.WEIGHT_SCALE,
     },
     // Phase number field removed in v5+, moved to header transitions
   };
@@ -243,9 +249,9 @@ export class GaggimateParser {
     }
 
     // Parse common header fields
-    const sampleCountHeader = view.getUint32(16, true);
     const sampleInterval = view.getUint16(8, true);
     const fieldsMask = view.getUint32(12, true);
+    const sampleCountHeader = view.getUint32(16, true);
     const durationHeader = view.getUint32(20, true);
     const startEpoch = view.getUint32(24, true);
     const profileIdBytes = new Uint8Array(arrayBuffer, 28, 32);
@@ -254,9 +260,10 @@ export class GaggimateParser {
     const profileId = this.decodeCString(profileIdBytes);
     const profileName = this.decodeCString(profileNameBytes);
 
-    // Calculate expected sample size from fieldsMask
+    // v6 stores the timestamp as uint32 elapsed milliseconds. Older versions
+    // store a uint16 sample index which is multiplied by sampleInterval.
     const fieldCount = this.countSetBits(fieldsMask);
-    const expectedSampleSize = fieldCount * 2; // Each field is 16 bits = 2 bytes
+    const expectedSampleSize = fieldCount * 2 + (version >= 6 ? 2 : 0);
 
     if (deviceSampleSize !== expectedSampleSize) {
       throw new Error(
@@ -302,20 +309,25 @@ export class GaggimateParser {
       const base = headerSize + i * sampleSize;
       const sample = {};
 
-      // Parse each field dynamically
+      // Parse each field dynamically. The first field grew from 2 to 4 bytes in
+      // v6; all remaining fields retain their existing order and width.
+      let offset = base;
       for (let fieldIdx = 0; fieldIdx < fieldLayout.length; fieldIdx++) {
         const field = fieldLayout[fieldIdx];
-        const offset = base + fieldIdx * 2; // Each field is 2 bytes
 
         let rawValue;
-        if (field.type === 'int16') {
+        if (version >= 6 && field.bitPos === this.FIELD_BITS.T) {
+          rawValue = view.getUint32(offset, true);
+        } else if (field.type === 'int16') {
           rawValue = view.getInt16(offset, true);
         } else {
           rawValue = view.getUint16(offset, true);
         }
 
         let finalValue;
-        if (field.transform) {
+        if (version >= 6 && field.bitPos === this.FIELD_BITS.T) {
+          finalValue = rawValue;
+        } else if (field.transform) {
           finalValue = field.transform(rawValue, sampleInterval);
         } else if (field.scale) {
           finalValue = rawValue / field.scale;
@@ -324,6 +336,7 @@ export class GaggimateParser {
         }
 
         sample[field.name] = finalValue;
+        offset += version >= 6 && field.bitPos === this.FIELD_BITS.T ? 4 : 2;
       }
 
       samples.push(sample);
@@ -358,6 +371,7 @@ export class GaggimateParser {
       sampleInterval,
       fieldsMask,
       trailingBytes,
+      samplesExpected: sampleCountHeader,
     };
   }
 

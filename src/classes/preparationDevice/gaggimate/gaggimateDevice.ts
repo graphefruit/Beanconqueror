@@ -109,6 +109,13 @@ export class GaggimateDevice extends PreparationDevice {
         brew_time: '',
         timestamp: timestamp,
       });
+
+      brewFlow.waterDispensed.push({
+        actual: row.wp ?? 0,
+        old: 0,
+        brew_time: '',
+        timestamp: timestamp,
+      });
     });
     return brewFlow;
   }
@@ -116,7 +123,7 @@ export class GaggimateDevice extends PreparationDevice {
   public async getRecentShots() {
     try {
       const response = await fetch(
-        this.connectionURL + '/api/history/recent.bin',
+        this.connectionURL + '/api/history/recent.bin?limit=10',
       );
 
       const buffer = await response.arrayBuffer();
@@ -159,6 +166,10 @@ export class GaggimateDevice extends PreparationDevice {
 
   private logError(...args: any[]) {
     UILog.getInstance().error('Gaggimate device:', ...args);
+  }
+
+  public get maxShotVersionSupported(): number {
+    return this.parser.MAX_SHOT_VERSION_SUPPORTED;
   }
 
   public getLatestShotsToImport(): number {
