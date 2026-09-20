@@ -915,6 +915,7 @@
     "NAV_LIST_VIEW_CUSTOM_PARAMETERS": "List view parameters",
     "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Decide which parameters should be displayed on the list view tiles",
     "BREW_DATA_VESSEL_NAME_WEIGHT": "Vessel Name\/Weight",
+    "BREW_IMPORTED_FROM": "Imported from",
     "IGNORE_NEGATIVE_VALUES": "Ignore negative weight values",
     "IGNORE_ANOMALY_VALUES": "Ignore anomaly values",
     "IGNORE_ANOMALY_VALUES_TOOLTIP": "For example: Swirling a cup on the scale",

@@ -66,6 +66,10 @@ import { BrewFunction } from '../../pipes/brew/brewFunction';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { PreparationFunction } from '../../pipes/preparation/preparationFunction';
 import { ToFixedPipe } from '../../pipes/toFixed';
+import {
+  BrewImportProvenanceChip,
+  buildBrewImportProvenanceChip,
+} from '../../services/brewImport/brew-import-provenance';
 import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
 import { ShareService } from '../../services/shareService/share-service.service';
 import { UIAlert } from '../../services/uiAlert';
@@ -173,8 +177,7 @@ export class BrewInformationComponent implements OnInit, OnChanges {
   };
 
   @ViewChild('swiper', { static: false }) public brewInformationSlider:
-    | ElementRef
-    | undefined;
+    ElementRef | undefined;
 
   @ViewChild('brewInformationContainer', { read: ElementRef, static: false })
   public brewInformationContainer: ElementRef;
@@ -197,6 +200,7 @@ export class BrewInformationComponent implements OnInit, OnChanges {
 
   public uiHasCustomRatingRange: boolean = undefined;
   public uiCuppedBrewFlavors: string[] = [];
+  public importedProvenanceChip: BrewImportProvenanceChip;
 
   @Input() set collapsed(value: boolean) {
     let retrigger = false;
@@ -235,6 +239,9 @@ export class BrewInformationComponent implements OnInit, OnChanges {
 
       this.uiHasCustomRatingRange = this.getHasCustomRatingRange();
       this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
+      this.importedProvenanceChip = buildBrewImportProvenanceChip(
+        this.brew.customInformation?.imported,
+      );
       /**On Android we somehow need a bit more ms for the calc... specific on older once**/
       let timeoutMS = 350;
       if (this.platform.is('ios')) {
@@ -287,6 +294,9 @@ export class BrewInformationComponent implements OnInit, OnChanges {
   public ngOnChanges(changes: SimpleChanges): void {
     // changes.prop contains the old and the new value...
 
+    this.importedProvenanceChip = buildBrewImportProvenanceChip(
+      this.brew?.customInformation?.imported,
+    );
     this.resetRenderingRating();
   }
   private resetRenderingRating() {
@@ -302,6 +312,12 @@ export class BrewInformationComponent implements OnInit, OnChanges {
 
   public async showBrewGraph() {
     await this.uiGraphHelper.detailBrewGraph(this.brew);
+  }
+
+  public openImportedProvenance(event: Event, sourceUrl: string): void {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.uiHelper.openExternalWebpage(sourceUrl);
   }
 
   public async showBrewActions(event): Promise<void> {

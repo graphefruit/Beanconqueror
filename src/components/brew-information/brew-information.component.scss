@@ -130,6 +130,16 @@
     }
   }
 
+  .brew-imported-chip {
+    max-width: 100%;
+
+    .brew-imported-chip-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
   async-image {
     margin: 0 auto;
   }
