@@ -144,7 +144,10 @@ describe('IntentHandlerService', () => {
     visualizerService = jasmine.createSpyObj('VisualizerService', [
       'importShotWithSharedCode',
     ]);
-    brewImportService = jasmine.createSpyObj('BrewImportService', ['import']);
+    brewImportService = jasmine.createSpyObj('BrewImportService', [
+      'ensureBeanFromHandoff',
+      'import',
+    ]);
     beanStorage = jasmine.createSpyObj('UIBeanStorage', [
       'attachOnEvent',
       'getAllEntries',
@@ -167,6 +170,7 @@ describe('IntentHandlerService', () => {
     uiAlert.showLoadingSpinner.and.resolveTo();
     uiAlert.hideLoadingSpinner.and.resolveTo();
     uiAlert.isLoadingSpinnerShown.and.returnValue(false);
+    brewImportService.ensureBeanFromHandoff.and.resolveTo();
     brewImportService.import.and.resolveTo();
     beanStorage.attachOnEvent.and.returnValue(eventEmitter as never);
     millStorage.attachOnEvent.and.returnValue(eventEmitter as never);
@@ -277,6 +281,27 @@ describe('IntentHandlerService', () => {
     );
   });
 
+  it('creates the pod bean before deciding whether the import can proceed', async () => {
+    const order: string[] = [];
+    beanStorage.getAllEntries.and.callFake(() => {
+      order.push('read');
+      return [] as never;
+    });
+    brewImportService.ensureBeanFromHandoff.and.callFake(() => {
+      order.push('ensure');
+      return Promise.resolve();
+    });
+
+    await service.handleDeepLink(url);
+
+    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
+      [envelope],
+    ]);
+    expect(order[0]).toBe('ensure');
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showLoadingSpinner.calls.count()).toBe(0);
+  });
+
   it('blocks brew handoff import when only archived beans are available', async () => {
     beanStorage.getAllEntries.and.returnValue([{ finished: true }] as never);
 
@@ -299,13 +324,13 @@ describe('IntentHandlerService', () => {
       `Handle deeplink: ADD_BREW (${url.length} chars)`,
     );
     expect(uiLog.log).not.toHaveBeenCalledWith('Handle deeplink: ' + url);
-    expect(brewImportService.import).toHaveBeenCalledOnceWith(envelope);
-    expect(uiAlert.showMessage).toHaveBeenCalledWith(
+    expect(brewImportService.import.calls.allArgs()).toEqual([[envelope]]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
       'BREW_IMPORT_SUCCESSFUL',
       undefined,
       undefined,
       true,
-    );
+    ]);
   });
 
   it('reports a brew handoff import failure after a decodable payload reaches import', async () => {
@@ -313,13 +338,13 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(url);
 
-    expect(brewImportService.import).toHaveBeenCalled();
-    expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
-    expect(uiAlert.showMessage).toHaveBeenCalledWith(
+    expect(brewImportService.import.calls.count()).toBe(1);
+    expect(uiAlert.hideLoadingSpinner.calls.count()).toBeGreaterThan(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
       'BREW_IMPORT_FAILED',
       'ERROR_OCCURED',
       undefined,
       true,
-    );
+    ]);
   });
 });

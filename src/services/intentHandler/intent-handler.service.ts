@@ -246,22 +246,26 @@ export class IntentHandlerService {
   private async addBrewFromHandoff(_url: string) {
     this.uiLog.log('Import brew from handoff link');
 
-    // A finished import only needs the fallback links that BrewImportService
-    // cannot create itself. A grinder hint is optional and may stay unlinked.
-    if (this.uiBrewHelper.canImportBrewIfNotShowMessage() === false) {
-      this.uiLog.log(
-        'Import brew from handoff link skipped: cannot import yet',
-      );
-      return;
-    }
-
     try {
-      await this.uiAlert.showLoadingSpinner();
       this.uiAnalytics.trackEvent(
         IntentHandlerTracking.TITLE,
         IntentHandlerTracking.ACTIONS.ADD_HANDOFF_BREW,
       );
       const envelope = await decodeHandoffPayload(collectHandoffPayload(_url));
+      await this.brewImportService.ensureBeanFromHandoff(envelope);
+
+      // A finished import only needs the fallback links that BrewImportService
+      // cannot create itself, so a grinder hint may stay unlinked. The check
+      // runs after the pod bean is created, because that bean is one of the
+      // links it is looking for.
+      if (this.uiBrewHelper.canImportBrewIfNotShowMessage() === false) {
+        this.uiLog.log(
+          'Import brew from handoff link skipped: cannot import yet',
+        );
+        return;
+      }
+
+      await this.uiAlert.showLoadingSpinner();
       await this.brewImportService.import(envelope);
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(

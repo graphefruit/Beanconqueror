@@ -9,6 +9,7 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import { decodeHandoffPayload } from '../../intentHandler/brew-handoff.decoder';
+import { UIAlert } from '../../uiAlert';
 import { UIBeanStorage } from '../../uiBeanStorage';
 import { UIBrewStorage } from '../../uiBrewStorage';
 import { UIFileHelper } from '../../uiFileHelper';
@@ -193,7 +194,11 @@ describe('BrewImportService', () => {
   let brewStorage: MemoryBrewStorage;
   let fileHelper: jasmine.SpyObj<UIFileHelper>;
   let uiLog: jasmine.SpyObj<UILog>;
+  let uiAlert: jasmine.SpyObj<UIAlert>;
   let settings: Settings;
+  let beans: Bean[];
+  let mills: Mill[];
+  let preparations: Preparation[];
 
   beforeEach(() => {
     beanStorage = jasmine.createSpyObj('UIBeanStorage', [
@@ -222,18 +227,24 @@ describe('BrewImportService', () => {
     fileHelper.writeInternalFileFromText.and.resolveTo();
     fileHelper.deleteInternalFile.and.resolveTo();
 
-    const beans = [entry(new Bean(), 'Any coffee', 'bean-1')];
-    const mills = [entry(new Mill(), 'Any grinder', 'mill-1')];
-    const preparations = [
-      entry(new Preparation(), 'Any brewer', 'preparation-1'),
-    ];
+    uiAlert = jasmine.createSpyObj('UIAlert', ['showConfirm']);
+    uiAlert.showConfirm.and.resolveTo('NO');
 
-    beanStorage.getAllEntries.and.returnValue(beans);
+    beans = [entry(new Bean(), 'Any coffee', 'bean-1')];
+    mills = [entry(new Mill(), 'Any grinder', 'mill-1')];
+    preparations = [entry(new Preparation(), 'Any brewer', 'preparation-1')];
+
+    beanStorage.getAllEntries.and.callFake(() => beans);
     beanStorage.getByUUID.and.callFake((uuid: string) =>
       beans.find((bean) => bean.config.uuid === uuid),
     );
-    millStorage.getAllEntries.and.returnValue(mills);
-    preparationStorage.getAllEntries.and.returnValue(preparations);
+    beanStorage.add.and.callFake((bean: Bean): Promise<Bean> => {
+      bean.config.uuid = 'bean-created';
+      beans.push(bean);
+      return Promise.resolve(bean);
+    });
+    millStorage.getAllEntries.and.callFake(() => mills);
+    preparationStorage.getAllEntries.and.callFake(() => preparations);
     preparationStorage.getByUUID.and.callFake((uuid: string) =>
       preparations.find((preparation) => preparation.config.uuid === uuid),
     );
@@ -268,6 +279,7 @@ describe('BrewImportService', () => {
         { provide: UIFileHelper, useValue: fileHelper },
         { provide: UILog, useValue: uiLog },
         { provide: UISettingsStorage, useValue: settingsStorage },
+        { provide: UIAlert, useValue: uiAlert },
         { provide: TranslateService, useValue: translate },
       ],
     });
@@ -532,15 +544,124 @@ describe('BrewImportService', () => {
     expect(beanStorage.add.calls.count()).toBe(0);
   });
 
-  it('falls back to the first active bean for a missing bean and does not create one', () => {
-    const beans = [
+  it('creates a pod bean with full metadata before build links the brew by name', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+        process: 'Washed',
+        variety: 'Heirloom',
+        aromatics: 'Jasmine',
+        note: 'Bright and floral',
+        beanMix: 'Single Origin',
+        imageUrl: 'https://example.com/pod.jpg',
+      },
+    });
+
+    await service.ensureBeanFromHandoff(handoff);
+    const result = service.build(handoff);
+    const created = beans.find((bean) => bean.config.uuid === 'bean-created');
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_BEAN_DESCRIPTION',
+        'BREW_IMPORT_CREATE_BEAN_TITLE',
+        true,
+      ],
+    ]);
+    expect(created.name).toBe('Pod coffee');
+    expect(created.note).toBe('Bright and floral');
+    expect(created.aromatics).toBe('Jasmine');
+    expect(String(created.beanMix)).toBe('SINGLE_ORIGIN');
+    expect(created.attachments).toEqual([]);
+    expect(created.bean_information).toEqual([
+      jasmine.objectContaining({
+        country: 'Ethiopia',
+        processing: 'Washed',
+        variety: 'Heirloom',
+      }),
+    ]);
+    expect(result.brew.bean).toBe('bean-created');
+    expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('does not prompt when pod metadata names an existing bean', async () => {
+    await service.ensureBeanFromHandoff(
+      envelope({
+        bean: {
+          name: 'Any coffee',
+          origin: 'Ethiopia',
+          process: 'Washed',
+        },
+      }),
+    );
+
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(beanStorage.add.calls.count()).toBe(0);
+  });
+
+  it('does not prompt when the bean hint only contains a name', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+
+    await service.ensureBeanFromHandoff(
+      envelope({ bean: { name: 'Pod coffee' } }),
+    );
+
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(beanStorage.add.calls.count()).toBe(0);
+  });
+
+  it('keeps the existing fallback note when bean creation is declined', async () => {
+    beans = [
       entry(new Bean(), 'Zed coffee', 'bean-z'),
       entry(new Bean(), 'Alpha coffee', 'bean-a'),
     ];
-    beanStorage.getAllEntries.and.returnValue(beans);
-    beanStorage.getByUUID.and.callFake((uuid: string) =>
-      beans.find((bean) => bean.config.uuid === uuid),
+    uiAlert.showConfirm.and.resolveTo('NO');
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+        process: 'Washed',
+      },
+    });
+
+    await service.ensureBeanFromHandoff(handoff);
+    const result = service.build(handoff);
+
+    expect(uiAlert.showConfirm.calls.count()).toBe(1);
+    expect(beanStorage.add.calls.count()).toBe(0);
+    expect(result.brew.bean).toBe('bean-a');
+    expect(result.brew.note).toBe(
+      'A completed brew\n\nBean not linked: "Pod coffee" (no match). Using "Alpha coffee".',
     );
+  });
+
+  it('falls back to an unknown bean mix instead of storing unknown handoff wording', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('YES');
+
+    await service.ensureBeanFromHandoff(
+      envelope({
+        bean: {
+          name: 'Pod coffee',
+          origin: 'Ethiopia',
+          beanMix: 'garbage',
+        },
+      }),
+    );
+
+    const created = beans.find((bean) => bean.config.uuid === 'bean-created');
+    expect(String(created.beanMix)).toBe('UNKNOWN');
+    expect(String(created.beanMix)).not.toBe('garbage');
+  });
+
+  it('falls back to the first active bean for a missing bean and does not create one', () => {
+    beans = [
+      entry(new Bean(), 'Zed coffee', 'bean-z'),
+      entry(new Bean(), 'Alpha coffee', 'bean-a'),
+    ];
 
     const result = service.build(
       envelope({ bean: { name: 'Unknown coffee' } }),
@@ -592,7 +713,9 @@ describe('BrewImportService', () => {
   });
 
   it('ignores a non-string bean name from an opaque decoded bean and falls back safely', () => {
-    const result = service.build(envelope({ bean: { name: 42 } }));
+    const result = service.build(
+      envelope({ bean: { name: 42 } as unknown as IHandoffEnvelope['bean'] }),
+    );
 
     expect(result.brew.bean).toBe('bean-1');
     expect(result.brew.note).toContain(
@@ -602,9 +725,7 @@ describe('BrewImportService', () => {
   });
 
   it('normalizes composed and decomposed characters when matching names', () => {
-    beanStorage.getAllEntries.and.returnValue([
-      entry(new Bean(), 'Café Juno', 'bean-cafe'),
-    ]);
+    beans = [entry(new Bean(), 'Café Juno', 'bean-cafe')];
 
     const result = service.build(
       envelope({ bean: { name: 'Cafe\u0301 Juno' } }),
@@ -615,7 +736,7 @@ describe('BrewImportService', () => {
   });
 
   it('leaves a missing mill unset, records the hint in the note, and does not create one', () => {
-    millStorage.getAllEntries.and.returnValue([]);
+    mills = [];
 
     const result = service.build(envelope());
 
@@ -698,14 +819,10 @@ describe('BrewImportService', () => {
   });
 
   it('falls back to the first active preparation for a missing preparation and does not create one', () => {
-    const preparations = [
+    preparations = [
       entry(new Preparation(), 'V60', 'preparation-v60'),
       entry(new Preparation(), 'Aeropress', 'preparation-aero'),
     ];
-    preparationStorage.getAllEntries.and.returnValue(preparations);
-    preparationStorage.getByUUID.and.callFake((uuid: string) =>
-      preparations.find((preparation) => preparation.config.uuid === uuid),
-    );
 
     const result = service.build(envelope());
 
@@ -717,12 +834,10 @@ describe('BrewImportService', () => {
   });
 
   it('does not persist an unmatched imported brew with empty bean or preparation UUIDs', () => {
-    beanStorage.getAllEntries.and.returnValue([
-      entry(new Bean(), 'Fallback bean', 'bean-fallback'),
-    ]);
-    preparationStorage.getAllEntries.and.returnValue([
+    beans = [entry(new Bean(), 'Fallback bean', 'bean-fallback')];
+    preparations = [
       entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
-    ]);
+    ];
 
     const result = service.build(
       envelope({
@@ -736,18 +851,10 @@ describe('BrewImportService', () => {
   });
 
   it('loads an unmatched imported brew through host accessors without throwing', () => {
-    const beans = [entry(new Bean(), 'Fallback bean', 'bean-fallback')];
-    const preparations = [
+    beans = [entry(new Bean(), 'Fallback bean', 'bean-fallback')];
+    preparations = [
       entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
     ];
-    beanStorage.getAllEntries.and.returnValue(beans);
-    beanStorage.getByUUID.and.callFake((uuid: string) =>
-      beans.find((bean) => bean.config.uuid === uuid),
-    );
-    preparationStorage.getAllEntries.and.returnValue(preparations);
-    preparationStorage.getByUUID.and.callFake((uuid: string) =>
-      preparations.find((preparation) => preparation.config.uuid === uuid),
-    );
 
     const brew = service.build(
       envelope({
@@ -763,11 +870,11 @@ describe('BrewImportService', () => {
   });
 
   it('does not guess when a bean name match is ambiguous', () => {
-    beanStorage.getAllEntries.and.returnValue([
+    beans = [
       entry(new Bean(), ' Any Coffee ', 'bean-1'),
       entry(new Bean(), 'any coffee', 'bean-2'),
       entry(new Bean(), 'Fallback coffee', 'bean-fallback'),
-    ]);
+    ];
 
     const result = service.build(envelope());
 
@@ -929,8 +1036,8 @@ describe('BrewImportService', () => {
   });
 
   it('rejects without persisting when no bean or preparation fallback exists', async () => {
-    beanStorage.getAllEntries.and.returnValue([]);
-    preparationStorage.getAllEntries.and.returnValue([]);
+    beans = [];
+    preparations = [];
 
     await expectAsync(service.import(envelope())).toBeRejectedWithError(
       'Bean not linked: no available Bean.',
@@ -957,7 +1064,7 @@ describe('BrewImportService', () => {
       await encodeEnvelopeForDecoder(envelope()),
     );
 
-    expect(Object.getPrototypeOf(decoded.bean)).toBeNull();
+    expect(decoded.bean).toEqual({ name: 'Any coffee' });
 
     const result = service.build(decoded);
 

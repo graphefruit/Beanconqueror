@@ -55,11 +55,22 @@ export interface IHandoffBrew {
   note: string;
 }
 
+export interface IHandoffBean {
+  name: string;
+  origin?: string;
+  process?: string;
+  variety?: string;
+  aromatics?: string;
+  note?: string;
+  beanMix?: string;
+  imageUrl?: string;
+}
+
 export interface IHandoffEnvelope {
   v: 1;
   app: { name: string; version?: string };
   brew: IHandoffBrew;
-  bean?: Record<string, unknown>;
+  bean?: IHandoffBean;
   flow?: IHandoffFlow;
   metrics?: IHandoffMetric[];
   imported: IHandoffImport;

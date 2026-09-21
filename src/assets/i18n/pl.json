@@ -870,6 +870,8 @@
     },
     "RETRY_CONNECT": "Ponów próbę połączenia",
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Utrzymuj połączenie wagi nawet wtedy, gdy aplikacja działa w tle",
+    "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
+    "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details that are not in your library. Create this coffee before importing the brew?",
     "BREW_FLOW_WEIGHT": "Waga",
     "BREW_FLOW_WEIGHT_PER_SECOND": "Przepływ (wygładzony)",
     "ROAST_TYPE_UNKNOWN": "Nieznany",

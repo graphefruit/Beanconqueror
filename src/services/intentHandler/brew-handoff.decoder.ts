@@ -7,6 +7,7 @@ import { BlobReader, ZipReader } from '@zip.js/zip.js';
 import type { FileEntry } from '@zip.js/zip.js';
 
 import type {
+  IHandoffBean,
   IHandoffBrew,
   IHandoffEnvelope,
   IHandoffFlow,
@@ -17,6 +18,7 @@ import type {
 
 export type {
   IHandoffBrew,
+  IHandoffBean,
   IHandoffEnvelope,
   IHandoffFlow,
   IHandoffImport,
@@ -470,9 +472,7 @@ function validateEnvelope(value: unknown): IHandoffEnvelope {
     v: 1,
     app: validateApp(envelope.app),
     brew: validateBrew(envelope.brew),
-    ...optional(envelope.bean, 'bean', (bean) =>
-      sanitizeOpaqueObject(bean, 'Envelope bean'),
-    ),
+    ...optionalValue('bean', validateBean(envelope.bean)),
     ...optional(envelope.flow, 'flow', validateFlow),
     ...optional(envelope.metrics, 'metrics', validateMetrics),
     imported: validateImported(envelope.imported),
@@ -485,6 +485,42 @@ function validateApp(value: unknown): IHandoffEnvelope['app'] {
     name: boundedString(app.name, 'Envelope app.name', 1, MAX_LABEL_LENGTH),
     ...optionalString(app.version, 'version', 'Envelope app.version'),
   };
+}
+
+function validateBean(value: unknown): IHandoffBean | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  let bean: Record<string, unknown>;
+  try {
+    bean = objectRecord(value, 'Envelope bean');
+  } catch {
+    return undefined;
+  }
+
+  const name = optionalTrimmedString(bean.name);
+  if (name === undefined) {
+    return undefined;
+  }
+
+  const out: IHandoffBean = { name };
+  const optionalFields: (keyof Omit<IHandoffBean, 'name'>)[] = [
+    'origin',
+    'process',
+    'variety',
+    'aromatics',
+    'note',
+    'beanMix',
+    'imageUrl',
+  ];
+  optionalFields.forEach((field) => {
+    const fieldValue = optionalTrimmedString(bean[field]);
+    if (fieldValue !== undefined) {
+      out[field] = fieldValue;
+    }
+  });
+  return out;
 }
 
 function validateImported(value: unknown): IHandoffImport {
@@ -931,6 +967,14 @@ function optionalString<K extends string>(
   return { [key]: boundedString(value, path, 1, MAX_LABEL_LENGTH) } as Partial<
     Record<K, string>
   >;
+}
+
+function optionalTrimmedString(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  return trimmed === '' ? undefined : trimmed;
 }
 
 function optionalValue<K extends string, T>(

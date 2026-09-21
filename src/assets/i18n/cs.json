@@ -870,6 +870,8 @@
     },
     "RETRY_CONNECT": "Zkusit znovu připojení",
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Udržet váhu připojenou i při běhu aplikace na pozadí",
+    "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
+    "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details that are not in your library. Create this coffee before importing the brew?",
     "BREW_FLOW_WEIGHT": "Hmotnost",
     "BREW_FLOW_WEIGHT_PER_SECOND": "Průtok (vyhlazený)",
     "ROAST_TYPE_UNKNOWN": "Neznámé",

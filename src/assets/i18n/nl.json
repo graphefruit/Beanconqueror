@@ -870,6 +870,8 @@
     },
     "RETRY_CONNECT": "Verbinding opnieuw proberen",
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Houd de weegschaal verbonden, zelfs als de app op de achtergrond draait",
+    "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
+    "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details that are not in your library. Create this coffee before importing the brew?",
     "BREW_FLOW_WEIGHT": "Gewicht",
     "BREW_FLOW_WEIGHT_PER_SECOND": "Stroom (afgevlakt)",
     "ROAST_TYPE_UNKNOWN": "onbekend",

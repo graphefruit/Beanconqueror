@@ -408,7 +408,7 @@ describe('brew handoff decoder', () => {
       )
       .replace(
         '"bean":{"name":"Any coffee"}',
-        '"bean":{"x":{"__proto__":{"polluted":true},"safe":true}}',
+        '"bean":{"name":"Any coffee","origin":{"__proto__":{"polluted":true},"safe":true}}',
       );
 
     const decoded = await decodeHandoffPayload(await gzipString(raw));
@@ -421,10 +421,48 @@ describe('brew handoff decoder', () => {
       a: { b: { c: {} } },
       list: [{ safe: 1 }],
     });
-    expect(decoded.bean).toEqual({ x: { safe: true } });
+    expect(decoded.bean).toEqual({ name: 'Any coffee' });
   });
 
-  it('bounds opaque object depth and key count', async () => {
+  it('drops malformed bean metadata without rejecting the brew', async () => {
+    const decodedWrongTypes = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: '  Pod coffee  ',
+          origin: 123,
+          process: '',
+          variety: '  Heirloom  ',
+          aromatics: false,
+          note: '  Floral  ',
+          beanMix: ' garbage ',
+          imageUrl: [],
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+    const decodedMalformedBean = await decodeEnvelope(
+      validEnvelope({
+        bean: 'not a bean' as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+    const decodedMissingName = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          origin: 'Ethiopia',
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decodedWrongTypes.bean).toEqual({
+      name: 'Pod coffee',
+      variety: 'Heirloom',
+      note: 'Floral',
+      beanMix: 'garbage',
+    });
+    expect(decodedMalformedBean.bean).toBeUndefined();
+    expect(decodedMissingName.bean).toBeUndefined();
+  });
+
+  it('bounds opaque imported params depth and key count', async () => {
     let deep: Record<string, unknown> = { end: true };
     for (let i = 0; i < 9; i++) {
       deep = { child: deep };
@@ -442,15 +480,18 @@ describe('brew handoff decoder', () => {
     await expectAsync(
       decodeEnvelope(
         validEnvelope({
-          bean: Object.fromEntries(
-            Array.from({ length: 1001 }, (_value, index) => [
-              `k${index}`,
-              true,
-            ]),
-          ),
+          imported: {
+            ...validEnvelope().imported,
+            params: Object.fromEntries(
+              Array.from({ length: 1001 }, (_value, index) => [
+                `k${index}`,
+                true,
+              ]),
+            ),
+          },
         }),
       ),
-    ).toBeRejectedWithError('Envelope bean contains too many keys');
+    ).toBeRejectedWithError('Envelope imported.params contains too many keys');
   });
 
   it('rejects non-object opaque blocks', async () => {

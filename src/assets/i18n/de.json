@@ -875,6 +875,8 @@
     },
     "RETRY_CONNECT": "Erneut verbinden",
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Waage verbunden lassen bei App minimierung\/inaktivität",
+    "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
+    "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details that are not in your library. Create this coffee before importing the brew?",
     "BREW_FLOW_WEIGHT": "Gewicht",
     "BREW_FLOW_WEIGHT_PER_SECOND": "Fluss (Berechnet)",
     "ROAST_TYPE_UNKNOWN": "Unbekannt",

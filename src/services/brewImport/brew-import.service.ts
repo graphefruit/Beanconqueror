@@ -2,14 +2,19 @@ import { inject, Injectable } from '@angular/core';
 
 import moment from 'moment';
 
+import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import type {
+  IHandoffBean,
   IHandoffEnvelope,
   IHandoffFlow,
   IHandoffMetric,
 } from '../../interfaces/brew/IHandoff';
+import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UIFileHelper } from '../uiFileHelper';
@@ -62,6 +67,7 @@ export class BrewImportService {
   private readonly fileHelper = inject(UIFileHelper);
   private readonly uiLog = inject(UILog);
   private readonly settingsStorage = inject(UISettingsStorage);
+  private readonly uiAlert = inject(UIAlert);
 
   public build(envelope: IHandoffEnvelope): IBrewImportResult {
     const brew = new Brew();
@@ -141,6 +147,30 @@ export class BrewImportService {
       brew,
       brewFlow: this.buildFlow(envelope.flow, envelope.metrics),
     };
+  }
+
+  public async ensureBeanFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<void> {
+    const bean = envelope.bean;
+    if (!bean || !this.hasBeanMetadata(bean)) {
+      return;
+    }
+
+    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+      return;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'BREW_IMPORT_CREATE_BEAN_DESCRIPTION',
+      'BREW_IMPORT_CREATE_BEAN_TITLE',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+
+    await this.beanStorage.add(this.buildBean(bean));
   }
 
   public async import(envelope: IHandoffEnvelope): Promise<IBrewImportResult> {
@@ -316,10 +346,86 @@ export class BrewImportService {
   }
 
   private optionalBeanName(envelope: IHandoffEnvelope): string {
-    if (typeof envelope.bean?.name === 'string') {
-      return envelope.bean.name;
+    return typeof envelope.bean?.name === 'string' ? envelope.bean.name : '';
+  }
+
+  private hasBeanMetadata(bean: IHandoffBean): boolean {
+    return [
+      bean.origin,
+      bean.process,
+      bean.variety,
+      bean.aromatics,
+      bean.note,
+      bean.beanMix,
+    ].some((field) => field !== undefined);
+  }
+
+  private buildBean(handoffBean: IHandoffBean): Bean {
+    const bean = new Bean();
+    bean.name = handoffBean.name;
+    bean.note = handoffBean.note ?? '';
+    bean.aromatics = handoffBean.aromatics ?? '';
+    bean.beanMix = this.beanMixFromHandoff(handoffBean.beanMix);
+
+    // Beanconqueror attachments are local file paths; remote pod images would
+    // need a downloader, permissions and lifecycle policy outside this import.
+    const information = this.beanInformationFromHandoff(handoffBean);
+    if (information !== undefined) {
+      bean.bean_information.push(information);
     }
-    return '';
+
+    return bean;
+  }
+
+  private beanInformationFromHandoff(
+    bean: IHandoffBean,
+  ): IBeanInformation | undefined {
+    if (!bean.origin && !bean.process && !bean.variety) {
+      return undefined;
+    }
+
+    return {
+      country: bean.origin ?? '',
+      region: '',
+      farm: '',
+      farmer: '',
+      elevation: '',
+      harvest_time: '',
+      variety: bean.variety ?? '',
+      processing: bean.process ?? '',
+      certification: '',
+      percentage: 0,
+      purchasing_price: 0,
+      fob_price: 0,
+    };
+  }
+
+  private beanMixFromHandoff(beanMix: string | undefined): BEAN_MIX_ENUM {
+    const normalized = this.normalizeBeanMix(beanMix ?? '');
+    if (normalized === 'singleorigin' || normalized === 'single') {
+      return 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
+    }
+    if (normalized === 'blend') {
+      return 'BLEND' as BEAN_MIX_ENUM;
+    }
+    if (normalized === 'unknown') {
+      return 'UNKNOWN' as BEAN_MIX_ENUM;
+    }
+    return 'UNKNOWN' as BEAN_MIX_ENUM;
+  }
+
+  private normalizeBeanMix(value: string): string {
+    return value.normalize('NFC').trim().toLocaleLowerCase().replace(/\W/g, '');
+  }
+
+  private hasNameMatch(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+  ): boolean {
+    const normalizedHint = this.normalizeName(hintedName);
+    return entries.some(
+      (entry) => this.normalizeName(entry.name) === normalizedHint,
+    );
   }
 
   private findUniqueOrDefault(

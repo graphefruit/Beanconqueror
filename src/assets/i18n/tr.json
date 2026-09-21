@@ -870,6 +870,8 @@
     },
     "RETRY_CONNECT": "Bağlantıyı yeniden dene",
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Uygulama simge durumuna küçültülmüş\/etkin değilken bile tartının bağlanmasına izin ver",
+    "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
+    "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details that are not in your library. Create this coffee before importing the brew?",
     "BREW_FLOW_WEIGHT": "Ağırlık",
     "BREW_FLOW_WEIGHT_PER_SECOND": "Akış",
     "ROAST_TYPE_UNKNOWN": "Bilinmiyor",

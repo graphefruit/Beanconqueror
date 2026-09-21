@@ -870,6 +870,8 @@
     },
     "RETRY_CONNECT": "重试连接",
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "即使应用程序被最小化\/非活动状态，也让电子秤连接",
+    "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
+    "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details that are not in your library. Create this coffee before importing the brew?",
     "BREW_FLOW_WEIGHT": "重量",
     "BREW_FLOW_WEIGHT_PER_SECOND": "流速",
     "ROAST_TYPE_UNKNOWN": "不清楚",
