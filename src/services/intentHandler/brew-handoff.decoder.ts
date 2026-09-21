@@ -30,6 +30,16 @@ export type {
 
 // A realistic 2,400-sample brew is roughly 60 KB JSON; 512 KiB is generous headroom for one brew while still being the cap that refuses zip bombs.
 const MAX_INFLATED_BYTES = 512 * 1024;
+/*
+ * A batch carries up to MAX_BATCH_BREWS whole envelopes, so the single-brew
+ * ceiling is the wrong one: fifty brews inflate to roughly three megabytes of
+ * perfectly ordinary JSON, and the single cap would turn away a batch of about
+ * eight. 4 MiB covers the largest batch this decoder will accept and still
+ * refuses a bomb, because the compressed side is bounded too: the collector
+ * takes at most MAX_CHUNKS chunks, so no more than a few hundred kilobytes
+ * ever reaches the inflater.
+ */
+const MAX_INFLATED_BATCH_BYTES = 4 * 1024 * 1024;
 // The sender's 131,072-character URL budget is the real limit: at 400 characters per slice it can emit 328 chunks. This 1,024-chunk backstop is 409,600 characters, so the receiver never becomes the binding constraint while assembly stays finite.
 const MAX_CHUNKS = 1024;
 const MAX_CHUNK_CHARS = 400;
@@ -188,16 +198,19 @@ function supportsNativeGzip(): boolean {
   }
 }
 
-async function gunzip(bytes: Uint8Array): Promise<string> {
+async function gunzip(
+  bytes: Uint8Array,
+  cap = MAX_INFLATED_BYTES,
+): Promise<string> {
   let inflated: Uint8Array;
   try {
     if (supportsNativeGzip()) {
       const stream = new Blob([bytes as BlobPart])
         .stream()
         .pipeThrough(new DecompressionStream('gzip'));
-      inflated = await readCapped(stream);
+      inflated = await readCapped(stream, cap);
     } else {
-      inflated = await gunzipWithZipJs(bytes);
+      inflated = await gunzipWithZipJs(bytes, cap);
     }
   } catch (error) {
     if (
@@ -211,11 +224,14 @@ async function gunzip(bytes: Uint8Array): Promise<string> {
   return decodeUtf8(inflated);
 }
 
-async function gunzipWithZipJs(bytes: Uint8Array): Promise<Uint8Array> {
+async function gunzipWithZipJs(
+  bytes: Uint8Array,
+  cap = MAX_INFLATED_BYTES,
+): Promise<Uint8Array> {
   const member = gzipMember(bytes);
   // GZIP ISIZE is attacker-controlled and only proves the honest case early; readZipEntryCapped is the bound that holds.
-  if (member.inflatedSize > MAX_INFLATED_BYTES) {
-    throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+  if (member.inflatedSize > cap) {
+    throw new Error(`Inflated payload exceeds ${cap} bytes`);
   }
 
   const zipReader = new ZipReader(new BlobReader(zipAroundDeflate(member)));
@@ -224,7 +240,11 @@ async function gunzipWithZipJs(bytes: Uint8Array): Promise<Uint8Array> {
     if (!entry || entry.directory === true) {
       throw new Error('Payload is not gzip');
     }
-    return await readZipEntryCapped(entry as FileEntry, member.inflatedSize);
+    return await readZipEntryCapped(
+      entry as FileEntry,
+      member.inflatedSize,
+      cap,
+    );
   } finally {
     await zipReader.close();
   }
@@ -233,14 +253,15 @@ async function gunzipWithZipJs(bytes: Uint8Array): Promise<Uint8Array> {
 async function readZipEntryCapped(
   entry: FileEntry,
   expectedInflatedSize: number,
+  cap = MAX_INFLATED_BYTES,
 ): Promise<Uint8Array> {
   const chunks: Uint8Array[] = [];
   let total = 0;
   const writable = new WritableStream<Uint8Array>({
     write(chunk) {
       total += chunk.length;
-      if (total > MAX_INFLATED_BYTES) {
-        throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+      if (total > cap) {
+        throw new Error(`Inflated payload exceeds ${cap} bytes`);
       }
       chunks.push(chunk);
     },
@@ -252,10 +273,10 @@ async function readZipEntryCapped(
     if (
       error instanceof Error &&
       error.message === 'Invalid uncompressed size' &&
-      total >= MAX_INFLATED_BYTES &&
+      total >= cap &&
       total !== expectedInflatedSize
     ) {
-      throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+      throw new Error(`Inflated payload exceeds ${cap} bytes`);
     }
     if (
       !(error instanceof Error) ||
@@ -411,6 +432,7 @@ function writeUInt32LE(bytes: Uint8Array, offset: number, value: number): void {
 
 async function readCapped(
   stream: ReadableStream<Uint8Array>,
+  cap: number,
 ): Promise<Uint8Array> {
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
@@ -422,9 +444,9 @@ async function readCapped(
       break;
     }
     total += value.length;
-    if (total > MAX_INFLATED_BYTES) {
+    if (total > cap) {
       await reader.cancel();
-      throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+      throw new Error(`Inflated payload exceeds ${cap} bytes`);
     }
     chunks.push(value);
   }
@@ -456,7 +478,10 @@ export async function decodeHandoffPayload(
 export async function decodeHandoffBatchPayload(
   payload: string,
 ): Promise<IHandoffEnvelope[]> {
-  const json = await gunzip(base64UrlToBytes(payload));
+  const json = await gunzip(
+    base64UrlToBytes(payload),
+    MAX_INFLATED_BATCH_BYTES,
+  );
   return validateBatch(parseInflatedJson(json)).brews;
 }
 

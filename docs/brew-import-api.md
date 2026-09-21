@@ -59,6 +59,19 @@ rejects payload lengths whose remainder modulo 4 is 1. It decodes with
 falls back to zip.js inflation on older WebKit, decodes text with fatal UTF 8
 decoding, then parses JSON.
 
+The inflate is capped, because the payload is attacker controlled gzip and an
+uncapped inflate is a zip bomb. A single brew may inflate to 256 KiB and a
+batch to 4 MiB. The two differ because a batch carries up to 100 whole
+envelopes: a hundred realistic brews are roughly two megabytes of ordinary
+JSON, so the single brew cap would turn away a batch of about thirteen. The
+larger figure is still bounded, because the collector takes at most 1,024
+chunks and so only a few hundred kilobytes ever reach the inflater.
+
+A sender should apply the same two limits before it builds a link. The URL
+length is almost never what stops a batch: a hundred brews assemble into
+roughly sixty thousand characters, well inside any sensible URL budget, and it
+is the brew count and the inflated size that bite first.
+
 Deep links are gated on `uiHelper.isBeanconqurorAppReady()`. In
 `src/app/app.component.ts`, app readiness is set only after `__initApp()` has
 finished. `__initApp()` can show and wait for first run modals such as the

@@ -1062,6 +1062,25 @@ describe('brew handoff decoder', () => {
     ).toBeRejectedWithError('Batch brews must contain at most 100 entries');
   });
 
+  it('accepts a batch larger than a single brew is allowed to inflate to', async () => {
+    /*
+     * A batch of whole envelopes passes the single-brew inflate cap long before
+     * it reaches the brew limit, so sharing that cap silently refused a batch
+     * of about thirteen while the sender saw nothing wrong with it. Anything
+     * over 256 KiB of JSON reproduces it.
+     */
+    const wordy = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        note: 'note '.repeat(1800).trim(),
+      },
+    });
+    const brews = Array.from({ length: 30 }, () => wordy);
+    expect(JSON.stringify({ v: 1, brews }).length).toBeGreaterThan(256 * 1024);
+
+    await expectAsync(decodeBatch({ v: 1, brews })).toBeResolvedTo(brews);
+  });
+
   it('rejects invalid envelopes inside a batch through the envelope validator', async () => {
     await expectAsync(
       decodeBatch({
