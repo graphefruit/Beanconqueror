@@ -1,6 +1,7 @@
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import {
   collectHandoffPayload,
+  decodeHandoffBatchPayload,
   decodeHandoffPayload,
 } from '../brew-handoff.decoder';
 
@@ -107,6 +108,10 @@ async function decodeEnvelope(
   envelope: unknown = validEnvelope(),
 ): Promise<IHandoffEnvelope> {
   return decodeHandoffPayload(await gzipBase64Url(envelope));
+}
+
+async function decodeBatch(batch: unknown): Promise<IHandoffEnvelope[]> {
+  return decodeHandoffBatchPayload(await gzipBase64Url(batch));
 }
 
 describe('brew handoff decoder', () => {
@@ -1029,5 +1034,43 @@ describe('brew handoff decoder', () => {
     const decoded = await decodeHandoffPayload(collected);
 
     expect(decoded).toEqual(envelope);
+  });
+
+  it('decodes a valid batch through the existing envelope validator', async () => {
+    const first = validEnvelope();
+    const second = validEnvelope({
+      brew: { ...validEnvelope().brew, note: 'Second completed brew' },
+    });
+
+    await expectAsync(
+      decodeBatch({ v: 1, brews: [first, second] }),
+    ).toBeResolvedTo([first, second]);
+  });
+
+  it('rejects malformed batch wrappers with specific messages', async () => {
+    await expectAsync(
+      decodeBatch({ v: 0, brews: [validEnvelope()] }),
+    ).toBeRejectedWithError('Unsupported batch version 0');
+    await expectAsync(decodeBatch({ v: 1 })).toBeRejectedWithError(
+      'Batch brews must be an array',
+    );
+    await expectAsync(decodeBatch({ v: 1, brews: [] })).toBeRejectedWithError(
+      'Batch brews must not be empty',
+    );
+    await expectAsync(
+      decodeBatch({ v: 1, brews: Array.from({ length: 101 }, validEnvelope) }),
+    ).toBeRejectedWithError('Batch brews must contain at most 100 entries');
+  });
+
+  it('rejects invalid envelopes inside a batch through the envelope validator', async () => {
+    await expectAsync(
+      decodeBatch({
+        v: 1,
+        brews: [
+          validEnvelope(),
+          validEnvelope({ v: 0 as IHandoffEnvelope['v'] }),
+        ],
+      }),
+    ).toBeRejectedWithError('Unsupported envelope version 0');
   });
 });

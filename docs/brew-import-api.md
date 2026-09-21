@@ -1,14 +1,15 @@
 # Brew import API
 
 Beanconqueror can receive a finished brew from another app through the
-`beanconqueror://ADD_BREW` deep link. The receiver treats that link as
-untrusted input. The decoder validates and bounds the payload before the import
-service builds a `Brew`.
+`beanconqueror://ADD_BREW` deep link, or several finished brews through
+`beanconqueror://ADD_BREWS`. The receiver treats those links as untrusted
+input. The decoder validates and bounds the payload before the import service
+builds a `Brew`.
 
 The implementation is split across these files:
 
 - `src/services/intentHandler/intent-handler.service.ts` routes the
-  `ADD_BREW` intent.
+  `ADD_BREW` and `ADD_BREWS` intents.
 - `src/services/intentHandler/brew-handoff.decoder.ts` defines the wire
   interfaces and validates the payload.
 - `src/services/brewImport/brew-import.service.ts` maps the decoded envelope to
@@ -25,11 +26,18 @@ Senders open this intent:
 beanconqueror://ADD_BREW?len=<payload-length>&shareBrew0=<chunk>&shareBrew1=<chunk>...
 ```
 
-`intent-handler.service.ts` recognises the intent by checking that the URL,
-lowercased for comparison, starts with `beanconqueror://ADD_BREW`. The payload
-arrives in numbered `shareBrew` query parameters. The comment on the import
-route says this mirrors the existing bean share because a single parameter long
-enough to hold a whole brew is truncated by the OS. The existing bean share in
+Batch senders use the same transport with a different intent:
+
+```text
+beanconqueror://ADD_BREWS?len=<payload-length>&shareBrew0=<chunk>&shareBrew1=<chunk>...
+```
+
+`intent-handler.service.ts` recognises the intent by comparing the URL before
+the query string with the supported scheme. `ADD_BREWS` must not be treated as
+`ADD_BREW`, even though the strings share a prefix. The payload arrives in
+numbered `shareBrew` query parameters. The comment on the import route says
+this mirrors the existing bean share because a single parameter long enough to
+hold a whole brew is truncated by the OS. The existing bean share in
 `src/services/shareService/share-service.service.ts` uses 400 character chunks,
 and the decoder tests use the same chunk width. The brew decoder accepts at
 most 400 characters in any one chunk.
@@ -63,6 +71,31 @@ to do nothing while the handler is still waiting for app readiness.
 The wire contract is the `IHandoffEnvelope` family in
 `brew-handoff.decoder.ts`. Unknown top level fields are ignored because the
 validator constructs a new object containing only the recognised fields.
+
+## Batch
+
+The batch payload is a small wrapper around complete single-brew envelopes:
+
+```json
+{
+  "v": 1,
+  "brews": []
+}
+```
+
+`v` must be exactly `1`. `brews` must be a non-empty array, capped at 100
+entries. That cap keeps a foreground deep-link import finite while being larger
+than a normal handoff session. Each array entry is validated by the same
+`IHandoffEnvelope` validator used by `ADD_BREW`; there is no separate batch
+envelope schema.
+
+During import, Beanconqueror first runs the optional bean creation step once per
+distinct incoming bean name. It then checks whether the library can add brews,
+shows one loading spinner for the whole batch, and imports entries one by one.
+An entry that fails to persist is logged and does not stop the rest of the
+batch. If at least one entry lands, the user sees how many brews were imported
+out of the batch total. If every entry fails, the existing shared-brew failure
+message is shown.
 
 ### Top level
 

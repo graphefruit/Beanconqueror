@@ -9,6 +9,7 @@ import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import {
   BrewImportRollbackError,
   BrewImportService,
+  type IBrewImportResult,
 } from '../../brewImport/brew-import.service';
 import { CoffeeBluetoothDevicesService } from '../../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { ServerCommunicationService } from '../../serverCommunication/server-communication.service';
@@ -51,7 +52,16 @@ function handoffUrl(payload: string): string {
   return `beanconqueror://ADD_BREW?${params.join('&')}`;
 }
 
-function validEnvelope(): IHandoffEnvelope {
+function batchHandoffUrl(payload: string): string {
+  return handoffUrl(payload).replace(
+    'beanconqueror://ADD_BREW?',
+    'beanconqueror://ADD_BREWS?',
+  );
+}
+
+function validEnvelope(
+  overrides: Partial<IHandoffEnvelope> = {},
+): IHandoffEnvelope {
   return {
     v: 1,
     app: { name: 'Sender', version: '1.0' },
@@ -97,6 +107,7 @@ function validEnvelope(): IHandoffEnvelope {
       schema: 1,
       params: { recipe: 'abc123' },
     },
+    ...overrides,
   };
 }
 
@@ -108,6 +119,7 @@ describe('IntentHandlerService', () => {
   let uiBeanHelper: jasmine.SpyObj<UIBeanHelper>;
   let uiAlert: jasmine.SpyObj<UIAlert>;
   let uiAnalytics: jasmine.SpyObj<UIAnalytics>;
+  let translate: jasmine.SpyObj<TranslateService>;
   let visualizerService: jasmine.SpyObj<VisualizerService>;
   let brewImportService: jasmine.SpyObj<BrewImportService>;
   let beanStorage: jasmine.SpyObj<UIBeanStorage>;
@@ -144,6 +156,7 @@ describe('IntentHandlerService', () => {
       'presentCustomPopover',
     ]);
     uiAnalytics = jasmine.createSpyObj('UIAnalytics', ['trackEvent']);
+    translate = jasmine.createSpyObj('TranslateService', ['instant']);
     visualizerService = jasmine.createSpyObj('VisualizerService', [
       'importShotWithSharedCode',
     ]);
@@ -175,6 +188,17 @@ describe('IntentHandlerService', () => {
     uiAlert.hideLoadingSpinner.and.resolveTo();
     uiAlert.isLoadingSpinnerShown.and.returnValue(false);
     beanStorage.removeByUUID.and.resolveTo(true);
+    translate.instant.and.callFake((key: string, params?: unknown) => {
+      if (
+        key === 'BREW_IMPORT_BATCH_RESULT' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { imported: number; total: number };
+        return `Imported ${counts.imported} of ${counts.total} brews`;
+      }
+      return key;
+    });
     brewImportService.ensureBeanFromHandoff.and.resolveTo();
     brewImportService.import.and.resolveTo();
     beanStorage.attachOnEvent.and.returnValue(eventEmitter as never);
@@ -202,6 +226,7 @@ describe('IntentHandlerService', () => {
         { provide: UIAlert, useValue: uiAlert },
         { provide: UIAnalytics, useValue: uiAnalytics },
         { provide: UIBeanStorage, useValue: beanStorage },
+        { provide: TranslateService, useValue: translate },
         { provide: VisualizerService, useValue: visualizerService },
         { provide: BrewImportService, useValue: brewImportService },
         { provide: UIBeanStorage, useValue: beanStorage },
@@ -382,6 +407,114 @@ describe('IntentHandlerService', () => {
       true,
     ]);
   });
+  it('imports every brew in a well-formed batch handoff', async () => {
+    const first = validEnvelope({ bean: { name: 'First coffee' } });
+    const second = validEnvelope({
+      bean: { name: 'Second coffee' },
+      brew: { ...validEnvelope().brew, note: 'Second brew' },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
+      [first],
+      [second],
+    ]);
+    expect(brewImportService.import.calls.allArgs()).toEqual([
+      [first],
+      [second],
+    ]);
+    expect(uiAlert.showLoadingSpinner.calls.count()).toBe(1);
+    expect(uiAlert.hideLoadingSpinner.calls.count()).toBe(1);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'Imported 2 of 2 brews',
+      undefined,
+      undefined,
+      false,
+    ]);
+  });
+
+  it('routes an ADD_BREWS URL away from the single brew handoff handler', async () => {
+    const singleHandler = spyOn(
+      service as unknown as {
+        addBrewFromHandoff: (_url: string) => Promise<void>;
+      },
+      'addBrewFromHandoff',
+    ).and.callThrough();
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [envelope] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(singleHandler).not.toHaveBeenCalled();
+    expect(brewImportService.import.calls.allArgs()).toEqual([[envelope]]);
+  });
+
+  it('asks once for the same bean across several batch brews', async () => {
+    const first = validEnvelope({
+      bean: { name: 'Same Pod', origin: 'Ethiopia' },
+    });
+    const second = validEnvelope({
+      bean: { name: ' same pod ', origin: 'Ethiopia' },
+      brew: { ...validEnvelope().brew, note: 'Same pod again' },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
+      [first],
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(2);
+  });
+
+  it('imports batch survivors and reports the imported count after a partial failure', async () => {
+    const first = validEnvelope({
+      brew: { ...validEnvelope().brew, note: 'One' },
+    });
+    const second = validEnvelope({
+      brew: { ...validEnvelope().brew, note: 'Two' },
+    });
+    const third = validEnvelope({
+      brew: { ...validEnvelope().brew, note: 'Three' },
+    });
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
+      if (candidate.brew.note === 'Two') {
+        return Promise.reject(new Error('Import failed'));
+      }
+      return Promise.resolve({} as IBrewImportResult);
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second, third] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.import.calls.allArgs()).toEqual([
+      [first],
+      [second],
+      [third],
+    ]);
+    expect(uiAlert.hideLoadingSpinner.calls.count()).toBe(1);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'Imported 2 of 3 brews',
+      undefined,
+      undefined,
+      false,
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).not.toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
 
   it('leaves a handoff-created bean when import rollback could not remove its brew', async () => {
     brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
@@ -475,6 +608,21 @@ describe('IntentHandlerService', () => {
     await service.handleDeepLink(url);
 
     expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+  it('reports the existing failure message when every batch brew fails', async () => {
+    brewImportService.import.and.rejectWith(new Error('Import failed'));
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [envelope] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
     expect(uiAlert.showMessage.calls.allArgs()).toContain([
       'BREW_IMPORT_FAILED',
       'ERROR_OCCURED',

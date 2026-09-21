@@ -1,10 +1,12 @@
 import { inject, Injectable, NgZone } from '@angular/core';
 
 import { App, URLOpenListenerEvent } from '@capacitor/app';
+import { TranslateService } from '@ngx-translate/core';
 
 import IntentHandlerTracking from '../../data/tracking/intentHandlerTracking';
 import QR_TRACKING from '../../data/tracking/qrTracking';
 import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
+import type { IHandoffEnvelope } from '../../interfaces/brew/IHandoff';
 import { ServerBean } from '../../models/bean/serverBean';
 import { BrewImportService } from '../brewImport/brew-import.service';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
@@ -18,6 +20,7 @@ import { UILog } from '../uiLog';
 import { VisualizerService } from '../visualizerService/visualizer-service.service';
 import {
   collectHandoffPayload,
+  decodeHandoffBatchPayload,
   decodeHandoffPayload,
 } from './brew-handoff.decoder';
 
@@ -35,6 +38,7 @@ export class IntentHandlerService {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly beanStorage = inject(UIBeanStorage);
+  private readonly translate = inject(TranslateService);
   private readonly visualizerService = inject(VisualizerService);
   private readonly brewImportService = inject(BrewImportService);
   private readonly zone = inject(NgZone);
@@ -43,14 +47,16 @@ export class IntentHandlerService {
     ADD_BEAN_ONLINE: 'ADD_BEAN_ONLINE',
     ADD_USER_BEAN: 'ADD_USER_BEAN',
     ADD_BREW: 'ADD_BREW',
+    ADD_BREWS: 'ADD_BREWS',
   };
 
   public attachOnHandleOpenUrl() {
     App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
       this.zone.run(() => {
-        if (this.isBrewHandoffIntent(event.url)) {
+        const matchedHandoff = this.handoffIntentName(event.url);
+        if (matchedHandoff !== undefined) {
           this.uiLog.log('Deeplink matched', {
-            intent: IntentHandlerService.SUPPORTED_INTENTS.ADD_BREW,
+            intent: matchedHandoff,
             length: event.url.length,
           });
         } else {
@@ -64,9 +70,10 @@ export class IntentHandlerService {
   public async handleQRCodeLink(_url) {
     await this.uiHelper.isBeanconqurorAppReady().then(async () => {
       const url: string = _url;
-      if (this.isBrewHandoffIntent(url)) {
+      const matchedHandoff = this.handoffIntentName(url);
+      if (matchedHandoff !== undefined) {
         this.uiLog.log(
-          `Handle QR Code Link: ${IntentHandlerService.SUPPORTED_INTENTS.ADD_BREW} (${url.length} chars)`,
+          `Handle QR Code Link: ${matchedHandoff} (${url.length} chars)`,
         );
       } else {
         this.uiLog.log('Handle QR Code Link: ' + url);
@@ -80,9 +87,10 @@ export class IntentHandlerService {
       if (_url) {
         await this.uiHelper.isBeanconqurorAppReady().then(async () => {
           const url: string = _url;
-          if (this.isBrewHandoffIntent(url)) {
+          const matchedHandoff = this.handoffIntentName(url);
+          if (matchedHandoff !== undefined) {
             this.uiLog.log(
-              `Handle deeplink: ${IntentHandlerService.SUPPORTED_INTENTS.ADD_BREW} (${url.length} chars)`,
+              `Handle deeplink: ${matchedHandoff} (${url.length} chars)`,
             );
           } else {
             this.uiLog.log('Handle deeplink: ' + url);
@@ -143,7 +151,9 @@ export class IntentHandlerService {
               userBeanJSON = userBeanJSON.replace(/ /g, '+');
               await this.addBeanFromUser(userBeanJSON);
             }
-          } else if (this.isBrewHandoffIntent(url)) {
+          } else if (this.matchesIntent(url, 'ADD_BREWS')) {
+            await this.addBrewsFromHandoff(url);
+          } else if (this.matchesIntent(url, 'ADD_BREW')) {
             await this.addBrewFromHandoff(url);
           } else if (
             url
@@ -233,6 +243,13 @@ export class IntentHandlerService {
       }
       this.uiLog.error('Handle Deep link failed: ' + ex.message);
     }
+  }
+
+  private matchesIntent(url: string, intent: string): boolean {
+    return (
+      url.split('?')[0].toLowerCase() ===
+      `beanconqueror://${intent}`.toLowerCase()
+    );
   }
 
   /**
@@ -331,10 +348,22 @@ export class IntentHandlerService {
     return false;
   }
 
-  private isBrewHandoffIntent(url: string): boolean {
-    return (
-      url.toLowerCase().indexOf('beanconqueror://ADD_BREW'.toLowerCase()) === 0
-    );
+  /**
+   * The handoff intent this URL carries, if it carries one.
+   *
+   * A handoff URL holds a whole brew and runs to hundreds of kilobytes, so the
+   * log records the intent and the length rather than the URL itself. Naming
+   * the intent that actually matched keeps a batch from being logged as a
+   * single brew.
+   */
+  private handoffIntentName(url: string): string | undefined {
+    if (this.matchesIntent(url, IntentHandlerService.SUPPORTED_INTENTS.ADD_BREWS)) {
+      return IntentHandlerService.SUPPORTED_INTENTS.ADD_BREWS;
+    }
+    if (this.matchesIntent(url, IntentHandlerService.SUPPORTED_INTENTS.ADD_BREW)) {
+      return IntentHandlerService.SUPPORTED_INTENTS.ADD_BREW;
+    }
+    return undefined;
   }
 
   private async removeCreatedHandoffBean(uuid: string | undefined) {
@@ -358,6 +387,99 @@ export class IntentHandlerService {
           ')',
       );
     }
+  }
+  /**
+   * Receive several brews handed over from another app.
+   *
+   * Each batch entry is a complete single-brew envelope. The batch decoder only
+   * validates the wrapper; the entries go through the same validator and import
+   * service used by `ADD_BREW`, so the single and batch paths cannot drift.
+   */
+  private async addBrewsFromHandoff(_url: string) {
+    this.uiLog.log('Import brews from handoff link');
+
+    try {
+      this.uiAnalytics.trackEvent(
+        IntentHandlerTracking.TITLE,
+        IntentHandlerTracking.ACTIONS.ADD_HANDOFF_BREWS,
+      );
+      const envelopes = await decodeHandoffBatchPayload(
+        collectHandoffPayload(_url),
+      );
+      await this.ensureDistinctBeansFromHandoff(envelopes);
+
+      if (this.uiBrewHelper.canBrewIfNotShowMessage() === false) {
+        this.uiLog.log(
+          'Import brews from handoff link skipped: cannot brew yet',
+        );
+        return;
+      }
+
+      await this.uiAlert.showLoadingSpinner();
+      let importedCount = 0;
+      for (const envelope of envelopes) {
+        try {
+          await this.brewImportService.import(envelope);
+          importedCount++;
+        } catch (ex) {
+          this.uiLog.error(
+            'Import brew from batch handoff link failed: ' + ex.message,
+          );
+        }
+      }
+      await this.uiAlert.hideLoadingSpinner();
+
+      if (importedCount === 0) {
+        this.uiAlert.showMessage(
+          'BREW_IMPORT_FAILED',
+          'ERROR_OCCURED',
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      this.uiAlert.showMessage(
+        this.translate.instant('BREW_IMPORT_BATCH_RESULT', {
+          imported: importedCount,
+          total: envelopes.length,
+        }),
+        undefined,
+        undefined,
+        false,
+      );
+    } catch (ex) {
+      this.uiLog.error('Import brews from handoff link failed: ' + ex.message);
+      await this.uiAlert.hideLoadingSpinner();
+      this.uiAlert.showMessage(
+        'BREW_IMPORT_FAILED',
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
+    }
+  }
+
+  private async ensureDistinctBeansFromHandoff(
+    envelopes: IHandoffEnvelope[],
+  ): Promise<void> {
+    const seenBeans = new Set<string>();
+    for (const envelope of envelopes) {
+      const beanName = this.handoffBeanName(envelope);
+      if (beanName === undefined || seenBeans.has(beanName)) {
+        continue;
+      }
+      seenBeans.add(beanName);
+      await this.brewImportService.ensureBeanFromHandoff(envelope);
+    }
+  }
+
+  private handoffBeanName(envelope: IHandoffEnvelope): string | undefined {
+    const beanName = envelope.bean?.name;
+    if (typeof beanName !== 'string') {
+      return undefined;
+    }
+    return beanName.normalize('NFC').trim().toLocaleLowerCase();
   }
 
   private importVisualizerShot(_shareCode) {

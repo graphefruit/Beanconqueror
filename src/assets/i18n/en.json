@@ -879,6 +879,7 @@
     "BREW_IMPORT_METRIC_MEASURED": "Measured",
     "BREW_IMPORT_METRIC_TARGET": "Target",
     "BREW_IMPORT_SUCCESSFUL": "Brew imported",
+    "BREW_IMPORT_BATCH_RESULT": "Imported {{imported}} of {{total}} brews",
     "BREW_IMPORT_FAILED": "The shared brew could not be imported",
     "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
     "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details for \"{{name}}\" that are not in your library. Create this coffee before importing the brew?",

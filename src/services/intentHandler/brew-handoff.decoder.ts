@@ -7,6 +7,7 @@ import { BlobReader, ZipReader } from '@zip.js/zip.js';
 import type { FileEntry } from '@zip.js/zip.js';
 
 import type {
+  IHandoffBatch,
   IHandoffBean,
   IHandoffBrew,
   IHandoffEnvelope,
@@ -17,6 +18,7 @@ import type {
 } from '../../interfaces/brew/IHandoff';
 
 export type {
+  IHandoffBatch,
   IHandoffBrew,
   IHandoffBean,
   IHandoffEnvelope,
@@ -52,6 +54,8 @@ const MAX_NOTE_LENGTH = 10_000;
 const MAX_RATING = 10;
 // Metric count is metadata, not the trace; 100 named series is already far beyond a brew chart.
 const MAX_METRICS = 100;
+// Deep links are foreground imports; 100 records is already larger than a normal session while keeping validation and storage bounded.
+const MAX_BATCH_BREWS = 100;
 // Opaque blocks may be rendered or copied later; cap their shape before a future deep-merge or stringify sees them.
 const MAX_OPAQUE_DEPTH = 8;
 const MAX_OPAQUE_KEYS = 1_000;
@@ -446,14 +450,52 @@ export async function decodeHandoffPayload(
   payload: string,
 ): Promise<IHandoffEnvelope> {
   const json = await gunzip(base64UrlToBytes(payload));
-  let envelope: unknown;
+  return validateEnvelope(parseInflatedJson(json));
+}
+
+export async function decodeHandoffBatchPayload(
+  payload: string,
+): Promise<IHandoffEnvelope[]> {
+  const json = await gunzip(base64UrlToBytes(payload));
+  return validateBatch(parseInflatedJson(json)).brews;
+}
+
+function parseInflatedJson(json: string): unknown {
   try {
-    envelope = JSON.parse(json);
+    return JSON.parse(json);
   } catch {
     throw new Error('Inflated payload is not JSON');
   }
+}
 
-  return validateEnvelope(envelope);
+function validateBatch(value: unknown): IHandoffBatch {
+  const batch = objectRecord(value, 'Batch');
+  const version = batch.v;
+  if (version !== 1) {
+    const shown =
+      typeof version === 'string' ||
+      typeof version === 'number' ||
+      typeof version === 'boolean'
+        ? String(version)
+        : typeof version;
+    throw new Error(`Unsupported batch version ${shown}`);
+  }
+  if (!Array.isArray(batch.brews)) {
+    throw new Error('Batch brews must be an array');
+  }
+  if (batch.brews.length === 0) {
+    throw new Error('Batch brews must not be empty');
+  }
+  if (batch.brews.length > MAX_BATCH_BREWS) {
+    throw new Error(
+      `Batch brews must contain at most ${MAX_BATCH_BREWS} entries`,
+    );
+  }
+
+  return {
+    v: 1,
+    brews: batch.brews.map(validateEnvelope),
+  };
 }
 
 function validateEnvelope(value: unknown): IHandoffEnvelope {
