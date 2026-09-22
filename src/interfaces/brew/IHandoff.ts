@@ -47,6 +47,7 @@ export interface IHandoffBrew {
   grinderRpm?: number;
   grinderName?: string;
   preparationMethod: string;
+  preparationType?: string;
   bloomTime?: number;
   firstDripTime?: number;
   // Whole stars, on the sending app's own scale, and absent when the brew was

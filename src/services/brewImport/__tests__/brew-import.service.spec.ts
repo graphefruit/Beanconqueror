@@ -7,6 +7,7 @@ import { Brew, BrewInstanceHelper } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import { decodeHandoffPayload } from '../../intentHandler/brew-handoff.decoder';
 import { UIAlert } from '../../uiAlert';
@@ -216,6 +217,7 @@ describe('BrewImportService', () => {
       'getAllEntries',
       'getByUUID',
       'add',
+      'addAndConfirm',
     ]);
     settingsStorage = jasmine.createSpyObj('UISettingsStorage', [
       'getSettings',
@@ -264,6 +266,15 @@ describe('BrewImportService', () => {
     preparationStorage.getAllEntries.and.callFake(() => preparations);
     preparationStorage.getByUUID.and.callFake((uuid: string) =>
       preparations.find((preparation) => preparation.config.uuid === uuid),
+    );
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: true });
+      },
     );
 
     settings = new Settings();
@@ -1248,6 +1259,145 @@ describe('BrewImportService', () => {
     expect(result.brew.note).toContain(
       'Preparation not linked: "Any brewer" (no match). Using "Aeropress".',
     );
+    expect(preparationStorage.add.calls.count()).toBe(0);
+  });
+
+  it('links a preparation by type before considering the handoff label', () => {
+    const fallback = entry(
+      new Preparation(),
+      'xBloom sender label',
+      'preparation-by-name',
+    );
+    fallback.type = PREPARATION_TYPES.V60;
+    const renamedXBloom = entry(
+      new Preparation(),
+      'Kitchen machine',
+      'preparation-xbloom',
+    );
+    renamedXBloom.type = PREPARATION_TYPES.XBLOOM;
+    preparations = [fallback, renamedXBloom];
+
+    const result = service.build(
+      envelope({
+        brew: {
+          ...envelope().brew,
+          preparationMethod: 'xBloom sender label',
+          preparationType: PREPARATION_TYPES.XBLOOM,
+        },
+      }),
+    );
+
+    expect(result.brew.method_of_preparation).toBe('preparation-xbloom');
+    expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('narrows duplicate preparation types by the handoff label', () => {
+    const studio = entry(
+      new Preparation(),
+      'xBloom Studio',
+      'preparation-studio',
+    );
+    studio.type = PREPARATION_TYPES.XBLOOM;
+    const renamed = entry(new Preparation(), 'Kitchen', 'preparation-kitchen');
+    renamed.type = PREPARATION_TYPES.XBLOOM;
+    preparations = [renamed, studio];
+
+    const result = service.build(
+      envelope({
+        brew: {
+          ...envelope().brew,
+          preparationMethod: 'xBloom Studio',
+          preparationType: PREPARATION_TYPES.XBLOOM,
+        },
+      }),
+    );
+
+    expect(result.brew.method_of_preparation).toBe('preparation-studio');
+  });
+
+  it('ignores an unknown preparation type and keeps matching by name', () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+      entry(new Preparation(), 'Any brewer', 'preparation-by-name'),
+    ];
+
+    const result = service.build(
+      envelope({
+        brew: {
+          ...envelope().brew,
+          preparationType: 'FUTURE_BREWER',
+        },
+      }),
+    );
+
+    expect(result.brew.method_of_preparation).toBe('preparation-by-name');
+    expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('matches by name exactly as before when no preparation type is present', () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+      entry(new Preparation(), 'Any brewer', 'preparation-by-name'),
+    ];
+
+    const result = service.build(envelope());
+
+    expect(result.brew.method_of_preparation).toBe('preparation-by-name');
+    expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('keeps importing by name when preparation creation is declined', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+      entry(new Preparation(), 'xBloom Studio', 'preparation-by-name'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('NO');
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    await service.ensurePreparationFromHandoff(handoff);
+    const result = service.build(handoff);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_PREPARATION_DESCRIPTION',
+        'BREW_IMPORT_CREATE_PREPARATION_TITLE',
+        true,
+        { name: 'xBloom Studio' },
+      ],
+    ]);
+    expect(preparationStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(result.brew.method_of_preparation).toBe('preparation-by-name');
+  });
+
+  it('creates a missing typed preparation and links the imported brew to it', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    const createdUuid = await service.ensurePreparationFromHandoff(handoff);
+    const result = service.build(handoff);
+    const created = preparations.find(
+      (preparation) => preparation.config.uuid === createdUuid,
+    );
+
+    expect(createdUuid).toBe('preparation-created');
+    expect(created.name).toBe('xBloom Studio');
+    expect(created.type).toBe(PREPARATION_TYPES.XBLOOM);
+    expect(result.brew.method_of_preparation).toBe('preparation-created');
     expect(preparationStorage.add.calls.count()).toBe(0);
   });
 

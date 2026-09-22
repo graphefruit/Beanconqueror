@@ -1,3 +1,4 @@
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import {
   collectHandoffPayload,
@@ -882,6 +883,51 @@ describe('brew handoff decoder', () => {
       ),
     ).toBeRejectedWithError(
       'Envelope brew.preparationMethod must be between 1 and 512 characters',
+    );
+  });
+
+  it('keeps a known bounded preparation type', async () => {
+    const decoded = await decodeEnvelope(
+      validEnvelope({
+        brew: {
+          ...validEnvelope().brew,
+          preparationType: PREPARATION_TYPES.XBLOOM,
+        },
+      }),
+    );
+
+    expect(decoded.brew.preparationType).toBe(PREPARATION_TYPES.XBLOOM);
+  });
+
+  it('drops empty and unknown preparation types without rejecting the brew', async () => {
+    const empty = await decodeEnvelope(
+      validEnvelope({
+        brew: { ...validEnvelope().brew, preparationType: '' },
+      }),
+    );
+    const unknown = await decodeEnvelope(
+      validEnvelope({
+        brew: { ...validEnvelope().brew, preparationType: 'FUTURE_BREWER' },
+      }),
+    );
+
+    expect(empty.brew.preparationType).toBeUndefined();
+    expect(unknown.brew.preparationType).toBeUndefined();
+    expect(unknown.brew.preparationMethod).toBe('Any brewer');
+  });
+
+  it('rejects preparation types beyond the label cap', async () => {
+    await expectAsync(
+      decodeEnvelope(
+        validEnvelope({
+          brew: {
+            ...validEnvelope().brew,
+            preparationType: 'a'.repeat(513),
+          },
+        }),
+      ),
+    ).toBeRejectedWithError(
+      'Envelope brew.preparationType must be between 1 and 512 characters',
     );
   });
 

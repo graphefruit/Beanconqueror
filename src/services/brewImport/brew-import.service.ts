@@ -5,8 +5,10 @@ import moment from 'moment';
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { Preparation } from '../../classes/preparation/preparation';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import type {
   IHandoffBean,
@@ -26,6 +28,7 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 const MAX_ABSOLUTE_MILLISECONDS = 24 * 60 * 60 * 1_000;
 const MAX_ABSOLUTE_GRAMS = 100_000;
 const MAX_CREATE_BEAN_PROMPT_NAME_LENGTH = 60;
+const MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH = 60;
 
 export interface IBrewImportResult {
   brew: Brew;
@@ -53,6 +56,7 @@ interface INameMatchResult {
 
 interface IStoredNamedEntry {
   name: string;
+  type?: string;
   finished?: boolean;
   config: { uuid: string };
 }
@@ -132,10 +136,10 @@ export class BrewImportService {
       }
     }
 
-    const preparationMatch = this.findUniqueOrDefault(
+    const preparationMatch = this.findUniquePreparationOrDefault(
       this.preparationStorage.getAllEntries(),
       envelope.brew.preparationMethod,
-      'Preparation',
+      envelope.brew.preparationType,
     );
     brew.method_of_preparation = preparationMatch.uuid;
     if (preparationMatch.note) {
@@ -210,12 +214,63 @@ export class BrewImportService {
       return undefined;
     }
 
-    const { entry: created, saved } = await this.beanStorage.addAndConfirm(
-      this.buildBean(bean),
-    );
+    const { entry: created, saved }: { entry: Bean; saved: boolean } =
+      await this.beanStorage.addAndConfirm(this.buildBean(bean));
     if (!saved) {
       await this.removeFailedHandoffBean(created.config.uuid);
       throw new Error(`Handoff bean creation failed: ${created.config.uuid}`);
+    }
+    return created.config.uuid;
+  }
+
+  public async ensurePreparationFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreatePreparationFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'BREW_IMPORT_CREATE_PREPARATION_DESCRIPTION',
+      'BREW_IMPORT_CREATE_PREPARATION_TITLE',
+      true,
+      { name: this.promptPreparationName(envelope.brew.preparationMethod) },
+    );
+    if (choice !== 'YES') {
+      return undefined;
+    }
+
+    return this.createPreparationFromHandoff(envelope);
+  }
+
+  public canCreatePreparationFromHandoff(envelope: IHandoffEnvelope): boolean {
+    const preparationType = this.knownPreparationType(
+      envelope.brew.preparationType,
+    );
+    if (preparationType === undefined) {
+      return false;
+    }
+
+    return !this.usableEntries(this.preparationStorage.getAllEntries()).some(
+      (entry) => this.knownPreparationType(entry.type) === preparationType,
+    );
+  }
+
+  public async createPreparationFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreatePreparationFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const { entry: created, saved }: { entry: Preparation; saved: boolean } =
+      await this.preparationStorage.addAndConfirm(
+        this.buildPreparation(envelope),
+      );
+    if (!saved) {
+      throw new Error(
+        `Handoff preparation creation failed: ${created.config.uuid}`,
+      );
     }
     return created.config.uuid;
   }
@@ -421,6 +476,14 @@ export class BrewImportService {
     return `${name.slice(0, MAX_CREATE_BEAN_PROMPT_NAME_LENGTH - 3)}...`;
   }
 
+  private promptPreparationName(name: string): string {
+    const trimmed = name.trim();
+    if (trimmed.length <= MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH) {
+      return trimmed;
+    }
+    return `${trimmed.slice(0, MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH - 3)}...`;
+  }
+
   private hasBeanMetadata(bean: IHandoffBean): boolean {
     return [
       bean.roaster,
@@ -457,6 +520,21 @@ export class BrewImportService {
     }
 
     return bean;
+  }
+
+  private buildPreparation(envelope: IHandoffEnvelope): Preparation {
+    const preparationType = this.knownPreparationType(
+      envelope.brew.preparationType,
+    );
+    if (preparationType === undefined) {
+      throw new Error('Handoff preparation creation failed: unknown type');
+    }
+
+    const preparation = new Preparation();
+    preparation.name = envelope.brew.preparationMethod.trim();
+    preparation.type = preparationType;
+    preparation.style_type = preparation.getPresetStyleType();
+    return preparation;
   }
 
   private beanInformationFromHandoff(
@@ -582,6 +660,29 @@ export class BrewImportService {
     return fallbackNote(match.reason);
   }
 
+  private findUniquePreparationOrDefault(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+    hintedType: string | undefined,
+  ): INameMatchResult {
+    const preparationType = this.knownPreparationType(hintedType);
+    if (preparationType === undefined) {
+      return this.findUniqueOrDefault(entries, hintedName, 'Preparation');
+    }
+
+    const typeMatches = this.usableEntries(entries).filter(
+      (entry) => this.knownPreparationType(entry.type) === preparationType,
+    );
+    if (typeMatches.length === 1) {
+      return { uuid: typeMatches[0].config.uuid };
+    }
+    if (typeMatches.length > 1) {
+      return this.findUniqueOrDefault(typeMatches, hintedName, 'Preparation');
+    }
+
+    return this.findUniqueOrDefault(entries, hintedName, 'Preparation');
+  }
+
   private findUniqueByName(
     entries: IStoredNamedEntry[],
     hintedName: string,
@@ -705,6 +806,18 @@ export class BrewImportService {
 
   private normalizeName(name: string): string {
     return name.normalize('NFC').trim().toLocaleLowerCase();
+  }
+
+  private knownPreparationType(
+    value: string | undefined,
+  ): PREPARATION_TYPES | undefined {
+    if (
+      value !== undefined &&
+      Object.values(PREPARATION_TYPES).includes(value as PREPARATION_TYPES)
+    ) {
+      return value as PREPARATION_TYPES;
+    }
+    return undefined;
   }
 
   /**

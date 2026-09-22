@@ -6,6 +6,7 @@
 import { BlobReader, ZipReader } from '@zip.js/zip.js';
 import type { FileEntry } from '@zip.js/zip.js';
 
+import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import type {
   IHandoffBatch,
   IHandoffBean,
@@ -767,6 +768,7 @@ function validateBrew(value: unknown): IHandoffBrew {
       1,
       MAX_LABEL_LENGTH,
     ),
+    ...optionalPreparationType(brew.preparationType),
     ...optional(brew.bloomTime, 'bloomTime', (bloomTime) =>
       boundedNumber(bloomTime, 'Envelope brew.bloomTime', 0, MAX_SECONDS),
     ),
@@ -1109,6 +1111,28 @@ function optionalString<K extends string>(
   return { [key]: boundedString(value, path, 1, MAX_LABEL_LENGTH) } as Partial<
     Record<K, string>
   >;
+}
+
+function optionalPreparationType(
+  value: unknown,
+): Partial<Pick<IHandoffBrew, 'preparationType'>> {
+  if (value === undefined || value === '') {
+    return {};
+  }
+  const preparationType = boundedString(
+    value,
+    'Envelope brew.preparationType',
+    1,
+    MAX_LABEL_LENGTH,
+  );
+  if (
+    !Object.values(PREPARATION_TYPES).includes(
+      preparationType as PREPARATION_TYPES,
+    )
+  ) {
+    return {};
+  }
+  return { preparationType };
 }
 
 function optionalTrimmedString(
