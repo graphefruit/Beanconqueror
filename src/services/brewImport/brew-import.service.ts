@@ -428,7 +428,9 @@ export class BrewImportService {
     return value
       .normalize('NFC')
       .trim()
-      .toLocaleLowerCase()
+      // Handoff enum keys are wire tokens, so they must not follow a user's
+      // locale. Turkish casing would turn SINGLE_ORIGIN into sıngle_origin.
+      .toLocaleLowerCase('en-US')
       .replace(/[\W_]/g, '');
   }
 
@@ -436,10 +438,7 @@ export class BrewImportService {
     entries: IStoredNamedEntry[],
     hintedName: string,
   ): boolean {
-    const normalizedHint = this.normalizeName(hintedName);
-    return entries.some(
-      (entry) => this.normalizeName(entry.name) === normalizedHint,
-    );
+    return this.findNameMatch(entries, hintedName).match !== undefined;
   }
 
   private findUniqueOrDefault(
@@ -447,8 +446,7 @@ export class BrewImportService {
     hintedName: string,
     label: string,
   ): INameMatchResult {
-    const usable = this.usableEntries(entries);
-    const fallback = this.firstUsableEntry(usable);
+    const fallback = this.firstUsableEntry(entries);
     const fallbackNote = (reason: string): INameMatchResult => {
       if (!fallback) {
         throw new Error(`${label} not linked: no available ${label}.`);
@@ -464,30 +462,18 @@ export class BrewImportService {
     // Name hints are matched case-insensitively after trimming, but never create
     // equipment. A mistaken match can be cleared by hand; an importer-created
     // duplicate silently pollutes the user's lists and is hard to discover.
-    const normalizedHint = this.normalizeName(hintedName);
-    if (!normalizedHint) {
-      return fallbackNote('missing name');
-    }
-
-    const matches = usable.filter(
-      (entry) => this.normalizeName(entry.name) === normalizedHint,
-    );
-    if (matches.length === 1) {
-      return { uuid: matches[0].config.uuid };
-    }
-
-    if (matches.length === 0) {
-      const wider = this.findUniqueModelMatch(usable, normalizedHint);
-      if (wider) {
+    const match = this.findNameMatch(entries, hintedName);
+    if (match.match) {
+      if (match.widened) {
         return {
-          uuid: wider.config.uuid,
-          note: `${label} linked to "${wider.name}" from "${hintedName.trim()}".`,
+          uuid: match.match.config.uuid,
+          note: `${label} linked to "${match.match.name}" from "${hintedName.trim()}".`,
         };
       }
+      return { uuid: match.match.config.uuid };
     }
 
-    const reason = matches.length === 0 ? 'no match' : 'multiple matches';
-    return fallbackNote(reason);
+    return fallbackNote(match.reason);
   }
 
   private findUniqueByName(
@@ -495,34 +481,57 @@ export class BrewImportService {
     hintedName: string,
     label: string,
   ): INameMatchResult {
+    const match = this.findNameMatch(entries, hintedName);
+    if (match.reason === 'missing name') {
+      return { uuid: '' };
+    }
+
+    if (match.match) {
+      if (match.widened) {
+        return {
+          uuid: match.match.config.uuid,
+          note: `${label} linked to "${match.match.name}" from "${hintedName.trim()}".`,
+        };
+      }
+      return { uuid: match.match.config.uuid };
+    }
+
+    return {
+      uuid: '',
+      note: `${label} not linked: "${hintedName.trim()}" (${match.reason}).`,
+    };
+  }
+
+  private findNameMatch(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+  ): {
+    match?: IStoredNamedEntry;
+    reason: 'missing name' | 'multiple matches' | 'no match';
+    widened: boolean;
+  } {
     const usable = this.usableEntries(entries);
     const normalizedHint = this.normalizeName(hintedName);
     if (!normalizedHint) {
-      return { uuid: '' };
+      return { reason: 'missing name', widened: false };
     }
 
     const matches = usable.filter(
       (entry) => this.normalizeName(entry.name) === normalizedHint,
     );
     if (matches.length === 1) {
-      return { uuid: matches[0].config.uuid };
+      return { match: matches[0], reason: 'no match', widened: false };
     }
 
     if (matches.length === 0) {
       const wider = this.findUniqueModelMatch(usable, normalizedHint);
       if (wider) {
-        return {
-          uuid: wider.config.uuid,
-          note: `${label} linked to "${wider.name}" from "${hintedName.trim()}".`,
-        };
+        return { match: wider, reason: 'no match', widened: true };
       }
+      return { reason: 'no match', widened: false };
     }
 
-    const reason = matches.length === 0 ? 'no match' : 'multiple matches';
-    return {
-      uuid: '',
-      note: `${label} not linked: "${hintedName.trim()}" (${reason}).`,
-    };
+    return { reason: 'multiple matches', widened: false };
   }
 
   /**

@@ -603,6 +603,27 @@ describe('BrewImportService', () => {
     expect(beanStorage.add.calls.count()).toBe(0);
   });
 
+  it('does not prompt when pod metadata matches an existing bean by widened name', async () => {
+    beans = [entry(new Bean(), 'Pod coffee Natural', 'bean-natural')];
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+        process: 'Natural',
+      },
+    });
+
+    await service.ensureBeanFromHandoff(handoff);
+    const result = service.build(handoff);
+
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(beanStorage.add.calls.count()).toBe(0);
+    expect(result.brew.bean).toBe('bean-natural');
+    expect(result.brew.note).toContain(
+      'Bean linked to "Pod coffee Natural" from "Pod coffee".',
+    );
+  });
+
   it('does not prompt when the bean hint only contains a name', async () => {
     beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
 
@@ -708,6 +729,46 @@ describe('BrewImportService', () => {
 
       const created = beans.find((bean) => bean.config.uuid === 'bean-created');
       expect(String(created.beanMix)).toBe(testCase.expected);
+    }
+  });
+
+  it('accepts bean mix enum keys when the default locale lowercases I differently', async () => {
+    const originalToLocaleLowerCase = String.prototype.toLocaleLowerCase;
+    const originalToLowerCase = String.prototype.toLowerCase;
+    String.prototype.toLocaleLowerCase = function (
+      locales?: string | string[],
+    ): string {
+      if (
+        locales === 'en-US' ||
+        (Array.isArray(locales) && locales.includes('en-US'))
+      ) {
+        return originalToLocaleLowerCase.call(this, locales);
+      }
+      return originalToLocaleLowerCase.call(this, 'tr');
+    };
+    String.prototype.toLowerCase = function (): string {
+      return originalToLocaleLowerCase.call(this, 'tr');
+    };
+
+    try {
+      beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+      uiAlert.showConfirm.and.resolveTo('YES');
+
+      await service.ensureBeanFromHandoff(
+        envelope({
+          bean: {
+            name: 'Pod coffee',
+            origin: 'Ethiopia',
+            beanMix: 'SINGLE_ORIGIN',
+          },
+        }),
+      );
+
+      const created = beans.find((bean) => bean.config.uuid === 'bean-created');
+      expect(String(created.beanMix)).toBe('SINGLE_ORIGIN');
+    } finally {
+      String.prototype.toLocaleLowerCase = originalToLocaleLowerCase;
+      String.prototype.toLowerCase = originalToLowerCase;
     }
   });
 
@@ -915,6 +976,20 @@ describe('BrewImportService', () => {
     expect(result.brew.bean).toBe('bean-natural');
     expect(result.brew.note).toContain(
       'Bean linked to "Any coffee Natural" from "Any coffee".',
+    );
+  });
+
+  it('falls back instead of guessing when widened bean matching is ambiguous', () => {
+    beans = [
+      entry(new Bean(), 'Pod coffee Washed', 'bean-washed'),
+      entry(new Bean(), 'Pod coffee Natural', 'bean-natural'),
+    ];
+
+    const result = service.build(envelope({ bean: { name: 'Pod coffee' } }));
+
+    expect(result.brew.bean).toBe('bean-natural');
+    expect(result.brew.note).toContain(
+      'Bean not linked: "Pod coffee" (no match). Using "Pod coffee Natural".',
     );
   });
 
