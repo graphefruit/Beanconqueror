@@ -105,7 +105,11 @@ The batch payload is a small wrapper around complete single-brew envelopes:
         "brewTime": 210,
         "preparationMethod": "V60"
       },
-      "imported": { "source": "example", "schema": 1 }
+      "imported": {
+        "source": "example",
+        "sourceName": "Example sender",
+        "schema": 1
+      }
     }
   ]
 }
@@ -529,7 +533,9 @@ handoff into a fresh install needs bean metadata and user confirmation.
 
 All decoder failures throw an `Error`. The route catches the error, logs
 `Import brew from handoff link failed: <message>`, hides the loading spinner,
-and shows the generic `BREW_IMPORT_FAILED` alert.
+and shows an alert. A payload that inflated past its ceiling shows
+`BREW_IMPORT_TOO_LARGE`, because that is the one failure the sender can act on
+by sending less; everything else shows the generic `BREW_IMPORT_FAILED`.
 
 | Failure                                                    | Decoder message                                                              | Sender fix                                                                   |
 | ---------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
