@@ -152,9 +152,10 @@ export class BrewImportService {
 
   public async ensureBeanFromHandoff(
     envelope: IHandoffEnvelope,
+    nameMatch: 'single' | 'exact' = 'single',
   ): Promise<string | undefined> {
     const bean = envelope.bean;
-    if (!bean || !this.canCreateBeanFromHandoff(envelope)) {
+    if (!bean || !this.canCreateBeanFromHandoff(envelope, nameMatch)) {
       return undefined;
     }
 
@@ -168,7 +169,7 @@ export class BrewImportService {
       return undefined;
     }
 
-    return this.createBeanFromHandoff(envelope);
+    return this.createBeanFromHandoff(envelope, nameMatch);
   }
 
   public canCreateBeanFromHandoff(

@@ -531,14 +531,21 @@ describe('IntentHandlerService', () => {
     expect(beanStorage.removeByUUID.calls.count()).toBe(0);
   });
 
-  it('creates distinct batch beans whose names would otherwise match by prefix', async () => {
+  it('creates and links a distinct batch bean whose name would otherwise widen onto an existing coffee', async () => {
     const createdByName = new Map<string, string>();
     const importedBeans: string[] = [];
-    const base = validEnvelope({ bean: { name: 'Any coffee' } });
     const natural = validEnvelope({
       bean: { name: 'Any coffee Natural' },
       brew: { ...validEnvelope().brew, note: 'Natural brew' },
     });
+    const second = validEnvelope({
+      bean: { name: 'Second coffee' },
+      brew: { ...validEnvelope().brew, note: 'Second brew' },
+    });
+    brewImportService.canCreateBeanFromHandoff.and.callFake(
+      (_candidate: IHandoffEnvelope, nameMatch?: 'single' | 'exact') =>
+        nameMatch === 'exact',
+    );
     brewImportService.createBeanFromHandoff.and.callFake(
       (candidate: IHandoffEnvelope, nameMatch?: 'single' | 'exact') => {
         if (nameMatch !== 'exact') {
@@ -546,18 +553,21 @@ describe('IntentHandlerService', () => {
         }
         const name = candidate.bean?.name ?? '';
         const uuid =
-          name === 'Any coffee' ? 'bean-any' : 'bean-any-natural';
+          name === 'Any coffee Natural'
+            ? 'bean-any-natural'
+            : 'bean-second';
         createdByName.set(name, uuid);
         return Promise.resolve(uuid);
       },
     );
     brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
-      const uuid = createdByName.get(candidate.bean?.name ?? '');
+      const uuid =
+        createdByName.get(candidate.bean?.name ?? '') ?? 'bean-any';
       importedBeans.push(uuid ?? 'missing');
       return Promise.resolve(importResult(uuid ?? 'missing'));
     });
     const batchUrl = batchHandoffUrl(
-      await gzipBase64Url({ v: 1, brews: [base, natural] }),
+      await gzipBase64Url({ v: 1, brews: [natural, second] }),
     );
 
     await service.handleDeepLink(batchUrl);
@@ -565,11 +575,112 @@ describe('IntentHandlerService', () => {
     expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
       ['Create 2 coffees before importing?', 'Create 2 coffees?', false],
     ]);
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
+      [
+        [natural, 'exact'],
+        [second, 'exact'],
+      ],
+    );
     expect(brewImportService.createBeanFromHandoff.calls.allArgs()).toEqual([
-      [base, 'exact'],
       [natural, 'exact'],
+      [second, 'exact'],
     ]);
-    expect(importedBeans).toEqual(['bean-any', 'bean-any-natural']);
+    expect(importedBeans).toEqual(['bean-any-natural', 'bean-second']);
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('creates and links a single distinct batch bean whose name would otherwise widen onto an existing coffee', async () => {
+    const createdByName = new Map<string, string>();
+    const importedBeans: string[] = [];
+    const natural = validEnvelope({
+      bean: { name: 'Any coffee Natural' },
+      brew: { ...validEnvelope().brew, note: 'Natural brew' },
+    });
+    brewImportService.canCreateBeanFromHandoff.and.callFake(
+      (_candidate: IHandoffEnvelope, nameMatch?: 'single' | 'exact') =>
+        nameMatch === 'exact',
+    );
+    brewImportService.ensureBeanFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope, nameMatch?: 'single' | 'exact') => {
+        if (nameMatch !== 'exact') {
+          return Promise.resolve(undefined);
+        }
+        const uuid = 'bean-any-natural';
+        createdByName.set(candidate.bean?.name ?? '', uuid);
+        return Promise.resolve(uuid);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
+      const uuid =
+        createdByName.get(candidate.bean?.name ?? '') ?? 'bean-any';
+      importedBeans.push(uuid);
+      return Promise.resolve(importResult(uuid));
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [natural] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
+      [[natural, 'exact']],
+    );
+    expect(
+      (brewImportService.ensureBeanFromHandoff as jasmine.Spy).calls.allArgs(),
+    ).toEqual([[natural, 'exact']]);
+    expect(brewImportService.createBeanFromHandoff.calls.count()).toBe(0);
+    expect(importedBeans).toEqual(['bean-any-natural']);
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('does not create a batch bean when the incoming name exactly matches an existing coffee', async () => {
+    const exact = validEnvelope({
+      bean: { name: 'Any coffee' },
+      brew: { ...validEnvelope().brew, note: 'Existing brew' },
+    });
+    brewImportService.canCreateBeanFromHandoff.and.returnValue(false);
+    brewImportService.import.and.resolveTo(importResult('bean-any'));
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [exact] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
+      [[exact, 'exact']],
+    );
+    expect(brewImportService.ensureBeanFromHandoff.calls.count()).toBe(0);
+    expect(brewImportService.createBeanFromHandoff.calls.count()).toBe(0);
+    expect(brewImportService.import.calls.allArgs()).toEqual([[exact]]);
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('falls back safely when the user declines creating a distinct batch bean that only widens onto an existing coffee', async () => {
+    uiAlert.showConfirm.and.resolveTo('NO');
+    const natural = validEnvelope({
+      bean: { name: 'Any coffee Natural' },
+      brew: { ...validEnvelope().brew, note: 'Natural brew' },
+    });
+    brewImportService.canCreateBeanFromHandoff.and.callFake(
+      (_candidate: IHandoffEnvelope, nameMatch?: 'single' | 'exact') =>
+        nameMatch === 'exact',
+    );
+    brewImportService.ensureBeanFromHandoff.and.resolveTo(undefined);
+    brewImportService.import.and.resolveTo(importResult('bean-any'));
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [natural] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
+      [[natural, 'exact']],
+    );
+    expect(
+      (brewImportService.ensureBeanFromHandoff as jasmine.Spy).calls.allArgs(),
+    ).toEqual([[natural, 'exact']]);
+    expect(brewImportService.createBeanFromHandoff.calls.count()).toBe(0);
+    expect(brewImportService.import.calls.allArgs()).toEqual([[natural]]);
     expect(beanStorage.removeByUUID.calls.count()).toBe(0);
   });
 
@@ -614,9 +725,9 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(batchUrl);
 
-    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
-      [first],
-    ]);
+    expect(
+      (brewImportService.ensureBeanFromHandoff as jasmine.Spy).calls.allArgs(),
+    ).toEqual([[first, 'exact']]);
     expect(uiAlert.showConfirm.calls.count()).toBe(0);
     expect(brewImportService.import.calls.count()).toBe(2);
   });
@@ -638,9 +749,9 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(batchUrl);
 
-    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
-      [withMetadata],
-    ]);
+    expect(
+      (brewImportService.ensureBeanFromHandoff as jasmine.Spy).calls.allArgs(),
+    ).toEqual([[withMetadata, 'exact']]);
     expect(uiAlert.showConfirm.calls.count()).toBe(0);
     expect(brewImportService.import.calls.allArgs()).toEqual([
       [nameOnly],

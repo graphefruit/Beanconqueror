@@ -607,7 +607,7 @@ export class IntentHandlerService {
     const creatableEnvelopes: IHandoffEnvelope[] = [];
     for (const groupedEnvelopes of envelopesByBeanName.values()) {
       const creatableEnvelope = groupedEnvelopes.find((envelope) =>
-        this.brewImportService.canCreateBeanFromHandoff(envelope),
+        this.brewImportService.canCreateBeanFromHandoff(envelope, 'exact'),
       );
       if (creatableEnvelope !== undefined) {
         creatableEnvelopes.push(creatableEnvelope);
@@ -621,6 +621,7 @@ export class IntentHandlerService {
     if (creatableEnvelopes.length === 1) {
       const created = await this.brewImportService.ensureBeanFromHandoff(
         creatableEnvelopes[0],
+        'exact',
       );
       const beanName = this.handoffBeanName(creatableEnvelopes[0]);
       if (created === undefined || beanName === undefined) {

@@ -124,12 +124,14 @@ whole link before import starts, while persistence is per-entry and
 best-effort.
 
 During import, Beanconqueror first runs the optional bean creation step once per
-distinct incoming bean name. It then checks whether the library can add brews,
-shows one loading spinner for the whole batch, and imports entries one by one.
-An entry that fails to persist is logged and does not stop the rest of the
-batch. If at least one entry lands, the user sees how many brews were imported
-out of the batch total. If every entry fails, the existing shared-brew failure
-message is shown.
+distinct incoming bean name. The batch creation preflight uses exact name
+matches, so an incoming `Any coffee Natural` is still offered for creation even
+if the library already has `Any coffee`; exact existing names are not offered.
+It then checks whether the library can add brews, shows one loading spinner for
+the whole batch, and imports entries one by one. An entry that fails to persist
+is logged and does not stop the rest of the batch. If at least one entry lands,
+the user sees how many brews were imported out of the batch total. If every
+entry fails, the existing shared-brew failure message is shown.
 
 ### Top level
 
@@ -309,6 +311,10 @@ have a name and at least one of `roaster`, `roastingDate`, `origin`, `region`,
 matches the name, or the name is ambiguous, no bean is created. If there is no
 match, Beanconqueror asks the user whether to create it. Grinder and
 preparation are never created from an incoming link.
+
+Single-brew links use the widened match described below for that creation
+decision. Batch links use an exact match, so a longer batch coffee name is not
+silently collapsed onto a shorter existing coffee.
 
 When an exact match fails, one widening step is tried: a stored entry whose
 name and the hint are the same equipment named at different lengths, in either
@@ -529,7 +535,8 @@ existing "Something is missing here..." popover. If the route created a bean
 before this check failed, it removes that bean. A grinder is not required:
 `brew.mill` is left empty when the hint is absent or unmatched. Beanconqueror
 seeds preparation methods on first run but never seeds a bean, so the first
-handoff into a fresh install needs bean metadata and user confirmation.
+handoff into a fresh install needs bean metadata and user confirmation. Nothing
+is wrong with the link, and no sender change can avoid it.
 
 All decoder failures throw an `Error`. The route catches the error, logs
 `Import brew from handoff link failed: <message>`, hides the loading spinner,
