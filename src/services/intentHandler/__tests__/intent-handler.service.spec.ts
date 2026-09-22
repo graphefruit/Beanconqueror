@@ -403,6 +403,37 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('removes a handoff-created bean when a failed rollback kept a brew linked to a different bean', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError('brew-created', false, 'bean-existing'),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+  });
+
+  it('leaves a handoff-created bean when a failed rollback did not report the brew bean link', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    const rollbackError = new BrewImportRollbackError(
+      'brew-created',
+      false,
+      'bean-created',
+    ) as BrewImportRollbackError & { beanUuid?: string };
+    delete rollbackError.beanUuid;
+    brewImportService.import.and.rejectWith(rollbackError);
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from handoff link kept bean bean-created because imported brew brew-created could not be rolled back.',
+    ]);
+  });
+
   it('removes a handoff-created bean when import rolled its brew back durably', async () => {
     brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
     brewImportService.import.and.rejectWith(

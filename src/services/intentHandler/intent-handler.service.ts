@@ -284,7 +284,7 @@ export class IntentHandlerService {
       this.uiLog.error('Import brew from handoff link failed: ' + ex.message);
       if (
         createdBeanUuid !== undefined &&
-        this.shouldKeepCreatedBeanAfterImportFailure(ex)
+        this.shouldKeepCreatedBeanAfterImportFailure(ex, createdBeanUuid)
       ) {
         this.uiLog.error(
           `Import brew from handoff link kept bean ${createdBeanUuid} because imported brew ${ex.brewUuid} could not be rolled back.`,
@@ -304,12 +304,14 @@ export class IntentHandlerService {
 
   private shouldKeepCreatedBeanAfterImportFailure(
     ex: unknown,
+    createdBeanUuid: string,
   ): ex is {
     isBrewImportRollbackError: true;
     brewUuid: string;
     rolledBack: false;
+    beanUuid?: string;
   } {
-    return (
+    if (
       !!ex &&
       typeof ex === 'object' &&
       'isBrewImportRollbackError' in ex &&
@@ -318,7 +320,15 @@ export class IntentHandlerService {
       ex.rolledBack === false &&
       'brewUuid' in ex &&
       typeof ex.brewUuid === 'string'
-    );
+    ) {
+      return (
+        !('beanUuid' in ex) ||
+        ex.beanUuid === undefined ||
+        ex.beanUuid === createdBeanUuid
+      );
+    }
+
+    return false;
   }
 
   private isBrewHandoffIntent(url: string): boolean {
