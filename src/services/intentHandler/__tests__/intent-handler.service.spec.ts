@@ -380,6 +380,28 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('logs a failed rollback delete without replacing the import failure', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    uiBrewHelper.canBrewIfNotShowMessage.and.returnValue(true);
+    brewImportService.import.and.rejectWith(new Error('Import failed'));
+    beanStorage.removeByUUID.and.resolveTo(false);
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from handoff link failed to roll back bean: bean-created',
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
   it('does not remove an existing matched bean when import fails', async () => {
     brewImportService.ensureBeanFromHandoff.and.resolveTo(undefined);
     brewImportService.import.and.rejectWith(new Error('Import failed'));

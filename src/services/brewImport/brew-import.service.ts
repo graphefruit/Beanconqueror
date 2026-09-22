@@ -172,7 +172,12 @@ export class BrewImportService {
       return undefined;
     }
 
-    const created = await this.beanStorage.add(this.buildBean(bean));
+    const { entry: created, saved } = await this.beanStorage.addAndConfirm(
+      this.buildBean(bean),
+    );
+    if (!saved) {
+      throw new Error(`Handoff bean creation failed: ${created.config.uuid}`);
+    }
     return created.config.uuid;
   }
 
@@ -425,13 +430,15 @@ export class BrewImportService {
   }
 
   private normalizeBeanMix(value: string): string {
-    return value
-      .normalize('NFC')
-      .trim()
-      // Handoff enum keys are wire tokens, so they must not follow a user's
-      // locale. Turkish casing would turn SINGLE_ORIGIN into sıngle_origin.
-      .toLocaleLowerCase('en-US')
-      .replace(/[\W_]/g, '');
+    return (
+      value
+        .normalize('NFC')
+        .trim()
+        // Handoff enum keys are wire tokens, so they must not follow a user's
+        // locale. Turkish casing would turn SINGLE_ORIGIN into sıngle_origin.
+        .toLocaleLowerCase('en-US')
+        .replace(/[\W_]/g, '')
+    );
   }
 
   // Whether the importer already has this coffee, which is not the same

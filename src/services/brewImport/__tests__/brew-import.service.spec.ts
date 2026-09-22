@@ -205,6 +205,7 @@ describe('BrewImportService', () => {
       'getAllEntries',
       'getByUUID',
       'add',
+      'addAndConfirm',
     ]);
     millStorage = jasmine.createSpyObj('UIMillStorage', [
       'getAllEntries',
@@ -243,6 +244,13 @@ describe('BrewImportService', () => {
       beans.push(bean);
       return Promise.resolve(bean);
     });
+    beanStorage.addAndConfirm.and.callFake(
+      (bean: Bean): Promise<{ entry: Bean; saved: boolean }> => {
+        bean.config.uuid = 'bean-created';
+        beans.push(bean);
+        return Promise.resolve({ entry: bean, saved: true });
+      },
+    );
     millStorage.getAllEntries.and.callFake(() => mills);
     preparationStorage.getAllEntries.and.callFake(() => preparations);
     preparationStorage.getByUUID.and.callFake((uuid: string) =>
@@ -588,6 +596,33 @@ describe('BrewImportService', () => {
     expect(result.brew.note).toBe('A completed brew');
   });
 
+  it('rejects a handoff bean creation whose save did not persist before the brew can link it', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    beanStorage.addAndConfirm.and.callFake(
+      (bean: Bean): Promise<{ entry: Bean; saved: boolean }> => {
+        bean.config.uuid = 'bean-created';
+        beans.push(bean);
+        return Promise.resolve({ entry: bean, saved: false });
+      },
+    );
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+      },
+    });
+
+    await expectAsync(
+      service.ensureBeanFromHandoff(handoff),
+    ).toBeRejectedWithError('Handoff bean creation failed: bean-created');
+
+    expect(beanStorage.addAndConfirm.calls.count()).toBe(1);
+    expect(beanStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.update.calls.count()).toBe(0);
+  });
+
   it('does not prompt when pod metadata names an existing bean', async () => {
     await service.ensureBeanFromHandoff(
       envelope({
@@ -601,6 +636,7 @@ describe('BrewImportService', () => {
 
     expect(uiAlert.showConfirm.calls.count()).toBe(0);
     expect(beanStorage.add.calls.count()).toBe(0);
+    expect(beanStorage.addAndConfirm.calls.count()).toBe(0);
   });
 
   it('does not offer to create a coffee the user already has twice over', async () => {
@@ -865,9 +901,7 @@ describe('BrewImportService', () => {
       beans.find((bean) => bean.config.uuid === uuid),
     );
 
-    const result = service.build(
-      envelope({ bean: { name: 'Ethiopia Guji' } }),
-    );
+    const result = service.build(envelope({ bean: { name: 'Ethiopia Guji' } }));
 
     expect(result.brew.bean).toBe('bean-a');
     expect(beanStorage.add.calls.count()).toBe(0);
@@ -884,9 +918,7 @@ describe('BrewImportService', () => {
       beans.find((bean) => bean.config.uuid === uuid),
     );
 
-    const result = service.build(
-      envelope({ bean: { name: 'Ethiopia Guji' } }),
-    );
+    const result = service.build(envelope({ bean: { name: 'Ethiopia Guji' } }));
 
     expect(result.brew.bean).toBe('bean-a');
     expect(beanStorage.add.calls.count()).toBe(0);
