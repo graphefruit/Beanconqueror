@@ -35,6 +35,7 @@ interface ICreatedHandoffBean {
 interface IBrewImportRollbackErrorLike {
   brewUuid: string;
   rolledBack: boolean;
+  beanUuid: string;
   isBrewImportRollbackError: true;
 }
 
@@ -380,18 +381,19 @@ export class IntentHandlerService {
     return undefined;
   }
 
-  private async removeCreatedHandoffBean(uuid: string | undefined) {
+  private async removeCreatedHandoffBean(uuid: string | undefined): Promise<boolean> {
     if (uuid === undefined) {
-      return;
+      return true;
     }
     try {
       const didRemove = await this.beanStorage.removeByUUID(uuid);
       if (didRemove) {
-        return;
+        return true;
       }
       this.uiLog.error(
         'Import brew from handoff link failed to roll back bean: ' + uuid,
       );
+      return false;
     } catch (ex) {
       this.uiLog.error(
         'Import brew from handoff link failed to roll back bean: ' +
@@ -400,6 +402,7 @@ export class IntentHandlerService {
           ex.message +
           ')',
       );
+      return false;
     }
   }
 
@@ -417,7 +420,8 @@ export class IntentHandlerService {
     return (
       candidate.isBrewImportRollbackError === true &&
       candidate.rolledBack === false &&
-      typeof candidate.brewUuid === 'string'
+      typeof candidate.brewUuid === 'string' &&
+      typeof candidate.beanUuid === 'string'
     );
   }
 
@@ -433,7 +437,6 @@ export class IntentHandlerService {
 
     let createdBeanUuids: string[] = [];
     const retainedBeanUuids = new Set<string>();
-    const createdBeanUuidsByName = new Map<string, string>();
     try {
       this.uiAnalytics.trackEvent(
         IntentHandlerTracking.TITLE,
@@ -444,9 +447,6 @@ export class IntentHandlerService {
       );
       const createdBeans = await this.ensureDistinctBeansFromHandoff(envelopes);
       createdBeanUuids = createdBeans.map((bean) => bean.uuid);
-      createdBeans.forEach((bean) => {
-        createdBeanUuidsByName.set(bean.beanName, bean.uuid);
-      });
 
       if (this.uiBrewHelper.canBrewIfNotShowMessage() === false) {
         this.uiLog.log(
@@ -482,8 +482,7 @@ export class IntentHandlerService {
           );
           this.keepBatchBeanAfterNonDurableRollback(
             ex,
-            envelope,
-            createdBeanUuidsByName,
+            createdBeanUuidSet,
             retainedBeanUuids,
           );
         }
@@ -531,25 +530,21 @@ export class IntentHandlerService {
 
   private keepBatchBeanAfterNonDurableRollback(
     error: unknown,
-    envelope: IHandoffEnvelope,
-    createdBeanUuidsByName: Map<string, string>,
+    createdBeanUuidSet: Set<string>,
     retainedBeanUuids: Set<string>,
   ): void {
     if (!this.isNonDurableBrewImportRollbackError(error)) {
       return;
     }
 
-    const beanName = this.handoffBeanName(envelope);
-    const uuid =
-      beanName === undefined ? undefined : createdBeanUuidsByName.get(beanName);
-    if (uuid === undefined) {
+    if (!createdBeanUuidSet.has(error.beanUuid)) {
       return;
     }
 
-    retainedBeanUuids.add(uuid);
+    retainedBeanUuids.add(error.beanUuid);
     this.uiLog.error(
       'Import brew from batch handoff link kept handoff-created bean after non-durable brew rollback: ' +
-        uuid +
+        error.beanUuid +
         ' (brew: ' +
         error.brewUuid +
         ')',
@@ -560,16 +555,24 @@ export class IntentHandlerService {
     createdBeanUuids: string[],
     retainedBeanUuids: Set<string>,
   ): Promise<void> {
+    let cleanupComplete = true;
     try {
       for (const uuid of createdBeanUuids) {
         if (!retainedBeanUuids.has(uuid)) {
-          await this.removeCreatedHandoffBean(uuid);
+          const removed = await this.removeCreatedHandoffBean(uuid);
+          cleanupComplete = cleanupComplete && removed;
         }
       }
     } catch (ex) {
+      cleanupComplete = false;
       this.uiLog.error(
         'Import brew from handoff link failed while cleaning up beans: ' +
           ex.message,
+      );
+    }
+    if (!cleanupComplete) {
+      this.uiLog.error(
+        'Import brews from handoff link cleanup incomplete; some handoff-created coffees may remain on disk.',
       );
     }
   }
