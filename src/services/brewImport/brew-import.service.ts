@@ -425,7 +425,11 @@ export class BrewImportService {
   }
 
   private normalizeBeanMix(value: string): string {
-    return value.normalize('NFC').trim().toLocaleLowerCase().replace(/\W/g, '');
+    return value
+      .normalize('NFC')
+      .trim()
+      .toLocaleLowerCase()
+      .replace(/[\W_]/g, '');
   }
 
   private hasNameMatch(

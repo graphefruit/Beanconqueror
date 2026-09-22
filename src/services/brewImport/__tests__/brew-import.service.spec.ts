@@ -685,6 +685,59 @@ describe('BrewImportService', () => {
     ]);
   });
 
+  it('accepts bean mix enum keys sent verbatim by a handoff sender', async () => {
+    const cases = [
+      { incoming: 'SINGLE_ORIGIN', expected: 'SINGLE_ORIGIN' },
+      { incoming: 'BLEND', expected: 'BLEND' },
+      { incoming: 'UNKNOWN', expected: 'UNKNOWN' },
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+
+    for (const [index, testCase] of cases.entries()) {
+      beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+
+      await service.ensureBeanFromHandoff(
+        envelope({
+          bean: {
+            name: `Pod coffee ${index}`,
+            origin: 'Ethiopia',
+            beanMix: testCase.incoming,
+          },
+        }),
+      );
+
+      const created = beans.find((bean) => bean.config.uuid === 'bean-created');
+      expect(String(created.beanMix)).toBe(testCase.expected);
+    }
+  });
+
+  it('keeps accepting human bean mix labels and shorthand', async () => {
+    const cases = [
+      { incoming: 'Single Origin', expected: 'SINGLE_ORIGIN' },
+      { incoming: 'single', expected: 'SINGLE_ORIGIN' },
+      { incoming: 'Blend', expected: 'BLEND' },
+      { incoming: 'Unknown', expected: 'UNKNOWN' },
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+
+    for (const [index, testCase] of cases.entries()) {
+      beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+
+      await service.ensureBeanFromHandoff(
+        envelope({
+          bean: {
+            name: `Pod coffee ${index}`,
+            origin: 'Ethiopia',
+            beanMix: testCase.incoming,
+          },
+        }),
+      );
+
+      const created = beans.find((bean) => bean.config.uuid === 'bean-created');
+      expect(String(created.beanMix)).toBe(testCase.expected);
+    }
+  });
+
   it('falls back to an unknown bean mix instead of storing unknown handoff wording', async () => {
     beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
     uiAlert.showConfirm.and.resolveTo('YES');
