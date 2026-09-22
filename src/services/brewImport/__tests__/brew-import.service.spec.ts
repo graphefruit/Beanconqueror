@@ -603,6 +603,25 @@ describe('BrewImportService', () => {
     expect(beanStorage.add.calls.count()).toBe(0);
   });
 
+  it('does not offer to create a coffee the user already has twice over', async () => {
+    beans = [
+      entry(new Bean(), 'Pod coffee', 'bean-one'),
+      entry(new Bean(), 'Pod coffee', 'bean-two'),
+    ];
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+        process: 'Natural',
+      },
+    });
+
+    await service.ensureBeanFromHandoff(handoff);
+
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(beanStorage.add.calls.count()).toBe(0);
+  });
+
   it('does not prompt when pod metadata matches an existing bean by widened name', async () => {
     beans = [entry(new Bean(), 'Pod coffee Natural', 'bean-natural')];
     const handoff = envelope({

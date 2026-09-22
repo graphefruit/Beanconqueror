@@ -434,11 +434,18 @@ export class BrewImportService {
       .replace(/[\W_]/g, '');
   }
 
+  // Whether the importer already has this coffee, which is not the same
+  // question as which one it should link to. `findNameMatch` returns no match
+  // when two active beans carry the incoming name, because it will not guess
+  // between them -- but the user plainly does have the coffee, and creating a
+  // third copy of it would leave them with a duplicate that `build()` then
+  // declines to use anyway. Ambiguity therefore counts as having it.
   private hasNameMatch(
     entries: IStoredNamedEntry[],
     hintedName: string,
   ): boolean {
-    return this.findNameMatch(entries, hintedName).match !== undefined;
+    const found = this.findNameMatch(entries, hintedName);
+    return found.match !== undefined || found.reason === 'multiple matches';
   }
 
   private findUniqueOrDefault(
