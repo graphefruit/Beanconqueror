@@ -154,11 +154,7 @@ export class BrewImportService {
     envelope: IHandoffEnvelope,
   ): Promise<string | undefined> {
     const bean = envelope.bean;
-    if (!bean || !this.hasBeanMetadata(bean)) {
-      return undefined;
-    }
-
-    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+    if (!bean || !this.canCreateBeanFromHandoff(envelope)) {
       return undefined;
     }
 
@@ -172,11 +168,30 @@ export class BrewImportService {
       return undefined;
     }
 
-    // Ask again, now the dialog has closed. The URL listener does not await
-    // one handoff before starting the next, so a second import of the same
-    // coffee can have arrived and created the bean while this prompt was open.
-    // Without this, both would create one and the user would end up with two.
-    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+    return this.createBeanFromHandoff(envelope);
+  }
+
+  public canCreateBeanFromHandoff(envelope: IHandoffEnvelope): boolean {
+    const bean = envelope.bean;
+    if (!bean || !this.hasBeanMetadata(bean)) {
+      return false;
+    }
+
+    return !this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name);
+  }
+
+  /**
+   * Write the bean and say which one was written.
+   *
+   * The uuid goes back to the caller so a handoff that then fails can take
+   * back the bean it created, and only that one: a name that matched an
+   * existing entry returns undefined and is left alone.
+   */
+  public async createBeanFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    const bean = envelope.bean;
+    if (!bean || !this.canCreateBeanFromHandoff(envelope)) {
       return undefined;
     }
 

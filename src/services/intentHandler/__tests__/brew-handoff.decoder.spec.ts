@@ -1058,8 +1058,8 @@ describe('brew handoff decoder', () => {
       'Batch brews must not be empty',
     );
     await expectAsync(
-      decodeBatch({ v: 1, brews: Array.from({ length: 101 }, validEnvelope) }),
-    ).toBeRejectedWithError('Batch brews must contain at most 100 entries');
+      decodeBatch({ v: 1, brews: Array.from({ length: 51 }, validEnvelope) }),
+    ).toBeRejectedWithError('Batch brews must contain at most 50 entries');
   });
 
   it('accepts a batch larger than a single brew is allowed to inflate to', async () => {
@@ -1079,6 +1079,25 @@ describe('brew handoff decoder', () => {
     expect(JSON.stringify({ v: 1, brews }).length).toBeGreaterThan(256 * 1024);
 
     await expectAsync(decodeBatch({ v: 1, brews })).toBeResolvedTo(brews);
+  });
+
+  it('rejects a batch larger than the batch inflate cap', async () => {
+    const oversized = JSON.stringify({
+      v: 1,
+      brews: [
+        validEnvelope({
+          brew: {
+            ...validEnvelope().brew,
+            note: 'x'.repeat(4 * 1024 * 1024),
+          },
+        }),
+      ],
+    });
+    expect(oversized.length).toBeGreaterThan(4 * 1024 * 1024);
+
+    await expectAsync(
+      decodeHandoffBatchPayload(await gzipString(oversized)),
+    ).toBeRejectedWithError('Inflated payload exceeds 4194304 bytes');
   });
 
   it('rejects invalid envelopes inside a batch through the envelope validator', async () => {

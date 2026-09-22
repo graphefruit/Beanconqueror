@@ -61,16 +61,18 @@ decoding, then parses JSON.
 
 The inflate is capped, because the payload is attacker controlled gzip and an
 uncapped inflate is a zip bomb. A single brew may inflate to 256 KiB and a
-batch to 4 MiB. The two differ because a batch carries up to 100 whole
-envelopes: a hundred realistic brews are roughly two megabytes of ordinary
-JSON, so the single brew cap would turn away a batch of about thirteen. The
-larger figure is still bounded, because the collector takes at most 1,024
-chunks and so only a few hundred kilobytes ever reach the inflater.
+batch to 4 MiB. The two differ because a batch carries up to 50 whole
+envelopes: fifty realistic 60 KB brews are roughly three megabytes of ordinary
+JSON, inside the batch cap with headroom. The larger figure is still a hard
+post-inflate limit, so oversized gzip output is rejected before validation or
+storage.
 
 A sender should apply the same two limits before it builds a link. The URL
-length is almost never what stops a batch: a hundred brews assemble into
-roughly sixty thousand characters, well inside any sensible URL budget, and it
-is the brew count and the inflated size that bite first.
+length is almost never what stops a batch: fifty brews assemble into roughly
+sixty thousand characters, well inside any sensible URL budget, and it is the
+brew count, the inflated size and the foreground import cost that bite first.
+Each accepted brew causes two whole-collection writes before its optional flow
+file is written, so the cap protects storage work as well as payload size.
 
 Deep links are gated on `uiHelper.isBeanconqurorAppReady()`. In
 `src/app/app.component.ts`, app readiness is set only after `__initApp()` has
@@ -92,15 +94,30 @@ The batch payload is a small wrapper around complete single-brew envelopes:
 ```json
 {
   "v": 1,
-  "brews": []
+  "brews": [
+    {
+      "v": 1,
+      "app": { "name": "Example sender", "version": "1.0" },
+      "brew": {
+        "date": "2026-09-20T12:00:00.000Z",
+        "waterIn": { "value": 300, "unit": "ml" },
+        "beverageOut": { "value": 240, "unit": "g" },
+        "brewTime": 210,
+        "preparationMethod": "V60"
+      },
+      "imported": { "source": "example", "schema": 1 }
+    }
+  ]
 }
 ```
 
-`v` must be exactly `1`. `brews` must be a non-empty array, capped at 100
+`v` must be exactly `1`. `brews` must be a non-empty array, capped at 50
 entries. That cap keeps a foreground deep-link import finite while being larger
 than a normal handoff session. Each array entry is validated by the same
 `IHandoffEnvelope` validator used by `ADD_BREW`; there is no separate batch
-envelope schema.
+envelope schema. Validation is all-or-nothing: one malformed entry rejects the
+whole link before import starts, while persistence is per-entry and
+best-effort.
 
 During import, Beanconqueror first runs the optional bean creation step once per
 distinct incoming bean name. It then checks whether the library can add brews,

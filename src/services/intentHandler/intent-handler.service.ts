@@ -247,7 +247,7 @@ export class IntentHandlerService {
 
   private matchesIntent(url: string, intent: string): boolean {
     return (
-      url.split('?')[0].toLowerCase() ===
+      url.split('?')[0].replace(/\/$/, '').toLowerCase() ===
       `beanconqueror://${intent}`.toLowerCase()
     );
   }
@@ -311,7 +311,7 @@ export class IntentHandlerService {
       }
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
-        'BREW_IMPORT_FAILED',
+        this.brewImportFailureMessage(ex),
         'ERROR_OCCURED',
         undefined,
         true,
@@ -406,18 +406,29 @@ export class IntentHandlerService {
       const envelopes = await decodeHandoffBatchPayload(
         collectHandoffPayload(_url),
       );
-      await this.ensureDistinctBeansFromHandoff(envelopes);
+      const createdBeanUuids =
+        await this.ensureDistinctBeansFromHandoff(envelopes);
 
       if (this.uiBrewHelper.canBrewIfNotShowMessage() === false) {
         this.uiLog.log(
           'Import brews from handoff link skipped: cannot brew yet',
         );
+        for (const uuid of createdBeanUuids) {
+          await this.removeCreatedHandoffBean(uuid);
+        }
         return;
       }
 
       await this.uiAlert.showLoadingSpinner();
       let importedCount = 0;
-      for (const envelope of envelopes) {
+      for (let index = 0; index < envelopes.length; index++) {
+        const envelope = envelopes[index];
+        this.uiAlert.setLoadingSpinnerMessage(
+          this.translate.instant('BREW_IMPORT_BATCH_PROGRESS', {
+            current: index + 1,
+            total: envelopes.length,
+          }),
+        );
         try {
           await this.brewImportService.import(envelope);
           importedCount++;
@@ -452,7 +463,7 @@ export class IntentHandlerService {
       this.uiLog.error('Import brews from handoff link failed: ' + ex.message);
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
-        'BREW_IMPORT_FAILED',
+        this.brewImportFailureMessage(ex),
         'ERROR_OCCURED',
         undefined,
         true,
@@ -460,18 +471,63 @@ export class IntentHandlerService {
     }
   }
 
+  /**
+   * Offer to create the coffees a batch mentions, asking once rather than once
+   * per brew.
+   *
+   * Returns the beans this call created, so a batch that then cannot proceed
+   * can take them back. A bean the user already had is not in that list and is
+   * never touched.
+   */
   private async ensureDistinctBeansFromHandoff(
     envelopes: IHandoffEnvelope[],
-  ): Promise<void> {
+  ): Promise<string[]> {
     const seenBeans = new Set<string>();
+    const distinctEnvelopes: IHandoffEnvelope[] = [];
     for (const envelope of envelopes) {
       const beanName = this.handoffBeanName(envelope);
       if (beanName === undefined || seenBeans.has(beanName)) {
         continue;
       }
       seenBeans.add(beanName);
-      await this.brewImportService.ensureBeanFromHandoff(envelope);
+      distinctEnvelopes.push(envelope);
     }
+
+    const creatableEnvelopes = distinctEnvelopes.filter((envelope) =>
+      this.brewImportService.canCreateBeanFromHandoff(envelope),
+    );
+    if (creatableEnvelopes.length === 0) {
+      return [];
+    }
+
+    if (creatableEnvelopes.length === 1) {
+      const created = await this.brewImportService.ensureBeanFromHandoff(
+        creatableEnvelopes[0],
+      );
+      return created === undefined ? [] : [created];
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      this.translate.instant('BREW_IMPORT_CREATE_BEANS_DESCRIPTION', {
+        count: creatableEnvelopes.length,
+      }),
+      this.translate.instant('BREW_IMPORT_CREATE_BEANS_TITLE', {
+        count: creatableEnvelopes.length,
+      }),
+      false,
+    );
+    if (choice !== 'YES') {
+      return [];
+    }
+
+    const created: string[] = [];
+    for (const envelope of creatableEnvelopes) {
+      const uuid = await this.brewImportService.createBeanFromHandoff(envelope);
+      if (uuid !== undefined) {
+        created.push(uuid);
+      }
+    }
+    return created;
   }
 
   private handoffBeanName(envelope: IHandoffEnvelope): string | undefined {
@@ -480,6 +536,17 @@ export class IntentHandlerService {
       return undefined;
     }
     return beanName.normalize('NFC').trim().toLocaleLowerCase();
+  }
+
+  private brewImportFailureMessage(error: unknown): string {
+    if (
+      error instanceof Error &&
+      error.message.startsWith('Inflated payload exceeds')
+    ) {
+      return 'BREW_IMPORT_TOO_LARGE';
+    }
+
+    return 'BREW_IMPORT_FAILED';
   }
 
   private importVisualizerShot(_shareCode) {

@@ -59,6 +59,10 @@ function batchHandoffUrl(payload: string): string {
   );
 }
 
+function withTrailingSlash(url: string): string {
+  return url.replace('?', '/?');
+}
+
 function validEnvelope(
   overrides: Partial<IHandoffEnvelope> = {},
 ): IHandoffEnvelope {
@@ -151,7 +155,9 @@ describe('IntentHandlerService', () => {
     uiAlert = jasmine.createSpyObj('UIAlert', [
       'showLoadingSpinner',
       'hideLoadingSpinner',
+      'setLoadingSpinnerMessage',
       'showMessage',
+      'showConfirm',
       'isLoadingSpinnerShown',
       'presentCustomPopover',
     ]);
@@ -162,6 +168,8 @@ describe('IntentHandlerService', () => {
     ]);
     brewImportService = jasmine.createSpyObj('BrewImportService', [
       'ensureBeanFromHandoff',
+      'canCreateBeanFromHandoff',
+      'createBeanFromHandoff',
       'import',
     ]);
     beanStorage = jasmine.createSpyObj('UIBeanStorage', [
@@ -186,6 +194,7 @@ describe('IntentHandlerService', () => {
     uiHelper.isBeanconqurorAppReady.and.resolveTo();
     uiAlert.showLoadingSpinner.and.resolveTo();
     uiAlert.hideLoadingSpinner.and.resolveTo();
+    uiAlert.showConfirm.and.resolveTo('YES');
     uiAlert.isLoadingSpinnerShown.and.returnValue(false);
     beanStorage.removeByUUID.and.resolveTo(true);
     translate.instant.and.callFake((key: string, params?: unknown) => {
@@ -197,9 +206,35 @@ describe('IntentHandlerService', () => {
         const counts = params as { imported: number; total: number };
         return `Imported ${counts.imported} of ${counts.total} brews`;
       }
+      if (
+        key === 'BREW_IMPORT_BATCH_PROGRESS' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { current: number; total: number };
+        return `Importing ${counts.current} of ${counts.total}`;
+      }
+      if (
+        key === 'BREW_IMPORT_CREATE_BEANS_TITLE' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { count: number };
+        return `Create ${counts.count} coffees?`;
+      }
+      if (
+        key === 'BREW_IMPORT_CREATE_BEANS_DESCRIPTION' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { count: number };
+        return `Create ${counts.count} coffees before importing?`;
+      }
       return key;
     });
     brewImportService.ensureBeanFromHandoff.and.resolveTo();
+    brewImportService.canCreateBeanFromHandoff.and.returnValue(true);
+    brewImportService.createBeanFromHandoff.and.resolveTo();
     brewImportService.import.and.resolveTo();
     beanStorage.attachOnEvent.and.returnValue(eventEmitter as never);
     millStorage.attachOnEvent.and.returnValue(eventEmitter as never);
@@ -376,6 +411,13 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('imports a brew handoff with a trailing slash before the query', async () => {
+
+    await service.handleDeepLink(withTrailingSlash(url));
+
+    expect(brewImportService.import.calls.allArgs()).toEqual([[envelope]]);
+  });
+
   it('reports a brew handoff import failure after a decodable payload reaches import', async () => {
     brewImportService.import.and.rejectWith(new Error('Import failed'));
 
@@ -419,7 +461,11 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(batchUrl);
 
-    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
+    expect(brewImportService.ensureBeanFromHandoff.calls.count()).toBe(0);
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      ['Create 2 coffees before importing?', 'Create 2 coffees?', false],
+    ]);
+    expect(brewImportService.createBeanFromHandoff.calls.allArgs()).toEqual([
       [first],
       [second],
     ]);
@@ -428,6 +474,10 @@ describe('IntentHandlerService', () => {
       [second],
     ]);
     expect(uiAlert.showLoadingSpinner.calls.count()).toBe(1);
+    expect(uiAlert.setLoadingSpinnerMessage.calls.allArgs()).toEqual([
+      ['Importing 1 of 2'],
+      ['Importing 2 of 2'],
+    ]);
     expect(uiAlert.hideLoadingSpinner.calls.count()).toBe(1);
     expect(uiAlert.showMessage.calls.allArgs()).toContain([
       'Imported 2 of 2 brews',
@@ -454,6 +504,16 @@ describe('IntentHandlerService', () => {
     expect(brewImportService.import.calls.allArgs()).toEqual([[envelope]]);
   });
 
+  it('imports a batch handoff with a trailing slash before the query', async () => {
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [envelope] }),
+    );
+
+    await service.handleDeepLink(withTrailingSlash(batchUrl));
+
+    expect(brewImportService.import.calls.allArgs()).toEqual([[envelope]]);
+  });
+
   it('asks once for the same bean across several batch brews', async () => {
     const first = validEnvelope({
       bean: { name: 'Same Pod', origin: 'Ethiopia' },
@@ -471,7 +531,33 @@ describe('IntentHandlerService', () => {
     expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
       [first],
     ]);
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
     expect(brewImportService.import.calls.count()).toBe(2);
+  });
+
+  it('asks once for several new batch beans and creates none when declined', async () => {
+    uiAlert.showConfirm.and.resolveTo('NO');
+    const first = validEnvelope({ bean: { name: 'First coffee' } });
+    const second = validEnvelope({
+      bean: { name: 'Second coffee' },
+      brew: { ...validEnvelope().brew, note: 'Second brew' },
+    });
+    const third = validEnvelope({
+      bean: { name: 'Third coffee' },
+      brew: { ...validEnvelope().brew, note: 'Third brew' },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second, third] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      ['Create 3 coffees before importing?', 'Create 3 coffees?', false],
+    ]);
+    expect(brewImportService.ensureBeanFromHandoff.calls.count()).toBe(0);
+    expect(brewImportService.createBeanFromHandoff.calls.count()).toBe(0);
+    expect(brewImportService.import.calls.count()).toBe(3);
   });
 
   it('imports batch survivors and reports the imported count after a partial failure', async () => {

@@ -32,12 +32,10 @@ export type {
 const MAX_INFLATED_BYTES = 512 * 1024;
 /*
  * A batch carries up to MAX_BATCH_BREWS whole envelopes, so the single-brew
- * ceiling is the wrong one: fifty brews inflate to roughly three megabytes of
- * perfectly ordinary JSON, and the single cap would turn away a batch of about
- * eight. 4 MiB covers the largest batch this decoder will accept and still
- * refuses a bomb, because the compressed side is bounded too: the collector
- * takes at most MAX_CHUNKS chunks, so no more than a few hundred kilobytes
- * ever reaches the inflater.
+ * ceiling is the wrong one: fifty realistic 60 KB brews inflate to roughly
+ * three megabytes of ordinary JSON, inside the 4 MiB cap with headroom. The
+ * count is also a foreground storage bound, because each imported brew causes
+ * two whole-collection writes before its optional flow file is written.
  */
 const MAX_INFLATED_BATCH_BYTES = 4 * 1024 * 1024;
 // The sender's 131,072-character URL budget is the real limit: at 400 characters per slice it can emit 328 chunks. This 1,024-chunk backstop is 409,600 characters, so the receiver never becomes the binding constraint while assembly stays finite.
@@ -64,8 +62,8 @@ const MAX_NOTE_LENGTH = 10_000;
 const MAX_RATING = 10;
 // Metric count is metadata, not the trace; 100 named series is already far beyond a brew chart.
 const MAX_METRICS = 100;
-// Deep links are foreground imports; 100 records is already larger than a normal session while keeping validation and storage bounded.
-const MAX_BATCH_BREWS = 100;
+// Deep links are foreground imports; 50 records fit the inflate cap and keep repeated whole-database writes bounded.
+const MAX_BATCH_BREWS = 50;
 // Opaque blocks may be rendered or copied later; cap their shape before a future deep-merge or stringify sees them.
 const MAX_OPAQUE_DEPTH = 8;
 const MAX_OPAQUE_KEYS = 1_000;
