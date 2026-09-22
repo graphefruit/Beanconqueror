@@ -13,6 +13,9 @@ The implementation is split across these files:
   interfaces and validates the payload.
 - `src/services/brewImport/brew-import.service.ts` maps the decoded envelope to
   Beanconqueror data.
+- `src/services/brewImport/brew-import-provenance.ts` resolves the `imported`
+  block into the brand shown on the chip, and the brew information template
+  renders it.
 
 ## Transport
 
