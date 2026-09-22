@@ -6,7 +6,10 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Settings } from '../../../classes/settings/settings';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
-import { BrewImportService } from '../../brewImport/brew-import.service';
+import {
+  BrewImportRollbackError,
+  BrewImportService,
+} from '../../brewImport/brew-import.service';
 import { CoffeeBluetoothDevicesService } from '../../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { ServerCommunicationService } from '../../serverCommunication/server-communication.service';
 import { UIAlert } from '../../uiAlert';
@@ -380,9 +383,41 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('leaves a handoff-created bean when import rollback could not remove its brew', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError('brew-created', false, 'bean-created'),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from handoff link kept bean bean-created because imported brew brew-created could not be rolled back.',
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
+  it('removes a handoff-created bean when import rolled its brew back durably', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError('brew-created', true, 'bean-created'),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+  });
+
   it('logs a failed rollback delete without replacing the import failure', async () => {
     brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
-    uiBrewHelper.canBrewIfNotShowMessage.and.returnValue(true);
     brewImportService.import.and.rejectWith(new Error('Import failed'));
     beanStorage.removeByUUID.and.resolveTo(false);
 

@@ -558,8 +558,11 @@ export class BrewImportService {
 
     if (matches.length === 0) {
       const wider = this.findUniqueModelMatch(usable, normalizedHint);
-      if (wider) {
-        return { match: wider, reason: 'no match', widened: true };
+      if (wider.match) {
+        return { match: wider.match, reason: 'no match', widened: true };
+      }
+      if (wider.multiple) {
+        return { reason: 'multiple matches', widened: true };
       }
       return { reason: 'no match', widened: false };
     }
@@ -588,7 +591,7 @@ export class BrewImportService {
   private findUniqueModelMatch(
     entries: IStoredNamedEntry[],
     normalizedHint: string,
-  ): IStoredNamedEntry | undefined {
+  ): { match?: IStoredNamedEntry; multiple: boolean } {
     const extendsName = (longer: string, shorter: string): boolean =>
       longer.length > shorter.length &&
       longer.startsWith(shorter) &&
@@ -604,7 +607,10 @@ export class BrewImportService {
       );
     });
 
-    return candidates.length === 1 ? candidates[0] : undefined;
+    if (candidates.length === 1) {
+      return { match: candidates[0], multiple: false };
+    }
+    return { multiple: candidates.length > 1 };
   }
 
   // A finished bean or preparation is archived, and `canBrew()` will not brew

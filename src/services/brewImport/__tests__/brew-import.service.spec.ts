@@ -754,6 +754,31 @@ describe('BrewImportService', () => {
     );
   });
 
+  it('does not prompt or create when pod metadata has ambiguous widened bean matches', async () => {
+    beans = [
+      entry(new Bean(), 'Pod coffee Washed', 'bean-washed'),
+      entry(new Bean(), 'Pod coffee Natural', 'bean-natural'),
+    ];
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+        process: 'Natural',
+      },
+    });
+
+    await service.ensureBeanFromHandoff(handoff);
+    const result = await service.import(handoff);
+
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(beanStorage.add.calls.count()).toBe(0);
+    expect(beanStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(result.brew.bean).toBe('bean-natural');
+    expect(result.brew.note).toContain(
+      'Bean not linked: "Pod coffee" (multiple matches). Using "Pod coffee Natural".',
+    );
+  });
+
   it('does not prompt when the bean hint only contains a name', async () => {
     beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
 
@@ -1115,7 +1140,7 @@ describe('BrewImportService', () => {
 
     expect(result.brew.bean).toBe('bean-natural');
     expect(result.brew.note).toContain(
-      'Bean not linked: "Pod coffee" (no match). Using "Pod coffee Natural".',
+      'Bean not linked: "Pod coffee" (multiple matches). Using "Pod coffee Natural".',
     );
   });
 
