@@ -25,6 +25,7 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 
 const MAX_ABSOLUTE_MILLISECONDS = 24 * 60 * 60 * 1_000;
 const MAX_ABSOLUTE_GRAMS = 100_000;
+const MAX_CREATE_BEAN_PROMPT_NAME_LENGTH = 60;
 
 export interface IBrewImportResult {
   brew: Brew;
@@ -151,26 +152,28 @@ export class BrewImportService {
 
   public async ensureBeanFromHandoff(
     envelope: IHandoffEnvelope,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     const bean = envelope.bean;
     if (!bean || !this.hasBeanMetadata(bean)) {
-      return;
+      return undefined;
     }
 
     if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
-      return;
+      return undefined;
     }
 
     const choice = await this.uiAlert.showConfirm(
       'BREW_IMPORT_CREATE_BEAN_DESCRIPTION',
       'BREW_IMPORT_CREATE_BEAN_TITLE',
       true,
+      { name: this.promptBeanName(bean.name) },
     );
     if (choice !== 'YES') {
-      return;
+      return undefined;
     }
 
-    await this.beanStorage.add(this.buildBean(bean));
+    const created = await this.beanStorage.add(this.buildBean(bean));
+    return created.config.uuid;
   }
 
   public async import(envelope: IHandoffEnvelope): Promise<IBrewImportResult> {
@@ -347,6 +350,13 @@ export class BrewImportService {
 
   private optionalBeanName(envelope: IHandoffEnvelope): string {
     return typeof envelope.bean?.name === 'string' ? envelope.bean.name : '';
+  }
+
+  private promptBeanName(name: string): string {
+    if (name.length <= MAX_CREATE_BEAN_PROMPT_NAME_LENGTH) {
+      return name;
+    }
+    return `${name.slice(0, MAX_CREATE_BEAN_PROMPT_NAME_LENGTH - 3)}...`;
   }
 
   private hasBeanMetadata(bean: IHandoffBean): boolean {

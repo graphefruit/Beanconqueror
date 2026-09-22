@@ -569,6 +569,7 @@ describe('BrewImportService', () => {
         'BREW_IMPORT_CREATE_BEAN_DESCRIPTION',
         'BREW_IMPORT_CREATE_BEAN_TITLE',
         true,
+        { name: 'Pod coffee' },
       ],
     ]);
     expect(created.name).toBe('Pod coffee');
@@ -636,6 +637,52 @@ describe('BrewImportService', () => {
     expect(result.brew.note).toBe(
       'A completed brew\n\nBean not linked: "Pod coffee" (no match). Using "Alpha coffee".',
     );
+  });
+
+  it('includes the bean name in the creation prompt', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('NO');
+
+    await service.ensureBeanFromHandoff(
+      envelope({
+        bean: {
+          name: 'Pod coffee',
+          origin: 'Ethiopia',
+        },
+      }),
+    );
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_BEAN_DESCRIPTION',
+        'BREW_IMPORT_CREATE_BEAN_TITLE',
+        true,
+        { name: 'Pod coffee' },
+      ],
+    ]);
+  });
+
+  it('shortens long bean names in the creation prompt', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('NO');
+
+    await service.ensureBeanFromHandoff(
+      envelope({
+        bean: {
+          name: 'x'.repeat(512),
+          origin: 'Ethiopia',
+        },
+      }),
+    );
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_BEAN_DESCRIPTION',
+        'BREW_IMPORT_CREATE_BEAN_TITLE',
+        true,
+        { name: `${'x'.repeat(57)}...` },
+      ],
+    ]);
   });
 
   it('falls back to an unknown bean mix instead of storing unknown handoff wording', async () => {

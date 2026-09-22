@@ -870,8 +870,6 @@
     },
     "RETRY_CONNECT": "Réessayer la connexion",
     "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Garder la balance connectée même lorsque l'application est en arrière-plan",
-    "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
-    "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details that are not in your library. Create this coffee before importing the brew?",
     "BREW_FLOW_WEIGHT": "Poids",
     "BREW_FLOW_WEIGHT_PER_SECOND": "Débit (lissé)",
     "ROAST_TYPE_UNKNOWN": "Inconnu",

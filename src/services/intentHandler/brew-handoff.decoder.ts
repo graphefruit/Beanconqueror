@@ -492,14 +492,16 @@ function validateBean(value: unknown): IHandoffBean | undefined {
     return undefined;
   }
 
-  let bean: Record<string, unknown>;
-  try {
-    bean = objectRecord(value, 'Envelope bean');
-  } catch {
-    return undefined;
-  }
+  // A present but non-object bean is a malformed envelope rather than an
+  // absent one, and is rejected like every other shape error here. Swallowing
+  // it would import the brew with no coffee attached and say nothing.
+  const bean = objectRecord(value, 'Envelope bean');
 
-  const name = optionalTrimmedString(bean.name);
+  const name = optionalTrimmedString(
+    bean.name,
+    'Envelope bean.name',
+    MAX_LABEL_LENGTH,
+  );
   if (name === undefined) {
     return undefined;
   }
@@ -515,7 +517,15 @@ function validateBean(value: unknown): IHandoffBean | undefined {
     'imageUrl',
   ];
   optionalFields.forEach((field) => {
-    const fieldValue = optionalTrimmedString(bean[field]);
+    const max =
+      field === 'aromatics' || field === 'note'
+        ? MAX_NOTE_LENGTH
+        : MAX_LABEL_LENGTH;
+    const fieldValue = optionalTrimmedString(
+      bean[field],
+      `Envelope bean.${field}`,
+      max,
+    );
     if (fieldValue !== undefined) {
       out[field] = fieldValue;
     }
@@ -969,12 +979,16 @@ function optionalString<K extends string>(
   >;
 }
 
-function optionalTrimmedString(value: unknown): string | undefined {
+function optionalTrimmedString(
+  value: unknown,
+  path: string,
+  max: number,
+): string | undefined {
   if (typeof value !== 'string') {
     return undefined;
   }
   const trimmed = value.trim();
-  return trimmed === '' ? undefined : trimmed;
+  return trimmed === '' ? undefined : boundedString(trimmed, path, 1, max);
 }
 
 function optionalValue<K extends string, T>(
