@@ -435,7 +435,7 @@ export class IntentHandlerService {
   private async addBrewsFromHandoff(_url: string) {
     this.uiLog.log('Import brews from handoff link');
 
-    let createdBeanUuids: string[] = [];
+    const createdBeanUuids: string[] = [];
     const retainedBeanUuids = new Set<string>();
     try {
       this.uiAnalytics.trackEvent(
@@ -445,8 +445,7 @@ export class IntentHandlerService {
       const envelopes = await decodeHandoffBatchPayload(
         collectHandoffPayload(_url),
       );
-      const createdBeans = await this.ensureDistinctBeansFromHandoff(envelopes);
-      createdBeanUuids = createdBeans.map((bean) => bean.uuid);
+      await this.ensureDistinctBeansFromHandoff(envelopes, createdBeanUuids);
 
       // Same rule as the single import: a batch only needs the fallback links
       // BrewImportService cannot create itself, and a grinder hint may stay
@@ -591,6 +590,7 @@ export class IntentHandlerService {
    */
   private async ensureDistinctBeansFromHandoff(
     envelopes: IHandoffEnvelope[],
+    createdBeanUuids: string[] = [],
   ): Promise<ICreatedHandoffBean[]> {
     const envelopesByBeanName = new Map<string, IHandoffEnvelope[]>();
     for (const envelope of envelopes) {
@@ -623,9 +623,11 @@ export class IntentHandlerService {
         creatableEnvelopes[0],
       );
       const beanName = this.handoffBeanName(creatableEnvelopes[0]);
-      return created === undefined || beanName === undefined
-        ? []
-        : [{ uuid: created, beanName }];
+      if (created === undefined || beanName === undefined) {
+        return [];
+      }
+      createdBeanUuids.push(created);
+      return [{ uuid: created, beanName }];
     }
 
     const choice = await this.uiAlert.showConfirm(
@@ -650,16 +652,27 @@ export class IntentHandlerService {
         );
         const beanName = this.handoffBeanName(envelope);
         if (uuid !== undefined && beanName !== undefined) {
+          createdBeanUuids.push(uuid);
           created.push({ uuid, beanName });
         }
       }
     } catch (ex) {
       for (const bean of created) {
-        await this.removeCreatedHandoffBean(bean.uuid);
+        const removed = await this.removeCreatedHandoffBean(bean.uuid);
+        if (removed) {
+          this.removeCreatedBeanUuid(createdBeanUuids, bean.uuid);
+        }
       }
       throw ex;
     }
     return created;
+  }
+
+  private removeCreatedBeanUuid(createdBeanUuids: string[], uuid: string): void {
+    const index = createdBeanUuids.indexOf(uuid);
+    if (index >= 0) {
+      createdBeanUuids.splice(index, 1);
+    }
   }
 
   private handoffBeanName(envelope: IHandoffEnvelope): string | undefined {
