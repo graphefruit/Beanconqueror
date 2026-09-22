@@ -752,6 +752,62 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('removes all batch-created beans when the library cannot import after creating them', async () => {
+    const first = validEnvelope({ bean: { name: 'First coffee' } });
+    const second = validEnvelope({
+      bean: { name: 'Second coffee' },
+      brew: { ...validEnvelope().brew, note: 'Second brew' },
+    });
+    const third = validEnvelope({
+      bean: { name: 'Third coffee' },
+      brew: { ...validEnvelope().brew, note: 'Third brew' },
+    });
+    brewImportService.createBeanFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.bean?.name === 'First coffee') {
+          return Promise.resolve('bean-created-first');
+        }
+        if (candidate.bean?.name === 'Second coffee') {
+          return Promise.resolve('bean-created-second');
+        }
+        if (candidate.bean?.name === 'Third coffee') {
+          return Promise.resolve('bean-created-third');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    preparationStorage.getAllEntries.and.returnValue([]);
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second, third] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.createBeanFromHandoff.calls.allArgs()).toEqual([
+      [first, 'exact'],
+      [second, 'exact'],
+      [third, 'exact'],
+    ]);
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created-first'],
+      ['bean-created-second'],
+      ['bean-created-third'],
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showLoadingSpinner.calls.count()).toBe(0);
+    expect(uiAlert.presentCustomPopover).toHaveBeenCalledWith(
+      'CANT_IMPORT_BREW_TITLE',
+      'CANT_IMPORT_BREW_DESCRIPTION',
+      'UNDERSTOOD',
+    );
+    expect(uiAlert.showMessage.calls.allArgs()).not.toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
   it('imports batch survivors and reports the imported count after a partial failure', async () => {
     const first = validEnvelope({
       brew: { ...validEnvelope().brew, note: 'One' },
