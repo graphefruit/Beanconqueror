@@ -516,7 +516,7 @@ export class IntentHandlerService {
 
     const createdBeanUuids: string[] = [];
     const retainedBeanUuids = new Set<string>();
-    let createdPreparationUuids: string[] = [];
+    const createdPreparationUuids: string[] = [];
     const retainedPreparationUuids = new Set<string>();
     const createdPreparationUuidsByType = new Map<string, string>();
     try {
@@ -528,17 +528,11 @@ export class IntentHandlerService {
         collectHandoffPayload(_url),
       );
       await this.ensureDistinctBeansFromHandoff(envelopes, createdBeanUuids);
-      const createdPreparations =
-        await this.ensureDistinctPreparationsFromHandoff(envelopes);
-      createdPreparationUuids = createdPreparations.map(
-        (preparation) => preparation.uuid,
+      await this.ensureDistinctPreparationsFromHandoff(
+        envelopes,
+        createdPreparationUuids,
+        createdPreparationUuidsByType,
       );
-      createdPreparations.forEach((preparation) => {
-        createdPreparationUuidsByType.set(
-          preparation.preparationType,
-          preparation.uuid,
-        );
-      });
 
       // Same rule as the single import: a batch only needs the fallback links
       // BrewImportService cannot create itself, and a grinder hint may stay
@@ -854,6 +848,8 @@ export class IntentHandlerService {
    */
   private async ensureDistinctPreparationsFromHandoff(
     envelopes: IHandoffEnvelope[],
+    createdPreparationUuids: string[] = [],
+    createdPreparationUuidsByType: Map<string, string> = new Map(),
   ): Promise<ICreatedHandoffPreparation[]> {
     const envelopesByPreparationType = new Map<string, IHandoffEnvelope[]>();
     for (const envelope of envelopes) {
@@ -889,16 +885,44 @@ export class IntentHandlerService {
           await this.brewImportService.ensurePreparationFromHandoff(envelope);
         const preparationType = this.handoffPreparationType(envelope);
         if (uuid !== undefined && preparationType !== undefined) {
+          createdPreparationUuids.push(uuid);
+          createdPreparationUuidsByType.set(preparationType, uuid);
           created.push({ uuid, preparationType });
         }
       }
     } catch (ex) {
       for (const preparation of created) {
-        await this.removeCreatedHandoffPreparation(preparation.uuid);
+        const removed = await this.removeCreatedHandoffPreparation(
+          preparation.uuid,
+        );
+        if (removed) {
+          this.removeCreatedPreparationUuid(
+            createdPreparationUuids,
+            createdPreparationUuidsByType,
+            preparation,
+          );
+        }
       }
       throw ex;
     }
     return created;
+  }
+
+  private removeCreatedPreparationUuid(
+    createdPreparationUuids: string[],
+    createdPreparationUuidsByType: Map<string, string>,
+    preparation: ICreatedHandoffPreparation,
+  ): void {
+    const index = createdPreparationUuids.indexOf(preparation.uuid);
+    if (index >= 0) {
+      createdPreparationUuids.splice(index, 1);
+    }
+    if (
+      createdPreparationUuidsByType.get(preparation.preparationType) ===
+      preparation.uuid
+    ) {
+      createdPreparationUuidsByType.delete(preparation.preparationType);
+    }
   }
 
   private handoffBeanName(envelope: IHandoffEnvelope): string | undefined {
