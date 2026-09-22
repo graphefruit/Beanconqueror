@@ -177,7 +177,8 @@ export class BrewInformationComponent implements OnInit, OnChanges {
   };
 
   @ViewChild('swiper', { static: false }) public brewInformationSlider:
-    ElementRef | undefined;
+    | ElementRef
+    | undefined;
 
   @ViewChild('brewInformationContainer', { read: ElementRef, static: false })
   public brewInformationContainer: ElementRef;

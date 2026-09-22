@@ -325,6 +325,79 @@ describe('BrewInformationComponent imported provenance', () => {
     expect(uiHelper.openExternalWebpage.calls.count()).toBe(0);
   });
 
+  it('renders a non-tappable chip for a non-string stored sourceUrl', () => {
+    expect(() =>
+      render(
+        makeBrew({
+          source: 'unknown-sender',
+          sourceName: 'Any Sender',
+          sourceUrl: 42,
+          schema: 1,
+        } as any),
+      ),
+    ).not.toThrow();
+
+    expect(
+      fixture.nativeElement.querySelector(
+        '[data-testid="brew-imported-source-link"]',
+      ),
+    ).toBeNull();
+    expect(
+      fixture.nativeElement.querySelector(
+        '[data-testid="brew-imported-source-chip"]',
+      ),
+    ).not.toBeNull();
+  });
+
+  it('does not render a chip when the stored sourceName is missing', () => {
+    expect(() =>
+      render(
+        makeBrew({
+          source: 'unknown-sender',
+          schema: 1,
+        } as any),
+      ),
+    ).not.toThrow();
+
+    expect(
+      fixture.nativeElement.querySelector('.brew-imported-chip'),
+    ).toBeNull();
+  });
+
+  it('does not render a chip when the stored sourceName is blank', () => {
+    expect(() =>
+      render(
+        makeBrew({
+          source: 'unknown-sender',
+          sourceName: '   ',
+          schema: 1,
+        }),
+      ),
+    ).not.toThrow();
+
+    expect(
+      fixture.nativeElement.querySelector('.brew-imported-chip'),
+    ).toBeNull();
+  });
+
+  it('omits the device segment when the stored device is not a string', () => {
+    expect(() =>
+      render(
+        makeBrew({
+          source: 'unknown-sender',
+          sourceName: 'Any Sender',
+          device: { label: 'Countertop brewer' },
+          schema: 1,
+        } as any),
+      ),
+    ).not.toThrow();
+
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Any Sender');
+    expect(text).not.toContain('[object Object]');
+    expect(text).not.toContain('Countertop brewer');
+  });
+
   it('falls back to text for an unknown source', () => {
     render(
       makeBrew({

@@ -9,18 +9,27 @@ export interface BrewImportProvenanceChip {
 export function buildBrewImportProvenanceChip(
   imported?: IHandoffImport,
 ): BrewImportProvenanceChip | undefined {
-  if (!imported) {
+  if (!imported || typeof imported !== 'object') {
     return undefined;
   }
 
   // Re-check stored provenance: backup/JSON imports can bypass the handoff decoder.
-  const sourceUrl = imported.sourceUrl?.startsWith('https:')
-    ? imported.sourceUrl
-    : undefined;
+  const sourceName =
+    typeof imported.sourceName === 'string' ? imported.sourceName.trim() : '';
+  if (!sourceName) {
+    return undefined;
+  }
+
+  const device = typeof imported.device === 'string' ? imported.device : undefined;
+  const sourceUrl =
+    typeof imported.sourceUrl === 'string' &&
+    imported.sourceUrl.startsWith('https://')
+      ? imported.sourceUrl
+      : undefined;
 
   return {
-    sourceName: imported.sourceName,
-    device: imported.device,
+    sourceName,
+    device,
     sourceUrl,
   };
 }
