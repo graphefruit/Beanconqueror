@@ -8,7 +8,10 @@ import QR_TRACKING from '../../data/tracking/qrTracking';
 import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
 import type { IHandoffEnvelope } from '../../interfaces/brew/IHandoff';
 import { ServerBean } from '../../models/bean/serverBean';
-import { BrewImportService } from '../brewImport/brew-import.service';
+import {
+  BrewImportRollbackError,
+  BrewImportService,
+} from '../brewImport/brew-import.service';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
@@ -23,6 +26,17 @@ import {
   decodeHandoffBatchPayload,
   decodeHandoffPayload,
 } from './brew-handoff.decoder';
+
+interface ICreatedHandoffBean {
+  uuid: string;
+  beanName: string;
+}
+
+interface IBrewImportRollbackErrorLike {
+  brewUuid: string;
+  rolledBack: boolean;
+  isBrewImportRollbackError: true;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -388,6 +402,25 @@ export class IntentHandlerService {
       );
     }
   }
+
+  private isNonDurableBrewImportRollbackError(
+    error: unknown,
+  ): error is BrewImportRollbackError | IBrewImportRollbackErrorLike {
+    if (error instanceof BrewImportRollbackError) {
+      return error.rolledBack === false;
+    }
+    if (typeof error !== 'object' || error === null) {
+      return false;
+    }
+
+    const candidate = error as Partial<IBrewImportRollbackErrorLike>;
+    return (
+      candidate.isBrewImportRollbackError === true &&
+      candidate.rolledBack === false &&
+      typeof candidate.brewUuid === 'string'
+    );
+  }
+
   /**
    * Receive several brews handed over from another app.
    *
@@ -398,6 +431,9 @@ export class IntentHandlerService {
   private async addBrewsFromHandoff(_url: string) {
     this.uiLog.log('Import brews from handoff link');
 
+    let createdBeanUuids: string[] = [];
+    const retainedBeanUuids = new Set<string>();
+    const createdBeanUuidsByName = new Map<string, string>();
     try {
       this.uiAnalytics.trackEvent(
         IntentHandlerTracking.TITLE,
@@ -406,22 +442,25 @@ export class IntentHandlerService {
       const envelopes = await decodeHandoffBatchPayload(
         collectHandoffPayload(_url),
       );
-      const createdBeanUuids =
-        await this.ensureDistinctBeansFromHandoff(envelopes);
+      const createdBeans = await this.ensureDistinctBeansFromHandoff(envelopes);
+      createdBeanUuids = createdBeans.map((bean) => bean.uuid);
+      createdBeans.forEach((bean) => {
+        createdBeanUuidsByName.set(bean.beanName, bean.uuid);
+      });
 
       if (this.uiBrewHelper.canBrewIfNotShowMessage() === false) {
         this.uiLog.log(
           'Import brews from handoff link skipped: cannot brew yet',
         );
-        for (const uuid of createdBeanUuids) {
-          await this.removeCreatedHandoffBean(uuid);
-        }
+        await this.removeUnretainedCreatedHandoffBeans(
+          createdBeanUuids,
+          retainedBeanUuids,
+        );
         return;
       }
 
       await this.uiAlert.showLoadingSpinner();
       let importedCount = 0;
-      const retainedBeanUuids = new Set<string>();
       const createdBeanUuidSet = new Set(createdBeanUuids);
       for (let index = 0; index < envelopes.length; index++) {
         const envelope = envelopes[index];
@@ -441,14 +480,19 @@ export class IntentHandlerService {
           this.uiLog.error(
             'Import brew from batch handoff link failed: ' + ex.message,
           );
+          this.keepBatchBeanAfterNonDurableRollback(
+            ex,
+            envelope,
+            createdBeanUuidsByName,
+            retainedBeanUuids,
+          );
         }
       }
       await this.uiAlert.hideLoadingSpinner();
-      for (const uuid of createdBeanUuids) {
-        if (!retainedBeanUuids.has(uuid)) {
-          await this.removeCreatedHandoffBean(uuid);
-        }
-      }
+      await this.removeUnretainedCreatedHandoffBeans(
+        createdBeanUuids,
+        retainedBeanUuids,
+      );
 
       if (importedCount === 0) {
         this.uiAlert.showMessage(
@@ -471,12 +515,61 @@ export class IntentHandlerService {
       );
     } catch (ex) {
       this.uiLog.error('Import brews from handoff link failed: ' + ex.message);
+      await this.removeUnretainedCreatedHandoffBeans(
+        createdBeanUuids,
+        retainedBeanUuids,
+      );
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         this.brewImportFailureMessage(ex),
         'ERROR_OCCURED',
         undefined,
         true,
+      );
+    }
+  }
+
+  private keepBatchBeanAfterNonDurableRollback(
+    error: unknown,
+    envelope: IHandoffEnvelope,
+    createdBeanUuidsByName: Map<string, string>,
+    retainedBeanUuids: Set<string>,
+  ): void {
+    if (!this.isNonDurableBrewImportRollbackError(error)) {
+      return;
+    }
+
+    const beanName = this.handoffBeanName(envelope);
+    const uuid =
+      beanName === undefined ? undefined : createdBeanUuidsByName.get(beanName);
+    if (uuid === undefined) {
+      return;
+    }
+
+    retainedBeanUuids.add(uuid);
+    this.uiLog.error(
+      'Import brew from batch handoff link kept handoff-created bean after non-durable brew rollback: ' +
+        uuid +
+        ' (brew: ' +
+        error.brewUuid +
+        ')',
+    );
+  }
+
+  private async removeUnretainedCreatedHandoffBeans(
+    createdBeanUuids: string[],
+    retainedBeanUuids: Set<string>,
+  ): Promise<void> {
+    try {
+      for (const uuid of createdBeanUuids) {
+        if (!retainedBeanUuids.has(uuid)) {
+          await this.removeCreatedHandoffBean(uuid);
+        }
+      }
+    } catch (ex) {
+      this.uiLog.error(
+        'Import brew from handoff link failed while cleaning up beans: ' +
+          ex.message,
       );
     }
   }
@@ -491,7 +584,7 @@ export class IntentHandlerService {
    */
   private async ensureDistinctBeansFromHandoff(
     envelopes: IHandoffEnvelope[],
-  ): Promise<string[]> {
+  ): Promise<ICreatedHandoffBean[]> {
     const envelopesByBeanName = new Map<string, IHandoffEnvelope[]>();
     for (const envelope of envelopes) {
       const beanName = this.handoffBeanName(envelope);
@@ -522,7 +615,10 @@ export class IntentHandlerService {
       const created = await this.brewImportService.ensureBeanFromHandoff(
         creatableEnvelopes[0],
       );
-      return created === undefined ? [] : [created];
+      const beanName = this.handoffBeanName(creatableEnvelopes[0]);
+      return created === undefined || beanName === undefined
+        ? []
+        : [{ uuid: created, beanName }];
     }
 
     const choice = await this.uiAlert.showConfirm(
@@ -538,20 +634,21 @@ export class IntentHandlerService {
       return [];
     }
 
-    const created: string[] = [];
+    const created: ICreatedHandoffBean[] = [];
     try {
       for (const envelope of creatableEnvelopes) {
         const uuid = await this.brewImportService.createBeanFromHandoff(
           envelope,
           'exact',
         );
-        if (uuid !== undefined) {
-          created.push(uuid);
+        const beanName = this.handoffBeanName(envelope);
+        if (uuid !== undefined && beanName !== undefined) {
+          created.push({ uuid, beanName });
         }
       }
     } catch (ex) {
-      for (const uuid of created) {
-        await this.removeCreatedHandoffBean(uuid);
+      for (const bean of created) {
+        await this.removeCreatedHandoffBean(bean.uuid);
       }
       throw ex;
     }
