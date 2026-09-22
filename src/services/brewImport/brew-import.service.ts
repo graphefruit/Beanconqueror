@@ -268,6 +268,7 @@ export class BrewImportService {
         this.buildPreparation(envelope),
       );
     if (!saved) {
+      await this.removeFailedHandoffPreparation(created.config.uuid);
       throw new Error(
         `Handoff preparation creation failed: ${created.config.uuid}`,
       );
@@ -364,6 +365,24 @@ export class BrewImportService {
     } catch (ex) {
       this.uiLog.error(
         'Handoff bean creation cleanup failed: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
+      );
+    }
+  }
+
+  private async removeFailedHandoffPreparation(uuid: string): Promise<void> {
+    try {
+      const didRemove = await this.preparationStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return;
+      }
+      this.uiLog.error('Handoff preparation creation cleanup failed: ' + uuid);
+    } catch (ex) {
+      this.uiLog.error(
+        'Handoff preparation creation cleanup failed: ' +
           uuid +
           ' (' +
           ex.message +

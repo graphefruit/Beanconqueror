@@ -218,6 +218,7 @@ describe('BrewImportService', () => {
       'getByUUID',
       'add',
       'addAndConfirm',
+      'removeByUUID',
     ]);
     settingsStorage = jasmine.createSpyObj('UISettingsStorage', [
       'getSettings',
@@ -274,6 +275,18 @@ describe('BrewImportService', () => {
         preparation.config.uuid = 'preparation-created';
         preparations.push(preparation);
         return Promise.resolve({ entry: preparation, saved: true });
+      },
+    );
+    preparationStorage.removeByUUID.and.callFake(
+      (uuid: string): Promise<boolean> => {
+        const index = preparations.findIndex(
+          (preparation) => preparation.config.uuid === uuid,
+        );
+        if (index < 0) {
+          return Promise.resolve(false);
+        }
+        preparations.splice(index, 1);
+        return Promise.resolve(true);
       },
     );
 
@@ -1399,6 +1412,121 @@ describe('BrewImportService', () => {
     expect(created.type).toBe(PREPARATION_TYPES.XBLOOM);
     expect(result.brew.method_of_preparation).toBe('preparation-created');
     expect(preparationStorage.add.calls.count()).toBe(0);
+  });
+
+  it('removes a handoff preparation whose save did not persist before later type matching can see it', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: false });
+      },
+    );
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    await expectAsync(
+      service.ensurePreparationFromHandoff(handoff),
+    ).toBeRejectedWithError(
+      'Handoff preparation creation failed: preparation-created',
+    );
+    const result = service.build(handoff);
+
+    expect(preparationStorage.addAndConfirm.calls.count()).toBe(1);
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created'],
+    ]);
+    expect(
+      preparations.map((preparation) => preparation.config.uuid),
+    ).toEqual(['preparation-fallback']);
+    expect(result.brew.method_of_preparation).toBe('preparation-fallback');
+    expect(result.brew.note).toBe(
+      'A completed brew\n\nPreparation not linked: "xBloom Studio" (no match). Using "Fallback brewer".',
+    );
+    expect(preparationStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.update.calls.count()).toBe(0);
+  });
+
+  it('does not hand the caller a uuid when a handoff preparation save fails', async () => {
+    let returnedUuid: string | undefined;
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: false });
+      },
+    );
+
+    try {
+      returnedUuid = await service.ensurePreparationFromHandoff(
+        envelope({
+          brew: {
+            ...envelope().brew,
+            preparationMethod: 'xBloom Studio',
+            preparationType: PREPARATION_TYPES.XBLOOM,
+          },
+        }),
+      );
+    } catch (ex) {
+      expect(ex.message).toBe(
+        'Handoff preparation creation failed: preparation-created',
+      );
+    }
+
+    expect(returnedUuid).toBeUndefined();
+  });
+
+  it('logs a failed handoff preparation creation cleanup without replacing the save failure', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: false });
+      },
+    );
+    preparationStorage.removeByUUID.and.rejectWith(new Error('delete failed'));
+
+    await expectAsync(
+      service.ensurePreparationFromHandoff(
+        envelope({
+          brew: {
+            ...envelope().brew,
+            preparationMethod: 'xBloom Studio',
+            preparationType: PREPARATION_TYPES.XBLOOM,
+          },
+        }),
+      ),
+    ).toBeRejectedWithError(
+      'Handoff preparation creation failed: preparation-created',
+    );
+
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Handoff preparation creation cleanup failed: preparation-created (delete failed)',
+    ]);
   });
 
   it('does not persist an unmatched imported brew with empty bean or preparation UUIDs', () => {
