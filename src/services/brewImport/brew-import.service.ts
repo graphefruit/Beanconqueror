@@ -171,13 +171,20 @@ export class BrewImportService {
     return this.createBeanFromHandoff(envelope);
   }
 
-  public canCreateBeanFromHandoff(envelope: IHandoffEnvelope): boolean {
+  public canCreateBeanFromHandoff(
+    envelope: IHandoffEnvelope,
+    nameMatch: 'single' | 'exact' = 'single',
+  ): boolean {
     const bean = envelope.bean;
     if (!bean || !this.hasBeanMetadata(bean)) {
       return false;
     }
 
-    return !this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name);
+    const entries = this.beanStorage.getAllEntries();
+    if (nameMatch === 'exact') {
+      return !this.hasExactNameMatch(entries, bean.name);
+    }
+    return !this.hasNameMatch(entries, bean.name);
   }
 
   /**
@@ -189,9 +196,10 @@ export class BrewImportService {
    */
   public async createBeanFromHandoff(
     envelope: IHandoffEnvelope,
+    nameMatch: 'single' | 'exact' = 'single',
   ): Promise<string | undefined> {
     const bean = envelope.bean;
-    if (!bean || !this.canCreateBeanFromHandoff(envelope)) {
+    if (!bean || !this.canCreateBeanFromHandoff(envelope, nameMatch)) {
       return undefined;
     }
 
@@ -513,6 +521,19 @@ export class BrewImportService {
   ): boolean {
     const found = this.findNameMatch(entries, hintedName);
     return found.match !== undefined || found.reason === 'multiple matches';
+  }
+
+  private hasExactNameMatch(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+  ): boolean {
+    const normalizedHint = this.normalizeName(hintedName);
+    if (!normalizedHint) {
+      return false;
+    }
+    return entries.some(
+      (entry) => this.normalizeName(entry.name) === normalizedHint,
+    );
   }
 
   private findUniqueOrDefault(

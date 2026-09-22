@@ -539,11 +539,21 @@ export class IntentHandlerService {
     }
 
     const created: string[] = [];
-    for (const envelope of creatableEnvelopes) {
-      const uuid = await this.brewImportService.createBeanFromHandoff(envelope);
-      if (uuid !== undefined) {
-        created.push(uuid);
+    try {
+      for (const envelope of creatableEnvelopes) {
+        const uuid = await this.brewImportService.createBeanFromHandoff(
+          envelope,
+          'exact',
+        );
+        if (uuid !== undefined) {
+          created.push(uuid);
+        }
       }
+    } catch (ex) {
+      for (const uuid of created) {
+        await this.removeCreatedHandoffBean(uuid);
+      }
+      throw ex;
     }
     return created;
   }

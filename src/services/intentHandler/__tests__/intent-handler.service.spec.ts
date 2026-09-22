@@ -473,8 +473,8 @@ describe('IntentHandlerService', () => {
       ['Create 2 coffees before importing?', 'Create 2 coffees?', false],
     ]);
     expect(brewImportService.createBeanFromHandoff.calls.allArgs()).toEqual([
-      [first],
-      [second],
+      [first, 'exact'],
+      [second, 'exact'],
     ]);
     expect(brewImportService.import.calls.allArgs()).toEqual([
       [first],
@@ -492,6 +492,48 @@ describe('IntentHandlerService', () => {
       undefined,
       false,
     ]);
+  });
+
+  it('creates distinct batch beans whose names would otherwise match by prefix', async () => {
+    const createdByName = new Map<string, string>();
+    const importedBeans: string[] = [];
+    const base = validEnvelope({ bean: { name: 'Any coffee' } });
+    const natural = validEnvelope({
+      bean: { name: 'Any coffee Natural' },
+      brew: { ...validEnvelope().brew, note: 'Natural brew' },
+    });
+    brewImportService.createBeanFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope, nameMatch?: 'single' | 'exact') => {
+        if (nameMatch !== 'exact') {
+          return Promise.resolve(undefined);
+        }
+        const name = candidate.bean?.name ?? '';
+        const uuid =
+          name === 'Any coffee' ? 'bean-any' : 'bean-any-natural';
+        createdByName.set(name, uuid);
+        return Promise.resolve(uuid);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
+      const uuid = createdByName.get(candidate.bean?.name ?? '');
+      importedBeans.push(uuid ?? 'missing');
+      return Promise.resolve(importResult(uuid ?? 'missing'));
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [base, natural] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      ['Create 2 coffees before importing?', 'Create 2 coffees?', false],
+    ]);
+    expect(brewImportService.createBeanFromHandoff.calls.allArgs()).toEqual([
+      [base, 'exact'],
+      [natural, 'exact'],
+    ]);
+    expect(importedBeans).toEqual(['bean-any', 'bean-any-natural']);
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
   });
 
   it('routes an ADD_BREWS URL away from the single brew handoff handler', async () => {
@@ -592,6 +634,49 @@ describe('IntentHandlerService', () => {
     expect(brewImportService.ensureBeanFromHandoff.calls.count()).toBe(0);
     expect(brewImportService.createBeanFromHandoff.calls.count()).toBe(0);
     expect(brewImportService.import.calls.count()).toBe(3);
+  });
+
+  it('rolls back beans created before a later batch bean creation fails', async () => {
+    const first = validEnvelope({ bean: { name: 'First coffee' } });
+    const second = validEnvelope({
+      bean: { name: 'Second coffee' },
+      brew: { ...validEnvelope().brew, note: 'Second brew' },
+    });
+    const third = validEnvelope({
+      bean: { name: 'Third coffee' },
+      brew: { ...validEnvelope().brew, note: 'Third brew' },
+    });
+    brewImportService.createBeanFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.bean?.name === 'First coffee') {
+          return Promise.resolve('bean-created-first');
+        }
+        if (candidate.bean?.name === 'Second coffee') {
+          return Promise.reject(new Error('Creation failed'));
+        }
+        return Promise.resolve('bean-created-third');
+      },
+    );
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second, third] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.createBeanFromHandoff.calls.allArgs()).toEqual([
+      [first, 'exact'],
+      [second, 'exact'],
+    ]);
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created-first'],
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
   });
 
   it('imports batch survivors and reports the imported count after a partial failure', async () => {
