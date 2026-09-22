@@ -448,9 +448,13 @@ export class IntentHandlerService {
       const createdBeans = await this.ensureDistinctBeansFromHandoff(envelopes);
       createdBeanUuids = createdBeans.map((bean) => bean.uuid);
 
-      if (this.uiBrewHelper.canBrewIfNotShowMessage() === false) {
+      // Same rule as the single import: a batch only needs the fallback links
+      // BrewImportService cannot create itself, and a grinder hint may stay
+      // unlinked. The check runs after any batch beans are created, because
+      // those beans are among the links it is looking for.
+      if (this.uiBrewHelper.canImportBrewIfNotShowMessage() === false) {
         this.uiLog.log(
-          'Import brews from handoff link skipped: cannot brew yet',
+          'Import brews from handoff link skipped: cannot import yet',
         );
         await this.removeUnretainedCreatedHandoffBeans(
           createdBeanUuids,

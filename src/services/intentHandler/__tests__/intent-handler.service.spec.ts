@@ -277,10 +277,6 @@ describe('IntentHandlerService', () => {
         { provide: UIBrewStorage, useValue: brewStorage },
         { provide: UISettingsStorage, useValue: settingsStorage },
         {
-          provide: TranslateService,
-          useValue: jasmine.createSpyObj('TranslateService', ['instant']),
-        },
-        {
           provide: ModalController,
           useValue: jasmine.createSpyObj('ModalController', ['create']),
         },
