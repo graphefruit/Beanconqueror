@@ -531,7 +531,11 @@ export class BrewImportService {
     if (!normalizedHint) {
       return false;
     }
-    return entries.some(
+    // Archived entries are excluded here for the same reason they are
+    // everywhere else in this file: the importer cannot link to one, so
+    // treating it as a match would block creation and leave the brew with
+    // nothing to point at.
+    return this.usableEntries(entries).some(
       (entry) => this.normalizeName(entry.name) === normalizedHint,
     );
   }
