@@ -882,7 +882,7 @@
     "BREW_IMPORT_BATCH_RESULT": "Imported {{imported}} of {{total}} brews",
     "BREW_IMPORT_BATCH_PROGRESS": "Importing {{current}} of {{total}}",
     "BREW_IMPORT_FAILED": "The shared brew could not be imported",
-    "BREW_IMPORT_TOO_LARGE": "The shared brew is too large to import",
+    "BREW_IMPORT_TOO_LARGE": "The shared link is too large to import",
     "BREW_IMPORT_CREATE_BEAN_TITLE": "Create coffee?",
     "BREW_IMPORT_CREATE_BEAN_DESCRIPTION": "The shared brew includes coffee details for \"{{name}}\" that are not in your library. Create this coffee before importing the brew?",
     "BREW_IMPORT_CREATE_BEANS_TITLE": "Create {{count}} coffees?",
