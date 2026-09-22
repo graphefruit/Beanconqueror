@@ -882,34 +882,11 @@ export class IntentHandlerService {
       return [];
     }
 
-    if (creatableEnvelopes.length === 1) {
-      const created = await this.brewImportService.ensurePreparationFromHandoff(
-        creatableEnvelopes[0],
-      );
-      const preparationType = this.handoffPreparationType(creatableEnvelopes[0]);
-      return created === undefined || preparationType === undefined
-        ? []
-        : [{ uuid: created, preparationType }];
-    }
-
-    const choice = await this.uiAlert.showConfirm(
-      this.translate.instant('BREW_IMPORT_CREATE_PREPARATIONS_DESCRIPTION', {
-        count: creatableEnvelopes.length,
-      }),
-      this.translate.instant('BREW_IMPORT_CREATE_PREPARATIONS_TITLE', {
-        count: creatableEnvelopes.length,
-      }),
-      false,
-    );
-    if (choice !== 'YES') {
-      return [];
-    }
-
     const created: ICreatedHandoffPreparation[] = [];
     try {
       for (const envelope of creatableEnvelopes) {
         const uuid =
-          await this.brewImportService.createPreparationFromHandoff(envelope);
+          await this.brewImportService.ensurePreparationFromHandoff(envelope);
         const preparationType = this.handoffPreparationType(envelope);
         if (uuid !== undefined && preparationType !== undefined) {
           created.push({ uuid, preparationType });

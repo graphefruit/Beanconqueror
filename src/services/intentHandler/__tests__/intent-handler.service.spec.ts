@@ -862,8 +862,16 @@ describe('IntentHandlerService', () => {
         note: 'Second xBloom brew',
       },
     });
+    const third = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'Third xBloom brew',
+      },
+    });
     const batchUrl = batchHandoffUrl(
-      await gzipBase64Url({ v: 1, brews: [first, second] }),
+      await gzipBase64Url({ v: 1, brews: [first, second, third] }),
     );
 
     await service.handleDeepLink(batchUrl);
@@ -877,7 +885,62 @@ describe('IntentHandlerService', () => {
     expect(brewImportService.import.calls.allArgs()).toEqual([
       [first],
       [second],
+      [third],
     ]);
+    expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('asks separately for distinct missing preparation types and keeps safe fallbacks when declined', async () => {
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) =>
+      Promise.resolve({
+        ...importResult('bean-imported'),
+        brew: {
+          ...importResult('bean-imported').brew,
+          method_of_preparation:
+            candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM
+              ? 'preparation-created-xbloom'
+              : 'preparation-existing-v60',
+        } as IBrewImportResult['brew'],
+      }),
+    );
+    const xBloom = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'xBloom',
+      },
+    });
+    const v60 = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'V60',
+        preparationType: PREPARATION_TYPES.V60,
+        note: 'V60',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [xBloom, v60] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(
+      brewImportService.ensurePreparationFromHandoff.calls.allArgs(),
+    ).toEqual([[xBloom], [v60]]);
+    expect(
+      brewImportService.createPreparationFromHandoff.calls.allArgs(),
+    ).toEqual([]);
+    expect(brewImportService.import.calls.allArgs()).toEqual([[xBloom], [v60]]);
     expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
   });
 
@@ -1521,7 +1584,7 @@ describe('IntentHandlerService', () => {
         note: 'V60',
       },
     });
-    brewImportService.createPreparationFromHandoff.and.callFake(
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
       (candidate: IHandoffEnvelope) => {
         if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
           return Promise.resolve('preparation-created-xbloom');

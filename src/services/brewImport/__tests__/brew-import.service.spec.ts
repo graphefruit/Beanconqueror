@@ -1414,6 +1414,28 @@ describe('BrewImportService', () => {
     expect(preparationStorage.add.calls.count()).toBe(0);
   });
 
+  it('does not create a typed preparation with a whitespace-only name and still imports', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: '   ',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    const createdUuid = await service.ensurePreparationFromHandoff(handoff);
+    const result = await service.import(handoff);
+
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(preparationStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(result.brew.method_of_preparation).toBe('preparation-fallback');
+  });
+
   it('removes a handoff preparation whose save did not persist before later type matching can see it', async () => {
     preparations = [
       entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),

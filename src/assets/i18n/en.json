@@ -888,7 +888,7 @@
     "BREW_IMPORT_CREATE_BEANS_TITLE": "Create {{count}} coffees?",
     "BREW_IMPORT_CREATE_BEANS_DESCRIPTION": "The shared brews include {{count}} coffees that are not in your library. Create these coffees before importing the brews?",
     "BREW_IMPORT_CREATE_PREPARATION_TITLE": "Create preparation method?",
-    "BREW_IMPORT_CREATE_PREPARATION_DESCRIPTION": "The shared brew was made with \"{{name}}\", whose preparation type is not in your library. Create this preparation method before importing the brew?",
+    "BREW_IMPORT_CREATE_PREPARATION_DESCRIPTION": "A shared brew uses \"{{name}}\", a preparation type not in your library. Create it before importing?",
     "BREW_IMPORT_CREATE_PREPARATIONS_TITLE": "Create {{count}} preparation methods?",
     "BREW_IMPORT_CREATE_PREPARATIONS_DESCRIPTION": "The shared brews include {{count}} preparation method types that are not in your library. Create these preparation methods before importing the brews?",
     "BREW_FLOW_WEIGHT": "Weight",

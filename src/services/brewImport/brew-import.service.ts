@@ -244,6 +244,10 @@ export class BrewImportService {
   }
 
   public canCreatePreparationFromHandoff(envelope: IHandoffEnvelope): boolean {
+    if (envelope.brew.preparationMethod.trim() === '') {
+      return false;
+    }
+
     const preparationType = this.knownPreparationType(
       envelope.brew.preparationType,
     );
@@ -548,9 +552,13 @@ export class BrewImportService {
     if (preparationType === undefined) {
       throw new Error('Handoff preparation creation failed: unknown type');
     }
+    const name = envelope.brew.preparationMethod.trim();
+    if (name === '') {
+      throw new Error('Handoff preparation creation failed: missing name');
+    }
 
     const preparation = new Preparation();
-    preparation.name = envelope.brew.preparationMethod.trim();
+    preparation.name = name;
     preparation.type = preparationType;
     preparation.style_type = preparation.getPresetStyleType();
     return preparation;
