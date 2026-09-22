@@ -42,6 +42,7 @@ interface IBrewImportRollbackErrorLike {
   brewUuid: string;
   rolledBack: boolean;
   beanUuid: string;
+  preparationUuid?: string;
   isBrewImportRollbackError: true;
 }
 
@@ -691,6 +692,26 @@ export class IntentHandlerService {
     }
   }
 
+  /**
+   * The preparation the failed brew actually points at. A batch entry can
+   * resolve to a preparation created for another entry through the name
+   * fallback, so the envelope's own type is not enough to find it.
+   */
+  private resolvedPreparationUuidForRollback(
+    error: BrewImportRollbackError | IBrewImportRollbackErrorLike,
+    envelope: IHandoffEnvelope,
+    createdPreparationUuidsByType: Map<string, string>,
+  ): string | undefined {
+    if (error.preparationUuid !== undefined && error.preparationUuid !== '') {
+      return error.preparationUuid;
+    }
+
+    const preparationType = this.handoffPreparationType(envelope);
+    return preparationType === undefined
+      ? undefined
+      : createdPreparationUuidsByType.get(preparationType);
+  }
+
   private keepBatchPreparationAfterNonDurableRollback(
     error: unknown,
     envelope: IHandoffEnvelope,
@@ -701,11 +722,11 @@ export class IntentHandlerService {
       return;
     }
 
-    const preparationType = this.handoffPreparationType(envelope);
-    const uuid =
-      preparationType === undefined
-        ? undefined
-        : createdPreparationUuidsByType.get(preparationType);
+    const uuid = this.resolvedPreparationUuidForRollback(
+      error,
+      envelope,
+      createdPreparationUuidsByType,
+    );
     if (uuid === undefined) {
       return;
     }

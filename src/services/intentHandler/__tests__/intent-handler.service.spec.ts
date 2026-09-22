@@ -1716,6 +1716,58 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('keeps a name-fallback preparation created for another batch entry', async () => {
+    brewImportService.canCreateBeanFromHandoff.and.returnValue(false);
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    const typed = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'Typed',
+      },
+    });
+    const untyped = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        note: 'Untyped',
+      },
+    });
+    delete untyped.brew.preparationType;
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
+      if (candidate.brew.note === 'Untyped') {
+        return Promise.reject(
+          new BrewImportRollbackError(
+            'brew-on-disk',
+            false,
+            'bean-imported',
+            'preparation-created-xbloom',
+          ),
+        );
+      }
+      return Promise.reject(new Error('Import failed'));
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [typed, untyped] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(preparationStorage.removeByUUID).not.toHaveBeenCalled();
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from batch handoff link kept handoff-created preparation after non-durable brew rollback: preparation-created-xbloom (brew: brew-on-disk)',
+    ]);
+  });
+
   it('keeps a batch-created preparation after a non-durable import rollback and removes other unretained preparations', async () => {
     brewImportService.canCreateBeanFromHandoff.and.returnValue(false);
     brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);

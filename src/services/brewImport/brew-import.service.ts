@@ -42,6 +42,7 @@ export class BrewImportRollbackError extends Error {
     public readonly brewUuid: string,
     public readonly rolledBack: boolean,
     public readonly beanUuid: string,
+    public readonly preparationUuid?: string,
   ) {
     super(`Imported brew update failed: ${brewUuid}`);
     this.name = 'BrewImportRollbackError';
@@ -326,6 +327,7 @@ export class BrewImportService {
         addedBrew.config.uuid,
         didRollback,
         result.brew.bean,
+        result.brew.method_of_preparation,
       );
     }
 
