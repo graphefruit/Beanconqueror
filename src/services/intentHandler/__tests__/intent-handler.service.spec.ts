@@ -195,6 +195,7 @@ describe('IntentHandlerService', () => {
     preparationStorage = jasmine.createSpyObj('UIPreparationStorage', [
       'attachOnEvent',
       'getAllEntries',
+      'removeByUUID',
     ]);
     brewStorage = jasmine.createSpyObj('UIBrewStorage', ['getAllEntries']);
     settingsStorage = jasmine.createSpyObj('UISettingsStorage', [
