@@ -181,6 +181,9 @@ describe('IntentHandlerService', () => {
       'ensurePreparationFromHandoff',
       'canCreatePreparationFromHandoff',
       'createPreparationFromHandoff',
+      'ensureMillFromHandoff',
+      'canCreateMillFromHandoff',
+      'createMillFromHandoff',
       'import',
     ]);
     beanStorage = jasmine.createSpyObj('UIBeanStorage', [
@@ -191,6 +194,7 @@ describe('IntentHandlerService', () => {
     millStorage = jasmine.createSpyObj('UIMillStorage', [
       'attachOnEvent',
       'getAllEntries',
+      'removeByUUID',
     ]);
     preparationStorage = jasmine.createSpyObj('UIPreparationStorage', [
       'attachOnEvent',
@@ -209,6 +213,7 @@ describe('IntentHandlerService', () => {
     uiAlert.showConfirm.and.resolveTo('YES');
     uiAlert.isLoadingSpinnerShown.and.returnValue(false);
     beanStorage.removeByUUID.and.resolveTo(true);
+    millStorage.removeByUUID.and.resolveTo(true);
     preparationStorage.removeByUUID.and.resolveTo(true);
     translate.instant.and.callFake((key: string, params?: unknown) => {
       if (
@@ -243,6 +248,22 @@ describe('IntentHandlerService', () => {
         const counts = params as { count: number };
         return `Create ${counts.count} coffees before importing?`;
       }
+      if (
+        key === 'BREW_IMPORT_CREATE_MILLS_TITLE' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { count: number };
+        return `Create ${counts.count} grinders?`;
+      }
+      if (
+        key === 'BREW_IMPORT_CREATE_MILLS_DESCRIPTION' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { count: number };
+        return `Create ${counts.count} grinders before importing?`;
+      }
       return key;
     });
     brewImportService.ensureBeanFromHandoff.and.resolveTo();
@@ -251,6 +272,9 @@ describe('IntentHandlerService', () => {
     brewImportService.ensurePreparationFromHandoff.and.resolveTo();
     brewImportService.canCreatePreparationFromHandoff.and.returnValue(false);
     brewImportService.createPreparationFromHandoff.and.resolveTo();
+    brewImportService.ensureMillFromHandoff.and.resolveTo();
+    brewImportService.canCreateMillFromHandoff.and.returnValue(false);
+    brewImportService.createMillFromHandoff.and.resolveTo();
     brewImportService.import.and.resolveTo(importResult('bean-imported'));
     beanStorage.attachOnEvent.and.returnValue(eventEmitter as never);
     millStorage.attachOnEvent.and.returnValue(eventEmitter as never);
@@ -542,6 +566,27 @@ describe('IntentHandlerService', () => {
       ['preparation-created'],
     ]);
     expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('removes a handoff-created mill when the library cannot import after creating it', async () => {
+    brewImportService.ensureMillFromHandoff.and.resolveTo('mill-created');
+    preparationStorage.getAllEntries.and.returnValue([]);
+
+    await service.handleDeepLink(url);
+
+    expect(brewImportService.ensureMillFromHandoff.calls.allArgs()).toEqual([
+      [envelope],
+    ]);
+    expect(millStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['mill-created'],
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showLoadingSpinner.calls.count()).toBe(0);
+    expect(uiAlert.presentCustomPopover).toHaveBeenCalledWith(
+      'CANT_IMPORT_BREW_TITLE',
+      'CANT_IMPORT_BREW_DESCRIPTION',
+      'UNDERSTOOD',
+    );
   });
 
   it('imports every brew in a well-formed batch handoff', async () => {
@@ -889,6 +934,77 @@ describe('IntentHandlerService', () => {
       [third],
     ]);
     expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('asks once per distinct missing grinder name across a batch', async () => {
+    const createdByName = new Map<string, string>();
+    const normalizedMillName = (candidate: IHandoffEnvelope): string =>
+      (candidate.brew.grinderName ?? '')
+        .normalize('NFC')
+        .trim()
+        .toLocaleLowerCase();
+    brewImportService.canCreateBeanFromHandoff.and.returnValue(false);
+    brewImportService.canCreateMillFromHandoff.and.returnValue(true);
+    brewImportService.createMillFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        const uuid =
+          normalizedMillName(candidate) === 'first grinder'
+            ? 'mill-created-first'
+            : 'mill-created-second';
+        createdByName.set(normalizedMillName(candidate), uuid);
+        return Promise.resolve(uuid);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) =>
+      Promise.resolve({
+        ...importResult('bean-imported'),
+        brew: {
+          ...importResult('bean-imported').brew,
+          mill: createdByName.get(normalizedMillName(candidate)) ?? '',
+        } as IBrewImportResult['brew'],
+      }),
+    );
+    const first = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        grinderName: 'First grinder',
+        note: 'First brew',
+      },
+    });
+    const sameFirst = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        grinderName: ' first grinder ',
+        note: 'Same grinder again',
+      },
+    });
+    const second = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        grinderName: 'Second grinder',
+        note: 'Second grinder brew',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, sameFirst, second] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      ['Create 2 grinders before importing?', 'Create 2 grinders?', false],
+    ]);
+    expect(brewImportService.ensureMillFromHandoff.calls.count()).toBe(0);
+    expect(brewImportService.createMillFromHandoff.calls.allArgs()).toEqual([
+      [first],
+      [second],
+    ]);
+    expect(brewImportService.import.calls.allArgs()).toEqual([
+      [first],
+      [sameFirst],
+      [second],
+    ]);
+    expect(millStorage.removeByUUID.calls.count()).toBe(0);
   });
 
   it('asks separately for distinct missing preparation types and keeps safe fallbacks when declined', async () => {

@@ -20,6 +20,7 @@ import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewHelper } from '../uiBrewHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
+import { UIMillStorage } from '../uiMillStorage';
 import { UIPreparationStorage } from '../uiPreparationStorage';
 import { VisualizerService } from '../visualizerService/visualizer-service.service';
 import {
@@ -38,11 +39,17 @@ interface ICreatedHandoffPreparation {
   preparationType: string;
 }
 
+interface ICreatedHandoffMill {
+  uuid: string;
+  millName: string;
+}
+
 interface IBrewImportRollbackErrorLike {
   brewUuid: string;
   rolledBack: boolean;
   beanUuid: string;
   preparationUuid?: string;
+  millUuid?: string;
   isBrewImportRollbackError: true;
 }
 
@@ -60,6 +67,7 @@ export class IntentHandlerService {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly beanStorage = inject(UIBeanStorage);
+  private readonly millStorage = inject(UIMillStorage);
   private readonly preparationStorage = inject(UIPreparationStorage);
   private readonly translate = inject(TranslateService);
   private readonly visualizerService = inject(VisualizerService);
@@ -290,6 +298,7 @@ export class IntentHandlerService {
 
     let createdBeanUuid: string | undefined;
     let createdPreparationUuid: string | undefined;
+    let createdMillUuid: string | undefined;
     try {
       this.uiAnalytics.trackEvent(
         IntentHandlerTracking.TITLE,
@@ -300,6 +309,8 @@ export class IntentHandlerService {
         await this.brewImportService.ensureBeanFromHandoff(envelope);
       createdPreparationUuid =
         await this.brewImportService.ensurePreparationFromHandoff(envelope);
+      createdMillUuid =
+        await this.brewImportService.ensureMillFromHandoff(envelope);
 
       // A finished import only needs the fallback links that BrewImportService
       // cannot create itself, so a grinder hint may stay unlinked. The check
@@ -309,6 +320,7 @@ export class IntentHandlerService {
         this.uiLog.log(
           'Import brew from handoff link skipped: cannot import yet',
         );
+        await this.removeCreatedHandoffMill(createdMillUuid);
         await this.removeCreatedHandoffPreparation(createdPreparationUuid);
         await this.removeCreatedHandoffBean(createdBeanUuid);
         return;
@@ -318,6 +330,9 @@ export class IntentHandlerService {
       const imported = await this.brewImportService.import(envelope);
       if (imported.brew.method_of_preparation === createdPreparationUuid) {
         createdPreparationUuid = undefined;
+      }
+      if (imported.brew.mill === createdMillUuid) {
+        createdMillUuid = undefined;
       }
       createdBeanUuid = undefined;
       await this.uiAlert.hideLoadingSpinner();
@@ -348,6 +363,15 @@ export class IntentHandlerService {
       } else {
         await this.removeCreatedHandoffBean(createdBeanUuid);
       }
+      if (
+        this.shouldKeepCreatedHandoffMillAfterFailedImport(
+          ex,
+          createdMillUuid,
+        )
+      ) {
+        createdMillUuid = undefined;
+      }
+      await this.removeCreatedHandoffMill(createdMillUuid);
       await this.removeCreatedHandoffPreparation(createdPreparationUuid);
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
@@ -458,6 +482,35 @@ export class IntentHandlerService {
     return true;
   }
 
+  private shouldKeepCreatedHandoffMillAfterFailedImport(
+    error: unknown,
+    uuid: string | undefined,
+  ): boolean {
+    if (
+      uuid === undefined ||
+      !this.isNonDurableBrewImportRollbackError(error)
+    ) {
+      return false;
+    }
+
+    if (
+      error.millUuid !== undefined &&
+      error.millUuid !== '' &&
+      error.millUuid !== uuid
+    ) {
+      return false;
+    }
+
+    this.uiLog.error(
+      'Import brew from handoff link kept handoff-created mill after non-durable brew rollback: ' +
+        uuid +
+        ' (brew: ' +
+        error.brewUuid +
+        ')',
+    );
+    return true;
+  }
+
   private isNonDurableBrewImportRollbackError(
     error: unknown,
   ): error is BrewImportRollbackError | IBrewImportRollbackErrorLike {
@@ -505,6 +558,33 @@ export class IntentHandlerService {
     }
   }
 
+  private async removeCreatedHandoffMill(
+    uuid: string | undefined,
+  ): Promise<boolean> {
+    if (uuid === undefined) {
+      return true;
+    }
+    try {
+      const didRemove = await this.millStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return true;
+      }
+      this.uiLog.error(
+        'Import brew from handoff link failed to roll back mill: ' + uuid,
+      );
+      return false;
+    } catch (ex) {
+      this.uiLog.error(
+        'Import brew from handoff link failed to roll back mill: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
+      );
+      return false;
+    }
+  }
+
   /**
    * Receive several brews handed over from another app.
    *
@@ -520,6 +600,9 @@ export class IntentHandlerService {
     const createdPreparationUuids: string[] = [];
     const retainedPreparationUuids = new Set<string>();
     const createdPreparationUuidsByType = new Map<string, string>();
+    const createdMillUuids: string[] = [];
+    const retainedMillUuids = new Set<string>();
+    const createdMillUuidsByName = new Map<string, string>();
     try {
       this.uiAnalytics.trackEvent(
         IntentHandlerTracking.TITLE,
@@ -534,6 +617,11 @@ export class IntentHandlerService {
         createdPreparationUuids,
         createdPreparationUuidsByType,
       );
+      await this.ensureDistinctMillsFromHandoff(
+        envelopes,
+        createdMillUuids,
+        createdMillUuidsByName,
+      );
 
       // Same rule as the single import: a batch only needs the fallback links
       // BrewImportService cannot create itself, and a grinder hint may stay
@@ -547,6 +635,10 @@ export class IntentHandlerService {
           createdPreparationUuids,
           retainedPreparationUuids,
         );
+        await this.removeUnretainedCreatedHandoffMills(
+          createdMillUuids,
+          retainedMillUuids,
+        );
         await this.removeUnretainedCreatedHandoffBeans(
           createdBeanUuids,
           retainedBeanUuids,
@@ -558,6 +650,7 @@ export class IntentHandlerService {
       let importedCount = 0;
       const createdBeanUuidSet = new Set(createdBeanUuids);
       const createdPreparationUuidSet = new Set(createdPreparationUuids);
+      const createdMillUuidSet = new Set(createdMillUuids);
       for (let index = 0; index < envelopes.length; index++) {
         const envelope = envelopes[index];
         this.uiAlert.setLoadingSpinnerMessage(
@@ -576,6 +669,9 @@ export class IntentHandlerService {
           ) {
             retainedPreparationUuids.add(imported.brew.method_of_preparation);
           }
+          if (createdMillUuidSet.has(imported.brew.mill)) {
+            retainedMillUuids.add(imported.brew.mill);
+          }
           importedCount++;
         } catch (ex) {
           this.uiLog.error(
@@ -592,12 +688,22 @@ export class IntentHandlerService {
             createdPreparationUuidsByType,
             retainedPreparationUuids,
           );
+          this.keepBatchMillAfterNonDurableRollback(
+            ex,
+            envelope,
+            createdMillUuidsByName,
+            retainedMillUuids,
+          );
         }
       }
       await this.uiAlert.hideLoadingSpinner();
       await this.removeUnretainedCreatedHandoffPreparations(
         createdPreparationUuids,
         retainedPreparationUuids,
+      );
+      await this.removeUnretainedCreatedHandoffMills(
+        createdMillUuids,
+        retainedMillUuids,
       );
       await this.removeUnretainedCreatedHandoffBeans(
         createdBeanUuids,
@@ -628,6 +734,10 @@ export class IntentHandlerService {
       await this.removeUnretainedCreatedHandoffPreparations(
         createdPreparationUuids,
         retainedPreparationUuids,
+      );
+      await this.removeUnretainedCreatedHandoffMills(
+        createdMillUuids,
+        retainedMillUuids,
       );
       await this.removeUnretainedCreatedHandoffBeans(
         createdBeanUuids,
@@ -741,6 +851,50 @@ export class IntentHandlerService {
     );
   }
 
+  private resolvedMillUuidForRollback(
+    error: BrewImportRollbackError | IBrewImportRollbackErrorLike,
+    envelope: IHandoffEnvelope,
+    createdMillUuidsByName: Map<string, string>,
+  ): string | undefined {
+    if (error.millUuid !== undefined && error.millUuid !== '') {
+      return error.millUuid;
+    }
+
+    const millName = this.handoffMillName(envelope);
+    return millName === undefined
+      ? undefined
+      : createdMillUuidsByName.get(millName);
+  }
+
+  private keepBatchMillAfterNonDurableRollback(
+    error: unknown,
+    envelope: IHandoffEnvelope,
+    createdMillUuidsByName: Map<string, string>,
+    retainedMillUuids: Set<string>,
+  ): void {
+    if (!this.isNonDurableBrewImportRollbackError(error)) {
+      return;
+    }
+
+    const uuid = this.resolvedMillUuidForRollback(
+      error,
+      envelope,
+      createdMillUuidsByName,
+    );
+    if (uuid === undefined) {
+      return;
+    }
+
+    retainedMillUuids.add(uuid);
+    this.uiLog.error(
+      'Import brew from batch handoff link kept handoff-created mill after non-durable brew rollback: ' +
+        uuid +
+        ' (brew: ' +
+        error.brewUuid +
+        ')',
+    );
+  }
+
   private async removeUnretainedCreatedHandoffPreparations(
     createdPreparationUuids: string[],
     retainedPreparationUuids: Set<string>,
@@ -763,6 +917,32 @@ export class IntentHandlerService {
     if (!cleanupComplete) {
       this.uiLog.error(
         'Import brews from handoff link cleanup incomplete; some handoff-created preparations may remain on disk.',
+      );
+    }
+  }
+
+  private async removeUnretainedCreatedHandoffMills(
+    createdMillUuids: string[],
+    retainedMillUuids: Set<string>,
+  ): Promise<void> {
+    let cleanupComplete = true;
+    try {
+      for (const uuid of createdMillUuids) {
+        if (!retainedMillUuids.has(uuid)) {
+          const removed = await this.removeCreatedHandoffMill(uuid);
+          cleanupComplete = cleanupComplete && removed;
+        }
+      }
+    } catch (ex) {
+      cleanupComplete = false;
+      this.uiLog.error(
+        'Import brew from handoff link failed while cleaning up mills: ' +
+          ex.message,
+      );
+    }
+    if (!cleanupComplete) {
+      this.uiLog.error(
+        'Import brews from handoff link cleanup incomplete; some handoff-created mills may remain on disk.',
       );
     }
   }
@@ -946,6 +1126,106 @@ export class IntentHandlerService {
     }
   }
 
+  private async ensureDistinctMillsFromHandoff(
+    envelopes: IHandoffEnvelope[],
+    createdMillUuids: string[] = [],
+    createdMillUuidsByName: Map<string, string> = new Map(),
+  ): Promise<ICreatedHandoffMill[]> {
+    const envelopesByMillName = new Map<string, IHandoffEnvelope[]>();
+    for (const envelope of envelopes) {
+      const millName = this.handoffMillName(envelope);
+      if (millName === undefined) {
+        continue;
+      }
+
+      const groupedEnvelopes = envelopesByMillName.get(millName) ?? [];
+      groupedEnvelopes.push(envelope);
+      envelopesByMillName.set(millName, groupedEnvelopes);
+    }
+
+    const creatableEnvelopes: IHandoffEnvelope[] = [];
+    for (const groupedEnvelopes of envelopesByMillName.values()) {
+      const creatableEnvelope = groupedEnvelopes.find((envelope) =>
+        this.brewImportService.canCreateMillFromHandoff(envelope),
+      );
+      if (creatableEnvelope !== undefined) {
+        creatableEnvelopes.push(creatableEnvelope);
+      }
+    }
+
+    if (creatableEnvelopes.length === 0) {
+      return [];
+    }
+
+    if (creatableEnvelopes.length === 1) {
+      const created = await this.brewImportService.ensureMillFromHandoff(
+        creatableEnvelopes[0],
+      );
+      const millName = this.handoffMillName(creatableEnvelopes[0]);
+      if (created === undefined || millName === undefined) {
+        return [];
+      }
+      createdMillUuids.push(created);
+      createdMillUuidsByName.set(millName, created);
+      return [{ uuid: created, millName }];
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      this.translate.instant('BREW_IMPORT_CREATE_MILLS_DESCRIPTION', {
+        count: creatableEnvelopes.length,
+      }),
+      this.translate.instant('BREW_IMPORT_CREATE_MILLS_TITLE', {
+        count: creatableEnvelopes.length,
+      }),
+      false,
+    );
+    if (choice !== 'YES') {
+      return [];
+    }
+
+    const created: ICreatedHandoffMill[] = [];
+    try {
+      for (const envelope of creatableEnvelopes) {
+        const uuid = await this.brewImportService.createMillFromHandoff(
+          envelope,
+        );
+        const millName = this.handoffMillName(envelope);
+        if (uuid !== undefined && millName !== undefined) {
+          createdMillUuids.push(uuid);
+          createdMillUuidsByName.set(millName, uuid);
+          created.push({ uuid, millName });
+        }
+      }
+    } catch (ex) {
+      for (const mill of created) {
+        const removed = await this.removeCreatedHandoffMill(mill.uuid);
+        if (removed) {
+          this.removeCreatedMillUuid(
+            createdMillUuids,
+            createdMillUuidsByName,
+            mill,
+          );
+        }
+      }
+      throw ex;
+    }
+    return created;
+  }
+
+  private removeCreatedMillUuid(
+    createdMillUuids: string[],
+    createdMillUuidsByName: Map<string, string>,
+    mill: ICreatedHandoffMill,
+  ): void {
+    const index = createdMillUuids.indexOf(mill.uuid);
+    if (index >= 0) {
+      createdMillUuids.splice(index, 1);
+    }
+    if (createdMillUuidsByName.get(mill.millName) === mill.uuid) {
+      createdMillUuidsByName.delete(mill.millName);
+    }
+  }
+
   private handoffBeanName(envelope: IHandoffEnvelope): string | undefined {
     const beanName = envelope.bean?.name;
     if (typeof beanName !== 'string') {
@@ -963,6 +1243,15 @@ export class IntentHandlerService {
     }
     const trimmed = preparationType.trim();
     return trimmed === '' ? undefined : trimmed;
+  }
+
+  private handoffMillName(envelope: IHandoffEnvelope): string | undefined {
+    const millName = envelope.brew.grinderName;
+    if (typeof millName !== 'string') {
+      return undefined;
+    }
+    const normalized = millName.normalize('NFC').trim().toLocaleLowerCase();
+    return normalized === '' ? undefined : normalized;
   }
 
   private brewImportFailureMessage(error: unknown): string {

@@ -5,6 +5,7 @@ import moment from 'moment';
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
@@ -29,6 +30,7 @@ const MAX_ABSOLUTE_MILLISECONDS = 24 * 60 * 60 * 1_000;
 const MAX_ABSOLUTE_GRAMS = 100_000;
 const MAX_CREATE_BEAN_PROMPT_NAME_LENGTH = 60;
 const MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH = 60;
+const MAX_CREATE_MILL_PROMPT_NAME_LENGTH = 60;
 
 export interface IBrewImportResult {
   brew: Brew;
@@ -43,6 +45,7 @@ export class BrewImportRollbackError extends Error {
     public readonly rolledBack: boolean,
     public readonly beanUuid: string,
     public readonly preparationUuid?: string,
+    public readonly millUuid?: string,
   ) {
     super(`Imported brew update failed: ${brewUuid}`);
     this.name = 'BrewImportRollbackError';
@@ -281,6 +284,52 @@ export class BrewImportService {
     return created.config.uuid;
   }
 
+  public async ensureMillFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreateMillFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'BREW_IMPORT_CREATE_MILL_DESCRIPTION',
+      'BREW_IMPORT_CREATE_MILL_TITLE',
+      true,
+      { name: this.promptMillName(envelope.brew.grinderName) },
+    );
+    if (choice !== 'YES') {
+      return undefined;
+    }
+
+    return this.createMillFromHandoff(envelope);
+  }
+
+  public canCreateMillFromHandoff(envelope: IHandoffEnvelope): boolean {
+    const name = envelope.brew.grinderName?.trim();
+    if (!name) {
+      return false;
+    }
+
+    const match = this.findNameMatch(this.millStorage.getAllEntries(), name);
+    return match.match === undefined && match.reason === 'no match';
+  }
+
+  public async createMillFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreateMillFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const { entry: created, saved }: { entry: Mill; saved: boolean } =
+      await this.millStorage.addAndConfirm(this.buildMill(envelope));
+    if (!saved) {
+      await this.removeFailedHandoffMill(created.config.uuid);
+      throw new Error(`Handoff mill creation failed: ${created.config.uuid}`);
+    }
+    return created.config.uuid;
+  }
+
   public async import(envelope: IHandoffEnvelope): Promise<IBrewImportResult> {
     const result = this.build(envelope);
     const addedBrew: Brew = await this.brewStorage.add(result.brew);
@@ -328,6 +377,7 @@ export class BrewImportService {
         didRollback,
         result.brew.bean,
         result.brew.method_of_preparation,
+        result.brew.mill,
       );
     }
 
@@ -389,6 +439,24 @@ export class BrewImportService {
     } catch (ex) {
       this.uiLog.error(
         'Handoff preparation creation cleanup failed: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
+      );
+    }
+  }
+
+  private async removeFailedHandoffMill(uuid: string): Promise<void> {
+    try {
+      const didRemove = await this.millStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return;
+      }
+      this.uiLog.error('Handoff mill creation cleanup failed: ' + uuid);
+    } catch (ex) {
+      this.uiLog.error(
+        'Handoff mill creation cleanup failed: ' +
           uuid +
           ' (' +
           ex.message +
@@ -509,6 +577,14 @@ export class BrewImportService {
     return `${trimmed.slice(0, MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH - 3)}...`;
   }
 
+  private promptMillName(name: string | undefined): string {
+    const trimmed = name?.trim() ?? '';
+    if (trimmed.length <= MAX_CREATE_MILL_PROMPT_NAME_LENGTH) {
+      return trimmed;
+    }
+    return `${trimmed.slice(0, MAX_CREATE_MILL_PROMPT_NAME_LENGTH - 3)}...`;
+  }
+
   private hasBeanMetadata(bean: IHandoffBean): boolean {
     return [
       bean.roaster,
@@ -564,6 +640,17 @@ export class BrewImportService {
     preparation.type = preparationType;
     preparation.style_type = preparation.getPresetStyleType();
     return preparation;
+  }
+
+  private buildMill(envelope: IHandoffEnvelope): Mill {
+    const name = envelope.brew.grinderName?.trim() ?? '';
+    if (name === '') {
+      throw new Error('Handoff mill creation failed: missing name');
+    }
+
+    const mill = new Mill();
+    mill.name = name;
+    return mill;
   }
 
   private beanInformationFromHandoff(

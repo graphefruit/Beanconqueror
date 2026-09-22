@@ -212,6 +212,8 @@ describe('BrewImportService', () => {
     millStorage = jasmine.createSpyObj('UIMillStorage', [
       'getAllEntries',
       'add',
+      'addAndConfirm',
+      'removeByUUID',
     ]);
     preparationStorage = jasmine.createSpyObj('UIPreparationStorage', [
       'getAllEntries',
@@ -264,6 +266,21 @@ describe('BrewImportService', () => {
       return Promise.resolve(true);
     });
     millStorage.getAllEntries.and.callFake(() => mills);
+    millStorage.addAndConfirm.and.callFake(
+      (mill: Mill): Promise<{ entry: Mill; saved: boolean }> => {
+        mill.config.uuid = 'mill-created';
+        mills.push(mill);
+        return Promise.resolve({ entry: mill, saved: true });
+      },
+    );
+    millStorage.removeByUUID.and.callFake((uuid: string): Promise<boolean> => {
+      const index = mills.findIndex((mill) => mill.config.uuid === uuid);
+      if (index < 0) {
+        return Promise.resolve(false);
+      }
+      mills.splice(index, 1);
+      return Promise.resolve(true);
+    });
     preparationStorage.getAllEntries.and.callFake(() => preparations);
     preparationStorage.getByUUID.and.callFake((uuid: string) =>
       preparations.find((preparation) => preparation.config.uuid === uuid),
@@ -1216,6 +1233,90 @@ describe('BrewImportService', () => {
 
     expect(result.brew.mill).toBe('');
     expect(result.brew.note).toContain('Grinder not linked');
+  });
+
+  it('offers to create a missing mill when the grinder name matches nothing', async () => {
+    mills = [];
+    uiAlert.showConfirm.and.resolveTo('YES');
+
+    expect(service.canCreateMillFromHandoff(envelope())).toBeTrue();
+    const createdUuid = await service.ensureMillFromHandoff(envelope());
+    const result = service.build(envelope());
+    const created = mills.find((mill) => mill.config.uuid === createdUuid);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_MILL_DESCRIPTION',
+        'BREW_IMPORT_CREATE_MILL_TITLE',
+        true,
+        { name: 'Any grinder' },
+      ],
+    ]);
+    expect(createdUuid).toBe('mill-created');
+    expect(created?.name).toBe('Any grinder');
+    expect(result.brew.mill).toBe('mill-created');
+  });
+
+  it('does not offer to create a mill when the grinder name matches exactly', async () => {
+    mills = [entry(new Mill(), 'Any grinder', 'mill-existing')];
+
+    const createdUuid = await service.ensureMillFromHandoff(envelope());
+
+    expect(service.canCreateMillFromHandoff(envelope())).toBeFalse();
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+  });
+
+  it('does not offer to create a mill when the grinder name matches by widening', async () => {
+    mills = [entry(new Mill(), 'xBloom Studio', 'mill-studio')];
+    const handoff = envelope({
+      brew: { ...envelope().brew, grinderName: 'xBloom' },
+    });
+
+    const createdUuid = await service.ensureMillFromHandoff(handoff);
+
+    expect(service.canCreateMillFromHandoff(handoff)).toBeFalse();
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+  });
+
+  it('does not offer to create a mill when the grinder hint is ambiguous', async () => {
+    mills = [
+      entry(new Mill(), 'xBloom Studio', 'mill-studio'),
+      entry(new Mill(), 'xBloom Original', 'mill-original'),
+    ];
+    const handoff = envelope({
+      brew: { ...envelope().brew, grinderName: 'xBloom' },
+    });
+
+    const createdUuid = await service.ensureMillFromHandoff(handoff);
+
+    expect(service.canCreateMillFromHandoff(handoff)).toBeFalse();
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+  });
+
+  it('keeps importing with an empty mill when mill creation is declined', async () => {
+    mills = [];
+    uiAlert.showConfirm.and.resolveTo('NO');
+
+    const createdUuid = await service.ensureMillFromHandoff(envelope());
+    const result = await service.import(envelope());
+
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_MILL_DESCRIPTION',
+        'BREW_IMPORT_CREATE_MILL_TITLE',
+        true,
+        { name: 'Any grinder' },
+      ],
+    ]);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(result.brew.mill).toBe('');
   });
 
   it('does not reach across a word boundary when widening a name', () => {

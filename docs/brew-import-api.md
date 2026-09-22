@@ -317,8 +317,8 @@ have a name and at least one of `roaster`, `roastingDate`, `origin`, `region`,
 `beanMix`, or `decaffeinated`. `imageUrl` alone does not count. If a usable bean already
 matches the name, or the name is ambiguous, no bean is created. If there is no
 match, Beanconqueror asks the user whether to create it. A known missing
-preparation type may be offered the same way. A grinder is never created from an
-incoming link.
+preparation type may be offered the same way. A missing grinder may also be
+offered when the name does not match one existing grinder.
 
 Single-brew links use the widened match described below for that creation
 decision. Batch links use an exact match, so a longer batch coffee name is not
@@ -552,12 +552,12 @@ An import needs an active bean and an active preparation method. A bean or
 preparation created from the handoff can satisfy those requirements. A library
 still missing either link cannot take a brew, so Beanconqueror drops the link
 and shows the existing "Something is missing here..." popover. If the route
-created a bean or a preparation before this check failed, it removes them. A
-grinder is not required: `brew.mill` is left empty when the hint is absent or
-unmatched. Beanconqueror seeds preparation methods on first run but never seeds
-a bean, so the first handoff into a fresh install needs bean metadata and user
-confirmation. Nothing is wrong with the link, and no sender change can avoid
-it.
+created a bean, preparation, or grinder before this check failed, it removes
+them. A grinder is not required: `brew.mill` is left empty when the hint is
+absent or unmatched, or when the user declines creating it. Beanconqueror seeds
+preparation methods on first run but never seeds a bean, so the first handoff
+into a fresh install needs bean metadata and user confirmation. Nothing is
+wrong with the link, and no sender change can avoid it.
 
 All decoder failures throw an `Error`. The route catches the error, logs
 `Import brew from handoff link failed: <message>`, hides the loading spinner,
