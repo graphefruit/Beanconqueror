@@ -29,7 +29,7 @@ export type {
 } from '../../interfaces/brew/IHandoff';
 
 // A realistic 2,400-sample brew is roughly 60 KB JSON; 512 KiB is generous headroom for one brew while still being the cap that refuses zip bombs.
-const MAX_INFLATED_BYTES = 512 * 1024;
+export const MAX_INFLATED_BYTES = 512 * 1024;
 /*
  * A batch carries up to MAX_BATCH_BREWS whole envelopes, so the single-brew
  * ceiling is the wrong one: fifty realistic 60 KB brews inflate to roughly
@@ -37,7 +37,7 @@ const MAX_INFLATED_BYTES = 512 * 1024;
  * count is also a foreground storage bound, because each imported brew causes
  * two whole-collection writes before its optional flow file is written.
  */
-const MAX_INFLATED_BATCH_BYTES = 4 * 1024 * 1024;
+export const MAX_INFLATED_BATCH_BYTES = 4 * 1024 * 1024;
 // The sender's 131,072-character URL budget is the real limit: at 400 characters per slice it can emit 328 chunks. This 1,024-chunk backstop is 409,600 characters, so the receiver never becomes the binding constraint while assembly stays finite.
 const MAX_CHUNKS = 1024;
 const MAX_CHUNK_CHARS = 400;

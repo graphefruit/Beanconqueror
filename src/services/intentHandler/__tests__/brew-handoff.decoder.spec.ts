@@ -3,6 +3,8 @@ import {
   collectHandoffPayload,
   decodeHandoffBatchPayload,
   decodeHandoffPayload,
+  MAX_INFLATED_BATCH_BYTES,
+  MAX_INFLATED_BYTES,
 } from '../brew-handoff.decoder';
 
 async function gzipRawBytes(bytes: Uint8Array): Promise<Uint8Array> {
@@ -1064,19 +1066,20 @@ describe('brew handoff decoder', () => {
 
   it('accepts a batch larger than a single brew is allowed to inflate to', async () => {
     /*
-     * A batch of whole envelopes passes the single-brew inflate cap long before
-     * it reaches the brew limit, so sharing that cap silently refused a batch
-     * of about thirteen while the sender saw nothing wrong with it. Anything
-     * over 256 KiB of JSON reproduces it.
+     * This payload would be refused by ADD_BREW's single-envelope inflate cap
+     * but is accepted by ADD_BREWS. That separation is the whole reason the
+     * batch path has its own larger post-inflate ceiling.
      */
     const wordy = validEnvelope({
       brew: {
         ...validEnvelope().brew,
-        note: 'note '.repeat(1800).trim(),
+        note: 'x'.repeat(10_000),
       },
     });
-    const brews = Array.from({ length: 30 }, () => wordy);
-    expect(JSON.stringify({ v: 1, brews }).length).toBeGreaterThan(256 * 1024);
+    const brews = Array.from({ length: 50 }, () => wordy);
+    expect(JSON.stringify({ v: 1, brews }).length).toBeGreaterThan(
+      MAX_INFLATED_BYTES,
+    );
 
     await expectAsync(decodeBatch({ v: 1, brews })).toBeResolvedTo(brews);
   });
@@ -1093,7 +1096,7 @@ describe('brew handoff decoder', () => {
         }),
       ],
     });
-    expect(oversized.length).toBeGreaterThan(4 * 1024 * 1024);
+    expect(oversized.length).toBeGreaterThan(MAX_INFLATED_BATCH_BYTES);
 
     await expectAsync(
       decodeHandoffBatchPayload(await gzipString(oversized)),

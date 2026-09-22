@@ -60,12 +60,12 @@ falls back to zip.js inflation on older WebKit, decodes text with fatal UTF 8
 decoding, then parses JSON.
 
 The inflate is capped, because the payload is attacker controlled gzip and an
-uncapped inflate is a zip bomb. A single brew may inflate to 256 KiB and a
+uncapped inflate is a zip bomb. A single brew may inflate to 512 KiB and a
 batch to 4 MiB. The two differ because a batch carries up to 50 whole
 envelopes: fifty realistic 60 KB brews are roughly three megabytes of ordinary
-JSON, inside the batch cap with headroom. The larger figure is still a hard
-post-inflate limit, so oversized gzip output is rejected before validation or
-storage.
+JSON, inside the 4 MiB batch cap with headroom. The larger figure is still a
+hard post-inflate limit, so oversized gzip output is rejected before validation
+or storage.
 
 A sender should apply the same two limits before it builds a link. The URL
 length is almost never what stops a batch: fifty brews assemble into roughly
@@ -471,10 +471,12 @@ The metric creates a custom axis with key `targetTemperature`, name
 
 The receiver's hard limits are in `brew-handoff.decoder.ts`:
 
-- Inflated JSON is capped at 524,288 bytes.
+- Single-brew inflated JSON is capped at 524,288 bytes.
+- Batch inflated JSON is capped at 4,194,304 bytes.
 - Each `shareBrew` chunk is capped at 400 characters.
 - There may be at most 1,024 `shareBrew` chunks, for an aggregate
   409,600-character payload backstop.
+- A batch may contain at most 50 brews.
 - Flow and metric series are capped at 10,000 points each.
 - The route validates `len` against the assembled payload length.
 
@@ -529,41 +531,42 @@ All decoder failures throw an `Error`. The route catches the error, logs
 `Import brew from handoff link failed: <message>`, hides the loading spinner,
 and shows the generic `BREW_IMPORT_FAILED` alert.
 
-| Failure                                                    | Decoder message                                                              | Sender fix                                                                    |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| No query string                                            | `Missing brew handoff query`                                                 | Include `?len=...&shareBrew0=...`.                                            |
-| Missing or non decimal `len`                               | `Missing or malformed brew handoff len`                                      | Send decimal digits only.                                                     |
-| `len` is not a safe integer                                | `Brew handoff len is too large`                                              | Keep payload length within JavaScript safe integer range.                     |
-| No chunks                                                  | `Missing shareBrew chunks`                                                   | Send `shareBrew0`.                                                            |
-| More than 1,024 chunks                                     | `Too many shareBrew chunks: maximum is 1024`                                 | Stay within the sender URL budget.                                            |
-| Single chunk exceeds 400 characters                        | `shareBrew<n> must be at most 400 characters`                                | Split the payload into 400 character chunks.                                  |
-| Duplicate chunk index                                      | `Duplicate shareBrew chunk <n>`                                              | Send each chunk index only once.                                              |
-| Missing chunk index                                        | `Missing shareBrew chunk <n>`                                                | Send every chunk from `0` through the last index.                             |
-| Assembled payload shorter than `len`                       | `Truncated brew handoff payload: expected <x> characters, got <y>`           | Check OS URL truncation and chunk assembly.                                   |
-| Assembled payload longer or shorter in the other direction | `Brew handoff payload length mismatch: expected <x> characters, got <y>`     | Make `len` match the base64url payload exactly.                               |
-| Empty payload                                              | `Empty payload`                                                              | Send a non empty gzip payload.                                                |
-| Not unpadded base64url                                     | `Payload is not unpadded base64url`                                          | Use base64url without `=` padding.                                            |
-| `DecompressionStream` unavailable                          | No sender-visible error                                                      | The decoder falls back to zip.js inflation for iOS 16.0 to 16.3.              |
-| Bytes are not gzip                                         | `Payload is not gzip`                                                        | Compress with gzip, not zlib, raw deflate, or plain JSON.                     |
-| Inflated payload exceeds cap                               | `Inflated payload exceeds 524288 bytes`                                      | Reduce JSON size.                                                             |
-| Inflated bytes are not UTF 8                               | `Inflated payload is not UTF-8`                                              | Encode JSON as UTF 8.                                                         |
-| Inflated text is not JSON                                  | `Inflated payload is not JSON`                                               | Send a JSON object.                                                           |
-| Top level value is not an object                           | `Envelope must be an object`                                                 | Send an object envelope.                                                      |
-| Unsupported envelope version                               | `Unsupported envelope version <value>`                                       | Send `v: 1`.                                                                  |
-| `app` missing or not an object                             | `Envelope app must be an object`                                             | Send the app block.                                                           |
-| `app.name` missing, empty, wrong type, or too long         | `Envelope app.name must be ...`                                              | Send a non empty string of at most 512 characters.                            |
-| Optional string has wrong type or is too long              | `<path> must be ...`                                                         | Omit it, send `""`, or send a string of at most 512 characters.               |
-| `imported` missing or not an object                        | `Envelope imported must be an object`                                        | Send provenance.                                                              |
-| `imported.source` or `sourceName` invalid                  | `Envelope imported.source...` or `Envelope imported.sourceName...`           | Send non empty strings of at most 512 characters.                             |
-| `sourceUrl` not a URL                                      | `Envelope imported.sourceUrl must be a URL`                                  | Send a parseable URL or omit it.                                              |
-| `sourceUrl` not HTTPS                                      | `Envelope imported.sourceUrl must be https`                                  | Use `https:` or omit it.                                                      |
-| `imported.schema` not an integer from 1 to 1,000           | `Envelope imported.schema must be ...`                                       | Send an integer in range.                                                     |
-| Opaque object too deep                                     | `<path> exceeds maximum depth 8`                                             | Flatten `params`.                                                             |
-| Opaque array too long                                      | `<path> contains too many entries`                                           | Keep arrays to 1,000 entries.                                                 |
-| Opaque object too wide                                     | `<path> contains too many keys`                                              | Keep objects to 1,000 keys.                                                   |
-| Opaque string too long                                     | `<path> must be between 0 and 10000 characters`                              | Shorten opaque strings.                                                       |
-| Opaque key invalid                                         | `<path> key must be ...`                                                     | Use non empty keys of at most 512 characters.                                 |
-| `bean` present but not an object                           | `Envelope bean must be an object`                                            | Omit `bean` or send an object.                                                |
+| Failure                                                    | Decoder message                                                              | Sender fix                                                                   |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| No query string                                            | `Missing brew handoff query`                                                 | Include `?len=...&shareBrew0=...`.                                           |
+| Missing or non decimal `len`                               | `Missing or malformed brew handoff len`                                      | Send decimal digits only.                                                    |
+| `len` is not a safe integer                                | `Brew handoff len is too large`                                              | Keep payload length within JavaScript safe integer range.                    |
+| No chunks                                                  | `Missing shareBrew chunks`                                                   | Send `shareBrew0`.                                                           |
+| More than 1,024 chunks                                     | `Too many shareBrew chunks: maximum is 1024`                                 | Stay within the sender URL budget.                                           |
+| Single chunk exceeds 400 characters                        | `shareBrew<n> must be at most 400 characters`                                | Split the payload into 400 character chunks.                                 |
+| Duplicate chunk index                                      | `Duplicate shareBrew chunk <n>`                                              | Send each chunk index only once.                                             |
+| Missing chunk index                                        | `Missing shareBrew chunk <n>`                                                | Send every chunk from `0` through the last index.                            |
+| Assembled payload shorter than `len`                       | `Truncated brew handoff payload: expected <x> characters, got <y>`           | Check OS URL truncation and chunk assembly.                                  |
+| Assembled payload longer or shorter in the other direction | `Brew handoff payload length mismatch: expected <x> characters, got <y>`     | Make `len` match the base64url payload exactly.                              |
+| Empty payload                                              | `Empty payload`                                                              | Send a non empty gzip payload.                                               |
+| Not unpadded base64url                                     | `Payload is not unpadded base64url`                                          | Use base64url without `=` padding.                                           |
+| `DecompressionStream` unavailable                          | No sender-visible error                                                      | The decoder falls back to zip.js inflation for iOS 16.0 to 16.3.             |
+| Bytes are not gzip                                         | `Payload is not gzip`                                                        | Compress with gzip, not zlib, raw deflate, or plain JSON.                    |
+| Single-brew inflated payload exceeds cap                   | `Inflated payload exceeds 524288 bytes`                                      | Reduce JSON size.                                                            |
+| Batch inflated payload exceeds cap                         | `Inflated payload exceeds 4194304 bytes`                                     | Reduce batch size or split it into smaller handoffs.                         |
+| Inflated bytes are not UTF 8                               | `Inflated payload is not UTF-8`                                              | Encode JSON as UTF 8.                                                        |
+| Inflated text is not JSON                                  | `Inflated payload is not JSON`                                               | Send a JSON object.                                                          |
+| Top level value is not an object                           | `Envelope must be an object`                                                 | Send an object envelope.                                                     |
+| Unsupported envelope version                               | `Unsupported envelope version <value>`                                       | Send `v: 1`.                                                                 |
+| `app` missing or not an object                             | `Envelope app must be an object`                                             | Send the app block.                                                          |
+| `app.name` missing, empty, wrong type, or too long         | `Envelope app.name must be ...`                                              | Send a non empty string of at most 512 characters.                           |
+| Optional string has wrong type or is too long              | `<path> must be ...`                                                         | Omit it, send `""`, or send a string of at most 512 characters.              |
+| `imported` missing or not an object                        | `Envelope imported must be an object`                                        | Send provenance.                                                             |
+| `imported.source` or `sourceName` invalid                  | `Envelope imported.source...` or `Envelope imported.sourceName...`           | Send non empty strings of at most 512 characters.                            |
+| `sourceUrl` not a URL                                      | `Envelope imported.sourceUrl must be a URL`                                  | Send a parseable URL or omit it.                                             |
+| `sourceUrl` not HTTPS                                      | `Envelope imported.sourceUrl must be https`                                  | Use `https:` or omit it.                                                     |
+| `imported.schema` not an integer from 1 to 1,000           | `Envelope imported.schema must be ...`                                       | Send an integer in range.                                                    |
+| Opaque object too deep                                     | `<path> exceeds maximum depth 8`                                             | Flatten `params`.                                                            |
+| Opaque array too long                                      | `<path> contains too many entries`                                           | Keep arrays to 1,000 entries.                                                |
+| Opaque object too wide                                     | `<path> contains too many keys`                                              | Keep objects to 1,000 keys.                                                  |
+| Opaque string too long                                     | `<path> must be between 0 and 10000 characters`                              | Shorten opaque strings.                                                      |
+| Opaque key invalid                                         | `<path> key must be ...`                                                     | Use non empty keys of at most 512 characters.                                |
+| `bean` present but not an object                           | `Envelope bean must be an object`                                            | Omit `bean` or send an object.                                               |
 | Bean string too long                                       | `Envelope bean.<field> must be between ...`                                  | Keep labels to 512 characters and `note` or `aromatics` to 10,000 characters. |
 | `brew` missing or not an object                            | `Envelope brew must be an object`                                            | Send the brew block.                                                          |
 | `brew.date` invalid                                        | `Envelope brew.date must be ISO 8601`                                        | Send an ISO timestamp accepted by the decoder pattern.                        |
@@ -604,7 +607,8 @@ controlled. The decoder's defences are:
 - It accepts only unpadded base64url.
 - It inflates through `readCapped()`, which reads the gzip stream chunk by
   chunk, tracks the total inflated bytes, cancels the reader when the total
-  exceeds 524,288 bytes, and throws before parsing JSON.
+  exceeds 524,288 bytes for a single brew or 4,194,304 bytes for a batch, and
+  throws before parsing JSON.
 - It uses fatal UTF 8 decoding.
 - It sanitises opaque objects by rebuilding them and dropping
   `__proto__`, `constructor`, and `prototype`.
