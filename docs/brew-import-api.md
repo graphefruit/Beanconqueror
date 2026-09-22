@@ -71,7 +71,7 @@ validator constructs a new object containing only the recognised fields.
 | `v`        | number      | yes      |      | Must be exactly `1`.                                                                                                                      |
 | `app`      | object      | yes      |      | Must validate as the app block.                                                                                                           |
 | `brew`     | object      | yes      |      | Must validate as the brew block.                                                                                                          |
-| `bean`     | object      | no       |      | Must be an object when present. Sanitised as opaque JSON inside that object.                                                               |
+| `bean`     | object      | no       |      | Must be an object when present. A non empty string `name` enables the named bean fields below.                                             |
 | `flow`     | object      | no       |      | Must validate as the flow block.                                                                                                          |
 | `metrics`  | array       | no       |      | At most 100 metric blocks.                                                                                                                |
 | `imported` | object      | yes      |      | Must validate as the provenance block.                                                                                                    |
@@ -85,6 +85,19 @@ validator constructs a new object containing only the recognised fields.
 
 The import service does not store `app`. Use `imported` for user visible
 provenance.
+
+### `bean`
+
+| Field       | Type   | Required | Unit | Decoder rule                                                                                   |
+| ----------- | ------ | -------- | ---- | ---------------------------------------------------------------------------------------------- |
+| `name`      | string | no       |      | Trimmed. Missing, empty, or non string values make the bean block absent. At most 512 characters. |
+| `origin`    | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
+| `process`   | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
+| `variety`   | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
+| `aromatics` | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 10,000 characters. |
+| `note`      | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 10,000 characters. |
+| `beanMix`   | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
+| `imageUrl`  | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. It is not parsed as a URL. |
 
 ### `brew`
 
@@ -148,8 +161,8 @@ absolute millisecond timestamp, then formats Beanconqueror flow timestamps as
 | `schema`     | integer     | yes      |      | Integer from 1 to 1,000. This is the sender schema, not the envelope version.                                                             |
 | `params`     | object      | no       |      | Must be an object when present. Sanitised as opaque JSON inside that object.                                                              |
 
-`bean`, `imported.params`, and any nested opaque values accepted there are
-copied through a sanitiser. Objects are rebuilt with a null prototype, keys
+The importer copies `imported.params` and any nested opaque values accepted
+there through a sanitiser. Objects are rebuilt with a null prototype, keys
 named `__proto__`, `constructor`, and `prototype` are dropped, nesting is capped
 at depth 8, arrays and objects are capped at 1,000 entries, string values are
 capped at 10,000 characters, and object keys are capped at 512 characters.
@@ -173,7 +186,14 @@ capped at 10,000 characters, and object keys are capped at 512 characters.
 | `imported`               | Stored in `brew.customInformation.imported`.                                                              |
 | `brew.rating`            | Clamped to the user's configured rating scale, never rescaled. Missing value becomes `0`.                 |
 | `brew.note`              | Starts `brew.note`. Name matching notes are appended after blank lines.                                   |
-| `bean.name`              | Used only as a lookup hint. Other bean fields are not mapped.                                             |
+| `bean.name`              | Used as a lookup hint. When a bean is created, stored as `bean.name`.                                     |
+| `bean.note`              | Stored as `bean.note` on a created bean.                                                                 |
+| `bean.aromatics`         | Stored as `bean.aromatics` on a created bean.                                                            |
+| `bean.beanMix`           | Normalised and stored as `SINGLE_ORIGIN`, `BLEND`, or `UNKNOWN` on a created bean.                       |
+| `bean.origin`            | Stored as `country` in the first `bean_information` entry on a created bean.                             |
+| `bean.process`           | Stored as `processing` in the first `bean_information` entry on a created bean.                          |
+| `bean.variety`           | Stored as `variety` in the first `bean_information` entry on a created bean.                             |
+| `bean.imageUrl`          | Validated but not stored.                                                                                |
 | `brew.ratio`             | Validated but not stored by the importer. Beanconqueror derives displayed ratios from quantities.         |
 | `app`                    | Validated but not stored.                                                                                 |
 
@@ -199,8 +219,14 @@ the import still succeeds, but `flow_profile` stays empty.
 ### Name matching
 
 Bean, grinder, and preparation hints are matched by name after Unicode NFC
-normalisation, trimming, and locale lowercasing. The importer never creates a
-bean, grinder, or preparation from an incoming link.
+normalisation, trimming, and locale lowercasing.
+
+Before the readiness check, the importer may create a bean. The bean block must
+have a name and at least one of `origin`, `process`, `variety`, `aromatics`,
+`note`, or `beanMix`. `imageUrl` alone does not count. If a usable bean already
+matches the name, or the name is ambiguous, no bean is created. If there is no
+match, Beanconqueror asks the user whether to create it. Grinder and
+preparation are never created from an incoming link.
 
 When an exact match fails, one widening step is tried: a stored entry whose
 name and the hint are the same equipment named at different lengths, in either
@@ -408,15 +434,18 @@ before any decompression was attempted.
 
 ## Limits and failure modes
 
-Before anything is decoded, the route calls `canImportBrewIfNotShowMessage()`.
-An import needs the two links the importer cannot create for itself: an active
-bean and an active preparation method. A library missing either cannot take a
-brew, so the link is dropped without a decode and Beanconqueror's existing
-"Something is missing here..." popover names what is missing. A grinder is not
-required: `brew.mill` is left empty when the hint is absent or unmatched.
-Beanconqueror seeds preparation methods on first run but never seeds a bean, so
-this is the expected outcome of the first handoff into a fresh install. Nothing
-is wrong with the link, and no sender change can avoid it.
+The route collects, decodes, and validates the link first. It then may ask the
+user to create the bean from the bean block. After that it calls
+`canImportBrewIfNotShowMessage()`.
+
+An import needs an active bean and an active preparation method. A bean created
+from the handoff can satisfy the bean requirement. A library still missing
+either link cannot take a brew, so Beanconqueror drops the link and shows the
+existing "Something is missing here..." popover. If the route created a bean
+before this check failed, it removes that bean. A grinder is not required:
+`brew.mill` is left empty when the hint is absent or unmatched. Beanconqueror
+seeds preparation methods on first run but never seeds a bean, so the first
+handoff into a fresh install needs bean metadata and user confirmation.
 
 All decoder failures throw an `Error`. The route catches the error, logs
 `Import brew from handoff link failed: <message>`, hides the loading spinner,
@@ -451,11 +480,13 @@ and shows the generic `BREW_IMPORT_FAILED` alert.
 | `sourceUrl` not a URL                                      | `Envelope imported.sourceUrl must be a URL`                                  | Send a parseable URL or omit it.                                             |
 | `sourceUrl` not HTTPS                                      | `Envelope imported.sourceUrl must be https`                                  | Use `https:` or omit it.                                                     |
 | `imported.schema` not an integer from 1 to 1,000           | `Envelope imported.schema must be ...`                                       | Send an integer in range.                                                    |
-| Opaque object too deep                                     | `<path> exceeds maximum depth 8`                                             | Flatten `bean` or `params`.                                                  |
+| Opaque object too deep                                     | `<path> exceeds maximum depth 8`                                             | Flatten `params`.                                                            |
 | Opaque array too long                                      | `<path> contains too many entries`                                           | Keep arrays to 1,000 entries.                                                |
 | Opaque object too wide                                     | `<path> contains too many keys`                                              | Keep objects to 1,000 keys.                                                  |
 | Opaque string too long                                     | `<path> must be between 0 and 10000 characters`                              | Shorten opaque strings.                                                      |
 | Opaque key invalid                                         | `<path> key must be ...`                                                     | Use non empty keys of at most 512 characters.                                |
+| `bean` present but not an object                           | `Envelope bean must be an object`                                            | Omit `bean` or send an object.                                               |
+| Bean string too long                                       | `Envelope bean.<field> must be between ...`                                  | Keep labels to 512 characters and `note` or `aromatics` to 10,000 characters. |
 | `brew` missing or not an object                            | `Envelope brew must be an object`                                            | Send the brew block.                                                         |
 | `brew.date` invalid                                        | `Envelope brew.date must be ISO 8601`                                        | Send an ISO timestamp accepted by the decoder pattern.                       |
 | Quantity object missing or wrong type                      | `<path> must be an object`                                                   | Send `{ "value": number, "unit": expectedUnit }`.                            |
