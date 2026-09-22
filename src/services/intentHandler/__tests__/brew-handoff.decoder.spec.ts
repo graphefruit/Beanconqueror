@@ -1084,7 +1084,47 @@ describe('brew handoff decoder', () => {
     await expectAsync(decodeBatch({ v: 1, brews })).toBeResolvedTo(brews);
   });
 
+  it('accepts a batch above the single-brew inflate cap through the zip.js fallback', async () => {
+    (
+      window as unknown as { DecompressionStream?: typeof DecompressionStream }
+    ).DecompressionStream = undefined;
+    const wordy = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        note: 'x'.repeat(10_000),
+      },
+    });
+    const brews = Array.from({ length: 50 }, () => wordy);
+    expect(JSON.stringify({ v: 1, brews }).length).toBeGreaterThan(
+      MAX_INFLATED_BYTES,
+    );
+
+    await expectAsync(decodeBatch({ v: 1, brews })).toBeResolvedTo(brews);
+  });
+
   it('rejects a batch larger than the batch inflate cap', async () => {
+    const oversized = JSON.stringify({
+      v: 1,
+      brews: [
+        validEnvelope({
+          brew: {
+            ...validEnvelope().brew,
+            note: 'x'.repeat(4 * 1024 * 1024),
+          },
+        }),
+      ],
+    });
+    expect(oversized.length).toBeGreaterThan(MAX_INFLATED_BATCH_BYTES);
+
+    await expectAsync(
+      decodeHandoffBatchPayload(await gzipString(oversized)),
+    ).toBeRejectedWithError('Inflated payload exceeds 4194304 bytes');
+  });
+
+  it('rejects a batch larger than the batch inflate cap through the zip.js fallback', async () => {
+    (
+      window as unknown as { DecompressionStream?: typeof DecompressionStream }
+    ).DecompressionStream = undefined;
     const oversized = JSON.stringify({
       v: 1,
       brews: [

@@ -232,7 +232,9 @@ async function gunzipWithZipJs(
     throw new Error(`Inflated payload exceeds ${cap} bytes`);
   }
 
-  const zipReader = new ZipReader(new BlobReader(zipAroundDeflate(member)));
+  const zipReader = new ZipReader(
+    new BlobReader(zipAroundDeflate(member, cap)),
+  );
   try {
     const entry = (await zipReader.getEntries()).shift();
     if (!entry || entry.directory === true) {
@@ -347,10 +349,13 @@ function skipZeroTerminated(bytes: Uint8Array, offset: number): number {
   throw new Error('Payload is not gzip');
 }
 
-function zipAroundDeflate(member: {
-  deflate: Uint8Array;
-  crc32: number;
-}): Blob {
+function zipAroundDeflate(
+  member: {
+    deflate: Uint8Array;
+    crc32: number;
+  },
+  cap = MAX_INFLATED_BYTES,
+): Blob {
   const filename = new TextEncoder().encode('payload.json');
   const centralDirectoryOffset = 30 + filename.length + member.deflate.length;
   const centralDirectorySize = 46 + filename.length;
@@ -359,10 +364,28 @@ function zipAroundDeflate(member: {
   );
   let offset = 0;
 
-  offset = writeZipHeader(zip, offset, 0x04034b50, 30, filename, member, 0);
+  offset = writeZipHeader(
+    zip,
+    offset,
+    0x04034b50,
+    30,
+    filename,
+    member,
+    0,
+    cap,
+  );
   zip.set(member.deflate, offset);
   offset += member.deflate.length;
-  offset = writeZipHeader(zip, offset, 0x02014b50, 46, filename, member, 0);
+  offset = writeZipHeader(
+    zip,
+    offset,
+    0x02014b50,
+    46,
+    filename,
+    member,
+    0,
+    cap,
+  );
 
   writeUInt32LE(zip, offset, 0x06054b50);
   writeUInt16LE(zip, offset + 8, 1);
@@ -381,6 +404,7 @@ function writeZipHeader(
   filename: Uint8Array,
   member: { deflate: Uint8Array; crc32: number },
   localHeaderOffset: number,
+  cap = MAX_INFLATED_BYTES,
 ): number {
   writeUInt32LE(zip, offset, signature);
   if (headerSize === 46) {
@@ -397,7 +421,7 @@ function writeZipHeader(
   writeUInt32LE(zip, base + 8, member.crc32);
   writeUInt32LE(zip, base + 12, member.deflate.length);
   // Use our own limit as the ZIP size hint, not GZIP ISIZE, so a forged small footer cannot make zip.js fail before the bounded writer sees the overflow.
-  writeUInt32LE(zip, base + 16, MAX_INFLATED_BYTES + 1);
+  writeUInt32LE(zip, base + 16, cap + 1);
   zip.set(filename, offset + headerSize);
   return offset + headerSize + filename.length;
 }
