@@ -115,6 +115,13 @@ function validEnvelope(
   };
 }
 
+function importResult(beanUuid: string): IBrewImportResult {
+  return {
+    brew: { bean: beanUuid } as IBrewImportResult['brew'],
+    brewFlow: {} as IBrewImportResult['brewFlow'],
+  };
+}
+
 describe('IntentHandlerService', () => {
   let service: IntentHandlerService;
   let uiHelper: jasmine.SpyObj<UIHelper>;
@@ -235,7 +242,7 @@ describe('IntentHandlerService', () => {
     brewImportService.ensureBeanFromHandoff.and.resolveTo();
     brewImportService.canCreateBeanFromHandoff.and.returnValue(true);
     brewImportService.createBeanFromHandoff.and.resolveTo();
-    brewImportService.import.and.resolveTo();
+    brewImportService.import.and.resolveTo(importResult('bean-imported'));
     beanStorage.attachOnEvent.and.returnValue(eventEmitter as never);
     millStorage.attachOnEvent.and.returnValue(eventEmitter as never);
     preparationStorage.attachOnEvent.and.returnValue(eventEmitter as never);
@@ -535,6 +542,33 @@ describe('IntentHandlerService', () => {
     expect(brewImportService.import.calls.count()).toBe(2);
   });
 
+  it('chooses a creatable envelope after grouping batch brews by bean name', async () => {
+    brewImportService.canCreateBeanFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => candidate.bean?.origin !== undefined,
+    );
+    const nameOnly = validEnvelope({
+      bean: { name: 'Same Pod' },
+    });
+    const withMetadata = validEnvelope({
+      bean: { name: 'Same Pod', origin: 'Ethiopia' },
+      brew: { ...validEnvelope().brew, note: 'Same pod with metadata' },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [nameOnly, withMetadata] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
+      [withMetadata],
+    ]);
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(brewImportService.import.calls.allArgs()).toEqual([
+      [nameOnly],
+      [withMetadata],
+    ]);
+  });
+
   it('asks once for several new batch beans and creates none when declined', async () => {
     uiAlert.showConfirm.and.resolveTo('NO');
     const first = validEnvelope({ bean: { name: 'First coffee' } });
@@ -574,7 +608,7 @@ describe('IntentHandlerService', () => {
       if (candidate.brew.note === 'Two') {
         return Promise.reject(new Error('Import failed'));
       }
-      return Promise.resolve({} as IBrewImportResult);
+      return Promise.resolve(importResult('bean-imported'));
     });
     const batchUrl = batchHandoffUrl(
       await gzipBase64Url({ v: 1, brews: [first, second, third] }),
@@ -684,6 +718,82 @@ describe('IntentHandlerService', () => {
       'ERROR_OCCURED',
       undefined,
       true,
+    ]);
+  });
+
+  it('removes all batch-created beans when every import fails', async () => {
+    const first = validEnvelope({ bean: { name: 'First coffee' } });
+    const second = validEnvelope({
+      bean: { name: 'Second coffee' },
+      brew: { ...validEnvelope().brew, note: 'Second brew' },
+    });
+    brewImportService.createBeanFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.bean?.name === 'First coffee') {
+          return Promise.resolve('bean-created-first');
+        }
+        if (candidate.bean?.name === 'Second coffee') {
+          return Promise.resolve('bean-created-second');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    brewImportService.import.and.rejectWith(new Error('Import failed'));
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created-first'],
+      ['bean-created-second'],
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
+  it('removes only batch-created beans that no successful import references', async () => {
+    const first = validEnvelope({ bean: { name: 'First coffee' } });
+    const second = validEnvelope({
+      bean: { name: 'Second coffee' },
+      brew: { ...validEnvelope().brew, note: 'Second brew' },
+    });
+    brewImportService.createBeanFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.bean?.name === 'First coffee') {
+          return Promise.resolve('bean-created-first');
+        }
+        if (candidate.bean?.name === 'Second coffee') {
+          return Promise.resolve('bean-created-second');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
+      if (candidate.brew.note === 'Second brew') {
+        return Promise.reject(new Error('Import failed'));
+      }
+      return Promise.resolve(importResult('bean-created-first'));
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created-second'],
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'Imported 1 of 2 brews',
+      undefined,
+      undefined,
+      false,
     ]);
   });
 

@@ -421,6 +421,8 @@ export class IntentHandlerService {
 
       await this.uiAlert.showLoadingSpinner();
       let importedCount = 0;
+      const retainedBeanUuids = new Set<string>();
+      const createdBeanUuidSet = new Set(createdBeanUuids);
       for (let index = 0; index < envelopes.length; index++) {
         const envelope = envelopes[index];
         this.uiAlert.setLoadingSpinnerMessage(
@@ -430,7 +432,10 @@ export class IntentHandlerService {
           }),
         );
         try {
-          await this.brewImportService.import(envelope);
+          const imported = await this.brewImportService.import(envelope);
+          if (createdBeanUuidSet.has(imported.brew.bean)) {
+            retainedBeanUuids.add(imported.brew.bean);
+          }
           importedCount++;
         } catch (ex) {
           this.uiLog.error(
@@ -439,6 +444,11 @@ export class IntentHandlerService {
         }
       }
       await this.uiAlert.hideLoadingSpinner();
+      for (const uuid of createdBeanUuids) {
+        if (!retainedBeanUuids.has(uuid)) {
+          await this.removeCreatedHandoffBean(uuid);
+        }
+      }
 
       if (importedCount === 0) {
         this.uiAlert.showMessage(
@@ -482,20 +492,28 @@ export class IntentHandlerService {
   private async ensureDistinctBeansFromHandoff(
     envelopes: IHandoffEnvelope[],
   ): Promise<string[]> {
-    const seenBeans = new Set<string>();
-    const distinctEnvelopes: IHandoffEnvelope[] = [];
+    const envelopesByBeanName = new Map<string, IHandoffEnvelope[]>();
     for (const envelope of envelopes) {
       const beanName = this.handoffBeanName(envelope);
-      if (beanName === undefined || seenBeans.has(beanName)) {
+      if (beanName === undefined) {
         continue;
       }
-      seenBeans.add(beanName);
-      distinctEnvelopes.push(envelope);
+
+      const groupedEnvelopes = envelopesByBeanName.get(beanName) ?? [];
+      groupedEnvelopes.push(envelope);
+      envelopesByBeanName.set(beanName, groupedEnvelopes);
     }
 
-    const creatableEnvelopes = distinctEnvelopes.filter((envelope) =>
-      this.brewImportService.canCreateBeanFromHandoff(envelope),
-    );
+    const creatableEnvelopes: IHandoffEnvelope[] = [];
+    for (const groupedEnvelopes of envelopesByBeanName.values()) {
+      const creatableEnvelope = groupedEnvelopes.find((envelope) =>
+        this.brewImportService.canCreateBeanFromHandoff(envelope),
+      );
+      if (creatableEnvelope !== undefined) {
+        creatableEnvelopes.push(creatableEnvelope);
+      }
+    }
+
     if (creatableEnvelopes.length === 0) {
       return [];
     }
