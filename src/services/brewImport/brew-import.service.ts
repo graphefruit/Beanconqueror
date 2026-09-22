@@ -176,6 +176,7 @@ export class BrewImportService {
       this.buildBean(bean),
     );
     if (!saved) {
+      await this.removeFailedHandoffBean(created.config.uuid);
       throw new Error(`Handoff bean creation failed: ${created.config.uuid}`);
     }
     return created.config.uuid;
@@ -256,6 +257,24 @@ export class BrewImportService {
     if (Math.abs(total) > MAX_ABSOLUTE_GRAMS) {
       throw new Error(
         `Envelope ${field} cumulative total must be at most ${MAX_ABSOLUTE_GRAMS}`,
+      );
+    }
+  }
+
+  private async removeFailedHandoffBean(uuid: string): Promise<void> {
+    try {
+      const didRemove = await this.beanStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return;
+      }
+      this.uiLog.error('Handoff bean creation cleanup failed: ' + uuid);
+    } catch (ex) {
+      this.uiLog.error(
+        'Handoff bean creation cleanup failed: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
       );
     }
   }

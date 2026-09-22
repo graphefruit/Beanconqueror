@@ -206,6 +206,7 @@ describe('BrewImportService', () => {
       'getByUUID',
       'add',
       'addAndConfirm',
+      'removeByUUID',
     ]);
     millStorage = jasmine.createSpyObj('UIMillStorage', [
       'getAllEntries',
@@ -251,6 +252,14 @@ describe('BrewImportService', () => {
         return Promise.resolve({ entry: bean, saved: true });
       },
     );
+    beanStorage.removeByUUID.and.callFake((uuid: string): Promise<boolean> => {
+      const index = beans.findIndex((bean) => bean.config.uuid === uuid);
+      if (index < 0) {
+        return Promise.resolve(false);
+      }
+      beans.splice(index, 1);
+      return Promise.resolve(true);
+    });
     millStorage.getAllEntries.and.callFake(() => mills);
     preparationStorage.getAllEntries.and.callFake(() => preparations);
     preparationStorage.getByUUID.and.callFake((uuid: string) =>
@@ -288,6 +297,7 @@ describe('BrewImportService', () => {
         { provide: UILog, useValue: uiLog },
         { provide: UISettingsStorage, useValue: settingsStorage },
         { provide: UIAlert, useValue: uiAlert },
+        { provide: UILog, useValue: uiLog },
         { provide: TranslateService, useValue: translate },
       ],
     });
@@ -596,7 +606,7 @@ describe('BrewImportService', () => {
     expect(result.brew.note).toBe('A completed brew');
   });
 
-  it('rejects a handoff bean creation whose save did not persist before the brew can link it', async () => {
+  it('removes a handoff bean whose save did not persist before later name matching can see it', async () => {
     beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
     uiAlert.showConfirm.and.resolveTo('YES');
     beanStorage.addAndConfirm.and.callFake(
@@ -616,11 +626,76 @@ describe('BrewImportService', () => {
     await expectAsync(
       service.ensureBeanFromHandoff(handoff),
     ).toBeRejectedWithError('Handoff bean creation failed: bean-created');
+    const result = service.build(handoff);
 
     expect(beanStorage.addAndConfirm.calls.count()).toBe(1);
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+    expect(beans.map((bean) => bean.config.uuid)).toEqual(['bean-fallback']);
+    expect(result.brew.bean).toBe('bean-fallback');
+    expect(result.brew.note).toBe(
+      'A completed brew\n\nBean not linked: "Pod coffee" (no match). Using "Fallback coffee".',
+    );
     expect(beanStorage.add.calls.count()).toBe(0);
     expect(brewStorage.add.calls.count()).toBe(0);
     expect(brewStorage.update.calls.count()).toBe(0);
+  });
+
+  it('does not hand the caller a uuid when a handoff bean save fails', async () => {
+    let returnedUuid: string | undefined;
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    beanStorage.addAndConfirm.and.callFake(
+      (bean: Bean): Promise<{ entry: Bean; saved: boolean }> => {
+        bean.config.uuid = 'bean-created';
+        beans.push(bean);
+        return Promise.resolve({ entry: bean, saved: false });
+      },
+    );
+
+    try {
+      returnedUuid = await service.ensureBeanFromHandoff(
+        envelope({
+          bean: {
+            name: 'Pod coffee',
+            origin: 'Ethiopia',
+          },
+        }),
+      );
+    } catch (ex) {
+      expect(ex.message).toBe('Handoff bean creation failed: bean-created');
+    }
+
+    expect(returnedUuid).toBeUndefined();
+  });
+
+  it('logs a failed handoff bean creation cleanup without replacing the save failure', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    beanStorage.addAndConfirm.and.callFake(
+      (bean: Bean): Promise<{ entry: Bean; saved: boolean }> => {
+        bean.config.uuid = 'bean-created';
+        beans.push(bean);
+        return Promise.resolve({ entry: bean, saved: false });
+      },
+    );
+    beanStorage.removeByUUID.and.rejectWith(new Error('delete failed'));
+
+    await expectAsync(
+      service.ensureBeanFromHandoff(
+        envelope({
+          bean: {
+            name: 'Pod coffee',
+            origin: 'Ethiopia',
+          },
+        }),
+      ),
+    ).toBeRejectedWithError('Handoff bean creation failed: bean-created');
+
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Handoff bean creation cleanup failed: bean-created (delete failed)',
+    ]);
   });
 
   it('does not prompt when pod metadata names an existing bean', async () => {
