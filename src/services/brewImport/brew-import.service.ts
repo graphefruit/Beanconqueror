@@ -194,6 +194,12 @@ export class BrewImportService {
    * The uuid goes back to the caller so a handoff that then fails can take
    * back the bean it created, and only that one: a name that matched an
    * existing entry returns undefined and is left alone.
+   *
+   * The `canCreateBeanFromHandoff` check here is not redundant with the one
+   * the caller made before prompting. The URL listener does not await one
+   * handoff before starting the next, so a second import of the same coffee
+   * can create the bean while the first is still asking. Asking again once
+   * the dialog has closed is what stops both from creating one.
    */
   public async createBeanFromHandoff(
     envelope: IHandoffEnvelope,
