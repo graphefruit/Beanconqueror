@@ -562,6 +562,26 @@ describe('BrewImportService', () => {
     expect(beanStorage.add.calls.count()).toBe(0);
   });
 
+  it('links a bean that arrived while the prompt was open instead of creating a second', async () => {
+    // The URL listener does not await one handoff before starting the next, so
+    // a second import of the same coffee can create the bean while this prompt
+    // is still open. Both would otherwise create one.
+    beans = [];
+    uiAlert.showConfirm.and.callFake(async () => {
+      beans.push(entry(new Bean(), 'Pod coffee', 'bean-concurrent'));
+      return 'YES';
+    });
+    const handoff = envelope({
+      bean: { name: 'Pod coffee', origin: 'Ethiopia' },
+    });
+
+    const created = await service.ensureBeanFromHandoff(handoff);
+
+    expect(created).toBeUndefined();
+    expect(beanStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(service.build(handoff).brew.bean).toBe('bean-concurrent');
+  });
+
   it('creates a pod bean with full metadata before build links the brew by name', async () => {
     beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
     uiAlert.showConfirm.and.resolveTo('YES');

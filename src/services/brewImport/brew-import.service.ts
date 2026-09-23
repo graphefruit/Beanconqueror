@@ -172,6 +172,14 @@ export class BrewImportService {
       return undefined;
     }
 
+    // Ask again, now the dialog has closed. The URL listener does not await
+    // one handoff before starting the next, so a second import of the same
+    // coffee can have arrived and created the bean while this prompt was open.
+    // Without this, both would create one and the user would end up with two.
+    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+      return undefined;
+    }
+
     const { entry: created, saved } = await this.beanStorage.addAndConfirm(
       this.buildBean(bean),
     );
