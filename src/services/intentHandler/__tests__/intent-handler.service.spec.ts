@@ -507,6 +507,29 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('removes a handoff-created preparation the stuck brew does not point at', async () => {
+    // An untyped envelope can resolve onto an existing preparation by name, so
+    // the one this import created may be referenced by nothing. Keep what the
+    // brew actually points at, not what the import happened to make.
+    brewImportService.ensurePreparationFromHandoff.and.resolveTo(
+      'preparation-created',
+    );
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError(
+        'brew-on-disk',
+        false,
+        'bean-imported',
+        'preparation-existing',
+      ),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created'],
+    ]);
+  });
+
   it('keeps a handoff-created preparation when import rollback was not durable', async () => {
     brewImportService.ensurePreparationFromHandoff.and.resolveTo(
       'preparation-created',

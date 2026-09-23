@@ -472,6 +472,18 @@ export class IntentHandlerService {
       return false;
     }
 
+    // Keep what the stuck brew actually points at, which is not always what
+    // this import created: an untyped envelope can resolve onto a preparation
+    // by name. If it points somewhere else, this one is unreferenced and
+    // should go, the same rule the bean and the mill follow.
+    if (
+      error.preparationUuid !== undefined &&
+      error.preparationUuid !== '' &&
+      error.preparationUuid !== uuid
+    ) {
+      return false;
+    }
+
     this.uiLog.error(
       'Import brew from handoff link kept handoff-created preparation after non-durable brew rollback: ' +
         uuid +
