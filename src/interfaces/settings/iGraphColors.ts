@@ -20,4 +20,6 @@ export interface IGraphColors {
   waterDispensed: IGraphColorSetting;
   waterDispensedFlowSecond: IGraphColorSetting;
   customTrace: IGraphColorSetting;
+  bloomMarker: IGraphColorSetting;
+  firstDripMarker: IGraphColorSetting;
 }

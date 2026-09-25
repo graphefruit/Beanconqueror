@@ -5,6 +5,7 @@ import { Platform } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 
+import { Brew } from '../../classes/brew/brew';
 import { BrewFlow, IBrewCustomAxis } from '../../classes/brew/brewFlow';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { Settings } from '../../classes/settings/settings';
@@ -868,5 +869,94 @@ export class GraphHelperService {
     }
 
     return layout;
+  }
+
+  public getEventMarkerShapes(
+    brew: Brew,
+    settings: Settings,
+  ): { shapes: any[]; annotations: any[] } {
+    const empty = { shapes: [], annotations: [] };
+    if (!settings.brew_event_markers_enabled) {
+      return empty;
+    }
+
+    const isDarkMode = this.themeService.isDarkMode();
+    const colors = settings.graph_colors;
+    const mode = settings.brew_event_markers_mode;
+    const startOfDay = moment(new Date()).startOf('day');
+
+    const shapes: any[] = [];
+    const annotations: any[] = [];
+
+    const events = [
+      {
+        seconds: brew.coffee_blooming_time,
+        colorLight: colors.bloomMarker.active.light,
+        colorDark: colors.bloomMarker.active.dark,
+        customIdShape: 'bloomShape',
+        customIdAnnotation: 'bloomAnnotation',
+        label: 'Bloom',
+      },
+      {
+        seconds: brew.coffee_first_drip_time,
+        colorLight: colors.firstDripMarker.active.light,
+        colorDark: colors.firstDripMarker.active.dark,
+        customIdShape: 'firstDripShape',
+        customIdAnnotation: 'firstDripAnnotation',
+        label: 'First drip',
+      },
+    ];
+
+    for (const event of events) {
+      if (!event.seconds || event.seconds <= 0) {
+        continue;
+      }
+
+      const t = startOfDay.clone().add(event.seconds, 'seconds').toDate();
+      const color = isDarkMode ? event.colorDark : event.colorLight;
+
+      if (mode === 'region') {
+        const x0 = startOfDay.toDate();
+        shapes.push({
+          type: 'rect',
+          x0,
+          x1: t,
+          y0: 0,
+          y1: 1,
+          xref: 'x',
+          yref: 'paper',
+          fillcolor: color,
+          opacity: 0.18,
+          line: { width: 0 },
+          customId: event.customIdShape,
+        });
+      } else {
+        shapes.push({
+          type: 'line',
+          x0: t,
+          x1: t,
+          y0: 0,
+          y1: 1,
+          xref: 'x',
+          yref: 'paper',
+          line: { color, width: 2, dash: 'dot' },
+          customId: event.customIdShape,
+        });
+        annotations.push({
+          x: t,
+          y: 1,
+          xref: 'x',
+          yref: 'paper',
+          text: event.label,
+          showarrow: false,
+          xanchor: 'left',
+          yanchor: 'top',
+          font: { color, size: 10 },
+          customId: event.customIdAnnotation,
+        });
+      }
+    }
+
+    return { shapes, annotations };
   }
 }

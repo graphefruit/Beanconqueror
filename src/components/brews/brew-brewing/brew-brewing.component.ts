@@ -742,6 +742,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.coffee_blooming_time,
       this.data.coffee_blooming_time_milliseconds,
     );
+    this.brewBrewingGraphEl?.updateEventMarkers();
   }
 
   public brewTimeTicked(_event): void {
@@ -1121,6 +1122,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.coffee_blooming_time = 0;
       this.data.coffee_blooming_time_milliseconds = 0;
     }
+    this.brewBrewingGraphEl?.updateEventMarkers();
   }
 
   public forceSetPreparation(_preparation: Preparation) {

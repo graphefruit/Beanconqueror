@@ -90,6 +90,9 @@ export interface ISettings {
   brew_save_automatic_active: boolean;
   brew_save_automatic_active_delay: number;
 
+  brew_event_markers_enabled: boolean;
+  brew_event_markers_mode: string;
+
   show_roasting_section: boolean;
   show_water_section: boolean;
   show_cupping_section: boolean;
