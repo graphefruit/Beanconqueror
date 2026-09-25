@@ -423,6 +423,10 @@ export const beanconquerorIcons = [
     path: 'beanconqueror-preparation-xenia.svg',
   },
   {
+    name: 'beanconqueror-preparation-xbloom',
+    path: 'beanconqueror-preparation-xbloom.svg',
+  },
+  {
     name: 'beanconqueror-preparation-move2',
     path: 'beanconqueror-preparation-move2.svg',
   },

@@ -1,0 +1,76 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    The xBloom Studio. Drawn on a 520x800 canvas and fitted to Beanconqueror's
+    200x200 icon square rather than redrawn on it: 800 units of height scale to
+    200 at a quarter, which leaves the 130-unit width centred by 35 a side.
+  -->
+  <g transform="translate(35 0) scale(0.25)">
+    <defs>
+      <!-- Gradient for the metal support arm -->
+      <linearGradient id="xbloom-metal-arm" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#EAEAEA"/>
+        <stop offset="40%" stop-color="#CCCCCC"/>
+        <stop offset="100%" stop-color="#A0A0A0"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Rear body, behind the carafe -->
+    <rect x="260" y="370" width="140" height="302" fill="#E6E6E6"/>
+
+    <!-- Base and feet -->
+    <rect x="150" y="715" width="20" height="10" fill="#666666" rx="3"/>
+    <rect x="350" y="715" width="20" height="10" fill="#666666" rx="3"/>
+    <rect x="110" y="700" width="300" height="15" fill="#EEEEEE" rx="4"/>
+    <rect x="125" y="692" width="270" height="8" fill="#D3D3D3"/>
+    <rect x="110" y="672" width="300" height="20" fill="#F7F7F7" rx="4"/>
+
+    <!-- Left column: the water tank -->
+    <rect x="120" y="100" width="140" height="572" fill="#F4F4F4" stroke="#E6E6E6" stroke-width="2"/>
+    <line x1="120" y1="630" x2="260" y2="630" stroke="#E0E0E0" stroke-width="2"/>
+
+    <!-- Upper right block: the brew head -->
+    <rect x="262" y="100" width="138" height="230" fill="#F8F8F8"/>
+  
+    <!-- Control panel -->
+    <rect x="262" y="330" width="138" height="40" fill="#EAEAEA"/>
+    <circle cx="285" cy="350" r="8" fill="#D8D8D8" stroke="#A8A8A8" stroke-width="1.5"/>
+    <circle cx="331" cy="350" r="8" fill="#D8D8D8" stroke="#A8A8A8" stroke-width="1.5"/>
+    <circle cx="377" cy="350" r="8" fill="#D8D8D8" stroke="#A8A8A8" stroke-width="1.5"/>
+
+    <!-- Spout, below the panel -->
+    <rect x="300" y="370" width="62" height="8" fill="#C4C4C4" rx="2"/>
+
+    <!-- Filter holder -->
+    <polygon points="286,385 376,385 374,395 288,395" fill="#6B5C51"/>
+    <polygon points="288,395 374,395 369,425 293,425" fill="#C5A47E"/>
+    <polygon points="293,425 369,425 367,435 295,435" fill="#6B5C51"/>
+    <polygon points="295,435 367,435 362,455 300,455" fill="#C5A47E"/>
+    <polygon points="300,455 362,455 361,460 301,460" fill="#6B5C51"/>
+
+    <!-- Horizontal support arm, in front of the filter holder -->
+    <rect x="155" y="425" width="220" height="18" fill="url(#xbloom-metal-arm)" stroke="#A5A5A5" stroke-width="1" rx="9"/>
+
+    <!-- Carafe: the coffee -->
+    <path d="M 280 585
+             L 382 585
+             C 382 630, 403 655, 392 667
+             C 387 670, 275 670, 270 667
+             C 259 655, 280 630, 280 585 Z"
+          fill="#301A14"/>
+
+    <!-- Carafe: outline -->
+    <path d="M 289 540
+             L 281 580
+             C 281 630, 256 660, 266 670
+             C 271 672, 391 672, 396 670
+             C 406 660, 381 630, 381 580
+             L 373 540"
+          fill="rgba(255,255,255,0.15)" stroke="#D4D4D4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        
+    <!-- Carafe: rim -->
+    <ellipse cx="331" cy="540" rx="42" ry="4" fill="none" stroke="#D4D4D4" stroke-width="4"/>
+  
+    <!-- Carafe: highlight -->
+    <path d="M 276 595 C 276 625, 264 650, 271 665" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+  </g>
+</svg>
