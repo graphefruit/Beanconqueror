@@ -1,4 +1,14 @@
 :host {
+  // A note keeps its own line breaks, but a line longer than the card still
+  // has to wrap: the browser default of `pre` would run it off the right edge
+  // with no way to scroll to the rest. `break-word` rather than `anywhere`,
+  // because `anywhere` also shrinks the element's min-content width and can
+  // pull the surrounding card layout in with it.
+  pre {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+
   // Fix repeat icon sizing in header
   ::ng-deep app-header-button ion-icon[name='beanconqueror-repeat'] {
     width: 32px;
