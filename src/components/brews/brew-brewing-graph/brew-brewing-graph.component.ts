@@ -92,7 +92,10 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
+import {
+  expandLiveAxisRangeForSample,
+  GraphHelperService,
+} from '../../../services/graphHelper/graph-helper.service';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -964,6 +967,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.isDetail,
       chartWidth,
       chartHeight,
+      false,
+      this.traceReferences,
     );
 
     return layout;
@@ -1548,17 +1553,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                       newLayoutIsNeeded = true;
                     }
 
+                    const multiplier =
+                      prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO
+                        ? 1.25
+                        : 1.5;
+                    const expandedRange = expandLiveAxisRangeForSample(
+                      this.lastChartLayout[yAxisKey].range,
+                      lastData,
+                      multiplier,
+                      toleranceMinus,
+                    );
                     if (
-                      lastData >=
-                      this.lastChartLayout[yAxisKey].range[1] - toleranceMinus
+                      expandedRange !== this.lastChartLayout[yAxisKey].range
                     ) {
-                      if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
-                        this.lastChartLayout[yAxisKey].range[1] =
-                          lastData * 1.25;
-                      } else {
-                        this.lastChartLayout[yAxisKey].range[1] =
-                          lastData * 1.5;
-                      }
+                      this.lastChartLayout[yAxisKey].range = expandedRange;
                       newLayoutIsNeeded = true;
                     }
                   }

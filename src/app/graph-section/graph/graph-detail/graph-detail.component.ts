@@ -266,6 +266,8 @@ export class GraphDetailComponent implements OnInit {
       true,
       chartWidth,
       chartHeight,
+      false,
+      this.traceReferences,
     );
     this.lastChartLayout = layout;
     return layout;

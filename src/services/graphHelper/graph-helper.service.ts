@@ -14,6 +14,49 @@ import { CoffeeBluetoothDevicesService } from '../coffeeBluetoothDevices/coffee-
 import { ThemeService } from '../theme/theme.service';
 import { UISettingsStorage } from '../uiSettingsStorage';
 
+export function expandLiveAxisRangeForSample(
+  range: [number, number],
+  sample: number,
+  multiplier: number,
+  tolerance: number,
+): [number, number] {
+  if (!Number.isFinite(sample)) {
+    return range;
+  }
+
+  const [lowerBound, upperBound] = range;
+  const headroom = Math.abs(sample) * (multiplier - 1);
+
+  if (upperBound < 0) {
+    let nextLowerBound = lowerBound;
+    let nextUpperBound = upperBound;
+
+    if (sample <= lowerBound + tolerance) {
+      nextLowerBound = sample - headroom;
+    }
+    if (sample >= upperBound - tolerance) {
+      // A negative range grows towards zero, but a sample that has climbed
+      // back above zero needs a bound above it or the trace is clipped again.
+      nextUpperBound =
+        sample >= 0 ? sample + headroom : Math.min(0, sample + headroom);
+    }
+
+    if (nextLowerBound === lowerBound && nextUpperBound === upperBound) {
+      return range;
+    }
+
+    return [nextLowerBound, nextUpperBound];
+  }
+
+  if (sample >= upperBound - tolerance) {
+    // The bound has to end up above the sample it is following, which a bare
+    // multiplication does not guarantee for a sample near zero.
+    return [lowerBound, Math.max(upperBound, sample + headroom)];
+  }
+
+  return range;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -447,6 +490,102 @@ export class GraphHelperService {
     }
   }
 
+  /**
+   * The upper bound for an axis that counts up from zero, given the data it
+   * has to hold.
+   *
+   * A brew that dispenses more water than the default upper bound is not a
+   * broken brew, it is a bigger one. Clipping it hides the part of the trace
+   * the drinker most wants to see, the end, while the axis goes on claiming a
+   * scale it is no longer keeping. The default stays as a floor so that a
+   * short or empty trace does not get an absurdly tight axis.
+   *
+   * Data that already fits returns the fallback untouched rather than the
+   * fallback compared against a padded value. Adding the headroom first would
+   * push a brew peaking anywhere above 95.24 past 100 and redraw it very
+   * slightly lower than it has always drawn, which is a visible change to an
+   * ordinary single-cup brew for no gain. The headroom exists to keep a trace
+   * off the ceiling once it has outgrown the axis, not before.
+   *
+   * Detail and brewing charts can draw a reference series on the same water
+   * axis as the active brew. The axis has to fit both traces, because clipping
+   * the reference would make a larger saved brew look smaller than the live one
+   * it is being compared against.
+   */
+  private fittedUpperBound(
+    values: number[] | undefined,
+    fallback: number,
+  ): number {
+    const finite = (values ?? []).filter((value) => Number.isFinite(value));
+    if (finite.length === 0) {
+      return fallback;
+    }
+    const highest = Math.max(...finite);
+    if (highest <= fallback) {
+      return fallback;
+    }
+    return Math.ceil(highest * 1.05);
+  }
+
+  /**
+   * The bounds for a custom axis, which holds a series this app did not
+   * define.
+   *
+   * Zero is meaningful for weight and for water, so those axes start there. A
+   * sender's own series need not: a temperature that lives between 88 and 93
+   * degrees, drawn on an axis from zero, is a straight line, and the steps
+   * between stages, the reason the sender attached it at all, disappear. So a
+   * custom axis is fitted to both ends of its own data with a little room
+   * either side once it outgrows the fixed range. Data that already fits keeps
+   * the fixed range, so comparable brews do not redraw on unrelated scales.
+   */
+  private fittedCustomRange(
+    values: number[] | undefined,
+    fallback: [number, number],
+  ): [number, number] {
+    const finite = (values ?? []).filter((value) => Number.isFinite(value));
+    if (finite.length === 0) {
+      return fallback;
+    }
+    const lowest = Math.min(...finite);
+    const highest = Math.max(...finite);
+    if (lowest >= fallback[0] && highest <= fallback[1]) {
+      return fallback;
+    }
+    if (lowest === highest) {
+      // A flat series should read as visibly flat rather than leave Plotly a
+      // zero-height axis to invent a range for.
+      return [lowest - 1, highest + 1];
+    }
+    const padding = (highest - lowest) * 0.1;
+    return [lowest - padding, highest + padding];
+  }
+
+  private visibleRange(range: [number, number]): [number, number] {
+    if (range[0] < range[1]) {
+      return range;
+    }
+    if (range[0] === range[1]) {
+      return [range[0] - 1, range[1] + 1];
+    }
+    return [range[1], range[0]];
+  }
+
+  private liveCustomRange(
+    values: number[],
+    fittedRange: [number, number],
+  ): [number, number] {
+    const finite = values.filter((value) => Number.isFinite(value));
+    if (finite.length > 0 && finite.every((value) => value < 0)) {
+      return fittedRange;
+    }
+    return [0, fittedRange[1]];
+  }
+
+  private combinedTraceValues(...traces: any[]): number[] {
+    return traces.flatMap((trace) => (Array.isArray(trace?.y) ? trace.y : []));
+  }
+
   public getChartLayout(
     _traces: any,
     _preparationStyle: PREPARATION_STYLE_TYPE,
@@ -456,6 +595,7 @@ export class GraphHelperService {
     _chartWidth: number = undefined,
     _chartHeight: number = undefined,
     _disableClick: boolean = false,
+    _traceReferences: any = undefined,
   ) {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     const isDarkMode = this.themeService.isDarkMode();
@@ -481,6 +621,10 @@ export class GraphHelperService {
     } catch (ex) {}
 
     const tickFormat = '%M:%S';
+    const waterDispensedValues = this.combinedTraceValues(
+      _traces.waterDispensedTrace,
+      _traceReferences?.waterDispensedTrace,
+    );
 
     let layout: any;
     if (_isDetail === false) {
@@ -674,7 +818,7 @@ export class GraphHelperService {
           position: 1,
           fixedrange: true,
           visible: false,
-          range: [0, 100],
+          range: [0, this.fittedUpperBound(waterDispensedValues, 100)],
         };
       }
     } else {
@@ -771,7 +915,7 @@ export class GraphHelperService {
         showgrid: false,
         position: 1,
         fixedrange: false,
-        range: [0, 100],
+        range: [0, this.fittedUpperBound(waterDispensedValues, 100)],
         visible: true,
       };
 
@@ -841,6 +985,21 @@ export class GraphHelperService {
         any,
       ][]) {
         let yAxisKey = trace.yaxis.replace('y', 'yaxis');
+        const referenceTrace = _traceReferences?.customTraces?.[key];
+        if (referenceTrace) {
+          // The reference trace object belongs to the chart component and can
+          // be reused across relayouts, but assigning the active axis for the
+          // same metric key is idempotent and keeps both plotted series on the
+          // axis whose range is fitted below.
+          referenceTrace.yaxis = trace.yaxis;
+        }
+        const fittedValues = this.combinedTraceValues(trace, referenceTrace);
+        const fittedRange = this.fittedCustomRange(fittedValues, [0, 20]);
+        const range = this.visibleRange(
+          _isDetail
+            ? fittedRange
+            : this.liveCustomRange(fittedValues, fittedRange),
+        );
         layout[yAxisKey] = {
           title: '',
           titlefont: { color: trace.line.color },
@@ -852,7 +1011,7 @@ export class GraphHelperService {
           position: axisPositionOffset,
           fixedrange: !_isDetail,
           visible: _isDetail ? true : trace.visible,
-          range: [0, 20],
+          range,
         };
         if (!_isDetail) {
           layout[yAxisKey].visible =
