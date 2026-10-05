@@ -67,6 +67,7 @@ const ISO_DATE =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 const ISO_DATE_PARTS =
   /^(\d{4})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
+const ISO_CALENDAR_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 /** Concatenate the numbered params back into one base64url string. */
 export function collectHandoffPayload(url: string): string {
@@ -507,8 +508,16 @@ function validateBean(value: unknown): IHandoffBean | undefined {
   }
 
   const out: IHandoffBean = { name };
-  const optionalFields: (keyof Omit<IHandoffBean, 'name'>)[] = [
+  const optionalFields: (keyof Omit<
+    IHandoffBean,
+    'name' | 'roastingDate' | 'decaffeinated'
+  >)[] = [
+    'roaster',
     'origin',
+    'region',
+    'farm',
+    'farmer',
+    'elevation',
     'process',
     'variety',
     'aromatics',
@@ -530,7 +539,41 @@ function validateBean(value: unknown): IHandoffBean | undefined {
       out[field] = fieldValue;
     }
   });
+
+  // Unlike brew.date, a bean's own values are dropped rather than thrown on.
+  // The brew is the payload and must be right; the bean is the label on it,
+  // and losing the whole import over an unparseable roast date would cost the
+  // user the one thing they asked for.
+  const roastingDate = optionalIsoDate(bean.roastingDate);
+  if (roastingDate !== undefined) {
+    out.roastingDate = roastingDate;
+  }
+  if (typeof bean.decaffeinated === 'boolean') {
+    out.decaffeinated = bean.decaffeinated;
+  }
   return out;
+}
+
+function optionalIsoDate(value: unknown): string | undefined {
+  const date = optionalTrimmedString(value, 'date', MAX_LABEL_LENGTH);
+  if (date === undefined) {
+    return undefined;
+  }
+  // A bare calendar day is accepted as well as a full timestamp. A roaster
+  // roasts on a day rather than at an instant, so demanding a time and an
+  // offset would make a sender invent both, and the wrong offset moves the
+  // roast to the day before.
+  const match =
+    ISO_CALENDAR_DATE.exec(date) ??
+    (ISO_DATE.test(date) ? ISO_DATE_PARTS.exec(date) : null);
+  if (
+    match === null ||
+    !isValidCalendarDate(match[1], match[2], match[3]) ||
+    !Number.isFinite(Date.parse(date))
+  ) {
+    return undefined;
+  }
+  return date;
 }
 
 function validateImported(value: unknown): IHandoffImport {

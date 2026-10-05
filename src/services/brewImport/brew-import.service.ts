@@ -393,21 +393,31 @@ export class BrewImportService {
 
   private hasBeanMetadata(bean: IHandoffBean): boolean {
     return [
+      bean.roaster,
+      bean.roastingDate,
       bean.origin,
+      bean.region,
+      bean.farm,
+      bean.farmer,
+      bean.elevation,
       bean.process,
       bean.variety,
       bean.aromatics,
       bean.note,
       bean.beanMix,
+      bean.decaffeinated,
     ].some((field) => field !== undefined);
   }
 
   private buildBean(handoffBean: IHandoffBean): Bean {
     const bean = new Bean();
     bean.name = handoffBean.name;
+    bean.roaster = handoffBean.roaster ?? '';
+    bean.roastingDate = handoffBean.roastingDate ?? '';
     bean.note = handoffBean.note ?? '';
     bean.aromatics = handoffBean.aromatics ?? '';
     bean.beanMix = this.beanMixFromHandoff(handoffBean.beanMix);
+    bean.decaffeinated = handoffBean.decaffeinated ?? false;
 
     // Beanconqueror attachments are local file paths; remote pod images would
     // need a downloader, permissions and lifecycle policy outside this import.
@@ -422,16 +432,24 @@ export class BrewImportService {
   private beanInformationFromHandoff(
     bean: IHandoffBean,
   ): IBeanInformation | undefined {
-    if (!bean.origin && !bean.process && !bean.variety) {
+    if (
+      !bean.origin &&
+      !bean.region &&
+      !bean.farm &&
+      !bean.farmer &&
+      !bean.elevation &&
+      !bean.process &&
+      !bean.variety
+    ) {
       return undefined;
     }
 
     return {
       country: bean.origin ?? '',
-      region: '',
-      farm: '',
-      farmer: '',
-      elevation: '',
+      region: bean.region ?? '',
+      farm: bean.farm ?? '',
+      farmer: bean.farmer ?? '',
+      elevation: bean.elevation ?? '',
       harvest_time: '',
       variety: bean.variety ?? '',
       processing: bean.process ?? '',

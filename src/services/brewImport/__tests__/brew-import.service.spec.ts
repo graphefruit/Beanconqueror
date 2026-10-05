@@ -588,12 +588,19 @@ describe('BrewImportService', () => {
     const handoff = envelope({
       bean: {
         name: 'Pod coffee',
+        roaster: 'Drop Coffee',
+        roastingDate: '2026-09-01',
         origin: 'Ethiopia',
+        region: 'Guji',
+        farm: 'Shakiso',
+        farmer: 'Alemu',
+        elevation: '1950',
         process: 'Washed',
         variety: 'Heirloom',
         aromatics: 'Jasmine',
         note: 'Bright and floral',
         beanMix: 'Single Origin',
+        decaffeinated: true,
         imageUrl: 'https://example.com/pod.jpg',
       },
     });
@@ -611,19 +618,56 @@ describe('BrewImportService', () => {
       ],
     ]);
     expect(created.name).toBe('Pod coffee');
+    expect(created.roaster).toBe('Drop Coffee');
+    expect(created.roastingDate).toBe('2026-09-01');
     expect(created.note).toBe('Bright and floral');
     expect(created.aromatics).toBe('Jasmine');
     expect(String(created.beanMix)).toBe('SINGLE_ORIGIN');
+    expect(created.decaffeinated).toBe(true);
     expect(created.attachments).toEqual([]);
     expect(created.bean_information).toEqual([
       jasmine.objectContaining({
         country: 'Ethiopia',
+        region: 'Guji',
+        farm: 'Shakiso',
+        farmer: 'Alemu',
+        elevation: '1950',
         processing: 'Washed',
         variety: 'Heirloom',
       }),
     ]);
     expect(result.brew.bean).toBe('bean-created');
     expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('creates a bean from a pod that names only its roaster', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    const handoff = envelope({
+      bean: { name: 'Pod coffee', roaster: 'Drop Coffee' },
+    });
+
+    await service.ensureBeanFromHandoff(handoff);
+    const created = beans.find((bean) => bean.config.uuid === 'bean-created');
+
+    expect(created.roaster).toBe('Drop Coffee');
+    // A roaster is detail, so it alone clears the bar a bare name does not.
+    expect(created.bean_information).toEqual([]);
+  });
+
+  it('leaves a created bean caffeinated when the pod does not say', async () => {
+    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    const handoff = envelope({
+      bean: { name: 'Pod coffee', origin: 'Ethiopia' },
+    });
+
+    await service.ensureBeanFromHandoff(handoff);
+    const created = beans.find((bean) => bean.config.uuid === 'bean-created');
+
+    expect(created.decaffeinated).toBe(false);
+    expect(created.roaster).toBe('');
+    expect(created.roastingDate).toBe('');
   });
 
   it('removes a handoff bean whose save did not persist before later name matching can see it', async () => {

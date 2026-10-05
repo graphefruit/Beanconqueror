@@ -66,15 +66,15 @@ validator constructs a new object containing only the recognised fields.
 
 ### Top level
 
-| Field      | Type        | Required | Unit | Decoder rule                                                                                                                              |
-| ---------- | ----------- | -------- | ---- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `v`        | number      | yes      |      | Must be exactly `1`.                                                                                                                      |
-| `app`      | object      | yes      |      | Must validate as the app block.                                                                                                           |
-| `brew`     | object      | yes      |      | Must validate as the brew block.                                                                                                          |
-| `bean`     | object      | no       |      | Must be an object when present. A non empty string `name` enables the named bean fields below.                                             |
-| `flow`     | object      | no       |      | Must validate as the flow block.                                                                                                          |
-| `metrics`  | array       | no       |      | At most 100 metric blocks.                                                                                                                |
-| `imported` | object      | yes      |      | Must validate as the provenance block.                                                                                                    |
+| Field      | Type   | Required | Unit | Decoder rule                                                                                   |
+| ---------- | ------ | -------- | ---- | ---------------------------------------------------------------------------------------------- |
+| `v`        | number | yes      |      | Must be exactly `1`.                                                                           |
+| `app`      | object | yes      |      | Must validate as the app block.                                                                |
+| `brew`     | object | yes      |      | Must validate as the brew block.                                                               |
+| `bean`     | object | no       |      | Must be an object when present. A non empty string `name` enables the named bean fields below. |
+| `flow`     | object | no       |      | Must validate as the flow block.                                                               |
+| `metrics`  | array  | no       |      | At most 100 metric blocks.                                                                     |
+| `imported` | object | yes      |      | Must validate as the provenance block.                                                         |
 
 ### `app`
 
@@ -88,36 +88,43 @@ provenance.
 
 ### `bean`
 
-| Field       | Type   | Required | Unit | Decoder rule                                                                                   |
-| ----------- | ------ | -------- | ---- | ---------------------------------------------------------------------------------------------- |
-| `name`      | string | no       |      | Trimmed. Missing, empty, or non string values make the bean block absent. At most 512 characters. |
-| `origin`    | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
-| `process`   | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
-| `variety`   | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
-| `aromatics` | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 10,000 characters. |
-| `note`      | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 10,000 characters. |
-| `beanMix`   | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. |
-| `imageUrl`  | string | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. It is not parsed as a URL. |
+| Field           | Type    | Required | Unit | Decoder rule                                                                                                                                                          |
+| --------------- | ------- | -------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`          | string  | no       |      | Trimmed. Missing, empty, or non string values make the bean block absent. At most 512 characters.                                                                     |
+| `roaster`       | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `roastingDate`  | string  | no       |      | A bare `YYYY-MM-DD` day or a full ISO 8601 timestamp, checked against the calendar. An unusable date drops the field; unlike `brew.date` it does not fail the import. |
+| `origin`        | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `region`        | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `farm`          | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `farmer`        | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `elevation`     | string  | no       |      | Metres, as text, so a sender can give a range. Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                     |
+| `process`       | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `variety`       | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `aromatics`     | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 10,000 characters.                                                                 |
+| `note`          | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 10,000 characters.                                                                 |
+| `beanMix`       | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters.                                                                    |
+| `decaffeinated` | boolean | no       |      | Non boolean values are ignored.                                                                                                                                       |
+| `imageUrl`      | string  | no       |      | Non string and empty values are ignored. Non empty strings are trimmed and at most 512 characters. It is not parsed as a URL.                                         |
 
 ### `brew`
 
-| Field               | Type     | Required | Unit               | Decoder rule                                                                        |
-| ------------------- | -------- | -------- | ------------------ | ----------------------------------------------------------------------------------- |
+| Field               | Type     | Required | Unit               | Decoder rule                                                                                      |
+| ------------------- | -------- | -------- | ------------------ | ------------------------------------------------------------------------------------------------- |
 | `date`              | string   | yes      | ISO 8601 timestamp | Must match the decoder's ISO 8601 pattern, name a real calendar date, and parse to a finite date. |
-| `doseIn`            | quantity | no       | `g`                | Value must be finite and between 0 and 200. Unit must be `g`.                       |
-| `waterIn`           | quantity | yes      | `ml`               | Value must be finite and between 0 and 100,000. Unit must be `ml`.                  |
-| `beverageOut`       | quantity | yes      | `g`                | Value must be finite and between 0 and 100,000. Unit must be `g`.                   |
-| `brewTime`          | number   | yes      | seconds            | Finite, 0 to 86,400. Fractions are allowed.                                         |
-| `temperature`       | number   | no       | degrees Celsius    | Finite, -50 to 250. Schema v1 is a bare Celsius number.                             |
-| `ratio`             | number   | no       |                    | Finite and non negative.                                                            |
-| `grindSize`         | string   | no       | sender defined     | Empty string is treated as absent. Non empty values are at most 512 characters.     |
-| `grinderRpm`        | number   | no       | rpm                | Finite and non negative.                                                            |
-| `grinderName`       | string   | no       |                    | Empty string is treated as absent. Non empty values are at most 512 characters.     |
-| `preparationMethod` | string   | yes      |                    | Non empty, at most 512 characters.                                                  |
-| `bloomTime`         | number   | no       | seconds            | Finite, 0 to 86,400. Fractions are allowed.                                         |
-| `firstDripTime`     | number   | no       | seconds            | Finite, 0 to 86,400. Fractions are allowed.                                         |
-| `rating`            | number   | no       | stars              | Whole number, 0 to 10, on the sending app's own scale. Omit it for an unrated brew. |
-| `note`              | string   | no       |                    | Defaults to `""`. At most 10,000 characters.                                        |
+| `doseIn`            | quantity | no       | `g`                | Value must be finite and between 0 and 200. Unit must be `g`.                                     |
+| `waterIn`           | quantity | yes      | `ml`               | Value must be finite and between 0 and 100,000. Unit must be `ml`.                                |
+| `beverageOut`       | quantity | yes      | `g`                | Value must be finite and between 0 and 100,000. Unit must be `g`.                                 |
+| `brewTime`          | number   | yes      | seconds            | Finite, 0 to 86,400. Fractions are allowed.                                                       |
+| `temperature`       | number   | no       | degrees Celsius    | Finite, -50 to 250. Schema v1 is a bare Celsius number.                                           |
+| `ratio`             | number   | no       |                    | Finite and non negative.                                                                          |
+| `grindSize`         | string   | no       | sender defined     | Empty string is treated as absent. Non empty values are at most 512 characters.                   |
+| `grinderRpm`        | number   | no       | rpm                | Finite and non negative.                                                                          |
+| `grinderName`       | string   | no       |                    | Empty string is treated as absent. Non empty values are at most 512 characters.                   |
+| `preparationMethod` | string   | yes      |                    | Non empty, at most 512 characters.                                                                |
+| `bloomTime`         | number   | no       | seconds            | Finite, 0 to 86,400. Fractions are allowed.                                                       |
+| `firstDripTime`     | number   | no       | seconds            | Finite, 0 to 86,400. Fractions are allowed.                                                       |
+| `rating`            | number   | no       | stars              | Whole number, 0 to 10, on the sending app's own scale. Omit it for an unrated brew.               |
+| `note`              | string   | no       |                    | Defaults to `""`. At most 10,000 characters.                                                      |
 
 Quantity objects have this shape:
 
@@ -127,13 +134,13 @@ Quantity objects have this shape:
 
 ### `flow`
 
-| Field            | Type     | Required | Unit                                | Decoder rule                                                                                                                |
-| ---------------- | -------- | -------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `fidelity`       | string   | yes      |                                     | Must be `full` or `downsampled`.                                                                                            |
-| `t`              | number[] | yes      | milliseconds                        | Delta coded time since the previous sample. Each entry must be finite and between 0 and 86,400,000. At most 10,000 entries. |
-| `waterDispensed` | number[] | yes      | decigrams since the previous sample | Must have the same length as `t`. Each entry must be finite. The importer divides by 10 and accumulates grams. The running total must stay within 100,000 g.              |
-| `weight`         | number[] | yes      | decigrams since the previous sample | Must have the same length as `t`. Each entry must be finite. The importer divides by 10 and accumulates grams. The running total must stay within 100,000 g.              |
-| `temperature`    | number[] | no       | degrees Celsius                     | Must have the same length as `t` when present. Each entry must be finite. Values are absolute per sample.                   |
+| Field            | Type     | Required | Unit                                | Decoder rule                                                                                                                                                 |
+| ---------------- | -------- | -------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `fidelity`       | string   | yes      |                                     | Must be `full` or `downsampled`.                                                                                                                             |
+| `t`              | number[] | yes      | milliseconds                        | Delta coded time since the previous sample. Each entry must be finite and between 0 and 86,400,000. At most 10,000 entries.                                  |
+| `waterDispensed` | number[] | yes      | decigrams since the previous sample | Must have the same length as `t`. Each entry must be finite. The importer divides by 10 and accumulates grams. The running total must stay within 100,000 g. |
+| `weight`         | number[] | yes      | decigrams since the previous sample | Must have the same length as `t`. Each entry must be finite. The importer divides by 10 and accumulates grams. The running total must stay within 100,000 g. |
+| `temperature`    | number[] | no       | degrees Celsius                     | Must have the same length as `t` when present. Each entry must be finite. Values are absolute per sample.                                                    |
 
 `flow.t` is delta coded on the wire. The import service accumulates it into an
 absolute millisecond timestamp, then formats Beanconqueror flow timestamps as
@@ -152,14 +159,14 @@ absolute millisecond timestamp, then formats Beanconqueror flow timestamps as
 
 ### `imported`
 
-| Field        | Type        | Required | Unit | Decoder rule                                                                                                                              |
-| ------------ | ----------- | -------- | ---- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `source`     | string      | yes      |      | Non empty, at most 512 characters. Stored verbatim in `brew.customInformation.imported`; not used for lookup.                              |
-| `sourceName` | string      | yes      |      | Non empty, at most 512 characters. Sender supplied display name.                                                                          |
-| `sourceUrl`  | string      | no       | URL  | 1 to 2,048 characters, must parse as a URL, must use `https:`, stored as the normalised `URL.href`.                                       |
-| `device`     | string      | no       |      | Empty string is treated as absent. Non empty values are at most 512 characters.                                                           |
-| `schema`     | integer     | yes      |      | Integer from 1 to 1,000. This is the sender schema, not the envelope version.                                                             |
-| `params`     | object      | no       |      | Must be an object when present. Sanitised as opaque JSON inside that object.                                                              |
+| Field        | Type    | Required | Unit | Decoder rule                                                                                                  |
+| ------------ | ------- | -------- | ---- | ------------------------------------------------------------------------------------------------------------- |
+| `source`     | string  | yes      |      | Non empty, at most 512 characters. Stored verbatim in `brew.customInformation.imported`; not used for lookup. |
+| `sourceName` | string  | yes      |      | Non empty, at most 512 characters. Sender supplied display name.                                              |
+| `sourceUrl`  | string  | no       | URL  | 1 to 2,048 characters, must parse as a URL, must use `https:`, stored as the normalised `URL.href`.           |
+| `device`     | string  | no       |      | Empty string is treated as absent. Non empty values are at most 512 characters.                               |
+| `schema`     | integer | yes      |      | Integer from 1 to 1,000. This is the sender schema, not the envelope version.                                 |
+| `params`     | object  | no       |      | Must be an object when present. Sanitised as opaque JSON inside that object.                                  |
 
 The importer copies `imported.params` and any nested opaque values accepted
 there through a sanitiser. Objects are rebuilt with a null prototype, keys
@@ -171,31 +178,38 @@ capped at 10,000 characters, and object keys are capped at 512 characters.
 
 `BrewImportService.build()` creates a new `Brew` and a new `BrewFlow`.
 
-| Envelope field           | Beanconqueror destination                                                                                 |
-| ------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `brew.doseIn.value`      | `brew.grind_weight`. Missing dose becomes `0`.                                                            |
-| `brew.waterIn.value`     | `brew.brew_quantity` with `brew_quantity_type = "ML"`.                                                    |
-| `brew.beverageOut.value` | `brew.brew_beverage_quantity` with `brew_beverage_quantity_type = "GR"`.                                  |
-| `brew.brewTime`          | Split into `brew_time` seconds and `brew_time_milliseconds`.                                              |
-| `brew.temperature`       | `brew.brew_temperature`. Missing temperature becomes `0`.                                                 |
-| `brew.grindSize`         | `brew.grind_size`. Missing value becomes `""`.                                                            |
-| `brew.grinderRpm`        | `brew.mill_speed`. Missing value becomes `0`.                                                             |
-| `brew.firstDripTime`     | Split into `coffee_first_drip_time` and `coffee_first_drip_time_milliseconds`. Missing value becomes `0`. |
-| `brew.bloomTime`         | Split into `coffee_blooming_time` and `coffee_blooming_time_milliseconds`. Missing value becomes `0`.     |
+| Envelope field           | Beanconqueror destination                                                                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `brew.doseIn.value`      | `brew.grind_weight`. Missing dose becomes `0`.                                                                                               |
+| `brew.waterIn.value`     | `brew.brew_quantity` with `brew_quantity_type = "ML"`.                                                                                       |
+| `brew.beverageOut.value` | `brew.brew_beverage_quantity` with `brew_beverage_quantity_type = "GR"`.                                                                     |
+| `brew.brewTime`          | Split into `brew_time` seconds and `brew_time_milliseconds`.                                                                                 |
+| `brew.temperature`       | `brew.brew_temperature`. Missing temperature becomes `0`.                                                                                    |
+| `brew.grindSize`         | `brew.grind_size`. Missing value becomes `""`.                                                                                               |
+| `brew.grinderRpm`        | `brew.mill_speed`. Missing value becomes `0`.                                                                                                |
+| `brew.firstDripTime`     | Split into `coffee_first_drip_time` and `coffee_first_drip_time_milliseconds`. Missing value becomes `0`.                                    |
+| `brew.bloomTime`         | Split into `coffee_blooming_time` and `coffee_blooming_time_milliseconds`. Missing value becomes `0`.                                        |
 | `brew.date`              | Validated as a real ISO 8601 calendar date, parsed with `Date.parse`, divided by 1,000, floored, and stored in `brew.config.unix_timestamp`. |
-| `imported`               | Stored in `brew.customInformation.imported`.                                                              |
-| `brew.rating`            | Clamped to the user's configured rating scale, never rescaled. Missing value becomes `0`.                 |
-| `brew.note`              | Starts `brew.note`. Name matching notes are appended after blank lines.                                   |
-| `bean.name`              | Used as a lookup hint. When a bean is created, stored as `bean.name`.                                     |
-| `bean.note`              | Stored as `bean.note` on a created bean.                                                                 |
-| `bean.aromatics`         | Stored as `bean.aromatics` on a created bean.                                                            |
-| `bean.beanMix`           | Normalised and stored as `SINGLE_ORIGIN`, `BLEND`, or `UNKNOWN` on a created bean.                       |
-| `bean.origin`            | Stored as `country` in the first `bean_information` entry on a created bean.                             |
-| `bean.process`           | Stored as `processing` in the first `bean_information` entry on a created bean.                          |
-| `bean.variety`           | Stored as `variety` in the first `bean_information` entry on a created bean.                             |
-| `bean.imageUrl`          | Validated but not stored.                                                                                |
-| `brew.ratio`             | Validated but not stored by the importer. Beanconqueror derives displayed ratios from quantities.         |
-| `app`                    | Validated but not stored.                                                                                 |
+| `imported`               | Stored in `brew.customInformation.imported`.                                                                                                 |
+| `brew.rating`            | Clamped to the user's configured rating scale, never rescaled. Missing value becomes `0`.                                                    |
+| `brew.note`              | Starts `brew.note`. Name matching notes are appended after blank lines.                                                                      |
+| `bean.name`              | Used as a lookup hint. When a bean is created, stored as `bean.name`.                                                                        |
+| `bean.note`              | Stored as `bean.note` on a created bean.                                                                                                     |
+| `bean.aromatics`         | Stored as `bean.aromatics` on a created bean.                                                                                                |
+| `bean.beanMix`           | Normalised and stored as `SINGLE_ORIGIN`, `BLEND`, or `UNKNOWN` on a created bean.                                                           |
+| `bean.origin`            | Stored as `country` in the first `bean_information` entry on a created bean.                                                                 |
+| `bean.process`           | Stored as `processing` in the first `bean_information` entry on a created bean.                                                              |
+| `bean.variety`           | Stored as `variety` in the first `bean_information` entry on a created bean.                                                                 |
+| `bean.roaster`           | Stored as `bean.roaster` on a created bean.                                                                                                  |
+| `bean.roastingDate`      | Stored as `bean.roastingDate` on a created bean, so the bean ages from the day it was roasted.                                               |
+| `bean.region`            | Stored as `region` in the first `bean_information` entry on a created bean.                                                                  |
+| `bean.farm`              | Stored as `farm` in the first `bean_information` entry on a created bean.                                                                    |
+| `bean.farmer`            | Stored as `farmer` in the first `bean_information` entry on a created bean.                                                                  |
+| `bean.elevation`         | Stored as `elevation` in the first `bean_information` entry on a created bean.                                                               |
+| `bean.decaffeinated`     | Stored as `bean.decaffeinated` on a created bean. Non boolean values are ignored.                                                            |
+| `bean.imageUrl`          | Validated but not stored.                                                                                                                    |
+| `brew.ratio`             | Validated but not stored by the importer. Beanconqueror derives displayed ratios from quantities.                                            |
+| `app`                    | Validated but not stored.                                                                                                                    |
 
 Flow samples are reconstructed by accumulating `flow.t`,
 `flow.waterDispensed`, and `flow.weight`. Water and weight are divided by 10
@@ -222,8 +236,9 @@ Bean, grinder, and preparation hints are matched by name after Unicode NFC
 normalisation, trimming, and locale lowercasing.
 
 Before the readiness check, the importer may create a bean. The bean block must
-have a name and at least one of `origin`, `process`, `variety`, `aromatics`,
-`note`, or `beanMix`. `imageUrl` alone does not count. If a usable bean already
+have a name and at least one of `roaster`, `roastingDate`, `origin`, `region`,
+`farm`, `farmer`, `elevation`, `process`, `variety`, `aromatics`, `note`,
+`beanMix`, or `decaffeinated`. `imageUrl` alone does not count. If a usable bean already
 matches the name, or the name is ambiguous, no bean is created. If there is no
 match, Beanconqueror asks the user whether to create it. Grinder and
 preparation are never created from an incoming link.
@@ -451,64 +466,64 @@ All decoder failures throw an `Error`. The route catches the error, logs
 `Import brew from handoff link failed: <message>`, hides the loading spinner,
 and shows the generic `BREW_IMPORT_FAILED` alert.
 
-| Failure                                                    | Decoder message                                                              | Sender fix                                                                   |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| No query string                                            | `Missing brew handoff query`                                                 | Include `?len=...&shareBrew0=...`.                                           |
-| Missing or non decimal `len`                               | `Missing or malformed brew handoff len`                                      | Send decimal digits only.                                                    |
-| `len` is not a safe integer                                | `Brew handoff len is too large`                                              | Keep payload length within JavaScript safe integer range.                    |
-| No chunks                                                  | `Missing shareBrew chunks`                                                   | Send `shareBrew0`.                                                           |
-| More than 1,024 chunks                                     | `Too many shareBrew chunks: maximum is 1024`                                 | Stay within the sender URL budget.                                           |
-| Single chunk exceeds 400 characters                        | `shareBrew<n> must be at most 400 characters`                                | Split the payload into 400 character chunks.                                 |
-| Duplicate chunk index                                      | `Duplicate shareBrew chunk <n>`                                              | Send each chunk index only once.                                             |
-| Missing chunk index                                        | `Missing shareBrew chunk <n>`                                                | Send every chunk from `0` through the last index.                            |
-| Assembled payload shorter than `len`                       | `Truncated brew handoff payload: expected <x> characters, got <y>`           | Check OS URL truncation and chunk assembly.                                  |
-| Assembled payload longer or shorter in the other direction | `Brew handoff payload length mismatch: expected <x> characters, got <y>`     | Make `len` match the base64url payload exactly.                              |
-| Empty payload                                              | `Empty payload`                                                              | Send a non empty gzip payload.                                               |
-| Not unpadded base64url                                     | `Payload is not unpadded base64url`                                          | Use base64url without `=` padding.                                           |
-| `DecompressionStream` unavailable                          | No sender-visible error                                                      | The decoder falls back to zip.js inflation for iOS 16.0 to 16.3.             |
-| Bytes are not gzip                                         | `Payload is not gzip`                                                        | Compress with gzip, not zlib, raw deflate, or plain JSON.                    |
-| Inflated payload exceeds cap                               | `Inflated payload exceeds 524288 bytes`                                      | Reduce JSON size.                                                            |
-| Inflated bytes are not UTF 8                               | `Inflated payload is not UTF-8`                                              | Encode JSON as UTF 8.                                                        |
-| Inflated text is not JSON                                  | `Inflated payload is not JSON`                                               | Send a JSON object.                                                          |
-| Top level value is not an object                           | `Envelope must be an object`                                                 | Send an object envelope.                                                     |
-| Unsupported envelope version                               | `Unsupported envelope version <value>`                                       | Send `v: 1`.                                                                 |
-| `app` missing or not an object                             | `Envelope app must be an object`                                             | Send the app block.                                                          |
-| `app.name` missing, empty, wrong type, or too long         | `Envelope app.name must be ...`                                              | Send a non empty string of at most 512 characters.                           |
-| Optional string has wrong type or is too long              | `<path> must be ...`                                                         | Omit it, send `""`, or send a string of at most 512 characters.              |
-| `imported` missing or not an object                        | `Envelope imported must be an object`                                        | Send provenance.                                                             |
-| `imported.source` or `sourceName` invalid                  | `Envelope imported.source...` or `Envelope imported.sourceName...`           | Send non empty strings of at most 512 characters.                            |
-| `sourceUrl` not a URL                                      | `Envelope imported.sourceUrl must be a URL`                                  | Send a parseable URL or omit it.                                             |
-| `sourceUrl` not HTTPS                                      | `Envelope imported.sourceUrl must be https`                                  | Use `https:` or omit it.                                                     |
-| `imported.schema` not an integer from 1 to 1,000           | `Envelope imported.schema must be ...`                                       | Send an integer in range.                                                    |
-| Opaque object too deep                                     | `<path> exceeds maximum depth 8`                                             | Flatten `params`.                                                            |
-| Opaque array too long                                      | `<path> contains too many entries`                                           | Keep arrays to 1,000 entries.                                                |
-| Opaque object too wide                                     | `<path> contains too many keys`                                              | Keep objects to 1,000 keys.                                                  |
-| Opaque string too long                                     | `<path> must be between 0 and 10000 characters`                              | Shorten opaque strings.                                                      |
-| Opaque key invalid                                         | `<path> key must be ...`                                                     | Use non empty keys of at most 512 characters.                                |
-| `bean` present but not an object                           | `Envelope bean must be an object`                                            | Omit `bean` or send an object.                                               |
+| Failure                                                    | Decoder message                                                              | Sender fix                                                                    |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| No query string                                            | `Missing brew handoff query`                                                 | Include `?len=...&shareBrew0=...`.                                            |
+| Missing or non decimal `len`                               | `Missing or malformed brew handoff len`                                      | Send decimal digits only.                                                     |
+| `len` is not a safe integer                                | `Brew handoff len is too large`                                              | Keep payload length within JavaScript safe integer range.                     |
+| No chunks                                                  | `Missing shareBrew chunks`                                                   | Send `shareBrew0`.                                                            |
+| More than 1,024 chunks                                     | `Too many shareBrew chunks: maximum is 1024`                                 | Stay within the sender URL budget.                                            |
+| Single chunk exceeds 400 characters                        | `shareBrew<n> must be at most 400 characters`                                | Split the payload into 400 character chunks.                                  |
+| Duplicate chunk index                                      | `Duplicate shareBrew chunk <n>`                                              | Send each chunk index only once.                                              |
+| Missing chunk index                                        | `Missing shareBrew chunk <n>`                                                | Send every chunk from `0` through the last index.                             |
+| Assembled payload shorter than `len`                       | `Truncated brew handoff payload: expected <x> characters, got <y>`           | Check OS URL truncation and chunk assembly.                                   |
+| Assembled payload longer or shorter in the other direction | `Brew handoff payload length mismatch: expected <x> characters, got <y>`     | Make `len` match the base64url payload exactly.                               |
+| Empty payload                                              | `Empty payload`                                                              | Send a non empty gzip payload.                                                |
+| Not unpadded base64url                                     | `Payload is not unpadded base64url`                                          | Use base64url without `=` padding.                                            |
+| `DecompressionStream` unavailable                          | No sender-visible error                                                      | The decoder falls back to zip.js inflation for iOS 16.0 to 16.3.              |
+| Bytes are not gzip                                         | `Payload is not gzip`                                                        | Compress with gzip, not zlib, raw deflate, or plain JSON.                     |
+| Inflated payload exceeds cap                               | `Inflated payload exceeds 524288 bytes`                                      | Reduce JSON size.                                                             |
+| Inflated bytes are not UTF 8                               | `Inflated payload is not UTF-8`                                              | Encode JSON as UTF 8.                                                         |
+| Inflated text is not JSON                                  | `Inflated payload is not JSON`                                               | Send a JSON object.                                                           |
+| Top level value is not an object                           | `Envelope must be an object`                                                 | Send an object envelope.                                                      |
+| Unsupported envelope version                               | `Unsupported envelope version <value>`                                       | Send `v: 1`.                                                                  |
+| `app` missing or not an object                             | `Envelope app must be an object`                                             | Send the app block.                                                           |
+| `app.name` missing, empty, wrong type, or too long         | `Envelope app.name must be ...`                                              | Send a non empty string of at most 512 characters.                            |
+| Optional string has wrong type or is too long              | `<path> must be ...`                                                         | Omit it, send `""`, or send a string of at most 512 characters.               |
+| `imported` missing or not an object                        | `Envelope imported must be an object`                                        | Send provenance.                                                              |
+| `imported.source` or `sourceName` invalid                  | `Envelope imported.source...` or `Envelope imported.sourceName...`           | Send non empty strings of at most 512 characters.                             |
+| `sourceUrl` not a URL                                      | `Envelope imported.sourceUrl must be a URL`                                  | Send a parseable URL or omit it.                                              |
+| `sourceUrl` not HTTPS                                      | `Envelope imported.sourceUrl must be https`                                  | Use `https:` or omit it.                                                      |
+| `imported.schema` not an integer from 1 to 1,000           | `Envelope imported.schema must be ...`                                       | Send an integer in range.                                                     |
+| Opaque object too deep                                     | `<path> exceeds maximum depth 8`                                             | Flatten `params`.                                                             |
+| Opaque array too long                                      | `<path> contains too many entries`                                           | Keep arrays to 1,000 entries.                                                 |
+| Opaque object too wide                                     | `<path> contains too many keys`                                              | Keep objects to 1,000 keys.                                                   |
+| Opaque string too long                                     | `<path> must be between 0 and 10000 characters`                              | Shorten opaque strings.                                                       |
+| Opaque key invalid                                         | `<path> key must be ...`                                                     | Use non empty keys of at most 512 characters.                                 |
+| `bean` present but not an object                           | `Envelope bean must be an object`                                            | Omit `bean` or send an object.                                                |
 | Bean string too long                                       | `Envelope bean.<field> must be between ...`                                  | Keep labels to 512 characters and `note` or `aromatics` to 10,000 characters. |
-| `brew` missing or not an object                            | `Envelope brew must be an object`                                            | Send the brew block.                                                         |
-| `brew.date` invalid                                        | `Envelope brew.date must be ISO 8601`                                        | Send an ISO timestamp accepted by the decoder pattern.                       |
-| Quantity object missing or wrong type                      | `<path> must be an object`                                                   | Send `{ "value": number, "unit": expectedUnit }`.                            |
-| Quantity unit wrong                                        | `<path>.unit must be <unit>`                                                 | Use `g` for dose and beverage, `ml` for water.                               |
-| Quantity value outside range                               | `<path>.value must be between <min> and <max>`                               | Keep dose 0 to 200 g, water and beverage non negative.                       |
-| Numeric brew field not finite or outside range             | `<path> must be a finite number` or `<path> must be between <min> and <max>` | Keep fields finite and inside their documented bounds.                       |
-| `preparationMethod` invalid                                | `Envelope brew.preparationMethod must be ...`                                | Send a non empty string of at most 512 characters.                           |
-| `rating` fractional or out of range                        | `Envelope brew.rating must be an integer` / `... must be between 0 and 10`   | Send a whole number of stars, or omit it.                                    |
-| `note` too long or wrong type                              | `Envelope brew.note must be between 0 and 10000 characters`                  | Omit it or keep it within the cap.                                           |
-| `flow` missing required shape                              | `Envelope flow must be an object` or field specific messages                 | Omit flow or send the full flow block.                                       |
-| Bad `flow.fidelity`                                        | `Envelope flow.fidelity must be full or downsampled`                         | Send `full` or `downsampled`.                                                |
-| Flow field not an array                                    | `<path> must be an array`                                                    | Send arrays for `t`, `waterDispensed`, `weight`, and optional `temperature`. |
-| Flow array too long                                        | `<path> must contain at most 10000 entries`                                  | Downsample.                                                                  |
-| Flow number invalid                                        | `<path>[n] must be a finite number` or range message                         | Send finite numbers. `t` must be 0 to 86,400,000.                            |
-| Flow arrays have different lengths                         | `Envelope flow arrays must have the same length`                             | Send one value in every flow array for every sample.                         |
-| `metrics` not an array                                     | `Envelope metrics must be an array`                                          | Send an array or omit it.                                                    |
-| Too many metrics                                           | `Envelope metrics must contain at most 100 entries`                          | Reduce metric count.                                                         |
-| Metric object invalid                                      | `Envelope metrics[n] must be an object` or field specific messages           | Send complete metric objects.                                                |
-| Bad metric kind                                            | `Envelope metrics[n].kind must be target or measured`                        | Send `target` or `measured`.                                                 |
-| Metric arrays too long or invalid                          | `<path> must contain at most 10000 entries` or number messages               | Downsample and keep times in range.                                          |
-| Metric arrays have different lengths                       | `Envelope metrics[n] arrays must have the same length`                       | Send one value for each timestamp.                                           |
-| Duplicate metric key                                       | `Envelope metrics[n].key is duplicated`                                      | Give each metric series a unique key.                                        |
+| `brew` missing or not an object                            | `Envelope brew must be an object`                                            | Send the brew block.                                                          |
+| `brew.date` invalid                                        | `Envelope brew.date must be ISO 8601`                                        | Send an ISO timestamp accepted by the decoder pattern.                        |
+| Quantity object missing or wrong type                      | `<path> must be an object`                                                   | Send `{ "value": number, "unit": expectedUnit }`.                             |
+| Quantity unit wrong                                        | `<path>.unit must be <unit>`                                                 | Use `g` for dose and beverage, `ml` for water.                                |
+| Quantity value outside range                               | `<path>.value must be between <min> and <max>`                               | Keep dose 0 to 200 g, water and beverage non negative.                        |
+| Numeric brew field not finite or outside range             | `<path> must be a finite number` or `<path> must be between <min> and <max>` | Keep fields finite and inside their documented bounds.                        |
+| `preparationMethod` invalid                                | `Envelope brew.preparationMethod must be ...`                                | Send a non empty string of at most 512 characters.                            |
+| `rating` fractional or out of range                        | `Envelope brew.rating must be an integer` / `... must be between 0 and 10`   | Send a whole number of stars, or omit it.                                     |
+| `note` too long or wrong type                              | `Envelope brew.note must be between 0 and 10000 characters`                  | Omit it or keep it within the cap.                                            |
+| `flow` missing required shape                              | `Envelope flow must be an object` or field specific messages                 | Omit flow or send the full flow block.                                        |
+| Bad `flow.fidelity`                                        | `Envelope flow.fidelity must be full or downsampled`                         | Send `full` or `downsampled`.                                                 |
+| Flow field not an array                                    | `<path> must be an array`                                                    | Send arrays for `t`, `waterDispensed`, `weight`, and optional `temperature`.  |
+| Flow array too long                                        | `<path> must contain at most 10000 entries`                                  | Downsample.                                                                   |
+| Flow number invalid                                        | `<path>[n] must be a finite number` or range message                         | Send finite numbers. `t` must be 0 to 86,400,000.                             |
+| Flow arrays have different lengths                         | `Envelope flow arrays must have the same length`                             | Send one value in every flow array for every sample.                          |
+| `metrics` not an array                                     | `Envelope metrics must be an array`                                          | Send an array or omit it.                                                     |
+| Too many metrics                                           | `Envelope metrics must contain at most 100 entries`                          | Reduce metric count.                                                          |
+| Metric object invalid                                      | `Envelope metrics[n] must be an object` or field specific messages           | Send complete metric objects.                                                 |
+| Bad metric kind                                            | `Envelope metrics[n].kind must be target or measured`                        | Send `target` or `measured`.                                                  |
+| Metric arrays too long or invalid                          | `<path> must contain at most 10000 entries` or number messages               | Downsample and keep times in range.                                           |
+| Metric arrays have different lengths                       | `Envelope metrics[n] arrays must have the same length`                       | Send one value for each timestamp.                                            |
+| Duplicate metric key                                       | `Envelope metrics[n].key is duplicated`                                      | Give each metric series a unique key.                                         |
 
 The validation philosophy is to bound what consumes resources and what can
 become active UI, while not rejecting harmless but unusual brew data. For

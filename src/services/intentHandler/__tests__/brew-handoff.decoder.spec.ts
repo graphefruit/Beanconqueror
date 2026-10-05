@@ -456,6 +456,68 @@ describe('brew handoff decoder', () => {
     expect(decodedMissingName.bean).toBeUndefined();
   });
 
+  it('keeps the roaster and origin detail a pod carries', async () => {
+    const decoded = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: 'Pod coffee',
+          roaster: '  Drop Coffee  ',
+          roastingDate: '2026-09-01',
+          origin: 'Ethiopia',
+          region: 'Guji',
+          farm: 'Shakiso',
+          farmer: 'Alemu',
+          elevation: '1800-2000',
+          decaffeinated: false,
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decoded.bean).toEqual({
+      name: 'Pod coffee',
+      roaster: 'Drop Coffee',
+      roastingDate: '2026-09-01',
+      origin: 'Ethiopia',
+      region: 'Guji',
+      farm: 'Shakiso',
+      farmer: 'Alemu',
+      elevation: '1800-2000',
+      decaffeinated: false,
+    });
+  });
+
+  it('drops an unusable roast date rather than losing the brew with it', async () => {
+    // brew.date is the payload and a bad one is fatal. A bean's roast date is
+    // a label on it, and the user would rather have the brew without it.
+    const decoded = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: 'Pod coffee',
+          roastingDate: '2026-02-30',
+          decaffeinated: 'yes',
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decoded.bean).toEqual({ name: 'Pod coffee' });
+  });
+
+  it('takes a roast date as a day or as a full timestamp', async () => {
+    const decoded = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: 'Pod coffee',
+          roastingDate: '2026-09-01T06:30:00Z',
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decoded.bean).toEqual({
+      name: 'Pod coffee',
+      roastingDate: '2026-09-01T06:30:00Z',
+    });
+  });
+
   it('rejects a bean that is present but not an object', async () => {
     // A field of the wrong shape is a malformed envelope, not a brew without
     // coffee, and the decoder says so rather than quietly dropping it.
