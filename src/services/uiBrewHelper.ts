@@ -147,18 +147,10 @@ export class UIBrewHelper {
 
   public canBrew(): boolean {
     if (this.canBrewBoolean === undefined || this.canBrewBoolean === false) {
-      const hasBeans: boolean =
-        this.uiBeanStorage.getAllEntries().length > 0 &&
-        this.uiBeanStorage.getAllEntries().filter((bean) => !bean.finished)
-          .length > 0;
-      const hasPreparationMethods: boolean =
-        this.uiPreparationStorage.getAllEntries().filter((e) => !e.finished)
-          .length > 0;
-      const hasMills: boolean =
-        this.uiMillStorage.getAllEntries().filter((e) => !e.finished).length >
-        0;
-
-      this.canBrewBoolean = hasBeans && hasPreparationMethods && hasMills;
+      this.canBrewBoolean =
+        this.hasUsableBeans() &&
+        this.hasUsablePreparationMethods() &&
+        this.hasUsableMills();
     }
 
     return this.canBrewBoolean;
@@ -174,6 +166,42 @@ export class UIBrewHelper {
       return false;
     }
     return true;
+  }
+
+  public canImportBrew(): boolean {
+    return this.hasUsableBeans() && this.hasUsablePreparationMethods();
+  }
+
+  public canImportBrewIfNotShowMessage() {
+    if (this.canImportBrew() === false) {
+      this.uiAlert.presentCustomPopover(
+        'CANT_IMPORT_BREW_TITLE',
+        'CANT_IMPORT_BREW_DESCRIPTION',
+        'UNDERSTOOD',
+      );
+      return false;
+    }
+    return true;
+  }
+
+  private hasUsableBeans(): boolean {
+    return (
+      this.uiBeanStorage.getAllEntries().filter((bean) => !bean.finished)
+        .length > 0
+    );
+  }
+
+  private hasUsablePreparationMethods(): boolean {
+    return (
+      this.uiPreparationStorage.getAllEntries().filter((e) => !e.finished)
+        .length > 0
+    );
+  }
+
+  private hasUsableMills(): boolean {
+    return (
+      this.uiMillStorage.getAllEntries().filter((e) => !e.finished).length > 0
+    );
   }
 
   public checkIfBeanPackageIsConsumed(_bean: Bean): boolean {

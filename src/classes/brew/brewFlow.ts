@@ -103,6 +103,7 @@ export interface IBrewCustomMetric {
 export interface IBrewCustomAxis {
   key: string; // Matches the key in customMetrics[] e.g. "waterDispensed"
   name: string; // Translated string or direct name e.g. "Counter Vol"
+  namePrefix?: string; // Optional i18n key prepended at render time e.g. "BREW_IMPORT_METRIC_TARGET"
   unit: string; // Unit e.g. "ml"
   colorLight: string; // Hex color for light mode e.g. "#000000"
   colorDark: string; // Hex color for dark mode e.g. "#ffffff"

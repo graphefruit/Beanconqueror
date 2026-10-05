@@ -262,13 +262,15 @@ export class GraphHelperService {
       Object.keys(_rawData.customMetrics).length > 0
     ) {
       for (const key of Object.keys(_rawData.customMetrics)) {
-        customAxesToInit.push({
-          key: key,
-          name: key,
-          unit: '',
-          colorLight: getColor('customTrace', _isReference),
-          colorDark: getColor('customTrace', _isReference),
-        });
+        customAxesToInit.push(
+          _rawData.customAxes?.find((customAxis) => customAxis.key === key) ?? {
+            key: key,
+            name: key,
+            unit: '',
+            colorLight: getColor('customTrace', _isReference),
+            colorDark: getColor('customTrace', _isReference),
+          },
+        );
       }
     }
 
@@ -281,7 +283,7 @@ export class GraphHelperService {
         traces.customTraces[customAxis.key] = {
           x: [],
           y: [],
-          name: this.translate.instant(customAxis.name),
+          name: this.getCustomAxisName(customAxis),
           yaxis: 'y' + customAxisIndex,
           type: 'scatter',
           mode: 'lines',
@@ -302,192 +304,198 @@ export class GraphHelperService {
   }
 
   public fillDataIntoTraces(_rawData: BrewFlow, _traces: any) {
-    if (
-      _rawData.weight.length > 0 ||
-      _rawData.pressureFlow.length > 0 ||
-      _rawData.temperatureFlow.length > 0
-    ) {
-      const startingDay = moment(new Date()).startOf('day');
-      // IF brewtime has some seconds, we add this to the delay directly.
+    const firstTimestamp = this.firstTraceTimestamp(_rawData);
+    if (!firstTimestamp) {
+      return;
+    }
 
-      let firstTimestamp;
-      if (_rawData.weight.length > 0) {
-        firstTimestamp = _rawData.weight[0].timestamp;
-      } else if (_rawData.pressureFlow.length > 0) {
-        firstTimestamp = _rawData.pressureFlow[0].timestamp;
-      } else if (_rawData.temperatureFlow.length > 0) {
-        firstTimestamp = _rawData.temperatureFlow[0].timestamp;
+    const startingDay = moment(new Date()).startOf('day');
+    // IF brewtime has some seconds, we add this to the delay directly.
+
+    const delay =
+      moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+      startingDay.toDate().getTime();
+    if (_rawData.weight.length > 0) {
+      for (const data of _rawData.weight) {
+        _traces.weightTrace.x.push(
+          new Date(
+            moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+          ),
+        );
+        _traces.weightTrace.y.push(data.actual_weight);
       }
-      const delay =
-        moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-        startingDay.toDate().getTime();
-      if (_rawData.weight.length > 0) {
-        for (const data of _rawData.weight) {
-          _traces.weightTrace.x.push(
+      for (const data of _rawData.waterFlow) {
+        _traces.flowPerSecondTrace.x.push(
+          new Date(
+            moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+          ),
+        );
+        _traces.flowPerSecondTrace.y.push(data.value);
+      }
+      if (_rawData.realtimeFlow) {
+        for (const data of _rawData.realtimeFlow) {
+          _traces.realtimeFlowTrace.x.push(
             new Date(
               moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
             ),
           );
-          _traces.weightTrace.y.push(data.actual_weight);
-        }
-        for (const data of _rawData.waterFlow) {
-          _traces.flowPerSecondTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
-            ),
-          );
-          _traces.flowPerSecondTrace.y.push(data.value);
-        }
-        if (_rawData.realtimeFlow) {
-          for (const data of _rawData.realtimeFlow) {
-            _traces.realtimeFlowTrace.x.push(
-              new Date(
-                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                  delay,
-              ),
-            );
-            _traces.realtimeFlowTrace.y.push(data.flow_value);
-          }
-        }
-      }
-      if (_rawData?.weightSecond?.length > 0) {
-        for (const data of _rawData.weightSecond) {
-          _traces.weightTraceSecond.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
-            ),
-          );
-          _traces.weightTraceSecond.y.push(data.actual_weight);
-        }
-
-        if (_rawData.realtimeFlowSecond) {
-          for (const data of _rawData.realtimeFlowSecond) {
-            _traces.realtimeFlowTraceSecond.x.push(
-              new Date(
-                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                  delay,
-              ),
-            );
-            _traces.realtimeFlowTraceSecond.y.push(data.flow_value);
-          }
-        }
-      }
-
-      if (_rawData.pressureFlow && _rawData.pressureFlow.length > 0) {
-        for (const data of _rawData.pressureFlow) {
-          _traces.pressureTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
-            ),
-          );
-          _traces.pressureTrace.y.push(data.actual_pressure);
-        }
-      }
-
-      if (_rawData.waterDispensed && _rawData.waterDispensed.length > 0) {
-        for (const data of _rawData.waterDispensed) {
-          _traces.waterDispensedTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
-            ),
-          );
-          _traces.waterDispensedTrace.y.push(data.actual);
-        }
-      }
-
-      if (
-        _rawData.waterDispensedFlowSecond &&
-        _rawData.waterDispensedFlowSecond.length > 0
-      ) {
-        for (const data of _rawData.waterDispensedFlowSecond) {
-          _traces.waterDispensedFlowSecondTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
-            ),
-          );
-          _traces.waterDispensedFlowSecondTrace.y.push(data.actual);
-        }
-      }
-
-      if (_rawData.temperatureFlow && _rawData.temperatureFlow.length > 0) {
-        for (const data of _rawData.temperatureFlow) {
-          _traces.temperatureTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
-            ),
-          );
-          _traces.temperatureTrace.y.push(data.actual_temperature);
-        }
-      }
-
-      if (_rawData.customMetrics) {
-        if (!_traces.customTraces) {
-          _traces.customTraces = {};
-        }
-
-        for (const [key, flowDataArray] of Object.entries(
-          _rawData.customMetrics,
-        )) {
-          let customAxis = _rawData.customAxes?.find((a) => a.key === key);
-          if (!customAxis) {
-            if (key === 'waterDispensed') {
-              customAxis = {
-                key: 'waterDispensed',
-                name: 'BREW_FLOW_WATER_DISPENSED',
-                unit: 'ml',
-                colorLight: '#0d6efd',
-                colorDark: '#3b82f6',
-              };
-            } else {
-              customAxis = {
-                key: key,
-                name: key,
-                unit: '',
-                colorLight: '#000000',
-                colorDark: '#ffffff',
-              };
-            }
-          }
-
-          let customAxisIndex = 11;
-          for (const cKey of Object.keys(_traces.customTraces)) {
-            if (cKey === key) break;
-            customAxisIndex++;
-          }
-
-          if (!_traces.customTraces[key]) {
-            _traces.customTraces[key] = {
-              x: [],
-              y: [],
-              name: this.translate.instant(customAxis.name),
-              yaxis: 'y' + customAxisIndex,
-              type: 'scatter',
-              mode: 'lines',
-              line: {
-                shape: 'linear',
-                color: this.themeService.isDarkMode()
-                  ? customAxis.colorDark
-                  : customAxis.colorLight,
-                width: 2,
-              },
-              visible: true,
-              hoverinfo: 'all',
-              showlegend: false,
-            };
-          }
-
-          for (const data of flowDataArray) {
-            _traces.customTraces[key].x.push(
-              new Date(
-                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                  delay,
-              ),
-            );
-            _traces.customTraces[key].y.push(data.value);
-          }
+          _traces.realtimeFlowTrace.y.push(data.flow_value);
         }
       }
     }
+    if (_rawData?.weightSecond?.length > 0) {
+      for (const data of _rawData.weightSecond) {
+        _traces.weightTraceSecond.x.push(
+          new Date(
+            moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+          ),
+        );
+        _traces.weightTraceSecond.y.push(data.actual_weight);
+      }
+
+      if (_rawData.realtimeFlowSecond) {
+        for (const data of _rawData.realtimeFlowSecond) {
+          _traces.realtimeFlowTraceSecond.x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
+          );
+          _traces.realtimeFlowTraceSecond.y.push(data.flow_value);
+        }
+      }
+    }
+
+    if (_rawData.pressureFlow && _rawData.pressureFlow.length > 0) {
+      for (const data of _rawData.pressureFlow) {
+        _traces.pressureTrace.x.push(
+          new Date(
+            moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+          ),
+        );
+        _traces.pressureTrace.y.push(data.actual_pressure);
+      }
+    }
+
+    if (_rawData.waterDispensed && _rawData.waterDispensed.length > 0) {
+      for (const data of _rawData.waterDispensed) {
+        _traces.waterDispensedTrace.x.push(
+          new Date(
+            moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+          ),
+        );
+        _traces.waterDispensedTrace.y.push(data.actual);
+      }
+    }
+
+    if (
+      _rawData.waterDispensedFlowSecond &&
+      _rawData.waterDispensedFlowSecond.length > 0
+    ) {
+      for (const data of _rawData.waterDispensedFlowSecond) {
+        _traces.waterDispensedFlowSecondTrace.x.push(
+          new Date(
+            moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+          ),
+        );
+        _traces.waterDispensedFlowSecondTrace.y.push(data.actual);
+      }
+    }
+
+    if (_rawData.temperatureFlow && _rawData.temperatureFlow.length > 0) {
+      for (const data of _rawData.temperatureFlow) {
+        _traces.temperatureTrace.x.push(
+          new Date(
+            moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+          ),
+        );
+        _traces.temperatureTrace.y.push(data.actual_temperature);
+      }
+    }
+
+    if (_rawData.customMetrics) {
+      if (!_traces.customTraces) {
+        _traces.customTraces = {};
+      }
+
+      for (const [key, flowDataArray] of Object.entries(
+        _rawData.customMetrics,
+      )) {
+        let customAxis = _rawData.customAxes?.find((a) => a.key === key);
+        if (!customAxis) {
+          if (key === 'waterDispensed') {
+            customAxis = {
+              key: 'waterDispensed',
+              name: 'BREW_FLOW_WATER_DISPENSED',
+              unit: 'ml',
+              colorLight: '#0d6efd',
+              colorDark: '#3b82f6',
+            };
+          } else {
+            customAxis = {
+              key: key,
+              name: key,
+              unit: '',
+              colorLight: '#000000',
+              colorDark: '#ffffff',
+            };
+          }
+        }
+
+        let customAxisIndex = 11;
+        for (const cKey of Object.keys(_traces.customTraces)) {
+          if (cKey === key) break;
+          customAxisIndex++;
+        }
+
+        if (!_traces.customTraces[key]) {
+          _traces.customTraces[key] = {
+            x: [],
+            y: [],
+            name: this.getCustomAxisName(customAxis),
+            yaxis: 'y' + customAxisIndex,
+            type: 'scatter',
+            mode: 'lines',
+            line: {
+              shape: 'linear',
+              color: this.themeService.isDarkMode()
+                ? customAxis.colorDark
+                : customAxis.colorLight,
+              width: 2,
+            },
+            visible: true,
+            hoverinfo: 'all',
+            showlegend: false,
+          };
+        }
+
+        for (const data of flowDataArray) {
+          _traces.customTraces[key].x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay,
+            ),
+          );
+          _traces.customTraces[key].y.push(data.value);
+        }
+      }
+    }
+  }
+
+  private firstTraceTimestamp(_rawData: BrewFlow): string | undefined {
+    if (_rawData.weight.length > 0) {
+      return _rawData.weight[0].timestamp;
+    }
+    if (_rawData.pressureFlow.length > 0) {
+      return _rawData.pressureFlow[0].timestamp;
+    }
+    if (_rawData.temperatureFlow.length > 0) {
+      return _rawData.temperatureFlow[0].timestamp;
+    }
+    for (const flowDataArray of Object.values(_rawData.customMetrics ?? {})) {
+      if (flowDataArray.length > 0) {
+        return flowDataArray[0].timestamp;
+      }
+    }
+    return undefined;
   }
 
   /**
@@ -1027,5 +1035,20 @@ export class GraphHelperService {
     }
 
     return layout;
+  }
+
+  /**
+   * An imported axis may carry a translated prefix alongside the sending
+   * app's own label. The prefix is a Beanconqueror i18n key so it follows the
+   * UI language; the label is the sender's and is passed through verbatim,
+   * because we cannot translate a string we did not write.
+   */
+  private getCustomAxisName(customAxis: IBrewCustomAxis): string {
+    if (!customAxis.namePrefix) {
+      return this.translate.instant(customAxis.name);
+    }
+    return (
+      this.translate.instant(customAxis.namePrefix) + ': ' + customAxis.name
+    );
   }
 }
