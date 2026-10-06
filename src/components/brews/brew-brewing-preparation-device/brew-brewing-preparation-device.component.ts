@@ -1345,13 +1345,13 @@ export class BrewBrewingPreparationDeviceComponent
 
     // A GM rating of 0 means 'not rated', keep the rating of the brew then
     if (shotData.rating > 0) {
-      // Normalize shotData.rating and scale proportionally to the maximum rating and step
+      // Scale the GM rating (1-5 stars) proportionally to the maximum rating and step
       const minRating = -1;
       const maxRating = this.settings.brew_rating;
       const step = this.settings.brew_rating_steps;
 
       const ratio = Math.min(Math.max(shotData.rating, 0), 5) / 5;
-      const scaledValue = minRating + ratio * (maxRating - minRating);
+      const scaledValue = ratio * maxRating;
       let rating: number;
       if (step > 0) {
         // Snap to the nearest step relative to minRating (-1)
