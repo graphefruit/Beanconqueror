@@ -1227,7 +1227,7 @@ export class BrewBrewingPreparationDeviceComponent
       const isDuplicate = this.uiBrewStorage
         .getAllEntries()
         .some(
-          (brew) => brew.preparationDeviceBrew.params.shotId === shotData.id,
+          (brew) => brew.preparationDeviceBrew?.params?.shotId === shotData.id,
         );
 
       if (isDuplicate) {

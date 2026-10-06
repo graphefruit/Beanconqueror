@@ -124,7 +124,11 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
         true,
       );
     } else {
-      for (let i = 0; i < this.gaggimateDevice.getLatestShotsToImport(); i++) {
+      const shotsToLoad = Math.min(
+        this.gaggimateDevice.getLatestShotsToImport(),
+        recentShotsArray.length,
+      );
+      for (let i = 0; i < shotsToLoad; i++) {
         try {
           const GaggimateShotDataEntry = new GaggimateShotData();
 

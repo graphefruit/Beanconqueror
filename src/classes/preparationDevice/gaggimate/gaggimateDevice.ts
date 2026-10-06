@@ -149,7 +149,12 @@ export class GaggimateDevice extends PreparationDevice {
     if (response.status === 404) {
       return {};
     }
-    return (await response.json()) as GaggimateShotNotes;
+    try {
+      return (await response.json()) as GaggimateShotNotes;
+    } catch {
+      // GaggiMate answers with its web UI (status 200) for shots without notes
+      return {};
+    }
   }
 
   public async getShotSlog(id: number) {
