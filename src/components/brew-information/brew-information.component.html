@@ -212,6 +212,40 @@
             <hr />
           </ion-col>
         </ion-row>
+        @if (importedProvenanceChip) {
+          <ng-template #importedChipBody>
+            <ion-label class="brew-imported-chip-label">
+              {{ "BREW_IMPORTED_FROM" | translate }}
+              {{ importedProvenanceChip.sourceName }}
+              @if (importedProvenanceChip.device) {
+                <span> · {{ importedProvenanceChip.device }}</span>
+              }
+            </ion-label>
+          </ng-template>
+          <ion-row>
+            <ion-col size="12">
+              <!-- Two chips, not one with a bound [button]: without a source URL
+                   there must be no click binding at all, not merely an inert one. -->
+              @if (importedProvenanceChip.sourceUrl) {
+                <ion-chip
+                  class="brew-imported-chip"
+                  button="true"
+                  data-testid="brew-imported-source-link"
+                  (click)="openImportedProvenance($event, importedProvenanceChip.sourceUrl)"
+                >
+                  <ng-container *ngTemplateOutlet="importedChipBody"></ng-container>
+                </ion-chip>
+              } @else {
+                <ion-chip
+                  class="brew-imported-chip"
+                  data-testid="brew-imported-source-chip"
+                >
+                  <ng-container *ngTemplateOutlet="importedChipBody"></ng-container>
+                </ion-chip>
+              }
+            </ion-col>
+          </ion-row>
+        }
       }
     </ion-grid>
     @if (!collapsed) {
