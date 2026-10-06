@@ -50,7 +50,6 @@ import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -775,7 +774,7 @@ export class SettingsPage {
       this.settings.language,
     );
     this.uiSettingsStorage.saveSettings(this.settings);
-    moment.locale(this.settings.language);
+    this.uiHelper.setMomentLocale(this.settings.language);
   }
 
   public async import(): Promise<void> {
