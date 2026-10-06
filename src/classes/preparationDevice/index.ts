@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 
 import { Preparation } from '../preparation/preparation';
+import { GaggimateDevice } from './gaggimate/gaggimateDevice';
 import { GaggiuinoDevice } from './gaggiuino/gaggiuinoDevice';
 import { MeticulousDevice } from './meticulous/meticulousDevice';
 import { Move2Device } from './move2/move2Device';
@@ -15,6 +16,7 @@ export enum PreparationDeviceType {
   SANREMO_YOU = 'SANREMO_YOU',
   GAGGIUINO = 'GAGGIUINO',
   MOVE2 = 'MOVE2',
+  GAGGIMATE = 'GAGGIMATE',
 }
 
 export function makePreparationDevice(
@@ -33,6 +35,8 @@ export function makePreparationDevice(
       return new Move2Device(_http, _preparation);
     case PreparationDeviceType.GAGGIUINO:
       return new GaggiuinoDevice(_http, _preparation);
+    case PreparationDeviceType.GAGGIMATE:
+      return new GaggimateDevice(_http, _preparation);
     default:
       return null;
   }

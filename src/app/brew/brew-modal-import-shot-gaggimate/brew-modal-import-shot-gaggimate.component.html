@@ -1,0 +1,38 @@
+<ion-header>
+  <app-header [title]="'IMPORT_SHOT_FROM_GAGGIMATE' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+  </app-header>
+</ion-header>
+<ion-content #historyShotContent>
+  @if(history) {
+  <ion-radio-group [(ngModel)]="radioSelection">
+    <ion-card>
+        <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="300">
+          @for(entry of shotDataScroll.items; track entry.id) {
+            <ion-item #ionItemEl tappable lines='full'>
+              <ion-radio justify="start" label-placement="end" [value]='entry.id'>
+                <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+                <h3 class="ion-text-wrap">{{entry.profile}}&nbsp;({{entry.id}})</h3>
+                <div class='font-size-16'>{{this.uiHelper.formateDate(entry.timestamp)}}</div>
+                </ion-grid>
+                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggimateHistoryData]='entry.brewFlow'></graph-display-card>
+              </ion-radio>
+            </ion-item>
+          }
+        </ag-virtual-scroll>
+      </ion-card>
+    </ion-radio-group>
+  }
+</ion-content>
+<ion-footer #footerContent class="ion-no-border">
+  <ion-row>
+    <ion-col size="6">
+      <ion-button (click)="dismiss()" color="danger" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="choose()" [disabled]='!radioSelection' color="accent" expand="block" tappable
+                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

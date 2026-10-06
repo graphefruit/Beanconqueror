@@ -42,6 +42,7 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public meticulousHistoryData: HistoryListingEntry;
   @Input() public meticulousDevice: MeticulousDevice;
   @Input() public gaggiuinoHistoryData: BrewFlow;
+  @Input() public gaggimateHistoryData: BrewFlow;
 
   @Input() public chartWidth: number;
   @Input() public chartHeight: number;
@@ -75,6 +76,11 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
         .gaggiuinoHistoryData as BrewFlow; /**GaggiuinoDevice.returnBrewFlowForShotData(
         this.gaggiuinoHistoryData.data,
       );**/
+    } else if (this.gaggimateHistoryData) {
+      this.flow_profile_raw = this
+        .gaggimateHistoryData as BrewFlow; /**GaggimateDevice.returnBrewFlowForShotData(
+       this.gaggimateHistoryData.data,
+       );**/
     }
     setTimeout(() => {
       this.initializeFlowChart();
