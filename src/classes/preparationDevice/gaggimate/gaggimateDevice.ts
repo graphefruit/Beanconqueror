@@ -90,6 +90,15 @@ export class GaggimateDevice extends PreparationDevice {
         not_mutated_weight: 0,
       });
 
+      // vf is the weight based flow (g/s) measured by the scale
+      brewFlow.realtimeFlow.push({
+        flow_value: row.vf ?? 0,
+        brew_time: '',
+        timestamp: timestamp,
+        smoothed_weight: 0,
+        timestampdelta: 0,
+      });
+
       brewFlow.pressureFlow.push({
         actual_pressure: row.cp ?? 0,
         old_pressure: 0,
