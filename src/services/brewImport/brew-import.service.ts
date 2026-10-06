@@ -5,8 +5,11 @@ import moment from 'moment';
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { Mill } from '../../classes/mill/mill';
+import { Preparation } from '../../classes/preparation/preparation';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import type {
   IHandoffBean,
@@ -26,6 +29,8 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 const MAX_ABSOLUTE_MILLISECONDS = 24 * 60 * 60 * 1_000;
 const MAX_ABSOLUTE_GRAMS = 100_000;
 const MAX_CREATE_BEAN_PROMPT_NAME_LENGTH = 60;
+const MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH = 60;
+const MAX_CREATE_MILL_PROMPT_NAME_LENGTH = 60;
 
 export interface IBrewImportResult {
   brew: Brew;
@@ -39,6 +44,8 @@ export class BrewImportRollbackError extends Error {
     public readonly brewUuid: string,
     public readonly rolledBack: boolean,
     public readonly beanUuid: string,
+    public readonly preparationUuid?: string,
+    public readonly millUuid?: string,
   ) {
     super(`Imported brew update failed: ${brewUuid}`);
     this.name = 'BrewImportRollbackError';
@@ -53,6 +60,7 @@ interface INameMatchResult {
 
 interface IStoredNamedEntry {
   name: string;
+  type?: string;
   finished?: boolean;
   config: { uuid: string };
 }
@@ -132,10 +140,10 @@ export class BrewImportService {
       }
     }
 
-    const preparationMatch = this.findUniqueOrDefault(
+    const preparationMatch = this.findUniquePreparationOrDefault(
       this.preparationStorage.getAllEntries(),
       envelope.brew.preparationMethod,
-      'Preparation',
+      envelope.brew.preparationType,
     );
     brew.method_of_preparation = preparationMatch.uuid;
     if (preparationMatch.note) {
@@ -210,12 +218,114 @@ export class BrewImportService {
       return undefined;
     }
 
-    const { entry: created, saved } = await this.beanStorage.addAndConfirm(
-      this.buildBean(bean),
-    );
+    const { entry: created, saved }: { entry: Bean; saved: boolean } =
+      await this.beanStorage.addAndConfirm(this.buildBean(bean));
     if (!saved) {
       await this.removeFailedHandoffBean(created.config.uuid);
       throw new Error(`Handoff bean creation failed: ${created.config.uuid}`);
+    }
+    return created.config.uuid;
+  }
+
+  public async ensurePreparationFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreatePreparationFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'BREW_IMPORT_CREATE_PREPARATION_DESCRIPTION',
+      'BREW_IMPORT_CREATE_PREPARATION_TITLE',
+      true,
+      { name: this.promptPreparationName(envelope.brew.preparationMethod) },
+    );
+    if (choice !== 'YES') {
+      return undefined;
+    }
+
+    return this.createPreparationFromHandoff(envelope);
+  }
+
+  public canCreatePreparationFromHandoff(envelope: IHandoffEnvelope): boolean {
+    if (envelope.brew.preparationMethod.trim() === '') {
+      return false;
+    }
+
+    const preparationType = this.knownPreparationType(
+      envelope.brew.preparationType,
+    );
+    if (preparationType === undefined) {
+      return false;
+    }
+
+    return !this.usableEntries(this.preparationStorage.getAllEntries()).some(
+      (entry) => this.knownPreparationType(entry.type) === preparationType,
+    );
+  }
+
+  public async createPreparationFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreatePreparationFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const { entry: created, saved }: { entry: Preparation; saved: boolean } =
+      await this.preparationStorage.addAndConfirm(
+        this.buildPreparation(envelope),
+      );
+    if (!saved) {
+      await this.removeFailedHandoffPreparation(created.config.uuid);
+      throw new Error(
+        `Handoff preparation creation failed: ${created.config.uuid}`,
+      );
+    }
+    return created.config.uuid;
+  }
+
+  public async ensureMillFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreateMillFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'BREW_IMPORT_CREATE_MILL_DESCRIPTION',
+      'BREW_IMPORT_CREATE_MILL_TITLE',
+      true,
+      { name: this.promptMillName(envelope.brew.grinderName) },
+    );
+    if (choice !== 'YES') {
+      return undefined;
+    }
+
+    return this.createMillFromHandoff(envelope);
+  }
+
+  public canCreateMillFromHandoff(envelope: IHandoffEnvelope): boolean {
+    const name = envelope.brew.grinderName?.trim();
+    if (!name) {
+      return false;
+    }
+
+    const match = this.findNameMatch(this.millStorage.getAllEntries(), name);
+    return match.match === undefined && match.reason === 'no match';
+  }
+
+  public async createMillFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    if (!this.canCreateMillFromHandoff(envelope)) {
+      return undefined;
+    }
+
+    const { entry: created, saved }: { entry: Mill; saved: boolean } =
+      await this.millStorage.addAndConfirm(this.buildMill(envelope));
+    if (!saved) {
+      await this.removeFailedHandoffMill(created.config.uuid);
+      throw new Error(`Handoff mill creation failed: ${created.config.uuid}`);
     }
     return created.config.uuid;
   }
@@ -266,6 +376,8 @@ export class BrewImportService {
         addedBrew.config.uuid,
         didRollback,
         result.brew.bean,
+        result.brew.method_of_preparation,
+        result.brew.mill,
       );
     }
 
@@ -309,6 +421,42 @@ export class BrewImportService {
     } catch (ex) {
       this.uiLog.error(
         'Handoff bean creation cleanup failed: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
+      );
+    }
+  }
+
+  private async removeFailedHandoffPreparation(uuid: string): Promise<void> {
+    try {
+      const didRemove = await this.preparationStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return;
+      }
+      this.uiLog.error('Handoff preparation creation cleanup failed: ' + uuid);
+    } catch (ex) {
+      this.uiLog.error(
+        'Handoff preparation creation cleanup failed: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
+      );
+    }
+  }
+
+  private async removeFailedHandoffMill(uuid: string): Promise<void> {
+    try {
+      const didRemove = await this.millStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return;
+      }
+      this.uiLog.error('Handoff mill creation cleanup failed: ' + uuid);
+    } catch (ex) {
+      this.uiLog.error(
+        'Handoff mill creation cleanup failed: ' +
           uuid +
           ' (' +
           ex.message +
@@ -421,6 +569,22 @@ export class BrewImportService {
     return `${name.slice(0, MAX_CREATE_BEAN_PROMPT_NAME_LENGTH - 3)}...`;
   }
 
+  private promptPreparationName(name: string): string {
+    const trimmed = name.trim();
+    if (trimmed.length <= MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH) {
+      return trimmed;
+    }
+    return `${trimmed.slice(0, MAX_CREATE_PREPARATION_PROMPT_NAME_LENGTH - 3)}...`;
+  }
+
+  private promptMillName(name: string | undefined): string {
+    const trimmed = name?.trim() ?? '';
+    if (trimmed.length <= MAX_CREATE_MILL_PROMPT_NAME_LENGTH) {
+      return trimmed;
+    }
+    return `${trimmed.slice(0, MAX_CREATE_MILL_PROMPT_NAME_LENGTH - 3)}...`;
+  }
+
   private hasBeanMetadata(bean: IHandoffBean): boolean {
     return [
       bean.roaster,
@@ -457,6 +621,36 @@ export class BrewImportService {
     }
 
     return bean;
+  }
+
+  private buildPreparation(envelope: IHandoffEnvelope): Preparation {
+    const preparationType = this.knownPreparationType(
+      envelope.brew.preparationType,
+    );
+    if (preparationType === undefined) {
+      throw new Error('Handoff preparation creation failed: unknown type');
+    }
+    const name = envelope.brew.preparationMethod.trim();
+    if (name === '') {
+      throw new Error('Handoff preparation creation failed: missing name');
+    }
+
+    const preparation = new Preparation();
+    preparation.name = name;
+    preparation.type = preparationType;
+    preparation.style_type = preparation.getPresetStyleType();
+    return preparation;
+  }
+
+  private buildMill(envelope: IHandoffEnvelope): Mill {
+    const name = envelope.brew.grinderName?.trim() ?? '';
+    if (name === '') {
+      throw new Error('Handoff mill creation failed: missing name');
+    }
+
+    const mill = new Mill();
+    mill.name = name;
+    return mill;
   }
 
   private beanInformationFromHandoff(
@@ -582,6 +776,29 @@ export class BrewImportService {
     return fallbackNote(match.reason);
   }
 
+  private findUniquePreparationOrDefault(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+    hintedType: string | undefined,
+  ): INameMatchResult {
+    const preparationType = this.knownPreparationType(hintedType);
+    if (preparationType === undefined) {
+      return this.findUniqueOrDefault(entries, hintedName, 'Preparation');
+    }
+
+    const typeMatches = this.usableEntries(entries).filter(
+      (entry) => this.knownPreparationType(entry.type) === preparationType,
+    );
+    if (typeMatches.length === 1) {
+      return { uuid: typeMatches[0].config.uuid };
+    }
+    if (typeMatches.length > 1) {
+      return this.findUniqueOrDefault(typeMatches, hintedName, 'Preparation');
+    }
+
+    return this.findUniqueOrDefault(entries, hintedName, 'Preparation');
+  }
+
   private findUniqueByName(
     entries: IStoredNamedEntry[],
     hintedName: string,
@@ -705,6 +922,18 @@ export class BrewImportService {
 
   private normalizeName(name: string): string {
     return name.normalize('NFC').trim().toLocaleLowerCase();
+  }
+
+  private knownPreparationType(
+    value: string | undefined,
+  ): PREPARATION_TYPES | undefined {
+    if (
+      value !== undefined &&
+      Object.values(PREPARATION_TYPES).includes(value as PREPARATION_TYPES)
+    ) {
+      return value as PREPARATION_TYPES;
+    }
+    return undefined;
   }
 
   /**

@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { Settings } from '../../../classes/settings/settings';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import {
@@ -177,6 +178,12 @@ describe('IntentHandlerService', () => {
       'ensureBeanFromHandoff',
       'canCreateBeanFromHandoff',
       'createBeanFromHandoff',
+      'ensurePreparationFromHandoff',
+      'canCreatePreparationFromHandoff',
+      'createPreparationFromHandoff',
+      'ensureMillFromHandoff',
+      'canCreateMillFromHandoff',
+      'createMillFromHandoff',
       'import',
     ]);
     beanStorage = jasmine.createSpyObj('UIBeanStorage', [
@@ -187,10 +194,12 @@ describe('IntentHandlerService', () => {
     millStorage = jasmine.createSpyObj('UIMillStorage', [
       'attachOnEvent',
       'getAllEntries',
+      'removeByUUID',
     ]);
     preparationStorage = jasmine.createSpyObj('UIPreparationStorage', [
       'attachOnEvent',
       'getAllEntries',
+      'removeByUUID',
     ]);
     brewStorage = jasmine.createSpyObj('UIBrewStorage', ['getAllEntries']);
     settingsStorage = jasmine.createSpyObj('UISettingsStorage', [
@@ -204,6 +213,8 @@ describe('IntentHandlerService', () => {
     uiAlert.showConfirm.and.resolveTo('YES');
     uiAlert.isLoadingSpinnerShown.and.returnValue(false);
     beanStorage.removeByUUID.and.resolveTo(true);
+    millStorage.removeByUUID.and.resolveTo(true);
+    preparationStorage.removeByUUID.and.resolveTo(true);
     translate.instant.and.callFake((key: string, params?: unknown) => {
       if (
         key === 'BREW_IMPORT_BATCH_RESULT' &&
@@ -237,11 +248,33 @@ describe('IntentHandlerService', () => {
         const counts = params as { count: number };
         return `Create ${counts.count} coffees before importing?`;
       }
+      if (
+        key === 'BREW_IMPORT_CREATE_MILLS_TITLE' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { count: number };
+        return `Create ${counts.count} grinders?`;
+      }
+      if (
+        key === 'BREW_IMPORT_CREATE_MILLS_DESCRIPTION' &&
+        params &&
+        typeof params === 'object'
+      ) {
+        const counts = params as { count: number };
+        return `Create ${counts.count} grinders before importing?`;
+      }
       return key;
     });
     brewImportService.ensureBeanFromHandoff.and.resolveTo();
     brewImportService.canCreateBeanFromHandoff.and.returnValue(true);
     brewImportService.createBeanFromHandoff.and.resolveTo();
+    brewImportService.ensurePreparationFromHandoff.and.resolveTo();
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(false);
+    brewImportService.createPreparationFromHandoff.and.resolveTo();
+    brewImportService.ensureMillFromHandoff.and.resolveTo();
+    brewImportService.canCreateMillFromHandoff.and.returnValue(false);
+    brewImportService.createMillFromHandoff.and.resolveTo();
     brewImportService.import.and.resolveTo(importResult('bean-imported'));
     beanStorage.attachOnEvent.and.returnValue(eventEmitter as never);
     millStorage.attachOnEvent.and.returnValue(eventEmitter as never);
@@ -268,6 +301,7 @@ describe('IntentHandlerService', () => {
         { provide: UIAlert, useValue: uiAlert },
         { provide: UIAnalytics, useValue: uiAnalytics },
         { provide: UIBeanStorage, useValue: beanStorage },
+        { provide: UIPreparationStorage, useValue: preparationStorage },
         { provide: TranslateService, useValue: translate },
         { provide: VisualizerService, useValue: visualizerService },
         { provide: BrewImportService, useValue: brewImportService },
@@ -473,6 +507,51 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  it('removes a handoff-created preparation the stuck brew does not point at', async () => {
+    // An untyped envelope can resolve onto an existing preparation by name, so
+    // the one this import created may be referenced by nothing. Keep what the
+    // brew actually points at, not what the import happened to make.
+    brewImportService.ensurePreparationFromHandoff.and.resolveTo(
+      'preparation-created',
+    );
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError(
+        'brew-on-disk',
+        false,
+        'bean-imported',
+        'preparation-existing',
+      ),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created'],
+    ]);
+  });
+
+  it('keeps a handoff-created preparation when import rollback was not durable', async () => {
+    brewImportService.ensurePreparationFromHandoff.and.resolveTo(
+      'preparation-created',
+    );
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError('brew-on-disk', false, 'bean-imported'),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from handoff link kept handoff-created preparation after non-durable brew rollback: preparation-created (brew: brew-on-disk)',
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
   it('removes a handoff-created bean when import rollback was durable', async () => {
     brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
     brewImportService.import.and.rejectWith(
@@ -490,6 +569,47 @@ describe('IntentHandlerService', () => {
       undefined,
       true,
     ]);
+  });
+
+  it('asks to create a missing preparation before importing a single brew and rolls it back on failure', async () => {
+    brewImportService.ensurePreparationFromHandoff.and.resolveTo(
+      'preparation-created',
+    );
+    brewImportService.import.and.rejectWith(new Error('Import failed'));
+
+    await service.handleDeepLink(url);
+
+    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
+      [envelope],
+    ]);
+    expect(
+      brewImportService.ensurePreparationFromHandoff.calls.allArgs(),
+    ).toEqual([[envelope]]);
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created'],
+    ]);
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('removes a handoff-created mill when the library cannot import after creating it', async () => {
+    brewImportService.ensureMillFromHandoff.and.resolveTo('mill-created');
+    preparationStorage.getAllEntries.and.returnValue([]);
+
+    await service.handleDeepLink(url);
+
+    expect(brewImportService.ensureMillFromHandoff.calls.allArgs()).toEqual([
+      [envelope],
+    ]);
+    expect(millStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['mill-created'],
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showLoadingSpinner.calls.count()).toBe(0);
+    expect(uiAlert.presentCustomPopover).toHaveBeenCalledWith(
+      'CANT_IMPORT_BREW_TITLE',
+      'CANT_IMPORT_BREW_DESCRIPTION',
+      'UNDERSTOOD',
+    );
   });
 
   it('imports every brew in a well-formed batch handoff', async () => {
@@ -782,6 +902,336 @@ describe('IntentHandlerService', () => {
     expect(brewImportService.ensureBeanFromHandoff.calls.count()).toBe(0);
     expect(brewImportService.createBeanFromHandoff.calls.count()).toBe(0);
     expect(brewImportService.import.calls.count()).toBe(3);
+  });
+
+  it('asks once for the same missing preparation type across several batch brews', async () => {
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    brewImportService.ensurePreparationFromHandoff.and.resolveTo(
+      'preparation-created',
+    );
+    brewImportService.import.and.resolveTo({
+      ...importResult('bean-imported'),
+      brew: {
+        ...importResult('bean-imported').brew,
+        method_of_preparation: 'preparation-created',
+      } as IBrewImportResult['brew'],
+    });
+    const first = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+    const second = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'Second xBloom brew',
+      },
+    });
+    const third = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'Third xBloom brew',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, second, third] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(
+      brewImportService.ensurePreparationFromHandoff.calls.allArgs(),
+    ).toEqual([[first]]);
+    expect(
+      brewImportService.createPreparationFromHandoff.calls.allArgs(),
+    ).toEqual([]);
+    expect(brewImportService.import.calls.allArgs()).toEqual([
+      [first],
+      [second],
+      [third],
+    ]);
+    expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('asks once per distinct missing grinder name across a batch', async () => {
+    const createdByName = new Map<string, string>();
+    const normalizedMillName = (candidate: IHandoffEnvelope): string =>
+      (candidate.brew.grinderName ?? '')
+        .normalize('NFC')
+        .trim()
+        .toLocaleLowerCase();
+    brewImportService.canCreateBeanFromHandoff.and.returnValue(false);
+    brewImportService.canCreateMillFromHandoff.and.returnValue(true);
+    brewImportService.createMillFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        const uuid =
+          normalizedMillName(candidate) === 'first grinder'
+            ? 'mill-created-first'
+            : 'mill-created-second';
+        createdByName.set(normalizedMillName(candidate), uuid);
+        return Promise.resolve(uuid);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) =>
+      Promise.resolve({
+        ...importResult('bean-imported'),
+        brew: {
+          ...importResult('bean-imported').brew,
+          mill: createdByName.get(normalizedMillName(candidate)) ?? '',
+        } as IBrewImportResult['brew'],
+      }),
+    );
+    const first = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        grinderName: 'First grinder',
+        note: 'First brew',
+      },
+    });
+    const sameFirst = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        grinderName: ' first grinder ',
+        note: 'Same grinder again',
+      },
+    });
+    const second = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        grinderName: 'Second grinder',
+        note: 'Second grinder brew',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [first, sameFirst, second] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      ['Create 2 grinders before importing?', 'Create 2 grinders?', false],
+    ]);
+    expect(brewImportService.ensureMillFromHandoff.calls.count()).toBe(0);
+    expect(brewImportService.createMillFromHandoff.calls.allArgs()).toEqual([
+      [first],
+      [second],
+    ]);
+    expect(brewImportService.import.calls.allArgs()).toEqual([
+      [first],
+      [sameFirst],
+      [second],
+    ]);
+    expect(millStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('asks separately for distinct missing preparation types and keeps safe fallbacks when declined', async () => {
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) =>
+      Promise.resolve({
+        ...importResult('bean-imported'),
+        brew: {
+          ...importResult('bean-imported').brew,
+          method_of_preparation:
+            candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM
+              ? 'preparation-created-xbloom'
+              : 'preparation-existing-v60',
+        } as IBrewImportResult['brew'],
+      }),
+    );
+    const xBloom = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'xBloom',
+      },
+    });
+    const v60 = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'V60',
+        preparationType: PREPARATION_TYPES.V60,
+        note: 'V60',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [xBloom, v60] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(
+      brewImportService.ensurePreparationFromHandoff.calls.allArgs(),
+    ).toEqual([[xBloom], [v60]]);
+    expect(
+      brewImportService.createPreparationFromHandoff.calls.allArgs(),
+    ).toEqual([]);
+    expect(brewImportService.import.calls.allArgs()).toEqual([[xBloom], [v60]]);
+    expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
+  });
+
+  it('reports a non-durable rollback after a later batch preparation creation fails', async () => {
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        return Promise.reject(new Error('Creation failed'));
+      },
+    );
+    preparationStorage.removeByUUID.and.resolveTo(false);
+    const xBloom = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+    const v60 = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'V60',
+        preparationType: PREPARATION_TYPES.V60,
+        note: 'V60',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [xBloom, v60] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created-xbloom'],
+      ['preparation-created-xbloom'],
+    ]);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brews from handoff link cleanup incomplete; some handoff-created preparations may remain on disk.',
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
+  it('does not report cleanup incomplete when a failed batch preparation creation is rolled back durably', async () => {
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        return Promise.reject(new Error('Creation failed'));
+      },
+    );
+    const xBloom = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+    const v60 = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'V60',
+        preparationType: PREPARATION_TYPES.V60,
+        note: 'V60',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [xBloom, v60] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created-xbloom'],
+    ]);
+    expect(uiLog.error.calls.allArgs()).not.toContain([
+      'Import brews from handoff link cleanup incomplete; some handoff-created preparations may remain on disk.',
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
+  it('imports a batch after creating distinct missing preparations', async () => {
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        return Promise.resolve('preparation-created-v60');
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) =>
+      Promise.resolve({
+        ...importResult('bean-imported'),
+        brew: {
+          ...importResult('bean-imported').brew,
+          method_of_preparation:
+            candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM
+              ? 'preparation-created-xbloom'
+              : 'preparation-created-v60',
+        } as IBrewImportResult['brew'],
+      }),
+    );
+    const xBloom = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+    const v60 = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'V60',
+        preparationType: PREPARATION_TYPES.V60,
+        note: 'V60',
+      },
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [xBloom, v60] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(
+      brewImportService.ensurePreparationFromHandoff.calls.allArgs(),
+    ).toEqual([[xBloom], [v60]]);
+    expect(brewImportService.import.calls.allArgs()).toEqual([[xBloom], [v60]]);
+    expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'Imported 2 of 2 brews',
+      undefined,
+      undefined,
+      false,
+    ]);
   });
 
   it('rolls back beans created before a later batch bean creation fails', async () => {
@@ -1402,6 +1852,116 @@ describe('IntentHandlerService', () => {
       undefined,
       undefined,
       false,
+    ]);
+  });
+
+  it('keeps a name-fallback preparation created for another batch entry', async () => {
+    brewImportService.canCreateBeanFromHandoff.and.returnValue(false);
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    const typed = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'Typed',
+      },
+    });
+    const untyped = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        note: 'Untyped',
+      },
+    });
+    delete untyped.brew.preparationType;
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
+      if (candidate.brew.note === 'Untyped') {
+        return Promise.reject(
+          new BrewImportRollbackError(
+            'brew-on-disk',
+            false,
+            'bean-imported',
+            'preparation-created-xbloom',
+          ),
+        );
+      }
+      return Promise.reject(new Error('Import failed'));
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [typed, untyped] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(preparationStorage.removeByUUID).not.toHaveBeenCalled();
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from batch handoff link kept handoff-created preparation after non-durable brew rollback: preparation-created-xbloom (brew: brew-on-disk)',
+    ]);
+  });
+
+  it('keeps a batch-created preparation after a non-durable import rollback and removes other unretained preparations', async () => {
+    brewImportService.canCreateBeanFromHandoff.and.returnValue(false);
+    brewImportService.canCreatePreparationFromHandoff.and.returnValue(true);
+    const xBloom = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+        note: 'xBloom',
+      },
+    });
+    const v60 = validEnvelope({
+      brew: {
+        ...validEnvelope().brew,
+        preparationMethod: 'V60',
+        preparationType: PREPARATION_TYPES.V60,
+        note: 'V60',
+      },
+    });
+    brewImportService.ensurePreparationFromHandoff.and.callFake(
+      (candidate: IHandoffEnvelope) => {
+        if (candidate.brew.preparationType === PREPARATION_TYPES.XBLOOM) {
+          return Promise.resolve('preparation-created-xbloom');
+        }
+        if (candidate.brew.preparationType === PREPARATION_TYPES.V60) {
+          return Promise.resolve('preparation-created-v60');
+        }
+        return Promise.resolve(undefined);
+      },
+    );
+    brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
+      if (candidate.brew.note === 'xBloom') {
+        return Promise.reject(
+          new BrewImportRollbackError('brew-on-disk', false, 'bean-imported'),
+        );
+      }
+      return Promise.reject(new Error('Import failed'));
+    });
+    const batchUrl = batchHandoffUrl(
+      await gzipBase64Url({ v: 1, brews: [xBloom, v60] }),
+    );
+
+    await service.handleDeepLink(batchUrl);
+
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created-v60'],
+    ]);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from batch handoff link kept handoff-created preparation after non-durable brew rollback: preparation-created-xbloom (brew: brew-on-disk)',
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
     ]);
   });
 

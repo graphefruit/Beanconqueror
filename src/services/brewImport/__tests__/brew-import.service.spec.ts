@@ -7,6 +7,7 @@ import { Brew, BrewInstanceHelper } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import { decodeHandoffPayload } from '../../intentHandler/brew-handoff.decoder';
 import { UIAlert } from '../../uiAlert';
@@ -211,11 +212,15 @@ describe('BrewImportService', () => {
     millStorage = jasmine.createSpyObj('UIMillStorage', [
       'getAllEntries',
       'add',
+      'addAndConfirm',
+      'removeByUUID',
     ]);
     preparationStorage = jasmine.createSpyObj('UIPreparationStorage', [
       'getAllEntries',
       'getByUUID',
       'add',
+      'addAndConfirm',
+      'removeByUUID',
     ]);
     settingsStorage = jasmine.createSpyObj('UISettingsStorage', [
       'getSettings',
@@ -261,9 +266,45 @@ describe('BrewImportService', () => {
       return Promise.resolve(true);
     });
     millStorage.getAllEntries.and.callFake(() => mills);
+    millStorage.addAndConfirm.and.callFake(
+      (mill: Mill): Promise<{ entry: Mill; saved: boolean }> => {
+        mill.config.uuid = 'mill-created';
+        mills.push(mill);
+        return Promise.resolve({ entry: mill, saved: true });
+      },
+    );
+    millStorage.removeByUUID.and.callFake((uuid: string): Promise<boolean> => {
+      const index = mills.findIndex((mill) => mill.config.uuid === uuid);
+      if (index < 0) {
+        return Promise.resolve(false);
+      }
+      mills.splice(index, 1);
+      return Promise.resolve(true);
+    });
     preparationStorage.getAllEntries.and.callFake(() => preparations);
     preparationStorage.getByUUID.and.callFake((uuid: string) =>
       preparations.find((preparation) => preparation.config.uuid === uuid),
+    );
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: true });
+      },
+    );
+    preparationStorage.removeByUUID.and.callFake(
+      (uuid: string): Promise<boolean> => {
+        const index = preparations.findIndex(
+          (preparation) => preparation.config.uuid === uuid,
+        );
+        if (index < 0) {
+          return Promise.resolve(false);
+        }
+        preparations.splice(index, 1);
+        return Promise.resolve(true);
+      },
     );
 
     settings = new Settings();
@@ -1194,6 +1235,90 @@ describe('BrewImportService', () => {
     expect(result.brew.note).toContain('Grinder not linked');
   });
 
+  it('offers to create a missing mill when the grinder name matches nothing', async () => {
+    mills = [];
+    uiAlert.showConfirm.and.resolveTo('YES');
+
+    expect(service.canCreateMillFromHandoff(envelope())).toBeTrue();
+    const createdUuid = await service.ensureMillFromHandoff(envelope());
+    const result = service.build(envelope());
+    const created = mills.find((mill) => mill.config.uuid === createdUuid);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_MILL_DESCRIPTION',
+        'BREW_IMPORT_CREATE_MILL_TITLE',
+        true,
+        { name: 'Any grinder' },
+      ],
+    ]);
+    expect(createdUuid).toBe('mill-created');
+    expect(created?.name).toBe('Any grinder');
+    expect(result.brew.mill).toBe('mill-created');
+  });
+
+  it('does not offer to create a mill when the grinder name matches exactly', async () => {
+    mills = [entry(new Mill(), 'Any grinder', 'mill-existing')];
+
+    const createdUuid = await service.ensureMillFromHandoff(envelope());
+
+    expect(service.canCreateMillFromHandoff(envelope())).toBeFalse();
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+  });
+
+  it('does not offer to create a mill when the grinder name matches by widening', async () => {
+    mills = [entry(new Mill(), 'xBloom Studio', 'mill-studio')];
+    const handoff = envelope({
+      brew: { ...envelope().brew, grinderName: 'xBloom' },
+    });
+
+    const createdUuid = await service.ensureMillFromHandoff(handoff);
+
+    expect(service.canCreateMillFromHandoff(handoff)).toBeFalse();
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+  });
+
+  it('does not offer to create a mill when the grinder hint is ambiguous', async () => {
+    mills = [
+      entry(new Mill(), 'xBloom Studio', 'mill-studio'),
+      entry(new Mill(), 'xBloom Original', 'mill-original'),
+    ];
+    const handoff = envelope({
+      brew: { ...envelope().brew, grinderName: 'xBloom' },
+    });
+
+    const createdUuid = await service.ensureMillFromHandoff(handoff);
+
+    expect(service.canCreateMillFromHandoff(handoff)).toBeFalse();
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+  });
+
+  it('keeps importing with an empty mill when mill creation is declined', async () => {
+    mills = [];
+    uiAlert.showConfirm.and.resolveTo('NO');
+
+    const createdUuid = await service.ensureMillFromHandoff(envelope());
+    const result = await service.import(envelope());
+
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_MILL_DESCRIPTION',
+        'BREW_IMPORT_CREATE_MILL_TITLE',
+        true,
+        { name: 'Any grinder' },
+      ],
+    ]);
+    expect(millStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(result.brew.mill).toBe('');
+  });
+
   it('does not reach across a word boundary when widening a name', () => {
     // A substring search would take "Ode" to "Odessa". The longer name has to
     // carry on with a separator, not with more of the same word.
@@ -1249,6 +1374,282 @@ describe('BrewImportService', () => {
       'Preparation not linked: "Any brewer" (no match). Using "Aeropress".',
     );
     expect(preparationStorage.add.calls.count()).toBe(0);
+  });
+
+  it('links a preparation by type before considering the handoff label', () => {
+    const fallback = entry(
+      new Preparation(),
+      'xBloom sender label',
+      'preparation-by-name',
+    );
+    fallback.type = PREPARATION_TYPES.V60;
+    const renamedXBloom = entry(
+      new Preparation(),
+      'Kitchen machine',
+      'preparation-xbloom',
+    );
+    renamedXBloom.type = PREPARATION_TYPES.XBLOOM;
+    preparations = [fallback, renamedXBloom];
+
+    const result = service.build(
+      envelope({
+        brew: {
+          ...envelope().brew,
+          preparationMethod: 'xBloom sender label',
+          preparationType: PREPARATION_TYPES.XBLOOM,
+        },
+      }),
+    );
+
+    expect(result.brew.method_of_preparation).toBe('preparation-xbloom');
+    expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('narrows duplicate preparation types by the handoff label', () => {
+    const studio = entry(
+      new Preparation(),
+      'xBloom Studio',
+      'preparation-studio',
+    );
+    studio.type = PREPARATION_TYPES.XBLOOM;
+    const renamed = entry(new Preparation(), 'Kitchen', 'preparation-kitchen');
+    renamed.type = PREPARATION_TYPES.XBLOOM;
+    preparations = [renamed, studio];
+
+    const result = service.build(
+      envelope({
+        brew: {
+          ...envelope().brew,
+          preparationMethod: 'xBloom Studio',
+          preparationType: PREPARATION_TYPES.XBLOOM,
+        },
+      }),
+    );
+
+    expect(result.brew.method_of_preparation).toBe('preparation-studio');
+  });
+
+  it('ignores an unknown preparation type and keeps matching by name', () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+      entry(new Preparation(), 'Any brewer', 'preparation-by-name'),
+    ];
+
+    const result = service.build(
+      envelope({
+        brew: {
+          ...envelope().brew,
+          preparationType: 'FUTURE_BREWER',
+        },
+      }),
+    );
+
+    expect(result.brew.method_of_preparation).toBe('preparation-by-name');
+    expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('matches by name exactly as before when no preparation type is present', () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+      entry(new Preparation(), 'Any brewer', 'preparation-by-name'),
+    ];
+
+    const result = service.build(envelope());
+
+    expect(result.brew.method_of_preparation).toBe('preparation-by-name');
+    expect(result.brew.note).toBe('A completed brew');
+  });
+
+  it('keeps importing by name when preparation creation is declined', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+      entry(new Preparation(), 'xBloom Studio', 'preparation-by-name'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('NO');
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    await service.ensurePreparationFromHandoff(handoff);
+    const result = service.build(handoff);
+
+    expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
+      [
+        'BREW_IMPORT_CREATE_PREPARATION_DESCRIPTION',
+        'BREW_IMPORT_CREATE_PREPARATION_TITLE',
+        true,
+        { name: 'xBloom Studio' },
+      ],
+    ]);
+    expect(preparationStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(result.brew.method_of_preparation).toBe('preparation-by-name');
+  });
+
+  it('creates a missing typed preparation and links the imported brew to it', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    const createdUuid = await service.ensurePreparationFromHandoff(handoff);
+    const result = service.build(handoff);
+    const created = preparations.find(
+      (preparation) => preparation.config.uuid === createdUuid,
+    );
+
+    expect(createdUuid).toBe('preparation-created');
+    expect(created.name).toBe('xBloom Studio');
+    expect(created.type).toBe(PREPARATION_TYPES.XBLOOM);
+    expect(result.brew.method_of_preparation).toBe('preparation-created');
+    expect(preparationStorage.add.calls.count()).toBe(0);
+  });
+
+  it('does not create a typed preparation with a whitespace-only name and still imports', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: '   ',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    const createdUuid = await service.ensurePreparationFromHandoff(handoff);
+    const result = await service.import(handoff);
+
+    expect(createdUuid).toBeUndefined();
+    expect(uiAlert.showConfirm.calls.count()).toBe(0);
+    expect(preparationStorage.addAndConfirm.calls.count()).toBe(0);
+    expect(result.brew.method_of_preparation).toBe('preparation-fallback');
+  });
+
+  it('removes a handoff preparation whose save did not persist before later type matching can see it', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: false });
+      },
+    );
+    const handoff = envelope({
+      brew: {
+        ...envelope().brew,
+        preparationMethod: 'xBloom Studio',
+        preparationType: PREPARATION_TYPES.XBLOOM,
+      },
+    });
+
+    await expectAsync(
+      service.ensurePreparationFromHandoff(handoff),
+    ).toBeRejectedWithError(
+      'Handoff preparation creation failed: preparation-created',
+    );
+    const result = service.build(handoff);
+
+    expect(preparationStorage.addAndConfirm.calls.count()).toBe(1);
+    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['preparation-created'],
+    ]);
+    expect(
+      preparations.map((preparation) => preparation.config.uuid),
+    ).toEqual(['preparation-fallback']);
+    expect(result.brew.method_of_preparation).toBe('preparation-fallback');
+    expect(result.brew.note).toBe(
+      'A completed brew\n\nPreparation not linked: "xBloom Studio" (no match). Using "Fallback brewer".',
+    );
+    expect(preparationStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.update.calls.count()).toBe(0);
+  });
+
+  it('does not hand the caller a uuid when a handoff preparation save fails', async () => {
+    let returnedUuid: string | undefined;
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: false });
+      },
+    );
+
+    try {
+      returnedUuid = await service.ensurePreparationFromHandoff(
+        envelope({
+          brew: {
+            ...envelope().brew,
+            preparationMethod: 'xBloom Studio',
+            preparationType: PREPARATION_TYPES.XBLOOM,
+          },
+        }),
+      );
+    } catch (ex) {
+      expect(ex.message).toBe(
+        'Handoff preparation creation failed: preparation-created',
+      );
+    }
+
+    expect(returnedUuid).toBeUndefined();
+  });
+
+  it('logs a failed handoff preparation creation cleanup without replacing the save failure', async () => {
+    preparations = [
+      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
+    ];
+    uiAlert.showConfirm.and.resolveTo('YES');
+    preparationStorage.addAndConfirm.and.callFake(
+      (
+        preparation: Preparation,
+      ): Promise<{ entry: Preparation; saved: boolean }> => {
+        preparation.config.uuid = 'preparation-created';
+        preparations.push(preparation);
+        return Promise.resolve({ entry: preparation, saved: false });
+      },
+    );
+    preparationStorage.removeByUUID.and.rejectWith(new Error('delete failed'));
+
+    await expectAsync(
+      service.ensurePreparationFromHandoff(
+        envelope({
+          brew: {
+            ...envelope().brew,
+            preparationMethod: 'xBloom Studio',
+            preparationType: PREPARATION_TYPES.XBLOOM,
+          },
+        }),
+      ),
+    ).toBeRejectedWithError(
+      'Handoff preparation creation failed: preparation-created',
+    );
+
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Handoff preparation creation cleanup failed: preparation-created (delete failed)',
+    ]);
   });
 
   it('does not persist an unmatched imported brew with empty bean or preparation UUIDs', () => {
