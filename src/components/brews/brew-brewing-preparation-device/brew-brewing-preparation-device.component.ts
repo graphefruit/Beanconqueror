@@ -1255,10 +1255,22 @@ export class BrewBrewingPreparationDeviceComponent
       this.brewComponent.data.brew_temperature = shotData.avgTemp;
     }
 
-    // Add grind settings and ground coffe and shot description from GM shot notes, if any
-    this.brewComponent.data.grind_size = shotData.notes?.grindSetting ?? '';
-    this.brewComponent.data.grind_weight = shotData.notes?.doseIn ?? null;
-    this.brewComponent.data.note = shotData.notes?.notes ?? '';
+    // Add grind settings and ground coffe and shot description from GM shot notes, if any.
+    // Empty GM values must not overwrite what the user already entered in the brew.
+    const grindSetting = String(shotData.notes?.grindSetting ?? '').trim();
+    if (grindSetting !== '') {
+      this.brewComponent.data.grind_size = grindSetting;
+    }
+    const doseIn = parseFloat(
+      String(shotData.notes?.doseIn ?? '').replace(',', '.'),
+    );
+    if (!isNaN(doseIn) && doseIn > 0) {
+      this.brewComponent.data.grind_weight = doseIn;
+    }
+    const shotNotes = String(shotData.notes?.notes ?? '').trim();
+    if (shotNotes !== '') {
+      this.brewComponent.data.note = shotNotes;
+    }
 
     // Select the bean, if any, from the storage based on name from GM shot notes. Set the first of the list if many
     if (shotData.notes?.beanType) {
@@ -1331,26 +1343,29 @@ export class BrewBrewingPreparationDeviceComponent
       this.brewComponent.brewFirstDripTime?.changeEvent();
     }
 
-    // Normalize shotData.rating and scale proportionally to the maximum rating and step
-    const minRating = -1;
-    const maxRating = this.settings.brew_rating;
-    const step = this.settings.brew_rating_steps;
+    // A GM rating of 0 means 'not rated', keep the rating of the brew then
+    if (shotData.rating > 0) {
+      // Normalize shotData.rating and scale proportionally to the maximum rating and step
+      const minRating = -1;
+      const maxRating = this.settings.brew_rating;
+      const step = this.settings.brew_rating_steps;
 
-    const ratio = Math.min(Math.max(shotData.rating, 0), 5) / 5;
-    const scaledValue = minRating + ratio * (maxRating - minRating);
-    let rating: number;
-    if (step > 0) {
-      // Snap to the nearest step relative to minRating (-1)
-      const stepsFromMin = Math.round((scaledValue - minRating) / step);
-      const snapped = minRating + stepsFromMin * step;
-      // Clamp between minRating and maxRating
-      rating = Math.min(Math.max(snapped, minRating), maxRating);
-    } else {
-      rating = scaledValue;
+      const ratio = Math.min(Math.max(shotData.rating, 0), 5) / 5;
+      const scaledValue = minRating + ratio * (maxRating - minRating);
+      let rating: number;
+      if (step > 0) {
+        // Snap to the nearest step relative to minRating (-1)
+        const stepsFromMin = Math.round((scaledValue - minRating) / step);
+        const snapped = minRating + stepsFromMin * step;
+        // Clamp between minRating and maxRating
+        rating = Math.min(Math.max(snapped, minRating), maxRating);
+      } else {
+        rating = scaledValue;
+      }
+
+      this.brewComponent.data.rating = parseFloat(rating.toFixed(4));
+      this.brewComponent.changedRating();
     }
-
-    this.brewComponent.data.rating = parseFloat(rating.toFixed(4));
-    this.brewComponent.changedRating();
 
     this.brewComponent.timer?.setTime(shotData.duration / 1000, 0);
     this.brewComponent.timer?.changeEvent();
