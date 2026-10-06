@@ -5,4 +5,5 @@ export interface IGaggimateParams {
   latestShotsToImport: number;
   confirmDuplicateImport: boolean;
   confirmBeanAdd: boolean;
+  useTargetTemperature: boolean;
 }

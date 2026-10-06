@@ -1251,7 +1251,14 @@ export class BrewBrewingPreparationDeviceComponent
       this.brewComponent.data.pressure_profile = shotData.profile;
     }
 
-    if (shotData.avgTemp) {
+    // Depending on the setting, use the temperature which was set in the profile
+    // instead of the measured average. Falls back to the average if not logged.
+    const useTargetTemperature =
+      this.preparation.connectedPreparationDevice.customParams
+        .useTargetTemperature && shotData.targetTemp > 0;
+    if (useTargetTemperature) {
+      this.brewComponent.data.brew_temperature = shotData.targetTemp;
+    } else if (shotData.avgTemp) {
       this.brewComponent.data.brew_temperature = shotData.avgTemp;
     }
 

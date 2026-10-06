@@ -129,6 +129,28 @@ export class GaggimateDevice extends PreparationDevice {
     return brewFlow;
   }
 
+  /**
+   * Returns the target temperature of a shot. Profiles may change the target
+   * per phase, so the value which was set for most of the samples is used.
+   */
+  public static returnTargetTemperatureForShotData(samples): number {
+    const counts = new Map<number, number>();
+    for (const row of samples ?? []) {
+      if (row.tt > 0) {
+        counts.set(row.tt, (counts.get(row.tt) ?? 0) + 1);
+      }
+    }
+    let targetTemp = 0;
+    let maxCount = 0;
+    counts.forEach((count, temp) => {
+      if (count > maxCount) {
+        maxCount = count;
+        targetTemp = temp;
+      }
+    });
+    return targetTemp;
+  }
+
   public async getRecentShots() {
     try {
       const response = await fetch(
@@ -209,6 +231,7 @@ export class GaggimateParams implements IGaggimateParams {
   public latestShotsToImport: number;
   public confirmDuplicateImport: boolean;
   public confirmBeanAdd: boolean;
+  public useTargetTemperature: boolean;
 
   constructor() {
     this.chosenProfileId = '';
@@ -217,5 +240,6 @@ export class GaggimateParams implements IGaggimateParams {
     this.latestShotsToImport = 1;
     this.confirmDuplicateImport = true;
     this.confirmBeanAdd = true;
+    this.useTargetTemperature = false;
   }
 }

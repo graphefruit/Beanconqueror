@@ -152,6 +152,10 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
 
             GaggimateShotDataEntry.brewFlow =
               GaggimateDevice.returnBrewFlowForShotData(shotData.samples);
+            GaggimateShotDataEntry.targetTemp =
+              GaggimateDevice.returnTargetTemperatureForShotData(
+                shotData.samples,
+              );
 
             GaggimateShotDataEntry.notes =
               await this.gaggimateDevice.getShotNotesFile(data.id);
