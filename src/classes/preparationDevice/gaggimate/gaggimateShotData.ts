@@ -11,6 +11,7 @@ export class GaggimateShotData implements IGaggimateShotData {
   public rating: number;
   public incomplete: boolean;
   public avgTemp: number;
+  public targetTemp: number;
   public maxPressure: number;
   public avgFlow: number;
   public notes: any;
@@ -26,6 +27,7 @@ export class GaggimateShotData implements IGaggimateShotData {
     this.rating = 0;
     this.incomplete = false;
     this.avgTemp = 0;
+    this.targetTemp = 0;
     this.maxPressure = 0;
     this.avgFlow = 0;
     this.notes = {};

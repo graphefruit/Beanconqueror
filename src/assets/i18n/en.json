@@ -1149,7 +1149,8 @@
           "IMPORT_BREW_DISCARD_DUPLICATE_POPUP_MESSAGE": "This shot has already been imported, do you want to import it again?",
           "CONFIRM_DUPLICATE_IMPORT": "Confirm if an already imported shot should be imported again",
           "IMPORT_BREW_DISCARD_ADD_MISSING_BEAN": "This shot bean is missing. Do you want to add it?",
-          "CONFIRM_BEAN_ADD": "Ask if a missing bean should be added"
+          "CONFIRM_BEAN_ADD": "Ask if a missing bean should be added",
+          "USE_TARGET_TEMPERATURE": "Import the target temperature of the profile instead of the measured average"
         }
     },
     "DEVICE_CONNECTION": "Device connection",

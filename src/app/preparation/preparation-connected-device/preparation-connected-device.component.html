@@ -210,6 +210,11 @@
             <div class='ion-label'>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.CONFIRM_BEAN_ADD" | translate}}</div>
           </ion-toggle>
         </ion-item>
+        <ion-item lines="none">
+          <ion-toggle label-placement='start' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.useTargetTemperature" >
+            <div class='ion-label ion-text-wrap'>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.USE_TARGET_TEMPERATURE" | translate}}</div>
+          </ion-toggle>
+        </ion-item>
       }
 
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.MOVE2) {

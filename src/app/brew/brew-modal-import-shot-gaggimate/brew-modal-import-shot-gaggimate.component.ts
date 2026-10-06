@@ -124,7 +124,11 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
         true,
       );
     } else {
-      for (let i = 0; i < this.gaggimateDevice.getLatestShotsToImport(); i++) {
+      const shotsToLoad = Math.min(
+        this.gaggimateDevice.getLatestShotsToImport(),
+        recentShotsArray.length,
+      );
+      for (let i = 0; i < shotsToLoad; i++) {
         try {
           const GaggimateShotDataEntry = new GaggimateShotData();
 
@@ -148,6 +152,10 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
 
             GaggimateShotDataEntry.brewFlow =
               GaggimateDevice.returnBrewFlowForShotData(shotData.samples);
+            GaggimateShotDataEntry.targetTemp =
+              GaggimateDevice.returnTargetTemperatureForShotData(
+                shotData.samples,
+              );
 
             GaggimateShotDataEntry.notes =
               await this.gaggimateDevice.getShotNotesFile(data.id);

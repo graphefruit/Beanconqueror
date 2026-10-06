@@ -90,6 +90,15 @@ export class GaggimateDevice extends PreparationDevice {
         not_mutated_weight: 0,
       });
 
+      // vf is the weight based flow (g/s) measured by the scale
+      brewFlow.realtimeFlow.push({
+        flow_value: row.vf ?? 0,
+        brew_time: '',
+        timestamp: timestamp,
+        smoothed_weight: 0,
+        timestampdelta: 0,
+      });
+
       brewFlow.pressureFlow.push({
         actual_pressure: row.cp ?? 0,
         old_pressure: 0,
@@ -118,6 +127,28 @@ export class GaggimateDevice extends PreparationDevice {
       });
     });
     return brewFlow;
+  }
+
+  /**
+   * Returns the target temperature of a shot. Profiles may change the target
+   * per phase, so the value which was set for most of the samples is used.
+   */
+  public static returnTargetTemperatureForShotData(samples): number {
+    const counts = new Map<number, number>();
+    for (const row of samples ?? []) {
+      if (row.tt > 0) {
+        counts.set(row.tt, (counts.get(row.tt) ?? 0) + 1);
+      }
+    }
+    let targetTemp = 0;
+    let maxCount = 0;
+    counts.forEach((count, temp) => {
+      if (count > maxCount) {
+        maxCount = count;
+        targetTemp = temp;
+      }
+    });
+    return targetTemp;
   }
 
   public async getRecentShots() {
@@ -149,7 +180,12 @@ export class GaggimateDevice extends PreparationDevice {
     if (response.status === 404) {
       return {};
     }
-    return (await response.json()) as GaggimateShotNotes;
+    try {
+      return (await response.json()) as GaggimateShotNotes;
+    } catch {
+      // GaggiMate answers with its web UI (status 200) for shots without notes
+      return {};
+    }
   }
 
   public async getShotSlog(id: number) {
@@ -195,6 +231,7 @@ export class GaggimateParams implements IGaggimateParams {
   public latestShotsToImport: number;
   public confirmDuplicateImport: boolean;
   public confirmBeanAdd: boolean;
+  public useTargetTemperature: boolean;
 
   constructor() {
     this.chosenProfileId = '';
@@ -203,5 +240,6 @@ export class GaggimateParams implements IGaggimateParams {
     this.latestShotsToImport = 1;
     this.confirmDuplicateImport = true;
     this.confirmBeanAdd = true;
+    this.useTargetTemperature = false;
   }
 }

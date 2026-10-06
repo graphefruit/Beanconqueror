@@ -310,14 +310,15 @@ export class PreparationConnectedDeviceComponent {
 
     let url = inputUrl.trim();
 
+    // If incomplete (only protocol), clear it. This needs to happen before the
+    // protocol is prepended, else 'http:/' would become 'http://http:'
+    if (IS_INCOMPLETE.test(url)) {
+      return '';
+    }
+
     // If missing protocol, default to http://
     if (!HAS_PROTOCOL.test(url)) {
       url = `http://${url}`;
-    }
-
-    // If incomplete (only protocol), clear it
-    if (IS_INCOMPLETE.test(url)) {
-      return '';
     }
 
     // Strip trailing slashes from valid URLs

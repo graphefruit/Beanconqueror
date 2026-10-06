@@ -10,6 +10,7 @@ export interface IGaggimateShotData {
   rating: number;
   incomplete: boolean;
   avgTemp: number;
+  targetTemp: number;
   maxPressure: number;
   avgFlow: number;
   notes: any;
