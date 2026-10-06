@@ -6,7 +6,10 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Settings } from '../../../classes/settings/settings';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
-import { BrewImportService } from '../../brewImport/brew-import.service';
+import {
+  BrewImportRollbackError,
+  BrewImportService,
+} from '../../brewImport/brew-import.service';
 import { CoffeeBluetoothDevicesService } from '../../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { ServerCommunicationService } from '../../serverCommunication/server-communication.service';
 import { UIAlert } from '../../uiAlert';
@@ -144,10 +147,14 @@ describe('IntentHandlerService', () => {
     visualizerService = jasmine.createSpyObj('VisualizerService', [
       'importShotWithSharedCode',
     ]);
-    brewImportService = jasmine.createSpyObj('BrewImportService', ['import']);
+    brewImportService = jasmine.createSpyObj('BrewImportService', [
+      'ensureBeanFromHandoff',
+      'import',
+    ]);
     beanStorage = jasmine.createSpyObj('UIBeanStorage', [
       'attachOnEvent',
       'getAllEntries',
+      'removeByUUID',
     ]);
     millStorage = jasmine.createSpyObj('UIMillStorage', [
       'attachOnEvent',
@@ -167,6 +174,8 @@ describe('IntentHandlerService', () => {
     uiAlert.showLoadingSpinner.and.resolveTo();
     uiAlert.hideLoadingSpinner.and.resolveTo();
     uiAlert.isLoadingSpinnerShown.and.returnValue(false);
+    beanStorage.removeByUUID.and.resolveTo(true);
+    brewImportService.ensureBeanFromHandoff.and.resolveTo();
     brewImportService.import.and.resolveTo();
     beanStorage.attachOnEvent.and.returnValue(eventEmitter as never);
     millStorage.attachOnEvent.and.returnValue(eventEmitter as never);
@@ -192,6 +201,7 @@ describe('IntentHandlerService', () => {
         UIBrewHelper,
         { provide: UIAlert, useValue: uiAlert },
         { provide: UIAnalytics, useValue: uiAnalytics },
+        { provide: UIBeanStorage, useValue: beanStorage },
         { provide: VisualizerService, useValue: visualizerService },
         { provide: BrewImportService, useValue: brewImportService },
         { provide: UIBeanStorage, useValue: beanStorage },
@@ -277,6 +287,39 @@ describe('IntentHandlerService', () => {
     );
   });
 
+  it('creates the pod bean before deciding whether the import can proceed', async () => {
+    const order: string[] = [];
+    beanStorage.getAllEntries.and.callFake(() => {
+      order.push('read');
+      return [] as never;
+    });
+    brewImportService.ensureBeanFromHandoff.and.callFake(() => {
+      order.push('ensure');
+      return Promise.resolve(undefined as never);
+    });
+
+    await service.handleDeepLink(url);
+
+    expect(brewImportService.ensureBeanFromHandoff.calls.allArgs()).toEqual([
+      [envelope],
+    ]);
+    expect(order[0]).toBe('ensure');
+    expect(brewImportService.import.calls.count()).toBe(0);
+    expect(uiAlert.showLoadingSpinner.calls.count()).toBe(0);
+  });
+
+  it('removes a handoff-created bean when the import cannot proceed', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    preparationStorage.getAllEntries.and.returnValue([]);
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+    expect(brewImportService.import.calls.count()).toBe(0);
+  });
+
   it('blocks brew handoff import when only archived beans are available', async () => {
     beanStorage.getAllEntries.and.returnValue([{ finished: true }] as never);
 
@@ -299,13 +342,13 @@ describe('IntentHandlerService', () => {
       `Handle deeplink: ADD_BREW (${url.length} chars)`,
     );
     expect(uiLog.log).not.toHaveBeenCalledWith('Handle deeplink: ' + url);
-    expect(brewImportService.import).toHaveBeenCalledOnceWith(envelope);
-    expect(uiAlert.showMessage).toHaveBeenCalledWith(
+    expect(brewImportService.import.calls.allArgs()).toEqual([[envelope]]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
       'BREW_IMPORT_SUCCESSFUL',
       undefined,
       undefined,
       true,
-    );
+    ]);
   });
 
   it('reports a brew handoff import failure after a decodable payload reaches import', async () => {
@@ -313,13 +356,130 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(url);
 
-    expect(brewImportService.import).toHaveBeenCalled();
-    expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
-    expect(uiAlert.showMessage).toHaveBeenCalledWith(
+    expect(brewImportService.import.calls.count()).toBe(1);
+    expect(uiAlert.hideLoadingSpinner.calls.count()).toBeGreaterThan(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
       'BREW_IMPORT_FAILED',
       'ERROR_OCCURED',
       undefined,
       true,
+    ]);
+  });
+
+  it('removes a handoff-created bean when import fails', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(new Error('Import failed'));
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
+  it('leaves a handoff-created bean when import rollback could not remove its brew', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError('brew-created', false, 'bean-created'),
     );
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from handoff link kept bean bean-created because imported brew brew-created could not be rolled back.',
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
+  it('removes a handoff-created bean when a failed rollback kept a brew linked to a different bean', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError('brew-created', false, 'bean-existing'),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+  });
+
+  it('leaves a handoff-created bean when a failed rollback did not report the brew bean link', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    const rollbackError = new BrewImportRollbackError(
+      'brew-created',
+      false,
+      'bean-created',
+    ) as BrewImportRollbackError & { beanUuid?: string };
+    delete rollbackError.beanUuid;
+    brewImportService.import.and.rejectWith(rollbackError);
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from handoff link kept bean bean-created because imported brew brew-created could not be rolled back.',
+    ]);
+  });
+
+  it('removes a handoff-created bean when import rolled its brew back durably', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(
+      new BrewImportRollbackError('brew-created', true, 'bean-created'),
+    );
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+  });
+
+  it('logs a failed rollback delete without replacing the import failure', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo('bean-created');
+    brewImportService.import.and.rejectWith(new Error('Import failed'));
+    beanStorage.removeByUUID.and.resolveTo(false);
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
+      ['bean-created'],
+    ]);
+    expect(uiLog.error.calls.allArgs()).toContain([
+      'Import brew from handoff link failed to roll back bean: bean-created',
+    ]);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
+  });
+
+  it('does not remove an existing matched bean when import fails', async () => {
+    brewImportService.ensureBeanFromHandoff.and.resolveTo(undefined);
+    brewImportService.import.and.rejectWith(new Error('Import failed'));
+
+    await service.handleDeepLink(url);
+
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toContain([
+      'BREW_IMPORT_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    ]);
   });
 });

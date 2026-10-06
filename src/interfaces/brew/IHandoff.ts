@@ -55,11 +55,35 @@ export interface IHandoffBrew {
   note: string;
 }
 
+export interface IHandoffBean {
+  name: string;
+  roaster?: string;
+  /** ISO 8601, date or date and time. */
+  roastingDate?: string;
+  origin?: string;
+  region?: string;
+  farm?: string;
+  farmer?: string;
+  /**
+   * Metres, as text. Beanconqueror stores elevation as a string and a sending
+   * app may well know it as a range ("1800-2000"), so the wire carries what
+   * the sender has rather than forcing a number it would have to invent.
+   */
+  elevation?: string;
+  process?: string;
+  variety?: string;
+  aromatics?: string;
+  note?: string;
+  beanMix?: string;
+  decaffeinated?: boolean;
+  imageUrl?: string;
+}
+
 export interface IHandoffEnvelope {
   v: 1;
   app: { name: string; version?: string };
   brew: IHandoffBrew;
-  bean?: Record<string, unknown>;
+  bean?: IHandoffBean;
   flow?: IHandoffFlow;
   metrics?: IHandoffMetric[];
   imported: IHandoffImport;

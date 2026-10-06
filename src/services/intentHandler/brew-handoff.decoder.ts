@@ -7,6 +7,7 @@ import { BlobReader, ZipReader } from '@zip.js/zip.js';
 import type { FileEntry } from '@zip.js/zip.js';
 
 import type {
+  IHandoffBean,
   IHandoffBrew,
   IHandoffEnvelope,
   IHandoffFlow,
@@ -17,6 +18,7 @@ import type {
 
 export type {
   IHandoffBrew,
+  IHandoffBean,
   IHandoffEnvelope,
   IHandoffFlow,
   IHandoffImport,
@@ -65,6 +67,7 @@ const ISO_DATE =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 const ISO_DATE_PARTS =
   /^(\d{4})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
+const ISO_CALENDAR_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 /** Concatenate the numbered params back into one base64url string. */
 export function collectHandoffPayload(url: string): string {
@@ -470,9 +473,7 @@ function validateEnvelope(value: unknown): IHandoffEnvelope {
     v: 1,
     app: validateApp(envelope.app),
     brew: validateBrew(envelope.brew),
-    ...optional(envelope.bean, 'bean', (bean) =>
-      sanitizeOpaqueObject(bean, 'Envelope bean'),
-    ),
+    ...optionalValue('bean', validateBean(envelope.bean)),
     ...optional(envelope.flow, 'flow', validateFlow),
     ...optional(envelope.metrics, 'metrics', validateMetrics),
     imported: validateImported(envelope.imported),
@@ -485,6 +486,94 @@ function validateApp(value: unknown): IHandoffEnvelope['app'] {
     name: boundedString(app.name, 'Envelope app.name', 1, MAX_LABEL_LENGTH),
     ...optionalString(app.version, 'version', 'Envelope app.version'),
   };
+}
+
+function validateBean(value: unknown): IHandoffBean | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  // A present but non-object bean is a malformed envelope rather than an
+  // absent one, and is rejected like every other shape error here. Swallowing
+  // it would import the brew with no coffee attached and say nothing.
+  const bean = objectRecord(value, 'Envelope bean');
+
+  const name = optionalTrimmedString(
+    bean.name,
+    'Envelope bean.name',
+    MAX_LABEL_LENGTH,
+  );
+  if (name === undefined) {
+    return undefined;
+  }
+
+  const out: IHandoffBean = { name };
+  const optionalFields: (keyof Omit<
+    IHandoffBean,
+    'name' | 'roastingDate' | 'decaffeinated'
+  >)[] = [
+    'roaster',
+    'origin',
+    'region',
+    'farm',
+    'farmer',
+    'elevation',
+    'process',
+    'variety',
+    'aromatics',
+    'note',
+    'beanMix',
+    'imageUrl',
+  ];
+  optionalFields.forEach((field) => {
+    const max =
+      field === 'aromatics' || field === 'note'
+        ? MAX_NOTE_LENGTH
+        : MAX_LABEL_LENGTH;
+    const fieldValue = optionalTrimmedString(
+      bean[field],
+      `Envelope bean.${field}`,
+      max,
+    );
+    if (fieldValue !== undefined) {
+      out[field] = fieldValue;
+    }
+  });
+
+  // Unlike brew.date, a bean's own values are dropped rather than thrown on.
+  // The brew is the payload and must be right; the bean is the label on it,
+  // and losing the whole import over an unparseable roast date would cost the
+  // user the one thing they asked for.
+  const roastingDate = optionalIsoDate(bean.roastingDate);
+  if (roastingDate !== undefined) {
+    out.roastingDate = roastingDate;
+  }
+  if (typeof bean.decaffeinated === 'boolean') {
+    out.decaffeinated = bean.decaffeinated;
+  }
+  return out;
+}
+
+function optionalIsoDate(value: unknown): string | undefined {
+  const date = optionalTrimmedString(value, 'date', MAX_LABEL_LENGTH);
+  if (date === undefined) {
+    return undefined;
+  }
+  // A bare calendar day is accepted as well as a full timestamp. A roaster
+  // roasts on a day rather than at an instant, so demanding a time and an
+  // offset would make a sender invent both, and the wrong offset moves the
+  // roast to the day before.
+  const match =
+    ISO_CALENDAR_DATE.exec(date) ??
+    (ISO_DATE.test(date) ? ISO_DATE_PARTS.exec(date) : null);
+  if (
+    match === null ||
+    !isValidCalendarDate(match[1], match[2], match[3]) ||
+    !Number.isFinite(Date.parse(date))
+  ) {
+    return undefined;
+  }
+  return date;
 }
 
 function validateImported(value: unknown): IHandoffImport {
@@ -931,6 +1020,18 @@ function optionalString<K extends string>(
   return { [key]: boundedString(value, path, 1, MAX_LABEL_LENGTH) } as Partial<
     Record<K, string>
   >;
+}
+
+function optionalTrimmedString(
+  value: unknown,
+  path: string,
+  max: number,
+): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  return trimmed === '' ? undefined : boundedString(trimmed, path, 1, max);
 }
 
 function optionalValue<K extends string, T>(

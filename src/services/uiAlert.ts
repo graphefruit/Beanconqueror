@@ -222,6 +222,7 @@ export class UIAlert {
     _message: string,
     _title?: string,
     _translate?: boolean,
+    _translateParams?: Record<string, unknown>,
   ): Promise<ConfirmationDialogResult> {
     return await this.showConfirmWithYesNoTranslation(
       _message,
@@ -229,6 +230,7 @@ export class UIAlert {
       undefined,
       undefined,
       _translate,
+      _translateParams,
     );
   }
 
@@ -244,11 +246,12 @@ export class UIAlert {
     _yesText?: string,
     _noText?: string,
     _translate?: boolean,
+    _translateParams?: Record<string, unknown>,
   ): Promise<ConfirmationDialogResult> {
     let yesText = this.translate.instant('YES');
     let noText = this.translate.instant('NO');
     if (_translate === true) {
-      _message = this.translate.instant(_message);
+      _message = this.translate.instant(_message, _translateParams);
 
       if (_title) {
         _title = this.translate.instant(_title);

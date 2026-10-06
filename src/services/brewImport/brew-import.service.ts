@@ -2,14 +2,19 @@ import { inject, Injectable } from '@angular/core';
 
 import moment from 'moment';
 
+import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import type {
+  IHandoffBean,
   IHandoffEnvelope,
   IHandoffFlow,
   IHandoffMetric,
 } from '../../interfaces/brew/IHandoff';
+import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UIFileHelper } from '../uiFileHelper';
@@ -20,6 +25,7 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 
 const MAX_ABSOLUTE_MILLISECONDS = 24 * 60 * 60 * 1_000;
 const MAX_ABSOLUTE_GRAMS = 100_000;
+const MAX_CREATE_BEAN_PROMPT_NAME_LENGTH = 60;
 
 export interface IBrewImportResult {
   brew: Brew;
@@ -62,6 +68,7 @@ export class BrewImportService {
   private readonly fileHelper = inject(UIFileHelper);
   private readonly uiLog = inject(UILog);
   private readonly settingsStorage = inject(UISettingsStorage);
+  private readonly uiAlert = inject(UIAlert);
 
   public build(envelope: IHandoffEnvelope): IBrewImportResult {
     const brew = new Brew();
@@ -143,6 +150,46 @@ export class BrewImportService {
     };
   }
 
+  public async ensureBeanFromHandoff(
+    envelope: IHandoffEnvelope,
+  ): Promise<string | undefined> {
+    const bean = envelope.bean;
+    if (!bean || !this.hasBeanMetadata(bean)) {
+      return undefined;
+    }
+
+    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+      return undefined;
+    }
+
+    const choice = await this.uiAlert.showConfirm(
+      'BREW_IMPORT_CREATE_BEAN_DESCRIPTION',
+      'BREW_IMPORT_CREATE_BEAN_TITLE',
+      true,
+      { name: this.promptBeanName(bean.name) },
+    );
+    if (choice !== 'YES') {
+      return undefined;
+    }
+
+    // Ask again, now the dialog has closed. The URL listener does not await
+    // one handoff before starting the next, so a second import of the same
+    // coffee can have arrived and created the bean while this prompt was open.
+    // Without this, both would create one and the user would end up with two.
+    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+      return undefined;
+    }
+
+    const { entry: created, saved } = await this.beanStorage.addAndConfirm(
+      this.buildBean(bean),
+    );
+    if (!saved) {
+      await this.removeFailedHandoffBean(created.config.uuid);
+      throw new Error(`Handoff bean creation failed: ${created.config.uuid}`);
+    }
+    return created.config.uuid;
+  }
+
   public async import(envelope: IHandoffEnvelope): Promise<IBrewImportResult> {
     const result = this.build(envelope);
     const addedBrew: Brew = await this.brewStorage.add(result.brew);
@@ -218,6 +265,24 @@ export class BrewImportService {
     if (Math.abs(total) > MAX_ABSOLUTE_GRAMS) {
       throw new Error(
         `Envelope ${field} cumulative total must be at most ${MAX_ABSOLUTE_GRAMS}`,
+      );
+    }
+  }
+
+  private async removeFailedHandoffBean(uuid: string): Promise<void> {
+    try {
+      const didRemove = await this.beanStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return;
+      }
+      this.uiLog.error('Handoff bean creation cleanup failed: ' + uuid);
+    } catch (ex) {
+      this.uiLog.error(
+        'Handoff bean creation cleanup failed: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
       );
     }
   }
@@ -316,10 +381,123 @@ export class BrewImportService {
   }
 
   private optionalBeanName(envelope: IHandoffEnvelope): string {
-    if (typeof envelope.bean?.name === 'string') {
-      return envelope.bean.name;
+    return typeof envelope.bean?.name === 'string' ? envelope.bean.name : '';
+  }
+
+  private promptBeanName(name: string): string {
+    if (name.length <= MAX_CREATE_BEAN_PROMPT_NAME_LENGTH) {
+      return name;
     }
-    return '';
+    return `${name.slice(0, MAX_CREATE_BEAN_PROMPT_NAME_LENGTH - 3)}...`;
+  }
+
+  private hasBeanMetadata(bean: IHandoffBean): boolean {
+    return [
+      bean.roaster,
+      bean.roastingDate,
+      bean.origin,
+      bean.region,
+      bean.farm,
+      bean.farmer,
+      bean.elevation,
+      bean.process,
+      bean.variety,
+      bean.aromatics,
+      bean.note,
+      bean.beanMix,
+      bean.decaffeinated,
+    ].some((field) => field !== undefined);
+  }
+
+  private buildBean(handoffBean: IHandoffBean): Bean {
+    const bean = new Bean();
+    bean.name = handoffBean.name;
+    bean.roaster = handoffBean.roaster ?? '';
+    bean.roastingDate = handoffBean.roastingDate ?? '';
+    bean.note = handoffBean.note ?? '';
+    bean.aromatics = handoffBean.aromatics ?? '';
+    bean.beanMix = this.beanMixFromHandoff(handoffBean.beanMix);
+    bean.decaffeinated = handoffBean.decaffeinated ?? false;
+
+    // Beanconqueror attachments are local file paths; remote pod images would
+    // need a downloader, permissions and lifecycle policy outside this import.
+    const information = this.beanInformationFromHandoff(handoffBean);
+    if (information !== undefined) {
+      bean.bean_information.push(information);
+    }
+
+    return bean;
+  }
+
+  private beanInformationFromHandoff(
+    bean: IHandoffBean,
+  ): IBeanInformation | undefined {
+    if (
+      !bean.origin &&
+      !bean.region &&
+      !bean.farm &&
+      !bean.farmer &&
+      !bean.elevation &&
+      !bean.process &&
+      !bean.variety
+    ) {
+      return undefined;
+    }
+
+    return {
+      country: bean.origin ?? '',
+      region: bean.region ?? '',
+      farm: bean.farm ?? '',
+      farmer: bean.farmer ?? '',
+      elevation: bean.elevation ?? '',
+      harvest_time: '',
+      variety: bean.variety ?? '',
+      processing: bean.process ?? '',
+      certification: '',
+      percentage: 0,
+      purchasing_price: 0,
+      fob_price: 0,
+    };
+  }
+
+  private beanMixFromHandoff(beanMix: string | undefined): BEAN_MIX_ENUM {
+    const normalized = this.normalizeBeanMix(beanMix ?? '');
+    if (normalized === 'singleorigin' || normalized === 'single') {
+      return 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
+    }
+    if (normalized === 'blend') {
+      return 'BLEND' as BEAN_MIX_ENUM;
+    }
+    if (normalized === 'unknown') {
+      return 'UNKNOWN' as BEAN_MIX_ENUM;
+    }
+    return 'UNKNOWN' as BEAN_MIX_ENUM;
+  }
+
+  private normalizeBeanMix(value: string): string {
+    return (
+      value
+        .normalize('NFC')
+        .trim()
+        // Handoff enum keys are wire tokens, so they must not follow a user's
+        // locale. Turkish casing would turn SINGLE_ORIGIN into sıngle_origin.
+        .toLocaleLowerCase('en-US')
+        .replace(/[\W_]/g, '')
+    );
+  }
+
+  // Whether the importer already has this coffee, which is not the same
+  // question as which one it should link to. `findNameMatch` returns no match
+  // when two active beans carry the incoming name, because it will not guess
+  // between them -- but the user plainly does have the coffee, and creating a
+  // third copy of it would leave them with a duplicate that `build()` then
+  // declines to use anyway. Ambiguity therefore counts as having it.
+  private hasNameMatch(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+  ): boolean {
+    const found = this.findNameMatch(entries, hintedName);
+    return found.match !== undefined || found.reason === 'multiple matches';
   }
 
   private findUniqueOrDefault(
@@ -327,8 +505,7 @@ export class BrewImportService {
     hintedName: string,
     label: string,
   ): INameMatchResult {
-    const usable = this.usableEntries(entries);
-    const fallback = this.firstUsableEntry(usable);
+    const fallback = this.firstUsableEntry(entries);
     const fallbackNote = (reason: string): INameMatchResult => {
       if (!fallback) {
         throw new Error(`${label} not linked: no available ${label}.`);
@@ -344,30 +521,18 @@ export class BrewImportService {
     // Name hints are matched case-insensitively after trimming, but never create
     // equipment. A mistaken match can be cleared by hand; an importer-created
     // duplicate silently pollutes the user's lists and is hard to discover.
-    const normalizedHint = this.normalizeName(hintedName);
-    if (!normalizedHint) {
-      return fallbackNote('missing name');
-    }
-
-    const matches = usable.filter(
-      (entry) => this.normalizeName(entry.name) === normalizedHint,
-    );
-    if (matches.length === 1) {
-      return { uuid: matches[0].config.uuid };
-    }
-
-    if (matches.length === 0) {
-      const wider = this.findUniqueModelMatch(usable, normalizedHint);
-      if (wider) {
+    const match = this.findNameMatch(entries, hintedName);
+    if (match.match) {
+      if (match.widened) {
         return {
-          uuid: wider.config.uuid,
-          note: `${label} linked to "${wider.name}" from "${hintedName.trim()}".`,
+          uuid: match.match.config.uuid,
+          note: `${label} linked to "${match.match.name}" from "${hintedName.trim()}".`,
         };
       }
+      return { uuid: match.match.config.uuid };
     }
 
-    const reason = matches.length === 0 ? 'no match' : 'multiple matches';
-    return fallbackNote(reason);
+    return fallbackNote(match.reason);
   }
 
   private findUniqueByName(
@@ -375,34 +540,60 @@ export class BrewImportService {
     hintedName: string,
     label: string,
   ): INameMatchResult {
+    const match = this.findNameMatch(entries, hintedName);
+    if (match.reason === 'missing name') {
+      return { uuid: '' };
+    }
+
+    if (match.match) {
+      if (match.widened) {
+        return {
+          uuid: match.match.config.uuid,
+          note: `${label} linked to "${match.match.name}" from "${hintedName.trim()}".`,
+        };
+      }
+      return { uuid: match.match.config.uuid };
+    }
+
+    return {
+      uuid: '',
+      note: `${label} not linked: "${hintedName.trim()}" (${match.reason}).`,
+    };
+  }
+
+  private findNameMatch(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+  ): {
+    match?: IStoredNamedEntry;
+    reason: 'missing name' | 'multiple matches' | 'no match';
+    widened: boolean;
+  } {
     const usable = this.usableEntries(entries);
     const normalizedHint = this.normalizeName(hintedName);
     if (!normalizedHint) {
-      return { uuid: '' };
+      return { reason: 'missing name', widened: false };
     }
 
     const matches = usable.filter(
       (entry) => this.normalizeName(entry.name) === normalizedHint,
     );
     if (matches.length === 1) {
-      return { uuid: matches[0].config.uuid };
+      return { match: matches[0], reason: 'no match', widened: false };
     }
 
     if (matches.length === 0) {
       const wider = this.findUniqueModelMatch(usable, normalizedHint);
-      if (wider) {
-        return {
-          uuid: wider.config.uuid,
-          note: `${label} linked to "${wider.name}" from "${hintedName.trim()}".`,
-        };
+      if (wider.match) {
+        return { match: wider.match, reason: 'no match', widened: true };
       }
+      if (wider.multiple) {
+        return { reason: 'multiple matches', widened: true };
+      }
+      return { reason: 'no match', widened: false };
     }
 
-    const reason = matches.length === 0 ? 'no match' : 'multiple matches';
-    return {
-      uuid: '',
-      note: `${label} not linked: "${hintedName.trim()}" (${reason}).`,
-    };
+    return { reason: 'multiple matches', widened: false };
   }
 
   /**
@@ -426,7 +617,7 @@ export class BrewImportService {
   private findUniqueModelMatch(
     entries: IStoredNamedEntry[],
     normalizedHint: string,
-  ): IStoredNamedEntry | undefined {
+  ): { match?: IStoredNamedEntry; multiple: boolean } {
     const extendsName = (longer: string, shorter: string): boolean =>
       longer.length > shorter.length &&
       longer.startsWith(shorter) &&
@@ -442,7 +633,10 @@ export class BrewImportService {
       );
     });
 
-    return candidates.length === 1 ? candidates[0] : undefined;
+    if (candidates.length === 1) {
+      return { match: candidates[0], multiple: false };
+    }
+    return { multiple: candidates.length > 1 };
   }
 
   // A finished bean or preparation is archived, and `canBrew()` will not brew

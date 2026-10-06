@@ -408,7 +408,7 @@ describe('brew handoff decoder', () => {
       )
       .replace(
         '"bean":{"name":"Any coffee"}',
-        '"bean":{"x":{"__proto__":{"polluted":true},"safe":true}}',
+        '"bean":{"name":"Any coffee","origin":{"__proto__":{"polluted":true},"safe":true}}',
       );
 
     const decoded = await decodeHandoffPayload(await gzipString(raw));
@@ -421,10 +421,170 @@ describe('brew handoff decoder', () => {
       a: { b: { c: {} } },
       list: [{ safe: 1 }],
     });
-    expect(decoded.bean).toEqual({ x: { safe: true } });
+    expect(decoded.bean).toEqual({ name: 'Any coffee' });
   });
 
-  it('bounds opaque object depth and key count', async () => {
+  it('drops malformed bean metadata without rejecting the brew', async () => {
+    const decodedWrongTypes = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: '  Pod coffee  ',
+          origin: 123,
+          process: '',
+          variety: '  Heirloom  ',
+          aromatics: false,
+          note: '  Floral  ',
+          beanMix: ' garbage ',
+          imageUrl: [],
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+    const decodedMissingName = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          origin: 'Ethiopia',
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decodedWrongTypes.bean).toEqual({
+      name: 'Pod coffee',
+      variety: 'Heirloom',
+      note: 'Floral',
+      beanMix: 'garbage',
+    });
+    expect(decodedMissingName.bean).toBeUndefined();
+  });
+
+  it('keeps the roaster and origin detail a pod carries', async () => {
+    const decoded = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: 'Pod coffee',
+          roaster: '  Drop Coffee  ',
+          roastingDate: '2026-09-01',
+          origin: 'Ethiopia',
+          region: 'Guji',
+          farm: 'Shakiso',
+          farmer: 'Alemu',
+          elevation: '1800-2000',
+          decaffeinated: false,
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decoded.bean).toEqual({
+      name: 'Pod coffee',
+      roaster: 'Drop Coffee',
+      roastingDate: '2026-09-01',
+      origin: 'Ethiopia',
+      region: 'Guji',
+      farm: 'Shakiso',
+      farmer: 'Alemu',
+      elevation: '1800-2000',
+      decaffeinated: false,
+    });
+  });
+
+  it('drops an unusable roast date rather than losing the brew with it', async () => {
+    // brew.date is the payload and a bad one is fatal. A bean's roast date is
+    // a label on it, and the user would rather have the brew without it.
+    const decoded = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: 'Pod coffee',
+          roastingDate: '2026-02-30',
+          decaffeinated: 'yes',
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decoded.bean).toEqual({ name: 'Pod coffee' });
+  });
+
+  it('takes a roast date as a day or as a full timestamp', async () => {
+    const decoded = await decodeEnvelope(
+      validEnvelope({
+        bean: {
+          name: 'Pod coffee',
+          roastingDate: '2026-09-01T06:30:00Z',
+        } as unknown as IHandoffEnvelope['bean'],
+      }),
+    );
+
+    expect(decoded.bean).toEqual({
+      name: 'Pod coffee',
+      roastingDate: '2026-09-01T06:30:00Z',
+    });
+  });
+
+  it('rejects a bean that is present but not an object', async () => {
+    // A field of the wrong shape is a malformed envelope, not a brew without
+    // coffee, and the decoder says so rather than quietly dropping it.
+    await expectAsync(
+      decodeEnvelope(
+        validEnvelope({
+          bean: 'not a bean' as unknown as IHandoffEnvelope['bean'],
+        }),
+      ),
+    ).toBeRejectedWithError('Envelope bean must be an object');
+  });
+
+  it('rejects bean labels over the shared label bound', async () => {
+    await expectAsync(
+      decodeEnvelope(
+        validEnvelope({
+          bean: {
+            name: 'x'.repeat(513),
+            origin: 'Ethiopia',
+          },
+        }),
+      ),
+    ).toBeRejectedWithError(
+      'Envelope bean.name must be between 1 and 512 characters',
+    );
+    await expectAsync(
+      decodeEnvelope(
+        validEnvelope({
+          bean: {
+            name: 'Pod coffee',
+            origin: 'x'.repeat(513),
+          },
+        }),
+      ),
+    ).toBeRejectedWithError(
+      'Envelope bean.origin must be between 1 and 512 characters',
+    );
+  });
+
+  it('rejects bean notes over the note bound', async () => {
+    await expectAsync(
+      decodeEnvelope(
+        validEnvelope({
+          bean: {
+            name: 'Pod coffee',
+            note: 'x'.repeat(10001),
+          },
+        }),
+      ),
+    ).toBeRejectedWithError(
+      'Envelope bean.note must be between 1 and 10000 characters',
+    );
+    await expectAsync(
+      decodeEnvelope(
+        validEnvelope({
+          bean: {
+            name: 'Pod coffee',
+            aromatics: 'x'.repeat(10001),
+          },
+        }),
+      ),
+    ).toBeRejectedWithError(
+      'Envelope bean.aromatics must be between 1 and 10000 characters',
+    );
+  });
+
+  it('bounds opaque imported params depth and key count', async () => {
     let deep: Record<string, unknown> = { end: true };
     for (let i = 0; i < 9; i++) {
       deep = { child: deep };
@@ -442,15 +602,18 @@ describe('brew handoff decoder', () => {
     await expectAsync(
       decodeEnvelope(
         validEnvelope({
-          bean: Object.fromEntries(
-            Array.from({ length: 1001 }, (_value, index) => [
-              `k${index}`,
-              true,
-            ]),
-          ),
+          imported: {
+            ...validEnvelope().imported,
+            params: Object.fromEntries(
+              Array.from({ length: 1001 }, (_value, index) => [
+                `k${index}`,
+                true,
+              ]),
+            ),
+          },
         }),
       ),
-    ).toBeRejectedWithError('Envelope bean contains too many keys');
+    ).toBeRejectedWithError('Envelope imported.params contains too many keys');
   });
 
   it('rejects non-object opaque blocks', async () => {

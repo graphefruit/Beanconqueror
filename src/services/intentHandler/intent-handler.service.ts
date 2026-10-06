@@ -11,6 +11,7 @@ import { ServerCommunicationService } from '../serverCommunication/server-commun
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
 import { UIBeanHelper } from '../uiBeanHelper';
+import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewHelper } from '../uiBrewHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
@@ -33,6 +34,7 @@ export class IntentHandlerService {
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly beanStorage = inject(UIBeanStorage);
   private readonly visualizerService = inject(VisualizerService);
   private readonly brewImportService = inject(BrewImportService);
   private readonly zone = inject(NgZone);
@@ -246,23 +248,31 @@ export class IntentHandlerService {
   private async addBrewFromHandoff(_url: string) {
     this.uiLog.log('Import brew from handoff link');
 
-    // A finished import only needs the fallback links that BrewImportService
-    // cannot create itself. A grinder hint is optional and may stay unlinked.
-    if (this.uiBrewHelper.canImportBrewIfNotShowMessage() === false) {
-      this.uiLog.log(
-        'Import brew from handoff link skipped: cannot import yet',
-      );
-      return;
-    }
-
+    let createdBeanUuid: string | undefined;
     try {
-      await this.uiAlert.showLoadingSpinner();
       this.uiAnalytics.trackEvent(
         IntentHandlerTracking.TITLE,
         IntentHandlerTracking.ACTIONS.ADD_HANDOFF_BREW,
       );
       const envelope = await decodeHandoffPayload(collectHandoffPayload(_url));
+      createdBeanUuid =
+        await this.brewImportService.ensureBeanFromHandoff(envelope);
+
+      // A finished import only needs the fallback links that BrewImportService
+      // cannot create itself, so a grinder hint may stay unlinked. The check
+      // runs after the pod bean is created, because that bean is one of the
+      // links it is looking for.
+      if (this.uiBrewHelper.canImportBrewIfNotShowMessage() === false) {
+        this.uiLog.log(
+          'Import brew from handoff link skipped: cannot import yet',
+        );
+        await this.removeCreatedHandoffBean(createdBeanUuid);
+        return;
+      }
+
+      await this.uiAlert.showLoadingSpinner();
       await this.brewImportService.import(envelope);
+      createdBeanUuid = undefined;
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         'BREW_IMPORT_SUCCESSFUL',
@@ -272,6 +282,16 @@ export class IntentHandlerService {
       );
     } catch (ex) {
       this.uiLog.error('Import brew from handoff link failed: ' + ex.message);
+      if (
+        createdBeanUuid !== undefined &&
+        this.shouldKeepCreatedBeanAfterImportFailure(ex, createdBeanUuid)
+      ) {
+        this.uiLog.error(
+          `Import brew from handoff link kept bean ${createdBeanUuid} because imported brew ${ex.brewUuid} could not be rolled back.`,
+        );
+      } else {
+        await this.removeCreatedHandoffBean(createdBeanUuid);
+      }
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         'BREW_IMPORT_FAILED',
@@ -282,10 +302,62 @@ export class IntentHandlerService {
     }
   }
 
+  private shouldKeepCreatedBeanAfterImportFailure(
+    ex: unknown,
+    createdBeanUuid: string,
+  ): ex is {
+    isBrewImportRollbackError: true;
+    brewUuid: string;
+    rolledBack: false;
+    beanUuid?: string;
+  } {
+    if (
+      !!ex &&
+      typeof ex === 'object' &&
+      'isBrewImportRollbackError' in ex &&
+      ex.isBrewImportRollbackError === true &&
+      'rolledBack' in ex &&
+      ex.rolledBack === false &&
+      'brewUuid' in ex &&
+      typeof ex.brewUuid === 'string'
+    ) {
+      return (
+        !('beanUuid' in ex) ||
+        ex.beanUuid === undefined ||
+        ex.beanUuid === createdBeanUuid
+      );
+    }
+
+    return false;
+  }
+
   private isBrewHandoffIntent(url: string): boolean {
     return (
       url.toLowerCase().indexOf('beanconqueror://ADD_BREW'.toLowerCase()) === 0
     );
+  }
+
+  private async removeCreatedHandoffBean(uuid: string | undefined) {
+    if (uuid === undefined) {
+      return;
+    }
+    try {
+      const didRemove = await this.beanStorage.removeByUUID(uuid);
+      if (didRemove) {
+        return;
+      }
+      this.uiLog.error(
+        'Import brew from handoff link failed to roll back bean: ' + uuid,
+      );
+    } catch (ex) {
+      this.uiLog.error(
+        'Import brew from handoff link failed to roll back bean: ' +
+          uuid +
+          ' (' +
+          ex.message +
+          ')',
+      );
+    }
   }
 
   private importVisualizerShot(_shareCode) {
