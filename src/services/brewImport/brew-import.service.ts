@@ -152,13 +152,10 @@ export class BrewImportService {
 
   public async ensureBeanFromHandoff(
     envelope: IHandoffEnvelope,
+    nameMatch: 'single' | 'exact' = 'single',
   ): Promise<string | undefined> {
     const bean = envelope.bean;
-    if (!bean || !this.hasBeanMetadata(bean)) {
-      return undefined;
-    }
-
-    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+    if (!bean || !this.canCreateBeanFromHandoff(envelope, nameMatch)) {
       return undefined;
     }
 
@@ -172,11 +169,44 @@ export class BrewImportService {
       return undefined;
     }
 
-    // Ask again, now the dialog has closed. The URL listener does not await
-    // one handoff before starting the next, so a second import of the same
-    // coffee can have arrived and created the bean while this prompt was open.
-    // Without this, both would create one and the user would end up with two.
-    if (this.hasNameMatch(this.beanStorage.getAllEntries(), bean.name)) {
+    return this.createBeanFromHandoff(envelope, nameMatch);
+  }
+
+  public canCreateBeanFromHandoff(
+    envelope: IHandoffEnvelope,
+    nameMatch: 'single' | 'exact' = 'single',
+  ): boolean {
+    const bean = envelope.bean;
+    if (!bean || !this.hasBeanMetadata(bean)) {
+      return false;
+    }
+
+    const entries = this.beanStorage.getAllEntries();
+    if (nameMatch === 'exact') {
+      return !this.hasExactNameMatch(entries, bean.name);
+    }
+    return !this.hasNameMatch(entries, bean.name);
+  }
+
+  /**
+   * Write the bean and say which one was written.
+   *
+   * The uuid goes back to the caller so a handoff that then fails can take
+   * back the bean it created, and only that one: a name that matched an
+   * existing entry returns undefined and is left alone.
+   *
+   * The `canCreateBeanFromHandoff` check here is not redundant with the one
+   * the caller made before prompting. The URL listener does not await one
+   * handoff before starting the next, so a second import of the same coffee
+   * can create the bean while the first is still asking. Asking again once
+   * the dialog has closed is what stops both from creating one.
+   */
+  public async createBeanFromHandoff(
+    envelope: IHandoffEnvelope,
+    nameMatch: 'single' | 'exact' = 'single',
+  ): Promise<string | undefined> {
+    const bean = envelope.bean;
+    if (!bean || !this.canCreateBeanFromHandoff(envelope, nameMatch)) {
       return undefined;
     }
 
@@ -498,6 +528,23 @@ export class BrewImportService {
   ): boolean {
     const found = this.findNameMatch(entries, hintedName);
     return found.match !== undefined || found.reason === 'multiple matches';
+  }
+
+  private hasExactNameMatch(
+    entries: IStoredNamedEntry[],
+    hintedName: string,
+  ): boolean {
+    const normalizedHint = this.normalizeName(hintedName);
+    if (!normalizedHint) {
+      return false;
+    }
+    // Archived entries are excluded here for the same reason they are
+    // everywhere else in this file: the importer cannot link to one, so
+    // treating it as a match would block creation and leave the brew with
+    // nothing to point at.
+    return this.usableEntries(entries).some(
+      (entry) => this.normalizeName(entry.name) === normalizedHint,
+    );
   }
 
   private findUniqueOrDefault(

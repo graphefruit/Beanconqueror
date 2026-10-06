@@ -778,6 +778,34 @@ describe('BrewImportService', () => {
     expect(beanStorage.addAndConfirm.calls.count()).toBe(0);
   });
 
+  it('does not let an archived coffee block creating one in a batch', () => {
+    const archived = entry(new Bean(), 'Pod coffee', 'bean-archived');
+    archived.finished = true;
+    beans = [archived];
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+        process: 'Natural',
+      },
+    });
+
+    expect(service.canCreateBeanFromHandoff(handoff, 'exact')).toBe(true);
+  });
+
+  it('still treats an active coffee of the same name as already present', () => {
+    beans = [entry(new Bean(), 'Pod coffee', 'bean-active')];
+    const handoff = envelope({
+      bean: {
+        name: 'Pod coffee',
+        origin: 'Ethiopia',
+        process: 'Natural',
+      },
+    });
+
+    expect(service.canCreateBeanFromHandoff(handoff, 'exact')).toBe(false);
+  });
+
   it('does not offer to create a coffee the user already has twice over', async () => {
     beans = [
       entry(new Bean(), 'Pod coffee', 'bean-one'),

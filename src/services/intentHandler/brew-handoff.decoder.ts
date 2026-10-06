@@ -7,6 +7,7 @@ import { BlobReader, ZipReader } from '@zip.js/zip.js';
 import type { FileEntry } from '@zip.js/zip.js';
 
 import type {
+  IHandoffBatch,
   IHandoffBean,
   IHandoffBrew,
   IHandoffEnvelope,
@@ -17,6 +18,7 @@ import type {
 } from '../../interfaces/brew/IHandoff';
 
 export type {
+  IHandoffBatch,
   IHandoffBrew,
   IHandoffBean,
   IHandoffEnvelope,
@@ -27,7 +29,15 @@ export type {
 } from '../../interfaces/brew/IHandoff';
 
 // A realistic 2,400-sample brew is roughly 60 KB JSON; 512 KiB is generous headroom for one brew while still being the cap that refuses zip bombs.
-const MAX_INFLATED_BYTES = 512 * 1024;
+export const MAX_INFLATED_BYTES = 512 * 1024;
+/*
+ * A batch carries up to MAX_BATCH_BREWS whole envelopes, so the single-brew
+ * ceiling is the wrong one: fifty realistic 60 KB brews inflate to roughly
+ * three megabytes of ordinary JSON, inside the 4 MiB cap with headroom. The
+ * count is also a foreground storage bound, because each imported brew causes
+ * two whole-collection writes before its optional flow file is written.
+ */
+export const MAX_INFLATED_BATCH_BYTES = 4 * 1024 * 1024;
 // The sender's 131,072-character URL budget is the real limit: at 400 characters per slice it can emit 328 chunks. This 1,024-chunk backstop is 409,600 characters, so the receiver never becomes the binding constraint while assembly stays finite.
 const MAX_CHUNKS = 1024;
 const MAX_CHUNK_CHARS = 400;
@@ -52,6 +62,8 @@ const MAX_NOTE_LENGTH = 10_000;
 const MAX_RATING = 10;
 // Metric count is metadata, not the trace; 100 named series is already far beyond a brew chart.
 const MAX_METRICS = 100;
+// Deep links are foreground imports; 50 records fit the inflate cap and keep repeated whole-database writes bounded.
+const MAX_BATCH_BREWS = 50;
 // Opaque blocks may be rendered or copied later; cap their shape before a future deep-merge or stringify sees them.
 const MAX_OPAQUE_DEPTH = 8;
 const MAX_OPAQUE_KEYS = 1_000;
@@ -184,16 +196,19 @@ function supportsNativeGzip(): boolean {
   }
 }
 
-async function gunzip(bytes: Uint8Array): Promise<string> {
+async function gunzip(
+  bytes: Uint8Array,
+  cap = MAX_INFLATED_BYTES,
+): Promise<string> {
   let inflated: Uint8Array;
   try {
     if (supportsNativeGzip()) {
       const stream = new Blob([bytes as BlobPart])
         .stream()
         .pipeThrough(new DecompressionStream('gzip'));
-      inflated = await readCapped(stream);
+      inflated = await readCapped(stream, cap);
     } else {
-      inflated = await gunzipWithZipJs(bytes);
+      inflated = await gunzipWithZipJs(bytes, cap);
     }
   } catch (error) {
     if (
@@ -207,20 +222,29 @@ async function gunzip(bytes: Uint8Array): Promise<string> {
   return decodeUtf8(inflated);
 }
 
-async function gunzipWithZipJs(bytes: Uint8Array): Promise<Uint8Array> {
+async function gunzipWithZipJs(
+  bytes: Uint8Array,
+  cap = MAX_INFLATED_BYTES,
+): Promise<Uint8Array> {
   const member = gzipMember(bytes);
   // GZIP ISIZE is attacker-controlled and only proves the honest case early; readZipEntryCapped is the bound that holds.
-  if (member.inflatedSize > MAX_INFLATED_BYTES) {
-    throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+  if (member.inflatedSize > cap) {
+    throw new Error(`Inflated payload exceeds ${cap} bytes`);
   }
 
-  const zipReader = new ZipReader(new BlobReader(zipAroundDeflate(member)));
+  const zipReader = new ZipReader(
+    new BlobReader(zipAroundDeflate(member, cap)),
+  );
   try {
     const entry = (await zipReader.getEntries()).shift();
     if (!entry || entry.directory === true) {
       throw new Error('Payload is not gzip');
     }
-    return await readZipEntryCapped(entry as FileEntry, member.inflatedSize);
+    return await readZipEntryCapped(
+      entry as FileEntry,
+      member.inflatedSize,
+      cap,
+    );
   } finally {
     await zipReader.close();
   }
@@ -229,14 +253,15 @@ async function gunzipWithZipJs(bytes: Uint8Array): Promise<Uint8Array> {
 async function readZipEntryCapped(
   entry: FileEntry,
   expectedInflatedSize: number,
+  cap = MAX_INFLATED_BYTES,
 ): Promise<Uint8Array> {
   const chunks: Uint8Array[] = [];
   let total = 0;
   const writable = new WritableStream<Uint8Array>({
     write(chunk) {
       total += chunk.length;
-      if (total > MAX_INFLATED_BYTES) {
-        throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+      if (total > cap) {
+        throw new Error(`Inflated payload exceeds ${cap} bytes`);
       }
       chunks.push(chunk);
     },
@@ -248,10 +273,10 @@ async function readZipEntryCapped(
     if (
       error instanceof Error &&
       error.message === 'Invalid uncompressed size' &&
-      total >= MAX_INFLATED_BYTES &&
+      total >= cap &&
       total !== expectedInflatedSize
     ) {
-      throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+      throw new Error(`Inflated payload exceeds ${cap} bytes`);
     }
     if (
       !(error instanceof Error) ||
@@ -324,10 +349,13 @@ function skipZeroTerminated(bytes: Uint8Array, offset: number): number {
   throw new Error('Payload is not gzip');
 }
 
-function zipAroundDeflate(member: {
-  deflate: Uint8Array;
-  crc32: number;
-}): Blob {
+function zipAroundDeflate(
+  member: {
+    deflate: Uint8Array;
+    crc32: number;
+  },
+  cap = MAX_INFLATED_BYTES,
+): Blob {
   const filename = new TextEncoder().encode('payload.json');
   const centralDirectoryOffset = 30 + filename.length + member.deflate.length;
   const centralDirectorySize = 46 + filename.length;
@@ -336,10 +364,28 @@ function zipAroundDeflate(member: {
   );
   let offset = 0;
 
-  offset = writeZipHeader(zip, offset, 0x04034b50, 30, filename, member, 0);
+  offset = writeZipHeader(
+    zip,
+    offset,
+    0x04034b50,
+    30,
+    filename,
+    member,
+    0,
+    cap,
+  );
   zip.set(member.deflate, offset);
   offset += member.deflate.length;
-  offset = writeZipHeader(zip, offset, 0x02014b50, 46, filename, member, 0);
+  offset = writeZipHeader(
+    zip,
+    offset,
+    0x02014b50,
+    46,
+    filename,
+    member,
+    0,
+    cap,
+  );
 
   writeUInt32LE(zip, offset, 0x06054b50);
   writeUInt16LE(zip, offset + 8, 1);
@@ -358,6 +404,7 @@ function writeZipHeader(
   filename: Uint8Array,
   member: { deflate: Uint8Array; crc32: number },
   localHeaderOffset: number,
+  cap = MAX_INFLATED_BYTES,
 ): number {
   writeUInt32LE(zip, offset, signature);
   if (headerSize === 46) {
@@ -374,7 +421,7 @@ function writeZipHeader(
   writeUInt32LE(zip, base + 8, member.crc32);
   writeUInt32LE(zip, base + 12, member.deflate.length);
   // Use our own limit as the ZIP size hint, not GZIP ISIZE, so a forged small footer cannot make zip.js fail before the bounded writer sees the overflow.
-  writeUInt32LE(zip, base + 16, MAX_INFLATED_BYTES + 1);
+  writeUInt32LE(zip, base + 16, cap + 1);
   zip.set(filename, offset + headerSize);
   return offset + headerSize + filename.length;
 }
@@ -407,6 +454,7 @@ function writeUInt32LE(bytes: Uint8Array, offset: number, value: number): void {
 
 async function readCapped(
   stream: ReadableStream<Uint8Array>,
+  cap: number,
 ): Promise<Uint8Array> {
   const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
@@ -418,9 +466,9 @@ async function readCapped(
       break;
     }
     total += value.length;
-    if (total > MAX_INFLATED_BYTES) {
+    if (total > cap) {
       await reader.cancel();
-      throw new Error(`Inflated payload exceeds ${MAX_INFLATED_BYTES} bytes`);
+      throw new Error(`Inflated payload exceeds ${cap} bytes`);
     }
     chunks.push(value);
   }
@@ -446,14 +494,55 @@ export async function decodeHandoffPayload(
   payload: string,
 ): Promise<IHandoffEnvelope> {
   const json = await gunzip(base64UrlToBytes(payload));
-  let envelope: unknown;
+  return validateEnvelope(parseInflatedJson(json));
+}
+
+export async function decodeHandoffBatchPayload(
+  payload: string,
+): Promise<IHandoffEnvelope[]> {
+  const json = await gunzip(
+    base64UrlToBytes(payload),
+    MAX_INFLATED_BATCH_BYTES,
+  );
+  return validateBatch(parseInflatedJson(json)).brews;
+}
+
+function parseInflatedJson(json: string): unknown {
   try {
-    envelope = JSON.parse(json);
+    return JSON.parse(json);
   } catch {
     throw new Error('Inflated payload is not JSON');
   }
+}
 
-  return validateEnvelope(envelope);
+function validateBatch(value: unknown): IHandoffBatch {
+  const batch = objectRecord(value, 'Batch');
+  const version = batch.v;
+  if (version !== 1) {
+    const shown =
+      typeof version === 'string' ||
+      typeof version === 'number' ||
+      typeof version === 'boolean'
+        ? String(version)
+        : typeof version;
+    throw new Error(`Unsupported batch version ${shown}`);
+  }
+  if (!Array.isArray(batch.brews)) {
+    throw new Error('Batch brews must be an array');
+  }
+  if (batch.brews.length === 0) {
+    throw new Error('Batch brews must not be empty');
+  }
+  if (batch.brews.length > MAX_BATCH_BREWS) {
+    throw new Error(
+      `Batch brews must contain at most ${MAX_BATCH_BREWS} entries`,
+    );
+  }
+
+  return {
+    v: 1,
+    brews: batch.brews.map(validateEnvelope),
+  };
 }
 
 function validateEnvelope(value: unknown): IHandoffEnvelope {
