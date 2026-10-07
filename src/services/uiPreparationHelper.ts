@@ -20,12 +20,17 @@ import {
   PreparationDeviceType,
 } from '../classes/preparationDevice';
 import { BluetoothPreparationDevice } from '../classes/preparationDevice/bluetoothPreparationDevice';
+import {
+  GaggimateDevice,
+  GaggimateShotNotes,
+} from '../classes/preparationDevice/gaggimate/gaggimateDevice';
 import { PreparationDevice } from '../classes/preparationDevice/preparationDevice';
 import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import { UIAnalytics } from './uiAnalytics';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIHelper } from './uiHelper';
 import { UIPreparationStorage } from './uiPreparationStorage';
+import { UIToast } from './uiToast';
 
 /**
  * Handles every helping functionalities
@@ -42,6 +47,7 @@ export class UIPreparationHelper {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly httpClient = inject(HttpClient);
   private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiToast = inject(UIToast);
 
   private allStoredBrews: Array<Brew> = [];
 
@@ -202,5 +208,60 @@ export class UIPreparationHelper {
       return _preparation.connectedPreparationDevice.url ? candidate : null;
     }
     return null;
+  }
+
+  /**
+   * If the brew was imported from a GaggiMate and the user activated it, the
+   * brew data is added to the shot notes on the GaggiMate. Only fields which
+   * are empty there are filled. Never throws, saving a brew must not fail
+   * because the machine is not reachable.
+   */
+  public async writeBrewBackToGaggimate(
+    _brew: Brew,
+    _maxRating: number,
+  ): Promise<void> {
+    try {
+      const shotId = _brew?.preparationDeviceBrew?.params?.shotId;
+      if (
+        _brew?.preparationDeviceBrew?.type !==
+          PreparationDeviceType.GAGGIMATE ||
+        !shotId
+      ) {
+        return;
+      }
+      const device = this.getConnectedDevice(_brew.getPreparation());
+      if (
+        !(device instanceof GaggimateDevice) ||
+        !device.shallWriteBackNotes()
+      ) {
+        return;
+      }
+
+      const values = new GaggimateShotNotes();
+      if (_brew.rating > 0 && _maxRating > 0) {
+        // GaggiMate rates with 1-5 stars, 0 means not rated
+        values.rating = Math.min(
+          Math.max(Math.round((_brew.rating / _maxRating) * 5), 1),
+          5,
+        );
+      }
+      if (_brew.grind_weight > 0) {
+        values.doseIn = String(_brew.grind_weight);
+      }
+      values.grindSetting = String(_brew.grind_size ?? '').trim();
+      values.beanType = String(_brew.getBean()?.name ?? '').trim();
+      values.notes = String(_brew.note ?? '').trim();
+
+      const changed = await device.addMissingShotNotes(shotId, values);
+      if (changed) {
+        await this.uiToast.showInfoToast(
+          'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SUCCESS',
+        );
+      }
+    } catch {
+      await this.uiToast.showInfoToast(
+        'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_ERROR',
+      );
+    }
   }
 }

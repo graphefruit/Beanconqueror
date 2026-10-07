@@ -47,6 +47,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
@@ -81,6 +82,7 @@ export class BrewEditComponent implements OnInit {
   private readonly uiToast = inject(UIToast);
   private readonly platform = inject(Platform);
   private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly brewTracking = inject(BrewTrackingService);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
@@ -233,6 +235,11 @@ export class BrewEditComponent implements OnInit {
     }
 
     await this.uiBrewStorage.update(this.data);
+
+    void this.uiPreparationHelper.writeBrewBackToGaggimate(
+      this.data,
+      this.settings.brew_rating,
+    );
 
     if (
       this.settings.visualizer_active &&

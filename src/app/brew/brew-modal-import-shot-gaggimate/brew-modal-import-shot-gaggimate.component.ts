@@ -21,6 +21,7 @@ import {
   IonRadio,
   IonRadioGroup,
   IonRow,
+  IonSpinner,
   ModalController,
 } from '@ionic/angular/standalone';
 
@@ -50,6 +51,7 @@ import { UIHelper } from '../../../services/uiHelper';
     HeaderComponent,
     HeaderDismissButtonComponent,
     IonRadioGroup,
+    IonSpinner,
     IonCard,
     IonItem,
     IonRadio,
@@ -72,6 +74,11 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   public radioSelection: number;
   public history: Array<GaggimateShotData> = [];
 
+  public loading = true;
+  public loadingCurrent = 0;
+  public loadingTotal = 0;
+  private loadingCancelled = false;
+
   @ViewChild('ionItemEl', { read: ElementRef, static: false })
   public ionItemEl: ElementRef;
 
@@ -92,9 +99,14 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   }
 
   private async readHistory() {
-    await this.uiAlert.showLoadingSpinner();
-    await this.fetchShotDetails();
-    await this.uiAlert.hideLoadingSpinner();
+    // The loading state is shown inside the modal instead of a blocking spinner,
+    // so the user is able to cancel it via the dismiss buttons
+    this.loading = true;
+    try {
+      await this.fetchShotDetails();
+    } finally {
+      this.loading = false;
+    }
 
     this.retriggerScroll();
   }
@@ -103,6 +115,9 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
     const alldatatoPush = [];
 
     const recentShots = await this.gaggimateDevice.getRecentShots();
+    if (this.loadingCancelled) {
+      return;
+    }
 
     if (!recentShots) {
       await this.uiAlert.showMessage(
@@ -128,7 +143,12 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
         this.gaggimateDevice.getLatestShotsToImport(),
         recentShotsArray.length,
       );
+      this.loadingTotal = shotsToLoad;
       for (let i = 0; i < shotsToLoad; i++) {
+        if (this.loadingCancelled) {
+          return;
+        }
+        this.loadingCurrent = i + 1;
         try {
           const GaggimateShotDataEntry = new GaggimateShotData();
 
@@ -231,6 +251,7 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   }
 
   public dismiss(): void {
+    this.loadingCancelled = true;
     this.modalController.dismiss(
       {
         dismissed: true,

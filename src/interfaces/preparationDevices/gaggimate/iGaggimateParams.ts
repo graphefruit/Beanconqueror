@@ -6,4 +6,5 @@ export interface IGaggimateParams {
   confirmDuplicateImport: boolean;
   confirmBeanAdd: boolean;
   useTargetTemperature: boolean;
+  writeBackNotes: boolean;
 }

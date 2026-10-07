@@ -1,6 +1,7 @@
 export interface IGaggimateShotNotes {
+  rating?: number;
   grindSetting?: string;
-  doseIn?: number;
+  doseIn?: number | string;
   notes?: string;
   beanType?: string;
 }

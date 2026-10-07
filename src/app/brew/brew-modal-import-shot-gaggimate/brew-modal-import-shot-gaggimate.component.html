@@ -4,7 +4,15 @@
   </app-header>
 </ion-header>
 <ion-content #historyShotContent>
-  @if(history) {
+  @if(loading) {
+  <div class="ion-text-center ion-padding">
+    <ion-spinner></ion-spinner>
+    @if(loadingTotal > 0) {
+    <p>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LOADING_SHOTS" | translate: {current: loadingCurrent, total: loadingTotal} }}</p>
+    }
+  </div>
+  }
+  @if(!loading && history) {
   <ion-radio-group [(ngModel)]="radioSelection">
     <ion-card>
         <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="300">
@@ -31,7 +39,7 @@
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size="6">
-      <ion-button (click)="choose()" [disabled]='!radioSelection' color="accent" expand="block" tappable
+      <ion-button (click)="choose()" [disabled]='loading || !radioSelection' color="accent" expand="block" tappable
                   type="submit">{{"CHOOSE" | translate}}</ion-button>
     </ion-col>
   </ion-row>

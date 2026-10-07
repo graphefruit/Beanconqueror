@@ -200,6 +200,114 @@ export class GaggimateDevice extends PreparationDevice {
     return this.parser.parseBinaryShot(buffer, id);
   }
 
+  /**
+   * Sends a request to the GaggiMate websocket and resolves with the response
+   * which carries the same request id.
+   */
+  private sendSocketRequest(request: Record<string, unknown>): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const rid = `bc-${Date.now()}-${Math.round(Math.random() * 100000)}`;
+      const socket = new WebSocket(
+        this.connectionURL.replace(/^http/i, 'ws') + '/ws',
+      );
+      const timeout = setTimeout(() => {
+        socket.close();
+        reject(new Error('GaggiMate websocket request timed out'));
+      }, 8000);
+      socket.onopen = () => {
+        socket.send(JSON.stringify({ ...request, rid: rid }));
+      };
+      socket.onmessage = (event) => {
+        try {
+          // The socket also streams status events, we just wait for our answer
+          const message = JSON.parse(event.data);
+          if (message?.rid === rid) {
+            clearTimeout(timeout);
+            socket.close();
+            resolve(message);
+          }
+        } catch {
+          // Not a JSON message, ignore it
+        }
+      };
+      socket.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error('GaggiMate websocket connection failed'));
+      };
+    });
+  }
+
+  /**
+   * Adds the given values to the notes of a shot on the GaggiMate. Only fields
+   * which are empty on the GaggiMate are filled, existing values are kept.
+   * Returns true if something was written.
+   */
+  public async addMissingShotNotes(
+    id: number,
+    values: GaggimateShotNotes,
+  ): Promise<boolean> {
+    const response = await this.sendSocketRequest({
+      tp: 'req:history:notes:get',
+      id: String(id),
+    });
+    if (response?.tp !== 'res:history:notes:get') {
+      throw new Error('Unexpected response for the GaggiMate shot notes');
+    }
+    // The save request replaces the stored notes, so we need to send all of them
+    const notes: Record<string, string | number> = {
+      rating: 0,
+      beanType: '',
+      doseIn: '',
+      doseOut: '',
+      ratio: '',
+      grindSetting: '',
+      balanceTaste: 'balanced',
+      notes: '',
+      ...(response.notes ?? {}),
+      id: String(id),
+    };
+
+    const isEmpty = (value: string | number | undefined | null) =>
+      value === undefined ||
+      value === null ||
+      value === 0 ||
+      String(value).trim() === '' ||
+      String(value).trim() === '0';
+
+    let changed = false;
+    for (const key of Object.keys(values)) {
+      if (isEmpty(notes[key]) && !isEmpty(values[key])) {
+        notes[key] = values[key];
+        changed = true;
+      }
+    }
+    if (!changed) {
+      return false;
+    }
+
+    const doseIn = parseFloat(String(notes.doseIn));
+    const doseOut = parseFloat(String(notes.doseOut));
+    if (isEmpty(notes.ratio) && doseIn > 0 && doseOut > 0) {
+      notes.ratio = (doseOut / doseIn).toFixed(2);
+    }
+
+    const saveResponse = await this.sendSocketRequest({
+      tp: 'req:history:notes:save',
+      id: String(id),
+      notes: notes,
+    });
+    if (saveResponse?.msg !== 'Ok') {
+      throw new Error('GaggiMate did not confirm saving the shot notes');
+    }
+    return true;
+  }
+
+  public shallWriteBackNotes(): boolean {
+    const customParams = this.getPreparation()?.connectedPreparationDevice
+      ?.customParams as GaggimateParams;
+    return customParams?.writeBackNotes === true;
+  }
+
   private logError(...args: any[]) {
     UILog.getInstance().error('Gaggimate device:', ...args);
   }
@@ -218,8 +326,9 @@ export class GaggimateDevice extends PreparationDevice {
 }
 
 export class GaggimateShotNotes implements IGaggimateShotNotes {
+  public rating?: number;
   public grindSetting?: string;
-  public doseIn?: number;
+  public doseIn?: number | string;
   public notes?: string;
   public beanType?: string;
 }
@@ -232,6 +341,7 @@ export class GaggimateParams implements IGaggimateParams {
   public confirmDuplicateImport: boolean;
   public confirmBeanAdd: boolean;
   public useTargetTemperature: boolean;
+  public writeBackNotes: boolean;
 
   constructor() {
     this.chosenProfileId = '';
@@ -241,5 +351,6 @@ export class GaggimateParams implements IGaggimateParams {
     this.confirmDuplicateImport = true;
     this.confirmBeanAdd = true;
     this.useTargetTemperature = false;
+    this.writeBackNotes = false;
   }
 }

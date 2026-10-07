@@ -1150,7 +1150,11 @@
           "CONFIRM_DUPLICATE_IMPORT": "Confirm if an already imported shot should be imported again",
           "IMPORT_BREW_DISCARD_ADD_MISSING_BEAN": "This shot bean is missing. Do you want to add it?",
           "CONFIRM_BEAN_ADD": "Ask if a missing bean should be added",
-          "USE_TARGET_TEMPERATURE": "Import the target temperature of the profile instead of the measured average"
+          "USE_TARGET_TEMPERATURE": "Import the target temperature of the profile instead of the measured average",
+          "WRITE_BACK_NOTES": "When saving an imported brew, add rating, dose, grind size, bean and notes to the shot on the GaggiMate if they are empty there",
+          "WRITE_BACK_NOTES_SUCCESS": "Shot notes on the GaggiMate have been updated",
+          "WRITE_BACK_NOTES_ERROR": "The shot notes on the GaggiMate could not be updated",
+          "LOADING_SHOTS": "Loading shot {{current}} of {{total}}"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
