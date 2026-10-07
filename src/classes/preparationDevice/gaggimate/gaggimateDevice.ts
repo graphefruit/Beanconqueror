@@ -213,7 +213,7 @@ export class GaggimateDevice extends PreparationDevice {
       const timeout = setTimeout(() => {
         socket.close();
         reject(new Error('GaggiMate websocket request timed out'));
-      }, 8000);
+      }, 5000);
       socket.onopen = () => {
         socket.send(JSON.stringify({ ...request, rid: rid }));
       };
@@ -235,6 +235,29 @@ export class GaggimateDevice extends PreparationDevice {
         reject(new Error('GaggiMate websocket connection failed'));
       };
     });
+  }
+
+  /**
+   * Checks if the shot with the given id on the GaggiMate is still the one
+   * which was imported. Shot ids are reused when the history on the GaggiMate
+   * is reset (e.g. new sd card or reflashing), so the id alone is not enough
+   * to identify a shot. The start timestamp of the shot needs to match aswell.
+   */
+  public async isSameShot(id: number, timestamp: number): Promise<boolean> {
+    if (!id || !timestamp) {
+      return false;
+    }
+    const response = await fetch(this.connectionURL + '/api/history/index.bin');
+    if (response.status !== 200) {
+      throw new Error('GaggiMate shot index is not available');
+    }
+    const indexData = this.parser.parseBinaryIndex(
+      await response.arrayBuffer(),
+    );
+    const entry = indexData.entries.find(
+      (e) => Number(e.id) === Number(id) && !e.deleted,
+    );
+    return entry !== undefined && entry.timestamp === timestamp;
   }
 
   /**
@@ -337,6 +360,13 @@ export class GaggimateParams implements IGaggimateParams {
   public chosenProfileId: string;
   public chosenProfileName: string;
   public shotId: number;
+  /**
+   * Start time (unix seconds) of the imported shot. The shot id is just a
+   * counter on the GaggiMate, which starts again when the history is reset.
+   * Together with the timestamp we are able to check if an id still belongs
+   * to the shot which was imported.
+   */
+  public shotTimestamp: number;
   public latestShotsToImport: number;
   public confirmDuplicateImport: boolean;
   public confirmBeanAdd: boolean;
@@ -347,6 +377,7 @@ export class GaggimateParams implements IGaggimateParams {
     this.chosenProfileId = '';
     this.chosenProfileName = '';
     this.shotId = 0;
+    this.shotTimestamp = 0;
     this.latestShotsToImport = 1;
     this.confirmDuplicateImport = true;
     this.confirmBeanAdd = true;

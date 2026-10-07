@@ -12,7 +12,8 @@
     }
   </div>
   }
-  @if(!loading && history) {
+  <!-- The list needs to exist before the shots are set, else the virtual scroll renders no items -->
+  @if(history) {
   <ion-radio-group [(ngModel)]="radioSelection">
     <ion-card>
         <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="300">

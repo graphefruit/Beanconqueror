@@ -213,8 +213,11 @@ export class UIPreparationHelper {
   /**
    * If the brew was imported from a GaggiMate and the user activated it, the
    * brew data is added to the shot notes on the GaggiMate. Only fields which
-   * are empty there are filled. Never throws, saving a brew must not fail
-   * because the machine is not reachable.
+   * are empty there are filled.
+   *
+   * This is meant to be called without awaiting it after a brew was saved: It
+   * never throws and just informs the user with a toast, so the app stays
+   * usable and the brew is saved even if the machine is switched off.
    */
   public async writeBrewBackToGaggimate(
     _brew: Brew,
@@ -237,6 +240,22 @@ export class UIPreparationHelper {
         return;
       }
 
+      // Brews which were imported before the timestamp was stored can't be
+      // verified, so we don't write to the GaggiMate for them
+      const shotTimestamp = _brew.preparationDeviceBrew.params.shotTimestamp;
+      if (!shotTimestamp) {
+        return;
+      }
+      // Make sure the shot id still belongs to the imported shot, else we
+      // would write the data of this brew into the notes of a different shot
+      if (!(await device.isSameShot(shotId, shotTimestamp))) {
+        await this.uiToast.showInfoToast(
+          'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SHOT_MISMATCH',
+        );
+        return;
+      }
+
+      // Collect the values of the brew. Empty values are skipped later.
       const values = new GaggimateShotNotes();
       if (_brew.rating > 0 && _maxRating > 0) {
         // GaggiMate rates with 1-5 stars, 0 means not rated
@@ -259,6 +278,7 @@ export class UIPreparationHelper {
         );
       }
     } catch {
+      // Most likely the machine is switched off or not reachable in this network
       await this.uiToast.showInfoToast(
         'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_ERROR',
       );

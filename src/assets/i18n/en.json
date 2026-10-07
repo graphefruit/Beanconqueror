@@ -1153,7 +1153,8 @@
           "USE_TARGET_TEMPERATURE": "Import the target temperature of the profile instead of the measured average",
           "WRITE_BACK_NOTES": "When saving an imported brew, add rating, dose, grind size, bean and notes to the shot on the GaggiMate if they are empty there",
           "WRITE_BACK_NOTES_SUCCESS": "Shot notes on the GaggiMate have been updated",
-          "WRITE_BACK_NOTES_ERROR": "The shot notes on the GaggiMate could not be updated",
+          "WRITE_BACK_NOTES_ERROR": "GaggiMate is not reachable. Your brew was saved, but the shot notes on the GaggiMate were not updated",
+          "WRITE_BACK_NOTES_SHOT_MISMATCH": "This shot does not exist on the GaggiMate anymore, the shot notes were not updated",
           "LOADING_SHOTS": "Loading shot {{current}} of {{total}}"
         }
     },

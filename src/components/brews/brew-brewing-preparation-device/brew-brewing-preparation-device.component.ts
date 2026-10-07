@@ -1388,6 +1388,9 @@ export class BrewBrewingPreparationDeviceComponent
     ).chosenProfileId = shotData.profileId;
     (this.data.preparationDeviceBrew.params as GaggimateParams).shotId =
       shotData.id;
+    // The timestamp is stored to be able to verify the shot id later, see GaggimateParams
+    (this.data.preparationDeviceBrew.params as GaggimateParams).shotTimestamp =
+      shotData.timestamp;
   }
 
   public getPreparationDeviceType() {
