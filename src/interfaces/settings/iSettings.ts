@@ -20,6 +20,7 @@ import { IBeanParameter } from '../parameter/iBeanParameter';
 import { IBrewParameter } from '../parameter/iBrewParameter';
 import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
 import { IGraphColors } from './iGraphColors';
+import { IStatisticsSettings } from './iStatisticsSettings';
 
 export interface BrewByWeightWebhookConfig {
   active: boolean;
@@ -45,6 +46,7 @@ export interface ISettings {
   brew_view: BREW_VIEW_ENUM;
   startup_view: STARTUP_VIEW_ENUM;
   date_format: string;
+  statistics: IStatisticsSettings;
 
   language: string;
   manage_parameters: IBrewParameter;
