@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Update entry {{index}} of {{count}}",
     "WEBSITE": "網站",
     "SHARE": "分享",
+    "SHARE_BREW_TEXT": "以文字分享",
+    "SHARE_BREW_TEXT_PARAMETERS": "文字分享參數",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "需要授權檔存取權限",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "為了讓應用程式充分發揮作用，我們需要您授權檔訪問。 否則應用程式內會有部分功能受限。 這是自動備份功能所需要的許可權。",
     "COULD_NOT_ACCESS_FILE": "我們無法訪問所選檔",

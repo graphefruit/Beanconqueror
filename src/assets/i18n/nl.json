@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Update item {{index}} van {{count}}",
     "WEBSITE": "Website",
     "SHARE": "Deel",
+    "SHARE_BREW_TEXT": "Delen als tekst",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parameters voor delen als tekst",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Toegang tot gedeeld bestand vereist",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Om de app volledig te laten werken, vragen we u om bestandstoegang te autoriseren. Anders ontstaan er problemen bij het gebruik van de app. Dit is specifiek nodig voor het automatische back-upsysteem.",
     "COULD_NOT_ACCESS_FILE": "We konden het gekozen bestand niet openen",

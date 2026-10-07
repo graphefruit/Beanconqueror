@@ -511,6 +511,10 @@ export const beanconquerorIcons = [
     path: 'beanconqueror-share-image.svg',
   },
   {
+    name: 'beanconqueror-share-text-parameter',
+    path: 'beanconqueror-share-text-parameter.svg',
+  },
+  {
     name: 'beanconqueror-smart-scale',
     path: 'beanconqueror-smart-scale.svg',
   },

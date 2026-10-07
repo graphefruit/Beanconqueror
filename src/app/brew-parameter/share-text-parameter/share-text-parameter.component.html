@@ -1,0 +1,30 @@
+<ion-header>
+  <app-header [title]="'SHARE_BREW_TEXT_PARAMETERS' | translate">
+    <ion-back-button header-slot="start" icon="beanconqueror-back" />
+  </app-header>
+</ion-header>
+<ion-content class="ion-padding-top">
+  <ion-card class="ion-padding">
+    <ion-title class="ion-no-padding">{{ 'NAV_BEANS' | translate }}</ion-title>
+    @for (field of beanFields; track field.key) {
+      <ion-item>
+        <ion-checkbox label-placement="start" [ngModel]="settings.share_brew_text_fields[field.key]"
+                      [disabled]="isLastSelected(field.key)" (ngModelChange)="setField(field.key, $event)">
+          <div class="ion-label">{{ labelFor(field.label) }}</div>
+        </ion-checkbox>
+      </ion-item>
+    }
+  </ion-card>
+  <ion-card class="ion-padding">
+    <ion-title class="ion-no-padding">{{ 'NAV_BREWS' | translate }}</ion-title>
+    @for (field of brewFields; track field.key) {
+      <ion-item>
+        <ion-checkbox label-placement="start" [ngModel]="settings.share_brew_text_fields[field.key]"
+                      [disabled]="isLastSelected(field.key)" (ngModelChange)="setField(field.key, $event)">
+          <div class="ion-label">{{ labelFor(field.label) }}</div>
+        </ion-checkbox>
+      </ion-item>
+    }
+  </ion-card>
+</ion-content>
+<ion-footer></ion-footer>

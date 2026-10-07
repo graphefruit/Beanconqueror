@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Girişi güncelle {{index}} of {{count}}",
     "WEBSITE": "İnternet Sitesi",
     "SHARE": "Paylaş",
+    "SHARE_BREW_TEXT": "Metin olarak paylaş",
+    "SHARE_BREW_TEXT_PARAMETERS": "Metin paylaşım parametreleri",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Paylaşım dosyası erişimi gerekli",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Uygulamanın tam olarak çalışabilmesi için dosya erişimine yetki vermenizi rica ediyoruz. Aksi takdirde uygulama içerisinde eksiklikler olacaktır. Bu, otomatik yedekleme sistemi için özel olarak gereklidir.",
     "COULD_NOT_ACCESS_FILE": "Seçilen dosyaya erişemedik",

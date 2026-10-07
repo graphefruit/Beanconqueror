@@ -4,6 +4,7 @@ import {
   ScaleType,
   TemperatureType,
 } from '../../classes/devices';
+import { ShareBrewTextFields } from '../../classes/parameter/shareBrewTextFields';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
@@ -51,6 +52,7 @@ export interface ISettings {
   default_last_coffee_parameters: IBrewParameter;
   repeat_coffee_parameters: IBrewParameter;
   visible_list_view_parameters: IBrewParameter;
+  share_brew_text_fields: ShareBrewTextFields;
   brew_order: IOrderBrewParameter;
 
   bean_manage_parameters: IBeanParameter;

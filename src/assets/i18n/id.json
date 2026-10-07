@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Update entry {{index}} dari {{count}}",
     "WEBSITE": "Website",
     "SHARE": "Share",
+    "SHARE_BREW_TEXT": "Bagikan sebagai teks",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parameter berbagi teks",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Memerlukan akses berbagi file",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Agar aplikasi berfungsi sepenuhnya, kami meminta Anda untuk mengotorisasi akses file. Kalau tidak, akan ada masalah menggunakan aplikasi. Ini secara khusus diperlukan untuk sistem pencadangan otomatis.",
     "COULD_NOT_ACCESS_FILE": "Kami tidak dapat mengakses file yang dipilih",

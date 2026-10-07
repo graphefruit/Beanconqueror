@@ -61,6 +61,10 @@ export class BrewParameterPage implements OnInit {
   public openListViewParameters(): void {
     this.router.navigateByUrl('/brew-parameter/listview');
   }
+
+  public openShareTextParameters(): void {
+    void this.router.navigateByUrl('/brew-parameter/share-text');
+  }
 }
 
 export default BrewParameterPage;

@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Actualizar entrada {{index}} de {{count}}",
     "WEBSITE": "Página web",
     "SHARE": "Compartir",
+    "SHARE_BREW_TEXT": "Compartir como texto",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parámetros de texto compartido",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Se requiere acceso a archivos compartidos",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Para que la aplicación funcione completamente, te pedimos que autorices el acceso a los archivos. De lo contrario, la aplicación no funcionará correctamente. Esto es especialmente necesario para las copias de seguridad automáticas.",
     "COULD_NOT_ACCESS_FILE": "No pudimos acceder al archivo elegido",

@@ -36,6 +36,13 @@
     </ion-item>
   </ion-card>
 
+  <ion-card (click)="openShareTextParameters()" tappable>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-share-text-parameter" slot="start"></ion-icon>
+      {{ "SHARE_BREW_TEXT_PARAMETERS" | translate }}
+    </ion-item>
+  </ion-card>
+
   <ion-card class="ion-padding">
     <ion-card-title>{{"BREW_PARAMETER_CUSTOMIZE_TITLE" | translate}}</ion-card-title>
     <ion-card-content class="ion-no-padding">

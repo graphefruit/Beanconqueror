@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "",
     "WEBSITE": "",
     "SHARE": "",
+    "SHARE_BREW_TEXT": "Comparteix com a text",
+    "SHARE_BREW_TEXT_PARAMETERS": "Paràmetres per compartir com a text",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "",
     "COULD_NOT_ACCESS_FILE": "",

@@ -6,7 +6,11 @@ import { Share } from '@capacitor/share';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+import { Mill } from '../../classes/mill/mill';
 import { Config } from '../../classes/objectConfig/objectConfig';
+import { ShareBrewTextFields } from '../../classes/parameter/shareBrewTextFields';
+import { Preparation } from '../../classes/preparation/preparation';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
@@ -21,6 +25,8 @@ import { UIAnalytics } from '../uiAnalytics';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
+import { formatBrewShareText } from './brew-share-text';
+import { translateShareLabel } from './translate-share-label';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +38,32 @@ export class ShareService {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly platform = inject(Platform);
   private readonly uiLog = inject(UILog);
+
+  public async shareBrewText(
+    brew: Brew,
+    bean: Bean,
+    preparation: Preparation,
+    mill: Mill,
+    fields: ShareBrewTextFields,
+    language: string,
+  ): Promise<void> {
+    const message = formatBrewShareText(
+      brew,
+      bean,
+      preparation,
+      mill,
+      fields,
+      (key) => translateShareLabel(this.translate, key),
+      language,
+    );
+    if (message) {
+      try {
+        await Share.share({ text: message });
+      } catch {
+        // The user can dismiss the system share sheet.
+      }
+    }
+  }
 
   public async shareImage(_dataUrl: string) {
     try {

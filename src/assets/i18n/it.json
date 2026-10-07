@@ -637,6 +637,8 @@
     "UPDATE_ENTRY_OF": "Aggiorna la voce {{index}} di {{count}}",
     "WEBSITE": "Sito web",
     "SHARE": "Condividi",
+    "SHARE_BREW_TEXT": "Condividi come testo",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parametri di condivisione del testo",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "È richiesto l'accesso alla condivisione dei file",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Per il corretto funzionamento dell'app, autorizza l'accesso ai file. Altrimenti ci saranno problemi nell'utilizzo dell'app. In particolare per il sistema di backup automatico.",
     "COULD_NOT_ACCESS_FILE": "Impossibile accedere al file scelto",

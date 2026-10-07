@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Aktualizovať záznam {{index}} z {{count}}",
     "WEBSITE": "Webstránka",
     "SHARE": "Zdieľať",
+    "SHARE_BREW_TEXT": "Zdieľať ako text",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parametre zdieľania textu",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Vyžaduje sa prístup k zdieľaniu súborov",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Aby aplikácia mohla plne fungovať, žiadame vás o autorizáciu prístupu k súborom. V opačnom prípade budú s používaním aplikácie problémy. Je to potrebné najmä pre systém automatického zálohovania.",
     "COULD_NOT_ACCESS_FILE": "K vybranému súboru sa nám nepodarilo získať prístup",

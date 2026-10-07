@@ -24,4 +24,22 @@ describe('Settings', () => {
     // Assert
     expect(hydratedSettings.cloud_ai_prompt_appendix).toBe('');
   });
+
+  it('keeps share text selections and supplies defaults for older settings', () => {
+    const saved = new Settings();
+    saved.share_brew_text_fields.bean_country = false;
+    const restored = new Settings();
+    restored.initializeByObject(saved);
+    expect(restored.share_brew_text_fields.bean_country).toBeFalse();
+
+    Reflect.deleteProperty(saved.share_brew_text_fields, 'tds');
+    Reflect.deleteProperty(saved.share_brew_text_fields, 'extraction_yield');
+    restored.initializeByObject(saved);
+    expect(restored.share_brew_text_fields.tds).toBeTrue();
+    expect(restored.share_brew_text_fields.extraction_yield).toBeTrue();
+
+    Reflect.deleteProperty(saved, 'share_brew_text_fields');
+    restored.initializeByObject(saved);
+    expect(restored.share_brew_text_fields.bean_country).toBeTrue();
+  });
 });

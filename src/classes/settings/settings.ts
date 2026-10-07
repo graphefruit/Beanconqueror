@@ -38,6 +38,7 @@ import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { ManageBrewParameter } from '../parameter/manageBrewParameter';
 import { OrderBrewParameter } from '../parameter/orderBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
+import { ShareBrewTextFields } from '../parameter/shareBrewTextFields';
 
 export class Settings implements ISettings {
   public graph_colors: IGraphColors;
@@ -56,6 +57,7 @@ export class Settings implements ISettings {
   public default_last_coffee_parameters: DefaultBrewParameter;
   public repeat_coffee_parameters: RepeatBrewParameter;
   public visible_list_view_parameters: ListViewBrewParameter;
+  public share_brew_text_fields: ShareBrewTextFields;
   public brew_order: OrderBrewParameter;
 
   public bean_manage_parameters: BeanManageParameter;
@@ -340,6 +342,7 @@ export class Settings implements ISettings {
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.visible_list_view_parameters = new ListViewBrewParameter();
+    this.share_brew_text_fields = new ShareBrewTextFields();
     this.repeat_coffee_parameters = new RepeatBrewParameter();
 
     this.brew_order = new OrderBrewParameter();
@@ -686,6 +689,12 @@ export class Settings implements ISettings {
 
     this.manage_parameters = new ManageBrewParameter();
     Object.assign(this.manage_parameters, settingsObj.manage_parameters);
+
+    this.share_brew_text_fields = new ShareBrewTextFields();
+    Object.assign(
+      this.share_brew_text_fields,
+      settingsObj.share_brew_text_fields,
+    );
 
     this.brew_order = new OrderBrewParameter();
     Object.assign(this.brew_order, settingsObj.brew_order);

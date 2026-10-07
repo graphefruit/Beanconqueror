@@ -5,6 +5,7 @@ import { DefaultParameterComponent } from './default-parameter/default-parameter
 import { ListViewParameterComponent } from './list-view-parameter/list-view-parameter.component';
 import { ManageParameterComponent } from './manage-parameter/manage-parameter.component';
 import { RepeatParameterComponent } from './repeat-parameter/repeat-parameter.component';
+import { ShareTextParameterComponent } from './share-text-parameter/share-text-parameter.component';
 import { SortParameterComponent } from './sort-parameter/sort-parameter.component';
 
 export const routes: Routes = [
@@ -31,6 +32,10 @@ export const routes: Routes = [
   {
     path: 'repeat',
     component: RepeatParameterComponent,
+  },
+  {
+    path: 'share-text',
+    component: ShareTextParameterComponent,
   },
 ];
 

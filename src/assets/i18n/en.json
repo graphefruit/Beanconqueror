@@ -639,6 +639,8 @@
     "UPDATE_ENTRY_OF": "Update entry {{index}} of {{count}}",
     "WEBSITE": "Website",
     "SHARE": "Share",
+    "SHARE_BREW_TEXT": "Share as text",
+    "SHARE_BREW_TEXT_PARAMETERS": "Text sharing parameters",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Share file access required",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "In order for the app to work fully, we ask you to authorize file access. Otherwise there will be problems using the app. This is specifically needed for the automatic backup system.",
     "COULD_NOT_ACCESS_FILE": "We could not access the chosen file",
