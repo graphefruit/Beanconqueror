@@ -7,7 +7,9 @@
   @if(loading) {
   <div class="ion-text-center ion-padding">
     <ion-spinner></ion-spinner>
-    @if(loadingTotal > 0) {
+    @if(loadingImportedShot) {
+    <p>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LOADING_IMPORTED_SHOT" | translate}}</p>
+    } @else if(loadingTotal > 0) {
     <p>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LOADING_SHOTS" | translate: {current: loadingCurrent, total: loadingTotal} }}</p>
     }
   </div>
@@ -21,6 +23,9 @@
             <ion-item #ionItemEl tappable lines='full'>
               <ion-radio justify="start" label-placement="end" [value]='entry.id'>
                 <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+                @if(entry.id === importedShotId) {
+                <div class='font-size-16'><b>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.PREVIOUSLY_IMPORTED_SHOT" | translate}}</b></div>
+                }
                 <h3 class="ion-text-wrap">{{entry.profile}}&nbsp;({{entry.id}})</h3>
                 <div class='font-size-16'>{{this.uiHelper.formateDate(entry.timestamp)}}</div>
                 </ion-grid>

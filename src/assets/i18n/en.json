@@ -1155,7 +1155,9 @@
           "WRITE_BACK_NOTES_SUCCESS": "Shot notes on the GaggiMate have been updated",
           "WRITE_BACK_NOTES_ERROR": "GaggiMate is not reachable. Your brew was saved, but the shot notes on the GaggiMate were not updated",
           "WRITE_BACK_NOTES_SHOT_MISMATCH": "This shot does not exist on the GaggiMate anymore, the shot notes were not updated",
-          "LOADING_SHOTS": "Loading shot {{current}} of {{total}}"
+          "LOADING_SHOTS": "Loading shot {{current}} of {{total}}",
+          "PREVIOUSLY_IMPORTED_SHOT": "Previously imported shot",
+          "LOADING_IMPORTED_SHOT": "Loading previously imported shot"
         }
     },
     "DEVICE_CONNECTION": "Device connection",

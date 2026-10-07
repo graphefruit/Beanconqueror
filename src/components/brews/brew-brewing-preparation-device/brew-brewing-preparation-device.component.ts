@@ -1200,11 +1200,15 @@ export class BrewBrewingPreparationDeviceComponent
   }
 
   public async importShotFromGaggimate() {
+    const gaggimateParams = this.data.preparationDeviceBrew
+      ?.params as GaggimateParams;
     const modal = await this.modalController.create({
       component: BrewModalImportShotGaggimateComponent,
       id: BrewModalImportShotGaggimateComponent.COMPONENT_ID,
       componentProps: {
         gaggimateDevice: this.preparationDevice as GaggimateDevice,
+        importedShotId: gaggimateParams?.shotId ?? 0,
+        importedShotTimestamp: gaggimateParams?.shotTimestamp ?? 0,
       },
     });
 

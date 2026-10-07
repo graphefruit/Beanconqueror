@@ -173,6 +173,20 @@ export class GaggimateDevice extends PreparationDevice {
     }
   }
 
+  /**
+   * Returns all shots of the GaggiMate from the complete shot index, most
+   * recent first. In contrast to getRecentShots() this is not limited.
+   */
+  public async getAllShots(): Promise<any[]> {
+    const response = await fetch(this.connectionURL + '/api/history/index.bin');
+    if (response.status !== 200) {
+      throw new Error('GaggiMate shot index is not available');
+    }
+    return this.parser.indexToShotList(
+      this.parser.parseBinaryIndex(await response.arrayBuffer()),
+    ) as any[];
+  }
+
   public async getShotNotesFile(id: number) {
     const response = await fetch(
       this.connectionURL + `/api/history/${String(id)}.json`,
