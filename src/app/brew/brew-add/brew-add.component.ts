@@ -69,6 +69,7 @@ import { UIHealthKit } from '../../../services/uiHealthKit';
 import { UIHelper } from '../../../services/uiHelper';
 import { UILog } from '../../../services/uiLog';
 import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
@@ -117,6 +118,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private readonly platform = inject(Platform);
   private readonly uiLog = inject(UILog);
   private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly uiHealthKit = inject(UIHealthKit);
   private readonly uiAlert = inject(UIAlert);
   private readonly brewTracking = inject(BrewTrackingService);
@@ -371,6 +373,11 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       await this.manageFlowProfile(addedBrewObj);
 
       await this.manageCustomBrewTime(addedBrewObj);
+
+      void this.uiPreparationHelper.writeBrewBackToGaggimate(
+        addedBrewObj,
+        this.settings.brew_rating,
+      );
 
       this.manageUploadToVisualizer(addedBrewObj);
 

@@ -21,6 +21,7 @@ import {
   IonRadio,
   IonRadioGroup,
   IonRow,
+  IonSpinner,
   ModalController,
 } from '@ionic/angular/standalone';
 
@@ -50,6 +51,7 @@ import { UIHelper } from '../../../services/uiHelper';
     HeaderComponent,
     HeaderDismissButtonComponent,
     IonRadioGroup,
+    IonSpinner,
     IonCard,
     IonItem,
     IonRadio,
@@ -69,8 +71,21 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-modal-import-shot-gaggimate';
 
   @Input() public gaggimateDevice: GaggimateDevice;
+  /**
+   * Id and timestamp of the shot which was already imported into the brew, if
+   * any. This shot is listed first and preselected, even if it is not part of
+   * the latest shots anymore.
+   */
+  @Input() public importedShotId = 0;
+  @Input() public importedShotTimestamp = 0;
   public radioSelection: number;
   public history: Array<GaggimateShotData> = [];
+
+  public loading = true;
+  public loadingCurrent = 0;
+  public loadingTotal = 0;
+  public loadingImportedShot = false;
+  private loadingCancelled = false;
 
   @ViewChild('ionItemEl', { read: ElementRef, static: false })
   public ionItemEl: ElementRef;
@@ -92,9 +107,14 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   }
 
   private async readHistory() {
-    await this.uiAlert.showLoadingSpinner();
-    await this.fetchShotDetails();
-    await this.uiAlert.hideLoadingSpinner();
+    // The loading state is shown inside the modal instead of a blocking spinner,
+    // so the user is able to cancel it via the dismiss buttons
+    this.loading = true;
+    try {
+      await this.fetchShotDetails();
+    } finally {
+      this.loading = false;
+    }
 
     this.retriggerScroll();
   }
@@ -103,6 +123,9 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
     const alldatatoPush = [];
 
     const recentShots = await this.gaggimateDevice.getRecentShots();
+    if (this.loadingCancelled) {
+      return;
+    }
 
     if (!recentShots) {
       await this.uiAlert.showMessage(
@@ -124,15 +147,28 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
         true,
       );
     } else {
-      const shotsToLoad = Math.min(
+      const shotsToFetch = recentShotsArray.slice(
+        0,
         this.gaggimateDevice.getLatestShotsToImport(),
-        recentShotsArray.length,
       );
-      for (let i = 0; i < shotsToLoad; i++) {
+      await this.addImportedShotToList(shotsToFetch, recentShotsArray);
+      if (this.loadingCancelled) {
+        return;
+      }
+
+      this.loadingTotal = shotsToFetch.length;
+      for (let i = 0; i < shotsToFetch.length; i++) {
+        if (this.loadingCancelled) {
+          return;
+        }
+        this.loadingCurrent = i + 1;
         try {
           const GaggimateShotDataEntry = new GaggimateShotData();
 
-          const data = recentShotsArray[i];
+          const data = shotsToFetch[i];
+          // The imported shot is always the first one, see addImportedShotToList()
+          this.loadingImportedShot =
+            i === 0 && Number(data?.id) === Number(this.importedShotId);
 
           if (data !== null) {
             GaggimateShotDataEntry.id = Number(data.id); // force id as a number
@@ -176,6 +212,10 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
     if (alldatatoPush.length > 0) {
       /**We need to grab all data before we can push it else the virtual scrolling has issues **/
       this.history = alldatatoPush;
+      if (alldatatoPush.some((entry) => entry.id === this.importedShotId)) {
+        // Preselect the shot which was imported into this brew before
+        this.radioSelection = this.importedShotId;
+      }
     } else {
       await this.uiAlert.showMessage(
         this.translate.instant(
@@ -189,6 +229,46 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
         'OK',
         true,
       );
+    }
+  }
+
+  /**
+   * Puts the shot which was already imported into the brew at the first
+   * position of the list. If it is not part of the recent shots anymore, it is
+   * looked up in the complete shot index of the GaggiMate.
+   */
+  private async addImportedShotToList(
+    shotsToFetch: any[],
+    recentShotsArray: any[],
+  ) {
+    if (!this.importedShotId) {
+      return;
+    }
+    this.loadingImportedShot = true;
+    // Shot ids are reused when the history on the GaggiMate is reset, so the
+    // timestamp needs to match aswell (if we know it, older imports don't)
+    const isImportedShot = (shot) =>
+      Number(shot.id) === Number(this.importedShotId) &&
+      (!this.importedShotTimestamp ||
+        shot.timestamp === this.importedShotTimestamp);
+
+    const existingIndex = shotsToFetch.findIndex(isImportedShot);
+    let importedShot =
+      existingIndex >= 0
+        ? shotsToFetch.splice(existingIndex, 1)[0]
+        : recentShotsArray.find(isImportedShot);
+
+    if (!importedShot) {
+      try {
+        importedShot = (await this.gaggimateDevice.getAllShots()).find(
+          isImportedShot,
+        );
+      } catch (error) {
+        console.error(`There was a problem fetching from GaggiMate:`, error);
+      }
+    }
+    if (importedShot) {
+      shotsToFetch.unshift(importedShot);
     }
   }
 
@@ -231,6 +311,7 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   }
 
   public dismiss(): void {
+    this.loadingCancelled = true;
     this.modalController.dismiss(
       {
         dismissed: true,
