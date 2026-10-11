@@ -74,6 +74,7 @@ export class GaggimateDevice extends PreparationDevice {
   public static returnBrewFlowForShotData(samples) {
     const brewFlow = new BrewFlow();
     const newMoment = moment(new Date()).startOf('day');
+    let lastValidWp = 0;
 
     samples.forEach((row) => {
       const shotEntryTime = newMoment.clone().add(row.t, 'millisecond');
@@ -119,9 +120,17 @@ export class GaggimateDevice extends PreparationDevice {
         timestamp: timestamp,
       });
 
+      // Workaround to fix wp value being reset to 0 before the shot ends
+      let effectiveWp = row.wp ?? 0;
+      if (effectiveWp <= lastValidWp && lastValidWp > 0) {
+        effectiveWp = lastValidWp + effectiveWp;
+      } else if (effectiveWp > lastValidWp) {
+        lastValidWp = effectiveWp;
+      }
+
       brewFlow.waterDispensed.push({
-        actual: row.wp ?? 0,
-        old: 0,
+        actual: effectiveWp,
+        old: lastValidWp,
         brew_time: '',
         timestamp: timestamp,
       });

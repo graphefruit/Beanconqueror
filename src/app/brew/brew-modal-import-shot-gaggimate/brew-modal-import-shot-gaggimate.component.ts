@@ -78,11 +78,11 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   @ViewChild('historyShotContent', { read: ElementRef })
   public historyShotContent: ElementRef;
 
-  @ViewChild('GaggimateShotDataScroll', {
+  @ViewChild('gaggimateShotDataScroll', {
     read: AgVirtualScrollComponent,
     static: false,
   })
-  public GaggimateShotDataScroll: AgVirtualScrollComponent;
+  public gaggimateShotDataScroll: AgVirtualScrollComponent;
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
@@ -202,14 +202,13 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
     setTimeout(() => {
       const el = this.historyShotContent.nativeElement;
       const scrollComponent: AgVirtualScrollComponent =
-        this.GaggimateShotDataScroll;
+        this.gaggimateShotDataScroll;
 
       if (!scrollComponent) {
         return;
       }
 
       scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
-      // this.segmentScrollHeight = scrollComponent.el.style.height;
 
       // HACK: Manually trigger component refresh to work around initialization
       //       bug. For some reason the scroll component sees its own height as

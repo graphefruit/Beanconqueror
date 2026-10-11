@@ -7,8 +7,8 @@
   @if(history) {
   <ion-radio-group [(ngModel)]="radioSelection">
     <ion-card>
-        <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="300">
-          @for(entry of shotDataScroll.items; track entry.id) {
+        <ag-virtual-scroll #gaggimateShotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="300">
+          @for(entry of gaggimateShotDataScroll.items; track entry.id) {
             <ion-item #ionItemEl tappable lines='full'>
               <ion-radio justify="start" label-placement="end" [value]='entry.id'>
                 <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
