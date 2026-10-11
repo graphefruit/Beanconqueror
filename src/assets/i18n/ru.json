@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "",
     "WEBSITE": "Веб-сайт",
     "SHARE": "",
+    "SHARE_BREW_TEXT": "Поделиться текстом",
+    "SHARE_BREW_TEXT_PARAMETERS": "Параметры публикации текста",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Для правильной работы приложения и автоматического резервного копирования мы просим дать доступ к файловой системе. В противном случае корректная работа приложения не гарантируется. ",
     "COULD_NOT_ACCESS_FILE": "",

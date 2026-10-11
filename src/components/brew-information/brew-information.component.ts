@@ -417,6 +417,11 @@ export class BrewInformationComponent implements OnInit, OnChanges {
       }),
       */
       popoverAction({
+        role: BREW_ACTION.SHARE_TEXT,
+        translationKey: 'SHARE_BREW_TEXT',
+        icon: 'share-social-outline',
+      }),
+      popoverAction({
         role: BREW_ACTION.SHOW_MAP_COORDINATES,
         translationKey: 'POPOVER_BREWS_OPTION_MAP_COORDINATES',
         icon: 'beanconqueror-map',
@@ -643,6 +648,9 @@ export class BrewInformationComponent implements OnInit, OnChanges {
       case BREW_ACTION.SHARE:
         await this.share();
         break;
+      case BREW_ACTION.SHARE_TEXT:
+        await this.shareText();
+        break;
       case BREW_ACTION.VISUALIZER:
         await this.shareToVisualizer();
         break;
@@ -746,6 +754,21 @@ export class BrewInformationComponent implements OnInit, OnChanges {
     }
 
     //await this.shareService.shareBrew(this.brew);
+  }
+
+  public async shareText(): Promise<void> {
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.SHARE,
+    );
+    await this.shareService.shareBrewText(
+      this.brew,
+      this.bean,
+      this.preparation,
+      this.mill,
+      this.settings.share_brew_text_fields,
+      this.settings.language,
+    );
   }
 
   public getCuppedBrewFlavors(): string[] {

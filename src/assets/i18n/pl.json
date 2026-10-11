@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Aktualizuj wpis {{index}} z {{count}}",
     "WEBSITE": "Strona internetowa",
     "SHARE": "Udostępniania",
+    "SHARE_BREW_TEXT": "Udostępnij jako tekst",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parametry udostępniania tekstu",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Wymagany dostęp do plików współdzielonych",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Aby aplikacja mogła w pełni działać, prosimy o autoryzację dostępu do plików. W przeciwnym razie wystąpią problemy z korzystaniem z aplikacji. Jest to szczególnie potrzebne w przypadku systemu automatycznego tworzenia kopii zapasowych.",
     "COULD_NOT_ACCESS_FILE": "Nie mogliśmy uzyskać dostępu do wybranego pliku",
