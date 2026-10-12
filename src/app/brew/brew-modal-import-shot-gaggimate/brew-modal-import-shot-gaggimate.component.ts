@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   HostListener,
@@ -151,7 +152,10 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
             const shotData = await this.gaggimateDevice.getShotSlog(data.id);
 
             GaggimateShotDataEntry.brewFlow =
-              GaggimateDevice.returnBrewFlowForShotData(shotData.samples);
+              GaggimateDevice.returnBrewFlowForShotData(
+                shotData.samples,
+                shotData.version,
+              );
             GaggimateShotDataEntry.targetTemp =
               GaggimateDevice.returnTargetTemperatureForShotData(
                 shotData.samples,
