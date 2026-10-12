@@ -30,6 +30,7 @@ import { UIAnalytics } from './uiAnalytics';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIHelper } from './uiHelper';
 import { UIPreparationStorage } from './uiPreparationStorage';
+import { UISettingsStorage } from './uiSettingsStorage';
 import { UIToast } from './uiToast';
 
 /**
@@ -48,6 +49,7 @@ export class UIPreparationHelper {
   private readonly httpClient = inject(HttpClient);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiToast = inject(UIToast);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   private allStoredBrews: Array<Brew> = [];
 
@@ -211,19 +213,26 @@ export class UIPreparationHelper {
   }
 
   /**
+   * Syncs a saved brew back to the connected machine, if the machine supports
+   * it. Called after a brew was added or edited. Each machine specific sync
+   * decides on its own whether there is something to do for the given brew.
+   *
+   * This is meant to be called without awaiting it: The syncs never throw and
+   * just inform the user with a toast, so saving a brew is not blocked by a
+   * machine which is switched off.
+   */
+  public async doMachineSpecificSyncs(_brew: Brew): Promise<void> {
+    await this.writeBrewBackToGaggimate(_brew);
+  }
+
+  /**
    * If the brew was imported from a GaggiMate and the user activated it, the
    * brew data is added to the shot notes on the GaggiMate. Only fields which
-   * are empty there are filled.
-   *
-   * This is meant to be called without awaiting it after a brew was saved: It
-   * never throws and just informs the user with a toast, so the app stays
-   * usable and the brew is saved even if the machine is switched off.
+   * are empty there are filled. Never throws, see doMachineSpecificSyncs().
    */
-  public async writeBrewBackToGaggimate(
-    _brew: Brew,
-    _maxRating: number,
-  ): Promise<void> {
+  private async writeBrewBackToGaggimate(_brew: Brew): Promise<void> {
     try {
+      const _maxRating = this.uiSettingsStorage.getSettings().brew_rating;
       const shotId = _brew?.preparationDeviceBrew?.params?.shotId;
       if (
         _brew?.preparationDeviceBrew?.type !==
@@ -265,7 +274,7 @@ export class UIPreparationHelper {
         );
       }
       if (_brew.grind_weight > 0) {
-        values.doseIn = String(_brew.grind_weight);
+        values.doseIn = Number(_brew.grind_weight);
       }
       values.grindSetting = String(_brew.grind_size ?? '').trim();
       values.beanType = String(_brew.getBean()?.name ?? '').trim();

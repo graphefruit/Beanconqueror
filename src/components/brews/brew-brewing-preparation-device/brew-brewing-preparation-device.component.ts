@@ -1272,10 +1272,8 @@ export class BrewBrewingPreparationDeviceComponent
     if (grindSetting !== '') {
       this.brewComponent.data.grind_size = grindSetting;
     }
-    const doseIn = parseFloat(
-      String(shotData.notes?.doseIn ?? '').replace(',', '.'),
-    );
-    if (!isNaN(doseIn) && doseIn > 0) {
+    const doseIn = shotData.notes?.doseIn;
+    if (doseIn > 0) {
       this.brewComponent.data.grind_weight = doseIn;
     }
     const shotNotes = String(shotData.notes?.notes ?? '').trim();

@@ -374,10 +374,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
       await this.manageCustomBrewTime(addedBrewObj);
 
-      void this.uiPreparationHelper.writeBrewBackToGaggimate(
-        addedBrewObj,
-        this.settings.brew_rating,
-      );
+      void this.uiPreparationHelper.doMachineSpecificSyncs(addedBrewObj);
 
       this.manageUploadToVisualizer(addedBrewObj);
 

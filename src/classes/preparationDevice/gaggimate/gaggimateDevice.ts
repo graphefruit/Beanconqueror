@@ -195,7 +195,11 @@ export class GaggimateDevice extends PreparationDevice {
       return {};
     }
     try {
-      return (await response.json()) as GaggimateShotNotes;
+      const notes = (await response.json()) as GaggimateShotNotes;
+      // GaggiMate stores the dose as text ('18', or '' if not set)
+      const doseIn = parseFloat(String(notes.doseIn ?? ''));
+      notes.doseIn = isNaN(doseIn) ? undefined : doseIn;
+      return notes;
     } catch {
       // GaggiMate answers with its web UI (status 200) for shots without notes
       return {};
@@ -314,7 +318,8 @@ export class GaggimateDevice extends PreparationDevice {
     let changed = false;
     for (const key of Object.keys(values)) {
       if (isEmpty(notes[key]) && !isEmpty(values[key])) {
-        notes[key] = values[key];
+        // GaggiMate stores everything except the rating as text
+        notes[key] = key === 'rating' ? values[key] : String(values[key]);
         changed = true;
       }
     }
@@ -365,7 +370,7 @@ export class GaggimateDevice extends PreparationDevice {
 export class GaggimateShotNotes implements IGaggimateShotNotes {
   public rating?: number;
   public grindSetting?: string;
-  public doseIn?: number | string;
+  public doseIn?: number;
   public notes?: string;
   public beanType?: string;
 }

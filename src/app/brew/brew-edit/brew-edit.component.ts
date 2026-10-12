@@ -236,10 +236,7 @@ export class BrewEditComponent implements OnInit {
 
     await this.uiBrewStorage.update(this.data);
 
-    void this.uiPreparationHelper.writeBrewBackToGaggimate(
-      this.data,
-      this.settings.brew_rating,
-    );
+    void this.uiPreparationHelper.doMachineSpecificSyncs(this.data);
 
     if (
       this.settings.visualizer_active &&
