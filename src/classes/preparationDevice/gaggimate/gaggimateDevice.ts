@@ -8,8 +8,11 @@ import { stringify } from 'safe-stable-stringify';
 import { IGaggimateParams } from '../../../interfaces/preparationDevices/gaggimate/iGaggimateParams';
 import { IGaggimateShotNotes } from '../../../interfaces/preparationDevices/gaggimate/iGaggimateShotNotes';
 import { UILog } from '../../../services/uiLog';
+import type { Brew } from '../../brew/brew';
 import { BrewFlow } from '../../brew/brewFlow';
 import { Preparation } from '../../preparation/preparation';
+import type { Settings } from '../../settings/settings';
+import { PreparationDeviceType } from '../index';
 import { PreparationDevice } from '../preparationDevice';
 import { GaggimateParser } from './gaggimateParser';
 
@@ -344,10 +347,70 @@ export class GaggimateDevice extends PreparationDevice {
     return true;
   }
 
-  public shallWriteBackNotes(): boolean {
+  private shallWriteBackNotes(): boolean {
     const customParams = this.getPreparation()?.connectedPreparationDevice
       ?.customParams as GaggimateParams;
     return customParams?.writeBackNotes === true;
+  }
+
+  /**
+   * If the brew was imported from this GaggiMate and the user activated it,
+   * the brew data is added to the shot notes on the GaggiMate. Only fields
+   * which are empty there are filled.
+   */
+  public override async syncBrew(
+    _brew: Brew,
+    _settings: Settings,
+  ): Promise<string | undefined> {
+    try {
+      const params = _brew?.preparationDeviceBrew?.params as GaggimateParams;
+      // Only brews with an imported GaggiMate shot have a shot id
+      if (
+        _brew?.preparationDeviceBrew?.type !==
+          PreparationDeviceType.GAGGIMATE ||
+        !params?.shotId ||
+        !this.shallWriteBackNotes()
+      ) {
+        return undefined;
+      }
+
+      // Brews which were imported before the timestamp was stored can't be
+      // verified, so we don't write to the GaggiMate for them
+      if (!params.shotTimestamp) {
+        return undefined;
+      }
+      // Make sure the shot id still belongs to the imported shot, else we
+      // would write the data of this brew into the notes of a different shot
+      if (!(await this.isSameShot(params.shotId, params.shotTimestamp))) {
+        return 'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SHOT_MISMATCH';
+      }
+
+      // Collect the values of the brew. Empty values are skipped later.
+      const values = new GaggimateShotNotes();
+      const maxRating = _settings?.brew_rating;
+      if (_brew.rating > 0 && maxRating > 0) {
+        // GaggiMate rates with 1-5 stars, 0 means not rated
+        values.rating = Math.min(
+          Math.max(Math.round((_brew.rating / maxRating) * 5), 1),
+          5,
+        );
+      }
+      if (_brew.grind_weight > 0) {
+        values.doseIn = Number(_brew.grind_weight);
+      }
+      values.grindSetting = String(_brew.grind_size ?? '').trim();
+      values.beanType = String(_brew.getBean()?.name ?? '').trim();
+      values.notes = String(_brew.note ?? '').trim();
+
+      const changed = await this.addMissingShotNotes(params.shotId, values);
+      return changed
+        ? 'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SUCCESS'
+        : undefined;
+    } catch (error) {
+      // Most likely the machine is switched off or not reachable in this network
+      this.logError('Error in syncBrew():', error);
+      return 'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_ERROR';
+    }
   }
 
   private logError(...args: any[]) {

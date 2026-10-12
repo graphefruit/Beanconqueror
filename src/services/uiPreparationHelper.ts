@@ -20,10 +20,6 @@ import {
   PreparationDeviceType,
 } from '../classes/preparationDevice';
 import { BluetoothPreparationDevice } from '../classes/preparationDevice/bluetoothPreparationDevice';
-import {
-  GaggimateDevice,
-  GaggimateShotNotes,
-} from '../classes/preparationDevice/gaggimate/gaggimateDevice';
 import { PreparationDevice } from '../classes/preparationDevice/preparationDevice';
 import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import { UIAnalytics } from './uiAnalytics';
@@ -214,83 +210,32 @@ export class UIPreparationHelper {
 
   /**
    * Syncs a saved brew back to the connected machine, if the machine supports
-   * it. Called after a brew was added or edited. Each machine specific sync
-   * decides on its own whether there is something to do for the given brew.
+   * it (see PreparationDevice.syncBrew()). Called after a brew was added or
+   * edited.
    *
-   * This is meant to be called without awaiting it: The syncs never throw and
-   * just inform the user with a toast, so saving a brew is not blocked by a
+   * This is meant to be called without awaiting it: It never throws and just
+   * informs the user with a toast, so saving a brew is not blocked by a
    * machine which is switched off.
    */
   public async doMachineSpecificSyncs(_brew: Brew): Promise<void> {
-    await this.writeBrewBackToGaggimate(_brew);
-  }
-
-  /**
-   * If the brew was imported from a GaggiMate and the user activated it, the
-   * brew data is added to the shot notes on the GaggiMate. Only fields which
-   * are empty there are filled. Never throws, see doMachineSpecificSyncs().
-   */
-  private async writeBrewBackToGaggimate(_brew: Brew): Promise<void> {
     try {
-      const _maxRating = this.uiSettingsStorage.getSettings().brew_rating;
-      const shotId = _brew?.preparationDeviceBrew?.params?.shotId;
-      if (
-        _brew?.preparationDeviceBrew?.type !==
-          PreparationDeviceType.GAGGIMATE ||
-        !shotId
-      ) {
+      const preparation = _brew?.getPreparation();
+      if (!preparation) {
         return;
       }
-      const device = this.getConnectedDevice(_brew.getPreparation());
-      if (
-        !(device instanceof GaggimateDevice) ||
-        !device.shallWriteBackNotes()
-      ) {
+      const device = this.getConnectedDevice(preparation);
+      if (!device) {
         return;
       }
-
-      // Brews which were imported before the timestamp was stored can't be
-      // verified, so we don't write to the GaggiMate for them
-      const shotTimestamp = _brew.preparationDeviceBrew.params.shotTimestamp;
-      if (!shotTimestamp) {
-        return;
-      }
-      // Make sure the shot id still belongs to the imported shot, else we
-      // would write the data of this brew into the notes of a different shot
-      if (!(await device.isSameShot(shotId, shotTimestamp))) {
-        await this.uiToast.showInfoToast(
-          'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SHOT_MISMATCH',
-        );
-        return;
-      }
-
-      // Collect the values of the brew. Empty values are skipped later.
-      const values = new GaggimateShotNotes();
-      if (_brew.rating > 0 && _maxRating > 0) {
-        // GaggiMate rates with 1-5 stars, 0 means not rated
-        values.rating = Math.min(
-          Math.max(Math.round((_brew.rating / _maxRating) * 5), 1),
-          5,
-        );
-      }
-      if (_brew.grind_weight > 0) {
-        values.doseIn = Number(_brew.grind_weight);
-      }
-      values.grindSetting = String(_brew.grind_size ?? '').trim();
-      values.beanType = String(_brew.getBean()?.name ?? '').trim();
-      values.notes = String(_brew.note ?? '').trim();
-
-      const changed = await device.addMissingShotNotes(shotId, values);
-      if (changed) {
-        await this.uiToast.showInfoToast(
-          'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SUCCESS',
-        );
+      const messageKey = await device.syncBrew(
+        _brew,
+        this.uiSettingsStorage.getSettings(),
+      );
+      if (messageKey) {
+        await this.uiToast.showInfoToast(messageKey);
       }
     } catch {
-      // Most likely the machine is switched off or not reachable in this network
-      await this.uiToast.showInfoToast(
-        'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_ERROR',
-      );
+      // A failing sync must not affect the saved brew
     }
   }
 }
