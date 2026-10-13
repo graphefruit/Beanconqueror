@@ -27,6 +27,54 @@
     </ion-segment-button>
   </ion-segment>
 
+  <div class="range-panel">
+    <ion-segment scrollable="true" [(ngModel)]="rangeMode"
+      (ngModelChange)="onRangeModeChange($event)" class="range-segment">
+      <ion-segment-button value="ALL">
+        <ion-label>{{"STATISTIC_RANGE_ALL_TIME" | translate}}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="THIS_MONTH">
+        <ion-label>{{"STATISTIC_RANGE_THIS_MONTH" | translate}}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="LAST_MONTH">
+        <ion-label>{{"STATISTIC_RANGE_LAST_MONTH" | translate}}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="THIS_YEAR">
+        <ion-label>{{"STATISTIC_RANGE_THIS_YEAR" | translate}}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="CUSTOM">
+        <ion-label>{{"STATISTIC_RANGE_CUSTOM" | translate}}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    @if (rangeMode === 'CUSTOM') {
+      <ion-row class="ion-align-items-center">
+        <ion-col size="6" class="ion-text-center">
+          <ion-label>{{"STATISTIC_RANGE_FROM" | translate}}</ion-label>
+          <ion-datetime-button datetime="statisticRangeStart"></ion-datetime-button>
+          <ion-popover #startDatePopover [keepContentsMounted]="true" side="bottom" alignment="start">
+            <ng-template>
+              <ion-datetime id="statisticRangeStart" presentation="date"
+                [(ngModel)]="customStart"
+                (ionChange)="onCustomStartChanged(startDatePopover)"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </ion-col>
+        <ion-col size="6" class="ion-text-center">
+          <ion-label>{{"STATISTIC_RANGE_TO" | translate}}</ion-label>
+          <ion-datetime-button datetime="statisticRangeEnd"></ion-datetime-button>
+          <ion-popover #endDatePopover [keepContentsMounted]="true" side="bottom" alignment="start">
+            <ng-template>
+              <ion-datetime id="statisticRangeEnd" presentation="date"
+                [(ngModel)]="customEnd"
+                (ionChange)="onCustomEndChanged(endDatePopover)"></ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </ion-col>
+      </ion-row>
+    }
+  </div>
+
   <div>
     @switch (segment) {
       @case ('GENERAL') {

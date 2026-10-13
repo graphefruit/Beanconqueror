@@ -1,0 +1,6 @@
+export enum STATISTIC_BEAN_DATE_FIELD_ENUM {
+  ADDED = 'ADDED',
+  ROAST = 'ROAST',
+  BUY = 'BUY',
+  OPEN = 'OPEN',
+}
