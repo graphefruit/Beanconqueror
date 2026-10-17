@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { CapacitorHttp, HttpResponse } from '@capacitor/core';
 import { padStart } from 'lodash';
 import moment from 'moment';
-import { stringify } from 'safe-stable-stringify';
 
 import { IGaggimateParams } from '../../../interfaces/preparationDevices/gaggimate/iGaggimateParams';
 import { IGaggimateShotNotes } from '../../../interfaces/preparationDevices/gaggimate/iGaggimateShotNotes';
@@ -74,14 +73,30 @@ export class GaggimateDevice extends PreparationDevice {
     }
   }
 
-  public static returnBrewFlowForShotData(samples) {
+  public static returnBrewFlowForShotData(samples, version: number) {
     const brewFlow = new BrewFlow();
     const newMoment = moment(new Date()).startOf('day');
+    let previousEventTime = 0;
     let lastValidWp = 0;
+    let oldWaterDispensed = 0;
 
     samples.forEach((row) => {
       const shotEntryTime = newMoment.clone().add(row.t, 'millisecond');
       const timestamp = shotEntryTime.format('HH:mm:ss.SSS');
+
+      brewFlow.pressureFlow.push({
+        actual_pressure: row.cp ?? 0,
+        old_pressure: 0,
+        brew_time: '',
+        timestamp: timestamp,
+      });
+
+      brewFlow.temperatureFlow.push({
+        actual_temperature: row.ct ?? 0,
+        old_temperature: 0,
+        brew_time: '',
+        timestamp: timestamp,
+      });
 
       brewFlow.weight.push({
         timestamp: timestamp,
@@ -94,7 +109,7 @@ export class GaggimateDevice extends PreparationDevice {
         not_mutated_weight: 0,
       });
 
-      // vf is the weight based flow (g/s) measured by the scale
+      // vf is the weight based flow (g/s) measured by the scale or estimated from puck flow
       brewFlow.realtimeFlow.push({
         flow_value: row.vf ?? 0,
         brew_time: '',
@@ -103,40 +118,42 @@ export class GaggimateDevice extends PreparationDevice {
         timestampdelta: 0,
       });
 
-      brewFlow.pressureFlow.push({
-        actual_pressure: row.cp ?? 0,
-        old_pressure: 0,
+      // Set the pump flow rate
+      brewFlow.waterDispensedFlowSecond.push({
+        actual: row.fl ?? 0,
+        old: 0,
         brew_time: '',
         timestamp: timestamp,
       });
 
-      brewFlow.waterFlow.push({
-        value: row.fl ?? 0,
-        brew_time: '',
-        timestamp: timestamp,
-      });
+      // Cumulative water dispensed
+      if (version < 7) {
+        // Calculate the value for older shots
+        const secondsDelta = (row.t - (previousEventTime || 0)) / 1000;
+        brewFlow.waterDispensed.push({
+          actual: (oldWaterDispensed || 0) + row.fl * secondsDelta,
+          old: oldWaterDispensed || 0,
+          brew_time: '',
+          timestamp: timestamp,
+        });
+        oldWaterDispensed += row.fl * secondsDelta;
+        previousEventTime = row.t;
+      } else {
+        // Workaround to fix wp value being reset to 0 before the shot ends
+        let effectiveWp = row.wp ?? 0;
+        if (effectiveWp < lastValidWp && lastValidWp > 0) {
+          effectiveWp = lastValidWp + effectiveWp;
+        } else if (effectiveWp > lastValidWp) {
+          lastValidWp = effectiveWp;
+        }
 
-      brewFlow.temperatureFlow.push({
-        actual_temperature: row.ct ?? 0,
-        old_temperature: 0,
-        brew_time: '',
-        timestamp: timestamp,
-      });
-
-      // Workaround to fix wp value being reset to 0 before the shot ends
-      let effectiveWp = row.wp ?? 0;
-      if (effectiveWp <= lastValidWp && lastValidWp > 0) {
-        effectiveWp = lastValidWp + effectiveWp;
-      } else if (effectiveWp > lastValidWp) {
-        lastValidWp = effectiveWp;
+        brewFlow.waterDispensed.push({
+          actual: effectiveWp,
+          old: lastValidWp,
+          brew_time: '',
+          timestamp: timestamp,
+        });
       }
-
-      brewFlow.waterDispensed.push({
-        actual: effectiveWp,
-        old: lastValidWp,
-        brew_time: '',
-        timestamp: timestamp,
-      });
     });
     return brewFlow;
   }
