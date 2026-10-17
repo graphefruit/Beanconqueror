@@ -215,6 +215,11 @@
             <div class='ion-label ion-text-wrap'>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.USE_TARGET_TEMPERATURE" | translate}}</div>
           </ion-toggle>
         </ion-item>
+        <ion-item lines="none">
+          <ion-toggle label-placement='start' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.writeBackNotes" >
+            <div class='ion-label ion-text-wrap'>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES" | translate}}</div>
+          </ion-toggle>
+        </ion-item>
       }
 
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.MOVE2) {

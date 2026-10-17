@@ -8,8 +8,11 @@ import { stringify } from 'safe-stable-stringify';
 import { IGaggimateParams } from '../../../interfaces/preparationDevices/gaggimate/iGaggimateParams';
 import { IGaggimateShotNotes } from '../../../interfaces/preparationDevices/gaggimate/iGaggimateShotNotes';
 import { UILog } from '../../../services/uiLog';
+import type { Brew } from '../../brew/brew';
 import { BrewFlow } from '../../brew/brewFlow';
 import { Preparation } from '../../preparation/preparation';
+import type { Settings } from '../../settings/settings';
+import { PreparationDeviceType } from '../index';
 import { PreparationDevice } from '../preparationDevice';
 import { GaggimateParser } from './gaggimateParser';
 
@@ -182,6 +185,20 @@ export class GaggimateDevice extends PreparationDevice {
     }
   }
 
+  /**
+   * Returns all shots of the GaggiMate from the complete shot index, most
+   * recent first. In contrast to getRecentShots() this is not limited.
+   */
+  public async getAllShots(): Promise<any[]> {
+    const response = await fetch(this.connectionURL + '/api/history/index.bin');
+    if (response.status !== 200) {
+      throw new Error('GaggiMate shot index is not available');
+    }
+    return this.parser.indexToShotList(
+      this.parser.parseBinaryIndex(await response.arrayBuffer()),
+    ) as any[];
+  }
+
   public async getShotNotesFile(id: number) {
     const response = await fetch(
       this.connectionURL + `/api/history/${String(id)}.json`,
@@ -190,7 +207,11 @@ export class GaggimateDevice extends PreparationDevice {
       return {};
     }
     try {
-      return (await response.json()) as GaggimateShotNotes;
+      const notes = (await response.json()) as GaggimateShotNotes;
+      // GaggiMate stores the dose as text ('18', or '' if not set)
+      const doseIn = parseFloat(String(notes.doseIn ?? ''));
+      notes.doseIn = isNaN(doseIn) ? undefined : doseIn;
+      return notes;
     } catch {
       // GaggiMate answers with its web UI (status 200) for shots without notes
       return {};
@@ -207,6 +228,198 @@ export class GaggimateDevice extends PreparationDevice {
       return null;
     }
     return this.parser.parseBinaryShot(buffer, id);
+  }
+
+  /**
+   * Sends a request to the GaggiMate websocket and resolves with the response
+   * which carries the same request id.
+   */
+  private sendSocketRequest(request: Record<string, unknown>): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const rid = `bc-${Date.now()}-${Math.round(Math.random() * 100000)}`;
+      const socket = new WebSocket(
+        this.connectionURL.replace(/^http/i, 'ws') + '/ws',
+      );
+      const timeout = setTimeout(() => {
+        socket.close();
+        reject(new Error('GaggiMate websocket request timed out'));
+      }, 5000);
+      socket.onopen = () => {
+        socket.send(JSON.stringify({ ...request, rid: rid }));
+      };
+      socket.onmessage = (event) => {
+        try {
+          // The socket also streams status events, we just wait for our answer
+          const message = JSON.parse(event.data);
+          if (message?.rid === rid) {
+            clearTimeout(timeout);
+            socket.close();
+            resolve(message);
+          }
+        } catch {
+          // Not a JSON message, ignore it
+        }
+      };
+      socket.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error('GaggiMate websocket connection failed'));
+      };
+    });
+  }
+
+  /**
+   * Checks if the shot with the given id on the GaggiMate is still the one
+   * which was imported. Shot ids are reused when the history on the GaggiMate
+   * is reset (e.g. new sd card or reflashing), so the id alone is not enough
+   * to identify a shot. The start timestamp of the shot needs to match aswell.
+   */
+  public async isSameShot(id: number, timestamp: number): Promise<boolean> {
+    if (!id || !timestamp) {
+      return false;
+    }
+    const response = await fetch(this.connectionURL + '/api/history/index.bin');
+    if (response.status !== 200) {
+      throw new Error('GaggiMate shot index is not available');
+    }
+    const indexData = this.parser.parseBinaryIndex(
+      await response.arrayBuffer(),
+    );
+    const entry = indexData.entries.find(
+      (e) => Number(e.id) === Number(id) && !e.deleted,
+    );
+    return entry !== undefined && entry.timestamp === timestamp;
+  }
+
+  /**
+   * Adds the given values to the notes of a shot on the GaggiMate. Only fields
+   * which are empty on the GaggiMate are filled, existing values are kept.
+   * Returns true if something was written.
+   */
+  public async addMissingShotNotes(
+    id: number,
+    values: GaggimateShotNotes,
+  ): Promise<boolean> {
+    const response = await this.sendSocketRequest({
+      tp: 'req:history:notes:get',
+      id: String(id),
+    });
+    if (response?.tp !== 'res:history:notes:get') {
+      throw new Error('Unexpected response for the GaggiMate shot notes');
+    }
+    // The save request replaces the stored notes, so we need to send all of them
+    const notes: Record<string, string | number> = {
+      rating: 0,
+      beanType: '',
+      doseIn: '',
+      doseOut: '',
+      ratio: '',
+      grindSetting: '',
+      balanceTaste: 'balanced',
+      notes: '',
+      ...(response.notes ?? {}),
+      id: String(id),
+    };
+
+    const isEmpty = (value: string | number | undefined | null) =>
+      value === undefined ||
+      value === null ||
+      value === 0 ||
+      String(value).trim() === '' ||
+      String(value).trim() === '0';
+
+    let changed = false;
+    for (const key of Object.keys(values)) {
+      if (isEmpty(notes[key]) && !isEmpty(values[key])) {
+        // GaggiMate stores everything except the rating as text
+        notes[key] = key === 'rating' ? values[key] : String(values[key]);
+        changed = true;
+      }
+    }
+    if (!changed) {
+      return false;
+    }
+
+    const doseIn = parseFloat(String(notes.doseIn));
+    const doseOut = parseFloat(String(notes.doseOut));
+    if (isEmpty(notes.ratio) && doseIn > 0 && doseOut > 0) {
+      notes.ratio = (doseOut / doseIn).toFixed(2);
+    }
+
+    const saveResponse = await this.sendSocketRequest({
+      tp: 'req:history:notes:save',
+      id: String(id),
+      notes: notes,
+    });
+    if (saveResponse?.msg !== 'Ok') {
+      throw new Error('GaggiMate did not confirm saving the shot notes');
+    }
+    return true;
+  }
+
+  private shallWriteBackNotes(): boolean {
+    const customParams = this.getPreparation()?.connectedPreparationDevice
+      ?.customParams as GaggimateParams;
+    return customParams?.writeBackNotes === true;
+  }
+
+  /**
+   * If the brew was imported from this GaggiMate and the user activated it,
+   * the brew data is added to the shot notes on the GaggiMate. Only fields
+   * which are empty there are filled.
+   */
+  public override async syncBrew(
+    _brew: Brew,
+    _settings: Settings,
+  ): Promise<string | undefined> {
+    try {
+      const params = _brew?.preparationDeviceBrew?.params as GaggimateParams;
+      // Only brews with an imported GaggiMate shot have a shot id
+      if (
+        _brew?.preparationDeviceBrew?.type !==
+          PreparationDeviceType.GAGGIMATE ||
+        !params?.shotId ||
+        !this.shallWriteBackNotes()
+      ) {
+        return undefined;
+      }
+
+      // Brews which were imported before the timestamp was stored can't be
+      // verified, so we don't write to the GaggiMate for them
+      if (!params.shotTimestamp) {
+        return undefined;
+      }
+      // Make sure the shot id still belongs to the imported shot, else we
+      // would write the data of this brew into the notes of a different shot
+      if (!(await this.isSameShot(params.shotId, params.shotTimestamp))) {
+        return 'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SHOT_MISMATCH';
+      }
+
+      // Collect the values of the brew. Empty values are skipped later.
+      const values = new GaggimateShotNotes();
+      const maxRating = _settings?.brew_rating;
+      if (_brew.rating > 0 && maxRating > 0) {
+        // GaggiMate rates with 1-5 stars, 0 means not rated
+        values.rating = Math.min(
+          Math.max(Math.round((_brew.rating / maxRating) * 5), 1),
+          5,
+        );
+      }
+      if (_brew.grind_weight > 0) {
+        values.doseIn = Number(_brew.grind_weight);
+      }
+      values.grindSetting = String(_brew.grind_size ?? '').trim();
+      values.beanType = String(_brew.getBean()?.name ?? '').trim();
+      values.notes = String(_brew.note ?? '').trim();
+
+      const changed = await this.addMissingShotNotes(params.shotId, values);
+      return changed
+        ? 'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_SUCCESS'
+        : undefined;
+    } catch (error) {
+      // Most likely the machine is switched off or not reachable in this network
+      this.logError('Error in syncBrew():', error);
+      return 'PREPARATION_DEVICE.TYPE_GAGGIMATE.WRITE_BACK_NOTES_ERROR';
+    }
   }
 
   private logError(...args: any[]) {
@@ -227,6 +440,7 @@ export class GaggimateDevice extends PreparationDevice {
 }
 
 export class GaggimateShotNotes implements IGaggimateShotNotes {
+  public rating?: number;
   public grindSetting?: string;
   public doseIn?: number;
   public notes?: string;
@@ -237,18 +451,28 @@ export class GaggimateParams implements IGaggimateParams {
   public chosenProfileId: string;
   public chosenProfileName: string;
   public shotId: number;
+  /**
+   * Start time (unix seconds) of the imported shot. The shot id is just a
+   * counter on the GaggiMate, which starts again when the history is reset.
+   * Together with the timestamp we are able to check if an id still belongs
+   * to the shot which was imported.
+   */
+  public shotTimestamp: number;
   public latestShotsToImport: number;
   public confirmDuplicateImport: boolean;
   public confirmBeanAdd: boolean;
   public useTargetTemperature: boolean;
+  public writeBackNotes: boolean;
 
   constructor() {
     this.chosenProfileId = '';
     this.chosenProfileName = '';
     this.shotId = 0;
+    this.shotTimestamp = 0;
     this.latestShotsToImport = 1;
     this.confirmDuplicateImport = true;
     this.confirmBeanAdd = true;
     this.useTargetTemperature = false;
+    this.writeBackNotes = false;
   }
 }

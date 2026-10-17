@@ -26,6 +26,8 @@ import { UIAnalytics } from './uiAnalytics';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIHelper } from './uiHelper';
 import { UIPreparationStorage } from './uiPreparationStorage';
+import { UISettingsStorage } from './uiSettingsStorage';
+import { UIToast } from './uiToast';
 
 /**
  * Handles every helping functionalities
@@ -42,6 +44,8 @@ export class UIPreparationHelper {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly httpClient = inject(HttpClient);
   private readonly uiAnalytics = inject(UIAnalytics);
+  private readonly uiToast = inject(UIToast);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   private allStoredBrews: Array<Brew> = [];
 
@@ -202,5 +206,36 @@ export class UIPreparationHelper {
       return _preparation.connectedPreparationDevice.url ? candidate : null;
     }
     return null;
+  }
+
+  /**
+   * Syncs a saved brew back to the connected machine, if the machine supports
+   * it (see PreparationDevice.syncBrew()). Called after a brew was added or
+   * edited.
+   *
+   * This is meant to be called without awaiting it: It never throws and just
+   * informs the user with a toast, so saving a brew is not blocked by a
+   * machine which is switched off.
+   */
+  public async doMachineSpecificSyncs(_brew: Brew): Promise<void> {
+    try {
+      const preparation = _brew?.getPreparation();
+      if (!preparation) {
+        return;
+      }
+      const device = this.getConnectedDevice(preparation);
+      if (!device) {
+        return;
+      }
+      const messageKey = await device.syncBrew(
+        _brew,
+        this.uiSettingsStorage.getSettings(),
+      );
+      if (messageKey) {
+        await this.uiToast.showInfoToast(messageKey);
+      }
+    } catch {
+      // A failing sync must not affect the saved brew
+    }
   }
 }

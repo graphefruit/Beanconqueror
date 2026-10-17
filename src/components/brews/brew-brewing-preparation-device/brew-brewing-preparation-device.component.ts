@@ -1200,11 +1200,15 @@ export class BrewBrewingPreparationDeviceComponent
   }
 
   public async importShotFromGaggimate() {
+    const gaggimateParams = this.data.preparationDeviceBrew
+      ?.params as GaggimateParams;
     const modal = await this.modalController.create({
       component: BrewModalImportShotGaggimateComponent,
       id: BrewModalImportShotGaggimateComponent.COMPONENT_ID,
       componentProps: {
         gaggimateDevice: this.preparationDevice as GaggimateDevice,
+        importedShotId: gaggimateParams?.shotId ?? 0,
+        importedShotTimestamp: gaggimateParams?.shotTimestamp ?? 0,
       },
     });
 
@@ -1268,10 +1272,8 @@ export class BrewBrewingPreparationDeviceComponent
     if (grindSetting !== '') {
       this.brewComponent.data.grind_size = grindSetting;
     }
-    const doseIn = parseFloat(
-      String(shotData.notes?.doseIn ?? '').replace(',', '.'),
-    );
-    if (!isNaN(doseIn) && doseIn > 0) {
+    const doseIn = shotData.notes?.doseIn;
+    if (doseIn > 0) {
       this.brewComponent.data.grind_weight = doseIn;
     }
     const shotNotes = String(shotData.notes?.notes ?? '').trim();
@@ -1388,6 +1390,9 @@ export class BrewBrewingPreparationDeviceComponent
     ).chosenProfileId = shotData.profileId;
     (this.data.preparationDeviceBrew.params as GaggimateParams).shotId =
       shotData.id;
+    // The timestamp is stored to be able to verify the shot id later, see GaggimateParams
+    (this.data.preparationDeviceBrew.params as GaggimateParams).shotTimestamp =
+      shotData.timestamp;
   }
 
   public getPreparationDeviceType() {
