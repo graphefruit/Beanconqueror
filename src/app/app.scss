@@ -156,7 +156,7 @@ ion-segment-button {
     --color-checked: var(--ion-color-accent);
     --indicator-color: var(--ion-color-accent);
   }
-  ion-card {
+  ion-card:not(.best-brew):not(.favourite-brew) {
     border: 1px solid var(--ion-border-color) !important;
   }
 }

@@ -1186,34 +1186,44 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private _overLaytimeShown: boolean = false;
   public async showTimeOverlay(_event) {
+    if (this._overLaytimeShown === true) {
+      return;
+    }
+    this._overLaytimeShown = true;
+
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
-    const modal = await this.modalController.create({
-      component: DatetimePopoverComponent,
-      id: 'datetime-popover',
-      cssClass: 'popover-actions',
-      animated: false,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
-      componentProps: { displayingTime: this.displayingBrewTime },
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.displayingTime !== undefined
-    ) {
-      this.displayingBrewTime = modalData.data.displayingTime;
-      this.data.brew_time = moment
-        .duration(
-          moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day'),
-          ),
-        )
-        .asSeconds();
+    try {
+      const modal = await this.modalController.create({
+        component: DatetimePopoverComponent,
+        id: 'datetime-popover',
+        cssClass: 'popover-actions',
+        animated: false,
+        breakpoints: [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75,
+        componentProps: { displayingTime: this.displayingBrewTime },
+      });
+      await modal.present();
+      const modalData = await modal.onWillDismiss();
+      if (
+        modalData !== undefined &&
+        modalData.data &&
+        modalData.data.displayingTime !== undefined
+      ) {
+        this.displayingBrewTime = modalData.data.displayingTime;
+        this.data.brew_time = moment
+          .duration(
+            moment(modalData.data.displayingTime).diff(
+              moment(modalData.data.displayingTime).startOf('day'),
+            ),
+          )
+          .asSeconds();
+      }
+    } finally {
+      this._overLaytimeShown = false;
     }
   }
 

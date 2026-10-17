@@ -4,11 +4,13 @@
 
 export const environment = {
   production: false,
+  SHOW_UNWRAPPED: true,
   INTERNAL_CALLER: 'beanconqueror://',
   API_URL: 'https://backend.beanconqueror.com/',
   FEATURES_ACTIVE: {
     SANREMO_YOU: true,
     MOVE2: true,
+    SHOW_UNWRAPPED: true,
   },
 };
 

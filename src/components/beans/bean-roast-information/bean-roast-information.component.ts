@@ -103,31 +103,34 @@ export class BeanRoastInformationComponent implements OnInit {
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
-    const modal = await this.modalCtrl.create({
-      component: DatetimePopoverComponent,
-      id: 'datetime-popover',
-      cssClass: 'popover-actions',
-      animated: false,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
-      componentProps: { displayingTime: this.displayingTime },
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    this._overLaytimeShown = false;
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.displayingTime !== undefined
-    ) {
-      this.displayingTime = modalData.data.displayingTime;
-      this.data.bean_roast_information.roast_length = moment
-        .duration(
-          moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day'),
-          ),
-        )
-        .asSeconds();
+    try {
+      const modal = await this.modalCtrl.create({
+        component: DatetimePopoverComponent,
+        id: 'datetime-popover',
+        cssClass: 'popover-actions',
+        animated: false,
+        breakpoints: [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75,
+        componentProps: { displayingTime: this.displayingTime },
+      });
+      await modal.present();
+      const modalData = await modal.onWillDismiss();
+      if (
+        modalData !== undefined &&
+        modalData.data &&
+        modalData.data.displayingTime !== undefined
+      ) {
+        this.displayingTime = modalData.data.displayingTime;
+        this.data.bean_roast_information.roast_length = moment
+          .duration(
+            moment(modalData.data.displayingTime).diff(
+              moment(modalData.data.displayingTime).startOf('day'),
+            ),
+          )
+          .asSeconds();
+      }
+    } finally {
+      this._overLaytimeShown = false;
     }
   }
 
@@ -141,31 +144,34 @@ export class BeanRoastInformationComponent implements OnInit {
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
-    const modal = await this.modalCtrl.create({
-      component: DatetimePopoverComponent,
-      id: 'datetime-popover',
-      cssClass: 'popover-actions',
-      animated: false,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
-      componentProps: { displayingTime: this.displayingFirstCrack },
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    this._overLayFirstCrackShown = false;
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.displayingTime !== undefined
-    ) {
-      this.displayingFirstCrack = modalData.data.displayingTime;
-      this.data.bean_roast_information.first_crack_minute = moment
-        .duration(
-          moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day'),
-          ),
-        )
-        .asSeconds();
+    try {
+      const modal = await this.modalCtrl.create({
+        component: DatetimePopoverComponent,
+        id: 'datetime-popover',
+        cssClass: 'popover-actions',
+        animated: false,
+        breakpoints: [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75,
+        componentProps: { displayingTime: this.displayingFirstCrack },
+      });
+      await modal.present();
+      const modalData = await modal.onWillDismiss();
+      if (
+        modalData !== undefined &&
+        modalData.data &&
+        modalData.data.displayingTime !== undefined
+      ) {
+        this.displayingFirstCrack = modalData.data.displayingTime;
+        this.data.bean_roast_information.first_crack_minute = moment
+          .duration(
+            moment(modalData.data.displayingTime).diff(
+              moment(modalData.data.displayingTime).startOf('day'),
+            ),
+          )
+          .asSeconds();
+      }
+    } finally {
+      this._overLayFirstCrackShown = false;
     }
   }
 
@@ -179,31 +185,34 @@ export class BeanRoastInformationComponent implements OnInit {
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
-    const modal = await this.modalCtrl.create({
-      component: DatetimePopoverComponent,
-      id: 'datetime-popover',
-      cssClass: 'popover-actions',
-      animated: false,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
-      componentProps: { displayingTime: this.displayingSecondCrack },
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    this._overLaySecondCrackShown = false;
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.displayingTime !== undefined
-    ) {
-      this.displayingSecondCrack = modalData.data.displayingTime;
-      this.data.bean_roast_information.second_crack_minute = moment
-        .duration(
-          moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day'),
-          ),
-        )
-        .asSeconds();
+    try {
+      const modal = await this.modalCtrl.create({
+        component: DatetimePopoverComponent,
+        id: 'datetime-popover',
+        cssClass: 'popover-actions',
+        animated: false,
+        breakpoints: [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75,
+        componentProps: { displayingTime: this.displayingSecondCrack },
+      });
+      await modal.present();
+      const modalData = await modal.onWillDismiss();
+      if (
+        modalData !== undefined &&
+        modalData.data &&
+        modalData.data.displayingTime !== undefined
+      ) {
+        this.displayingSecondCrack = modalData.data.displayingTime;
+        this.data.bean_roast_information.second_crack_minute = moment
+          .duration(
+            moment(modalData.data.displayingTime).diff(
+              moment(modalData.data.displayingTime).startOf('day'),
+            ),
+          )
+          .asSeconds();
+      }
+    } finally {
+      this._overLaySecondCrackShown = false;
     }
   }
 

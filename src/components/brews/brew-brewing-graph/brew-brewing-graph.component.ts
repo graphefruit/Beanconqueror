@@ -2255,12 +2255,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.move2FetchingInterval = setInterval(() => {
         const pressure = prepDeviceCall.getPressure();
 
-        let temperature = 0;
         if (grabbedFirstTimeTemperature === undefined) {
           grabbedFirstTimeTemperature = prepDeviceCall.getTemperature();
         }
         //The temperature would drop, because the temperature is taken out of the boiler, so we sample the first grabbed temperature.
-        temperature = grabbedFirstTimeTemperature;
+        const temperature: number = grabbedFirstTimeTemperature;
 
         this.__setPressureFlow({ actual: pressure, old: pressure });
         if (temperature !== undefined) {

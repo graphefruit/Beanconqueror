@@ -426,4 +426,31 @@ describe('BrewInformationComponent imported provenance', () => {
     expect(chip.querySelector('img')).toBeNull();
     expect(chip.querySelector('.brew-imported-chip-label')).not.toBeNull();
   });
+
+  it('applies best-brew and favourite-brew classes on the card for brew layout', () => {
+    const brew = makeBrew();
+    brew.best_brew = true;
+    brew.favourite = true;
+    render(brew);
+
+    const card = fixture.nativeElement.querySelector('ion-card.brew-layout');
+    expect(card).not.toBeNull();
+    expect(card.classList.contains('best-brew')).toBeTrue();
+    expect(card.classList.contains('favourite-brew')).toBeTrue();
+  });
+
+  it('applies best-brew and favourite-brew classes on the card for dashboard layout', () => {
+    fixture.componentRef.setInput('layout', 'dashboard');
+    const brew = makeBrew();
+    brew.best_brew = true;
+    brew.favourite = true;
+    render(brew);
+
+    const card = fixture.nativeElement.querySelector(
+      'ion-card.dashboard-layout',
+    );
+    expect(card).not.toBeNull();
+    expect(card.classList.contains('best-brew')).toBeTrue();
+    expect(card.classList.contains('favourite-brew')).toBeTrue();
+  });
 });
