@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Oppdater oppføring {{index}} av {{count}}",
     "WEBSITE": "Nettsted",
     "SHARE": "Del",
+    "SHARE_BREW_TEXT": "Del som tekst",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parametre for deling som tekst",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Dele filtilgang kreves",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "For at appen skal fungere fullt ut ber vi deg godkjenne filtilgang. Uten dette vil det være problemer med å bruke appen. Dette er spesielt nødvendig for det automatiske sikkerhetskopieringssystemet.",
     "COULD_NOT_ACCESS_FILE": "Vi fikk ikke tilgang til den valgte filen",

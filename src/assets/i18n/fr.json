@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Mettre à jour l’élément {{index}} de {{count}}",
     "WEBSITE": "Site web",
     "SHARE": "Partager",
+    "SHARE_BREW_TEXT": "Partager en texte",
+    "SHARE_BREW_TEXT_PARAMETERS": "Paramètres de partage en texte",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Accès aux fichiers partagés requis",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Pour que l'appli fonctionne pleinement, on te demande d'autoriser l'accès aux fichiers. Sinon, tu auras des problèmes en utilisant l'appli. C'est spécifiquement nécessaire pour le système de sauvegarde automatique.",
     "COULD_NOT_ACCESS_FILE": "Le fichier choisi n'a pas pu accéder",

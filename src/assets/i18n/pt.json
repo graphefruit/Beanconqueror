@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "Atualizar entrada {{index}} de {{count}}",
     "WEBSITE": "Site",
     "SHARE": "Compartilhar",
+    "SHARE_BREW_TEXT": "Compartilhar como texto",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parâmetros de compartilhamento de texto",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "É necessário permitir o acesso para compartilhar arquivos",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Para que o aplicativo funcione totalmente, pedimos que você autorize o acesso ao arquivo. Caso contrário, haverá problemas ao usar o aplicativo. Isso é especificamente necessário para o sistema de backup automático.",
     "COULD_NOT_ACCESS_FILE": "Não foi possível acessar o arquivo escolhido",

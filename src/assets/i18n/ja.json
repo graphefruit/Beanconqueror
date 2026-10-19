@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "{{index}} \/ {{count}} 件目を更新",
     "WEBSITE": "ウェブサイト",
     "SHARE": "共有",
+    "SHARE_BREW_TEXT": "テキストとして共有",
+    "SHARE_BREW_TEXT_PARAMETERS": "テキスト共有パラメータ",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "ファイルアクセスの許可が必要です",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "アプリが正常に動作するためにファイルへのアクセス許可が必要です。許可しない場合、アプリの動作に問題が生じることがあります。自動バックアップシステムに必要です。",
     "COULD_NOT_ACCESS_FILE": "選択したファイルにアクセスできませんでした",

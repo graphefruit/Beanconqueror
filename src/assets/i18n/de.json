@@ -638,6 +638,8 @@
     "UPDATE_ENTRY_OF": "Aktualisiere Eintrag {{index}} von {{count}}",
     "WEBSITE": "Webseite",
     "SHARE": "Teilen",
+    "SHARE_BREW_TEXT": "Als Text teilen",
+    "SHARE_BREW_TEXT_PARAMETERS": "Parameter für die Textfreigabe",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Freigabe Dateizugriff benötigt",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Damit die App vollfunktional funktioniert, bitten wir dich den Dateizugriff freizugeben. Andernfalls wird es zu Fehlverhalten innerhalb der App kommen. Diese Freigabe ist unter anderem für die automatischen Sicherheitsbackups notwendig.",
     "COULD_NOT_ACCESS_FILE": "Auf die ausgewählte Datei konnte nicht Zugegriffen werden",

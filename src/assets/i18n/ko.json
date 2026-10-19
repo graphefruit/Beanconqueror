@@ -633,6 +633,8 @@
     "UPDATE_ENTRY_OF": "",
     "WEBSITE": "",
     "SHARE": "",
+    "SHARE_BREW_TEXT": "텍스트로 공유",
+    "SHARE_BREW_TEXT_PARAMETERS": "텍스트 공유 매개변수",
     "ANDROID_FILE_ACCESS_NEEDED_TITLE": "",
     "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "",
     "COULD_NOT_ACCESS_FILE": "",
