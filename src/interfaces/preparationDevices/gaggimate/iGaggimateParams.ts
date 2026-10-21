@@ -6,6 +6,9 @@ export interface IGaggimateParams {
   latestShotsToImport: number;
   confirmDuplicateImport: boolean;
   confirmBeanAdd: boolean;
+  autoSetBloomTime: boolean;
+  shotIdTimeout: number;
+  shotWatchdogTimeout: number;
   useTargetTemperature: boolean;
   writeBackNotes: boolean;
 }

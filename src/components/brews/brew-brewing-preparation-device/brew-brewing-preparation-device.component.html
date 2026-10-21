@@ -295,6 +295,24 @@
         <ion-icon name="cloud-download-outline" slot='start'></ion-icon>
         <span>{{ "IMPORT_SHOT_FROM_GAGGIMATE" | translate }}</span>
       </ion-item>
+      <div class="or-separator">
+        <span>{{ "OR" | translate }}</span>
+      </div>
+      <ion-item lines="none">
+        <ion-select [label]="'PREPARATION_DEVICE.TYPE_GAGGIMATE.CHOOSE_PROFILE' | translate"
+                  label-placement="stacked"
+                  [(ngModel)]="data.preparationDeviceBrew.params.chosenProfileId"
+                  [placeholder]="'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate">
+        <ion-select-option [value]="''">
+          {{ "PREPARATION_DEVICE.TYPE_GAGGIMATE.NO_PROFILE" | translate }}
+        </ion-select-option>
+        @for (profiles of preparationDevice.getProfiles(); track profiles.id) {
+          <ion-select-option [value]='profiles.id'>
+            {{ profiles.label }}
+          </ion-select-option>
+        }
+      </ion-select>
+      </ion-item>
     </ion-card>
   } @else if (isMove2Device(preparationDevice)) {
       <ion-card class="popover" style="display:flex; flex-direction: column;">

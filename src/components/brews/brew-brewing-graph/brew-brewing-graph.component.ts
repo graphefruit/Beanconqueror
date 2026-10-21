@@ -69,6 +69,12 @@ import { TemperatureDevice } from '../../../classes/devices/temperatureBluetooth
 import { Graph } from '../../../classes/graph/graph';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { GaggimateDevice } from '../../../classes/preparationDevice/gaggimate/gaggimateDevice';
+import {
+  gaggimateModal,
+  GmConfirmDialogHandle,
+} from '../../../classes/preparationDevice/gaggimate/gaggimateModal';
+import { GaggimateStatus } from '../../../classes/preparationDevice/gaggimate/gaggimateWsService';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { MeticulousShotData } from '../../../classes/preparationDevice/meticulous/meticulousShotData';
 import {
@@ -154,6 +160,16 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly graphHelper = inject(GraphHelperService);
+
+  private gaggimateStatusListenerId: string | null = null;
+  private gaggimateWarningScreenListenerId: string | null = null;
+  private gaggimateWarningScreenCanceledRemotelyListenerId: string | null =
+    null;
+  private gaggimateShotFinishedListenerId: string | null = null;
+  private gaggimateWatchdogTimer: ReturnType<typeof setTimeout> | null = null;
+  private isGaggimateWatchdogPromptOpen = false;
+  private isResolvingGaggimateShotId = false;
+  private readonly gaggimateModal = inject(gaggimateModal);
 
   @ViewChild('smartScaleWeight', { read: ElementRef })
   public smartScaleWeightEl: ElementRef;
@@ -248,6 +264,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private temperatureThresholdWasHit = false;
   private xeniaOverviewInterval: any = undefined;
   private meticulousInterval: any = undefined;
+  private gaggimateInterval: any = undefined;
   private sanremoYOUFetchingInterval: any = undefined;
   private move2FetchingInterval: any = undefined;
 
@@ -372,7 +389,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         (prepDeviceType === PreparationDeviceType.METICULOUS ||
           prepDeviceType === PreparationDeviceType.XENIA ||
           prepDeviceType === PreparationDeviceType.SANREMO_YOU ||
-          prepDeviceType === PreparationDeviceType.MOVE2)
+          prepDeviceType === PreparationDeviceType.MOVE2 ||
+          prepDeviceType === PreparationDeviceType.GAGGIMATE)
       ) {
         isSomethingConnected = true;
       }
@@ -1627,6 +1645,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         }
       } else if (deviceType === PreparationDeviceType.MOVE2) {
         this.stopFetchingDataFromMove2();
+      } else if (deviceType === PreparationDeviceType.GAGGIMATE) {
+        this.stopFetchingDataFromGaggimate();
       }
     }
 
@@ -1830,6 +1850,18 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         prepDeviceCall.stopShot();
       }
       this.stopFetchingDataFromMove2();
+    }
+
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.GAGGIMATE &&
+      _event !== 'gaggimate'
+    ) {
+      const prepDeviceCall: GaggimateDevice = this.brewComponent
+        ?.brewBrewingPreparationDeviceEl?.preparationDevice as GaggimateDevice;
+
+      prepDeviceCall.stopExtraction();
     }
 
     if (!this.platform.is('capacitor')) {
@@ -2133,9 +2165,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               });
 
               /** this.__setTemperatureFlow({
-                              actual: shotData.temperature,
-                              old: shotData.temperature,
-                            });**/
+               actual: shotData.temperature,
+               old: shotData.temperature,
+               });**/
 
               this.__setFlowProfile({
                 actual: shotData.weight,
@@ -2179,6 +2211,388 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         //Should never trigger
       },
     );
+  }
+
+  public startFetchingDataFromGaggimate() {
+    const prepDeviceCall: GaggimateDevice = this.brewComponent
+      .brewBrewingPreparationDeviceEl.preparationDevice as GaggimateDevice;
+
+    this.stopFetchingDataFromGaggimate();
+
+    // During extraction process any null/undefined process object are discarded falling back to the previous value
+    let hasShotStarted = false;
+    let previousEventTime: number | null = null;
+    let previousProcessType: string | undefined;
+    let extendedRecording = false;
+    let lastValidWp = 0;
+
+    // Watchdog guarding the risky window between GaggiMate reporting the shot as physically
+    // finished (evt:shot-finished-stats) and the history being confirmed saved (evt:history-shot-saved).
+    const armShotWatchdog = () => {
+      if (this.gaggimateWatchdogTimer) {
+        clearTimeout(this.gaggimateWatchdogTimer);
+        this.gaggimateWatchdogTimer = null;
+      }
+
+      const shotWatchdogTimeout =
+        prepDeviceCall.getPreparation().connectedPreparationDevice.customParams
+          .shotWatchdogTimeout ?? 20000;
+
+      this.gaggimateWatchdogTimer = setTimeout(async () => {
+        this.gaggimateWatchdogTimer = null;
+        if (!hasShotStarted || this.isGaggimateWatchdogPromptOpen) {
+          return;
+        }
+
+        await this.ngZone.run(async () => {
+          this.isGaggimateWatchdogPromptOpen = true;
+          const stopChoice =
+            await this.gaggimateModal.showDismissableConfirmWithYesNoTranslation(
+              'PREPARATION_DEVICE.TYPE_GAGGIMATE.STOP_RECORDING_PROMPT_MESSAGE',
+              'SURE_QUESTION',
+              'PREPARATION_DEVICE.TYPE_GAGGIMATE.STOP_RECORDING_PROMPT_YES_TEXT',
+              'PREPARATION_DEVICE.TYPE_GAGGIMATE.STOP_RECORDING_PROMPT_NO_TEXT',
+              true,
+            );
+
+          const stopResult = await stopChoice.result;
+          this.isGaggimateWatchdogPromptOpen = false;
+
+          if (!hasShotStarted) {
+            // The shot already finished naturally while the prompt was open
+            return;
+          }
+
+          if (stopResult === 'YES') {
+            hasShotStarted = false;
+            prepDeviceCall.setIsBrewing(false); // Set the flag to false as the shot is no longer being brewed and never received evt:status:saved (that set isBrewing to false)
+            this.brewComponent.timer.pauseTimer('gaggimate');
+            prepDeviceCall.stopRecordingHistory();
+            this.updateChart();
+            this.stopFetchingDataFromGaggimate();
+            await this.resolveGaggimateShotId(prepDeviceCall);
+            this.uiAlert.hideLoadingSpinner();
+            this.updateChart();
+            this.uiToast.showInfoToast(
+              'PREPARATION_DEVICE.TYPE_GAGGIMATE.SHOT_ENDED',
+            );
+          } else {
+            armShotWatchdog();
+          }
+        });
+      }, shotWatchdogTimeout);
+    };
+
+    prepDeviceCall
+      .connectToSocket()
+      .then(
+        async (_connected) => {
+          if (!_connected) {
+            console.log('not connected');
+            return;
+          }
+
+          if (
+            this.data.preparationDeviceBrew.params.chosenProfileId &&
+            (this.data.preparationDeviceBrew.params.chosenProfileId !==
+              prepDeviceCall.getActualShotData().selectedProfileId ||
+              prepDeviceCall.getActualShotData().mode !==
+                prepDeviceCall.MODE_BREW)
+          ) {
+            this.uiAlert.showMessage(
+              'PREPARATION_DEVICE.TYPE_GAGGIMATE.ERROR_CANNOT_SET_PROFILE_OR_BREW_MODE',
+              'CARE',
+              'OK',
+              true,
+            );
+
+            this.brewComponent.timer.reset(true);
+            this.stopFetchingDataFromGaggimate();
+            return;
+          }
+
+          if (this.data.preparationDeviceBrew.params.chosenProfileId) {
+            this.uiAlert.showLoadingSpinner(
+              'PREPARATION_DEVICE.TYPE_GAGGIMATE.SHOT_WILL_START_SOON',
+              true,
+            );
+          } else {
+            prepDeviceCall.clearHistory();
+            // Show a dismissible spinner, in case the shot won't be started on GaggiMate
+            this.uiAlert
+              .showLoadingMessageWithCustomTimeout(
+                'PREPARATION_DEVICE.TYPE_GAGGIMATE.WAITING_FOR_THE_SHOT',
+                true,
+                true,
+                3000,
+              )
+              .then((waitForGmShotWarning) => {
+                if (waitForGmShotWarning?.dismissed) {
+                  this.brewComponent.timer.pauseTimer('gaggimate');
+                  this.brewComponent.timer.reset(true);
+                  this.stopFetchingDataFromGaggimate();
+                }
+              });
+          }
+
+          // Set the listener to show the warning popup if GaggiMate is showing the warnings
+          let isShowingWarningPopup = false;
+          let warningChoice: GmConfirmDialogHandle | undefined;
+          this.gaggimateWarningScreenListenerId = prepDeviceCall.onShowWarning(
+            async (isGmWarning: boolean) => {
+              await this.ngZone.run(async () => {
+                // Show the Warning screen
+                if (isGmWarning && !isShowingWarningPopup) {
+                  warningChoice =
+                    await this.gaggimateModal.showDismissableConfirmWithYesNoTranslation(
+                      'PREPARATION_DEVICE.TYPE_GAGGIMATE.WARNING_SCREEN_WARNING_MESSAGE',
+                      'SURE_QUESTION',
+                      'PREPARATION_DEVICE.TYPE_GAGGIMATE.WARNING_SCREEN_WARNING_YES_TEXT',
+                      'PREPARATION_DEVICE.TYPE_GAGGIMATE.WARNING_SCREEN_WARNING_NO_TEXT',
+                      true,
+                    );
+
+                  isShowingWarningPopup = true;
+
+                  // Set the listener to dismiss the popup if GM cancels the warning
+                  this.gaggimateWarningScreenCanceledRemotelyListenerId =
+                    prepDeviceCall.onCancelWarning(
+                      async (isGmWarning: boolean) => {
+                        await this.ngZone.run(async () => {
+                          if (!isGmWarning && isShowingWarningPopup) {
+                            isShowingWarningPopup = await warningChoice.dismiss(
+                              null,
+                              'cancel',
+                            );
+                            prepDeviceCall.offCancelWarning(
+                              this
+                                .gaggimateWarningScreenCanceledRemotelyListenerId,
+                            );
+                          }
+                        });
+                      },
+                    );
+
+                  const warnResult = await warningChoice.result;
+                  if (warnResult === 'NO') {
+                    isShowingWarningPopup = false;
+                    await prepDeviceCall.cancelConfirmation();
+                    this.stopFetchingDataFromGaggimate();
+                    this.brewComponent.timer.pauseTimer('gaggimate');
+                    this.brewComponent.timer.reset(true);
+                    await this.uiAlert.hideLoadingSpinner();
+                    return;
+                  } else {
+                    await prepDeviceCall.startExtraction(true);
+                  }
+                }
+              });
+            },
+          );
+
+          // Attach the shot-finished listener to arm the watchdog guarding the gap between
+          // GaggiMate physically finishing the shot and the history being confirmed saved
+          this.gaggimateShotFinishedListenerId = prepDeviceCall.onShotFinished(
+            () => {
+              armShotWatchdog();
+            },
+          );
+
+          // Attach the status event listener
+          this.gaggimateStatusListenerId = prepDeviceCall.onStatusUpdate(
+            async (shotData: GaggimateStatus) => {
+              // Wrap in NgZone to ensure Angular triggers UI updates on WebSocket events
+              await this.ngZone.run(async () => {
+                const isBrewing = prepDeviceCall.isBrewing();
+                let roundedWeight = null;
+
+                // Shot Starting Detected
+                if (isBrewing && !hasShotStarted) {
+                  await warningChoice?.dismiss(); // close the warning popup if it's shown and from GM has been selected to start brew
+                  hasShotStarted = true;
+                  this.data.pressure_profile = shotData.selectedProfile;
+                  await this.uiAlert.hideLoadingSpinner();
+                  this.uiToast.showInfoToast(
+                    'PREPARATION_DEVICE.TYPE_GAGGIMATE.SHOT_STARTED',
+                  );
+
+                  this.startingFlowTime = Date.now();
+                  this.data.brew_time = 0;
+                  this.data.brew_time_milliseconds = 0;
+                  this.data.coffee_first_drip_time = 0;
+                  this.data.coffee_first_drip_time_milliseconds = 0;
+                  this.data.coffee_blooming_time = 0;
+                  this.data.coffee_blooming_time_milliseconds = 0;
+                  this.data.brew_temperature = shotData.targetTemperature;
+
+                  this.brewComponent.timer.initTimer(false);
+                  prepDeviceCall.stopRecordingHistory();
+
+                  // Replay buffered history entries to draw any missed initial frames
+                  const history = prepDeviceCall.getShotHistory() || [];
+
+                  for (const item of history) {
+                    if (item.process?.a) {
+                      this.__setPressureFlow({
+                        actual: item.currentPressure,
+                        old: item.currentPressure,
+                      });
+                      this.__setTemperatureFlow({
+                        actual: item.currentTemperature,
+                        old: item.currentTemperature,
+                      });
+
+                      if (prepDeviceCall.isGMBrewByWeight()) {
+                        this.__setScaleWeight(
+                          this.uiHelper.toFixedIfNecessary(
+                            item.currentWeight,
+                            1,
+                          ),
+                          false,
+                          false,
+                        );
+                      } else {
+                        this.toggleChartLines('calc_flow');
+                        this.toggleChartLines('weight');
+                      }
+
+                      this.__setFlowProfile({
+                        actual: item.currentWeight,
+                        old: item.currentWeight,
+                        smoothed: item.currentWeight,
+                        oldSmoothed: item.currentWeight,
+                      });
+
+                      // Override weight-based flow with GaggiMate real time flow
+                      if (item.currentFlow !== null && item.currentFlow !== 0) {
+                        const lastRealtimeFlow =
+                          this.flow_profile_raw.realtimeFlow[
+                            this.flow_profile_raw.realtimeFlow.length - 1
+                          ];
+                        if (lastRealtimeFlow) {
+                          lastRealtimeFlow.flow_value = item.currentFlow;
+                        }
+                        if (this.traces.realtimeFlowTrace.y.length > 0) {
+                          this.traces.realtimeFlowTrace.y[
+                            this.traces.realtimeFlowTrace.y.length - 1
+                          ] = item.currentFlow;
+                        }
+                      }
+
+                      this.setActualSmartInformation(roundedWeight);
+                    }
+                  }
+
+                  this.brewComponent.timer.startTimer(false, false);
+                  this.lastChartRenderingInstance = -1;
+                  this.updateChart();
+                  return;
+                }
+
+                // Shot Finished Detected
+                if (!isBrewing && hasShotStarted) {
+                  hasShotStarted = false;
+                  if (this.gaggimateWatchdogTimer) {
+                    clearTimeout(this.gaggimateWatchdogTimer);
+                    this.gaggimateWatchdogTimer = null;
+                  }
+                  this.brewComponent.timer.pauseTimer('gaggimate');
+                  this.stopFetchingDataFromGaggimate();
+                  this.updateChart();
+                  await this.resolveGaggimateShotId(prepDeviceCall);
+                  this.uiAlert.hideLoadingSpinner();
+                  this.updateChart();
+                  this.uiToast.showInfoToast(
+                    'PREPARATION_DEVICE.TYPE_GAGGIMATE.SHOT_ENDED',
+                  );
+                  return;
+                }
+
+                // REAL-TIME SHOT IN PROGRESS or extended recording
+                // During extraction any null/undefined process object is discarded falling back to the previous value
+                if (
+                  (hasShotStarted &&
+                    shotData.process?.e !== previousEventTime) ||
+                  extendedRecording
+                ) {
+                  // Check for bloom time
+                  if (
+                    shotData.process?.s === 'brew' &&
+                    previousProcessType === 'infusion' &&
+                    this.brewComponent.brewCoffeeBloomingTime.getMilliseconds() <=
+                      0 &&
+                    this.brewComponent.brewCoffeeBloomingTime.getSeconds() <= 0
+                  ) {
+                    this.brewComponent.setCoffeeBloomingTime('gaggimate');
+                  }
+
+                  this.__setPressureFlow({
+                    actual: shotData.currentPressure,
+                    old: shotData.currentPressure,
+                  });
+
+                  this.__setTemperatureFlow({
+                    actual: shotData.currentTemperature,
+                    old: shotData.currentTemperature,
+                  });
+
+                  if (prepDeviceCall.isGMBrewByWeight()) {
+                    roundedWeight = this.uiHelper.toFixedIfNecessary(
+                      shotData.currentWeight,
+                      1,
+                    );
+                    this.__setScaleWeight(roundedWeight ?? 0, false, false); // TODO : use .bw
+                  }
+
+                  this.__setFlowProfile({
+                    actual: roundedWeight ?? 0,
+                    old: roundedWeight ?? 0,
+                    smoothed: roundedWeight ?? 0,
+                    oldSmoothed: roundedWeight ?? 0,
+                  });
+
+                  // Workaround to fix wp value being reset to 0 before the shot ends
+                  let effectiveWp = shotData.waterPumped ?? 0;
+                  if (effectiveWp < lastValidWp && lastValidWp > 0) {
+                    effectiveWp = lastValidWp + effectiveWp;
+                  } else if (effectiveWp > lastValidWp) {
+                    lastValidWp = effectiveWp;
+                  }
+
+                  this.__setWaterDispensedFlow({
+                    actual: this.uiHelper.toFixedIfNecessary(effectiveWp, 2),
+                    old: this.uiHelper.toFixedIfNecessary(lastValidWp || 0, 2),
+                  });
+
+                  this.__setWaterDispensedFlowSecond({
+                    actual: shotData.currentFlow,
+                  });
+
+                  this.updateChart();
+
+                  this.setActualSmartInformation(roundedWeight);
+
+                  // During extraction process any null/undefined process object is discarded falling back to the previously received value
+                  previousProcessType = shotData.process?.s;
+                  previousEventTime = shotData.process?.e || 0;
+
+                  if (prepDeviceCall.isGMBrewByWeight() && roundedWeight > 0) {
+                    // Set extended recording for any shot with active weight data
+                    extendedRecording = true;
+                  }
+                }
+              });
+            },
+          );
+        },
+        () => {
+          // Socket error
+          this.uiLog.error('Socket connection error');
+        },
+      )
+      .catch((err) => {
+        this.uiAlert.showMessage(err);
+      });
   }
 
   public startFetchingAndSettingDataFromXenia() {
@@ -2283,11 +2697,135 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
+  private async resolveGaggimateShotId(
+    prepDeviceCall: GaggimateDevice,
+  ): Promise<void> {
+    if (this.isResolvingGaggimateShotId) {
+      return;
+    }
+    this.isResolvingGaggimateShotId = true;
+    try {
+      // Wait for WebSocket save shot id event
+      const shotIdTimeout =
+        prepDeviceCall.getPreparation().connectedPreparationDevice.customParams
+          .shotIdTimeout ?? 3000;
+      this.data.preparationDeviceBrew.params.shotId =
+        await this.uiAlert.withLoadingSpinner(async () =>
+          prepDeviceCall.getSocketShotId(shotIdTimeout),
+        );
+      // get the timestamp from the shot log file
+      const shotSlog = await prepDeviceCall.getShotSlog(
+        this.data.preparationDeviceBrew.params.shotId,
+      );
+
+      if (shotSlog) {
+        this.data.preparationDeviceBrew.params.shotTimestamp =
+          shotSlog.timestamp;
+      } else {
+        // If the slog is of an incompatible version or missing, fallback to the recent index file
+        const recentShots = await prepDeviceCall.getRecentShots();
+        if (recentShots) {
+          const shot = JSON.parse(recentShots)[0];
+          if (shot) {
+            console.warn(
+              'Using recent shot timestamp as fallback',
+              shot.timestamp,
+            );
+            this.data.preparationDeviceBrew.params.shotTimestamp =
+              shot.timestamp;
+          }
+        }
+      }
+    } catch (error) {
+      if (prepDeviceCall.isConnected()) {
+        // do not run this if we are no more in the brew page (exited before shotIdTimeout has been reached)
+        console.warn(
+          'WebSocket shotId timed out, attempting HTTP fallback...',
+          error,
+        );
+        try {
+          if (prepDeviceCall.isValid()) {
+            // if the shot is valid and not discarded, we can try to retrieve the id from the GM history
+            // HTTP Fallback, fetch recent shots and get id for the latest one
+            const recentShotsRaw = await prepDeviceCall.getRecentShots();
+            if (recentShotsRaw) {
+              const shots = JSON.parse(recentShotsRaw);
+              if (Array.isArray(shots) && shots.length > 0) {
+                // Take the latest saved shot id
+                const latestShot = shots[0];
+                this.data.preparationDeviceBrew.params.shotId = Number(
+                  latestShot.id,
+                );
+                this.data.preparationDeviceBrew.params.shotTimestamp = Number(
+                  latestShot.timestamp,
+                );
+                await prepDeviceCall.clearExtraction();
+              }
+            }
+          } else {
+            await this.uiAlert.showMessage(
+              'PREPARATION_DEVICE.TYPE_GAGGIMATE.SHOT_CANNOT_BE_IDENTIFIED',
+              'CARE',
+              'OK',
+              true,
+            );
+          }
+        } catch (fallbackError) {
+          console.error('Failed to fetch shotId from fallback:', fallbackError);
+        }
+      }
+    } finally {
+      this.isResolvingGaggimateShotId = false;
+    }
+  }
+
+  public stopFetchingDataFromGaggimate() {
+    const prepDeviceCall: GaggimateDevice = this.brewComponent
+      ?.brewBrewingPreparationDeviceEl?.preparationDevice as GaggimateDevice;
+
+    // removing the event status listeners
+    if (this.gaggimateStatusListenerId && prepDeviceCall) {
+      prepDeviceCall.offStatusUpdate(this.gaggimateStatusListenerId);
+      this.gaggimateStatusListenerId = null;
+    }
+
+    if (this.gaggimateWarningScreenListenerId && prepDeviceCall) {
+      prepDeviceCall.offShowWarning(this.gaggimateWarningScreenListenerId);
+      this.gaggimateWarningScreenListenerId = null;
+    }
+
+    if (
+      this.gaggimateWarningScreenCanceledRemotelyListenerId &&
+      prepDeviceCall
+    ) {
+      prepDeviceCall.offCancelWarning(
+        this.gaggimateWarningScreenCanceledRemotelyListenerId,
+      );
+      this.gaggimateWarningScreenCanceledRemotelyListenerId = null;
+    }
+
+    if (this.gaggimateShotFinishedListenerId && prepDeviceCall) {
+      prepDeviceCall.offShotFinished(this.gaggimateShotFinishedListenerId);
+      this.gaggimateShotFinishedListenerId = null;
+    }
+
+    if (this.gaggimateWatchdogTimer) {
+      clearTimeout(this.gaggimateWatchdogTimer);
+      this.gaggimateWatchdogTimer = null;
+    }
+    this.isGaggimateWatchdogPromptOpen = false;
+
+    if (this.gaggimateInterval !== undefined) {
+      clearInterval(this.gaggimateInterval);
+      this.gaggimateInterval = undefined;
+    }
+  }
+
   public async timerStartPressed(_event) {
     if (
       _event !== 'AUTO_LISTEN_SCALE' &&
       _event !== 'AUTO_START_PRESSURE' &&
-      _event !== 'AUTO_START_TEMPERATURE'
+      _event !== 'AUthis.stopFetchingDataFromGaggimate();TO_START_TEMPERATURE'
     ) {
       const scale: BluetoothScale = this.bleManager.getScale();
       if (scale) {
@@ -2386,6 +2924,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         const power = Math.pow(10, decimalPlaces);
         return Math.floor(rand * power) / power;
       };
+
       this.ngZone.runOutsideAngular(() => {
         this.graphTimerTest = setInterval(() => {
           flow = Math.floor(
@@ -2663,6 +3202,83 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
 
       this.startFetchingDataFromMove2();
+    } else if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.GAGGIMATE
+    ) {
+      const prepDeviceCall: GaggimateDevice = this.brewComponent
+        .brewBrewingPreparationDeviceEl.preparationDevice as GaggimateDevice;
+
+      if (
+        prepDeviceCall.getPreparation().connectedPreparationDevice.customParams
+          .autoSetBloomTime
+      ) {
+        this.brewComponent.timer.bloomTimerVisible = false; // hide the bloom button if auto set bloom option is set
+      }
+
+      if (this.data.preparationDeviceBrew.params.chosenProfileId !== '') {
+        this.uiLog.log(
+          `A GaggiMate profile was choosen, execute it - ${this.data.preparationDeviceBrew.params.chosenProfileId}`,
+        );
+
+        // Send a preventive cancel request to avoid getting stuck if GM is showing the brew confirmation screen due to some warning
+        if (prepDeviceCall.isWarning()) {
+          await prepDeviceCall.cancelConfirmation();
+        }
+
+        // If the profile is already active on GaggiMate we don't select it again
+        // to avoid resetting customized parameters values for temperature, weight/time
+        let profileSelected = true;
+        if (
+          prepDeviceCall.getActualShotData().selectedProfileId !==
+          this.data.preparationDeviceBrew.params.chosenProfileId
+        ) {
+          profileSelected = await prepDeviceCall.selectProfileByID(
+            this.data.preparationDeviceBrew.params.chosenProfileId,
+          );
+        }
+
+        // The mode is selected when switching to the brew page and instantiating the class, but the user could have changed it manually
+        let modeSelected: boolean;
+        if (
+          prepDeviceCall.getActualShotData().mode !== prepDeviceCall.MODE_BREW
+        ) {
+          modeSelected = await prepDeviceCall.selectBrewMode();
+        } else {
+          modeSelected = true;
+        }
+
+        if (profileSelected && modeSelected && !prepDeviceCall.isWarning()) {
+          await prepDeviceCall.startExtraction();
+        } else {
+          this.uiLog.log(
+            `GaggiMate ${!profileSelected ? ' profile ' : ''} ${!profileSelected && !modeSelected ? ' and ' : ''} ${!modeSelected ? ' brew mode ' : ''} cannot be selected ${prepDeviceCall.isWarning() ? ' is warning ' : ''} `,
+          );
+          await this.uiAlert.showMessage(
+            'PREPARATION_DEVICE.TYPE_GAGGIMATE.ERROR_CANNOT_SET_PROFILE_OR_BREW_MODE',
+            'CARE',
+            'OK',
+            true,
+          );
+          this.brewComponent.timer.reset(true);
+          return;
+        }
+      } else {
+        this.uiLog.log(
+          'No GaggiMate profile was selected, just listen for the start',
+        );
+      }
+
+      if (
+        this.settings.bluetooth_scale_maximize_on_start_timer === true &&
+        this.brewComponent.maximizeFlowGraphIsShown === false &&
+        !this.baristamode
+      ) {
+        await this.brewComponent.maximizeFlowGraph();
+      }
+
+      this.startFetchingDataFromGaggimate();
     }
   }
 
@@ -3658,6 +4274,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.stopFetchingDataFromMeticulous();
     this.stopFetchingDataFromSanremoYOU();
     this.stopFetchingDataFromMove2();
+    this.stopFetchingDataFromGaggimate();
 
     if (this.settings?.text_to_speech_active) {
       this.textToSpeech.end();
@@ -3834,7 +4451,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       _waterDispensedRealtime.actual,
       2,
     );
-
     const isSmartScaleConnected = this.smartScaleConnected();
     const flowTimeSecond = (this.data.brew_time_milliseconds / 1000).toFixed(1);
 
@@ -4321,18 +4937,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.stopFetchingDataFromMove2();
       }
 
-      let isMeticulous = false;
+      let stopByStatus = false;
 
       if (
         this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected() &&
-        this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
-          PreparationDeviceType.METICULOUS
+        (this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
+          PreparationDeviceType.METICULOUS ||
+          this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
+            PreparationDeviceType.GAGGIMATE)
       ) {
-        isMeticulous = true;
+        stopByStatus = true;
       }
 
       // Meticulous is stopped by status, not by Beanconqueror logic
-      if (!isMeticulous) {
+      if (!stopByStatus) {
         // We have found a written weight which is above 5 grams at least
         this.__setScaleWeight(weight, false, false);
         this.brewComponent.timer.pauseTimer('shot_ended');
