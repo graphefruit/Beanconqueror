@@ -2825,7 +2825,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     if (
       _event !== 'AUTO_LISTEN_SCALE' &&
       _event !== 'AUTO_START_PRESSURE' &&
-      _event !== 'AUthis.stopFetchingDataFromGaggimate();TO_START_TEMPERATURE'
+      _event !== 'AUTO_START_TEMPERATURE'
     ) {
       const scale: BluetoothScale = this.bleManager.getScale();
       if (scale) {
