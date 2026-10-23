@@ -64,6 +64,5 @@ export enum MachineType {
 }
 
 export enum GrinderType {
-  GENERIC = 'GENERIC',
   BOOKOO_MOTTO = 'BOOKOO_MOTTO',
 }

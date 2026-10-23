@@ -22,7 +22,6 @@ import { EurekaPrecisaScale } from './eurekaPrecisaScale';
 import { FelicitaScale } from './felicitaScale';
 import { FutulaScale } from './futulaScale';
 import { GeisingerThermometer } from './geisingerThermometer';
-import { GenericGrinderDevice } from './genericGrinderDevice';
 import { GrinderDevice } from './grinderBluetoothDevice';
 import { InkbirdIbbqThermometer } from './inkbirdIbbqThermometer';
 import { InkbirdIht2pbThermometer } from './inkbirdIht2pbThermometer';
@@ -196,8 +195,6 @@ export function makeGrinderDevice(
   switch (type) {
     case GrinderType.BOOKOO_MOTTO:
       return new BookooMotto(data);
-    case GrinderType.GENERIC:
-      return new GenericGrinderDevice(data);
     default:
       return null;
   }
