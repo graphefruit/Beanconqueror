@@ -6,6 +6,18 @@ import { Clipboard } from '@capacitor/clipboard';
 import moment from 'moment';
 
 import 'moment/locale/de';
+import 'moment/locale/it';
+import 'moment/locale/es';
+import 'moment/locale/tr';
+import 'moment/locale/zh-cn';
+import 'moment/locale/fr';
+import 'moment/locale/id';
+import 'moment/locale/pl';
+import 'moment/locale/nl';
+import 'moment/locale/nb';
+import 'moment/locale/pt';
+import 'moment/locale/el';
+import 'moment/locale/cs';
 import 'moment/locale/ja';
 
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -126,6 +138,28 @@ export class UIHelper {
   }
   public getUnixTimestamp(): number {
     return StorageClass.getUnixTimestamp();
+  }
+
+  /**
+   * Set the moment locale based on the provided locale string.
+   * If the provided locale is 'no' (Norwegian), it will be fixed to 'nb' for moment.js.
+   * If the provided locale is not available, it will default to 'en'.
+   * @param locale The locale string to get for moment.js.
+   */
+  public setMomentLocale(locale: string): string {
+    const normalizedLocale = locale?.toLowerCase();
+    const momentLocale = normalizedLocale === 'no' ? 'nb' : normalizedLocale;
+    const availableLocale = moment
+      .locales()
+      .find(
+        (loadedLocale) =>
+          loadedLocale.toLowerCase() === momentLocale ||
+          loadedLocale.toLowerCase().split('-')[0] === momentLocale,
+      );
+    const selectedLocale = availableLocale ?? 'en';
+
+    moment.locale(selectedLocale);
+    return selectedLocale;
   }
 
   public isToday(_unix: number): boolean {

@@ -32,6 +32,7 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIHelper } from '../../services/uiHelper';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIStatistic } from '../../services/uiStatistic';
 
 @Component({
@@ -65,6 +66,7 @@ export class StatisticPage implements OnInit {
   private readonly uiMillStorage = inject(UIMillStorage);
   private translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
 
   @ViewChild('brewChart', { static: false }) public brewChart;
   @ViewChild('brewsPerDayChart', { static: false }) public brewsPerDayChart;
@@ -113,14 +115,29 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadAvgBeanRatingByCountryChart(): void {
+    if (!this.beansAvgRatingByCountryChart?.nativeElement) {
+      return;
+    }
+    const existingChart = Chart.getChart(
+      this.beansAvgRatingByCountryChart.nativeElement,
+    );
+    if (existingChart) {
+      existingChart.destroy();
+    }
+
+    const beans = this.uiBeanStorage.getAllEntries();
     const brews = this.uiBrewStorage.getAllEntries();
-    const beans = this.__getBeansFromBrews(brews);
+    const settings = this.uiSettingsStorage.getSettings();
+    const maxBeanRating = settings?.bean_rating || 5;
+    const maxBrewRating = settings?.brew_rating || 5;
+    const ratingRatio = maxBrewRating > 0 ? maxBeanRating / maxBrewRating : 1;
+
     const countries = Array.from(
       new Set(
         beans
-          .map((b) => b.bean_information.map((info) => info.country))
+          .map((b) => (b.bean_information || []).map((info) => info.country))
           .reduce((acc, val) => acc.concat(val), [])
-          .filter((c) => c),
+          .filter((c) => c && c.trim() !== ''),
       ),
     );
     const data = {
@@ -130,25 +147,45 @@ export class StatisticPage implements OnInit {
           label: this.translate.instant('PAGE_STATISTICS_AVG_RATING'),
           data: [],
           borderColor: 'rgb(159,140,111)',
-          backgroundColor: 'rgb(205,194,172)',
+          backgroundColor: 'rgba(205,194,172,0.4)',
+          pointBackgroundColor: 'rgb(159,140,111)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(159,140,111)',
         },
       ],
     };
     for (const country of countries) {
       const beansForCountry = beans.filter((b) =>
-        b.bean_information.some((info) => info.country === country),
+        b.bean_information?.some((info) => info.country === country),
       );
-      const brewsForCountry = brews.filter((b) =>
-        beansForCountry.some((bean) => bean.config.uuid === b.bean),
-      );
-      const totalRating = brewsForCountry.reduce(
-        (acc, brew) => acc + brew.rating,
-        0,
-      );
-      const avgRating = totalRating / brewsForCountry.length;
-      if (!country) continue;
-      data.labels.push(country);
-      data.datasets[0].data.push(avgRating);
+
+      const beanRatings: number[] = [];
+
+      for (const bean of beansForCountry) {
+        if (bean.rating && bean.rating > 0) {
+          beanRatings.push(bean.rating);
+        } else {
+          const ratedBrews = brews.filter(
+            (b) => b.bean === bean.config?.uuid && b.rating > 0,
+          );
+          if (ratedBrews.length > 0) {
+            const avgBrewRating =
+              ratedBrews.reduce((acc, brew) => acc + brew.rating, 0) /
+              ratedBrews.length;
+            beanRatings.push(avgBrewRating * ratingRatio);
+          }
+        }
+      }
+
+      if (beanRatings.length > 0) {
+        const avgRating =
+          beanRatings.reduce((acc, r) => acc + r, 0) / beanRatings.length;
+        data.labels.push(country);
+        data.datasets[0].data.push(
+          this.uiHelper.toFixedIfNecessary(avgRating, 2),
+        );
+      }
     }
 
     new Chart(this.beansAvgRatingByCountryChart.nativeElement, {
@@ -157,6 +194,16 @@ export class StatisticPage implements OnInit {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        scales: {
+          r: {
+            beginAtZero: true,
+            min: 0,
+            suggestedMax: maxBeanRating,
+            ticks: {
+              stepSize: maxBeanRating <= 5 ? 1 : 2,
+            },
+          },
+        },
         plugins: {
           legend: {
             position: 'top',
@@ -167,6 +214,16 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByRoasterChart(): void {
+    if (!this.beansByRoasterChart?.nativeElement) {
+      return;
+    }
+    const existingChart = Chart.getChart(
+      this.beansByRoasterChart.nativeElement,
+    );
+    if (existingChart) {
+      existingChart.destroy();
+    }
+
     const beans = this.uiBeanStorage.getAllEntries();
     const roasters = Array.from(
       new Set(beans.map((b) => b.roaster).filter((r) => r)),
@@ -213,11 +270,21 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByProcessingChart(): void {
+    if (!this.beansByProcessingChart?.nativeElement) {
+      return;
+    }
+    const existingChart = Chart.getChart(
+      this.beansByProcessingChart.nativeElement,
+    );
+    if (existingChart) {
+      existingChart.destroy();
+    }
+
     const beans = this.uiBeanStorage.getAllEntries();
     const processings = Array.from(
       new Set(
         beans
-          .map((b) => b.bean_information.map((info) => info.processing))
+          .map((b) => (b.bean_information || []).map((info) => info.processing))
           .reduce((acc, val) => acc.concat(val), [])
           .filter((p) => p),
       ),
@@ -239,7 +306,7 @@ export class StatisticPage implements OnInit {
       data.labels.push(processing);
       data.datasets[0].data.push(
         beans.filter((b) =>
-          b.bean_information.some((info) => info.processing === processing),
+          b.bean_information?.some((info) => info.processing === processing),
         ).length,
       );
     }
@@ -266,11 +333,21 @@ export class StatisticPage implements OnInit {
   }
 
   private __loadBeansByCountryChart(): void {
+    if (!this.beansByCountryChart?.nativeElement) {
+      return;
+    }
+    const existingChart = Chart.getChart(
+      this.beansByCountryChart.nativeElement,
+    );
+    if (existingChart) {
+      existingChart.destroy();
+    }
+
     const beans = this.uiBeanStorage.getAllEntries();
     const countries = Array.from(
       new Set(
         beans
-          .map((b) => b.bean_information.map((info) => info.country))
+          .map((b) => (b.bean_information || []).map((info) => info.country))
           .reduce((acc, val) => acc.concat(val), [])
           .filter((c) => c),
       ),
@@ -292,7 +369,7 @@ export class StatisticPage implements OnInit {
       data.labels.push(country);
       data.datasets[0].data.push(
         beans.filter((b) =>
-          b.bean_information.some((info) => info.country === country),
+          b.bean_information?.some((info) => info.country === country),
         ).length,
       );
     }
@@ -316,18 +393,6 @@ export class StatisticPage implements OnInit {
         },
       },
     } as any);
-  }
-
-  private __getBeansFromBrews(brews: Brew[]): any[] {
-    const brewedBeanUuids = new Set(brews.map((b) => b.bean));
-    const beans = [];
-    for (const uuid of brewedBeanUuids) {
-      const bean = this.uiBeanStorage.getByUUID(uuid);
-      if (bean) {
-        beans.push(bean);
-      }
-    }
-    return beans;
   }
 
   public loadPreparationCharts() {

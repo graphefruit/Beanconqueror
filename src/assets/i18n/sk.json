@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "",
     "CLOUD_AI_API_KEY": "",
     "CLOUD_AI_MODEL": "",
+    "CLOUD_AI_PROMPT_APPENDIX": "Vlastný dodatok k výzve",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "Ďalšie pokyny pripojené ku každej výzve cloudovej AI na extrakciu údajov o kávových zrnách",
     "CLOUD_AI_BASE_URL": "",
     "CLOUD_AI_NOT_CONFIGURED": "",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "",

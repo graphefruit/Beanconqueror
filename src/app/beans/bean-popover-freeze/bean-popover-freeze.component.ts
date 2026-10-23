@@ -141,6 +141,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
       this.bean.weight - this.getUsedWeightCount(),
       1,
     );
+    if (this.bean?.frozenStorageType) {
+      this.frozenStorage = this.bean.frozenStorageType;
+    }
+    if (this.bean?.frozenNote) {
+      this.frozenNote = this.bean.frozenNote;
+    }
   }
 
   public getUsedWeightCount(): number {
@@ -171,9 +177,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
       this.bean.frozenId = this.uiBeanHelper.generateFrozenId();
     }
     this.bean.frozenDate = this.frozenDate;
-    if (this.frozenNote) {
-      this.bean.frozenNote = this.frozenNote;
-    }
+    this.bean.unfrozenDate = '';
+    this.bean.frozenStorageType = this.frozenStorage;
+    this.bean.frozenNote = this.frozenNote;
 
     await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('BEAN_HAS_BEEN_FROZEN', true);

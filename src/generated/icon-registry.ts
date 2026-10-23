@@ -155,6 +155,10 @@ export const beanconquerorIcons = [
     path: 'beanconqueror-gaggiuino-logo.svg',
   },
   {
+    name: 'beanconqueror-gaggimate-logo',
+    path: 'beanconqueror-gaggimate-logo.svg',
+  },
+  {
     name: 'beanconqueror-graph',
     path: 'beanconqueror-graph.svg',
   },
@@ -331,6 +335,10 @@ export const beanconquerorIcons = [
     path: 'beanconqueror-preparation-gaggiuino.svg',
   },
   {
+    name: 'beanconqueror-preparation-gaggimate',
+    path: 'beanconqueror-preparation-gaggimate.svg',
+  },
+  {
     name: 'beanconqueror-preparation-gina',
     path: 'beanconqueror-preparation-gina.svg',
   },
@@ -421,6 +429,10 @@ export const beanconquerorIcons = [
   {
     name: 'beanconqueror-preparation-xenia',
     path: 'beanconqueror-preparation-xenia.svg',
+  },
+  {
+    name: 'beanconqueror-preparation-xbloom',
+    path: 'beanconqueror-preparation-xbloom.svg',
   },
   {
     name: 'beanconqueror-preparation-move2',

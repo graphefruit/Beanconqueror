@@ -35,7 +35,7 @@
           [outline]="!this.traces.temperatureTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.temperatureTrace?.visible" [style.--chip-color]="this.traces.temperatureTrace?.line?.color">{{'BREW_TEMPERATURE_REALTIME' |
         translate}}</ion-chip>
       }
-      @if ((uiPreparationDeviceConnected && uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) || (isDetail === true && this.traces.waterDispensedTrace?.x?.length > 0)) {
+      @if ((uiPreparationDeviceConnected && [PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU, PREPARATION_DEVICE_TYPE_ENUM.GAGGIMATE].includes(uiPreparationDeviceType)) || (isDetail === true && this.traces.waterDispensedTrace?.x?.length > 0)) {
         <ion-chip (click)="toggleChartLines('waterDispensed')"
           [outline]="!this.traces.waterDispensedTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.waterDispensedTrace?.visible" [style.--chip-color]="this.traces.waterDispensedTrace?.line?.color">{{'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate}}</ion-chip>
       }

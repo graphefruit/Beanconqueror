@@ -6,6 +6,11 @@
     background-color: var(--ion-header-background-color);
   }
 
+  ion-footer {
+    background: var(--ion-color-light);
+    box-shadow: none;
+  }
+
   ion-toolbar {
     height: 0px !important;
     padding-top: 25px !important;

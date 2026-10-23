@@ -1,0 +1,52 @@
+<ion-header>
+  <app-header [title]="'IMPORT_SHOT_FROM_GAGGIMATE' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+  </app-header>
+</ion-header>
+<ion-content #historyShotContent>
+  @if(loading) {
+  <div class="ion-text-center ion-padding">
+    <ion-spinner></ion-spinner>
+    @if(loadingImportedShot) {
+    <p>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LOADING_IMPORTED_SHOT" | translate}}</p>
+    } @else if(loadingTotal > 0) {
+    <p>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LOADING_SHOTS" | translate: {current: loadingCurrent, total: loadingTotal} }}</p>
+    }
+  </div>
+  }
+  <!-- The list needs to exist before the shots are set, else the virtual scroll renders no items -->
+  @if(history) {
+  <ion-radio-group [(ngModel)]="radioSelection">
+    <ion-card>
+        <ag-virtual-scroll #gaggimateShotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="300">
+          @for(entry of gaggimateShotDataScroll.items; track entry.id) {
+            <ion-item #ionItemEl tappable lines='full'>
+              <ion-radio justify="start" label-placement="end" [value]='entry.id'>
+                <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+                @if(entry.id === importedShotId) {
+                <div class='font-size-16'><b>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.PREVIOUSLY_IMPORTED_SHOT" | translate}}</b></div>
+                }
+                <h3 class="ion-text-wrap">{{entry.profile}}&nbsp;({{entry.id}})</h3>
+                <div class='font-size-16'>{{this.uiHelper.formateDate(entry.timestamp)}}</div>
+                </ion-grid>
+                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggimateHistoryData]='entry.brewFlow'></graph-display-card>
+              </ion-radio>
+            </ion-item>
+          }
+        </ag-virtual-scroll>
+      </ion-card>
+    </ion-radio-group>
+  }
+</ion-content>
+<ion-footer #footerContent class="ion-no-border">
+  <ion-row>
+    <ion-col size="6">
+      <ion-button (click)="dismiss()" color="danger" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="choose()" [disabled]='loading || !radioSelection' color="accent" expand="block" tappable
+                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

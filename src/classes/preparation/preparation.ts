@@ -163,6 +163,8 @@ export class Preparation implements IPreparation {
         return PREPARATION_STYLE_TYPE.POUR_OVER;
       case PREPARATION_TYPES.TRICOLATE:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.XBLOOM:
+        return PREPARATION_STYLE_TYPE.POUR_OVER;
       case PREPARATION_TYPES.METICULOUS:
         return PREPARATION_STYLE_TYPE.ESPRESSO;
       case PREPARATION_TYPES.XENIA:
@@ -172,6 +174,8 @@ export class Preparation implements IPreparation {
       case PREPARATION_TYPES.GAGGIUINO:
         return PREPARATION_STYLE_TYPE.ESPRESSO;
       case PREPARATION_TYPES.MOVE2:
+        return PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.GAGGIMATE:
         return PREPARATION_STYLE_TYPE.ESPRESSO;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
@@ -257,6 +261,8 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-tornado-duo';
       case PREPARATION_TYPES.TRICOLATE:
         return 'beanconqueror-preparation-tricolate';
+      case PREPARATION_TYPES.XBLOOM:
+        return 'beanconqueror-preparation-xbloom';
       case PREPARATION_TYPES.METICULOUS:
         return 'beanconqueror-preparation-meticulous';
       case PREPARATION_TYPES.SANREMO_YOU:
@@ -267,6 +273,8 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-gaggiuino';
       case PREPARATION_TYPES.MOVE2:
         return 'beanconqueror-preparation-move2';
+      case PREPARATION_TYPES.GAGGIMATE:
+        return 'beanconqueror-preparation-gaggimate';
       default:
         return 'beanconqueror-preparation-custom';
     }

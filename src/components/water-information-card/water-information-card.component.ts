@@ -25,7 +25,6 @@ import { waterOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { WaterPopoverActionsComponent } from '../../app/water-section/water/water-popover-actions/water-popover-actions.component';
 import { Brew } from '../../classes/brew/brew';
 import { Water } from '../../classes/water/water';
 import WATER_TRACKING from '../../data/tracking/waterTracking';
@@ -40,6 +39,11 @@ import { UIImage } from '../../services/uiImage';
 import { UIToast } from '../../services/uiToast';
 import { UIWaterHelper } from '../../services/uiWaterHelper';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
@@ -99,11 +103,9 @@ export class WaterInformationCardComponent implements OnInit {
       WATER_TRACKING.TITLE,
       WATER_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await this.modalController.create({
-      component: WaterPopoverActionsComponent,
-      componentProps: { water: this.water },
-      id: WaterPopoverActionsComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalController, {
+      id: 'water-popover-actions',
+      items: this.buildWaterActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
@@ -113,6 +115,43 @@ export class WaterInformationCardComponent implements OnInit {
       await this.internalAction(data.role as WATER_ACTION);
       this.waterAction.emit([data.role as WATER_ACTION, this.water]);
     }
+  }
+
+  private buildWaterActions(): PopoverAction[] {
+    return [
+      popoverAction({
+        role: WATER_ACTION.DETAIL,
+        translationKey: 'DETAIL',
+        icon: 'beanconqueror-detail',
+      }),
+      popoverAction({
+        role: WATER_ACTION.EDIT,
+        translationKey: 'EDIT',
+        icon: 'beanconqueror-edit',
+      }),
+      popoverAction({
+        role: WATER_ACTION.ARCHIVE,
+        translationKey: 'ARCHIVE',
+        icon: 'beanconqueror-finished',
+        visible: this.water.finished === false,
+      }),
+      popoverAction({
+        role: WATER_ACTION.SHOW_BREWS,
+        translationKey: 'POPOVER_SHOW_BREWS',
+        icon: 'beanconqueror-brew',
+      }),
+      popoverAction({
+        role: WATER_ACTION.PHOTO_GALLERY,
+        translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+        icon: 'beanconqueror-photo-gallery',
+        visible: this.hasPhotos(),
+      }),
+      popoverAction({
+        role: WATER_ACTION.DELETE,
+        translationKey: 'DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
 
   private async internalAction(action: WATER_ACTION) {

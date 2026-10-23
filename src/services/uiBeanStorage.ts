@@ -74,18 +74,13 @@ export class UIBeanStorage extends StorageClass {
     return null;
   }
 
-  public async add(_entry: Bean): Promise<any> {
+  protected prepareEntryForStorage(_entry: Bean): Bean {
     _entry.fixDataTypes();
-    return await super.add(_entry);
+    return _entry;
   }
 
   public async initializeStorage() {
     this.beans = [];
     await super.__initializeStorage();
-  }
-
-  public async update(_obj: Bean): Promise<boolean> {
-    _obj.fixDataTypes();
-    return await super.update(_obj);
   }
 }

@@ -28,7 +28,6 @@ import { analyticsOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { BaristamodeBrewPopoverActionsComponent } from '../../app/baristamode/baristamode-brew-popover-actions/baristamode-brew-popover-actions.component';
 import BaristamodeBrew from '../../classes/brew/baristamodeBrew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Settings } from '../../classes/settings/settings';
@@ -43,6 +42,11 @@ import { UIHelper } from '../../services/uiHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../actions-popover/actions-popover.component';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
 @Component({
@@ -147,12 +151,9 @@ export class BaristamodeBrewInformationComponent implements OnInit {
   public async showBrewActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    const popover = await this.modalCtrl.create({
-      component: BaristamodeBrewPopoverActionsComponent,
-      animated: true,
-      componentProps: { brew: this.brew },
-      id: BaristamodeBrewPopoverActionsComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalCtrl, {
+      id: 'baristamode-brew-popover-actions',
+      items: this.buildBrewActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
@@ -161,6 +162,51 @@ export class BaristamodeBrewInformationComponent implements OnInit {
     if (data.role !== undefined) {
       await this.internalBrewAction(data.role as BREW_ACTION);
     }
+  }
+
+  private buildBrewActions(): PopoverAction[] {
+    const hasFlowProfile =
+      !!this.brew.flow_profile && this.brew.flow_profile.length > 0;
+    const hasVisualizerId = !!this.brew.customInformation?.visualizer_id;
+    const canExportToVisualizer =
+      hasFlowProfile &&
+      this.settings.visualizer_active &&
+      this.settings.visualizer_upload_automatic === false &&
+      !!this.settings.visualizer_username &&
+      !!this.settings.visualizer_password &&
+      !hasVisualizerId;
+
+    return [
+      popoverAction({
+        role: BREW_ACTION.SHOW_GRAPH,
+        translationKey: 'SHOW_GRAPH',
+        icon: 'analytics-outline',
+        visible: !!this.brew.flow_profile,
+      }),
+      popoverAction({
+        role: BREW_ACTION.DOWNLOAD_XLSX,
+        translationKey: 'DOWNLOAD_XLSX',
+        icon: 'download',
+        visible: !!this.brew.flow_profile,
+      }),
+      popoverAction({
+        role: BREW_ACTION.VISUALIZER,
+        translationKey: 'MANUAL_EXPORT_TO_VISUALIZER',
+        icon: 'beanconqueror-visualizer',
+        visible: canExportToVisualizer,
+      }),
+      popoverAction({
+        role: BREW_ACTION.SHOW_VISUALIZER,
+        translationKey: 'SHOW_VISUALIZER',
+        icon: 'beanconqueror-visualizer-logo',
+        visible: hasVisualizerId,
+      }),
+      popoverAction({
+        role: BREW_ACTION.DELETE,
+        translationKey: 'POPOVER_BREWS_OPTION_DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
 
   private async internalBrewAction(action: BREW_ACTION) {

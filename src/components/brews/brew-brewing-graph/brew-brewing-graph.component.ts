@@ -39,6 +39,7 @@ import {
   waterOutline,
 } from 'ionicons/icons';
 
+import { CapacitorHttp } from '@capacitor/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment/moment';
 import regression from 'regression';
@@ -77,6 +78,7 @@ import {
 import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { buildWebhookHeaders } from '../../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../../classes/settings/settings';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
@@ -90,7 +92,10 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
+import {
+  expandLiveAxisRangeForSample,
+  GraphHelperService,
+} from '../../../services/graphHelper/graph-helper.service';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -256,6 +261,14 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   public machineStopScriptWasTriggered = false;
 
+  // Separate flag so scale reconnect mid-shot cannot re-arm the webhook.
+  private webhookFired = false;
+
+  // Target weight captured once at brew start — brew_beverage_quantity
+  // is overwritten with the live scale reading during the brew, so we
+  // cannot use it as a stable threshold reference mid-shot.
+  private webhookTargetWeight = 0;
+
   @ViewChild('canvaContainer', { read: ElementRef, static: true })
   public canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
@@ -292,6 +305,23 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+
+    // Pre-fill brew_beverage_quantity from the webhook default target weight
+    // when the brew modal opens, so the user sees it before starting.
+    //
+    // This deliberately also overwrites a value carried over from a repeated
+    // brew. That carried-over value is the previous shot's *actual yield*,
+    // not a target, so the configured default is the more meaningful starting
+    // point whenever the webhook is active.
+    //
+    // Per-brew override still works: timerStarted() reads whatever is in the
+    // field at brew start, so anything the user types after the modal opens
+    // takes precedence over this default.
+    const cfg = this.settings?.brew_by_weight_webhook;
+    if (this.data && cfg?.active && cfg.defaultTargetWeight > 0) {
+      this.data.brew_beverage_quantity = cfg.defaultTargetWeight;
+    }
+
     if (this.settings.text_to_speech_active) {
       this.textToSpeech.readAndSetTTLSettings();
     }
@@ -437,7 +467,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   private async readDummyFlowProfile(): Promise<any> {
     return (
-      await import('../../../assets/BeanconquerorFlowTestDataSecond.json')
+      await import('../../../assets/BeanconquerorFlowTestDataFourth.json')
     ).default;
   }
 
@@ -892,7 +922,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             this.updateChart(true);
           }
         }, 250);
-      } catch (ex) {}
+      } catch (ex) {
+        //
+      }
     }, timeout);
   }
 
@@ -937,6 +969,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.isDetail,
       chartWidth,
       chartHeight,
+      false,
+      this.traceReferences,
     );
 
     return layout;
@@ -1521,17 +1555,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                       newLayoutIsNeeded = true;
                     }
 
+                    const multiplier =
+                      prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO
+                        ? 1.25
+                        : 1.5;
+                    const expandedRange = expandLiveAxisRangeForSample(
+                      this.lastChartLayout[yAxisKey].range,
+                      lastData,
+                      multiplier,
+                      toleranceMinus,
+                    );
                     if (
-                      lastData >=
-                      this.lastChartLayout[yAxisKey].range[1] - toleranceMinus
+                      expandedRange !== this.lastChartLayout[yAxisKey].range
                     ) {
-                      if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
-                        this.lastChartLayout[yAxisKey].range[1] =
-                          lastData * 1.25;
-                      } else {
-                        this.lastChartLayout[yAxisKey].range[1] =
-                          lastData * 1.5;
-                      }
+                      this.lastChartLayout[yAxisKey].range = expandedRange;
                       newLayoutIsNeeded = true;
                     }
                   }
@@ -2213,10 +2250,16 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
     // To continuously poll the updated pressure from the class property:
     this.stopFetchingDataFromMove2();
+    let grabbedFirstTimeTemperature = undefined;
     this.ngZone.runOutsideAngular(() => {
       this.move2FetchingInterval = setInterval(() => {
         const pressure = prepDeviceCall.getPressure();
-        let temperature = prepDeviceCall.getTemperature();
+
+        if (grabbedFirstTimeTemperature === undefined) {
+          grabbedFirstTimeTemperature = prepDeviceCall.getTemperature();
+        }
+        //The temperature would drop, because the temperature is taken out of the boiler, so we sample the first grabbed temperature.
+        const temperature: number = grabbedFirstTimeTemperature;
 
         this.__setPressureFlow({ actual: pressure, old: pressure });
         if (temperature !== undefined) {
@@ -2302,6 +2345,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       return;
     }
     this.machineStopScriptWasTriggered = false;
+
+    // Reset webhook flag here (not in attachToScaleWeightChange) so a
+    // scale reconnect mid-shot cannot re-arm the webhook.
+    this.webhookFired = false;
+
+    const webhookCfg = this.settings?.brew_by_weight_webhook;
+
+    // Capture target weight now, before brew_beverage_quantity gets
+    // overwritten with the live scale reading during the shot.
+    // Priority: field already set on this brew > defaultTargetWeight in settings.
+    this.webhookTargetWeight =
+      this.data.brew_beverage_quantity > 0
+        ? this.data.brew_beverage_quantity
+        : (webhookCfg?.defaultTargetWeight ?? 0);
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
@@ -3470,6 +3527,50 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             }
           }
         }
+
+        // Generic brew-by-weight webhook. webhookFired is separate from
+        // machineStopScriptWasTriggered so scale reconnect cannot re-arm it.
+        // Predictive mode: uses calculateBrewByWeight with learnedLagTime,
+        // pushing brewbyweight frames for post-brew lag learning. Only when
+        // no prep device connected (avoids duplicate frames).
+        // Direct mode: simple actual >= target.
+        // Cheapest and most-selective check first: the large majority of
+        // users never enable this, so bail out before doing any further work.
+        if (
+          this.settings.brew_by_weight_webhook?.active &&
+          this.webhookFired === false &&
+          this.webhookTargetWeight > 0 &&
+          this.settings.brew_by_weight_webhook?.url?.trim() &&
+          this.brewComponent.timer.isTimerRunning()
+        ) {
+          const cfg = this.settings.brew_by_weight_webhook;
+          let webhookThresholdHit: boolean;
+
+          if (cfg.predictiveMode && !prepDeviceConnected) {
+            webhookThresholdHit = this.calculateBrewByWeight(
+              _val.actual,
+              cfg.learnedLagTime ?? 0.5,
+              this.webhookTargetWeight,
+              true,
+              scale,
+            );
+          } else {
+            webhookThresholdHit = _val.actual >= this.webhookTargetWeight;
+          }
+
+          if (webhookThresholdHit) {
+            this.webhookFired = true;
+            void CapacitorHttp.get({
+              url: cfg.url.trim(),
+              headers: buildWebhookHeaders(cfg),
+            }).catch((_err) => {
+              const msg = `Brew-by-weight webhook failed (${cfg.url}): ${_err}`;
+              console.error(msg);
+              this.uiLog.error(msg);
+            });
+          }
+        }
+
         if (this.ignoreScaleWeight === false) {
           this.__setFlowProfile(_val);
         } else {
@@ -3619,6 +3720,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public async readFlowProfile() {
+    if (!this.platform.is('capacitor')) {
+      this.flow_profile_raw = await this.readDummyFlowProfile();
+    }
     const flowProfilePath =
       'brews/' + this.data.config.uuid + '_flow_profile.json';
     try {

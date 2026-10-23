@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "プロバイダー",
     "CLOUD_AI_API_KEY": "API キー",
     "CLOUD_AI_MODEL": "モデル",
+    "CLOUD_AI_PROMPT_APPENDIX": "カスタムプロンプトの追記",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "クラウドAIによるコーヒー豆抽出の各プロンプトに追加する指示",
     "CLOUD_AI_BASE_URL": "ベース URL",
     "CLOUD_AI_NOT_CONFIGURED": "クラウド AI が設定されていません。設定でプロバイダーと API キーを入力してください。",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "Apple Intelligence を選択 — オンデバイス処理を使用",

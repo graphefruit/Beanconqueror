@@ -28,6 +28,7 @@ import { BrewInformationComponent } from '../../components/brew-information/brew
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
+import { environment } from '../../environments/environment';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
@@ -92,7 +93,17 @@ export class DashboardPage implements OnInit {
   }
 
   public async openUnwrapped(year: number) {
-    const stats = this.unwrappedService.getUnwrappedData(year);
+    let stats = this.unwrappedService.getUnwrappedData(year);
+    if (
+      !stats &&
+      (environment.SHOW_UNWRAPPED ??
+        environment.FEATURES_ACTIVE?.SHOW_UNWRAPPED)
+    ) {
+      const availableYears = this.unwrappedService.getAvailableYears();
+      if (availableYears.length > 0) {
+        stats = this.unwrappedService.getUnwrappedData(availableYears[0]);
+      }
+    }
     if (stats) {
       const modal = await this.modalController.create({
         component: UnwrappedModalComponent,
@@ -103,17 +114,18 @@ export class DashboardPage implements OnInit {
   }
 
   public get showUnwrapped(): boolean {
-    // Check for current year or previous year (if early in the year)
-    // For now, let's just check 2025 as requested, or make it dynamic
+    if (
+      environment.SHOW_UNWRAPPED ??
+      environment.FEATURES_ACTIVE?.SHOW_UNWRAPPED
+    ) {
+      return true;
+    }
 
     const currentYear = moment().year();
     const currentMonth = moment().month();
-    // If we are in 2025, show 2025. If we are in 2026, maybe show 2025?
-    // User asked for "Unwrapped 2025", so let's default to checking 2025 for the button visibility
-    // But allow the method to take any year.
 
-    if (currentYear === 2025 || (currentYear === 2026 && currentMonth == 0)) {
-      return !!this.unwrappedService.getUnwrappedData(2025);
+    if (currentYear === 2026 || (currentYear === 2027 && currentMonth === 0)) {
+      return !!this.unwrappedService.getUnwrappedData(2026);
     } else {
       return false;
     }
@@ -150,6 +162,7 @@ export class DashboardPage implements OnInit {
       this.uiStatistic.getTimePassedSinceLastBrew();
     this.getTimePassedSinceLastBrewMessage =
       this.uiStatistic.getTimePassedSinceLastBrewMessage();
+    this.showUnwrappedButton = this.showUnwrapped;
 
     this.brews = [];
     /**Short timeout needed, else the filter pipe is not working correctly**/

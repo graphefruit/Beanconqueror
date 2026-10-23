@@ -5,6 +5,7 @@ import { ModalController } from '@ionic/angular/standalone';
 
 import { TranslateService } from '@ngx-translate/core';
 
+import { Brew } from 'src/classes/brew/brew';
 import { BrewFlow } from 'src/classes/brew/brewFlow';
 import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
@@ -114,5 +115,71 @@ describe('BrewPopoverCutComponent performCut', () => {
 
     // Final weight should be 15.0g (the weight at the end of the range)
     expect(result.finalWeight).toBe(15.0);
+  });
+
+  it('should shift first drip time and blooming time when cutting from the left', () => {
+    const rawFlow = new BrewFlow();
+    rawFlow.weight = [
+      {
+        timestamp: '12:00:02.000',
+        brew_time: '2.0',
+        actual_weight: 5.0,
+        old_weight: 0,
+        actual_smoothed_weight: 5.0,
+        old_smoothed_weight: 0,
+        calculated_real_flow: 2.5,
+        not_mutated_weight: 5.0,
+      },
+    ];
+
+    const mockBrew = new Brew();
+    mockBrew.coffee_first_drip_time = 5;
+    mockBrew.coffee_first_drip_time_milliseconds = 500;
+    mockBrew.coffee_blooming_time = 10;
+    mockBrew.coffee_blooming_time_milliseconds = 200;
+
+    // Cut starting at 2.0 seconds -> shift is 2.0s (2000 ms)
+    const result = (component as any).performCut(rawFlow, 2.0, 10.0, mockBrew);
+
+    // First drip time: 5500 ms - 2000 ms = 3500 ms -> 3s 500ms
+    expect(result.coffee_first_drip_time).toBe(3);
+    expect(result.coffee_first_drip_time_milliseconds).toBe(500);
+
+    // Blooming time: 10200 ms - 2000 ms = 8200 ms -> 8s 200ms
+    expect(result.coffee_blooming_time).toBe(8);
+    expect(result.coffee_blooming_time_milliseconds).toBe(200);
+  });
+
+  it('should set first drip time and blooming time to zero if they fall below or equal to 0:00', () => {
+    const rawFlow = new BrewFlow();
+    rawFlow.weight = [
+      {
+        timestamp: '12:00:05.000',
+        brew_time: '5.0',
+        actual_weight: 5.0,
+        old_weight: 0,
+        actual_smoothed_weight: 5.0,
+        old_smoothed_weight: 0,
+        calculated_real_flow: 2.5,
+        not_mutated_weight: 5.0,
+      },
+    ];
+
+    const mockBrew = new Brew();
+    mockBrew.coffee_first_drip_time = 4;
+    mockBrew.coffee_first_drip_time_milliseconds = 0;
+    mockBrew.coffee_blooming_time = 5;
+    mockBrew.coffee_blooming_time_milliseconds = 0;
+
+    // Cut starting at 5.0 seconds -> shift is 5.0s (5000 ms)
+    const result = (component as any).performCut(rawFlow, 5.0, 10.0, mockBrew);
+
+    // First drip time: 4000 ms - 5000 ms = -1000 ms <= 0 -> 0s 0ms
+    expect(result.coffee_first_drip_time).toBe(0);
+    expect(result.coffee_first_drip_time_milliseconds).toBe(0);
+
+    // Blooming time: 5000 ms - 5000 ms = 0 ms <= 0 -> 0s 0ms
+    expect(result.coffee_blooming_time).toBe(0);
+    expect(result.coffee_blooming_time_milliseconds).toBe(0);
   });
 });
