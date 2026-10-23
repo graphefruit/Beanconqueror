@@ -4,6 +4,7 @@ import { BlackcoffeeScale } from './blackcoffeeScale';
 import { PeripheralData } from './ble.types';
 import { BluetoothScale } from './bluetoothDevice';
 import { BookooScale } from './bokooScale';
+import { BookooMotto } from './bookooMotto';
 import { BookooPressure } from './bookooPressure';
 import { CoffeeSensorPressure } from './coffeeSensorPressure';
 import { CoffeeSensorTemperature } from './coffeeSensorTemperature';
@@ -20,6 +21,8 @@ import { EurekaPrecisaScale } from './eurekaPrecisaScale';
 import { FelicitaScale } from './felicitaScale';
 import { FutulaScale } from './futulaScale';
 import { GeisingerThermometer } from './geisingerThermometer';
+import { GenericGrinderDevice } from './genericGrinderDevice';
+import { GrinderDevice } from './grinderBluetoothDevice';
 import { JimmyScale } from './jimmyScale';
 import { LunarScale } from './lunarScale';
 import { MeaterThermometer } from './meaterThermometer';
@@ -36,6 +39,7 @@ import { TimemoreScale } from './timemoreScale';
 import { TransducerDirectPressure } from './transducerDirectPressure';
 import {
   BluetoothTypes,
+  GrinderType,
   MachineType,
   PressureType,
   RefractometerType,
@@ -47,9 +51,15 @@ import { WeighMasterScale } from './weighMasterScale';
 import { WeighMyBruScale } from './weighMyBruScale';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
+export {
+  Grinder,
+  GrinderChangeEvent,
+  GrinderDevice,
+} from './grinderBluetoothDevice';
 export * from './common';
 export {
   BluetoothTypes,
+  GrinderType,
   MachineType,
   PressureType,
   RefractometerType,
@@ -159,4 +169,18 @@ export function makeRefractometerDevice(
 ): RefractometerDevice | null {
   if (type === RefractometerType.R2) return new DiFluidR2Refractometer(data);
   return null;
+}
+
+export function makeGrinderDevice(
+  type: GrinderType,
+  data: PeripheralData,
+): GrinderDevice | null {
+  switch (type) {
+    case GrinderType.BOOKOO_MOTTO:
+      return new BookooMotto(data);
+    case GrinderType.GENERIC:
+      return new GenericGrinderDevice(data);
+    default:
+      return null;
+  }
 }

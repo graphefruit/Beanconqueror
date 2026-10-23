@@ -1,5 +1,11 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  NgZone,
+  OnDestroy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -48,7 +54,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
@@ -57,7 +63,13 @@ import { Bean } from '../../classes/bean/bean';
 import BaristamodeBrew from '../../classes/brew/baristamodeBrew';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-import { BluetoothScale, BluetoothTypes, sleep } from '../../classes/devices';
+import {
+  BluetoothScale,
+  BluetoothTypes,
+  Grinder,
+  GrinderDevice,
+  sleep,
+} from '../../classes/devices';
 import { Logger } from '../../classes/devices/common/logger';
 import { Graph } from '../../classes/graph/graph';
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -96,7 +108,10 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
-import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import {
+  CoffeeBluetoothDevicesService,
+  CoffeeBluetoothServiceEvent,
+} from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
 import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
@@ -164,7 +179,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     IonAccordion,
   ],
 })
-export class SettingsPage {
+export class SettingsPage implements OnDestroy {
   protected readonly platform = inject(Platform);
   uiSettingsStorage = inject(UISettingsStorage);
   uiStorage = inject(UIStorage);
@@ -199,8 +214,11 @@ export class SettingsPage {
   private readonly visualizerService = inject(VisualizerService);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly themeService = inject(ThemeService);
+  private readonly ngZone = inject(NgZone);
 
   public settings: Settings;
+  private bluetoothSubscription: Subscription = undefined;
+  private grinderChangeSubscription: Subscription = undefined;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
@@ -291,6 +309,101 @@ export class SettingsPage {
       listOutline,
       refreshOutline,
     });
+
+    this.attachToBluetoothEvents();
+    this.attachToGrinderChange();
+  }
+
+  public ngOnDestroy() {
+    if (this.bluetoothSubscription) {
+      this.bluetoothSubscription.unsubscribe();
+      this.bluetoothSubscription = undefined;
+    }
+    this.deattachFromGrinderChange();
+  }
+
+  private attachToBluetoothEvents(): void {
+    this.bluetoothSubscription = this.bleManager
+      .attachOnEvent()
+      .subscribe((_type) => {
+        if (_type === CoffeeBluetoothServiceEvent.CONNECTED_GRINDER) {
+          this.attachToGrinderChange();
+        } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_GRINDER) {
+          this.deattachFromGrinderChange();
+        }
+      });
+  }
+
+  private attachToGrinderChange(): void {
+    const grinderDevice: GrinderDevice = this.bleManager.getGrinderDevice();
+    this.deattachFromGrinderChange();
+
+    if (!grinderDevice) {
+      return;
+    }
+
+    this.grinderChangeSubscription = grinderDevice.grinderChange.subscribe(
+      (grinder) => {
+        this.updateGrinderSettingsFromDevice(grinder);
+      },
+    );
+
+    if (grinderDevice.hasGrinderData()) {
+      this.updateGrinderSettingsFromDevice(grinderDevice.getGrinder());
+    }
+  }
+
+  private deattachFromGrinderChange(): void {
+    if (this.grinderChangeSubscription) {
+      this.grinderChangeSubscription.unsubscribe();
+      this.grinderChangeSubscription = undefined;
+    }
+  }
+
+  private updateGrinderSettingsFromDevice(grinder: Partial<Grinder>): void {
+    this.ngZone.run(() => {
+      let changed = false;
+
+      changed =
+        this.updateGrinderSetting('grinder_burr_gap', grinder.burr_gap) ||
+        changed;
+      changed =
+        this.updateGrinderSetting('grinder_rpm_speed', grinder.rpm_speed) ||
+        changed;
+      changed =
+        this.updateGrinderSetting('grinder_feedspeed', grinder.feedspeed) ||
+        changed;
+
+      if (changed) {
+        this.changeDetectorRef.detectChanges();
+      }
+    });
+  }
+
+  private updateGrinderSetting(
+    setting: 'grinder_burr_gap' | 'grinder_rpm_speed' | 'grinder_feedspeed',
+    value: unknown,
+  ): boolean {
+    const parsedValue = this.toFiniteNumber(value);
+    if (parsedValue === undefined || this.settings[setting] === parsedValue) {
+      return false;
+    }
+
+    this.settings[setting] = parsedValue;
+    return true;
+  }
+
+  private toFiniteNumber(value: unknown): number | undefined {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+
+    const parsedValue = Number(value);
+    if (!Number.isFinite(parsedValue)) {
+      return undefined;
+    }
+
+    return parsedValue;
   }
 
   public handleScrollStart() {
@@ -320,6 +433,10 @@ export class SettingsPage {
 
   public async findAndConnectRefractometerDevice(_retry = false) {
     this.showBluetoothPopover(BluetoothTypes.TDS);
+  }
+
+  public async findAndConnectGrinderDevice(_retry = false) {
+    await this.showBluetoothPopover(BluetoothTypes.GRINDER);
   }
 
   public async findAndConnectTemperatureDevice(_retry = false) {
@@ -409,6 +526,27 @@ export class SettingsPage {
       if (disconnected) {
         this.settings.refractometer_id = '';
         this.settings.refractometer_type = null;
+      }
+    } else if (_type === BluetoothTypes.GRINDER) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_GRINDER_DEVICE_DISCONNECT,
+          undefined,
+        ),
+      );
+
+      if (
+        this.settings.grinder_id !== '' &&
+        this.bleManager.getGrinderDevice()
+      ) {
+        disconnected = await this.bleManager.disconnectGrinderDevice(
+          this.settings.grinder_id,
+        );
+      }
+
+      if (disconnected) {
+        this.settings.grinder_id = '';
+        this.settings.grinder_type = null;
       }
     }
 
@@ -719,7 +857,8 @@ export class SettingsPage {
       this.settings.scale_log === true ||
       this.settings.pressure_log === true ||
       this.settings.temperature_log === true ||
-      this.settings.refractometer_log === true
+      this.settings.refractometer_log === true ||
+      this.settings.grinder_log === true
     ) {
       Logger.enableLog();
     } else {

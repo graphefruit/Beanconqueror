@@ -151,6 +151,27 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
         this.settings.refractometer_id = '';
         this.settings.refractometer_type = null;
       }
+    } else if (_type === BluetoothTypes.GRINDER) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_GRINDER_DEVICE_DISCONNECT,
+          undefined,
+        ),
+      );
+
+      if (
+        this.settings.grinder_id !== '' &&
+        this.bluetoothService.getGrinderDevice()
+      ) {
+        disconnected = await this.bluetoothService.disconnectGrinderDevice(
+          this.settings.grinder_id,
+        );
+      }
+
+      if (disconnected) {
+        this.settings.grinder_id = '';
+        this.settings.grinder_type = null;
+      }
     }
 
     if (disconnected) {
@@ -324,6 +345,56 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
       this.bluetoothService.reconnectRefractometerDevice(
         refractometerType,
         refractometerId,
+        () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        },
+        () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        },
+      );
+
+      timeoutVar = setTimeout(async () => {
+        if (subscrip) {
+          subscrip.unsubscribe();
+          subscrip = undefined;
+        }
+        this.uiAlert.hideLoadingSpinner();
+      }, 15000);
+    }
+  }
+
+  public async reconnectGrinderDevice() {
+    let timeoutVar: any = null;
+    const grinderId = this.settings.grinder_id;
+    const grinderType = this.settings.grinder_type;
+    if (grinderId && grinderType) {
+      await this.uiAlert.showLoadingSpinner();
+      let subscrip = this.bluetoothService
+        .attachOnEvent()
+        .subscribe((_type) => {
+          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_GRINDER) {
+            this.uiAlert.hideLoadingSpinner();
+            if (subscrip) {
+              subscrip.unsubscribe();
+              subscrip = undefined;
+            }
+          }
+        });
+      this.bluetoothService.reconnectGrinderDevice(
+        grinderType,
+        grinderId,
         () => {
           if (subscrip) {
             subscrip.unsubscribe();

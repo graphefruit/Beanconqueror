@@ -160,6 +160,8 @@ export class BluetoothDeviceChooserPopoverComponent
       connectedId = this.settings.temperature_id;
     } else if (this.bluetoothTypeSearch === BluetoothTypes.TDS) {
       connectedId = this.settings.refractometer_id;
+    } else if (this.bluetoothTypeSearch === BluetoothTypes.GRINDER) {
+      connectedId = this.settings.grinder_id;
     }
 
     this.searchRunning = true;
@@ -235,6 +237,12 @@ export class BluetoothDeviceChooserPopoverComponent
           await this.connectTemperature(choosenDevice);
         } else if (this.bluetoothTypeSearch === BluetoothTypes.TDS) {
           await this.connectRefractometer(choosenDevice);
+        } else if (this.bluetoothTypeSearch === BluetoothTypes.GRINDER) {
+          // Stop discovery before opening the GATT connection. Keeping an
+          // Android LE scan active during service discovery can starve the
+          // connection and leave the MT80 with a timed-out link.
+          await this.destroySearchSubscription();
+          await this.connectGrinder(choosenDevice);
         } else if (this.bluetoothTypeSearch === BluetoothTypes.MACHINE) {
           /**
            * After thats not the normal routine, jump out here and return the choosen mac.
@@ -465,6 +473,76 @@ export class BluetoothDeviceChooserPopoverComponent
     } else {
       this.uiAlert.showMessage(
         'REFRACTOMETER.CONNECTION_NOT_ESTABLISHED',
+        undefined,
+        undefined,
+        true,
+      );
+    }
+  }
+
+  private async connectGrinder(_choosenDevice) {
+    const grinderDevice = _choosenDevice;
+    if (grinderDevice) {
+      let connected = false;
+      try {
+        await this.uiAlert.showLoadingSpinner();
+        // We don't need to retry for iOS, because we just did scan before.
+
+        // NEVER!!! Await here, else the bluetooth logic will get broken.
+        connected = await new Promise<boolean>((resolve) => {
+          let resolved = false;
+          const finish = (value: boolean) => {
+            if (resolved) {
+              return;
+            }
+
+            resolved = true;
+            clearTimeout(timeout);
+            resolve(value);
+          };
+
+          const timeout = setTimeout(() => {
+            finish(false);
+          }, 20000);
+
+          void this.bleManager.autoConnectGrinderDevice(
+            grinderDevice.type,
+            grinderDevice.id,
+            false,
+            () => {
+              finish(true);
+            },
+            () => {
+              finish(false);
+            },
+          );
+        });
+      } catch {
+        connected = false;
+      }
+      await this.uiAlert.hideLoadingSpinner();
+      if (!connected) {
+        void this.uiAlert.showMessage(
+          'GRINDER.CONNECTION_NOT_ESTABLISHED',
+          undefined,
+          undefined,
+          true,
+        );
+        return;
+      }
+
+      this.settings.grinder_id = grinderDevice.id;
+      this.settings.grinder_type = grinderDevice.type;
+      this.uiAnalytics.trackEvent(
+        BLUETOOTH_TRACKING.TITLE,
+        BLUETOOTH_TRACKING.ACTIONS.GRINDER_CONNECTED,
+        grinderDevice.type,
+      );
+
+      await this.saveSettings();
+    } else {
+      void this.uiAlert.showMessage(
+        'GRINDER.CONNECTION_NOT_ESTABLISHED',
         undefined,
         undefined,
         true,

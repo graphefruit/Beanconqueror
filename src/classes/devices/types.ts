@@ -4,6 +4,7 @@ export enum BluetoothTypes {
   TEMPERATURE = 'TEMPERATURE',
   TDS = 'TDS',
   MACHINE = 'MACHINE',
+  GRINDER = 'GRINDER',
 }
 
 export enum ScaleType {
@@ -54,4 +55,9 @@ export enum RefractometerType {
 
 export enum MachineType {
   MOVE2 = 'MOVE2',
+}
+
+export enum GrinderType {
+  GENERIC = 'GENERIC',
+  BOOKOO_MOTTO = 'BOOKOO_MOTTO',
 }

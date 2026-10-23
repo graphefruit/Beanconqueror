@@ -5,7 +5,7 @@ export interface IOSAdvertisingData {
   kCBAdvDataManufacturerData?: ArrayBuffer;
   kCBAdvDataServiceUUIDs?: string[];
   kCBAdvDataIsConnectable?: boolean;
-  kCBAdvDataServiceData?: { [k: string]: ArrayBuffer };
+  kCBAdvDataServiceData?: Record<string, ArrayBuffer>;
 }
 
 export interface LimitedPeripheralData {
@@ -23,13 +23,14 @@ export interface PeripheralData extends LimitedPeripheralData {
 export interface Characteristic {
   service: UUID;
   characteristic: UUID;
-  propertis: Property[];
+  properties: Property[];
   descriptors?: Descriptor[];
 }
 
 export enum Property {
   READ = 'Read',
   WRITE = 'Write',
+  WRITE_WITHOUT_RESPONSE = 'WriteWithoutResponse',
   NOTIFY = 'Notify',
 }
 

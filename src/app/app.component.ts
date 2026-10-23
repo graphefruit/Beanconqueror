@@ -53,6 +53,7 @@ import { register } from 'swiper/element/bundle';
 import { Bean } from '../classes/bean/bean';
 import { BrewInstanceHelper } from '../classes/brew/brew';
 import {
+  GrinderType,
   Logger,
   PressureType,
   RefractometerType,
@@ -778,8 +779,15 @@ export class AppComponent implements AfterViewInit {
         const temperature_id: string = checkDevices.temperature_id;
         const scale_id: string = checkDevices.scale_id;
         const refractometer_id: string = checkDevices.refractometer_id;
+        const grinder_id: string = checkDevices.grinder_id;
         // If one of these is there, enable bluetooth
-        if (pressure_id || temperature_id || scale_id || refractometer_id) {
+        if (
+          pressure_id ||
+          temperature_id ||
+          scale_id ||
+          refractometer_id ||
+          grinder_id
+        ) {
           await this.bleManager.enableIOSBluetooth();
         }
       } else {
@@ -791,6 +799,7 @@ export class AppComponent implements AfterViewInit {
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
       this.__connectRefractometerDevice();
+      this.__connectGrinderDevice();
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
@@ -804,7 +813,8 @@ export class AppComponent implements AfterViewInit {
       settings.scale_log === true ||
       settings.pressure_log === true ||
       settings.temperature_log === true ||
-      settings.refractometer_log === true
+      settings.refractometer_log === true ||
+      settings.grinder_log === true
     ) {
       Logger.enableLog();
     } else {
@@ -863,6 +873,7 @@ export class AppComponent implements AfterViewInit {
     const scale_id: string = settings.scale_id;
 
     const refractometer_id: string = settings.refractometer_id;
+    const grinder_id: string = settings.grinder_id;
 
     let isAndroidAndPressureDevice: boolean = false;
     if (this.platform.is('android') && pressure_id) {
@@ -881,6 +892,9 @@ export class AppComponent implements AfterViewInit {
     }
     if (refractometer_id && !this.platform.is('android')) {
       searchIds.push(refractometer_id);
+    }
+    if (grinder_id && !this.platform.is('android')) {
+      searchIds.push(grinder_id);
     }
     try {
       if (searchIds.length > 0) {
@@ -965,6 +979,25 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  private __connectGrinderDevice() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const grinder_id: string = settings.grinder_id;
+    const grinder_type: GrinderType = settings.grinder_type;
+
+    this.uiLog.log(`Connect grinder device? ${grinder_id}`);
+    if (grinder_id !== undefined && grinder_id !== '') {
+      this.bleManager.autoConnectGrinderDevice(
+        grinder_type,
+        grinder_id,
+        false,
+        () => {},
+        () => {},
+      );
+    } else {
+      this.uiLog.log('Grinder device not connected, dont try to connect');
+    }
+  }
+
   private __attachOnDevicePause() {
     App.addListener('pause', async () => {
       this.uiHelper.setActualAppState(false);
@@ -1006,6 +1039,13 @@ export class AppComponent implements AfterViewInit {
           );
         }
       }
+      if (settings.grinder_stay_connected === false) {
+        const grinder_id: string = settings.grinder_id;
+        if (grinder_id !== undefined && grinder_id !== '') {
+          // Don't show message on device pause.
+          this.bleManager.disconnectGrinderDevice(settings.grinder_id, false);
+        }
+      }
       BrewInstanceHelper.setEntryAmountBackToZero();
     });
   }
@@ -1026,6 +1066,9 @@ export class AppComponent implements AfterViewInit {
       }
       if (settings.refractometer_stay_connected === false) {
         this.__connectRefractometerDevice();
+      }
+      if (settings.grinder_stay_connected === false) {
+        this.__connectGrinderDevice();
       }
 
       /**

@@ -2,17 +2,19 @@ import { EventEmitter, inject, Injectable } from '@angular/core';
 
 import { Capacitor } from '@capacitor/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
 import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
 import { BluetoothScale } from 'src/classes/devices/bluetoothDevice';
 import { BookooScale } from 'src/classes/devices/bokooScale';
+import { BookooMotto } from 'src/classes/devices/bookooMotto';
 import { BookooPressure } from 'src/classes/devices/bookooPressure';
 import { Logger } from 'src/classes/devices/common/logger';
 import { DifluidMicrobalance } from 'src/classes/devices/difluidMicrobalance';
 import { DiFluidR2Refractometer } from 'src/classes/devices/difluidR2Refractometer';
 import { ETITemperature } from 'src/classes/devices/etiTemperature';
+import { GrinderDevice } from 'src/classes/devices/grinderBluetoothDevice';
 import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { PressureDevice } from 'src/classes/devices/pressureBluetoothDevice';
 import { PrsPressure } from 'src/classes/devices/prsPressure';
@@ -25,8 +27,10 @@ import { TimemoreScale } from 'src/classes/devices/timemoreScale';
 import { WeighMyBruScale } from 'src/classes/devices/weighMyBruScale';
 import {
   BluetoothTypes,
+  GrinderType,
   MachineType,
   makeDevice,
+  makeGrinderDevice,
   makePressureDevice,
   makeRefractometerDevice,
   makeTemperatureDevice,
@@ -76,6 +80,8 @@ export enum CoffeeBluetoothServiceEvent {
   DISCONNECTED_TEMPERATURE,
   CONNECTED_REFRACTOMETER,
   DISCONNECTED_REFRACTOMETER,
+  CONNECTED_GRINDER,
+  DISCONNECTED_GRINDER,
 }
 
 @Injectable({
@@ -92,6 +98,7 @@ export class CoffeeBluetoothDevicesService {
   public pressureDevice: PressureDevice | null = null;
   public temperatureDevice: TemperatureDevice | null = null;
   public refractometerDevice: RefractometerDevice | null = null;
+  public grinderDevice: GrinderDevice | null = null;
   public failed: boolean;
   public ready: boolean;
   private readonly logger: Logger;
@@ -99,6 +106,9 @@ export class CoffeeBluetoothDevicesService {
   private androidPermissions: any = null;
 
   private scanBluetoothTimeout: any = null;
+  private grinderConnectionGeneration = 0;
+  private grinderReconnectTimeout: any = null;
+  private grinderDisconnectRequested = false;
 
   /**
    * Singelton instance
@@ -295,6 +305,8 @@ export class CoffeeBluetoothDevicesService {
             type = this.getRefractometerDeviceType(scanDevice);
           } else if (_searchingType === BluetoothTypes.MACHINE) {
             type = this.getMachineDeviceType(scanDevice);
+          } else if (_searchingType === BluetoothTypes.GRINDER) {
+            type = this.getGrinderDeviceType(scanDevice);
           }
 
           if (type) {
@@ -620,6 +632,30 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
+  public disconnectGrinderDevice(
+    deviceId: string,
+    show_toast: boolean = true,
+  ): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        ++this.grinderConnectionGeneration;
+        this.grinderDisconnectRequested = true;
+        this.clearGrinderReconnectTimeout();
+
+        const grinderDevice = this.grinderDevice;
+        this.grinderDevice = null;
+        await grinderDevice?.disconnectAndWait();
+        await ble.withPromises.disconnect(deviceId);
+        if (show_toast) {
+          void this.uiToast.showInfoToast('GRINDER.DISCONNECTED_SUCCESSFULLY');
+        }
+        resolve(true);
+      } catch (ex) {
+        resolve(false);
+      }
+    });
+  }
+
   public isBleEnabled(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -645,6 +681,10 @@ export class CoffeeBluetoothDevicesService {
 
   public getRefractometerDevice() {
     return this.refractometerDevice;
+  }
+
+  public getGrinderDevice() {
+    return this.grinderDevice;
   }
 
   public getPressure() {
@@ -676,6 +716,39 @@ export class CoffeeBluetoothDevicesService {
           this.temperatureDevice.getTemperature(),
           2,
         );
+      }
+      return 0;
+    } catch (ex) {
+      return 0;
+    }
+  }
+
+  public getGrinderBurrGap() {
+    try {
+      if (this.grinderDevice) {
+        return this.toFixedIfNecessary(this.grinderDevice.getBurrGap(), 2);
+      }
+      return 0;
+    } catch (ex) {
+      return 0;
+    }
+  }
+
+  public getGrinderRpmSpeed() {
+    try {
+      if (this.grinderDevice) {
+        return this.toFixedIfNecessary(this.grinderDevice.getRpmSpeed(), 0);
+      }
+      return 0;
+    } catch (ex) {
+      return 0;
+    }
+  }
+
+  public getGrinderFeedspeed() {
+    try {
+      if (this.grinderDevice) {
+        return this.toFixedIfNecessary(this.grinderDevice.getFeedspeed(), 2);
       }
       return 0;
     } catch (ex) {
@@ -904,6 +977,14 @@ export class CoffeeBluetoothDevicesService {
     return undefined;
   }
 
+  public getGrinderDeviceType(deviceGrinder) {
+    if (BookooMotto.test(deviceGrinder)) {
+      this.logger.log('BleManager - We found a Bookoo Motto grinder device ');
+      return { id: deviceGrinder.id, type: GrinderType.BOOKOO_MOTTO };
+    }
+    return undefined;
+  }
+
   public async reconnectScale(
     deviceType: ScaleType,
     deviceId: string,
@@ -990,6 +1071,55 @@ export class CoffeeBluetoothDevicesService {
       }, 2000);
     } catch (ex) {
       errorCallback();
+    }
+  }
+
+  public async reconnectGrinderDevice(
+    grinderType: GrinderType,
+    deviceId: string,
+    successCallback: any = () => undefined,
+    errorCallback: any = () => undefined,
+  ) {
+    try {
+      const reconnectGeneration = ++this.grinderConnectionGeneration;
+      this.grinderDisconnectRequested = true;
+      this.clearGrinderReconnectTimeout();
+
+      const grinderDevice = this.grinderDevice;
+      this.grinderDevice = null;
+      await grinderDevice?.disconnectAndWait();
+      try {
+        await ble.withPromises.disconnect(deviceId);
+      } catch (ex) {
+        this.logger.log('Reconnect grinder disconnect cleanup failed');
+      }
+
+      if (
+        this.grinderConnectionGeneration !== reconnectGeneration ||
+        !this.grinderDisconnectRequested
+      ) {
+        return;
+      }
+
+      this.grinderReconnectTimeout = setTimeout(() => {
+        this.grinderReconnectTimeout = null;
+        if (
+          this.grinderConnectionGeneration !== reconnectGeneration ||
+          !this.grinderDisconnectRequested
+        ) {
+          return;
+        }
+
+        void this.autoConnectGrinderDevice(
+          grinderType,
+          deviceId,
+          true,
+          successCallback,
+          errorCallback,
+        );
+      }, 2000);
+    } catch (ex) {
+      void errorCallback();
     }
   }
 
@@ -1331,6 +1461,183 @@ export class CoffeeBluetoothDevicesService {
     } catch (ex) {}
   }
 
+  public async autoConnectGrinderDevice(
+    grinderType: GrinderType,
+    deviceId: string,
+    _scanForDevices: boolean = false,
+    successCallback: any = () => undefined,
+    errorCallback: any = () => undefined,
+    _timeout: number = 15000,
+    _wasConnected: boolean = false,
+  ) {
+    const connectionGeneration = ++this.grinderConnectionGeneration;
+    this.grinderDisconnectRequested = false;
+    this.clearGrinderReconnectTimeout();
+    let disconnectHandled = false;
+
+    if (_scanForDevices) {
+      this.logger.log('AutoConnectGrinderDevice - Scan for device');
+      await this.findDeviceWithDirectId(deviceId, _timeout);
+    }
+
+    if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+      return;
+    }
+
+    this.logger.log(
+      'AutoConnectGrinderDevice - We can start to connect to the id ' +
+        deviceId +
+        ' and type ' +
+        grinderType,
+    );
+    // Service discovery must not race an active Android LE scan. This also
+    // covers automatic reconnects, which scan for the saved device first.
+    await this.stopScanning();
+    if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+      return;
+    }
+
+    try {
+      ble.connect(
+        deviceId,
+        (data: PeripheralData) => {
+          if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+            return;
+          }
+
+          this.logger.log(
+            'AutoConnectGrinderDevice - Grinder device connected.',
+          );
+          void this.connectGrinderCallback(
+            grinderType,
+            data,
+            connectionGeneration,
+          )
+            .then(async (grinderConnected) => {
+              if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+                return;
+              }
+
+              if (!grinderConnected) {
+                await this.disconnectGrinderDevice(deviceId, false);
+                void errorCallback();
+                return;
+              }
+
+              const grinderDevice = this.getGrinderDevice();
+              if (
+                !this.isCurrentGrinderConnection(connectionGeneration) ||
+                !grinderDevice
+              ) {
+                return;
+              }
+
+              _wasConnected = true;
+              try {
+                this.uiAnalytics.trackEvent(
+                  BLUETOOTH_TRACKING.TITLE,
+                  BLUETOOTH_TRACKING.ACTIONS.GRINDER_USED,
+                  grinderType,
+                );
+                const settings = this.uiStettingsStorage.getSettings();
+                if (
+                  settings.bluetooth_devices_show_connection_messages === true
+                ) {
+                  void this.uiToast.showInfoToast(
+                    this.translate.instant('GRINDER.CONNECTED_SUCCESSFULLY') +
+                      ' - ' +
+                      grinderDevice.device_name +
+                      ' / ' +
+                      grinderDevice.device_id,
+                    false,
+                  );
+                }
+              } catch (ex) {
+                this.logger.error(
+                  'AutoConnectGrinderDevice success failed',
+                  ex,
+                );
+              }
+
+              void successCallback();
+            })
+            .catch((error) => {
+              if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+                return;
+              }
+
+              this.logger.error('AutoConnectGrinderDevice init failed', error);
+              void this.disconnectGrinderDevice(deviceId, false).finally(() => {
+                void errorCallback();
+              });
+            });
+        },
+        async () => {
+          if (
+            disconnectHandled ||
+            !this.isCurrentGrinderConnection(connectionGeneration)
+          ) {
+            return;
+          }
+          disconnectHandled = true;
+
+          const settings = this.uiStettingsStorage.getSettings();
+          if (
+            this.uiHelper.isActualAppStateActive() === false &&
+            settings.grinder_stay_connected === false
+          ) {
+            return;
+          }
+
+          this.logger.log(
+            'AutoConnectGrinderDevice - Grinder device disconnected.',
+          );
+          const shouldReconnect =
+            _wasConnected === true &&
+            settings.grinder_id &&
+            settings.grinder_id === deviceId;
+
+          if (_wasConnected === true && settings.grinder_id) {
+            if (settings.bluetooth_devices_show_connection_messages === true) {
+              void this.uiToast.showInfoToast('GRINDER.DISCONNECTED_UNPLANNED');
+            }
+          }
+          _wasConnected = false;
+
+          await this.disconnectGrinderCallback(connectionGeneration);
+          void errorCallback();
+
+          if (shouldReconnect) {
+            if (Capacitor.getPlatform() === 'android') {
+              await this.findDeviceWithDirectId(deviceId, 6000);
+              if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+                return;
+              }
+              await sleep(500);
+            }
+
+            await sleep(2000);
+            if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+              return;
+            }
+
+            void this.autoConnectGrinderDevice(
+              grinderType,
+              deviceId,
+              _scanForDevices,
+              successCallback,
+              errorCallback,
+              _timeout,
+              false,
+            );
+          }
+        },
+      );
+    } catch (ex) {
+      this.logger.error('AutoConnectGrinderDevice failed', ex);
+    }
+  }
+
   public stopScanning() {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1446,5 +1753,137 @@ export class CoffeeBluetoothDevicesService {
     }
     // Send disconnect callback, even if scale is already null/not existing anymore
     this.__sendEvent(CoffeeBluetoothServiceEvent.DISCONNECTED_REFRACTOMETER);
+  }
+
+  private connectGrinderCallback(
+    grinderType: GrinderType,
+    data: PeripheralData,
+    connectionGeneration: number,
+  ): Promise<boolean> {
+    return this.initializeGrinder(grinderType, data, connectionGeneration);
+  }
+
+  private async initializeGrinder(
+    grinderType: GrinderType,
+    data: PeripheralData,
+    connectionGeneration: number,
+  ): Promise<boolean> {
+    if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+      return false;
+    }
+
+    if (!data.characteristics?.length) {
+      this.logger.log(
+        'Grinder connected before service discovery finished, waiting for characteristics',
+      );
+      return Promise.resolve(false);
+    }
+
+    if (
+      this.grinderDevice?.device_id === data.id &&
+      this.grinderDevice.hasGrinderData()
+    ) {
+      this.logger.log('Grinder device already initialized');
+      return Promise.resolve(true);
+    }
+
+    if (this.grinderDevice) {
+      const previousGrinderDevice = this.grinderDevice;
+      this.grinderDevice = null;
+      await previousGrinderDevice.disconnectAndWait();
+      if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+        return false;
+      }
+    }
+
+    const grinderDevice = makeGrinderDevice(grinderType, data);
+    if (!grinderDevice) {
+      this.logger.log('Grinder device type could not be initialized');
+      return Promise.resolve(false);
+    }
+
+    this.grinderDevice = grinderDevice;
+    const ready = await this.waitForGrinderReady(grinderDevice);
+    if (
+      !ready ||
+      !this.isCurrentGrinderConnection(connectionGeneration) ||
+      this.grinderDevice !== grinderDevice
+    ) {
+      if (this.grinderDevice === grinderDevice) {
+        this.grinderDevice = null;
+      }
+      await grinderDevice.disconnectAndWait();
+      this.logger.log('Grinder did not become ready after connection');
+      return false;
+    }
+
+    this.logger.log('Grinder Connected successfully');
+    this.__sendEvent(CoffeeBluetoothServiceEvent.CONNECTED_GRINDER);
+    return true;
+  }
+
+  private waitForGrinderReady(grinderDevice: GrinderDevice): Promise<boolean> {
+    if (
+      grinderDevice.waitForInitialData === false ||
+      grinderDevice.hasGrinderData()
+    ) {
+      return Promise.resolve(true);
+    }
+
+    return new Promise<boolean>((resolve) => {
+      let resolved = false;
+      let subscription: Subscription | undefined = undefined;
+      const timeout = setTimeout(() => {
+        if (resolved) {
+          return;
+        }
+
+        resolved = true;
+        subscription?.unsubscribe();
+        resolve(false);
+      }, 5000);
+
+      subscription = grinderDevice.grinderChange.subscribe(() => {
+        if (resolved) {
+          return;
+        }
+
+        resolved = true;
+        clearTimeout(timeout);
+        subscription?.unsubscribe();
+        resolve(true);
+      });
+    });
+  }
+
+  private async disconnectGrinderCallback(
+    connectionGeneration: number,
+  ): Promise<void> {
+    if (!this.isCurrentGrinderConnection(connectionGeneration)) {
+      return;
+    }
+
+    const grinderDevice = this.grinderDevice;
+    this.grinderDevice = null;
+    if (grinderDevice) {
+      await grinderDevice.disconnectAndWait();
+      this.logger.log('Disconnected successfully');
+    }
+    // Send disconnect callback, even if scale is already null/not existing anymore
+    this.__sendEvent(CoffeeBluetoothServiceEvent.DISCONNECTED_GRINDER);
+  }
+
+  private isCurrentGrinderConnection(connectionGeneration: number): boolean {
+    return (
+      this.grinderConnectionGeneration === connectionGeneration &&
+      !this.grinderDisconnectRequested
+    );
+  }
+
+  private clearGrinderReconnectTimeout(): void {
+    if (this.grinderReconnectTimeout) {
+      clearTimeout(this.grinderReconnectTimeout);
+      this.grinderReconnectTimeout = null;
+    }
   }
 }

@@ -26,6 +26,10 @@
       <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="bluetoothgrinder">
+      <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_GRINDER" | translate }}
+      </ion-label>
+    </ion-segment-button>
   </ion-segment>
   @switch (settings_segment) {
   @case ('general') {
@@ -1686,6 +1690,69 @@
       <ion-label>
         <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
         <p style="display: inline;">{{ "TEMPERATURE.INFORMATION_DESCRIPTION" | translate }}</p>
+      </ion-label>
+    </ion-card-content>
+
+  </ion-card>
+  }
+  @case ('bluetoothgrinder') {
+  <ion-card>
+    <ion-card-content>
+      <ion-card-title>
+        {{ "PAGE_SETTINGS_TAB_BLUETOOTH_GRINDER" | translate }}
+      </ion-card-title>
+      <ion-list>
+        @if (settings.grinder_id === '') {
+        <ion-item lines="full" (click)="findAndConnectGrinderDevice()" tappable button>
+          <ion-label>
+            <h2>{{ "CONNECT" | translate }}</h2>
+          </ion-label>
+          <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+        </ion-item>
+        }
+        @if (settings.grinder_id !== '') {
+        <ion-item (click)="disconnectDevice(BluetoothTypes.GRINDER)" tappable button>
+          <ion-label>
+            <h2>{{ "DISCONNECT" | translate }}</h2>
+          </ion-label>
+          <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+        </ion-item>
+        }
+        <ion-item>
+          <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+            [(ngModel)]="settings.grinder_stay_connected">
+            <div class="ion-label" style="white-space: normal;">
+              <h2>{{ "GRINDER.STAY_CONNECTED_ON_APP_MINIMIZE" | translate }}</h2>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" inputmode="decimal" label="{{ 'GRINDER.BURR_GAP' | translate }}"
+            label-placement="stacked" [(ngModel)]="settings.grinder_burr_gap" (ionBlur)="saveSettings()">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" inputmode="numeric" label="{{ 'GRINDER.RPM_SPEED' | translate }}"
+            label-placement="stacked" [(ngModel)]="settings.grinder_rpm_speed" (ionBlur)="saveSettings()">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="number" inputmode="decimal" label="{{ 'GRINDER.FEEDSPEED' | translate }}"
+            label-placement="stacked" [(ngModel)]="settings.grinder_feedspeed" (ionBlur)="saveSettings()">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.grinder_log">
+            <div class="ion-label" style="white-space: normal;">
+              <h2>{{ "GRINDER.LOG" | translate }}</h2>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+      </ion-list>
+
+      <ion-label>
+        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+        <p style="display: inline;">{{ "GRINDER.INFORMATION_DESCRIPTION" | translate }}</p>
       </ion-label>
     </ion-card-content>
 

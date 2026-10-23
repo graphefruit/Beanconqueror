@@ -21,6 +21,7 @@ import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationP
 import { IGraphColors } from '../../interfaces/settings/iGraphColors';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import {
+  GrinderType,
   PressureType,
   RefractometerType,
   ScaleType,
@@ -242,6 +243,14 @@ export class Settings implements ISettings {
   public refractometer_test_number: number;
   public refractometer_stay_connected: boolean;
   public refractometer_log: boolean;
+
+  public grinder_id: string;
+  public grinder_type: GrinderType;
+  public grinder_burr_gap: number;
+  public grinder_rpm_speed: number;
+  public grinder_feedspeed: number;
+  public grinder_stay_connected: boolean;
+  public grinder_log: boolean;
 
   public currency: string;
   public brew_display_image_type: BREW_DISPLAY_IMAGE_TYPE;
@@ -596,6 +605,14 @@ export class Settings implements ISettings {
     this.refractometer_test_number = 4;
     this.refractometer_stay_connected = false;
     this.refractometer_log = false;
+
+    this.grinder_id = '';
+    this.grinder_type = null;
+    this.grinder_burr_gap = 0;
+    this.grinder_rpm_speed = 0;
+    this.grinder_feedspeed = 0;
+    this.grinder_stay_connected = false;
+    this.grinder_log = false;
 
     this.currency = 'EUR';
     this.brew_milliseconds_leading_digits = 3;

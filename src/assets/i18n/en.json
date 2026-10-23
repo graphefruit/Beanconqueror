@@ -943,6 +943,7 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": "Show graphs for espresso",
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Pressure device",
     "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperature device",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_GRINDER": "Grinder device",
     "PRESSURE_LOG": "Activate log files for pressure device",
     "PRESSURE_THRESHOLD_ACTIVE": "Start timer with predefined pressure",
     "PRESSURE_THRESHOLD_BAR": "Threshold pressure",
@@ -970,6 +971,7 @@
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Reconnect scale",
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Reconnect pressure device",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_GRINDER_DEVICE": "Reconnect grinder device",
     "POPOVER_SHOW_BREWS": "Show brews",
     "LAST_USED_GRIND_SIZE_SETTING": "Last grind setting",
     "LAST_USED_BEAN": "Last bean",
@@ -1178,6 +1180,24 @@
         "AUTO_TEST": "Auto Test",
         "AUTO_TEST_DESCRIPTION": "Automatically perform a looping test when temperature change is detected until a stable TDS \/ Temperature is found",
         "TEST_NUMBER": "Number of tests"
+    },
+    "GRINDER": {
+        "CONNECTION_NOT_ESTABLISHED": "Grinder device not found, or connection could not be established",
+        "CONNECTED_SUCCESSFULLY": "Grinder device connected",
+        "DISCONNECTED_SUCCESSFULLY": "Grinder device disconnected",
+        "DISCONNECTED_UNPLANNED": "Grinder device disconnected unexpectedly",
+        "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep grinder connected even when app is in the background",
+        "INFORMATION_DESCRIPTION": "Supported devices are: BOOKOO MT80. Generic grinder discovery also matches Bluetooth devices with \"grinder\" in the advertised name.",
+        "BLUETOOTH_SCAN_RUNNING": "Searching for grinder device for up to 60s",
+        "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+        "REQUEST_PERMISSION": {
+            "LOCATION": "To find grinder devices, the app needs access to the location.",
+            "BLUETOOTH": "To find grinder devices, the app needs access to bluetooth"
+        },
+        "LOG": "Activate log files for grinder device",
+        "BURR_GAP": "Burr gap",
+        "RPM_SPEED": "RPM speed",
+        "FEEDSPEED": "Feedspeed"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Added to clipboard",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Could not be added to clipboard",
@@ -1410,10 +1430,12 @@
     "CONNECT_PRESSURE": "Connect pressure",
     "CONNECT_TEMPERATURE": "Connect temperature",
     "CONNECT_REFRACTOMETER": "Connect refractometer",
+    "CONNECT_GRINDER": "Connect grinder",
     "DISCONNECT_SCALE": "Disconnect scale",
     "DISCONNECT_PRESSURE": "Disconnect pressure",
     "DISCONNECT_TEMPERATURE": "Disconnect temperature",
     "DISCONNECT_REFRACTOMETER": "Disconnect refractometer",
+    "DISCONNECT_GRINDER": "Disconnect grinder",
     "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "We didn't find any supported bluetooth devices, please try again",
     "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": "Hide value cards on maximized screen",
     "BLUETOOTH_REQUEST_PERMISSION": {

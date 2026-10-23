@@ -1,4 +1,5 @@
 import {
+  GrinderType,
   PressureType,
   RefractometerType,
   ScaleType,
@@ -220,6 +221,14 @@ export interface ISettings {
   refractometer_type: RefractometerType;
   refractometer_stay_connected: boolean;
   refractometer_log: boolean;
+
+  grinder_id: string;
+  grinder_type: GrinderType;
+  grinder_burr_gap: number;
+  grinder_rpm_speed: number;
+  grinder_feedspeed: number;
+  grinder_stay_connected: boolean;
+  grinder_log: boolean;
 
   currency: string;
   brew_display_image_type: BREW_DISPLAY_IMAGE_TYPE;
