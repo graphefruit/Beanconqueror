@@ -120,6 +120,41 @@ export class AnnotationGraphHelperService {
     }
   }
 
+  private getContrastTextColor(color?: string): string {
+    if (!color) return '#ffffff';
+    let c = color.trim();
+    if (c.startsWith('#')) {
+      c = c.substring(1);
+    }
+    if (c.length === 3) {
+      c = c
+        .split('')
+        .map((char) => char + char)
+        .join('');
+    }
+    if (c.length === 6) {
+      const r = parseInt(c.substring(0, 2), 16);
+      const g = parseInt(c.substring(2, 4), 16);
+      const b = parseInt(c.substring(4, 6), 16);
+      if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.6 ? '#000000' : '#ffffff';
+      }
+    }
+    const rgbMatch = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    if (rgbMatch) {
+      const r = parseInt(rgbMatch[1], 10);
+      const g = parseInt(rgbMatch[2], 10);
+      const b = parseInt(rgbMatch[3], 10);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance > 0.6 ? '#000000' : '#ffffff';
+    }
+    if (c.toLowerCase() === 'white') {
+      return '#000000';
+    }
+    return '#ffffff';
+  }
+
   public updateSliderLineAndAnnotations(
     profileDivElement: any,
     lastChartLayout: any,
@@ -301,6 +336,10 @@ export class AnnotationGraphHelperService {
 
       candidates.forEach((c, i) => {
         const ay = labelY[i] - c.targetPixelY;
+        const traceColor = c.trace.line?.color;
+        const textColor = this.getContrastTextColor(traceColor);
+        const isLight = textColor === '#000000';
+
         annotations.push({
           x: c.xVal,
           y: c.yVal,
@@ -311,14 +350,14 @@ export class AnnotationGraphHelperService {
           showarrow: true,
           arrowhead: 6,
           arrowsize: 1,
-          arrowcolor: c.trace.line?.color || '#ff3b30',
+          arrowcolor: traceColor || '#ff3b30',
           font: {
             family: 'Inter, sans-serif',
             size: 11,
-            color: '#ffffff',
+            color: textColor,
           },
-          bgcolor: c.trace.line?.color || '#333333',
-          bordercolor: '#ffffff',
+          bgcolor: traceColor || '#333333',
+          bordercolor: isLight ? '#000000' : '#ffffff',
           borderwidth: 1,
           borderpad: 4,
           ax: ax,

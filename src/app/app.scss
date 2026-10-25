@@ -159,6 +159,11 @@ ion-segment-button {
   ion-card:not(.best-brew):not(.favourite-brew) {
     border: 1px solid var(--ion-border-color) !important;
   }
+  ion-badge:not([color]) {
+    --background: #cdc2ac;
+    --color: black !important;
+    color: black !important;
+  }
 }
 
 .heading-20 {
@@ -432,6 +437,8 @@ ion-menu:host .menu-inner {
 
   ion-badge {
     --background: #cdc2ac;
+    --color: black;
+    color: black;
   }
   ion-button {
     font-family: 'Baloo', sans-serif;
@@ -1090,6 +1097,18 @@ ion-chip.trace-chip.trace-active {
   --color: white !important;
   margin-right: 2px;
   margin-left: 0px;
+}
+
+.ion-palette-dark {
+  ion-chip.trace-chip.trace-active.custom-trace-chip,
+  ion-chip.trace-chip.trace-active[style*="--chip-color: #ffffff" i],
+  ion-chip.trace-chip.trace-active[style*="--chip-color:#ffffff" i],
+  ion-chip.trace-chip.trace-active[style*="--chip-color: white" i],
+  ion-chip.trace-chip.trace-active[style*="--chip-color:white" i],
+  ion-chip.trace-chip.trace-active[style*="--chip-color: #cdc2ac" i],
+  ion-chip.trace-chip.trace-active[style*="--chip-color:#cdc2ac" i] {
+    --color: var(--ion-color-graph-background, #222428) !important;
+  }
 }
 
 

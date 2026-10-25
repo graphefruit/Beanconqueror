@@ -8,13 +8,13 @@
         <span class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
       }
       @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
-        <ion-button (click)="copyInformation(i);$event.stopPropagation()" fill="clear" slot="end" tappable>
-          <ion-icon color="accent" name="copy-outline" slot="icon-only"></ion-icon>
+        <ion-button (click)="copyInformation(i);$event.stopPropagation()" aria-label="Copy variety information" fill="clear" slot="end" tappable>
+          <ion-icon aria-hidden="true" color="accent" name="copy-outline" slot="icon-only"></ion-icon>
         </ion-button>
       }
       @if (!first) {
-        <ion-button (click)="deleteSortInformation(i);$event.stopPropagation()" fill="clear" slot="end" tappable>
-          <ion-icon color="accent" name="close-outline" slot="icon-only"></ion-icon>
+        <ion-button (click)="deleteSortInformation(i);$event.stopPropagation()" aria-label="Delete variety" fill="clear" slot="end" tappable>
+          <ion-icon aria-hidden="true" color="accent" name="close-outline" slot="icon-only"></ion-icon>
         </ion-button>
       }
     </ion-item>

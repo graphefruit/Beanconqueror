@@ -1,7 +1,7 @@
 <ion-header>
   <app-header [title]="'NAV_PREPARATION' | translate">
     <ion-menu-button header-slot="start" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" (clicked)="add()" />
+    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add preparation method" (clicked)="add()" />
   </app-header>
 </ion-header>
 <ion-content #preparationContent>
@@ -100,11 +100,11 @@
   <ion-searchbar (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
     class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
     search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-  <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+  <ion-button (click)="showSort()" [attr.aria-label]="uiIsSortActive ? 'Sort preparations (active)' : 'Sort preparations'" fill="clear" size="small" tappable>
     @if (uiIsSortActive) {
-    <ion-icon name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
     } @else {
-    <ion-icon name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
     }
   </ion-button>
 </ng-template>
