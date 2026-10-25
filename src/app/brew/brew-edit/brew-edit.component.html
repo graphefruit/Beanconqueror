@@ -65,9 +65,9 @@
     }
     </ng-template>
     @if(brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
-      <app-header-button header-slot="end" icon="beanconqueror-scale-tare" buttonClass="big-icon-only" (clicked)="tareScale()" />
+      <app-header-button header-slot="end" icon="beanconqueror-scale-tare" buttonClass="big-icon-only" ariaLabel="Tare scale" (clicked)="tareScale()" />
     }
-    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" (clicked)="popoverActionsBrew()" />
+    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" ariaLabel="Brew options" (clicked)="popoverActionsBrew()" />
   </app-header>
 </ion-header>
 <ion-content>

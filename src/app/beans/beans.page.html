@@ -1,8 +1,8 @@
 <ion-header>
   <app-header [title]="'NAV_BEANS' | translate">
     <ion-menu-button header-slot="start" />
-    <app-header-button header-slot="end" icon="beanconqueror-list-add" (clicked)="openImportMenu()" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" (clicked)="longPressAdd($event)" />
+    <app-header-button header-slot="end" icon="beanconqueror-list-add" ariaLabel="Import beans" (clicked)="openImportMenu()" />
+    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add bean" (clicked)="longPressAdd($event)" />
   </app-header>
 </ion-header>
 <ion-content #beanContent>
@@ -149,25 +149,25 @@
   <ion-searchbar (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
     class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
     search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-  <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
+  <ion-button (click)="showFilter()" [attr.aria-label]="uiIsFilterActive ? 'Filter beans (active)' : 'Filter beans'" fill="clear" size="small" tappable>
     @if (uiIsFilterActive) {
-    <ion-icon name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
     } @else {
-    <ion-icon name="beanconqueror-filter-inactive" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only"></ion-icon>
     }
   </ion-button>
-  <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+  <ion-button (click)="showSort()" [attr.aria-label]="uiIsSortActive ? 'Sort beans (active)' : 'Sort beans'" fill="clear" size="small" tappable>
     @if (uiIsSortActive) {
-    <ion-icon name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
     } @else {
-    <ion-icon name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
     }
   </ion-button>
-  <ion-button (click)="toggleCollapseBeans()" fill="clear" size="small" tappable>
+  <ion-button (click)="toggleCollapseBeans()" [attr.aria-label]="uiIsCollapseActive ? 'Expand bean list items' : 'Collapse bean list items'" fill="clear" size="small" tappable>
     @if (uiIsCollapseActive) {
-    <ion-icon name="beanconqueror-expand-active" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-expand-active" slot="icon-only"></ion-icon>
     } @else {
-    <ion-icon name="beanconqueror-expand-inactive" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-expand-inactive" slot="icon-only"></ion-icon>
     }
   </ion-button>
 </ng-template>

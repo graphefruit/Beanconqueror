@@ -9,6 +9,7 @@ import { HeaderButtonComponent } from './header-button.component';
     <app-header-button
       icon="beanconqueror-back"
       buttonClass="big-icon-only"
+      ariaLabel="Back"
       (clicked)="dismissed.emit()"
     />
   `,

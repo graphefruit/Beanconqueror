@@ -1,7 +1,7 @@
 <ion-header>
   <app-header [title]="(multiple ? 'CHOOSE_BEANS' : 'CHOOSE_BEAN') | translate">
     <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" (clicked)="add()" />
+    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add bean" (clicked)="add()" />
   </app-header>
 </ion-header>
 <ion-content #beanContent>
