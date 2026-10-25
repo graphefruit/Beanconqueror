@@ -49,7 +49,7 @@
       }
       @for(key of uiCustomMetricsKeys; track key) {
         @if(this.traces.customTraces[key]) {
-          <ion-chip (click)="toggleChartLines(key)" [outline]="!this.traces.customTraces[key]?.visible" class="trace-chip" [class.trace-active]="this.traces.customTraces[key]?.visible" [style.--chip-color]="this.traces.customTraces[key]?.line?.color">
+          <ion-chip (click)="toggleChartLines(key)" [outline]="!this.traces.customTraces[key]?.visible" class="trace-chip custom-trace-chip" [class.trace-active]="this.traces.customTraces[key]?.visible" [style.--chip-color]="this.traces.customTraces[key]?.line?.color">
              {{ this.traces.customTraces[key]?.name }}
           </ion-chip>
         }

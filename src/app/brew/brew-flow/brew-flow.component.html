@@ -33,7 +33,7 @@
           }
           @for(key of brewComponent.brewBrewingGraphEl.uiCustomMetricsKeys; track key) {
             @if(brewComponent.brewBrewingGraphEl.traces.customTraces[key]) {
-              <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines(key)" [outline]="!brewComponent.brewBrewingGraphEl.traces.customTraces[key]?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.customTraces[key]?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.customTraces[key]?.line?.color">
+              <ion-chip (click)="brewComponent.brewBrewingGraphEl.toggleChartLines(key)" [outline]="!brewComponent.brewBrewingGraphEl.traces.customTraces[key]?.visible" class="trace-chip custom-trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.customTraces[key]?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.customTraces[key]?.line?.color">
                  {{ brewComponent.brewBrewingGraphEl.traces.customTraces[key]?.name }}
               </ion-chip>
             }
@@ -241,7 +241,7 @@
         <ion-col size="12">
           <ion-item lines="none">
             <ion-label>{{ "BREW_GRAPH_TIME_SLIDER" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top;">{{sliderValue | number:'1.3-3'  }}s
+              style="vertical-align: top; --color: black; color: black;">{{sliderValue | number:'1.3-3'  }}s
             </ion-badge>
             </ion-label>
           </ion-item>
