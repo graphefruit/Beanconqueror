@@ -132,6 +132,7 @@
       <div class="slide-content">
         <h2>{{ 'UNWRAPPED.PREPARATIONS.TITLE' | translate }}</h2>
         <div class="roaster-list">
+          @if (stats.topPreparations.length > 0) {
           @for (p of stats.topPreparations | slice:0:10; track p.preparation) {
           <div class="roaster-item">
             <div class="bar-container">
@@ -140,6 +141,9 @@
             </div>
             <div class="count-container">{{ p.count }}</div>
           </div>
+          }
+          } @else {
+          <div class="no-data-banner">{{ 'NO_ENTRIES_FOUND' | translate }}</div>
           }
         </div>
       </div>
@@ -150,6 +154,7 @@
       <div class="slide-content">
         <h2>{{ 'UNWRAPPED.VARIETIES.TITLE' | translate }}</h2>
         <div class="roaster-list">
+          @if (stats.topVarieties.length > 0) {
           @for (v of stats.topVarieties | slice:0:10; track v.variety) {
           <div class="roaster-item">
             <div class="bar-container">
@@ -158,6 +163,9 @@
             </div>
             <div class="count-container">{{ v.count }}</div>
           </div>
+          }
+          } @else {
+          <div class="no-data-banner">{{ 'NO_ENTRIES_FOUND' | translate }}</div>
           }
         </div>
       </div>
@@ -168,6 +176,7 @@
       <div class="slide-content">
         <h2>{{ 'UNWRAPPED.PROCESSING.TITLE' | translate }}</h2>
         <div class="roaster-list">
+          @if (stats.topProcessingMethods.length > 0) {
           @for (p of stats.topProcessingMethods | slice:0:10; track p.method) {
           <div class="roaster-item">
             <div class="bar-container">
@@ -176,6 +185,9 @@
             </div>
             <div class="count-container">{{ p.count }}</div>
           </div>
+          }
+          } @else {
+          <div class="no-data-banner">{{ 'NO_ENTRIES_FOUND' | translate }}</div>
           }
         </div>
       </div>
