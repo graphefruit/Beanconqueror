@@ -96,6 +96,7 @@
         <h2>{{ 'UNWRAPPED.MAP.TITLE' | translate }}</h2>
 
         <div class="top-countries-list">
+          @if (stats.topCountries.length > 0) {
           @for (c of stats.topCountries | slice:0:10; track c.country) {
           <div class="country-item">
             <div class="bar-container">
@@ -104,6 +105,9 @@
             </div>
             <div class="count-container">{{ c.count }}</div>
           </div>
+          }
+          } @else {
+          <div class="no-data-banner">{{ 'NO_ENTRIES_FOUND' | translate }}</div>
           }
         </div>
       </div>
