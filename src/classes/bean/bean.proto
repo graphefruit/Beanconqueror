@@ -10,7 +10,7 @@ message BeanProto {
   optional string roaster = 5;
   optional Config config = 6;
   optional Roast roast = 7;
-  optional uint64 roast_range = 8;
+  optional double roast_range = 8;
   optional BeanMix beanMix = 9;
 
   optional string roast_custom = 10;
