@@ -14,13 +14,25 @@ import type { Settings } from '../../settings/settings';
 import { PreparationDeviceType } from '../index';
 import { PreparationDevice } from '../preparationDevice';
 import { GaggimateParser } from './gaggimateParser';
+import { GaggimateStatus, GaggimateWsService } from './gaggimateWsService';
 
 declare var cordova;
 
 export class GaggimateDevice extends PreparationDevice {
+  private SOCKET_POST_MODE_SETTLE_MS = 1500;
+
   private parser = new GaggimateParser();
+  private gaggimateSocket = new GaggimateWsService({
+    debug: false,
+    timeout: 5000,
+  });
   private connectionURL: string;
+  private connectionToWsURL: string;
   private _isConnected = false;
+
+  private _profiles = [];
+
+  public MODE_BREW = 1;
 
   constructor(
     protected httpClient: HttpClient,
@@ -29,6 +41,9 @@ export class GaggimateDevice extends PreparationDevice {
     super(httpClient, _preparation);
 
     this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
+    this.connectionToWsURL = this.getPreparation()
+      .connectedPreparationDevice.url.replace(/^http/, 'ws')
+      .concat('/ws');
 
     if (typeof cordova !== 'undefined') {
       //
@@ -71,6 +86,179 @@ export class GaggimateDevice extends PreparationDevice {
       this.logError('Error in connection:', error);
       throw error;
     }
+  }
+
+  public getProfiles() {
+    return this._profiles;
+  }
+
+  public async cancelConfirmation() {
+    try {
+      this.gaggimateSocket.send({
+        tp: 'req:brew:confirm:cancel',
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          this.offCancelWarning(listenerId);
+          reject(new Error('Warning cancel timed out'));
+        }, 5000);
+
+        const listenerId = this.onCancelWarning((isWarning) => {
+          if (!isWarning) {
+            clearTimeout(timeout);
+            this.offCancelWarning(listenerId);
+            resolve();
+          }
+        });
+      });
+
+      return true;
+    } catch (ex) {
+      // TODO
+    }
+    return undefined;
+  }
+
+  public async loadProfiles() {
+    try {
+      if (this._profiles.length <= 0) {
+        const profiles = await this.gaggimateSocket.request({
+          tp: 'req:profiles:list',
+          minimal: true,
+        });
+        this._profiles = profiles.profiles;
+      }
+    } catch (ex) {
+      this.logError('Error in loadProfiles:', ex);
+    }
+  }
+
+  public async selectBrewMode() {
+    try {
+      // Send the command
+      this.gaggimateSocket.send({
+        tp: 'req:change-mode',
+        mode: this.MODE_BREW,
+      });
+
+      // Wait for evt:status confirming the new mode
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          this.offStatusUpdate(listenerId);
+          reject(new Error('Brew mode selection confirmation timed out'));
+        }, 5000);
+
+        const listenerId = this.onStatusUpdate((status) => {
+          if (status.mode === this.MODE_BREW) {
+            clearTimeout(timeout);
+            this.offStatusUpdate(listenerId);
+            resolve();
+          }
+        });
+      });
+
+      return true;
+    } catch (ex) {
+      // TODO
+    }
+    return undefined;
+  }
+
+  public async startExtraction(ignoreWarnings = false) {
+    if (this.gaggimateSocket.machineState.isBrewing) {
+      return undefined;
+    }
+
+    this.clearHistory(); // needed to clean the machine history if the shot is restarted without closing the socket (e.g. reset timer and re-run)
+
+    // If the machine is still in the finished state for any reason, clear the extraction
+    if (
+      this.gaggimateSocket.machineState.status.process?.l?.toLowerCase() ===
+      'finished'
+    ) {
+      this.clearExtraction();
+    }
+
+    try {
+      this.gaggimateSocket.send({
+        tp: 'req:process:activate',
+        ignoreWarnings: ignoreWarnings,
+      });
+      return true;
+    } catch (ex) {
+      this.logError('Error in startExecute:', ex);
+    }
+    return undefined;
+  }
+
+  public stopExtraction() {
+    if (!this.gaggimateSocket.machineState.isBrewing) {
+      return undefined;
+    }
+
+    try {
+      this.gaggimateSocket.send({
+        tp: 'req:process:deactivate',
+      });
+      return true;
+    } catch (ex) {
+      this.logError('Error in stopShot:', ex);
+    }
+    return undefined;
+  }
+
+  public clearExtraction() {
+    if (this.gaggimateSocket.machineState.isBrewing) {
+      return undefined;
+    }
+
+    try {
+      this.gaggimateSocket.clear();
+      return true;
+    } catch (ex) {
+      this.logError('Error in clear:', ex);
+    }
+    return undefined;
+  }
+
+  public clearHistory() {
+    this.gaggimateSocket.clearHistory();
+  }
+
+  public stopRecordingHistory() {
+    this.gaggimateSocket.stopRecordingHistory();
+  }
+
+  public async selectProfileByID(_profileId: string) {
+    try {
+      // Send the command
+      await this.gaggimateSocket.request({
+        tp: 'req:profiles:select',
+        id: _profileId,
+      });
+
+      // Wait for evt:status confirming the new profile
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          this.offStatusUpdate(listenerId);
+          reject(new Error('Profile selection confirmation timed out'));
+        }, 5000);
+
+        const listenerId = this.onStatusUpdate((status) => {
+          if (status.selectedProfileId === _profileId) {
+            clearTimeout(timeout);
+            this.offStatusUpdate(listenerId);
+            resolve();
+          }
+        });
+      });
+
+      return true;
+    } catch (ex) {
+      // TODO
+    }
+    return undefined;
   }
 
   public static returnBrewFlowForShotData(samples, version: number) {
@@ -136,6 +324,7 @@ export class GaggimateDevice extends PreparationDevice {
           brew_time: '',
           timestamp: timestamp,
         });
+
         oldWaterDispensed += row.fl * secondsDelta;
         previousEventTime = row.t;
       } else {
@@ -216,23 +405,42 @@ export class GaggimateDevice extends PreparationDevice {
     ) as any[];
   }
 
-  public async getShotNotesFile(id: number) {
-    const response = await fetch(
-      this.connectionURL + `/api/history/${String(id)}.json`,
-    );
-    if (response.status === 404) {
-      return {};
+  public async getShotNotesFile(
+    id: number,
+  ): Promise<GaggimateShotNotes | Record<string, never>> {
+    const paddedId = String(id).padStart(6, '0');
+    const unpaddedId = String(id);
+
+    // Search for both padded and unpadded file names, trying padded first, then fall back to unpadded
+    const fileNames = [paddedId, unpaddedId];
+
+    for (const fileName of fileNames) {
+      try {
+        const response = await fetch(
+          `${this.connectionURL}/api/history/${fileName}.json`,
+        );
+
+        if (response.status === 404) {
+          continue; // Try the next file name format in the list
+        }
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const notes = (await response.json()) as GaggimateShotNotes;
+        // GaggiMate stores the dose as text ('18', or '' if not set)
+        const doseIn = parseFloat(String(notes.doseIn ?? ''));
+        notes.doseIn = isNaN(doseIn) ? undefined : doseIn;
+        return notes;
+      } catch (ex) {
+        // If the unpadded attempt fails as well, log the error
+        if (fileName === unpaddedId) {
+          this.logError('Notes file missing: ', [id]);
+        }
+      }
     }
-    try {
-      const notes = (await response.json()) as GaggimateShotNotes;
-      // GaggiMate stores the dose as text ('18', or '' if not set)
-      const doseIn = parseFloat(String(notes.doseIn ?? ''));
-      notes.doseIn = isNaN(doseIn) ? undefined : doseIn;
-      return notes;
-    } catch {
-      // GaggiMate answers with its web UI (status 200) for shots without notes
-      return {};
-    }
+    return {};
   }
 
   public async getShotSlog(id: number) {
@@ -244,7 +452,12 @@ export class GaggimateDevice extends PreparationDevice {
     if (response.status === 404) {
       return null;
     }
-    return this.parser.parseBinaryShot(buffer, id);
+    try {
+      return this.parser.parseBinaryShot(buffer, id);
+    } catch (error) {
+      this.logError('Error in getShotSlog():', error);
+      return null;
+    }
   }
 
   /**
@@ -454,6 +667,148 @@ export class GaggimateDevice extends PreparationDevice {
       ? customParams.latestShotsToImport
       : 3;
   }
+
+  public getActualShotData() {
+    return this.gaggimateSocket.machineState?.status;
+  }
+
+  public isActive() {
+    return this.gaggimateSocket?.machineState?.isActive;
+  }
+
+  public isBrewing() {
+    return this.gaggimateSocket.machineState?.isBrewing;
+  }
+
+  public setIsBrewing(isBrewing: boolean) {
+    this.gaggimateSocket.machineState.isBrewing = isBrewing;
+  }
+
+  public isGMBrewByWeight() {
+    return this.gaggimateSocket.machineState?.isGMBrewByWeight;
+  }
+
+  public isValid() {
+    return this.gaggimateSocket?.machineState?.isValid;
+  }
+
+  public isWarning() {
+    return this.gaggimateSocket.machineState?.isWarning;
+  }
+
+  public getShotHistory() {
+    return this.gaggimateSocket.machineState?.history;
+  }
+
+  public async getSocketShotId(timeoutMs = 5000): Promise<number | string> {
+    // If shotId is already stored and non-zero, resolve immediately
+    if (this.gaggimateSocket.machineState?.shotId) {
+      return this.gaggimateSocket.machineState.shotId;
+    }
+
+    return new Promise((resolve, reject) => {
+      let timer: ReturnType<typeof setTimeout>;
+      let listenerId: string;
+
+      const cleanup = () => {
+        if (timer) clearTimeout(timer);
+        if (listenerId)
+          this.gaggimateSocket.off('evt:history-shot-saved', listenerId);
+      };
+
+      timer = setTimeout(() => {
+        cleanup();
+        reject(new Error(`Timed out waiting for Shot Id after ${timeoutMs}ms`));
+      }, timeoutMs);
+
+      listenerId = this.gaggimateSocket.on(
+        'evt:history-shot-saved',
+        (msg: any) => {
+          const id = msg.id ?? this.gaggimateSocket.machineState?.shotId;
+          if (id) {
+            cleanup();
+            resolve(Number(id));
+          }
+        },
+      );
+    });
+  }
+
+  public disconnectSocket() {
+    if (this.gaggimateSocket.isConnected) {
+      this.gaggimateSocket.disconnect();
+    }
+    this._isConnected = false;
+  }
+
+  public async connectToSocket(): Promise<boolean> {
+    try {
+      if (this.gaggimateSocket.isConnected) {
+        this._isConnected = true;
+        return true;
+      }
+
+      this.gaggimateSocket.connect(this.connectionToWsURL);
+
+      const startTime = Date.now();
+      while (Date.now() - startTime < this.SOCKET_POST_MODE_SETTLE_MS) {
+        if (this.gaggimateSocket.isConnected) {
+          this._isConnected = true;
+          return true;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      this._isConnected = false;
+      return false;
+    } catch (ex) {
+      this.logError('Error connecting to socket: ' + ex);
+      this._isConnected = false;
+      return false;
+    }
+  }
+
+  public onStatusUpdate(callback: (status: GaggimateStatus) => void): string {
+    // GaggimateApiService.on('evt:status', ...) receives the parsed message.
+    // When evt:status arrives, GaggimateApiService._onStatus() has already updated machineState.status.
+    return this.gaggimateSocket.on('evt:status', () => {
+      callback(this.gaggimateSocket.machineState.status);
+    });
+  }
+
+  public offStatusUpdate(listenerId: string): void {
+    this.gaggimateSocket.off('evt:status', listenerId);
+  }
+
+  public onCancelWarning(callback: (isWarning: boolean) => void): string {
+    return this.gaggimateSocket.on('evt:brew:confirm:cancel', () => {
+      callback(this.gaggimateSocket.machineState.isWarning);
+    });
+  }
+
+  public offCancelWarning(listenerId: string): void {
+    this.gaggimateSocket.off('evt:brew:confirm:cancel', listenerId);
+  }
+
+  public onShowWarning(callback: (isWarning: boolean) => void): string {
+    return this.gaggimateSocket.on('evt:brew:confirm', () => {
+      callback(this.gaggimateSocket.machineState.isWarning);
+    });
+  }
+
+  public offShowWarning(listenerId: string): void {
+    this.gaggimateSocket.off('evt:brew:confirm', listenerId);
+  }
+
+  public onShotFinished(callback: () => void): string {
+    return this.gaggimateSocket.on('evt:shot-finished-stats', () => {
+      callback();
+    });
+  }
+
+  public offShotFinished(listenerId: string): void {
+    this.gaggimateSocket.off('evt:shot-finished-stats', listenerId);
+  }
 }
 
 export class GaggimateShotNotes implements IGaggimateShotNotes {
@@ -480,6 +835,9 @@ export class GaggimateParams implements IGaggimateParams {
   public confirmBeanAdd: boolean;
   public useTargetTemperature: boolean;
   public writeBackNotes: boolean;
+  public autoSetBloomTime: boolean;
+  public shotIdTimeout: number;
+  public shotWatchdogTimeout: number;
 
   constructor() {
     this.chosenProfileId = '';
@@ -491,5 +849,8 @@ export class GaggimateParams implements IGaggimateParams {
     this.confirmBeanAdd = true;
     this.useTargetTemperature = false;
     this.writeBackNotes = false;
+    this.autoSetBloomTime = false;
+    this.shotIdTimeout = 3000;
+    this.shotWatchdogTimeout = 5000;
   }
 }

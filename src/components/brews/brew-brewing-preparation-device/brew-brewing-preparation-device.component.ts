@@ -531,6 +531,8 @@ export class BrewBrewingPreparationDeviceComponent
         device.disconnectSocket();
       } else if (device instanceof SanremoYOUDevice) {
         device.disconnectSocket();
+      } else if (device instanceof GaggimateDevice) {
+        device.disconnectSocket();
       }
     }
     this.preparationDevice = undefined;
@@ -957,6 +959,32 @@ export class BrewBrewingPreparationDeviceComponent
         );
       },
     );
+
+    try {
+      await connectedDevice.connectToSocket().then(async (_connected) => {
+        if (_connected) {
+          this.preparationDevice = connectedDevice;
+          await this.preparationDevice.cancelConfirmation(); // Send a preventive cancel request to avoid getting stuck if GM is showing the brew confirmation screen due to some warning
+          await this.preparationDevice.loadProfiles();
+          await this.preparationDevice.selectBrewMode(); // set brew mode so to speed up actions on timer start
+          /**Check if this profile is still existing, if yes, preset, if not cancel**/
+          const profileFound = this.preparationDevice
+            .getProfiles()
+            .find(
+              (e) =>
+                e.id === this.data.preparationDeviceBrew.params.chosenProfileId,
+            );
+          if (profileFound) {
+            //Everything great
+          } else {
+            //Revert to zero
+            this.data.preparationDeviceBrew.params.chosenProfileId = '';
+          }
+        }
+      });
+    } catch (ex) {
+      this.uiAlert.showMessage('Error connecting to socket: ' + ex);
+    }
   }
 
   public async importShotFromMeticulous() {
@@ -1227,7 +1255,7 @@ export class BrewBrewingPreparationDeviceComponent
       this.preparation.connectedPreparationDevice.customParams
         .confirmDuplicateImport
     ) {
-      // If a shot has been already imported, ask if it should be imported again (id check)
+      // If a shot has been already imported or saved via real time brew, ask if it should be imported again (id check)
       const isDuplicate = this.uiBrewStorage
         .getAllEntries()
         .some(
