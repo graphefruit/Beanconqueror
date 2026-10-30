@@ -64,7 +64,7 @@
         @if (stats.mostExpensiveBean) {
         <div class="favorite-section">
           <div class="highlight">{{ stats.mostExpensiveBean.name }}</div>
-          <div class="sub-highlight">{{ stats.mostExpensiveBean.cost | number:'1.2-2' }} {{ getCurrencySymbol() }}
+          <div class="sub-highlight">{{ stats.mostExpensiveBean.costPerKg | number:'1.2-2' }} {{ getCurrencySymbol() }}/kg
           </div>
           <div class="sub-highlight">{{ 'UNWRAPPED.FAVORITES.EXPENSIVE' | translate }}</div>
         </div>

@@ -154,10 +154,12 @@ describe('UnwrappedService', () => {
       // Total cost: 15 (bean1) + (10 + 10 + 5) = 40
       expect(stats.totalCost).toBe(40);
 
-      // Most expensive bean should be Ethiopia Yirgacheffe with aggregated cost 25 (over Colombia 15)
+      // Ethiopia: 25 / 250 * 1000 = 100/kg, Colombia: 15 / 250 * 1000 = 60/kg
       expect(stats.mostExpensiveBean).not.toBeNull();
       expect(stats.mostExpensiveBean.name).toBe('Ethiopia Yirgacheffe');
-      expect(stats.mostExpensiveBean.cost).toBe(25);
+      expect(stats.mostExpensiveBean.costPerKg).toBe(100);
+      expect(frozenBag1.cost).toBe(10);
+      expect(frozenBag1.weight).toBe(100);
 
       // Top countries: Ethiopia should count ONCE (1), Colombia count ONCE (1)
       expect(stats.topCountries.length).toBe(2);
@@ -214,6 +216,126 @@ describe('UnwrappedService', () => {
       expect(stats.bestRatedBean).not.toBeNull();
       expect(stats.bestRatedBean.name).toBe('Kenya Nyeri');
       expect(stats.bestRatedBean.rating).toBe(4.5);
+    });
+
+    describe('most expensive bean by price per kg', () => {
+      function createBean(name: string, cost: number, weight: number): Bean {
+        const bean = new Bean();
+        bean.config.uuid = name;
+        bean.name = name;
+        bean.buyDate = '2026-01-10T00:00:00.000Z';
+        bean.cost = cost;
+        bean.weight = weight;
+        return bean;
+      }
+
+      beforeEach(() => {
+        brewStorage.getAllEntries.and.returnValue([]);
+      });
+
+      it('should rank by price per kg rather than total bag cost', () => {
+        beanStorage.getAllEntries.and.returnValue([
+          createBean('Ursprung', 50, 1000),
+          createBean('Specialty', 75, 250),
+          createBean('Higher bag price', 100, 1000),
+        ]);
+
+        const stats = service.getUnwrappedData(2026);
+
+        expect(stats.mostExpensiveBean).toEqual({
+          name: 'Specialty',
+          costPerKg: 300,
+        });
+        expect(stats.totalCost).toBe(225);
+        expect(stats.totalWeight).toBe(2250);
+      });
+
+      it('should use combined cost and weight of frozen, thawed and archived portions', () => {
+        const frozen = createBean('Frozen portion', 10, 100);
+        frozen.frozenGroupId = 'shared-coffee';
+        frozen.frozenDate = '2026-02-01T00:00:00.000Z';
+
+        const thawed = createBean('Thawed portion', 20, 100);
+        thawed.frozenGroupId = 'shared-coffee';
+        thawed.frozenDate = frozen.frozenDate;
+        thawed.unfrozenDate = '2026-03-01T00:00:00.000Z';
+
+        const archived = createBean('Archived remainder', 10, 50);
+        archived.frozenGroupId = 'shared-coffee';
+        archived.finished = true;
+
+        // The group costs 160/kg, although individual portions cost up to 200/kg.
+        beanStorage.getAllEntries.and.returnValue([
+          frozen,
+          thawed,
+          archived,
+          createBean('Winner', 43.75, 250),
+        ]);
+
+        const stats = service.getUnwrappedData(2026);
+
+        expect(stats.mostExpensiveBean).toEqual({
+          name: 'Winner',
+          costPerKg: 175,
+        });
+        expect(stats.totalBeans).toBe(2);
+        expect(stats.totalCost).toBe(83.75);
+        expect(stats.totalWeight).toBe(500);
+      });
+
+      it('should compare unrounded prices per kg', () => {
+        beanStorage.getAllEntries.and.returnValue([
+          createBean('Lower price', 10, 300),
+          createBean('Higher price', 10.0001, 300),
+        ]);
+
+        expect(service.getUnwrappedData(2026).mostExpensiveBean.name).toBe(
+          'Higher price',
+        );
+      });
+
+      it('should keep the purchase year filter and roasting date fallback', () => {
+        const previousYear = createBean('Previous year', 100, 100);
+        previousYear.buyDate = '2025-01-10T00:00:00.000Z';
+        previousYear.roastingDate = '2026-01-01T00:00:00.000Z';
+        const roastDateOnly = createBean('Roast date only', 25, 250);
+        roastDateOnly.buyDate = '';
+        roastDateOnly.roastingDate = '2026-01-01T00:00:00.000Z';
+        beanStorage.getAllEntries.and.returnValue([
+          previousYear,
+          roastDateOnly,
+        ]);
+
+        expect(service.getUnwrappedData(2026).mostExpensiveBean).toEqual({
+          name: 'Roast date only',
+          costPerKg: 100,
+        });
+      });
+
+      for (const [label, cost, weight] of [
+        ['missing weight', 100, 0],
+        ['negative weight', 100, -100],
+        ['non-finite weight', 100, Infinity],
+        ['invalid weight', 100, NaN],
+        ['missing cost', 0, 100],
+        ['negative cost', -10, 100],
+        ['non-finite cost', Infinity, 100],
+        ['invalid cost', NaN, 100],
+      ] as const) {
+        it(`should not rank a bean with ${label}`, () => {
+          const invalidBean = createBean(label, cost, weight);
+          const validBean = createBean('Valid', 10, 250);
+          beanStorage.getAllEntries.and.returnValue([invalidBean, validBean]);
+
+          expect(service.getUnwrappedData(2026).mostExpensiveBean).toEqual({
+            name: 'Valid',
+            costPerKg: 40,
+          });
+
+          beanStorage.getAllEntries.and.returnValue([invalidBean]);
+          expect(service.getUnwrappedData(2026).mostExpensiveBean).toBeNull();
+        });
+      }
     });
   });
 });
