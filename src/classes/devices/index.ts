@@ -17,6 +17,7 @@ import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
 import { EmberThermometer } from './emberThermometer';
 import { EspressiScale } from './espressiScale';
 import { ETITemperature } from './etiTemperature';
+import { ETIBlueDotTemperature } from './etiBlueDotTemperature';
 import { EurekaPrecisaScale } from './eurekaPrecisaScale';
 import { FelicitaScale } from './felicitaScale';
 import { FutulaScale } from './futulaScale';
@@ -142,6 +143,8 @@ export function makeTemperatureDevice(
   switch (type) {
     case TemperatureType.ETI:
       return new ETITemperature(data);
+    case TemperatureType.ETIBLUEDOT:
+      return new ETIBlueDotTemperature(data);
     case TemperatureType.BASICGRILL:
       return new BasicGrillThermometer(data);
     case TemperatureType.MEATER:
