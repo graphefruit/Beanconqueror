@@ -177,6 +177,8 @@ export class Preparation implements IPreparation {
         return PREPARATION_STYLE_TYPE.ESPRESSO;
       case PREPARATION_TYPES.GAGGIMATE:
         return PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.OXO_RAPID_BREWER:
+        return PREPARATION_STYLE_TYPE.PERCOLATION;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
     }
@@ -275,6 +277,8 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-move2';
       case PREPARATION_TYPES.GAGGIMATE:
         return 'beanconqueror-preparation-gaggimate';
+      case PREPARATION_TYPES.OXO_RAPID_BREWER:
+        return 'beanconqueror-preparation-oxo-rapid-brewer';
       default:
         return 'beanconqueror-preparation-custom';
     }
