@@ -1,4 +1,48 @@
 :host {
+#gaggimate-card {
+
+  ion-accordion {
+    background-color: inherit !important;
+    font-size: 16px;
+    div[slot='content'] {
+      ion-label {
+        margin-bottom: 0px;
+      }
+    }
+  }
+
+  ion-accordion.accordion-expanded {
+    div[slot='content'] {
+      border: 1px solid var(--ion-color-accent-shade);
+      padding-bottom: 10px;
+      margin-left: 16px;
+      margin-right: 16px;
+      margin-bottom: 16px;
+    }
+  }
+
+  ion-button.gaggimate-target-control {
+    font-size: 18px;
+    --background: var(--ion-color-accent);
+    --color: #000000;
+    ion-icon {
+      color: var(--ion-color-accent-contrast);
+      font-size: 16px;
+    }
+  }
+
+  ion-label {
+    padding-bottom: 0px;
+    font-size: 16px;
+  }
+
+  .gaggimate-target-value {
+    min-width: 4.5em;
+    margin: 0 0px;
+    text-align: center;
+  }
+
+}
   ion-item {
     --border-width: 0px;
     margin-left: 16px;

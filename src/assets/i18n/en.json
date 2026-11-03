@@ -1184,7 +1184,11 @@
             "WRITE_BACK_NOTES_SHOT_MISMATCH": "This shot does not exist on the GaggiMate anymore, the shot notes were not updated",
             "LOADING_SHOTS": "Loading shot {{current}} of {{total}}",
             "PREVIOUSLY_IMPORTED_SHOT": "Previously imported shot",
-            "LOADING_IMPORTED_SHOT": "Loading previously imported shot"
+            "LOADING_IMPORTED_SHOT": "Loading previously imported shot",
+            "BREW_TARGET_TITLE": "Set brew targets",
+            "TARGET_TEMPERATURE": "Temperature",
+            "TARGET_WEIGHT": "Weight",
+            "TARGET_DURATION": "Duration"
         }
     },
     "DEVICE_CONNECTION": "Device connection",

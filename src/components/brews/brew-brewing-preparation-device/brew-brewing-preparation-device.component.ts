@@ -11,6 +11,9 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonAccordion,
+  IonAccordionGroup,
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -27,7 +30,12 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
+import {
+  add,
+  cloudDownloadOutline,
+  informationCircleOutline,
+  remove,
+} from 'ionicons/icons';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -117,6 +125,9 @@ import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
     IonCol,
     IonCardHeader,
     IonCardContent,
+    IonButton,
+    IonAccordionGroup,
+    IonAccordion,
   ],
 })
 export class BrewBrewingPreparationDeviceComponent
@@ -165,7 +176,7 @@ export class BrewBrewingPreparationDeviceComponent
   private eventQueue = inject(EventQueueService);
 
   constructor() {
-    addIcons({ cloudDownloadOutline, informationCircleOutline });
+    addIcons({ cloudDownloadOutline, informationCircleOutline, add, remove });
   }
 
   public async baristaModeWeightChanged(_type: string) {
@@ -966,7 +977,6 @@ export class BrewBrewingPreparationDeviceComponent
           this.preparationDevice = connectedDevice;
           await this.preparationDevice.cancelConfirmation(); // Send a preventive cancel request to avoid getting stuck if GM is showing the brew confirmation screen due to some warning
           await this.preparationDevice.loadProfiles();
-          await this.preparationDevice.selectBrewMode(); // set brew mode so to speed up actions on timer start
           /**Check if this profile is still existing, if yes, preset, if not cancel**/
           const profileFound = this.preparationDevice
             .getProfiles()
@@ -985,6 +995,43 @@ export class BrewBrewingPreparationDeviceComponent
     } catch (ex) {
       this.uiAlert.showMessage('Error connecting to socket: ' + ex);
     }
+  }
+
+  /** The user chose a GaggiMate profile, so prepare the machine for it */
+  public async gaggimateProfileChanged() {
+    if (this.data.preparationDeviceBrew.params.chosenProfileId) {
+      await this.activateGaggimateProfile();
+    }
+  }
+
+  public async activateGaggimateProfile() {
+    const device = this.preparationDevice as GaggimateDevice;
+    const profileId = this.data.preparationDeviceBrew.params.chosenProfileId;
+    if (!device || !profileId) {
+      return;
+    }
+    await this.uiAlert.showLoadingSpinner();
+    const activated = await device.activateOnProfile(profileId);
+    await this.uiAlert.hideLoadingSpinner();
+    if (!activated) {
+      await this.uiAlert.showMessage(
+        'PREPARATION_DEVICE.TYPE_GAGGIMATE.ERROR_CANNOT_SET_PROFILE_OR_BREW_MODE',
+        'CARE',
+        'OK',
+        true,
+      );
+    }
+    this.checkChanges();
+  }
+
+  public changeGaggimateTargetTemperature(_raise: boolean) {
+    (this.preparationDevice as GaggimateDevice)?.changeTargetTemperature(
+      _raise,
+    );
+  }
+
+  public changeGaggimateBrewTarget(_raise: boolean) {
+    (this.preparationDevice as GaggimateDevice)?.changeBrewTarget(_raise);
   }
 
   public async importShotFromMeticulous() {

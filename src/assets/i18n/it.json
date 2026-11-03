@@ -1160,7 +1160,11 @@
             "WRITE_BACK_NOTES_SHOT_MISMATCH": "Questa estrazione non esiste più su GaggiMate, le note non sono state aggiornate",
             "LOADING_SHOTS": "Carico estrazione {{current}} di {{total}}",
             "PREVIOUSLY_IMPORTED_SHOT": "Estrazione già importata",
-            "LOADING_IMPORTED_SHOT": "Carico estrazione già importata"
+            "LOADING_IMPORTED_SHOT": "Carico estrazione già importata",
+            "BREW_TARGET_TITLE": "Imposta obiettivi estrazione",
+            "TARGET_TEMPERATURE": "Temperatura",
+            "TARGET_WEIGHT": "Peso",
+            "TARGET_DURATION": "Durata"
         }
     },
     "DEVICE_CONNECTION": "Connessione dispositivi",

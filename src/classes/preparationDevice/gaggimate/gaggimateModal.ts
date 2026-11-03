@@ -14,7 +14,7 @@ export interface GmConfirmDialogHandle {
 @Injectable({
   providedIn: 'root',
 })
-export class gaggimateModal {
+export class GaggimateModal {
   private readonly alertController = inject(AlertController);
   private readonly translate = inject(TranslateService);
 

@@ -69,9 +69,12 @@ import { TemperatureDevice } from '../../../classes/devices/temperatureBluetooth
 import { Graph } from '../../../classes/graph/graph';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { GaggimateDevice } from '../../../classes/preparationDevice/gaggimate/gaggimateDevice';
 import {
-  gaggimateModal,
+  GaggimateDevice,
+  GaggimateParams,
+} from '../../../classes/preparationDevice/gaggimate/gaggimateDevice';
+import {
+  GaggimateModal,
   GmConfirmDialogHandle,
 } from '../../../classes/preparationDevice/gaggimate/gaggimateModal';
 import { GaggimateStatus } from '../../../classes/preparationDevice/gaggimate/gaggimateWsService';
@@ -169,7 +172,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private gaggimateWatchdogTimer: ReturnType<typeof setTimeout> | null = null;
   private isGaggimateWatchdogPromptOpen = false;
   private isResolvingGaggimateShotId = false;
-  private readonly gaggimateModal = inject(gaggimateModal);
+  private readonly gaggimateModal = inject(GaggimateModal);
 
   @ViewChild('smartScaleWeight', { read: ElementRef })
   public smartScaleWeightEl: ElementRef;
@@ -264,7 +267,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private temperatureThresholdWasHit = false;
   private xeniaOverviewInterval: any = undefined;
   private meticulousInterval: any = undefined;
-  private gaggimateInterval: any = undefined;
   private sanremoYOUFetchingInterval: any = undefined;
   private move2FetchingInterval: any = undefined;
 
@@ -2236,8 +2238,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       const shotWatchdogTimeout =
         prepDeviceCall.getPreparation().connectedPreparationDevice.customParams
-          .shotWatchdogTimeout ?? 20000;
-
+          .shotWatchdogTimeout ?? GaggimateParams.SHOT_WATCHDOG_TIMEOUT;
       this.gaggimateWatchdogTimer = setTimeout(async () => {
         this.gaggimateWatchdogTimer = null;
         if (!hasShotStarted || this.isGaggimateWatchdogPromptOpen) {
@@ -2521,7 +2522,10 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                     previousProcessType === 'infusion' &&
                     this.brewComponent.brewCoffeeBloomingTime.getMilliseconds() <=
                       0 &&
-                    this.brewComponent.brewCoffeeBloomingTime.getSeconds() <= 0
+                    this.brewComponent.brewCoffeeBloomingTime.getSeconds() <=
+                      0 &&
+                    prepDeviceCall.getPreparation().connectedPreparationDevice
+                      .customParams.autoSetBloomTime
                   ) {
                     this.brewComponent.setCoffeeBloomingTime('gaggimate');
                   }
@@ -2708,7 +2712,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       // Wait for WebSocket save shot id event
       const shotIdTimeout =
         prepDeviceCall.getPreparation().connectedPreparationDevice.customParams
-          .shotIdTimeout ?? 3000;
+          .shotIdTimeout ?? GaggimateParams.SHOT_ID_TIMEOUT;
       this.data.preparationDeviceBrew.params.shotId =
         await this.uiAlert.withLoadingSpinner(async () =>
           prepDeviceCall.getSocketShotId(shotIdTimeout),
@@ -2814,11 +2818,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.gaggimateWatchdogTimer = null;
     }
     this.isGaggimateWatchdogPromptOpen = false;
-
-    if (this.gaggimateInterval !== undefined) {
-      clearInterval(this.gaggimateInterval);
-      this.gaggimateInterval = undefined;
-    }
   }
 
   public async timerStartPressed(_event) {
