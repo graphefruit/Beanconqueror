@@ -9,8 +9,23 @@ export class GaggimateParser {
   readonly WEIGHT_SCALE = 10;
   readonly RESISTANCE_SCALE = 100;
 
-  readonly MAX_SHOT_VERSION_SUPPORTED = 7;
+  readonly MAX_SHOT_VERSION_SUPPORTED = 8;
   readonly MAX_INDEX_VERSION_SUPPORTED = 1;
+
+  // Phase exit reason codes (must match PhaseExitReason in shot_log_format.h / profile.h).
+  // 0 (unknown) is also what legacy files carry in the formerly-reserved byte.
+  readonly PHASE_EXIT_REASON_LABELS = {
+    0: 'Unknown',
+    1: 'Volumetric target',
+    2: 'Pressure target',
+    3: 'Flow target',
+    4: 'Pumped target',
+    5: 'Duration',
+    6: 'Safety timeout',
+    7: 'Aborted',
+    8: 'Hold released',
+    9: 'Ratio target',
+  };
 
   // Field bit positions (must match shot_log_format.h)
   readonly FIELD_BITS = {
@@ -89,6 +104,10 @@ export class GaggimateParser {
         bluetoothScaleConnected: !!(val & 0x0004),
         volumetricAvailable: !!(val & 0x0008),
         extendedRecording: !!(val & 0x0010),
+        processIsBrew: !!(val & 0x0020),
+        targetIsVolumetric: !!(val & 0x0040),
+        phaseHasVolumetric: !!(val & 0x0080),
+        activeScaleConnected: !!(val & 0x0100),
       }),
     },
     [this.FIELD_BITS.WP]: {
@@ -260,10 +279,27 @@ export class GaggimateParser {
     const profileId = this.decodeCString(profileIdBytes);
     const profileName = this.decodeCString(profileNameBytes);
 
-    // v6 stores the timestamp as uint32 elapsed milliseconds. Older versions
-    // store a uint16 sample index which is multiplied by sampleInterval.
+    // Parse phase transitions for v5+
+    let phaseTransitions = [];
+    let finalExitReason = 0;
+    let brewDelay = 0;
+    if (version >= 5) {
+      const transitionCount = view.getUint8(110 + 12 * 29); // After 12 PhaseTransitions
+      phaseTransitions = this.parsePhaseTransitions(view, transitionCount);
+      // finalExitReason follows phaseTransitionCount; was reserved padding before, so legacy files read 0.
+      finalExitReason = view.getUint8(110 + 12 * 29 + 1);
+      // brewDelayMs (ms) follows finalExitReason; legacy files read 0 (was reserved padding).
+      brewDelay = view.getUint16(110 + 12 * 29 + 2, true);
+    }
+
+    // The original hardware-scale v6 used 26-byte records with 16-bit ticks.
+    // Upstream v6 uses 28-byte records with elapsed milliseconds. The recorded
+    // size distinguishes them; v8 adds active-scale flags to upstreams v7 layout.
+    const legacyScaleV6 =
+      version === 6 && deviceSampleSize === 26 && fieldsMask === 0x1fff;
+    const elapsedTimestamp = version >= 6 && !legacyScaleV6;
     const fieldCount = this.countSetBits(fieldsMask);
-    const expectedSampleSize = fieldCount * 2 + (version >= 6 ? 2 : 0);
+    const expectedSampleSize = fieldCount * 2 + (elapsedTimestamp ? 2 : 0);
 
     if (deviceSampleSize !== expectedSampleSize) {
       throw new Error(
@@ -307,16 +343,17 @@ export class GaggimateParser {
 
     for (let i = 0; i < maxSamples; i++) {
       const base = headerSize + i * sampleSize;
-      const sample = {};
+      const sample: any = {};
 
       // Parse each field dynamically. The first field grew from 2 to 4 bytes in
       // v6; all remaining fields retain their existing order and width.
       let offset = base;
-      for (let fieldIdx = 0; fieldIdx < fieldLayout.length; fieldIdx++) {
-        const field = fieldLayout[fieldIdx];
+      // for (let fieldIdx = 0; fieldIdx < fieldLayout.length; fieldIdx++) {
+      for (const field of fieldLayout) {
+        // const field = fieldLayout[fieldIdx];
 
-        let rawValue;
-        if (version >= 6 && field.bitPos === this.FIELD_BITS.T) {
+        let rawValue: number;
+        if (elapsedTimestamp && field.bitPos === this.FIELD_BITS.T) {
           rawValue = view.getUint32(offset, true);
         } else if (field.type === 'int16') {
           rawValue = view.getInt16(offset, true);
@@ -325,7 +362,7 @@ export class GaggimateParser {
         }
 
         let finalValue;
-        if (version >= 6 && field.bitPos === this.FIELD_BITS.T) {
+        if (elapsedTimestamp && field.bitPos === this.FIELD_BITS.T) {
           finalValue = rawValue;
         } else if (field.transform) {
           finalValue = field.transform(rawValue, sampleInterval);
@@ -336,7 +373,35 @@ export class GaggimateParser {
         }
 
         sample[field.name] = finalValue;
-        offset += version >= 6 && field.bitPos === this.FIELD_BITS.T ? 4 : 2;
+        offset +=
+          elapsedTimestamp && field.bitPos === this.FIELD_BITS.T ? 4 : 2;
+      }
+
+      // For v5+ files, reconstruct phase information from transitions
+      if (version >= 5) {
+        // Find the current phase for this sample
+        let currentPhase = 0;
+        let phaseName = 'Phase 1';
+
+        for (const transition of phaseTransitions) {
+          if (i >= transition.sampleIndex) {
+            currentPhase = transition.phaseNumber;
+            phaseName = transition.phaseName;
+          } else {
+            break;
+          }
+        }
+
+        sample.phaseNumber = currentPhase;
+        sample.phaseDisplayNumber = currentPhase + 1; // 1-based for display
+        sample.phaseName = phaseName;
+      }
+
+      // Upstream histories have no source-neutral scale bit. Only the old scale
+      // v6 and the new scale v8 record it; do not interpret an absent bit as loss.
+      if (sample.systemInfo && !legacyScaleV6 && version < 8) {
+        sample.systemInfo.activeScaleConnected =
+          sample.systemInfo.bluetoothScaleConnected;
       }
 
       samples.push(sample);
@@ -372,6 +437,11 @@ export class GaggimateParser {
       fieldsMask,
       trailingBytes,
       samplesExpected: sampleCountHeader,
+      phaseTransitions, // v5+ phase transition data
+      finalExitReason, // v5+ reason the shot ended (last phase exit or manual abort)
+      finalExitReasonLabel:
+        this.PHASE_EXIT_REASON_LABELS[finalExitReason] ?? 'Unknown',
+      brewDelay, // v5+ predictive brew delay (ms) the shot ran with
     };
   }
 
@@ -407,6 +477,45 @@ export class GaggimateParser {
     throw new Error(
       `Unsupported shot index version: ${indexData.header.version}, max version supported: ${this.MAX_INDEX_VERSION_SUPPORTED}`,
     );
+  }
+
+  // Parse phase transitions from v5+ headers
+  private parsePhaseTransitions(view: DataView, transitionCount: number) {
+    const transitions: {
+      sampleIndex: number;
+      phaseNumber: number;
+      phaseName: string;
+      transitionReason: number;
+      transitionReasonLabel: string;
+    }[] = [];
+    const baseOffset = 110; // Offset after existing header fields
+
+    for (let i = 0; i < transitionCount && i < 12; i++) {
+      const offset = baseOffset + i * 29; // Each PhaseTransition is 29 bytes
+
+      const sampleIndex = view.getUint16(offset, true);
+      const phaseNumber = view.getUint8(offset + 2);
+      // Byte at offset + 3 was reserved through v5; repurposed as the phase exit reason.
+      // Legacy files wrote 0 here, which maps to "Unknown".
+      const transitionReason = view.getUint8(offset + 3);
+      const phaseNameBytes = new Uint8Array(
+        view.buffer,
+        view.byteOffset + offset + 4,
+        25,
+      );
+      const phaseName = this.decodeCString(phaseNameBytes);
+
+      transitions.push({
+        sampleIndex,
+        phaseNumber,
+        phaseName,
+        transitionReason,
+        transitionReasonLabel:
+          this.PHASE_EXIT_REASON_LABELS[transitionReason] ?? 'Unknown',
+      });
+    }
+
+    return transitions;
   }
 
   private decodeCString(bytes) {
