@@ -89,14 +89,15 @@
                   <ion-col size='2'>
                     @if ((brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED)===false) {
                       <ion-button (click)='showBrewActions($event)'
+                        aria-label="Brew options"
                         class='button-top-absolute' color='accent'
                         fill='clear' tappable>
-                        <ion-icon name='beanconqueror-dots' slot='icon-only'></ion-icon>
+                        <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only'></ion-icon>
                       </ion-button>
                     }
                     @if ((brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED) === true) {
-                      <ion-button class='button-top-absolute' color='accent' fill='clear'>
-                        <ion-icon name='archive' slot='icon-only'></ion-icon>
+                      <ion-button aria-label="Archived brew" class='button-top-absolute' color='accent' fill='clear'>
+                        <ion-icon aria-hidden="true" name='archive' slot='icon-only'></ion-icon>
                       </ion-button>
                     }
                   </ion-col>
@@ -161,8 +162,8 @@
                   class='ion-padding-start'>{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</span></ion-title>
                 </ion-col>
                 <ion-col size='2'>
-                  <ion-button (click)='showBrewActions($event)' class='button-top-absolute' color='accent' fill='clear'>
-                    <ion-icon name='beanconqueror-dots' slot='icon-only'></ion-icon>
+                  <ion-button (click)='showBrewActions($event)' aria-label="Brew options" class='button-top-absolute' color='accent' fill='clear'>
+                    <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only'></ion-icon>
                   </ion-button>
                 </ion-col>
               </ion-row>

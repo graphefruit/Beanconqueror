@@ -120,6 +120,7 @@
           <ion-select-option value="es">{{ "PAGE_SETTINGS_LANGUAGE_SPANISH" | translate }}</ion-select-option>
           <ion-select-option value="tr">{{ "PAGE_SETTINGS_LANGUAGE_TURKISH" | translate }}</ion-select-option>
           <ion-select-option value="zh">{{ "PAGE_SETTINGS_LANGUAGE_CHINESE" | translate }}</ion-select-option>
+          <ion-select-option value="zh_TW">{{ "PAGE_SETTINGS_LANGUAGE_CHINESE_TRADITIONAL" | translate }}</ion-select-option>
           <ion-select-option value="fr">{{ "PAGE_SETTINGS_LANGUAGE_FRANCE" | translate }}</ion-select-option>
           <ion-select-option value="id">{{ "PAGE_SETTINGS_LANGUAGE_INDONESIA" | translate }}</ion-select-option>
           <ion-select-option value="pl">{{ "PAGE_SETTINGS_LANGUAGE_POLISH" | translate }}</ion-select-option>
@@ -531,6 +532,38 @@
       <ion-item lines="none">
         <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
           [(ngModel)]="settings.show_archived_mills">
+          <div class='ion-label'>{{ "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate }}</div>
+        </ion-checkbox>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="margin-top-20">
+    <ion-card-content>
+      <ion-card-title>{{ "PAGE_SETTINGS_MANAGE_STATISTICS" | translate }}</ion-card-title>
+      <ion-item>
+        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.statistics.bean_date_field"
+          cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+          <div slot="label">{{ "PAGE_SETTINGS_STATISTIC_BEAN_DATE_FIELD" | translate }}</div>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.ADDED}}">{{
+            "PAGE_SETTINGS_STATISTIC_BEAN_DATE_FIELD_ADDED" | translate }}</ion-select-option>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.ROAST}}">{{
+            "BEAN_DATA_ROASTING_DATE" | translate }}</ion-select-option>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.BUY}}">{{
+            "BEAN_DATA_BUY_DATE" | translate }}</ion-select-option>
+          <ion-select-option value="{{STATISTIC_BEAN_DATE_FIELD_ENUM.OPEN}}">{{
+            "BEAN_DATA_OPEN_DATE" | translate }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+          [(ngModel)]="settings.statistics.show_archived_preparations">
+          <div class='ion-label'>{{ "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate }}</div>
+        </ion-checkbox>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+          [(ngModel)]="settings.statistics.show_archived_mills">
           <div class='ion-label'>{{ "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate }}</div>
         </ion-checkbox>
       </ion-item>

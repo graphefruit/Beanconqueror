@@ -348,7 +348,7 @@ export const BeanProto: MessageFns<BeanProto> = {
       writer.uint32(56).int32(message.roast);
     }
     if (message.roast_range !== undefined) {
-      writer.uint32(64).uint64(message.roast_range);
+      writer.uint32(65).double(message.roast_range);
     }
     if (message.beanMix !== undefined) {
       writer.uint32(72).int32(message.beanMix);
@@ -484,11 +484,15 @@ export const BeanProto: MessageFns<BeanProto> = {
           continue;
         }
         case 8: {
-          if (tag !== 64) {
+          if (tag === 64) {
+            message.roast_range = longToNumber(reader.uint64());
+            continue;
+          }
+          if (tag !== 65) {
             break;
           }
 
-          message.roast_range = longToNumber(reader.uint64());
+          message.roast_range = reader.double();
           continue;
         }
         case 9: {
@@ -809,7 +813,7 @@ export const BeanProto: MessageFns<BeanProto> = {
       obj.roast = roastToJSON(message.roast);
     }
     if (message.roast_range !== undefined) {
-      obj.roastRange = Math.round(message.roast_range);
+      obj.roastRange = message.roast_range;
     }
     if (message.beanMix !== undefined) {
       obj.beanMix = beanMixToJSON(message.beanMix);

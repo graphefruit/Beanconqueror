@@ -121,10 +121,12 @@ export class DashboardPage implements OnInit {
       return true;
     }
 
-    const currentYear = moment().year();
-    const currentMonth = moment().month();
+    const now = moment();
 
-    if (currentYear === 2026 || (currentYear === 2027 && currentMonth === 0)) {
+    if (
+      (now.year() === 2026 && now.month() === 11) ||
+      (now.year() === 2027 && now.month() === 0)
+    ) {
       return !!this.unwrappedService.getUnwrappedData(2026);
     } else {
       return false;

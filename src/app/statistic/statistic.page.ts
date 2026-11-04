@@ -1,5 +1,11 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -8,9 +14,12 @@ import {
   IonCardHeader,
   IonCol,
   IonContent,
+  IonDatetime,
+  IonDatetimeButton,
   IonHeader,
   IonLabel,
   IonMenuButton,
+  IonPopover,
   IonRow,
   IonSegment,
   IonSegmentButton,
@@ -20,12 +29,22 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import Gradient from 'javascript-color-gradient';
+import moment from 'moment';
 
+import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewView } from '../../classes/brew/brewView';
 import { HeaderComponent } from '../../components/header/header.component';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import {
+  filterBeansByRange,
+  filterByConfigTimestamp,
+  getDefaultStatisticDateRange,
+  IStatisticDateRange,
+  resolveQuickRange,
+  STATISTIC_RANGE_MODE,
+} from '../../services/statistic/statistic-date-range';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
@@ -55,6 +74,9 @@ import { UIStatistic } from '../../services/uiStatistic';
     IonCard,
     IonCardHeader,
     IonCardContent,
+    IonDatetime,
+    IonDatetimeButton,
+    IonPopover,
   ],
 })
 export class StatisticPage implements OnInit {
@@ -64,9 +86,12 @@ export class StatisticPage implements OnInit {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
   private translate = inject(TranslateService);
   private readonly currencyService = inject(CurrencyService);
-  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef, {
+    optional: true,
+  });
 
   @ViewChild('brewChart', { static: false }) public brewChart;
   @ViewChild('brewsPerDayChart', { static: false }) public brewsPerDayChart;
@@ -91,11 +116,129 @@ export class StatisticPage implements OnInit {
   public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
 
+  public rangeMode: STATISTIC_RANGE_MODE = 'ALL';
+  public dateRange: IStatisticDateRange = getDefaultStatisticDateRange();
+  public customStart: string = moment().startOf('month').format();
+  public customEnd: string = moment().endOf('day').format();
+
+  // Keep references so charts can be destroyed before re-render (Chart.js
+  // throws "Canvas is already in use" otherwise).
+  private chartRegistry: Record<string, Chart> = {};
+
   public getCurrencySymbol() {
     return this.currencyService.getActualCurrencySymbol();
   }
 
   public ionViewDidEnter(): void {}
+
+  public ionViewWillEnter(): void {
+    this.rangeMode = 'ALL';
+    this.dateRange = getDefaultStatisticDateRange();
+    this.uiStatistic.setDateRange(this.dateRange);
+  }
+
+  public onRangeModeChange(mode: STATISTIC_RANGE_MODE): void {
+    this.rangeMode = mode;
+    if (mode !== 'CUSTOM') {
+      this.dateRange = resolveQuickRange(
+        mode,
+        this.uiHelper.getUnixTimestamp(),
+      );
+      this.__applyDateRange();
+    } else {
+      this.__applyCustomRange();
+    }
+  }
+
+  public __applyCustomRange(): void {
+    if (this.customStart && this.customEnd) {
+      let start = moment(this.customStart).startOf('day').unix();
+      let end = moment(this.customEnd).endOf('day').unix();
+      if (start > end) {
+        const tmp = start;
+        start = moment(this.customEnd).startOf('day').unix();
+        end = moment(this.customStart).endOf('day').unix();
+      }
+      this.dateRange = {
+        mode: 'CUSTOM',
+        start,
+        end,
+      };
+      this.__applyDateRange();
+    }
+  }
+
+  public onCustomStartChanged(event: any, popover?: IonPopover): void {
+    const val = event?.detail?.value;
+    if (val) {
+      this.customStart = Array.isArray(val) ? val[0] : val;
+    }
+    this.__applyCustomRange();
+    if (popover) {
+      popover.dismiss();
+    }
+  }
+
+  public onCustomEndChanged(event: any, popover?: IonPopover): void {
+    const val = event?.detail?.value;
+    if (val) {
+      this.customEnd = Array.isArray(val) ? val[0] : val;
+    }
+    this.__applyCustomRange();
+    if (popover) {
+      popover.dismiss();
+    }
+  }
+
+  private __applyDateRange(): void {
+    this.uiStatistic.setDateRange(this.dateRange);
+    this.__reloadActiveSegmentCharts();
+    this.changeDetectorRef?.markForCheck();
+  }
+
+  private __reloadActiveSegmentCharts(): void {
+    switch (this.segment) {
+      case 'BREWS':
+        this.loadBrewCharts();
+        break;
+      case 'BEANS':
+        this.loadBeanCharts();
+        break;
+      case 'PREPARATIONS':
+        this.loadPreparationCharts();
+        break;
+      case 'GRINDERS':
+        this.loadGrinderCharts();
+        break;
+      default:
+        // GENERAL has no charts; scalar cards refresh via change detection.
+        break;
+    }
+  }
+
+  private __renderChart(key: string, nativeElement: any, config: any): void {
+    if (!nativeElement) {
+      return;
+    }
+    const existing = Chart.getChart(nativeElement);
+    if (existing) {
+      existing.destroy();
+    }
+    if (this.chartRegistry[key]) {
+      this.chartRegistry[key].destroy();
+    }
+    this.chartRegistry[key] = new Chart(nativeElement, config);
+  }
+
+  private __getBeansInRange(): Array<Bean> {
+    const field =
+      this.uiSettingsStorage.getSettings().statistics.bean_date_field;
+    return filterBeansByRange(
+      this.uiBeanStorage.getAllEntries(),
+      this.dateRange,
+      field,
+    );
+  }
 
   public loadBrewCharts() {
     setTimeout(() => {
@@ -118,15 +261,12 @@ export class StatisticPage implements OnInit {
     if (!this.beansAvgRatingByCountryChart?.nativeElement) {
       return;
     }
-    const existingChart = Chart.getChart(
-      this.beansAvgRatingByCountryChart.nativeElement,
-    );
-    if (existingChart) {
-      existingChart.destroy();
-    }
 
-    const beans = this.uiBeanStorage.getAllEntries();
-    const brews = this.uiBrewStorage.getAllEntries();
+    const beans = this.__getBeansInRange();
+    const brews = filterByConfigTimestamp(
+      this.uiBrewStorage.getAllEntries(),
+      this.dateRange,
+    );
     const settings = this.uiSettingsStorage.getSettings();
     const maxBeanRating = settings?.bean_rating || 5;
     const maxBrewRating = settings?.brew_rating || 5;
@@ -188,43 +328,41 @@ export class StatisticPage implements OnInit {
       }
     }
 
-    new Chart(this.beansAvgRatingByCountryChart.nativeElement, {
-      type: 'radar',
-      data,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          r: {
-            beginAtZero: true,
-            min: 0,
-            suggestedMax: maxBeanRating,
-            ticks: {
-              stepSize: maxBeanRating <= 5 ? 1 : 2,
+    this.__renderChart(
+      'beansAvgRatingByCountryChart',
+      this.beansAvgRatingByCountryChart.nativeElement,
+      {
+        type: 'radar',
+        data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              beginAtZero: true,
+              min: 0,
+              suggestedMax: maxBeanRating,
+              ticks: {
+                stepSize: maxBeanRating <= 5 ? 1 : 2,
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              position: 'top',
             },
           },
         },
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-        },
-      },
-    } as any);
+      } as any,
+    );
   }
 
   private __loadBeansByRoasterChart(): void {
     if (!this.beansByRoasterChart?.nativeElement) {
       return;
     }
-    const existingChart = Chart.getChart(
-      this.beansByRoasterChart.nativeElement,
-    );
-    if (existingChart) {
-      existingChart.destroy();
-    }
 
-    const beans = this.uiBeanStorage.getAllEntries();
+    const beans = this.__getBeansInRange();
     const roasters = Array.from(
       new Set(beans.map((b) => b.roaster).filter((r) => r)),
     );
@@ -254,33 +392,31 @@ export class StatisticPage implements OnInit {
       .getColors();
     data.datasets[0].backgroundColor = colorGradient;
 
-    new Chart(this.beansByRoasterChart.nativeElement, {
-      type: 'pie',
-      data,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
+    this.__renderChart(
+      'beansByRoasterChart',
+      this.beansByRoasterChart.nativeElement,
+      {
+        type: 'pie',
+        data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
           },
         },
-      },
-    } as any);
+      } as any,
+    );
   }
 
   private __loadBeansByProcessingChart(): void {
     if (!this.beansByProcessingChart?.nativeElement) {
       return;
     }
-    const existingChart = Chart.getChart(
-      this.beansByProcessingChart.nativeElement,
-    );
-    if (existingChart) {
-      existingChart.destroy();
-    }
 
-    const beans = this.uiBeanStorage.getAllEntries();
+    const beans = this.__getBeansInRange();
     const processings = Array.from(
       new Set(
         beans
@@ -317,33 +453,31 @@ export class StatisticPage implements OnInit {
       .getColors();
     data.datasets[0].backgroundColor = colorGradient;
 
-    new Chart(this.beansByProcessingChart.nativeElement, {
-      type: 'pie',
-      data,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
+    this.__renderChart(
+      'beansByProcessingChart',
+      this.beansByProcessingChart.nativeElement,
+      {
+        type: 'pie',
+        data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
           },
         },
-      },
-    } as any);
+      } as any,
+    );
   }
 
   private __loadBeansByCountryChart(): void {
     if (!this.beansByCountryChart?.nativeElement) {
       return;
     }
-    const existingChart = Chart.getChart(
-      this.beansByCountryChart.nativeElement,
-    );
-    if (existingChart) {
-      existingChart.destroy();
-    }
 
-    const beans = this.uiBeanStorage.getAllEntries();
+    const beans = this.__getBeansInRange();
     const countries = Array.from(
       new Set(
         beans
@@ -380,19 +514,23 @@ export class StatisticPage implements OnInit {
       .getColors();
     data.datasets[0].backgroundColor = colorGradient;
 
-    new Chart(this.beansByCountryChart.nativeElement, {
-      type: 'pie',
-      data,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
+    this.__renderChart(
+      'beansByCountryChart',
+      this.beansByCountryChart.nativeElement,
+      {
+        type: 'pie',
+        data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
           },
         },
-      },
-    } as any);
+      } as any,
+    );
   }
 
   public loadPreparationCharts() {
@@ -413,7 +551,10 @@ export class StatisticPage implements OnInit {
 
   private __getBrewsSortedForMonth(): Array<BrewView> {
     const brewViews: Array<BrewView> = [];
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+    const brews: Array<Brew> = filterByConfigTimestamp(
+      this.uiBrewStorage.getAllEntries(),
+      this.dateRange,
+    );
     // sort latest to top.
     const brewsCopy: Array<Brew> = [...brews];
 
@@ -452,7 +593,10 @@ export class StatisticPage implements OnInit {
   }
   private __getBrewsSortedForDay(): Array<BrewView> {
     const brewViews: Array<BrewView> = [];
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+    const brews: Array<Brew> = filterByConfigTimestamp(
+      this.uiBrewStorage.getAllEntries(),
+      this.dateRange,
+    );
     // sort latest to top.
     const brewsCopy: Array<Brew> = [...brews];
 
@@ -497,12 +641,26 @@ export class StatisticPage implements OnInit {
   private __loadGrinderUsageTimelineChart(): void {
     const brewEntries: Array<Brew> = this.uiBrewStorage.getAllEntries();
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
-    // Take the last 12 Months
-    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
+    // Take the last 12 Months when showing all-time data; otherwise show
+    // every bucket within the selected range.
+    const lastBrewViews: Array<BrewView> =
+      this.dateRange.mode === 'ALL' ? brewView.slice(-12) : brewView;
 
-    const grinderIds: Array<string> = Array.from(
+    let grinderIds: Array<string> = Array.from(
       new Set(brewEntries.map((e: Brew) => e.mill)),
     );
+
+    if (
+      this.uiSettingsStorage.getSettings()?.statistics?.show_archived_mills ===
+      false
+    ) {
+      grinderIds = grinderIds.filter((id) => {
+        const mill = this.uiMillStorage
+          .getAllEntries()
+          .find((m) => m.config.uuid === id);
+        return mill ? !mill.finished : true;
+      });
+    }
 
     const data = {
       labels: [],
@@ -561,7 +719,8 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    const grindingChartToDismiss = new Chart(
+    this.__renderChart(
+      'grinderUsageTimelineChart',
       this.grinderUsageTimelineChart.nativeElement,
       {
         type: 'line',
@@ -573,12 +732,26 @@ export class StatisticPage implements OnInit {
   private __loadPreparationUsageTimelineChart(): void {
     const brewEntries: Array<Brew> = this.uiBrewStorage.getAllEntries();
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
-    // Take the last 12 Months
-    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
+    // Take the last 12 Months when showing all-time data; otherwise show
+    // every bucket within the selected range.
+    const lastBrewViews: Array<BrewView> =
+      this.dateRange.mode === 'ALL' ? brewView.slice(-12) : brewView;
 
-    const preparationMethodIds: Array<string> = Array.from(
+    let preparationMethodIds: Array<string> = Array.from(
       new Set(brewEntries.map((e: Brew) => e.method_of_preparation)),
     );
+
+    if (
+      this.uiSettingsStorage.getSettings()?.statistics
+        ?.show_archived_preparations === false
+    ) {
+      preparationMethodIds = preparationMethodIds.filter((id) => {
+        const prep = this.uiPreparationStorage
+          .getAllEntries()
+          .find((p) => p.config.uuid === id);
+        return prep ? !prep.finished : true;
+      });
+    }
 
     const data = {
       labels: [],
@@ -640,7 +813,8 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    const grindingChartToDismiss = new Chart(
+    this.__renderChart(
+      'preparationUsageTimelineChart',
       this.preparationUsageTimelineChart.nativeElement,
       {
         type: 'line',
@@ -651,8 +825,10 @@ export class StatisticPage implements OnInit {
   }
   private __loadDrinkingChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
-    // Take the last 12 Months
-    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
+    // Take the last 12 Months when showing all-time data; otherwise show
+    // every bucket within the selected range.
+    const lastBrewViews: Array<BrewView> =
+      this.dateRange.mode === 'ALL' ? brewView.slice(-12) : brewView;
 
     const drinkingData = {
       labels: [],
@@ -691,7 +867,7 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    const drinkChartToDismiss = new Chart(this.drinkingChart.nativeElement, {
+    this.__renderChart('drinkingChart', this.drinkingChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions,
@@ -699,8 +875,10 @@ export class StatisticPage implements OnInit {
   }
   private __loadBrewPerDayChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForDay();
-    // Take the last 12 Months
-    const lastBrewViews: Array<BrewView> = brewView.slice(-30);
+    // Take the last 30 days when showing all-time data; otherwise show
+    // every bucket within the selected range.
+    const lastBrewViews: Array<BrewView> =
+      this.dateRange.mode === 'ALL' ? brewView.slice(-30) : brewView;
 
     const drinkingData = {
       labels: [],
@@ -727,16 +905,22 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    const brewChartToDismiss = new Chart(this.brewsPerDayChart.nativeElement, {
-      type: 'line',
-      data: drinkingData,
-      options: chartOptions,
-    } as any);
+    this.__renderChart(
+      'brewsPerDayChart',
+      this.brewsPerDayChart.nativeElement,
+      {
+        type: 'line',
+        data: drinkingData,
+        options: chartOptions,
+      } as any,
+    );
   }
   private __loadBrewChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
-    // Take the last 12 Months
-    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
+    // Take the last 12 Months when showing all-time data; otherwise show
+    // every bucket within the selected range.
+    const lastBrewViews: Array<BrewView> =
+      this.dateRange.mode === 'ALL' ? brewView.slice(-12) : brewView;
 
     const drinkingData = {
       labels: [],
@@ -763,7 +947,7 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    const brewChartToDismiss = new Chart(this.brewChart.nativeElement, {
+    this.__renderChart('brewChart', this.brewChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions,
@@ -772,8 +956,10 @@ export class StatisticPage implements OnInit {
 
   private __loadGrindingChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
-    // Take the last 12 Months
-    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
+    // Take the last 12 Months when showing all-time data; otherwise show
+    // every bucket within the selected range.
+    const lastBrewViews: Array<BrewView> =
+      this.dateRange.mode === 'ALL' ? brewView.slice(-12) : brewView;
 
     const drinkingData = {
       labels: [],
@@ -804,17 +990,32 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    const grindingChartToDismiss = new Chart(this.grindingChart.nativeElement, {
+    this.__renderChart('grindingChart', this.grindingChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions,
     } as any);
   }
   private __loadPreparationUsageChart(): void {
-    const brewView: Array<Brew> = this.uiBrewStorage.getAllEntries();
-    const preparationMethodIds: Array<string> = Array.from(
+    const brewView: Array<Brew> = filterByConfigTimestamp(
+      this.uiBrewStorage.getAllEntries(),
+      this.dateRange,
+    );
+    let preparationMethodIds: Array<string> = Array.from(
       new Set(brewView.map((e: Brew) => e.method_of_preparation)),
     );
+
+    if (
+      this.uiSettingsStorage.getSettings()?.statistics
+        ?.show_archived_preparations === false
+    ) {
+      preparationMethodIds = preparationMethodIds.filter((id) => {
+        const prep = this.uiPreparationStorage
+          .getAllEntries()
+          .find((p) => p.config.uuid === id);
+        return prep ? !prep.finished : true;
+      });
+    }
 
     const data = [
       {
@@ -872,13 +1073,15 @@ export class StatisticPage implements OnInit {
                 (accumulator, curValue) => {
                   return accumulator + curValue;
                 },
+                0,
               );
               const value =
                 mapData.datasets[tooltipItem.datasetIndex].data[
                   tooltipItem.index
                 ];
 
-              label += Number((value / sum) * 100).toFixed(2) + '%';
+              label +=
+                sum > 0 ? Number((value / sum) * 100).toFixed(2) + '%' : '0%';
               return label;
             } catch (error) {}
           },
@@ -886,7 +1089,8 @@ export class StatisticPage implements OnInit {
       },
     };
 
-    const preparationChartToDismiss = new Chart(
+    this.__renderChart(
+      'preparationUsageChart',
       this.preparationUsageChart.nativeElement,
       {
         type: 'pie',

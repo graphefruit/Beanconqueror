@@ -10,6 +10,7 @@ import 'moment/locale/it';
 import 'moment/locale/es';
 import 'moment/locale/tr';
 import 'moment/locale/zh-cn';
+import 'moment/locale/zh-tw';
 import 'moment/locale/fr';
 import 'moment/locale/id';
 import 'moment/locale/pl';
@@ -147,7 +148,7 @@ export class UIHelper {
    * @param locale The locale string to get for moment.js.
    */
   public setMomentLocale(locale: string): string {
-    const normalizedLocale = locale?.toLowerCase();
+    const normalizedLocale = locale?.toLowerCase().replace('_', '-');
     const momentLocale = normalizedLocale === 'no' ? 'nb' : normalizedLocale;
     const availableLocale = moment
       .locales()

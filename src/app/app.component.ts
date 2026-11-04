@@ -616,14 +616,21 @@ export class AppComponent implements AfterViewInit {
           ) {
             try {
               // Run other functions after getting device default lang
-              let systemLanguage: string = navigator.language.toLowerCase();
-              this.uiLog.log(`Found system language: ${systemLanguage}`);
-              if (systemLanguage.indexOf('-') > -1) {
-                systemLanguage = systemLanguage.split('-')[0];
-              }
+              const normalizedSystemLanguage = navigator.language
+                .toLowerCase()
+                .replace('_', '-');
+              this.uiLog.log(
+                `Found system language: ${normalizedSystemLanguage}`,
+              );
+              const systemLanguage = normalizedSystemLanguage.split('-')[0];
 
               let settingLanguage: string;
-              if (systemLanguage === 'de') {
+              if (
+                normalizedSystemLanguage.startsWith('zh-tw') ||
+                normalizedSystemLanguage.includes('-hant')
+              ) {
+                settingLanguage = 'zh_TW';
+              } else if (systemLanguage === 'de') {
                 settingLanguage = 'de';
               } else if (systemLanguage === 'es') {
                 settingLanguage = 'es';

@@ -17,7 +17,7 @@ export interface UnwrappedStats {
   topRoasters: { roaster: string; count: number }[];
   favoriteRoast: string;
   averageRating: number;
-  mostExpensiveBean: Bean | null;
+  mostExpensiveBean: { name: string; costPerKg: number } | null;
   topProcessingMethods: { method: string; count: number }[];
   topVarieties: { variety: string; count: number }[];
   topPreparations: { preparation: string; count: number }[];
@@ -183,16 +183,22 @@ export class UnwrappedService {
         ratedBeansCount++;
       }
 
-      // Most Expensive Bean (compare total bean cost)
-      if (groupCost > 0) {
+      // Compare price per kg after combining frozen portions, not bag prices.
+      if (
+        Number.isFinite(groupCost) &&
+        Number.isFinite(groupWeight) &&
+        groupCost > 0 &&
+        groupWeight > 0
+      ) {
+        const costPerKg = (groupCost / groupWeight) * 1000;
         if (
           !stats.mostExpensiveBean ||
-          groupCost > stats.mostExpensiveBean.cost
+          costPerKg > stats.mostExpensiveBean.costPerKg
         ) {
           stats.mostExpensiveBean = {
-            ...repBean,
-            cost: groupCost,
-          } as Bean;
+            name: repBean.name,
+            costPerKg,
+          };
         }
       }
     }
