@@ -11,6 +11,7 @@ import {
   AI_IMPORT_LANGUAGE_DETECTION_PROMPT,
   LANGUAGE_DETECTION_INSTRUCTIONS,
 } from '../../data/ai-import/ai-import-prompt';
+import { AndroidNativeCalls } from '../../native/android-native-calls-plugin';
 import { UIAlert } from '../uiAlert';
 import { UILog } from '../uiLog';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
@@ -28,7 +29,7 @@ export interface AIReadinessResult {
 @Injectable({
   providedIn: 'root',
 })
-export class AppleIntelligenceAIBeanImportService {
+export class OnDeviceAIBeanImportService {
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);
   private readonly platform = inject(Platform);
@@ -39,18 +40,22 @@ export class AppleIntelligenceAIBeanImportService {
   private readonly cameraOcr = inject(CameraOcrService);
 
   /**
-   * Check if the device supports AI-based import (Apple Intelligence on iOS 18.1+)
+   * Check if the device supports AI-based import (Apple Intelligence on iOS 18.1+, Gemini Nano on Android)
    */
   public async checkReadiness(): Promise<AIReadinessResult> {
-    // Android is not supported in the initial version
-    if (this.platform.is('android')) {
+    if (this.platform.is('ios')) {
+      return this.checkAppleIntelligenceReadiness();
+    } else if (this.platform.is('android')) {
+      return this.checkGeminiNanoReadiness();
+    } else {
       return {
         ready: false,
-        message: this.translate.instant('AI_IMPORT_NOT_AVAILABLE_ANDROID'),
+        message: this.translate.instant('AI_IMPORT_NOT_AVAILABLE_BROWSER'),
       };
     }
+  }
 
-    // Check Apple Intelligence readiness on iOS
+  private async checkAppleIntelligenceReadiness(): Promise<AIReadinessResult> {
     try {
       const result = await CapgoLLM.getReadiness();
       this.uiLog.log('AI Readiness check result: ' + JSON.stringify(result));
@@ -73,6 +78,29 @@ export class AppleIntelligenceAIBeanImportService {
         message: this.translate.instant(
           'AI_IMPORT_REQUIRES_APPLE_INTELLIGENCE',
         ),
+      };
+    }
+  }
+
+  private async checkGeminiNanoReadiness(): Promise<AIReadinessResult> {
+    try {
+      const { status } = await AndroidNativeCalls.geminiNanoStatus();
+      if (status === 'available') {
+        return { ready: true };
+      }
+      return {
+        ready: false,
+        message: this.translate.instant(
+          status === 'downloading' || status === 'downloadable'
+            ? 'AI_IMPORT_GEMINI_NANO_DOWNLOADING'
+            : 'AI_IMPORT_REQUIRES_GEMINI_NANO',
+        ),
+      };
+    } catch (error) {
+      this.uiLog.error('Error checking Gemini Nano readiness: ' + error);
+      return {
+        ready: false,
+        message: this.translate.instant('AI_IMPORT_REQUIRES_GEMINI_NANO'),
       };
     }
   }

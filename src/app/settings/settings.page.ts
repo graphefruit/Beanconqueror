@@ -228,6 +228,7 @@ export class SettingsPage {
   public isScrolling: boolean = false;
 
   public readonly isAndroid: boolean;
+  public isGeminiNanoSupported = true;
   public readonly isIos: boolean;
 
   private __cleanupAttachmentData(
@@ -288,6 +289,16 @@ export class SettingsPage {
     this.isAndroid =
       this.platform.is('capacitor') && this.platform.is('android');
     this.isIos = this.platform.is('capacitor') && this.platform.is('ios');
+    if (this.isAndroid) {
+      AndroidNativeCalls.geminiNanoStatus().then(
+        ({ status }) => {
+          this.isGeminiNanoSupported = status !== 'unavailable';
+        },
+        () => {
+          this.isGeminiNanoSupported = false;
+        },
+      );
+    }
     addIcons({
       bluetoothOutline,
       checkmarkCircleOutline,
@@ -585,6 +596,10 @@ export class SettingsPage {
 
   public isAppleIntelligenceAvailable(): boolean {
     return this.platform.is('ios') && this.platform.is('capacitor');
+  }
+
+  public isGeminiNanoAvailable(): boolean {
+    return this.isAndroid;
   }
 
   public onAiProviderChanged(): void {
