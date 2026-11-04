@@ -889,7 +889,7 @@
           <ion-select-option value="{{aiProviderEnum.APPLE_INTELLIGENCE}}">{{ "AI_PROVIDER_APPLE_INTELLIGENCE" | translate }}</ion-select-option>
           }
           @if (isGeminiNanoAvailable()) {
-          <ion-select-option value="{{aiProviderEnum.GEMINI_NANO}}" [disabled]="!isGeminiNanoSupported">{{ "AI_PROVIDER_GEMINI_NANO" | translate }}@if (!isGeminiNanoSupported) { ({{ "AI_PROVIDER_NOT_SUPPORTED_ON_DEVICE" | translate }})}</ion-select-option>
+          <ion-select-option value="{{aiProviderEnum.GEMINI_NANO}}">{{ "AI_PROVIDER_GEMINI_NANO" | translate }}</ion-select-option>
           }
           <ion-select-option value="{{aiProviderEnum.OPENAI}}">{{ "AI_PROVIDER_OPENAI" | translate }}</ion-select-option>
           <ion-select-option value="{{aiProviderEnum.GOOGLE}}">{{ "AI_PROVIDER_GOOGLE" | translate }}</ion-select-option>

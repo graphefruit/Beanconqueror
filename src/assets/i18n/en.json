@@ -1669,7 +1669,6 @@
     "AI_PROVIDER_DISABLED": "Disabled",
     "AI_PROVIDER_APPLE_INTELLIGENCE": "Apple Intelligence (on-device)",
     "AI_PROVIDER_GEMINI_NANO": "Gemini Nano (on-device)",
-    "AI_PROVIDER_NOT_SUPPORTED_ON_DEVICE": "not supported on this device",
     "AI_PROVIDER_OPENAI": "OpenAI",
     "AI_PROVIDER_GOOGLE": "Google Gemini",
     "AI_PROVIDER_ANTHROPIC": "Anthropic Claude",
