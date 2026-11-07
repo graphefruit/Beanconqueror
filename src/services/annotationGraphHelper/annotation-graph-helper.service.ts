@@ -235,7 +235,7 @@ export class AnnotationGraphHelperService {
 
         for (let i = 0; i < trace.x.length; i++) {
           const t = trace.x[i];
-          if (!t) continue;
+          if (!t || !Number.isFinite(trace.y?.[i])) continue;
           const timeMs = this.getTimestampMs(t);
           if (timeMs === 0) continue;
           const diff = Math.abs(timeMs - targetTimeMs);

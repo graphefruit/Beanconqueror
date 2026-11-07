@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, NgZone } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Brew } from 'src/classes/brew/brew';
 import { BrewFlow } from 'src/classes/brew/brewFlow';
+import { MeticulousDevice } from '../../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { BrewPopoverCutComponent } from '../brew-popover-cut.component';
@@ -45,6 +46,56 @@ describe('BrewPopoverCutComponent performCut', () => {
 
     component = TestBed.inject(BrewPopoverCutComponent);
   });
+
+  it('recovers legacy Meticulous times and cuts all imported traces', fakeAsync(() => {
+    const flow = MeticulousDevice.returnBrewFlowForShotData(
+      [100, 1350, 30125].map((time, index) => ({
+        time,
+        shot: { weight: index * 12, pressure: 9, gravimetric_flow: 2 },
+      })),
+    );
+    for (const samples of [flow.weight, flow.pressureFlow, flow.realtimeFlow]) {
+      samples.forEach((sample) => {
+        sample.brew_time = '';
+      });
+    }
+    component.flowProfile = flow;
+    component.brew = new Brew();
+    component.ngOnInit();
+    tick(50);
+
+    expect(component.maxTime).toBe(30.025);
+    expect(component.cutRange).toEqual({ lower: 0, upper: 30.025 });
+    expect(component.newFinalWeight).toBe(24);
+    component.onRangeInput({ detail: { value: { lower: 1.25, upper: 2 } } });
+    expect(component.newFinalWeight).toBe(12);
+    expect(component.isSaveDisabled()).toBeFalse();
+
+    const result = component['performCut'](flow, 1.25, 2, component.brew);
+    for (const samples of [
+      result.flowProfile.weight,
+      result.flowProfile.pressureFlow,
+      result.flowProfile.realtimeFlow,
+    ]) {
+      expect(samples.length).toBe(1);
+      expect(samples[0].brew_time).toBe('0.0');
+      expect(samples[0].timestamp).toBe('00:00:00.100');
+    }
+    expect(result.finalWeight).toBe(12);
+  }));
+
+  it('preserves elapsed times already stored by the importer', fakeAsync(() => {
+    component.flowProfile = MeticulousDevice.returnBrewFlowForShotData([
+      { time: 100, shot: { weight: 0, pressure: 0, gravimetric_flow: 0 } },
+      { time: 30125, shot: { weight: 24, pressure: 9, gravimetric_flow: 2 } },
+    ]);
+    component.ngOnInit();
+    tick(50);
+
+    expect(component.maxTime).toBe(30.125);
+    expect(component.flowProfile.weight[0].brew_time).toBe('0.100');
+    expect(component.flowProfile.weight[1].brew_time).toBe('30.125');
+  }));
 
   it('should correctly filter and shift weights and timestamps', () => {
     // Arrange

@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
   HostListener,
   inject,
   Input,
@@ -24,6 +25,7 @@ import {
 import { addIcons } from 'ionicons';
 import { bluetoothOutline } from 'ionicons/icons';
 
+import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
@@ -53,6 +55,7 @@ import { DisableDoubleClickDirective } from '../../../directive/disable-double-c
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes'; // Added import
+import { VoiceOverMagicTap } from '../../../native/voice-over-magic-tap-plugin';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
 import {
   CoffeeBluetoothDevicesService,
@@ -129,6 +132,9 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private readonly hapticService = inject(HapticService);
   private readonly uiHelper = inject(UIHelper);
   private readonly eventQueue = inject(EventQueueService);
+  private readonly elementRef = inject(ElementRef);
+  private magicTapActive = false;
+  private magicTapBusy = false;
 
   public static readonly COMPONENT_ID: string = 'brew-add';
   @Input('brew_template') public brew_template: Brew;
@@ -198,6 +204,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   }
 
   public ionViewDidEnter(): void {
+    this.setMagicTapEnabled(true);
     this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
     if (this.settings.wake_lock) {
       this.uiHelper.deviceKeepAwake();
@@ -250,8 +257,53 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   }
 
   public ionViewWillLeave() {
+    this.setMagicTapEnabled(false);
     if (this.settings.wake_lock) {
       this.uiHelper.deviceAllowSleepAgain();
+    }
+  }
+
+  private setMagicTapEnabled(enabled: boolean): void {
+    this.magicTapActive = enabled;
+    if (Capacitor.getPlatform() === 'ios') {
+      void VoiceOverMagicTap.setEnabled({ enabled }).catch((error) => {
+        console.error('Could not update VoiceOver Magic Tap', error);
+      });
+    }
+  }
+
+  @HostListener('window:voiceOverMagicTap')
+  public async handleVoiceOverMagicTap(): Promise<void> {
+    if (!this.magicTapActive || this.magicTapBusy || !this.brewBrewing?.timer) {
+      return;
+    }
+    this.magicTapBusy = true;
+    try {
+      const topModal = await this.modalController.getTop();
+      const blockingOverlay = Array.from(
+        document.querySelectorAll(
+          'ion-alert, ion-action-sheet, ion-popover, ion-loading, ion-picker',
+        ),
+      ).some((overlay) => !overlay.classList.contains('overlay-hidden'));
+      if (
+        !this.magicTapActive ||
+        topModal?.querySelector('brew-add') !== this.elementRef.nativeElement ||
+        blockingOverlay ||
+        this.brewBrewing.timer.isTimerRunning()
+      ) {
+        return;
+      }
+
+      const timer = this.brewBrewing.timer;
+      if (timer.getSeconds() > 0 || timer.getMilliseconds() > 0) {
+        timer.resetWithoutEmit();
+        await this.brewBrewing.timerReset(undefined);
+      }
+      if (this.magicTapActive && !timer.isTimerRunning()) {
+        await this.brewBrewing.timerStartPressed(undefined);
+      }
+    } finally {
+      this.magicTapBusy = false;
     }
   }
 
@@ -674,6 +726,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy() {
+    this.setMagicTapEnabled(false);
     if (this.bluetoothSubscription) {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;

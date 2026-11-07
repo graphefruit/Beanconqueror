@@ -1112,7 +1112,9 @@ export class BrewBrewingPreparationDeviceComponent
     const newMoment = moment(new Date()).startOf('day');
 
     let firstDripTimeSet: boolean = false;
-    const newBrewFlow = new BrewFlow();
+    const newBrewFlow = MeticulousDevice.returnBrewFlowForShotData(
+      _historyData.data,
+    );
 
     let seconds: number = 0;
     let milliseconds: number = 0;
@@ -1120,31 +1122,10 @@ export class BrewBrewingPreparationDeviceComponent
       const shotEntry: any = entry.shot;
       const shotEntryTime = newMoment.clone().add('milliseconds', entry.time);
       const timestamp = shotEntryTime.format('HH:mm:ss.SSS');
+      const brewTime = (entry.time / 1000).toFixed(3);
 
       seconds = shotEntryTime.diff(newMoment, 'seconds');
       milliseconds = shotEntryTime.get('milliseconds');
-
-      const realtimeWaterFlow: IBrewRealtimeWaterFlow =
-        {} as IBrewRealtimeWaterFlow;
-
-      realtimeWaterFlow.brew_time = '';
-      realtimeWaterFlow.timestamp = timestamp;
-      realtimeWaterFlow.smoothed_weight = 0;
-
-      realtimeWaterFlow.flow_value = shotEntry.gravimetric_flow;
-      realtimeWaterFlow.timestampdelta = 0;
-
-      newBrewFlow.realtimeFlow.push(realtimeWaterFlow);
-
-      const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
-      brewFlow.timestamp = timestamp;
-      brewFlow.brew_time = '';
-      brewFlow.actual_weight = shotEntry.weight;
-      brewFlow.old_weight = 0;
-      brewFlow.actual_smoothed_weight = 0;
-      brewFlow.old_smoothed_weight = 0;
-      brewFlow.not_mutated_weight = 0;
-      newBrewFlow.weight.push(brewFlow);
 
       if (
         shotEntry.weight > 0 &&
@@ -1157,19 +1138,15 @@ export class BrewBrewingPreparationDeviceComponent
         this.brewComponent.brewFirstDripTime?.changeEvent();
       }
 
-      const pressureFlow: IBrewPressureFlow = {} as IBrewPressureFlow;
-      pressureFlow.timestamp = timestamp;
-      pressureFlow.brew_time = '';
-      pressureFlow.actual_pressure = shotEntry.pressure;
-      pressureFlow.old_pressure = 0;
-      newBrewFlow.pressureFlow.push(pressureFlow);
-
-      const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
-      temperatureFlow.timestamp = timestamp;
-      temperatureFlow.brew_time = '';
-      temperatureFlow.actual_temperature = shotEntry.temperature;
-      temperatureFlow.old_temperature = 0;
-      newBrewFlow.temperatureFlow.push(temperatureFlow);
+      if (Number.isFinite(shotEntry.temperature)) {
+        const temperatureFlow: IBrewTemperatureFlow = {
+          timestamp,
+          brew_time: brewTime,
+          actual_temperature: shotEntry.temperature,
+          old_temperature: 0,
+        };
+        newBrewFlow.temperatureFlow.push(temperatureFlow);
+      }
     }
 
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];

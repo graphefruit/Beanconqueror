@@ -121,13 +121,40 @@ export class BrewPopoverCutComponent implements OnInit {
     if (this.flowProfile) {
       const arraysToCheck = [
         this.flowProfile.weight,
+        this.flowProfile.pressureFlow,
+        this.flowProfile.temperatureFlow,
         this.flowProfile.weightSecond,
         this.flowProfile.waterFlow,
         this.flowProfile.realtimeFlow,
         this.flowProfile.realtimeFlowSecond,
-        this.flowProfile.pressureFlow,
-        this.flowProfile.temperatureFlow,
+        this.flowProfile.waterDispensed,
+        this.flowProfile.waterDispensedFlowSecond,
+        this.flowProfile.brewbyweight,
+        ...Object.values(this.flowProfile.customMetrics ?? {}),
       ];
+
+      // Older imports stored timestamps but left brew_time empty.
+      const firstSample = arraysToCheck.find((arr) => arr?.length > 0)?.[0];
+      if (firstSample) {
+        const start = moment(firstSample.timestamp, 'HH:mm:ss.SSS', true);
+        const startTime = Number.parseFloat(firstSample.brew_time);
+        for (const arr of arraysToCheck) {
+          for (const sample of arr ?? []) {
+            if (!sample.brew_time?.trim()) {
+              const timestamp = moment(sample.timestamp, 'HH:mm:ss.SSS', true);
+              if (!start.isValid() || !timestamp.isValid()) {
+                throw new Error(
+                  'Cannot recover brew time from invalid timestamp',
+                );
+              }
+              sample.brew_time = (
+                timestamp.diff(start, 'seconds', true) +
+                (Number.isFinite(startTime) ? startTime : 0)
+              ).toFixed(3);
+            }
+          }
+        }
+      }
 
       for (const arr of arraysToCheck) {
         if (arr && arr.length > 0) {

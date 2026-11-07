@@ -27,7 +27,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Chart } from 'chart.js';
+import { Chart, ChartDataCustomTypesPerDataset } from 'chart.js';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 
@@ -72,8 +72,14 @@ export class BaristamodeStatisticsPage implements OnDestroy {
   @ViewChild('waterBeverageChart', { static: false })
   public waterBeverageChart!: ElementRef;
 
-  public segment: 'DAILY' | 'WEEKLY' | 'MONTHLY' = 'DAILY';
+  public segment: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'ALL_TIME' = 'DAILY';
   private brewStorageChangeSubscription?: Subscription;
+  private themeObserver?: MutationObserver;
+  private renderTimeout?: ReturnType<typeof setTimeout>;
+
+  // Canvas colours must be resolved CSS values, not var() expressions.
+  private readonly chartTextColor = () =>
+    getComputedStyle(document.body).getPropertyValue('--ion-text-color').trim();
 
   // All-time cumulative metrics
   public totalBrewsCount = 0;
@@ -95,6 +101,13 @@ export class BaristamodeStatisticsPage implements OnDestroy {
   private waterBeverageChartInstance: Chart | null = null;
 
   public ionViewWillEnter(): void {
+    this.themeObserver = new MutationObserver(() => {
+      this.renderCharts();
+    });
+    this.themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
     this.calculateAllTimeMetrics();
     this.loadActiveSegmentData();
 
@@ -107,14 +120,14 @@ export class BaristamodeStatisticsPage implements OnDestroy {
   }
 
   public ionViewWillLeave(): void {
+    this.themeObserver?.disconnect();
+    this.brewStorageChangeSubscription?.unsubscribe();
+    clearTimeout(this.renderTimeout);
     this.destroyCharts();
   }
 
   public ngOnDestroy(): void {
-    if (this.brewStorageChangeSubscription) {
-      this.brewStorageChangeSubscription.unsubscribe();
-    }
-    this.destroyCharts();
+    this.ionViewWillLeave();
   }
 
   public onSegmentChange(): void {
@@ -180,7 +193,8 @@ export class BaristamodeStatisticsPage implements OnDestroy {
   }
 
   private loadActiveSegmentData(): void {
-    setTimeout(() => {
+    clearTimeout(this.renderTimeout);
+    this.renderTimeout = setTimeout(() => {
       this.renderCharts();
     }, 150);
   }
@@ -190,6 +204,7 @@ export class BaristamodeStatisticsPage implements OnDestroy {
 
     const allBrews = this.uiBaristamodeBrewStorage.getAllEntries() || [];
     if (allBrews.length === 0) {
+      this.calculateActiveWindowMetrics([]);
       return;
     }
 
@@ -202,11 +217,20 @@ export class BaristamodeStatisticsPage implements OnDestroy {
       startDate = moment().subtract(7, 'weeks').startOf('isoWeek');
     } else if (this.segment === 'MONTHLY') {
       startDate = moment().subtract(5, 'months').startOf('month');
+    } else {
+      startDate = moment
+        .unix(
+          allBrews.reduce(
+            (earliest, brew) => Math.min(earliest, brew.config.unix_timestamp),
+            allBrews[0].config.unix_timestamp,
+          ),
+        )
+        .startOf('month');
     }
 
     const filteredBrews = allBrews.filter((brew) => {
       const brewDate = moment.unix(brew.config.unix_timestamp);
-      return brewDate.isSameOrAfter(startDate);
+      return this.segment === 'ALL_TIME' || brewDate.isSameOrAfter(startDate);
     });
 
     let cardStartDate = moment();
@@ -220,7 +244,9 @@ export class BaristamodeStatisticsPage implements OnDestroy {
 
     const cardBrews = allBrews.filter((brew) => {
       const brewDate = moment.unix(brew.config.unix_timestamp);
-      return brewDate.isSameOrAfter(cardStartDate);
+      return (
+        this.segment === 'ALL_TIME' || brewDate.isSameOrAfter(cardStartDate)
+      );
     });
 
     this.calculateActiveWindowMetrics(cardBrews);
@@ -316,12 +342,12 @@ export class BaristamodeStatisticsPage implements OnDestroy {
           legend: {
             position: 'bottom',
             labels: {
-              color: 'var(--ion-text-color, #000000)',
+              color: this.chartTextColor(),
             },
           },
         },
       },
-    } as any);
+    });
   }
 
   private renderProfileTimelineChart(
@@ -346,8 +372,12 @@ export class BaristamodeStatisticsPage implements OnDestroy {
         bucketKeys.push(w.format('YYYY-[W]WW'));
         bucketLabels.push(`W${w.format('WW')}`);
       }
-    } else if (this.segment === 'MONTHLY') {
-      for (let i = 0; i < 6; i++) {
+    } else {
+      const monthCount =
+        this.segment === 'MONTHLY'
+          ? 6
+          : moment().startOf('month').diff(startDate, 'months') + 1;
+      for (let i = 0; i < monthCount; i++) {
         const m = moment(startDate).add(i, 'months');
         bucketKeys.push(m.format('YYYY-MM'));
         bucketLabels.push(m.format('MMM YY'));
@@ -417,13 +447,13 @@ export class BaristamodeStatisticsPage implements OnDestroy {
                 display: false,
               },
               ticks: {
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
             },
             y: {
               stacked: true,
               ticks: {
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
                 precision: 0,
               },
             },
@@ -432,12 +462,12 @@ export class BaristamodeStatisticsPage implements OnDestroy {
             legend: {
               position: 'bottom',
               labels: {
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
             },
           },
         },
-      } as any,
+      },
     );
   }
 
@@ -486,7 +516,11 @@ export class BaristamodeStatisticsPage implements OnDestroy {
       ratioData.push(Math.round(ratio * 100) / 100);
     }
 
-    const data = {
+    const data: ChartDataCustomTypesPerDataset<
+      'bar' | 'line',
+      number[],
+      string
+    > = {
       labels: sortedProfiles,
       datasets: [
         {
@@ -534,19 +568,19 @@ export class BaristamodeStatisticsPage implements OnDestroy {
                 display: false,
               },
               ticks: {
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
             },
             yWeight: {
               type: 'linear',
               position: 'left',
               ticks: {
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
               title: {
                 display: true,
                 text: 'g / ml',
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
             },
             yRatio: {
@@ -556,12 +590,12 @@ export class BaristamodeStatisticsPage implements OnDestroy {
                 drawOnChartArea: false, // only want the grid lines for one axis
               },
               ticks: {
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
               title: {
                 display: true,
                 text: 'Ratio (Input/Output)',
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
             },
           },
@@ -569,12 +603,12 @@ export class BaristamodeStatisticsPage implements OnDestroy {
             legend: {
               position: 'bottom',
               labels: {
-                color: 'var(--ion-text-color, #000000)',
+                color: this.chartTextColor(),
               },
             },
           },
         },
-      } as any,
+      },
     );
   }
 }

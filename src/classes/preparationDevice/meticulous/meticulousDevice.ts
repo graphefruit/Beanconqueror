@@ -45,11 +45,12 @@ export class MeticulousDevice extends PreparationDevice {
       const shotEntry: any = entry.shot;
       const shotEntryTime = newMoment.clone().add('milliseconds', entry.time);
       const timestamp = shotEntryTime.format('HH:mm:ss.SSS');
+      const brewTime = (entry.time / 1000).toFixed(3);
 
       const realtimeWaterFlow: IBrewRealtimeWaterFlow =
         {} as IBrewRealtimeWaterFlow;
 
-      realtimeWaterFlow.brew_time = '';
+      realtimeWaterFlow.brew_time = brewTime;
       realtimeWaterFlow.timestamp = timestamp;
       realtimeWaterFlow.smoothed_weight = 0;
       realtimeWaterFlow.flow_value = shotEntry.gravimetric_flow;
@@ -59,7 +60,7 @@ export class MeticulousDevice extends PreparationDevice {
 
       const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
       brewFlow.timestamp = timestamp;
-      brewFlow.brew_time = '';
+      brewFlow.brew_time = brewTime;
       brewFlow.actual_weight = shotEntry.weight;
       brewFlow.old_weight = 0;
       brewFlow.actual_smoothed_weight = 0;
@@ -69,7 +70,7 @@ export class MeticulousDevice extends PreparationDevice {
 
       const pressureFlow: IBrewPressureFlow = {} as IBrewPressureFlow;
       pressureFlow.timestamp = timestamp;
-      pressureFlow.brew_time = '';
+      pressureFlow.brew_time = brewTime;
       pressureFlow.actual_pressure = shotEntry.pressure;
       pressureFlow.old_pressure = 0;
       newBrewFlow.pressureFlow.push(pressureFlow);

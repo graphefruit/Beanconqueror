@@ -92,7 +92,7 @@
     <div class="divider-line"></div>
 
     <!-- Segment Filter Section -->
-    <ion-segment [(ngModel)]="segment" (ionChange)="onSegmentChange()" class="ion-margin-bottom font-medium">
+    <ion-segment [(ngModel)]="segment" (ionChange)="onSegmentChange()" [scrollable]="true" class="ion-margin-bottom font-medium">
       <ion-segment-button value="DAILY">
         <ion-label>{{ "BARISTAMODE_STATISTICS.DAILY" | translate }}</ion-label>
       </ion-segment-button>
@@ -101,6 +101,9 @@
       </ion-segment-button>
       <ion-segment-button value="MONTHLY">
         <ion-label>{{ "BARISTAMODE_STATISTICS.MONTHLY" | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ALL_TIME">
+        <ion-label>{{ "STATISTIC_RANGE_ALL_TIME" | translate }}</ion-label>
       </ion-segment-button>
     </ion-segment>
 
