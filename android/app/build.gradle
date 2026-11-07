@@ -33,6 +33,7 @@ repositories {
 dependencies {
     // Custom dependencies for custom native code
     implementation "androidx.documentfile:documentfile:1.0.1"
+    implementation "com.google.mlkit:genai-prompt:1.0.0-beta5"
 
     // Default config from Capacitor
     implementation fileTree(include: ['*.jar'], dir: 'libs')
