@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   HostListener,
@@ -187,25 +186,27 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
             // Load the slog samples and the notes
             const shotData = await this.gaggimateDevice.getShotSlog(data.id);
 
-            GaggimateShotDataEntry.brewFlow =
-              GaggimateDevice.returnBrewFlowForShotData(
-                shotData.samples,
-                shotData.version,
-              );
-            GaggimateShotDataEntry.targetTemp =
-              GaggimateDevice.returnTargetTemperatureForShotData(
-                shotData.samples,
-              );
+            if (shotData) {
+              GaggimateShotDataEntry.brewFlow =
+                GaggimateDevice.returnBrewFlowForShotData(
+                  shotData.samples,
+                  shotData.version,
+                );
+              GaggimateShotDataEntry.targetTemp =
+                GaggimateDevice.returnTargetTemperatureForShotData(
+                  shotData.samples,
+                );
 
-            GaggimateShotDataEntry.notes =
-              await this.gaggimateDevice.getShotNotesFile(data.id);
+              GaggimateShotDataEntry.notes =
+                await this.gaggimateDevice.getShotNotesFile(data.id);
 
-            if (data.hasNotes) {
-              // console.log('has notes', data.id)
-              // TODO: For future release, when the flag will be correctly populated, we should load the notes only on true
+              if (data.hasNotes) {
+                // console.log('has notes', data.id)
+                // TODO: For future release, when the flag will be correctly populated, we should load the notes only if true
+              }
+
+              alldatatoPush.push(GaggimateShotDataEntry);
             }
-
-            alldatatoPush.push(GaggimateShotDataEntry);
           }
         } catch (error) {
           console.error(`There was a problem fetching from GaggiMate:`, error);

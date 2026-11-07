@@ -13,6 +13,7 @@ import {
   IonIcon,
   IonInput,
   IonItem,
+  IonItemGroup,
   IonLabel,
   IonRange,
   IonSelect,
@@ -76,6 +77,7 @@ import { UIToast } from '../../../services/uiToast';
     IonCheckbox,
     IonFooter,
     IonToggle,
+    IonItemGroup,
   ],
 })
 export class PreparationConnectedDeviceComponent {
@@ -299,8 +301,6 @@ export class PreparationConnectedDeviceComponent {
   }
 
   private normalizeUrl(inputUrl: string) {
-    // const inputUrl = this.data?.connectedPreparationDevice?.url;
-
     const PROTOCOL_PATTERN = '(https?|wss?)';
     const HAS_PROTOCOL = new RegExp(`^${PROTOCOL_PATTERN}:\\/\\/`, 'i');
     const IS_INCOMPLETE = new RegExp(`^${PROTOCOL_PATTERN}:\\/*$`, 'i');
