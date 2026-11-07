@@ -40,6 +40,7 @@ export enum PressureType {
 
 export enum TemperatureType {
   ETI = 'ETI',
+  ETIBLUEDOT = 'ETIBLUEDOT',
   BASICGRILL = 'BASICGRILL',
   MEATER = 'MEATER',
   COMBUSTION = 'COMBUSTION',

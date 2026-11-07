@@ -13,6 +13,7 @@ import { Logger } from 'src/classes/devices/common/logger';
 import { DifluidMicrobalance } from 'src/classes/devices/difluidMicrobalance';
 import { DiFluidR2Refractometer } from 'src/classes/devices/difluidR2Refractometer';
 import { ETITemperature } from 'src/classes/devices/etiTemperature';
+import { ETIBlueDotTemperature } from 'src/classes/devices/etiBlueDotTemperature';
 import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { PressureDevice } from 'src/classes/devices/pressureBluetoothDevice';
 import { PrsPressure } from 'src/classes/devices/prsPressure';
@@ -526,6 +527,7 @@ export class CoffeeBluetoothDevicesService {
         (scanDevice) => {
           if (
             ETITemperature.test(scanDevice) ||
+            ETIBlueDotTemperature.test(scanDevice) ||
             BasicGrillThermometer.test(scanDevice) ||
             MeaterThermometer.test(scanDevice) ||
             CombustionThermometer.test(scanDevice) ||
@@ -850,6 +852,12 @@ export class CoffeeBluetoothDevicesService {
     if (ETITemperature.test(deviceTemperature)) {
       this.logger.log('BleManager - We found a ETI Ltd Thermometer device ');
       return { id: deviceTemperature.id, type: TemperatureType.ETI };
+    } else if (ETIBlueDotTemperature.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found a ETI Ltd BlueDOT Thermometer device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.ETIBLUEDOT,
+      };
     } else if (BasicGrillThermometer.test(deviceTemperature)) {
       this.logger.log(
         'BleManager - We found a Basic Grill Thermometer device ',
