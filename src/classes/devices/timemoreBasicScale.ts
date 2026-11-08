@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core';
+
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { sleep } from './common';
@@ -41,6 +43,23 @@ export class TimemoreBasicScale extends BluetoothScale {
 
   public override async connect() {
     this.logger.log('connecting...');
+    if (Capacitor.getPlatform() === 'android') {
+      try {
+        await new Promise<void>((resolve) => {
+          ble.requestMtu(
+            this.device_id,
+            247,
+            () => resolve(),
+            (err: any) => {
+              this.logger.log('failed to set MTU', err);
+              resolve();
+            },
+          );
+        });
+      } catch (e) {
+        this.logger.log('Error requesting MTU', e);
+      }
+    }
     await this.attachNotification();
     await sleep(500);
     await this.setWeightUnitToGram();
@@ -180,46 +199,47 @@ export class TimemoreBasicScale extends BluetoothScale {
   }
 
   private async parseStatusUpdate(rawStatus: Uint8Array) {
-    if (rawStatus.length < 8) {
-      return;
-    }
-    if (rawStatus[0] !== 0xa5 || rawStatus[1] !== 0x5a) {
-      return;
-    }
-    const opcode = rawStatus[2];
-    const cmdId = rawStatus[3];
-    const dataLen = (rawStatus[4] << 8) | rawStatus[5];
-
-    if (rawStatus.length < 8 + dataLen) {
+    if (!rawStatus || rawStatus.length < 8) {
       return;
     }
 
-    // Validate CRC
-    const receivedCrc = (rawStatus[6 + dataLen] << 8) | rawStatus[7 + dataLen];
-    const calculatedCrc = this.crc16Ibm(rawStatus.slice(0, 6 + dataLen));
-    if (receivedCrc !== calculatedCrc) {
-      this.logger.log('CRC validation failed');
-      return;
-    }
-
-    const data = rawStatus.slice(6, 6 + dataLen);
-
-    if (opcode === 0x01 || opcode === 0x02) {
-      switch (cmdId) {
-        case 0x01: // Weight, Flow Rate, Time
-          if (data.length >= 8) {
-            const rawWeight =
-              (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
-            const weight = rawWeight / 10;
-            this.setWeight(weight);
-          }
-          break;
-        case 0x05: // Battery Level
-          if (data.length >= 2) {
-            this.batteryLevel = data[1];
-          }
-          break;
+    let offset = 0;
+    while (offset <= rawStatus.length - 8) {
+      if (rawStatus[offset] !== 0xa5 || rawStatus[offset + 1] !== 0x5a) {
+        offset++;
+        continue;
       }
+
+      const opcode = rawStatus[offset + 2];
+      const cmdId = rawStatus[offset + 3];
+      const dataLen = (rawStatus[offset + 4] << 8) | rawStatus[offset + 5];
+
+      const availableData = rawStatus.length - (offset + 6);
+      if (dataLen > availableData) {
+        break;
+      }
+
+      const data = rawStatus.slice(offset + 6, offset + 6 + dataLen);
+
+      if (opcode === 0x01 || opcode === 0x02) {
+        switch (cmdId) {
+          case 0x01: // Weight, Flow Rate, Time
+            if (data.length >= 8) {
+              const rawWeight =
+                (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+              const weight = rawWeight / 10;
+              this.setWeight(weight);
+            }
+            break;
+          case 0x05: // Battery Level
+            if (data.length >= 2) {
+              this.batteryLevel = data[1];
+            }
+            break;
+        }
+      }
+
+      offset += Math.max(8, 6 + dataLen + 2);
     }
   }
 

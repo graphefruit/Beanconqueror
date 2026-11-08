@@ -1,5 +1,11 @@
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Input,
+  ViewChild,
+} from '@angular/core';
 
 import {
   AlertController,
@@ -26,6 +32,7 @@ import { addIcons } from 'ionicons';
 import {
   clipboardOutline,
   create,
+  cutOutline,
   download,
   expandOutline,
   globeOutline,
@@ -70,6 +77,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIExcel } from '../../../services/uiExcel';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
@@ -78,6 +86,7 @@ import { UIMillHelper } from '../../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
+import { BrewPopoverCutComponent } from '../brew-popover-cut/brew-popover-cut.component';
 import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
 
 declare var Plotly;
@@ -134,7 +143,9 @@ export class BrewDetailComponent {
   private readonly platform = inject(Platform);
   private readonly alertCtrl = inject(AlertController);
   private readonly uiLog = inject(UILog);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly shareService = inject(ShareService);
+  private readonly uiBrewStorage = inject(UIBrewStorage);
 
   public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -170,6 +181,7 @@ export class BrewDetailComponent {
       shareSocialOutline,
       expandOutline,
       clipboardOutline,
+      cutOutline,
     });
   }
   public setUIParams() {
@@ -516,6 +528,127 @@ export class BrewDetailComponent {
     });
     await popover.present();
     await popover.onWillDismiss();
+  }
+
+  private async readDummyFlowProfile(): Promise<any> {
+    return (
+      await import('../../../assets/BeanconquerorFlowTestDataSecond.json')
+    ).default;
+  }
+
+  public async cutFlowProfile(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    if (!this.data.flow_profile) {
+      return;
+    }
+
+    let flowProfile = null;
+    try {
+      if (!this.platform.is('capacitor')) {
+        flowProfile = await this.readDummyFlowProfile();
+      } else {
+        flowProfile = await this.uiFileHelper.readInternalJSONFile(
+          this.data.flow_profile,
+        );
+      }
+    } catch (ex) {
+      this.uiLog.error('Cant read flow profile for cutting ' + ex.message);
+      return;
+    }
+
+    if (!flowProfile) {
+      return;
+    }
+
+    const popover = await this.modalController.create({
+      component: BrewPopoverCutComponent,
+      animated: true,
+      componentProps: {
+        brew: this.data,
+        flowProfile: flowProfile,
+      },
+      id: BrewPopoverCutComponent.COMPONENT_ID,
+      cssClass: 'popover-cut',
+    });
+
+    await popover.present();
+    const result = await popover.onWillDismiss();
+
+    if (result.role === 'save' && result.data) {
+      try {
+        try {
+          await this.uiFileHelper.writeInternalFileFromText(
+            JSON.stringify(result.data.flowProfile),
+            this.data.flow_profile,
+          );
+        } catch (ex) {}
+
+        this.data.brew_time = result.data.brew_time;
+        this.data.brew_time_milliseconds = result.data.brew_time_milliseconds;
+
+        if (result.data.finalWeight !== undefined) {
+          if (this.data.brew_beverage_quantity > 0) {
+            this.data.brew_beverage_quantity = result.data.finalWeight;
+          }
+          if (this.data.brew_quantity > 0) {
+            this.data.brew_quantity = result.data.finalWeight;
+          }
+        }
+
+        if (result.data.coffee_first_drip_time !== undefined) {
+          this.data.coffee_first_drip_time = result.data.coffee_first_drip_time;
+          this.data.coffee_first_drip_time_milliseconds =
+            result.data.coffee_first_drip_time_milliseconds;
+        }
+
+        if (result.data.coffee_blooming_time !== undefined) {
+          this.data.coffee_blooming_time = result.data.coffee_blooming_time;
+          this.data.coffee_blooming_time_milliseconds =
+            result.data.coffee_blooming_time_milliseconds;
+        }
+
+        if (this.brew) {
+          this.brew.brew_time = result.data.brew_time;
+          this.brew.brew_time_milliseconds = result.data.brew_time_milliseconds;
+          if (result.data.finalWeight !== undefined) {
+            if (this.brew.brew_beverage_quantity > 0) {
+              this.brew.brew_beverage_quantity = result.data.finalWeight;
+            }
+            if (this.brew.brew_quantity > 0) {
+              this.brew.brew_quantity = result.data.finalWeight;
+            }
+          }
+          if (result.data.coffee_first_drip_time !== undefined) {
+            this.brew.coffee_first_drip_time =
+              result.data.coffee_first_drip_time;
+            this.brew.coffee_first_drip_time_milliseconds =
+              result.data.coffee_first_drip_time_milliseconds;
+          }
+          if (result.data.coffee_blooming_time !== undefined) {
+            this.brew.coffee_blooming_time = result.data.coffee_blooming_time;
+            this.brew.coffee_blooming_time_milliseconds =
+              result.data.coffee_blooming_time_milliseconds;
+          }
+        }
+
+        const updatedData = new Brew();
+        updatedData.initializeByObject(this.data);
+        this.data = updatedData;
+
+        if (this.brew) {
+          const updatedBrew = new Brew();
+          updatedBrew.initializeByObject(this.brew as Brew);
+          this.brew = updatedBrew;
+        }
+
+        await this.uiBrewStorage.update(this.data);
+        await this.initializeFlowChartOnGraphEl();
+        this.cdr.detectChanges();
+      } catch (err) {
+        this.uiLog.error('Failed to save cut flow profile: ' + err.message);
+      }
+    }
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;

@@ -51,7 +51,7 @@ export class PleaseActivateAnalyticsPopoverComponent implements OnInit {
 
   private disableHardwareBack;
   public finishButtonDisabled: boolean = true;
-  public delayCounter: number = 20;
+  public delayCounter: number = 10;
   public brewsCount: number = 0;
   public beansCount: number = 0;
   constructor() {

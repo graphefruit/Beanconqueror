@@ -33,8 +33,13 @@ It also supports several languages, including English, German, Spanish, Chinese,
 Flow & Pressure Profiling:
 Beanconqueror is compatible with a range of bluetooth scales and pressure profile devices, including Decent Scale, Acaia Scales, Felicita Scales, Hiroia Jimmy, Eureka Precisa, Skale2, Smart Espresso Profiler, and Pressensor.
 It can even produce graphs to track your brew live and help you repeat your favourite brews more easily.
+Imported Meticulous shots support time-slider metric overlays and graph trimming.
+Older imports with missing sample times recover them from the graph timestamps when trimming; unavailable metrics are omitted from the overlay.
 
 Track your caffeine consume into Apple Health and have a look there.
+
+Barista mode statistics:
+Review daily, weekly, monthly, or All Time statistics. All Time includes every saved barista-mode brew and groups the profile timeline by month, starting with the earliest brew. Chart labels follow the light or dark theme.
 
 Whether you're looking to track your coffee journey, optimise your brews, or simply keep track of your coffee beans, Beanconqueror has everything you need to perfect your brew from green to cup.
 

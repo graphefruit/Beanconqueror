@@ -16,7 +16,6 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { RoastingMachinePopoverActionsComponent } from '../../app/roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
@@ -30,6 +29,11 @@ import { UIImage } from '../../services/uiImage';
 import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
 import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
 import { UIToast } from '../../services/uiToast';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
@@ -79,11 +83,9 @@ export class RoastingMachineInformationCardComponent {
       ROASTING_MACHINE_TRACKING.TITLE,
       ROASTING_MACHINE_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await this.modalController.create({
-      component: RoastingMachinePopoverActionsComponent,
-      componentProps: { roastingMachine: this.roastingMachine },
-      id: RoastingMachinePopoverActionsComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalController, {
+      id: 'roasting-machine-popover-actions',
+      items: this.buildRoastingMachineActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
@@ -96,6 +98,38 @@ export class RoastingMachineInformationCardComponent {
         this.roastingMachine,
       ]);
     }
+  }
+
+  private buildRoastingMachineActions(): PopoverAction[] {
+    return [
+      popoverAction({
+        role: ROASTING_MACHINE_ACTION.DETAIL,
+        translationKey: 'DETAIL',
+        icon: 'beanconqueror-detail',
+      }),
+      popoverAction({
+        role: ROASTING_MACHINE_ACTION.EDIT,
+        translationKey: 'EDIT',
+        icon: 'beanconqueror-edit',
+      }),
+      popoverAction({
+        role: ROASTING_MACHINE_ACTION.ARCHIVE,
+        translationKey: 'ARCHIVE',
+        icon: 'beanconqueror-finished',
+        visible: this.roastingMachine.finished === false,
+      }),
+      popoverAction({
+        role: ROASTING_MACHINE_ACTION.PHOTO_GALLERY,
+        translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+        icon: 'beanconqueror-photo-gallery',
+        visible: this.hasPhotos(),
+      }),
+      popoverAction({
+        role: ROASTING_MACHINE_ACTION.DELETE,
+        translationKey: 'DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
 
   private async internalAction(action: ROASTING_MACHINE_ACTION) {

@@ -14,12 +14,18 @@ import { DifluidMicrobalanceTi } from './difluidMicrobalanceTi';
 import { DiFluidR2Refractometer } from './difluidR2Refractometer';
 import { DiyPythonCoffeeScale } from './diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
+import { EmberThermometer } from './emberThermometer';
 import { EspressiScale } from './espressiScale';
 import { ETITemperature } from './etiTemperature';
 import { EurekaPrecisaScale } from './eurekaPrecisaScale';
 import { FelicitaScale } from './felicitaScale';
 import { FutulaScale } from './futulaScale';
 import { GeisingerThermometer } from './geisingerThermometer';
+import { InkbirdIbbqThermometer } from './inkbirdIbbqThermometer';
+import { InkbirdIht2pbThermometer } from './inkbirdIht2pbThermometer';
+import { InkbirdInt11IBThermometer } from './inkbirdInt11IBThermometer';
+import { InkbirdInt11PBThermometer } from './inkbirdInt11PBThermometer';
+import { InkbirdTnt11BThermometer } from './inkbirdTnt11BThermometer';
 import { JimmyScale } from './jimmyScale';
 import { LunarScale } from './lunarScale';
 import { MeaterThermometer } from './meaterThermometer';
@@ -148,6 +154,18 @@ export function makeTemperatureDevice(
       return new GeisingerThermometer(data);
     case TemperatureType.COFFEESENSOR:
       return new CoffeeSensorTemperature(data);
+    case TemperatureType.EMBER:
+      return new EmberThermometer(data);
+    case TemperatureType.INKBIRD_INT11IB:
+      return new InkbirdInt11IBThermometer(data);
+    case TemperatureType.INKBIRD_INT11PB:
+      return new InkbirdInt11PBThermometer(data);
+    case TemperatureType.INKBIRD_IHT2PB:
+      return new InkbirdIht2pbThermometer(data);
+    case TemperatureType.INKBIRD_IBBQ:
+      return new InkbirdIbbqThermometer(data);
+    case TemperatureType.INKBIRD_TNT11B:
+      return new InkbirdTnt11BThermometer(data);
     default:
       return null;
   }

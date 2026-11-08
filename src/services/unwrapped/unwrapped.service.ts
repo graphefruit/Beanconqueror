@@ -17,7 +17,7 @@ export interface UnwrappedStats {
   topRoasters: { roaster: string; count: number }[];
   favoriteRoast: string;
   averageRating: number;
-  mostExpensiveBean: Bean | null;
+  mostExpensiveBean: { name: string; costPerKg: number } | null;
   topProcessingMethods: { method: string; count: number }[];
   topVarieties: { variety: string; count: number }[];
   topPreparations: { preparation: string; count: number }[];
@@ -41,6 +41,21 @@ export class UnwrappedService {
   private uiPreparationStorage = inject(UIPreparationStorage);
   private uiMillStorage = inject(UIMillStorage);
 
+  public getAvailableYears(): number[] {
+    const allBeans = this.uiBeanStorage.getAllEntries();
+    const years = new Set<number>();
+    for (const bean of allBeans) {
+      const dateStr = bean.buyDate || bean.roastingDate;
+      if (dateStr) {
+        const date = DateTime.fromISO(dateStr);
+        if (date.isValid) {
+          years.add(date.year);
+        }
+      }
+    }
+    return Array.from(years).sort((a, b) => b - a);
+  }
+
   public getUnwrappedData(year: number): UnwrappedStats | null {
     const allBeans = this.uiBeanStorage.getAllEntries();
 
@@ -59,9 +74,20 @@ export class UnwrappedService {
       return null;
     }
 
+    // Group beans by frozenGroupId if present, or by individual bean uuid
+    const groupedBeansMap = new Map<string, Bean[]>();
+    for (const bean of beansInYear) {
+      const key = bean.frozenGroupId
+        ? `frozen_${bean.frozenGroupId}`
+        : `bean_${bean.config.uuid}`;
+      const group = groupedBeansMap.get(key) || [];
+      group.push(bean);
+      groupedBeansMap.set(key, group);
+    }
+
     const stats: UnwrappedStats = {
       year: year,
-      totalBeans: beansInYear.length,
+      totalBeans: groupedBeansMap.size,
       totalWeight: 0,
       topCountries: [],
       topRoasters: [],
@@ -90,15 +116,25 @@ export class UnwrappedService {
     let totalRating = 0;
     let ratedBeansCount = 0;
 
-    for (const bean of beansInYear) {
-      // Weight
-      if (bean.weight) {
-        stats.totalWeight += bean.weight;
+    for (const beanGroup of groupedBeansMap.values()) {
+      let groupWeight = 0;
+      let groupCost = 0;
+      for (const bean of beanGroup) {
+        if (bean.weight) {
+          groupWeight += bean.weight;
+        }
+        if (bean.cost) {
+          groupCost += bean.cost;
+        }
       }
+      stats.totalWeight += groupWeight;
+      stats.totalCost += groupCost;
 
-      // Country, Processing, Variety
-      if (bean.bean_information) {
-        bean.bean_information.forEach((info) => {
+      const repBean = beanGroup[0];
+
+      // Country, Processing, Variety (counted once per master bean)
+      if (repBean.bean_information) {
+        repBean.bean_information.forEach((info) => {
           if (info.country) {
             const country = info.country.trim();
             if (country) {
@@ -126,33 +162,43 @@ export class UnwrappedService {
         });
       }
 
-      // Roaster
-      if (bean.roaster) {
-        const roaster = bean.roaster.trim();
+      // Roaster (counted once per master bean)
+      if (repBean.roaster) {
+        const roaster = repBean.roaster.trim();
         if (roaster) {
           roastersMap.set(roaster, (roastersMap.get(roaster) || 0) + 1);
         }
       }
 
-      // Roast
-      if (bean.roast) {
-        const roast = this.getRoastName(bean.roast);
+      // Roast (counted once per master bean)
+      if (repBean.roast) {
+        const roast = this.getRoastName(repBean.roast);
         roastsMap.set(roast, (roastsMap.get(roast) || 0) + 1);
       }
 
-      // Rating
-      if (bean.rating > 0) {
-        totalRating += bean.rating;
+      // Rating (counted once per master bean if rated)
+      const ratedBean = beanGroup.find((b) => b.rating > 0);
+      if (ratedBean) {
+        totalRating += ratedBean.rating;
         ratedBeansCount++;
       }
 
-      // Most Expensive
-      if (bean.cost) {
+      // Compare price per kg after combining frozen portions, not bag prices.
+      if (
+        Number.isFinite(groupCost) &&
+        Number.isFinite(groupWeight) &&
+        groupCost > 0 &&
+        groupWeight > 0
+      ) {
+        const costPerKg = (groupCost / groupWeight) * 1000;
         if (
           !stats.mostExpensiveBean ||
-          bean.cost > stats.mostExpensiveBean.cost
+          costPerKg > stats.mostExpensiveBean.costPerKg
         ) {
-          stats.mostExpensiveBean = bean;
+          stats.mostExpensiveBean = {
+            name: repBean.name,
+            costPerKg,
+          };
         }
       }
     }
@@ -164,7 +210,7 @@ export class UnwrappedService {
 
     const sortedRoasts = this.mapToSortedArray(roastsMap, 'roast');
     if (sortedRoasts.length > 0) {
-      stats.favoriteRoast = sortedRoasts[0]['roast'];
+      stats.favoriteRoast = sortedRoasts[0].roast;
     }
 
     if (ratedBeansCount > 0) {
@@ -244,13 +290,6 @@ export class UnwrappedService {
       }
     }
 
-    // Cost Calculation (from Beans)
-    for (const bean of beansInYear) {
-      if (bean.cost) {
-        stats.totalCost += bean.cost;
-      }
-    }
-
     // Averages and Maxes
     if (uniqueDays.size > 0) {
       stats.averageBrewsPerDay = stats.totalBrews / uniqueDays.size;
@@ -294,7 +333,10 @@ export class UnwrappedService {
       if (brew.bean && brew.rating > 0) {
         const beanInstance = this.uiBeanStorage.getEntryByUUID(brew.bean);
         if (beanInstance) {
-          const current = beanRatingMap.get(brew.bean) || {
+          const key = beanInstance.frozenGroupId
+            ? beanInstance.frozenGroupId
+            : brew.bean;
+          const current = beanRatingMap.get(key) || {
             totalRating: 0,
             count: 0,
             roaster: beanInstance.roaster,
@@ -302,7 +344,7 @@ export class UnwrappedService {
           };
           current.totalRating += brew.rating;
           current.count += 1;
-          beanRatingMap.set(brew.bean, current);
+          beanRatingMap.set(key, current);
         }
       }
     }

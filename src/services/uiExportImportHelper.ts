@@ -39,6 +39,11 @@ const EXPORT_CHUNKING_CONFIG = [
     fileName: 'Beans',
     chunkSize: 500,
   },
+  {
+    propertyName: 'BARISTAMODE_BREWS',
+    fileName: 'Baristamode',
+    chunkSize: 250,
+  },
 ];
 
 function chunkFileName(fileName: string, index: number): string {

@@ -22,7 +22,6 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { MillPopoverActionsComponent } from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
 import { Brew } from '../../classes/brew/brew';
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
@@ -42,6 +41,11 @@ import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
@@ -289,11 +293,9 @@ export class MillInformationCardComponent implements OnInit {
       MILL_TRACKING.TITLE,
       MILL_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await this.modalController.create({
-      component: MillPopoverActionsComponent,
-      componentProps: { mill: this.mill },
-      id: MillPopoverActionsComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalController, {
+      id: 'mill-popover-actions',
+      items: this.buildMillActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
@@ -303,6 +305,43 @@ export class MillInformationCardComponent implements OnInit {
       await this.internalMillAction(data.role as MILL_ACTION);
       this.millAction.emit([data.role as MILL_ACTION, this.mill]);
     }
+  }
+
+  private buildMillActions(): PopoverAction[] {
+    return [
+      popoverAction({
+        role: MILL_ACTION.DETAIL,
+        translationKey: 'DETAIL',
+        icon: 'beanconqueror-detail',
+      }),
+      popoverAction({
+        role: MILL_ACTION.EDIT,
+        translationKey: 'EDIT',
+        icon: 'beanconqueror-edit',
+      }),
+      popoverAction({
+        role: MILL_ACTION.SHOW_BREWS,
+        translationKey: 'POPOVER_SHOW_BREWS',
+        icon: 'beanconqueror-brew',
+      }),
+      popoverAction({
+        role: MILL_ACTION.ARCHIVE,
+        translationKey: 'ARCHIVE',
+        icon: 'beanconqueror-finished',
+        visible: this.mill.finished === false,
+      }),
+      popoverAction({
+        role: MILL_ACTION.PHOTO_GALLERY,
+        translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+        icon: 'beanconqueror-photo-gallery',
+        visible: this.mill.attachments.length > 0,
+      }),
+      popoverAction({
+        role: MILL_ACTION.DELETE,
+        translationKey: 'DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
   public async showBrews() {
     await this.uiBrewHelper.showAssociatedBrews(this.mill.config.uuid, 'mill');

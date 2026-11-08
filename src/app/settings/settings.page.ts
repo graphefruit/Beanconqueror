@@ -26,6 +26,7 @@ import {
   IonSegmentButton,
   IonSelect,
   IonSelectOption,
+  IonTextarea,
   ModalController,
   Platform,
   ScrollDetail,
@@ -36,6 +37,7 @@ import {
   checkmarkCircleOutline,
   chevronForwardOutline,
   cloudUploadOutline,
+  flashOutline,
   informationCircleOutline,
   informationOutline,
   listOutline,
@@ -43,11 +45,11 @@ import {
 } from 'ionicons/icons';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { CapacitorHttp } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -65,6 +67,7 @@ import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { buildWebhookHeaders } from '../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../classes/settings/settings';
 import { Water } from '../../classes/water/water';
 import { CloudModelPickerComponent } from '../../components/cloud-model-picker/cloud-model-picker.component';
@@ -80,8 +83,10 @@ import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
+import { STATISTIC_BEAN_DATE_FIELD_ENUM } from '../../enums/settings/statisticBeanDateField';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
@@ -156,6 +161,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     IonRange,
     IonCheckbox,
     IonInput,
+    IonTextarea,
     IonButton,
     IonNote,
     IonList,
@@ -215,6 +221,7 @@ export class SettingsPage {
   public settings_segment = 'general';
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
+  public webhookAuthTypeEnum = WEBHOOK_AUTH_TYPE_ENUM;
 
   public aiProviderEnum = AI_PROVIDER_ENUM;
 
@@ -286,6 +293,7 @@ export class SettingsPage {
       checkmarkCircleOutline,
       chevronForwardOutline,
       cloudUploadOutline,
+      flashOutline,
       informationCircleOutline,
       informationOutline,
       listOutline,
@@ -760,7 +768,6 @@ export class SettingsPage {
   }
 
   public setLanguage(): void {
-    this.translate.setFallbackLang(this.settings.language);
     this.translate.use(this.settings.language);
     this.uiAnalytics.trackEvent(
       SETTINGS_TRACKING.TITLE,
@@ -768,12 +775,53 @@ export class SettingsPage {
       this.settings.language,
     );
     this.uiSettingsStorage.saveSettings(this.settings);
-    moment.locale(this.settings.language);
+    this.uiHelper.setMomentLocale(this.settings.language);
   }
 
   public async import(): Promise<void> {
     if (!this.platform.is('capacitor')) {
-      this.__importDummyData();
+      const element = document.createElement('div');
+      element.innerHTML = '<input type="file" accept=".zip" id="importZip">';
+      const fileInput = element.firstChild as HTMLInputElement;
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) {
+          return;
+        }
+
+        if (
+          file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase() !==
+          'zip'
+        ) {
+          void this.uiAlert.showMessage(
+            this.translate.instant('INVALID_FILE_FORMAT'),
+          );
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            await this.uiAlert.showLoadingSpinner();
+            const arrayBuffer = reader.result as ArrayBuffer;
+            const parsedJSON =
+              await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                arrayBuffer,
+              );
+            await this.__importJSON(parsedJSON, '');
+          } catch (error) {
+            this.uiLog.error('Error while importing ZIP on web:', error);
+            await this.uiAlert.hideLoadingSpinner();
+            await this.uiAlert.showMessage(
+              this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`,
+            );
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+
+      fileInput.click();
       return;
     }
 
@@ -1290,7 +1338,6 @@ export class SettingsPage {
         const reader = new FileReader();
 
         reader.onload = () => {
-          debugger;
           const arrayBuffer = reader.result as ArrayBuffer;
           if (_type === 'roasted') {
             this.uiExcel.importBeansByExcel(arrayBuffer);
@@ -1634,7 +1681,7 @@ export class SettingsPage {
           this.uiAnalytics.disableTracking();
           this.__initializeSettings();
 
-          if (!isIOS) {
+          if (!isIOS && this.platform.is('capacitor')) {
             const brewsData = this.uiBrewStorage.getAllEntries();
             const importAttachmentCollections = [
               brewsData,
@@ -1792,10 +1839,56 @@ export class SettingsPage {
     }
   }
 
+  /**
+   * Users routinely omit the scheme when typing a LAN address like
+   * "192.168.1.50/relay/0?turn=off". CapacitorHttp requires an absolute URL,
+   * so normalise on blur. http:// is the correct default here because this
+   * feature targets local smart plugs and relays, which rarely serve https.
+   */
+  public normalizeWebhookUrl(): void {
+    const cfg = this.settings.brew_by_weight_webhook;
+    const url = cfg?.url?.trim();
+    if (!url || url.includes('://')) {
+      return;
+    }
+    cfg.url = `http://${url}`;
+    this.saveSettings();
+  }
+
+  public isWebhookUrlHttp(): boolean {
+    return (
+      this.settings.brew_by_weight_webhook?.url?.trim().startsWith('http://') ??
+      false
+    );
+  }
+
+  public async testBrewByWeightWebhook() {
+    const url = this.settings.brew_by_weight_webhook?.url?.trim();
+    if (!url) {
+      return;
+    }
+    try {
+      await CapacitorHttp.get({
+        url,
+        headers: buildWebhookHeaders(this.settings.brew_by_weight_webhook),
+      });
+      this.uiToast.showInfoToastBottom('BREW_BY_WEIGHT_WEBHOOK.TEST_SUCCESS');
+    } catch (_err) {
+      this.uiAlert.showMessage(
+        'BREW_BY_WEIGHT_WEBHOOK.TEST_FAILED',
+        undefined,
+        undefined,
+        true,
+      );
+    }
+  }
+
   protected readonly BluetoothTypes = BluetoothTypes;
   protected readonly BREW_DISPLAY_IMAGE_TYPE = BREW_DISPLAY_IMAGE_TYPE;
   protected readonly TEST_TYPE_ENUM = TEST_TYPE_ENUM;
   protected readonly THEME_MODE_ENUM = THEME_MODE_ENUM;
+  protected readonly STATISTIC_BEAN_DATE_FIELD_ENUM =
+    STATISTIC_BEAN_DATE_FIELD_ENUM;
 
   public async resetGraphColor(graphType: keyof IGraphColors) {
     const choice = await this.uiAlert.showConfirm(

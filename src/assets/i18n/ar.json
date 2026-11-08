@@ -1638,6 +1638,8 @@
     "AI_PROVIDER": "المزوّد",
     "CLOUD_AI_API_KEY": "",
     "CLOUD_AI_MODEL": "",
+    "CLOUD_AI_PROMPT_APPENDIX": "ملحق مخصص للمطالبة",
+    "CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER": "تعليمات إضافية تُضاف إلى كل مطالبة سحابية بالذكاء الاصطناعي لاستخراج بيانات حبوب القهوة",
     "CLOUD_AI_BASE_URL": "",
     "CLOUD_AI_NOT_CONFIGURED": "",
     "APPLE_INTELLIGENCE_USE_ON_DEVICE": "تم اختيار Apple Intelligence — استخدم المسار المحلي",

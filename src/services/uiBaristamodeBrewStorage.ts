@@ -60,13 +60,7 @@ export class UIBaristamodeBrewStorage extends StorageClass {
     this.baristamodeBrews = [];
     await super.__initializeStorage();
   }
-  public async add(_entry: BaristamodeBrew): Promise<any> {
-    const addEntry = StorageClass.cloneData(_entry);
-    return await super.add(addEntry);
-  }
-
-  public async update(_obj: BaristamodeBrew): Promise<boolean> {
-    const updatingObj = StorageClass.cloneData(_obj);
-    return await super.update(updatingObj);
+  protected prepareEntryForStorage(_entry: BaristamodeBrew): BaristamodeBrew {
+    return StorageClass.cloneData(_entry);
   }
 }

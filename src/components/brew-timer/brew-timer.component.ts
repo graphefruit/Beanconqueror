@@ -548,52 +548,55 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     _event.stopPropagation();
     _event.stopImmediatePropagation();
     this._overLaytimeShown = true;
-    const modal = await this.modalCtrl.create({
-      component: DatetimePopoverComponent,
-      id: 'datetime-popover',
-      cssClass: 'popover-actions',
-      animated: false,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
-      componentProps: { displayingTime: this.displayingTime },
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    this._overLaytimeShown = false;
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.displayingTime !== undefined
-    ) {
-      this.displayingTime = modalData.data.displayingTime;
-      this.updateBrewTimerText();
-      this.timer.seconds = moment
-        .duration(
-          moment(this.displayingTime).diff(
-            moment(this.displayingTime).startOf('day'),
-          ),
-        )
-        .asSeconds();
-      this.timer.milliseconds = moment(this.displayingTime)
-        .startOf('day')
-        .milliseconds();
+    try {
+      const modal = await this.modalCtrl.create({
+        component: DatetimePopoverComponent,
+        id: 'datetime-popover',
+        cssClass: 'popover-actions',
+        animated: false,
+        breakpoints: [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75,
+        componentProps: { displayingTime: this.displayingTime },
+      });
+      await modal.present();
+      const modalData = await modal.onWillDismiss();
+      if (
+        modalData !== undefined &&
+        modalData.data &&
+        modalData.data.displayingTime !== undefined
+      ) {
+        this.displayingTime = modalData.data.displayingTime;
+        this.updateBrewTimerText();
+        this.timer.seconds = moment
+          .duration(
+            moment(this.displayingTime).diff(
+              moment(this.displayingTime).startOf('day'),
+            ),
+          )
+          .asSeconds();
+        this.timer.milliseconds = moment(this.displayingTime)
+          .startOf('day')
+          .milliseconds();
 
-      // We need to calculate new, else when user starts timer again, the wrong times will be used
-      const startingDate = moment().toDate();
-      this.pausedTimer = moment(moment().toDate());
-      this.startingDay = moment(startingDate).startOf('day');
-      if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
-        // We need to subtract, if the time is already given on start (like repeat or preset)
-        this.startedTimer = moment(startingDate)
-          .subtract(this.timer.seconds, 'seconds')
-          .subtract(this.timer.milliseconds, 'milliseconds');
-      } else {
-        this.startedTimer = moment(startingDate);
+        // We need to calculate new, else when user starts timer again, the wrong times will be used
+        const startingDate = moment().toDate();
+        this.pausedTimer = moment(moment().toDate());
+        this.startingDay = moment(startingDate).startOf('day');
+        if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
+          // We need to subtract, if the time is already given on start (like repeat or preset)
+          this.startedTimer = moment(startingDate)
+            .subtract(this.timer.seconds, 'seconds')
+            .subtract(this.timer.milliseconds, 'milliseconds');
+        } else {
+          this.startedTimer = moment(startingDate);
+        }
+
+        this.startedOffset = this.startedTimer.diff(this.startingDay);
+
+        this.changeEvent();
       }
-
-      this.startedOffset = this.startedTimer.diff(this.startingDay);
-
-      this.changeEvent();
+    } finally {
+      this._overLaytimeShown = false;
     }
   }
 }

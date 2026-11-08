@@ -1,4 +1,10 @@
+import { TestBed } from '@angular/core/testing';
+
+import { Settings } from '../../../classes/settings/settings';
 import { AI_PROVIDER_ENUM } from '../../../enums/settings/aiProvider';
+import { UIAnalytics } from '../../uiAnalytics';
+import { UILog } from '../../uiLog';
+import { UISettingsStorage } from '../../uiSettingsStorage';
 import { CloudFieldExtractionService } from '../cloud-field-extraction.service';
 import { CloudLLMConfig } from '../cloud-llm-communication.service';
 
@@ -233,6 +239,51 @@ describe('CloudFieldExtractionService', () => {
       expect(bean.decaffeinated).toBe(true);
     });
 
+    it('appends the stored prompt appendix to the request and prompt log', async () => {
+      // Arrange
+      const settings = new Settings();
+      settings.cloud_ai_prompt_appendix = 'Prioritize explicit farm names.';
+      TestBed.configureTestingModule({
+        providers: [
+          CloudFieldExtractionService,
+          {
+            provide: UISettingsStorage,
+            useValue: { getSettings: () => settings },
+          },
+          { provide: UILog, useValue: null },
+          { provide: UIAnalytics, useValue: null },
+        ],
+      });
+      const injectedService = TestBed.inject(CloudFieldExtractionService);
+      mockFetchWithBeanJson({
+        name: 'Test',
+        roaster: 'Test',
+        bean_mix: 'SINGLE_ORIGIN',
+        origins: [],
+      });
+      const expectedSuffix =
+        'Additional extraction instructions from the user:\n' +
+        'Prioritize explicit farm names.';
+
+      // Act
+      await injectedService.extractAllFields(
+        'sample OCR text',
+        mockConfig,
+        mockLogger,
+      );
+
+      // Assert
+      const requestOptions = fetchSpy.calls.mostRecent().args[1];
+      const requestBody = JSON.parse(String(requestOptions.body));
+      const userMessage = requestBody.messages.find(
+        (message) => message.role === 'user',
+      );
+      expect(userMessage.content.endsWith(expectedSuffix)).toBe(true);
+      expect(mockLogger.log).toHaveBeenCalledWith(
+        jasmine.stringMatching(expectedSuffix),
+      );
+    });
+
     it('should log token usage when available', async () => {
       // Arrange
       mockFetchWithBeanJson({
@@ -255,6 +306,44 @@ describe('CloudFieldExtractionService', () => {
       expect(mockLogger.log).toHaveBeenCalledWith('[Cloud LLM] model: gpt-4o');
       expect(mockLogger.log).toHaveBeenCalledWith(
         'Token usage: 100 prompt, 50 completion',
+      );
+    });
+
+    it('logs when a rejected temperature triggers a retry without it', async () => {
+      // Arrange
+      const config = {
+        ...mockConfig,
+        model: 'temperature-log-test-model',
+      };
+      const responseContent = JSON.stringify({
+        name: 'Test',
+        roaster: 'Test',
+        bean_mix: 'SINGLE_ORIGIN',
+        origins: [],
+      });
+      fetchSpy.and.returnValues(
+        Promise.resolve({
+          ok: false,
+          status: 400,
+          text: () => Promise.resolve('{"error":{"param":"temperature"}}'),
+        } as unknown as Response),
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () =>
+            Promise.resolve({
+              choices: [{ message: { content: responseContent } }],
+              model: config.model,
+            }),
+        } as unknown as Response),
+      );
+
+      // Act
+      await service.extractAllFields('sample OCR text', config, mockLogger);
+
+      // Assert
+      expect(mockLogger.log).toHaveBeenCalledWith(
+        '[Cloud LLM] Temperature rejected; retrying without temperature',
       );
     });
   });

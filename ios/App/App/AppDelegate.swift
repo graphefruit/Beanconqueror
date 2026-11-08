@@ -1,13 +1,87 @@
 import UIKit
 import Capacitor
 
+@objc(VoiceOverMagicTapPlugin)
+class VoiceOverMagicTapPlugin: CAPPlugin, CAPBridgedPlugin {
+    let identifier = "VoiceOverMagicTapPlugin"
+    let jsName = "VoiceOverMagicTap"
+    let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "setEnabled", returnType: CAPPluginReturnPromise)
+    ]
+    private(set) var enabled = false
+
+    @objc func setEnabled(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.enabled = call.getBool("enabled") ?? false
+            call.resolve()
+        }
+    }
+}
+
+class MagicTapContainerViewController: UIViewController {
+    let capacitorViewController: CAPBridgeViewController
+    private let magicTapPlugin = VoiceOverMagicTapPlugin()
+
+    init(capacitorViewController: CAPBridgeViewController) {
+        self.capacitorViewController = capacitorViewController
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        addChild(capacitorViewController)
+        view.addSubview(capacitorViewController.view)
+        capacitorViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            capacitorViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            capacitorViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            capacitorViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            capacitorViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        capacitorViewController.didMove(toParent: self)
+        capacitorViewController.bridge?.registerPluginInstance(magicTapPlugin)
+    }
+
+    override var childForStatusBarStyle: UIViewController? {
+        return capacitorViewController
+    }
+
+    override var childForStatusBarHidden: UIViewController? {
+        return capacitorViewController
+    }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return capacitorViewController.supportedInterfaceOrientations
+    }
+
+    override func accessibilityPerformMagicTap() -> Bool {
+        guard UIAccessibility.isVoiceOverRunning, magicTapPlugin.enabled,
+              let bridge = capacitorViewController.bridge,
+              presentedViewController == nil,
+              capacitorViewController.presentedViewController == nil else {
+            return super.accessibilityPerformMagicTap()
+        }
+        bridge.triggerWindowJSEvent(eventName: "voiceOverMagicTap")
+        return true
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        if let capacitorViewController = window?.rootViewController as? CAPBridgeViewController {
+            window?.rootViewController = MagicTapContainerViewController(
+                capacitorViewController: capacitorViewController
+            )
+        }
         return true
     }
 
@@ -48,8 +122,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, performActionFor shortcutItem:
           UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-          let bridge = (self.window?.rootViewController as! CAPBridgeViewController).bridge
-          bridge?.webView?.evaluateJavaScript("handleQuickAction('"+shortcutItem.type+"')")
+          let rootViewController = window?.rootViewController
+          let capacitorViewController =
+              (rootViewController as? MagicTapContainerViewController)?.capacitorViewController
+              ?? (rootViewController as? CAPBridgeViewController)
+          guard let bridge = capacitorViewController?.bridge else {
+              completionHandler(false)
+              return
+          }
+          bridge.webView?.evaluateJavaScript("handleQuickAction('"+shortcutItem.type+"')")
           completionHandler(true)
       }
 

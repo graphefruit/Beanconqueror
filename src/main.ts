@@ -49,6 +49,11 @@ bootstrapApplication(AppComponent, {
     AndroidPermissions,
     provideHttpClient(withInterceptorsFromDi()),
     provideTranslateService({
+      // The app will set the user-preferred language later, this is just a default
+      lang: 'en',
+      // The app will never change the fallback language
+      fallbackLang: 'en',
+
       loader: provideTranslateHttpLoader({
         prefix: './assets/i18n/',
         suffix: '.json',
@@ -62,6 +67,7 @@ bootstrapApplication(AppComponent, {
       swipeBackEnabled: true,
       animated: true,
       rippleEffect: false,
+      useSetInputAPI: true, // required for modern signal-based input() in modals. See https://github.com/ionic-team/ionic-framework/issues/28876
     }),
   ],
 }).catch((err) => console.log(err));

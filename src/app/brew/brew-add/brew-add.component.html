@@ -26,6 +26,10 @@
             <ion-icon name="beanconqueror-profitec-logo" size='large'></ion-icon>
             <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
           }
+          @case (PreparationDeviceType.GAGGIMATE) {
+            <ion-icon name="beanconqueror-gaggimate-logo" size='large'></ion-icon>
+            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+          }
         }
         </ion-chip>
       } @else {
@@ -51,15 +55,19 @@
               <ion-icon name="beanconqueror-profitec-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline"></ion-icon>
             }
+            @case (PreparationDeviceType.GAGGIMATE) {
+              <ion-icon name="beanconqueror-gaggimate-logo" size='large'></ion-icon>
+              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+            }
           }
         </ion-chip>
       }
     }
     </ng-content>
     @if(brewBrewing?.brewBrewingGraphEl?.uiSmartScaleConnected && brewBrewing?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
-      <app-header-button header-slot="end" icon="beanconqueror-scale-tare" buttonClass="big-icon-only" (clicked)="tareScale()" />
+      <app-header-button header-slot="end" icon="beanconqueror-scale-tare" buttonClass="big-icon-only" ariaLabel="Tare scale" (clicked)="tareScale()" />
     }
-    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" (clicked)="popoverActionsBrew()" />
+    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" ariaLabel="Brew options" (clicked)="popoverActionsBrew()" />
   </app-header>
 </ion-header>
 <ion-content>

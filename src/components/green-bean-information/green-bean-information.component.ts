@@ -27,7 +27,6 @@ import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
 import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
 import { GreenBeanAddComponent } from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
-import { GreenBeanPopoverActionsComponent } from '../../app/roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -46,6 +45,11 @@ import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
 import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import {
+  ActionsPopoverComponent,
+  popoverAction,
+  PopoverAction,
+} from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
 @Component({
@@ -126,11 +130,9 @@ export class GreenBeanInformationComponent implements OnInit {
       GREEN_BEAN_TRACKING.TITLE,
       GREEN_BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await this.modalController.create({
-      component: GreenBeanPopoverActionsComponent,
-      componentProps: { greenbean: this.greenBean },
-      id: GreenBeanPopoverActionsComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
+    const popover = await ActionsPopoverComponent.create(this.modalController, {
+      id: 'green-bean-popover-actions',
+      items: this.buildGreenBeanActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
@@ -143,6 +145,48 @@ export class GreenBeanInformationComponent implements OnInit {
         this.greenBean,
       ]);
     }
+  }
+
+  private buildGreenBeanActions(): PopoverAction[] {
+    return [
+      popoverAction({
+        role: GREEN_BEAN_ACTION.DETAIL,
+        translationKey: 'DETAIL',
+        icon: 'beanconqueror-detail',
+      }),
+      popoverAction({
+        role: GREEN_BEAN_ACTION.TRANSFER_ROAST,
+        translationKey: 'TRANSFER_ROAST',
+        icon: 'flame-outline',
+      }),
+      popoverAction({
+        role: GREEN_BEAN_ACTION.REPEAT,
+        translationKey: 'REPEAT',
+        icon: 'beanconqueror-repeat',
+      }),
+      popoverAction({
+        role: GREEN_BEAN_ACTION.EDIT,
+        translationKey: 'EDIT',
+        icon: 'beanconqueror-edit',
+      }),
+      popoverAction({
+        role: GREEN_BEAN_ACTION.BEANS_CONSUMED,
+        translationKey: 'BEANS_CONSUMED',
+        icon: 'beanconqueror-finished',
+        visible: this.greenBean.finished === false,
+      }),
+      popoverAction({
+        role: GREEN_BEAN_ACTION.PHOTO_GALLERY,
+        translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+        icon: 'beanconqueror-photo-gallery',
+        visible: this.hasPhotos(),
+      }),
+      popoverAction({
+        role: GREEN_BEAN_ACTION.DELETE,
+        translationKey: 'DELETE',
+        icon: 'beanconqueror-delete',
+      }),
+    ];
   }
 
   private async internalBeanAction(action: GREEN_BEAN_ACTION) {

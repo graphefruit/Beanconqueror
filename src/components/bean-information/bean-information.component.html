@@ -72,8 +72,8 @@
         </ion-col>
         @if (showActions) {
         <ion-col size="1">
-          <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
-            <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+          <ion-button (click)="showBeanActions($event)" aria-label="Bean options" class="button-top-absolute" color="accent" fill="clear">
+            <ion-icon aria-hidden="true" name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>
         }
@@ -425,8 +425,8 @@
     }
     @if (beanGroup) {
     <div class="ion-text-center">
-      <ion-button fill="clear" size="small" (click)="toggleGroupExpansion($event)">
-        <ion-icon [name]="beanGroup.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+      <ion-button fill="clear" size="small" [attr.aria-label]="beanGroup.expanded ? 'Collapse bean group' : 'Expand bean group'" (click)="toggleGroupExpansion($event)">
+        <ion-icon aria-hidden="true" [name]="beanGroup.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
       </ion-button>
     </div>
     @if (beanGroup.expanded) {

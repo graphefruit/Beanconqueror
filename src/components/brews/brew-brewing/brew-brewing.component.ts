@@ -912,6 +912,31 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       } catch (ex) {}
 
+      // Webhook predictive lag learning — mirrors the Sanremo block above.
+      // Runs only when predictiveMode is on and there's brewbyweight data
+      // (i.e. the webhook's calculateBrewByWeight path ran this shot).
+      try {
+        const webhookCfg = this.settings.brew_by_weight_webhook;
+        if (
+          webhookCfg?.active &&
+          webhookCfg.predictiveMode &&
+          this.brewBrewingGraphEl.flow_profile_raw?.brewbyweight?.length > 0
+        ) {
+          const currentLag = webhookCfg.learnedLagTime ?? 0.5;
+          const newLag = this.calculateNextResidualLagTime(
+            this.brewBrewingGraphEl.flow_profile_raw,
+            currentLag,
+          );
+          if (newLag !== currentLag) {
+            this.uiLog.log(
+              `[Webhook BBW] Auto-adjusting lag from ${currentLag}s to ${newLag}s`,
+            );
+            webhookCfg.learnedLagTime = newLag;
+            await this.uiSettingsStorage.saveSettings(this.settings);
+          }
+        }
+      } catch (ex) {}
+
       try {
         const shotWeight = this.data.brew_beverage_quantity;
         const avgFlow = this.uiHelper.toFixedIfNecessary(
@@ -1161,34 +1186,44 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private _overLaytimeShown: boolean = false;
   public async showTimeOverlay(_event) {
+    if (this._overLaytimeShown === true) {
+      return;
+    }
+    this._overLaytimeShown = true;
+
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
-    const modal = await this.modalController.create({
-      component: DatetimePopoverComponent,
-      id: 'datetime-popover',
-      cssClass: 'popover-actions',
-      animated: false,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
-      componentProps: { displayingTime: this.displayingBrewTime },
-    });
-    await modal.present();
-    const modalData = await modal.onWillDismiss();
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.displayingTime !== undefined
-    ) {
-      this.displayingBrewTime = modalData.data.displayingTime;
-      this.data.brew_time = moment
-        .duration(
-          moment(modalData.data.displayingTime).diff(
-            moment(modalData.data.displayingTime).startOf('day'),
-          ),
-        )
-        .asSeconds();
+    try {
+      const modal = await this.modalController.create({
+        component: DatetimePopoverComponent,
+        id: 'datetime-popover',
+        cssClass: 'popover-actions',
+        animated: false,
+        breakpoints: [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75,
+        componentProps: { displayingTime: this.displayingBrewTime },
+      });
+      await modal.present();
+      const modalData = await modal.onWillDismiss();
+      if (
+        modalData !== undefined &&
+        modalData.data &&
+        modalData.data.displayingTime !== undefined
+      ) {
+        this.displayingBrewTime = modalData.data.displayingTime;
+        this.data.brew_time = moment
+          .duration(
+            moment(modalData.data.displayingTime).diff(
+              moment(modalData.data.displayingTime).startOf('day'),
+            ),
+          )
+          .asSeconds();
+      }
+    } finally {
+      this._overLaytimeShown = false;
     }
   }
 

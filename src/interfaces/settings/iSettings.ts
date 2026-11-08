@@ -9,6 +9,7 @@ import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
 import { IBeanPageSort } from '../bean/iBeanPageSort';
 import { IBrewGraphs } from '../brew/iBrewGraphs';
@@ -19,6 +20,25 @@ import { IBeanParameter } from '../parameter/iBeanParameter';
 import { IBrewParameter } from '../parameter/iBrewParameter';
 import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
 import { IGraphColors } from './iGraphColors';
+import { IStatisticsSettings } from './iStatisticsSettings';
+
+export interface BrewByWeightWebhookConfig {
+  active: boolean;
+  url: string;
+  authType: WEBHOOK_AUTH_TYPE_ENUM;
+  bearerToken: string;
+  basicUsername: string;
+  basicPassword: string;
+  customHeaderName: string;
+  customHeaderValue: string;
+  // Pre-fills brew_beverage_quantity at brew start if not already set.
+  defaultTargetWeight: number;
+  // When true, uses predictive lag-learning to fire before target weight,
+  // compensating for drip-through. Lag is learned and stored automatically.
+  predictiveMode: boolean;
+  // Auto-updated after each brew when predictiveMode is on. Start: 0.5s.
+  learnedLagTime: number;
+}
 
 export interface ISettings {
   // Properties
@@ -26,6 +46,7 @@ export interface ISettings {
   brew_view: BREW_VIEW_ENUM;
   startup_view: STARTUP_VIEW_ENUM;
   date_format: string;
+  statistics: IStatisticsSettings;
 
   language: string;
   manage_parameters: IBrewParameter;
@@ -232,9 +253,12 @@ export interface ISettings {
   visualizer_password: string;
   visualizer_upload_automatic: boolean;
 
+  brew_by_weight_webhook: BrewByWeightWebhookConfig;
+
   ai_provider: AI_PROVIDER_ENUM;
   cloud_ai_api_key: string;
   cloud_ai_model: string;
+  cloud_ai_prompt_appendix: string;
   cloud_ai_base_url: string;
 
   show_backup_issues: boolean;
