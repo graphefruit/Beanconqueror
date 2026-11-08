@@ -1900,7 +1900,7 @@
         "TEST_FAILED": "Impossible d'accéder au Webhook. Vérifiez l'URL et votre connexion réseau.",
         "DEFAULT_TARGET_WEIGHT": "Poids cible par défaut (g)",
         "DEFAULT_TARGET_WEIGHT_TOOLTIP": "Prérégle le poids cible à chaque fois que vous lancez une infusion. Vous pouvez toujours le modifier manuellement pour chaque infusion. Réglez-le sur 0 pour désactiver cette fonction.",
-        "PREDICTIVE_MODE": "Arrêt prédictif (s'adapte à chaque infusion)",
+        "PREDICTIVE_MODE": "Arrêt intelligent (s'améliore à chaque infusion)",
         "PREDICTIVE_MODE_TOOLTIP": "Au lieu de se déclencher exactement au poids cible, l'application déclenche légèrement plus tôt afin de compenser les premières gouttes. Le décalage est déterminé automatiquement au fil des shots : si l'on règle 36 g, le premier shot délivre 38 g, le suivant environ 37 g, puis les valeurs convergent vers 36 g."
     }
 }
