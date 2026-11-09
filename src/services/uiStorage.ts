@@ -148,13 +148,27 @@ export class UIStorage {
       exportObj[_key] = _value;
     });
 
-    // #520 - Remove username and password before export.
-    if (exportObj && 'SETTINGS' in exportObj) {
-      exportObj['SETTINGS'][0].visualizer_username = '';
-      exportObj['SETTINGS'][0].visualizer_password = '';
+    // #520 - Remove credentials before export, so backups can be shared safely.
+    const settings = (exportObj as { SETTINGS?: any[] }).SETTINGS?.[0];
+    if (settings) {
+      UIStorage.removeCredentialsFromSettings(settings);
     }
 
     return exportObj;
+  }
+
+  public static removeCredentialsFromSettings(_settings: any): void {
+    _settings.visualizer_username = '';
+    _settings.visualizer_password = '';
+    _settings.cloud_ai_api_key = '';
+
+    const webhook = _settings.brew_by_weight_webhook;
+    if (webhook) {
+      webhook.bearerToken = '';
+      webhook.basicUsername = '';
+      webhook.basicPassword = '';
+      webhook.customHeaderValue = '';
+    }
   }
 
   public async clearStorage() {
