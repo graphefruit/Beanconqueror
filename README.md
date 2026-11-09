@@ -145,6 +145,28 @@ Before continuing it is important to note that Beanconqueror is open source avai
 
 I welcome pull requests, but you will be required to sign the Beanconqueror CLA before any contributions can be merged.
 
+### Android release optimization
+
+Android release builds enable R8 code shrinking, optimization, obfuscation, and
+resource shrinking. Capacitor supplies consumer keep rules for its native bridge,
+plugin annotations, callbacks, and Cordova plugins. Add project-specific rules to
+`android/app/proguard-rules.pro` only when needed; avoid unnecessarily broad rules
+that prevent optimization.
+
+After building the production web assets and syncing Android, build a release
+bundle with `cd android && ./gradlew :app:bundleRelease`. Configure release signing
+in Android Studio before distributing it. Preserve
+`android/app/build/outputs/mapping/release/mapping.txt` for each published release
+to decode obfuscated crash reports. Check the uploaded bundle's DEX optimization
+metrics in Play Console; enabling R8 alone does not guarantee a particular score.
+
+Before publishing, test the signed, optimized release on a device as an update
+over an existing installation without clearing data. Verify existing storage,
+BLE scanning/connections/notifications/reconnection, NFC reading/writing and
+pause/resume, camera/barcode scanning, and file import/export. Keep the WebView
+hostname, scheme, database name, and storage driver order unchanged to retain
+access to existing data.
+
 ## Statistics
 
 ![Graphefruit github stats](https://github-readme-stats.vercel.app/api?username=graphefruit&theme=dark&repo=Beanconqueror)

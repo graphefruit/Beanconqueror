@@ -5,6 +5,13 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# MediaPipe tasks-genai 0.10.27 references build-time protobuf annotations
+# absent from its declared protobuf-javalite 4.26.1 runtime.
+-dontwarn com.google.protobuf.Internal$ProtoNonnullApi
+-dontwarn com.google.protobuf.ProtoField
+-dontwarn com.google.protobuf.ProtoPresenceBits
+-dontwarn com.google.protobuf.ProtoPresenceCheckedField
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
