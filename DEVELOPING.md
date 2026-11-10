@@ -41,6 +41,27 @@ pnpm exec eslint "src/**/*.ts" "src/**/*.html" --prune-suppressions
 
 Do not regenerate the file with `--suppress-all` to hide new errors.
 
+### Browser end-to-end tests
+
+Playwright runs user journeys against the real app in an emulated Pixel 7 (Chromium). It starts
+its own dev server on port 4300, so nothing needs to be running beforehand. These run in CI.
+
+```shell
+pnpm exec playwright install chromium # once
+pnpm e2e
+pnpm e2e --repeat-each=5              # check a new test for flakiness
+pnpm exec playwright show-report      # inspect traces and screenshots of failures
+```
+
+- Import `test`/`expect` from `e2e/fixtures.ts`. Each test starts with empty storage, `en-US`
+  locale and no permissions. Page errors, console errors and requests leaving the app fail the
+  test; mock required external calls with `page.route`.
+- Locate elements by role and accessible name and assert what a user can observe. Avoid CSS
+  selectors and fixed waits.
+- Use synthetic data only; never real user exports. Traces and screenshots are uploaded as CI
+  artifacts.
+- Browser emulation does not replace testing on a real device (BLE, NFC, camera, filesystem).
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.
