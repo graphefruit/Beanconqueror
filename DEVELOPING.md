@@ -62,6 +62,33 @@ pnpm exec playwright show-report      # inspect traces and screenshots of failur
   artifacts.
 - Browser emulation does not replace testing on a real device (BLE, NFC, camera, filesystem).
 
+#### Native plugins
+
+The app runs as the `web` platform, so Capacitor plugins use their web implementations and
+`platform.is('capacitor')` branches are skipped. The `native` fixture (`e2e/support/native.ts`)
+sits at the plugin boundary, below all app code; nothing of it is part of the app build.
+
+- Every test attaches a `native-calls` trace to the report: Capacitor plugin calls and reads of
+  Cordova plugin globals (`ble`, `NfcPlugin`, …).
+- Mock a Capacitor plugin only when a journey needs it, before `page.goto`, typed against the
+  plugin's interface. Throw `NativeError` to simulate cancellation or a denied permission;
+  `native.emit()` fires plugin events and `native.activeListeners()` checks listener cleanup.
+
+  ```ts
+  await native.mockCapacitor<CameraPlugin>('Camera', {
+    getPhoto: () => {
+      throw new NativeError('User denied access to camera');
+    },
+  });
+  ```
+
+- A mocked plugin has no defaults: a call without a handler is rejected and fails the test.
+- Cordova plugins (e.g. BLE) are globals and can be replaced the same way once a feature needs
+  it. Flows guarded by `platform.is('capacitor')` are not reachable in the browser.
+- Browser tests prove how the app reacts to plugin results. They do not prove real Bluetooth
+  devices, native storage/SQLite, file system paths, OS permission dialogs, background timing or
+  plugin behavior on Android/iOS; check those on a device for the relevant feature.
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.
