@@ -5,7 +5,7 @@ name: pnpm test CI
 
 on:
   push:
-    branches: ['master', 'develop']
+    branches: ['master', 'develop', 'feature/relaunch']
   pull_request:
   workflow_dispatch:
 
