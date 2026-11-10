@@ -10,7 +10,7 @@ Make yourself familiar with our tech stack, which uses [Ionic](https://ionicfram
 You need to have the following prerequisites
 
 - Git
-- Node.js (tested with version 22)
+- Node.js 24 (see `.nvmrc`; `nvm use` picks it up)
 - `pnpm` (tested with version 10.33.0)
 - Android Studio (if you want to work on the Android App)
 - Xcode (if you want to work on the iOS App)
@@ -20,7 +20,7 @@ You need to have the following prerequisites
 After cloning the repository, you need to install `pnpm` dependencies:
 
 ```shell
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
 ## Running tests
@@ -30,6 +30,16 @@ Run unit tests through pnpm. These are run automatically in CI.
 ```shell
 pnpm test
 ```
+
+Run the linter. It also runs in CI. Existing errors are recorded in `eslint-suppressions.json`,
+so only new errors fail. If you fix existing errors, shrink the file and commit it:
+
+```shell
+pnpm lint
+pnpm exec eslint "src/**/*.ts" "src/**/*.html" --prune-suppressions
+```
+
+Do not regenerate the file with `--suppress-all` to hide new errors.
 
 ## Building and Running Beanconqueror
 

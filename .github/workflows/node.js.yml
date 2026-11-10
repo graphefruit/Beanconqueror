@@ -21,8 +21,10 @@ jobs:
           version: 10
       - uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          node-version-file: .nvmrc
           cache: 'pnpm'
       - run: pnpm install
+      # Pre-existing errors are listed in eslint-suppressions.json; only new errors fail.
+      - run: pnpm lint
       - run: pnpm run build
       - run: pnpm test

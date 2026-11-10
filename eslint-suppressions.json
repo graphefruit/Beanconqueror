@@ -1,0 +1,3358 @@
+{
+  "src/app/app.component.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 13
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 27
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 4
+    },
+    "no-async-promise-executor": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 11
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/app/baristamode/barista/barista.page.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 7
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/prefer-find": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "src/app/baristamode/baristamode-brews/baristamode-brews.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/app/baristamode/baristamode-brews/baristamode-brews.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/baristamode/baristamode.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/bean-parameter/bean-list-view-parameter/bean-list-view-parameter.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/bean-parameter/bean-manage-parameter/bean-manage-parameter.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/bean-parameter/bean-parameter.page.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    }
+  },
+  "src/app/beans/bean-archive-popover/bean-archive-popover.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/beans/bean-filter/bean-filter.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component.html": {
+    "@angular-eslint/template/alt-text": {
+      "count": 1
+    }
+  },
+  "src/app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 4
+    }
+  },
+  "src/app/beans/bean-modal-select/bean-modal-select.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/app/beans/bean-popover-freeze/__tests__/bean-popover-freeze.component.spec.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/unbound-method": {
+      "count": 4
+    }
+  },
+  "src/app/beans/bean-popover-freeze/bean-popover-freeze.component.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 3
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 4
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 2
+    },
+    "no-async-promise-executor": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "src/app/beans/bean-popover-frozen-list/bean-popover-frozen-list.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/beans/bean-popover-list/bean-popover-list.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/beans/bean-popover-unfreeze/bean-popover-unfreeze.component.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 4
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "no-async-promise-executor": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "src/app/beans/bean-sort/bean-sort.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/app/beans/bean-sort/bean-sort.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/beans/beans-add/beans-add.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/app/beans/beans-add/beans-add.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 4
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/app/beans/beans-detail/beans-detail.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/app/beans/beans-detail/beans-detail.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/beans/beans-edit/beans-edit.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/app/beans/beans-edit/beans-edit.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/app/beans/beans.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 3
+    }
+  },
+  "src/app/beans/beans.page.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/app/brew-parameter/brew-parameter.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 5
+    }
+  },
+  "src/app/brew-parameter/default-parameter/default-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/brew-parameter/list-view-parameter/list-view-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/brew-parameter/manage-parameter/manage-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/brew-parameter/repeat-parameter/repeat-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/brew-parameter/sort-parameter/sort-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/brew/associated-brews/associated-brews.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    }
+  },
+  "src/app/brew/brew-add/brew-add.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "@typescript-eslint/no-base-to-string": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 12
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 4
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/brew/brew-brix-calculator/brew-brix-calculator.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 4
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-cupping/brew-cupping.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "no-prototype-builtins": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-detail/brew-detail.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 8
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 7
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-edit/brew-edit.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 6
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 2
+    }
+  },
+  "src/app/brew/brew-filter/brew-filter.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-flavor-picker/brew-flavor-picker.component.ts": {
+    "@typescript-eslint/no-empty-object-type": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/brew/brew-flow/brew-flow.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 5
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 6
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-maximize-controls/brew-maximize-controls.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/app/brew/brew-modal-import-shot-gaggimate/brew-modal-import-shot-gaggimate.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    }
+  },
+  "src/app/brew/brew-modal-import-shot-gaggiuino/brew-modal-import-shot-gaggiuino.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    }
+  },
+  "src/app/brew/brew-popover-cut/brew-popover-cut.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 8
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-popover-extraction/brew-popover-extraction.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 3
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-rating/brew-rating.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-ratio-calculator/brew-ratio-calculator.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/brew/brew-sort/brew-sort.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/brew/brew.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/app/brew/brew.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/app/dashboard/__tests__/dashboard.page.spec.ts": {
+    "@typescript-eslint/unbound-method": {
+      "count": 5
+    }
+  },
+  "src/app/dashboard/dashboard.page.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/graph-section/graph-section.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/graph-section/graph/graph-add/graph-add.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 2
+    }
+  },
+  "src/app/graph-section/graph/graph-detail/graph-detail.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 3
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/app/graph-section/graph/graph-edit/graph-edit.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 4
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/app/graph-section/graph/graph.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/app/graph-section/graph/graph.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/helper/helper-brew-ratio/helper-brew-ratio.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/helper/helper-water-hardness/helper-water-hardness.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/info/about/about.component.ts": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    }
+  },
+  "src/app/info/contact/contact.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/info/cookie/cookie.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/info/credits/credits.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/app/info/credits/credits.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/info/impressum/impressum.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/info/info.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/info/licences/licences.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/app/info/licences/licences.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/info/log/log-text/log-text.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/info/log/log.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/info/privacy/privacy.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/info/terms/terms.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/info/thanks/thanks.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/mill/mill-add/mill-add.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/mill/mill-detail/mill-detail.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/mill/mill-edit/mill-edit.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/mill/mill-modal-select/mill-modal-select.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 3
+    }
+  },
+  "src/app/mill/mill.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/app/mill/mill.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/preparation/preparation-add-type/preparation-add-type.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    }
+  },
+  "src/app/preparation/preparation-add/preparation-add.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/preparation/preparation-connected-device/preparation-connected-device.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 6
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    }
+  },
+  "src/app/preparation/preparation-custom-parameters/preparation-custom-parameters.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/preparation/preparation-detail/preparation-detail.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 4
+    }
+  },
+  "src/app/preparation/preparation-detail/preparation-detail.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/preparation/preparation-edit-tool/preparation-edit-tool.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/preparation/preparation-edit/preparation-edit.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/preparation/preparation-modal-select/preparation-modal-select.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    }
+  },
+  "src/app/preparation/preparation-sort-tools/preparation-sort-tools.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/preparation/preparation-sort/preparation-sort.component.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/preparation/preparation-tool-modal-select/preparation-tool-modal-select.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 4
+    }
+  },
+  "src/app/preparation/preparation-tool-modal-select/preparation-tool-modal-select.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    }
+  },
+  "src/app/preparation/preparation.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/app/roasting-section/green-beans/green-bean-add/green-bean-add.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/app/roasting-section/green-beans/green-bean-detail/green-bean-detail.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/roasting-section/green-beans/green-bean-edit/green-bean-edit.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/roasting-section/green-beans/green-bean-sort/green-bean-sort.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    }
+  },
+  "src/app/roasting-section/green-beans/green-beans.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/app/roasting-section/green-beans/green-beans.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/roasting-section/roasting-machine/roasting-machine-add/roasting-machine-add.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/roasting-section/roasting-machine/roasting-machine-detail/roasting-machine-detail.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 4
+    }
+  },
+  "src/app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/roasting-section/roasting-machine/roasting-machine.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/app/roasting-section/roasting-machine/roasting-machine.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/roasting-section/roasting-section.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    }
+  },
+  "src/app/settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 20
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 4
+    }
+  },
+  "src/app/settings/settings.page.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 30
+    },
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "no-constant-binary-expression": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/app/statistic/__tests__/statistic.page.spec.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "@typescript-eslint/unbound-method": {
+      "count": 4
+    }
+  },
+  "src/app/statistic/statistic.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-prototype-builtins": {
+      "count": 2
+    }
+  },
+  "src/app/unwrapped/unwrapped-modal.component.html": {
+    "@angular-eslint/template/click-events-have-key-events": {
+      "count": 1
+    },
+    "@angular-eslint/template/interactive-supports-focus": {
+      "count": 1
+    }
+  },
+  "src/app/unwrapped/unwrapped-modal.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/app/water-section/water-section.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/app/water-section/water/water-add-type/water-add-type.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/water-section/water/water-add/water-add.component.html": {
+    "@angular-eslint/template/alt-text": {
+      "count": 1
+    }
+  },
+  "src/app/water-section/water/water-add/water-add.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/water-section/water/water-detail/water-detail.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/app/water-section/water/water-edit/water-edit.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/water-section/water/water-modal-select/water-modal-select.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/app/water-section/water/water.page.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/app/water-section/water/water.page.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/assets/ts/sheetjs-index.d.ts": {
+    "@typescript-eslint/consistent-indexed-object-style": {
+      "count": 2
+    },
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 4
+    }
+  },
+  "src/classes/__tests__/storageClass.spec.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 4
+    },
+    "@typescript-eslint/unbound-method": {
+      "count": 4
+    }
+  },
+  "src/classes/bean/bean.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/classes/brew/baristamodeBrew.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "src/classes/brew/brew.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 6
+    },
+    "prefer-const": {
+      "count": 5
+    }
+  },
+  "src/classes/brew/brewFlow.ts": {
+    "@typescript-eslint/consistent-indexed-object-style": {
+      "count": 1
+    }
+  },
+  "src/classes/brew/preparationDeviceBrew.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/acaia/acaia.ts": {
+    "@typescript-eslint/ban-ts-comment": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 12
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-enum-comparison": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 3
+    },
+    "no-prototype-builtins": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/acaia/decoder.ts": {
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 5
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/argosThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/unbound-method": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/basicGrillThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/blackcoffeeScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 3
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/ble.types.ts": {
+    "@typescript-eslint/consistent-indexed-object-style": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/bluetoothDevice.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 6
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 5
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 5
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/bokooScale.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/bookooPressure.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/coffeeSensorPressure.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/coffeeSensorTemperature.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/combustionThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-for-of": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/common/logger.ts": {
+    "no-constant-condition": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/decentScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/diFluid/protocol.ts": {
+    "@typescript-eslint/consistent-type-definitions": {
+      "count": 1
+    },
+    "@typescript-eslint/no-namespace": {
+      "count": 9
+    },
+    "@typescript-eslint/prefer-for-of": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 2
+    },
+    "no-useless-catch": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/difluidMicrobalance.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/difluidMicrobalanceTi.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/difluidR2Refractometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 6
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 5
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-case-declarations": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/diyPythonCoffeeScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/diyRustCoffeeScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/emberThermometer.ts": {
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/espressiScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/etiTemperature.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 2
+    }
+  },
+  "src/classes/devices/eurekaPrecisaScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 5
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/felicitaScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 4
+    }
+  },
+  "src/classes/devices/futulaScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/geisingerThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/inkbirdIbbqThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/inkbirdIht2pbThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/inkbirdInt11IBThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/inkbirdInt11PBThermometer.ts": {
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/inkbirdTnt11BThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/jimmyScale.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 2
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/lunarScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-case-declarations": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/meaterThermometer.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/popsiclePressure.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/pressureBluetoothDevice.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/prsPressure.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/refractometerBluetoothDevice.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/skale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/smartchefScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/temperatureBluetoothDevice.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/timemoreBasicScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-for-of": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/timemoreDotScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-for-of": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/timemoreScale.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/transducerDirectPressure.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/variaAku.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 5
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/weighMasterScale.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/devices/weighMyBruScale.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/mill/__tests__/mill.spec.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    }
+  },
+  "src/classes/preparation/preparation.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/classes/preparationDevice/bluetoothPreparationDevice.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 8
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 4
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/classes/preparationDevice/gaggimate/gaggimateDevice.ts": {
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/preparationDevice/gaggimate/gaggimateParser.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-for-of": {
+      "count": 1
+    }
+  },
+  "src/classes/preparationDevice/gaggiuino/gaggiuinoDevice.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/preparationDevice/meticulous/__tests__/meticulousDevice.spec.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    }
+  },
+  "src/classes/preparationDevice/meticulous/meticulousDevice.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    },
+    "no-async-promise-executor": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 6
+    },
+    "no-var": {
+      "count": 2
+    }
+  },
+  "src/classes/preparationDevice/move2/move2Device.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/classes/preparationDevice/sanremo/sanremoYOUDevice.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 7
+    },
+    "eqeqeq": {
+      "count": 1
+    },
+    "no-async-promise-executor": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 10
+    }
+  },
+  "src/classes/preparationDevice/xenia/xeniaDevice.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/classes/settings/settings.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 20
+    }
+  },
+  "src/classes/storageClass.ts": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/classes/visualizer/visualizer.ts": {
+    "no-prototype-builtins": {
+      "count": 1
+    }
+  },
+  "src/components/ai-import-photo-gallery/__tests__/ai-import-photo-gallery.component.spec.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    }
+  },
+  "src/components/ai-import-photo-gallery/ai-import-photo-gallery.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    }
+  },
+  "src/components/async-image/async-image.component.html": {
+    "@angular-eslint/template/alt-text": {
+      "count": 1
+    }
+  },
+  "src/components/baristamode-brew-information/baristamode-brew-information.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/components/bean-information/bean-information.component.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 9
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-find": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 1
+    },
+    "no-prototype-builtins": {
+      "count": 1
+    }
+  },
+  "src/components/beans/bean-freeze-information/bean-freeze-information.component.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/components/beans/bean-general-information/bean-general-information.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/components/beans/bean-general-information/bean-general-information.component.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/components/beans/bean-sort-information/bean-sort-information.component.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "no-prototype-builtins": {
+      "count": 3
+    }
+  },
+  "src/components/beans/detail/bean-detail-sort-information/__tests__/bean-detail-sort-information.component.spec.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/components/beans/green-bean-general-information/green-bean-general-information.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/components/brew-graph-reference-card/brew-graph-reference-card.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/components/brew-graph-reference-card/brew-graph-reference-card.component.ts": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    }
+  },
+  "src/components/brew-information/brew-information.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 3
+    }
+  },
+  "src/components/brew-information/brew-information.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 9
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-prototype-builtins": {
+      "count": 1
+    }
+  },
+  "src/components/brew-ratio-card/brew-ratio-card.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/components/brew-timer/brew-timer.component.ts": {
+    "@typescript-eslint/adjacent-overload-signatures": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 7
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/components/brews/brew-brewing-graph/brew-brewing-graph.component.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 63
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "eqeqeq": {
+      "count": 7
+    },
+    "no-async-promise-executor": {
+      "count": 1
+    },
+    "no-case-declarations": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 25
+    },
+    "no-unsafe-optional-chaining": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 3
+    }
+  },
+  "src/components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 11
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 2
+    }
+  },
+  "src/components/brews/brew-brewing/brew-brewing.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 5
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 16
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 5
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 7
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 3
+    }
+  },
+  "src/components/cupping-flavors/cupping-flavors.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-object-type": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/components/cupping-radar/cupping-radar.component.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    }
+  },
+  "src/components/graph-display-card/graph-display-card.component.ts": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 3
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/components/graph-information-card/graph-information-card.component.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 3
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/components/green-bean-information/green-bean-information.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/components/mill-information-card/mill-information-card.component.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/components/parameter/default-custom-parameter/default-custom-parameter.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 3
+    }
+  },
+  "src/components/parameter/default-custom-parameter/default-custom-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/components/parameter/list-view-custom-parameter/list-view-custom-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/components/parameter/manage-custom-parameter/manage-custom-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/components/parameter/repeat-custom-parameter/repeat-custom-parameter.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 3
+    }
+  },
+  "src/components/parameter/repeat-custom-parameter/repeat-custom-parameter.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/components/parameter/sort-custom-parameter/sort-custom-parameter.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    },
+    "no-prototype-builtins": {
+      "count": 1
+    }
+  },
+  "src/components/photo-add/photo-add.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 13
+    }
+  },
+  "src/components/photo-view/photo-view.component.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/components/preparation-information-card/preparation-information-card.component.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 9
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/components/roasting-machine-information-card/roasting-machine-information-card.component.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/components/timer/timer.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 4
+    }
+  },
+  "src/components/timer/timer.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/components/water-information-card/water-information-card.component.html": {
+    "@angular-eslint/template/alt-text": {
+      "count": 1
+    }
+  },
+  "src/components/water-information-card/water-information-card.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/data/ai-import/__tests__/ai-field-prompts.spec.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 9
+    }
+  },
+  "src/directive/bean-overlay.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/directive/choose-date.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/directive/disable-double-click.directive.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/directive/long-press.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/directive/max-number-value.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    }
+  },
+  "src/directive/mill-overlay.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/directive/preparation-overlay.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/directive/preparation-tool-overlay.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 4
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/directive/roasting-machine-overlay.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/directive/short-press.directive.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/directive/tooltip.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/directive/transform-date.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/directive/water-overlay.directive.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/interfaces/brew/iPreparationDeviceBrew.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    }
+  },
+  "src/interfaces/flavor/iFlavor.ts": {
+    "@typescript-eslint/no-empty-object-type": {
+      "count": 1
+    }
+  },
+  "src/mapper/bean/beanMapper.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "no-async-promise-executor": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/pipes/bean/beanFunction.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/pipes/brew/brewFunction.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/pipes/formatDate.ts": {
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/pipes/keys.ts": {
+    "no-prototype-builtins": {
+      "count": 1
+    }
+  },
+  "src/pipes/mill/millFunction.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/pipes/preparation/preparationFunction.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/pipes/setting/settingFunction.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/pipes/toFixed.ts": {
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/popover/analytics-popover/analytics-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 15
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 4
+    },
+    "no-async-promise-executor": {
+      "count": 4
+    },
+    "no-empty": {
+      "count": 6
+    }
+  },
+  "src/popover/data-corruption-found/data-corruption-found.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/popover/datetime-popover/datetime-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 9
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/popover/filesystem-error-popover/filesystem-error-popover.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/popover/loading-popover/loading-popover.component.ts": {
+    "@angular-eslint/no-input-rename": {
+      "count": 4
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/popover/meticulous-help-popover/meticulous-help-popover.component.html": {
+    "@angular-eslint/template/alt-text": {
+      "count": 1
+    }
+  },
+  "src/popover/meticulous-help-popover/meticulous-help-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/popover/photo-popover/photo-popover.component.ts": {
+    "@angular-eslint/no-empty-lifecycle-method": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    }
+  },
+  "src/popover/please-activate-analytics-popover/please-activate-analytics-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 5
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/popover/qr-code-scanner-popover/qr-code-scanner-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 2
+    }
+  },
+  "src/popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    }
+  },
+  "src/popover/update-popover/update-popover.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 2
+    }
+  },
+  "src/popover/update-popover/update-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/popover/welcome-popover/welcome-popover.component.html": {
+    "@angular-eslint/template/eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/popover/welcome-popover/welcome-popover.component.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 3
+    }
+  },
+  "src/services/aiBeanImport/__tests__/image-rotation.spec.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    }
+  },
+  "src/services/aiBeanImport/__tests__/text-normalization.service.spec.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/services/aiBeanImport/__tests__/type-mappings.spec.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 7
+    }
+  },
+  "src/services/aiBeanImport/apple-intelligence-ai-bean-import.service.ts": {
+    "@typescript-eslint/no-base-to-string": {
+      "count": 2
+    }
+  },
+  "src/services/aiBeanImport/bean-construction.service.ts": {
+    "eqeqeq": {
+      "count": 5
+    }
+  },
+  "src/services/aiBeanImport/camera-ocr.service.ts": {
+    "@typescript-eslint/no-base-to-string": {
+      "count": 3
+    }
+  },
+  "src/services/aiBeanImport/cloud-field-extraction.service.ts": {
+    "@typescript-eslint/no-base-to-string": {
+      "count": 21
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/services/aiBeanImport/cloud-llm-communication.service.ts": {
+    "@typescript-eslint/no-base-to-string": {
+      "count": 4
+    },
+    "eqeqeq": {
+      "count": 1
+    }
+  },
+  "src/services/aiBeanImport/llm-communication.service.ts": {
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "src/services/androidPlatform/android-platform.service.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/services/annotationGraphHelper/annotation-graph-helper.service.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "@typescript-eslint/prefer-regexp-exec": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/services/beanSortFilterHelper/bean-sort-filter-helper.service.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 4
+    }
+  },
+  "src/services/brewImport/__tests__/brew-import.service.spec.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 3
+    },
+    "@typescript-eslint/unbound-method": {
+      "count": 8
+    }
+  },
+  "src/services/brewTracking/brew-tracking.service.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 2
+    }
+  },
+  "src/services/coffeeBluetoothDevices/coffee-bluetooth-devices.service.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-empty-function": {
+      "count": 18
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 28
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 10
+    },
+    "no-async-promise-executor": {
+      "count": 6
+    },
+    "no-empty": {
+      "count": 10
+    },
+    "no-var": {
+      "count": 2
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/services/currencyService/currency.service.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    }
+  },
+  "src/services/graphHelper/__tests__/graph-helper.service.spec.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    }
+  },
+  "src/services/graphHelper/graph-helper.service.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 6
+    },
+    "eqeqeq": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 3
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "src/services/hapticService/haptic.service.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 1
+    }
+  },
+  "src/services/instanceClass.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/services/intentHandler/__tests__/brew-handoff.decoder.spec.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/services/intentHandler/__tests__/intent-handler.service.spec.ts": {
+    "@typescript-eslint/no-unsafe-enum-comparison": {
+      "count": 9
+    },
+    "@typescript-eslint/unbound-method": {
+      "count": 17
+    }
+  },
+  "src/services/intentHandler/brew-handoff.decoder.ts": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 2
+    }
+  },
+  "src/services/intentHandler/intent-handler.service.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 12
+    },
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    },
+    "@typescript-eslint/prefer-string-starts-ends-with": {
+      "count": 9
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "no-useless-escape": {
+      "count": 2
+    }
+  },
+  "src/services/iosPlatform/ios-platform.service.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 4
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/services/nfcService/nfc-service.service.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 7
+    },
+    "no-var": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 3
+    }
+  },
+  "src/services/serverCommunication/server-communication.service.ts": {
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 8
+    }
+  },
+  "src/services/shareService/share-service.service.ts": {
+    "no-empty": {
+      "count": 4
+    }
+  },
+  "src/services/textToSpeech/text-to-speech.service.ts": {
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 2
+    }
+  },
+  "src/services/uiAnalytics.ts": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "no-async-promise-executor": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/services/uiBeanHelper.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 7
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/services/uiBeanStorage.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/services/uiBrewHelper.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "no-async-promise-executor": {
+      "count": 2
+    },
+    "no-extra-boolean-cast": {
+      "count": 2
+    }
+  },
+  "src/services/uiExcel.ts": {
+    "@typescript-eslint/await-thenable": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 9
+    },
+    "eqeqeq": {
+      "count": 3
+    },
+    "no-empty": {
+      "count": 8
+    },
+    "no-prototype-builtins": {
+      "count": 9
+    }
+  },
+  "src/services/uiExportImportHelper.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 9
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    },
+    "eqeqeq": {
+      "count": 2
+    },
+    "no-async-promise-executor": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "prefer-const": {
+      "count": 2
+    }
+  },
+  "src/services/uiGraphHelper.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 1
+    }
+  },
+  "src/services/uiGreenBeanStorage.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/services/uiHealthKit.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 4
+    },
+    "no-async-promise-executor": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    },
+    "no-var": {
+      "count": 1
+    }
+  },
+  "src/services/uiHelper.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 6
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 2
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/services/uiImage.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 3
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 2
+    },
+    "eqeqeq": {
+      "count": 2
+    },
+    "no-async-promise-executor": {
+      "count": 2
+    },
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/services/uiMillStorage.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/services/uiPreparationStorage.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/services/uiRoastingMachineStorage.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  },
+  "src/services/uiSettingsStorage.ts": {
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 2
+    }
+  },
+  "src/services/uiStatistic.ts": {
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 7
+    }
+  },
+  "src/services/uiStorage.ts": {
+    "@typescript-eslint/only-throw-error": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 2
+    }
+  },
+  "src/services/uiToast.ts": {
+    "@typescript-eslint/no-empty-function": {
+      "count": 2
+    },
+    "@typescript-eslint/no-floating-promises": {
+      "count": 2
+    },
+    "prefer-const": {
+      "count": 1
+    }
+  },
+  "src/services/uiUpdate.ts": {
+    "@typescript-eslint/consistent-generic-constructors": {
+      "count": 1
+    },
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "no-async-promise-executor": {
+      "count": 2
+    },
+    "no-case-declarations": {
+      "count": 18
+    }
+  },
+  "src/services/uiVersionStorage.ts": {
+    "@typescript-eslint/prefer-promise-reject-errors": {
+      "count": 2
+    }
+  },
+  "src/services/visualizerService/visualizer-service.service.ts": {
+    "@typescript-eslint/no-floating-promises": {
+      "count": 6
+    },
+    "@typescript-eslint/restrict-plus-operands": {
+      "count": 1
+    },
+    "no-empty": {
+      "count": 3
+    },
+    "no-prototype-builtins": {
+      "count": 1
+    }
+  },
+  "src/test-utils/mock-services.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 1
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "count": 1
+    }
+  }
+}
