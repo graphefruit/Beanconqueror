@@ -15,6 +15,14 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.google.mlkit.genai.common.DownloadCallback;
+import com.google.mlkit.genai.common.FeatureStatus;
+import com.google.mlkit.genai.prompt.Generation;
+import com.google.mlkit.genai.prompt.GenerateContentRequest;
+import com.google.mlkit.genai.prompt.GenerativeModel;
+import com.google.mlkit.genai.prompt.SystemInstruction;
+import com.google.mlkit.genai.prompt.TextPart;
+import com.google.mlkit.genai.prompt.java.GenerativeModelFutures;
 
 import org.json.JSONException;
 
@@ -29,6 +37,7 @@ import java.util.List;
 @CapacitorPlugin(name = "BCAndroidNativeCalls")
 public class BCAndroidNativeCallsPlugin extends Plugin {
   private static final String TAG = BCAndroidNativeCallsPlugin.class.getSimpleName();
+  private GenerativeModel geminiNanoModel;
 
   @PluginMethod()
   public void pickDirectory(PluginCall call) {
@@ -241,5 +250,80 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
     while ((bytesRead = in.read(buffer)) != -1) {
       out.write(buffer, 0, bytesRead);
     }
+  }
+
+  private synchronized GenerativeModelFutures getGeminiNanoModel() {
+    if (geminiNanoModel == null) {
+      geminiNanoModel = Generation.INSTANCE.getClient();
+    }
+    return GenerativeModelFutures.from(geminiNanoModel);
+  }
+
+  @Override
+  protected void handleOnDestroy() {
+    if (geminiNanoModel != null) {
+      geminiNanoModel.close();
+    }
+    super.handleOnDestroy();
+  }
+
+  @PluginMethod
+  public void geminiNanoStatus(PluginCall call) {
+    new Thread(() -> {
+      String status = "unavailable";
+      try {
+        GenerativeModelFutures model = getGeminiNanoModel();
+        int featureStatus = model.checkStatus().get();
+        if (featureStatus == FeatureStatus.AVAILABLE) {
+          status = "available";
+        } else if (featureStatus == FeatureStatus.DOWNLOADING) {
+          status = "downloading";
+        } else if (featureStatus == FeatureStatus.DOWNLOADABLE) {
+          model.download(new DownloadCallback() {});
+          status = "downloading";
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "Error while checking Gemini Nano status.", e);
+      }
+      JSObject result = new JSObject();
+      result.put("status", status);
+      call.resolve(result);
+    }).start();
+  }
+
+  @PluginMethod
+  public void geminiNanoGenerate(PluginCall call) {
+    String prompt = call.getString("prompt");
+    String instructions = call.getString("instructions");
+
+    if (prompt == null) {
+      call.reject("prompt was null");
+      return;
+    }
+
+    new Thread(() -> {
+      try {
+        GenerativeModelFutures model = getGeminiNanoModel();
+        TextPart promptPart = new TextPart(prompt);
+        GenerateContentRequest.Builder builder;
+        if (instructions == null) {
+          builder = new GenerateContentRequest.Builder(promptPart);
+        } else if (model.isSystemPromptAvailable().get()) {
+          builder = new GenerateContentRequest.Builder(new SystemInstruction(instructions), promptPart);
+        } else {
+          builder = new GenerateContentRequest.Builder(new TextPart(instructions + "\n\n" + prompt));
+        }
+        builder.setTemperature(0.1f);
+        builder.setMaxOutputTokens(512);
+
+        String text = model.generateContent(builder.build()).get().getCandidates().get(0).getText();
+        JSObject result = new JSObject();
+        result.put("text", text);
+        call.resolve(result);
+      } catch (Exception e) {
+        Log.e(TAG, "Error while generating with Gemini Nano.", e);
+        call.reject("An error occurred while generating", e);
+      }
+    }).start();
   }
 }

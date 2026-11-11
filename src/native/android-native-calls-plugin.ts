@@ -58,6 +58,18 @@ export interface CopyFileDirectoryToSafDirectoryOptions {
   toSafTreeUri: string;
 }
 
+export interface GeminiNanoGenerateOptions {
+  /**
+   * The prompt to send to the on-device model.
+   */
+  prompt: string;
+
+  /**
+   * System-level instructions that take priority over the prompt content.
+   */
+  instructions?: string;
+}
+
 export interface BCAndroidNativeCalls {
   /**
    * Start a directory picker for a directory that the application will then
@@ -86,6 +98,21 @@ export interface BCAndroidNativeCalls {
   moveFileDirectoryToSafDirectory(
     options: CopyFileDirectoryToSafDirectoryOptions,
   ): Promise<void>;
+
+  /**
+   * Get the availability of Gemini Nano on this device. If the model is
+   * downloadable, the download is started and `downloading` is reported.
+   */
+  geminiNanoStatus(): Promise<{
+    status: 'available' | 'downloadable' | 'downloading' | 'unavailable';
+  }>;
+
+  /**
+   * Generate a complete text response with the on-device Gemini Nano model.
+   */
+  geminiNanoGenerate(
+    options: GeminiNanoGenerateOptions,
+  ): Promise<{ text: string }>;
 }
 
 const AndroidNativeCalls = registerPlugin<BCAndroidNativeCalls>(

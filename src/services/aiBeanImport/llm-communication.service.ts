@@ -1,4 +1,10 @@
+import { Capacitor } from '@capacitor/core';
 import { CapgoLLM } from '@capgo/capacitor-llm';
+
+import {
+  AndroidNativeCalls,
+  BCAndroidNativeCalls,
+} from '../../native/android-native-calls-plugin';
 
 /**
  * Local type extension — the native Swift plugin already supports `instructions`
@@ -85,14 +91,35 @@ export function extractJsonFromResponse<T = unknown>(
 }
 
 /**
- * Send a prompt to the LLM and return the response.
- * Handles model setup, chat creation, listeners, timeout, and cleanup.
+ * Send a prompt to the on-device LLM of the current platform and return the response.
  *
  * @param prompt The prompt to send
  * @param options Configuration options
  * @returns The LLM response text, or empty string on timeout/error
  */
 export async function sendLLMPrompt(
+  prompt: string,
+  options: LLMCommunicationOptions = {},
+): Promise<string> {
+  switch (Capacitor.getPlatform()) {
+    case 'ios':
+      return sendAppleIntelligencePrompt(prompt, options);
+    case 'android':
+      return sendGeminiNanoPrompt(prompt, options);
+    default:
+      return '';
+  }
+}
+
+/**
+ * Send a prompt to Apple Intelligence (iOS) and return the response.
+ * Handles model setup, chat creation, listeners, timeout, and cleanup.
+ *
+ * @param prompt The prompt to send
+ * @param options Configuration options
+ * @returns The LLM response text, or empty string on timeout/error
+ */
+async function sendAppleIntelligencePrompt(
   prompt: string,
   options: LLMCommunicationOptions = {},
 ): Promise<string> {
@@ -168,4 +195,44 @@ export async function sendLLMPrompt(
   });
 
   return responsePromise;
+}
+
+/**
+ * Send a prompt to Gemini Nano (Android) and return the response.
+ *
+ * @param prompt The prompt to send
+ * @param options Configuration options
+ * @param generate Native generate call, replaceable in tests
+ * @returns The LLM response text, or empty string on timeout/error
+ */
+export async function sendGeminiNanoPrompt(
+  prompt: string,
+  options: LLMCommunicationOptions = {},
+  generate: BCAndroidNativeCalls['geminiNanoGenerate'] = (generateOptions) =>
+    AndroidNativeCalls.geminiNanoGenerate(generateOptions),
+): Promise<string> {
+  const { timeoutMs = 15000, instructions, logger } = options;
+
+  logger?.log('[Gemini Nano] prompt: ' + prompt);
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<string>((resolve) => {
+    timeoutHandle = setTimeout(() => {
+      logger?.log('LLM timeout');
+      resolve('');
+    }, timeoutMs);
+  });
+  const generatePromise = generate({
+    prompt,
+    instructions,
+  }).then(
+    ({ text }) => text,
+    (e) => {
+      logger?.error('[Gemini Nano] error: ' + e);
+      return '';
+    },
+  );
+  const response = await Promise.race([generatePromise, timeoutPromise]);
+  clearTimeout(timeoutHandle);
+  logger?.log('[Gemini Nano] response: ' + response);
+  return response;
 }
