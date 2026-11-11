@@ -41,6 +41,10 @@
                 "inject": true
               },
               {
+                "input": "src/theme/bq-tokens.scss",
+                "inject": true
+              },
+              {
                 "input": "src/app/app.scss",
                 "inject": true
               }

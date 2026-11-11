@@ -1,0 +1,74 @@
+// Beanconqueror design tokens (light/dark), derived from the design handoff.
+// Single source for brand values; components consume the semantic --bq-* names,
+// never the raw palette. Not yet wired to Ionic variables.
+
+:root {
+  // Palette
+  --bq-palette-espresso-900: #211914;
+  --bq-palette-espresso-1000: #2a211a;
+  --bq-palette-sand-400: #d4c4b0;
+  --bq-palette-cream-300: #e1d1bf;
+  --bq-palette-cream-200: #ead9c4;
+  --bq-palette-white: #ffffff;
+  --bq-palette-coral-aa: #c73545;
+  --bq-palette-caramel-aa: #825634;
+
+  // Surfaces
+  --bq-surface-page: var(--bq-palette-cream-200);
+  --bq-surface-card: var(--bq-palette-white);
+  --bq-surface-mid: var(--bq-palette-sand-400);
+
+  // Text
+  --bq-text-primary: var(--bq-palette-espresso-900);
+  --bq-text-secondary: #4a382c;
+  --bq-text-link: #9e2d45;
+  --bq-text-accent: #9e2d45;
+  --bq-text-on-accent: var(--bq-palette-white);
+  --bq-nav-inactive: #75604f;
+
+  // Actions
+  --bq-action-primary: var(--bq-palette-coral-aa);
+  --bq-action-secondary: var(--bq-palette-caramel-aa);
+
+  // Borders and focus
+  --bq-border-subtle: rgba(33, 25, 20, 0.1);
+  --bq-border-strong: rgba(33, 25, 20, 0.14);
+  --bq-focus-ring: var(--bq-palette-espresso-900);
+  --bq-focus-ring-offset: 3px;
+
+  // Spacing (8-pt grid)
+  --bq-space-1: 4px;
+  --bq-space-2: 8px;
+  --bq-space-3: 12px;
+  --bq-space-4: 16px;
+  --bq-space-6: 24px;
+  --bq-space-8: 32px;
+  --bq-space-12: 48px;
+
+  // Radius
+  --bq-radius-button: 8px;
+  --bq-radius-card: 16px;
+  --bq-radius-pill: 9999px;
+}
+
+// Ionic's dark palette sets its variables on `.ion-palette-dark.md` and
+// `.ion-palette-dark.ios`; matching that specificity keeps our dark values
+// winning once they are mapped onto Ionic variables.
+:root.ion-palette-dark.md,
+:root.ion-palette-dark.ios {
+  --bq-surface-page: var(--bq-palette-espresso-900);
+  --bq-surface-card: var(--bq-palette-espresso-1000);
+
+  --bq-text-primary: var(--bq-palette-white);
+  --bq-text-secondary: var(--bq-palette-cream-300);
+  // #EA495B misses AA on dark cards (4.2:1); #FF7A88 reaches 6.3:1. Provisional until the designer confirms.
+  --bq-text-link: #ff7a88;
+  --bq-text-accent: #ff7a88;
+  --bq-nav-inactive: #b8a898;
+
+  --bq-action-secondary: #925c38;
+
+  --bq-border-subtle: rgba(255, 255, 255, 0.1);
+  --bq-border-strong: rgba(255, 255, 255, 0.1);
+  --bq-focus-ring: var(--bq-palette-white);
+}
