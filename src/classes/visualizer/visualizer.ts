@@ -58,6 +58,52 @@ export class Visualizer implements IVisualizer {
     Object.keys(this.preparation).map((_key) => {
       this.preparation[_key] = preparation[_key];
     });
+    // Replace the copied tools array with a stripped-down view so the upload
+    // payload only carries the fields downstream tools actually need
+    // (name), instead of the internal PreparationTool objects with their
+    // UUIDs, archived flags, etc.
+    const rawTools = (preparation as any)?.tools;
+    if (Array.isArray(rawTools)) {
+      this.preparation.tools = rawTools
+        .filter((t) => t && !t.archived)
+        .map((t) => ({ name: t.name }));
+    } else {
+      this.preparation.tools = [];
+    }
+  }
+
+  /**
+   * Populate BrewVisualizer.used_preparation_tools with the names of the
+   * preparation tools that were actually selected for this specific brew.
+   * Beanconqueror stores the selection as UUIDs on the brew; this resolves
+   * them against the preparation's tool catalog into human-readable names.
+   */
+  public mapUsedPreparationTools(
+    brew: Brew | BaristamodeBrew,
+    preparation: Preparation,
+  ) {
+    const selectedUuids = (brew as any)?.method_of_preparation_tools as
+      | string[]
+      | undefined;
+    if (
+      !selectedUuids ||
+      !Array.isArray(selectedUuids) ||
+      selectedUuids.length === 0 ||
+      !Array.isArray((preparation as any)?.tools)
+    ) {
+      this.brew.used_preparation_tools = [];
+      return;
+    }
+    const nameByUuid = new Map<string, string>();
+    for (const tool of (preparation as any).tools) {
+      if (tool?.config?.uuid) {
+        nameByUuid.set(tool.config.uuid, tool.name);
+      }
+    }
+    this.brew.used_preparation_tools = selectedUuids
+      .map((uuid) => nameByUuid.get(uuid))
+      .filter((name): name is string => !!name)
+      .map((name) => ({ name }));
   }
   public mapWater(water: Water) {
     Object.keys(this.water).map((_key) => {
