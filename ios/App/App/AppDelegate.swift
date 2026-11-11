@@ -36,13 +36,11 @@ class MagicTapContainerViewController: UIViewController {
         super.viewDidLoad()
         addChild(capacitorViewController)
         view.addSubview(capacitorViewController.view)
-        capacitorViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            capacitorViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            capacitorViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            capacitorViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            capacitorViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        // The Capacitor view is the WKWebView. @capacitor/keyboard (resize: native) shrinks it
+        // via setFrame when the keyboard opens; Auto Layout constraints would reset that frame
+        // and leave inputs hidden behind the keyboard, so use autoresizing masks instead.
+        capacitorViewController.view.frame = view.bounds
+        capacitorViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         capacitorViewController.didMove(toParent: self)
         capacitorViewController.bridge?.registerPluginInstance(magicTapPlugin)
     }
