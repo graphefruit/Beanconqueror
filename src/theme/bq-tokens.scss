@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // Beanconqueror design tokens (light/dark), derived from the design handoff.
 // Single source for brand values; components consume the semantic --bq-* names,
 // never the raw palette. Not yet wired to Ionic variables.
@@ -71,4 +73,75 @@
   --bq-border-subtle: rgba(255, 255, 255, 0.1);
   --bq-border-strong: rgba(255, 255, 255, 0.1);
   --bq-focus-ring: var(--bq-palette-white);
+}
+
+// ── Ionic base mapping ──────────────────────────────────────────────────────
+// Surfaces, text, bars and borders only. Button and accent colours stay on the
+// legacy palette until the call-to-action strategy is decided.
+@mixin ionic-base(
+  $background,
+  $text,
+  $card,
+  $nav-selected,
+  $nav-inactive,
+  $border
+) {
+  --ion-background-color: #{$background};
+  --ion-background-color-rgb:
+    #{color.channel($background, 'red')},
+    #{color.channel($background, 'green')},
+    #{color.channel($background, 'blue')};
+  --ion-text-color: #{$text};
+  --ion-text-color-rgb:
+    #{color.channel($text, 'red')}, #{color.channel($text, 'green')},
+    #{color.channel($text, 'blue')};
+  --ion-card-background: #{$card};
+  --ion-item-background: #{$card};
+  --ion-toolbar-background: #{$card};
+  --ion-toolbar-color: #{$text};
+  --ion-tab-bar-background: #{$card};
+  --ion-tab-bar-color: #{$nav-inactive};
+  --ion-tab-bar-color-selected: #{$nav-selected};
+  --ion-border-color: #{$border};
+  --ion-item-border-color: #{$border};
+
+  // Ionic derives searchbar, segment and toolbar shades from these steps; without
+  // them they fall back to white-based defaults that clash with the brand surfaces.
+  @for $i from 1 through 19 {
+    $step: $i * 50;
+    --ion-background-color-step-#{$step}: #{color.mix(
+        $text,
+        $background,
+        $step * 0.1%
+      )};
+    --ion-text-color-step-#{$step}: #{color.mix(
+        $background,
+        $text,
+        $step * 0.1%
+      )};
+  }
+}
+
+:root.md,
+:root.ios {
+  @include ionic-base(
+    #ead9c4,
+    #211914,
+    #ffffff,
+    #9e2d45,
+    #75604f,
+    rgba(33, 25, 20, 0.14)
+  );
+}
+
+:root.ion-palette-dark.md,
+:root.ion-palette-dark.ios {
+  @include ionic-base(
+    #211914,
+    #ffffff,
+    #2a211a,
+    #ff7a88,
+    #b8a898,
+    rgba(255, 255, 255, 0.1)
+  );
 }
