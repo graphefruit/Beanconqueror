@@ -20,7 +20,8 @@
   --ion-color-graph-background: #ffffff;
   --ion-item-sort-background: #f0f0f0;
 
-  --ion-font-family: 'Karla', sans-serif;
+  // Brand font stack (Inter plus script fallbacks), defined in bq-tokens.scss.
+  --ion-font-family: var(--bq-font-family-brand);
   font-family: var(--ion-font-family) !important;
   /** primary **/
   --ion-color-primary: #282013;

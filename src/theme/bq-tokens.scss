@@ -63,6 +63,99 @@ $bq-on-action-primary: #ffffff;
   --bq-radius-pill: 9999px;
 }
 
+// ── Typography ──────────────────────────────────────────────────────────────
+// Bundled fonts are self-subset from the upstream releases by
+// tools/fonts/subset_fonts.py; keep the unicode-range values in sync with it.
+// Japanese, Korean and Chinese use the system fonts: bundling them would add
+// ~17 MB and user input would still mix glyphs from different fonts.
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/inter/InterVariable.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0100-024F, U+0259, U+02B0-02FF, U+0300-036F, U+0370-03FF,
+    U+0400-052F, U+1E00-1EFF, U+2000-206F, U+2070-209F, U+20A0-20CF,
+    U+2100-218F, U+2190-21FF, U+2200-22FF, U+2300-23FF, U+25A0-25FF,
+    U+2C60-2C7F, U+A720-A7FF, U+FEFF, U+FFFD;
+}
+
+// Prefixed names so a locally installed Noto never replaces the subset files.
+@font-face {
+  font-family: 'BQ Noto Sans Arabic';
+  src: url('../assets/fonts/noto-sans-arabic/NotoSansArabic.woff2')
+    format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1,
+    U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF,
+    U+FE70-FE74, U+FE76-FEFC, U+25CC;
+}
+
+@font-face {
+  font-family: 'BQ Noto Sans Hebrew';
+  src: url('../assets/fonts/noto-sans-hebrew/NotoSansHebrew.woff2')
+    format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
+// Every translation lists the language names in their own script, so the
+// stack has to cover Arabic and Hebrew in every UI language.
+$bq-font-stack-base:
+  'Inter', 'BQ Noto Sans Arabic', 'BQ Noto Sans Hebrew', system-ui, sans-serif;
+
+:root {
+  --bq-font-family-brand: #{$bq-font-stack-base};
+  // Disambiguation set: I with serifs, l with a tail, so I/l/1 never look
+  // alike in codes, grind settings and bean names.
+  font-feature-settings: 'ss04';
+}
+
+// CJK puts the system font first so punctuation, spacing and Latin inside a
+// sentence come from one CJK design; the `lang` attribute (set at runtime) also
+// selects the right Han glyph variants. ss04 is an Inter set and may mean
+// something else in these fonts.
+:root:lang(ja) {
+  --bq-font-family-brand:
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP',
+    'Noto Sans JP', #{$bq-font-stack-base};
+  font-feature-settings: normal;
+}
+
+:root:lang(ko) {
+  --bq-font-family-brand:
+    'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Noto Sans KR',
+    #{$bq-font-stack-base};
+  font-feature-settings: normal;
+}
+
+:root:lang(zh) {
+  --bq-font-family-brand:
+    'PingFang SC', 'Noto Sans CJK SC', 'Noto Sans SC', #{$bq-font-stack-base};
+  font-feature-settings: normal;
+}
+
+// After :lang(zh), which also matches zh-TW.
+:root:lang(zh-TW) {
+  --bq-font-family-brand:
+    'PingFang TC', 'Noto Sans CJK TC', 'Noto Sans TC', #{$bq-font-stack-base};
+}
+
+// Live readings (brew timer, scale weight, flow) update several times a second;
+// tabular figures keep the digits from jittering. Running text keeps
+// proportional figures.
+app-timer,
+app-brew-timer,
+.flow-profile {
+  font-variant-numeric: tabular-nums;
+}
+
 // Ionic's dark palette sets its variables on `.ion-palette-dark.md` and
 // `.ion-palette-dark.ios`; matching that specificity keeps our dark values
 // winning once they are mapped onto Ionic variables.

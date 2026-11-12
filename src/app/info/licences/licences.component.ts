@@ -97,23 +97,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Also, please credit our work in your App Store or Google Play description (something like "Icons by Icons8" is fine).`,
     },
-    font_karla_licence: {
-      TITLE: 'Font Karla',
-      LINK: 'https://fonts.google.com/specimen/Karla#standard-styles',
+    font_inter_licence: {
+      TITLE: 'Font Inter',
+      LINK: 'https://github.com/rsms/inter',
       ACTIVE: false,
-      DESCRIPTION: `These fonts are licensed under the Open Font License.
+      DESCRIPTION: `Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)
 
-You can use them freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the fonts on their own.
+This font is licensed under the SIL Open Font License, Version 1.1.
+
+You can use it freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the font on its own.
 
 This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`,
     },
-    font_baloo_tamma_licence: {
-      TITLE: 'Font Baloo Tamma 2',
-      LINK: 'https://fonts.google.com/specimen/Baloo+Tamma+2',
+    font_noto_sans_arabic_licence: {
+      TITLE: 'Font Noto Sans Arabic',
+      LINK: 'https://github.com/notofonts/arabic',
       ACTIVE: false,
-      DESCRIPTION: `These fonts are licensed under the Open Font License.
+      DESCRIPTION: `Copyright 2022 The Noto Project Authors (https://github.com/notofonts/arabic)
 
-You can use them freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the fonts on their own.
+This font is licensed under the SIL Open Font License, Version 1.1.
+
+You can use it freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the font on its own.
+
+This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`,
+    },
+    font_noto_sans_hebrew_licence: {
+      TITLE: 'Font Noto Sans Hebrew',
+      LINK: 'https://github.com/notofonts/hebrew',
+      ACTIVE: false,
+      DESCRIPTION: `Copyright 2022 The Noto Project Authors (https://github.com/notofonts/hebrew)
+
+This font is licensed under the SIL Open Font License, Version 1.1.
+
+You can use it freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the font on its own.
 
 This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`,
     },
