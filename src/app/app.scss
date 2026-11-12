@@ -333,7 +333,10 @@ ion-split-pane {
 
   ion-radio {
     --color: var(--bq-text-secondary);
-    --color-checked: var(--bq-text-accent);
+    // The dot sits on the fixed light-grey container above, not on the page or
+    // card, so the dark-mode text accent would fall to 1.99:1. The coral fill
+    // holds 4.14:1 on it in both modes.
+    --color-checked: var(--bq-action-primary);
   }
 
   ion-checkbox {
