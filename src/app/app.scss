@@ -108,8 +108,7 @@ ion-action-sheet {
 }
 
 ion-card.small-card {
-  border-radius: 6px 6px 6px 6px;
-  background: var(--ion-color-light);
+  border-radius: var(--bq-radius-card);
   border: none;
   padding: 0px;
   margin: 0px;
@@ -153,7 +152,7 @@ ion-segment-button {
     --indicator-color: var(--ion-color-accent);
   }
   ion-card:not(.best-brew):not(.favourite-brew) {
-    border: 1px solid var(--ion-border-color) !important;
+    border: 1px solid var(--bq-border-card) !important;
   }
   ion-badge:not([color]) {
     --background: #cdc2ac;
@@ -163,8 +162,7 @@ ion-segment-button {
 }
 
 ion-card.long-card {
-  background: var(--ion-color-light);
-  border-radius: 6px 6px 6px 6px;
+  border-radius: var(--bq-radius-card);
   padding: 0px;
   border: none;
 
@@ -258,30 +256,28 @@ ion-split-pane {
   --border: none !important;
 
   ion-menu {
-    --background: var(--ion-color-light);
+    --background: var(--bq-surface-card);
 
     ion-toolbar {
-      --background: var(--ion-color-light);
+      --background: var(--bq-surface-card);
     }
 
     ion-content {
-      --background: var(--ion-color-light);
+      --background: var(--bq-surface-card);
       ion-item {
         text-align: center;
-        --background: var(--ion-color-light);
       }
       ion-list {
-        background: var(--ion-color-light) !important;
+        background: var(--bq-surface-card) !important;
       }
     }
     ion-list {
-      background: var(--ion-color-light) !important;
+      background: var(--bq-surface-card) !important;
     }
 
     ion-footer {
       ion-item {
         text-align: center;
-        --background: var(--ion-color-light);
         font-size: 12px;
       }
     }
@@ -410,10 +406,10 @@ ion-split-pane {
     }
   }
 
+  // No background here: a host background would hide Ionic's --ion-card-background.
   ion-card {
-    background-color: var(--ion-color-light);
-    border-radius: 6px 6px 6px 6px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: var(--bq-radius-card);
+    border: 1px solid var(--bq-border-card);
     /*box-shadow: 0px 0px 10px #0000001F;*/
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -422,7 +418,6 @@ ion-split-pane {
   }
 
   ion-item {
-    --background: var(--ion-color-light);
     --inner-padding-bottom: 0;
     --inner-padding-end: 0;
     --inner-padding-start: 0;
@@ -445,20 +440,18 @@ ion-split-pane {
     --background: rgba(0, 0, 0, 0.47);
 
     ion-toolbar {
-      --background: var(--ion-color-light);
+      --background: var(--bq-surface-card);
       padding-top: 0px !important;
     }
 
     ion-content {
-      --background: var(--ion-color-light);
+      --background: var(--bq-surface-card);
     }
 
     ion-header {
       background-color: var(--ion-header-background-color);
     }
     ion-item {
-      --background: var(--ion-color-light);
-
       margin-left: 16px;
       margin-right: 16px;
     }
@@ -466,7 +459,7 @@ ion-split-pane {
     ion-footer {
       //one px minus because it looks like a border
       top: -1px;
-      background: var(--ion-color-light);
+      background: var(--bq-surface-card);
       padding-left: 16px;
       padding-right: 16px;
       padding-bottom: 8px;
@@ -480,22 +473,20 @@ ion-split-pane {
   .popover-actions {
     ion-header {
       ion-toolbar {
-        --background: var(--ion-color-light);
+        --background: var(--bq-surface-card);
         height: 40px;
       }
     }
 
     ion-content {
-      --background: var(--ion-color-light);
+      --background: var(--bq-surface-card);
     }
 
     ion-list {
-      background: var(--ion-color-light);
+      background: var(--bq-surface-card);
     }
 
     ion-item {
-      --background: var(--ion-color-light);
-
       margin-left: 16px;
       margin-right: 16px;
     }
@@ -546,10 +537,6 @@ ion-split-pane {
     ion-label {
       font-family: 'Baloo', sans-serif;
       font-size: 14px;
-    }
-
-    ion-item {
-      --background: var(--ion-color-light);
     }
   }
 
@@ -610,7 +597,7 @@ ion-split-pane {
   }
 
   ion-toast {
-    --background: var(--ion-color-light);
+    --background: var(--bq-surface-card);
     --color: var(--ion-text-color);
     font-family: 'Baloo', sans-serif;
     font-weight: bold;
@@ -736,7 +723,7 @@ ion-split-pane {
   }
 
   ion-searchbar {
-    --background: var(--ion-color-light);
+    --background: var(--bq-surface-card);
     --border-radius: 15px;
     --box-shadow: none;
   }
@@ -745,7 +732,7 @@ ion-split-pane {
   }
 
   ion-popover {
-    --background: var(--ion-color-light);
+    --background: var(--bq-surface-card);
   }
 
   ion-app {

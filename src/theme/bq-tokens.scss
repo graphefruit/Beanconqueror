@@ -35,6 +35,7 @@
   // Borders and focus
   --bq-border-subtle: rgba(33, 25, 20, 0.1);
   --bq-border-strong: rgba(33, 25, 20, 0.14);
+  --bq-border-card: rgba(33, 25, 20, 0.1);
   --bq-focus-ring: var(--bq-palette-espresso-900);
   --bq-focus-ring-offset: 3px;
 
@@ -75,6 +76,7 @@
 
   --bq-border-subtle: rgba(255, 255, 255, 0.1);
   --bq-border-strong: rgba(255, 255, 255, 0.1);
+  --bq-border-card: rgba(234, 217, 196, 0.14);
   --bq-focus-ring: var(--bq-palette-white);
 }
 
@@ -108,6 +110,24 @@
   --ion-tab-bar-color-selected: #{$nav-selected};
   --ion-border-color: #{$border};
   --ion-item-border-color: #{$border};
+  // Alert and action sheet read this; without it they fall back to the page
+  // colour while popovers and toasts sit on the card colour.
+  --ion-overlay-background-color: #{$card};
+
+  // The legacy theme uses `light` as the card surface (app and component SCSS,
+  // color="light"). Mapping it here keeps those on the brand card colour instead
+  // of Ionic's grey #222428 next to espresso cards in dark mode.
+  --ion-color-light: #{$card};
+  --ion-color-light-rgb:
+    #{color.channel($card, 'red')}, #{color.channel($card, 'green')},
+    #{color.channel($card, 'blue')};
+  --ion-color-light-contrast: #{$text};
+  --ion-color-light-contrast-rgb:
+    #{color.channel($text, 'red')}, #{color.channel($text, 'green')},
+    #{color.channel($text, 'blue')};
+  // Same shade/tint steps as Ionic's colour generator.
+  --ion-color-light-shade: #{color.mix(#000000, $card, 12%)};
+  --ion-color-light-tint: #{color.mix(#ffffff, $card, 10%)};
 
   // Ionic derives searchbar, segment and toolbar shades from these steps; without
   // them they fall back to white-based defaults that clash with the brand surfaces.
