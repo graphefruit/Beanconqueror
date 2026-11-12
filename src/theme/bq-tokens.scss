@@ -42,8 +42,13 @@ $bq-on-action-primary: #ffffff;
   --bq-border-subtle: rgba(33, 25, 20, 0.1);
   --bq-border-strong: rgba(33, 25, 20, 0.14);
   --bq-border-card: rgba(33, 25, 20, 0.1);
+  // Keyboard focus: 3px ring 2px away from the element (12.5:1 on cream).
+  // Coral fills only reach 3.31:1 against the ring, so they get a double ring:
+  // the gap colour fills the offset and separates fill and ring.
   --bq-focus-ring: var(--bq-palette-espresso-900);
-  --bq-focus-ring-offset: 3px;
+  --bq-focus-ring-width: 3px;
+  --bq-focus-ring-offset: 2px;
+  --bq-focus-ring-gap: var(--bq-palette-white);
 
   // Spacing (8-pt grid)
   --bq-space-1: 4px;
@@ -177,6 +182,7 @@ brew-timer,
   --bq-border-strong: rgba(255, 255, 255, 0.1);
   --bq-border-card: rgba(234, 217, 196, 0.14);
   --bq-focus-ring: var(--bq-palette-white);
+  --bq-focus-ring-gap: var(--bq-palette-espresso-900);
 }
 
 // ── Ionic base mapping ──────────────────────────────────────────────────────
