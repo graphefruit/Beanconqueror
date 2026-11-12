@@ -62,6 +62,26 @@ pnpm exec playwright show-report      # inspect traces and screenshots of failur
   artifacts.
 - Browser emulation does not replace testing on a real device (BLE, NFC, camera, filesystem).
 
+#### Accessibility baseline
+
+`e2e/accessibility.spec.ts` runs axe (WCAG 2.2 AA and best practices) on the main areas in light
+and dark. Known violations are listed per area and theme in `e2e/accessibility-baseline.json` as
+`<rule id> | <selector>`. Like the lint suppressions, the file may only shrink:
+
+- A violation not in the baseline fails the test. Fix it rather than adding it.
+- A baseline entry that no longer occurs fails the test as well ("please remove from
+  `e2e/accessibility-baseline.json`"), so a fixed issue cannot return unnoticed.
+
+After fixing violations, or when a markup change moves a known violation to a new selector,
+regenerate the file and review the diff before committing:
+
+```shell
+A11Y_UPDATE_BASELINE=1 pnpm e2e e2e/accessibility.spec.ts
+git diff e2e/accessibility-baseline.json
+```
+
+axe cannot check everything; the screen reader acceptance on a device is still required.
+
 #### Native plugins
 
 The app runs as the `web` platform, so Capacitor plugins use their web implementations and
