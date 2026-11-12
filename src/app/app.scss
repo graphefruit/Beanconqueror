@@ -735,6 +735,12 @@ ion-split-pane {
   ion-modal.modal-sheet {
     --border-radius: var(--bq-radius-sheet);
   }
+  // --border-radius rounds all four corners on md (iOS squares the bottom
+  // itself), and the sheet's bottom edge sits on the screen edge.
+  ion-modal.modal-sheet::part(content) {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
 
   ion-action-sheet {
     --background: var(--bq-surface-overlay);
@@ -742,8 +748,10 @@ ion-split-pane {
     --color: var(--bq-text-secondary);
     --button-color: var(--bq-text-primary);
   }
-  // Scoped component: the sheet's top edge is its first button group.
-  ion-action-sheet .action-sheet-group:first-child {
+  // Scoped component: on md the sheet's top edge is its first button group.
+  // iOS floats every group as a rounded card of its own, so it keeps Ionic's
+  // uniform radius there.
+  ion-action-sheet.md .action-sheet-group:first-child {
     border-top-left-radius: var(--bq-radius-sheet);
     border-top-right-radius: var(--bq-radius-sheet);
   }
