@@ -80,6 +80,7 @@ import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popo
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { DocumentLanguageService } from '../services/documentLanguage/document-language.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import { ThemeService } from '../services/theme/theme.service';
@@ -150,6 +151,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiHelper = inject(UIHelper);
   private readonly uiAlert = inject(UIAlert);
   private _translate = inject(TranslateService);
+  private readonly documentLanguage = inject(DocumentLanguageService);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly menu = inject(MenuController);
   private readonly uiUpdate = inject(UIUpdate);
@@ -309,6 +311,7 @@ export class AppComponent implements AfterViewInit {
   public uiRoastingSectionVisible: boolean = false;
 
   constructor() {
+    this.documentLanguage.start();
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
