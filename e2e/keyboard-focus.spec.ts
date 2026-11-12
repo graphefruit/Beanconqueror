@@ -24,6 +24,9 @@ async function setTheme(page: Page, theme: Theme): Promise<void> {
 async function tabTo(page: Page, target: Locator, maxPresses = 60) {
   await expect(target).toHaveCount(1);
   for (let press = 0; press < maxPresses; press++) {
+    // Settings sliders are disabled while the page scrolls, and focusing the
+    // previous control scrolls it; a user waits until the slider is usable.
+    await expect(target).not.toHaveAttribute('aria-disabled', 'true');
     await page.keyboard.press('Tab');
     const focused = await target
       .evaluate(
