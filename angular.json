@@ -23,7 +23,8 @@
               {
                 "glob": "**/*",
                 "input": "src/assets",
-                "output": "assets"
+                "output": "assets",
+                "ignore": ["fonts/**/*.woff2"]
               },
               {
                 "glob": "**/*.svg",
