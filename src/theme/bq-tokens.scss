@@ -150,8 +150,8 @@ $bq-font-stack-base:
 // Live readings (brew timer, scale weight, flow) update several times a second;
 // tabular figures keep the digits from jittering. Running text keeps
 // proportional figures.
-app-timer,
-app-brew-timer,
+timer,
+brew-timer,
 .flow-profile {
   font-variant-numeric: tabular-nums;
 }
