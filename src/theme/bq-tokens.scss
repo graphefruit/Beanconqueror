@@ -89,6 +89,25 @@ $bq-on-action-primary: #ffffff;
 
   // Elevation
   --bq-shadow-bar: 0 -2px 10px rgba(0, 0, 0, 0.13);
+  // Alerts, popovers and toasts float above the page; espresso-tinted so the
+  // shadow reads as depth on cream rather than as a grey smudge.
+  --bq-shadow-overlay: 0 4px 16px rgba(33, 25, 20, 0.2);
+
+  // Overlays (alert, action sheet, popover, sheet modal, loading, toast)
+  --bq-surface-overlay: var(--bq-surface-card);
+  // Same hairline as cards, so an overlay keeps its edge where the scrim and
+  // the overlay surface are close (dark mode).
+  --bq-overlay-border: var(--bq-border-card);
+  // Scrim behind dialogs: espresso, as in the handoff (rgba(33,25,20,.45)).
+  // Colour and opacity are separate because Ionic's backdrop takes them apart;
+  // --bq-overlay-scrim is the same value for surfaces that need one colour.
+  --bq-overlay-scrim-color: var(--bq-palette-espresso-900);
+  --bq-overlay-scrim-opacity: 0.45;
+  --bq-overlay-scrim: rgba(33, 25, 20, 0.45);
+  // Toast: espresso with white text in light mode (17.7:1), so it stands out
+  // from cream and white cards alike.
+  --bq-toast-surface: var(--bq-palette-espresso-900);
+  --bq-toast-text: var(--bq-palette-white);
 
   // Radius
   --bq-radius-button: 8px;
@@ -96,6 +115,9 @@ $bq-on-action-primary: #ffffff;
   --bq-radius-pill: 9999px;
   --bq-radius-control: 6px;
   --bq-radius-field: 14px;
+  --bq-radius-overlay: 14px;
+  // Sheets are rounded at the top only; they sit on the bottom edge.
+  --bq-radius-sheet: var(--bq-radius-card);
 }
 
 // ── Typography ──────────────────────────────────────────────────────────────
@@ -221,6 +243,15 @@ brew-timer,
   --bq-control-error: #ff7a88;
   --bq-control-toggle-off: #8a7464;
   --bq-control-toggle-off-border: var(--bq-palette-cream-200);
+
+  --bq-shadow-overlay: 0 4px 16px rgba(0, 0, 0, 0.4);
+  // An espresso scrim would vanish on the espresso page; black still dims it.
+  --bq-overlay-scrim-color: #000000;
+  --bq-overlay-scrim-opacity: 0.6;
+  --bq-overlay-scrim: rgba(0, 0, 0, 0.6);
+  // Card surface (white text 16.0:1); the overlay border keeps its edge on
+  // the espresso page.
+  --bq-toast-surface: var(--bq-palette-espresso-1000);
 }
 
 // ── Ionic base mapping ──────────────────────────────────────────────────────
@@ -255,6 +286,10 @@ brew-timer,
   // Alert and action sheet read this; without it they fall back to the page
   // colour while popovers and toasts sit on the card colour.
   --ion-overlay-background-color: #{$card};
+  // Every overlay backdrop (alert, action sheet, modal, popover, loading)
+  // reads these two.
+  --ion-backdrop-color: var(--bq-overlay-scrim-color);
+  --ion-backdrop-opacity: var(--bq-overlay-scrim-opacity);
 
   // The legacy theme uses `light` as the card surface (app and component SCSS,
   // color="light"). Mapping it here keeps those on the brand card colour instead

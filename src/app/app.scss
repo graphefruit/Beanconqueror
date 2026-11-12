@@ -415,7 +415,8 @@ ion-split-pane {
   }
 
   .half-bottom-modal {
-    --background: rgba(0, 0, 0, 0.47);
+    // The full-screen modal's own background is the dimmed area above the sheet.
+    --background: var(--bq-overlay-scrim);
 
     ion-toolbar {
       --background: var(--bq-surface-card);
@@ -570,16 +571,24 @@ ion-split-pane {
     padding-bottom: 0px;
   }
 
+  // Inverted surface (espresso in light mode) so a toast never blends into
+  // cream pages or white cards; buttons share the toast's text colour.
   ion-toast {
-    --background: var(--bq-surface-card);
-    --color: var(--ion-text-color);
+    --background: var(--bq-toast-surface);
+    --color: var(--bq-toast-text);
+    --button-color: var(--bq-toast-text);
+    --border-radius: var(--bq-radius-overlay);
+    --border-color: var(--bq-overlay-border);
+    --border-style: solid;
+    --border-width: 1px;
+    --box-shadow: var(--bq-shadow-overlay);
     font-weight: bold;
     letter-spacing: 0.5px;
 
     --height: 75px;
   }
   ion-toast::part(button cancel) {
-    color: var(--ion-text-color);
+    color: var(--bq-toast-text);
   }
 
   .ion-no-margin-important {
@@ -713,7 +722,30 @@ ion-split-pane {
   }
 
   ion-popover {
-    --background: var(--bq-surface-card);
+    --background: var(--bq-surface-overlay);
+    --box-shadow: var(--bq-shadow-overlay);
+  }
+  // Ionic offers no variable for the popover's radius or border.
+  ion-popover::part(content) {
+    border: 1px solid var(--bq-overlay-border);
+    border-radius: var(--bq-radius-overlay);
+  }
+
+  // Sheet modals (breakpoints) round their top edge.
+  ion-modal.modal-sheet {
+    --border-radius: var(--bq-radius-sheet);
+  }
+
+  ion-action-sheet {
+    --background: var(--bq-surface-overlay);
+    // Header text; Ionic's 54 % text colour is too faint on dark cards.
+    --color: var(--bq-text-secondary);
+    --button-color: var(--bq-text-primary);
+  }
+  // Scoped component: the sheet's top edge is its first button group.
+  ion-action-sheet .action-sheet-group:first-child {
+    border-top-left-radius: var(--bq-radius-sheet);
+    border-top-right-radius: var(--bq-radius-sheet);
   }
 
   ion-app {
@@ -899,12 +931,14 @@ ion-modal.loading-modal {
   -ms-user-select: none;
   user-select: none;
   z-index: 1001;
-  --background: var(--ion-color-step-50, #f2f2f2);
+  --background: var(--bq-surface-overlay);
+  --border-radius: var(--bq-radius-overlay);
+  --box-shadow: var(--bq-shadow-overlay);
   --max-width: 280px;
   --max-height: 90%;
-  --spinner-color: var(--ion-color-primary, #3880ff);
-  --backdrop-opacity: var(--ion-backdrop-opacity, 0.32) !important;
-  color: var(--ion-color-step-850, #262626);
+  --spinner-color: var(--ion-color-accent);
+  --backdrop-opacity: var(--bq-overlay-scrim-opacity) !important;
+  color: var(--bq-text-primary);
   font-size: 0.875rem;
   /**Overwrite**/
   --min-height: inherit !important;
@@ -915,7 +949,7 @@ loading-popover {
   min-height: 100px !important;
   width: 250px !important;
   /**Just needed on devices. on web its not needed**/
-  background: var(--ion-background-color);
+  background: var(--bq-surface-overlay);
 }
 
 .ios-indexeddbissues {
@@ -987,7 +1021,7 @@ Somehow i've found out that ionic is rendering this media-tags and setting box-s
   }
 }
 .toast-automatic-save-timer {
-  --button-color: var(--ion-text-color);
+  --button-color: var(--bq-toast-text);
 }
 
 .please-activate-analytics-content {
@@ -1000,8 +1034,35 @@ Somehow i've found out that ionic is rendering this media-tags and setting box-s
 .svg-container > svg:first-child {
   background: var(--ion-color-graph-background) !important;
 }
-:root ion-alert .alert-button {
-  color: var(--ion-text-color);
+// Alerts are scoped, not shadow, so their parts are styled by class; :root
+// outweighs Ionic's scoped rules without !important.
+:root ion-alert {
+  --background: var(--bq-surface-overlay);
+
+  .alert-wrapper {
+    border: 1px solid var(--bq-overlay-border);
+    border-radius: var(--bq-radius-overlay);
+    box-shadow: var(--bq-shadow-overlay);
+  }
+
+  .alert-title {
+    color: var(--bq-text-primary);
+  }
+
+  .alert-sub-title,
+  .alert-message {
+    color: var(--bq-text-secondary);
+  }
+
+  // Text buttons, so the main action takes the text accent: coral fill would
+  // be 3.02:1 as text on dark cards. Cancel steps back to secondary text.
+  .alert-button {
+    color: var(--bq-text-accent);
+  }
+
+  .alert-button.alert-button-role-cancel {
+    color: var(--bq-text-secondary);
+  }
 }
 
 // ── Keyboard focus ──────────────────────────────────────────────────────────
