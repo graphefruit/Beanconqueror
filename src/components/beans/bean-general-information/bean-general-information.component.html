@@ -2,7 +2,7 @@
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.name])) {
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_NAME' | translate}}"
-        required spellcheck="false" type="text">
+        errorText="{{'BEAN.VALIDATION.NAME_REQUIRED' | translate}}" required spellcheck="false" type="text">
       </ion-input>
     </ion-item>
   }

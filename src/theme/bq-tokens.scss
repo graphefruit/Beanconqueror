@@ -50,6 +50,34 @@ $bq-on-action-primary: #ffffff;
   --bq-focus-ring-offset: 2px;
   --bq-focus-ring-gap: var(--bq-palette-white);
 
+  // Form controls. Fields sit on cards, so contrast is measured against the
+  // card colour (white / #2a211a); the page colour is noted where it differs.
+  // Unchecked boxes, radio rings, field outlines: 11.09:1 (dark 6.83:1).
+  --bq-control-border: var(--bq-text-secondary);
+  --bq-control-border-width: 2px;
+  --bq-control-surface: var(--bq-palette-white);
+  --bq-control-size: 22px;
+  // Placeholder text at full opacity: 5.93:1 (dark 6.83:1).
+  --bq-text-placeholder: #75604f;
+  // Error border and message, same hue as the text accent: 7.20:1 (dark 6.30:1).
+  --bq-control-error: #9e2d45;
+  // Inactive range track. One value for both modes: 4.41:1 on white, 3.20:1 on
+  // cream, 3.58:1 on dark cards; the handoff's translucent dark track was 2.54:1.
+  --bq-control-track: #8a7464;
+  // Toggle off: a solid track with an outline (7.13:1 on white), so "off" does
+  // not depend on a faint grey.
+  --bq-control-toggle-off: #6b5344;
+  --bq-control-toggle-off-border: var(--bq-palette-espresso-900);
+  --bq-control-handle: var(--bq-palette-white);
+  --bq-field-border-width: 1px;
+  --bq-toggle-width: 52px;
+  --bq-toggle-height: 32px;
+  --bq-toggle-handle-size: 26px;
+  --bq-toggle-handle-inset: 3px;
+  --bq-toggle-border-width: 1.5px;
+  // Minimum touch target for controls that stand on their own.
+  --bq-touch-target: 44px;
+
   // Spacing (8-pt grid)
   --bq-space-1: 4px;
   --bq-space-2: 8px;
@@ -66,6 +94,8 @@ $bq-on-action-primary: #ffffff;
   --bq-radius-button: 8px;
   --bq-radius-card: 16px;
   --bq-radius-pill: 9999px;
+  --bq-radius-control: 6px;
+  --bq-radius-field: 14px;
 }
 
 // ── Typography ──────────────────────────────────────────────────────────────
@@ -183,6 +213,14 @@ brew-timer,
   --bq-border-card: rgba(234, 217, 196, 0.14);
   --bq-focus-ring: var(--bq-palette-white);
   --bq-focus-ring-gap: var(--bq-palette-espresso-900);
+
+  --bq-control-border: #b8a898;
+  // Transparent: the control shows the dark card behind it.
+  --bq-control-surface: transparent;
+  --bq-text-placeholder: #b8a898;
+  --bq-control-error: #ff7a88;
+  --bq-control-toggle-off: #8a7464;
+  --bq-control-toggle-off-border: var(--bq-palette-cream-200);
 }
 
 // ── Ionic base mapping ──────────────────────────────────────────────────────

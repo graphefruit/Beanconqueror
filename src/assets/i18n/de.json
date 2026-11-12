@@ -412,6 +412,9 @@
             "BEAN_DATA_BEST_DATE": "Wann ist das beste Datum für den Genuss der Bohne?",
             "BEAN_DATA_OPEN_DATE": "Wann wurde die Packung geöffnet?",
             "FROZEN_NOTES": "Irgendwelche Anmerkungen zum gefrorenen Kaffee? Zum Beispiel in welchem Gefrierschrank du ihn gelagert hast"
+        },
+        "VALIDATION": {
+            "NAME_REQUIRED": "Bitte gib einen Namen für die Bohnen ein."
         }
     },
     "PREPARATION": {

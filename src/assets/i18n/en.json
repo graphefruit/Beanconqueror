@@ -412,6 +412,9 @@
             "BEAN_DATA_BEST_DATE": "When is the best date for the bean?",
             "BEAN_DATA_OPEN_DATE": "When was the bean bag opend?",
             "FROZEN_NOTES": "Any notes to the frozen coffee? Like in which freezer you've stored it e.g."
+        },
+        "VALIDATION": {
+            "NAME_REQUIRED": "Please enter a name for these beans."
         }
     },
     "PREPARATION": {
