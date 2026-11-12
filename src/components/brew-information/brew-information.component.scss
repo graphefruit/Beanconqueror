@@ -85,12 +85,16 @@
       }
     }
 
+    // The column has a fixed share of the card; at a large text size a long
+    // month name breaks instead of running into the divider.
     .dashboard-time-center {
       display: grid;
       height: 100%;
       align-items: center;
       justify-content: center;
       text-align: center;
+      overflow-wrap: anywhere;
+      hyphens: auto;
     }
 
     ion-col.center-col {

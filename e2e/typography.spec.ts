@@ -125,7 +125,8 @@ test.describe('brew cards at 200 % text size', () => {
   test.use({ allowedConsoleErrors: [BREW_FORM_REFRACTOMETER_ERROR] });
 
   test.beforeEach(async ({ page }) => {
-    // A fixed date keeps the cards' text the same on every run.
+    // A fixed date keeps the cards' text the same on every run; September is
+    // the longest English month name the home card shows.
     await page.clock.setFixedTime(new Date('2026-09-23T10:30:00+02:00'));
     await page.goto('/');
     await completeFirstRunWithBrew(page);
@@ -193,5 +194,51 @@ test.describe('brew cards at 200 % text size', () => {
       layout.beanNameBottom,
       'bean name stays above the divider',
     ).toBeLessThanOrEqual(layout.dividerTop);
+  });
+
+  test('the home card keeps the month inside the date column', async ({
+    page,
+  }) => {
+    await page.getByRole('tab', { name: 'Home' }).click();
+    const card = page.locator('ion-card.dashboard-layout');
+    await expect(card.getByText('September')).toBeVisible();
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = '200%';
+    });
+
+    const fit = await card.evaluate((cardElement) => {
+      const date = cardElement
+        .querySelector('.dashboard-time-center')!
+        .getBoundingClientRect();
+      const divider = cardElement.querySelector('.vr')!.getBoundingClientRect();
+      // The date's text, measured by its glyphs rather than its boxes.
+      const column = cardElement.querySelector('.dashboard-time-center')!;
+      const walker = document.createTreeWalker(column, NodeFilter.SHOW_TEXT);
+      const glyphs: DOMRect[] = [];
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        glyphs.push(
+          ...[...range.getClientRects()].filter((rect) => rect.width > 0),
+        );
+      }
+      const text = {
+        left: Math.min(...glyphs.map((rect) => rect.left)),
+        right: Math.max(...glyphs.map((rect) => rect.right)),
+      };
+      return {
+        textLeft: text.left,
+        textRight: text.right,
+        columnLeft: date.left,
+        dividerLeft: divider.left,
+      };
+    });
+    expect(
+      fit.textLeft,
+      'date starts inside its column',
+    ).toBeGreaterThanOrEqual(fit.columnLeft);
+    expect(fit.textRight, 'date ends before the divider').toBeLessThanOrEqual(
+      fit.dividerLeft,
+    );
   });
 });
