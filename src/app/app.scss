@@ -20,10 +20,6 @@ ion-title {
   font-size: 24px;
   color: var(--ion-text-color);
 }
-.font-size-12 {
-  font-size: 12px !important;
-  line-height: 12px !important;
-}
 .font-size-14 {
   font-size: 14px !important;
   line-height: 14px !important;
@@ -166,11 +162,6 @@ ion-segment-button {
   }
 }
 
-.heading-20 {
-  font-size: 20px;
-  font-weight: bold;
-}
-
 ion-card.long-card {
   background: var(--ion-color-light);
   border-radius: 6px 6px 6px 6px;
@@ -187,17 +178,6 @@ ion-card-header {
   white-space: normal;
 }
 
-.blockquote {
-  border-radius: 5px;
-  padding: 5px 10px;
-  background-color: #cfd7e1;
-  border: 1px solid #5b7391;
-  font-style: italic;
-}
-
-[no-margin-important] {
-  margin: 0px !important;
-}
 ion-label {
   white-space: normal;
   p {
@@ -215,51 +195,8 @@ ion-modal {
 .margin-top-5 {
   margin-top: 5px;
 }
-.padding-right-8 {
-  padding-right: 8px;
-}
-
-.margin-horizontal-5 {
-  margin-right: 5px;
-  margin-left: 5px;
-}
-
-.checkbox-icon {
-  border-radius: 0px !important;
-}
-ion-list.no-last-border .item-block:last-child {
-  border-bottom: none !important;
-}
-ion-buttons[start] {
-  order: 1;
-  margin: 0 6px;
-}
-
-ion-buttons[start] button {
-  min-width: 44px;
-  box-shadow: none;
-}
-
 ion-list.no-label-margin ion-label {
   margin: 0px !important;
-}
-
-.bean-icon {
-  /*background: url(../assets/icon/bean.svg) no-repeat top left;*/
-  background-size: contain;
-  width: 80px;
-  height: 35px;
-  margin: 20px auto 0 auto;
-}
-
-[text-italic] {
-  font-style: italic;
-}
-[justify-content-start] .button-inner {
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-  -ms-flex-pack: start;
-  justify-content: flex-start;
 }
 
 pre {
@@ -308,41 +245,6 @@ ion-alert {
   }
 }
 
-ion-alert.select-full-screen {
-  .alert-wrapper {
-    min-height: 100%;
-    min-width: 100%;
-    height: 100%;
-    width: 100%;
-  }
-
-  .alert-radio-label {
-    white-space: normal !important;
-  }
-
-  .alert-radio-group {
-    max-height: 100%;
-    height: 100%;
-  }
-
-  // Applies a text wrap on ion options
-  .alert-tappable.alert-radio {
-    height: auto;
-    contain: content;
-  }
-}
-
-ion-alert.select-break-text {
-  .alert-checkbox-label {
-    white-space: normal !important;
-  }
-
-  .alert-tappable.alert-checkbox {
-    height: auto;
-    contain: content;
-  }
-}
-
 ion-alert {
   [aria-checked='true'] {
     .alert-checkbox-icon {
@@ -386,15 +288,7 @@ ion-split-pane {
   }
 }
 
-ion-menu:host .menu-inner {
-  box-shadow: none;
-}
-
 :root {
-  ion-col.center-col {
-    display: flex;
-    align-items: center;
-  }
   hr {
     height: 0px;
     border-top: 2px solid var(--ion-color-accent);
@@ -402,9 +296,6 @@ ion-menu:host .menu-inner {
   }
   .ion-no-padding-right {
     padding-right: 0px;
-  }
-  .ion-no-padding-left {
-    padding-left: 0px;
   }
   ion-range {
     --bar-background: #cccccc;
@@ -550,7 +441,6 @@ ion-menu:host .menu-inner {
     border-bottom-left-radius: 0 !important;
   }
 
-  .bottom-modal,
   .half-bottom-modal {
     --background: rgba(0, 0, 0, 0.47);
 
@@ -667,10 +557,6 @@ ion-menu:host .menu-inner {
     color: black;
   }
 
-  .rotate-icon-180 {
-    transform: rotate(180deg);
-  }
-
   span.swiper-pagination-bullet.swiper-pagination-bullet-active {
     width: 15px;
     border-radius: 6px;
@@ -678,10 +564,6 @@ ion-menu:host .menu-inner {
 
   .swiper-pagination.swiper-pagination-bullets {
     position: relative;
-  }
-  ion-slides {
-    --bullet-background: #282013;
-    --bullet-background-active: #ae9f87;
   }
 
   @media (min-width: 768px) {
@@ -695,8 +577,7 @@ ion-menu:host .menu-inner {
       padding-right: 2.5%;
     }
 
-    ion-modal.half-bottom-modal,
-    ion-modal.bottom-modal {
+    ion-modal.half-bottom-modal {
       .ion-page {
         margin-right: 2.5%;
         margin-left: 2.5%;
@@ -846,10 +727,6 @@ ion-menu:host .menu-inner {
     height: 100%;
     word-break: break-all;
   }
-  .icon-32 {
-    width: 32px;
-    height: 32px;
-  }
   .icon-16 {
     width: 16px;
     height: 16px;
@@ -888,10 +765,6 @@ ion-menu:host .menu-inner {
   .disablePointerEvents {
     pointer-events: none;
   }
-}
-
-.color-white {
-  color: white !important;
 }
 
 ion-segment.tabs {
