@@ -18,13 +18,23 @@
       padding-bottom: 0px;
       padding-top: var(--padding-top);
     }
+    // Inside ion-title, which does not wrap. The time is an inline block so
+    // it can move to its own line without a space after the date.
+    .brew-date-time {
+      display: block;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .brew-time {
+      display: inline-block;
+    }
     .brew-title {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
     }
     ion-label {
-      line-height: 14px !important;
+      line-height: var(--bq-leading-caption);
       display: inline-block;
     }
     // Overwrite

@@ -1,6 +1,10 @@
 import type { Locator } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import {
+  BREW_FORM_REFRACTOMETER_ERROR,
+  completeFirstRunWithBrew,
+} from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 
 /**
@@ -115,4 +119,79 @@ test('bar chrome is not cut off at 200 % text size', async ({ page }) => {
     return inner.scrollWidth > inner.clientWidth;
   });
   expect(truncated, 'screen title is not ellipsized').toBe(false);
+});
+
+test.describe('brew cards at 200 % text size', () => {
+  test.use({ allowedConsoleErrors: [BREW_FORM_REFRACTOMETER_ERROR] });
+
+  test.beforeEach(async ({ page }) => {
+    // A fixed date keeps the cards' text the same on every run.
+    await page.clock.setFixedTime(new Date('2026-09-23T10:30:00+02:00'));
+    await page.goto('/');
+    await completeFirstRunWithBrew(page);
+  });
+
+  test('the brew list card keeps labels, date and time readable', async ({
+    page,
+  }) => {
+    await page.getByRole('tab', { name: 'Brews' }).click();
+    const card = page.locator('ion-card.brew-layout');
+    await expect(card).toBeVisible();
+    await expect(card.getByText('10:30', { exact: true })).toBeVisible();
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = '200%';
+    });
+
+    const layout = await card.evaluate((cardElement) => {
+      const labels = [...cardElement.querySelectorAll('ion-label')].map(
+        (label) => {
+          const style = getComputedStyle(label);
+          return {
+            text: label.textContent?.trim(),
+            fontSize: parseFloat(style.fontSize),
+            lineHeight: parseFloat(style.lineHeight),
+          };
+        },
+      );
+      const title = cardElement
+        .querySelector('ion-title')!
+        .shadowRoot!.querySelector('.toolbar-title')!;
+      const time = [...cardElement.querySelectorAll('ion-title span')].find(
+        (span) => span.textContent?.trim() === '10:30',
+      )!;
+      const titleBox = title.getBoundingClientRect();
+      const timeBox = time.getBoundingClientRect();
+      return {
+        labels,
+        titleClippedX: title.scrollWidth > title.clientWidth,
+        titleClippedY: title.scrollHeight > title.clientHeight,
+        timeInsideTitle:
+          timeBox.left >= titleBox.left &&
+          timeBox.right <= titleBox.right &&
+          timeBox.bottom <= titleBox.bottom,
+        beanNameBottom: cardElement
+          .querySelector('.brew-title')!
+          .getBoundingClientRect().bottom,
+        dividerTop: cardElement.querySelector('hr')!.getBoundingClientRect()
+          .top,
+      };
+    });
+
+    // Wrapped labels ("Preparation method", "In/Out (BR)") must not stack
+    // their lines on top of each other.
+    expect(layout.labels).not.toHaveLength(0);
+    for (const label of layout.labels) {
+      expect(
+        label.lineHeight,
+        `${label.text} line height`,
+      ).toBeGreaterThanOrEqual(label.fontSize);
+    }
+    expect(layout.titleClippedX, 'date is not cut off').toBe(false);
+    expect(layout.titleClippedY, 'date is not cut off').toBe(false);
+    expect(layout.timeInsideTitle, 'time stays visible').toBe(true);
+    expect(
+      layout.beanNameBottom,
+      'bean name stays above the divider',
+    ).toBeLessThanOrEqual(layout.dividerTop);
+  });
 });

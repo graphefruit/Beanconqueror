@@ -116,7 +116,7 @@
   <ion-card class='long-card brew-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'>
     <ion-card-content #card class='no-ion-col-vertical-padding ion-padding-top' [ngClass]="brew.flow_profile?'add-bottom-spacing':''">
       <ion-grid class='no-padding-bottom' style='padding-top:0px;'>
-        <ion-row style='height:60px;'>
+        <ion-row style='min-height:60px;'>
 
           <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' size="1" class='ion-no-padding'>
             @if (choosenImageDisplayingType === BREW_DISPLAY_IMAGE_TYPE.PREPARATION) {
@@ -146,20 +146,24 @@
               <ion-row class='ion-padding-bottom-half'>
                 <ion-col size='10'>
                   <ion-title class='ion-no-padding font-size-18'>
-                    @if (brew.best_brew) {
-                      <ion-icon name='trophy'
-                      style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
-                    }
-                    @if (brew.favourite) {
-                      <ion-icon name='heart'
-                      style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
-                    }
-                    @if (brew?.flow_profile) {
-                      <ion-icon name='analytics-outline'
-                      style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
-                    }
-                    <strong>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}</strong><span
-                  class='ion-padding-start'>{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</span></ion-title>
+                    <!-- Ionic keeps a title on one line and cuts it off; the
+                         date and time wrap instead when the text is large. -->
+                    <span class='brew-date-time'>
+                      @if (brew.best_brew) {
+                        <ion-icon name='trophy'
+                        style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                      }
+                      @if (brew.favourite) {
+                        <ion-icon name='heart'
+                        style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                      }
+                      @if (brew?.flow_profile) {
+                        <ion-icon name='analytics-outline'
+                        style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                      }
+                      <strong>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}</strong><span
+                    class='ion-padding-start brew-time'>{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</span>
+                    </span></ion-title>
                 </ion-col>
                 <ion-col size='2'>
                   <ion-button (click)='showBrewActions($event)' aria-label="Brew options" class='button-top-absolute' color='accent' fill='clear'>
