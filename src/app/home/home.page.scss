@@ -1,4 +1,9 @@
 :host {
+  ion-tab-bar {
+    box-shadow: var(--bq-shadow-bar);
+    padding-top: var(--bq-space-3);
+  }
+
   ion-tab-button {
     --padding-start: 6px;
     --padding-end: 6px;

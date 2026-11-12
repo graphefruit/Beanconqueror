@@ -47,6 +47,9 @@
   --bq-space-8: 32px;
   --bq-space-12: 48px;
 
+  // Elevation
+  --bq-shadow-bar: 0 -2px 10px rgba(0, 0, 0, 0.13);
+
   // Radius
   --bq-radius-button: 8px;
   --bq-radius-card: 16px;
@@ -97,7 +100,8 @@
     #{color.channel($text, 'blue')};
   --ion-card-background: #{$card};
   --ion-item-background: #{$card};
-  --ion-toolbar-background: #{$card};
+  --ion-toolbar-background: #{$background};
+  --ion-header-background-color: #{$background};
   --ion-toolbar-color: #{$text};
   --ion-tab-bar-background: #{$card};
   --ion-tab-bar-color: #{$nav-inactive};

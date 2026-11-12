@@ -68,7 +68,7 @@ ion-header {
 }
 
 ion-header ion-toolbar:first-of-type {
-  padding-top:0px!important;
+  padding-top: 0px !important;
 }
 
 ion-content {
@@ -268,27 +268,14 @@ pre {
   white-space: pre-wrap;
 }
 
+// Tab colours come from --ion-tab-bar-color(-selected); icons must follow the
+// button colour instead of the global icon colour.
 ion-tab-button {
   ion-icon {
-    color: #cccccc;
+    color: inherit;
   }
   ion-icon.stroke {
-    stroke: #cccccc;
-  }
-  ion-label {
-    color: #cccccc;
-  }
-}
-
-ion-tab-button.tab-selected {
-  ion-icon {
-    color: #b88265;
-  }
-  ion-icon.stroke {
-    stroke: #b88265;
-  }
-  ion-label {
-    color: #b88265;
+    stroke: currentColor;
   }
 }
 
@@ -428,7 +415,6 @@ ion-menu:host .menu-inner {
   }
 
   ion-tab-bar {
-    --background: var(--ion-color-light);
     --border: 0px;
     padding-bottom: 12px;
     padding-bottom: constant(safe-area-inset-bottom);
@@ -1053,10 +1039,9 @@ ion-modal.loading-modal {
   --min-width: inherit !important;
 }
 
-
 loading-popover {
   min-height: 100px !important;
-  width: 250px!important;
+  width: 250px !important;
   /**Just needed on devices. on web its not needed**/
   background: var(--ion-background-color);
 }
@@ -1077,7 +1062,6 @@ ion-chip.machine-connected {
 ion-chip.machine-disconnected {
   background-color: rgba(204, 51, 17, 0.4);
 }
-
 
 ion-chip.chip-outline {
   /**Make it for darkmode accessable**/
@@ -1101,16 +1085,15 @@ ion-chip.trace-chip.trace-active {
 
 .ion-palette-dark {
   ion-chip.trace-chip.trace-active.custom-trace-chip,
-  ion-chip.trace-chip.trace-active[style*="--chip-color: #ffffff" i],
-  ion-chip.trace-chip.trace-active[style*="--chip-color:#ffffff" i],
-  ion-chip.trace-chip.trace-active[style*="--chip-color: white" i],
-  ion-chip.trace-chip.trace-active[style*="--chip-color:white" i],
-  ion-chip.trace-chip.trace-active[style*="--chip-color: #cdc2ac" i],
-  ion-chip.trace-chip.trace-active[style*="--chip-color:#cdc2ac" i] {
+  ion-chip.trace-chip.trace-active[style*='--chip-color: #ffffff' i],
+  ion-chip.trace-chip.trace-active[style*='--chip-color:#ffffff' i],
+  ion-chip.trace-chip.trace-active[style*='--chip-color: white' i],
+  ion-chip.trace-chip.trace-active[style*='--chip-color:white' i],
+  ion-chip.trace-chip.trace-active[style*='--chip-color: #cdc2ac' i],
+  ion-chip.trace-chip.trace-active[style*='--chip-color:#cdc2ac' i] {
     --color: var(--ion-color-graph-background, #222428) !important;
   }
 }
-
 
 .no-overflow-ellipsis {
   white-space: nowrap;
