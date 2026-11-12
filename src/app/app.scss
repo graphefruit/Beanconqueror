@@ -1173,8 +1173,12 @@ $bq-focus-double-ring:
   }
 
   // The knob is a coral fill as well. Ionic marks only the focused knob, not
-  // the host, so the ring needs the knob part.
-  ion-range::part(knob focused) {
-    box-shadow: $bq-focus-double-ring;
+  // the host, so the ring needs a part. On touch Ionic still marks a tapped
+  // knob as focused (the compatibility mousedown focuses it after pointerup
+  // has reset Ionic's pointer flag), so the focusable handle must also match
+  // :focus-visible. The ring is drawn on the knob inside the handle through
+  // Ionic's knob shadow variable, which the knob inherits from the handle.
+  ion-range::part(knob-handle focused):focus-visible {
+    --knob-box-shadow: #{$bq-focus-double-ring};
   }
 }

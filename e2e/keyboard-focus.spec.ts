@@ -97,11 +97,46 @@ async function showsFocusRing(target: Locator): Promise<boolean> {
   });
 }
 
+/**
+ * True when the focused control draws the double ring of solid (coral)
+ * fills: an inner spread in the gap token at the ring offset and an outer
+ * spread in the ring token at offset plus ring width, both on the control
+ * itself (for ion-button, the native button inside its shadow root).
+ */
+async function showsDoubleRing(target: Locator): Promise<boolean> {
+  return target.evaluate((element) => {
+    const tokens = getComputedStyle(document.documentElement);
+    const resolve = (token: string): string => {
+      const probe = document.createElement('div');
+      probe.style.color = tokens.getPropertyValue(token).trim();
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
+    const offset = parseFloat(
+      tokens.getPropertyValue('--bq-focus-ring-offset'),
+    );
+    const width = parseFloat(tokens.getPropertyValue('--bq-focus-ring-width'));
+    const shadow = getComputedStyle(element).boxShadow;
+    return (
+      shadow.includes(
+        `${resolve('--bq-focus-ring-gap')} 0px 0px 0px ${offset}px`,
+      ) &&
+      shadow.includes(
+        `${resolve('--bq-focus-ring')} 0px 0px 0px ${offset + width}px`,
+      )
+    );
+  });
+}
+
 async function expectFocusRing(page: Page, target: Locator): Promise<void> {
   await tabTo(page, target);
   // Ionic animates its own focus states; the ring has to be there once they settle.
   await expect
-    .poll(() => showsFocusRing(target), { message: `focus ring on ${target}` })
+    .poll(() => showsFocusRing(target), {
+      message: `focus ring on ${String(target)}`,
+    })
     .toBe(true);
 }
 
@@ -154,6 +189,37 @@ for (const theme of ['light', 'dark'] as const) {
     await expect(page.getByRole('dialog')).toBeVisible();
 
     await expectFocusRing(page, page.getByRole('textbox', { name: /^Name/ }));
-    await expectFocusRing(page, page.getByRole('button', { name: 'Save' }));
+    const save = page.getByRole('button', { name: 'Save' });
+    await expectFocusRing(page, save);
+    // A single ring would disappear into the coral fill; the gap keeps it apart.
+    await expect
+      .poll(() => showsDoubleRing(save), { message: 'double ring on Save' })
+      .toBe(true);
   });
 }
+
+test('tapping a settings slider does not draw the keyboard focus ring', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await page.getByRole('button', { name: 'menu' }).click();
+  await page.getByRole('link', { name: 'Settings' }).click();
+
+  const slider = page.getByRole('slider').first();
+  await slider.scrollIntoViewIfNeeded();
+  // Sliders are disabled while the page scrolls.
+  await expect(slider).not.toHaveAttribute('aria-disabled', 'true');
+  await slider.tap();
+
+  // The tap focuses the knob (Ionic even marks it .ion-focused on touch), but
+  // the ring is for keyboard focus only.
+  await expect(slider).toBeFocused();
+  await slider.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+  expect(await showsFocusRing(slider)).toBe(false);
+});
