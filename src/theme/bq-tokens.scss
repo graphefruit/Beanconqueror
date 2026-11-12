@@ -186,6 +186,13 @@ $bq-font-stack-base:
   // Pinch zoom is allowed, so fields must never fall below 16px, even when
   // the root size is lowered.
   --bq-type-input: max(1rem, 16px);
+  // Bar chrome has a fixed size: the tab bar does not grow and the header
+  // title sits between fixed buttons and is ellipsized by Ionic. Growing with
+  // the text size would clip tab labels and cut the screen name to "Ov...",
+  // so these follow a smaller text size but never exceed their design size.
+  // Pinch zoom still enlarges them.
+  --bq-type-tab-label: min(var(--bq-type-caption), 14px);
+  --bq-type-screen-title: min(var(--bq-type-title), 28px);
 
   // Line heights, unitless so they scale with the font size.
   --bq-leading-display: 1.2;

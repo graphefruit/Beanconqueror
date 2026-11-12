@@ -68,3 +68,51 @@ test('text fields in the add-bean form are at least 16px', async ({ page }) => {
     expect(size).toBeGreaterThanOrEqual(MIN_FIELD_FONT_SIZE_PX);
   }
 });
+
+test('bar chrome is not cut off at 200 % text size', async ({ page }) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  // The user's text size scales the root font; rem-based text follows it.
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
+
+  // The tab bar has a fixed height and shares the screen width between five
+  // tabs, so its labels must neither overflow the button nor the bar.
+  const viewportWidth = page.viewportSize()!.width;
+  await expect(page.getByRole('tab')).toHaveCount(5);
+  for (const tab of await page.getByRole('tab').all()) {
+    const fit = await tab.evaluate((tabElement) => {
+      // The tab role sits on Ionic's inner anchor; the label is slotted into
+      // the host element.
+      const root = tabElement.getRootNode();
+      const button = root instanceof ShadowRoot ? root.host : tabElement;
+      const label = button.querySelector('ion-label')!;
+      const box = button.getBoundingClientRect();
+      return {
+        name: label.textContent?.trim(),
+        left: box.left,
+        right: box.right,
+        clippedX: label.scrollWidth > label.clientWidth,
+        clippedY: label.scrollHeight > label.clientHeight,
+      };
+    });
+    expect(fit.left, `${fit.name} starts on screen`).toBeGreaterThanOrEqual(0);
+    expect(fit.right, `${fit.name} ends on screen`).toBeLessThanOrEqual(
+      viewportWidth,
+    );
+    expect(fit.clippedX, `${fit.name} label fits its width`).toBe(false);
+    expect(fit.clippedY, `${fit.name} label fits its height`).toBe(false);
+  }
+
+  // Ionic ellipsizes the header title; the screen name must stay whole.
+  const title = page.getByRole('banner').getByText('Overview', { exact: true });
+  await expect(title).toBeVisible();
+  const truncated = await title.evaluate((span) => {
+    const inner = span
+      .closest('ion-title')!
+      .shadowRoot!.querySelector('.toolbar-title')!;
+    return inner.scrollWidth > inner.clientWidth;
+  });
+  expect(truncated, 'screen title is not ellipsized').toBe(false);
+});

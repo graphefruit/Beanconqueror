@@ -46,10 +46,10 @@ ion-header {
     height: 0px;
   }
   ion-title {
-    font-size: var(--bq-type-title);
+    font-size: var(--bq-type-screen-title);
   }
   .ion-title {
-    font-size: var(--bq-type-title);
+    font-size: var(--bq-type-screen-title);
   }
 }
 
@@ -489,10 +489,10 @@ ion-split-pane {
   ion-label {
     font-size: var(--bq-type-ui-label);
   }
-  // Five tabs share the width of a small phone, so tab labels stay compact
-  // chrome (caption) rather than taking the 16px label floor.
+  // Five tabs share the width of a small phone and the bar does not grow, so
+  // tab labels stay compact chrome below the 16px label floor.
   ion-tab-button ion-label {
-    font-size: var(--bq-type-caption);
+    font-size: var(--bq-type-tab-label);
   }
   ion-label.card-headline {
     color: #938f89;
