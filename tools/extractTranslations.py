@@ -9,6 +9,7 @@ import argparse
 import html
 import json
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -140,9 +141,11 @@ def write_fastlane_metadata(input_dir: Path, metadata_dir: Path, version: str, v
             description = fallback_description
         if description is None:
             warning(f"{lang}: no text for version {version}, skipped")
-            # The iOS file name carries no version, so a stale one would upload old notes.
-            if ios_file and ios_file.exists():
-                ios_file.unlink()
+            # A folder from an earlier run would still be uploaded: deliver sends its old notes and
+            # supply sends an empty text for every language folder without a matching changelog.
+            for locale_dir in (ios_file and ios_file.parent, play_file and play_file.parent.parent):
+                if locale_dir:
+                    shutil.rmtree(locale_dir, ignore_errors=True)
             continue
 
         text = format_store_text(description)

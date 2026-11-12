@@ -13,9 +13,11 @@ def repo_root
   File.expand_path("..", Dir.pwd)
 end
 
+# The i18n key of the "What's new" text, not necessarily the store version: hotfixes such as
+# 8.8.1 reuse the 8.8.0 text.
 def required_version(options)
   version = options[:version].to_s
-  UI.user_error!("Pass the app version, e.g. version:9.0.0") if version.empty?
+  UI.user_error!("Pass the i18n key of the release notes, e.g. version:9.0.0") if version.empty?
   version
 end
 
@@ -29,6 +31,9 @@ end
 # Regenerates the metadata so an upload never sends texts from an earlier run.
 # Strict by default: a missing translation would otherwise block the App Store submission later.
 def generate_release_notes(options, version_code = nil)
+  # A language folder left from an earlier run would be uploaded again (deliver) or sent with an
+  # empty text (supply reads every folder), so start from an empty directory.
+  FileUtils.rm_rf(File.join(repo_root, "fastlane", "metadata"))
   args = [
     "python3", File.join(repo_root, "tools", "extractTranslations.py"),
     File.join(repo_root, "src", "assets", "i18n"),
@@ -42,7 +47,7 @@ def generate_release_notes(options, version_code = nil)
 end
 
 platform :ios do
-  desc "Upload the localized release notes for the App Store version. " \
+  desc "Upload the localized release notes to the App Store version in preparation. " \
        "Options: version (required), fallback:en, strict:false, force:true (skip HTML preview)"
   lane :release_notes do |options|
     generate_release_notes(options)
@@ -54,13 +59,18 @@ platform :ios do
     deliver(
       **auth,
       platform: "ios",
-      app_version: required_version(options),
+      # The notes go to the version currently in preparation. Passing app_version would make
+      # deliver rename that version (or create a new one) to the i18n key, which differs for hotfixes.
+      skip_app_version_update: true,
       metadata_path: METADATA_PATH,
       # Only release_notes.txt files exist in the metadata folder, so no other field is touched.
       skip_metadata: false,
       skip_binary_upload: true,
       skip_screenshots: true,
       submit_for_review: false,
+      # deliver runs precheck even without a submission, and precheck aborts on API key login
+      # because it cannot check in-app purchases. Nothing is submitted, so it adds nothing here.
+      run_precheck_before_submit: false,
       # The HTML preview is the only review step before the texts go live in App Store Connect.
       force: options[:force] == true
     )

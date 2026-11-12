@@ -243,8 +243,11 @@ fastlane ios release_notes version:9.0.0
 fastlane android release_notes version:9.0.0 track:beta
 ```
 
-- iOS: the version must exist in App Store Connect. `deliver` shows an HTML preview to confirm;
-  `force:true` skips it. Nothing is submitted for review.
+- `version` is the i18n key of the text, not the store version, so a hotfix such as 8.8.1 can upload
+  the 8.8.0 text.
+- iOS: the notes go to the version currently in preparation in App Store Connect; create it there
+  first. The lane never creates or renames a version. `deliver` shows an HTML preview to confirm;
+  `force:true` skips it. Nothing is submitted for review and precheck is not run.
 - Android: the build with that `versionCode` must already be in a release on the given track
   (`production` by default). `validate_only:true` checks without publishing.
 

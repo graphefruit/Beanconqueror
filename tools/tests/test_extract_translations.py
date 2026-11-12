@@ -22,10 +22,33 @@ def write_i18n(directory: Path, lang: str, versions: dict):
     (directory / f"{lang}.json").write_text(json.dumps(data), encoding="utf-8")
 
 
+# Locale codes the store tools accept, copied from fastlane (FastlaneCore::Languages::ALL_LANGUAGES
+# and Supply::Languages::ALL_LANGUAGES, the latter with "_" written as "-").
+DELIVER_LANGUAGES = set(
+    "ar-SA bn-BD ca cs da de-DE el en-AU en-CA en-GB en-US es-ES es-MX fi fr-CA fr-FR gu-IN he hi hr hu "
+    "id it ja kn-IN ko ml-IN mr-IN ms nl-NL no or-IN pa-IN pl pt-BR pt-PT ro ru sk sl-SI sv ta-IN te-IN "
+    "th tr uk ur-PK vi zh-Hans zh-Hant".split()
+)
+SUPPLY_LANGUAGES = set(
+    "af am ar az-AZ be bg bn-BD ca cs-CZ da-DK de-DE el-GR en-AU en-CA en-GB en-IN en-SG en-US en-ZA "
+    "es-419 es-ES es-US et eu-ES fa fi-FI fil fr-CA fr-FR gl-ES hi-IN hr hu-HU hy-AM id is-IS it-IT "
+    "iw-IL ja-JP ka-GE km-KH kn-IN ko-KR ky-KG lo-LA lt lv mk-MK ml-IN mn-MN mr-IN ms ms-MY my-MM "
+    "ne-NP nl-NL no-NO pl-PL pt-BR pt-PT rm ro ru-RU si-LK sk sl sr sv-SE sw ta-IN te-IN th tr-TR uk "
+    "vi zh-CN zh-HK zh-TW zu".split()
+)
+
+
 class StoreLocalesTest(unittest.TestCase):
     def test_every_app_language_has_an_entry(self):
         app_languages = {path.stem for path in I18N_DIR.glob("*.json")}
         self.assertEqual(app_languages, set(et.STORE_LOCALES))
+
+    def test_locales_are_accepted_by_the_stores(self):
+        for lang, (ios, play) in et.STORE_LOCALES.items():
+            if ios:
+                self.assertIn(ios, DELIVER_LANGUAGES, lang)
+            if play:
+                self.assertIn(play, SUPPLY_LANGUAGES, lang)
 
     def test_store_specific_codes(self):
         self.assertEqual(et.STORE_LOCALES["he"], ("he", "iw-IL"))
@@ -81,17 +104,19 @@ class FastlaneMetadataTest(unittest.TestCase):
                      "android/en-US/changelogs/90000.txt", "android/iw-IL/changelogs/90000.txt"):
             self.assertEqual((self.out / path).read_text(encoding="utf-8"), expected, path)
 
-    def test_missing_translation_warns_and_removes_stale_ios_notes(self):
+    def test_missing_translation_warns_and_removes_stale_locale_folders(self):
         write_i18n(self.i18n, "de", {"8.8.0": DESCRIPTION})
-        stale = self.out / "de-DE" / "release_notes.txt"
-        stale.parent.mkdir(parents=True)
-        stale.write_text("old", encoding="utf-8")
+        for stale in (self.out / "de-DE" / "release_notes.txt",
+                      self.out / "android" / "de-DE" / "changelogs" / "80801.txt"):
+            stale.parent.mkdir(parents=True)
+            stale.write_text("old", encoding="utf-8")
 
         warnings = self.run_write()
 
         self.assertEqual(len(warnings), 1)
         self.assertIn("de", warnings[0])
-        self.assertFalse(stale.exists())
+        # Both stores upload every locale folder they find, so the folders must go, not only the files.
+        self.assertFalse((self.out / "de-DE").exists())
         self.assertFalse((self.out / "android" / "de-DE").exists())
 
     def test_fallback_language_fills_missing_translation(self):

@@ -54,6 +54,10 @@ UserInterfaceState.xcuserstate
 /fastlane/report.xml
 /fastlane/Preview.html
 /fastlane/README.md
+# Any JSON or .env file in fastlane/ is treated as a credential (Google Cloud names service account
+# keys <project>-<hash>.json; fastlane loads .env files automatically, which can hold the key itself).
+/fastlane/*.json
+/fastlane/.env*
 *.p8
 *api-key*.json
 *service-account*.json
