@@ -212,3 +212,49 @@ Generate from the bean.proto:
 ```shell
  pnpm run generate_proto
 ```
+
+## Store release notes
+
+The localized "What's new" texts come from `UPDATE_TEXT_TITLE_TITLE.<version>.DESCRIPTION` in
+`src/assets/i18n/*.json`. [fastlane](https://docs.fastlane.tools/) uploads them to App Store Connect
+(`deliver`) and Google Play (`supply`) in one step. Only the release notes are uploaded: no builds,
+screenshots or other store metadata.
+
+Install fastlane once, for example with `brew install fastlane`.
+
+Generate the files without uploading (written to `fastlane/metadata`, which is not committed):
+
+```shell
+python3 tools/extractTranslations.py src/assets/i18n --version 9.0.0 --fastlane fastlane/metadata
+```
+
+- The Android changelog file is named after `versionCode` from `android/app/build.gradle`; override
+  it with `--version-code`.
+- Google Play allows 500 characters per language. Longer texts are reduced to the section headings.
+- Languages without a text for the version are skipped with a warning. `--fallback en` uses the
+  English text instead, `--strict` exits with an error on any warning.
+- The mapping from app language to store locale is `STORE_LOCALES` in the script. Note that `deliver`
+  activates every language folder it finds as a new App Store language.
+
+Upload (both lanes regenerate the files first and run strict unless `strict:false` is passed):
+
+```shell
+fastlane ios release_notes version:9.0.0
+fastlane android release_notes version:9.0.0 track:beta
+```
+
+- iOS: the version must exist in App Store Connect. `deliver` shows an HTML preview to confirm;
+  `force:true` skips it. Nothing is submitted for review.
+- Android: the build with that `versionCode` must already be in a release on the given track
+  (`production` by default). `validate_only:true` checks without publishing.
+
+Credentials are read from environment variables and must be stored outside the repository:
+
+| Variable                                                                  | Purpose                                           |
+| ------------------------------------------------------------------------- | ------------------------------------------------- |
+| `APP_STORE_CONNECT_API_KEY_KEY_ID`, `APP_STORE_CONNECT_API_KEY_ISSUER_ID` | App Store Connect API key ID and issuer ID        |
+| `APP_STORE_CONNECT_API_KEY_KEY_FILEPATH`                                  | Path to the downloaded `AuthKey_<id>.p8`          |
+| `APP_STORE_CONNECT_API_KEY_PATH`                                          | Alternative: path to a fastlane API key JSON file |
+| `SUPPLY_JSON_KEY`                                                         | Path to the Google Play service account JSON key  |
+
+Run the script's tests with `python3 -m unittest discover -s tools/tests`.

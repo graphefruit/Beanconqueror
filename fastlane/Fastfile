@@ -1,0 +1,94 @@
+# Uploads only the localized "What's new" texts. Builds stay a manual step for now.
+#
+#   fastlane ios release_notes version:9.0.0
+#   fastlane android release_notes version:9.0.0 track:beta
+#
+# Credentials never live in this repository; see "Store release notes" in DEVELOPING.md.
+# Lane code runs inside ./fastlane, actions run in the repository root (fastlane convention).
+
+METADATA_PATH = "./fastlane/metadata"
+ANDROID_METADATA_PATH = "./fastlane/metadata/android"
+
+def repo_root
+  File.expand_path("..", Dir.pwd)
+end
+
+def required_version(options)
+  version = options[:version].to_s
+  UI.user_error!("Pass the app version, e.g. version:9.0.0") if version.empty?
+  version
+end
+
+def android_version_code(options)
+  return options[:version_code].to_s if options[:version_code]
+
+  gradle = File.read(File.join(repo_root, "android", "app", "build.gradle"))
+  gradle[/^\s*versionCode\s+(\d+)/, 1] || UI.user_error!("No versionCode in android/app/build.gradle")
+end
+
+# Regenerates the metadata so an upload never sends texts from an earlier run.
+# Strict by default: a missing translation would otherwise block the App Store submission later.
+def generate_release_notes(options, version_code = nil)
+  args = [
+    "python3", File.join(repo_root, "tools", "extractTranslations.py"),
+    File.join(repo_root, "src", "assets", "i18n"),
+    "--version", required_version(options),
+    "--fastlane", File.join(repo_root, "fastlane", "metadata")
+  ]
+  args += ["--version-code", version_code] if version_code
+  args += ["--fallback", options[:fallback].to_s] if options[:fallback]
+  args << "--strict" unless options[:strict] == false
+  sh(*args)
+end
+
+platform :ios do
+  desc "Upload the localized release notes for the App Store version. " \
+       "Options: version (required), fallback:en, strict:false, force:true (skip HTML preview)"
+  lane :release_notes do |options|
+    generate_release_notes(options)
+
+    # A .json key file is read by deliver itself (APP_STORE_CONNECT_API_KEY_PATH);
+    # otherwise app_store_connect_api_key reads the .p8 variables from the environment.
+    auth = ENV["APP_STORE_CONNECT_API_KEY_PATH"].to_s.empty? ? { api_key: app_store_connect_api_key } : {}
+
+    deliver(
+      **auth,
+      platform: "ios",
+      app_version: required_version(options),
+      metadata_path: METADATA_PATH,
+      # Only release_notes.txt files exist in the metadata folder, so no other field is touched.
+      skip_metadata: false,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      submit_for_review: false,
+      # The HTML preview is the only review step before the texts go live in App Store Connect.
+      force: options[:force] == true
+    )
+  end
+end
+
+platform :android do
+  desc "Upload the localized release notes for a build already on a Google Play track. " \
+       "Options: version (required), track (production|beta|alpha|internal), version_code, " \
+       "fallback:en, strict:false, validate_only:true"
+  lane :release_notes do |options|
+    UI.user_error!("Set SUPPLY_JSON_KEY to the service account JSON file") if ENV["SUPPLY_JSON_KEY"].to_s.empty?
+
+    version_code = android_version_code(options)
+    generate_release_notes(options, version_code)
+
+    supply(
+      track: (options[:track] || "production").to_s,
+      # supply attaches the notes to the release that already contains this version code.
+      version_code: version_code.to_i,
+      metadata_path: ANDROID_METADATA_PATH,
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      validate_only: options[:validate_only] == true
+    )
+  end
+end

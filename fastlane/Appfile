@@ -1,0 +1,3 @@
+# Same identifier on both platforms (Capacitor appId).
+app_identifier("com.beanconqueror.app") # iOS bundle ID
+package_name("com.beanconqueror.app") # Android applicationId
