@@ -137,8 +137,9 @@ ion-segment-button {
   margin: auto;
 
   --color: var(--ion-text-color);
-  --color-checked: var(--ion-color-accent-secondary);
-  --indicator-color: var(--ion-color-accent-secondary);
+  // The selected label is text, so it takes the text accent rather than the fill.
+  --color-checked: var(--bq-text-accent);
+  --indicator-color: var(--bq-text-accent);
 
   ion-label,
   .ion-label {
@@ -146,18 +147,8 @@ ion-segment-button {
   }
 }
 .ion-palette-dark {
-  ion-segment-button {
-    --color: var(--ion-text-color);
-    --color-checked: var(--ion-color-accent);
-    --indicator-color: var(--ion-color-accent);
-  }
   ion-card:not(.best-brew):not(.favourite-brew) {
     border: 1px solid var(--bq-border-card) !important;
-  }
-  ion-badge:not([color]) {
-    --background: #cdc2ac;
-    --color: black !important;
-    color: black !important;
   }
 }
 
@@ -234,11 +225,12 @@ ion-tab-button {
 }
 ion-alert {
   .alert-wrapper {
+    // Radios mark the choice with ring and dot only, so they use the text accent.
     .alert-radio-icon {
-      border-color: var(--ion-color-accent) !important;
+      border-color: var(--bq-text-accent) !important;
     }
     .alert-radio-inner {
-      background-color: var(--ion-color-accent) !important;
+      background-color: var(--bq-text-accent) !important;
     }
   }
 }
@@ -246,8 +238,8 @@ ion-alert {
 ion-alert {
   [aria-checked='true'] {
     .alert-checkbox-icon {
-      background-color: var(--ion-color-accent-secondary) !important;
-      border-color: var(--ion-color-accent-secondary) !important;
+      background-color: var(--ion-color-accent) !important;
+      border-color: var(--ion-color-accent) !important;
     }
   }
 }
@@ -295,10 +287,10 @@ ion-split-pane {
   }
   ion-range {
     --bar-background: #cccccc;
-    --bar-background-active: var(--ion-color-accent-secondary);
+    --bar-background-active: var(--ion-color-accent);
   }
   ion-range::part(pin) {
-    --pin-background: var(--ion-color-accent-secondary);
+    --pin-background: var(--ion-color-accent);
   }
 
   ion-tab-bar {
@@ -309,9 +301,8 @@ ion-split-pane {
   }
 
   ion-badge {
-    --background: #cdc2ac;
-    --color: black;
-    color: black;
+    --background: var(--ion-color-accent);
+    --color: var(--ion-color-accent-contrast);
   }
   ion-button {
     font-family: 'Baloo', sans-serif;
@@ -341,8 +332,8 @@ ion-split-pane {
   }
 
   ion-radio {
-    --color: var(--ion-color-accent);
-    --color-checked: var(--ion-color-accent);
+    --color: var(--bq-text-secondary);
+    --color-checked: var(--bq-text-accent);
   }
 
   ion-checkbox {
@@ -747,7 +738,7 @@ ion-split-pane {
     --track-background-checked: var(--ion-color-accent);
 
     --handle-background: var(--ion-color-inactive);
-    --handle-background-checked: var(--ion-color-accent);
+    --handle-background-checked: var(--ion-color-accent-contrast);
   }
   .disablePointerEvents {
     pointer-events: none;
@@ -793,7 +784,7 @@ ion-segment.tabs {
 
 swiper-container {
   --swiper-pagination-bullet-inactive-color: var(--ion-color-step-200, #cccccc);
-  --swiper-pagination-color: #ae9f87;
+  --swiper-pagination-color: var(--ion-color-accent);
   --swiper-pagination-progressbar-bg-color: rgba(
     var(--ion-text-color-rgb, 0, 0, 0),
     0.25

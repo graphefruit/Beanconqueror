@@ -1,8 +1,14 @@
 @use 'sass:color';
 
+// Call-to-action fill. Provisional product decision (coral); change it here and
+// every accent button, checked control and range fill follows in both modes.
+$bq-action-primary: #c73545;
+// Label on the fill: 5.22:1 on #c73545.
+$bq-on-action-primary: #ffffff;
+
 // Beanconqueror design tokens (light/dark), derived from the design handoff.
 // Single source for brand values; components consume the semantic --bq-* names,
-// never the raw palette. Not yet wired to Ionic variables.
+// never the raw palette. Ionic variables are mapped at the end of this file.
 
 :root {
   // Palette
@@ -12,7 +18,7 @@
   --bq-palette-cream-300: #e1d1bf;
   --bq-palette-cream-200: #ead9c4;
   --bq-palette-white: #ffffff;
-  --bq-palette-coral-aa: #c73545;
+  --bq-palette-coral-aa: #{$bq-action-primary};
   --bq-palette-caramel-aa: #825634;
 
   // Surfaces
@@ -25,7 +31,7 @@
   --bq-text-secondary: #4a382c;
   --bq-text-link: #9e2d45;
   --bq-text-accent: #9e2d45;
-  --bq-text-on-accent: var(--bq-palette-white);
+  --bq-text-on-accent: #{$bq-on-action-primary};
   --bq-nav-inactive: #75604f;
 
   // Actions
@@ -81,8 +87,7 @@
 }
 
 // ── Ionic base mapping ──────────────────────────────────────────────────────
-// Surfaces, text, bars and borders only. Button and accent colours stay on the
-// legacy palette until the call-to-action strategy is decided.
+// Surfaces, text, bars and borders. The accent (call to action) follows below.
 @mixin ionic-base(
   $background,
   $text,
@@ -168,4 +173,53 @@
     #b8a898,
     rgba(255, 255, 255, 0.1)
   );
+}
+
+// ── Accent (call to action) ─────────────────────────────────────────────────
+// The legacy templates use color="accent" for their main buttons, so mapping
+// accent onto the CTA fill switches them without touching templates.
+// Shade follows Ionic's generator (12 % black, 6.37:1 with white) and is the
+// pressed state. Ionic's 10 % white tint only reaches 4.48:1, so the hover tint
+// stops at 8 % (4.65:1) to keep the label readable.
+@mixin ionic-accent($fill, $on-fill) {
+  --ion-color-accent: #{$fill};
+  --ion-color-accent-rgb:
+    #{color.channel($fill, 'red')}, #{color.channel($fill, 'green')},
+    #{color.channel($fill, 'blue')};
+  --ion-color-accent-contrast: #{$on-fill};
+  --ion-color-accent-contrast-rgb:
+    #{color.channel($on-fill, 'red')}, #{color.channel($on-fill, 'green')},
+    #{color.channel($on-fill, 'blue')};
+  --ion-color-accent-shade: #{color.mix(#000000, $fill, 12%)};
+  --ion-color-accent-tint: #{color.mix(#ffffff, $fill, 8%)};
+}
+
+// The dark theme keeps the same fill: white on coral passes there too, while
+// the lighter dark-mode text accent would not carry a white label.
+:root.md,
+:root.ios,
+:root.ion-palette-dark.md,
+:root.ion-palette-dark.ios {
+  @include ionic-accent($bq-action-primary, $bq-on-action-primary);
+}
+
+// Ionic only generates colour classes for its built-in palette; a custom colour
+// needs all six variables or contrast, hover and pressed states fall back.
+.ion-color-accent {
+  --ion-color-base: var(--ion-color-accent);
+  --ion-color-base-rgb: var(--ion-color-accent-rgb);
+  --ion-color-contrast: var(--ion-color-accent-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-accent-contrast-rgb);
+  --ion-color-shade: var(--ion-color-accent-shade);
+  --ion-color-tint: var(--ion-color-accent-tint);
+}
+
+// Outline and clear buttons draw the accent as text on the page or card. Coral
+// is only 3.78:1 on cream and 3.02:1 on dark cards, so they use the text accent
+// (5.22:1 / 6.30:1 or better). iOS fills a pressed outline button with the base
+// colour; the card colour keeps its label readable on both text accents.
+ion-button.ion-color-accent.button-outline,
+ion-button.ion-color-accent.button-clear {
+  --ion-color-base: var(--bq-text-accent);
+  --ion-color-contrast: var(--bq-surface-card);
 }
