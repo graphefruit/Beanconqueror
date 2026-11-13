@@ -198,6 +198,67 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
+/**
+ * Names the ancestors that cut off part of the ring around the focused item
+ * that holds `target`: an overflow clip or paint containment (Ionic lists
+ * use `contain: content`) whose box does not hold the whole ring.
+ */
+async function ringClippedBy(target: Locator): Promise<string[]> {
+  return target.evaluate((element) => {
+    const root = element.getRootNode();
+    const item = root instanceof ShadowRoot ? root.host : element;
+    const style = getComputedStyle(item);
+    const reach =
+      parseFloat(style.outlineOffset) + parseFloat(style.outlineWidth);
+    const box = item.getBoundingClientRect();
+    const ring = {
+      left: box.left - reach,
+      top: box.top - reach,
+      right: box.right + reach,
+      bottom: box.bottom + reach,
+    };
+
+    const clippers: string[] = [];
+    let node: Element | null = item;
+    while (node) {
+      const parent: Element | null =
+        node.assignedSlot ??
+        node.parentElement ??
+        (node.getRootNode() instanceof ShadowRoot
+          ? (node.getRootNode() as ShadowRoot).host
+          : null);
+      node = parent;
+      if (!node || node.tagName === 'ION-CONTENT') {
+        break;
+      }
+      const css = getComputedStyle(node);
+      const clips =
+        css.overflowX !== 'visible' ||
+        css.overflowY !== 'visible' ||
+        /paint|content|strict/.test(css.contain);
+      if (!clips) {
+        continue;
+      }
+      const outer = node.getBoundingClientRect();
+      const inner = {
+        left: outer.left + node.clientLeft,
+        top: outer.top + node.clientTop,
+        right: outer.left + node.clientLeft + node.clientWidth,
+        bottom: outer.top + node.clientTop + node.clientHeight,
+      };
+      if (
+        ring.left < inner.left - 0.5 ||
+        ring.top < inner.top - 0.5 ||
+        ring.right > inner.right + 0.5 ||
+        ring.bottom > inner.bottom + 0.5
+      ) {
+        clippers.push(`${node.tagName.toLowerCase()}.${node.className}`);
+      }
+    }
+    return clippers;
+  });
+}
+
 for (const theme of ['light', 'dark'] as const) {
   test(`focus is visible on every profile entry (${theme})`, async ({
     page,
@@ -226,7 +287,10 @@ for (const theme of ['light', 'dark'] as const) {
       /^Statistics/,
       /^Settings/,
     ]) {
-      await expectFocusRing(page, page.getByRole('link', { name }));
+      const entry = page.getByRole('link', { name });
+      await expectFocusRing(page, entry);
+      // The ring sits outside the row, so the card must not clip it.
+      expect(await ringClippedBy(entry)).toEqual([]);
     }
   });
 }

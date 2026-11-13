@@ -14,8 +14,11 @@
 
   // No overflow clip: the keyboard focus ring of an entry sits just outside
   // it and must stay visible at the card edge. The first and last entry round
-  // their own background instead.
+  // their own background instead. Ionic's list sets `contain: content`, whose
+  // paint containment clips just like overflow would; layout and style
+  // containment stay.
   .group-card {
+    contain: layout style;
     margin: 0;
     padding: 0;
     border: 1px solid var(--bq-border-card);
