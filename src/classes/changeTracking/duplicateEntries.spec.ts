@@ -452,6 +452,29 @@ describe('duplicateEntries', () => {
       });
     });
 
+    it('finds a shared uuid in a text that a shorter shared uuid is part of', () => {
+      const entries = [
+        entry('bean-1', { name: 'A' }),
+        entry('bean-1', { name: 'B' }),
+        entry('bean-10', { name: 'A' }),
+        entry('bean-10', { name: 'B' }),
+      ];
+
+      const result = removeDuplicateEntries(
+        'BEANS',
+        entries,
+        {
+          BREWS: [
+            brew('brew-a', { attachments: ['photos/bean-10_photo.jpg'] }),
+          ],
+        },
+        uuidSource(),
+      );
+
+      expect(result.kept).toContain('bean-10');
+      expect(uuids(entries).slice(2)).toEqual(['bean-10', 'bean-10']);
+    });
+
     it('looks for references in the given entries, not in the stored copy of the collection', () => {
       const entries = [
         brew('brew-x', { note: 'A' }),
