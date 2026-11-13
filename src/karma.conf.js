@@ -39,6 +39,8 @@ function isCheckedFile(file) {
 /**
  * Whether istanbul counts statements in the file. A file with only types or
  * re-exports compiles to imports and exports alone, so no test has to load it.
+ * Istanbul does not count `export default <value>` either, only the functions
+ * inside the value.
  */
 function hasStatements(file) {
   const ts = require('typescript');
@@ -46,12 +48,15 @@ function hasStatements(file) {
     fs.readFileSync(path.join(REPOSITORY, file), 'utf8'),
     { compilerOptions: { module: ts.ModuleKind.ESNext } },
   );
+  const containsFunction = (node) =>
+    ts.isFunctionLike(node) || ts.forEachChild(node, containsFunction) === true;
   return ts
     .createSourceFile('output.js', outputText, ts.ScriptTarget.Latest)
-    .statements.some(
-      (statement) =>
-        !ts.isImportDeclaration(statement) &&
-        !ts.isExportDeclaration(statement),
+    .statements.some((statement) =>
+      ts.isExportAssignment(statement)
+        ? containsFunction(statement.expression)
+        : !ts.isImportDeclaration(statement) &&
+          !ts.isExportDeclaration(statement),
     );
 }
 
@@ -89,6 +94,10 @@ function checkNewCode() {
       continue;
     }
     const { statements, lines } = coverage;
+    if (statements.total === 0) {
+      // Loaded by a test, but there is nothing to cover (see hasStatements).
+      continue;
+    }
     rows.push(
       `  ${`${statements.pct} %`.padStart(10)} ${`${lines.pct} %`.padStart(8)}  ${file}`,
     );

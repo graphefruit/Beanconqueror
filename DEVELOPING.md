@@ -37,7 +37,8 @@ pnpm test:coverage # as in CI; the HTML report lands in coverage/
 covered, or when no unit test loads it. New code is listed in `NEW_CODE` at the top of
 `src/karma.conf.js`, and every new code structure must be added there in the commit that creates
 it: a new folder as `'src/services/<feature>/**'`, a new file in a folder that is not listed with
-its own path. Spec files, `__tests__` folders and files with only types or re-exports are skipped.
+its own path. Spec files, `__tests__` folders and files without code of their own (only types,
+re-exports or an `export default` value without functions) are skipped.
 An entry that matches no file fails as well, so rename or remove entries together with their
 folders. The rules are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#coverage-of-new-code).
 

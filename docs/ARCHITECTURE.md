@@ -544,8 +544,9 @@ matched by the list
 - is not loaded by any unit test.
 
 Every file has to reach the threshold on its own. Spec files, helpers in
-`__tests__` folders and files without code of their own (only types or
-re-exports) are not checked. Legacy code has no threshold; the overall figure in
+`__tests__` folders and files without code of their own (only types,
+re-exports or an `export default` value without functions) are not checked,
+whether a test loads them or not. Legacy code has no threshold; the overall figure in
 the summary includes it. The HTML report lands in `coverage/`, which is not
 committed.
 
