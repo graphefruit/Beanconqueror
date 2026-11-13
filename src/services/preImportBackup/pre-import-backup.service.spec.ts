@@ -442,6 +442,43 @@ describe('Whether an imported file can be imported again', () => {
     );
   });
 
+  it('tells the file by its name when a path or URI is passed', () => {
+    const importedAt = at(13, 11, 9);
+    for (const folder of [
+      'file:///var/mobile/Documents/',
+      '/storage/emulated/0/Download/Beanconqueror_export/',
+    ]) {
+      expect(
+        canBeImportedAgain(`${folder}Beanconqueror.zip`, importedAt, NOW),
+      ).toBe(false);
+      expect(
+        canBeImportedAgain(
+          folder + backupPath('2026-11-13_08-00-00-000'),
+          importedAt,
+          NOW,
+        ),
+      ).toBe(false);
+      expect(
+        canBeImportedAgain(
+          folder + automaticBackup('13_11_2026'),
+          importedAt,
+          NOW,
+        ),
+      ).toBe(false);
+      expect(
+        canBeImportedAgain(
+          folder + automaticBackup('12_11_2026'),
+          importedAt,
+          NOW,
+        ),
+      ).toBe(true);
+      expect(canBeImportedAgain(folder, importedAt, NOW)).toBe(false);
+      expect(
+        canBeImportedAgain(`${folder}Beanconqueror 2.zip`, importedAt, NOW),
+      ).toBe(true);
+    }
+  });
+
   it('never holds for a backup written before an import, which the rotation deletes', () => {
     for (const path of [
       backupPath('2026-11-13_08-00-00-000'),

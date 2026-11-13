@@ -83,17 +83,21 @@ export function canBeImportedAgain(
   _importedAt: number,
   _now: number,
 ): boolean {
+  if (typeof _fileName !== 'string') {
+    return false;
+  }
+  // Told by the name alone, also when a path or URI was passed.
+  const name = _fileName.substring(_fileName.lastIndexOf('/') + 1);
   if (
-    typeof _fileName !== 'string' ||
-    _fileName === '' ||
-    _fileName === BACKUP_FILE_NAME ||
-    _fileName.startsWith(FILE_NAME_PREFIX)
+    name === '' ||
+    name === BACKUP_FILE_NAME ||
+    name.startsWith(FILE_NAME_PREFIX)
   ) {
     return false;
   }
-  if (_fileName.startsWith(AUTOMATIC_BACKUP_FILE_PREFIX)) {
+  if (name.startsWith(AUTOMATIC_BACKUP_FILE_PREFIX)) {
     const day = moment(
-      _fileName.substring(AUTOMATIC_BACKUP_FILE_PREFIX.length),
+      name.substring(AUTOMATIC_BACKUP_FILE_PREFIX.length),
       'DD_MM_YYYY[.zip]',
       true,
     );
