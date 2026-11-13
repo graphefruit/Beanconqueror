@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
 import { DEVICE_STORAGE_KEY } from '../../classes/changeTracking/localStorageKeys';
-import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 import { UIStorage } from '../uiStorage';
 
@@ -18,6 +17,9 @@ export interface IDeviceIdentity {
  * The device id is its own random value; it is not the analytics id. It is
  * stored outside the settings under a local-only key, so it never leaves the
  * device with a backup and an import never replaces it.
+ *
+ * Every stored entry depends on this service, so it only imports services
+ * that do not depend on the entry storages themselves.
  */
 @Injectable({
   providedIn: 'root',
@@ -48,7 +50,7 @@ export class DeviceIdentityService {
     } catch {
       // A stored id may exist but could not be read; it must not be
       // replaced. The id below only lives for this session.
-      this.deviceId = UIHelper.generateUUID();
+      this.deviceId = crypto.randomUUID();
       this.uiLog.info(
         'DeviceIdentityService - stored device id could not be read, using a temporary one',
       );
@@ -61,7 +63,7 @@ export class DeviceIdentityService {
     }
 
     const identity: IDeviceIdentity = {
-      device_id: UIHelper.generateUUID(),
+      device_id: crypto.randomUUID(),
       created_at: Date.now(),
     };
     this.deviceId = identity.device_id;
