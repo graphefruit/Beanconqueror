@@ -184,7 +184,7 @@ export abstract class StorageClass {
       }
       this.storedData.push(newEntry);
       saved = await this.__save();
-      this.__sendEvent('ADD');
+      this.__sendEvent('ADD', newEntry.config.uuid);
     } catch (ex) {
       newEntry = this.createFailedAddEntry(newEntry ?? _entry);
       this.uiLog.error('Storage - Add - Unsuccessfully', ex);
@@ -238,7 +238,7 @@ export abstract class StorageClass {
           }
           this.storedData[i] = updatedObj;
           const saved = await this.__save();
-          this.__sendEvent('UPDATE');
+          this.__sendEvent('UPDATE', updatedObj.config.uuid);
           didUpdate = true;
           if (saved === false) {
             this.uiLog.error(
@@ -355,8 +355,16 @@ export abstract class StorageClass {
     this.removeObjSubject.next({ id: _id });
   }
 
-  private __sendEvent(_type: string) {
-    this.eventSubject.next({ type: _type });
+  /**
+   * `_uuid` names the entry that was added or updated. Events about the
+   * whole collection (DELETE, REINITIALIZE, backfills) carry none.
+   */
+  private __sendEvent(_type: string, _uuid?: string) {
+    if (_uuid === undefined) {
+      this.eventSubject.next({ type: _type });
+    } else {
+      this.eventSubject.next({ type: _type, uuid: _uuid });
+    }
   }
 
   public getDBPath(): string {

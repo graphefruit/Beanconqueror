@@ -588,6 +588,24 @@ describe('StorageClass change info', () => {
     expect(second.config).toEqual({ uuid: 'b', unix_timestamp: 2 });
   });
 
+  it('names the added or updated entry in its event, but not on other events', async () => {
+    const storage = create(() => new NamedTestStorage('BEANS'));
+    const events: any[] = [];
+    storage.attachOnEvent().subscribe((event) => events.push(event));
+
+    const added = await storage.add({ config: {}, name: 'Bean' });
+    await storage.update(added);
+    await storage.backfillWithoutTouch(() => 1);
+    await storage.removeByUUID(added.config.uuid);
+
+    expect(events).toEqual([
+      { type: 'ADD', uuid: added.config.uuid },
+      { type: 'UPDATE', uuid: added.config.uuid },
+      { type: 'UPDATE' },
+      { type: 'DELETE' },
+    ]);
+  });
+
   it('does not save when the fill changes nothing', async () => {
     const storage = create(() => new NamedTestStorage('BREWS'));
     storage.setEntries([{ config: { uuid: 'a', unix_timestamp: 1 } }]);
