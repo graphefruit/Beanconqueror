@@ -189,7 +189,7 @@ test('an export announces its loading message once and does not take focus', asy
   ]);
 });
 
-test('the live region stays above an open dialog and out of what it hides', async ({
+test('the live region stays above an open dialog, out of what it hides and out of sight', async ({
   page,
 }) => {
   await page.goto('/');
@@ -207,11 +207,34 @@ test('the live region stays above an open dialog and out of what it hides', asyn
     return Number(getComputedStyle(host).zIndex);
   });
   const region = page.locator('.cdk-live-announcer-element');
-  const { layer, concealed } = await region.evaluate((element) => ({
-    layer: Number(getComputedStyle(element).zIndex),
-    concealed: element.closest('[aria-hidden="true"], [inert]') !== null,
-  }));
+  const { layer, concealed, visual } = await region.evaluate((element) => {
+    const style = getComputedStyle(element);
+    const box = element.getBoundingClientRect();
+    return {
+      layer: Number(style.zIndex),
+      concealed: element.closest('[aria-hidden="true"], [inert]') !== null,
+      // Visually hidden as the CDK's cdk-visually-hidden does it: out of the
+      // flow, one pixel, clipped. Hidden with display or visibility, it would
+      // be silent too.
+      visual: {
+        position: style.position,
+        width: box.width,
+        height: box.height,
+        overflow: style.overflow,
+        display: style.display,
+        visibility: style.visibility,
+      },
+    };
+  });
   expect(dialogLayer).toBeGreaterThanOrEqual(20000);
   expect(layer).toBeGreaterThan(dialogLayer);
   expect(concealed).toBe(false);
+  expect(visual).toEqual({
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    overflow: 'hidden',
+    display: 'block',
+    visibility: 'visible',
+  });
 });
