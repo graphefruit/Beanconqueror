@@ -195,6 +195,16 @@ async function startDevice(
     hideLoadingSpinner: jasmine.createSpy('hideLoadingSpinner'),
     showMessage: jasmine.createSpy('showMessage'),
   };
+  const fileHelper = {
+    readInternalFileAsUint8Array: () =>
+      Promise.resolve(_options.internalBackup),
+    // Beanconqueror.zip, which the start-up check reads.
+    writeInternalFileFromBlob: jasmine
+      .createSpy('writeInternalFileFromBlob')
+      .and.resolveTo(),
+    // The automatic backup of the day.
+    writeFileFromBlob: jasmine.createSpy('writeFileFromBlob').and.resolveTo(),
+  };
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
     providers: [
@@ -220,15 +230,20 @@ async function startDevice(
       { provide: UILog, useValue: uiLog },
       { provide: UIAlert, useValue: uiAlert },
       { provide: PRE_IMPORT_BACKUP_FILES, useValue: directory.files },
+      { provide: UIFileHelper, useValue: fileHelper },
       {
-        provide: UIFileHelper,
+        provide: UISettingsStorage,
         useValue: {
-          readInternalFileAsUint8Array: () =>
-            Promise.resolve(_options.internalBackup),
+          getSettings: () => ({
+            welcome_page_showed: true,
+            show_backup_issues: false,
+          }),
         },
       },
-      { provide: UISettingsStorage, useValue: {} },
-      { provide: UIBrewStorage, useValue: {} },
+      {
+        provide: UIBrewStorage,
+        useValue: { getAllEntries: () => device.data.get('BREWS') ?? [] },
+      },
       { provide: ModalController, useValue: {} },
     ],
   });
@@ -240,6 +255,7 @@ async function startDevice(
     writes,
     uiLog,
     uiAlert,
+    fileHelper,
     helper: TestBed.inject(UIExportImportHelper),
   };
 }
@@ -620,6 +636,123 @@ describe('Restoring the internal backup at start-up', () => {
       storedData('backup', { BREWS: imported(entries('backup-brew', 5)) }),
     );
   }
+
+  /**
+   * Data with a mill and a preparation as well, which the automatic backups
+   * do not take for corrupted.
+   */
+  function completeData(_prefix: string): Record<string, any> {
+    return storedData(_prefix, {
+      MILL: imported(entries(`${_prefix}-mill`, 1)),
+      PREPARATION: imported(entries(`${_prefix}-preparation`, 1)),
+    });
+  }
+
+  /**
+   * Writes the automatic backups as the app does a few seconds after a
+   * change. Resolves once the automatic backup of the day is written, which
+   * comes right after Beanconqueror.zip.
+   */
+  async function writeAutomaticBackups(_device: Device): Promise<void> {
+    const written = new Promise<void>((_resolve) => {
+      _device.fileHelper.writeFileFromBlob.and.callFake(() => {
+        _resolve();
+        return Promise.resolve();
+      });
+    });
+    await _device.helper.saveAutomaticBackups();
+    await written;
+  }
+
+  async function writtenInternalBackup(_device: Device): Promise<any> {
+    expect(_device.fileHelper.writeInternalFileFromBlob).toHaveBeenCalledTimes(
+      1,
+    );
+    const [blob, path] =
+      _device.fileHelper.writeInternalFileFromBlob.calls.mostRecent().args;
+    expect(path).toBe('Beanconqueror.zip');
+    return await _device.helper.getJSONFromZIPArrayBufferContent(
+      await (blob as Blob).arrayBuffer(),
+    );
+  }
+
+  it('keeps the internal backup for the next start when the current data could not be saved first', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const device = await startDevice(completeData('own'), { internalBackup });
+    device.directory.failing.write = true;
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+    await device.helper.checkBackup();
+
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    // The work of this session still goes into the automatic backup.
+    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the internal backup also when it was to be restored without asking', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    // The list of data updates is lost, so the app restores without asking.
+    const stored = completeData('own');
+    delete stored.VERSION;
+    const device = await startDevice(stored, { internalBackup });
+    device.directory.failing.write = true;
+    await device.helper.checkBackup();
+    expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'PRE_IMPORT_BACKUP_FAILED',
+      undefined,
+      undefined,
+      true,
+    );
+    // The start writes the list of data updates again.
+    device.data.set('VERSION', [{ updatedDataVersions: ['UPDATE_1'] }]);
+
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+  });
+
+  it('keeps the internal backup when importing it was rolled back', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const before = completeData('own');
+    const device = await startDevice(before, { internalBackup });
+    device.failingWrites.add('BREWS');
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+    await device.helper.checkBackup();
+    expect(device.data.get('BREWS')).toEqual(before.BREWS);
+
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+  });
+
+  it('writes the internal backup again once it was restored', async () => {
+    const internalBackup = await backupFileOf(completeData('backup'));
+    const device = await startDevice(
+      { ...completeData('own'), BREWS: [] },
+      { internalBackup },
+    );
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+    await device.helper.checkBackup();
+
+    await writeAutomaticBackups(device);
+
+    expect((await writtenInternalBackup(device)).BREWS).toEqual(
+      completeData('backup').BREWS,
+    );
+  });
+
+  it('writes the internal backup again when restoring it was declined', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const before = completeData('own');
+    const device = await startDevice(before, { internalBackup });
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(false);
+    await device.helper.checkBackup();
+
+    await writeAutomaticBackups(device);
+
+    expect((await writtenInternalBackup(device)).BREWS).toEqual(before.BREWS);
+  });
 
   it('saves the current data before the internal backup replaces it', async () => {
     const internalBackup = await internalBackupWithMoreBrews();

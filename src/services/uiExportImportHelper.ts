@@ -130,6 +130,15 @@ export class UIExportImportHelper {
    */
   private isAppReady: number = -1;
 
+  /**
+   * Set when the internal backup was to be restored at start-up, but was
+   * not: the current data could not be saved first, or the import failed.
+   * Beanconqueror.zip still holds the data to restore, so the automatic
+   * backups leave it alone for the rest of this session, and the next start
+   * can offer the restore again.
+   */
+  private internalBackupNotRestored = false;
+
   /** Whether importBackup() writes the current data into a file first. */
   public savesBackupBeforeImport(): boolean {
     return this.preImportBackup.isAvailable();
@@ -495,14 +504,21 @@ export class UIExportImportHelper {
       await this.uiAlert.showLoadingSpinner();
 
       this.importBackup(_parsedJSON, 'internal_backup').then(
-        async () => {
-          this.uiLog.log('Sucessfully imported  Backup');
+        async (_result) => {
+          if (_result?.BACKUP === false) {
+            this.uiLog.log('Sucessfully imported  Backup');
+          } else {
+            // Rolled back, the app starts with the stored data.
+            this.internalBackupNotRestored = true;
+            this.uiLog.error('Could not import  Backup, it was rolled back');
+          }
           setTimeout(() => {
             this.uiAlert.hideLoadingSpinner();
           }, 150);
           resolve(null);
         },
         async (_error: unknown) => {
+          this.internalBackupNotRestored = true;
           this.uiLog.error('Could not import  Backup');
           if (_error instanceof PreImportBackupError) {
             // Nothing was imported, the app starts with the stored data.
@@ -581,7 +597,13 @@ export class UIExportImportHelper {
           }
           if (hasData && !actualUIStorageDataObj.CORRUPTED) {
             this.uiLog.debug('Start writing automatic backups');
-            this.__saveInternalBeanconquerorDump(_blob);
+            if (this.internalBackupNotRestored) {
+              this.uiLog.info(
+                'Internal backup kept, it was not restored at start-up',
+              );
+            } else {
+              this.__saveInternalBeanconquerorDump(_blob);
+            }
             this.__saveAutomaticBeanconquerorDump(_blob);
           } else if (hasData && actualUIStorageDataObj.CORRUPTED) {
             this.uiLog.error(

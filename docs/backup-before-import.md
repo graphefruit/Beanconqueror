@@ -32,6 +32,13 @@ ones kept. If the current data cannot be read or the file cannot be written,
 for example because the storage is full, nothing is imported and the app says
 so.
 
+When restoring the internal backup at start-up does not happen for that
+reason, or because the import failed and was rolled back, the app keeps
+`Beanconqueror.zip` as it is for the rest of the session: the automatic
+backups would otherwise replace it with the stored data within seconds of the
+next change, so the next start can offer the restore again. The automatic
+backup of the day is still written.
+
 The file is the same ZIP an export writes. It holds no passwords, API keys or
 tokens (they stay on the device, and an import keeps them) and none of the
 values that belong to this installation: device id, deletion journal,
