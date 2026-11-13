@@ -914,6 +914,64 @@ describe('Restoring the internal backup at start-up', () => {
     expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
   });
 
+  const FAILURES = [
+    {
+      failure: 'was rolled back',
+      breakImport: (_device: Device) => _device.failingWrites.add('BREWS'),
+      message: 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+    },
+    {
+      failure: 'could not be rolled back',
+      breakImport: (_device: Device) => _device.brokenWrites.add('BREWS'),
+      message: 'IMPORT_UNSUCCESSFULLY',
+    },
+  ];
+
+  for (const { failure, breakImport, message } of FAILURES) {
+    it(`says that it was not restored when the import ${failure}`, async () => {
+      const internalBackup = await internalBackupWithMoreBrews();
+      const device = await startDevice(completeData('own'), {
+        internalBackup,
+      });
+      breakImport(device);
+      spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+
+      await device.helper.checkBackup();
+
+      expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+        message,
+        undefined,
+        undefined,
+        true,
+      );
+      expect(device.uiAlert.hideLoadingSpinner).toHaveBeenCalledBefore(
+        device.uiAlert.showMessage,
+      );
+    });
+
+    it(`keeps three backups when the restore offered at every start ${failure}`, async () => {
+      const internalBackup = await internalBackupWithMoreBrews();
+      const device = await startDevice(completeData('own'), {
+        internalBackup,
+        files: OLDER_BACKUPS,
+      });
+      const offered = spyOn(
+        device.helper,
+        'showDataCorruptionPopover',
+      ).and.resolveTo(true);
+
+      for (let start = 0; start < 5; start++) {
+        breakImport(device);
+        await device.helper.checkBackup();
+        // A new millisecond, so the next backup gets a name of its own.
+        await new Promise((_resolve) => setTimeout(_resolve, 2));
+      }
+
+      expect(offered).toHaveBeenCalledTimes(5);
+      expect(writtenBackups(device).length).toBe(3);
+    });
+  }
+
   it('writes the internal backup again once it was restored', async () => {
     const internalBackup = await backupFileOf(completeData('backup'));
     const device = await startDevice(

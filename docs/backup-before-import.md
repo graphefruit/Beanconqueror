@@ -33,8 +33,8 @@ for example because the storage is full, nothing is imported and the app says
 so.
 
 When restoring the internal backup at start-up does not happen for that
-reason, or because the import failed and was rolled back, the app keeps
-`Beanconqueror.zip` as it is for the rest of the session: the automatic
+reason, or because the import failed and was rolled back, the app says so and
+keeps `Beanconqueror.zip` as it is for the rest of the session: the automatic
 backups would otherwise replace it with the stored data within seconds of the
 next change, so the next start can offer the restore again. The automatic
 backup of the day is still written.
@@ -80,8 +80,12 @@ as the automatic backups replace that file.
 Three files are kept. When the name of the file just written ends in
 `_imported.zip`: that file, the newest one whose name does not end in
 `_imported.zip`, and the newest of the others. Otherwise the three newest.
-Older ones are deleted once an import has completed. A failed import deletes
-none, so the file an import was started from is still there if it fails.
+Older ones are deleted once an import has completed. A failed import of a
+file chosen in the settings deletes none, so the file it was started from is
+still there if it fails. A failed restore of the internal backup at start-up
+deletes older ones as well: `Beanconqueror.zip` is not one of these files, and
+the next start offers the restore again and writes a file before it, so
+without that a restore failing at every start would add one at every start.
 
 Without that rule, trying a few backups one after the other would delete the
 data from before the first of them: once an import is done, the automatic

@@ -170,8 +170,11 @@ export class UIExportImportHelper {
    *
    * After a completed import, older backups are removed, but never the
    * newest one of data that had not just been imported from a file
-   * (PreImportBackupService.removeOldBackups). A failed import removes none,
-   * so the file it was started from stays available.
+   * (PreImportBackupService.removeOldBackups). A failed import of a file
+   * chosen in the settings removes none, so the file it was started from
+   * stays available, as it can be one of them. A failed restore of the
+   * internal backup removes them as well: that file is not one of them, and
+   * the next start offers the restore again, with a new backup before it.
    *
    * `_fileName` is the name of the backup file chosen in the settings, when
    * it is known. Only while that file can still be imported again does the
@@ -184,15 +187,24 @@ export class UIExportImportHelper {
     _fileName?: string,
   ): Promise<{ BACKUP: boolean }> {
     const written = await this.__writeBackupBeforeImport();
-    const result: { BACKUP: boolean } = await this.uiStorage.import(
-      _data,
-      _source,
-      _fileName,
-    );
-    if (written !== undefined && result?.BACKUP === false) {
-      await this.preImportBackup.removeOldBackups(written);
+    let completed = false;
+    try {
+      const result: { BACKUP: boolean } = await this.uiStorage.import(
+        _data,
+        _source,
+        _fileName,
+      );
+      completed = result?.BACKUP === false;
+      return result;
+    } finally {
+      if (
+        written !== undefined &&
+        (completed || _source === 'internal_backup')
+      ) {
+        // Never rejects, so a failed import keeps its own error.
+        await this.preImportBackup.removeOldBackups(written);
+      }
     }
-    return result;
   }
 
   /**
@@ -516,42 +528,51 @@ export class UIExportImportHelper {
         async (_result) => {
           if (_result?.BACKUP === false) {
             this.uiLog.log('Sucessfully imported  Backup');
-          } else {
-            // Rolled back, the app starts with the stored data.
-            this.internalBackupNotRestored = true;
-            this.uiLog.error('Could not import  Backup, it was rolled back');
+            setTimeout(() => {
+              this.uiAlert.hideLoadingSpinner();
+            }, 150);
+            resolve(null);
+            return;
           }
-          setTimeout(() => {
-            this.uiAlert.hideLoadingSpinner();
-          }, 150);
+          // Rolled back, the app starts with the stored data.
+          this.internalBackupNotRestored = true;
+          this.uiLog.error('Could not import  Backup, it was rolled back');
+          await this.__sayInternalBackupNotRestored(
+            'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+          );
           resolve(null);
         },
         async (_error: unknown) => {
           this.internalBackupNotRestored = true;
           this.uiLog.error('Could not import  Backup');
-          if (_error instanceof PreImportBackupError) {
-            // Nothing was imported, the app starts with the stored data.
-            try {
-              await this.uiAlert.hideLoadingSpinner();
-              await this.uiAlert.showMessage(
-                'PRE_IMPORT_BACKUP_FAILED',
-                undefined,
-                undefined,
-                true,
-              );
-            } finally {
-              resolve(null);
-            }
-            return;
-          }
-          setTimeout(() => {
-            this.uiAlert.hideLoadingSpinner();
-          }, 150);
+          await this.__sayInternalBackupNotRestored(
+            _error instanceof PreImportBackupError
+              ? // Nothing was imported, the app starts with the stored data.
+                'PRE_IMPORT_BACKUP_FAILED'
+              : // The rollback failed as well.
+                'IMPORT_UNSUCCESSFULLY',
+          );
           resolve(null);
         },
       );
     });
     return promise;
+  }
+
+  /**
+   * Says that restoring the internal backup at start-up did not happen.
+   * Otherwise the user would only see the restore offered again at the next
+   * start. Never rejects.
+   */
+  private async __sayInternalBackupNotRestored(
+    _message: string,
+  ): Promise<void> {
+    try {
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessage(_message, undefined, undefined, true);
+    } catch (ex) {
+      this.uiLog.error('Could not import  Backup - message not shown', ex);
+    }
   }
 
   private readBackupZIPFile() {
