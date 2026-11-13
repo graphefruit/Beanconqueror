@@ -280,6 +280,12 @@ export class UIStorage {
     }
   }
 
+  /**
+   * Replaces the stored values with those of a parsed backup. Backups are
+   * imported through UIExportImportHelper.importBackup(), which first writes
+   * the current data into a backup file. The copy kept here for the rollback
+   * only lives in memory.
+   */
   public async import(
     _data: any,
     _source: RESTORE_SOURCE = 'import',

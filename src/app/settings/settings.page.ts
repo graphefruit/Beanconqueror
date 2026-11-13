@@ -103,6 +103,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../services/currencyService/currency.service';
+import { PreImportBackupError } from '../../services/preImportBackup/pre-import-backup.service';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
 import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
 import { ThemeService } from '../../services/theme/theme.service';
@@ -1671,9 +1672,15 @@ export class SettingsPage {
         );
       }
 
+      if (!(await this.__confirmImport())) {
+        return;
+      }
       await this.uiAlert.showLoadingSpinner();
       try {
-        const _data = await this.uiStorage.import(parsedContent);
+        const _data = await this.uiExportImportHelper.importBackup(
+          parsedContent,
+          'import',
+        );
         if (_data.BACKUP === false) {
           await this.__reinitializeStorages();
           // Show loadingspinner again, because the reintializestorages hides it.
@@ -1751,7 +1758,11 @@ export class SettingsPage {
         this.uiLog.error('Error during import', error);
         await this.uiAlert.hideLoadingSpinner();
         await this.uiAlert.showMessage(
-          this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'),
+          this.translate.instant(
+            error instanceof PreImportBackupError
+              ? 'PRE_IMPORT_BACKUP_FAILED'
+              : 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+          ),
         );
       }
     } catch (ex) {
@@ -1759,6 +1770,26 @@ export class SettingsPage {
         this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex),
       );
     }
+  }
+
+  /**
+   * An import replaces all data, so it is confirmed first. The question
+   * says where the current data is saved before (see
+   * UIExportImportHelper.importBackup), or that nothing is saved in the
+   * browser.
+   */
+  private async __confirmImport(): Promise<boolean> {
+    // Reading the file may have shown the spinner; no spinner while the
+    // question waits for an answer.
+    await this.uiAlert.hideLoadingSpinner();
+    const choice = await this.uiAlert.showConfirm(
+      this.uiExportImportHelper.savesBackupBeforeImport()
+        ? 'PRE_IMPORT_BACKUP_HINT'
+        : 'PRE_IMPORT_BACKUP_HINT_BROWSER',
+      'IMPORT_REPLACE_ALL_DATA_QUESTION',
+      true,
+    );
+    return choice === 'YES';
   }
 
   /**

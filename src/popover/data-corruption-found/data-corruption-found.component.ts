@@ -17,11 +17,14 @@ import {
 import { addIcons } from 'ionicons';
 import { alertCircleOutline } from 'ionicons/icons';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-data-corruption-found',
   templateUrl: './data-corruption-found.component.html',
   styleUrls: ['./data-corruption-found.component.scss'],
   imports: [
+    TranslatePipe,
     IonHeader,
     IonTitle,
     IonContent,

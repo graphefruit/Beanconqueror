@@ -23,6 +23,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FormatDatePipe } from '../../pipes/formatDate';
+import { PreImportBackupService } from '../../services/preImportBackup/pre-import-backup.service';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIHelper } from '../../services/uiHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -54,6 +55,7 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly preImportBackup = inject(PreImportBackupService);
   protected readonly uiHelper = inject(UIHelper);
 
   public static POPOVER_ID: string =
@@ -68,7 +70,12 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   }
 
   public async ngOnInit() {
-    const files = await this.uiFileHelper.listAutomaticBackupFiles();
+    const files = [
+      ...(await this.uiFileHelper.listAutomaticBackupFiles()),
+      // Saved before each import. They are in the app data directory, which
+      // the file picker of the import cannot open on Android.
+      ...(await this.preImportBackup.list()),
+    ];
     if (files.length > 0) {
       this.foundBackupFiles = files.sort((a: FileInfo, b: FileInfo) => {
         return b.size - a.size;

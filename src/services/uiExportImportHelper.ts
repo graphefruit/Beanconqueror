@@ -18,9 +18,15 @@ import {
 import * as zip from '@zip.js/zip.js';
 import moment from 'moment';
 
+import { CHANGE_TRACKED_COLLECTIONS } from '../classes/changeTracking/changeTracking';
 import { LOCAL_ONLY_STORAGE_KEYS } from '../classes/changeTracking/localStorageKeys';
 import { withoutSettingsSecrets } from '../classes/settings/settingsSecrets';
+import { RESTORE_SOURCE } from '../interfaces/changeTracking/iRestoreNote';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
+import {
+  PreImportBackupError,
+  PreImportBackupService,
+} from './preImportBackup/pre-import-backup.service';
 import { UIAlert } from './uiAlert';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIFileHelper } from './uiFileHelper';
@@ -52,6 +58,13 @@ function chunkFileName(fileName: string, index: number): string {
   return `Beanconqueror_${fileName}_${index}.json`;
 }
 
+/** Whether stored values (UIStorage.export()) hold settings or entries. */
+function holdsDataToSave(_stored: any): boolean {
+  return ['SETTINGS', ...CHANGE_TRACKED_COLLECTIONS].some(
+    (_key) => Array.isArray(_stored?.[_key]) && _stored[_key].length > 0,
+  );
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -66,14 +79,97 @@ export class UIExportImportHelper {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly modalController = inject(ModalController);
+  private readonly preImportBackup = inject(PreImportBackupService);
 
   /**
    *
    */
   private isAppReady: number = -1;
 
-  public async buildExportZIP(): Promise<Blob> {
-    const _data = await this.uiStorage.export();
+  /** Whether importBackup() writes the current data into a file first. */
+  public savesBackupBeforeImport(): boolean {
+    return this.preImportBackup.isAvailable();
+  }
+
+  /**
+   * Replaces the stored data with a parsed backup (UIStorage.import()).
+   *
+   * First the current data is written into a backup file in the app data
+   * directory (PreImportBackupService). It is the same ZIP an export writes,
+   * so it holds no credentials (they stay on the device anyway) and no values
+   * of this installation. Only then is anything replaced. If the current
+   * data cannot be read or the file cannot be written, nothing is imported
+   * and this rejects with PreImportBackupError. Unlike the copy the import
+   * rolls back to, the file is not lost when the app is closed during the
+   * import.
+   *
+   * No file is written:
+   * - in the browser: the app has no file system there (UIFileHelper only
+   *   works on iOS and Android), and no import could open such a file again.
+   *   The browser build is used for development, so the import is not
+   *   stopped there; it still rolls back from its copy in memory when it
+   *   fails.
+   * - when the device stores neither settings nor entries, as after a loss
+   *   of all data: there is nothing to save, and an empty file would push a
+   *   real backup out of the ones kept.
+   *
+   * After a completed import, only the newest backups are kept. A failed
+   * import removes none, so the file it was started from stays available.
+   */
+  public async importBackup(
+    _data: unknown,
+    _source: RESTORE_SOURCE,
+  ): Promise<{ BACKUP: boolean }> {
+    const written = await this.__writeBackupBeforeImport();
+    const result: { BACKUP: boolean } = await this.uiStorage.import(
+      _data,
+      _source,
+    );
+    if (written !== undefined && result?.BACKUP === false) {
+      await this.preImportBackup.removeOldBackups(written);
+    }
+    return result;
+  }
+
+  /**
+   * Resolves the path of the written file, nothing when none is needed.
+   * Whether there is data to save is decided on the values the file is
+   * written from, so data that cannot be read stops the import instead of
+   * being taken for none.
+   */
+  private async __writeBackupBeforeImport(): Promise<string | undefined> {
+    if (!this.preImportBackup.isAvailable()) {
+      this.uiLog.info(
+        'Backup before import - skipped, there is no file system in the browser',
+      );
+      return undefined;
+    }
+    try {
+      const stored = await this.uiStorage.export();
+      if (!holdsDataToSave(stored)) {
+        this.uiLog.info('Backup before import - skipped, no data stored');
+        return undefined;
+      }
+      const written = await this.preImportBackup.write(
+        await this.buildExportZIP(stored),
+      );
+      this.uiLog.log(`Backup before import - written to ${written}`);
+      return written;
+    } catch (ex) {
+      this.uiLog.error(
+        'Backup before import - could not be written, nothing is imported',
+        ex,
+      );
+      throw new PreImportBackupError(ex);
+    }
+  }
+
+  /**
+   * `_stored` are the values of UIStorage.export() when the caller already
+   * read them; otherwise they are read here.
+   */
+  public async buildExportZIP(_stored?: any): Promise<Blob> {
+    const _data = _stored ?? (await this.uiStorage.export());
 
     const mainJsonData = this.uiHelper.cloneData(_data);
     // Values that belong to this installation never leave it.
@@ -351,7 +447,7 @@ export class UIExportImportHelper {
     const promise = new Promise(async (resolve, reject) => {
       await this.uiAlert.showLoadingSpinner();
 
-      this.uiStorage.import(_parsedJSON, 'internal_backup').then(
+      this.importBackup(_parsedJSON, 'internal_backup').then(
         async () => {
           this.uiLog.log('Sucessfully imported  Backup');
           setTimeout(() => {
@@ -359,8 +455,23 @@ export class UIExportImportHelper {
           }, 150);
           resolve(null);
         },
-        () => {
+        async (_error: unknown) => {
           this.uiLog.error('Could not import  Backup');
+          if (_error instanceof PreImportBackupError) {
+            // Nothing was imported, the app starts with the stored data.
+            try {
+              await this.uiAlert.hideLoadingSpinner();
+              await this.uiAlert.showMessage(
+                'PRE_IMPORT_BACKUP_FAILED',
+                undefined,
+                undefined,
+                true,
+              );
+            } finally {
+              resolve(null);
+            }
+            return;
+          }
           setTimeout(() => {
             this.uiAlert.hideLoadingSpinner();
           }, 150);
