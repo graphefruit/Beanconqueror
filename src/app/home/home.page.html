@@ -1,16 +1,20 @@
 <ion-content>
   <ion-tabs>
 
-    <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="dashboard" tappable>
+    <!-- The href only makes Ionic's inner link focusable for keyboard users;
+         Ionic cancels the link's default action and ion-tabs still navigates
+         by the tab name. Ionic selects a tab on Enter/Space keyup, so the
+         link's own click on Enter keydown is cancelled to select only once. -->
+    <ion-tab-bar slot="bottom" (keydown.enter)="$event.preventDefault()">
+      <ion-tab-button tab="dashboard" href="/home/dashboard" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-home"></ion-icon>
         <ion-label>{{"NAV_HOME" | translate}}</ion-label>
       </ion-tab-button>
-      <ion-tab-button tab="brews" tappable>
+      <ion-tab-button tab="brews" href="/home/brews" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-brew"></ion-icon>
         <ion-label>{{"NAV_BREWS" | translate}}</ion-label>
       </ion-tab-button>
-      <ion-tab-button tab="beans" tappable>
+      <ion-tab-button tab="beans" href="/home/beans" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-bean"></ion-icon>
         <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
         @if (!beansExist) {
@@ -18,7 +22,7 @@
 }
       </ion-tab-button>
 
-      <ion-tab-button tab="preparations" tappable>
+      <ion-tab-button tab="preparations" href="/home/preparations" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-preparation"></ion-icon>
         <ion-label>{{"NAV_PREPARATION" | translate}}</ion-label>
         @if (!preparationsExist) {
@@ -26,7 +30,7 @@
 }
       </ion-tab-button>
 
-      <ion-tab-button tab="mills" tappable>
+      <ion-tab-button tab="mills" href="/home/mills" tappable>
         <ion-icon class="menu-icon stroke" name="beanconqueror-pepper-mill"></ion-icon>
         <ion-label>{{"NAV_MILL" | translate}}</ion-label>
         @if (!millsExist) {

@@ -198,6 +198,64 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
+const TABS = [
+  { name: 'Home', path: '/home/dashboard', key: 'Enter' },
+  { name: 'Brews', path: '/home/brews', key: 'Enter' },
+  { name: 'Beans', path: '/home/beans', key: 'Enter' },
+  { name: 'Methods', path: '/home/preparations', key: 'Enter' },
+  { name: 'Grinders', path: '/home/mills', key: ' ' },
+] as const;
+
+for (const theme of ['light', 'dark'] as const) {
+  test(`every tab in the tab bar can be reached and opened by keyboard (${theme})`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await completeFirstRun(page);
+    await setTheme(page, theme);
+
+    // Lists also use tablists (segments), so pick the one holding the tabs.
+    const tabBar = page.getByRole('tablist').filter({
+      has: page.getByRole('tab', { name: 'Home', exact: true }),
+    });
+    // Counts tab selections, so a key press that selects twice shows up.
+    await page.evaluate(() => {
+      const w = window as unknown as { tabSelections: number };
+      w.tabSelections = 0;
+      document.addEventListener(
+        'ionTabButtonClick',
+        () => w.tabSelections++,
+        true,
+      );
+    });
+    const tabSelections = () =>
+      page.evaluate(
+        () => (window as unknown as { tabSelections: number }).tabSelections,
+      );
+
+    for (const { name, path, key } of TABS) {
+      const tab = tabBar.getByRole('tab', { name, exact: true });
+      await expectFocusRing(page, tab);
+      // Ionic's focus tint is a positioned layer in the tab that would paint
+      // over the inset ring, leaving only a grey fill.
+      await expect
+        .poll(() =>
+          tab.evaluate((link) => getComputedStyle(link, '::after').opacity),
+        )
+        .toBe('0');
+      const selectionsBefore = await tabSelections();
+      await page.keyboard.press(key);
+      await expect(page).toHaveURL(new RegExp(`${path}$`));
+      expect(await tabSelections(), `${key} selects ${name} once`).toBe(
+        selectionsBefore + 1,
+      );
+      // Screen readers announce the open tab as selected, and only that one.
+      await expect(tab).toHaveAttribute('aria-selected', 'true');
+      await expect(tabBar.getByRole('tab', { selected: true })).toHaveCount(1);
+    }
+  });
+}
+
 test('tapping a settings slider does not draw the keyboard focus ring', async ({
   page,
 }) => {

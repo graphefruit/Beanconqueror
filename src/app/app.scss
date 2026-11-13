@@ -1165,6 +1165,12 @@ $bq-focus-double-ring:
     @include bq-focus-outline-inset;
   }
 
+  // The tab's focus tint is a positioned layer inside its shadow root that
+  // paints over the host's inset ring; the ring marks focus instead.
+  ion-tab-button.ion-focused {
+    --background-focused-opacity: 0;
+  }
+
   // The card host never matches :focus-visible and Ionic gives cards no
   // .ion-focused, so only the native link/button can carry the ring. It sits
   // inside the card padding; an inset ring would cover the card's text.
