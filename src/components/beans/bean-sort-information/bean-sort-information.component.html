@@ -22,20 +22,20 @@
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.country)) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_COUNTRY" | translate}}' #country="ngModel"
-            (ionBlur)="onSearchLeave('country')"
-            (ionInput)="onSearchChange('country',$event)"
-            (ionFocus)="onSearchFocus('country');"
+            (ionBlur)="onSearchLeave(beanInformation,'country')"
+            (ionInput)="onSearchChange(beanInformation,'country',$event)"
+            (ionFocus)="onSearchFocus(beanInformation,'country');"
             [(ngModel)]="beanInformation.country" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COUNTRY' | translate}}" spellcheck="false"
             type="text">
           </ion-input>
         </ion-item>
       }
-      @if (searchResultsAvailable('country')) {
+      @if (searchResultsAvailable(beanInformation,'country')) {
         <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
           <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-            @for (result of getResults('country'); track result; let last = $last) {
-              <ion-item (click)="searchResultSelected(i,'country',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
+            @for (result of getResults(beanInformation,'country'); track result; let last = $last) {
+              <ion-item (click)="searchResultSelected(beanInformation,'country',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
                 <ion-label>{{result}}</ion-label>
               </ion-item>
             }
@@ -45,20 +45,20 @@
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.region)) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_REGION" | translate}}' #region="ngModel"
-            (ionBlur)="onSearchLeave('region')"
-            (ionInput)="onSearchChange('region',$event)"
-            (ionFocus)="onSearchFocus('region');"
+            (ionBlur)="onSearchLeave(beanInformation,'region')"
+            (ionInput)="onSearchChange(beanInformation,'region',$event)"
+            (ionFocus)="onSearchFocus(beanInformation,'region');"
             [(ngModel)]="beanInformation.region" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_REGION' | translate}}" spellcheck="false"
             type="text">
           </ion-input>
         </ion-item>
       }
-      @if (searchResultsAvailable('region')) {
+      @if (searchResultsAvailable(beanInformation,'region')) {
         <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
           <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-            @for (result of getResults('region'); track result; let last = $last) {
-              <ion-item (click)="searchResultSelected(i,'region',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
+            @for (result of getResults(beanInformation,'region'); track result; let last = $last) {
+              <ion-item (click)="searchResultSelected(beanInformation,'region',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
                 <ion-label>{{result}}</ion-label>
               </ion-item>
             }
@@ -68,20 +68,20 @@
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farm)) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_FARM" | translate}}' #farm="ngModel"
-            (ionBlur)="onSearchLeave('farm')"
-            (ionInput)="onSearchChange('farm',$event)"
-            (ionFocus)="onSearchFocus('farm');"
+            (ionBlur)="onSearchLeave(beanInformation,'farm')"
+            (ionInput)="onSearchChange(beanInformation,'farm',$event)"
+            (ionFocus)="onSearchFocus(beanInformation,'farm');"
             [(ngModel)]="beanInformation.farm" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARM' | translate}}" spellcheck="false"
             type="text">
           </ion-input>
         </ion-item>
       }
-      @if (searchResultsAvailable('farm')) {
+      @if (searchResultsAvailable(beanInformation,'farm')) {
         <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
           <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-            @for (result of getResults('farm'); track result; let last = $last) {
-              <ion-item (click)="searchResultSelected(i,'farm',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
+            @for (result of getResults(beanInformation,'farm'); track result; let last = $last) {
+              <ion-item (click)="searchResultSelected(beanInformation,'farm',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
                 <ion-label>{{result}}</ion-label>
               </ion-item>
             }
@@ -91,20 +91,20 @@
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farmer)) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_FARMER" | translate}}' #farmer="ngModel"
-            (ionBlur)="onSearchLeave('farmer')"
-            (ionInput)="onSearchChange('farmer',$event)"
-            (ionFocus)="onSearchFocus('farmer');"
+            (ionBlur)="onSearchLeave(beanInformation,'farmer')"
+            (ionInput)="onSearchChange(beanInformation,'farmer',$event)"
+            (ionFocus)="onSearchFocus(beanInformation,'farmer');"
             [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARMER' | translate}}" spellcheck="false"
             type="text">
           </ion-input>
         </ion-item>
       }
-      @if (searchResultsAvailable('farmer')) {
+      @if (searchResultsAvailable(beanInformation,'farmer')) {
         <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
           <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-            @for (result of getResults('farmer'); track result; let last = $last) {
-              <ion-item (click)="searchResultSelected(i,'farmer',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
+            @for (result of getResults(beanInformation,'farmer'); track result; let last = $last) {
+              <ion-item (click)="searchResultSelected(beanInformation,'farmer',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
                 <ion-label>{{result}}</ion-label>
               </ion-item>
             }
@@ -122,20 +122,20 @@
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.variety)) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_VARIETY" | translate}}' #variety="ngModel"
-            (ionBlur)="onSearchLeave('variety')"
-            (ionInput)="onSearchChange('variety',$event)"
-            (ionFocus)="onSearchFocus('variety');"
+            (ionBlur)="onSearchLeave(beanInformation,'variety')"
+            (ionInput)="onSearchChange(beanInformation,'variety',$event)"
+            (ionFocus)="onSearchFocus(beanInformation,'variety');"
             [(ngModel)]="beanInformation.variety" autocapitalize="sentences"
             name="variety" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_VARIETY' | translate}}" spellcheck="false"
             type="text">
           </ion-input>
         </ion-item>
       }
-      @if (searchResultsAvailable('variety')) {
+      @if (searchResultsAvailable(beanInformation,'variety')) {
         <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
           <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-            @for (result of getResults('variety'); track result; let last = $last) {
-              <ion-item (click)="searchResultSelected(i,'variety',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
+            @for (result of getResults(beanInformation,'variety'); track result; let last = $last) {
+              <ion-item (click)="searchResultSelected(beanInformation,'variety',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
                 <ion-label>{{result}}</ion-label>
               </ion-item>
             }
@@ -145,20 +145,20 @@
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.processing)) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_PROCESSING" | translate}}' #processing="ngModel"
-            (ionBlur)="onSearchLeave('processing')"
-            (ionInput)="onSearchChange('processing',$event)"
-            (ionFocus)="onSearchFocus('processing');"
+            (ionBlur)="onSearchLeave(beanInformation,'processing')"
+            (ionInput)="onSearchChange(beanInformation,'processing',$event)"
+            (ionFocus)="onSearchFocus(beanInformation,'processing');"
             [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
             name="processing" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PROCESSING' | translate}}" spellcheck="false"
             type="text">
           </ion-input>
         </ion-item>
       }
-      @if (searchResultsAvailable('processing')) {
+      @if (searchResultsAvailable(beanInformation,'processing')) {
         <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
           <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-            @for (result of getResults('processing'); track result; let last = $last) {
-              <ion-item (click)="searchResultSelected(i,'processing',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
+            @for (result of getResults(beanInformation,'processing'); track result; let last = $last) {
+              <ion-item (click)="searchResultSelected(beanInformation,'processing',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
                 <ion-label>{{result}}</ion-label>
               </ion-item>
             }
@@ -184,20 +184,20 @@
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.certification)) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_CERTIFICATION" | translate}}' #certification="ngModel"
-            (ionBlur)="onSearchLeave('certification')"
-            (ionInput)="onSearchChange('certification',$event)"
-            (ionFocus)="onSearchFocus('certification');"
+            (ionBlur)="onSearchLeave(beanInformation,'certification')"
+            (ionInput)="onSearchChange(beanInformation,'certification',$event)"
+            (ionFocus)="onSearchFocus(beanInformation,'certification');"
             [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"
             type="text">
           </ion-input>
         </ion-item>
       }
-      @if (searchResultsAvailable('certification')) {
+      @if (searchResultsAvailable(beanInformation,'certification')) {
         <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
           <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-            @for (result of getResults('certification'); track result; let last = $last) {
-              <ion-item (click)="searchResultSelected(i,'certification',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
+            @for (result of getResults(beanInformation,'certification'); track result; let last = $last) {
+              <ion-item (click)="searchResultSelected(beanInformation,'certification',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
                 <ion-label>{{result}}</ion-label>
               </ion-item>
             }

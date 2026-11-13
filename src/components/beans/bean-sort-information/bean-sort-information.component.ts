@@ -67,7 +67,8 @@ export class BeanSortInformationComponent implements OnInit {
   public settings: Settings = undefined;
   public BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 
-  public typeaheadSearch = {};
+  // Kept per sort, so a blend shows the suggestions only in the sort typed into.
+  public typeaheadSearch = new Map<IBeanInformation, Record<string, any>>();
 
   constructor() {
     addIcons({ copyOutline, closeOutline });
@@ -94,13 +95,18 @@ export class BeanSortInformationComponent implements OnInit {
     // this.data.bean_information.splice(_index, 1);
   }
 
-  public onSearchChange(_type: string, event: any) {
-    if (!this.typeaheadSearch[_type + 'Focused']) {
+  public onSearchChange(
+    _beanInformation: IBeanInformation,
+    _type: string,
+    event: any,
+  ) {
+    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
+    if (!typeaheadSearch[_type + 'Focused']) {
       return;
     }
     let actualSearchValue = event.target.value;
-    this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
-    this.typeaheadSearch[_type + 'Results'] = [];
+    typeaheadSearch[_type + 'ResultsAvailable'] = false;
+    typeaheadSearch[_type + 'Results'] = [];
     if (actualSearchValue === undefined || actualSearchValue === '') {
       return;
     }
@@ -134,7 +140,7 @@ export class BeanSortInformationComponent implements OnInit {
             }
           });
 
-          this.typeaheadSearch[_type + 'Results'].push(
+          typeaheadSearch[_type + 'Results'].push(
             ...new Set(filterSplittedInfos),
           );
         }
@@ -142,51 +148,66 @@ export class BeanSortInformationComponent implements OnInit {
     }
 
     const distictedValues = [];
-    this.typeaheadSearch[_type + 'Results'].forEach((element) => {
+    typeaheadSearch[_type + 'Results'].forEach((element) => {
       if (!distictedValues.includes(element.trim())) {
         distictedValues.push(element.trim());
       }
     });
     // Distinct values
-    this.typeaheadSearch[_type + 'Results'] = distictedValues;
+    typeaheadSearch[_type + 'Results'] = distictedValues;
 
-    if (this.typeaheadSearch[_type + 'Results'].length > 0) {
-      this.typeaheadSearch[_type + 'ResultsAvailable'] = true;
+    if (typeaheadSearch[_type + 'Results'].length > 0) {
+      typeaheadSearch[_type + 'ResultsAvailable'] = true;
     } else {
-      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
+      typeaheadSearch[_type + 'ResultsAvailable'] = false;
     }
   }
 
-  public searchResultsAvailable(_type): boolean {
-    if (this.typeaheadSearch[_type + 'Results']) {
-      return this.typeaheadSearch[_type + 'Results'].length > 0;
+  public searchResultsAvailable(
+    _beanInformation: IBeanInformation,
+    _type,
+  ): boolean {
+    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
+    if (typeaheadSearch[_type + 'Results']) {
+      return typeaheadSearch[_type + 'Results'].length > 0;
     }
     return false;
   }
 
-  public getResults(_type: string) {
-    if (this.typeaheadSearch[_type + 'Results']) {
-      return this.typeaheadSearch[_type + 'Results'];
+  public getResults(_beanInformation: IBeanInformation, _type: string) {
+    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
+    if (typeaheadSearch[_type + 'Results']) {
+      return typeaheadSearch[_type + 'Results'];
     }
     return [];
   }
-  public onSearchLeave(_type: string) {
+  public onSearchLeave(_beanInformation: IBeanInformation, _type: string) {
+    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
     setTimeout(() => {
-      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
-      this.typeaheadSearch[_type + 'Results'] = [];
-      this.typeaheadSearch[_type + 'Focused'] = false;
+      typeaheadSearch[_type + 'ResultsAvailable'] = false;
+      typeaheadSearch[_type + 'Results'] = [];
+      typeaheadSearch[_type + 'Focused'] = false;
     }, 150);
   }
-  public onSearchFocus(_type: string) {
-    this.typeaheadSearch[_type + 'Focused'] = true;
+  public onSearchFocus(_beanInformation: IBeanInformation, _type: string) {
+    this.getTypeaheadSearch(_beanInformation)[_type + 'Focused'] = true;
   }
 
   public searchResultSelected(
-    _index: number,
+    _beanInformation: IBeanInformation,
     _type: string,
     selected: string,
   ): void {
-    this.data.bean_information[_index][_type] = selected;
-    this.onSearchLeave(_type);
+    _beanInformation[_type] = selected;
+    this.onSearchLeave(_beanInformation, _type);
+  }
+
+  private getTypeaheadSearch(
+    _beanInformation: IBeanInformation,
+  ): Record<string, any> {
+    if (!this.typeaheadSearch.has(_beanInformation)) {
+      this.typeaheadSearch.set(_beanInformation, {});
+    }
+    return this.typeaheadSearch.get(_beanInformation);
   }
 }
