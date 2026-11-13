@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { TranslateService } from '@ngx-translate/core';
 
+import { DeletionJournalService } from '../../services/deletionJournal/deletion-journal.service';
 import { DeviceIdentityService } from '../../services/deviceIdentity/device-identity.service';
 import { UIAlert } from '../../services/uiAlert';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
@@ -609,5 +610,231 @@ describe('StorageClass change info', () => {
 
     expect(thrown).toBeFalse();
     expect(unsaved).toBeFalse();
+  });
+});
+
+describe('StorageClass deletion journal', () => {
+  const T0 = 1_800_000_000_000;
+  let database: Map<string, unknown>;
+  let failingWrites: Set<string>;
+  let fakeUIStorage: {
+    get: jasmine.Spy;
+    getOrFail: jasmine.Spy;
+    set: jasmine.Spy;
+  };
+
+  const create = <T>(factory: () => T): T =>
+    TestBed.runInInjectionContext(factory);
+
+  const journal = () =>
+    (database.get('DELETION_JOURNAL') ?? []) as Array<{
+      collection: string;
+      uuid: string;
+      deleted_at: number;
+      device_id: string;
+      rev: number;
+    }>;
+
+  const rawEntry = (uuid: string, rev?: number) => ({
+    config: {
+      uuid,
+      unix_timestamp: 1_700_000_000,
+      ...(rev === undefined ? {} : { rev }),
+    },
+  });
+
+  beforeEach(() => {
+    spyOn(Date, 'now').and.returnValue(T0);
+    database = new Map();
+    failingWrites = new Set();
+    const read = (key: string) =>
+      Promise.resolve(
+        database.has(key) ? structuredClone(database.get(key)) : null,
+      );
+    fakeUIStorage = {
+      get: jasmine.createSpy('get').and.callFake(read),
+      getOrFail: jasmine.createSpy('getOrFail').and.callFake(read),
+      set: jasmine
+        .createSpy('set')
+        .and.callFake((key: string, value: unknown) => {
+          if (failingWrites.has(key)) {
+            return Promise.resolve(false);
+          }
+          database.set(key, structuredClone(value));
+          return Promise.resolve(true);
+        }),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UIStorage, useValue: fakeUIStorage },
+        {
+          provide: UILog,
+          useValue: jasmine.createSpyObj('UILog', [
+            'log',
+            'info',
+            'error',
+            'debug',
+          ]),
+        },
+        { provide: TranslateService, useValue: createMockTranslateService() },
+        {
+          provide: DeviceIdentityService,
+          useValue: { getDeviceId: () => 'device-a' },
+        },
+      ],
+    });
+    spyOn(UIAlert, 'getInstance').and.returnValue(createMockUIAlert());
+  });
+
+  it('writes exactly one note when a brew is deleted', async () => {
+    const storage = create(() => new UIBrewStorage());
+    const added = await storage.add(new Brew());
+    await storage.update(storage.getEntryByUUID(added.config.uuid));
+    const removed: string[] = [];
+    storage.attachOnRemove().subscribe((_event) => removed.push(_event.id));
+
+    const deleted = await storage.removeByObject(
+      storage.getEntryByUUID(added.config.uuid),
+    );
+
+    expect(deleted).toBeTrue();
+    expect(storage.getAllEntries()).toEqual([]);
+    expect(removed).toEqual([added.config.uuid]);
+    expect(journal()).toEqual([
+      {
+        collection: 'BREWS',
+        uuid: added.config.uuid,
+        deleted_at: T0,
+        device_id: 'device-a',
+        rev: 2,
+      },
+    ]);
+  });
+
+  it('notes revision 0 for entries without change info', async () => {
+    const storage = create(() => new NamedTestStorage('MILL'));
+    storage.setEntries([rawEntry('legacy')]);
+
+    await storage.removeByUUID('legacy');
+
+    expect(journal()).toEqual([jasmine.objectContaining({ rev: 0 })]);
+  });
+
+  it('writes no note when the collection could not be saved', async () => {
+    const storage = create(() => new NamedTestStorage('BREWS'));
+    storage.setEntries([rawEntry('brew-1', 3)]);
+    failingWrites.add('BREWS');
+
+    const deleted = await storage.removeByUUID('brew-1');
+
+    expect(deleted).toBeFalse();
+    expect(database.has('DELETION_JOURNAL')).toBeFalse();
+  });
+
+  it('writes no note for collections without change tracking', async () => {
+    for (const dbPath of ['SETTINGS', 'VERSION', 'TEST_DB']) {
+      const storage = create(() => new NamedTestStorage(dbPath));
+      storage.setEntries([rawEntry('entry-1')]);
+
+      expect(await storage.removeByUUID('entry-1'))
+        .withContext(dbPath)
+        .toBeTrue();
+    }
+
+    expect(database.has('DELETION_JOURNAL')).toBeFalse();
+    expect(fakeUIStorage.getOrFail).not.toHaveBeenCalled();
+  });
+
+  it('writes no note for an unknown uuid', async () => {
+    const storage = create(() => new NamedTestStorage('BREWS'));
+    storage.setEntries([rawEntry('brew-1')]);
+
+    expect(await storage.removeByUUID('unknown')).toBeFalse();
+
+    expect(storage.getAllEntries().length).toBe(1);
+    expect(database.has('DELETION_JOURNAL')).toBeFalse();
+  });
+
+  it('writes the note only when the last entry sharing a uuid is deleted', async () => {
+    const storage = create(() => new NamedTestStorage('BREWS'));
+    storage.setEntries([rawEntry('twin', 1), rawEntry('twin', 1)]);
+
+    await storage.removeByUUID('twin');
+    expect(database.has('DELETION_JOURNAL')).toBeFalse();
+
+    await storage.removeByUUID('twin');
+    expect(journal().map((_note) => _note.uuid)).toEqual(['twin']);
+  });
+
+  it('keeps the result of the deletion when the note cannot be written', async () => {
+    const storage = create(() => new NamedTestStorage('BREWS'));
+    storage.setEntries([rawEntry('brew-1')]);
+    fakeUIStorage.getOrFail.and.rejectWith(new Error('read failed'));
+
+    expect(await storage.removeByUUID('brew-1')).toBeTrue();
+    expect(storage.getAllEntries()).toEqual([]);
+    expect(database.has('DELETION_JOURNAL')).toBeFalse();
+  });
+
+  it('writes one note per entry when a bean is deleted with its 300 brews', async () => {
+    database.set('BEANS', [rawEntry('bean-1', 4)]);
+    database.set(
+      'BREWS',
+      Array.from({ length: 300 }, (_, i) => ({
+        ...rawEntry(`brew-${i}`, 1),
+        bean: 'bean-1',
+      })),
+    );
+    const beans = create(() => new UIBeanStorage());
+    const brews = create(() => new UIBrewStorage());
+    await beans.initializeStorage();
+    await brews.initializeStorage();
+
+    // The same order as the bean information component: brews, then bean.
+    for (const brew of brews.getAllEntries().slice()) {
+      await brews.removeByObject(brew);
+    }
+    await beans.removeByObject(beans.getAllEntries()[0]);
+
+    const notes = journal();
+    expect(notes.length).toBe(301);
+    expect(notes.filter((_note) => _note.collection === 'BREWS').length).toBe(
+      300,
+    );
+    expect(notes[300]).toEqual(
+      jasmine.objectContaining({ collection: 'BEANS', uuid: 'bean-1', rev: 4 }),
+    );
+    expect(new Set(notes.map((_note) => _note.uuid)).size).toBe(301);
+  });
+
+  it('forgets notes about entries that exist again when the collection is loaded', async () => {
+    database.set('DELETION_JOURNAL', [
+      {
+        collection: 'BREWS',
+        uuid: 'brew-back',
+        deleted_at: 1,
+        device_id: 'device-a',
+        rev: 1,
+      },
+      {
+        collection: 'BREWS',
+        uuid: 'brew-gone',
+        deleted_at: 1,
+        device_id: 'device-a',
+        rev: 1,
+      },
+    ]);
+    // For example imported from a backup taken before the deletion.
+    database.set('BREWS', [rawEntry('brew-back', 1)]);
+    const brews = create(() => new UIBrewStorage());
+    const journalService = TestBed.inject(DeletionJournalService);
+
+    await brews.reinitializeStorage();
+    // The journal is cleaned up in the background.
+    await journalService.forgetExistingEntries('BREWS', new Set());
+
+    expect(journal().map((_note) => _note.uuid)).toEqual(['brew-gone']);
+    expect(brews.getAllEntries().length).toBe(1);
   });
 });

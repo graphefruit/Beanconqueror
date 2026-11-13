@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { Observable, Subject } from 'rxjs';
 
+import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
 import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
 import { UILog } from '../services/uiLog';
 import { UIStorage } from '../services/uiStorage';
@@ -31,6 +32,7 @@ export abstract class StorageClass {
   protected uiStorage = inject(UIStorage);
   protected uiLog = inject(UILog);
   protected deviceIdentity = inject(DeviceIdentityService);
+  protected deletionJournal = inject(DeletionJournalService);
 
   private removeObjSubject = new Subject<any>();
   private eventSubject = new Subject<any>();
@@ -384,6 +386,7 @@ export abstract class StorageClass {
             this.storedData = _data;
             this.isInitialized = 1;
           }
+          this.__forgetExistingDeletions();
           resolve(undefined);
         },
         (e) => {
@@ -405,6 +408,7 @@ export abstract class StorageClass {
         for (let i = 0; i < this.storedData.length; i++) {
           if (this.storedData[i].config.uuid === deleteUUID) {
             this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
+            const rev = StorageClass.revisionOf(this.storedData[i]);
             this.storedData.splice(i, 1);
             const saved = await this.__save();
             this.__sendRemoveMessage(deleteUUID);
@@ -413,6 +417,11 @@ export abstract class StorageClass {
               this.uiLog.error(
                 `Storage - Delete - Unsuccessfully - ${deleteUUID} - save failed`,
               );
+            } else {
+              // The note is written only after the collection was saved: if
+              // the app stops in between, at most a note is missing, but no
+              // note ever claims that a stored entry was deleted.
+              await this.__noteDeletion(deleteUUID, rev);
             }
             return saved;
           }
@@ -424,6 +433,62 @@ export abstract class StorageClass {
       this.uiLog.error('Storage - Delete - Unsuccessfully', ex);
       await this.showAlertSafely(ex.message, 'CRITICAL ERROR');
       return false;
+    }
+  }
+
+  private static revisionOf(_entry: any): number {
+    const rev = Number(_entry?.config?.rev);
+    return Number.isFinite(rev) && rev > 0 ? rev : 0;
+  }
+
+  /** Never changes the result of the deletion. */
+  private async __noteDeletion(_uuid: string, _rev: number): Promise<void> {
+    if (!this.tracksChanges()) {
+      return;
+    }
+    // Entries sharing a uuid are deleted one at a time; while a copy is
+    // left, the entry still exists.
+    if (this.storedData.some((_entry) => _entry?.config?.uuid === _uuid)) {
+      this.uiLog.log(
+        `Storage - Delete - ${_uuid} - another entry with this uuid is left, no deletion note`,
+      );
+      return;
+    }
+    try {
+      await this.deletionJournal.record({
+        collection: this.DB_PATH,
+        uuid: _uuid,
+        deleted_at: Date.now(),
+        device_id: this.deviceIdentity.getDeviceId(),
+        rev: _rev,
+      });
+    } catch {
+      this.uiLog.log(`Storage - Delete - ${_uuid} - deletion note failed`);
+    }
+  }
+
+  /**
+   * Entries can exist again after they were deleted, for example when a
+   * backup from before the deletion is imported. Their notes are dropped
+   * from the deletion journal. Runs in the background.
+   */
+  private __forgetExistingDeletions(): void {
+    if (!this.tracksChanges() || this.storedData.length === 0) {
+      return;
+    }
+    try {
+      const uuids = new Set<string>();
+      for (const entry of this.storedData) {
+        const uuid = entry?.config?.uuid;
+        if (typeof uuid === 'string') {
+          uuids.add(uuid);
+        }
+      }
+      void this.deletionJournal
+        .forgetExistingEntries(this.DB_PATH, uuids)
+        .catch(() => undefined);
+    } catch {
+      // Never affects loading the collection.
     }
   }
 

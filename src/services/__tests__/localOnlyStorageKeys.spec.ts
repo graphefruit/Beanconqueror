@@ -13,6 +13,7 @@ import {
 import { Settings } from '../../classes/settings/settings';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { EXPERIENCE_MODE_ENUM } from '../../enums/settings/experienceMode';
+import { DeletionJournalService } from '../deletionJournal/deletion-journal.service';
 import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -240,6 +241,40 @@ describe('Values local to one installation', () => {
     for (const key of LOCAL_ONLY_STORAGE_KEYS) {
       expect(deviceB.data.get(key)).toEqual(localValues('b')[key]);
     }
+  });
+
+  it('keep the deletion journal out of the backup and unchanged by an import', async () => {
+    const note = (uuid: string) => ({
+      collection: 'BREWS',
+      uuid,
+      deleted_at: 5,
+      device_id: 'device',
+      rev: 1,
+    });
+    const deviceA = await startDevice({
+      SETTINGS: [{ language: 'de' }],
+      BREWS: entries('brew', 2),
+    });
+    await TestBed.inject(DeletionJournalService).record(note('a-deleted'));
+    expect(deviceA.data.get(DELETION_JOURNAL_STORAGE_KEY)).toEqual([
+      note('a-deleted'),
+    ]);
+    const backup = await readBackup(
+      deviceA.helper,
+      await deviceA.helper.buildExportZIP(),
+    );
+    expect(Object.keys(backup)).not.toContain(DELETION_JOURNAL_STORAGE_KEY);
+    expect(JSON.stringify(backup)).not.toContain('a-deleted');
+
+    const deviceB = await startDevice({ SETTINGS: [{ language: 'en' }] });
+    const journalB = TestBed.inject(DeletionJournalService);
+    await journalB.record(note('b-deleted'));
+    await deviceB.uiStorage.import(backup);
+
+    expect(deviceB.data.get(DELETION_JOURNAL_STORAGE_KEY)).toEqual([
+      note('b-deleted'),
+    ]);
+    expect(journalB.getEntries()).toEqual([note('b-deleted')]);
   });
 
   it('gives settings imported from a backup without a user profile the advanced mode', async () => {

@@ -81,6 +81,7 @@ import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popo
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
 import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
 import { DocumentLanguageService } from '../services/documentLanguage/document-language.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
@@ -174,6 +175,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiStorage = inject(UIStorage);
   private readonly deviceIdentity = inject(DeviceIdentityService);
+  private readonly deletionJournal = inject(DeletionJournalService);
   private readonly androidPlatformService = inject(AndroidPlatformService);
   private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
@@ -399,6 +401,9 @@ export class AppComponent implements AfterViewInit {
       } catch (ex) {
         this.uiLog.info('Device id could not be initialized');
       }
+      // Not awaited: the start does not wait for the deletion journal, a
+      // deletion waits for it by itself. It never rejects.
+      void this.deletionJournal.initialize();
       try {
         const deviceInfo = await Device.getInfo();
         // #285 - Add more device loggings
