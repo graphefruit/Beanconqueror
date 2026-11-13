@@ -78,10 +78,10 @@ test('bar chrome is not cut off at 200 % text size', async ({ page }) => {
     document.documentElement.style.fontSize = '200%';
   });
 
-  // The tab bar has a fixed height and shares the screen width between five
+  // The tab bar has a fixed height and shares the screen width between four
   // tabs, so its labels must neither overflow the button nor the bar.
   const viewportWidth = page.viewportSize()!.width;
-  await expect(page.getByRole('tab')).toHaveCount(5);
+  await expect(page.getByRole('tab')).toHaveCount(4);
   for (const tab of await page.getByRole('tab').all()) {
     const fit = await tab.evaluate((tabElement) => {
       // The tab role sits on Ionic's inner anchor; the label is slotted into

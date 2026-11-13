@@ -22,4 +22,15 @@ test('a new user can finish onboarding and move between the main sections', asyn
   );
   await expect(page.getByRole('button', { name: 'Add bean' })).toBeVisible();
   await expect(page.getByRole('tab', { name: /^Available/ })).toBeVisible();
+
+  await page.getByRole('tab', { name: 'Profile' }).click();
+
+  await expect(page.getByRole('tab', { name: 'Profile' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await page.getByRole('link', { name: 'Methods' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Add preparation method' }),
+  ).toBeVisible();
 });

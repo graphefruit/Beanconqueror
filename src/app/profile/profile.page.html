@@ -1,0 +1,26 @@
+<ion-header>
+  <app-header [title]="'NAV_PROFILE' | translate">
+    <ion-menu-button header-slot="start" />
+  </app-header>
+</ion-header>
+<ion-content>
+  <ion-list lines="full">
+    <ion-item [routerLink]="['/home/profile/preparations']" detail="true">
+      <ion-label>{{ "NAV_PREPARATION" | translate }}</ion-label>
+    </ion-item>
+    <ion-item [routerLink]="['/home/profile/mills']" detail="true">
+      <ion-label>{{ "NAV_MILL" | translate }}</ion-label>
+    </ion-item>
+    @if (waterSectionVisible) {
+      <ion-item [routerLink]="['/water-section']" detail="true">
+        <ion-label>{{ "NAV_WATER_SECTION" | translate }}</ion-label>
+      </ion-item>
+    }
+    <ion-item [routerLink]="['/statistic']" detail="true">
+      <ion-label>{{ "NAV_STATISTICS" | translate }}</ion-label>
+    </ion-item>
+    <ion-item [routerLink]="['/settings']" detail="true" lines="none">
+      <ion-label>{{ "NAV_SETTINGS" | translate }}</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

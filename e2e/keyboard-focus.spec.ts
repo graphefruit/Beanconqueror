@@ -202,8 +202,7 @@ const TABS = [
   { name: 'Home', path: '/home/dashboard', key: 'Enter' },
   { name: 'Brews', path: '/home/brews', key: 'Enter' },
   { name: 'Beans', path: '/home/beans', key: 'Enter' },
-  { name: 'Methods', path: '/home/preparations', key: 'Enter' },
-  { name: 'Grinders', path: '/home/mills', key: ' ' },
+  { name: 'Profile', path: '/home/profile', key: ' ' },
 ] as const;
 
 for (const theme of ['light', 'dark'] as const) {

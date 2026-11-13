@@ -10,6 +10,8 @@ import {
   IonTabButton,
   IonTabs,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { personOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -39,6 +41,10 @@ export class HomePage {
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiMillStorage = inject(UIMillStorage);
+
+  constructor() {
+    addIcons({ personOutline });
+  }
 
   /** Needed app minimize for android */
 

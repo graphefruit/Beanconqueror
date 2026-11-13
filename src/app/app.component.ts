@@ -26,6 +26,7 @@ import {
   IonToolbar,
   MenuController,
   ModalController,
+  NavController,
   Platform,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -156,6 +157,7 @@ export class AppComponent implements AfterViewInit {
   private readonly tabletLayout = inject(TabletLayoutService);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly menu = inject(MenuController);
+  private readonly navCtrl = inject(NavController);
   private readonly uiUpdate = inject(UIUpdate);
   private readonly uiVersionStorage = inject(UiVersionStorage);
   private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
@@ -1175,6 +1177,9 @@ export class AppComponent implements AfterViewInit {
         this.routerOutlet.canGoBack()
       ) {
         this.routerOutlet.pop();
+      } else if (this.router.url.startsWith('/home/profile/')) {
+        // Preparation methods and grinders are opened from the profile tab.
+        void this.navCtrl.navigateBack('/home/profile');
       } else if (this.router.url.indexOf('/home') >= 0) {
         App.minimizeApp();
       } else {

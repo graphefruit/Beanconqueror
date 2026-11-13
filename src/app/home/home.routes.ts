@@ -14,12 +14,29 @@ export const routes: Routes = [
     loadComponent: () => import('../beans/beans.page'),
   },
   {
-    path: 'preparations',
+    path: 'profile',
+    loadComponent: () => import('../profile/profile.page'),
+  },
+  // Preparation methods and grinders live in the profile tab's stack, so the
+  // profile tab stays selected and back returns to the profile page.
+  {
+    path: 'profile/preparations',
     loadComponent: () => import('../preparation/preparation.page'),
   },
   {
-    path: 'mills',
+    path: 'profile/mills',
     loadComponent: () => import('../mill/mill.page'),
+  },
+  // Former tab routes, kept for existing links.
+  {
+    path: 'preparations',
+    redirectTo: 'profile/preparations',
+    pathMatch: 'full',
+  },
+  {
+    path: 'mills',
+    redirectTo: 'profile/mills',
+    pathMatch: 'full',
   },
 ];
 

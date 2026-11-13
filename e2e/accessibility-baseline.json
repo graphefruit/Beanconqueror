@@ -19,12 +19,7 @@
       "landmark-main-is-top-level | beans > ion-content[role=\"main\"]",
       "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
       "landmark-unique | app-home > ion-content[role=\"main\"]",
-      "role-img-alt | .stroke",
-      "role-img-alt | ion-icon[name=\"beanconqueror-bean\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-brew\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-home\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-preparation\"]"
+      "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]"
     ],
     "dark": [
       "color-contrast | .text-color-inactive.ion-margin-top",
@@ -32,12 +27,7 @@
       "landmark-main-is-top-level | beans > ion-content[role=\"main\"]",
       "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
       "landmark-unique | app-home > ion-content[role=\"main\"]",
-      "role-img-alt | .stroke",
-      "role-img-alt | ion-icon[name=\"beanconqueror-bean\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-brew\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-home\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-preparation\"]"
+      "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]"
     ]
   },
   "brews": {
@@ -48,12 +38,7 @@
       "landmark-main-is-top-level | brew > ion-content[role=\"main\"]",
       "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
       "landmark-unique | app-home > ion-content[role=\"main\"]",
-      "role-img-alt | .stroke",
-      "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-bean\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-brew\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-home\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-preparation\"]"
+      "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]"
     ],
     "dark": [
       "color-contrast | .text-color-inactive.ion-margin-top",
@@ -61,12 +46,7 @@
       "landmark-main-is-top-level | brew > ion-content[role=\"main\"]",
       "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
       "landmark-unique | app-home > ion-content[role=\"main\"]",
-      "role-img-alt | .stroke",
-      "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-bean\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-brew\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-home\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-preparation\"]"
+      "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]"
     ]
   },
   "home": {
@@ -77,11 +57,6 @@
       "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
       "landmark-unique | app-home > ion-content[role=\"main\"]",
       "role-img-alt | .ion-color-inactive",
-      "role-img-alt | .stroke",
-      "role-img-alt | ion-icon[name=\"beanconqueror-bean\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-brew\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-home\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-preparation\"]",
       "role-img-alt | ion-icon[name=\"gift-outline\"]"
     ],
     "dark": [
@@ -91,11 +66,6 @@
       "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
       "landmark-unique | app-home > ion-content[role=\"main\"]",
       "role-img-alt | .ion-color-inactive",
-      "role-img-alt | .stroke",
-      "role-img-alt | ion-icon[name=\"beanconqueror-bean\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-brew\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-home\"]",
-      "role-img-alt | ion-icon[name=\"beanconqueror-preparation\"]",
       "role-img-alt | ion-icon[name=\"gift-outline\"]"
     ]
   },
