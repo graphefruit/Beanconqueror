@@ -207,10 +207,22 @@ for (const theme of ['light', 'dark'] as const) {
     await setTheme(page, theme);
     await page.getByRole('tab', { name: 'Profile' }).click();
     await expect(page).toHaveURL(/\/home\/profile$/);
+    // Water is opt-in; switched on it closes the equipment card instead of
+    // the grinders, so its ring has to survive the card's rounded edge.
+    await page.getByRole('link', { name: /^Settings/ }).click();
+    const water = page.getByRole('checkbox', {
+      name: 'Activate water section',
+    });
+    await water.scrollIntoViewIfNeeded();
+    await water.click();
+    await expect(water).toBeChecked();
+    await page.goBack();
+    await expect(page).toHaveURL(/\/home\/profile$/);
 
     for (const name of [
       /^Preparation methods/,
       /^Grinders/,
+      /^Water/,
       /^Statistics/,
       /^Settings/,
     ]) {
