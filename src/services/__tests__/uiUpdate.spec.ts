@@ -217,10 +217,12 @@ describe('UIUpdate change info migration', () => {
   let run: jasmine.Spy;
   let version: Version;
   let saveVersion: jasmine.Spy;
+  let hasData: boolean;
   let uiUpdate: UIUpdate;
 
   beforeEach(() => {
     run = jasmine.createSpy('run');
+    hasData = true;
     version = new Version();
     saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
     TestBed.resetTestingModule();
@@ -248,13 +250,48 @@ describe('UIUpdate change info migration', () => {
         { provide: Platform, useValue: { is: () => true } },
         { provide: ModalController, useValue: {} },
         { provide: UIFileHelper, useValue: {} },
-        { provide: UIAlert, useValue: {} },
+        {
+          provide: UIAlert,
+          useValue: {
+            showLoadingSpinner: async () => undefined,
+            hideLoadingSpinner: async () => undefined,
+            isLoadingSpinnerShown: () => false,
+          },
+        },
         { provide: TranslateService, useValue: {} },
-        { provide: UIStorage, useValue: {} },
+        { provide: UIStorage, useValue: { hasData: async () => hasData } },
         { provide: UIHelper, useValue: {} },
       ],
     });
     uiUpdate = TestBed.inject(UIUpdate);
+  });
+
+  function markEarlierMigrationsDone() {
+    for (let i = 1; i <= 15; i++) {
+      version.pushUpdatedDataVersion(`UPDATE_${i}`);
+    }
+  }
+
+  it('runs during the start-up update check for existing data', async () => {
+    markEarlierMigrationsDone();
+    run.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate();
+
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_16')).toBeTrue();
+    expect(saveVersion).toHaveBeenCalledWith(version);
+  });
+
+  it('runs during the start-up update check on a new install', async () => {
+    markEarlierMigrationsDone();
+    hasData = false;
+    run.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate();
+
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_16')).toBeTrue();
   });
 
   it('is marked as done when everything was stored', async () => {
