@@ -26,11 +26,20 @@ pnpm install --frozen-lockfile
 
 ## Running tests
 
-Run unit tests through pnpm. These are run automatically in CI.
+Run unit tests through pnpm. CI runs them with coverage:
 
 ```shell
 pnpm test
+pnpm test:coverage # as in CI; the HTML report lands in coverage/
 ```
+
+`pnpm test:coverage` fails when a file of new code has less than 80 % of its statements or lines
+covered, or when no unit test loads it. New code is listed in `NEW_CODE` at the top of
+`src/karma.conf.js`, and every new code structure must be added there in the commit that creates
+it: a new folder as `'src/services/<feature>/**'`, a new file in a folder that is not listed with
+its own path. Spec files, `__tests__` folders and files with only types or re-exports are skipped.
+An entry that matches no file fails as well, so rename or remove entries together with their
+folders. The rules are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#coverage-of-new-code).
 
 Run the linter. It also runs in CI. Existing errors are recorded in `eslint-suppressions.json`,
 so only new errors fail. If you fix existing errors, shrink the file and commit it:

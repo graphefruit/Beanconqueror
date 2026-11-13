@@ -519,21 +519,11 @@ example that already uses OnPush, signal inputs and `computed()`.
 
 | Area                                                      | Rule                                                                                         |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| New code                                                  | At least 80 % line coverage from unit tests (Karma/Jasmine).                                 |
+| New code                                                  | At least 80 % of each file's statements and lines covered by unit tests (Karma/Jasmine).     |
 | New screens                                               | Every user flow covered by Playwright, including an axe scan, dark mode and 200 % text size. |
 | Legacy code                                               | Characterisation tests only where code is rebuilt; they pin the current behaviour first.     |
 | Foundation (storage, migrations, backup/import, settings) | Every change comes with tests, regardless of size.                                           |
 | Performance                                               | Within the budgets below.                                                                    |
-
-Measuring coverage (the HTML report lands in `coverage/`, which is not
-committed):
-
-```shell
-pnpm exec ng test --browsers=ChromeHeadless --watch=false --code-coverage \
-  --reporters=progress --reporters=coverage-istanbul
-```
-
-Check the new files in the report; the overall figure includes all legacy code.
 
 Existing tests to extend: `src/classes/__tests__/storageClass.spec.ts`,
 `src/classes/settings/__tests__/`, `src/services/__tests__/uiExportImportHelper.spec.ts`,
@@ -542,6 +532,34 @@ yet; a change to a migration starts by adding them.
 
 Browser test conventions (fixtures, native boundary, axe baseline) are described
 in `DEVELOPING.md`.
+
+### Coverage of new code
+
+New code is listed in `NEW_CODE` at the top of `src/karma.conf.js`, as globs
+relative to the repository root. `pnpm test:coverage` runs the unit tests with
+coverage (CI runs it instead of `pnpm test`) and fails when a TypeScript file
+matched by the list
+
+- has less than 80 % of its statements or of its lines covered, or
+- is not loaded by any unit test.
+
+Every file has to reach the threshold on its own. Spec files, helpers in
+`__tests__` folders and files without code of their own (only types or
+re-exports) are not checked. Legacy code has no threshold; the overall figure in
+the summary includes it. The HTML report lands in `coverage/`, which is not
+committed.
+
+Every new code structure **must** be added to the list in the commit that
+creates it:
+
+- a new folder: its glob, e.g. `'src/services/<feature>/**'`;
+- a new file in a folder that is not listed: its path, e.g.
+  `'src/services/theme/theme-plugins.ts'`.
+
+An entry that matches no file fails the run as well, so a renamed or removed
+folder cannot drop out of the check unnoticed. Only code under `src/` can be
+listed: the test build instruments nothing else, so the test tooling in `e2e/`
+and `tools/` is outside this rule.
 
 ### Performance budgets
 

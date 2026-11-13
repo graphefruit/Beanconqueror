@@ -128,6 +128,14 @@
             "ci": {
               "progress": false,
               "watch": false
+            },
+            "coverage": {
+              "codeCoverage": true,
+              "reporters": [
+                "progress",
+                "coverage-istanbul",
+                "new-code-coverage"
+              ]
             }
           }
         },

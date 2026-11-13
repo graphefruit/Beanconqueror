@@ -27,7 +27,8 @@ jobs:
       # Pre-existing errors are listed in eslint-suppressions.json; only new errors fail.
       - run: pnpm lint
       - run: pnpm run build
-      - run: pnpm test
+      # Unit tests with coverage; fails when new code (NEW_CODE in src/karma.conf.js) is below 80 %.
+      - run: pnpm test:coverage
 
   e2e:
     runs-on: ubuntu-latest
