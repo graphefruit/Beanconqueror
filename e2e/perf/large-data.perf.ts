@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 
-import type { Page, TestInfo } from '@playwright/test';
+import { test as plainTest, type Page, type TestInfo } from '@playwright/test';
 import { BlobReader, configure, TextWriter, ZipReader } from '@zip.js/zip.js';
 
 import { expect, test } from '../fixtures';
@@ -98,6 +98,16 @@ function checkBudget(
     )
     .toBeLessThanOrEqual(budget[name]);
 }
+
+// No browser needed: checks the budgets themselves.
+plainTest('no 15,000-brew budget is below the 7,000-brew one', () => {
+  // The work grows with the number of brews.
+  for (const name of Object.keys(BUDGETS[7_000]) as (keyof Budget)[]) {
+    expect(BUDGETS[15_000][name], name).toBeGreaterThanOrEqual(
+      BUDGETS[7_000][name],
+    );
+  }
+});
 
 for (const tier of TIERS) {
   test.describe(`${tier} brews`, () => {

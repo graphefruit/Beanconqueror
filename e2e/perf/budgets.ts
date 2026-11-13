@@ -3,10 +3,13 @@ export type PerfTier = 7_000 | 15_000;
 /**
  * Upper limits in milliseconds at 4x CPU throttling (see DEVELOPING.md, "Performance budgets").
  *
- * Set from five runs on an Apple M2 Max (2026-11). The comments give median / maximum of those
- * runs; each budget is the maximum plus about 30 % (at least 150 ms for short values), so the
- * spread between runs passes and a clear slowdown fails. Lower a budget when the app gets
- * faster; raise one only with a reason.
+ * Set from ten runs on an Apple M2 Max (2026-11-13). Only tests that started with the machine at
+ * most 30 % busy count (`BUSY_LIMIT` in perf.ts), four to seven values per budget; the comments
+ * give their median / maximum. Each budget is that maximum plus 30 %, but at least plus 50 ms,
+ * rounded up to 10 ms (100 ms from one second, 1,000 ms from ten seconds), so the spread between
+ * runs passes and a clear slowdown fails. A 15,000-brew budget is never below the 7,000-brew one:
+ * the work grows with the brews. Lower a budget when the app gets faster; raise one only with a
+ * reason.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -52,29 +55,29 @@ export const FIXED_DELAYS = {
 
 export const BUDGETS: Record<PerfTier, Budget> = {
   7_000: {
-    startVisible: 3_500, // 2,560 / 2,692
-    startInteractive: 3_600, // 2,666 / 2,799
-    brewListOpen: 600, // 401 / 422
-    brewListScroll: 31_000, // 22,218 / 23,791
-    brewListScrollLongestFrame: 200, // 127 / 132
-    search: 400, // 89 / 121
-    beanListOpen: 700, // 419 / 519
-    statisticsOpen: 250, // 75 / 80
-    statisticsBrewCharts: 400, // 232 / 240
-    export: 2_050, // 1,470 / 1,503
-    import: 2_600, // 1,935 / 1,972
+    startVisible: 3_900, // 2,494 / 2,926
+    startInteractive: 4_000, // 2,598 / 3,044
+    brewListOpen: 510, // 369 / 387
+    brewListScroll: 31_000, // 20,672 / 23,169
+    brewListScrollLongestFrame: 200, // 113 / 145
+    search: 170, // 90 / 112
+    beanListOpen: 600, // 412 / 455
+    statisticsOpen: 130, // 74 / 77
+    statisticsBrewCharts: 310, // 222 / 234
+    export: 1_000, // 746 / 763
+    import: 2_000, // 1,106 / 1,515
   },
   15_000: {
-    startVisible: 3_900, // 2,872 / 2,968
-    startInteractive: 4_000, // 2,980 / 3,079
-    brewListOpen: 750, // 555 / 556
-    brewListScroll: 69_000, // 46,793 / 53,005
-    brewListScrollLongestFrame: 300, // 226 / 231
-    search: 400, // 120 / 120
-    beanListOpen: 600, // 424 / 444
-    statisticsOpen: 270, // 87 / 120
-    statisticsBrewCharts: 550, // 323 / 349
-    export: 2_850, // 2,095 / 2,146
-    import: 3_500, // 2,607 / 2,705
+    startVisible: 3_900, // 2,748 / 2,904
+    startInteractive: 4_000, // 2,852 / 3,011
+    brewListOpen: 810, // 536 / 622
+    brewListScroll: 69_000, // 47,632 / 52,320
+    brewListScrollLongestFrame: 270, // 179 / 204
+    search: 200, // 116 / 146
+    beanListOpen: 600, // 421 / 432
+    statisticsOpen: 150, // 86 / 100
+    statisticsBrewCharts: 450, // 314 / 339
+    export: 1_900, // 1,364 / 1,385
+    import: 2_700, // 1,892 / 2,028
   },
 };
