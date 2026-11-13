@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Settings } from '../classes/settings/settings';
 import { StorageClass } from '../classes/storageClass';
+import { EXPERIENCE_MODE_ENUM } from '../enums/settings/experienceMode';
 import { ISettings } from '../interfaces/settings/iSettings';
 
 @Injectable({
@@ -41,7 +42,8 @@ export class UISettingsStorage extends StorageClass {
           this.isSettingsInitialized = 1;
         } else {
           // Take the new settings obj.
-
+          this.settings.user.experience_mode =
+            await this.experienceModeForNewSettings();
           const data: any = await super.add(this.settings);
           this.settings = new Settings();
           this.settings.initializeByObject(data);
@@ -100,6 +102,8 @@ export class UISettingsStorage extends StorageClass {
           this.settings = new Settings();
           this.settings.initializeByObject(entries[0]);
         } else {
+          this.settings.user.experience_mode =
+            await this.experienceModeForNewSettings();
           const data: any = await super.add(this.settings);
           this.settings = new Settings();
           this.settings.initializeByObject(data);
@@ -110,6 +114,42 @@ export class UISettingsStorage extends StorageClass {
       },
     );
   }
+  /**
+   * Settings are created when none are stored. On a new installation that
+   * starts the beginner mode. If brews, beans or finished data updates are
+   * already stored, the app has been used before and only the settings went
+   * missing, so the advanced mode is kept. When that cannot be read, the
+   * advanced mode is used as well, so an existing user is never downgraded.
+   */
+  private async experienceModeForNewSettings(): Promise<EXPERIENCE_MODE_ENUM> {
+    try {
+      const version: unknown = await this.uiStorage.getOrFail('VERSION');
+      if (
+        Array.isArray(version) &&
+        version.some(
+          (_entry) =>
+            Array.isArray(_entry?.updatedDataVersions) &&
+            _entry.updatedDataVersions.length > 0,
+        )
+      ) {
+        return EXPERIENCE_MODE_ENUM.ADVANCED;
+      }
+      for (const key of ['BREWS', 'BEANS']) {
+        const stored: unknown = await this.uiStorage.getOrFail(key);
+        if (Array.isArray(stored) && stored.length > 0) {
+          return EXPERIENCE_MODE_ENUM.ADVANCED;
+        }
+      }
+      return EXPERIENCE_MODE_ENUM.BEGINNER;
+    } catch (ex) {
+      this.uiLog.log(
+        'Settings - Could not check for existing data, keep advanced mode',
+        ex,
+      );
+      return EXPERIENCE_MODE_ENUM.ADVANCED;
+    }
+  }
+
   public getSettings(): Settings {
     return this.settings;
   }
