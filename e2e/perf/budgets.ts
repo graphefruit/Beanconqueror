@@ -25,9 +25,9 @@ export interface Budget {
   statisticsOpen: number;
   /** The "Brews" segment until its charts are drawn and the main thread is quiet. */
   statisticsBrewCharts: number;
-  /** Settings > Export until the download starts. */
+  /** Settings > Export, from the tap until the app hands the ZIP to the browser. */
   export: number;
-  /** Settings > Import, from choosing the file until "Import successful". */
+  /** Settings > Import, from the moment the app gets the file until "Import successful" shows. */
   import: number;
 }
 

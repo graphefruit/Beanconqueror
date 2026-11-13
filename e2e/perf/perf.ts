@@ -1,11 +1,13 @@
-import type { Page, TestInfo } from '@playwright/test';
+import type { FileChooser, Page, TestInfo } from '@playwright/test';
 
 import type { SyntheticDataSet } from '../support/synthetic-data';
 
 /**
  * Measuring helpers for the performance specs. Times come from the page's own clock
- * (`performance.now()`), so Playwright's round trips do not count, and they are wall-clock times
- * under the CPU throttling below.
+ * (`performance.now()`): they start at an event in the page (navigation start, the last input, a
+ * file input's `change` event) and end when the page itself sees the result, checked every frame.
+ * So Playwright's round trips and polling do not count. They are wall-clock times under the CPU
+ * throttling below.
  */
 
 /** CPU slowdown as an approximation of an older Android phone. `PERF_CPU_THROTTLING=1` turns it off. */
@@ -24,6 +26,8 @@ export interface PerfWindow {
     longTasks: { start: number; end: number }[];
     /** Time of the last pointer down or text input. */
     lastInput: number;
+    /** Times of clicks on download links, i.e. when the app hands a file to the browser. */
+    downloads: number[];
     /**
      * Timers as they were before zone.js patched them. Waiting with the patched ones would run
      * Angular change detection on every tick and so change what is measured.
@@ -33,7 +37,10 @@ export interface PerfWindow {
   };
 }
 
-/** Records long tasks and the last user input; runs before the app on every navigation. */
+/**
+ * Records long tasks, the last user input and started downloads; runs before the app on every
+ * navigation.
+ */
 export async function installPerfObserver(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const requestFrame = window.requestAnimationFrame.bind(window);
@@ -41,6 +48,7 @@ export async function installPerfObserver(page: Page): Promise<void> {
     const perf: PerfWindow['__perf'] = {
       longTasks: [],
       lastInput: 0,
+      downloads: [],
       nextFrame: () => new Promise((resolve) => requestFrame(resolve)),
       sleep: (ms) => new Promise((resolve) => setTimer(resolve, ms)),
     };
@@ -58,6 +66,19 @@ export async function installPerfObserver(page: Page): Promise<void> {
     };
     document.addEventListener('pointerdown', mark, true);
     document.addEventListener('input', mark, true);
+    // The web build downloads a file by clicking a temporary <a download> in the document.
+    document.addEventListener(
+      'click',
+      (event) => {
+        if (
+          event.target instanceof HTMLAnchorElement &&
+          event.target.hasAttribute('download')
+        ) {
+          perf.downloads.push(performance.now());
+        }
+      },
+      true,
+    );
   });
 }
 
@@ -135,13 +156,14 @@ export interface Expected {
 
 /**
  * Waits until `expected` is shown, then until the main thread stays quiet, and returns the times
- * relative to `from`: `'navigation'` (page start) or `'input'` (the last pointer down or text
- * input, so the click itself and Playwright's checks are not counted).
+ * relative to `from`: `'navigation'` (page start), `'input'` (the last pointer down or text
+ * input, so the click itself and Playwright's checks are not counted) or the last performance
+ * mark of that name (see `markFileChange`).
  */
 export async function waitUntilSettled(
   page: Page,
   expected: Expected,
-  from: 'navigation' | 'input',
+  from: 'navigation' | 'input' | { mark: string },
 ): Promise<Timing> {
   return page.evaluate(
     async ({ selector, text, from, quietWindow, timeout }) => {
@@ -167,7 +189,18 @@ export async function waitUntilSettled(
         await perf.nextFrame();
       }
       const visibleAt = performance.now();
-      const start = from === 'navigation' ? 0 : perf.lastInput;
+      let start: number;
+      if (from === 'navigation') {
+        start = 0;
+      } else if (from === 'input') {
+        start = perf.lastInput;
+      } else {
+        const marks = performance.getEntriesByName(from.mark, 'mark');
+        if (marks.length === 0) {
+          throw new Error(`no performance mark "${from.mark}"`);
+        }
+        start = marks[marks.length - 1].startTime;
+      }
       const lastEnd = () =>
         perf.longTasks.reduce((latest, task) => Math.max(latest, task.end), 0);
       while (performance.now() - Math.max(visibleAt, lastEnd()) < quietWindow) {
@@ -194,6 +227,37 @@ export async function waitUntilSettled(
       timeout: WAIT_TIMEOUT_MS,
     },
   );
+}
+
+/**
+ * Sets the performance mark `name` when the app gets the files of `chooser`: on the `change` event
+ * of its file input, which Playwright's `setFiles` fires after handing over the files.
+ */
+export async function markFileChange(
+  chooser: FileChooser,
+  name: string,
+): Promise<void> {
+  await chooser.element().evaluate((input, mark) => {
+    input.addEventListener('change', () => performance.mark(mark), {
+      capture: true,
+      once: true,
+    });
+  }, name);
+}
+
+/**
+ * Milliseconds from the last input until the app started a download, from the page's clock. Call
+ * it after Playwright reported the download.
+ */
+export async function downloadAfterInput(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const perf = (window as unknown as PerfWindow).__perf;
+    const started = perf.downloads.find((time) => time >= perf.lastInput);
+    if (started === undefined) {
+      throw new Error('no download link was clicked after the last input');
+    }
+    return Math.round(started - perf.lastInput);
+  });
 }
 
 export interface ScrollResult {

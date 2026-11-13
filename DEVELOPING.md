@@ -162,10 +162,13 @@ statistics, start-up or backups.
   check but no migration. The import test goes through Settings > Import with the generated ZIP.
 - Measured: start until the home screen is interactive, opening the brew list and scrolling it to
   the end (duration, slow frames, longest frame), search in the brew list (including the search
-  field's 750 ms debounce), opening the bean list, statistics with the brew charts, export (until
-  the download starts) and import (until the success message).
-- "Settled" means the content is on screen and the main thread had no long task for one second.
-  Every value is printed as a `PERF {…}` line.
+  field's 750 ms debounce), opening the bean list, statistics with the brew charts, export (from
+  the tap until the app hands the ZIP to the browser) and import (from the moment the app gets
+  the file until the success message).
+- Times come from the page's own clock: from navigation start, the tap or the file input's
+  `change` event until the page itself sees the result, checked every frame, so Playwright's
+  round trips and polling are not part of them. "Settled" means the content is on screen and the
+  main thread had no long task for one second. Every value is printed as a `PERF {…}` line.
 - Times depend on the machine. Look at a few runs before judging a change:
 
   ```shell

@@ -15,7 +15,9 @@ import {
 import { BUDGETS, type Budget, type PerfTier } from './budgets';
 import {
   CPU_THROTTLING,
+  downloadAfterInput,
   installPerfObserver,
+  markFileChange,
   report,
   scrollListToEnd,
   seedDatabase,
@@ -214,15 +216,12 @@ for (const tier of TIERS) {
       await tabBar(page).getByRole('tab', { name: 'Profile' }).click();
       await page.getByRole('link', { name: /^Settings/ }).click();
 
-      const exportItem = page.getByRole('button', {
-        name: /^Export Export just/,
-      });
-      const started = performance.now();
       const [download] = await Promise.all([
         page.waitForEvent('download', { timeout: 300_000 }),
-        exportItem.click(),
+        page.getByRole('button', { name: /^Export Export just/ }).click(),
       ]);
-      const duration = Math.round(performance.now() - started);
+      // From the tap on Export until the app hands the ZIP to the browser.
+      const duration = await downloadAfterInput(page);
       const path = await download.path();
       report(testInfo, tier, 'export', { duration });
       if (checkBudgets) {
@@ -263,22 +262,24 @@ for (const tier of TIERS) {
         page.waitForEvent('filechooser'),
         page.getByRole('button', { name: 'Import', exact: true }).click(),
       ]);
-      const started = performance.now();
+      await markFileChange(chooser, 'import');
       await chooser.setFiles({
         name: 'Beanconqueror.zip',
         mimeType: 'application/zip',
         buffer: zip,
       });
-      await expect(page.getByText('Import successful')).toBeVisible({
-        timeout: 300_000,
-      });
-      const duration = Math.round(performance.now() - started);
+      // From the moment the app gets the file until the success message is on screen.
+      const imported = await waitUntilSettled(
+        page,
+        { selector: 'ion-alert', text: 'Import successful' },
+        { mark: 'import' },
+      );
       report(testInfo, tier, 'import', {
-        duration,
+        ...imported,
         zipKiB: Math.round(zip.length / 1024),
       });
       if (checkBudgets) {
-        checkBudget('import', duration, budget);
+        checkBudget('import', imported.visible, budget);
       }
 
       await page.getByRole('button', { name: 'Ok' }).click();
