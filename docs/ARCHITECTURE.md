@@ -464,7 +464,7 @@ mutable fields. Counts at the time of writing:
 | `runOutsideAngular`                          | 22                  | 5     |
 | `setTimeout(` (many used to defer an update) | 188                 | 77    |
 | `ChangeDetectionStrategy.OnPush`             | 1 of 163 components | 1     |
-| `signal(` / `computed(`                      | 4                   | 2     |
+| `signal(` / `computed(`                      | 5                   | 2     |
 
 Re-count with, for example:
 `grep -rE "detectChanges\(" src --include='*.ts' --exclude='*.spec.ts' | wc -l`.
@@ -472,7 +472,8 @@ Re-count with, for example:
 ### Function calls in templates
 
 About 240 call expressions in interpolations, property bindings and `@if` /
-`@for` conditions across 53 of 159 templates (heuristic `grep` for an
+`@for` conditions across 53 of 159 component templates (all `src/**/*.html`
+except `src/index.html`; heuristic `grep` for an
 identifier followed by `(` inside `{{ }}`, `[x]="…"` and control-flow
 conditions). With default change detection they run on every cycle. The
 `brewFunction` and `beanFunction` pipes (`src/pipes/brew/brewFunction.ts`,
