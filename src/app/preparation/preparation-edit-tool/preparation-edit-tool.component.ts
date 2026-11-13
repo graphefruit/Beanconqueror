@@ -103,8 +103,8 @@ export class PreparationEditToolComponent {
             brew.method_of_preparation_tools.splice(i, 1);
             break;
           }
-          await this.uiBrewStorage.update(brew);
         }
+        await this.uiBrewStorage.update(brew);
 
         // await  this.uiBrewStorage.removeByUUID(brew.config.uuid);
       }
