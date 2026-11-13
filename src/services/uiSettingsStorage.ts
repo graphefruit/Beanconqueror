@@ -42,8 +42,7 @@ export class UISettingsStorage extends StorageClass {
           this.isSettingsInitialized = 1;
         } else {
           // Take the new settings obj.
-          this.settings.user.experience_mode =
-            await this.experienceModeForNewSettings();
+          await this.chooseExperienceModeForNewSettings();
           const data: any = await super.add(this.settings);
           this.settings = new Settings();
           this.settings.initializeByObject(data);
@@ -102,8 +101,7 @@ export class UISettingsStorage extends StorageClass {
           this.settings = new Settings();
           this.settings.initializeByObject(entries[0]);
         } else {
-          this.settings.user.experience_mode =
-            await this.experienceModeForNewSettings();
+          await this.chooseExperienceModeForNewSettings();
           const data: any = await super.add(this.settings);
           this.settings = new Settings();
           this.settings.initializeByObject(data);
@@ -114,6 +112,17 @@ export class UISettingsStorage extends StorageClass {
       },
     );
   }
+  /**
+   * When the app picks the advanced mode on its own, the note about the
+   * mode is still to be shown.
+   */
+  private async chooseExperienceModeForNewSettings(): Promise<void> {
+    const mode = await this.experienceModeForNewSettings();
+    this.settings.user.experience_mode = mode;
+    this.settings.user.mode_hint_pending =
+      mode === EXPERIENCE_MODE_ENUM.ADVANCED;
+  }
+
   /**
    * Settings are created when none are stored. On a new installation that
    * starts the beginner mode. If brews, beans or finished data updates are
@@ -152,6 +161,31 @@ export class UISettingsStorage extends StorageClass {
 
   public getSettings(): Settings {
     return this.settings;
+  }
+
+  /**
+   * Whether the person still has to be told which experience mode the app
+   * chose for them and that it can be changed (IUserProfile.mode_hint_pending).
+   */
+  public isModeHintPending(): boolean {
+    return this.settings.user.mode_hint_pending === true;
+  }
+
+  /**
+   * To be called once the note about the experience mode was shown; it is
+   * not shown again. Resolves whether the settings were stored.
+   */
+  public async markModeHintShown(): Promise<boolean> {
+    if (!this.isModeHintPending()) {
+      return true;
+    }
+    this.settings.user.mode_hint_pending = false;
+    const saved = await this.saveSettings(this.settings);
+    if (!saved) {
+      // Still stored as pending, so it stays pending here as well.
+      this.settings.user.mode_hint_pending = true;
+    }
+    return saved;
   }
 
   public async saveSettings(settings: ISettings | Settings): Promise<boolean> {

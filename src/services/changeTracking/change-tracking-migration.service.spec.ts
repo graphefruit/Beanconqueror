@@ -204,7 +204,7 @@ describe('ChangeTrackingMigrationService', () => {
     expect(device.data.get('VERSION')).toEqual(legacy.VERSION);
   });
 
-  it('stores the advanced mode for existing users', async () => {
+  it('stores the advanced mode for existing users with the note about it pending', async () => {
     const device = createDeviceDatabase(createLegacyData({ brews: 3 }));
     const app = await startApp(device);
     expect((device.data.get('SETTINGS') as any[])[0].user).toBeUndefined();
@@ -216,7 +216,9 @@ describe('ChangeTrackingMigrationService', () => {
       experience_mode: EXPERIENCE_MODE_ENUM.ADVANCED,
       nickname: '',
       whats_new_seen: '',
+      mode_hint_pending: true,
     });
+    expect(app.settingsStorage.isModeHintPending()).toBeTrue();
   });
 
   it('writes each collection once and nothing on a second run', async () => {
@@ -296,7 +298,7 @@ describe('ChangeTrackingMigrationService', () => {
     expect(await app.migration.run()).toBeFalse();
   });
 
-  it('writes nothing on a new installation and keeps the beginner mode', async () => {
+  it('writes nothing on a new installation and keeps the beginner mode without the note', async () => {
     const settings = JSON.parse(JSON.stringify(new Settings()));
     const device = createDeviceDatabase({ SETTINGS: [settings] });
     const app = await startApp(device);
@@ -310,6 +312,7 @@ describe('ChangeTrackingMigrationService', () => {
     expect(app.settingsStorage.getSettings().user.experience_mode).toBe(
       EXPERIENCE_MODE_ENUM.BEGINNER,
     );
+    expect(app.settingsStorage.isModeHintPending()).toBeFalse();
   });
 
   it('handles a large number of brews and reports what it did', async () => {

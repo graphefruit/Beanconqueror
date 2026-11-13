@@ -46,6 +46,7 @@ describe('Settings', () => {
         experience_mode: EXPERIENCE_MODE_ENUM.BEGINNER,
         nickname: '',
         whats_new_seen: '',
+        mode_hint_pending: false,
       });
     });
 
@@ -59,6 +60,7 @@ describe('Settings', () => {
 
       // Assert
       expect(hydrated.user.experience_mode).toBe(EXPERIENCE_MODE_ENUM.BEGINNER);
+      expect(hydrated.user.mode_hint_pending).toBeFalse();
     });
 
     for (const [label, value] of [
@@ -80,6 +82,7 @@ describe('Settings', () => {
           experience_mode: EXPERIENCE_MODE_ENUM.ADVANCED,
           nickname: '',
           whats_new_seen: '',
+          mode_hint_pending: true,
         });
       });
     }
@@ -90,6 +93,7 @@ describe('Settings', () => {
         experience_mode: 'expert',
         nickname: 'Kim',
         whats_new_seen: 42,
+        mode_hint_pending: false,
       });
       const hydrated = new Settings();
 
@@ -101,6 +105,8 @@ describe('Settings', () => {
         experience_mode: EXPERIENCE_MODE_ENUM.ADVANCED,
         nickname: 'Kim',
         whats_new_seen: '',
+        // The app chose the mode, so the note about it is still to be shown.
+        mode_hint_pending: true,
       });
     });
 
@@ -110,6 +116,7 @@ describe('Settings', () => {
         experience_mode: EXPERIENCE_MODE_ENUM.BEGINNER,
         nickname: 'Kim',
         whats_new_seen: '9.0.0',
+        mode_hint_pending: true,
       };
       const stored = storedSettingsWithUser(storedUser);
       const hydrated = new Settings();
@@ -121,5 +128,27 @@ describe('Settings', () => {
       expect(hydrated.user).toEqual(storedUser);
       expect(hydrated.user).not.toBe(storedUser);
     });
+
+    for (const [label, value] of [
+      ['missing', undefined],
+      ['not a boolean', 'yes'],
+    ] as [string, unknown][]) {
+      it(`does not show the note for a chosen mode when the flag is ${label}`, () => {
+        // Arrange
+        const stored = storedSettingsWithUser({
+          experience_mode: EXPERIENCE_MODE_ENUM.BEGINNER,
+          nickname: '',
+          whats_new_seen: '',
+          mode_hint_pending: value,
+        });
+        const hydrated = new Settings();
+
+        // Act
+        hydrated.initializeByObject(stored);
+
+        // Assert
+        expect(hydrated.user.mode_hint_pending).toBeFalse();
+      });
+    }
   });
 });

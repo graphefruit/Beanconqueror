@@ -85,6 +85,7 @@ describe('UISettingsStorage experience mode for created settings', () => {
       EXPERIENCE_MODE_ENUM.BEGINNER,
     );
     expect(storedExperienceMode(storage)).toBe(EXPERIENCE_MODE_ENUM.BEGINNER);
+    expect(settingsStorage.isModeHintPending()).toBeFalse();
   });
 
   it('keeps the advanced mode when only the settings are missing', async () => {
@@ -99,6 +100,15 @@ describe('UISettingsStorage experience mode for created settings', () => {
       EXPERIENCE_MODE_ENUM.ADVANCED,
     );
     expect(storedExperienceMode(storage)).toBe(EXPERIENCE_MODE_ENUM.ADVANCED);
+    // The app chose the mode, so the note about it is still to be shown.
+    expect(settingsStorage.isModeHintPending()).toBeTrue();
+    expect(
+      (
+        storage.data.get('SETTINGS') as {
+          user: { mode_hint_pending: boolean };
+        }[]
+      )[0].user.mode_hint_pending,
+    ).toBeTrue();
   });
 
   it('keeps the advanced mode when data updates already ran', async () => {
@@ -146,6 +156,7 @@ describe('UISettingsStorage experience mode for created settings', () => {
             experience_mode: EXPERIENCE_MODE_ENUM.BEGINNER,
             nickname: '',
             whats_new_seen: '',
+            mode_hint_pending: false,
           },
         },
       ],
@@ -157,5 +168,6 @@ describe('UISettingsStorage experience mode for created settings', () => {
     expect(settingsStorage.getSettings().user.experience_mode).toBe(
       EXPERIENCE_MODE_ENUM.BEGINNER,
     );
+    expect(settingsStorage.isModeHintPending()).toBeFalse();
   });
 });

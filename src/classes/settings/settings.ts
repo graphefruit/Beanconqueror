@@ -347,6 +347,7 @@ export class Settings implements ISettings {
       experience_mode: EXPERIENCE_MODE_ENUM.BEGINNER,
       nickname: '',
       whats_new_seen: '',
+      mode_hint_pending: false,
     };
 
     this.manage_parameters = new ManageBrewParameter();
@@ -801,23 +802,43 @@ export class Settings implements ISettings {
    * the stored raw data.
    *
    * Stored settings without a profile come from existing installations that
-   * already use the app fully, so they get the advanced mode.
+   * already use the app fully, so they get the advanced mode. The app chose
+   * that mode for them, so the note about it is still to be shown.
    */
   private static normalizeUserProfile(_user: unknown): IUserProfile {
-    const isObject =
-      typeof _user === 'object' && _user !== null && !Array.isArray(_user);
-    const user = (isObject ? _user : {}) as Partial<
+    const user = (Settings.isPlainObject(_user) ? _user : {}) as Partial<
       Record<keyof IUserProfile, unknown>
     >;
-    const knownModes: unknown[] = Object.values(EXPERIENCE_MODE_ENUM);
+    const modeChosen = Settings.hasExperienceMode(_user);
     return {
-      experience_mode: knownModes.includes(user.experience_mode)
+      experience_mode: modeChosen
         ? (user.experience_mode as EXPERIENCE_MODE_ENUM)
         : EXPERIENCE_MODE_ENUM.ADVANCED,
       nickname: typeof user.nickname === 'string' ? user.nickname : '',
       whats_new_seen:
         typeof user.whats_new_seen === 'string' ? user.whats_new_seen : '',
+      mode_hint_pending: modeChosen ? user.mode_hint_pending === true : true,
     };
+  }
+
+  /**
+   * Whether the given stored profile holds a known experience mode, i.e. a
+   * mode that was chosen for this data before and has to be kept.
+   */
+  public static hasExperienceMode(_user: unknown): boolean {
+    if (!Settings.isPlainObject(_user)) {
+      return false;
+    }
+    const knownModes: unknown[] = Object.values(EXPERIENCE_MODE_ENUM);
+    return knownModes.includes(_user.experience_mode);
+  }
+
+  private static isPlainObject(
+    _value: unknown,
+  ): _value is Record<string, unknown> {
+    return (
+      typeof _value === 'object' && _value !== null && !Array.isArray(_value)
+    );
   }
 
   public resetBeanFilter() {
