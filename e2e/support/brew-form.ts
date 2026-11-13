@@ -119,7 +119,8 @@ export async function addPreparationMethod(
   page: Page,
   type: string,
 ): Promise<void> {
-  await page.getByRole('tab', { name: 'Methods' }).click();
+  await page.getByRole('tab', { name: 'Profile' }).click();
+  await page.getByRole('link', { name: /^Preparation methods/ }).click();
   await page.getByRole('button', { name: 'Add preparation method' }).click();
   await page.getByText(type, { exact: true }).click();
   await page.getByRole('button', { name: 'Save' }).click();

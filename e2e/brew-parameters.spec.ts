@@ -264,7 +264,8 @@ test('sorted parameters change the order of the brew form', async ({
 test('custom parameters of a method replace the global ones for that method only', async ({
   page,
 }) => {
-  await page.getByRole('tab', { name: 'Methods' }).click();
+  await page.getByRole('tab', { name: 'Profile' }).click();
+  await page.getByRole('link', { name: /^Preparation methods/ }).click();
   await page.getByRole('button', { name: 'Preparation options' }).click();
   await page.getByRole('button', { name: 'Customize parameters' }).click();
   // Ionic projects modal content into the dialog through a slot, so locators
