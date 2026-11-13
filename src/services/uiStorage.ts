@@ -12,9 +12,16 @@ import {
   countWithoutIdenticalCopies,
   removeDuplicateEntriesFromData,
 } from '../classes/changeTracking/duplicateEntries';
-import { isLocalOnlyStorageKey } from '../classes/changeTracking/localStorageKeys';
+import {
+  isLocalOnlyStorageKey,
+  LAST_RESTORE_STORAGE_KEY,
+} from '../classes/changeTracking/localStorageKeys';
 import { withDeviceSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { AppEventType } from '../enums/appEvent/appEvent';
+import {
+  IRestoreNote,
+  RESTORE_SOURCE,
+} from '../interfaces/changeTracking/iRestoreNote';
 import { EventQueueService } from './queueService/queue-service.service';
 import { UILog } from './uiLog';
 
@@ -273,7 +280,10 @@ export class UIStorage {
     }
   }
 
-  public async import(_data: any): Promise<any> {
+  public async import(
+    _data: any,
+    _source: RESTORE_SOURCE = 'import',
+  ): Promise<any> {
     // Before we import, we do a saftey backup
     const _backup = await this.__safteyBackup();
     try {
@@ -281,6 +291,7 @@ export class UIStorage {
       this.removeDuplicateEntries(importData);
       this.__fillMissingChangeInfo(importData);
       await this.__importBackup(importData);
+      await this.__noteRestore(importData, _source);
 
       return { BACKUP: false };
     } catch (ex) {
@@ -376,6 +387,39 @@ export class UIStorage {
     this.uiLog.log(
       `UIStorage - Import - Change info filled in for ${filled} entries, ${stats.skipped} entries without config skipped`,
     );
+  }
+
+  /**
+   * Notes the completed import under a local-only key: when, from where and
+   * how many entries (IRestoreNote). One note is enough, no entry is marked:
+   * the imported entries keep the change info they came with, so they never
+   * look like changes made on this device, and a mark on every entry would
+   * stay until the entry is edited again and cost a write of whole
+   * collections. An import that was rolled back leaves the previous note.
+   *
+   * Never throws: the data is already stored and must not be rolled back
+   * because of the note.
+   */
+  private async __noteRestore(
+    _data: any,
+    _source: RESTORE_SOURCE,
+  ): Promise<void> {
+    try {
+      let recordCount = 0;
+      for (const collection of CHANGE_TRACKED_COLLECTIONS) {
+        if (Array.isArray(_data?.[collection])) {
+          recordCount += _data[collection].length;
+        }
+      }
+      const note: IRestoreNote = {
+        last_restore_at: Date.now(),
+        source: _source,
+        record_count: recordCount,
+      };
+      await this._storage.set(LAST_RESTORE_STORAGE_KEY, note);
+    } catch (ex) {
+      this.uiLog.error('UIStorage - Import - Restore note not stored', ex);
+    }
   }
 
   private async __safteyBackup(): Promise<any> {

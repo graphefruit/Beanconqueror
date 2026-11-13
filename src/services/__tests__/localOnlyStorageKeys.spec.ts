@@ -8,6 +8,7 @@ import {
   ATTACHMENT_MANIFEST_STORAGE_KEY,
   DELETION_JOURNAL_STORAGE_KEY,
   DEVICE_STORAGE_KEY,
+  LAST_RESTORE_STORAGE_KEY,
   LOCAL_ONLY_STORAGE_KEYS,
 } from '../../classes/changeTracking/localStorageKeys';
 import { Settings } from '../../classes/settings/settings';
@@ -55,6 +56,24 @@ function localValues(prefix: string) {
       completed_at: 3,
       entries: [{ path: `${prefix}-photo.jpg` }],
     },
+    [LAST_RESTORE_STORAGE_KEY]: {
+      last_restore_at: 4,
+      source: `${prefix}-import`,
+      record_count: 5,
+    },
+  };
+}
+
+/** A completed import replaces the note about the last import with its own. */
+const KEPT_BY_IMPORT = LOCAL_ONLY_STORAGE_KEYS.filter(
+  (_key) => _key !== LAST_RESTORE_STORAGE_KEY,
+);
+
+function restoreNote(_recordCount: number) {
+  return {
+    last_restore_at: jasmine.any(Number),
+    source: 'import',
+    record_count: _recordCount,
   };
 }
 
@@ -194,9 +213,10 @@ describe('Values local to one installation', () => {
     );
 
     expect(result).toEqual({ BACKUP: false });
-    for (const key of LOCAL_ONLY_STORAGE_KEYS) {
+    for (const key of KEPT_BY_IMPORT) {
       expect(deviceB.data.get(key)).toEqual(localValues('b')[key]);
     }
+    expect(deviceB.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(restoreNote(3));
     expect(deviceB.data.get('BREWS')).toEqual(imported(entries('brew', 3)));
     expect((deviceB.data.get('SETTINGS') as any[])[0].user).toEqual(
       userProfile(),
@@ -215,9 +235,11 @@ describe('Values local to one installation', () => {
       BREWS: entries('brew', 2),
     });
 
-    for (const key of LOCAL_ONLY_STORAGE_KEYS) {
+    for (const key of KEPT_BY_IMPORT) {
       expect(deviceB.data.get(key)).toEqual(localValues('b')[key]);
     }
+    // The note is the import's own, not the one in the file.
+    expect(deviceB.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(restoreNote(2));
     expect(deviceB.data.get('BREWS')).toEqual(imported(entries('brew', 2)));
     expect((deviceB.data.get('SETTINGS') as any[])[0].language).toBe('de');
   });

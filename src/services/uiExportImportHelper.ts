@@ -351,7 +351,7 @@ export class UIExportImportHelper {
     const promise = new Promise(async (resolve, reject) => {
       await this.uiAlert.showLoadingSpinner();
 
-      this.uiStorage.import(_parsedJSON).then(
+      this.uiStorage.import(_parsedJSON, 'internal_backup').then(
         async () => {
           this.uiLog.log('Sucessfully imported  Backup');
           setTimeout(() => {
