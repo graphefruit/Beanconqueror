@@ -264,12 +264,18 @@ flowchart LR
 ### Start migrations
 
 `UIUpdate.checkUpdate()` (`src/services/uiUpdate.ts`) runs the data migrations
-`UPDATE_1` … `UPDATE_15` in order. Each one runs once: the applied names are
-stored in the `VERSION` entry (`Version.pushUpdatedDataVersion`). When
+`UPDATE_1` … `UPDATE_15` in order. A migration that succeeds is recorded in the
+`VERSION` entry (`Version.pushUpdatedDataVersion`) and does not run again. If
+`__updateDataVersion()` returns `false` or throws, nothing is recorded and the
+migration runs again on the next start (`__checkUpdateForDataVersion`). When
 `UIStorage.hasData()` is false and a migration is pending, a loading spinner is
-shown while they run; with existing data they run without it. A new migration is a new `UPDATE_n` case appended to
-both lists in `checkUpdate()` and `__updateDataVersion()`; existing ones are not
-changed, because installations and imported backups can be at any older state.
+shown while they run; with existing data they run without it.
+
+A new migration touches three places in `src/services/uiUpdate.ts`: the
+`updateVersions` array in `checkUpdate()`, the chain of
+`__checkUpdateForDataVersion('UPDATE_n', …)` calls below it, and a new `case`
+in `__updateDataVersion()`. Existing migrations are not changed, because
+installations and imported backups can be at any older state.
 
 ## 3. Devices
 
