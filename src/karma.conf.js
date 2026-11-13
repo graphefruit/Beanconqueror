@@ -15,7 +15,13 @@ const path = require('node:path');
  */
 const NEW_CODE = [
   'src/app/profile/**',
+  'src/brew-session/**',
+  'src/classes/changeTracking/**',
   'src/classes/settings/settingsSecrets.ts',
+  'src/services/attachmentManifest/**',
+  'src/services/changeTracking/**',
+  'src/services/deletionJournal/**',
+  'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',
   'src/services/tabletLayout/**',
   'src/services/theme/theme-plugins.ts',
