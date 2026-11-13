@@ -19,9 +19,16 @@ import * as zip from '@zip.js/zip.js';
 import moment from 'moment';
 
 import { CHANGE_TRACKED_COLLECTIONS } from '../classes/changeTracking/changeTracking';
-import { LOCAL_ONLY_STORAGE_KEYS } from '../classes/changeTracking/localStorageKeys';
+import {
+  DELETION_JOURNAL_STORAGE_KEY,
+  LAST_RESTORE_STORAGE_KEY,
+  LOCAL_ONLY_STORAGE_KEYS,
+} from '../classes/changeTracking/localStorageKeys';
 import { withoutSettingsSecrets } from '../classes/settings/settingsSecrets';
-import { RESTORE_SOURCE } from '../interfaces/changeTracking/iRestoreNote';
+import {
+  IRestoreNote,
+  RESTORE_SOURCE,
+} from '../interfaces/changeTracking/iRestoreNote';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 import {
   PreImportBackupError,
@@ -63,6 +70,43 @@ function holdsDataToSave(_stored: any): boolean {
   return ['SETTINGS', ...CHANGE_TRACKED_COLLECTIONS].some(
     (_key) => Array.isArray(_stored?.[_key]) && _stored[_key].length > 0,
   );
+}
+
+/**
+ * Whether stored values (UIStorage.export()) are what the last import of a
+ * file chosen in the settings stored, so that file can be imported again:
+ * no entry was added, changed or deleted since, as their change info and
+ * the deletion journal tell. Settings carry no change info and do not
+ * count. An entry the app adds itself counts as well, like the standard
+ * mill for imported brews without one. Data restored from the internal
+ * backup never counts as unchanged, as the automatic backups replace that
+ * file.
+ */
+function holdsUnchangedImport(_stored: any): boolean {
+  const note: Partial<IRestoreNote> | undefined =
+    _stored?.[LAST_RESTORE_STORAGE_KEY];
+  const restoredAt = note?.last_restore_at;
+  if (
+    note?.source !== 'import' ||
+    typeof restoredAt !== 'number' ||
+    !Number.isFinite(restoredAt)
+  ) {
+    return false;
+  }
+  const isLater = (_time: unknown) =>
+    typeof _time === 'number' && _time > restoredAt;
+  const changed = CHANGE_TRACKED_COLLECTIONS.some(
+    (_collection) =>
+      Array.isArray(_stored[_collection]) &&
+      _stored[_collection].some((_entry: any) =>
+        isLater(_entry?.config?.updated_at),
+      ),
+  );
+  const journal = _stored[DELETION_JOURNAL_STORAGE_KEY];
+  const deleted =
+    Array.isArray(journal) &&
+    journal.some((_note: any) => isLater(_note?.deleted_at));
+  return !changed && !deleted;
 }
 
 @Injectable({
@@ -113,8 +157,10 @@ export class UIExportImportHelper {
    *   of all data: there is nothing to save, and an empty file would push a
    *   real backup out of the ones kept.
    *
-   * After a completed import, only the newest backups are kept. A failed
-   * import removes none, so the file it was started from stays available.
+   * After a completed import, older backups are removed, but never the
+   * newest one of data that had not just been imported from a file
+   * (PreImportBackupService.removeOldBackups). A failed import removes none,
+   * so the file it was started from stays available.
    */
   public async importBackup(
     _data: unknown,
@@ -152,6 +198,7 @@ export class UIExportImportHelper {
       }
       const written = await this.preImportBackup.write(
         await this.buildExportZIP(stored),
+        { unchangedImport: holdsUnchangedImport(stored) },
       );
       this.uiLog.log(`Backup before import - written to ${written}`);
       return written;

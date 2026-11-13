@@ -43,14 +43,27 @@ holds the database only, no photos or flow profile files.
 Folder `pre-import` in the app data directory, one file per import, named
 `Beanconqueror_pre_import_<YYYY-MM-DD_HH-mm-ss-SSS>.zip` in local time.
 
+The name ends in `_imported.zip` instead when the current data is what the
+last import of a file chosen in the settings stored, and no entry was added,
+changed or deleted since (told by the change info of the entries and the
+deletion journal; settings carry no change info and do not count). That file
+can be imported again. Data restored from the internal backup is never taken
+for unchanged, as the automatic backups replace that file.
+
 - iOS: the documents folder of the app, shown in the Files app under
   On My iPhone › Beanconqueror › pre-import.
 - Android: the internal storage of the app. Neither other apps nor the file
   picker of the import can open it.
 
-The three newest files are kept. Older ones are deleted once an import has
-completed. A failed import deletes none, so the file an import was started
-from is still there if it fails.
+Three files are kept: the one just written, the newest one whose name does
+not end in `_imported.zip`, and the newest of the others. Older ones are
+deleted once an import has completed. A failed import deletes none, so the
+file an import was started from is still there if it fails.
+
+Without that rule, trying a few backups one after the other would delete the
+data from before the first of them: once an import is done, the automatic
+backup of that day and `Beanconqueror.zip` are written with the imported
+data, so this file is the only one left with the changes made that day.
 
 ## Going back
 

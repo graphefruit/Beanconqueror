@@ -18,6 +18,11 @@ function backupPath(_time: string): string {
   return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}.zip`;
 }
 
+/** Path of the backup of an unchanged import written at the given local time. */
+function importedBackupPath(_time: string): string {
+  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}_imported.zip`;
+}
+
 /** A file system that keeps the files of the app data directory in memory. */
 function createFakeFiles(_paths: string[] = [], _available = true) {
   const stored = new Map<string, Blob>(
@@ -90,10 +95,25 @@ describe('PreImportBackupService', () => {
     const { service } = setUp(fake.files);
     const zip = new Blob(['zip content']);
 
-    const path = await service.write(zip, new Date(2026, 10, 3, 9, 5, 7, 42));
+    const path = await service.write(zip, {
+      now: new Date(2026, 10, 3, 9, 5, 7, 42),
+    });
 
     expect(path).toBe(backupPath('2026-11-03_09-05-07-042'));
     expect(fake.stored.get(path)).toBe(zip);
+  });
+
+  it('marks the name of a backup of an unchanged import', async () => {
+    const fake = createFakeFiles();
+    const { service } = setUp(fake.files);
+
+    const path = await service.write(new Blob(['zip']), {
+      unchangedImport: true,
+      now: new Date(2026, 10, 3, 9, 5, 7, 42),
+    });
+
+    expect(path).toBe(importedBackupPath('2026-11-03_09-05-07-042'));
+    expect(fake.stored.has(path)).toBeTrue();
   });
 
   it('rejects when the backup cannot be written', async () => {
@@ -111,6 +131,7 @@ describe('PreImportBackupService', () => {
     const others = [
       `${PRE_IMPORT_BACKUP_FOLDER}/notes.txt`,
       `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_copy.zip`,
+      `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_copy_imported.zip`,
       'Beanconqueror.zip',
       `brews/${backupPath('2026-01-01_00-00-00-000')}`,
     ];
@@ -123,10 +144,9 @@ describe('PreImportBackupService', () => {
     ]);
     const { service } = setUp(fake.files);
 
-    const written = await service.write(
-      new Blob(['zip']),
-      new Date(2026, 10, 13, 12, 0, 0, 0),
-    );
+    const written = await service.write(new Blob(['zip']), {
+      now: new Date(2026, 10, 13, 12, 0, 0, 0),
+    });
     await service.removeOldBackups(written);
 
     expect([...fake.stored.keys()].sort()).toEqual(
@@ -139,6 +159,78 @@ describe('PreImportBackupService', () => {
     );
   });
 
+  it('keeps the data from before several imports in a row', async () => {
+    // Written before the first import, then before each next one, while
+    // the data was still the one the import before had stored.
+    const beforeFirstImport = backupPath('2026-11-13_10-00-00-000');
+    const fake = createFakeFiles([
+      beforeFirstImport,
+      importedBackupPath('2026-11-13_10-01-00-000'),
+      importedBackupPath('2026-11-13_10-02-00-000'),
+    ]);
+    const { service } = setUp(fake.files);
+
+    const written = await service.write(new Blob(['zip']), {
+      unchangedImport: true,
+      now: new Date(2026, 10, 13, 10, 3, 0, 0),
+    });
+    await service.removeOldBackups(written);
+
+    expect([...fake.stored.keys()].sort()).toEqual(
+      [
+        written,
+        importedBackupPath('2026-11-13_10-02-00-000'),
+        beforeFirstImport,
+      ].sort(),
+    );
+  });
+
+  it('keeps only the newest backup of data that was not just imported', async () => {
+    const fake = createFakeFiles([
+      backupPath('2026-11-01_10-00-00-000'),
+      backupPath('2026-11-02_10-00-00-000'),
+      importedBackupPath('2026-11-03_10-00-00-000'),
+      importedBackupPath('2026-11-04_10-00-00-000'),
+    ]);
+    const { service } = setUp(fake.files);
+
+    const written = await service.write(new Blob(['zip']), {
+      unchangedImport: true,
+      now: new Date(2026, 10, 5, 10, 0, 0, 0),
+    });
+    await service.removeOldBackups(written);
+
+    expect([...fake.stored.keys()].sort()).toEqual(
+      [
+        written,
+        importedBackupPath('2026-11-04_10-00-00-000'),
+        backupPath('2026-11-02_10-00-00-000'),
+      ].sort(),
+    );
+  });
+
+  it(`keeps the ${PRE_IMPORT_BACKUPS_KEPT} newest backups when the one just written was not of an unchanged import`, async () => {
+    const fake = createFakeFiles([
+      backupPath('2026-11-01_10-00-00-000'),
+      importedBackupPath('2026-11-02_10-00-00-000'),
+      importedBackupPath('2026-11-03_10-00-00-000'),
+    ]);
+    const { service } = setUp(fake.files);
+
+    const written = await service.write(new Blob(['zip']), {
+      now: new Date(2026, 10, 4, 10, 0, 0, 0),
+    });
+    await service.removeOldBackups(written);
+
+    expect([...fake.stored.keys()].sort()).toEqual(
+      [
+        written,
+        importedBackupPath('2026-11-03_10-00-00-000'),
+        importedBackupPath('2026-11-02_10-00-00-000'),
+      ].sort(),
+    );
+  });
+
   it('keeps the backup just written when a clock set back gives it the oldest name', async () => {
     const fake = createFakeFiles([
       backupPath('2026-11-01_10-00-00-000'),
@@ -147,10 +239,9 @@ describe('PreImportBackupService', () => {
     ]);
     const { service } = setUp(fake.files);
 
-    const written = await service.write(
-      new Blob(['zip']),
-      new Date(2020, 0, 1, 0, 0, 0, 0),
-    );
+    const written = await service.write(new Blob(['zip']), {
+      now: new Date(2020, 0, 1, 0, 0, 0, 0),
+    });
     await service.removeOldBackups(written);
 
     expect([...fake.stored.keys()].sort()).toEqual(
@@ -191,7 +282,7 @@ describe('PreImportBackupService', () => {
       backupPath('2026-11-01_10-00-00-000'),
       `${PRE_IMPORT_BACKUP_FOLDER}/notes.txt`,
       backupPath('2026-11-03_10-00-00-000'),
-      backupPath('2026-11-02_10-00-00-000'),
+      importedBackupPath('2026-11-02_10-00-00-000'),
     ]);
     const { service } = setUp(fake.files);
 
@@ -199,7 +290,7 @@ describe('PreImportBackupService', () => {
 
     expect(listed.map((_file) => _file.name)).toEqual([
       'Beanconqueror_pre_import_2026-11-03_10-00-00-000.zip',
-      'Beanconqueror_pre_import_2026-11-02_10-00-00-000.zip',
+      'Beanconqueror_pre_import_2026-11-02_10-00-00-000_imported.zip',
       'Beanconqueror_pre_import_2026-11-01_10-00-00-000.zip',
     ]);
     expect(listed[0].uri).toBe(

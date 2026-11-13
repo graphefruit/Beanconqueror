@@ -13,7 +13,10 @@ import {
   LOCAL_ONLY_STORAGE_KEYS,
 } from '../../classes/changeTracking/localStorageKeys';
 import { withoutSettingsSecrets } from '../../classes/settings/settingsSecrets';
-import { IRestoreNote } from '../../interfaces/changeTracking/iRestoreNote';
+import {
+  IRestoreNote,
+  RESTORE_SOURCE,
+} from '../../interfaces/changeTracking/iRestoreNote';
 import {
   PRE_IMPORT_BACKUP_FILES,
   PreImportBackupFiles,
@@ -33,7 +36,10 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
 
 const BACKUP_FILE_PATTERN =
-  /^pre-import\/Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}\.zip$/;
+  /^pre-import\/Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}(_imported)?\.zip$/;
+
+/** Ends the name of a backup of data an import had stored, unchanged since. */
+const UNCHANGED_IMPORT_ENDING = '_imported.zip';
 
 function entries(prefix: string, count: number) {
   return Array.from({ length: count }, (_, i) => ({
@@ -278,6 +284,7 @@ describe('Importing a backup', () => {
     expect(result).toEqual({ BACKUP: false });
     const [file] = writtenBackups(device);
     expect(file).toMatch(BACKUP_FILE_PATTERN);
+    expect(file).not.toContain(UNCHANGED_IMPORT_ENDING);
     expect(device.writes[0]).toBe(`file ${file}`);
     expect(device.writes.slice(1)).toEqual([
       'database SETTINGS',
@@ -332,6 +339,43 @@ describe('Importing a backup', () => {
     expect([...device.directory.stored.keys()].sort()).toEqual(
       [OLDER_BACKUPS[1], OLDER_BACKUPS[2], added[0], otherFile].sort(),
     );
+  });
+
+  it('keeps the data from before the first of several imports in a row', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before);
+    const tried = ['a', 'b', 'c', 'd'].map((_name) =>
+      entries(`tried-${_name}`, 3),
+    );
+
+    for (const brews of tried) {
+      const result = await device.helper.importBackup(
+        { SETTINGS: [{ language: 'en' }], BREWS: brews },
+        'import',
+      );
+      expect(result).toEqual({ BACKUP: false });
+      // A new millisecond, so the next backup gets a name of its own.
+      await new Promise((_resolve) => setTimeout(_resolve, 2));
+    }
+
+    const kept = writtenBackups(device);
+    const keptBrews: unknown[] = [];
+    for (const path of kept) {
+      keptBrews.push((await readBackupFile(device, path)).BREWS);
+    }
+    // Kept: the data from before the first import, which the automatic
+    // backups no longer hold once it is done, and the two newest. The data
+    // of a is gone, its file can be imported again.
+    expect(keptBrews).toEqual(
+      jasmine.arrayWithExactContents([
+        before.BREWS,
+        imported(tried[1]),
+        imported(tried[2]),
+      ]),
+    );
+    expect(
+      kept.filter((_path) => _path.endsWith(UNCHANGED_IMPORT_ENDING)).length,
+    ).toBe(2);
   });
 
   it('removes no backup when the import fails, so the file it came from stays', async () => {
@@ -492,6 +536,80 @@ describe('Importing a backup', () => {
 
     expect(device.writes).toEqual([]);
     expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+});
+
+describe('The backup before an import of data that was just imported', () => {
+  const RESTORED_AT = 1763000000000;
+
+  /** The data a completed import from `_source` stored, unchanged so far. */
+  function afterImport(
+    _source: RESTORE_SOURCE,
+    _extra: Record<string, unknown> = {},
+  ): Record<string, any> {
+    const stored = storedData('imported', {
+      [LAST_RESTORE_STORAGE_KEY]: {
+        last_restore_at: RESTORED_AT,
+        source: _source,
+        record_count: 3,
+      },
+      ..._extra,
+    });
+    // Changed on another device, before the import.
+    stored.BREWS[0].config.updated_at = RESTORED_AT - 1;
+    return stored;
+  }
+
+  /** Path of the backup the next import writes on a device storing `_stored`. */
+  async function backupBeforeNextImport(
+    _stored: Record<string, unknown>,
+  ): Promise<string> {
+    const device = await startDevice(_stored);
+    await device.helper.importBackup(
+      { SETTINGS: [{}], BREWS: entries('next', 1) },
+      'import',
+    );
+    const [file] = writtenBackups(device);
+    return file;
+  }
+
+  it('is marked while no entry was changed since', async () => {
+    expect(await backupBeforeNextImport(afterImport('import'))).toContain(
+      UNCHANGED_IMPORT_ENDING,
+    );
+  });
+
+  it('is not marked once an entry was added or changed since', async () => {
+    const stored = afterImport('import');
+    stored.BREWS[1].config.updated_at = RESTORED_AT + 1;
+
+    expect(await backupBeforeNextImport(stored)).not.toContain(
+      UNCHANGED_IMPORT_ENDING,
+    );
+  });
+
+  it('is not marked once an entry was deleted since', async () => {
+    const stored = afterImport('import', {
+      [DELETION_JOURNAL_STORAGE_KEY]: [
+        {
+          collection: 'BREWS',
+          uuid: 'deleted-brew',
+          deleted_at: RESTORED_AT + 1,
+          device_id: 'device',
+          rev: 1,
+        },
+      ],
+    });
+
+    expect(await backupBeforeNextImport(stored)).not.toContain(
+      UNCHANGED_IMPORT_ENDING,
+    );
+  });
+
+  it('is not marked after the internal backup was restored, as that file is replaced', async () => {
+    expect(
+      await backupBeforeNextImport(afterImport('internal_backup')),
+    ).not.toContain(UNCHANGED_IMPORT_ENDING);
   });
 });
 
