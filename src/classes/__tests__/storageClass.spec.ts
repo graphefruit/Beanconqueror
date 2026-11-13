@@ -1,23 +1,35 @@
 import { TestBed } from '@angular/core/testing';
+
 import { TranslateService } from '@ngx-translate/core';
 
-import { StorageClass } from '../storageClass';
+import { DeviceIdentityService } from '../../services/deviceIdentity/device-identity.service';
 import { UIAlert } from '../../services/uiAlert';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UILog } from '../../services/uiLog';
 import { UIStorage } from '../../services/uiStorage';
-import { Bean } from '../bean/bean';
-import { Brew } from '../brew/brew';
 import {
+  createMockTranslateService,
   createMockUIAlert,
   createMockUILog,
-  createMockTranslateService,
 } from '../../test-utils';
+import { Bean } from '../bean/bean';
+import { Brew } from '../brew/brew';
+import { StorageClass } from '../storageClass';
 
 class TestStorage extends StorageClass {
   public constructor() {
     super('TEST_DB');
+  }
+
+  public setEntries(entries: any[]): void {
+    this.storedData = entries;
+  }
+}
+
+class NamedTestStorage extends StorageClass {
+  public constructor(_dbPath: string) {
+    super(_dbPath);
   }
 
   public setEntries(entries: any[]): void {
@@ -380,5 +392,222 @@ describe('typed storage normalization', () => {
     const [entry] = storage.getAllEntries();
     expect(entry.brew_quantity).toBe(45);
     expect(entry.grind_weight).toBe(19.5);
+  });
+});
+
+describe('StorageClass change info', () => {
+  const T0 = 1_800_000_000_000;
+  let now: number;
+  let mockUIStorage: jasmine.SpyObj<UIStorage>;
+
+  const create = <T>(factory: () => T): T =>
+    TestBed.runInInjectionContext(factory);
+
+  beforeEach(() => {
+    now = T0;
+    spyOn(Date, 'now').and.callFake(() => now);
+    mockUIStorage = jasmine.createSpyObj<UIStorage>('UIStorage', [
+      'get',
+      'set',
+    ]);
+    mockUIStorage.set.and.returnValue(Promise.resolve(true));
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UIStorage, useValue: mockUIStorage },
+        { provide: UILog, useValue: createMockUILog() },
+        { provide: TranslateService, useValue: createMockTranslateService() },
+        {
+          provide: DeviceIdentityService,
+          useValue: { getDeviceId: () => 'device-a' },
+        },
+      ],
+    });
+    spyOn(UIAlert, 'getInstance').and.returnValue(createMockUIAlert());
+  });
+
+  it('does not track entries of untracked collections', async () => {
+    for (const dbPath of ['TEST_DB', 'SETTINGS', 'VERSION']) {
+      const storage = create(() => new NamedTestStorage(dbPath));
+      const added = await storage.add({ config: {}, name: 'entry' });
+      await storage.update({ ...added, name: 'changed' });
+
+      const [stored] = storage.getAllEntries();
+      expect(Object.keys(stored.config).sort())
+        .withContext(dbPath)
+        .toEqual(['unix_timestamp', 'uuid']);
+    }
+  });
+
+  it('sets all change info fields when a bean is added', async () => {
+    const storage = create(() => new UIBeanStorage());
+
+    const added = await storage.add(new Bean());
+
+    const [stored] = storage.getAllEntries();
+    expect(stored.config.created_at).toBe(T0);
+    expect(stored.config.updated_at).toBe(T0);
+    expect(stored.config.rev).toBe(1);
+    expect(stored.config.updated_by).toBe('device-a');
+    expect(added.config.rev).toBe(1);
+    expect(stored.config.unix_timestamp).toBe(Math.floor(T0 / 1000));
+  });
+
+  it('overwrites change info copied from another entry on add', async () => {
+    const storage = create(() => new UIBrewStorage());
+    const copy = new Brew();
+    copy.config.rev = 7;
+    copy.config.created_at = 5;
+    copy.config.updated_by = 'device-b';
+
+    await storage.add(copy);
+
+    const [stored] = storage.getAllEntries();
+    expect(stored.config.rev).toBe(1);
+    expect(stored.config.created_at).toBe(T0);
+    expect(stored.config.updated_by).toBe('device-a');
+  });
+
+  it('counts the revision up with every brew update and keeps created_at', async () => {
+    const storage = create(() => new UIBrewStorage());
+    const added = await storage.add(new Brew());
+    const unixTimestamp = added.config.unix_timestamp;
+
+    now = T0 + 1000;
+    await storage.update(storage.getEntryByUUID(added.config.uuid));
+    expect(storage.getAllEntries()[0].config.rev).toBe(2);
+
+    now = T0 + 2000;
+    await storage.update(storage.getEntryByUUID(added.config.uuid));
+    const [stored] = storage.getAllEntries();
+    expect(stored.config.rev).toBe(3);
+    expect(stored.config.updated_at).toBe(T0 + 2000);
+    expect(stored.config.updated_by).toBe('device-a');
+    expect(stored.config.created_at).toBe(T0);
+    expect(stored.config.unix_timestamp).toBe(unixTimestamp);
+  });
+
+  it('counts up from the stored revision when the caller holds an outdated brew', async () => {
+    const storage = create(() => new UIBrewStorage());
+    const added = await storage.add(new Brew());
+    const outdated = storage.getEntryByUUID(added.config.uuid);
+    await storage.update(storage.getEntryByUUID(added.config.uuid));
+    await storage.update(storage.getEntryByUUID(added.config.uuid));
+
+    await storage.update(outdated);
+
+    expect(storage.getAllEntries()[0].config.rev).toBe(4);
+  });
+
+  it('keeps the change info on updates without touch', async () => {
+    const storage = create(() => new UIBeanStorage());
+    const added = await storage.add(new Bean());
+    const bean = storage.getEntryByUUID(added.config.uuid);
+    bean.name = 'Migrated';
+
+    now = T0 + 5000;
+    const saved = await storage.update(bean, { touch: false });
+
+    const [stored] = storage.getAllEntries();
+    expect(saved).toBeTrue();
+    expect(stored.name).toBe('Migrated');
+    expect(stored.config.rev).toBe(1);
+    expect(stored.config.updated_at).toBe(T0);
+    expect(stored.config.created_at).toBe(T0);
+    expect(stored.config.updated_by).toBe('device-a');
+  });
+
+  it('does not create change info fields on legacy entries without touch', async () => {
+    const storage = create(() => new NamedTestStorage('MILL'));
+    storage.setEntries([
+      { config: { uuid: 'legacy', unix_timestamp: 1_600_000_000 }, name: 'a' },
+    ]);
+
+    await storage.update(
+      { config: { uuid: 'legacy', unix_timestamp: 1_600_000_000 }, name: 'b' },
+      { touch: false },
+    );
+
+    expect(Object.keys(storage.getAllEntries()[0].config).sort()).toEqual([
+      'unix_timestamp',
+      'uuid',
+    ]);
+  });
+
+  it('counts the revision up exactly once when the bean shares its config with the stored entry', async () => {
+    const storage = create(() => new UIBeanStorage());
+    const added = await storage.add(new Bean());
+    const bean = storage.getEntryByUUID(added.config.uuid);
+    const raw = (storage as any).storedData[0];
+    // Typed beans are built with Object.assign and keep the stored config.
+    expect(bean.config).toBe(raw.config);
+
+    await storage.update(bean);
+
+    expect(storage.getAllEntries()[0].config.rev).toBe(2);
+  });
+
+  it('keeps the stored entry apart from the object passed to update', async () => {
+    const storage = create(() => new UIBeanStorage());
+    const added = await storage.add(new Bean());
+    const bean = storage.getEntryByUUID(added.config.uuid);
+    await storage.update(bean);
+
+    bean.name = 'Not saved';
+    bean.config.rev = 99;
+
+    const raw = (storage as any).storedData[0];
+    expect(raw).not.toBe(bean);
+    expect(raw.name).not.toBe('Not saved');
+    expect(raw.config.rev).toBe(2);
+  });
+
+  it('fills in values with one save and keeps the change info', async () => {
+    const storage = create(() => new NamedTestStorage('BREWS'));
+    storage.setEntries([
+      { config: { uuid: 'a', unix_timestamp: 1, rev: 3 } },
+      { config: { uuid: 'b', unix_timestamp: 2 } },
+    ]);
+    const events: string[] = [];
+    storage.attachOnEvent().subscribe((event) => events.push(event.type));
+
+    const saved = await storage.backfillWithoutTouch((entries) => {
+      for (const entry of entries) {
+        entry.filled = true;
+      }
+      return entries.length;
+    });
+
+    expect(saved).toBeTrue();
+    expect(mockUIStorage.set.calls.count()).toBe(1);
+    expect(events).toEqual(['UPDATE']);
+    const [first, second] = storage.getAllEntries();
+    expect(first.filled).toBeTrue();
+    expect(first.config.rev).toBe(3);
+    expect(second.config).toEqual({ uuid: 'b', unix_timestamp: 2 });
+  });
+
+  it('does not save when the fill changes nothing', async () => {
+    const storage = create(() => new NamedTestStorage('BREWS'));
+    storage.setEntries([{ config: { uuid: 'a', unix_timestamp: 1 } }]);
+
+    const saved = await storage.backfillWithoutTouch(() => 0);
+
+    expect(saved).toBeTrue();
+    expect(mockUIStorage.set.calls.count()).toBe(0);
+  });
+
+  it('reports a failed fill or save', async () => {
+    const storage = create(() => new NamedTestStorage('BREWS'));
+    storage.setEntries([{ config: { uuid: 'a', unix_timestamp: 1 } }]);
+
+    const thrown = await storage.backfillWithoutTouch(() => {
+      throw new Error('fill failed');
+    });
+    mockUIStorage.set.and.returnValue(Promise.resolve(false));
+    const unsaved = await storage.backfillWithoutTouch(() => 1);
+
+    expect(thrown).toBeFalse();
+    expect(unsaved).toBeFalse();
   });
 });

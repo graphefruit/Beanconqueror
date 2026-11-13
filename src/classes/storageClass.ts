@@ -3,17 +3,34 @@ import { inject } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { Observable, Subject } from 'rxjs';
 
+import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
 import { UILog } from '../services/uiLog';
 import { UIStorage } from '../services/uiStorage';
+import {
+  copyChangeInfo,
+  isChangeTrackedCollection,
+  stampAdded,
+  stampUpdated,
+} from './changeTracking/changeTracking';
 
 export interface StorageClassAddResult {
   entry: any;
   saved: boolean;
 }
 
+export interface StorageWriteOptions {
+  /**
+   * Defaults to true. False is the system write path for migrations,
+   * backfills and similar maintenance: the change info (updated_at, rev,
+   * updated_by) of the entry is kept as it is.
+   */
+  touch?: boolean;
+}
+
 export abstract class StorageClass {
   protected uiStorage = inject(UIStorage);
   protected uiLog = inject(UILog);
+  protected deviceIdentity = inject(DeviceIdentityService);
 
   private removeObjSubject = new Subject<any>();
   private eventSubject = new Subject<any>();
@@ -43,6 +60,10 @@ export abstract class StorageClass {
 
   protected prepareEntryForStorage(_entry: any): any {
     return _entry;
+  }
+
+  private tracksChanges(): boolean {
+    return isChangeTrackedCollection(this.DB_PATH);
   }
 
   // Dynamic import to avoid circular dependency:
@@ -149,11 +170,16 @@ export abstract class StorageClass {
     let newEntry: any;
     let saved = false;
     try {
-      newEntry = StorageClass.cloneData(
-        this.prepareEntryForStorage(_entry),
-      );
+      newEntry = StorageClass.cloneData(this.prepareEntryForStorage(_entry));
       newEntry.config.uuid = crypto.randomUUID();
       newEntry.config.unix_timestamp = StorageClass.getUnixTimestamp();
+      if (this.tracksChanges()) {
+        stampAdded(
+          newEntry.config,
+          Date.now(),
+          this.deviceIdentity.getDeviceId(),
+        );
+      }
       this.storedData.push(newEntry);
       saved = await this.__save();
       this.__sendEvent('ADD');
@@ -169,15 +195,45 @@ export abstract class StorageClass {
     return this.storedData;
   }
 
-  public async update(_obj): Promise<boolean> {
+  /**
+   * Replaces the stored entry with the same uuid.
+   *
+   * For change tracked collections the change info is set as well: by
+   * default it counts as a change by this device (updated_at, rev and
+   * updated_by are set). `{ touch: false }` is the system write path for
+   * migrations, backfills and similar maintenance; it keeps the change info
+   * of the stored entry and counts nothing up.
+   */
+  public async update(
+    _obj,
+    _options: StorageWriteOptions = {},
+  ): Promise<boolean> {
     try {
-      const updatedObj = this.prepareEntryForStorage(_obj);
+      let updatedObj = this.prepareEntryForStorage(_obj);
       let didUpdate: boolean = false;
       for (let i = 0; i < this.storedData.length; i++) {
         if (this.storedData[i].config.uuid === updatedObj.config.uuid) {
           this.uiLog.log(
             `Storage - Update  - Successfully - ${updatedObj.config.uuid}`,
           );
+          if (this.tracksChanges()) {
+            // Taken before anything is replaced: the caller's object can be
+            // the stored entry itself or share its config with it.
+            const previous = copyChangeInfo(this.storedData[i].config);
+            if (updatedObj === _obj) {
+              // Keep the stored entry apart from the caller's object, so
+              // later unsaved changes to it cannot reach the disk unstamped
+              // with the next write of another entry.
+              updatedObj = StorageClass.cloneData(updatedObj);
+            }
+            stampUpdated(
+              previous,
+              updatedObj.config,
+              Date.now(),
+              this.deviceIdentity.getDeviceId(),
+              _options.touch !== false,
+            );
+          }
           this.storedData[i] = updatedObj;
           const saved = await this.__save();
           this.__sendEvent('UPDATE');
@@ -208,6 +264,41 @@ export abstract class StorageClass {
       await this.showAlertSafely(
         `Storage - Update  - Unsucessfully - Execption occured - ${ex.message}`,
         'CRITICAL ERROR',
+      );
+      return false;
+    }
+  }
+
+  /**
+   * System write path for filling in values on many entries at once, for
+   * example in migrations. `_fill` changes the given stored entries in place
+   * and returns how many it changed; the change info is not touched. The
+   * collection is saved once, and only when something changed.
+   *
+   * Resolves whether the collection was saved (true when nothing had to be
+   * saved).
+   */
+  public async backfillWithoutTouch(
+    _fill: (entries: any[]) => number,
+  ): Promise<boolean> {
+    try {
+      const changed = _fill(this.storedData);
+      if (!changed) {
+        return true;
+      }
+      const saved = await this.__save();
+      // Lets the typed storages drop their cached objects.
+      this.__sendEvent('UPDATE');
+      if (saved === false) {
+        this.uiLog.error(
+          `Storage - Backfill - Unsuccessfully - ${this.DB_PATH} - save failed`,
+        );
+      }
+      return saved;
+    } catch (ex) {
+      this.uiLog.error(
+        `Storage - Backfill - Unsuccessfully - ${this.DB_PATH}`,
+        ex,
       );
       return false;
     }
