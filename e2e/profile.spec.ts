@@ -44,6 +44,30 @@ async function addGrinder(page: Page, name: string): Promise<void> {
   await expect(page).toHaveURL(/\/home\/profile$/);
 }
 
+async function archiveGrinder(page: Page, name: string): Promise<void> {
+  await page.getByRole('link', { name: /^Grinders/ }).click();
+  await page
+    .locator('mill-information-card')
+    .filter({ hasText: name })
+    .getByRole('button', { name: 'Grinder options' })
+    .click();
+  await page.getByRole('button', { name: 'Archive', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'back' }).click();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+}
+
+async function addWater(page: Page, name: string): Promise<void> {
+  await page.getByRole('link', { name: /^Water/ }).click();
+  await page.getByRole('button', { name: 'Add water recipe' }).click();
+  await page.getByText('Pure Coffee Water', { exact: true }).click();
+  await page.getByRole('textbox', { name: /^Name/ }).fill(name);
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+}
+
 /** The hub's entries, read from the content so the tab bar is left out. */
 function entries(page: Page) {
   return page.locator('app-profile ion-content').getByRole('link');
@@ -88,6 +112,41 @@ test('the grinder entry counts the active grinders in its name', async ({
   await addGrinder(page, 'Niche Zero');
   await expect(
     page.getByRole('link', { name: 'Grinders 2 grinders', exact: true }),
+  ).toBeVisible();
+});
+
+test('archived grinders are left out of the count', async ({ page }) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+
+  await addGrinder(page, 'Comandante C40');
+  await addGrinder(page, 'Niche Zero');
+  await archiveGrinder(page, 'Niche Zero');
+  await expect(
+    page.getByRole('link', { name: 'Grinders 1 grinder', exact: true }),
+  ).toBeVisible();
+  await archiveGrinder(page, 'Comandante C40');
+  await expect(
+    page.getByRole('link', { name: 'Grinders None added yet', exact: true }),
+  ).toBeVisible();
+});
+
+test('the water entry counts the water recipes in its name', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+  await switchOnWater(page);
+
+  await addWater(page, 'Tap water');
+  await expect(
+    page.getByRole('link', { name: 'Water 1 water', exact: true }),
+  ).toBeVisible();
+  await addWater(page, 'Filtered water');
+  await expect(
+    page.getByRole('link', { name: 'Water 2 waters', exact: true }),
   ).toBeVisible();
 });
 
