@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Storage } from '@ionic/storage';
 
+import { withImportedUserProfile } from '../../classes/settings/importedUserProfile';
 import {
   createLegacyData,
   LEGACY_DUPLICATE_BREW_UUID,
@@ -143,8 +144,11 @@ describe('Importing a backup cleans up entries that share a uuid', () => {
     expect(uuids(mills.slice(0, 2))).toEqual(['mill-0', 'mill-1']);
     expect(mills[2].config.uuid).toMatch(UUID_V4);
     expect(mills[2].note).toBe('differing');
-    // Not change tracked, so not cleaned.
-    expect(target.data.get('SETTINGS')).toEqual(data.SETTINGS);
+    // Not change tracked, so not cleaned; only the missing user profile is
+    // added.
+    expect(target.data.get('SETTINGS')).toEqual(
+      data.SETTINGS.map(withImportedUserProfile),
+    );
   });
 
   it('logs what it did', async () => {

@@ -16,6 +16,7 @@ import {
   isLocalOnlyStorageKey,
   LAST_RESTORE_STORAGE_KEY,
 } from '../classes/changeTracking/localStorageKeys';
+import { withImportedUserProfile } from '../classes/settings/importedUserProfile';
 import { withDeviceSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import {
@@ -295,7 +296,9 @@ export class UIStorage {
     // Before we import, we do a saftey backup
     const _backup = await this.__safteyBackup();
     try {
-      const importData = this.__keepDeviceSecrets(_data, _backup);
+      const importData = this.__withImportedUserProfile(
+        this.__keepDeviceSecrets(_data, _backup),
+      );
       this.removeDuplicateEntries(importData);
       this.__fillMissingChangeInfo(importData);
       await this.__importBackup(importData);
@@ -369,6 +372,25 @@ export class UIStorage {
       ..._data,
       SETTINGS: importedSettings.map((_settings: unknown) =>
         withDeviceSettingsSecrets(_settings, deviceSettings),
+      ),
+    };
+  }
+
+  /**
+   * A backup brings the experience mode of its data along; one without it
+   * gets the advanced mode and the note about it is still to be shown (see
+   * withImportedUserProfile). A backup without settings leaves that to the
+   * settings created after the import (UISettingsStorage).
+   */
+  private __withImportedUserProfile(_data: any): any {
+    const importedSettings = _data?.SETTINGS;
+    if (!Array.isArray(importedSettings)) {
+      return _data;
+    }
+    return {
+      ..._data,
+      SETTINGS: importedSettings.map((_settings: unknown) =>
+        withImportedUserProfile(_settings),
       ),
     };
   }

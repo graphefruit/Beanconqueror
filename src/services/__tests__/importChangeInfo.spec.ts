@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage';
 import { BlobReader, ZipReader } from '@zip.js/zip.js';
 
 import { CHANGE_TRACKED_COLLECTIONS } from '../../classes/changeTracking/changeTracking';
+import { withImportedUserProfile } from '../../classes/settings/importedUserProfile';
 import {
   createLegacyData,
   LEGACY_DUPLICATE_BREW_UUID,
@@ -157,7 +158,10 @@ describe('Importing a backup fills in missing change info', () => {
     }
     // The version state comes from the backup as before.
     expect(target.data.get('VERSION')).toEqual(legacy.VERSION);
-    expect(target.data.get('SETTINGS')).toEqual(legacy.SETTINGS);
+    // Only the user profile the backup lacks is added.
+    expect(target.data.get('SETTINGS')).toEqual(
+      legacy.SETTINGS.map(withImportedUserProfile),
+    );
   });
 
   it('keeps the change info a backup brings along', async () => {

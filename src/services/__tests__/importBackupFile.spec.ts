@@ -16,6 +16,7 @@ import {
   LAST_RESTORE_STORAGE_KEY,
 } from '../../classes/changeTracking/localStorageKeys';
 import { withoutSettingsSecrets } from '../../classes/settings/settingsSecrets';
+import { EXPERIENCE_MODE_ENUM } from '../../enums/settings/experienceMode';
 import {
   IRestoreNote,
   RESTORE_SOURCE,
@@ -70,12 +71,22 @@ function imported<T>(_entries: T[]): T[] {
 }
 
 /** Data of an installation that has started before; VERSION lists its updates. */
+/** User profile as this app version stores it in the settings. */
+function userProfile() {
+  return {
+    experience_mode: EXPERIENCE_MODE_ENUM.ADVANCED,
+    nickname: '',
+    whats_new_seen: '',
+    mode_hint_pending: false,
+  };
+}
+
 function storedData(
   prefix: string,
   extra: Record<string, unknown> = {},
 ): Record<string, any> {
   return {
-    SETTINGS: [{ language: 'de' }],
+    SETTINGS: [{ language: 'de', user: userProfile() }],
     VERSION: [{ updatedDataVersions: ['UPDATE_1'] }],
     BREWS: imported(entries(`${prefix}-brew`, 2)),
     BEANS: imported(entries(`${prefix}-bean`, 1)),
@@ -506,6 +517,7 @@ describe('Importing a backup', () => {
       SETTINGS: [
         {
           language: 'de',
+          user: userProfile(),
           visualizer_username: 'secret-visualizer-user',
           visualizer_password: 'secret-visualizer-password',
           cloud_ai_api_key: 'secret-ai-key',

@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Storage } from '@ionic/storage';
 
+import { EXPERIENCE_MODE_ENUM } from '../../enums/settings/experienceMode';
 import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
@@ -17,6 +18,12 @@ import { UIStorage } from '../uiStorage';
 function settingsWithSecrets(prefix: string) {
   return {
     language: 'de',
+    user: {
+      experience_mode: EXPERIENCE_MODE_ENUM.ADVANCED,
+      nickname: '',
+      whats_new_seen: '',
+      mode_hint_pending: false,
+    },
     currency: 'CHF',
     visualizer_active: true,
     visualizer_url: 'https://visualizer.coffee/',
