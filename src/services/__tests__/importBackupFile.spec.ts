@@ -39,7 +39,7 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
 
 const BACKUP_FILE_PATTERN =
-  /^pre-import\/Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}(_imported)?\.zip$/;
+  /^pre-import\/Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}Z(_imported)?\.zip$/;
 
 /** Ends the name of a backup of data an import had stored, unchanged since. */
 const UNCHANGED_IMPORT_ENDING = '_imported.zip';
@@ -84,7 +84,7 @@ function storedData(
 }
 
 function backupPath(_time: string): string {
-  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}.zip`;
+  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}Z.zip`;
 }
 
 const OLDER_BACKUPS = [

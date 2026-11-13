@@ -48,7 +48,10 @@ holds the database only, no photos or flow profile files.
 ## Where the files are
 
 Folder `pre-import` in the app data directory, one file per import, named
-`Beanconqueror_pre_import_<YYYY-MM-DD_HH-mm-ss-SSS>.zip` in local time.
+`Beanconqueror_pre_import_<YYYY-MM-DD_HH-mm-ss-SSS>Z.zip` with the time in
+UTC. Unlike the local time it does not go back when the time zone changes or
+daylight saving time ends, so the names sort by the time the files were
+written, which tells the files to keep.
 
 - iOS: the documents folder of the app, shown in the Files app under
   On My iPhone › Beanconqueror › pre-import.

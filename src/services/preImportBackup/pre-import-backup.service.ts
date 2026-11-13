@@ -19,7 +19,7 @@ const UNCHANGED_IMPORT_SUFFIX = '_imported';
 
 /** Only files with exactly this name are backups of this service. */
 const FILE_NAME_PATTERN =
-  /^Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}(_imported)?\.zip$/;
+  /^Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}Z(_imported)?\.zip$/;
 
 /** Options of PreImportBackupService.write(). */
 export interface PreImportBackupWriteOptions {
@@ -103,14 +103,18 @@ export function canBeImportedAgain(
   return true;
 }
 
-/** Local time of `_date` as it is written into a file name. */
+/**
+ * Time of `_date` in UTC as it is written into a file name. Unlike the local
+ * time, it does not go back when the time zone changes or daylight saving
+ * time ends, so the names sort by the time the files were written.
+ */
 function fileTimestamp(_date: Date): string {
   const pad = (_value: number, _length = 2) =>
     String(_value).padStart(_length, '0');
   return (
-    `${pad(_date.getFullYear(), 4)}-${pad(_date.getMonth() + 1)}-${pad(_date.getDate())}` +
-    `_${pad(_date.getHours())}-${pad(_date.getMinutes())}-${pad(_date.getSeconds())}` +
-    `-${pad(_date.getMilliseconds(), 3)}`
+    `${pad(_date.getUTCFullYear(), 4)}-${pad(_date.getUTCMonth() + 1)}-${pad(_date.getUTCDate())}` +
+    `_${pad(_date.getUTCHours())}-${pad(_date.getUTCMinutes())}-${pad(_date.getUTCSeconds())}` +
+    `-${pad(_date.getUTCMilliseconds(), 3)}Z`
   );
 }
 
@@ -122,7 +126,7 @@ function isUnchangedImport(_name: string): boolean {
   return _name.endsWith(`${UNCHANGED_IMPORT_SUFFIX}.zip`);
 }
 
-/** The names hold the time with fixed digits, so they sort by time. */
+/** The names hold the time in UTC with fixed digits, so they sort by time. */
 function newestFirst(_a: FileInfo, _b: FileInfo): number {
   if (_a.name === _b.name) {
     return 0;

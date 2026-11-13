@@ -26,8 +26,8 @@ describe('Choosing an automatic backup file to import', () => {
       file('Beanconqueror_automatic_export_12_11_2026.zip', 300),
     ];
     const beforeImport = [
-      file('Beanconqueror_pre_import_2026-11-13_10-00-00-000.zip', 500),
-      file('Beanconqueror_pre_import_2026-11-12_10-00-00-000.zip', 100),
+      file('Beanconqueror_pre_import_2026-11-13_10-00-00-000Z.zip', 500),
+      file('Beanconqueror_pre_import_2026-11-12_10-00-00-000Z.zip', 100),
     ];
     TestBed.configureTestingModule({
       providers: [

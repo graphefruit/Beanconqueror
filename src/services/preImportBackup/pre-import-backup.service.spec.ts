@@ -14,14 +14,14 @@ import {
   PreImportBackupService,
 } from './pre-import-backup.service';
 
-/** Path of the backup written at the given local time. */
+/** Path of the backup written at the given time in UTC. */
 function backupPath(_time: string): string {
-  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}.zip`;
+  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}Z.zip`;
 }
 
-/** Path of the backup of an unchanged import written at the given local time. */
+/** Path of the backup of an unchanged import written at the given time in UTC. */
 function importedBackupPath(_time: string): string {
-  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}_imported.zip`;
+  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}Z_imported.zip`;
 }
 
 /** A file system that keeps the files of the app data directory in memory. */
@@ -91,17 +91,36 @@ function setUp(_files: PreImportBackupFiles) {
 }
 
 describe('PreImportBackupService', () => {
-  it('writes the backup into its folder with the local time in the name', async () => {
+  it('writes the backup into its folder with the time in UTC in the name', async () => {
     const fake = createFakeFiles();
     const { service } = setUp(fake.files);
     const zip = new Blob(['zip content']);
 
     const path = await service.write(zip, {
-      now: new Date(2026, 10, 3, 9, 5, 7, 42),
+      now: new Date(Date.UTC(2026, 10, 3, 9, 5, 7, 42)),
     });
 
     expect(path).toBe(backupPath('2026-11-03_09-05-07-042'));
     expect(fake.stored.get(path)).toBe(zip);
+  });
+
+  it('lists the backups by the time they were written, also when daylight saving time ends', async () => {
+    // In Central Europe 02:30 summer time comes before 02:15 winter time on
+    // 25 October 2026, as after a change of the time zone the local time can
+    // go back as well. In UTC they are 00:30 and 01:15.
+    const fake = createFakeFiles();
+    const { service } = setUp(fake.files);
+    const first = await service.write(new Blob(['first']), {
+      now: new Date(Date.UTC(2026, 9, 25, 0, 30)),
+    });
+    const second = await service.write(new Blob(['second']), {
+      now: new Date(Date.UTC(2026, 9, 25, 1, 15)),
+    });
+
+    expect((await service.list()).map((_file) => _file.uri)).toEqual([
+      `file:///data/${second}`,
+      `file:///data/${first}`,
+    ]);
   });
 
   it('marks the name of a backup of an unchanged import', async () => {
@@ -110,7 +129,7 @@ describe('PreImportBackupService', () => {
 
     const path = await service.write(new Blob(['zip']), {
       unchangedImport: true,
-      now: new Date(2026, 10, 3, 9, 5, 7, 42),
+      now: new Date(Date.UTC(2026, 10, 3, 9, 5, 7, 42)),
     });
 
     expect(path).toBe(importedBackupPath('2026-11-03_09-05-07-042'));
@@ -146,7 +165,7 @@ describe('PreImportBackupService', () => {
     const { service } = setUp(fake.files);
 
     const written = await service.write(new Blob(['zip']), {
-      now: new Date(2026, 10, 13, 12, 0, 0, 0),
+      now: new Date(Date.UTC(2026, 10, 13, 12, 0, 0, 0)),
     });
     await service.removeOldBackups(written);
 
@@ -173,7 +192,7 @@ describe('PreImportBackupService', () => {
 
     const written = await service.write(new Blob(['zip']), {
       unchangedImport: true,
-      now: new Date(2026, 10, 13, 10, 3, 0, 0),
+      now: new Date(Date.UTC(2026, 10, 13, 10, 3, 0, 0)),
     });
     await service.removeOldBackups(written);
 
@@ -197,7 +216,7 @@ describe('PreImportBackupService', () => {
 
     const written = await service.write(new Blob(['zip']), {
       unchangedImport: true,
-      now: new Date(2026, 10, 5, 10, 0, 0, 0),
+      now: new Date(Date.UTC(2026, 10, 5, 10, 0, 0, 0)),
     });
     await service.removeOldBackups(written);
 
@@ -219,7 +238,7 @@ describe('PreImportBackupService', () => {
     const { service } = setUp(fake.files);
 
     const written = await service.write(new Blob(['zip']), {
-      now: new Date(2026, 10, 4, 10, 0, 0, 0),
+      now: new Date(Date.UTC(2026, 10, 4, 10, 0, 0, 0)),
     });
     await service.removeOldBackups(written);
 
@@ -241,7 +260,7 @@ describe('PreImportBackupService', () => {
     const { service } = setUp(fake.files);
 
     const written = await service.write(new Blob(['zip']), {
-      now: new Date(2020, 0, 1, 0, 0, 0, 0),
+      now: new Date(Date.UTC(2020, 0, 1, 0, 0, 0, 0)),
     });
     await service.removeOldBackups(written);
 
@@ -290,9 +309,9 @@ describe('PreImportBackupService', () => {
     const listed = await service.list();
 
     expect(listed.map((_file) => _file.name)).toEqual([
-      'Beanconqueror_pre_import_2026-11-03_10-00-00-000.zip',
-      'Beanconqueror_pre_import_2026-11-02_10-00-00-000_imported.zip',
-      'Beanconqueror_pre_import_2026-11-01_10-00-00-000.zip',
+      'Beanconqueror_pre_import_2026-11-03_10-00-00-000Z.zip',
+      'Beanconqueror_pre_import_2026-11-02_10-00-00-000Z_imported.zip',
+      'Beanconqueror_pre_import_2026-11-01_10-00-00-000Z.zip',
     ]);
     expect(listed[0].uri).toBe(
       `file:///data/${backupPath('2026-11-03_10-00-00-000')}`,
