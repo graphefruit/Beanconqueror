@@ -118,6 +118,9 @@ export class BeansPage implements OnDestroy {
   public finishedBeansLength = 0;
   public openBeansLength = 0;
   public frozenBeansLength = 0;
+  public finishedBeansShownLength = 0;
+  public openBeansShownLength = 0;
+  public frozenBeansShownLength = 0;
 
   public openBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -1182,10 +1185,13 @@ export class BeansPage implements OnDestroy {
 
     if (_type === 'open') {
       this.openBeans = groupedBeans;
+      this.openBeansShownLength = filteredBeans.length;
     } else if (_type === 'archive') {
       this.finishedBeans = groupedBeans;
+      this.finishedBeansShownLength = filteredBeans.length;
     } else if (_type === 'frozen') {
       this.frozenBeans = groupedBeans;
+      this.frozenBeansShownLength = filteredBeans.length;
     }
     this.retriggerScroll();
   }
