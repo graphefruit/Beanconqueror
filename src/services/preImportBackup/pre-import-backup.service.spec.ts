@@ -8,6 +8,7 @@ import {
   PreImportBackupFiles,
 } from './pre-import-backup-files';
 import {
+  canBeImportedAgain,
   PRE_IMPORT_BACKUP_FOLDER,
   PRE_IMPORT_BACKUPS_KEPT,
   PreImportBackupService,
@@ -317,5 +318,74 @@ describe('PreImportBackupService', () => {
     expect(await service.list()).toEqual([]);
     expect(fake.files.list).not.toHaveBeenCalled();
     expect(uiLog.error).not.toHaveBeenCalled();
+  });
+});
+
+describe('Whether an imported file can be imported again', () => {
+  /** Milliseconds since epoch of the given local time. */
+  function at(_day: number, _month: number, _hour = 12): number {
+    return new Date(2026, _month - 1, _day, _hour).getTime();
+  }
+
+  function automaticBackup(_day: string): string {
+    return `Beanconqueror_automatic_export_${_day}.zip`;
+  }
+
+  const NOW = at(13, 11);
+
+  it('holds for a file with a name the app does not write', () => {
+    expect(canBeImportedAgain('Beanconqueror 2.zip', at(13, 11, 9), NOW)).toBe(
+      true,
+    );
+  });
+
+  it('never holds for Beanconqueror.zip, the name of the internal backup and of every export', () => {
+    expect(canBeImportedAgain('Beanconqueror.zip', at(13, 11, 9), NOW)).toBe(
+      false,
+    );
+  });
+
+  it('never holds when the name is not known', () => {
+    for (const name of [undefined, null, '', 42]) {
+      expect(canBeImportedAgain(name, at(13, 11, 9), NOW))
+        .withContext(String(name))
+        .toBe(false);
+    }
+  });
+
+  it('does not hold for the automatic backup of the day of the import, which that day replaces', () => {
+    expect(
+      canBeImportedAgain(automaticBackup('13_11_2026'), at(13, 11, 9), NOW),
+    ).toBe(false);
+    // Also not on a later day: it was replaced after the import.
+    expect(
+      canBeImportedAgain(automaticBackup('10_11_2026'), at(10, 11, 23), NOW),
+    ).toBe(false);
+  });
+
+  it('holds for the automatic backup of an earlier day until the app deletes it a week later', () => {
+    expect(
+      canBeImportedAgain(automaticBackup('12_11_2026'), at(13, 11, 9), NOW),
+    ).toBe(true);
+    expect(
+      canBeImportedAgain(automaticBackup('06_11_2026'), at(13, 11, 9), NOW),
+    ).toBe(true);
+    expect(
+      canBeImportedAgain(automaticBackup('05_11_2026'), at(13, 11, 9), NOW),
+    ).toBe(false);
+    // Imported while it was kept, deleted at a start since.
+    expect(
+      canBeImportedAgain(automaticBackup('05_11_2026'), at(10, 11), NOW),
+    ).toBe(false);
+  });
+
+  it('does not hold for a name of an automatic backup without a day', () => {
+    expect(
+      canBeImportedAgain(
+        'Beanconqueror_automatic_export_12_11_2026 (1).zip',
+        at(13, 11, 9),
+        NOW,
+      ),
+    ).toBe(false);
   });
 });

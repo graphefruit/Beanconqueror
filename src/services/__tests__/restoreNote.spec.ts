@@ -174,6 +174,23 @@ describe('The note about the last import', () => {
     });
   });
 
+  it('keeps the name of the file chosen in the settings', async () => {
+    const device = await startDevice({ SETTINGS: [{ language: 'de' }] });
+
+    await device.uiStorage.import(
+      { SETTINGS: [{ language: 'en' }], BREWS: entries('brew', 2) },
+      'import',
+      'Beanconqueror 2.zip',
+    );
+
+    expect(device.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual({
+      last_restore_at: jasmine.any(Number),
+      source: 'import',
+      record_count: 2,
+      file_name: 'Beanconqueror 2.zip',
+    });
+  });
+
   it('is the only mark: imported entries keep the change info they came with', async () => {
     const device = await startDevice({ SETTINGS: [{ language: 'de' }] });
     const brew = {

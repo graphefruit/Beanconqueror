@@ -102,7 +102,7 @@ describe('SettingsPage importing a backup file', () => {
     });
     const backup = parsedBackup();
 
-    await page.__importJSON(backup, '');
+    await page.__importJSON(backup, '', 'Beanconqueror 2.zip');
 
     expect(uiAlert.showConfirm).toHaveBeenCalledOnceWith(
       'PRE_IMPORT_BACKUP_HINT',
@@ -114,7 +114,11 @@ describe('SettingsPage importing a backup file', () => {
       uiAlert.hideLoadingSpinner.calls.first().invocationOrder,
     ).toBeLessThan(uiAlert.showConfirm.calls.first().invocationOrder);
     expect(uiAlert.showConfirm).toHaveBeenCalledBefore(importBackup);
-    expect(importBackup).toHaveBeenCalledOnceWith(backup, 'import');
+    expect(importBackup).toHaveBeenCalledOnceWith(
+      backup,
+      'import',
+      'Beanconqueror 2.zip',
+    );
   });
 
   it('says that no backup file is written in the browser', async () => {
@@ -176,6 +180,64 @@ describe('SettingsPage importing a backup file', () => {
 
     expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
       'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+    );
+  });
+});
+
+describe('SettingsPage naming the file of an import', () => {
+  // Whether the backup before the next import counts as one of an
+  // unchanged import depends on the name (canBeImportedAgain).
+
+  it('imports a chosen file under its name', async () => {
+    const parsed = { SETTINGS: [{}], BREWS: [] };
+    const page = Object.create(SettingsPage.prototype);
+    Object.assign(page, {
+      uiFileHelper: {
+        readFileAsUint8Array: () => Promise.resolve(new Uint8Array([1])),
+      },
+      uiExportImportHelper: {
+        getJSONFromZIPArrayBufferContent: () => Promise.resolve(parsed),
+      },
+    });
+    const importJSON = spyOn(page, '__importJSON').and.resolveTo();
+
+    await page.doImport(
+      'zip',
+      'file:///picked/Beanconqueror 2.zip',
+      'file:///picked',
+      'Beanconqueror 2.zip',
+    );
+
+    expect(importJSON).toHaveBeenCalledOnceWith(
+      parsed,
+      'file:///picked',
+      'Beanconqueror 2.zip',
+    );
+  });
+
+  it('imports a file found with the automatic backups under its name', async () => {
+    const uri =
+      'file:///data/Download/Beanconqueror_export/Beanconqueror_automatic_export_12_11_2026.zip';
+    const page = Object.create(SettingsPage.prototype);
+    Object.assign(page, {
+      modalCtrl: {
+        create: () =>
+          Promise.resolve({
+            present: () => Promise.resolve(),
+            onWillDismiss: () => Promise.resolve({ data: { choosenURI: uri } }),
+          }),
+      },
+      platform: { is: () => false },
+    });
+    const doImport = spyOn(page, 'doImport').and.resolveTo();
+
+    await page.findAndImportAutomaticBackupFile();
+
+    expect(doImport).toHaveBeenCalledOnceWith(
+      'zip',
+      uri,
+      'file:///data/Download/Beanconqueror_export',
+      'Beanconqueror_automatic_export_12_11_2026.zip',
     );
   });
 });

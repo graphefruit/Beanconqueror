@@ -4,6 +4,7 @@ import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Storage } from '@ionic/storage';
 
 import { FileInfo } from '@capacitor/filesystem';
+import moment from 'moment';
 
 import { fillMissingChangeInfo } from '../../classes/changeTracking/changeTracking';
 import {
@@ -39,6 +40,17 @@ const BACKUP_FILE_PATTERN =
 
 /** Ends the name of a backup of data an import had stored, unchanged since. */
 const UNCHANGED_IMPORT_ENDING = '_imported.zip';
+
+/**
+ * A backup file the app neither replaces nor deletes, like an export saved
+ * elsewhere under another name, so it can always be imported again.
+ */
+const KEPT_FILE_NAME = 'Beanconqueror 2.zip';
+
+/** Name of the automatic backup of the day of `_time`. */
+function automaticBackupName(_time: number): string {
+  return `Beanconqueror_automatic_export_${moment(_time).format('DD_MM_YYYY')}.zip`;
+}
 
 function entries(prefix: string, count: number) {
   return Array.from({ length: count }, (_, i) => ({
@@ -363,10 +375,11 @@ describe('Importing a backup', () => {
       entries(`tried-${_name}`, 3),
     );
 
-    for (const brews of tried) {
+    for (const [i, brews] of tried.entries()) {
       const result = await device.helper.importBackup(
         { SETTINGS: [{ language: 'en' }], BREWS: brews },
         'import',
+        `Beanconqueror ${i + 2}.zip`,
       );
       expect(result).toEqual({ BACKUP: false });
       // A new millisecond, so the next backup gets a name of its own.
@@ -391,6 +404,39 @@ describe('Importing a backup', () => {
     expect(
       kept.filter((_path) => _path.endsWith(UNCHANGED_IMPORT_ENDING)).length,
     ).toBe(2);
+  });
+
+  it('keeps the data of the automatic backup of the day when several imports in a row start with it', async () => {
+    // Fewer brews than in the automatic backup of the day: some were lost,
+    // and nothing was saved since.
+    const device = await startDevice(storedData('own'));
+    const ofTheDay = imported(entries('day', 5));
+    const series = [
+      { BREWS: ofTheDay, fileName: automaticBackupName(Date.now()) },
+      ...['b', 'c', 'd'].map((_name, i) => ({
+        BREWS: entries(`tried-${_name}`, 3),
+        fileName: `Beanconqueror ${i + 2}.zip`,
+      })),
+    ];
+
+    for (const { BREWS, fileName } of series) {
+      const result = await device.helper.importBackup(
+        { SETTINGS: [{ language: 'en' }], BREWS },
+        'import',
+        fileName,
+      );
+      expect(result).toEqual({ BACKUP: false });
+      await new Promise((_resolve) => setTimeout(_resolve, 2));
+    }
+
+    // Once the first import is done, the automatic backups replace that
+    // file, so the backup written before the second import is the only
+    // copy of its data left.
+    const keptBrews: unknown[] = [];
+    for (const path of writtenBackups(device)) {
+      keptBrews.push((await readBackupFile(device, path)).BREWS);
+    }
+    expect(keptBrews).toContain(ofTheDay);
   });
 
   it('removes no backup when the import fails, so the file it came from stays', async () => {
@@ -563,22 +609,30 @@ describe('Importing a backup', () => {
 
 describe('The backup before an import of data that was just imported', () => {
   const RESTORED_AT = 1763000000000;
+  const DAY = 24 * 60 * 60 * 1000;
 
-  /** The data a completed import from `_source` stored, unchanged so far. */
+  /**
+   * The data a completed import from `_source` stored, unchanged so far.
+   * `_note` changes the note about that import, which names a file that
+   * can be imported again by default.
+   */
   function afterImport(
     _source: RESTORE_SOURCE,
     _extra: Record<string, unknown> = {},
+    _note: Partial<IRestoreNote> = { file_name: KEPT_FILE_NAME },
   ): Record<string, any> {
+    const restoredAt = _note.last_restore_at ?? RESTORED_AT;
     const stored = storedData('imported', {
       [LAST_RESTORE_STORAGE_KEY]: {
-        last_restore_at: RESTORED_AT,
+        last_restore_at: restoredAt,
         source: _source,
         record_count: 3,
+        ..._note,
       },
       ..._extra,
     });
     // Changed on another device, before the import.
-    stored.BREWS[0].config.updated_at = RESTORED_AT - 1;
+    stored.BREWS[0].config.updated_at = restoredAt - 1;
     return stored;
   }
 
@@ -631,6 +685,49 @@ describe('The backup before an import of data that was just imported', () => {
   it('is not marked after the internal backup was restored, as that file is replaced', async () => {
     expect(
       await backupBeforeNextImport(afterImport('internal_backup')),
+    ).not.toContain(UNCHANGED_IMPORT_ENDING);
+  });
+
+  it('is not marked when the file imported was Beanconqueror.zip, which the app replaces', async () => {
+    expect(
+      await backupBeforeNextImport(
+        afterImport('import', {}, { file_name: 'Beanconqueror.zip' }),
+      ),
+    ).not.toContain(UNCHANGED_IMPORT_ENDING);
+  });
+
+  it('is not marked when the file imported was the automatic backup of that day, which the app replaces', async () => {
+    expect(
+      await backupBeforeNextImport(
+        afterImport(
+          'import',
+          {},
+          { file_name: automaticBackupName(RESTORED_AT) },
+        ),
+      ),
+    ).not.toContain(UNCHANGED_IMPORT_ENDING);
+  });
+
+  it('is marked when the file imported was the automatic backup of an earlier day', async () => {
+    const restoredAt = Date.now();
+
+    expect(
+      await backupBeforeNextImport(
+        afterImport(
+          'import',
+          {},
+          {
+            last_restore_at: restoredAt,
+            file_name: automaticBackupName(restoredAt - DAY),
+          },
+        ),
+      ),
+    ).toContain(UNCHANGED_IMPORT_ENDING);
+  });
+
+  it('is not marked when the name of the file imported is not known', async () => {
+    expect(
+      await backupBeforeNextImport(afterImport('import', {}, {})),
     ).not.toContain(UNCHANGED_IMPORT_ENDING);
   });
 });

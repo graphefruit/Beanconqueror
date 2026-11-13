@@ -284,11 +284,13 @@ export class UIStorage {
    * Replaces the stored values with those of a parsed backup. Backups are
    * imported through UIExportImportHelper.importBackup(), which first writes
    * the current data into a backup file. The copy kept here for the rollback
-   * only lives in memory.
+   * only lives in memory. `_fileName` is the name of the backup file, when
+   * it is known; it goes into the note about the import.
    */
   public async import(
     _data: any,
     _source: RESTORE_SOURCE = 'import',
+    _fileName?: string,
   ): Promise<any> {
     // Before we import, we do a saftey backup
     const _backup = await this.__safteyBackup();
@@ -297,7 +299,7 @@ export class UIStorage {
       this.removeDuplicateEntries(importData);
       this.__fillMissingChangeInfo(importData);
       await this.__importBackup(importData);
-      await this.__noteRestore(importData, _source);
+      await this.__noteRestore(importData, _source, _fileName);
 
       return { BACKUP: false };
     } catch (ex) {
@@ -397,11 +399,12 @@ export class UIStorage {
 
   /**
    * Notes the completed import under a local-only key: when, from where and
-   * how many entries (IRestoreNote). One note is enough, no entry is marked:
-   * the imported entries keep the change info they came with, so they never
-   * look like changes made on this device, and a mark on every entry would
-   * stay until the entry is edited again and cost a write of whole
-   * collections. An import that was rolled back leaves the previous note.
+   * how many entries (IRestoreNote), and the name of the file when it is
+   * known. One note is enough, no entry is marked: the imported entries keep
+   * the change info they came with, so they never look like changes made on
+   * this device, and a mark on every entry would stay until the entry is
+   * edited again and cost a write of whole collections. An import that was
+   * rolled back leaves the previous note.
    *
    * Never throws: the data is already stored and must not be rolled back
    * because of the note.
@@ -409,6 +412,7 @@ export class UIStorage {
   private async __noteRestore(
     _data: any,
     _source: RESTORE_SOURCE,
+    _fileName?: string,
   ): Promise<void> {
     try {
       let recordCount = 0;
@@ -422,6 +426,9 @@ export class UIStorage {
         source: _source,
         record_count: recordCount,
       };
+      if (_fileName !== undefined) {
+        note.file_name = _fileName;
+      }
       await this._storage.set(LAST_RESTORE_STORAGE_KEY, note);
     } catch (ex) {
       this.uiLog.error('UIStorage - Import - Restore note not stored', ex);

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { FileInfo } from '@capacitor/filesystem';
+import moment from 'moment';
 
 import { UILog } from '../uiLog';
 import { PRE_IMPORT_BACKUP_FILES } from './pre-import-backup-files';
@@ -23,8 +24,9 @@ const FILE_NAME_PATTERN =
 /** Options of PreImportBackupService.write(). */
 export interface PreImportBackupWriteOptions {
   /**
-   * The data is what an import of a file chosen in the settings stored, and
-   * nothing was changed since, so that file can be imported again.
+   * The data is what an import of a file chosen in the settings stored,
+   * nothing was changed since, and that file can still be imported again
+   * (canBeImportedAgain).
    */
   unchangedImport?: boolean;
   /** Time in the file name, now by default. */
@@ -40,6 +42,61 @@ export class PreImportBackupError extends Error {
     super('The current data could not be saved before the import');
     this.name = 'PreImportBackupError';
   }
+}
+
+/** Name of the internal backup and of every export. */
+const BACKUP_FILE_NAME = 'Beanconqueror.zip';
+
+const AUTOMATIC_BACKUP_FILE_PREFIX = 'Beanconqueror_automatic_export_';
+
+/**
+ * Days an automatic backup is kept after its day, see
+ * UIFileHelper.deleteZIPBackupsOlderThanSevenDays().
+ */
+const AUTOMATIC_BACKUP_DAYS_KEPT = 7;
+
+/**
+ * Whether the backup file named `_fileName`, imported at `_importedAt`, is
+ * at `_now` still there as it was imported, so it can be imported again
+ * (times in milliseconds since epoch). Only then does the backup of the
+ * data that import stored count as one of an unchanged import
+ * (PreImportBackupWriteOptions.unchangedImport). Files the app replaces or
+ * deletes itself do not count:
+ * - Beanconqueror.zip is the name of the internal backup, which the
+ *   automatic backups replace after every change and which the Files app
+ *   shows on iOS, and of every export, which the next export replaces.
+ * - The automatic backup of a day is replaced on that day, and deleted at
+ *   start-up a week later.
+ * A name that is not known does not count either.
+ */
+export function canBeImportedAgain(
+  _fileName: unknown,
+  _importedAt: number,
+  _now: number,
+): boolean {
+  if (
+    typeof _fileName !== 'string' ||
+    _fileName === '' ||
+    _fileName === BACKUP_FILE_NAME
+  ) {
+    return false;
+  }
+  if (_fileName.startsWith(AUTOMATIC_BACKUP_FILE_PREFIX)) {
+    const day = moment(
+      _fileName.substring(AUTOMATIC_BACKUP_FILE_PREFIX.length),
+      'DD_MM_YYYY[.zip]',
+      true,
+    );
+    return (
+      day.isValid() &&
+      day.isBefore(moment(_importedAt), 'day') &&
+      !day.isBefore(
+        moment(_now).subtract(AUTOMATIC_BACKUP_DAYS_KEPT, 'days'),
+        'day',
+      )
+    );
+  }
+  return true;
 }
 
 /** Local time of `_date` as it is written into a file name. */

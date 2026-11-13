@@ -50,17 +50,29 @@ holds the database only, no photos or flow profile files.
 Folder `pre-import` in the app data directory, one file per import, named
 `Beanconqueror_pre_import_<YYYY-MM-DD_HH-mm-ss-SSS>.zip` in local time.
 
-The name ends in `_imported.zip` instead when the current data is what the
-last import of a file chosen in the settings stored, and no entry was added,
-changed or deleted since (told by the change info of the entries and the
-deletion journal; settings carry no change info and do not count). That file
-can be imported again. Data restored from the internal backup is never taken
-for unchanged, as the automatic backups replace that file.
-
 - iOS: the documents folder of the app, shown in the Files app under
   On My iPhone › Beanconqueror › pre-import.
 - Android: the internal storage of the app. Neither other apps nor the file
   picker of the import can open it.
+
+The name ends in `_imported.zip` instead when the current data is what the
+last import of a file chosen in the settings stored, no entry was added,
+changed or deleted since (told by the change info of the entries and the
+deletion journal; settings carry no change info and do not count), and that
+file is still there as it was imported, so it can be imported again. That is
+never taken for granted for a file the app replaces or deletes itself:
+
+- `Beanconqueror.zip`: the name of the internal backup, which the automatic
+  backups replace after every change and which the Files app shows on iOS,
+  and of every export, which the next export replaces.
+- The automatic backup of a day
+  (`Beanconqueror_automatic_export_<DD_MM_YYYY>.zip`): it is replaced on that
+  day, so it only counts when it was imported on a later day, and it is
+  deleted when the app starts a week after its day.
+- A file whose name is not known.
+
+Data restored from the internal backup is never taken for unchanged either,
+as the automatic backups replace that file.
 
 Three files are kept. When the name of the file just written ends in
 `_imported.zip`: that file, the newest one whose name does not end in
@@ -98,7 +110,12 @@ After a completed import the app stores this under the local key
 `LAST_RESTORE` (`IRestoreNote`):
 
 ```json
-{ "last_restore_at": 1763046000000, "source": "import", "record_count": 1250 }
+{
+  "last_restore_at": 1763046000000,
+  "source": "import",
+  "record_count": 1250,
+  "file_name": "Beanconqueror_automatic_export_12_11_2026.zip"
+}
 ```
 
 - `last_restore_at`: milliseconds since epoch, clock of the device.
@@ -107,6 +124,8 @@ After a completed import the app stores this under the local key
 - `record_count`: entries the import stored in the collections with change
   info (beans, brews, grinders, preparation methods, water, green beans,
   roasting machines, graphs, barista mode brews).
+- `file_name`: name of the file chosen in the settings, when it is known. It
+  tells whether that file can still be imported again (see above).
 
 The key is local to the installation: it is never written into a backup or
 export, and an import never takes it from a file. An import that was rolled

@@ -21,6 +21,7 @@ interface StoredRestoreNote {
   last_restore_at: number;
   source: string;
   record_count: number;
+  file_name?: string;
 }
 
 const IMPORTED_BEAN_NAME = 'Kenya Gatomboya AA';
@@ -133,6 +134,7 @@ test('in the browser the import runs without a backup file', async ({
     last_restore_at: expect.any(Number),
     source: 'import',
     record_count: entryCount,
+    file_name: 'Beanconqueror.zip',
   });
   expect(note!.last_restore_at).toBeGreaterThanOrEqual(started);
   // No file was written. Console errors fail the test (see fixtures.ts).

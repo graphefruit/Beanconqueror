@@ -12,4 +12,10 @@ export interface IRestoreNote {
   source: RESTORE_SOURCE;
   /** Number of entries the import stored in the change tracked collections. */
   record_count: number;
+  /**
+   * Name of the backup file chosen in the settings, when it is known. It
+   * tells whether that file can still be imported again, see
+   * UIExportImportHelper.importBackup().
+   */
+  file_name?: string;
 }

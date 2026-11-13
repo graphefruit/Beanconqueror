@@ -810,7 +810,7 @@ export class SettingsPage {
               await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
                 arrayBuffer,
               );
-            await this.__importJSON(parsedJSON, '');
+            await this.__importJSON(parsedJSON, '', file.name);
           } catch (error) {
             this.uiLog.error('Error while importing ZIP on web:', error);
             await this.uiAlert.hideLoadingSpinner();
@@ -865,13 +865,15 @@ export class SettingsPage {
       directoryUri = result.uri;
     }
     const importMode = pickedFile.mimeType.includes('zip') ? 'zip' : 'json';
-    await this.doImport(importMode, path, directoryUri);
+    await this.doImport(importMode, path, directoryUri, pickedFile.name);
   }
 
+  /** `fileName` is the name of the chosen file, see __importJSON(). */
   private async doImport(
     importMode: 'zip' | 'json',
     mainFileUri: string,
     directoryUri: string,
+    fileName: string,
   ): Promise<void> {
     try {
       if (importMode === 'zip') {
@@ -881,7 +883,7 @@ export class SettingsPage {
           await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
             zipContent,
           );
-        await this.__importJSON(parsedJSON, directoryUri);
+        await this.__importJSON(parsedJSON, directoryUri, fileName);
       } else {
         // importMode === 'json'
         await this.uiFileHelper.readJSONFile(mainFileUri);
@@ -949,6 +951,7 @@ export class SettingsPage {
         'zip',
         cacheDir.uri + '/' + mainFileName,
         cacheDir.uri,
+        mainFileName,
       );
     } finally {
       try {
@@ -999,7 +1002,12 @@ export class SettingsPage {
         directoryUri = result.uri;
       }
 
-      await this.doImport('zip', path, directoryUri);
+      await this.doImport(
+        'zip',
+        path,
+        directoryUri,
+        path.substring(path.lastIndexOf('/') + 1),
+      );
     }
   }
 
@@ -1602,7 +1610,15 @@ export class SettingsPage {
     }
   }
 
-  private async __importJSON(_parsedJSON: any, _importDirectory: string) {
+  /**
+   * `_fileName` is the name of the backup file chosen, which the note about
+   * the import keeps (UIExportImportHelper.importBackup).
+   */
+  private async __importJSON(
+    _parsedJSON: any,
+    _importDirectory: string,
+    _fileName: string,
+  ) {
     try {
       const parsedContent = _parsedJSON;
       this.uiLog.log('Parsed import data successfully');
@@ -1680,6 +1696,7 @@ export class SettingsPage {
         const _data = await this.uiExportImportHelper.importBackup(
           parsedContent,
           'import',
+          _fileName,
         );
         if (_data.BACKUP === false) {
           await this.__reinitializeStorages();

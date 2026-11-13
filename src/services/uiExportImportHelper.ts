@@ -31,6 +31,7 @@ import {
 } from '../interfaces/changeTracking/iRestoreNote';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 import {
+  canBeImportedAgain,
   PreImportBackupError,
   PreImportBackupService,
 } from './preImportBackup/pre-import-backup.service';
@@ -74,22 +75,23 @@ function holdsDataToSave(_stored: any): boolean {
 
 /**
  * Whether stored values (UIStorage.export()) are what the last import of a
- * file chosen in the settings stored, so that file can be imported again:
- * no entry was added, changed or deleted since, as their change info and
- * the deletion journal tell. Settings carry no change info and do not
- * count. An entry the app adds itself counts as well, like the standard
- * mill for imported brews without one. Data restored from the internal
- * backup never counts as unchanged, as the automatic backups replace that
- * file.
+ * file chosen in the settings stored, while that file can still be imported
+ * again at `_now` (canBeImportedAgain): no entry was added, changed or
+ * deleted since, as their change info and the deletion journal tell.
+ * Settings carry no change info and do not count. An entry the app adds
+ * itself counts as well, like the standard mill for imported brews without
+ * one. Data restored from the internal backup never counts as unchanged, as
+ * the automatic backups replace that file.
  */
-function holdsUnchangedImport(_stored: any): boolean {
+function holdsUnchangedImport(_stored: any, _now: number): boolean {
   const note: Partial<IRestoreNote> | undefined =
     _stored?.[LAST_RESTORE_STORAGE_KEY];
   const restoredAt = note?.last_restore_at;
   if (
     note?.source !== 'import' ||
     typeof restoredAt !== 'number' ||
-    !Number.isFinite(restoredAt)
+    !Number.isFinite(restoredAt) ||
+    !canBeImportedAgain(note.file_name, restoredAt, _now)
   ) {
     return false;
   }
@@ -170,15 +172,22 @@ export class UIExportImportHelper {
    * newest one of data that had not just been imported from a file
    * (PreImportBackupService.removeOldBackups). A failed import removes none,
    * so the file it was started from stays available.
+   *
+   * `_fileName` is the name of the backup file chosen in the settings, when
+   * it is known. Only while that file can still be imported again does the
+   * backup before the next import count as one of an unchanged import
+   * (holdsUnchangedImport).
    */
   public async importBackup(
     _data: unknown,
     _source: RESTORE_SOURCE,
+    _fileName?: string,
   ): Promise<{ BACKUP: boolean }> {
     const written = await this.__writeBackupBeforeImport();
     const result: { BACKUP: boolean } = await this.uiStorage.import(
       _data,
       _source,
+      _fileName,
     );
     if (written !== undefined && result?.BACKUP === false) {
       await this.preImportBackup.removeOldBackups(written);
@@ -207,7 +216,7 @@ export class UIExportImportHelper {
       }
       const written = await this.preImportBackup.write(
         await this.buildExportZIP(stored),
-        { unchangedImport: holdsUnchangedImport(stored) },
+        { unchangedImport: holdsUnchangedImport(stored, Date.now()) },
       );
       this.uiLog.log(`Backup before import - written to ${written}`);
       return written;
