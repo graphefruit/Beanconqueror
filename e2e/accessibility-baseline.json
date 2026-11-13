@@ -69,6 +69,53 @@
       "role-img-alt | ion-icon[name=\"gift-outline\"]"
     ]
   },
+  "mills": {
+    "light": [
+      "color-contrast | mill > ion-content[role=\"main\"] > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
+      "landmark-banner-is-top-level | mill > ion-header[role=\"banner\"]",
+      "landmark-main-is-top-level | mill > ion-content[role=\"main\"]",
+      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
+      "landmark-unique | app-home > ion-content[role=\"main\"]"
+    ],
+    "dark": [
+      "color-contrast | mill > ion-content[role=\"main\"] > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
+      "landmark-banner-is-top-level | mill > ion-header[role=\"banner\"]",
+      "landmark-main-is-top-level | mill > ion-content[role=\"main\"]",
+      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
+      "landmark-unique | app-home > ion-content[role=\"main\"]"
+    ]
+  },
+  "preparations": {
+    "light": [
+      "color-contrast | .segment-button-checked > ion-label > .value",
+      "color-contrast | .text-color-inactive.ion-margin-top",
+      "landmark-banner-is-top-level | preparation > ion-header[role=\"banner\"]",
+      "landmark-main-is-top-level | preparation > ion-content[role=\"main\"]",
+      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
+      "landmark-unique | app-home > ion-content[role=\"main\"]"
+    ],
+    "dark": [
+      "color-contrast | .text-color-inactive.ion-margin-top",
+      "landmark-banner-is-top-level | preparation > ion-header[role=\"banner\"]",
+      "landmark-main-is-top-level | preparation > ion-content[role=\"main\"]",
+      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
+      "landmark-unique | app-home > ion-content[role=\"main\"]"
+    ]
+  },
+  "profile": {
+    "light": [
+      "landmark-banner-is-top-level | app-profile > ion-header[role=\"banner\"]",
+      "landmark-main-is-top-level | app-profile > ion-content[role=\"main\"]",
+      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
+      "landmark-unique | app-home > ion-content[role=\"main\"]"
+    ],
+    "dark": [
+      "landmark-banner-is-top-level | app-profile > ion-header[role=\"banner\"]",
+      "landmark-main-is-top-level | app-profile > ion-content[role=\"main\"]",
+      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
+      "landmark-unique | app-home > ion-content[role=\"main\"]"
+    ]
+  },
   "settings": {
     "light": [
       "nested-interactive | .item-multiple-inputs[button=\"\"][tappable=\"\"],button[type=\"button\"]",

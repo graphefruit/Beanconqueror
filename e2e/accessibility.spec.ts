@@ -171,6 +171,35 @@ const areas: { name: string; open: (page: Page) => Promise<void> }[] = [
     },
   },
   {
+    name: 'profile',
+    open: async (page) => {
+      await openTab(page, 'Profile');
+      await expect(
+        page.getByRole('link', { name: /^Preparation methods/ }),
+      ).toBeVisible();
+    },
+  },
+  {
+    name: 'preparations',
+    open: async (page) => {
+      await openTab(page, 'Profile');
+      await page.getByRole('link', { name: /^Preparation methods/ }).click();
+      await expect(
+        page.getByRole('button', { name: 'Add preparation method' }),
+      ).toBeVisible();
+    },
+  },
+  {
+    name: 'mills',
+    open: async (page) => {
+      await openTab(page, 'Profile');
+      await page.getByRole('link', { name: /^Grinders/ }).click();
+      await expect(
+        page.getByRole('button', { name: 'Add grinder' }),
+      ).toBeVisible();
+    },
+  },
+  {
     name: 'settings',
     open: async (page) => {
       await page.getByRole('button', { name: 'menu' }).click();
