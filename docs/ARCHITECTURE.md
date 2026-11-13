@@ -378,8 +378,8 @@ flowchart LR
 `VERSION` entry (`Version.pushUpdatedDataVersion`) and does not run again. If
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
 migration runs again on the next start (`__checkUpdateForDataVersion`). When
-`UIStorage.hasData()` is false and a migration is pending, a loading spinner is
-shown while they run; with existing data they run without it. When the
+`UIStorage.getDataState()` is `'empty'` and a migration is pending, a loading
+spinner is shown while they run; with existing data they run without it. When the
 database could not be read (`getDataState()` is `'unknown'`), no migration
 runs and none is recorded; they are left for the next start.
 
