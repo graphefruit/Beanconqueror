@@ -42,7 +42,10 @@ export interface Budget {
    * before the download.
    */
   export: number;
-  /** Settings > Import, from the moment the app gets the file until "Import successful" shows. */
+  /**
+   * Settings > Import, from the moment the app gets the file until "Import successful" shows,
+   * without the time the question whether to replace all data is open.
+   */
   import: number;
 }
 

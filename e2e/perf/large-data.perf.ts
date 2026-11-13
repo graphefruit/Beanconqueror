@@ -333,12 +333,29 @@ for (const tier of TIERS) {
         mimeType: 'application/zip',
         buffer: zip,
       });
-      // From the moment the app gets the file until the success message is on screen.
-      const imported = await waitUntilSettled(
+      // The app reads the file, asks whether to replace all data, and then imports. The time of
+      // the person answering is left out: from the file until the question is on screen, plus
+      // from the answer until the success message is on screen.
+      const read = await waitUntilSettled(
         page,
-        { selector: 'ion-alert', text: 'Import successful' },
+        { selector: 'ion-alert', text: 'Replace all data with the import?' },
         { mark: 'import' },
       );
+      await page
+        .getByRole('alertdialog', { name: 'Replace all data with the import?' })
+        .getByRole('button', { name: 'Yes' })
+        .click();
+      const written = await waitUntilSettled(
+        page,
+        { selector: 'ion-alert', text: 'Import successful' },
+        'input',
+      );
+      const imported = {
+        visible: read.visible + written.visible,
+        settled: read.visible + written.settled,
+        longTasksTotal: read.longTasksTotal + written.longTasksTotal,
+        longestTask: Math.max(read.longestTask, written.longestTask),
+      };
       await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'import', {
         ...imported,
