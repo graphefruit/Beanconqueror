@@ -175,10 +175,11 @@ statistics, start-up or backups.
 - Times depend on the machine and on what else runs on it. The budgets are set on an Apple M2 Max
   (see `budgets.ts`). Run on an otherwise idle machine: no other test runs (also not `pnpm e2e` or
   `pnpm test` in another worktree), builds, emulators or indexing, and a laptop on power. Other
-  load slows the throttled page down further; with parallel test runs single values were up to
-  70 % higher and failed their budgets. Before and after each measurement the run checks how busy
-  the machine is (`machineBusy` in the `PERF` lines, percent of all cores); above 30 % it prints a
-  `PERF-WARNING`, and a failed budget mentions it.
+  load slows the throttled page down further; with parallel test runs values were up to twice as
+  high as on a quiet machine (the longest frame almost five times) and failed their budgets.
+  Before and after each measurement the run checks how busy the machine is (`machineBusy` in the
+  `PERF` lines, percent of all cores); above 30 % it prints a `PERF-WARNING`, and a failed budget
+  mentions it.
 - Look at a few runs before judging a change (the `grep` also keeps the warnings):
 
   ```shell
