@@ -78,6 +78,7 @@ import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytic
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
+import { OverlayStackA11yService } from '../services/a11y/overlay-stack-a11y.service';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { AttachmentManifestService } from '../services/attachmentManifest/attachment-manifest.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
@@ -158,6 +159,7 @@ export class AppComponent implements AfterViewInit {
   private _translate = inject(TranslateService);
   private readonly documentLanguage = inject(DocumentLanguageService);
   private readonly tabletLayout = inject(TabletLayoutService);
+  private readonly overlayStackA11y = inject(OverlayStackA11yService);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly menu = inject(MenuController);
   private readonly navCtrl = inject(NavController);
@@ -323,6 +325,7 @@ export class AppComponent implements AfterViewInit {
   constructor() {
     this.documentLanguage.start();
     this.tabletLayout.start();
+    this.overlayStackA11y.start();
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6

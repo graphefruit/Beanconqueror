@@ -59,6 +59,9 @@ pnpm exec playwright show-report      # inspect traces and screenshots of failur
   test; mock required external calls with `page.route`.
 - Locate elements by role and accessible name and assert what a user can observe. Avoid CSS
   selectors and fixed waits.
+- Only the overlay on top is in the accessibility tree: the page and every dialog below it are
+  inert and aria-hidden until it starts to close. Role locators therefore find only the top
+  dialog's controls; `includeHidden: true` reaches one below it on purpose.
 - Use synthetic data only; never real user exports. Traces and screenshots are uploaded as CI
   artifacts.
 - Browser emulation does not replace testing on a real device (BLE, NFC, camera, filesystem).

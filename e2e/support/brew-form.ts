@@ -73,10 +73,10 @@ export async function chooseInBrewSelect(
     name: new RegExp(`^${label}, `),
   });
   const radio = page.getByRole('radio', { name: new RegExp(`^${option}\\b`) });
-  // While the form is still settling a tap can get lost; tap again only when
-  // no chooser is on its way (the brew form itself is one dialog).
+  // While the form is still settling a tap can get lost; tap again only while
+  // the select can still be reached, i.e. no chooser covers the form.
   await expect(async () => {
-    if ((await page.getByRole('dialog').count()) < 2) {
+    if (await select.isVisible()) {
       await select.click({ force: true });
     }
     await expect(radio).toBeVisible({ timeout: 5000 });

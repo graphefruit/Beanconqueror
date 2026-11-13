@@ -182,12 +182,13 @@ test('tasting notes picked in the cupping are shown in the brew details', async 
     page.getByRole('tab', { name: 'Systematic cupping' }),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Add aromas/flavors' }).click();
-  await page.getByRole('checkbox', { name: 'Lime', exact: true }).click();
-  // The picker opens above the tasting dialog, and both stay in the
-  // accessibility tree; the picker's Save is the later one.
+  const lime = page.getByRole('checkbox', { name: 'Lime', exact: true });
+  await lime.click();
+  // The tasting dialog leaves the accessibility tree while the picker is
+  // open above it, so this Save is the picker's.
   const save = page.getByRole('button', { name: 'Save' });
-  await save.last().click();
-  await expect(save).toHaveCount(1);
+  await save.click();
+  await expect(lime).toHaveCount(0);
   await expect(page.getByText('Lime', { exact: true })).toBeVisible();
   await save.click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
