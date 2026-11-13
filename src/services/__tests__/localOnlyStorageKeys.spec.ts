@@ -9,7 +9,6 @@ import {
   DELETION_JOURNAL_STORAGE_KEY,
   DEVICE_STORAGE_KEY,
   LAST_RESTORE_STORAGE_KEY,
-  LOCAL_ONLY_STORAGE_KEYS,
 } from '../../classes/changeTracking/localStorageKeys';
 import { Settings } from '../../classes/settings/settings';
 import { AppEventType } from '../../enums/appEvent/appEvent';
@@ -64,8 +63,15 @@ function localValues(prefix: string) {
   };
 }
 
+/**
+ * The keys of localValues(). Taken from the test data and not from
+ * LOCAL_ONLY_STORAGE_KEYS: a key dropped from that list must fail these
+ * tests, not leave them with one key less to check.
+ */
+const LOCAL_KEYS = Object.keys(localValues('any'));
+
 /** A completed import replaces the note about the last import with its own. */
-const KEPT_BY_IMPORT = LOCAL_ONLY_STORAGE_KEYS.filter(
+const KEPT_BY_IMPORT = LOCAL_KEYS.filter(
   (_key) => _key !== LAST_RESTORE_STORAGE_KEY,
 );
 
@@ -183,10 +189,18 @@ describe('Values local to one installation', () => {
       await deviceA.helper.buildExportZIP(),
     );
 
-    for (const key of LOCAL_ONLY_STORAGE_KEYS) {
-      expect(Object.keys(backup)).not.toContain(key);
+    for (const key of LOCAL_KEYS) {
+      expect(Object.keys(backup)).withContext(key).not.toContain(key);
     }
-    expect(JSON.stringify(backup)).not.toContain('a-device-id');
+    const content = JSON.stringify(backup);
+    for (const value of [
+      'a-device-id',
+      'a-deleted-brew',
+      'a-photo.jpg',
+      'a-import',
+    ]) {
+      expect(content).withContext(value).not.toContain(value);
+    }
     expect(backup.SETTINGS[0].user).toEqual(userProfile());
     expect(backup.BREWS).toEqual(entries('brew', 3));
     expect(backup.BEANS).toEqual(entries('bean', 2));
@@ -260,8 +274,10 @@ describe('Values local to one installation', () => {
     expect(result).toEqual({ BACKUP: true });
     expect(deviceB.data.get('BREWS')).toEqual(entries('own-brew', 2));
     expect((deviceB.data.get('SETTINGS') as any[])[0].language).toBe('en');
-    for (const key of LOCAL_ONLY_STORAGE_KEYS) {
-      expect(deviceB.data.get(key)).toEqual(localValues('b')[key]);
+    for (const key of LOCAL_KEYS) {
+      expect(deviceB.data.get(key))
+        .withContext(key)
+        .toEqual(localValues('b')[key]);
     }
   });
 
@@ -323,7 +339,7 @@ describe('Values local to one installation', () => {
     const uiStorage = TestBed.inject(UIStorage);
     await uiStorage.init();
 
-    for (const key of LOCAL_ONLY_STORAGE_KEYS) {
+    for (const key of LOCAL_KEYS) {
       await uiStorage.set(key, { written: key });
     }
     expect(dispatch).not.toHaveBeenCalled();

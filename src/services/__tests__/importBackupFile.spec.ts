@@ -10,7 +10,6 @@ import {
   DELETION_JOURNAL_STORAGE_KEY,
   DEVICE_STORAGE_KEY,
   LAST_RESTORE_STORAGE_KEY,
-  LOCAL_ONLY_STORAGE_KEYS,
 } from '../../classes/changeTracking/localStorageKeys';
 import { withoutSettingsSecrets } from '../../classes/settings/settingsSecrets';
 import {
@@ -455,13 +454,20 @@ describe('Importing a backup', () => {
     );
 
     const saved = await readBackupFile(device, writtenBackups(device)[0]);
-    for (const key of LOCAL_ONLY_STORAGE_KEYS) {
-      expect(Object.keys(saved)).not.toContain(key);
+    // The keys stored above and not LOCAL_ONLY_STORAGE_KEYS, so a key
+    // dropped from that list fails here.
+    for (const key of [
+      DEVICE_STORAGE_KEY,
+      DELETION_JOURNAL_STORAGE_KEY,
+      LAST_RESTORE_STORAGE_KEY,
+    ]) {
+      expect(Object.keys(saved)).withContext(key).not.toContain(key);
     }
     const content = JSON.stringify(saved);
     expect(content).not.toContain('secret-');
     expect(content).not.toContain('device-id-a');
     expect(content).not.toContain('deleted-brew');
+    expect(content).not.toContain('last_restore_at');
     expect(saved.SETTINGS[0].brew_by_weight_webhook.url).toBe(
       'https://webhook.example.com/stop',
     );
