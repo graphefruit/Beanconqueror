@@ -1,6 +1,15 @@
+import { TestBed } from '@angular/core/testing';
+
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
+import {
+  StorageClass,
+  StorageReloadError,
+} from '../../../classes/storageClass';
 import { PreImportBackupError } from '../../../services/preImportBackup/pre-import-backup.service';
+import { UIAlert } from '../../../services/uiAlert';
+import { UILog } from '../../../services/uiLog';
+import { UIStorage } from '../../../services/uiStorage';
 import { SettingsPage } from '../settings.page';
 
 describe('SettingsPage standard mill after an import', () => {
@@ -50,8 +59,15 @@ describe('SettingsPage importing a backup file', () => {
     savesBackup: boolean;
     choice: 'YES' | 'NO';
     importBackup?: jasmine.Spy;
+    reinitializeStorage?: (_path: string) => Promise<void>;
   }) {
-    const storage = (_path: string) => ({ getDBPath: () => _path });
+    const storage = (_path: string) => ({
+      getDBPath: () => _path,
+      reinitializeStorage: () =>
+        _options.reinitializeStorage?.(_path) ?? Promise.resolve(),
+      storageReady: () => Promise.resolve(),
+      getAllEntries: () => [],
+    });
     const uiAlert = jasmine.createSpyObj('UIAlert', {
       showLoadingSpinner: Promise.resolve(),
       hideLoadingSpinner: Promise.resolve(),
@@ -84,6 +100,9 @@ describe('SettingsPage importing a backup file', () => {
       uiWaterStorage: storage('WATER'),
       uiVersionStorage: storage('VERSION'),
       uiGraphStorage: storage('GRAPH'),
+      uiMillStorage: storage('MILL'),
+      uiBaristamodeBrewStorage: storage('BARISTAMODE_BREWS'),
+      uiUpdate: { checkUpdate: () => Promise.resolve() },
     });
     return { page, uiAlert, importBackup: uiExportImportHelper.importBackup };
   }
@@ -181,6 +200,185 @@ describe('SettingsPage importing a backup file', () => {
     expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
       'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
     );
+  });
+
+  it('does not say that no data was changed when the imported data could not be loaded', async () => {
+    const { page, uiAlert } = pageWith({
+      savesBackup: true,
+      choice: 'YES',
+      importBackup: jasmine
+        .createSpy('importBackup')
+        .and.resolveTo({ BACKUP: false }),
+      reinitializeStorage: (_path) =>
+        _path === 'BEANS' ? Promise.reject() : Promise.resolve(),
+    });
+
+    await page.__importJSON(parsedBackup(), '');
+
+    expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
+    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'IMPORT_DATA_NOT_LOADED_RESTART_NEEDED',
+    );
+  });
+});
+
+describe('SettingsPage loading the collections again after an import', () => {
+  class TestStorage extends StorageClass {
+    public constructor(_path: string) {
+      super(_path);
+    }
+  }
+
+  const entry = (_uuid: string) => ({
+    config: { uuid: _uuid, unix_timestamp: 1 },
+  });
+
+  const FIELDS: Record<string, string> = {
+    uiBeanStorage: 'BEANS',
+    uiPreparationStorage: 'PREPARATION',
+    uiSettingsStorage: 'SETTINGS',
+    uiBrewStorage: 'BREWS',
+    uiMillStorage: 'MILL',
+    uiVersionStorage: 'VERSION',
+    uiGreenBeanStorage: 'GREEN_BEANS',
+    uiRoastingMachineStorage: 'ROASTING_MACHINES',
+    uiWaterStorage: 'WATER',
+    uiGraphStorage: 'GRAPH',
+    uiBaristamodeBrewStorage: 'BARISTAMODE_BREWS',
+  };
+
+  /**
+   * The page with real collections over one database. Every collection was
+   * read with an entry from before the import; `unreadable` lists the keys
+   * that cannot be read from then on.
+   */
+  async function pageAfterStart() {
+    const database: Record<string, unknown> = {};
+    for (const path of Object.values(FIELDS)) {
+      database[path] = [entry(`old-${path}`)];
+    }
+    const unreadable = new Set<string>();
+    const errors: string[] = [];
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: UIStorage,
+          useValue: {
+            getOrFail: (_key: string) =>
+              unreadable.has(_key)
+                ? Promise.reject(new Error(`${_key} could not be read`))
+                : Promise.resolve(structuredClone(database[_key] ?? null)),
+            set: (_key: string, _value: unknown) => {
+              database[_key] = structuredClone(_value);
+              return Promise.resolve(true);
+            },
+          },
+        },
+        {
+          provide: UILog,
+          useValue: {
+            log: () => undefined,
+            info: () => undefined,
+            debug: () => undefined,
+            error: (_message: string) => errors.push(_message),
+          },
+        },
+      ],
+    });
+    spyOn(UIAlert, 'getInstance').and.returnValue({
+      showMessage: () => Promise.resolve(),
+    } as any);
+    const checkUpdate = jasmine.createSpy('checkUpdate').and.resolveTo();
+    const page = Object.create(SettingsPage.prototype);
+    page.uiUpdate = { checkUpdate };
+    page.uiLog = TestBed.inject(UILog);
+    const storages: Record<string, TestStorage> = {};
+    for (const [field, path] of Object.entries(FIELDS)) {
+      const storage = TestBed.runInInjectionContext(
+        () => new TestStorage(path),
+      );
+      await storage.initializeStorage();
+      storages[path] = storage;
+      page[field] = storage;
+    }
+    const importData = () => {
+      for (const path of Object.values(FIELDS)) {
+        database[path] = [entry(`imported-${path}`)];
+      }
+    };
+    return {
+      page,
+      database,
+      unreadable,
+      storages,
+      importData,
+      checkUpdate,
+      errors,
+    };
+  }
+
+  const uuids = (_entries: unknown) =>
+    (_entries as any[]).map((_entry) => _entry.config.uuid);
+
+  it('reads every collection and runs the update check', async () => {
+    const { page, storages, importData, checkUpdate } = await pageAfterStart();
+    importData();
+
+    await page.__reinitializeStorages();
+
+    for (const [path, storage] of Object.entries(storages)) {
+      expect(uuids(storage.getAllEntries())).toEqual([`imported-${path}`]);
+    }
+    expect(checkUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads the other collections also when one cannot be read', async () => {
+    const { page, database, unreadable, storages, importData, checkUpdate } =
+      await pageAfterStart();
+    importData();
+    unreadable.add('BEANS');
+
+    await expectAsync(page.__reinitializeStorages()).toBeRejected();
+
+    for (const [path, storage] of Object.entries(storages)) {
+      expect(uuids(storage.getAllEntries()))
+        .withContext(path)
+        .toEqual(path === 'BEANS' ? [] : [`imported-${path}`]);
+    }
+    // A collection left with the entries from before the import would store
+    // them over the imported ones with its next write.
+    const result = await storages.BREWS.addAndConfirm({ config: {} });
+    expect(result.saved).toBeTrue();
+    expect(uuids(database.BREWS)).toEqual([
+      'imported-BREWS',
+      result.entry.config.uuid,
+    ]);
+    expect(checkUpdate).not.toHaveBeenCalled();
+  });
+
+  it('keeps the collection that cannot be read unwritten and names it', async () => {
+    const { page, database, unreadable, storages, importData, errors } =
+      await pageAfterStart();
+    importData();
+    unreadable.add('BEANS');
+    unreadable.add('WATER');
+
+    const error = await page.__reinitializeStorages().then(
+      () => undefined,
+      (_error: unknown) => _error,
+    );
+
+    expect(error).toBeInstanceOf(StorageReloadError);
+    expect((error as StorageReloadError).collections).toEqual([
+      'BEANS',
+      'WATER',
+    ]);
+    expect(errors.some((_line) => _line.includes('BEANS, WATER'))).toBeTrue();
+    expect((await storages.BEANS.addAndConfirm({ config: {} })).saved).toBe(
+      false,
+    );
+    expect(uuids(database.BEANS)).toEqual(['imported-BEANS']);
   });
 });
 

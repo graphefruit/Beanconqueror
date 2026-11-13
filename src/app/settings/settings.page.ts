@@ -69,6 +69,7 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 import { buildWebhookHeaders } from '../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../classes/settings/settings';
+import { StorageReloadError } from '../../classes/storageClass';
 import { Water } from '../../classes/water/water';
 import { CloudModelPickerComponent } from '../../components/cloud-model-picker/cloud-model-picker.component';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -1778,7 +1779,10 @@ export class SettingsPage {
           this.translate.instant(
             error instanceof PreImportBackupError
               ? 'PRE_IMPORT_BACKUP_FAILED'
-              : 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+              : error instanceof StorageReloadError
+                ? // The data is imported, but the app does not show it.
+                  'IMPORT_DATA_NOT_LOADED_RESTART_NEEDED'
+                : 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
           ),
         );
       }
@@ -1836,18 +1840,41 @@ export class SettingsPage {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
+  /**
+   * Reads every collection again after the stored data was replaced. Rejects
+   * with a StorageReloadError when one could not be read; the others are
+   * read all the same.
+   */
   private async __reinitializeStorages(): Promise<any> {
-    await this.uiBeanStorage.reinitializeStorage();
-    await this.uiPreparationStorage.reinitializeStorage();
-    await this.uiSettingsStorage.reinitializeStorage();
-    await this.uiBrewStorage.reinitializeStorage();
-    await this.uiMillStorage.reinitializeStorage();
-    await this.uiVersionStorage.reinitializeStorage();
-    await this.uiGreenBeanStorage.reinitializeStorage();
-    await this.uiRoastingMachineStorage.reinitializeStorage();
-    await this.uiWaterStorage.reinitializeStorage();
-    await this.uiGraphStorage.reinitializeStorage();
-    await this.uiBaristamodeBrewStorage.reinitializeStorage();
+    const storages = [
+      this.uiBeanStorage,
+      this.uiPreparationStorage,
+      this.uiSettingsStorage,
+      this.uiBrewStorage,
+      this.uiMillStorage,
+      this.uiVersionStorage,
+      this.uiGreenBeanStorage,
+      this.uiRoastingMachineStorage,
+      this.uiWaterStorage,
+      this.uiGraphStorage,
+      this.uiBaristamodeBrewStorage,
+    ];
+    // Not stopped by a collection that cannot be read: one left with the
+    // entries from before would store them over the new ones with its next
+    // write.
+    const notRead: string[] = [];
+    for (const storage of storages) {
+      try {
+        await storage.reinitializeStorage();
+      } catch {
+        notRead.push(storage.getDBPath());
+      }
+    }
+    if (notRead.length > 0) {
+      const error = new StorageReloadError(notRead);
+      this.uiLog.error(error.message);
+      throw error;
+    }
 
     // Wait for every necessary service to be ready before starting the app
     // Settings and version, will create a new object on start, so we need to wait for this in the end.

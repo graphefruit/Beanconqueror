@@ -28,6 +28,18 @@ export interface StorageWriteOptions {
   touch?: boolean;
 }
 
+/**
+ * Collections that could not be read again after the stored data was
+ * replaced, for example by an import. The stored data is the new one, but
+ * these collections hold none of it and refuse every write.
+ */
+export class StorageReloadError extends Error {
+  public constructor(public readonly collections: string[]) {
+    super(`Storage - could not be read again: ${collections.join(', ')}`);
+    this.name = 'StorageReloadError';
+  }
+}
+
 export abstract class StorageClass {
   protected uiStorage = inject(UIStorage);
   protected uiLog = inject(UILog);

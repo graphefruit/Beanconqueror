@@ -188,6 +188,13 @@ UIStorage                            (src/services/uiStorage.ts)
     being read and before it was read for the first time. Every write stores
     the whole array, so a write on a list that was not read would replace
     the stored entries.
+  - After an import, `SettingsPage.__reinitializeStorages` reads every
+    collection again, also after one that could not be read, and then
+    rejects with a `StorageReloadError` naming those. A collection left with
+    the entries from before the import would store them over the imported
+    ones with its next write. The user is told that the data was imported
+    and the app has to be started again
+    (`IMPORT_DATA_NOT_LOADED_RESTART_NEEDED`).
   - `UIStorage.getDataState()` tells whether the database holds data of a
     used installation: `'data'`, `'empty'` or `'unknown'` when it could not
     be read. The callers (`checkBackup`, `saveAutomaticBackups`,
