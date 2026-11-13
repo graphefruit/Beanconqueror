@@ -248,11 +248,14 @@ flowchart LR
   copies are removed after seven days
   (`src/services/androidPlatform/android-platform.service.ts`,
   `src/services/iosPlatform/ios-platform.service.ts`).
-- At start (native only), `checkBackup()` looks at the stored backup files
-  (`checkBackupAndSeeIfDataAreCorrupted`): with an empty database it imports
-  the largest manual backup; when a backup holds more beans, brews,
-  preparations or grinders than the database, it shows the data corruption
-  dialog and offers the backup.
+- At start (native only), `checkBackup()` reads a single file: the internal
+  `Beanconqueror.zip` in the data directory, or the legacy `Beanconqueror.json`
+  when there is no ZIP (`readBackupZIPFile`). Despite its name,
+  `__getBiggerFileBackupOrAutomatic` compares nothing: the comparison with the
+  dated copies is commented out and `isAutomaticBackup` is always `false`. In
+  `checkBackupAndSeeIfDataAreCorrupted`, an empty database imports the file
+  directly; otherwise the data corruption dialog offers the file when it holds
+  more beans, brews, preparations or grinders than the database.
 - Photos and flow profiles are not part of the ZIP. On Android, the manual
   export in settings copies them next to it (`exportToPath` in
   `src/app/settings/settings.page.ts`); on iOS the data directory is visible to
