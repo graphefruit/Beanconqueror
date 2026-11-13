@@ -83,17 +83,17 @@ as the automatic backups replace that file.
 Three files are kept. When the name of the file just written ends in
 `_imported.zip`: that file, the newest one whose name does not end in
 `_imported.zip`, and the newest of the others. Otherwise the three newest.
-Older ones are deleted once an import has completed. A failed import of a
+Without that rule, trying a few backups one after the other would delete the
+data from before the first of them: once an import is done, the automatic
+backup of that day and `Beanconqueror.zip` are written with the imported
+data, so this file is the only one left with the changes made that day.
+
+Older files are deleted once an import has completed. A failed import of a
 file chosen in the settings deletes none, so the file it was started from is
 still there if it fails. A failed restore of the internal backup at start-up
 deletes older ones as well: `Beanconqueror.zip` is not one of these files, and
 the next start offers the restore again and writes a file before it, so
 without that a restore failing at every start would add one at every start.
-
-Without that rule, trying a few backups one after the other would delete the
-data from before the first of them: once an import is done, the automatic
-backup of that day and `Beanconqueror.zip` are written with the imported
-data, so this file is the only one left with the changes made that day.
 
 ## Going back
 
