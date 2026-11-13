@@ -1358,6 +1358,7 @@
     "SORT_PREPARATION_TOOLS": "Sort preparation tools",
     "PREPARATION_TYPE_METICULOUS": "Meticulous",
     "EXPORT_CAUTION": "Export just exports the database, no images, no flow-profiles, if these ones are needed, please visit Gitbook for more information",
+    "EXPORT_CAUTION_CREDENTIALS": "Passwords, API keys and tokens are not part of the export. Enter them again on a new device.",
     "POPOVER_FREEZE_COFFEE_BEAN": "Freeze coffee bean",
     "POPOVER_UNFREEZE_COFFEE_BEAN": "Unfreeze coffee bean",
     "BEAN_POPOVER_EDIT_FREEZE_DATE": "Edit freeze date",

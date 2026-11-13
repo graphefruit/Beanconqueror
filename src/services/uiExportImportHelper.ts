@@ -18,6 +18,7 @@ import {
 import * as zip from '@zip.js/zip.js';
 import moment from 'moment';
 
+import { withoutSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 import { UIAlert } from './uiAlert';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -74,6 +75,12 @@ export class UIExportImportHelper {
     const _data = await this.uiStorage.export();
 
     const mainJsonData = this.uiHelper.cloneData(_data);
+    if (Array.isArray(mainJsonData?.SETTINGS)) {
+      // Backup files leave the device, so credentials are never written into them.
+      mainJsonData.SETTINGS = mainJsonData.SETTINGS.map((_settings: unknown) =>
+        withoutSettingsSecrets(_settings),
+      );
+    }
 
     const chunkedData: { fileName: string; content: unknown }[] = [];
     for (const c of EXPORT_CHUNKING_CONFIG) {

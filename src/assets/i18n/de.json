@@ -1358,6 +1358,7 @@
     "SORT_PREPARATION_TOOLS": "Zubereitungsmethoden sortieren",
     "PREPARATION_TYPE_METICULOUS": "Meticulous",
     "EXPORT_CAUTION": "Exportiert nur die Datenbank, keine Bilder, keine Flow-Profile, wenn diese benötigt werden, besuche bitte Gitbook für weitere Informationen",
+    "EXPORT_CAUTION_CREDENTIALS": "Passwörter, API-Schlüssel und Tokens sind nicht im Export enthalten. Gib sie auf einem neuen Gerät erneut ein.",
     "POPOVER_FREEZE_COFFEE_BEAN": "Kaffeebohnen einfrieren",
     "POPOVER_UNFREEZE_COFFEE_BEAN": "Kaffeebohnen auftauen",
     "BEAN_POPOVER_EDIT_FREEZE_DATE": "Einfrierdatum bearbeiten",

@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 import { AppEvent } from '../classes/appEvent/appEvent';
+import { withDeviceSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { EventQueueService } from './queueService/queue-service.service';
 import { UILog } from './uiLog';
@@ -148,12 +149,8 @@ export class UIStorage {
       exportObj[_key] = _value;
     });
 
-    // #520 - Remove username and password before export.
-    if (exportObj && 'SETTINGS' in exportObj) {
-      exportObj['SETTINGS'][0].visualizer_username = '';
-      exportObj['SETTINGS'][0].visualizer_password = '';
-    }
-
+    // Contains credentials; files written for the user are stripped in
+    // UIExportImportHelper.buildExportZIP (see settingsSecrets.ts).
     return exportObj;
   }
 
@@ -239,7 +236,7 @@ export class UIStorage {
     // Before we import, we do a saftey backup
     const _backup = await this.__safteyBackup();
     try {
-      await this.__importBackup(_data);
+      await this.__importBackup(this.__keepDeviceSecrets(_data, _backup));
 
       return { BACKUP: false };
     } catch (ex) {
@@ -250,6 +247,24 @@ export class UIStorage {
         throw { BACKUP: true };
       }
     }
+  }
+
+  /**
+   * Backups do not contain credentials, so importing one must not wipe the
+   * credentials already stored on this device.
+   */
+  private __keepDeviceSecrets(_data: any, _deviceData: any): any {
+    const importedSettings = _data?.SETTINGS;
+    const deviceSettings = _deviceData?.SETTINGS?.[0];
+    if (!Array.isArray(importedSettings) || !deviceSettings) {
+      return _data;
+    }
+    return {
+      ..._data,
+      SETTINGS: importedSettings.map((_settings: unknown) =>
+        withDeviceSettingsSecrets(_settings, deviceSettings),
+      ),
+    };
   }
 
   private async __safteyBackup(): Promise<any> {
