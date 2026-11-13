@@ -3,6 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 const PORT = 4300;
 const BASE_URL = `http://localhost:${PORT}`;
 const isCI = !!process.env['CI'];
+const TABLET_SPECS = /tablet\.spec\.ts$/;
 
 /**
  * Browser E2E against the real Angular/Ionic app served by `ng serve`.
@@ -32,10 +33,27 @@ export default defineConfig({
     {
       name: 'pixel-7-chromium',
       use: { ...devices['Pixel 7'] },
+      testIgnore: TABLET_SPECS,
     },
-    // Add further projects deliberately, e.g. when a journey depends on WebKit or tablet layout:
+    // Tablet layout rules only: the journeys above do not change with the screen width.
+    {
+      name: 'tablet-landscape-chromium',
+      use: {
+        ...devices['Galaxy Tab S4 landscape'],
+        viewport: { width: 1024, height: 768 },
+      },
+      testMatch: TABLET_SPECS,
+    },
+    {
+      name: 'tablet-portrait-chromium',
+      use: {
+        ...devices['Galaxy Tab S4'],
+        viewport: { width: 768, height: 1024 },
+      },
+      testMatch: TABLET_SPECS,
+    },
+    // Add further projects deliberately, e.g. when a journey depends on WebKit:
     // { name: 'iphone-15-webkit', use: { ...devices['iPhone 15'] } },
-    // { name: 'ipad-landscape-webkit', use: { ...devices['iPad Pro 11 landscape'] } },
   ],
   webServer: {
     command: `pnpm exec ng serve --port ${PORT} --no-hmr --no-live-reload`,

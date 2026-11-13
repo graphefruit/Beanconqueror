@@ -94,6 +94,21 @@ $bq-on-action-primary: #ffffff;
   --bq-space-8: 32px;
   --bq-space-12: 48px;
 
+  // Layout on tablets (from 768px wide). Phones are narrower than each limit,
+  // so their layout does not change. Fixed px rather than rem: a larger text
+  // size should fill the column, not widen it past the screen.
+  // Content column for lists, forms and cards: about 80 characters of body
+  // text, two stat cards side by side, and exactly the width left on a 768px
+  // portrait tablet after the gutters.
+  --bq-content-max-width: 720px;
+  // Minimum space between the column and the screen edge.
+  --bq-content-gutter: var(--bq-space-6);
+  // A single full-width button stops here and is centred.
+  --bq-button-max-width: 480px;
+  // Sheets (action and sort sheets) as a centred panel; Ionic's own tablet
+  // dialog width, narrower than the content column behind it.
+  --bq-sheet-max-width: 600px;
+
   // Elevation
   --bq-shadow-bar: 0 -2px 10px rgba(0, 0, 0, 0.13);
   // Alerts, popovers and toasts float above the page; espresso-tinted so the
