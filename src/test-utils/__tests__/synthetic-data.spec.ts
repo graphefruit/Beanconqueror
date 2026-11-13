@@ -74,7 +74,7 @@ function startUpCheck(versionEntry: SyntheticDataSet['VERSION'][number]) {
       },
       {
         provide: UIStorage,
-        useValue: { hasData: () => Promise.resolve(true) },
+        useValue: { getDataState: () => Promise.resolve('data') },
       },
       { provide: ModalController, useValue: { create: openModal } },
       // Not the native app: the update screens are checked against the web build's version.

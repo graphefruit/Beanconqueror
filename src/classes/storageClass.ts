@@ -46,6 +46,14 @@ export abstract class StorageClass {
    */
   private isInitialized: number = -1;
 
+  /**
+   * Why the collection must not be written, if so: its stored entries are
+   * being read, or they could not be read. `storedData` is empty then, but
+   * the stored entries are not known to be, and every write stores the whole
+   * collection, so a write would replace them.
+   */
+  private writeBlock: 'reading' | 'read-failed' | undefined;
+
   protected constructor(protected dbPath: string) {
     this.DB_PATH = dbPath;
   }
@@ -112,6 +120,25 @@ export abstract class StorageClass {
     return failedEntry;
   }
 
+  /**
+   * Refuses a write while the stored entries are not known (`writeBlock`):
+   * logs it, tells the user and resolves true. Nothing is changed then, in
+   * memory or stored, and no event is sent.
+   */
+  private async __refusesWrite(_action: string): Promise<boolean> {
+    if (this.writeBlock === undefined) {
+      return false;
+    }
+    const message =
+      `Storage - ${_action} - Unsuccessfully - ${this.DB_PATH} - ` +
+      (this.writeBlock === 'reading'
+        ? 'the stored entries are still being read, nothing was saved'
+        : 'the stored entries could not be read, nothing was saved');
+    this.uiLog.error(message);
+    await this.showAlertSafely(message, 'CRITICAL ERROR');
+    return true;
+  }
+
   public async initializeStorage() {
     await this.__initializeStorage();
   }
@@ -147,8 +174,13 @@ export abstract class StorageClass {
   public async reinitializeStorage() {
     this.uiLog.log(`Storage - Reinitialize ${this.DB_PATH}`);
     this.isInitialized = -1;
-    await this.__initializeStorage();
-    this.__sendEvent('REINITIALIZE');
+    try {
+      await this.__initializeStorage();
+    } finally {
+      // Also when the entries could not be read: the ones read before are
+      // gone, so the typed storages have to drop their cached objects.
+      this.__sendEvent('REINITIALIZE');
+    }
   }
 
   protected getInitializeValue(): number {
@@ -171,6 +203,9 @@ export abstract class StorageClass {
   public async addAndConfirm(_entry): Promise<StorageClassAddResult> {
     let newEntry: any;
     let saved = false;
+    if (await this.__refusesWrite('Add')) {
+      return { entry: this.createFailedAddEntry(_entry), saved };
+    }
     try {
       newEntry = StorageClass.cloneData(this.prepareEntryForStorage(_entry));
       newEntry.config.uuid = crypto.randomUUID();
@@ -210,6 +245,9 @@ export abstract class StorageClass {
     _obj,
     _options: StorageWriteOptions = {},
   ): Promise<boolean> {
+    if (await this.__refusesWrite('Update')) {
+      return false;
+    }
     try {
       let updatedObj = this.prepareEntryForStorage(_obj);
       let didUpdate: boolean = false;
@@ -283,6 +321,9 @@ export abstract class StorageClass {
   public async backfillWithoutTouch(
     _fill: (entries: any[]) => number,
   ): Promise<boolean> {
+    if (await this.__refusesWrite('Backfill')) {
+      return false;
+    }
     try {
       const changed = _fill(this.storedData);
       if (!changed) {
@@ -371,12 +412,19 @@ export abstract class StorageClass {
     return this.DB_PATH;
   }
 
+  /**
+   * Reads the stored entries. A collection that could not be read is not an
+   * empty one: this rejects, storageReady() rejects, and the collection
+   * refuses every write until it was read (see `writeBlock`), so the stored
+   * entries are never replaced by entries added to an empty list.
+   */
   protected async __initializeStorage() {
     this.storedData = [];
     this.isInitialized = -1;
+    this.writeBlock = 'reading';
     const promise = new Promise((resolve, reject) => {
       this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
-      this.uiStorage.get(this.DB_PATH).then(
+      this.uiStorage.getOrFail(this.DB_PATH).then(
         (_data) => {
           if (_data === null || _data === undefined) {
             this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
@@ -394,14 +442,19 @@ export abstract class StorageClass {
             this.storedData = _data;
             this.isInitialized = 1;
           }
+          this.writeBlock = undefined;
           this.__forgetExistingDeletions();
           resolve(undefined);
         },
         (e) => {
           // Error
-          this.uiLog.log(`Storage error - ${this.DB_PATH}`, e);
+          this.uiLog.error(
+            `Storage error - ${this.DB_PATH} - could not be read, it is not written until it was`,
+            e,
+          );
           this.storedData = [];
           this.isInitialized = 0;
+          this.writeBlock = 'read-failed';
           reject();
         },
       );
@@ -410,6 +463,9 @@ export abstract class StorageClass {
   }
 
   private async __delete(_uuid: string): Promise<boolean> {
+    if (await this.__refusesWrite('Delete')) {
+      return false;
+    }
     try {
       if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
         const deleteUUID = _uuid;

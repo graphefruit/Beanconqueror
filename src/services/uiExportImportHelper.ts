@@ -151,6 +151,8 @@ export class UIExportImportHelper {
   /**
    * Set when the internal backup was to be restored at start-up, but was
    * not: the current data could not be saved first, or the import failed.
+   * Also set when the database could not be read at start-up, so nothing
+   * was compared with the internal backup.
    * Beanconqueror.zip still holds the data to restore, so the automatic
    * backups leave it alone for the rest of this session, and the next start
    * can offer the restore again.
@@ -400,7 +402,19 @@ export class UIExportImportHelper {
       this.uiLog.log(
         'checkBackupAndSeeIfDataAreCorrupted - Check if we got a corruption',
       );
-      const hasData = await this.uiStorage.hasData();
+      const dataState = await this.uiStorage.getDataState();
+      if (dataState === 'unknown') {
+        // Not an empty database: the entries can still be stored and be
+        // newer than the internal backup, so nothing is imported. The file
+        // is the only copy known to be readable, so the automatic backups
+        // leave it alone for the rest of this session.
+        this.internalBackupNotRestored = true;
+        this.uiLog.error(
+          'checkBackupAndSeeIfDataAreCorrupted - The database could not be read, the internal backup is not imported and kept as it is',
+        );
+        return;
+      }
+      const hasData = dataState === 'data';
 
       let actualUIStorageDataObj;
       if (hasData) {
@@ -635,7 +649,16 @@ export class UIExportImportHelper {
     this.buildExportZIP().then(
       async (_blob) => {
         try {
-          const hasData = await this.uiStorage.hasData();
+          const dataState = await this.uiStorage.getDataState();
+          if (dataState === 'unknown') {
+            // The ZIP was built from a database that cannot be read now, so
+            // it is not trusted to replace a backup.
+            this.uiLog.error(
+              'The database could not be read, no automatic backup is written',
+            );
+            return;
+          }
+          const hasData = dataState === 'data';
 
           let actualUIStorageDataObj;
           if (hasData) {

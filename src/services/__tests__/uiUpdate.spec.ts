@@ -268,7 +268,12 @@ describe('UIUpdate change info migration', () => {
           },
         },
         { provide: TranslateService, useValue: {} },
-        { provide: UIStorage, useValue: { hasData: async () => hasData } },
+        {
+          provide: UIStorage,
+          useValue: {
+            getDataState: () => Promise.resolve(hasData ? 'data' : 'empty'),
+          },
+        },
         { provide: UIHelper, useValue: {} },
       ],
     });
@@ -383,7 +388,9 @@ describe('UIUpdate duplicate entries migration', () => {
         { provide: TranslateService, useValue: {} },
         {
           provide: UIStorage,
-          useValue: { hasData: () => Promise.resolve(hasData) },
+          useValue: {
+            getDataState: () => Promise.resolve(hasData ? 'data' : 'empty'),
+          },
         },
         { provide: UIHelper, useValue: {} },
       ],

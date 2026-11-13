@@ -26,6 +26,11 @@ import {
 import { EventQueueService } from './queueService/queue-service.service';
 import { UILog } from './uiLog';
 
+/**
+ * 'unknown': the database could not be read. That is not 'empty'.
+ */
+export type StoredDataState = 'data' | 'empty' | 'unknown';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -200,7 +205,15 @@ export class UIStorage {
     await this._storage.clear();
   }
 
-  public async hasData(): Promise<boolean> {
+  /**
+   * Whether the database holds data of a used installation: a VERSION entry
+   * with at least one finished data update.
+   *
+   * A database that could not be read is 'unknown' and never taken for an
+   * empty one: the entries can still be stored. Every caller has to decide
+   * what it leaves alone then.
+   */
+  public async getDataState(): Promise<StoredDataState> {
     let hasData: boolean = false;
 
     try {
@@ -217,9 +230,10 @@ export class UIStorage {
           } catch (ex) {}
         }
       });
-      return hasData;
+      return hasData ? 'data' : 'empty';
     } catch (ex) {
-      return false;
+      this.uiLog.error('UIStorage - Data state - could not be read', ex);
+      return 'unknown';
     }
   }
 

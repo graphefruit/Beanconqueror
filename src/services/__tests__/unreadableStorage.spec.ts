@@ -1,0 +1,598 @@
+import { TestBed } from '@angular/core/testing';
+
+import { ModalController, Platform } from '@ionic/angular/standalone';
+import { Storage } from '@ionic/storage';
+
+import { TranslateService } from '@ngx-translate/core';
+
+import { StorageClass } from '../../classes/storageClass';
+import { Version } from '../../classes/version/iVersion';
+import { createLegacyData } from '../../test-utils/legacy-data-fixture';
+import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
+import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-entries-migration.service';
+import { EventQueueService } from '../queueService/queue-service.service';
+import { UIAlert } from '../uiAlert';
+import { UIBeanStorage } from '../uiBeanStorage';
+import { UIBrewStorage } from '../uiBrewStorage';
+import { UIExportImportHelper } from '../uiExportImportHelper';
+import { UIFileHelper } from '../uiFileHelper';
+import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
+import { UIMillStorage } from '../uiMillStorage';
+import { UIPreparationStorage } from '../uiPreparationStorage';
+import { UISettingsStorage } from '../uiSettingsStorage';
+import { UIStorage } from '../uiStorage';
+import { UIUpdate } from '../uiUpdate';
+import { UiVersionStorage } from '../uiVersionStorage';
+
+/**
+ * A database as the app sees it. `readable: false` is a database that
+ * cannot be read: every read rejects, as when IndexedDB lost its connection.
+ */
+function createDeviceDatabase(
+  _initial: Record<string, unknown>,
+  _state: { readable: boolean },
+) {
+  const data = new Map<string, unknown>(
+    Object.entries(structuredClone(_initial)),
+  );
+  const unreadable = () => Promise.reject(new Error('database not readable'));
+  return {
+    data,
+    set: (key: string, value: unknown) => {
+      data.set(key, structuredClone(value));
+      return Promise.resolve();
+    },
+    get: (key: string) =>
+      _state.readable
+        ? Promise.resolve(data.has(key) ? structuredClone(data.get(key)) : null)
+        : unreadable(),
+    forEach: (cb: (value: unknown, key: string, i: number) => void) => {
+      if (!_state.readable) {
+        return unreadable();
+      }
+      let i = 0;
+      for (const [key, value] of data) {
+        cb(structuredClone(value), key, i++);
+      }
+      return Promise.resolve();
+    },
+  };
+}
+
+function createLog() {
+  const lines: string[] = [];
+  const add = (_message: string) => lines.push(_message);
+  return { lines, log: add, info: add, error: add, debug: add };
+}
+
+describe('Checking the internal backup at start-up with a database that cannot be read', () => {
+  /**
+   * The app on a device storing `_stored`, with `_backupFile` as its
+   * internal backup file.
+   */
+  async function startApp(
+    _stored: Record<string, unknown>,
+    _state: { readable: boolean },
+    _backupFile?: Uint8Array,
+  ) {
+    const log = createLog();
+    const writeInternalFileFromBlob = jasmine
+      .createSpy('writeInternalFileFromBlob')
+      .and.resolveTo(undefined);
+    const writeFileFromBlob = jasmine
+      .createSpy('writeFileFromBlob')
+      .and.resolveTo(undefined);
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIExportImportHelper,
+        UIStorage,
+        {
+          provide: Storage,
+          useValue: {
+            create: () =>
+              Promise.resolve(createDeviceDatabase(_stored, _state)),
+          },
+        },
+        { provide: EventQueueService, useValue: { dispatch: () => undefined } },
+        {
+          provide: UIHelper,
+          useValue: { cloneData: <T>(v: T): T => structuredClone(v) },
+        },
+        // The internal backup is only checked in the app.
+        {
+          provide: Platform,
+          useValue: { is: (_platform: string) => _platform === 'capacitor' },
+        },
+        { provide: UILog, useValue: log },
+        {
+          provide: UIFileHelper,
+          useValue: {
+            readInternalFileAsUint8Array: () => Promise.resolve(_backupFile),
+            writeInternalFileFromBlob,
+            writeFileFromBlob,
+          },
+        },
+        {
+          provide: UISettingsStorage,
+          useValue: {
+            getSettings: () => ({
+              welcome_page_showed: true,
+              show_backup_issues: true,
+            }),
+          },
+        },
+        {
+          provide: UIAlert,
+          useValue: {
+            showLoadingSpinner: () => Promise.resolve(),
+            hideLoadingSpinner: () => Promise.resolve(),
+            showMessage: () => Promise.resolve(),
+          },
+        },
+        {
+          provide: UIBrewStorage,
+          useValue: { getAllEntries: () => [{}] },
+        },
+        { provide: ModalController, useValue: {} },
+      ],
+    });
+    await TestBed.inject(UIStorage).init();
+    const helper = TestBed.inject(UIExportImportHelper);
+    const popover = spyOn(helper, 'showDataCorruptionPopover').and.resolveTo(
+      false,
+    );
+    const importBackup = spyOn(helper, 'importBackup').and.resolveTo({
+      BACKUP: false,
+    });
+    return {
+      helper,
+      popover,
+      importBackup,
+      log,
+      writeInternalFileFromBlob,
+      writeFileFromBlob,
+    };
+  }
+
+  /** The backup file a device storing `_data` writes. */
+  async function writeBackupFile(
+    _data: Record<string, unknown>,
+  ): Promise<Uint8Array> {
+    const { helper } = await startApp(_data, { readable: true });
+    return new Uint8Array(await (await helper.buildExportZIP()).arrayBuffer());
+  }
+
+  it('does not import the internal backup', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const { helper, importBackup, popover } = await startApp(
+      data,
+      { readable: false },
+      backupFile,
+    );
+
+    await helper.checkBackup();
+
+    expect(importBackup).not.toHaveBeenCalled();
+    expect(popover).not.toHaveBeenCalled();
+  });
+
+  it('logs that the import was skipped', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const { helper, log } = await startApp(
+      data,
+      { readable: false },
+      backupFile,
+    );
+
+    await helper.checkBackup();
+
+    expect(
+      log.lines.some((_line) =>
+        _line.includes('could not be read, the internal backup is not'),
+      ),
+    ).toBeTrue();
+  });
+
+  it('keeps the internal backup file for the rest of the session', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const state = { readable: false };
+    const { helper, writeInternalFileFromBlob, writeFileFromBlob } =
+      await startApp(data, state, backupFile);
+    await helper.checkBackup();
+
+    // The database can be read again, and a change triggers the backups.
+    state.readable = true;
+    await helper.saveAutomaticBackups();
+    await new Promise((_resolve) => setTimeout(_resolve, 200));
+
+    expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
+    // The backup of the day is still written.
+    expect(writeFileFromBlob).toHaveBeenCalledTimes(1);
+  });
+
+  it('still imports the internal backup without asking when the database is empty', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const { helper, importBackup, popover } = await startApp(
+      {},
+      { readable: true },
+      backupFile,
+    );
+
+    await helper.checkBackup();
+
+    expect(importBackup).toHaveBeenCalledTimes(1);
+    expect(importBackup.calls.mostRecent().args[1]).toBe('internal_backup');
+    expect(popover).not.toHaveBeenCalled();
+  });
+
+  it('writes no automatic backup while the database cannot be read', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const state = { readable: true };
+    const { helper, writeInternalFileFromBlob, writeFileFromBlob } =
+      await startApp(data, state);
+    spyOn(helper, 'buildExportZIP').and.resolveTo(new Blob(['zip']));
+    state.readable = false;
+
+    await helper.saveAutomaticBackups();
+    await new Promise((_resolve) => setTimeout(_resolve, 200));
+
+    expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(writeFileFromBlob).not.toHaveBeenCalled();
+  });
+});
+
+describe('The start-up update check with a database that cannot be read', () => {
+  it('runs no data update and marks none as done', async () => {
+    const version = new Version();
+    for (let i = 1; i <= 15; i++) {
+      version.pushUpdatedDataVersion(`UPDATE_${i}`);
+    }
+    const saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
+    const run = jasmine.createSpy('run').and.resolveTo(true);
+    const showLoadingSpinner = jasmine
+      .createSpy('showLoadingSpinner')
+      .and.resolveTo();
+    const log = createLog();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIUpdate,
+        UIStorage,
+        {
+          provide: Storage,
+          useValue: {
+            create: () =>
+              Promise.resolve(createDeviceDatabase({}, { readable: false })),
+          },
+        },
+        { provide: EventQueueService, useValue: { dispatch: () => undefined } },
+        { provide: ChangeTrackingMigrationService, useValue: { run } },
+        { provide: DuplicateEntriesMigrationService, useValue: { run } },
+        {
+          provide: UiVersionStorage,
+          useValue: { getVersion: () => version, saveVersion },
+        },
+        { provide: UILog, useValue: log },
+        { provide: UIBrewStorage, useValue: {} },
+        { provide: UIBeanStorage, useValue: {} },
+        { provide: UIPreparationStorage, useValue: {} },
+        { provide: UIMillStorage, useValue: {} },
+        { provide: UISettingsStorage, useValue: {} },
+        { provide: Platform, useValue: { is: () => true } },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        {
+          provide: UIAlert,
+          useValue: {
+            showLoadingSpinner,
+            hideLoadingSpinner: () => Promise.resolve(),
+            isLoadingSpinnerShown: () => false,
+          },
+        },
+        { provide: TranslateService, useValue: {} },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    await TestBed.inject(UIStorage).init();
+
+    await TestBed.inject(UIUpdate).checkUpdate();
+
+    expect(run).not.toHaveBeenCalled();
+    expect(saveVersion).not.toHaveBeenCalled();
+    expect(showLoadingSpinner).not.toHaveBeenCalled();
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_16')).toBeFalse();
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_17')).toBeFalse();
+    expect(
+      log.lines.some((_line) =>
+        _line.includes('could not be read, no data update is run'),
+      ),
+    ).toBeTrue();
+  });
+});
+
+describe('A collection that could not be read', () => {
+  class TestStorage extends StorageClass {
+    public constructor() {
+      super('BEANS');
+    }
+  }
+
+  const stored = () => [
+    { config: { uuid: 'stored-1', unix_timestamp: 1 }, name: 'Stored 1' },
+    { config: { uuid: 'stored-2', unix_timestamp: 2 }, name: 'Stored 2' },
+  ];
+
+  let database: Record<string, unknown>;
+  let readable: boolean;
+  let uiStorage: { getOrFail: jasmine.Spy; set: jasmine.Spy };
+  let log: ReturnType<typeof createLog>;
+  let showMessage: jasmine.Spy;
+  let storage: TestStorage;
+
+  beforeEach(() => {
+    database = { BEANS: stored() };
+    readable = false;
+    log = createLog();
+    showMessage = jasmine.createSpy('showMessage').and.resolveTo();
+    uiStorage = {
+      getOrFail: jasmine.createSpy('getOrFail'),
+      set: jasmine.createSpy('set'),
+    };
+    // What UIStorage does once its attempts to read are used up.
+    uiStorage.getOrFail.and.callFake((_key: string) =>
+      readable
+        ? Promise.resolve(structuredClone(database[_key] ?? null))
+        : Promise.reject(
+            new Error(`UIStorage - Get Key - ${_key} could not be read`),
+          ),
+    );
+    uiStorage.set.and.callFake((_key: string, _value: unknown) => {
+      database[_key] = structuredClone(_value);
+      return Promise.resolve(true);
+    });
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UIStorage, useValue: uiStorage },
+        { provide: UILog, useValue: log },
+      ],
+    });
+    spyOn(UIAlert, 'getInstance').and.returnValue({ showMessage } as any);
+    storage = TestBed.runInInjectionContext(() => new TestStorage());
+  });
+
+  it('is reported as not initialized', async () => {
+    await expectAsync(storage.initializeStorage()).toBeRejected();
+    await expectAsync(storage.storageReady()).toBeRejected();
+  });
+
+  it('does not replace the stored entries when an entry is added', async () => {
+    await storage.initializeStorage().catch(() => undefined);
+
+    const result = await storage.addAndConfirm({ config: {}, name: 'New' });
+
+    expect(result.saved).toBeFalse();
+    expect(uiStorage.set).not.toHaveBeenCalled();
+    expect(database.BEANS).toEqual(stored());
+    expect(storage.getAllEntries()).toEqual([]);
+  });
+
+  it('does not replace the stored entries when an entry is updated, removed or filled in', async () => {
+    await storage.initializeStorage().catch(() => undefined);
+
+    expect(await storage.update(stored()[0])).toBeFalse();
+    expect(await storage.removeByUUID('stored-1')).toBeFalse();
+    expect(await storage.removeByObject(stored()[1])).toBeFalse();
+    expect(await storage.backfillWithoutTouch(() => 1)).toBeFalse();
+
+    expect(uiStorage.set).not.toHaveBeenCalled();
+    expect(database.BEANS).toEqual(stored());
+  });
+
+  it('logs and reports a write it did not make', async () => {
+    await storage.initializeStorage().catch(() => undefined);
+
+    await storage.add({ config: {}, name: 'New' });
+
+    expect(
+      log.lines.some((_line) =>
+        _line.includes('Storage - Add - Unsuccessfully - BEANS'),
+      ),
+    ).toBeTrue();
+    expect(showMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('sends no event for a write it did not make', async () => {
+    await storage.initializeStorage().catch(() => undefined);
+    const events: unknown[] = [];
+    storage.attachOnEvent().subscribe((_event) => events.push(_event));
+    storage.attachOnRemove().subscribe((_event) => events.push(_event));
+
+    await storage.add({ config: {}, name: 'New' });
+    await storage.removeByUUID('stored-1');
+
+    expect(events).toEqual([]);
+  });
+
+  it('can be written again once it was read', async () => {
+    await storage.initializeStorage().catch(() => undefined);
+    readable = true;
+
+    await storage.reinitializeStorage();
+    const result = await storage.addAndConfirm({ config: {}, name: 'New' });
+
+    expect(result.saved).toBeTrue();
+    expect((database.BEANS as unknown[]).length).toBe(3);
+  });
+
+  it('stays unwritten when reading it again fails after an import', async () => {
+    readable = true;
+    await storage.initializeStorage();
+    readable = false;
+    const events: any[] = [];
+    storage.attachOnEvent().subscribe((_event) => events.push(_event));
+
+    await expectAsync(storage.reinitializeStorage()).toBeRejected();
+    const result = await storage.addAndConfirm({ config: {}, name: 'New' });
+
+    expect(result.saved).toBeFalse();
+    expect(database.BEANS).toEqual(stored());
+    // Lets the typed storages drop the objects of the entries read before.
+    expect(events).toEqual([{ type: 'REINITIALIZE' }]);
+  });
+
+  it('is not written while it is being read', async () => {
+    let finishRead: (value: unknown) => void;
+    uiStorage.getOrFail.and.returnValue(
+      new Promise((_resolve) => {
+        finishRead = _resolve;
+      }),
+    );
+    const initialized = storage.initializeStorage();
+
+    const result = await storage.addAndConfirm({ config: {}, name: 'New' });
+    finishRead(stored());
+    await initialized;
+
+    expect(result.saved).toBeFalse();
+    expect(uiStorage.set).not.toHaveBeenCalled();
+    expect(storage.getAllEntries()).toEqual(stored());
+  });
+});
+
+describe('Settings and version that could not be read', () => {
+  // Both create their entry when none is stored. That must not happen when
+  // the stored one was only not read.
+  const database = () => ({
+    SETTINGS: [{ config: { uuid: 'settings', unix_timestamp: 1 } }],
+    VERSION: [
+      {
+        config: { uuid: 'version', unix_timestamp: 1 },
+        alreadyDisplayedVersions: [],
+        updatedDataVersions: ['UPDATE_1'],
+      },
+    ],
+  });
+
+  function createUnreadableStorage() {
+    const stored: Record<string, unknown> = database();
+    const set = jasmine
+      .createSpy('set')
+      .and.callFake((_key: string, _value: unknown) => {
+        stored[_key] = structuredClone(_value);
+        return Promise.resolve(true);
+      });
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: UIStorage,
+          useValue: {
+            getOrFail: () => Promise.reject(new Error('read failed')),
+            set,
+          },
+        },
+        { provide: UILog, useValue: createLog() },
+      ],
+    });
+    spyOn(UIAlert, 'getInstance').and.returnValue({
+      showMessage: () => Promise.resolve(),
+    } as any);
+    return { stored, set };
+  }
+
+  it('creates no new settings over the stored ones', async () => {
+    const { stored, set } = createUnreadableStorage();
+    const settingsStorage = TestBed.inject(UISettingsStorage);
+
+    await settingsStorage.initializeStorage().catch(() => undefined);
+
+    await expectAsync(settingsStorage.storageReady()).toBeRejected();
+    expect(set).not.toHaveBeenCalled();
+    expect(stored).toEqual(database());
+  });
+
+  it('creates no new version entry over the stored one and saves none', async () => {
+    const { stored, set } = createUnreadableStorage();
+    const versionStorage = TestBed.inject(UiVersionStorage);
+
+    await versionStorage.initializeStorage().catch(() => undefined);
+
+    await expectAsync(versionStorage.storageReady()).toBeRejected();
+    const version = versionStorage.getVersion();
+    version.pushUpdatedDataVersion('UPDATE_17');
+    await versionStorage.saveVersion(version);
+    expect(set).not.toHaveBeenCalled();
+    expect(stored).toEqual(database());
+  });
+});
+
+describe('UIStorage', () => {
+  async function createStorage(
+    _stored: Record<string, unknown>,
+    _state = { readable: true },
+  ) {
+    const log = createLog();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIStorage,
+        {
+          provide: Storage,
+          useValue: {
+            create: () =>
+              Promise.resolve(createDeviceDatabase(_stored, _state)),
+          },
+        },
+        { provide: EventQueueService, useValue: { dispatch: () => undefined } },
+        { provide: UILog, useValue: log },
+      ],
+    });
+    const uiStorage = TestBed.inject(UIStorage);
+    await uiStorage.init();
+    return { uiStorage, log };
+  }
+
+  describe('getDataState', () => {
+    it('is "data" when a data update is noted as done', async () => {
+      const { uiStorage } = await createStorage({
+        VERSION: [{ updatedDataVersions: ['UPDATE_1'] }],
+      });
+
+      expect(await uiStorage.getDataState()).toBe('data');
+    });
+
+    it('is "empty" when nothing is stored', async () => {
+      const { uiStorage } = await createStorage({});
+
+      expect(await uiStorage.getDataState()).toBe('empty');
+    });
+
+    it('is "empty" when no data update is noted as done', async () => {
+      const noUpdates = await createStorage({
+        VERSION: [{ updatedDataVersions: [] }],
+        SETTINGS: [{}],
+      });
+      const noList = await createStorage({ VERSION: [{}] });
+
+      expect(await noUpdates.uiStorage.getDataState()).toBe('empty');
+      expect(await noList.uiStorage.getDataState()).toBe('empty');
+    });
+
+    it('is "unknown" and not "empty" when the database cannot be read', async () => {
+      const { uiStorage, log } = await createStorage(
+        { VERSION: [{ updatedDataVersions: ['UPDATE_1'] }] },
+        { readable: false },
+      );
+
+      expect(await uiStorage.getDataState()).toBe('unknown');
+      expect(log.lines).toContain('UIStorage - Data state - could not be read');
+    });
+  });
+});
