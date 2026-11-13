@@ -25,7 +25,7 @@ export type ChangeInfo = Pick<
   'created_at' | 'updated_at' | 'rev' | 'updated_by'
 >;
 
-const CHANGE_INFO_FIELDS: ReadonlyArray<keyof ChangeInfo> = [
+export const CHANGE_INFO_FIELDS: ReadonlyArray<keyof ChangeInfo> = [
   'created_at',
   'updated_at',
   'rev',

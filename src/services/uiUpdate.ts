@@ -19,6 +19,7 @@ import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTy
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
 import { ChangeTrackingMigrationService } from './changeTracking/change-tracking-migration.service';
+import { DuplicateEntriesMigrationService } from './changeTracking/duplicate-entries-migration.service';
 import { UIAlert } from './uiAlert';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -52,6 +53,9 @@ export class UIUpdate {
   private readonly changeTrackingMigration = inject(
     ChangeTrackingMigrationService,
   );
+  private readonly duplicateEntriesMigration = inject(
+    DuplicateEntriesMigrationService,
+  );
 
   public async checkUpdate() {
     this.uiLog.info('Check updates');
@@ -75,6 +79,7 @@ export class UIUpdate {
         'UPDATE_14',
         'UPDATE_15',
         'UPDATE_16',
+        'UPDATE_17',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -104,6 +109,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_14', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_15', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_16', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_17', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -637,6 +643,17 @@ export class UIUpdate {
             // written. When something could not be stored it is not marked
             // as done, so the next start continues it.
             if (!(await this.changeTrackingMigration.run())) {
+              resolve(false);
+              return;
+            }
+            break;
+          case 'UPDATE_17':
+            // Removes identical copies of entries that share a uuid and
+            // gives differing copies a new uuid when nothing depends on the
+            // shared one. Collections without such copies are not written.
+            // When something could not be stored it is not marked as done,
+            // so the next start continues it.
+            if (!(await this.duplicateEntriesMigration.run())) {
               resolve(false);
               return;
             }

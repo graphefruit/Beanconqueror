@@ -11,6 +11,7 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { Version } from '../../classes/version/iVersion';
 import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
+import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-entries-migration.service';
 import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -147,6 +148,10 @@ describe('UIUpdate data migrations and change info', () => {
           provide: ChangeTrackingMigrationService,
           useValue: { run: async () => true },
         },
+        {
+          provide: DuplicateEntriesMigrationService,
+          useValue: { run: () => Promise.resolve(true) },
+        },
         { provide: Platform, useValue: { is: () => true } },
         { provide: ModalController, useValue: {} },
         { provide: UIFileHelper, useValue: {} },
@@ -230,6 +235,10 @@ describe('UIUpdate change info migration', () => {
       providers: [
         UIUpdate,
         { provide: ChangeTrackingMigrationService, useValue: { run } },
+        {
+          provide: DuplicateEntriesMigrationService,
+          useValue: { run: () => Promise.resolve(true) },
+        },
         {
           provide: UiVersionStorage,
           useValue: { getVersion: () => version, saveVersion },
@@ -317,6 +326,129 @@ describe('UIUpdate change info migration', () => {
     version.pushUpdatedDataVersion('UPDATE_16');
 
     await (uiUpdate as any).__checkUpdateForDataVersion('UPDATE_16', false);
+
+    expect(run).not.toHaveBeenCalled();
+  });
+});
+
+describe('UIUpdate duplicate entries migration', () => {
+  let run: jasmine.Spy;
+  let version: Version;
+  let saveVersion: jasmine.Spy;
+  let hasData: boolean;
+  let uiUpdate: UIUpdate;
+
+  beforeEach(() => {
+    run = jasmine.createSpy('run');
+    hasData = true;
+    version = new Version();
+    saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIUpdate,
+        {
+          provide: ChangeTrackingMigrationService,
+          useValue: { run: () => Promise.resolve(true) },
+        },
+        { provide: DuplicateEntriesMigrationService, useValue: { run } },
+        {
+          provide: UiVersionStorage,
+          useValue: { getVersion: () => version, saveVersion },
+        },
+        {
+          provide: UILog,
+          useValue: {
+            log: () => undefined,
+            info: () => undefined,
+            error: () => undefined,
+          },
+        },
+        { provide: UIBrewStorage, useValue: {} },
+        { provide: UIBeanStorage, useValue: {} },
+        { provide: UIPreparationStorage, useValue: {} },
+        { provide: UIMillStorage, useValue: {} },
+        { provide: UISettingsStorage, useValue: {} },
+        { provide: Platform, useValue: { is: () => true } },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        {
+          provide: UIAlert,
+          useValue: {
+            showLoadingSpinner: () => Promise.resolve(),
+            hideLoadingSpinner: () => Promise.resolve(),
+            isLoadingSpinnerShown: () => false,
+          },
+        },
+        { provide: TranslateService, useValue: {} },
+        {
+          provide: UIStorage,
+          useValue: { hasData: () => Promise.resolve(hasData) },
+        },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    uiUpdate = TestBed.inject(UIUpdate);
+  });
+
+  function markEarlierMigrationsDone() {
+    for (let i = 1; i <= 16; i++) {
+      version.pushUpdatedDataVersion(`UPDATE_${i}`);
+    }
+  }
+
+  it('runs during the start-up update check for existing data', async () => {
+    markEarlierMigrationsDone();
+    run.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate();
+
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_17')).toBeTrue();
+    expect(saveVersion).toHaveBeenCalledWith(version);
+  });
+
+  it('runs during the start-up update check on a new install', async () => {
+    markEarlierMigrationsDone();
+    hasData = false;
+    run.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate();
+
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_17')).toBeTrue();
+  });
+
+  it('runs after the change info migration', async () => {
+    const order: string[] = [];
+    const changeInfo = TestBed.inject(ChangeTrackingMigrationService);
+    spyOn(changeInfo, 'run').and.callFake(() => {
+      order.push('UPDATE_16');
+      return Promise.resolve(true);
+    });
+    run.and.callFake(() => {
+      order.push('UPDATE_17');
+      return Promise.resolve(true);
+    });
+
+    await uiUpdate.checkUpdate();
+
+    expect(order).toEqual(['UPDATE_16', 'UPDATE_17']);
+  });
+
+  it('stays open when something could not be stored', async () => {
+    run.and.resolveTo(false);
+
+    await (uiUpdate as any).__checkUpdateForDataVersion('UPDATE_17', false);
+
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_17')).toBeFalse();
+    expect(saveVersion).not.toHaveBeenCalled();
+  });
+
+  it('does not run again once it is done', async () => {
+    version.pushUpdatedDataVersion('UPDATE_17');
+
+    await (uiUpdate as any).__checkUpdateForDataVersion('UPDATE_17', false);
 
     expect(run).not.toHaveBeenCalled();
   });
