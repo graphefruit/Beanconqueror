@@ -222,6 +222,10 @@ export class UIExportImportHelper {
         await this.__getBiggerFileBackupOrAutomatic();
 
       if (fileData) {
+        // Counted as an import would store it: after the copies of entries
+        // sharing a uuid were cleaned up, a backup written before has more
+        // entries than the device, although nothing was lost.
+        this.uiStorage.removeDuplicateEntries(fileData);
         let importBackup: boolean = false;
         if (!hasData && isAutomaticBackup === false) {
           /**We don't have any data, so we import the latest file data

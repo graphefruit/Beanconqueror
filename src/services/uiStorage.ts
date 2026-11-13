@@ -288,7 +288,8 @@ export class UIStorage {
    * uuid. Data update UPDATE_17 cleans them up on this device, and the same
    * cleanup runs on every backup before it is imported, so an import does
    * not bring them back (see classes/changeTracking/duplicateEntries.ts).
-   * The parsed backup is changed in place.
+   * The parsed backup is changed in place. The check of the internal backup
+   * at start-up uses it as well, to count the entries an import would store.
    *
    * Never throws; a failed cleanup does not stop the import. Each
    * collection is either cleaned completely or left as it is.
