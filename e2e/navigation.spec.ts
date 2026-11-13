@@ -1,7 +1,9 @@
+import type { AppPlugin } from '@capacitor/app';
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import type { NativeBoundary } from './support/native';
 
 /**
  * The tab bar holds Home, Brews, Beans and Profile. Preparation methods,
@@ -285,4 +287,101 @@ test('the profile marks a missing preparation method and names it', async ({
   await expect(
     page.getByRole('link', { name: 'Preparation methods None added yet' }),
   ).toBeVisible();
+});
+
+/**
+ * Presses the Android back key the way Ionic delivers it on a device: an
+ * `ionBackButton` event collects the registered handlers and the one with the
+ * highest priority (the last registered on a tie) runs. The web build blocks
+ * the hardware key, so the event is raised here instead.
+ */
+async function pressHardwareBack(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    type Handler = (processNext: () => void) => unknown;
+    const handlers: { priority: number; handler: Handler }[] = [];
+    document.dispatchEvent(
+      new CustomEvent('ionBackButton', {
+        detail: {
+          register: (priority: number, handler: Handler) =>
+            handlers.push({ priority, handler }),
+        },
+      }),
+    );
+    const next = () => {
+      let chosen: (typeof handlers)[number] | undefined;
+      for (const entry of handlers) {
+        if (!chosen || entry.priority >= chosen.priority) {
+          chosen = entry;
+        }
+      }
+      if (chosen) {
+        handlers.splice(handlers.indexOf(chosen), 1);
+        void chosen.handler(next);
+      }
+    };
+    next();
+  });
+}
+
+test.describe('the Android back key', () => {
+  test.beforeEach(async ({ page, native }) => {
+    // On the profile itself the key leaves the app, as on every tab.
+    await native.mockCapacitor<AppPlugin>('App', {
+      minimizeApp: () => undefined,
+    });
+    await page.goto('/');
+    await completeFirstRun(page);
+    await openProfile(page);
+  });
+
+  async function minimizeCalls(native: NativeBoundary) {
+    return (await native.calls()).filter(
+      (call) => call.plugin === 'App' && call.method === 'minimizeApp',
+    );
+  }
+
+  test('returns from preparation methods and grinders to the profile', async ({
+    page,
+    native,
+  }) => {
+    await page.getByRole('link', { name: /^Preparation methods/ }).click();
+    await expect(page).toHaveURL(/\/home\/profile\/preparations$/);
+    await pressHardwareBack(page);
+    await expect(page).toHaveURL(/\/home\/profile$/);
+    await expectProfileTabSelected(page);
+
+    await page.getByRole('link', { name: /^Grinders/ }).click();
+    await expect(page).toHaveURL(/\/home\/profile\/mills$/);
+    await pressHardwareBack(page);
+    await expect(page).toHaveURL(/\/home\/profile$/);
+    await expect(page.getByRole('link', { name: /^Grinders/ })).toBeVisible();
+    expect(await minimizeCalls(native)).toEqual([]);
+  });
+
+  test('returns to the profile from a former tab link', async ({
+    page,
+    native,
+  }) => {
+    await page.getByRole('tab', { name: 'Home' }).click();
+    await followInAppLink(page, '/home/mills');
+    await expect(page).toHaveURL(/\/home\/profile\/mills$/);
+    await pressHardwareBack(page);
+    await expect(page).toHaveURL(/\/home\/profile$/);
+    await expectProfileTabSelected(page);
+    expect(await minimizeCalls(native)).toEqual([]);
+  });
+
+  test('returns from statistics to the profile', async ({ page, native }) => {
+    await page.getByRole('link', { name: /^Statistics/ }).click();
+    await expect(page).toHaveURL(/\/statistic$/);
+    await pressHardwareBack(page);
+    await expect(page).toHaveURL(/\/home\/profile$/);
+    expect(await minimizeCalls(native)).toEqual([]);
+  });
+
+  test('leaves the app from the profile itself', async ({ page, native }) => {
+    await pressHardwareBack(page);
+    await expect.poll(() => minimizeCalls(native)).toHaveLength(1);
+    await expect(page).toHaveURL(/\/home\/profile$/);
+  });
 });
