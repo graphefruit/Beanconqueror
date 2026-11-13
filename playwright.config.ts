@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 4300;
+const PORT = Number(process.env['E2E_PORT'] ?? 4300);
 const BASE_URL = `http://localhost:${PORT}`;
 const isCI = !!process.env['CI'];
 const TABLET_SPECS = /tablet\.spec\.ts$/;

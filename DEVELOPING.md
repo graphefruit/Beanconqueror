@@ -45,6 +45,7 @@ Do not regenerate the file with `--suppress-all` to hide new errors.
 
 Playwright runs user journeys against the real app in an emulated Pixel 7 (Chromium). It starts
 its own dev server on port 4300, so nothing needs to be running beforehand. These run in CI.
+Set `E2E_PORT` to use another port, e.g. to run two worktrees side by side (`E2E_PORT=4310 pnpm e2e`).
 
 ```shell
 pnpm exec playwright install chromium # once
