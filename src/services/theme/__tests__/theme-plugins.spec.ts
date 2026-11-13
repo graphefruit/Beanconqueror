@@ -30,8 +30,13 @@ describe('THEME_PLUGINS', () => {
   });
 
   it('reads the platform from Capacitor', () => {
-    spyOn(Capacitor, 'getPlatform').and.returnValue('ios');
+    const getPlatform = spyOn(Capacitor, 'getPlatform');
+    const plugins = TestBed.inject(THEME_PLUGINS);
 
-    expect(TestBed.inject(THEME_PLUGINS).getPlatform()).toBe('ios');
+    // Two platforms, so a fixed return value cannot pass.
+    for (const platform of ['android', 'ios']) {
+      getPlatform.and.returnValue(platform);
+      expect(plugins.getPlatform()).withContext(platform).toBe(platform);
+    }
   });
 });
