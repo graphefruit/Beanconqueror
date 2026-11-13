@@ -237,6 +237,28 @@ export class UIStorage {
     }
   }
 
+  /**
+   * Asks the browser once at start-up not to clear the database when the
+   * device runs low on storage. Never rejects and is not waited for: the
+   * answer can depend on a question to the user.
+   */
+  public async requestPersistentStorage(): Promise<void> {
+    try {
+      const storageManager = navigator.storage;
+      if (typeof storageManager?.persist !== 'function') {
+        this.uiLog.log('UIStorage - Persistent storage - not available');
+        return;
+      }
+      const persisted = await storageManager.persist();
+      this.uiLog.log(
+        'UIStorage - Persistent storage - ' +
+          (persisted ? 'granted' : 'not granted'),
+      );
+    } catch (ex) {
+      this.uiLog.error('UIStorage - Persistent storage - request failed', ex);
+    }
+  }
+
   public async hasCorruptedData(): Promise<{
     CORRUPTED: boolean;
     DATA: {

@@ -595,4 +595,60 @@ describe('UIStorage', () => {
       expect(log.lines).toContain('UIStorage - Data state - could not be read');
     });
   });
+
+  describe('requestPersistentStorage', () => {
+    async function request(_storageManager: unknown): Promise<string[]> {
+      const { uiStorage, log } = await createStorage({});
+      spyOnProperty(navigator, 'storage', 'get').and.returnValue(
+        _storageManager as StorageManager,
+      );
+
+      await expectAsync(uiStorage.requestPersistentStorage()).toBeResolved();
+
+      return log.lines;
+    }
+
+    it('asks the browser to keep the database and logs that it does', async () => {
+      const persist = jasmine.createSpy('persist').and.resolveTo(true);
+
+      const lines = await request({ persist });
+
+      expect(persist).toHaveBeenCalledTimes(1);
+      expect(lines).toContain('UIStorage - Persistent storage - granted');
+    });
+
+    it('logs that the browser does not keep the database', async () => {
+      const lines = await request({ persist: () => Promise.resolve(false) });
+
+      expect(lines).toContain('UIStorage - Persistent storage - not granted');
+    });
+
+    it('does nothing where the browser has no persist()', async () => {
+      expect(await request({})).toContain(
+        'UIStorage - Persistent storage - not available',
+      );
+    });
+
+    it('does nothing where the browser has no storage manager', async () => {
+      expect(await request(undefined)).toContain(
+        'UIStorage - Persistent storage - not available',
+      );
+    });
+
+    it('does not fail when the browser rejects the request', async () => {
+      expect(
+        await request({ persist: () => Promise.reject(new Error('no')) }),
+      ).toContain('UIStorage - Persistent storage - request failed');
+    });
+
+    it('does not fail when asking throws', async () => {
+      expect(
+        await request({
+          persist: () => {
+            throw new Error('no');
+          },
+        }),
+      ).toContain('UIStorage - Persistent storage - request failed');
+    });
+  });
 });
