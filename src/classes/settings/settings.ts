@@ -8,6 +8,7 @@ import { PREPARATION_SORT_AFTER } from '../../enums/preparations/preparationSort
 import { PREPARATION_SORT_ORDER } from '../../enums/preparations/preparationSortOrder';
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { EXPERIENCE_MODE_ENUM } from '../../enums/settings/experienceMode';
 import { TEST_TYPE_ENUM } from '../../enums/settings/refractometer';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
@@ -24,6 +25,7 @@ import {
   BrewByWeightWebhookConfig,
   ISettings,
 } from '../../interfaces/settings/iSettings';
+import { IUserProfile } from '../../interfaces/settings/iUserProfile';
 import {
   PressureType,
   RefractometerType,
@@ -47,6 +49,7 @@ export class Settings implements ISettings {
   public startup_view: STARTUP_VIEW_ENUM;
   public date_format: string;
   public statistics: StatisticsSettings;
+  public user: IUserProfile;
 
   public matomo_analytics: boolean;
   public matomo_analytics_id: string;
@@ -339,6 +342,12 @@ export class Settings implements ISettings {
     this.date_format = 'DD.MM.YYYY';
     this.statistics = new StatisticsSettings();
     this.config = new Config();
+    // Default for new installations.
+    this.user = {
+      experience_mode: EXPERIENCE_MODE_ENUM.BEGINNER,
+      nickname: '',
+      whats_new_seen: '',
+    };
 
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
@@ -728,6 +737,8 @@ export class Settings implements ISettings {
       this.statistics.show_archived_mills = true;
     }
 
+    this.user = Settings.normalizeUserProfile(settingsObj.user);
+
     if (settingsObj.ai_provider !== undefined) {
       this.ai_provider = settingsObj.ai_provider;
     } else if ((settingsObj as any).cloud_ai_provider !== undefined) {
@@ -783,6 +794,30 @@ export class Settings implements ISettings {
         this.brew_by_weight_webhook.learnedLagTime = 0.5;
       }
     }
+  }
+
+  /**
+   * Always builds a new profile object, so the settings never share it with
+   * the stored raw data.
+   *
+   * Stored settings without a profile come from existing installations that
+   * already use the app fully, so they get the advanced mode.
+   */
+  private static normalizeUserProfile(_user: unknown): IUserProfile {
+    const isObject =
+      typeof _user === 'object' && _user !== null && !Array.isArray(_user);
+    const user = (isObject ? _user : {}) as Partial<
+      Record<keyof IUserProfile, unknown>
+    >;
+    const knownModes: unknown[] = Object.values(EXPERIENCE_MODE_ENUM);
+    return {
+      experience_mode: knownModes.includes(user.experience_mode)
+        ? (user.experience_mode as EXPERIENCE_MODE_ENUM)
+        : EXPERIENCE_MODE_ENUM.ADVANCED,
+      nickname: typeof user.nickname === 'string' ? user.nickname : '',
+      whats_new_seen:
+        typeof user.whats_new_seen === 'string' ? user.whats_new_seen : '',
+    };
   }
 
   public resetBeanFilter() {

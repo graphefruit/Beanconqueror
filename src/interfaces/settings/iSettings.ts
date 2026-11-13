@@ -21,6 +21,7 @@ import { IBrewParameter } from '../parameter/iBrewParameter';
 import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
 import { IGraphColors } from './iGraphColors';
 import { IStatisticsSettings } from './iStatisticsSettings';
+import { IUserProfile } from './iUserProfile';
 
 export interface BrewByWeightWebhookConfig {
   active: boolean;
@@ -47,6 +48,7 @@ export interface ISettings {
   startup_view: STARTUP_VIEW_ENUM;
   date_format: string;
   statistics: IStatisticsSettings;
+  user: IUserProfile;
 
   language: string;
   manage_parameters: IBrewParameter;
