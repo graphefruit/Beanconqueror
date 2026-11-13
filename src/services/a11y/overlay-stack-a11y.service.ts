@@ -36,12 +36,15 @@ const LIFECYCLE_EVENTS = Object.values(MODAL_OVERLAY_EVENT_PREFIXES).flatMap(
 /** Children of the overlay root that are never rendered. */
 const UNRENDERED = new Set(['LINK', 'META', 'SCRIPT', 'STYLE', 'TEMPLATE']);
 
+/** Marks the focus guards, which are neither overlay nor page. */
+const FOCUS_GUARD = 'data-overlay-focus-guard';
+
 const CONCEALING_ATTRIBUTES = ['aria-hidden', 'inert'] as const;
 type ConcealingAttribute = (typeof CONCEALING_ATTRIBUTES)[number];
 type SavedAttributes = Record<ConcealingAttribute, string | null>;
 
 /** Properties of an Ionic overlay host that decide how it stacks. */
-interface OverlayHost extends Element {
+interface OverlayHost extends HTMLElement {
   /** Rises with every overlay created or moved; Ionic's z-index follows it. */
   overlayIndex?: number;
   showBackdrop?: boolean;
@@ -72,8 +75,20 @@ function stackLevel(overlay: OverlayHost): number {
  */
 function pageLayers(root: Element): Element[] {
   return [...root.children].filter(
-    (child) => !child.matches(ALL_OVERLAYS) && !UNRENDERED.has(child.tagName),
+    (child) =>
+      !child.matches(ALL_OVERLAYS) &&
+      !child.hasAttribute(FOCUS_GUARD) &&
+      !UNRENDERED.has(child.tagName),
   );
+}
+
+/** The child of `root` that is or holds `element`, if it is in `root`. */
+function childOfRootHolding(root: Element, element: Element): Element | null {
+  let current: Element | null = element;
+  while (current && current.parentElement !== root) {
+    current = current.parentElement;
+  }
+  return current;
 }
 
 /**
@@ -94,6 +109,16 @@ function pageLayers(root: Element): Element[] {
  * order (`overlayIndex`). A mutation observer notices overlays that leave the
  * DOM without an event and restores the attributes when Ionic removes them
  * from a covered overlay, which it does whenever an overlay finishes opening.
+ *
+ * Tab past the last control of a modal or popover, or Shift+Tab before the
+ * first, moves focus out of it, and only then does Ionic pull focus back to
+ * the other end. Alerts, action sheets and loading messages have focusable
+ * guards of their own for this; modals and popovers rely on focus landing
+ * outside. With everything else inert, focus would leave the document
+ * instead, and Tab could not bring it back: the overlay's host has tabindex
+ * -1, which keeps the tab order from entering it from outside. So two empty
+ * guards, focusable but hidden from assistive technology, sit right before
+ * and after such an overlay on top.
  */
 @Injectable({
   providedIn: 'root',
@@ -111,6 +136,13 @@ export class OverlayStackA11yService {
   private readonly concealed = new Map<Element, SavedAttributes>();
   private observer?: MutationObserver;
   private observedRoot?: Element;
+  /** Placed right before and after the guarded overlay. */
+  private readonly focusGuards = [
+    this.createFocusGuard(),
+    this.createFocusGuard(),
+  ] as const;
+  /** The overlay on top whose focus guards are in place. */
+  private guarded?: OverlayHost;
 
   public start(): void {
     if (this.observer) {
@@ -122,6 +154,9 @@ export class OverlayStackA11yService {
         this.adoptForeignChanges(records);
         this.update();
       });
+      for (const guard of this.focusGuards) {
+        guard.addEventListener('focus', this.onFocusGuardFocus);
+      }
       for (const type of LIFECYCLE_EVENTS) {
         // Capture: before listeners of the overlay itself move focus.
         this.document.addEventListener(type, this.onLifecycleEvent, true);
@@ -140,13 +175,18 @@ export class OverlayStackA11yService {
     for (const [element, saved] of [...this.concealed]) {
       this.reveal(element, saved);
     }
+    for (const guard of this.focusGuards) {
+      guard.removeEventListener('focus', this.onFocusGuardFocus);
+      guard.remove();
+    }
+    this.guarded = undefined;
     this.presented.clear();
     this.leaving.clear();
   }
 
   private readonly onLifecycleEvent = (event: Event): void => {
     const overlay = event.target;
-    if (!(overlay instanceof Element)) {
+    if (!(overlay instanceof HTMLElement)) {
       return;
     }
     const prefix = MODAL_OVERLAY_EVENT_PREFIXES[overlay.localName];
@@ -212,9 +252,13 @@ export class OverlayStackA11yService {
       }
     }
     // A closing overlay above the top one stays as it is until it is gone.
-    const unchanged = stack.filter(
+    const unchanged: Element[] = stack.filter(
       (overlay) => this.leaving.has(overlay) && !conceal.has(overlay),
     );
+    // Ionic keeps focus in overlays with a shadow root (modals, popovers) by
+    // pulling it back once it has landed outside; see the class comment.
+    const top = topIndex >= 0 ? stack[topIndex] : undefined;
+    const guarded = top?.shadowRoot ? top : undefined;
 
     this.write(() => {
       for (const [element, saved] of [...this.concealed]) {
@@ -225,8 +269,56 @@ export class OverlayStackA11yService {
       for (const element of conceal) {
         this.conceal(element);
       }
+      this.placeFocusGuards(root, guarded);
     });
   }
+
+  private createFocusGuard(): HTMLElement {
+    const guard = this.document.createElement('div');
+    guard.setAttribute(FOCUS_GUARD, '');
+    guard.setAttribute('aria-hidden', 'true');
+    guard.tabIndex = 0;
+    // An empty box still takes focus. Fixed in the corner, out of the layout
+    // of ion-app, so that taking focus never scrolls anything.
+    Object.assign(guard.style, { position: 'fixed', top: '0', left: '0' });
+    return guard;
+  }
+
+  /**
+   * Right before and after `overlay`; an overlay that sits in another element
+   * of the root gets them around that element, never inside app content.
+   * Without an overlay, they are removed.
+   */
+  private placeFocusGuards(
+    root: Element,
+    overlay: OverlayHost | undefined,
+  ): void {
+    const [before, after] = this.focusGuards;
+    const anchor = overlay && childOfRootHolding(root, overlay);
+    this.guarded = anchor ? overlay : undefined;
+    if (!anchor) {
+      before.remove();
+      after.remove();
+      return;
+    }
+    if (anchor.previousSibling !== before) {
+      root.insertBefore(before, anchor);
+    }
+    if (anchor.nextSibling !== after) {
+      root.insertBefore(after, anchor.nextSibling);
+    }
+  }
+
+  /**
+   * Ionic's focus trap runs first and has moved focus into the overlay by
+   * now. Should it not have, focus goes to the overlay itself rather than
+   * stay on an element nobody can see.
+   */
+  private readonly onFocusGuardFocus = (event: FocusEvent): void => {
+    if (this.document.activeElement === event.target) {
+      this.guarded?.focus();
+    }
+  };
 
   private observeRoot(root: Element): void {
     if (this.observedRoot !== root) {

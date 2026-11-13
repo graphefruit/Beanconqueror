@@ -18,7 +18,9 @@ import { openTab } from './support/layout';
  * Otherwise touching the empty space of the top dialog, or having the screen
  * read from the top, reads what lies underneath. Everything below the top
  * overlay stays open but is inert and hidden from the accessibility tree until
- * the top one closes; then focus returns to the control that opened it.
+ * the top one closes; then focus returns to the control that opened it. Tab
+ * and Shift+Tab go round in the overlay on top as they would without the rest
+ * being inert.
  */
 
 /**
@@ -159,6 +161,94 @@ async function expectFocusStaysOn(
   await expect(focused).toBeFocused();
 }
 
+/**
+ * Tab from the last control of the overlay on top goes on to its first, and
+ * Shift+Tab from the first back to the last. Ionic pulls focus back only once
+ * it has left the overlay, so with all else inert, focus must still find a
+ * place to land outside instead of leaving the document.
+ */
+async function expectTabGoesRound(
+  page: Page,
+  first: Locator,
+  last: Locator,
+): Promise<void> {
+  await last.focus();
+  await page.keyboard.press('Tab');
+  await expect(first).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(last).toBeFocused();
+}
+
+test('Tab and Shift+Tab go round in a dialog above the page', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openTab(page, 'Beans');
+  const addBean = page.getByRole('button', { name: 'Add bean' });
+  await addBean.focus();
+  await page.keyboard.press('Enter');
+  const back = page.getByRole('button', { name: 'Back' });
+  await waitUntilOpen(back);
+
+  await expectTabGoesRound(
+    page,
+    back,
+    page.getByRole('button', { name: 'Save' }),
+  );
+
+  await page.keyboard.press('Escape');
+  await expect(back).toHaveCount(0);
+  await expect(addBean).toBeFocused();
+});
+
+test('Tab and Shift+Tab go round in a popover above a dialog', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openTab(page, 'Beans');
+  await page.getByRole('button', { name: 'Add bean' }).click();
+  const beanName = page.getByRole('textbox', {
+    name: /^Name/,
+    disabled: false,
+  });
+  await waitUntilOpen(beanName);
+  await beanName.focus();
+
+  // The app's popovers, such as the download menu of a brew's flow profile,
+  // need a recorded flow profile; a menu of the same kind stands in for them.
+  await page.evaluate(() => {
+    const content = document.createElement('ion-content');
+    for (const text of ['Download XLSX', 'Download JSON']) {
+      const item = Object.assign(document.createElement('ion-item'), {
+        button: true,
+        detail: false,
+      });
+      item.textContent = text;
+      content.append(item);
+    }
+    const menu = Object.assign(document.createElement('ion-popover'), {
+      isOpen: true,
+    });
+    menu.append(content);
+    document.querySelector('ion-app')?.append(menu);
+  });
+  const xlsx = page.getByRole('button', { name: 'Download XLSX' });
+  await waitUntilOpen(xlsx);
+  await expect(beanName).toHaveCount(0);
+
+  await expectTabGoesRound(
+    page,
+    xlsx,
+    page.getByRole('button', { name: 'Download JSON' }),
+  );
+
+  await page.keyboard.press('Escape');
+  await expect(xlsx).toHaveCount(0);
+  await expect(beanName).toBeFocused();
+});
+
 test('a half-height sheet keeps the page and its tab bar out of reach', async ({
   page,
 }) => {
@@ -266,12 +356,13 @@ test('the aroma picker hides the tasting dialog until it closes', async ({
     page.getByRole('button', { name: 'Cancel' }),
     hiddenAddAromas,
   );
-  // Tab and Shift+Tab at both ends of the picker stay out of it as well.
-  await page.getByRole('button', { name: 'Save' }).focus();
-  await page.keyboard.press('Tab');
-  expect(await focusIsInOverlayOf(hiddenAddAromas)).toBe(false);
-  await page.getByRole('button', { name: 'Back' }).focus();
-  await page.keyboard.press('Shift+Tab');
+  // Tab and Shift+Tab at both ends of the picker stay out of it as well and
+  // go round inside the picker.
+  await expectTabGoesRound(
+    page,
+    page.getByRole('button', { name: 'Back' }),
+    page.getByRole('button', { name: 'Save' }),
+  );
   expect(await focusIsInOverlayOf(hiddenAddAromas)).toBe(false);
 
   await page.keyboard.press('Escape');

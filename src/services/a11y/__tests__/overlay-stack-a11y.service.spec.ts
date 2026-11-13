@@ -61,13 +61,19 @@ describe('OverlayStackA11yService', () => {
     TestBed.inject(OverlayStackA11yService).start();
   });
 
-  /** Like Ionic's controllers: appended to ion-app, hidden, next stack index. */
+  /**
+   * Like Ionic's controllers: appended to ion-app, hidden, next stack index.
+   * As in Ionic, modals and popovers render into a shadow root.
+   */
   function create(
     tag = 'ion-modal',
     properties: Partial<FakeOverlay> = {},
     parent: Element = app,
   ): FakeOverlay {
     const overlay = doc.createElement(tag) as FakeOverlay;
+    if (tag === 'ion-modal' || tag === 'ion-popover') {
+      overlay.attachShadow({ mode: 'open' });
+    }
     overlay.classList.add('overlay-hidden');
     overlay.overlayIndex = nextOverlayIndex++;
     Object.assign(overlay, properties);
@@ -114,6 +120,25 @@ describe('OverlayStackA11yService', () => {
     fire(overlay, 'WillDismiss');
     finishDismissing(overlay);
     await mutationsDelivered();
+  }
+
+  /** Empty elements that take focus but are hidden from assistive technology. */
+  function focusGuards(): HTMLElement[] {
+    return [
+      ...doc.querySelectorAll<HTMLElement>(
+        '[tabindex="0"][aria-hidden="true"]',
+      ),
+    ];
+  }
+
+  /** Whether the two focus guards sit right before and after `element`. */
+  function guarded(element: Element): boolean {
+    const guards = focusGuards();
+    return (
+      guards.length === 2 &&
+      element.previousElementSibling === guards[0] &&
+      element.nextElementSibling === guards[1]
+    );
   }
 
   it('hides the page behind an overlay and gives it back afterwards', async () => {
@@ -431,6 +456,106 @@ describe('OverlayStackA11yService', () => {
 
     expect(state(content)).toEqual(CONCEALED);
     expect(state(dialog)).toEqual(UNTOUCHED);
+    expect(guarded(dialog)).toBeTrue();
+  });
+
+  // Ionic wraps focus around in a modal or popover only once it has left it,
+  // so focus needs somewhere to go outside while the rest is inert.
+  it('puts focus guards around a modal or popover on top', async () => {
+    for (const tag of ['ion-modal', 'ion-popover']) {
+      const overlay = await present(tag);
+      expect(guarded(overlay)).withContext(tag).toBeTrue();
+      for (const guard of focusGuards()) {
+        expect(guard.parentElement).withContext(tag).toBe(app);
+        expect(guard.tabIndex).withContext(tag).toBe(0);
+        expect(guard.childNodes.length).withContext(tag).toBe(0);
+        expect(guard.closest('[inert]'))
+          .withContext(`${tag}: a guard is never inert`)
+          .toBeNull();
+      }
+      expect(state(page)).withContext(tag).toEqual(CONCEALED);
+
+      await dismiss(overlay);
+      expect(focusGuards()).withContext(tag).toEqual([]);
+      expect(state(page)).withContext(tag).toEqual(UNTOUCHED);
+    }
+  });
+
+  it('moves the focus guards along with the dialog on top', async () => {
+    const form = await present();
+    const sheet = await present();
+    expect(guarded(sheet)).toBeTrue();
+
+    fire(sheet, 'WillDismiss');
+    expect(guarded(form))
+      .withContext('back at the form as soon as the sheet starts to close')
+      .toBeTrue();
+    finishDismissing(sheet);
+    await mutationsDelivered();
+    expect(guarded(form)).toBeTrue();
+
+    const chooser = await present('ion-popover');
+    expect(guarded(chooser)).toBeTrue();
+    expect(guarded(form)).toBeFalse();
+    chooser.remove();
+    await mutationsDelivered();
+    expect(guarded(form))
+      .withContext('back after the chooser left without an event')
+      .toBeTrue();
+
+    await dismiss(form);
+    expect(focusGuards()).toEqual([]);
+  });
+
+  it('leaves alerts, action sheets and loading messages to their own guards', async () => {
+    for (const tag of [
+      'ion-alert',
+      'ion-action-sheet',
+      'ion-loading',
+      'ion-picker-legacy',
+    ]) {
+      const overlay = await present(tag);
+      expect(focusGuards()).withContext(tag).toEqual([]);
+      await dismiss(overlay);
+    }
+
+    const form = await present();
+    const choices = await present('ion-alert');
+    expect(focusGuards()).withContext('an alert above a dialog').toEqual([]);
+    await dismiss(choices);
+    expect(guarded(form)).toBeTrue();
+  });
+
+  it('puts the focus guards around what holds a nested overlay', async () => {
+    const outer = await present();
+    const nested = create('ion-popover', {}, outer);
+    startPresenting(nested);
+    finishPresenting(nested);
+    await mutationsDelivered();
+
+    expect(guarded(outer)).toBeTrue();
+    expect(nested.parentElement).toBe(outer);
+  });
+
+  it('moves focus into the dialog only if nothing took it off a guard', async () => {
+    const dialog = await present();
+    const focusDialog = spyOn(dialog, 'focus');
+    const activeElement = spyOnProperty(doc, 'activeElement');
+    const [before, after] = focusGuards();
+
+    // Ionic's focus trap listens first and has moved focus into the dialog.
+    const control = doc.createElement('button');
+    dialog.append(control);
+    activeElement.and.returnValue(control);
+    before.dispatchEvent(new FocusEvent('focus'));
+    after.dispatchEvent(new FocusEvent('focus'));
+    expect(focusDialog).not.toHaveBeenCalled();
+
+    for (const guard of [before, after]) {
+      activeElement.and.returnValue(guard);
+      guard.dispatchEvent(new FocusEvent('focus'));
+    }
+    expect(focusDialog).toHaveBeenCalledTimes(2);
   });
 
   it('starts once and gives everything back when the app is destroyed', async () => {
@@ -438,10 +563,12 @@ describe('OverlayStackA11yService', () => {
     const form = await present();
     const sheet = await present();
     expect(state(form)).toEqual(CONCEALED);
+    expect(focusGuards().length).toBe(2);
 
     TestBed.inject(EnvironmentInjector).destroy();
     expect(state(form)).toEqual(UNTOUCHED);
     expect(state(page)).toEqual(UNTOUCHED);
+    expect(focusGuards()).toEqual([]);
 
     await dismiss(sheet);
     await present();
