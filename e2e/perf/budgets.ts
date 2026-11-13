@@ -18,18 +18,37 @@ export interface Budget {
   /** Scrolling the current brews to the oldest one, three screens per frame. */
   brewListScroll: number;
   brewListScrollLongestFrame: number;
-  /** Search in the brew list, including the field's 750 ms debounce. */
+  /** Search in the brew list until the list shows the matches, after the field's debounce. */
   search: number;
   beanListOpen: number;
   /** Profile > Statistics until the general numbers are shown and the main thread is quiet. */
   statisticsOpen: number;
-  /** The "Brews" segment until its charts are drawn and the main thread is quiet. */
+  /**
+   * The "Brews" segment until its charts are drawn and the main thread is quiet, after the
+   * delay before drawing.
+   */
   statisticsBrewCharts: number;
-  /** Settings > Export, from the tap until the app hands the ZIP to the browser. */
+  /**
+   * Settings > Export, from the tap until the app hands the ZIP to the browser, without the delay
+   * before the download.
+   */
   export: number;
   /** Settings > Import, from the moment the app gets the file until "Import successful" shows. */
   import: number;
 }
+
+/**
+ * Fixed waits of the app inside a measured flow, in milliseconds. They are taken off a value
+ * before it is compared with its budget, so a budget and its reserve cover the app's work only.
+ */
+export const FIXED_DELAYS = {
+  /** `debounce="750"` of the brew list's search field (src/app/brew/brew.page.html). */
+  search: 750,
+  /** `setTimeout(…, 250)` in `StatisticPage.loadBrewCharts()`. */
+  statisticsBrewCharts: 250,
+  /** `setTimeout(…, 250)` in `UIFileHelper.exportFileInBrowser()`. */
+  export: 250,
+} as const satisfies Partial<Record<keyof Budget, number>>;
 
 export const BUDGETS: Record<PerfTier, Budget> = {
   7_000: {
@@ -38,11 +57,11 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListOpen: 600, // 401 / 422
     brewListScroll: 31_000, // 22,218 / 23,791
     brewListScrollLongestFrame: 200, // 127 / 132
-    search: 1_150, // 839 / 871
+    search: 400, // 89 / 121
     beanListOpen: 700, // 419 / 519
     statisticsOpen: 250, // 75 / 80
-    statisticsBrewCharts: 650, // 482 / 490
-    export: 2_300, // 1,720 / 1,753
+    statisticsBrewCharts: 400, // 232 / 240
+    export: 2_050, // 1,470 / 1,503
     import: 2_600, // 1,935 / 1,972
   },
   15_000: {
@@ -51,11 +70,11 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListOpen: 750, // 555 / 556
     brewListScroll: 69_000, // 46,793 / 53,005
     brewListScrollLongestFrame: 300, // 226 / 231
-    search: 1_150, // 870 / 870
+    search: 400, // 120 / 120
     beanListOpen: 600, // 424 / 444
     statisticsOpen: 270, // 87 / 120
-    statisticsBrewCharts: 800, // 573 / 599
-    export: 3_100, // 2,345 / 2,396
+    statisticsBrewCharts: 550, // 323 / 349
+    export: 2_850, // 2,095 / 2,146
     import: 3_500, // 2,607 / 2,705
   },
 };

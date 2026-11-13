@@ -161,10 +161,13 @@ statistics, start-up or backups.
   installation. All data migrations are marked as applied, so the start includes the migration
   check but no migration. The import test goes through Settings > Import with the generated ZIP.
 - Measured: start until the home screen is interactive, opening the brew list and scrolling it to
-  the end (duration, slow frames, longest frame), search in the brew list (including the search
-  field's 750 ms debounce), opening the bean list, statistics with the brew charts, export (from
-  the tap until the app hands the ZIP to the browser) and import (from the moment the app gets
-  the file until the success message).
+  the end (duration, slow frames, longest frame), search in the brew list, opening the bean list,
+  statistics with the brew charts, export (from the tap until the app hands the ZIP to the
+  browser) and import (from the moment the app gets the file until the success message).
+- Fixed waits of the app (the search field's 750 ms debounce, 250 ms before the brew charts and
+  before the export download) are taken off before a value is compared with its budget
+  (`FIXED_DELAYS` in `budgets.ts`), so budgets and their reserve cover the app's work. The
+  `PERF` lines show both, e.g. `settled` and `work` for the search.
 - Times come from the page's own clock: from navigation start, the tap or the file input's
   `change` event until the page itself sees the result, checked every frame, so Playwright's
   round trips and polling are not part of them. "Settled" means the content is on screen and the

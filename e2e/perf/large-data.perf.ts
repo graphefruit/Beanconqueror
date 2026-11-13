@@ -12,7 +12,7 @@ import {
   NOTE_SEARCH_TERM,
   type SyntheticDataSet,
 } from '../support/synthetic-data';
-import { BUDGETS, type Budget, type PerfTier } from './budgets';
+import { BUDGETS, FIXED_DELAYS, type Budget, type PerfTier } from './budgets';
 import {
   CPU_THROTTLING,
   downloadAfterInput,
@@ -69,9 +69,22 @@ async function startWithData(page: Page, tier: PerfTier) {
   return { data, start };
 }
 
+const delays: Partial<Record<keyof Budget, number>> = FIXED_DELAYS;
+
+/** Compares a value with its budget, after taking off the app's fixed wait in that flow. */
 function checkBudget(name: keyof Budget, value: number, budget: Budget) {
+  const delay = delays[name] ?? 0;
+  if (delay > 0) {
+    expect
+      .soft(
+        value,
+        `${name} is shorter than the app's fixed wait (FIXED_DELAYS)`,
+      )
+      .toBeGreaterThanOrEqual(delay);
+  }
+  const without = delay > 0 ? ` without the fixed ${delay} ms` : '';
   expect
-    .soft(value, `${name} (budget ${budget[name]} ms)`)
+    .soft(value - delay, `${name}${without} (budget ${budget[name]} ms)`)
     .toBeLessThanOrEqual(budget[name]);
 }
 
@@ -142,10 +155,14 @@ for (const tier of TIERS) {
       await expect(
         page.getByRole('tab', { name: `Current ( ${open.length} )` }),
       ).toBeVisible();
-      await page
-        .getByRole('searchbox', { name: 'Search' })
-        .fill(NOTE_SEARCH_TERM);
-      // Includes the search field's 750 ms debounce.
+      const searchField = page.getByRole('searchbox', { name: 'Search' });
+      // The budget starts after the field's debounce, so FIXED_DELAYS has to match it.
+      expect(
+        await page
+          .locator('ion-searchbar', { has: searchField })
+          .evaluate((field) => (field as { debounce?: number }).debounce),
+      ).toBe(FIXED_DELAYS.search);
+      await searchField.fill(NOTE_SEARCH_TERM);
       const search = await waitUntilSettled(
         page,
         {
@@ -154,7 +171,10 @@ for (const tier of TIERS) {
         },
         'input',
       );
-      report(testInfo, tier, 'search', { ...search });
+      report(testInfo, tier, 'search', {
+        ...search,
+        work: search.settled - FIXED_DELAYS.search,
+      });
       if (checkBudgets) {
         checkBudget('search', search.settled, budget);
       }
@@ -203,6 +223,7 @@ for (const tier of TIERS) {
         open: general.settled,
         openLongestTask: general.longestTask,
         brewCharts: charts.settled,
+        brewChartsWork: charts.settled - FIXED_DELAYS.statisticsBrewCharts,
         brewChartsLongestTask: charts.longestTask,
       });
       if (checkBudgets) {
@@ -223,7 +244,10 @@ for (const tier of TIERS) {
       // From the tap on Export until the app hands the ZIP to the browser.
       const duration = await downloadAfterInput(page);
       const path = await download.path();
-      report(testInfo, tier, 'export', { duration });
+      report(testInfo, tier, 'export', {
+        duration,
+        work: duration - FIXED_DELAYS.export,
+      });
       if (checkBudgets) {
         checkBudget('export', duration, budget);
       }
