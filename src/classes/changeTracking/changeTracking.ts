@@ -125,3 +125,79 @@ export function stampUpdated(
     }
   }
 }
+
+/** Counts kept by fillMissingChangeInfo for the caller's log. */
+export interface FillChangeInfoStats {
+  /** Entries left as they are because they have no config object. */
+  skipped: number;
+}
+
+function isConfigObject(_value: unknown): _value is IConfig {
+  return (
+    typeof _value === 'object' && _value !== null && !Array.isArray(_value)
+  );
+}
+
+function isValidTime(_value: unknown): boolean {
+  return typeof _value === 'number' && Number.isFinite(_value) && _value >= 0;
+}
+
+/**
+ * Fills in the change info of entries that do not carry it yet, for example
+ * data stored before change tracking existed, or entries added by an older
+ * app version.
+ *
+ * Only missing values (or values of the wrong type) are filled in, values
+ * that are already there are never changed. Running it again on the same
+ * entries therefore changes nothing.
+ *
+ * updated_at = 0 means the entry was last changed before change tracking
+ * began, so it counts as older than any later change. rev = 0 and
+ * updated_by = '' likewise mean "unknown". created_at is estimated from the
+ * unix timestamp of the entry (0 when there is none).
+ *
+ * Entries are changed in place. Entries without a config object are left
+ * alone and counted in `_stats.skipped`. Entries that share a uuid are each
+ * filled the same way. Returns the number of changed entries.
+ */
+export function fillMissingChangeInfo(
+  _entries: unknown[],
+  _stats?: FillChangeInfoStats,
+): number {
+  if (!Array.isArray(_entries)) {
+    return 0;
+  }
+  let changed = 0;
+  for (const entry of _entries) {
+    const config: unknown = isConfigObject(entry)
+      ? (entry as { config?: unknown }).config
+      : undefined;
+    if (!isConfigObject(config)) {
+      if (_stats) {
+        _stats.skipped++;
+      }
+      continue;
+    }
+    let entryChanged = false;
+    if (!isValidTime(config.created_at)) {
+      config.created_at = estimateCreatedAt(config.unix_timestamp);
+      entryChanged = true;
+    }
+    if (!isValidTime(config.updated_at)) {
+      config.updated_at = 0;
+      entryChanged = true;
+    }
+    if (!isValidTime(config.rev)) {
+      config.rev = 0;
+      entryChanged = true;
+    }
+    if (typeof config.updated_by !== 'string') {
+      config.updated_by = '';
+      entryChanged = true;
+    }
+    if (entryChanged) {
+      changed++;
+    }
+  }
+  return changed;
+}

@@ -3,6 +3,8 @@ import {
   CHANGE_TRACKED_COLLECTIONS,
   copyChangeInfo,
   estimateCreatedAt,
+  FillChangeInfoStats,
+  fillMissingChangeInfo,
   isChangeTrackedCollection,
   stampAdded,
   stampUpdated,
@@ -193,6 +195,127 @@ describe('changeTracking', () => {
       stampUpdated({}, updated, NOW, 'device-a', false);
 
       expect(Object.keys(updated).sort()).toEqual(['unix_timestamp', 'uuid']);
+    });
+  });
+
+  describe('fillMissingChangeInfo', () => {
+    it('fills in missing change info as unknown and estimates created_at', () => {
+      const entries: any[] = [
+        { config: config() },
+        { config: config({ uuid: 'ms', unix_timestamp: 1_700_000_000_123 }) },
+        { config: { uuid: 'no-timestamp' } },
+      ];
+
+      expect(fillMissingChangeInfo(entries)).toBe(3);
+
+      expect(entries[0].config).toEqual({
+        uuid: 'entry-1',
+        unix_timestamp: 1_700_000_000,
+        created_at: 1_700_000_000_000,
+        updated_at: 0,
+        rev: 0,
+        updated_by: '',
+      });
+      expect(entries[1].config.created_at).toBe(1_700_000_000_123);
+      expect(entries[1].config.unix_timestamp).toBe(1_700_000_000_123);
+      expect(entries[2].config).toEqual({
+        uuid: 'no-timestamp',
+        created_at: 0,
+        updated_at: 0,
+        rev: 0,
+        updated_by: '',
+      });
+    });
+
+    it('never changes values that are already there', () => {
+      const tracked = config({
+        created_at: 5,
+        updated_at: NOW,
+        rev: 7,
+        updated_by: 'device-a',
+      });
+      const partly = config({ uuid: 'partly', rev: 3, updated_at: 0 });
+      const entries: any[] = [{ config: tracked }, { config: partly }];
+
+      expect(fillMissingChangeInfo(entries)).toBe(1);
+
+      expect(entries[0].config).toEqual(tracked);
+      expect(entries[1].config).toEqual({
+        ...config({ uuid: 'partly' }),
+        created_at: 1_700_000_000_000,
+        updated_at: 0,
+        rev: 3,
+        updated_by: '',
+      });
+    });
+
+    it('replaces values of the wrong type', () => {
+      const entries: any[] = [
+        {
+          config: config({
+            created_at: '1' as any,
+            updated_at: null,
+            rev: Number.NaN,
+            updated_by: 4 as any,
+          }),
+        },
+      ];
+
+      expect(fillMissingChangeInfo(entries)).toBe(1);
+
+      expect(entries[0].config).toEqual({
+        ...config(),
+        created_at: 1_700_000_000_000,
+        updated_at: 0,
+        rev: 0,
+        updated_by: '',
+      });
+    });
+
+    it('changes nothing when it runs again', () => {
+      const entries: any[] = [{ config: config() }, { config: config() }];
+      fillMissingChangeInfo(entries);
+      const filled = structuredClone(entries);
+
+      expect(fillMissingChangeInfo(entries)).toBe(0);
+      expect(entries).toEqual(filled);
+    });
+
+    it('fills both copies of entries that share a uuid', () => {
+      const entries: any[] = [
+        { config: config(), note: 'same' },
+        { config: config(), note: 'same' },
+      ];
+
+      expect(fillMissingChangeInfo(entries)).toBe(2);
+      expect(entries[0]).toEqual(entries[1]);
+      expect(entries[0].config.rev).toBe(0);
+    });
+
+    it('skips and counts entries without a config object', () => {
+      const stats: FillChangeInfoStats = { skipped: 0 };
+      const entries: any[] = [
+        null,
+        'text',
+        {},
+        { config: null },
+        { config: [] },
+        { config: config() },
+      ];
+
+      expect(fillMissingChangeInfo(entries, stats)).toBe(1);
+      expect(stats.skipped).toBe(5);
+      expect(entries.slice(0, 5)).toEqual([
+        null,
+        'text',
+        {},
+        { config: null },
+        { config: [] },
+      ]);
+    });
+
+    it('accepts a value that is not a list', () => {
+      expect(fillMissingChangeInfo(undefined as any)).toBe(0);
     });
   });
 });

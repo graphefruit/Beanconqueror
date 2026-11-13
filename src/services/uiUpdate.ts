@@ -18,6 +18,7 @@ import { BREW_DISPLAY_IMAGE_TYPE } from '../enums/brews/brewDisplayImageType';
 import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTypes';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
+import { ChangeTrackingMigrationService } from './changeTracking/change-tracking-migration.service';
 import { UIAlert } from './uiAlert';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -48,6 +49,9 @@ export class UIUpdate {
   private readonly translate = inject(TranslateService);
   private readonly uiStorage = inject(UIStorage);
   private readonly uiHelper = inject(UIHelper);
+  private readonly changeTrackingMigration = inject(
+    ChangeTrackingMigrationService,
+  );
 
   public async checkUpdate() {
     this.uiLog.info('Check updates');
@@ -70,6 +74,7 @@ export class UIUpdate {
         'UPDATE_13',
         'UPDATE_14',
         'UPDATE_15',
+        'UPDATE_16',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -98,6 +103,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_13', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_14', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_15', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_16', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -622,6 +628,17 @@ export class UIUpdate {
               if (updated) {
                 await this.uiBeanStorage.update(bean, { touch: false });
               }
+            }
+            break;
+          case 'UPDATE_16':
+            // Fills in the change info of all stored entries and stores the
+            // user profile of existing installations. It also runs on new
+            // installations, where the collections are empty and nothing is
+            // written. When something could not be stored it is not marked
+            // as done, so the next start continues it.
+            if (!(await this.changeTrackingMigration.run())) {
+              resolve(false);
+              return;
             }
             break;
           default:

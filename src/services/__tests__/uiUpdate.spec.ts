@@ -9,6 +9,8 @@ import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
+import { Version } from '../../classes/version/iVersion';
+import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
 import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -141,6 +143,10 @@ describe('UIUpdate data migrations and change info', () => {
           },
         },
         { provide: UiVersionStorage, useValue: {} },
+        {
+          provide: ChangeTrackingMigrationService,
+          useValue: { run: async () => true },
+        },
         { provide: Platform, useValue: { is: () => true } },
         { provide: ModalController, useValue: {} },
         { provide: UIFileHelper, useValue: {} },
@@ -204,5 +210,77 @@ describe('UIUpdate data migrations and change info', () => {
         .withContext(`${call.version}:${call.storage}`)
         .toEqual({ touch: false });
     }
+  });
+});
+
+describe('UIUpdate change info migration', () => {
+  let run: jasmine.Spy;
+  let version: Version;
+  let saveVersion: jasmine.Spy;
+  let uiUpdate: UIUpdate;
+
+  beforeEach(() => {
+    run = jasmine.createSpy('run');
+    version = new Version();
+    saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIUpdate,
+        { provide: ChangeTrackingMigrationService, useValue: { run } },
+        {
+          provide: UiVersionStorage,
+          useValue: { getVersion: () => version, saveVersion },
+        },
+        {
+          provide: UILog,
+          useValue: {
+            log: () => undefined,
+            info: () => undefined,
+            error: () => undefined,
+          },
+        },
+        { provide: UIBrewStorage, useValue: {} },
+        { provide: UIBeanStorage, useValue: {} },
+        { provide: UIPreparationStorage, useValue: {} },
+        { provide: UIMillStorage, useValue: {} },
+        { provide: UISettingsStorage, useValue: {} },
+        { provide: Platform, useValue: { is: () => true } },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        { provide: UIAlert, useValue: {} },
+        { provide: TranslateService, useValue: {} },
+        { provide: UIStorage, useValue: {} },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    uiUpdate = TestBed.inject(UIUpdate);
+  });
+
+  it('is marked as done when everything was stored', async () => {
+    run.and.resolveTo(true);
+
+    await (uiUpdate as any).__checkUpdateForDataVersion('UPDATE_16', false);
+
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_16')).toBeTrue();
+    expect(saveVersion).toHaveBeenCalledWith(version);
+  });
+
+  it('stays open when something could not be stored', async () => {
+    run.and.resolveTo(false);
+
+    await (uiUpdate as any).__checkUpdateForDataVersion('UPDATE_16', false);
+
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_16')).toBeFalse();
+    expect(saveVersion).not.toHaveBeenCalled();
+  });
+
+  it('does not run again once it is done', async () => {
+    version.pushUpdatedDataVersion('UPDATE_16');
+
+    await (uiUpdate as any).__checkUpdateForDataVersion('UPDATE_16', false);
+
+    expect(run).not.toHaveBeenCalled();
   });
 });
