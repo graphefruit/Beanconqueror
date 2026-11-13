@@ -599,9 +599,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public attachToRefractometerChanges() {
-    if (this.refractometerConnected()) {
+    // refractometerConnected() is always true in the web build so the read
+    // button stays visible there, but no device exists to listen to. Guard on
+    // the device itself, as the scale, pressure and temperature code does.
+    const refractometerDevice = this.bleManager.getRefractometerDevice();
+    if (refractometerDevice) {
       this.deattachToRefractometerChange();
-      const refractometerDevice = this.bleManager.getRefractometerDevice();
       this.refractometerDeviceSubscription =
         refractometerDevice.resultEvent.subscribe(async () => {
           this.uiLog.log('Got Refractometer Read');

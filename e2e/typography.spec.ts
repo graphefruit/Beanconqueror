@@ -1,10 +1,7 @@
 import type { Locator } from '@playwright/test';
 
 import { expect, test } from './fixtures';
-import {
-  BREW_FORM_REFRACTOMETER_ERROR,
-  completeFirstRunWithBrew,
-} from './support/first-brew';
+import { completeFirstRunWithBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 
 /**
@@ -122,8 +119,6 @@ test('bar chrome is not cut off at 200 % text size', async ({ page }) => {
 });
 
 test.describe('brew cards at 200 % text size', () => {
-  test.use({ allowedConsoleErrors: [BREW_FORM_REFRACTOMETER_ERROR] });
-
   test.beforeEach(async ({ page }) => {
     // A fixed date keeps the cards' text the same on every run; September is
     // the longest English month name the home card shows.

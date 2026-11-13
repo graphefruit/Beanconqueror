@@ -1,13 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 
 /**
- * Opening the brew form logs this error in the browser: the form asks for a
- * refractometer that the web build reports as connected but cannot provide.
- * Tests that add a brew allow it until that is fixed in the brew form.
- */
-export const BREW_FORM_REFRACTOMETER_ERROR = /reading 'resultEvent'/;
-
-/**
  * Completes the first-run dialogs of a fresh install and adds one bean, a V60,
  * one grinder and one brew through the UI, so brew cards have content.
  * Freeze the clock before `page.goto` for a deterministic brew date.
