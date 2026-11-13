@@ -5,9 +5,15 @@
     "moduleResolution": "bundler",
     "strict": true,
     "noEmit": true,
+    // The test data CLI runs in Node directly, which needs the file extensions.
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["./**/*.ts", "../playwright.config.ts"]
+  "include": [
+    "./**/*.ts",
+    "../playwright.config.ts",
+    "../playwright.perf.config.ts"
+  ]
 }

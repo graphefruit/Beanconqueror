@@ -545,7 +545,11 @@ in `DEVELOPING.md`.
 
 ### Performance budgets
 
-To be defined. Budgets will be measured on a Pixel 2 XL as the low-end reference
-device, with a data set the size of the largest known installations (several
-thousand brews). They will cover at least app start until the dashboard is
-usable, opening the brew and bean lists, and opening the brew form.
+The Pixel 2 XL is the low-end reference device; the data sets are the size of
+the largest known installations (7,000 and 15,000 brews, 1,000 beans, generated
+by `e2e/support/synthetic-data.ts`). `pnpm e2e:perf` checks app start, the brew
+list (open and scroll to the end), search, the bean list, statistics, export and
+import in an emulated Pixel 2 XL with 4x CPU throttling against
+`e2e/perf/budgets.ts`. How to run it and how to measure the same flows on the
+device is described in `DEVELOPING.md`. Opening the brew form is not covered
+yet.

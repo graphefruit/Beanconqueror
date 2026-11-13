@@ -124,6 +124,82 @@ sits at the plugin boundary, below all app code; nothing of it is part of the ap
   devices, native storage/SQLite, file system paths, OS permission dialogs, background timing or
   plugin behavior on Android/iOS; check those on a device for the relevant feature.
 
+### Synthetic test data
+
+`e2e/support/synthetic-data.ts` generates the data of a long-time user: 1,000 beans (about 40 %
+archived, a quarter of them blends), seven preparation methods (espresso and filter, two of them
+archived), four grinders, three waters and any number of brews over five years, with ratings,
+notes and references to the beans, grinders, tools and water in use at the time. The same seed
+and end date always produce the same data. Field names and stored values follow the model
+classes; `src/test-utils/__tests__/synthetic-data.spec.ts` compares them with real instances, so
+a model change that the generator does not follow fails the unit tests.
+
+To get a backup file that the app imports under Settings > Import:
+
+```shell
+pnpm generate-test-data --brews 15000   # dist/test-data/Beanconqueror-15000-brews-seed-1.zip
+pnpm generate-test-data --brews 7000 --seed 2 --end-date 2026-11-01 --out /tmp/backup.zip
+```
+
+`--file-references` adds photo and flow profile paths without the files, to check how the app
+handles missing files. Without `--end-date` the data ends at the current full hour.
+
+### Performance budgets
+
+`pnpm e2e:perf` measures the app with 7,000 and 15,000 brews (`e2e/perf/large-data.perf.ts`)
+and fails when a value exceeds its budget in `e2e/perf/budgets.ts`. A run takes several minutes,
+so it is not part of `pnpm e2e` or CI; run it before and after changes to storage, lists,
+statistics, start-up or backups.
+
+- It runs the production build (`ng serve --configuration production`) in an emulated Pixel 2 XL
+  with the CPU throttled 4x (`Emulation.setCPUThrottlingRate`) as an approximation of an older
+  Android phone. `PERF_CPU_THROTTLING=1` turns throttling off; budgets are only checked at 4x.
+- The data is written into the app's IndexedDB before the app starts, as on an existing
+  installation. All data migrations are marked as applied, so the start includes the migration
+  check but no migration. The import test goes through Settings > Import with the generated ZIP.
+- Measured: start until the home screen is interactive, opening the brew list and scrolling it to
+  the end (duration, slow frames, longest frame), search in the brew list (including the search
+  field's 750 ms debounce), opening the bean list, statistics with the brew charts, export (until
+  the download starts) and import (until the success message).
+- "Settled" means the content is on screen and the main thread had no long task for one second.
+  Every value is printed as a `PERF {…}` line.
+- Times depend on the machine. Look at a few runs before judging a change:
+
+  ```shell
+  pnpm e2e:perf --repeat-each=3 | grep '^PERF'
+  ```
+
+When a change makes the app faster, lower the budget. Raise a budget only with a reason in the
+commit message. `budgets.ts` notes the measured values and their spread the budgets are based on.
+
+### Measuring on a Pixel 2 XL
+
+Browser throttling only approximates an older phone; the reference device is a Pixel 2 XL.
+Measure the same flows there:
+
+1. Build the production web bundle into a debug app (debug builds allow WebView debugging):
+   `pnpm run -- build --configuration production && pnpm run -- cap run android`.
+   Use an installation without personal data: the import replaces all data.
+2. Generate the data and copy it to the phone:
+   `pnpm generate-test-data --brews 15000`, then
+   `adb push dist/test-data/Beanconqueror-15000-brews-seed-1.zip /sdcard/Download/`.
+3. In the app, open Settings > Import and pick the file. Note the time until "Import successful".
+4. Enable USB debugging on the phone, open `chrome://inspect` in desktop Chrome and click
+   _inspect_ on the Beanconqueror WebView. Keep CPU throttling in the Performance panel off.
+5. Record each flow separately:
+   - Start: _Record and reload_ in the Performance panel (WebView start without the native
+     splash screen); stop when the home screen shows the brew count. For the native cold start,
+     `adb shell am force-stop com.beanconqueror.app` followed by
+     `adb shell am start -W -n com.beanconqueror.app/com.beanconqueror.MainActivity` prints
+     `TotalTime`.
+   - Brews tab, then fling to the end of the list.
+   - Search for `syrupy` in the brew list (the word occurs only in brew notes).
+   - Beans tab; Profile > Statistics, then the Brews segment.
+   - Settings > Export.
+6. Read the long tasks (red corners in the Main track), the Frames track (dropped frames) and the
+   time until the screen is complete. Note app version, data set and values together with the
+   `pnpm e2e:perf` values of the same commit.
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.

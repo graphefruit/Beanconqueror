@@ -1,0 +1,283 @@
+import type { Page, TestInfo } from '@playwright/test';
+
+import type { SyntheticDataSet } from '../support/synthetic-data';
+
+/**
+ * Measuring helpers for the performance specs. Times come from the page's own clock
+ * (`performance.now()`), so Playwright's round trips do not count, and they are wall-clock times
+ * under the CPU throttling below.
+ */
+
+/** CPU slowdown as an approximation of an older Android phone. `PERF_CPU_THROTTLING=1` turns it off. */
+export const CPU_THROTTLING = Number(process.env.PERF_CPU_THROTTLING ?? 4);
+
+/** Main thread has to be free of long tasks this long before an interaction counts as settled. */
+const QUIET_WINDOW_MS = 1_000;
+/** Longest wait for content or a quiet main thread. */
+const WAIT_TIMEOUT_MS = 120_000;
+
+const SEED_PAGE = '/__perf__/seed';
+const SEED_DATA = '/__perf__/data.json';
+
+export interface PerfWindow {
+  __perf: {
+    longTasks: { start: number; end: number }[];
+    /** Time of the last pointer down or text input. */
+    lastInput: number;
+    /**
+     * Timers as they were before zone.js patched them. Waiting with the patched ones would run
+     * Angular change detection on every tick and so change what is measured.
+     */
+    nextFrame: () => Promise<unknown>;
+    sleep: (ms: number) => Promise<unknown>;
+  };
+}
+
+/** Records long tasks and the last user input; runs before the app on every navigation. */
+export async function installPerfObserver(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const requestFrame = window.requestAnimationFrame.bind(window);
+    const setTimer = window.setTimeout.bind(window);
+    const perf: PerfWindow['__perf'] = {
+      longTasks: [],
+      lastInput: 0,
+      nextFrame: () => new Promise((resolve) => requestFrame(resolve)),
+      sleep: (ms) => new Promise((resolve) => setTimer(resolve, ms)),
+    };
+    (window as unknown as PerfWindow).__perf = perf;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        perf.longTasks.push({
+          start: entry.startTime,
+          end: entry.startTime + entry.duration,
+        });
+      }
+    }).observe({ type: 'longtask', buffered: true });
+    const mark = () => {
+      perf.lastInput = performance.now();
+    };
+    document.addEventListener('pointerdown', mark, true);
+    document.addEventListener('input', mark, true);
+  });
+}
+
+/**
+ * Writes the data set into the app's database before the app starts, as an existing installation
+ * would have it: Ionic Storage keeps one entry per collection in the IndexedDB store `_ionickv`
+ * of the database `__baristaDB` (src/main.ts). A blank page on the app origin does the writing,
+ * so the app is not running meanwhile.
+ */
+export async function seedDatabase(
+  page: Page,
+  data: SyntheticDataSet,
+  json: string = JSON.stringify(data),
+): Promise<void> {
+  await page.route(`**${SEED_PAGE}`, (route) =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: '<!doctype html><title>seed</title>',
+    }),
+  );
+  await page.route(`**${SEED_DATA}`, (route) =>
+    route.fulfill({ contentType: 'application/json', body: json }),
+  );
+  await page.goto(SEED_PAGE);
+  await page.evaluate(async (url) => {
+    const entries = (await (await fetch(url)).json()) as Record<
+      string,
+      unknown
+    >;
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('__baristaDB');
+      request.onupgradeneeded = () =>
+        request.result.createObjectStore('_ionickv');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error ?? new Error('open failed'));
+    });
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction('_ionickv', 'readwrite');
+      const store = transaction.objectStore('_ionickv');
+      for (const [key, value] of Object.entries(entries)) {
+        store.put(value, key);
+      }
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () =>
+        reject(transaction.error ?? new Error('write failed'));
+    });
+    db.close();
+  }, SEED_DATA);
+  await page.unroute(`**${SEED_PAGE}`);
+  await page.unroute(`**${SEED_DATA}`);
+}
+
+export async function throttleCpu(page: Page): Promise<void> {
+  const session = await page.context().newCDPSession(page);
+  await session.send('Emulation.setCPUThrottlingRate', {
+    rate: CPU_THROTTLING,
+  });
+}
+
+export interface Timing {
+  /** From the input (or navigation start) until the expected content is shown. */
+  visible: number;
+  /** Until the main thread is also free of long tasks (`QUIET_WINDOW_MS`), like time to interactive. */
+  settled: number;
+  /** Long tasks in that period: their sum and the longest one. */
+  longTasksTotal: number;
+  longestTask: number;
+}
+
+/** Content that has to be on screen: an element matching `selector`, optionally with `text`. */
+export interface Expected {
+  selector: string;
+  text?: string;
+}
+
+/**
+ * Waits until `expected` is shown, then until the main thread stays quiet, and returns the times
+ * relative to `from`: `'navigation'` (page start) or `'input'` (the last pointer down or text
+ * input, so the click itself and Playwright's checks are not counted).
+ */
+export async function waitUntilSettled(
+  page: Page,
+  expected: Expected,
+  from: 'navigation' | 'input',
+): Promise<Timing> {
+  return page.evaluate(
+    async ({ selector, text, from, quietWindow, timeout }) => {
+      const perf = (window as unknown as PerfWindow).__perf;
+      const isShown = () =>
+        [...document.querySelectorAll(selector)].some((element) => {
+          const box = element.getBoundingClientRect();
+          return (
+            box.width > 0 &&
+            box.height > 0 &&
+            box.bottom > 0 &&
+            box.top < window.innerHeight &&
+            (text === undefined || (element.textContent ?? '').includes(text))
+          );
+        });
+      const waitStart = performance.now();
+      while (!isShown()) {
+        if (performance.now() - waitStart > timeout) {
+          throw new Error(
+            `${selector}${text === undefined ? '' : ` with "${text}"`} not shown`,
+          );
+        }
+        await perf.nextFrame();
+      }
+      const visibleAt = performance.now();
+      const start = from === 'navigation' ? 0 : perf.lastInput;
+      const lastEnd = () =>
+        perf.longTasks.reduce((latest, task) => Math.max(latest, task.end), 0);
+      while (performance.now() - Math.max(visibleAt, lastEnd()) < quietWindow) {
+        if (performance.now() - visibleAt > timeout) {
+          throw new Error('main thread never became quiet');
+        }
+        await perf.sleep(100);
+      }
+      const settledAt = Math.max(visibleAt, lastEnd());
+      const tasks = perf.longTasks
+        .filter((t) => t.end > start && t.start < settledAt)
+        .map((t) => Math.min(t.end, settledAt) - Math.max(t.start, start));
+      return {
+        visible: Math.round(visibleAt - start),
+        settled: Math.round(settledAt - start),
+        longTasksTotal: Math.round(tasks.reduce((sum, t) => sum + t, 0)),
+        longestTask: Math.round(Math.max(0, ...tasks)),
+      };
+    },
+    {
+      ...expected,
+      from,
+      quietWindow: QUIET_WINDOW_MS,
+      timeout: WAIT_TIMEOUT_MS,
+    },
+  );
+}
+
+export interface ScrollResult {
+  /** From the first scroll step until the last entry is rendered. */
+  duration: number;
+  frames: number;
+  /** Frames that took longer than 50 ms (below 20 fps). */
+  slowFrames: number;
+  longestFrame: number;
+  longestTask: number;
+}
+
+/**
+ * Scrolls the virtual list that contains `firstItemId` down by `stepScreens` screen heights per
+ * frame until the element `lastItemId` is rendered at the bottom, like a fast fling.
+ */
+export async function scrollListToEnd(
+  page: Page,
+  firstItemId: string,
+  lastItemId: string,
+  stepScreens = 3,
+): Promise<ScrollResult> {
+  return page.evaluate(
+    async ({ firstItemId, lastItemId, stepScreens }) => {
+      const perf = (window as unknown as PerfWindow).__perf;
+      const scroller = document
+        .getElementById(firstItemId)
+        ?.closest('ag-virtual-scroll');
+      if (!scroller) {
+        throw new Error(`No virtual list around #${firstItemId}`);
+      }
+      const nextFrame = perf.nextFrame;
+      await nextFrame();
+      const start = performance.now();
+      const frames: number[] = [];
+      let previous = start;
+      for (;;) {
+        const atBottom =
+          scroller.scrollTop + scroller.clientHeight >=
+          scroller.scrollHeight - 2;
+        if (atBottom && document.getElementById(lastItemId)) {
+          break;
+        }
+        if (performance.now() - start > 600_000) {
+          throw new Error(`#${lastItemId} not reached after 10 minutes`);
+        }
+        scroller.scrollTop += scroller.clientHeight * stepScreens;
+        await nextFrame();
+        const now = performance.now();
+        frames.push(now - previous);
+        previous = now;
+      }
+      const end = performance.now();
+      const tasks = perf.longTasks
+        .filter((t) => t.end > start && t.start < end)
+        .map((t) => t.end - t.start);
+      return {
+        duration: Math.round(end - start),
+        frames: frames.length,
+        slowFrames: frames.filter((f) => f > 50).length,
+        longestFrame: Math.round(Math.max(0, ...frames)),
+        longestTask: Math.round(Math.max(0, ...tasks)),
+      };
+    },
+    { firstItemId, lastItemId, stepScreens },
+  );
+}
+
+/**
+ * Prints a measurement as one `PERF {…}` line (collect them over runs with
+ * `grep '^PERF'`) and attaches all of a test's values to the report.
+ */
+export function report(
+  testInfo: TestInfo,
+  brews: number,
+  name: string,
+  values: Record<string, number>,
+): void {
+  const entry = { brews, name, cpuThrottling: CPU_THROTTLING, ...values };
+  console.log(`PERF ${JSON.stringify(entry)}`);
+  testInfo.annotations.push({
+    type: 'perf',
+    description: `${name}: ${Object.entries(values)
+      .map(([key, value]) => `${key} ${value}`)
+      .join(', ')}`,
+  });
+}

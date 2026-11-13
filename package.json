@@ -11,6 +11,8 @@
     "test:dev": "ng test",
     "lint": "eslint \"src/**/*.ts\" \"src/**/*.html\"",
     "e2e": "playwright test",
+    "e2e:perf": "playwright test --config playwright.perf.config.ts",
+    "generate-test-data": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON e2e/support/generate-test-data.ts",
     "prepare": "husky",
     "generate_proto": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto  --ts_proto_opt=snakeToCamel=false --ts_proto_opt=esModuleInterop=true --ts_proto_out ./src/generated ./src/classes/bean/bean.proto",
     "ionic": "ionic",
