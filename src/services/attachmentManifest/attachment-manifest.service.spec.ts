@@ -389,6 +389,28 @@ describe('AttachmentManifestService', () => {
     second.service.stop();
   });
 
+  it('looks for a file that was not found again on the next start', async () => {
+    const setup = createSetup();
+    setup.storages.BEANS.setEntries([
+      { config: { uuid: 'bean-0', updated_at: 0 }, attachments: ['late.jpg'] },
+    ]);
+    const first = createService(setup);
+    await startAndBuild(first.service);
+    first.service.stop();
+    expect(storedManifest(setup).entries[0].size).toBeNull();
+
+    // The file appears later, for example when copying it took longer; the
+    // entry itself does not change.
+    const next = restart(setup);
+    next.files.set('DATA:late.jpg', 321);
+    const second = createService(next);
+    await startAndBuild(second.service);
+
+    expect(second.statFile).toHaveBeenCalledTimes(1);
+    expect(storedManifest(next).entries[0].size).toBe(321);
+    second.service.stop();
+  });
+
   it('checks the files of a changed entry again on the next start', async () => {
     const setup = createSetup();
     setup.storages.BEANS.setEntries([
@@ -499,6 +521,81 @@ describe('AttachmentManifestService', () => {
     flush();
   }));
 
+  it('does not bring back the files of an entry deleted during the build', fakeAsync(() => {
+    const setup = createSetup();
+    setup.storages.BEANS.setEntries([
+      { config: { uuid: 'bean-0' }, attachments: ['a.jpg'] },
+      { config: { uuid: 'bean-1' }, attachments: ['b.jpg'] },
+    ]);
+    setup.files.set('DATA:b.jpg', 2);
+    const { service, statFile } = createService(setup);
+    let finishSlowStat: (_info: { size: number }) => void = () => undefined;
+    statFile.and.callFake((_path: string, _directory: string) => {
+      if (_path === 'a.jpg') {
+        return new Promise((_resolve) => (finishSlowStat = _resolve));
+      }
+      return Promise.resolve({
+        size: setup.files.get(_directory + ':' + _path),
+      });
+    });
+
+    void service.start();
+    tick();
+    expect(statFile).toHaveBeenCalledWith('a.jpg', 'DATA');
+
+    void setup.storages.BEANS.removeByUUID('bean-0');
+    tick();
+    finishSlowStat({ size: 1 });
+    flush();
+
+    expect(service.getManifest().completed_at).toBeGreaterThan(0);
+    expect(storedManifest(setup).entries.map((_e) => _e.path)).toEqual([
+      'b.jpg',
+    ]);
+    service.stop();
+    flush();
+  }));
+
+  it('drops the result of a check that a newer change of the entry replaced', fakeAsync(() => {
+    const setup = createSetup();
+    setup.storages.BEANS.setEntries([
+      { config: { uuid: 'bean-0' }, attachments: [] },
+    ]);
+    const { service, statFile } = createService(setup);
+    void service.start();
+    flush();
+
+    let finishSlowStat: (_info: { size: number }) => void = () => undefined;
+    statFile.and.callFake((_path: string) => {
+      if (_path === 'old.jpg') {
+        return new Promise((_resolve) => (finishSlowStat = _resolve));
+      }
+      return Promise.resolve({ size: 2 });
+    });
+
+    const first = structuredClone(setup.storages.BEANS.getAllEntries()[0]);
+    first.attachments = ['old.jpg'];
+    void setup.storages.BEANS.update(first);
+    tick(AttachmentManifestService.OWNER_CHECK_DELAY_MS);
+    expect(statFile).toHaveBeenCalledWith('old.jpg', 'DATA');
+
+    // The photo is replaced while the first check still waits for its file.
+    const second = structuredClone(setup.storages.BEANS.getAllEntries()[0]);
+    second.attachments = ['new.jpg'];
+    void setup.storages.BEANS.update(second);
+    tick();
+    finishSlowStat({ size: 1 });
+    tick();
+    expect(service.getManifest().entries).toEqual([]);
+
+    tick(AttachmentManifestService.OWNER_CHECK_DELAY_MS);
+    expect(service.getManifest().entries.map((_e) => _e.path)).toEqual([
+      'new.jpg',
+    ]);
+    service.stop();
+    flush();
+  }));
+
   it('checks every file again after the collections were reloaded by an import', fakeAsync(() => {
     const setup = createSetup();
     setup.storages.BEANS.setEntries([
@@ -551,6 +648,28 @@ describe('AttachmentManifestService', () => {
     expect(storedManifest(setup)).toBeUndefined();
     expect(uiLog.error.calls.count()).toBe(0);
   });
+
+  for (const platforms of [
+    ['android', 'mobileweb'],
+    ['ios', 'mobileweb'],
+  ]) {
+    it(`does nothing in a mobile browser (${platforms.join(', ')})`, async () => {
+      const setup = createSetup(platforms);
+      fillSyntheticData(setup, 10, 2);
+      const { service, statFile } = createService(setup);
+
+      await startAndBuild(service);
+      await setup.storages.BEANS.add({ config: {}, attachments: ['x.jpg'] });
+      await new Promise((_resolve) => setTimeout(_resolve, 20));
+
+      expect(service.isSupported()).toBeFalse();
+      expect(statFile).not.toHaveBeenCalled();
+      expect(setup.database.get).not.toHaveBeenCalledWith(
+        ATTACHMENT_MANIFEST_STORAGE_KEY,
+      );
+      expect(storedManifest(setup)).toBeUndefined();
+    });
+  }
 
   it('builds the list again when the stored one is not valid', async () => {
     const setup = createSetup();
