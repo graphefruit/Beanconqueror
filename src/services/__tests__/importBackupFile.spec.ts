@@ -101,17 +101,21 @@ function createDeviceDatabase(
   const data = new Map<string, unknown>(
     Object.entries(structuredClone(_initial)),
   );
+  /** Keys whose next write fails. */
   const failingWrites = new Set<string>();
+  /** Keys whose writes all fail, so a rollback fails as well. */
+  const brokenWrites = new Set<string>();
   /** Number of the next reads of all values that fail. */
   const failingReads = { count: 0 };
   return {
     data,
     failingWrites,
+    brokenWrites,
     failingReads,
     database: {
       set: (key: string, value: unknown) => {
         _writes.push(`database ${key}`);
-        if (failingWrites.delete(key)) {
+        if (failingWrites.delete(key) || brokenWrites.has(key)) {
           return Promise.reject(new Error('write failed'));
         }
         data.set(key, structuredClone(value));
@@ -850,11 +854,13 @@ describe('Restoring the internal backup at start-up', () => {
     spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
     await device.helper.checkBackup();
 
+    // Written after every change, for the rest of the session.
+    await writeAutomaticBackups(device);
     await writeAutomaticBackups(device);
 
     expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
     // The work of this session still goes into the automatic backup.
-    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalledTimes(1);
+    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalledTimes(2);
   });
 
   it('keeps the internal backup also when it was to be restored without asking', async () => {
@@ -887,6 +893,21 @@ describe('Restoring the internal backup at start-up', () => {
     spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
     await device.helper.checkBackup();
     expect(device.data.get('BREWS')).toEqual(before.BREWS);
+
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+  });
+
+  it('keeps the internal backup when importing it failed and could not be rolled back', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const before = completeData('own');
+    const device = await startDevice(before, { internalBackup });
+    // Every write of the brews fails, also the one of the rollback, so
+    // Beanconqueror.zip can be the only complete copy left.
+    device.brokenWrites.add('BREWS');
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+    await device.helper.checkBackup();
 
     await writeAutomaticBackups(device);
 
