@@ -47,12 +47,13 @@ export abstract class StorageClass {
   private isInitialized: number = -1;
 
   /**
-   * Why the collection must not be written, if so: its stored entries are
-   * being read, or they could not be read. `storedData` is empty then, but
-   * the stored entries are not known to be, and every write stores the whole
-   * collection, so a write would replace them.
+   * Why the collection must not be written, if so: its stored entries were
+   * not read yet, are being read, or could not be read. `storedData` is
+   * empty then, but the stored entries are not known to be, and every write
+   * stores the whole collection, so a write would replace them.
    */
-  private writeBlock: 'reading' | 'read-failed' | undefined;
+  private writeBlock: 'not-read' | 'reading' | 'read-failed' | undefined =
+    'not-read';
 
   protected constructor(protected dbPath: string) {
     this.DB_PATH = dbPath;
@@ -129,11 +130,12 @@ export abstract class StorageClass {
     if (this.writeBlock === undefined) {
       return false;
     }
-    const message =
-      `Storage - ${_action} - Unsuccessfully - ${this.DB_PATH} - ` +
-      (this.writeBlock === 'reading'
-        ? 'the stored entries are still being read, nothing was saved'
-        : 'the stored entries could not be read, nothing was saved');
+    const reasons = {
+      'not-read': 'the stored entries were not read yet',
+      reading: 'the stored entries are still being read',
+      'read-failed': 'the stored entries could not be read',
+    };
+    const message = `Storage - ${_action} - Unsuccessfully - ${this.DB_PATH} - ${reasons[this.writeBlock]}, nothing was saved`;
     this.uiLog.error(message);
     await this.showAlertSafely(message, 'CRITICAL ERROR');
     return true;

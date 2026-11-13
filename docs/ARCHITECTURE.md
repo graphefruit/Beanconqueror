@@ -185,8 +185,9 @@ UIStorage                            (src/services/uiStorage.ts)
     collection refuses `add`, `update`, `remove` and `backfillWithoutTouch`
     (logged, reported with the alert of a failed save, no event) until a
     later `reinitializeStorage()` has read it. The same holds while it is
-    being read. Every write stores the whole array, so a write on a list
-    that was not read would replace the stored entries.
+    being read and before it was read for the first time. Every write stores
+    the whole array, so a write on a list that was not read would replace
+    the stored entries.
   - `UIStorage.getDataState()` tells whether the database holds data of a
     used installation: `'data'`, `'empty'` or `'unknown'` when it could not
     be read. The callers (`checkBackup`, `saveAutomaticBackups`,

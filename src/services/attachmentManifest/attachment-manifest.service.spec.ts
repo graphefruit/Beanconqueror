@@ -28,6 +28,9 @@ import { AttachmentManifestService } from './attachment-manifest.service';
 class FakeStorage extends StorageClass {
   public constructor(_dbPath: string) {
     super(_dbPath);
+    // Stands in for a collection whose entries were read: the tests set
+    // them with setEntries(). One that was not read takes no write.
+    (this as any).writeBlock = undefined;
   }
 
   public setEntries(_entries: any[]): void {

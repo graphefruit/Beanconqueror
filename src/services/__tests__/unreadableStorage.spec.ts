@@ -234,7 +234,7 @@ describe('Checking the internal backup at start-up with a database that cannot b
   it('writes no automatic backup while the database cannot be read', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const state = { readable: true };
-    const { helper, writeInternalFileFromBlob, writeFileFromBlob } =
+    const { helper, log, writeInternalFileFromBlob, writeFileFromBlob } =
       await startApp(data, state);
     spyOn(helper, 'buildExportZIP').and.resolveTo(new Blob(['zip']));
     state.readable = false;
@@ -244,6 +244,9 @@ describe('Checking the internal backup at start-up with a database that cannot b
 
     expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
     expect(writeFileFromBlob).not.toHaveBeenCalled();
+    expect(log.lines).toContain(
+      'The database could not be read, no automatic backup is written',
+    );
   });
 });
 
@@ -406,6 +409,42 @@ describe('A collection that could not be read', () => {
       ),
     ).toBeTrue();
     expect(showMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('names each write it did not make and does not look for the entry', async () => {
+    await storage.initializeStorage().catch(() => undefined);
+    const reason = 'BEANS - the stored entries could not be read';
+
+    await storage.update(stored()[0]);
+    await storage.removeByUUID('stored-1');
+    await storage.backfillWithoutTouch(() => 1);
+
+    for (const action of ['Update', 'Delete', 'Backfill']) {
+      expect(log.lines)
+        .withContext(action)
+        .toContain(
+          `Storage - ${action} - Unsuccessfully - ${reason}, nothing was saved`,
+        );
+    }
+    expect(log.lines.some((_line) => _line.includes('not found'))).toBeFalse();
+    expect(log.lines).not.toContain('Storage - Delete - Unsuccessfully');
+    expect(showMessage).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not replace the stored entries when it was never read', async () => {
+    readable = true;
+
+    const result = await storage.addAndConfirm({ config: {}, name: 'New' });
+    expect(await storage.update(stored()[0])).toBeFalse();
+    expect(await storage.removeByUUID('stored-1')).toBeFalse();
+    expect(await storage.backfillWithoutTouch(() => 1)).toBeFalse();
+
+    expect(result.saved).toBeFalse();
+    expect(uiStorage.set).not.toHaveBeenCalled();
+    expect(database.BEANS).toEqual(stored());
+    expect(log.lines).toContain(
+      'Storage - Add - Unsuccessfully - BEANS - the stored entries were not read yet, nothing was saved',
+    );
   });
 
   it('sends no event for a write it did not make', async () => {

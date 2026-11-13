@@ -44,6 +44,12 @@ class ThrowingPreparationStorage extends TestStorage {
   }
 }
 
+/** A collection takes no write before its stored entries were read. */
+async function read<T extends StorageClass>(_storage: T): Promise<T> {
+  await _storage.initializeStorage();
+  return _storage;
+}
+
 async function expectSettled<T>(promise: Promise<T>): Promise<T> {
   const pending = Symbol('pending');
   const result = await Promise.race([
@@ -75,11 +81,13 @@ describe('StorageClass', () => {
     name: 'Test entry',
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockUIStorage = jasmine.createSpyObj<UIStorage>('UIStorage', [
       'get',
+      'getOrFail',
       'set',
     ]);
+    mockUIStorage.getOrFail.and.resolveTo(null);
     mockUILog = createMockUILog();
     mockUIAlert = createMockUIAlert();
     mockUIAlert.showMessage.and.returnValue(Promise.resolve());
@@ -92,7 +100,9 @@ describe('StorageClass', () => {
     });
 
     spyOn(UIAlert, 'getInstance').and.returnValue(mockUIAlert);
-    storage = TestBed.runInInjectionContext(() => new TestStorage());
+    storage = await read(
+      TestBed.runInInjectionContext(() => new TestStorage()),
+    );
   });
 
   it('reports successful saves from addAndConfirm, update, and removeByUUID', async () => {
@@ -245,8 +255,8 @@ describe('StorageClass', () => {
 
   it('resolves addAndConfirm as an unsaved add when preparation throws', async () => {
     mockUIStorage.set.and.returnValue(Promise.resolve(true));
-    storage = TestBed.runInInjectionContext(
-      () => new ThrowingPreparationStorage(),
+    storage = await read(
+      TestBed.runInInjectionContext(() => new ThrowingPreparationStorage()),
     );
     const newEntry = entry();
 
@@ -265,8 +275,8 @@ describe('StorageClass', () => {
 
   it('resolves update as an unsaved update when preparation throws', async () => {
     mockUIStorage.set.and.returnValue(Promise.resolve(true));
-    storage = TestBed.runInInjectionContext(
-      () => new ThrowingPreparationStorage(),
+    storage = await read(
+      TestBed.runInInjectionContext(() => new ThrowingPreparationStorage()),
     );
 
     const result = await expectSettled(storage.update(entry('update-uuid')));
@@ -315,8 +325,10 @@ describe('typed storage normalization', () => {
   beforeEach(() => {
     mockUIStorage = jasmine.createSpyObj<UIStorage>('UIStorage', [
       'get',
+      'getOrFail',
       'set',
     ]);
+    mockUIStorage.getOrFail.and.resolveTo(null);
     mockUIStorage.set.and.returnValue(Promise.resolve(true));
     mockUILog = createMockUILog();
 
@@ -330,7 +342,9 @@ describe('typed storage normalization', () => {
   });
 
   it('normalizes bean numeric fields added through add or addAndConfirm', async () => {
-    const storage = TestBed.runInInjectionContext(() => new UIBeanStorage());
+    const storage = await read(
+      TestBed.runInInjectionContext(() => new UIBeanStorage()),
+    );
     const addBean = new Bean();
     addBean.weight = '250' as unknown as number;
     addBean.cost = '12.5' as unknown as number;
@@ -349,7 +363,9 @@ describe('typed storage normalization', () => {
   });
 
   it('normalizes bean numeric fields updated through update', async () => {
-    const storage = TestBed.runInInjectionContext(() => new UIBeanStorage());
+    const storage = await read(
+      TestBed.runInInjectionContext(() => new UIBeanStorage()),
+    );
     const bean = new Bean();
 
     const addedBean = await storage.add(bean);
@@ -363,7 +379,9 @@ describe('typed storage normalization', () => {
   });
 
   it('normalizes brew numeric fields added through add or addAndConfirm', async () => {
-    const storage = TestBed.runInInjectionContext(() => new UIBrewStorage());
+    const storage = await read(
+      TestBed.runInInjectionContext(() => new UIBrewStorage()),
+    );
     const addBrew = new Brew();
     addBrew.brew_quantity = '42' as unknown as number;
     addBrew.grind_weight = '18.5' as unknown as number;
@@ -382,7 +400,9 @@ describe('typed storage normalization', () => {
   });
 
   it('normalizes brew numeric fields updated through update', async () => {
-    const storage = TestBed.runInInjectionContext(() => new UIBrewStorage());
+    const storage = await read(
+      TestBed.runInInjectionContext(() => new UIBrewStorage()),
+    );
     const brew = new Brew();
 
     const addedBrew = await storage.add(brew);
@@ -409,8 +429,10 @@ describe('StorageClass change info', () => {
     spyOn(Date, 'now').and.callFake(() => now);
     mockUIStorage = jasmine.createSpyObj<UIStorage>('UIStorage', [
       'get',
+      'getOrFail',
       'set',
     ]);
+    mockUIStorage.getOrFail.and.resolveTo(null);
     mockUIStorage.set.and.returnValue(Promise.resolve(true));
 
     TestBed.configureTestingModule({
@@ -429,7 +451,7 @@ describe('StorageClass change info', () => {
 
   it('does not track entries of untracked collections', async () => {
     for (const dbPath of ['TEST_DB', 'SETTINGS', 'VERSION']) {
-      const storage = create(() => new NamedTestStorage(dbPath));
+      const storage = await read(create(() => new NamedTestStorage(dbPath)));
       const added = await storage.add({ config: {}, name: 'entry' });
       await storage.update({ ...added, name: 'changed' });
 
@@ -441,7 +463,7 @@ describe('StorageClass change info', () => {
   });
 
   it('sets all change info fields when a bean is added', async () => {
-    const storage = create(() => new UIBeanStorage());
+    const storage = await read(create(() => new UIBeanStorage()));
 
     const added = await storage.add(new Bean());
 
@@ -455,7 +477,7 @@ describe('StorageClass change info', () => {
   });
 
   it('overwrites change info copied from another entry on add', async () => {
-    const storage = create(() => new UIBrewStorage());
+    const storage = await read(create(() => new UIBrewStorage()));
     const copy = new Brew();
     copy.config.rev = 7;
     copy.config.created_at = 5;
@@ -470,7 +492,7 @@ describe('StorageClass change info', () => {
   });
 
   it('counts the revision up with every brew update and keeps created_at', async () => {
-    const storage = create(() => new UIBrewStorage());
+    const storage = await read(create(() => new UIBrewStorage()));
     const added = await storage.add(new Brew());
     const unixTimestamp = added.config.unix_timestamp;
 
@@ -489,7 +511,7 @@ describe('StorageClass change info', () => {
   });
 
   it('counts up from the stored revision when the caller holds an outdated brew', async () => {
-    const storage = create(() => new UIBrewStorage());
+    const storage = await read(create(() => new UIBrewStorage()));
     const added = await storage.add(new Brew());
     const outdated = storage.getEntryByUUID(added.config.uuid);
     await storage.update(storage.getEntryByUUID(added.config.uuid));
@@ -501,7 +523,7 @@ describe('StorageClass change info', () => {
   });
 
   it('keeps the change info on updates without touch', async () => {
-    const storage = create(() => new UIBeanStorage());
+    const storage = await read(create(() => new UIBeanStorage()));
     const added = await storage.add(new Bean());
     const bean = storage.getEntryByUUID(added.config.uuid);
     bean.name = 'Migrated';
@@ -519,7 +541,7 @@ describe('StorageClass change info', () => {
   });
 
   it('does not create change info fields on legacy entries without touch', async () => {
-    const storage = create(() => new NamedTestStorage('MILL'));
+    const storage = await read(create(() => new NamedTestStorage('MILL')));
     storage.setEntries([
       { config: { uuid: 'legacy', unix_timestamp: 1_600_000_000 }, name: 'a' },
     ]);
@@ -536,7 +558,7 @@ describe('StorageClass change info', () => {
   });
 
   it('counts the revision up exactly once when the bean shares its config with the stored entry', async () => {
-    const storage = create(() => new UIBeanStorage());
+    const storage = await read(create(() => new UIBeanStorage()));
     const added = await storage.add(new Bean());
     const bean = storage.getEntryByUUID(added.config.uuid);
     const raw = (storage as any).storedData[0];
@@ -549,7 +571,7 @@ describe('StorageClass change info', () => {
   });
 
   it('keeps the stored entry apart from the object passed to update', async () => {
-    const storage = create(() => new UIBeanStorage());
+    const storage = await read(create(() => new UIBeanStorage()));
     const added = await storage.add(new Bean());
     const bean = storage.getEntryByUUID(added.config.uuid);
     await storage.update(bean);
@@ -564,7 +586,7 @@ describe('StorageClass change info', () => {
   });
 
   it('fills in values with one save and keeps the change info', async () => {
-    const storage = create(() => new NamedTestStorage('BREWS'));
+    const storage = await read(create(() => new NamedTestStorage('BREWS')));
     storage.setEntries([
       { config: { uuid: 'a', unix_timestamp: 1, rev: 3 } },
       { config: { uuid: 'b', unix_timestamp: 2 } },
@@ -589,7 +611,7 @@ describe('StorageClass change info', () => {
   });
 
   it('names the added or updated entry in its event, but not on other events', async () => {
-    const storage = create(() => new NamedTestStorage('BEANS'));
+    const storage = await read(create(() => new NamedTestStorage('BEANS')));
     const events: any[] = [];
     storage.attachOnEvent().subscribe((event) => events.push(event));
 
@@ -607,7 +629,7 @@ describe('StorageClass change info', () => {
   });
 
   it('does not save when the fill changes nothing', async () => {
-    const storage = create(() => new NamedTestStorage('BREWS'));
+    const storage = await read(create(() => new NamedTestStorage('BREWS')));
     storage.setEntries([{ config: { uuid: 'a', unix_timestamp: 1 } }]);
 
     const saved = await storage.backfillWithoutTouch(() => 0);
@@ -617,7 +639,7 @@ describe('StorageClass change info', () => {
   });
 
   it('reports a failed fill or save', async () => {
-    const storage = create(() => new NamedTestStorage('BREWS'));
+    const storage = await read(create(() => new NamedTestStorage('BREWS')));
     storage.setEntries([{ config: { uuid: 'a', unix_timestamp: 1 } }]);
 
     const thrown = await storage.backfillWithoutTouch(() => {
@@ -706,7 +728,7 @@ describe('StorageClass deletion journal', () => {
   });
 
   it('writes exactly one note when a brew is deleted', async () => {
-    const storage = create(() => new UIBrewStorage());
+    const storage = await read(create(() => new UIBrewStorage()));
     const added = await storage.add(new Brew());
     await storage.update(storage.getEntryByUUID(added.config.uuid));
     const removed: string[] = [];
@@ -731,7 +753,7 @@ describe('StorageClass deletion journal', () => {
   });
 
   it('notes revision 0 for entries without change info', async () => {
-    const storage = create(() => new NamedTestStorage('MILL'));
+    const storage = await read(create(() => new NamedTestStorage('MILL')));
     storage.setEntries([rawEntry('legacy')]);
 
     await storage.removeByUUID('legacy');
@@ -740,7 +762,7 @@ describe('StorageClass deletion journal', () => {
   });
 
   it('writes no note when the collection could not be saved', async () => {
-    const storage = create(() => new NamedTestStorage('BREWS'));
+    const storage = await read(create(() => new NamedTestStorage('BREWS')));
     storage.setEntries([rawEntry('brew-1', 3)]);
     failingWrites.add('BREWS');
 
@@ -752,7 +774,7 @@ describe('StorageClass deletion journal', () => {
 
   it('writes no note for collections without change tracking', async () => {
     for (const dbPath of ['SETTINGS', 'VERSION', 'TEST_DB']) {
-      const storage = create(() => new NamedTestStorage(dbPath));
+      const storage = await read(create(() => new NamedTestStorage(dbPath)));
       storage.setEntries([rawEntry('entry-1')]);
 
       expect(await storage.removeByUUID('entry-1'))
@@ -761,11 +783,13 @@ describe('StorageClass deletion journal', () => {
     }
 
     expect(database.has('DELETION_JOURNAL')).toBeFalse();
-    expect(fakeUIStorage.getOrFail).not.toHaveBeenCalled();
+    expect(fakeUIStorage.getOrFail).not.toHaveBeenCalledWith(
+      'DELETION_JOURNAL',
+    );
   });
 
   it('writes no note for an unknown uuid', async () => {
-    const storage = create(() => new NamedTestStorage('BREWS'));
+    const storage = await read(create(() => new NamedTestStorage('BREWS')));
     storage.setEntries([rawEntry('brew-1')]);
 
     expect(await storage.removeByUUID('unknown')).toBeFalse();
@@ -775,7 +799,7 @@ describe('StorageClass deletion journal', () => {
   });
 
   it('writes the note only when the last entry sharing a uuid is deleted', async () => {
-    const storage = create(() => new NamedTestStorage('BREWS'));
+    const storage = await read(create(() => new NamedTestStorage('BREWS')));
     storage.setEntries([rawEntry('twin', 1), rawEntry('twin', 1)]);
 
     await storage.removeByUUID('twin');
@@ -786,7 +810,7 @@ describe('StorageClass deletion journal', () => {
   });
 
   it('keeps the result of the deletion when the note cannot be written', async () => {
-    const storage = create(() => new NamedTestStorage('BREWS'));
+    const storage = await read(create(() => new NamedTestStorage('BREWS')));
     storage.setEntries([rawEntry('brew-1')]);
     fakeUIStorage.getOrFail.and.rejectWith(new Error('read failed'));
 
