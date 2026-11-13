@@ -3,6 +3,11 @@ import { inject, Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 import { AppEvent } from '../classes/appEvent/appEvent';
+import {
+  CHANGE_TRACKED_COLLECTIONS,
+  FillChangeInfoStats,
+  fillMissingChangeInfo,
+} from '../classes/changeTracking/changeTracking';
 import { isLocalOnlyStorageKey } from '../classes/changeTracking/localStorageKeys';
 import { withDeviceSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { AppEventType } from '../enums/appEvent/appEvent';
@@ -261,7 +266,9 @@ export class UIStorage {
     // Before we import, we do a saftey backup
     const _backup = await this.__safteyBackup();
     try {
-      await this.__importBackup(this.__keepDeviceSecrets(_data, _backup));
+      const importData = this.__keepDeviceSecrets(_data, _backup);
+      this.__fillMissingChangeInfo(importData);
+      await this.__importBackup(importData);
 
       return { BACKUP: false };
     } catch (ex) {
@@ -290,6 +297,30 @@ export class UIStorage {
         withDeviceSettingsSecrets(_settings, deviceSettings),
       ),
     };
+  }
+
+  /**
+   * A backup can come from an older app version. Its VERSION entry can
+   * already contain the data update that fills in the change info, while
+   * single entries (for example added in that older version) still lack it,
+   * so it is filled in here. Values the backup brings along are kept, they
+   * are not replaced by the time of the import. The parsed backup is only
+   * used for this import, so it is changed in place.
+   */
+  private __fillMissingChangeInfo(_data: any): void {
+    if (typeof _data !== 'object' || _data === null) {
+      return;
+    }
+    const stats: FillChangeInfoStats = { skipped: 0 };
+    let filled = 0;
+    for (const collection of CHANGE_TRACKED_COLLECTIONS) {
+      if (Array.isArray(_data[collection])) {
+        filled += fillMissingChangeInfo(_data[collection], stats);
+      }
+    }
+    this.uiLog.log(
+      `UIStorage - Import - Change info filled in for ${filled} entries, ${stats.skipped} entries without config skipped`,
+    );
   }
 
   private async __safteyBackup(): Promise<any> {

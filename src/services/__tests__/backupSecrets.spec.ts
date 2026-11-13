@@ -225,8 +225,17 @@ describe('Backup and export without credentials', () => {
           fromNewDevice.brew_by_weight_webhook.customHeaderValue,
       },
     });
+    // Missing change info is filled in as unknown on import.
     expect(newDevice.data.get('BREWS')).toEqual([
-      { config: { uuid: 'brew-1' } },
+      {
+        config: {
+          uuid: 'brew-1',
+          created_at: 0,
+          updated_at: 0,
+          rev: 0,
+          updated_by: '',
+        },
+      },
     ]);
     // The old device itself still holds its credentials.
     expect((oldDevice.data.get('SETTINGS') as any[])[0]).toEqual(

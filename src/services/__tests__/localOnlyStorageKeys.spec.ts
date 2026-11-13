@@ -3,6 +3,7 @@ import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Storage } from '@ionic/storage';
 
+import { fillMissingChangeInfo } from '../../classes/changeTracking/changeTracking';
 import {
   ATTACHMENT_MANIFEST_STORAGE_KEY,
   DELETION_JOURNAL_STORAGE_KEY,
@@ -27,6 +28,13 @@ function entries(prefix: string, count: number) {
     config: { uuid: `${prefix}-${i}`, unix_timestamp: 1600000000 + i },
     note: `${prefix} ${i}`,
   }));
+}
+
+/** Entries as an import stores them: missing change info is filled in. */
+function imported<T>(_entries: T[]): T[] {
+  const copy = structuredClone(_entries);
+  fillMissingChangeInfo(copy);
+  return copy;
 }
 
 function localValues(prefix: string) {
@@ -188,7 +196,7 @@ describe('Values local to one installation', () => {
     for (const key of LOCAL_ONLY_STORAGE_KEYS) {
       expect(deviceB.data.get(key)).toEqual(localValues('b')[key]);
     }
-    expect(deviceB.data.get('BREWS')).toEqual(entries('brew', 3));
+    expect(deviceB.data.get('BREWS')).toEqual(imported(entries('brew', 3)));
     expect((deviceB.data.get('SETTINGS') as any[])[0].user).toEqual(
       userProfile(),
     );
@@ -209,7 +217,7 @@ describe('Values local to one installation', () => {
     for (const key of LOCAL_ONLY_STORAGE_KEYS) {
       expect(deviceB.data.get(key)).toEqual(localValues('b')[key]);
     }
-    expect(deviceB.data.get('BREWS')).toEqual(entries('brew', 2));
+    expect(deviceB.data.get('BREWS')).toEqual(imported(entries('brew', 2)));
     expect((deviceB.data.get('SETTINGS') as any[])[0].language).toBe('de');
   });
 
