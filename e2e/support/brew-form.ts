@@ -6,8 +6,12 @@ import { expect, type Locator, type Page } from '@playwright/test';
  * characterization tests survive a rebuild of the brew form.
  */
 
-/** Fixed start time for tests that freeze the clock before `page.goto`. */
-export const BREW_TEST_START = new Date('2026-03-01T09:00:00');
+/**
+ * Fixed start time for tests that freeze the clock before `page.goto`: 9:00
+ * in the time zone the tests run the browser in, whatever zone the machine
+ * that runs them is in.
+ */
+export const BREW_TEST_START = new Date('2026-03-01T09:00:00+01:00');
 
 /**
  * A text field of the brew form. Ionic's scroll assist briefly shows a
