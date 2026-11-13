@@ -146,4 +146,37 @@ describe('Checking the internal backup at start-up', () => {
     expect(backupData.BREWS.length).toBe(stored.BREWS.length + 1);
     expect(deviceCounts.BREWS).toBe(stored.BREWS.length);
   });
+
+  // The check runs before the data updates, so on the first start after the
+  // update the device still stores the identical copies.
+  describe('before the device is cleaned up', () => {
+    it('does not take the identical copies for lost entries', async () => {
+      const backup = createLegacyData({ brews: 600, beans: 4 });
+      const backupFile = await writeBackupFile(backup);
+      const { helper, popover } = await startApp(backup, backupFile);
+
+      await helper.checkBackup();
+
+      expect(popover).not.toHaveBeenCalled();
+    });
+
+    it('reports a lost brew although the device still stores an identical copy', async () => {
+      const backup = createLegacyData({ brews: 600, beans: 4 });
+      const backupFile = await writeBackupFile(backup);
+      const stored = structuredClone(backup);
+      const lost = (stored.BREWS as StoredEntry[]).findIndex(
+        (_brew) => _brew.config.uuid === 'brew-5',
+      );
+      stored.BREWS.splice(lost, 1);
+      const { helper, popover } = await startApp(stored, backupFile);
+
+      await helper.checkBackup();
+
+      expect(popover).toHaveBeenCalledTimes(1);
+      const [deviceCounts, backupData] = popover.calls.mostRecent().args;
+      // Both are counted as an import would store them, without the copy.
+      expect(deviceCounts.BREWS).toBe(stored.BREWS.length - 1);
+      expect(backupData.BREWS.length).toBe(stored.BREWS.length);
+    });
+  });
 });

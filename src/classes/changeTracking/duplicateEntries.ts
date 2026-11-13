@@ -102,6 +102,47 @@ function uuidOf(_entry: unknown): string | undefined {
   return typeof uuid === 'string' && uuid !== '' ? uuid : undefined;
 }
 
+/** Positions of the entries with a uuid, by uuid, in the stored order. */
+function positionsByUuid(_entries: readonly unknown[]): Map<string, number[]> {
+  const positions = new Map<string, number[]>();
+  _entries.forEach((_entry, i) => {
+    const uuid = uuidOf(_entry);
+    if (uuid === undefined) {
+      return;
+    }
+    const known = positions.get(uuid);
+    if (known === undefined) {
+      positions.set(uuid, [i]);
+    } else {
+      known.push(i);
+    }
+  });
+  return positions;
+}
+
+/**
+ * Splits the positions of entries sharing a uuid: the first entry and every
+ * copy differing from all entries kept before it are distinct, the other
+ * copies are identical to one of them.
+ */
+function splitIdenticalCopies(
+  _entries: readonly unknown[],
+  _found: readonly number[],
+): { distinct: number[]; identical: number[] } {
+  const distinct = [_found[0]];
+  const identical: number[] = [];
+  for (const position of _found.slice(1)) {
+    if (
+      distinct.some((_kept) => isSameEntry(_entries[_kept], _entries[position]))
+    ) {
+      identical.push(position);
+    } else {
+      distinct.push(position);
+    }
+  }
+  return { distinct, identical };
+}
+
 /**
  * Flow profiles are read from a path built from the uuid of their entry, so
  * an entry that has one cannot get a new uuid without losing it. Photos are
@@ -257,50 +298,26 @@ export function removeDuplicateEntries(
     return result;
   }
 
-  const positions = new Map<string, number[]>();
-  _entries.forEach((_entry, i) => {
-    const uuid = uuidOf(_entry);
-    if (uuid === undefined) {
-      return;
-    }
-    const known = positions.get(uuid);
-    if (known === undefined) {
-      positions.set(uuid, [i]);
-    } else {
-      known.push(i);
-    }
-  });
-
   const removed = new Set<number>();
   /** Differing copies after the first entry, by shared uuid. */
   const differing = new Map<string, number[]>();
   /** The first entry and removed copies of each shared uuid. */
   const ignore = new Map<unknown, string>();
-  for (const [uuid, found] of positions) {
+  for (const [uuid, found] of positionsByUuid(_entries)) {
     if (found.length < 2) {
       continue;
     }
     result.groups++;
     result.entries += found.length;
-    const distinct = [found[0]];
-    for (const position of found.slice(1)) {
-      if (
-        distinct.some((_kept) =>
-          isSameEntry(_entries[_kept], _entries[position]),
-        )
-      ) {
-        removed.add(position);
-      } else {
-        distinct.push(position);
-      }
+    const { distinct, identical } = splitIdenticalCopies(_entries, found);
+    for (const position of identical) {
+      removed.add(position);
     }
     if (distinct.length > 1) {
       differing.set(uuid, distinct.slice(1));
       ignore.set(_entries[found[0]], uuid);
-      for (const position of found) {
-        if (removed.has(position)) {
-          ignore.set(_entries[position], uuid);
-        }
+      for (const position of identical) {
+        ignore.set(_entries[position], uuid);
       }
     }
   }
@@ -392,4 +409,22 @@ export function removeDuplicateEntriesFromData(
 /** Number of changed entries: removed copies and copies with a new uuid. */
 export function countChangedEntries(_result: DuplicateCleanupResult): number {
   return _result.removed + _result.renamed.length;
+}
+
+/**
+ * Number of entries left once removeDuplicateEntries removed the identical
+ * copies: differing copies and entries without a uuid count, they are never
+ * removed. `_entries` is not changed, and references are not looked for, as
+ * they only decide about new uuids.
+ */
+export function countWithoutIdenticalCopies(
+  _entries: readonly unknown[],
+): number {
+  let identical = 0;
+  for (const found of positionsByUuid(_entries).values()) {
+    if (found.length > 1) {
+      identical += splitIdenticalCopies(_entries, found).identical.length;
+    }
+  }
+  return _entries.length - identical;
 }

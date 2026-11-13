@@ -224,7 +224,9 @@ export class UIExportImportHelper {
       if (fileData) {
         // Counted as an import would store it: after the copies of entries
         // sharing a uuid were cleaned up, a backup written before has more
-        // entries than the device, although nothing was lost.
+        // entries than the device, although nothing was lost. The device is
+        // counted the same way (UIStorage.hasCorruptedData), so copies it
+        // still stores before the cleanup do not hide a lost entry either.
         this.uiStorage.removeDuplicateEntries(fileData);
         let importBackup: boolean = false;
         if (!hasData && isAutomaticBackup === false) {

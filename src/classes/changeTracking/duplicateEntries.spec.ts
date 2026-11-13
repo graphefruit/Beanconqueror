@@ -1,6 +1,7 @@
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import {
   countChangedEntries,
+  countWithoutIdenticalCopies,
   isSameEntry,
   removeDuplicateEntries,
   removeDuplicateEntriesFromData,
@@ -566,6 +567,30 @@ describe('duplicateEntries', () => {
       expect(removeDuplicateEntriesFromData(null as any, uuidSource())).toEqual(
         {},
       );
+    });
+  });
+
+  describe('countWithoutIdenticalCopies', () => {
+    it('counts the entries the cleanup leaves, without changing them', () => {
+      const shared = entry('bean-x', { name: 'A' });
+      const withoutUuid = { name: 'no uuid', config: {} };
+      const entries: unknown[] = [
+        shared,
+        structuredClone(shared),
+        entry('bean-x', { name: 'B' }),
+        structuredClone(shared),
+        entry('bean-y'),
+        withoutUuid,
+        structuredClone(withoutUuid),
+      ];
+      const before = structuredClone(entries);
+
+      const count = countWithoutIdenticalCopies(entries);
+
+      expect(entries).toEqual(before);
+      expect(count).toBe(5);
+      removeDuplicateEntries('BEANS', entries, {}, uuidSource());
+      expect(entries.length).toBe(count);
     });
   });
 });
