@@ -27,6 +27,17 @@ async function openProfile(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/home\/profile$/);
 }
 
+/** Switches the app to German in the settings and returns to the profile. */
+async function switchToGermanFromProfile(page: Page): Promise<void> {
+  await page.getByRole('link', { name: /^Settings/ }).click();
+  await page.getByRole('button', { name: /^Language Settings/ }).press('Enter');
+  await page.getByRole('radio', { name: 'German' }).click();
+  await page.getByRole('button', { name: 'Choose' }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await page.goBack();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+}
+
 async function expectProfileTabSelected(page: Page): Promise<void> {
   await expect(
     tabBar(page).getByRole('tab', { name: 'Profile' }),
@@ -185,13 +196,7 @@ test('tabs and profile entries use the glossary terms in German', async ({
   await completeFirstRun(page);
 
   await openProfile(page);
-  await page.getByRole('link', { name: /^Settings/ }).click();
-  await page.getByRole('button', { name: /^Language Settings/ }).press('Enter');
-  await page.getByRole('radio', { name: 'German' }).click();
-  await page.getByRole('button', { name: 'Choose' }).click();
-  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-  await page.goBack();
-  await expect(page).toHaveURL(/\/home\/profile$/);
+  await switchToGermanFromProfile(page);
 
   const tabs = tabBar(page).getByRole('tab');
   for (const [index, name] of [
@@ -213,6 +218,63 @@ test('tabs and profile entries use the glossary terms in German', async ({
     ).toBeVisible();
   }
 });
+
+/** Whether Ionic ellipsizes the screen title shown in the header. */
+async function screenTitleIsCut(page: Page, title: string): Promise<boolean> {
+  const span = page.getByRole('banner').getByText(title, { exact: true });
+  await expect(span).toBeVisible();
+  return span.evaluate((element) => {
+    const inner = element
+      .closest('ion-title')!
+      .shadowRoot!.querySelector('.toolbar-title')!;
+    return inner.scrollWidth > inner.clientWidth;
+  });
+}
+
+for (const language of [
+  {
+    name: 'English',
+    preparations: 'Preparation methods',
+    preparationsTitle: 'Methods',
+    grinders: 'Grinders',
+  },
+  {
+    name: 'German',
+    preparations: 'Zubereitungsmethoden',
+    preparationsTitle: 'Methoden',
+    grinders: 'Mühlen',
+  },
+] as const) {
+  test(`the preparation and grinder titles fit the header in ${language.name}`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await completeFirstRun(page);
+    await openProfile(page);
+    if (language.name === 'German') {
+      await switchToGermanFromProfile(page);
+    }
+
+    // The profile entry may use the long term; the screen title must stay whole.
+    for (const textSize of ['100%', '200%']) {
+      await page.evaluate((size) => {
+        document.documentElement.style.fontSize = size;
+      }, textSize);
+      for (const [entry, title] of [
+        [language.preparations, language.preparationsTitle],
+        [language.grinders, language.grinders],
+      ]) {
+        await page.getByRole('link', { name: new RegExp(`^${entry}`) }).click();
+        expect(
+          await screenTitleIsCut(page, title),
+          `${title} is not ellipsized at ${textSize}`,
+        ).toBe(false);
+        await page.getByRole('button', { name: 'back' }).click();
+        await expect(page).toHaveURL(/\/home\/profile$/);
+      }
+    }
+  });
+}
 
 /**
  * The dot on the profile tab. It is decorative and slotted next to the tab's
