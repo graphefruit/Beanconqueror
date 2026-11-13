@@ -96,6 +96,30 @@ describe('duplicateEntries', () => {
       const notANumber = entry('x', { n: NaN });
       expect(isSameEntry(notANumber, structuredClone(notANumber))).toBeTrue();
     });
+
+    it('never takes a hole in a list for a value', () => {
+      // The database keeps holes in lists.
+      const values: unknown[] = [];
+      values[1] = 'b';
+      const withHole = entry('x', { values });
+      const withValue = entry('x', { values: ['a', 'b'] });
+
+      expect(isSameEntry(withHole, withValue)).toBeFalse();
+      expect(isSameEntry(withValue, withHole)).toBeFalse();
+      expect(isSameEntry(withHole, structuredClone(withHole))).toBeTrue();
+      // A hole reads as undefined and is written as null, like undefined.
+      expect(
+        isSameEntry(withHole, entry('x', { values: [undefined, 'b'] })),
+      ).toBeTrue();
+      expect(
+        isSameEntry(withHole, entry('x', { values: [null, 'b'] })),
+      ).toBeFalse();
+
+      const entries = [withHole, withValue];
+      const result = removeDuplicateEntries('BEANS', entries, {}, uuidSource());
+      expect(result.removed).toBe(0);
+      expect(entries.length).toBe(2);
+    });
   });
 
   describe('removeDuplicateEntries', () => {

@@ -35,10 +35,10 @@ function definedKeys(_value: Record<string, unknown>): string[] {
 
 /**
  * Deep comparison of stored values. A property set to undefined counts as
- * missing, as it is lost when the value is written as JSON. Values other
- * than plain data (arrays, objects, dates and primitives) only count as
- * equal when they are the same object, so they never make two entries look
- * identical.
+ * missing, as it is lost when the value is written as JSON. A hole in a list
+ * counts as undefined. Values other than plain data (arrays, objects, dates
+ * and primitives) only count as equal when they are the same object, so they
+ * never make two entries look identical.
  */
 function isSameValue(_a: unknown, _b: unknown): boolean {
   if (_a === _b) {
@@ -48,12 +48,17 @@ function isSameValue(_a: unknown, _b: unknown): boolean {
     return Number.isNaN(_a) && Number.isNaN(_b);
   }
   if (Array.isArray(_a) || Array.isArray(_b)) {
-    return (
-      Array.isArray(_a) &&
-      Array.isArray(_b) &&
-      _a.length === _b.length &&
-      _a.every((_item, i) => isSameValue(_item, _b[i]))
-    );
+    if (!Array.isArray(_a) || !Array.isArray(_b) || _a.length !== _b.length) {
+      return false;
+    }
+    // Every position, holes too: every() skips the holes of `_a` and would
+    // take them for whatever `_b` holds there.
+    for (let i = 0; i < _a.length; i++) {
+      if (!isSameValue(_a[i], _b[i])) {
+        return false;
+      }
+    }
+    return true;
   }
   if (_a instanceof Date || _b instanceof Date) {
     return (
