@@ -439,6 +439,46 @@ describe('Importing a backup', () => {
     expect(keptBrews).toContain(ofTheDay);
   });
 
+  it('keeps the data brought back from a backup written before an import when more imports follow', async () => {
+    const own = storedData('own');
+    const device = await startDevice(own);
+    const importFile = async (_data: unknown, _fileName: string) => {
+      expect(
+        await device.helper.importBackup(_data, 'import', _fileName),
+      ).toEqual({ BACKUP: false });
+      await new Promise((_resolve) => setTimeout(_resolve, 2));
+    };
+    const tried = (_name: string) => ({
+      SETTINGS: [{ language: 'en' }],
+      BREWS: entries(`tried-${_name}`, 3),
+    });
+
+    await importFile(tried('a'), 'Beanconqueror 2.zip');
+    const [ownBackup] = writtenBackups(device);
+    // A brew changed after that import: its backup is kept like own data.
+    const note = device.data.get(LAST_RESTORE_STORAGE_KEY) as IRestoreNote;
+    (device.data.get('BREWS') as any[])[0].config.updated_at =
+      note.last_restore_at + 1;
+    await importFile(tried('b'), 'Beanconqueror 3.zip');
+    // Going back to the data from before the first import.
+    await importFile(
+      await readBackupFile(device, ownBackup),
+      ownBackup.substring(ownBackup.lastIndexOf('/') + 1),
+    );
+    for (const [i, name] of ['c', 'd', 'e'].entries()) {
+      await importFile(tried(name), `Beanconqueror ${i + 4}.zip`);
+    }
+
+    // The file it was brought back from is gone after the next import, so
+    // the backup written before that import is the only copy left.
+    const keptBrews: unknown[] = [];
+    for (const path of writtenBackups(device)) {
+      keptBrews.push((await readBackupFile(device, path)).BREWS);
+    }
+    expect(writtenBackups(device)).not.toContain(ownBackup);
+    expect(keptBrews).toContain(own.BREWS);
+  });
+
   it('removes no backup when the import fails, so the file it came from stays', async () => {
     const before = storedData('own');
     const device = await startDevice(before, { files: OLDER_BACKUPS });

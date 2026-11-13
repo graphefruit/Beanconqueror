@@ -67,6 +67,9 @@ const AUTOMATIC_BACKUP_DAYS_KEPT = 7;
  *   shows on iOS, and of every export, which the next export replaces.
  * - The automatic backup of a day is replaced on that day, and deleted at
  *   start-up a week later.
+ * - A backup of this service that data was brought back from: the rotation
+ *   after the next import can delete it, and the backup written before
+ *   that import is then the only copy of that data.
  * A name that is not known does not count either.
  */
 export function canBeImportedAgain(
@@ -77,7 +80,8 @@ export function canBeImportedAgain(
   if (
     typeof _fileName !== 'string' ||
     _fileName === '' ||
-    _fileName === BACKUP_FILE_NAME
+    _fileName === BACKUP_FILE_NAME ||
+    _fileName.startsWith(FILE_NAME_PREFIX)
   ) {
     return false;
   }

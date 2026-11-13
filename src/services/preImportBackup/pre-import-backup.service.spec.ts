@@ -345,6 +345,18 @@ describe('Whether an imported file can be imported again', () => {
     );
   });
 
+  it('never holds for a backup written before an import, which the rotation deletes', () => {
+    for (const path of [
+      backupPath('2026-11-13_08-00-00-000'),
+      importedBackupPath('2026-11-13_08-00-00-000'),
+    ]) {
+      const name = path.substring(path.lastIndexOf('/') + 1);
+      expect(canBeImportedAgain(name, at(13, 11, 9), NOW))
+        .withContext(name)
+        .toBe(false);
+    }
+  });
+
   it('never holds when the name is not known', () => {
     for (const name of [undefined, null, '', 42]) {
       expect(canBeImportedAgain(name, at(13, 11, 9), NOW))

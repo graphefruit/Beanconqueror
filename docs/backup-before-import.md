@@ -69,6 +69,9 @@ never taken for granted for a file the app replaces or deletes itself:
   (`Beanconqueror_automatic_export_<DD_MM_YYYY>.zip`): it is replaced on that
   day, so it only counts when it was imported on a later day, and it is
   deleted when the app starts a week after its day.
+- One of these files (`Beanconqueror_pre_import_…`), when going back: the
+  rotation after the next import can delete it, and the file written before
+  that import is then the only one with that data.
 - A file whose name is not known.
 
 Data restored from the internal backup is never taken for unchanged either,
@@ -94,7 +97,8 @@ data, so this file is the only one left with the changes made that day.
   under On My iPhone › Beanconqueror › pre-import.
 
 Going back is an import as well, so the data from before it is saved first
-again.
+again. The data brought back is kept like data changed on the device: the
+file written before the next import does not end in `_imported.zip`.
 
 ## Browser
 
