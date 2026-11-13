@@ -144,6 +144,9 @@ pnpm generate-test-data --brews 7000 --seed 2 --end-date 2026-11-01 --out /tmp/b
 `--file-references` adds photo and flow profile paths without the files, to check how the app
 handles missing files. Without `--end-date` the data ends at the current full hour.
 
+The command runs the TypeScript file directly in Node. That needs Node 22.18 or later (23.6 or
+later in the 23 line), such as the Node 24 from `.nvmrc`; older versions cannot load the file.
+
 ### Performance budgets
 
 `pnpm e2e:perf` measures the app with 7,000 and 15,000 brews (`e2e/perf/large-data.perf.ts`)
