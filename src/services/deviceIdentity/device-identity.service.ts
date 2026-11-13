@@ -15,8 +15,15 @@ export interface IDeviceIdentity {
  * Identifies this installation for change tracking.
  *
  * The device id is its own random value; it is not the analytics id. It is
- * stored outside the settings under a local-only key, so it never leaves the
- * device with a backup and an import never replaces it.
+ * stored outside the settings under a local-only key, so it is not part of
+ * the app's own backup files and an import never replaces it.
+ *
+ * Known gap: it lives in the same app database as the entries. Backups made
+ * by the operating system (Android Auto Backup and device transfer, iOS
+ * device backup and restore) copy that database, so a restored or
+ * transferred installation starts with the same device id as the original
+ * one. Nothing detects such a copy yet. This has to be settled before the
+ * device id is used to tell installations apart.
  *
  * Every stored entry depends on this service, so it only imports services
  * that do not depend on the entry storages themselves.
