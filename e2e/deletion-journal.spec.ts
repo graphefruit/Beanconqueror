@@ -22,7 +22,11 @@ test('deleting a brew removes it at once and keeps a local note of it', async ({
 
   const [brew] = (await readStoredValue<StoredEntry[]>(page, 'BREWS')) ?? [];
   const device = await readStoredValue<{ device_id: string }>(page, 'DEVICE');
-  expect(brew?.config.uuid).toBeTruthy();
+  if (!brew || !device) {
+    throw new Error(
+      'Expected a stored brew and a device id after the first run',
+    );
+  }
   expect(await readStoredValue(page, 'DELETION_JOURNAL')).toBeNull();
 
   await page.getByRole('button', { name: 'Brew options' }).first().click();
@@ -46,10 +50,10 @@ test('deleting a brew removes it at once and keeps a local note of it', async ({
     .toEqual([
       {
         collection: 'BREWS',
-        uuid: brew!.config.uuid,
+        uuid: brew.config.uuid,
         deleted_at: expect.any(Number),
-        device_id: device!.device_id,
-        rev: brew!.config.rev ?? 0,
+        device_id: device.device_id,
+        rev: brew.config.rev ?? 0,
       },
     ]);
 });
