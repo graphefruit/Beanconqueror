@@ -140,11 +140,13 @@ describe('UIAlert loading spinner', () => {
   it('stops announcing once it is closed with its own cancel button', fakeAsync(() => {
     void uiAlert.showLoadingSpinner();
     flushMicrotasks();
+    tick(1000);
+    uiAlert.setLoadingSpinnerMessage('Still connecting');
 
     void modals[0].dismiss({ dismissed: true });
     flushMicrotasks();
     tick(PROGRESS_INTERVAL_MS);
-    uiAlert.setLoadingSpinnerMessage('Still connecting');
+    uiAlert.setLoadingSpinnerMessage('Giving up');
     tick(PROGRESS_INTERVAL_MS);
 
     expect(liveRegion.heard).toEqual(['Please wait...']);
