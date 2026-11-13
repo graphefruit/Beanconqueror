@@ -14,8 +14,13 @@ import { UIFileHelper } from '../uiFileHelper';
 export interface PreImportBackupFiles {
   /** False where the app has no file system of its own, in the browser. */
   isAvailable: () => boolean;
-  /** Writes `_data` to `_path`, missing folders are created. */
+  /**
+   * Writes `_data` to `_path`, missing folders are created. A write that
+   * fails can leave an empty or cut off file at `_path`.
+   */
   write: (_path: string, _data: Blob) => Promise<void>;
+  /** Gives the file at `_from` the path `_to`, where no file is yet. */
+  rename: (_from: string, _to: string) => Promise<void>;
   /** Files directly in `_folder`, none when the folder does not exist. */
   list: (_folder: string) => Promise<FileInfo[]>;
   remove: (_path: string) => Promise<void>;
@@ -40,6 +45,13 @@ export const PRE_IMPORT_BACKUP_FILES = new InjectionToken<PreImportBackupFiles>(
             uiFileHelper.getDataDirectory(),
           );
         },
+        rename: (_from: string, _to: string) =>
+          Filesystem.rename({
+            from: _from,
+            to: _to,
+            directory: uiFileHelper.getDataDirectory(),
+            toDirectory: uiFileHelper.getDataDirectory(),
+          }),
         list: async (_folder: string) => {
           try {
             const { files } = await Filesystem.readdir({

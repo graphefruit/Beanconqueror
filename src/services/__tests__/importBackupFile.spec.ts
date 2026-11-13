@@ -162,11 +162,25 @@ function createDataDirectory(
   const files: PreImportBackupFiles = {
     isAvailable: () => _available,
     write: (_path, _data) => {
-      _writes.push(`file ${_path}`);
       if (failing.write) {
+        _writes.push(`file ${_path}`);
+        // Like Android, where the file is created before its content is
+        // written and stays when writing fails.
+        stored.set(_path, new Blob([]));
         return Promise.reject(new Error('disk full'));
       }
       stored.set(_path, _data);
+      return Promise.resolve();
+    },
+    rename: (_from, _to) => {
+      const data = stored.get(_from);
+      if (data === undefined) {
+        return Promise.reject(new Error('no such file'));
+      }
+      // The backup is there once the file has its name.
+      _writes.push(`file ${_to}`);
+      stored.delete(_from);
+      stored.set(_to, data);
       return Promise.resolve();
     },
     list: (_folder) =>
@@ -364,6 +378,35 @@ describe('Importing a backup', () => {
     expect(device.writes).toEqual([jasmine.stringMatching(/^file /)]);
     expect(Object.fromEntries(device.data)).toEqual(before);
     expect(writtenBackups(device)).toEqual([]);
+  });
+
+  it('keeps the older backups when writing the backup file failed a few times before', async () => {
+    // The storage is full: every failed write would leave an empty file.
+    const device = await startDevice(storedData('own'), {
+      files: OLDER_BACKUPS.slice(1),
+    });
+    const next = { SETTINGS: [{ language: 'en' }], BREWS: entries('brew', 3) };
+    device.directory.failing.write = true;
+    for (let i = 0; i < 2; i++) {
+      await expectAsync(
+        device.helper.importBackup(next, 'import'),
+      ).toBeRejectedWith(jasmine.any(PreImportBackupError));
+      await new Promise((_resolve) => setTimeout(_resolve, 2));
+    }
+    expect([...device.directory.stored.keys()]).toEqual(OLDER_BACKUPS.slice(1));
+
+    // Space was made, the import is tried again.
+    device.directory.failing.write = false;
+    expect(await device.helper.importBackup(next, 'import')).toEqual({
+      BACKUP: false,
+    });
+
+    const files = [...device.directory.stored];
+    expect(files.map(([_path]) => _path)).toEqual(
+      jasmine.arrayContaining(OLDER_BACKUPS.slice(1)),
+    );
+    expect(files.length).toBe(3);
+    expect(files.every(([, _data]) => _data.size > 0)).toBeTrue();
   });
 
   it('keeps the three newest backups once the import is done', async () => {

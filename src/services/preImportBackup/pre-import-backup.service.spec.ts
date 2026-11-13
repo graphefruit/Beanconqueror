@@ -31,6 +31,7 @@ function createFakeFiles(_paths: string[] = [], _available = true) {
   );
   const failing = {
     write: false,
+    rename: false,
     list: false,
     remove: new Set<string>(),
   };
@@ -38,9 +39,21 @@ function createFakeFiles(_paths: string[] = [], _available = true) {
     isAvailable: () => _available,
     write: (_path, _data) => {
       if (failing.write) {
+        // Like Android, where the file is created before its content is
+        // written and stays when writing fails.
+        stored.set(_path, new Blob([]));
         return Promise.reject(new Error('disk full'));
       }
       stored.set(_path, _data);
+      return Promise.resolve();
+    },
+    rename: (_from, _to) => {
+      const data = stored.get(_from);
+      if (failing.rename || data === undefined || stored.has(_to)) {
+        return Promise.reject(new Error('not renamed'));
+      }
+      stored.delete(_from);
+      stored.set(_to, data);
       return Promise.resolve();
     },
     list: (_folder) => {
@@ -136,7 +149,7 @@ describe('PreImportBackupService', () => {
     expect(fake.stored.has(path)).toBeTrue();
   });
 
-  it('rejects when the backup cannot be written', async () => {
+  it('rejects and leaves no file when the backup cannot be written', async () => {
     const fake = createFakeFiles();
     fake.failing.write = true;
     const { service } = setUp(fake.files);
@@ -145,6 +158,69 @@ describe('PreImportBackupService', () => {
       'disk full',
     );
     expect(fake.stored.size).toBe(0);
+  });
+
+  it('rejects and leaves no file when the written backup cannot get its name', async () => {
+    const fake = createFakeFiles();
+    fake.failing.rename = true;
+    const { service } = setUp(fake.files);
+
+    await expectAsync(service.write(new Blob(['zip']))).toBeRejectedWithError(
+      'not renamed',
+    );
+    expect(fake.stored.size).toBe(0);
+  });
+
+  it('never takes a file that was not written completely for a backup', async () => {
+    // The app was closed while writing, or the file could not be removed.
+    const older = [
+      backupPath('2026-11-01_10-00-00-000'),
+      backupPath('2026-11-02_10-00-00-000'),
+    ];
+    const unfinished = [
+      `${backupPath('2026-11-03_10-00-00-000')}.part`,
+      `${importedBackupPath('2026-11-04_10-00-00-000')}.part`,
+    ];
+    const fake = createFakeFiles([...older, ...unfinished]);
+    const { service } = setUp(fake.files);
+
+    expect((await service.list()).length).toBe(2);
+    await service.removeOldBackups(backupPath('2026-11-05_10-00-00-000'));
+    expect([...fake.stored.keys()].sort()).toEqual(
+      [...older, ...unfinished].sort(),
+    );
+
+    // The next backup removes them before it is written.
+    const written = await service.write(new Blob(['zip']), {
+      now: new Date(Date.UTC(2026, 10, 6, 10, 0, 0, 0)),
+    });
+    expect([...fake.stored.keys()].sort()).toEqual([...older, written].sort());
+  });
+
+  it('writes the backup also when unfinished files cannot be removed', async () => {
+    const unfinished = `${backupPath('2026-11-03_10-00-00-000')}.part`;
+    const fake = createFakeFiles([
+      unfinished,
+      `${PRE_IMPORT_BACKUP_FOLDER}/notes.zip.part`,
+    ]);
+    fake.failing.remove.add(unfinished);
+    const { service, uiLog } = setUp(fake.files);
+
+    const written = await service.write(new Blob(['zip']));
+
+    expect([...fake.stored.keys()].sort()).toEqual(
+      [
+        unfinished,
+        `${PRE_IMPORT_BACKUP_FOLDER}/notes.zip.part`,
+        written,
+      ].sort(),
+    );
+    expect(uiLog.error).toHaveBeenCalledTimes(1);
+
+    fake.failing.list = true;
+    await expectAsync(
+      service.write(new Blob(['zip']), { now: new Date(0) }),
+    ).toBeResolved();
   });
 
   it(`keeps the ${PRE_IMPORT_BACKUPS_KEPT} newest backups and no other file is touched`, async () => {

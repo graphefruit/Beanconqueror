@@ -17,6 +17,12 @@ const FILE_NAME_PREFIX = 'Beanconqueror_pre_import_';
 /** Ends the name of a backup of an unchanged import, see write(). */
 const UNCHANGED_IMPORT_SUFFIX = '_imported';
 
+/**
+ * Ends the name of a backup while it is written, see write(). A file with
+ * that name is never taken for a backup.
+ */
+const UNFINISHED_SUFFIX = '.part';
+
 /** Only files with exactly this name are backups of this service. */
 const FILE_NAME_PATTERN =
   /^Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}Z(_imported)?\.zip$/;
@@ -122,6 +128,15 @@ function isBackupFile(_file: FileInfo): boolean {
   return FILE_NAME_PATTERN.test(_file.name);
 }
 
+function isUnfinishedBackupFile(_file: FileInfo): boolean {
+  return (
+    _file.name.endsWith(UNFINISHED_SUFFIX) &&
+    FILE_NAME_PATTERN.test(
+      _file.name.substring(0, _file.name.length - UNFINISHED_SUFFIX.length),
+    )
+  );
+}
+
 function isUnchangedImport(_name: string): boolean {
   return _name.endsWith(`${UNCHANGED_IMPORT_SUFFIX}.zip`);
 }
@@ -158,6 +173,12 @@ export class PreImportBackupService {
    * Writes `_zip` as a new backup and resolves its path in the app data
    * directory. Rejects when the file could not be written. The name of a
    * backup of an unchanged import ends in `_imported`.
+   *
+   * The file is written under a name ending in `.part` and only gets its
+   * name once it is complete: a write that fails, for example because the
+   * storage is full, can leave an empty or cut off file behind, which must
+   * never count as a backup. Such a file is removed, here and before the
+   * next backup is written, in case the app was closed while writing.
    */
   public async write(
     _zip: Blob,
@@ -166,8 +187,36 @@ export class PreImportBackupService {
     const suffix = _options.unchangedImport ? UNCHANGED_IMPORT_SUFFIX : '';
     const time = fileTimestamp(_options.now ?? new Date());
     const path = `${PRE_IMPORT_BACKUP_FOLDER}/${FILE_NAME_PREFIX}${time}${suffix}.zip`;
-    await this.files.write(path, _zip);
+    const unfinished = `${path}${UNFINISHED_SUFFIX}`;
+    await this.removeUnfinishedBackups();
+    try {
+      await this.files.write(unfinished, _zip);
+      await this.files.rename(unfinished, path);
+    } catch (ex) {
+      await this.removeUnfinishedBackups();
+      throw ex;
+    }
     return path;
+  }
+
+  /** Removes what a write that did not complete left behind. Never rejects. */
+  private async removeUnfinishedBackups(): Promise<void> {
+    try {
+      const unfinished = (
+        await this.files.list(PRE_IMPORT_BACKUP_FOLDER)
+      ).filter(isUnfinishedBackupFile);
+      for (const file of unfinished) {
+        await this.files.remove(`${PRE_IMPORT_BACKUP_FOLDER}/${file.name}`);
+        this.uiLog.log(
+          `PreImportBackupService - removed unfinished ${file.name}`,
+        );
+      }
+    } catch (ex) {
+      this.uiLog.error(
+        'PreImportBackupService - unfinished backups could not be removed',
+        ex,
+      );
+    }
   }
 
   /**
