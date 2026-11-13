@@ -28,6 +28,7 @@ import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { WATER_TYPES } from '../../enums/water/waterTypes';
 import { WATER_UNIT } from '../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../enums/water/waterUnitTds';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
 import { UIAlert } from '../../services/uiAlert';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
@@ -119,6 +120,22 @@ function topLevelKeys(value: object): string[] {
   return Object.keys(value).sort();
 }
 
+/** The fields of IBeanInformation; `satisfies` rejects a missing or unknown name. */
+const BEAN_INFORMATION_FIELDS = Object.keys({
+  country: true,
+  region: true,
+  farm: true,
+  farmer: true,
+  elevation: true,
+  harvest_time: true,
+  variety: true,
+  processing: true,
+  certification: true,
+  percentage: true,
+  purchasing_price: true,
+  fob_price: true,
+} satisfies Record<keyof IBeanInformation, true>).sort();
+
 const DAY = 86_400;
 const END = new Date('2026-11-01T18:00:00Z');
 
@@ -206,9 +223,10 @@ describe('synthetic data set', () => {
         expect(Object.keys(BEAN_ROASTING_TYPE_ENUM)).toContain(
           entry.bean_roasting_type,
         );
-        for (const information of entry.bean_information) {
-          // The bean form creates these records with all fields of IBeanInformation.
-          expect(Object.keys(information).length).toBe(12);
+        // Typed as the app's interface, so a field of another type does not compile.
+        const information: IBeanInformation[] = entry.bean_information;
+        for (const record of information) {
+          expect(Object.keys(record).sort()).toEqual(BEAN_INFORMATION_FIELDS);
         }
       }
       for (const preparation of data.PREPARATION) {
@@ -299,6 +317,39 @@ describe('synthetic data set', () => {
       }
     });
 
+    it('counts a brew as current when bean, grinder and preparation are all current', () => {
+      // The rule of the brew list's "Current" segment (BrewPage.__initializeBrewView()).
+      const archived = (
+        list: { config: { uuid: string }; finished: boolean }[],
+        uuid: string,
+      ) => list.find((e) => e.config.uuid === uuid).finished;
+      const wrong: string[] = [];
+      const onlyReasons = new Set<string>();
+      for (const brew of data.BREWS) {
+        const archivedParts = Object.entries({
+          bean: archived(data.BEANS, brew.bean),
+          grinder: archived(data.MILL, brew.mill),
+          preparation: archived(data.PREPARATION, brew.method_of_preparation),
+        })
+          .filter(([, isArchived]) => isArchived)
+          .map(([part]) => part);
+        if (isOpenBrew(data, brew) !== (archivedParts.length === 0)) {
+          wrong.push(brew.config.uuid);
+        }
+        if (archivedParts.length <= 1) {
+          onlyReasons.add(archivedParts[0] ?? 'none');
+        }
+      }
+      expect(wrong).withContext('brews isOpenBrew() gets wrong').toEqual([]);
+      // Each part archives some brews on its own, so the comparison covers every condition.
+      expect([...onlyReasons].sort()).toEqual([
+        'bean',
+        'grinder',
+        'none',
+        'preparation',
+      ]);
+    });
+
     it('uuids are unique across all entries', () => {
       const all = [
         ...data.BREWS,
@@ -346,8 +397,28 @@ describe('synthetic data set', () => {
         perYear[Math.min(4, Math.floor((time - start) / (365 * DAY)))]++;
       }
       expect(perYear.every((count) => count > 0)).toBeTrue();
-      // Brewing gets more frequent over the years.
-      expect(perYear[4]).toBeGreaterThan(perYear[0]);
+    });
+
+    it('brews more often every year', () => {
+      // The largest tier, so random spread cannot reorder the years.
+      const times = generateDataSet({
+        brews: BREW_TIERS[BREW_TIERS.length - 1],
+        endDate: END,
+      }).BREWS.map((b) => b.config.unix_timestamp);
+      const start = END.getTime() / 1000 - 5 * 365 * DAY;
+      const perYear = [0, 0, 0, 0, 0];
+      for (const time of times) {
+        perYear[Math.min(4, Math.floor((time - start) / (365 * DAY)))]++;
+      }
+      for (let year = 1; year < perYear.length; year++) {
+        expect(perYear[year])
+          .withContext(`brews in year ${year + 1}`)
+          .toBeGreaterThan(perYear[year - 1]);
+      }
+      // Brews per day rise linearly to twice the first day's number, so the last of the five
+      // years has 0.38 / 0.22 = 1.73 times the brews of the first.
+      expect(perYear[4] / perYear[0]).toBeGreaterThan(1.55);
+      expect(perYear[4] / perYear[0]).toBeLessThan(1.9);
     });
 
     it('mixes espresso and filter, archived and current, blends and ratings', () => {
