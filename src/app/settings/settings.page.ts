@@ -1710,21 +1710,7 @@ export class SettingsPage {
             );
           }
 
-          if (
-            this.uiBrewStorage.getAllEntries().length > 0 &&
-            this.uiMillStorage.getAllEntries().length <= 0
-          ) {
-            // We got an update and we got no mills yet, therefore we add a Standard mill.
-            const data: Mill = new Mill();
-            data.name = 'Standard';
-            await this.uiMillStorage.add(data);
-
-            const brews: Brew[] = this.uiBrewStorage.getAllEntries();
-            for (const brew of brews) {
-              brew.mill = data.config.uuid;
-              await this.uiBrewStorage.update(brew);
-            }
-          }
+          await this.__addStandardMillAfterImport();
           this.setLanguage();
 
           if (
@@ -1772,6 +1758,29 @@ export class SettingsPage {
       await this.uiAlert.showMessage(
         this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex),
       );
+    }
+  }
+
+  /**
+   * Imported brews need a mill. Pointing them at the standard mill is a
+   * correction made by the app, not a user change, so the imported entries
+   * keep the change info they came with.
+   */
+  private async __addStandardMillAfterImport(): Promise<void> {
+    if (
+      this.uiBrewStorage.getAllEntries().length > 0 &&
+      this.uiMillStorage.getAllEntries().length <= 0
+    ) {
+      // We got an update and we got no mills yet, therefore we add a Standard mill.
+      const data: Mill = new Mill();
+      data.name = 'Standard';
+      await this.uiMillStorage.add(data);
+
+      const brews: Brew[] = this.uiBrewStorage.getAllEntries();
+      for (const brew of brews) {
+        brew.mill = data.config.uuid;
+        await this.uiBrewStorage.update(brew, { touch: false });
+      }
     }
   }
 
