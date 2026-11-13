@@ -107,10 +107,11 @@ export class PreImportBackupService {
 
   /**
    * Deletes older backups, so PRE_IMPORT_BACKUPS_KEPT are left: `_keep`, the
-   * path write() resolved, the newest backup that is not of an unchanged
-   * import, and the newest others. `_keep` always stays, also when a clock
-   * set back gave it an older name. Other files are never touched. Never
-   * rejects: the backups are only kept longer when deleting fails.
+   * path write() resolved, and the newest others. When `_keep` is the backup
+   * of an unchanged import, the newest backup that is not one is among them.
+   * `_keep` always stays, also when a clock set back gave it an older name.
+   * Other files are never touched. Never rejects: the backups are only kept
+   * longer when deleting fails.
    *
    * After a few imports in a row, the newest backups only hold the data of
    * the files imported before, which can be imported again. The data from

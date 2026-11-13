@@ -62,10 +62,11 @@ for unchanged, as the automatic backups replace that file.
 - Android: the internal storage of the app. Neither other apps nor the file
   picker of the import can open it.
 
-Three files are kept: the one just written, the newest one whose name does
-not end in `_imported.zip`, and the newest of the others. Older ones are
-deleted once an import has completed. A failed import deletes none, so the
-file an import was started from is still there if it fails.
+Three files are kept. When the name of the file just written ends in
+`_imported.zip`: that file, the newest one whose name does not end in
+`_imported.zip`, and the newest of the others. Otherwise the three newest.
+Older ones are deleted once an import has completed. A failed import deletes
+none, so the file an import was started from is still there if it fails.
 
 Without that rule, trying a few backups one after the other would delete the
 data from before the first of them: once an import is done, the automatic
