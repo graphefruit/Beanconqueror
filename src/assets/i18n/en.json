@@ -332,6 +332,7 @@
     "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "You do not have any archived preparation methods.",
     "TOAST_BREW_ADDED_SUCCESSFULLY": "Brew added successfully",
     "TOAST_BREW_REPEATED_SUCCESSFULLY": "Brew repeated successfully",
+    "TOAST_BREW_ALREADY_OPEN": "A brew is already open",
     "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bean added successfully",
     "TOAST_MILL_ADDED_SUCCESSFULLY": "Grinder added successfully",
     "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Preparation method added successfully",

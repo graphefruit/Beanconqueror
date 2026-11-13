@@ -40,6 +40,7 @@ import { UIHelper } from './uiHelper';
 import { UIMillStorage } from './uiMillStorage';
 import { UIPreparationStorage } from './uiPreparationStorage';
 import { UISettingsStorage } from './uiSettingsStorage';
+import { UIToast } from './uiToast';
 
 /**
  * Handles every helping functionalities
@@ -67,10 +68,14 @@ export class UIBrewHelper {
   private readonly modalController = inject(ModalController);
   private readonly uiHelper = inject(UIHelper);
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
+  private readonly uiToast = inject(UIToast);
 
   private static instance: UIBrewHelper;
 
   private canBrewBoolean: boolean = undefined;
+
+  // Set before a brew form is created and reset once it is dismissed
+  private brewFormOpen = false;
 
   private settings: Settings;
 
@@ -600,38 +605,54 @@ export class UIBrewHelper {
     return cuppingElementData;
   }
 
-  public async addBrew() {
-    if (this.canBrewIfNotShowMessage()) {
+  /**
+   * Quick actions, NFC tags and links can ask for a new brew while a brew form
+   * is still open. Both forms would save on BREW_AUTOMATIC_SAVE and close on
+   * CLOSE_BREW_SCREEN, so the open one is kept and no second one is opened.
+   */
+  private canOpenBrewFormIfNotShowMessage(): boolean {
+    if (this.brewFormOpen) {
+      void this.uiToast.showInfoToast('TOAST_BREW_ALREADY_OPEN');
+      return false;
+    }
+    return true;
+  }
+
+  private async openBrewForm(_componentProps?: Record<string, unknown>) {
+    if (!this.canOpenBrewFormIfNotShowMessage()) {
+      return;
+    }
+    this.brewFormOpen = true;
+    try {
       const modal = await this.modalController.create({
         component: BrewAddComponent,
         id: BrewAddComponent.COMPONENT_ID,
+        componentProps: _componentProps,
       });
+      // Listen before presenting, else a dismiss during the opening is missed
+      const willDismiss = modal.onWillDismiss();
       await modal.present();
-      await modal.onWillDismiss();
+      await willDismiss;
+    } finally {
+      this.brewFormOpen = false;
+    }
+  }
+
+  public async addBrew() {
+    if (this.canBrewIfNotShowMessage()) {
+      await this.openBrewForm();
     }
   }
 
   public async addBrewWithPresetBean(_bean) {
     if (this.canBrewIfNotShowMessage()) {
-      const modal = await this.modalController.create({
-        component: BrewAddComponent,
-        id: BrewAddComponent.COMPONENT_ID,
-        componentProps: { bean_preset: _bean },
-      });
-      await modal.present();
-      await modal.onWillDismiss();
+      await this.openBrewForm({ bean_preset: _bean });
     }
   }
 
   public async addBrewFromVisualizerWithGraph(_brewFlow: BrewFlow) {
     if (this.canBrewIfNotShowMessage()) {
-      const modal = await this.modalController.create({
-        component: BrewAddComponent,
-        id: BrewAddComponent.COMPONENT_ID,
-        componentProps: { brew_flow_preset: _brewFlow },
-      });
-      await modal.present();
-      await modal.onWillDismiss();
+      await this.openBrewForm({ brew_flow_preset: _brewFlow });
     }
   }
   public async brewFlow() {
@@ -692,13 +713,7 @@ export class UIBrewHelper {
   }
 
   public async repeatBrew(_brew: Brew) {
-    const modal = await this.modalController.create({
-      component: BrewAddComponent,
-      id: BrewAddComponent.COMPONENT_ID,
-      componentProps: { brew_template: _brew },
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.openBrewForm({ brew_template: _brew });
   }
   public async longPressAddBrew() {
     if (this.canBrewIfNotShowMessage()) {
@@ -709,6 +724,9 @@ export class UIBrewHelper {
   public async choosePreparationMethodAndStartBrew(
     _presetBean: Bean = undefined,
   ) {
+    if (!this.canOpenBrewFormIfNotShowMessage()) {
+      return;
+    }
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.LONG_PRESS_ADD,
@@ -737,13 +755,7 @@ export class UIBrewHelper {
       if (_presetBean) {
         compProps['bean_preset'] = _presetBean;
       }
-      const modalBrew = await this.modalController.create({
-        component: BrewAddComponent,
-        componentProps: compProps,
-        id: BrewAddComponent.COMPONENT_ID,
-      });
-      await modalBrew.present();
-      await modalBrew.onWillDismiss();
+      await this.openBrewForm(compProps);
     }
   }
   public async editBrew(_brew: Brew): Promise<Brew> {
