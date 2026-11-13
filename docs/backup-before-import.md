@@ -47,6 +47,11 @@ backups would otherwise replace it with the stored data within seconds of the
 next change, so the next start can offer the restore again. The automatic
 backup of the day is still written.
 
+The same holds when the database could not be read at start-up: it is not
+taken for an empty one, so the internal backup is neither imported nor
+offered, no file is written, and `Beanconqueror.zip` is kept as it is for the
+rest of the session. The next start checks again.
+
 The file is the same ZIP an export writes. It holds no passwords, API keys or
 tokens (they stay on the device, and an import keeps them) and none of the
 values that belong to this installation: device id, deletion journal,

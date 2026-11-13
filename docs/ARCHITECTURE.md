@@ -48,7 +48,7 @@ sequenceDiagram
     Main->>App: bootstrapApplication()
     App->>App: ngOnInit: ThemeService.initializeBeforeAppReady()
     App->>App: ngAfterViewInit: Chart.register(), __appReady()
-    App->>Storage: platform.ready() → UIStorage.init()
+    App->>Storage: platform.ready() → UIStorage.init(),<br/>requestPersistentStorage() (not awaited)
     App->>Storage: DeviceIdentityService.initialize() (awaited),<br/>DeletionJournalService.initialize() (not awaited)
     App->>App: status bar, logging, iOS quick actions
     App->>App: (native only) UIExportImportHelper.checkBackup()
@@ -67,7 +67,9 @@ which resolves once `UIHelper.isBeanconqurorAppReady()` sees the ready flag
 route (services, quick actions) waits on the same promise.
 
 If one collection fails to load, the app shows a blocking error message
-(`UIAlert.showAppShetItSelfMessage()` in `__appReady`).
+(`UIAlert.showAppShetItSelfMessage()` in `__appReady`). A collection that
+could not be read counts as failed to load, not as empty (see "Storage
+layer").
 
 ### Routing and navigation
 
@@ -174,6 +176,25 @@ UIStorage                            (src/services/uiStorage.ts)
   database after 11 failed attempts and finally show the iOS database error
   dialog. A successful `set` dispatches `AppEventType.STORAGE_CHANGED`
   on the `EventQueueService`.
+- A database that could not be read is never taken for an empty one:
+  - `UIStorage.get` resolves `null` for a missing value and for a failed read
+    alike. Code that writes depending on what it read uses
+    `UIStorage.getOrFail`, which rejects when the read failed.
+  - `StorageClass.__initializeStorage` reads with `getOrFail`. When that
+    fails, `initializeStorage()` and `storageReady()` reject and the
+    collection refuses `add`, `update`, `remove` and `backfillWithoutTouch`
+    (logged, reported with the alert of a failed save, no event) until a
+    later `reinitializeStorage()` has read it. The same holds while it is
+    being read. Every write stores the whole array, so a write on a list
+    that was not read would replace the stored entries.
+  - `UIStorage.getDataState()` tells whether the database holds data of a
+    used installation: `'data'`, `'empty'` or `'unknown'` when it could not
+    be read. The callers (`checkBackup`, `saveAutomaticBackups`,
+    `UIUpdate.checkUpdate`) leave everything as it is for `'unknown'`.
+- `UIStorage.requestPersistentStorage()` asks the browser once at start-up
+  not to clear the database under storage pressure
+  (`navigator.storage.persist()`), where that exists. The start does not wait
+  for the answer, which is only logged.
 
 ### Change info in the write path
 
@@ -331,7 +352,12 @@ flowchart LR
   dated copies is commented out and `isAutomaticBackup` is always `false`. In
   `checkBackupAndSeeIfDataAreCorrupted`, an empty database imports the file
   directly; otherwise the data corruption dialog offers the file when it holds
-  more beans, brews, preparations or grinders than the database.
+  more beans, brews, preparations or grinders than the database. When the
+  database could not be read (`getDataState()` is `'unknown'`), nothing is
+  imported or offered and the internal `Beanconqueror.zip` is not replaced
+  for the rest of the session: the stored entries can be newer than the file,
+  and the file is the only copy known to be readable. `saveAutomaticBackups()`
+  writes no file while the database cannot be read.
 - Photos and flow profiles are not part of the ZIP. On Android, the manual
   export in settings copies them next to it (`exportToPath` in
   `src/app/settings/settings.page.ts`); on iOS the data directory is visible to
@@ -345,7 +371,9 @@ flowchart LR
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
 migration runs again on the next start (`__checkUpdateForDataVersion`). When
 `UIStorage.hasData()` is false and a migration is pending, a loading spinner is
-shown while they run; with existing data they run without it.
+shown while they run; with existing data they run without it. When the
+database could not be read (`getDataState()` is `'unknown'`), no migration
+runs and none is recorded; they are left for the next start.
 
 `UPDATE_16` fills in the change info of all stored entries and stores the user
 profile of existing installations
@@ -645,6 +673,7 @@ Existing tests to extend: `src/classes/__tests__/storageClass.spec.ts`,
 `src/services/__tests__/uiExportImportHelper.spec.ts`,
 `src/services/__tests__/backupSecrets.spec.ts`,
 `src/services/__tests__/importChangeInfo.spec.ts`,
+`src/services/__tests__/unreadableStorage.spec.ts`,
 `src/services/__tests__/localOnlyStorageKeys.spec.ts` and, for migrations,
 `src/services/__tests__/uiUpdate.spec.ts` (every migration keeps the change
 info) and `src/services/changeTracking/change-tracking-migration.service.spec.ts`.
