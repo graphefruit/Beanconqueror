@@ -10,10 +10,7 @@ import {
   topDialog,
   WATER,
 } from './support/brew-form';
-import {
-  BREW_FORM_REFRACTOMETER_ERROR,
-  completeFirstRunWithBrew,
-} from './support/first-brew';
+import { completeFirstRunWithBrew } from './support/first-brew';
 
 /**
  * Characterization of the brew journey as it works today: add, show in list
@@ -22,8 +19,6 @@ import {
  * Each test starts with one bean (Ethiopia Yirgacheffe Natural), a V60, one
  * grinder (Comandante C40) and one brew of 18 g / 300 g.
  */
-
-test.use({ allowedConsoleErrors: [BREW_FORM_REFRACTOMETER_ERROR] });
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: BREW_TEST_START });

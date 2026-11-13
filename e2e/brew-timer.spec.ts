@@ -10,10 +10,7 @@ import {
   saveBrew,
   topDialog,
 } from './support/brew-form';
-import {
-  BREW_FORM_REFRACTOMETER_ERROR,
-  completeFirstRunWithBrew,
-} from './support/first-brew';
+import { completeFirstRunWithBrew } from './support/first-brew';
 
 /**
  * Characterization of the brew timer without a real Bluetooth device: start,
@@ -32,8 +29,6 @@ import {
  * in the weight fields, so these tests never assert them. Real devices are
  * not covered here.
  */
-
-test.use({ allowedConsoleErrors: [BREW_FORM_REFRACTOMETER_ERROR] });
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: BREW_TEST_START });

@@ -16,10 +16,7 @@ import {
   setParameter,
   WATER,
 } from './support/brew-form';
-import {
-  BREW_FORM_REFRACTOMETER_ERROR,
-  completeFirstRunWithBrew,
-} from './support/first-brew';
+import { completeFirstRunWithBrew } from './support/first-brew';
 import { NativeError } from './support/native';
 
 /**
@@ -29,7 +26,6 @@ import { NativeError } from './support/native';
  * and one brew of 18 g / 300 g.
  */
 
-test.use({ allowedConsoleErrors: [BREW_FORM_REFRACTOMETER_ERROR] });
 // Setup plus several page changes per test; under parallel load this can
 // exceed the default 30 s.
 test.describe.configure({ timeout: 60_000 });
