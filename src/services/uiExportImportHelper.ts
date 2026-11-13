@@ -18,6 +18,7 @@ import {
 import * as zip from '@zip.js/zip.js';
 import moment from 'moment';
 
+import { LOCAL_ONLY_STORAGE_KEYS } from '../classes/changeTracking/localStorageKeys';
 import { withoutSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 import { UIAlert } from './uiAlert';
@@ -75,6 +76,10 @@ export class UIExportImportHelper {
     const _data = await this.uiStorage.export();
 
     const mainJsonData = this.uiHelper.cloneData(_data);
+    // Values that belong to this installation never leave it.
+    for (const key of LOCAL_ONLY_STORAGE_KEYS) {
+      delete mainJsonData?.[key];
+    }
     if (Array.isArray(mainJsonData?.SETTINGS)) {
       // Backup files leave the device, so credentials are never written into them.
       mainJsonData.SETTINGS = mainJsonData.SETTINGS.map((_settings: unknown) =>

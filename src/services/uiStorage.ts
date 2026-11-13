@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 import { AppEvent } from '../classes/appEvent/appEvent';
+import { isLocalOnlyStorageKey } from '../classes/changeTracking/localStorageKeys';
 import { withDeviceSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { EventQueueService } from './queueService/queue-service.service';
@@ -88,6 +89,10 @@ export class UIStorage {
   }
   private async internalSet(_key: string, _val: any): Promise<boolean> {
     await this._storage.set(_key, _val);
+    // Backups never contain local-only keys, so writing them needs no new one.
+    if (isLocalOnlyStorageKey(_key)) {
+      return true;
+    }
     // We just trigger storage change when the set was successfully.
     this.eventQueue.dispatch(
       new AppEvent(AppEventType.STORAGE_CHANGED, undefined),
@@ -102,6 +107,26 @@ export class UIStorage {
   }
 
   public async get(_key: string): Promise<any> {
+    const result = await this.__getWithRetries(_key);
+    return result.read ? result.value : null;
+  }
+
+  /**
+   * Like get(), but rejects when the database could not be read, instead of
+   * resolving with null. Lets callers tell a missing value from a read error,
+   * so they never replace a stored value they could not read.
+   */
+  public async getOrFail(_key: string): Promise<any> {
+    const result = await this.__getWithRetries(_key);
+    if (!result.read) {
+      throw new Error('UIStorage - Get Key - ' + _key + ' could not be read');
+    }
+    return result.value;
+  }
+
+  private async __getWithRetries(
+    _key: string,
+  ): Promise<{ read: boolean; value: any }> {
     let whileCounter = 0;
     while (true) {
       try {
@@ -110,7 +135,7 @@ export class UIStorage {
         );
         const data = await this.internalGet(_key);
         this.uiLog.log('UIStorage - Get Key - ' + _key + ' successfully');
-        return data;
+        return { read: true, value: data };
       } catch (ex) {
         // We could not access the database... do it again.
         this.uiLog.error(
@@ -136,7 +161,7 @@ export class UIStorage {
               ' we stop to try getting data now 20 attempts are enough - show error',
           );
           await this.displayIOSIndexedDBIssue();
-          return null;
+          return { read: false, value: null };
         }
       }
     }
@@ -272,16 +297,13 @@ export class UIStorage {
   }
 
   private async __importBackup(_data: any): Promise<void> {
-    const keysCount: number = Object.keys(_data).length;
-    let finishedImport = 0;
-    for (const key in _data) {
-      if (Object.prototype.hasOwnProperty.call(_data, key)) {
-        await this._storage.set(key, _data[key]);
-        finishedImport++;
-        if (keysCount === finishedImport) {
-          return;
-        }
-      }
+    // Values that belong to this installation are never replaced by a file,
+    // also not when the safety backup is written back.
+    const keys = Object.keys(_data).filter(
+      (_key) => !isLocalOnlyStorageKey(_key),
+    );
+    for (const key of keys) {
+      await this._storage.set(key, _data[key]);
     }
   }
 }

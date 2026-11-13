@@ -81,6 +81,7 @@ import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popo
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
 import { DocumentLanguageService } from '../services/documentLanguage/document-language.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
@@ -172,6 +173,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiStorage = inject(UIStorage);
+  private readonly deviceIdentity = inject(DeviceIdentityService);
   private readonly androidPlatformService = inject(AndroidPlatformService);
   private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
@@ -391,6 +393,12 @@ export class AppComponent implements AfterViewInit {
       } catch (ex) {}
 
       await this.uiStorage.init();
+      try {
+        // Before any entry can be written, so changes know their device.
+        await this.deviceIdentity.initialize();
+      } catch (ex) {
+        this.uiLog.info('Device id could not be initialized');
+      }
       try {
         const deviceInfo = await Device.getInfo();
         // #285 - Add more device loggings
