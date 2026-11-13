@@ -24,6 +24,10 @@ interface Announcement {
 interface LoadingDialog {
   name: string | null;
   focusInside: boolean;
+  /** Spinners a screen reader would reach, i.e. not inside aria-hidden. */
+  spinnersExposed: number;
+  /** Headers in the dialog; an empty one is an empty banner landmark. */
+  headers: number;
 }
 
 interface Recorder {
@@ -88,6 +92,11 @@ function record(): void {
               ?.querySelector('[role="dialog"]')
               ?.getAttribute('aria-label') ?? null,
           focusInside: modal.contains(document.activeElement),
+          spinnersExposed: [...modal.querySelectorAll('ion-spinner')].filter(
+            (spinner) => spinner.closest('[aria-hidden="true"]') === null,
+          ).length,
+          headers: modal.querySelectorAll('ion-header, header, [role="banner"]')
+            .length,
         });
       }
     },
@@ -164,7 +173,14 @@ test('an export announces its loading message once and does not take focus', asy
 
   await expect
     .poll(async () => (await recorded(page)).loadingDialogs)
-    .toEqual([{ name: 'Please wait...', focusInside: false }]);
+    .toEqual([
+      {
+        name: 'Please wait...',
+        focusInside: false,
+        spinnersExposed: 0,
+        headers: 0,
+      },
+    ]);
   // Ionic hands focus back to the control that opened the dialog.
   await expect(exportData).toBeFocused();
   // Closing says nothing.
