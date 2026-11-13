@@ -272,13 +272,17 @@ export async function downloadAfterInput(page: Page): Promise<number> {
 let machineLoad: { testId: string; busy: number } | undefined;
 
 /**
- * Measures how much of all cores' CPU time the machine uses before the test starts the app: the
- * lowest share of five 200 ms samples, so the browser that has just started for the test does not
- * count, but other test runs or builds do. The share goes into the test's `PERF` lines as
- * `machineBusy` (percent); above `BUSY_LIMIT` the test prints a warning, and `busyNote` adds it
- * to failed budgets.
+ * Measures how much of all cores' CPU time the machine uses, before the test starts the app and
+ * again after the measurement, for load that started meanwhile: the lowest share of five 200 ms
+ * samples, so the test's own browser starting or settling does not count, but other test runs or
+ * builds do. The higher share of both goes into the test's `PERF` lines as `machineBusy`
+ * (percent); above `BUSY_LIMIT` the test prints a warning, and `busyNote` adds it to failed
+ * budgets.
  */
-export async function measureMachineLoad(testInfo: TestInfo): Promise<void> {
+export async function measureMachineLoad(
+  testInfo: TestInfo,
+  when: 'before' | 'after',
+): Promise<void> {
   const sample = async () => {
     const before = cpus().map((cpu) => cpu.times);
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -295,26 +299,28 @@ export async function measureMachineLoad(testInfo: TestInfo): Promise<void> {
   for (let i = 0; i < 5; i++) {
     busy = Math.min(busy, await sample());
   }
-  machineLoad = { testId: testInfo.testId, busy };
+  const earlier = when === 'after' ? (busyAround(testInfo) ?? 0) : 0;
+  machineLoad = { testId: testInfo.testId, busy: Math.max(earlier, busy) };
   if (busy > BUSY_LIMIT) {
+    const moment = when === 'before' ? 'before' : 'after the measurement of';
     const warning =
-      `machine ${Math.round(busy * 100)} % busy before "${testInfo.title}": ` +
+      `machine ${Math.round(busy * 100)} % busy ${moment} "${testInfo.title}": ` +
       'the values are not comparable with the budgets; run again on an idle machine';
     console.log(`PERF-WARNING ${warning}`);
     testInfo.annotations.push({ type: 'warning', description: warning });
   }
 }
 
-/** How busy the machine was before this test (0–1), if it was measured. */
-function busyBefore(testInfo: TestInfo): number | undefined {
+/** How busy the machine was around this test's measurement (0–1), if it was measured. */
+function busyAround(testInfo: TestInfo): number | undefined {
   return machineLoad?.testId === testInfo.testId ? machineLoad.busy : undefined;
 }
 
-/** A hint for a failed budget when the machine was busy before the test, otherwise ''. */
+/** A hint for a failed budget when the machine was busy around the test, otherwise ''. */
 export function busyNote(testInfo: TestInfo): string {
-  const busy = busyBefore(testInfo);
+  const busy = busyAround(testInfo);
   return busy !== undefined && busy > BUSY_LIMIT
-    ? `, machine ${Math.round(busy * 100)} % busy before the test`
+    ? `, machine ${Math.round(busy * 100)} % busy`
     : '';
 }
 
@@ -394,7 +400,7 @@ export function report(
   name: string,
   values: Record<string, number>,
 ): void {
-  const busy = busyBefore(testInfo);
+  const busy = busyAround(testInfo);
   const entry = {
     brews,
     name,

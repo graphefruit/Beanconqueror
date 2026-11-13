@@ -59,7 +59,7 @@ function tabBar(page: Page) {
 /** Seeds the database, throttles the CPU and starts the app until the home screen is interactive. */
 async function startWithData(page: Page, tier: PerfTier, testInfo: TestInfo) {
   const { data, json } = dataSet(tier);
-  await measureMachineLoad(testInfo);
+  await measureMachineLoad(testInfo, 'before');
   await installPerfObserver(page);
   await seedDatabase(page, data, json);
   await throttleCpu(page);
@@ -119,6 +119,7 @@ for (const tier of TIERS) {
       page,
     }, testInfo) => {
       const { start } = await startWithData(page, tier, testInfo);
+      await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'start', { ...start });
       if (checkBudgets) {
         checkBudget('startVisible', start.visible, budget, testInfo);
@@ -148,6 +149,7 @@ for (const tier of TIERS) {
         `brew-${newest.config.uuid}`,
         `brew-${oldest.config.uuid}`,
       );
+      await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'brew list', {
         open: list.settled,
         openLongestTask: list.longestTask,
@@ -197,6 +199,7 @@ for (const tier of TIERS) {
         },
         'input',
       );
+      await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'search', {
         ...search,
         work: search.settled - FIXED_DELAYS.search,
@@ -219,6 +222,7 @@ for (const tier of TIERS) {
       await expect(
         page.getByRole('tab', { name: new RegExp(`\\( ${available} \\)`) }),
       ).toBeVisible();
+      await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'bean list', { ...beans });
       if (checkBudgets) {
         checkBudget('beanListOpen', beans.settled, budget, testInfo);
@@ -245,6 +249,7 @@ for (const tier of TIERS) {
         { selector: 'canvas' },
         'input',
       );
+      await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'statistics', {
         open: general.settled,
         openLongestTask: general.longestTask,
@@ -270,6 +275,7 @@ for (const tier of TIERS) {
       // From the tap on Export until the app hands the ZIP to the browser.
       const duration = await downloadAfterInput(page);
       const path = await download.path();
+      await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'export', {
         duration,
         work: duration - FIXED_DELAYS.export,
@@ -301,7 +307,7 @@ for (const tier of TIERS) {
 
     test('import of a backup ZIP', async ({ page }, testInfo) => {
       const zip = await buildBackupZip(dataSet(tier).data, END_DATE);
-      await measureMachineLoad(testInfo);
+      await measureMachineLoad(testInfo, 'before');
       await installPerfObserver(page);
       await page.goto('/');
       await completeFirstRun(page);
@@ -325,6 +331,7 @@ for (const tier of TIERS) {
         { selector: 'ion-alert', text: 'Import successful' },
         { mark: 'import' },
       );
+      await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'import', {
         ...imported,
         zipKiB: Math.round(zip.length / 1024),
