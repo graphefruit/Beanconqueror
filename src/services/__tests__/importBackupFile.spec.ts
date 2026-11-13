@@ -609,6 +609,49 @@ describe('Importing a backup', () => {
     expect(device.data.get('BREWS')).toEqual(before.BREWS);
   });
 
+  it('leaves the file with the data from before when the import failed and could not be rolled back', async () => {
+    // The data is what an import stored, unchanged since.
+    const before = storedData('own', {
+      [LAST_RESTORE_STORAGE_KEY]: {
+        last_restore_at: Date.now() - 60000,
+        source: 'import',
+        record_count: 3,
+        file_name: KEPT_FILE_NAME,
+      },
+    });
+    const device = await startDevice(before, { files: OLDER_BACKUPS });
+    const next = { BREWS: entries('brew', 2), SETTINGS: [{ language: 'en' }] };
+    // Storing the settings fails, and writing the values from before back
+    // stops at the list of data updates, before the brews.
+    device.failingWrites.add('SETTINGS');
+    device.brokenWrites.add('VERSION');
+
+    await expectAsync(
+      device.helper.importBackup(next, 'import', 'Beanconqueror 3.zip'),
+    ).toBeRejectedWith({ BACKUP: true });
+
+    // The brews of the import are stored, its settings are not.
+    expect(device.data.get('BREWS')).toEqual(imported(entries('brew', 2)));
+    expect((device.data.get('SETTINGS') as any[])[0].language).toBe('de');
+    const [file] = writtenBackups(device).filter(
+      (_path) => !OLDER_BACKUPS.includes(_path),
+    );
+    const saved = await readBackupFile(device, file);
+    expect(saved.SETTINGS).toEqual(before.SETTINGS);
+    expect(saved.BREWS).toEqual(before.BREWS);
+    expect(writtenBackups(device).length).toBe(OLDER_BACKUPS.length + 1);
+
+    // The mix stored now is not what the import before had stored.
+    device.brokenWrites.clear();
+    await new Promise((_resolve) => setTimeout(_resolve, 2));
+    expect(
+      await device.helper.importBackup(next, 'import', 'Beanconqueror 3.zip'),
+    ).toEqual({ BACKUP: false });
+    const newest = writtenBackups(device).sort().pop();
+    expect(newest).not.toBe(file);
+    expect(newest).not.toContain(UNCHANGED_IMPORT_ENDING);
+  });
+
   it('writes no credentials and no values of this installation into the backup file', async () => {
     const before = storedData('own', {
       SETTINGS: [

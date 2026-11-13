@@ -32,6 +32,14 @@ ones kept. If the current data cannot be read or the file cannot be written,
 for example because the storage is full, nothing is imported and the app says
 so.
 
+The file is written under its name with `.part` at the end and only gets its
+name once it is written completely. A write that fails can leave an empty or
+cut off file behind (Android creates the file before its content is written).
+Such a file is never taken for a backup: it does not count as one of the
+files kept, and it is not listed for an import. It is removed right away,
+and again before the next backup is written, in case the app was closed while
+writing.
+
 When restoring the internal backup at start-up does not happen for that
 reason, or because the import failed and was rolled back, the app says so and
 keeps `Beanconqueror.zip` as it is for the rest of the session: the automatic
@@ -60,10 +68,24 @@ written, which tells the files to keep.
 
 The name ends in `_imported.zip` instead when the current data is what the
 last import of a file chosen in the settings stored, no entry was added,
-changed or deleted since (told by the change info of the entries and the
-deletion journal; settings carry no change info and do not count), and that
-file is still there as it was imported, so it can be imported again. That is
-never taken for granted for a file the app replaces or deletes itself:
+changed or deleted since, and that file is still there as it was imported, so
+it can be imported again. In doubt the name does not end in `_imported.zip`,
+which only means that the file is kept longer.
+
+Whether an entry was added, changed or deleted is told by the change info of
+the entries and the deletion journal, whose times are compared with the time
+of the import; settings carry no change info and do not count. These times
+come from the clock of the device, so two checks that do not depend on them
+are made first: the import must not lie in the future (the clock was set
+back), and the number of entries must still be the one the note about the
+import holds. What is not noticed: an entry that was only edited while the
+clock was set back behind the import, when the clock is past the time of the
+import again at the next import.
+
+That the file can be imported again is decided by its name when the backup
+is written, and not checked again later: a file the user deletes afterwards
+is not noticed. It is never taken for granted for a file the app replaces or
+deletes itself:
 
 - `Beanconqueror.zip`: the name of the internal backup, which the automatic
   backups replace after every change and which the Files app shows on iOS,
@@ -71,7 +93,10 @@ never taken for granted for a file the app replaces or deletes itself:
 - The automatic backup of a day
   (`Beanconqueror_automatic_export_<DD_MM_YYYY>.zip`): it is replaced on that
   day, so it only counts when it was imported on a later day, and it is
-  deleted when the app starts a week after its day.
+  deleted when the app starts a week after its day, so it no longer counts
+  from then on. A backup written before that keeps its name, also once the
+  automatic backup is deleted. Its data is an earlier state of the data of
+  this device, which the user left again without changing it.
 - One of these files (`Beanconqueror_pre_import_…`), when going back: the
   rotation after the next import can delete it, and the file written before
   that import is then the only one with that data.
@@ -80,13 +105,16 @@ never taken for granted for a file the app replaces or deletes itself:
 Data restored from the internal backup is never taken for unchanged either,
 as the automatic backups replace that file.
 
-Three files are kept. When the name of the file just written ends in
-`_imported.zip`: that file, the newest one whose name does not end in
-`_imported.zip`, and the newest of the others. Otherwise the three newest.
-Without that rule, trying a few backups one after the other would delete the
-data from before the first of them: once an import is done, the automatic
-backup of that day and `Beanconqueror.zip` are written with the imported
-data, so this file is the only one left with the changes made that day.
+Three files are kept: the file just written and two of the others. Of
+those, the newest ones whose name does not end in `_imported.zip` come
+first; a file whose name ends in `_imported.zip` is only kept while a place
+is left, the newest first. Without that rule, trying a few backups one after
+the other would delete the data from before the first of them: once an
+import is done, the automatic backup of that day and `Beanconqueror.zip` are
+written with the imported data, so this file is the only one left with the
+changes made that day. The same holds when the first file tried was
+`Beanconqueror.zip` or the automatic backup of the day: the data from before
+it and the data of that file are both kept.
 
 Older files are deleted once an import has completed. A failed import of a
 file chosen in the settings deletes none, so the file it was started from is
@@ -94,6 +122,30 @@ still there if it fails. A failed restore of the internal backup at start-up
 deletes older ones as well: `Beanconqueror.zip` is not one of these files, and
 the next start offers the restore again and writes a file before it, so
 without that a restore failing at every start would add one at every start.
+
+## When an import fails or is stopped
+
+The current data is never left changed without a file that holds it:
+
+- The file cannot be written, or the current data cannot be read: nothing is
+  imported, the data is as it was, and no unfinished file is left.
+- The question "Replace all data with the import?" is answered with "No":
+  nothing is written and nothing is imported.
+- Storing the imported data fails: the import writes the values from before
+  back from its copy in memory and says that the data was not changed. Keys
+  the device did not store before, but the backup file brought along, are
+  not removed again by that. The file written before the import stays.
+- Writing the values back fails as well, or the app is closed during the
+  import: the stored data can be a mix of old and imported values. The file
+  written before the import is complete by then, as nothing is replaced
+  before it has its name, and it stays. After an import of a file chosen in
+  the settings no file is deleted at all; after a failed restore of the
+  internal backup the file just written is always among the three kept.
+  The note about the import before is removed by then (see below), so the
+  file written before the next import does not end in `_imported.zip`.
+
+This does not hold where no file is written: in the browser, and when the
+device stored neither settings nor entries.
 
 ## Going back
 
@@ -132,15 +184,18 @@ After a completed import the app stores this under the local key
 - `last_restore_at`: milliseconds since epoch, clock of the device.
 - `source`: `import` for a file chosen in the settings, `internal_backup` for
   the internal backup restored when the app starts.
-- `record_count`: entries the import stored in the collections with change
-  info (beans, brews, grinders, preparation methods, water, green beans,
-  roasting machines, graphs, barista mode brews).
+- `record_count`: entries in the collections with change info (beans, brews,
+  grinders, preparation methods, water, green beans, roasting machines,
+  graphs, barista mode brews) once the import was stored. A collection the
+  backup file does not contain is left as it is and counts as well.
 - `file_name`: name of the file chosen in the settings, when it is known. It
   tells whether that file can still be imported again (see above).
 
 The key is local to the installation: it is never written into a backup or
-export, and an import never takes it from a file. An import that was rolled
-back leaves the previous note.
+export, and an import never takes it from a file. The previous note is
+removed before the data is replaced, so it is never taken for a note about
+other data when the app is closed during the import or the new note cannot
+be stored. An import that was rolled back stores the previous note again.
 
 No entry is marked as imported. The imported entries keep the change info they
 came with (`created_at`, `updated_at`, `rev`, `updated_by`), so they never look
