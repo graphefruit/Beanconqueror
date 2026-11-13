@@ -28,6 +28,8 @@ interface FakeModal {
   present: jasmine.Spy<() => Promise<void>>;
   dismiss: (data?: unknown) => Promise<boolean>;
   onWillDismiss: () => Promise<{ data?: unknown }>;
+  /** Emits ionModalWillDismiss, which dismiss() does at once by default. */
+  startClosing: (detail: { data?: unknown }) => void;
 }
 
 function createModal(options: Record<string, any>): FakeModal {
@@ -43,17 +45,23 @@ function createModal(options: Record<string, any>): FakeModal {
       return Promise.resolve(true);
     },
     onWillDismiss: () => willDismiss,
+    startClosing: (detail) => startClosing(detail),
   };
 }
 
 describe('UIAlert loading spinner', () => {
   let liveRegion: FakeLiveRegion;
   let modals: FakeModal[];
+  /** While set, ModalController.create() waits until the test releases it. */
+  let holdCreate: boolean;
+  let heldCreates: (() => void)[];
   let uiAlert: UIAlert;
 
   beforeEach(() => {
     liveRegion = new FakeLiveRegion();
     modals = [];
+    holdCreate = false;
+    heldCreates = [];
     TestBed.configureTestingModule({
       providers: [
         { provide: LIVE_REGION, useValue: liveRegion },
@@ -70,7 +78,12 @@ describe('UIAlert loading spinner', () => {
             create: (options: Record<string, any>) => {
               const modal = createModal(options);
               modals.push(modal);
-              return Promise.resolve(modal);
+              if (!holdCreate) {
+                return Promise.resolve(modal);
+              }
+              return new Promise<FakeModal>((resolve) =>
+                heldCreates.push(() => resolve(modal)),
+              );
             },
           },
         },
@@ -135,6 +148,53 @@ describe('UIAlert loading spinner', () => {
 
     expect(liveRegion.heard).toEqual(['Please wait...']);
     expect(uiAlert.isLoadingSpinnerShown()).toBeFalse();
+  }));
+
+  it('drops a waiting message update at once when hidden while it is still opening', fakeAsync(() => {
+    void uiAlert.showLoadingSpinner();
+    flushMicrotasks();
+    tick(1000);
+    uiAlert.setLoadingSpinnerMessage('Almost done');
+    // Ionic does not start to close an overlay that is still opening.
+    let finishOpening: () => void;
+    modals[0].dismiss = (data) =>
+      new Promise<boolean>((resolve) => {
+        finishOpening = () => {
+          modals[0].startClosing({ data });
+          resolve(true);
+        };
+      });
+
+    void uiAlert.hideLoadingSpinner();
+    flushMicrotasks();
+    uiAlert.setLoadingSpinnerMessage('Done');
+    tick(PROGRESS_INTERVAL_MS);
+
+    expect(liveRegion.heard).toEqual(['Please wait...']);
+    finishOpening();
+    flushMicrotasks();
+    expect(uiAlert.isLoadingSpinnerShown()).toBeFalse();
+  }));
+
+  it('drops what was waiting for a loading spinner that another one opened at the same time replaces', fakeAsync(() => {
+    holdCreate = true;
+    void uiAlert.showLoadingSpinner('Connecting', false);
+    void uiAlert.showLoadingSpinner('Reading the scale', false);
+    flushMicrotasks();
+    expect(heldCreates.length).toBe(2);
+
+    heldCreates[0]();
+    flushMicrotasks();
+    tick(1000);
+    uiAlert.setLoadingSpinnerMessage('Connected');
+    heldCreates[1]();
+    flushMicrotasks();
+    tick(PROGRESS_INTERVAL_MS);
+
+    // 'Connected' was meant for the first one, which is no longer on top.
+    expect(liveRegion.heard).toEqual(['Connecting', 'Reading the scale']);
+    void uiAlert.hideLoadingSpinner();
+    flushMicrotasks();
   }));
 
   it('stops announcing once it is closed with its own cancel button', fakeAsync(() => {
