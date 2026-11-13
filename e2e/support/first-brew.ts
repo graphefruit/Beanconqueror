@@ -2,8 +2,9 @@ import { expect, type Page } from '@playwright/test';
 
 /**
  * Completes the first-run dialogs of a fresh install and adds one bean, a V60,
- * one grinder and one brew through the UI, so brew cards have content.
- * Freeze the clock before `page.goto` for a deterministic brew date.
+ * one grinder and one brew through the UI, so brew cards have content. Ends on
+ * the Brews tab. Freeze the clock before `page.goto` for a deterministic brew
+ * date.
  */
 export async function completeFirstRunWithBrew(page: Page): Promise<void> {
   await page.getByRole('button', { name: "Don't activate" }).click();
@@ -41,4 +42,10 @@ export async function completeFirstRunWithBrew(page: Page): Promise<void> {
   await page.getByRole('textbox', { name: /^Amount of water/ }).fill('300');
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
+  // The home page switches to the Brews tab once the form has closed, and
+  // until the brew list is shown its own "Add brew" and brew buttons are
+  // still on screen. Ionic selects the tab only when the switch is done.
+  await expect(
+    page.getByRole('tab', { name: 'Brews', selected: true }),
+  ).toBeVisible();
 }
