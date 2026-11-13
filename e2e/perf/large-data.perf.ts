@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 
-import type { Page } from '@playwright/test';
+import type { Page, TestInfo } from '@playwright/test';
 import { BlobReader, configure, TextWriter, ZipReader } from '@zip.js/zip.js';
 
 import { expect, test } from '../fixtures';
@@ -14,10 +14,12 @@ import {
 } from '../support/synthetic-data';
 import { BUDGETS, FIXED_DELAYS, type Budget, type PerfTier } from './budgets';
 import {
+  busyNote,
   CPU_THROTTLING,
   downloadAfterInput,
   installPerfObserver,
   markFileChange,
+  measureMachineLoad,
   report,
   scrollListToEnd,
   seedDatabase,
@@ -55,8 +57,9 @@ function tabBar(page: Page) {
 }
 
 /** Seeds the database, throttles the CPU and starts the app until the home screen is interactive. */
-async function startWithData(page: Page, tier: PerfTier) {
+async function startWithData(page: Page, tier: PerfTier, testInfo: TestInfo) {
   const { data, json } = dataSet(tier);
+  await measureMachineLoad(testInfo);
   await installPerfObserver(page);
   await seedDatabase(page, data, json);
   await throttleCpu(page);
@@ -72,7 +75,12 @@ async function startWithData(page: Page, tier: PerfTier) {
 const delays: Partial<Record<keyof Budget, number>> = FIXED_DELAYS;
 
 /** Compares a value with its budget, after taking off the app's fixed wait in that flow. */
-function checkBudget(name: keyof Budget, value: number, budget: Budget) {
+function checkBudget(
+  name: keyof Budget,
+  value: number,
+  budget: Budget,
+  testInfo: TestInfo,
+) {
   const delay = delays[name] ?? 0;
   if (delay > 0) {
     expect
@@ -84,7 +92,10 @@ function checkBudget(name: keyof Budget, value: number, budget: Budget) {
   }
   const without = delay > 0 ? ` without the fixed ${delay} ms` : '';
   expect
-    .soft(value - delay, `${name}${without} (budget ${budget[name]} ms)`)
+    .soft(
+      value - delay,
+      `${name}${without} (budget ${budget[name]} ms${busyNote(testInfo)})`,
+    )
     .toBeLessThanOrEqual(budget[name]);
 }
 
@@ -97,18 +108,18 @@ for (const tier of TIERS) {
     test('start until the home screen is interactive', async ({
       page,
     }, testInfo) => {
-      const { start } = await startWithData(page, tier);
+      const { start } = await startWithData(page, tier, testInfo);
       report(testInfo, tier, 'start', { ...start });
       if (checkBudgets) {
-        checkBudget('startVisible', start.visible, budget);
-        checkBudget('startInteractive', start.settled, budget);
+        checkBudget('startVisible', start.visible, budget, testInfo);
+        checkBudget('startInteractive', start.settled, budget, testInfo);
       }
     });
 
     test('brew list opens and scrolls to the end', async ({
       page,
     }, testInfo) => {
-      const { data } = await startWithData(page, tier);
+      const { data } = await startWithData(page, tier, testInfo);
       const open = data.BREWS.filter((b) => isOpenBrew(data, b));
       const newest = open[open.length - 1];
       const oldest = open[0];
@@ -138,14 +149,19 @@ for (const tier of TIERS) {
         ),
       });
       if (checkBudgets) {
-        checkBudget('brewListOpen', list.settled, budget);
-        checkBudget('brewListScroll', scroll.duration, budget);
-        checkBudget('brewListScrollLongestFrame', scroll.longestFrame, budget);
+        checkBudget('brewListOpen', list.settled, budget, testInfo);
+        checkBudget('brewListScroll', scroll.duration, budget, testInfo);
+        checkBudget(
+          'brewListScrollLongestFrame',
+          scroll.longestFrame,
+          budget,
+          testInfo,
+        );
       }
     });
 
     test('search in the brew list', async ({ page }, testInfo) => {
-      const { data } = await startWithData(page, tier);
+      const { data } = await startWithData(page, tier, testInfo);
       const open = data.BREWS.filter((b) => isOpenBrew(data, b));
       const matches = open.filter((b) =>
         b.note.toLowerCase().includes(NOTE_SEARCH_TERM),
@@ -176,12 +192,12 @@ for (const tier of TIERS) {
         work: search.settled - FIXED_DELAYS.search,
       });
       if (checkBudgets) {
-        checkBudget('search', search.settled, budget);
+        checkBudget('search', search.settled, budget, testInfo);
       }
     });
 
     test('bean list opens', async ({ page }, testInfo) => {
-      const { data } = await startWithData(page, tier);
+      const { data } = await startWithData(page, tier, testInfo);
       const available = data.BEANS.filter((b) => !b.finished).length;
 
       await tabBar(page).getByRole('tab', { name: 'Beans' }).click();
@@ -195,14 +211,14 @@ for (const tier of TIERS) {
       ).toBeVisible();
       report(testInfo, tier, 'bean list', { ...beans });
       if (checkBudgets) {
-        checkBudget('beanListOpen', beans.settled, budget);
+        checkBudget('beanListOpen', beans.settled, budget, testInfo);
       }
     });
 
     test('statistics open and draw the brew charts', async ({
       page,
     }, testInfo) => {
-      await startWithData(page, tier);
+      await startWithData(page, tier, testInfo);
 
       await tabBar(page).getByRole('tab', { name: 'Profile' }).click();
       await page.getByRole('link', { name: /^Statistics/ }).click();
@@ -227,13 +243,13 @@ for (const tier of TIERS) {
         brewChartsLongestTask: charts.longestTask,
       });
       if (checkBudgets) {
-        checkBudget('statisticsOpen', general.settled, budget);
-        checkBudget('statisticsBrewCharts', charts.settled, budget);
+        checkBudget('statisticsOpen', general.settled, budget, testInfo);
+        checkBudget('statisticsBrewCharts', charts.settled, budget, testInfo);
       }
     });
 
     test('export builds the backup ZIP', async ({ page }, testInfo) => {
-      await startWithData(page, tier);
+      await startWithData(page, tier, testInfo);
       await tabBar(page).getByRole('tab', { name: 'Profile' }).click();
       await page.getByRole('link', { name: /^Settings/ }).click();
 
@@ -249,7 +265,7 @@ for (const tier of TIERS) {
         work: duration - FIXED_DELAYS.export,
       });
       if (checkBudgets) {
-        checkBudget('export', duration, budget);
+        checkBudget('export', duration, budget, testInfo);
       }
 
       // The ZIP holds every brew: the first chunk in the main file, the rest in chunk files.
@@ -275,6 +291,7 @@ for (const tier of TIERS) {
 
     test('import of a backup ZIP', async ({ page }, testInfo) => {
       const zip = await buildBackupZip(dataSet(tier).data, END_DATE);
+      await measureMachineLoad(testInfo);
       await installPerfObserver(page);
       await page.goto('/');
       await completeFirstRun(page);
@@ -303,7 +320,7 @@ for (const tier of TIERS) {
         zipKiB: Math.round(zip.length / 1024),
       });
       if (checkBudgets) {
-        checkBudget('import', imported.visible, budget);
+        checkBudget('import', imported.visible, budget, testInfo);
       }
 
       await page.getByRole('button', { name: 'Ok' }).click();

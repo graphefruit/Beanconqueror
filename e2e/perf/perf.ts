@@ -1,3 +1,5 @@
+import { cpus } from 'node:os';
+
 import type { FileChooser, Page, TestInfo } from '@playwright/test';
 
 import type { SyntheticDataSet } from '../support/synthetic-data';
@@ -17,6 +19,13 @@ export const CPU_THROTTLING = Number(process.env.PERF_CPU_THROTTLING ?? 4);
 const QUIET_WINDOW_MS = 1_000;
 /** Longest wait for content or a quiet main thread. */
 const WAIT_TIMEOUT_MS = 120_000;
+
+/**
+ * Share of the machine's CPU time (all cores) above which a test warns that it ran on a busy
+ * machine. Other processes slow the throttled page down further: with parallel test runs single
+ * values were up to 70 % higher, so they say nothing about the budgets.
+ */
+export const BUSY_LIMIT = 0.3;
 
 const SEED_PAGE = '/__perf__/seed';
 const SEED_DATA = '/__perf__/data.json';
@@ -260,6 +269,55 @@ export async function downloadAfterInput(page: Page): Promise<number> {
   });
 }
 
+let machineLoad: { testId: string; busy: number } | undefined;
+
+/**
+ * Measures how much of all cores' CPU time the machine uses before the test starts the app: the
+ * lowest share of five 200 ms samples, so the browser that has just started for the test does not
+ * count, but other test runs or builds do. The share goes into the test's `PERF` lines as
+ * `machineBusy` (percent); above `BUSY_LIMIT` the test prints a warning, and `busyNote` adds it
+ * to failed budgets.
+ */
+export async function measureMachineLoad(testInfo: TestInfo): Promise<void> {
+  const sample = async () => {
+    const before = cpus().map((cpu) => cpu.times);
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    let total = 0;
+    let idle = 0;
+    cpus().forEach(({ times: after }, i) => {
+      const sum = (t: typeof after) => t.user + t.nice + t.sys + t.irq + t.idle;
+      total += sum(after) - sum(before[i]);
+      idle += after.idle - before[i].idle;
+    });
+    return total > 0 ? 1 - idle / total : 0;
+  };
+  let busy = 1;
+  for (let i = 0; i < 5; i++) {
+    busy = Math.min(busy, await sample());
+  }
+  machineLoad = { testId: testInfo.testId, busy };
+  if (busy > BUSY_LIMIT) {
+    const warning =
+      `machine ${Math.round(busy * 100)} % busy before "${testInfo.title}": ` +
+      'the values are not comparable with the budgets; run again on an idle machine';
+    console.log(`PERF-WARNING ${warning}`);
+    testInfo.annotations.push({ type: 'warning', description: warning });
+  }
+}
+
+/** How busy the machine was before this test (0–1), if it was measured. */
+function busyBefore(testInfo: TestInfo): number | undefined {
+  return machineLoad?.testId === testInfo.testId ? machineLoad.busy : undefined;
+}
+
+/** A hint for a failed budget when the machine was busy before the test, otherwise ''. */
+export function busyNote(testInfo: TestInfo): string {
+  const busy = busyBefore(testInfo);
+  return busy !== undefined && busy > BUSY_LIMIT
+    ? `, machine ${Math.round(busy * 100)} % busy before the test`
+    : '';
+}
+
 export interface ScrollResult {
   /** From the first scroll step until the last entry is rendered. */
   duration: number;
@@ -336,7 +394,14 @@ export function report(
   name: string,
   values: Record<string, number>,
 ): void {
-  const entry = { brews, name, cpuThrottling: CPU_THROTTLING, ...values };
+  const busy = busyBefore(testInfo);
+  const entry = {
+    brews,
+    name,
+    cpuThrottling: CPU_THROTTLING,
+    ...(busy === undefined ? {} : { machineBusy: Math.round(busy * 100) }),
+    ...values,
+  };
   console.log(`PERF ${JSON.stringify(entry)}`);
   testInfo.annotations.push({
     type: 'perf',

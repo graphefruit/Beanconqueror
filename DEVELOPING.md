@@ -172,14 +172,23 @@ statistics, start-up or backups.
   `change` event until the page itself sees the result, checked every frame, so Playwright's
   round trips and polling are not part of them. "Settled" means the content is on screen and the
   main thread had no long task for one second. Every value is printed as a `PERF {…}` line.
-- Times depend on the machine. Look at a few runs before judging a change:
+- Times depend on the machine and on what else runs on it. The budgets are set on an Apple M2 Max
+  (see `budgets.ts`). Run on an otherwise idle machine: no other test runs (also not `pnpm e2e` or
+  `pnpm test` in another worktree), builds, emulators or indexing, and a laptop on power. Other
+  load slows the throttled page down further; with parallel test runs single values were up to
+  70 % higher and failed their budgets. Before each test the run measures how busy the machine is
+  (`machineBusy` in the `PERF` lines, percent of all cores); above 30 % it prints a
+  `PERF-WARNING`, and a failed budget mentions it.
+- Look at a few runs before judging a change (the `grep` also keeps the warnings):
 
   ```shell
   pnpm e2e:perf --repeat-each=3 | grep '^PERF'
   ```
 
-When a change makes the app faster, lower the budget. Raise a budget only with a reason in the
-commit message. `budgets.ts` notes the measured values and their spread the budgets are based on.
+When a budget fails, run again on an idle machine and compare with a run of the previous commit on
+the same machine before concluding that the change made the app slower. When a change makes the
+app faster, lower the budget. Raise a budget only with a reason in the commit message. `budgets.ts`
+notes the measured values and their spread the budgets are based on.
 
 ### Measuring on a Pixel 2 XL
 
