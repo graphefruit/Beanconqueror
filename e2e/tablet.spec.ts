@@ -1,12 +1,14 @@
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { completeFirstRunWithBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 import {
   measureLayout,
   measureSheet,
   openImportSheet,
   openTab,
+  shortenViewportForKeyboard,
   waitForAnimations,
 } from './support/layout';
 
@@ -107,6 +109,64 @@ test('a sheet opens as a centred panel narrower than the screen', async ({
   await completeFirstRun(page);
   await openImportSheet(page);
 
+  const panel = await measureSheet(page);
+  expect(panel.width).toBeLessThanOrEqual(panel.sheetMaxWidth + 1);
+  expect(
+    Math.abs(panel.left - (panel.viewportWidth - panel.right)),
+  ).toBeLessThan(2);
+});
+
+test('a single full-width action in a sheet stops at the button limit', async ({
+  page,
+}) => {
+  await page.goto('/');
+  // The filter and sort controls only show once there is a bean.
+  await completeFirstRunWithBrew(page);
+  await openTab(page, 'Beans');
+  await page.getByRole('button', { name: 'Filter beans' }).click();
+
+  // The host element: the button role sits on the native button in its shadow root.
+  const apply = page
+    .locator('ion-modal.modal-sheet ion-button')
+    .filter({ hasText: 'Apply filter' });
+  await expect(apply).toBeVisible();
+  await waitForAnimations(page);
+
+  const { button, room, buttonMaxWidth } = await apply.evaluate((host) => {
+    const rect = host.getBoundingClientRect();
+    const parent = host.parentElement!.getBoundingClientRect();
+    return {
+      button: { left: rect.left, right: rect.right, width: rect.width },
+      room: { left: parent.left, right: parent.right, width: parent.width },
+      buttonMaxWidth: parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          '--bq-button-max-width',
+        ),
+      ),
+    };
+  });
+  // Without the limit the button would fill its row; the row must be wider for the
+  // check to mean anything.
+  expect(room.width).toBeGreaterThan(buttonMaxWidth + 1);
+  expect(button.width).toBeLessThanOrEqual(buttonMaxWidth + 1);
+  expect(
+    Math.abs(button.left - room.left - (room.right - button.right)),
+  ).toBeLessThan(2);
+});
+
+test('the column and the sheet panel stay while the keyboard shortens the viewport', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await expect(page.getByRole('button', { name: 'Add brew' })).toBeVisible();
+  // An open on-screen keyboard shrinks the viewport height, not the screen. Ionic sizes
+  // overlays only from a 600px tall viewport, so the panel width must come from the rule.
+  await shortenViewportForKeyboard(page, 400);
+
+  await expectTabletLayout(page);
+
+  await openImportSheet(page);
   const panel = await measureSheet(page);
   expect(panel.width).toBeLessThanOrEqual(panel.sheetMaxWidth + 1);
   expect(

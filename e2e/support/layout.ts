@@ -133,3 +133,29 @@ export async function openImportSheet(page: Page): Promise<void> {
     page.locator('ion-modal.modal-sheet').getByText('Scan QR Code'),
   ).toBeVisible();
 }
+
+/**
+ * Shortens the viewport the way an open on-screen keyboard does: the screen keeps its
+ * size. page.setViewportSize would resize the emulated screen as well. Chromium only.
+ */
+export async function shortenViewportForKeyboard(
+  page: Page,
+  height: number,
+): Promise<void> {
+  const { width } = page.viewportSize()!;
+  const screen = await page.evaluate(() => ({
+    width: window.screen.width,
+    height: window.screen.height,
+    deviceScaleFactor: window.devicePixelRatio,
+  }));
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width,
+    height,
+    deviceScaleFactor: screen.deviceScaleFactor,
+    mobile: true,
+    screenWidth: screen.width,
+    screenHeight: screen.height,
+  });
+  await expect.poll(() => page.evaluate(() => window.innerHeight)).toBe(height);
+}
