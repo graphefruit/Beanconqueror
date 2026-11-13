@@ -100,8 +100,8 @@ test('a filter method shows the default fields, sorted by the default order', as
   ).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Add Photo' })).toHaveCount(0);
 
-  // The order is applied with CSS only: on screen the bean comes first, while
-  // the markup (and so a screen reader) starts with "Grind Setting".
+  // The bean comes first on screen and in the markup, which screen readers
+  // follow.
   await expectVisualOrder([
     beanSelect(page),
     brewField(page, 'Ground Coffee (gr)'),

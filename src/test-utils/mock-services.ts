@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 
 /**
  * Create a mock TranslateService for testing.
@@ -95,9 +95,15 @@ export function createMockModalController(): jasmine.SpyObj<any> {
 /**
  * Create a mock UISettingsStorage for testing.
  * Call `getSettings.and.returnValue(mySettings)` to configure the returned settings.
+ * `attachOnEvent()` emits no storage events unless configured.
  */
 export function createMockUISettingsStorage(): jasmine.SpyObj<any> {
-  return jasmine.createSpyObj('UISettingsStorage', ['getSettings']);
+  const spy = jasmine.createSpyObj('UISettingsStorage', [
+    'getSettings',
+    'attachOnEvent',
+  ]);
+  spy.attachOnEvent.and.returnValue(EMPTY);
+  return spy;
 }
 
 /**

@@ -1,7 +1,10 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  computed,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   HostListener,
@@ -10,8 +13,10 @@ import {
   NgZone,
   OnInit,
   Output,
+  signal,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -53,6 +58,11 @@ import { BrewBrixCalculatorComponent } from '../../../app/brew/brew-brix-calcula
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
 import { BrewMaximizeControlsComponent } from '../../../app/brew/brew-maximize-controls/brew-maximize-controls.component';
 import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
+import {
+  BREW_FORM_FIELDS,
+  brewFieldLayout,
+  EMPTY_BREW_FIELD_LAYOUT,
+} from '../../../brew-session/rules/brewFieldLayout';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
@@ -84,8 +94,6 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
 import { IBean } from '../../../interfaces/bean/iBean';
 import { IMill } from '../../../interfaces/mill/iMill';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
-import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { KeysPipe } from '../../../pipes/keys';
 import { MillFunction } from '../../../pipes/mill/millFunction';
@@ -127,6 +135,7 @@ declare var cordova;
   styleUrls: ['./brew-brewing.component.scss'],
   imports: [
     FormsModule,
+    NgTemplateOutlet,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     PreparationOverlayDirective,
@@ -144,8 +153,6 @@ declare var cordova;
     TranslatePipe,
     KeysPipe,
     ToFixedPipe,
-    BrewFieldVisiblePipe,
-    BrewFieldOrder,
     BrewFunction,
     MillFunction,
     IonCard,
@@ -191,6 +198,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private readonly eventQueue = inject(EventQueueService);
   private readonly hapticService = inject(HapticService);
   private readonly textToSpeech = inject(TextToSpeechService);
+  private readonly destroyRef = inject(DestroyRef);
 
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewBrewingGraphEl', { static: false })
@@ -261,6 +269,39 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public uiHasWaterEntries: boolean = false;
   public uiHasActivePreparationTools: boolean = false;
   public uiRefractometerConnected: boolean = false;
+
+  /**
+   * The settings and the chosen preparation the fields are laid out by, until
+   * the settings are available as a signal. Both are changed in place, so
+   * setting the same object again counts as a change as well.
+   */
+  private readonly layoutSettings = signal<Settings>(undefined, {
+    equal: () => false,
+  });
+  private readonly layoutPreparation = signal<Preparation>(undefined, {
+    equal: () => false,
+  });
+  /** The shown fields of each section, in the configured order. */
+  protected readonly brewFields = computed(() => {
+    const settings = this.layoutSettings();
+    const preparation = this.layoutPreparation();
+    if (!settings || !preparation) {
+      return EMPTY_BREW_FIELD_LAYOUT;
+    }
+    return brewFieldLayout(BREW_FORM_FIELDS, settings, preparation);
+  });
+  /**
+   * The graph is not repeated with the fields of its section, so a new layout
+   * never creates it anew: the fields are laid out before and after it.
+   */
+  protected readonly whileFieldsBeforeGraph = computed(() => {
+    const fields = this.brewFields().while;
+    return fields.slice(0, fields.indexOf('graph'));
+  });
+  protected readonly whileFieldsAfterGraph = computed(() => {
+    const fields = this.brewFields().while;
+    return fields.slice(fields.indexOf('graph') + 1);
+  });
 
   constructor() {
     addIcons({ globeOutline, download, expandOutline, analyticsOutline });
@@ -688,6 +729,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public ngOnInit(): void {
     this.settings = this.uiSettingsStorage.getSettings();
+    this.layoutSettings.set(this.settings);
+    // Parameters can change while the form is open, e.g. connecting a
+    // refractometer switches TDS on. Settings and preparations are changed in
+    // place, so the fields are laid out again with the objects at hand.
+    this.uiSettingsStorage
+      .attachOnEvent()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.layoutSettings.set(this.settings));
+    this.uiPreparationStorage
+      .attachOnEvent()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.layoutPreparation.set(this.choosenPreparation));
     if (!this.data.config.uuid) {
       this.customCreationDate = moment().toISOString();
     } else {
@@ -1128,11 +1181,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public forceSetPreparation(_preparation: Preparation) {
     this.choosenPreparation = this.loadSpecificLastPreparation;
+    this.layoutPreparation.set(this.choosenPreparation);
     this.data.method_of_preparation = this.choosenPreparation.config.uuid;
     this.setUIParams();
   }
   public setChoosenPreparation() {
     this.choosenPreparation = this.data.getPreparation();
+    this.layoutPreparation.set(this.choosenPreparation);
     this.setUIParams();
   }
   public getPreparation(): Preparation {

@@ -149,7 +149,6 @@ async function expectReadingOrder(
 test('the brew form reads its fields in the sorted order', async ({
   page,
 }, testInfo) => {
-  test.fail();
   await sortBrewTemperatureFirst(page);
   await openAddBrew(page);
 
@@ -221,7 +220,6 @@ test('the brew graph stays in the brew form when the brew time is hidden', async
 test('Tab moves through the brew form in the sorted order', async ({
   page,
 }) => {
-  test.fail();
   await sortBrewTemperatureFirst(page);
   await openAddBrew(page);
 

@@ -29,8 +29,6 @@ import { Brew } from '../../../../classes/brew/brew';
 import { Mill } from '../../../../classes/mill/mill';
 import { Preparation } from '../../../../classes/preparation/preparation';
 import { Settings } from '../../../../classes/settings/settings';
-import { BrewFieldOrder } from '../../../../pipes/brew/brewFieldOrder';
-import { BrewFieldVisiblePipe } from '../../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../../pipes/brew/brewFunction';
 import { KeysPipe } from '../../../../pipes/keys';
 import { MillFunction } from '../../../../pipes/mill/millFunction';
@@ -114,12 +112,10 @@ describe('BrewBrewingComponent mill visibility', () => {
           IonSelect,
           IonSelectOption,
           IonTextarea,
-          // Pipes (needed for @if conditions and [style.order] bindings)
+          // Pipes (needed for @if conditions)
           TranslatePipe,
           KeysPipe,
           ToFixedPipe,
-          BrewFieldVisiblePipe,
-          BrewFieldOrder,
           BrewFunction,
           MillFunction,
         ],
@@ -158,9 +154,10 @@ describe('BrewBrewingComponent mill visibility', () => {
         },
         {
           provide: UIPreparationStorage,
-          useValue: jasmine.createSpyObj('UIPreparationStorage', [
-            'getAllEntries',
-          ]),
+          useValue: jasmine.createSpyObj('UIPreparationStorage', {
+            getAllEntries: undefined,
+            attachOnEvent: EMPTY,
+          }),
         },
         {
           provide: UIHelper,
@@ -244,7 +241,6 @@ describe('BrewBrewingComponent mill visibility', () => {
     component = fixture.componentInstance;
 
     // Stub storage-dependent methods called during ngOnInit
-    spyOn(component, 'setChoosenPreparation' as any).and.stub();
     spyOn(component, 'setUIParams').and.stub();
   });
 
@@ -252,10 +248,11 @@ describe('BrewBrewingComponent mill visibility', () => {
     const brew = new Brew();
     const preparation = new Preparation();
     preparation.use_custom_parameters = false;
+    // ngOnInit takes the preparation of the brew.
+    spyOn(brew, 'getPreparation').and.returnValue(preparation);
 
     component.data = brew;
     component.settings = settings;
-    component.choosenPreparation = preparation;
     component.choosenMill = mill;
     component.uiShowSectionBeforeBrew = true;
     component.uiShowSectionWhileBrew = false;
