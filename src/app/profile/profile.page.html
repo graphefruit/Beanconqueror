@@ -1,40 +1,75 @@
 <ion-header>
-  <app-header [title]="'NAV_PROFILE' | translate">
+  <app-header [title]="'NAV_PROFILE' | translate" [heading]="true">
     <ion-menu-button header-slot="start" />
   </app-header>
 </ion-header>
 <ion-content>
-  <ion-list lines="full">
-    <ion-item [routerLink]="['/home/profile/preparations']" detail="true">
-      <ion-label>
-        {{ "PROFILE_PREPARATION_METHODS" | translate }}
-        @if (!preparationsExist) {
-          <p class="setup-hint">
-            <span class="setup-dot" aria-hidden="true"></span>{{ "PROFILE_NONE_ADDED_YET" | translate }}
-          </p>
-        }
-      </ion-label>
-    </ion-item>
-    <ion-item [routerLink]="['/home/profile/mills']" detail="true">
-      <ion-label>
-        {{ "NAV_MILL" | translate }}
-        @if (!millsExist) {
-          <p class="setup-hint">
-            <span class="setup-dot" aria-hidden="true"></span>{{ "PROFILE_NONE_ADDED_YET" | translate }}
-          </p>
-        }
-      </ion-label>
-    </ion-item>
-    @if (waterSectionVisible) {
-      <ion-item [routerLink]="['/water-section']" detail="true">
-        <ion-label>{{ "NAV_WATER_SECTION" | translate }}</ion-label>
+  <div class="hub">
+    <h2 class="group-title">{{ "PROFILE_GROUP_EQUIPMENT" | translate }}</h2>
+    <ion-list class="group-card" lines="full">
+      <ion-item [routerLink]="['/home/profile/preparations']" detail="true">
+        <span class="entry-icon" slot="start" aria-hidden="true">
+          <ion-icon name="beanconqueror-preparation" />
+        </span>
+        <ion-label>
+          {{ "PROFILE_PREPARATION_METHODS" | translate }}
+          @if (preparations; as line) {
+            <p>{{ line.key | translate: line.params }}</p>
+          } @else {
+            <p class="setup-hint">
+              <span class="setup-dot" aria-hidden="true"></span>{{ "PROFILE_NONE_ADDED_YET" | translate }}
+            </p>
+          }
+        </ion-label>
       </ion-item>
-    }
-    <ion-item [routerLink]="['/statistic']" detail="true">
-      <ion-label>{{ "NAV_STATISTICS" | translate }}</ion-label>
-    </ion-item>
-    <ion-item [routerLink]="['/settings']" detail="true" lines="none">
-      <ion-label>{{ "NAV_SETTINGS" | translate }}</ion-label>
-    </ion-item>
-  </ion-list>
+      <ion-item [routerLink]="['/home/profile/mills']" detail="true" [lines]="waterSectionVisible ? undefined : 'none'">
+        <span class="entry-icon" slot="start" aria-hidden="true">
+          <ion-icon name="beanconqueror-pepper-mill" />
+        </span>
+        <ion-label>
+          {{ "NAV_MILL" | translate }}
+          @if (mills; as line) {
+            <p>{{ line.key | translate: line.params }}</p>
+          } @else {
+            <p class="setup-hint">
+              <span class="setup-dot" aria-hidden="true"></span>{{ "PROFILE_NONE_ADDED_YET" | translate }}
+            </p>
+          }
+        </ion-label>
+      </ion-item>
+      @if (waterSectionVisible) {
+        <ion-item [routerLink]="['/water-section']" detail="true" lines="none">
+          <span class="entry-icon" slot="start" aria-hidden="true">
+            <ion-icon name="water-outline" />
+          </span>
+          <ion-label>
+            {{ "NAV_WATER_SECTION" | translate }}
+            <p>{{ waters ? (waters.key | translate: waters.params) : ("PROFILE_NONE_ADDED_YET" | translate) }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+
+    <h2 class="group-title">{{ "PROFILE_GROUP_APP" | translate }}</h2>
+    <ion-list class="group-card" lines="full">
+      <ion-item [routerLink]="['/statistic']" detail="true">
+        <span class="entry-icon" slot="start" aria-hidden="true">
+          <ion-icon name="stats-chart-outline" />
+        </span>
+        <ion-label>
+          {{ "NAV_STATISTICS" | translate }}
+          <p>{{ "PROFILE_STATISTICS_DESCRIPTION" | translate }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item [routerLink]="['/settings']" detail="true" lines="none">
+        <span class="entry-icon" slot="start" aria-hidden="true">
+          <ion-icon name="settings-outline" />
+        </span>
+        <ion-label>
+          {{ "NAV_SETTINGS" | translate }}
+          <p>{{ "PROFILE_SETTINGS_DESCRIPTION" | translate }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

@@ -369,7 +369,10 @@ test('the profile marks a missing grinder and names it', async ({ page }) => {
 
   await addPreparationFromProfile(page);
   await expect(
-    page.getByRole('link', { name: 'Preparation methods', exact: true }),
+    page.getByRole('link', {
+      name: 'Preparation methods 1 method',
+      exact: true,
+    }),
   ).toBeVisible();
   // Only the grinder is missing now, and the tab still says so.
   await expect(profileDot(page)).toBeVisible();
@@ -379,7 +382,7 @@ test('the profile marks a missing grinder and names it', async ({ page }) => {
 
   await addGrinderFromProfile(page);
   await expect(
-    page.getByRole('link', { name: 'Grinders', exact: true }),
+    page.getByRole('link', { name: 'Grinders 1 grinder', exact: true }),
   ).toBeVisible();
   await expect(profileDot(page)).toHaveCount(0);
 });
@@ -393,7 +396,7 @@ test('the profile marks a missing preparation method and names it', async ({
   await openProfile(page);
   await addGrinderFromProfile(page);
   await expect(
-    page.getByRole('link', { name: 'Grinders', exact: true }),
+    page.getByRole('link', { name: 'Grinders 1 grinder', exact: true }),
   ).toBeVisible();
   await expect(profileDot(page)).toBeVisible();
   await expect(

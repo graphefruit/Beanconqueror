@@ -1,21 +1,89 @@
 :host {
+  // Groups of entries on cards, after the handoff's profile hub.
+  .hub {
+    padding: var(--bq-space-2) var(--bq-space-4) var(--bq-space-6);
+  }
+
+  .group-title {
+    margin: var(--bq-space-4) 0 var(--bq-space-2);
+    font-size: var(--bq-type-subhead);
+    font-weight: 700;
+    line-height: var(--bq-leading-subhead);
+    color: var(--bq-text-primary);
+  }
+
+  // No overflow clip: the keyboard focus ring of an entry sits just outside
+  // it and must stay visible at the card edge. The first and last entry round
+  // their own background instead.
+  .group-card {
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--bq-border-card);
+    border-radius: var(--bq-radius-card);
+    background: var(--bq-surface-card);
+  }
+
   ion-item {
+    --background: var(--bq-surface-card);
     --padding-start: var(--bq-space-4);
     --inner-padding-end: var(--bq-space-4);
+    --padding-top: var(--bq-space-2);
+    --padding-bottom: var(--bq-space-2);
+    --min-height: var(--bq-touch-target);
+  }
+
+  ion-item:first-child {
+    --border-radius: var(--bq-radius-card) var(--bq-radius-card) 0 0;
+  }
+
+  ion-item:last-child {
+    --border-radius: 0 0 var(--bq-radius-card) var(--bq-radius-card);
+  }
+
+  ion-item:only-child {
+    --border-radius: var(--bq-radius-card);
+  }
+
+  .entry-icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--bq-space-8);
+    height: var(--bq-space-8);
+    margin-inline-end: var(--bq-space-3);
+    border-radius: var(--bq-radius-button);
+    background: var(--bq-surface-icon);
+    color: var(--bq-text-secondary);
+
+    // The global icon colour is a faint legacy tone; the tile's text colour
+    // keeps the icon at 3:1 or more against the tile.
+    ion-icon {
+      font-size: var(--bq-space-4);
+      color: inherit;
+    }
   }
 
   // At a large text size a long compound such as "Zubereitungsmethoden" no
   // longer fits; it breaks at a syllable with a hyphen instead of before its
   // last letter. The document language picks the hyphenation rules.
   ion-label {
+    margin: 0;
+    font-size: var(--bq-type-ui-label);
+    font-weight: 700;
+    white-space: normal;
     hyphens: auto;
+
+    p {
+      margin-top: var(--bq-space-1);
+      font-size: var(--bq-type-caption);
+      font-weight: 400;
+      line-height: var(--bq-leading-caption);
+      color: var(--bq-text-secondary);
+    }
   }
 
   // Explains the dot on the profile tab: the section has no entry yet.
-  .setup-hint {
-    color: var(--bq-text-secondary);
-  }
-
   .setup-dot {
     display: inline-block;
     width: var(--bq-space-2);

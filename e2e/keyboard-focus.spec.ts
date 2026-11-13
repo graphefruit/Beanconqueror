@@ -198,6 +198,27 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
+for (const theme of ['light', 'dark'] as const) {
+  test(`focus is visible on every profile entry (${theme})`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await completeFirstRun(page);
+    await setTheme(page, theme);
+    await page.getByRole('tab', { name: 'Profile' }).click();
+    await expect(page).toHaveURL(/\/home\/profile$/);
+
+    for (const name of [
+      /^Preparation methods/,
+      /^Grinders/,
+      /^Statistics/,
+      /^Settings/,
+    ]) {
+      await expectFocusRing(page, page.getByRole('link', { name }));
+    }
+  });
+}
+
 const TABS = [
   { name: 'Home', path: '/home/dashboard', key: 'Enter' },
   { name: 'Brews', path: '/home/brews', key: 'Enter' },

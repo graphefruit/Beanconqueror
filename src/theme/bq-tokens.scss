@@ -25,6 +25,9 @@ $bq-on-action-primary: #ffffff;
   --bq-surface-page: var(--bq-palette-cream-200);
   --bq-surface-card: var(--bq-palette-white);
   --bq-surface-mid: var(--bq-palette-sand-400);
+  // Tile behind a decorative row icon (caramel tint, handoff settings rows).
+  // The icon on it carries the contrast, not the tile.
+  --bq-surface-icon: rgba(194, 133, 89, 0.12);
   // Status and navigation bar, browser theme-color: the page colour of each
   // mode. Both live on :root so the theme service can read the target mode's
   // value before the palette class switches. Native plugins take plain hex, so
@@ -278,6 +281,7 @@ brew-timer,
 :root.ion-palette-dark.ios {
   --bq-surface-page: var(--bq-palette-espresso-900);
   --bq-surface-card: var(--bq-palette-espresso-1000);
+  --bq-surface-icon: rgba(194, 133, 89, 0.2);
 
   --bq-text-primary: var(--bq-palette-white);
   --bq-text-secondary: var(--bq-palette-cream-300);
