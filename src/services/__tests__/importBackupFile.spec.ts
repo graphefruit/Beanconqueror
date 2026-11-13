@@ -6,7 +6,10 @@ import { Storage } from '@ionic/storage';
 import { FileInfo } from '@capacitor/filesystem';
 import moment from 'moment';
 
-import { fillMissingChangeInfo } from '../../classes/changeTracking/changeTracking';
+import {
+  CHANGE_TRACKED_COLLECTIONS,
+  fillMissingChangeInfo,
+} from '../../classes/changeTracking/changeTracking';
 import {
   DELETION_JOURNAL_STORAGE_KEY,
   DEVICE_STORAGE_KEY,
@@ -703,6 +706,27 @@ describe('The backup before an import of data that was just imported', () => {
       UNCHANGED_IMPORT_ENDING,
     );
   });
+
+  for (const collection of CHANGE_TRACKED_COLLECTIONS) {
+    it(`is not marked once an entry was added to ${collection} since`, async () => {
+      /** The imported data with an entry in `collection` changed at `_time`. */
+      const withEntryChangedAt = (_time: number) => {
+        const stored = afterImport('import');
+        const [entry]: any[] = imported(entries(`added-${collection}`, 1));
+        entry.config.updated_at = _time;
+        stored[collection] = [...(stored[collection] ?? []), entry];
+        return stored;
+      };
+
+      // Changed before the import, on another device: still marked.
+      expect(
+        await backupBeforeNextImport(withEntryChangedAt(RESTORED_AT - 1)),
+      ).toContain(UNCHANGED_IMPORT_ENDING);
+      expect(
+        await backupBeforeNextImport(withEntryChangedAt(RESTORED_AT + 1)),
+      ).not.toContain(UNCHANGED_IMPORT_ENDING);
+    });
+  }
 
   it('is not marked once an entry was deleted since', async () => {
     const stored = afterImport('import', {
