@@ -1,3 +1,9 @@
+import { TestBed } from '@angular/core/testing';
+
+import { ModalController, Platform } from '@ionic/angular/standalone';
+
+import { TranslateService } from '@ngx-translate/core';
+
 import {
   APPLIED_DATA_VERSIONS,
   BREW_TIERS,
@@ -22,6 +28,70 @@ import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import { WATER_TYPES } from '../../enums/water/waterTypes';
 import { WATER_UNIT } from '../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../enums/water/waterUnitTds';
+import { UIAlert } from '../../services/uiAlert';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIHelper } from '../../services/uiHelper';
+import { UILog } from '../../services/uiLog';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIStorage } from '../../services/uiStorage';
+import { UIUpdate } from '../../services/uiUpdate';
+import { UiVersionStorage } from '../../services/uiVersionStorage';
+
+/**
+ * The update check the app runs at every start (`UIUpdate`), with the data set's version entry.
+ * The other services are empty stubs: the tests only look at what the check decides to do.
+ */
+function startUpCheck(versionEntry: SyntheticDataSet['VERSION'][number]) {
+  const version = new Version();
+  // A copy: the check pushes into the arrays of the version entry.
+  version.initializeByObject(structuredClone(versionEntry));
+  const saveVersion = jasmine.createSpy('saveVersion').and.resolveTo(undefined);
+  const openModal = jasmine.createSpy('ModalController.create').and.resolveTo({
+    present: () => Promise.resolve(),
+    onWillDismiss: () => Promise.resolve({}),
+  });
+
+  TestBed.configureTestingModule({
+    providers: [
+      UIUpdate,
+      {
+        provide: UiVersionStorage,
+        useValue: { getVersion: () => version, saveVersion },
+      },
+      {
+        provide: UIStorage,
+        useValue: { hasData: () => Promise.resolve(true) },
+      },
+      { provide: ModalController, useValue: { create: openModal } },
+      // Not the native app: the update screens are checked against the web build's version.
+      { provide: Platform, useValue: { is: () => false } },
+      {
+        provide: UILog,
+        useValue: {
+          info: () => undefined,
+          log: () => undefined,
+          error: () => undefined,
+        },
+      },
+      { provide: UIAlert, useValue: { isLoadingSpinnerShown: () => false } },
+      ...[
+        UIBrewStorage,
+        UIMillStorage,
+        UIBeanStorage,
+        UIPreparationStorage,
+        UISettingsStorage,
+        UIFileHelper,
+        TranslateService,
+        UIHelper,
+      ].map((token) => ({ provide: token, useValue: {} })),
+    ],
+  });
+  return { update: TestBed.inject(UIUpdate), version, saveVersion, openModal };
+}
 
 /** Field paths of an object as the database stores it (JSON shape, arrays are leaves). */
 function fieldPaths(value: unknown, prefix = ''): string[] {
@@ -152,14 +222,46 @@ describe('synthetic data set', () => {
         expect(Object.keys(WATER_UNIT_TDS)).toContain(water.tds_type);
       }
     });
+  });
 
-    it('marks every data migration as applied and every update screen as shown', () => {
-      const version = new Version();
-      version.initializeByObject(data.VERSION[0]);
-      for (const update of APPLIED_DATA_VERSIONS) {
-        expect(version.checkIfDataVersionWasUpdated(update)).toBeTrue();
-      }
-      expect(version.whichUpdateScreensShallBeDisplayed('99.0.0')).toEqual([]);
+  describe('app start', () => {
+    it('lists exactly the data migrations the app runs, all as applied', async () => {
+      const { update, version, saveVersion } = startUpCheck(data.VERSION[0]);
+      const checked = spyOn(
+        version,
+        'checkIfDataVersionWasUpdated',
+      ).and.callThrough();
+
+      await update.checkUpdate();
+
+      const runByTheApp = [...new Set(checked.calls.allArgs().flat())];
+      expect(runByTheApp.length).toBeGreaterThan(0);
+      expect(
+        runByTheApp.filter((name) => !APPLIED_DATA_VERSIONS.includes(name)),
+      )
+        .withContext('migrations missing in APPLIED_DATA_VERSIONS')
+        .toEqual([]);
+      expect(
+        APPLIED_DATA_VERSIONS.filter((name) => !runByTheApp.includes(name)),
+      )
+        .withContext('APPLIED_DATA_VERSIONS the app does not run')
+        .toEqual([]);
+      const pending = checked.calls
+        .all()
+        .filter((call) => call.returnValue === false)
+        .map((call) => call.args[0]);
+      expect([...new Set(pending)])
+        .withContext('migrations that would run')
+        .toEqual([]);
+      expect(saveVersion).not.toHaveBeenCalled();
+    });
+
+    it('shows no update screen', async () => {
+      const { update, openModal } = startUpCheck(data.VERSION[0]);
+
+      await update.checkUpdateScreen();
+
+      expect(openModal).not.toHaveBeenCalled();
     });
   });
 

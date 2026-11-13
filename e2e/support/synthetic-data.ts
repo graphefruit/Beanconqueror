@@ -282,14 +282,18 @@ export interface SyntheticDataSet {
 
 /**
  * Data migrations `UIUpdate.checkUpdate()` has already applied to this data, so a start runs the
- * migration check without migrating anything. A migration added later runs on the first start.
+ * migration check without migrating anything. The unit test runs that check and fails when the
+ * app gets a migration that is missing here.
  */
 export const APPLIED_DATA_VERSIONS = Array.from(
   { length: 15 },
   (_, i) => `UPDATE_${i + 1}`,
 );
 
-/** Update screens already seen (`Version.getUpdatedVersions()`). */
+/**
+ * Update screens already seen (`Version.getUpdatedVersions()`). The unit test checks that the
+ * web build (`UIUpdate.checkUpdateScreen()`) shows none at start.
+ */
 export const DISPLAYED_UPDATE_SCREENS = ['8.8.0'];
 
 /**
