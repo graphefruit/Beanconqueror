@@ -38,26 +38,94 @@ function behind(
   });
 }
 
-/**
- * Whether keyboard focus is in the overlay that holds `control`. Controls
- * often sit in shadow roots, so the way up leaves them through their host.
- */
-function focusIsInOverlayOf(control: Locator): Promise<boolean> {
-  return control.evaluate((element) => {
-    let node: Node | null = element;
-    while (
-      node &&
-      !(node instanceof Element && node.matches('ion-modal, ion-alert'))
-    ) {
-      node = node instanceof ShadowRoot ? node.host : node.parentNode;
-    }
-    return node?.contains(document.activeElement) ?? false;
-  });
+/** The modal overlays of Ionic that the app opens. */
+const OVERLAYS =
+  'ion-modal, ion-popover, ion-alert, ion-action-sheet, ion-loading';
+
+/** What `recordOpenOverlays` keeps in the page. */
+interface OpenOverlays {
+  __bqOpenOverlays: WeakSet<EventTarget>;
 }
 
-/** Ionic moves focus into an overlay once it has finished opening. */
+/**
+ * Runs in the page before the app: an overlay counts as open from Ionic's
+ * `ion…DidPresent` until its `ion…WillDismiss`.
+ */
+function recordOpenOverlays(): void {
+  const open = new WeakSet<EventTarget>();
+  (window as unknown as OpenOverlays).__bqOpenOverlays = open;
+  for (const prefix of [
+    'ionModal',
+    'ionPopover',
+    'ionAlert',
+    'ionActionSheet',
+    'ionLoading',
+  ]) {
+    document.addEventListener(
+      `${prefix}DidPresent`,
+      (event) => {
+        if (event.target) open.add(event.target);
+      },
+      true,
+    );
+    document.addEventListener(
+      `${prefix}WillDismiss`,
+      (event) => {
+        if (event.target) open.delete(event.target);
+      },
+      true,
+    );
+  }
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(recordOpenOverlays);
+});
+
+interface OverlayState {
+  /** Ionic has finished opening it and has not started to close it. */
+  open: boolean;
+  /** Keyboard focus is inside it. */
+  focused: boolean;
+}
+
+/**
+ * The overlay that holds `control`. Controls often sit in shadow roots, so
+ * the way up leaves them through their host.
+ */
+function overlayOf(control: Locator): Promise<OverlayState> {
+  return control.evaluate((element, overlays) => {
+    let node: Node | null = element;
+    while (node && !(node instanceof Element && node.matches(overlays))) {
+      node = node instanceof ShadowRoot ? node.host : node.parentNode;
+    }
+    const open = (window as unknown as OpenOverlays).__bqOpenOverlays;
+    return {
+      open: node !== null && open.has(node),
+      focused: node?.contains(document.activeElement) ?? false,
+    };
+  }, OVERLAYS);
+}
+
+/** Whether keyboard focus is in the overlay that holds `control`. */
+async function focusIsInOverlayOf(control: Locator): Promise<boolean> {
+  return (await overlayOf(control)).focused;
+}
+
+/**
+ * Waits until Ionic has finished opening the overlay that holds `control`
+ * and has moved focus into it. Focus inside does not tell on its own: a
+ * select focuses the chosen option a frame after its list starts to open,
+ * and the list takes focus itself once its animation is over. Only from
+ * then on does focus stay where a test puts it.
+ */
 async function waitUntilOpen(control: Locator): Promise<void> {
-  await expect.poll(() => focusIsInOverlayOf(control)).toBe(true);
+  await expect
+    .poll(async () => {
+      const overlay = await overlayOf(control);
+      return overlay.open && overlay.focused;
+    })
+    .toBe(true);
 }
 
 /** Everything a screen reader can reach, as Playwright's aria snapshot. */
@@ -80,6 +148,11 @@ async function expectFocusStaysOn(
   await target.focus();
   await expect(focused).toBeFocused();
   expect(await focusIsInOverlayOf(target)).toBe(false);
+  // Only conclusive if Ionic had finished opening the overlay before: while
+  // it opens, Ionic still moves focus, and the probe would pass or fail by
+  // timing. Checked here so that such a run fails every time.
+  expect((await overlayOf(focused)).open).toBe(true);
+  await expect(focused).toBeFocused();
 }
 
 test('a half-height sheet keeps the page and its tab bar out of reach', async ({
