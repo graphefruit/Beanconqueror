@@ -6,7 +6,10 @@ import { Storage } from '@ionic/storage';
 import { BlobReader, ZipReader } from '@zip.js/zip.js';
 
 import { CHANGE_TRACKED_COLLECTIONS } from '../../classes/changeTracking/changeTracking';
-import { createLegacyData } from '../../test-utils/legacy-data-fixture';
+import {
+  createLegacyData,
+  LEGACY_DUPLICATE_BREW_UUID,
+} from '../../test-utils/legacy-data-fixture';
 import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -98,6 +101,23 @@ async function exportBackup(_data: Record<string, unknown>) {
 
 const CHANGE_INFO_FIELDS = ['created_at', 'updated_at', 'rev', 'updated_by'];
 
+/**
+ * The entries as an import stores them: of the two identical brews of the
+ * legacy data, only the first one.
+ */
+function asImported(
+  _collection: string,
+  _entries: Record<string, any>[],
+): Record<string, any>[] {
+  if (_collection !== 'BREWS') {
+    return _entries;
+  }
+  const copy = _entries
+    .map((_entry) => _entry.config.uuid as string)
+    .lastIndexOf(LEGACY_DUPLICATE_BREW_UUID);
+  return _entries.filter((_entry, i) => i !== copy);
+}
+
 function withoutChangeInfo(
   _entries: Record<string, any>[],
 ): Record<string, any>[] {
@@ -121,9 +141,8 @@ describe('Importing a backup fills in missing change info', () => {
 
     for (const collection of CHANGE_TRACKED_COLLECTIONS) {
       const stored = target.data.get(collection) as any[];
-      expect(stored.length)
-        .withContext(collection)
-        .toBe(legacy[collection].length);
+      const expected = asImported(collection, legacy[collection]);
+      expect(stored.length).withContext(collection).toBe(expected.length);
       for (const entry of stored) {
         expect(entry.config.updated_at).withContext(collection).toBe(0);
         expect(entry.config.rev).withContext(collection).toBe(0);
@@ -134,7 +153,7 @@ describe('Importing a backup fills in missing change info', () => {
       }
       expect(withoutChangeInfo(stored))
         .withContext(collection)
-        .toEqual(legacy[collection]);
+        .toEqual(expected);
     }
     // The version state comes from the backup as before.
     expect(target.data.get('VERSION')).toEqual(legacy.VERSION);
@@ -160,8 +179,10 @@ describe('Importing a backup fills in missing change info', () => {
     await target.uiStorage.import(backup);
 
     const stored = target.data.get('BREWS') as any[];
+    const expected = asImported('BREWS', data.BREWS);
+    expect(stored.length).toBe(expected.length);
     stored.slice(1).forEach((_brew, i) => {
-      expect(_brew.config).toEqual(data.BREWS[i + 1].config);
+      expect(_brew.config).toEqual(expected[i + 1].config);
     });
     expect(stored[0].config).toEqual({
       ...untracked.config,

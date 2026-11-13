@@ -8,6 +8,7 @@ import {
   FillChangeInfoStats,
   fillMissingChangeInfo,
 } from '../classes/changeTracking/changeTracking';
+import { removeDuplicateEntriesFromData } from '../classes/changeTracking/duplicateEntries';
 import { isLocalOnlyStorageKey } from '../classes/changeTracking/localStorageKeys';
 import { withDeviceSettingsSecrets } from '../classes/settings/settingsSecrets';
 import { AppEventType } from '../enums/appEvent/appEvent';
@@ -267,6 +268,7 @@ export class UIStorage {
     const _backup = await this.__safteyBackup();
     try {
       const importData = this.__keepDeviceSecrets(_data, _backup);
+      this.removeDuplicateEntries(importData);
       this.__fillMissingChangeInfo(importData);
       await this.__importBackup(importData);
 
@@ -278,6 +280,48 @@ export class UIStorage {
       } catch (ex) {
         throw { BACKUP: true };
       }
+    }
+  }
+
+  /**
+   * Backups made by older app versions can contain entries that share a
+   * uuid. Data update UPDATE_17 cleans them up on this device, and the same
+   * cleanup runs on every backup before it is imported, so an import does
+   * not bring them back (see classes/changeTracking/duplicateEntries.ts).
+   * The parsed backup is changed in place.
+   *
+   * Never throws; a failed cleanup does not stop the import. Each
+   * collection is either cleaned completely or left as it is.
+   */
+  public removeDuplicateEntries(_data: any): void {
+    if (typeof _data !== 'object' || _data === null) {
+      return;
+    }
+    try {
+      const results = removeDuplicateEntriesFromData(_data, () =>
+        crypto.randomUUID(),
+      );
+      for (const [collection, result] of Object.entries(results)) {
+        const prefix = `UIStorage - Backup - Duplicate entries in ${collection}`;
+        this.uiLog.log(
+          `${prefix} - shared uuids: ${result.groups}, identical copies removed: ${result.removed}, new uuids: ${result.renamed.length}, kept: ${result.kept.length}`,
+        );
+        for (const uuid of result.kept) {
+          this.uiLog.log(
+            `${prefix} - ${uuid} - differing copies kept, the uuid is referenced`,
+          );
+        }
+        for (const renamed of result.renamed) {
+          this.uiLog.log(
+            `${prefix} - ${renamed.uuid} - differing copy got the uuid ${renamed.new_uuid}`,
+          );
+        }
+      }
+    } catch (ex) {
+      this.uiLog.error(
+        'UIStorage - Backup - Duplicate entries not cleaned',
+        ex,
+      );
     }
   }
 
