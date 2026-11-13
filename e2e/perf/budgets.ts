@@ -10,6 +10,12 @@ export type PerfTier = 7_000 | 15_000;
  * second, 1,000 ms from ten seconds), so the spread between runs passes and a clear slowdown
  * fails. A 15,000-brew budget is never below the 7,000-brew one: the work grows with the brews.
  * Lower a budget when the app gets faster; raise one only with a reason.
+ *
+ * The values are from before entries carried change info and before the brew charts were
+ * measured until their painting ends (about 50 ms later than the last long task). Four runs
+ * after both changes (2026-11-13) stayed within every budget although the machine was 39 to
+ * 99 % busy, so no budget was changed; the brew charts used up to 90 % of theirs. Derive the
+ * budgets again when the machine is idle.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -27,8 +33,8 @@ export interface Budget {
   /** Profile > Statistics until the general numbers are shown and the main thread is quiet. */
   statisticsOpen: number;
   /**
-   * The "Brews" segment until its charts are drawn and the main thread is quiet, after the
-   * delay before drawing.
+   * The "Brews" segment until all of its charts are painted, nothing paints on them any more and
+   * the main thread is quiet, after the delay before drawing.
    */
   statisticsBrewCharts: number;
   /**

@@ -144,6 +144,14 @@ and end date always produce the same data. Field names and stored values follow 
 classes; `src/test-utils/__tests__/synthetic-data.spec.ts` compares them with real instances, so
 a model change that the generator does not follow fails the unit tests.
 
+The data is that of an installation whose data migrations have all run: every entry carries the
+change info (`created_at`, `updated_at`, `rev`, `updated_by`) that the change info migration
+fills in for entries from before change tracking, and the settings hold the user profile of an
+existing installation. The unit test runs the app's start-up update check and
+`fillMissingChangeInfo()` against the data, so a new migration or change info field that the
+generator does not follow fails it. Device id, deletion journal and attachment manifest are not
+generated; they belong to one installation and the app creates them itself.
+
 To get a backup file that the app imports under Settings > Import:
 
 ```shell
@@ -168,12 +176,17 @@ statistics, start-up or backups.
   with the CPU throttled 4x (`Emulation.setCPUThrottlingRate`) as an approximation of an older
   Android phone. `PERF_CPU_THROTTLING=1` turns throttling off; budgets are only checked at 4x.
 - The data is written into the app's IndexedDB before the app starts, as on an existing
-  installation. All data migrations are marked as applied, so the start includes the migration
-  check but no migration. The import test goes through Settings > Import with the generated ZIP.
+  installation. All data migrations are marked as applied and the entries carry their change
+  info, so the start includes the migration check but no migration. The import writes entries
+  that already have their change info as well. The import test goes through Settings > Import with the generated ZIP.
 - Measured: start until the home screen is interactive, opening the brew list and scrolling it to
   the end (duration, slow frames, longest frame), search in the brew list, opening the bean list,
   statistics with the brew charts, export (from the tap until the app hands the ZIP to the
   browser) and import (from the moment the app gets the file until the success message).
+- The brew charts count as drawn when every chart canvas of the segment has been painted on and
+  nothing has painted on them for one second: the empty canvases are in the document long before
+  their charts. The run records the painting calls on canvases for this (`brewChartsFirstDraw`,
+  `brewChartsLastDraw` in the `PERF` line).
 - Fixed waits of the app (the search field's 750 ms debounce, 250 ms before the brew charts and
   before the export download) are taken off before a value is compared with its budget
   (`FIXED_DELAYS` in `budgets.ts`), so budgets and their reserve cover the app's work. The
@@ -181,7 +194,7 @@ statistics, start-up or backups.
 - Times come from the page's own clock: from navigation start, the tap or the file input's
   `change` event until the page itself sees the result, checked every frame, so Playwright's
   round trips and polling are not part of them. "Settled" means the content is on screen and the
-  main thread had no long task for one second. Every value is printed as a `PERF {…}` line.
+  main thread had no long task for one second (for the brew charts also no painting). Every value is printed as a `PERF {…}` line.
 - Times depend on the machine and on what else runs on it. The budgets are set on an Apple M2 Max
   (see `budgets.ts`). Run on an otherwise idle machine: no other test runs (also not `pnpm e2e` or
   `pnpm test` in another worktree), builds, emulators or indexing, and a laptop on power. Other

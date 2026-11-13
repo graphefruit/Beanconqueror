@@ -247,9 +247,14 @@ for (const tier of TIERS) {
       await page.locator('ion-segment-button[value="BREWS"]').click();
       const charts = await waitUntilSettled(
         page,
-        { selector: 'canvas' },
+        { selector: 'canvas', drawn: true },
         'input',
       );
+      // The app waits before it draws, so charts that count as shown earlier are not the charts.
+      expect(
+        charts.visible,
+        'brew charts shown before the fixed wait is over',
+      ).toBeGreaterThanOrEqual(FIXED_DELAYS.statisticsBrewCharts);
       await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'statistics', {
         open: general.settled,
@@ -257,6 +262,8 @@ for (const tier of TIERS) {
         brewCharts: charts.settled,
         brewChartsWork: charts.settled - FIXED_DELAYS.statisticsBrewCharts,
         brewChartsLongestTask: charts.longestTask,
+        brewChartsFirstDraw: charts.firstDraw ?? 0,
+        brewChartsLastDraw: charts.lastDraw ?? 0,
       });
       if (checkBudgets) {
         checkBudget('statisticsOpen', general.settled, budget, testInfo);

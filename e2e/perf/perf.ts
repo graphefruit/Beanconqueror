@@ -38,6 +38,8 @@ export interface PerfWindow {
     lastInput: number;
     /** Times of clicks on download links, i.e. when the app hands a file to the browser. */
     downloads: number[];
+    /** Per canvas, the times of the first and the last call that painted on it. */
+    canvasDraws: WeakMap<HTMLCanvasElement, { first: number; last: number }>;
     /**
      * Timers as they were before zone.js patched them. Waiting with the patched ones would run
      * Angular change detection on every tick and so change what is measured.
@@ -48,8 +50,8 @@ export interface PerfWindow {
 }
 
 /**
- * Records long tasks, the last user input and started downloads; runs before the app on every
- * navigation.
+ * Records long tasks, the last user input, started downloads and painting on canvases; runs
+ * before the app on every navigation.
  */
 export async function installPerfObserver(page: Page): Promise<void> {
   await page.addInitScript(() => {
@@ -59,6 +61,7 @@ export async function installPerfObserver(page: Page): Promise<void> {
       longTasks: [],
       lastInput: 0,
       downloads: [],
+      canvasDraws: new WeakMap(),
       nextFrame: () => new Promise((resolve) => requestFrame(resolve)),
       sleep: (ms) => new Promise((resolve) => setTimer(resolve, ms)),
     };
@@ -71,6 +74,32 @@ export async function installPerfObserver(page: Page): Promise<void> {
         });
       }
     }).observe({ type: 'longtask', buffered: true });
+    // Chart.js paints its charts with these calls, frame by frame while a chart animates.
+    const context = CanvasRenderingContext2D.prototype as unknown as Record<
+      string,
+      (this: CanvasRenderingContext2D, ...args: unknown[]) => unknown
+    >;
+    for (const name of [
+      'fill',
+      'stroke',
+      'fillRect',
+      'strokeRect',
+      'fillText',
+      'strokeText',
+      'drawImage',
+    ]) {
+      const paint = context[name];
+      context[name] = function (...args) {
+        const now = performance.now();
+        const draws = perf.canvasDraws.get(this.canvas);
+        if (draws) {
+          draws.last = now;
+        } else {
+          perf.canvasDraws.set(this.canvas, { first: now, last: now });
+        }
+        return paint.apply(this, args);
+      };
+    }
     const mark = () => {
       perf.lastInput = performance.now();
     };
@@ -151,17 +180,32 @@ export async function throttleCpu(page: Page): Promise<void> {
 export interface Timing {
   /** From the input (or navigation start) until the expected content is shown. */
   visible: number;
-  /** Until the main thread is also free of long tasks (`QUIET_WINDOW_MS`), like time to interactive. */
+  /**
+   * Until the main thread is also free of long tasks (`QUIET_WINDOW_MS`), like time to
+   * interactive. With `Expected.drawn` also until nothing paints on the canvases any more.
+   */
   settled: number;
   /** Long tasks in that period: their sum and the longest one. */
   longTasksTotal: number;
   longestTask: number;
+  /**
+   * Only with `Expected.drawn`: until every canvas got its first painting call, and until the
+   * last painting call on any of them.
+   */
+  firstDraw?: number;
+  lastDraw?: number;
 }
 
 /** Content that has to be on screen: an element matching `selector`, optionally with `text`. */
 export interface Expected {
   selector: string;
   text?: string;
+  /**
+   * For canvases: every element matching `selector` that has a size must have been painted on
+   * (an empty canvas is in the document long before its chart), and the painting must have
+   * stopped for `QUIET_WINDOW_MS`, so a chart's animation has finished.
+   */
+  drawn?: boolean;
 }
 
 /**
@@ -176,9 +220,23 @@ export async function waitUntilSettled(
   from: 'navigation' | 'input' | { mark: string },
 ): Promise<Timing> {
   return page.evaluate(
-    async ({ selector, text, from, quietWindow, timeout }) => {
+    async ({ selector, text, drawn, from, quietWindow, timeout }) => {
       const perf = (window as unknown as PerfWindow).__perf;
+      const canvasDraws = () =>
+        [...document.querySelectorAll<HTMLCanvasElement>(selector)]
+          .filter((canvas) => {
+            const box = canvas.getBoundingClientRect();
+            return box.width > 0 && box.height > 0;
+          })
+          .map((canvas) => perf.canvasDraws.get(canvas));
+      const isDrawn = () => {
+        const draws = canvasDraws();
+        return draws.length > 0 && draws.every((d) => d !== undefined);
+      };
+      const lastDraw = () =>
+        canvasDraws().reduce((latest, d) => Math.max(latest, d?.last ?? 0), 0);
       const isShown = () =>
+        (!drawn || isDrawn()) &&
         [...document.querySelectorAll(selector)].some((element) => {
           const box = element.getBoundingClientRect();
           return (
@@ -212,7 +270,13 @@ export async function waitUntilSettled(
         start = marks[marks.length - 1].startTime;
       }
       const lastEnd = () =>
-        perf.longTasks.reduce((latest, task) => Math.max(latest, task.end), 0);
+        Math.max(
+          drawn ? lastDraw() : 0,
+          perf.longTasks.reduce(
+            (latest, task) => Math.max(latest, task.end),
+            0,
+          ),
+        );
       while (performance.now() - Math.max(visibleAt, lastEnd()) < quietWindow) {
         if (performance.now() - visibleAt > timeout) {
           throw new Error('main thread never became quiet');
@@ -228,6 +292,17 @@ export async function waitUntilSettled(
         settled: Math.round(settledAt - start),
         longTasksTotal: Math.round(tasks.reduce((sum, t) => sum + t, 0)),
         longestTask: Math.round(Math.max(0, ...tasks)),
+        ...(drawn
+          ? {
+              firstDraw: Math.round(
+                canvasDraws().reduce(
+                  (latest, d) => Math.max(latest, d?.first ?? 0),
+                  0,
+                ) - start,
+              ),
+              lastDraw: Math.round(lastDraw() - start),
+            }
+          : {}),
       };
     },
     {
