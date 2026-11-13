@@ -317,6 +317,127 @@ describe('synthetic data set', () => {
       }
     });
 
+    it('brews use beans only until they are used up, 10 to 40 days after the purchase', () => {
+      // The largest tier: with 15 brews per bean on average, the last brew of a bean is close to
+      // the day it was used up.
+      const largest = generateDataSet({
+        brews: BREW_TIERS[BREW_TIERS.length - 1],
+        endDate: END,
+      });
+      const bought = new Map(
+        largest.BEANS.map((b) => [b.config.uuid, b.config.unix_timestamp]),
+      );
+      // Days from the purchase of each bean until its last brew.
+      const inUse = new Map<string, number>();
+      let tooLate = 0;
+      for (const brew of largest.BREWS) {
+        const age = (brew.config.unix_timestamp - bought.get(brew.bean)) / DAY;
+        if (age > 40) {
+          tooLate++;
+        }
+        inUse.set(brew.bean, Math.max(inUse.get(brew.bean) ?? 0, age));
+      }
+      expect(tooLate)
+        .withContext('brews more than 40 days after the purchase of the bean')
+        .toBe(0);
+      // Used up evenly between 10 and 40 days, so half of the beans within about 25 days. Beans
+      // that stayed in use for the whole 40 days would move the median close to 40.
+      const sorted = [...inUse.values()].sort((a, b) => a - b);
+      const median = sorted[Math.floor(sorted.length / 2)];
+      expect(median).toBeGreaterThan(15);
+      expect(median).toBeLessThan(30);
+    });
+
+    it('brews espresso with espresso or omni roasts and filter coffee with filter or omni roasts', () => {
+      const style = new Map(
+        data.PREPARATION.map((p) => [p.config.uuid, p.style_type]),
+      );
+      const roast = new Map(
+        data.BEANS.map((b) => [b.config.uuid, b.bean_roasting_type]),
+      );
+      // Only in the first days, while few beans are open, can a brew get a bean roasted for the
+      // other kind (the generator then takes any open bean).
+      const afterStart = END.getTime() / 1000 - 5 * 365 * DAY + 14 * DAY;
+      const otherRoast = data.BREWS.filter((brew) => {
+        const other =
+          style.get(brew.method_of_preparation) === 'ESPRESSO'
+            ? 'FILTER'
+            : 'ESPRESSO';
+        return (
+          brew.config.unix_timestamp >= afterStart &&
+          roast.get(brew.bean) === other
+        );
+      });
+      expect(otherRoast.length)
+        .withContext('brews after the first two weeks with the other roast')
+        .toBe(0);
+    });
+
+    it('brews use grinders, preparations, tools and water only after they were added', () => {
+      const added = new Map(
+        [
+          ...data.MILL,
+          ...data.PREPARATION,
+          ...data.PREPARATION.flatMap((p) => p.tools),
+          ...data.WATER,
+        ].map((e) => [e.config.uuid, e]),
+      );
+      const tooEarly: Record<string, number> = {};
+      for (const brew of data.BREWS) {
+        for (const uuid of [
+          brew.mill,
+          brew.method_of_preparation,
+          ...brew.method_of_preparation_tools,
+          brew.water,
+        ]) {
+          const entry = added.get(uuid);
+          if (
+            entry &&
+            entry.config.unix_timestamp > brew.config.unix_timestamp
+          ) {
+            tooEarly[entry.name] = (tooEarly[entry.name] ?? 0) + 1;
+          }
+        }
+      }
+      expect(tooEarly)
+        .withContext('brews before the entry was added, per entry')
+        .toEqual({});
+    });
+
+    it('brews of the last year use no archived grinder, preparation or water', () => {
+      // Archived ones were in use earlier and replaced years before the end of the data.
+      const archived = new Map(
+        [...data.MILL, ...data.PREPARATION, ...data.WATER]
+          .filter((e) => e.finished)
+          .map((e) => [e.config.uuid, e.name]),
+      );
+      const lastYear = END.getTime() / 1000 - 365 * DAY;
+      const used = new Set<string>();
+      const late: Record<string, number> = {};
+      for (const brew of data.BREWS) {
+        for (const uuid of [
+          brew.mill,
+          brew.method_of_preparation,
+          brew.water,
+        ]) {
+          const name = archived.get(uuid);
+          if (name === undefined) {
+            continue;
+          }
+          used.add(name);
+          if (brew.config.unix_timestamp > lastYear) {
+            late[name] = (late[name] ?? 0) + 1;
+          }
+        }
+      }
+      expect([...used].sort())
+        .withContext('archived entries that brews use')
+        .toEqual([...archived.values()].sort());
+      expect(late)
+        .withContext('brews of the last year, per archived entry')
+        .toEqual({});
+    });
+
     it('counts a brew as current when bean, grinder and preparation are all current', () => {
       // The rule of the brew list's "Current" segment (BrewPage.__initializeBrewView()).
       const archived = (
