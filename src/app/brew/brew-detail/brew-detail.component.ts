@@ -2,10 +2,14 @@ import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  computed,
+  DestroyRef,
   inject,
   Input,
+  signal,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import {
   AlertController,
@@ -43,6 +47,11 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
 import moment from 'moment';
 
+import {
+  BREW_DETAIL_FIELDS,
+  brewFieldLayout,
+  EMPTY_BREW_FIELD_LAYOUT,
+} from '../../../brew-session/rules/brewFieldLayout';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
 import {
@@ -66,8 +75,6 @@ import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IBrew } from '../../../interfaces/brew/iBrew';
-import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
-import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { MillFunction } from '../../../pipes/mill/millFunction';
@@ -84,6 +91,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UILog } from '../../../services/uiLog';
 import { UIMillHelper } from '../../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
 import { BrewPopoverCutComponent } from '../brew-popover-cut/brew-popover-cut.component';
@@ -102,8 +110,6 @@ declare var Plotly;
     TranslatePipe,
     FormatDatePipe,
     ToFixedPipe,
-    BrewFieldVisiblePipe,
-    BrewFieldOrder,
     BrewFunction,
     MillFunction,
     HeaderComponent,
@@ -131,6 +137,7 @@ export class BrewDetailComponent {
   private readonly modalController = inject(ModalController);
   uiHelper = inject(UIHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiPreparationStorage = inject(UIPreparationStorage);
   readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiExcel = inject(UIExcel);
@@ -146,6 +153,7 @@ export class BrewDetailComponent {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly shareService = inject(ShareService);
   private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly destroyRef = inject(DestroyRef);
 
   public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -172,8 +180,41 @@ export class BrewDetailComponent {
   public uiShowSectionBeforeBrew: boolean = false;
   public uiShowCupping: boolean = false;
 
+  /**
+   * The settings and the preparation of the brew the fields are laid out by,
+   * until the settings are available as a signal. Both are changed in place,
+   * so setting the same object again counts as a change as well.
+   */
+  private readonly layoutSettings = signal<Settings>(undefined, {
+    equal: () => false,
+  });
+  private readonly layoutPreparation = signal<Preparation>(undefined, {
+    equal: () => false,
+  });
+  /** The shown fields of each section, in the configured order. */
+  protected readonly brewFields = computed(() => {
+    const settings = this.layoutSettings();
+    const preparation = this.layoutPreparation();
+    if (!settings || !preparation) {
+      return EMPTY_BREW_FIELD_LAYOUT;
+    }
+    return brewFieldLayout(BREW_DETAIL_FIELDS, settings, preparation);
+  });
+
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    this.layoutSettings.set(this.settings);
+    // Parameters can change while the details are open, e.g. when the brew
+    // is edited from here. Settings and preparations are changed in place, so
+    // the fields are laid out again with the objects at hand.
+    this.uiSettingsStorage
+      .attachOnEvent()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.layoutSettings.set(this.settings));
+    this.uiPreparationStorage
+      .attachOnEvent()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.layoutPreparation.set(this.choosenPreparation));
     addIcons({
       create,
       globeOutline,
@@ -207,6 +248,7 @@ export class BrewDetailComponent {
 
       this.bean = this.data.getBean();
       this.choosenPreparation = this.data.getPreparation();
+      this.layoutPreparation.set(this.choosenPreparation);
       this.mill = this.data.getMill();
       this.setUIParams();
     }
@@ -302,6 +344,7 @@ export class BrewDetailComponent {
       this.data = returningBrew;
       this.bean = this.data.getBean();
       this.choosenPreparation = this.data.getPreparation();
+      this.layoutPreparation.set(this.choosenPreparation);
       this.mill = this.data.getMill();
       this.setUIParams();
       this.initializeFlowChartOnGraphEl();

@@ -68,21 +68,22 @@ test('a new brew shows its entered values in the list and in the details', async
   ).toBeVisible();
 
   await brewAction(page, 'Details');
+  // Read in the default sort order, as shown on screen.
   await expect(topDialog(page)).toMatchAriaSnapshot(`
-    - heading "Grind Setting:" [level=2]
-    - heading "14 clicks" [level=3]
-    - heading "Ground Coffee (gr):" [level=2]
-    - heading "15.5" [level=3]
-    - heading "Brew Temperature:" [level=2]
-    - heading "94" [level=3]
-    - heading "Preparation method:" [level=2]
-    - heading "V60" [level=3]
     - heading "Bean Type:" [level=2]
     - heading "Ethiopia Yirgacheffe Natural" [level=3]
     - heading "Brew Ratio:" [level=2]
     - heading "1 / 16.13" [level=3]
+    - heading "Ground Coffee (gr):" [level=2]
+    - heading "15.5" [level=3]
     - heading "Grinder:" [level=2]
     - heading "Comandante C40" [level=3]
+    - heading "Grind Setting:" [level=2]
+    - heading "14 clicks" [level=3]
+    - heading "Preparation method:" [level=2]
+    - heading "V60" [level=3]
+    - heading "Brew Temperature:" [level=2]
+    - heading "94" [level=3]
     - heading "Time:" [level=2]
     - heading "00:00:00" [level=3]
     - heading "Amount of water:" [level=2]

@@ -14,198 +14,154 @@
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
       </ion-item>
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.grind_size,
-        choosenPreparation.manage_parameters.grind_size,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.grind_size,
-          choosenPreparation.brew_order.before.grind_size,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_GRIND_SIZE" | translate}}:</h2>
-            <h3>{{data.grind_size}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.grind_weight,
-        choosenPreparation.manage_parameters.grind_weight,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.grind_weight,
-          choosenPreparation.brew_order.before.grind_weight,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_GRIND_WEIGHT" | translate}}:</h2>
-            <h3>{{data.grind_weight}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_temperature,
-        choosenPreparation.manage_parameters.brew_temperature,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.brew_temperature,
-          choosenPreparation.brew_order.before.brew_temperature,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}:</h2>
-            <h3>{{data.brew_temperature}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.method_of_preparation,
-        choosenPreparation.manage_parameters.method_of_preparation,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.method_of_preparation,
-          choosenPreparation.brew_order.before.method_of_preparation,
-          choosenPreparation.use_custom_parameters])" detail="true" (click)="detailPreparation()">
-          <ion-label>
-            <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</h2>
-            <h3>{{choosenPreparation.name}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.bean_type,
-        choosenPreparation.manage_parameters.bean_type,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.bean_type,
-          choosenPreparation.brew_order.before.bean_type,
-          choosenPreparation.use_custom_parameters])" detail="true" (click)="detailBean()">
-          <ion-label>
-            <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BEAN_NAME}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE)>-1) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.bean_type,
-          choosenPreparation.brew_order.before.bean_type,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_INFORMATION_BEAN_AGE" | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.bean_type,
-        choosenPreparation.brew_order.before.bean_type,
-        choosenPreparation.use_custom_parameters])">
-        <ion-label>
-          <h2>{{"BREW_INFORMATION_BREW_RATIO" | translate}}:</h2>
-          <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}}</h3>
-        </ion-label>
-      </ion-item>
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill,
-        choosenPreparation.manage_parameters.mill,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill,
-          choosenPreparation.brew_order.before.mill,
-          choosenPreparation.use_custom_parameters])" detail="true" (click)="detailMill()">
-          <ion-label>
-            <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_MILL_NAME}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_speed,
-        choosenPreparation.manage_parameters.mill_speed,
-        choosenPreparation.use_custom_parameters]) && (!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_ADJUSTABLE_SPEED))) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_speed,
-          choosenPreparation.brew_order.before.mill_speed,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_MILL_SPEED" | translate}}:</h2>
-            <h3>{{data.mill_speed}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.mill_timer,
-        choosenPreparation.manage_parameters.mill_timer,
-        choosenPreparation.use_custom_parameters]) && (!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_TIMER))) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.mill_timer,
-          choosenPreparation.brew_order.before.mill_timer,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_MILL_TIMER" | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_MILL_TIME}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.pressure_profile,
-        choosenPreparation.manage_parameters.pressure_profile,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.pressure_profile,
-          choosenPreparation.brew_order.before.pressure_profile,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
-            <h3>{{data.pressure_profile}}</h3>
-          </ion-label>
-          @if((data | brewFunctionPipe : BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL)) {
-            <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
-                        aria-label="Open pressure profile URL"
-                        tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-              <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only"></ion-icon>
-            </ion-button>
+      @for(field of brewFields().before; track field) {
+        @switch(field) {
+          @case ('grind_size') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_GRIND_SIZE" | translate}}:</h2>
+                <h3>{{data.grind_size}}</h3>
+              </ion-label>
+            </ion-item>
           }
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.method_of_preparation_tool,
-        choosenPreparation.manage_parameters.method_of_preparation_tool,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.method_of_preparation_tool,
-          choosenPreparation.brew_order.before.method_of_preparation_tool,
-          choosenPreparation.use_custom_parameters])" lines="inset">
-          <ion-label>
-            <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}:</h2>
-            <div class="break-whitespaces">
-              @for(uuid of data.method_of_preparation_tools; track uuid) {
-                <ion-chip>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_PREPARATION_TOOL_NAME,uuid] }}</ion-chip>
-              }
-            </div>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.bean_weight_in,
-        choosenPreparation.manage_parameters.bean_weight_in,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.bean_weight_in,
-          choosenPreparation.brew_order.before.bean_weight_in,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}:</h2>
-            <h3>{{data.bean_weight_in}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.vessel,
-        choosenPreparation.manage_parameters.vessel,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.vessel,
-          choosenPreparation.brew_order.before.vessel,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_VESSEL_NAME" | translate}}:</h2>
-            @if(data.vessel_name !== '') {
-              <h3>{{data.vessel_name}}</h3>
-            } @else {
-              <h3>-</h3>
+          @case ('grind_weight') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_GRIND_WEIGHT" | translate}}:</h2>
+                <h3>{{data.grind_weight}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('brew_temperature') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}:</h2>
+                <h3>{{data.brew_temperature}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('method_of_preparation') {
+            <ion-item detail="true" (click)="detailPreparation()">
+              <ion-label>
+                <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</h2>
+                <h3>{{choosenPreparation.name}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('bean_type') {
+            <ion-item detail="true" (click)="detailBean()">
+              <ion-label>
+                <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BEAN_NAME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('bean_age') {
+            @if((data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE)>-1) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BREW_INFORMATION_BEAN_AGE" | translate}}:</h2>
+                  <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE}}</h3>
+                </ion-label>
+              </ion-item>
             }
-          </ion-label>
-          <ion-label>
-            <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
-            <h3>{{data.vessel_weight}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.water,
-        choosenPreparation.manage_parameters.water,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.before.water,
-          choosenPreparation.brew_order.before.water,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_WATER" | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME}}</h3>
-          </ion-label>
-        </ion-item>
+          }
+          @case ('brew_ratio') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_INFORMATION_BREW_RATIO" | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('mill') {
+            <ion-item detail="true" (click)="detailMill()">
+              <ion-label>
+                <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_MILL_NAME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('mill_speed') {
+            @if(!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_ADJUSTABLE_SPEED)) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BREW_DATA_MILL_SPEED" | translate}}:</h2>
+                  <h3>{{data.mill_speed}}</h3>
+                </ion-label>
+              </ion-item>
+            }
+          }
+          @case ('mill_timer') {
+            @if(!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_TIMER)) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{"BREW_DATA_MILL_TIMER" | translate}}:</h2>
+                  <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_MILL_TIME}}</h3>
+                </ion-label>
+              </ion-item>
+            }
+          }
+          @case ('pressure_profile') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
+                <h3>{{data.pressure_profile}}</h3>
+              </ion-label>
+              @if((data | brewFunctionPipe : BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL)) {
+                <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
+                            aria-label="Open pressure profile URL"
+                            tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              }
+            </ion-item>
+          }
+          @case ('method_of_preparation_tool') {
+            <ion-item lines="inset">
+              <ion-label>
+                <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}:</h2>
+                <div class="break-whitespaces">
+                  @for(uuid of data.method_of_preparation_tools; track uuid) {
+                    <ion-chip>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_PREPARATION_TOOL_NAME,uuid] }}</ion-chip>
+                  }
+                </div>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('bean_weight_in') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}:</h2>
+                <h3>{{data.bean_weight_in}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('vessel') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_VESSEL_NAME" | translate}}:</h2>
+                @if(data.vessel_name !== '') {
+                  <h3>{{data.vessel_name}}</h3>
+                } @else {
+                  <h3>-</h3>
+                }
+              </ion-label>
+              <ion-label>
+                <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
+                <h3>{{data.vessel_weight}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('water') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_WATER" | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+        }
       }
       <div class="last-item"></div>
     </ion-card>
@@ -253,133 +209,113 @@
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
       </ion-item>
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_temperature_time,
-        choosenPreparation.manage_parameters.brew_temperature_time,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_temperature_time,
-          choosenPreparation.brew_order.while.brew_temperature_time,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_TEMPERATURE_TIME}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if(data.flow_profile) {
-        <ion-item lines="none" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
-          choosenPreparation.brew_order.while.brew_time,
-          choosenPreparation.use_custom_parameters])">
-          <ion-grid class="ion-text-center" style="padding-left: 0px; padding-right: 0px; padding-top: 0px;">
-            <ion-row class="ion-no-padding">
-              <ion-col size="4">
-                <ion-card class="flow-profile ion-text-center" style="height: 100%;">
-                  <ion-card-header>
-                    <div>Ø&nbsp;{{getAvgFlow()| toFixed: 2}} g/s</div>
-                    <div>^&nbsp;{{getPeakFlow() | toFixed: 2}}&nbsp;g/s</div>
-                  </ion-card-header>
-                  <ion-card-content>
-                    {{"BREW_AVG_FLOW_WEIGHT_PER_SECOND" | translate}}
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-              <ion-col size="2" style="margin:auto">
-                <ion-button fill="clear" id="popover-button" aria-label="Download flow profile" tappable>
-                  <ion-icon aria-hidden="true" name="download" slot="icon-only"></ion-icon>
-                </ion-button>
-                <ion-popover [dismissOnSelect]="true" trigger="popover-button">
-                  <ng-template>
-                    <ion-content style="--background:white;">
-                      <ion-list style="padding:0;background:white;">
-                        <ion-item (click)="downloadFlowProfile()" tappable [button]="true" [detail]="false"
-                                  class="ion-padding-horizontal">{{"DOWNLOAD_XLSX" | translate}}</ion-item>
-                        <ion-item (click)="downloadJSONProfile()" tappable [button]="true" [detail]="false"
-                                  class="ion-padding-horizontal">{{"DOWNLOAD_JSON" | translate}}</ion-item>
-                        <ion-item (click)="downloadVisualizerProfile()" tappable [button]="true" [detail]="false"
-                                  class="ion-padding-horizontal">{{"MANUAL_EXPORT_TO_VISUALIZER" | translate}}</ion-item>
-                      </ion-list>
-                    </ion-content>
-                  </ng-template>
-                </ion-popover>
-              </ion-col>
-              <ion-col size="2" style="margin:auto">
-                <ion-button (click)="cutFlowProfile($event)" aria-label="Cut flow profile" tappable fill="clear">
-                  <ion-icon aria-hidden="true" name="cut-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </ion-col>
-              <ion-col size="2" style="margin:auto">
-                <ion-button (click)="shareFlowProfile()" aria-label="Share flow profile" tappable fill="clear">
-                  <ion-icon aria-hidden="true" name="share-social-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </ion-col>
-              <ion-col size="2" style="margin:auto">
-                <ion-button (click)="maximizeFlowGraph()" aria-label="Maximize flow graph" tappable fill="clear">
-                  <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-item>
-      }
-      @if(editActive===false && data.flow_profile) {
-        <!-- HACK: brewComponent property expects BrewBrewingComponent,
-                   but this component has always just passed 'this' into it.
-                   This is an error with strictTemplates. (See #1074)
-                   Fixing this in brew-brewing-graph doesn't look trivial, so
-                   for now we silence this error by casting to any with
-                   $any(this). -->
-        <brew-brewing-graph [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
-          choosenPreparation.brew_order.while.brew_time,
-          choosenPreparation.use_custom_parameters])" #brewBrewingGraphEl [isDetail]='true' [brewComponent]='$any(this)' [(data)]='data'></brew-brewing-graph>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_time,
-        choosenPreparation.manage_parameters.brew_time,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
-          choosenPreparation.brew_order.while.brew_time,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{'BREW_DATA_TIME' | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_BREW_TIME}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if(((settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_time && settings.manage_parameters.coffee_first_drip_time,
-        choosenPreparation.manage_parameters.brew_time && choosenPreparation.manage_parameters.coffee_first_drip_time,
-        choosenPreparation.use_custom_parameters]) &&  choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (choosenPreparation.use_custom_parameters &&  choosenPreparation.manage_parameters.coffee_first_drip_time)) {
-        <ion-item
-          [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
-          choosenPreparation.brew_order.while.brew_time,
-          choosenPreparation.use_custom_parameters])" lines="full">
-          <ion-label>
-            <h2>{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_COFFEE_BREW_TIME}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.coffee_blooming_time,
-        choosenPreparation.manage_parameters.coffee_blooming_time,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.coffee_blooming_time,
-          choosenPreparation.brew_order.while.coffee_blooming_time,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BLOOMING_TIME}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if(((settings | brewFieldVisiblePipe: [settings.manage_parameters.coffee_first_drip_time,
-        choosenPreparation.manage_parameters.coffee_first_drip_time,
-        choosenPreparation.use_custom_parameters]) && choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (choosenPreparation.use_custom_parameters &&  choosenPreparation.manage_parameters.coffee_first_drip_time)) {
-        <ion-item
-          [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.coffee_first_drip_time,
-          choosenPreparation.brew_order.while.coffee_first_drip_time,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</h2>
-            <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_FIRST_DRIP_TIME}}</h3>
-          </ion-label>
-        </ion-item>
+      @for(field of brewFields().while; track field) {
+        @switch(field) {
+          @case ('brew_temperature_time') {
+            <ion-item>
+              <ion-label>
+                <h2>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_TEMPERATURE_TIME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('graph') {
+            @if(data.flow_profile) {
+              <ion-item lines="none">
+                <ion-grid class="ion-text-center" style="padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+                  <ion-row class="ion-no-padding">
+                    <ion-col size="4">
+                      <ion-card class="flow-profile ion-text-center" style="height: 100%;">
+                        <ion-card-header>
+                          <div>Ø&nbsp;{{getAvgFlow()| toFixed: 2}} g/s</div>
+                          <div>^&nbsp;{{getPeakFlow() | toFixed: 2}}&nbsp;g/s</div>
+                        </ion-card-header>
+                        <ion-card-content>
+                          {{"BREW_AVG_FLOW_WEIGHT_PER_SECOND" | translate}}
+                        </ion-card-content>
+                      </ion-card>
+                    </ion-col>
+                    <ion-col size="2" style="margin:auto">
+                      <ion-button fill="clear" id="popover-button" aria-label="Download flow profile" tappable>
+                        <ion-icon aria-hidden="true" name="download" slot="icon-only"></ion-icon>
+                      </ion-button>
+                      <ion-popover [dismissOnSelect]="true" trigger="popover-button">
+                        <ng-template>
+                          <ion-content style="--background:white;">
+                            <ion-list style="padding:0;background:white;">
+                              <ion-item (click)="downloadFlowProfile()" tappable [button]="true" [detail]="false"
+                                        class="ion-padding-horizontal">{{"DOWNLOAD_XLSX" | translate}}</ion-item>
+                              <ion-item (click)="downloadJSONProfile()" tappable [button]="true" [detail]="false"
+                                        class="ion-padding-horizontal">{{"DOWNLOAD_JSON" | translate}}</ion-item>
+                              <ion-item (click)="downloadVisualizerProfile()" tappable [button]="true" [detail]="false"
+                                        class="ion-padding-horizontal">{{"MANUAL_EXPORT_TO_VISUALIZER" | translate}}</ion-item>
+                            </ion-list>
+                          </ion-content>
+                        </ng-template>
+                      </ion-popover>
+                    </ion-col>
+                    <ion-col size="2" style="margin:auto">
+                      <ion-button (click)="cutFlowProfile($event)" aria-label="Cut flow profile" tappable fill="clear">
+                        <ion-icon aria-hidden="true" name="cut-outline" slot="icon-only"></ion-icon>
+                      </ion-button>
+                    </ion-col>
+                    <ion-col size="2" style="margin:auto">
+                      <ion-button (click)="shareFlowProfile()" aria-label="Share flow profile" tappable fill="clear">
+                        <ion-icon aria-hidden="true" name="share-social-outline" slot="icon-only"></ion-icon>
+                      </ion-button>
+                    </ion-col>
+                    <ion-col size="2" style="margin:auto">
+                      <ion-button (click)="maximizeFlowGraph()" aria-label="Maximize flow graph" tappable fill="clear">
+                        <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only"></ion-icon>
+                      </ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-item>
+            }
+            @if(editActive===false && data.flow_profile) {
+              <!-- HACK: brewComponent property expects BrewBrewingComponent,
+                         but this component has always just passed 'this' into it.
+                         This is an error with strictTemplates. (See #1074)
+                         Fixing this in brew-brewing-graph doesn't look trivial, so
+                         for now we silence this error by casting to any with
+                         $any(this). -->
+              <brew-brewing-graph #brewBrewingGraphEl [isDetail]='true' [brewComponent]='$any(this)' [(data)]='data'></brew-brewing-graph>
+            }
+          }
+          @case ('brew_time') {
+            <ion-item>
+              <ion-label>
+                <h2>{{'BREW_DATA_TIME' | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_BREW_TIME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('calculated_coffee_brew_time') {
+            <ion-item lines="full">
+              <ion-label>
+                <h2>{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_COFFEE_BREW_TIME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('coffee_blooming_time') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BLOOMING_TIME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('coffee_first_drip_time') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</h2>
+                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_FIRST_DRIP_TIME}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+        }
       }
       <div class="last-item"></div>
     </ion-card>
@@ -390,130 +326,100 @@
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_quantity,
-        choosenPreparation.manage_parameters.brew_quantity,
-        choosenPreparation.use_custom_parameters]) && choosenPreparation.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-        <ion-item
-          [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.brew_quantity,
-          choosenPreparation.brew_order.after.brew_quantity,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}:</h2>
-            <h3>{{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.coffee_type,
-        choosenPreparation.manage_parameters.coffee_type,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.coffee_type,
-          choosenPreparation.brew_order.after.coffee_type,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_COFFEE_TYPE" | translate}}
-            </h2>
-            <h3>{{data.coffee_type}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.coffee_concentration,
-        choosenPreparation.manage_parameters.coffee_concentration,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.coffee_concentration,
-          choosenPreparation.brew_order.after.coffee_concentration,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}:</h2>
-            <h3>{{data.coffee_concentration}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.rating,
-        choosenPreparation.manage_parameters.rating,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.rating,
-          choosenPreparation.brew_order.after.rating,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
-            <h3>{{data.rating | number : '.0-2'}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.brew_beverage_quantity,
-        choosenPreparation.manage_parameters.brew_beverage_quantity,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.brew_beverage_quantity,
-          choosenPreparation.brew_order.after.brew_beverage_quantity,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate }}:</h2>
-            <h3>{{data.brew_beverage_quantity}}&nbsp;({{data.getBrewBeverageQuantityTypeName()}})</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.tds,
-        choosenPreparation.manage_parameters.tds,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.tds,
-          choosenPreparation.brew_order.after.tds,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_TDS" | translate }}:</h2>
-            <h3>{{data.tds}}</h3>
-          </ion-label>
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.grind_weight && settings.manage_parameters.brew_beverage_quantity && settings.manage_parameters.tds,
-        choosenPreparation.manage_parameters.grind_weight && choosenPreparation.manage_parameters.brew_beverage_quantity && choosenPreparation.manage_parameters.tds,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.tds,
-          choosenPreparation.brew_order.after.tds,
-          choosenPreparation.use_custom_parameters])" lines="inset">
-          <ion-label>
-            <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
-            <h3>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity]}}</h3>
-          </ion-label>
-          @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity])) {
-            <ion-button style="margin-left:0px;"
-                        (click)="showExtractionChart($event)" aria-label="Show extraction chart" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
-                        tappable>
-              <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only"></ion-icon>
-            </ion-button>
+      @for(field of brewFields().after; track field) {
+        @switch(field) {
+          @case ('brew_quantity') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}:</h2>
+                <h3>{{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})</h3>
+              </ion-label>
+            </ion-item>
           }
-        </ion-item>
-      }
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.note,
-        choosenPreparation.manage_parameters.note,
-        choosenPreparation.use_custom_parameters])) {
-        <ion-item [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.note,
-          choosenPreparation.brew_order.after.note,
-          choosenPreparation.use_custom_parameters])">
-          <ion-label>
-            <h2>{{"BREW_DATA_NOTES" | translate }}:</h2>
-            <pre>{{data.note}}</pre>
-          </ion-label>
-          @if(data.note) {
-            <ion-button (click)='copyNotesToClipboard()'
-                        aria-label="Copy notes to clipboard"
-                        tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-              <ion-icon aria-hidden="true" class="ion-color-accent" name="clipboard-outline" slot="icon-only"></ion-icon>
-            </ion-button>
+          @case ('coffee_type') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_COFFEE_TYPE" | translate}}
+                </h2>
+                <h3>{{data.coffee_type}}</h3>
+              </ion-label>
+            </ion-item>
           }
-        </ion-item>
+          @case ('coffee_concentration') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}:</h2>
+                <h3>{{data.coffee_concentration}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('rating') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
+                <h3>{{data.rating | number : '.0-2'}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('brew_beverage_quantity') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate }}:</h2>
+                <h3>{{data.brew_beverage_quantity}}&nbsp;({{data.getBrewBeverageQuantityTypeName()}})</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('tds') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_TDS" | translate }}:</h2>
+                <h3>{{data.tds}}</h3>
+              </ion-label>
+            </ion-item>
+          }
+          @case ('calculated_extraction_yield') {
+            <ion-item lines="inset">
+              <ion-label>
+                <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
+                <h3>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity]}}</h3>
+              </ion-label>
+              @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity])) {
+                <ion-button style="margin-left:0px;"
+                            (click)="showExtractionChart($event)" aria-label="Show extraction chart" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
+                            tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only"></ion-icon>
+                </ion-button>
+              }
+            </ion-item>
+          }
+          @case ('note') {
+            <ion-item>
+              <ion-label>
+                <h2>{{"BREW_DATA_NOTES" | translate }}:</h2>
+                <pre>{{data.note}}</pre>
+              </ion-label>
+              @if(data.note) {
+                <ion-button (click)='copyNotesToClipboard()'
+                            aria-label="Copy notes to clipboard"
+                            tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="clipboard-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              }
+            </ion-item>
+          }
+          @case ('attachments') {
+            @if(data?.attachments?.length>0) {
+              <div>
+                <photo-view [(data)]="data"></photo-view>
+              </div>
+            }
+          }
+        }
       }
-      <ion-item [style.order]="9999" lines="none">
+      <!-- The creation date has no sort order of its own and always comes last. -->
+      <ion-item lines="none">
         <ion-label><h2>{{"BREW_CREATION_DATE" | translate}}</h2><h3>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}&nbsp;{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</h3></ion-label>
       </ion-item>
-      @if((settings | brewFieldVisiblePipe: [settings.manage_parameters.attachments,
-        choosenPreparation.manage_parameters.attachments,
-        choosenPreparation.use_custom_parameters]) && data?.attachments?.length>0) {
-        <div [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.after.attachments,
-          choosenPreparation.brew_order.after.attachments,
-          choosenPreparation.use_custom_parameters])">
-          <photo-view [(data)]="data"></photo-view>
-        </div>
-      }
       <div class="last-item"></div>
     </ion-card>
   }

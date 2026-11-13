@@ -174,7 +174,6 @@ test('the brew form reads its fields in the sorted order', async ({
 test('the brew details read their fields in the sorted order', async ({
   page,
 }, testInfo) => {
-  test.fail();
   await sortBrewTemperatureFirst(page);
   await brewAction(page, 'Details');
 
