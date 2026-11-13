@@ -276,6 +276,56 @@ for (const language of [
   });
 }
 
+test('long German profile entries break at a syllable at 200 % text size', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+  await switchToGermanFromProfile(page);
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '200%';
+  });
+
+  const entry = page.getByRole('link', { name: /^Zubereitungsmethoden/ });
+  await expect(entry).toBeVisible();
+  // The link role sits on Ionic's inner anchor; the label is slotted into the
+  // item, so it is read from the host.
+  const layout = await entry.evaluate((link) => {
+    const root = link.getRootNode();
+    const item = root instanceof ShadowRoot ? root.host : link;
+    const label = item.querySelector('ion-label')!;
+    const text = label.firstChild!;
+    const lines: string[] = [];
+    let top: number | undefined;
+    for (let index = 0; index < text.textContent!.length; index++) {
+      const range = document.createRange();
+      range.setStart(text, index);
+      range.setEnd(text, index + 1);
+      const glyph = [...range.getClientRects()].find((rect) => rect.width > 0);
+      if (!glyph) {
+        continue;
+      }
+      if (top === undefined || Math.abs(glyph.top - top) > 2) {
+        lines.push('');
+        top = glyph.top;
+      }
+      lines[lines.length - 1] += text.textContent![index];
+    }
+    return { lines, hyphens: getComputedStyle(label).hyphens };
+  });
+
+  // The compound is wider than the screen at this size, so it must break.
+  expect(layout.lines.length).toBeGreaterThan(1);
+  expect(layout.hyphens).toBe('auto');
+  for (const line of layout.lines) {
+    expect(
+      line.trim().length,
+      `"${line}" is not a stray letter of the word`,
+    ).toBeGreaterThan(1);
+  }
+});
+
 /**
  * The dot on the profile tab. It is decorative and slotted next to the tab's
  * shadow link, so it is found by its element instead of inside the tab role.

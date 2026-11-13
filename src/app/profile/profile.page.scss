@@ -4,6 +4,13 @@
     --inner-padding-end: var(--bq-space-4);
   }
 
+  // At a large text size a long compound such as "Zubereitungsmethoden" no
+  // longer fits; it breaks at a syllable with a hyphen instead of before its
+  // last letter. The document language picks the hyphenation rules.
+  ion-label {
+    hyphens: auto;
+  }
+
   // Explains the dot on the profile tab: the section has no entry yet.
   .setup-hint {
     color: var(--bq-text-secondary);
