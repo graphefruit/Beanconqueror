@@ -164,6 +164,27 @@ test('the water entry joins the equipment group once switched on', async ({
   );
 });
 
+test('every entry shows its icon', async ({ page }) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+  await switchOnWater(page);
+
+  // An icon that is not registered stays an empty element without an error.
+  const icons = page.locator('app-profile ion-content .entry-icon ion-icon');
+  await expect(icons).toHaveCount(5);
+  for (const icon of await icons.all()) {
+    await expect
+      .poll(() =>
+        icon.evaluate(
+          (element) =>
+            element.shadowRoot?.querySelector('svg')?.childElementCount ?? 0,
+        ),
+      )
+      .toBeGreaterThan(0);
+  }
+});
+
 for (const { entry, url, shows, back } of [
   {
     entry: /^Preparation methods/,
