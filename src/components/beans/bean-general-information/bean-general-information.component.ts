@@ -237,7 +237,12 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.beanStars.setRating(this.data.roast_range);
   }
   public beanMixChanged() {
-    if (this.data.beanMix !== BEAN_MIX_ENUM.BLEND) {
+    // The field stores the key of the mix ('BLEND'); a bean saved with the
+    // name of the mix ('Blend') keeps its varieties as before.
+    const isBlend =
+      BEAN_MIX_ENUM[this.data.beanMix] === BEAN_MIX_ENUM.BLEND ||
+      this.data.beanMix === BEAN_MIX_ENUM.BLEND;
+    if (!isBlend) {
       const beanInfo: IBeanInformation = this.data.bean_information[0];
       this.data.bean_information = [];
       this.data.bean_information.push(beanInfo);
