@@ -1,6 +1,7 @@
 import { expect, test } from './fixtures';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { readStoredValue } from './support/stored-values';
+import { toast } from './support/toast';
 
 interface StoredEntry {
   config: { uuid: string; rev?: number };
@@ -38,7 +39,7 @@ test('deleting a brew removes it at once and keeps a local note of it', async ({
   // the dialog to close makes sure the list is checked with the background
   // visible again, not while the dialog hides it.
   await expect(confirm).toBeHidden();
-  await expect(page.getByText('Brew has been deleted')).toBeVisible();
+  await expect(toast(page, 'Brew has been deleted')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Brew options' })).toHaveCount(
     0,
   );

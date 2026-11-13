@@ -9,6 +9,7 @@ import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
+import { Announcer, ProgressAnnouncement } from './a11y/announcer.service';
 import { EventQueueService } from './queueService/queue-service.service';
 
 export type ConfirmationDialogResult = 'YES' | 'NO';
@@ -21,6 +22,7 @@ export class UIAlert {
   private readonly translate = inject(TranslateService);
   private readonly modalController = inject(ModalController);
   private eventQueue = inject(EventQueueService);
+  private readonly announcer = inject(Announcer);
 
   private static instance: UIAlert;
   public static getInstance(): UIAlert {
@@ -38,6 +40,8 @@ export class UIAlert {
   }
 
   private existingLoadingSpinners: HTMLIonModalElement[] = [];
+  /** Announces the message of the open loading spinner popup. */
+  private loadingAnnouncement: ProgressAnnouncement | undefined;
 
   /**
    * Starts presenting a loading spinner popup.
@@ -78,6 +82,7 @@ export class UIAlert {
 
   /**
    * Updates the message displayed in all active loading spinner popups.
+   * Screen readers hear the new message at most every few seconds.
    */
   public setLoadingSpinnerMessage(message: string, translate = false): void {
     if (this.existingLoadingSpinners.length > 0) {
@@ -93,6 +98,7 @@ export class UIAlert {
           internMessage,
         ),
       );
+      this.loadingAnnouncement?.update(internMessage);
     }
   }
 
@@ -105,6 +111,8 @@ export class UIAlert {
    * Resolves after all loading spinners have been hidden.
    */
   public async hideLoadingSpinner(): Promise<void> {
+    this.loadingAnnouncement?.end();
+    this.loadingAnnouncement = undefined;
     if (this.existingLoadingSpinners.length > 0) {
       for (const spinner of this.existingLoadingSpinners) {
         await spinner.dismiss();
@@ -321,19 +329,10 @@ export class UIAlert {
       msg = this.translate.instant(message);
     }
 
-    const modal = await this.modalController.create({
-      component: LoadingPopoverComponent,
-      cssClass: 'loading-modal',
-      animated: false,
-      backdropDismiss: false,
-      showBackdrop: true,
-      componentProps: {
-        showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
-        message: msg,
-      },
+    const modal = await this.createLoadingModal(msg, {
+      showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
     });
-    this.existingLoadingSpinners.push(modal);
-    await modal.present();
+    await this.presentLoadingModal(modal, msg);
   }
 
   public async showLoadingMessageWithCustomTimeout(
@@ -350,22 +349,64 @@ export class UIAlert {
       msg = this.translate.instant(message);
     }
 
-    const modal = await this.modalController.create({
+    const modal = await this.createLoadingModal(msg, {
+      showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
+      dismissTimeoutInMilliseconds: timeout,
+      showLogs: false,
+    });
+    await this.presentLoadingModal(modal, msg);
+    const dismissMessage = await modal.onWillDismiss();
+    return dismissMessage.data;
+  }
+
+  /**
+   * The loading spinner popup is a status message (WCAG 4.1.3): its message is
+   * announced through the live region, and the popup does not take focus.
+   * Ionic would move focus to the popup's host element once it has opened.
+   * That element has neither role nor name, so screen readers have no dialog
+   * to land on, and one that reads the content there would speak the message
+   * a second time after the announcement. Ionic takes focus off the control
+   * that opened the popup either way and puts it back when the popup closes.
+   *
+   * The dialog is named after its first message for whoever reaches it by
+   * touch or swipe; Ionic moves the label from `htmlAttributes` to its
+   * role="dialog" element.
+   */
+  private createLoadingModal(
+    message: string,
+    componentProps: Record<string, unknown>,
+  ): Promise<HTMLIonModalElement> {
+    return this.modalController.create({
       component: LoadingPopoverComponent,
       cssClass: 'loading-modal',
       animated: false,
       backdropDismiss: false,
       showBackdrop: true,
-      componentProps: {
-        showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
-        dismissTimeoutInMilliseconds: timeout,
-        showLogs: false,
-        message: msg,
-      },
+      keyboardClose: false,
+      htmlAttributes: { 'aria-label': message },
+      componentProps: { ...componentProps, message: message },
     });
+  }
+
+  /**
+   * Announces the message, then its updates, until the popup starts to close,
+   * whether through `hideLoadingSpinner()` or its own cancel button. Closing
+   * says nothing.
+   */
+  private async presentLoadingModal(
+    modal: HTMLIonModalElement,
+    message: string,
+  ): Promise<void> {
     this.existingLoadingSpinners.push(modal);
+    this.loadingAnnouncement?.end();
+    const announcement = this.announcer.startProgress(message);
+    this.loadingAnnouncement = announcement;
+    void modal.onWillDismiss().then(() => {
+      announcement.end();
+      if (this.loadingAnnouncement === announcement) {
+        this.loadingAnnouncement = undefined;
+      }
+    });
     await modal.present();
-    const dismissMessage = await modal.onWillDismiss();
-    return dismissMessage.data;
   }
 }

@@ -62,6 +62,9 @@ pnpm exec playwright show-report      # inspect traces and screenshots of failur
 - Only the overlay on top is in the accessibility tree: the page and every dialog below it are
   inert and aria-hidden until it starts to close. Role locators therefore find only the top
   dialog's controls; `includeHidden: true` reaches one below it on purpose.
+- Toasts and loading messages are announced from a visually hidden live region
+  (`.cdk-live-announcer-element`), which holds their text for a while, so `getByText` finds a
+  toast's text twice. Use `toast()` from `e2e/support/toast.ts`.
 - Use synthetic data only; never real user exports. Traces and screenshots are uploaded as CI
   artifacts.
 - Browser emulation does not replace testing on a real device (BLE, NFC, camera, filesystem).
@@ -85,6 +88,13 @@ git diff e2e/accessibility-baseline.json
 ```
 
 axe cannot check everything; the screen reader acceptance on a device is still required.
+
+#### Announcements
+
+Status messages that should be spoken without moving focus, such as toasts and loading messages,
+go through `Announcer` (`src/services/a11y/announcer.service.ts`), not through live regions of
+their own. A second live region makes screen readers speak a message twice, and VoiceOver ignores
+live regions outside an open dialog unless they are stacked above it.
 
 #### Native plugins
 

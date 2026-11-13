@@ -11,6 +11,7 @@ import {
   WATER,
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
+import { toast } from './support/toast';
 
 /**
  * Characterization of the brew journey as it works today: add, show in list
@@ -56,7 +57,7 @@ test('a new brew shows its entered values in the list and in the details', async
   await expect(rating).toHaveAttribute('aria-valuenow', '3');
   await saveBrew(page);
 
-  await expect(page.getByText('Brew added successfully')).toBeVisible();
+  await expect(toast(page, 'Brew added successfully')).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Current ( 2 )' })).toBeVisible();
   // Newest brew first; the card shows dose, water and brew ratio, grind
   // setting and temperature, and the rating as stars.
@@ -115,7 +116,7 @@ test('editing a brew opens it with its values and saves the change', async ({
   );
   await saveBrew(page);
 
-  await expect(page.getByText('Brew has been edited')).toBeVisible();
+  await expect(toast(page, 'Brew has been edited')).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Current ( 1 )' })).toBeVisible();
   await expect(brewList(page)).toContainText(/20gr \/ 300gr\s*\(1 \/ 15\.00\)/);
 });
@@ -171,7 +172,7 @@ test('deleting a brew asks first and removes it', async ({ page }) => {
 
   await brewAction(page, 'Delete');
   await confirm.getByRole('button', { name: 'Yes' }).click();
-  await expect(page.getByText('Brew has been deleted')).toBeVisible();
+  await expect(toast(page, 'Brew has been deleted')).toBeVisible();
   // The Home tab has the same empty-state text; only the Brews tab is shown.
   await expect(
     page.getByText('No brews added yet').filter({ visible: true }),

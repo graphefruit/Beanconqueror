@@ -10,3 +10,17 @@
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
 @import '@ionic/angular/css/palettes/dark.class.css';
+// Hides the live region of the CDK's LiveAnnouncer, which the app announces
+// through (src/services/a11y/announcer.service.ts).
+@import '@angular/cdk/a11y-prebuilt.css';
+
+// WebKit leaves everything outside an open aria-modal dialog out of the
+// accessibility tree, live regions included, unless it is stacked above the
+// dialog (since WebKit 297016, July 2025; before that, without exception), so
+// VoiceOver would not hear this region while a dialog is open. Ionic stacks
+// its overlays from z-index 20000 up and counts up with every overlay, so the
+// region gets the highest z-index there is. It is clipped to nothing and
+// covers nothing.
+.cdk-live-announcer-element {
+  z-index: 2147483647;
+}

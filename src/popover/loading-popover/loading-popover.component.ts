@@ -4,7 +4,6 @@ import {
   IonButton,
   IonContent,
   IonFooter,
-  IonHeader,
   IonSpinner,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -23,14 +22,7 @@ import { UILog } from '../../services/uiLog';
   selector: 'loading-popover',
   templateUrl: './loading-popover.component.html',
   styleUrls: ['./loading-popover.component.scss'],
-  imports: [
-    TranslatePipe,
-    IonContent,
-    IonSpinner,
-    IonFooter,
-    IonButton,
-    IonHeader,
-  ],
+  imports: [TranslatePipe, IonContent, IonSpinner, IonFooter, IonButton],
 })
 export class LoadingPopoverComponent implements OnInit {
   private readonly modalController = inject(ModalController);
