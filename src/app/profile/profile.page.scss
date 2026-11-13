@@ -3,4 +3,19 @@
     --padding-start: var(--bq-space-4);
     --inner-padding-end: var(--bq-space-4);
   }
+
+  // Explains the dot on the profile tab: the section has no entry yet.
+  .setup-hint {
+    color: var(--bq-text-secondary);
+  }
+
+  .setup-dot {
+    display: inline-block;
+    width: var(--bq-space-2);
+    height: var(--bq-space-2);
+    margin-inline-end: var(--bq-space-2);
+    border-radius: 50%;
+    background: var(--ion-color-danger);
+    vertical-align: middle;
+  }
 }

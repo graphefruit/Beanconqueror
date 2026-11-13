@@ -211,3 +211,78 @@ test('tabs and profile entries use the glossary terms in German', async ({
     ).toBeVisible();
   }
 });
+
+/**
+ * The dot on the profile tab. It is decorative and slotted next to the tab's
+ * shadow link, so it is found by its element instead of inside the tab role.
+ */
+function profileDot(page: Page) {
+  return page.locator('ion-tab-button[tab="profile"] > ion-badge');
+}
+
+async function addGrinderFromProfile(page: Page): Promise<void> {
+  await page.getByRole('link', { name: /^Grinders/ }).click();
+  await page.getByRole('button', { name: 'Add grinder' }).click();
+  await page.getByRole('textbox', { name: /^Name/ }).fill('Comandante C40');
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'back' }).click();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+}
+
+async function addPreparationFromProfile(page: Page): Promise<void> {
+  await page.getByRole('link', { name: /^Preparation methods/ }).click();
+  await page.getByRole('button', { name: 'Add preparation method' }).click();
+  await page.getByText('V60', { exact: true }).click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'back' }).click();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+}
+
+test('the profile marks a missing grinder and names it', async ({ page }) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await expect(profileDot(page)).toBeVisible();
+  await openProfile(page);
+  await expect(
+    page.getByRole('link', { name: 'Preparation methods None added yet' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Grinders None added yet' }),
+  ).toBeVisible();
+
+  await addPreparationFromProfile(page);
+  await expect(
+    page.getByRole('link', { name: 'Preparation methods', exact: true }),
+  ).toBeVisible();
+  // Only the grinder is missing now, and the tab still says so.
+  await expect(profileDot(page)).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Grinders None added yet' }),
+  ).toBeVisible();
+
+  await addGrinderFromProfile(page);
+  await expect(
+    page.getByRole('link', { name: 'Grinders', exact: true }),
+  ).toBeVisible();
+  await expect(profileDot(page)).toHaveCount(0);
+});
+
+test('the profile marks a missing preparation method and names it', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await openProfile(page);
+  await addGrinderFromProfile(page);
+  await expect(
+    page.getByRole('link', { name: 'Grinders', exact: true }),
+  ).toBeVisible();
+  await expect(profileDot(page)).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: 'Preparation methods None added yet' }),
+  ).toBeVisible();
+});
