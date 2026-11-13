@@ -6,6 +6,13 @@
  * model classes in src/classes/; src/test-utils/__tests__/synthetic-data.spec.ts compares them
  * with real instances, so a renamed or added field fails that test instead of silently drifting.
  *
+ * The data is that of an installation whose data migrations have all run. Entries of the
+ * collections with change info (`CHANGE_TRACKED_COLLECTIONS` in
+ * src/classes/changeTracking/changeTracking.ts) carry what the change info migration fills in for
+ * entries from before change tracking: the creation time from the entry's timestamp and
+ * "unknown" for the rest. Nothing is generated for the keys that stay on one installation
+ * (device id, deletion journal, attachment manifest); the app creates them itself.
+ *
  * Preparations and settings only carry the fields the data set needs. The app fills every missing
  * field with the class default when it loads them (`initializeByObject`), as it does for backups
  * from older versions.
@@ -43,6 +50,18 @@ export interface DataSetOptions {
 export interface EntryConfig {
   uuid: string;
   unix_timestamp: number;
+}
+
+/** Config of an entry in a collection with change info (`IConfig`). */
+export interface TrackedEntryConfig extends EntryConfig {
+  /** Milliseconds, estimated from `unix_timestamp`. */
+  created_at: number;
+  /** 0: last changed before change tracking. */
+  updated_at: 0;
+  /** 0: written before change tracking. */
+  rev: 0;
+  /** '': unknown device. */
+  updated_by: '';
 }
 
 interface Cupping {
@@ -87,7 +106,7 @@ export interface SyntheticBean {
   roastingDate: string;
   note: string;
   roaster: string;
-  config: EntryConfig;
+  config: TrackedEntryConfig;
   roast: string;
   roast_range: number;
   roast_custom: string;
@@ -156,7 +175,7 @@ export interface SyntheticBrew {
   coffee_first_drip_time: number;
   coffee_blooming_time: number;
   attachments: string[];
-  config: EntryConfig;
+  config: TrackedEntryConfig;
   tds: number;
   brew_beverage_quantity: number;
   brew_beverage_quantity_type: 'GR' | 'ML';
@@ -200,7 +219,7 @@ export interface SyntheticPreparationTool {
 export interface SyntheticPreparation {
   name: string;
   note: string;
-  config: EntryConfig;
+  config: TrackedEntryConfig;
   /** `PREPARATION_STYLE_TYPE` value, as the preparation form stores it. */
   style_type: 'ESPRESSO' | 'POUR OVER' | 'FULL_IMMERSION' | 'PERCOLATION';
   type: string;
@@ -214,7 +233,7 @@ export interface SyntheticPreparation {
 export interface SyntheticMill {
   name: string;
   note: string;
-  config: EntryConfig;
+  config: TrackedEntryConfig;
   finished: boolean;
   attachments: string[];
   has_adjustable_speed: boolean;
@@ -225,7 +244,7 @@ export interface SyntheticMill {
 export interface SyntheticWater {
   name: string;
   note: string;
-  config: EntryConfig;
+  config: TrackedEntryConfig;
   attachments: string[];
   finished: boolean;
   general_hardness: number;
@@ -261,6 +280,12 @@ export interface SyntheticSettings {
   matomo_analytics_last_question: number;
   /** `BREW_VIEW_ENUM.SINGLE_PAGE`. */
   brew_view: '0';
+  /** The profile the change info migration stores for an existing installation. */
+  user: {
+    experience_mode: 'advanced';
+    nickname: string;
+    whats_new_seen: string;
+  };
 }
 
 /** `src/classes/version/iVersion.ts` (class `Version`). */
@@ -290,7 +315,7 @@ export interface SyntheticDataSet {
  * app gets a migration that is missing here.
  */
 export const APPLIED_DATA_VERSIONS = Array.from(
-  { length: 15 },
+  { length: 16 },
   (_, i) => `UPDATE_${i + 1}`,
 );
 
@@ -362,6 +387,7 @@ export function generateDataSet(options: DataSetOptions): SyntheticDataSet {
         matomo_analytics: false,
         matomo_analytics_last_question: end,
         brew_view: '0',
+        user: { experience_mode: 'advanced', nickname: '', whats_new_seen: '' },
       },
     ],
     VERSION: [
@@ -445,6 +471,24 @@ function createRandom(seed: number) {
 
 function at(start: number, end: number, share: number): number {
   return Math.round(start + (end - start) * share);
+}
+
+/**
+ * Config of an entry from before change tracking, as `fillMissingChangeInfo()` completes it
+ * (src/classes/changeTracking/changeTracking.ts).
+ */
+function trackedConfig(
+  uuid: string,
+  unixTimestamp: number,
+): TrackedEntryConfig {
+  return {
+    uuid,
+    unix_timestamp: unixTimestamp,
+    created_at: unixTimestamp * 1000,
+    updated_at: 0,
+    rev: 0,
+    updated_by: '',
+  };
 }
 
 function isoDate(unix: number): string {
@@ -651,7 +695,7 @@ function createPreparation(
     entry: {
       name: template.name,
       note: '',
-      config: { uuid: random.uuid(), unix_timestamp: addedAt },
+      config: trackedConfig(random.uuid(), addedAt),
       style_type: template.style,
       type: template.type,
       finished: template.retiredAt < 1,
@@ -676,7 +720,7 @@ function createMill(
     entry: {
       name: template.name,
       note: '',
-      config: { uuid: random.uuid(), unix_timestamp: addedAt },
+      config: trackedConfig(random.uuid(), addedAt),
       finished: template.retiredAt < 1,
       attachments: [],
       has_adjustable_speed: template.hasAdjustableSpeed,
@@ -695,7 +739,7 @@ function createWater(
     entry: {
       name: template.name,
       note: '',
-      config: { uuid: random.uuid(), unix_timestamp: addedAt },
+      config: trackedConfig(random.uuid(), addedAt),
       attachments: [],
       finished: template.retiredAt < 1,
       general_hardness: template.hardness,
@@ -835,7 +879,7 @@ function createBeans(
         roastingDate: isoDate(buy - random.int(2, 12) * DAY),
         note: random.chance(0.2) ? random.pick(BEAN_NOTES) : '',
         roaster: random.pick(ROASTERS),
-        config: { uuid, unix_timestamp: buy },
+        config: trackedConfig(uuid, buy),
         roast: random.weighted(ROASTS),
         roast_range: random.chance(0.6) ? random.int(0, 10) / 2 : 0,
         roast_custom: '',
@@ -1061,7 +1105,7 @@ function createBrews(
         equipment.fileReferences && random.chance(0.03)
           ? [`photo_${random.uuid()}.jpg`]
           : [],
-      config: { uuid, unix_timestamp: time },
+      config: trackedConfig(uuid, time),
       tds: random.chance(0.15) ? values.tds : 0,
       brew_beverage_quantity: values.beverage,
       brew_beverage_quantity_type: 'GR',
