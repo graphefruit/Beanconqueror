@@ -455,6 +455,17 @@ file maps them onto Ionic's variables at the end.
   level-1 heading (`src/components/header/header.component.ts`); sections below
   it use real heading elements (e.g. `h2` in `src/app/profile/profile.page.html`).
 - Tabs are reachable by keyboard (`src/app/home/home.page.html`).
+- Overlays: `OverlayStackA11yService`
+  (`src/services/a11y/overlay-stack-a11y.service.ts`, started in
+  `AppComponent`) keeps only the overlay on top in the accessibility tree; the
+  page and every dialog below it are `inert` and `aria-hidden` until it starts
+  to close, and Tab goes round inside it. Covered by
+  `e2e/overlay-stack-a11y.spec.ts`.
+- Status messages: toasts and loading messages are spoken through `Announcer`
+  (`src/services/a11y/announcer.service.ts`) from the one visually hidden live
+  region of the Angular CDK (`LIVE_REGION` in `src/services/a11y/live-region.ts`),
+  never from live regions of their own (`src/services/uiToast.ts`,
+  `src/services/uiAlert.ts`). Covered by `e2e/announcements.spec.ts`.
 - axe baseline: `e2e/accessibility.spec.ts` scans the main areas in light and
   dark against WCAG 2.2 AA; known violations live in
   `e2e/accessibility-baseline.json`, which may only shrink (`DEVELOPING.md`).
@@ -556,8 +567,8 @@ mutable fields. Counts at the time of writing:
 | `detectChanges()`                            | 40                  | 34    |
 | `markForCheck()`                             | 6                   | 2     |
 | `ngZone.run(` / `zone.run(`                  | 5                   | 3     |
-| `runOutsideAngular`                          | 22                  | 5     |
-| `setTimeout(` (many used to defer an update) | 192                 | 78    |
+| `runOutsideAngular`                          | 23                  | 6     |
+| `setTimeout(` (many used to defer an update) | 193                 | 79    |
 | `ChangeDetectionStrategy.OnPush`             | 1 of 163 components | 1     |
 | `signal(` / `computed(`                      | 9                   | 4     |
 

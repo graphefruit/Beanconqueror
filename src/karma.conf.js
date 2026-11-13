@@ -18,6 +18,7 @@ const NEW_CODE = [
   'src/brew-session/**',
   'src/classes/changeTracking/**',
   'src/classes/settings/settingsSecrets.ts',
+  'src/services/a11y/**',
   'src/services/attachmentManifest/**',
   'src/services/changeTracking/**',
   'src/services/deletionJournal/**',
