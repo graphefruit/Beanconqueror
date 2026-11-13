@@ -555,53 +555,60 @@ ion-split-pane {
       padding-right: 2.5%;
     }
 
-    // Tablet: screens and full-screen modals keep their bars full width and
-    // put content and footer actions in a centred column, so lines, cards and
-    // forms stay readable. Barista mode and the live brew chart are made for
-    // wide screens and keep the full width. The menu is no page and keeps the
-    // rule above.
-    .ion-page:not(
-      app-baristamode,
-      app-barista,
-      app-baristamode-brews,
-      app-baristamode-statistics,
-      brew-flow
-    ) {
-      // Resolved where it is used: the percentage is the page width.
-      --bq-content-inset: max(
-        var(--bq-content-gutter),
-        calc((100% - var(--bq-content-max-width)) / 2)
-      );
+    // Tablets only (TabletLayoutService marks them by their screen): phones in
+    // landscape are as wide as a portrait tablet but keep their phone layout,
+    // and a tablet keeps its column while the keyboard shortens the viewport.
+    &.bq-tablet {
+      // Screens and full-screen modals keep their bars full width and
+      // put content and footer actions in a centred column, so lines, cards and
+      // forms stay readable. Barista mode and the live brew chart are made for
+      // wide screens and keep the full width. The menu is no page and keeps the
+      // rule above.
+      .ion-page:not(
+        app-baristamode,
+        app-barista,
+        app-baristamode-brews,
+        app-baristamode-statistics,
+        brew-flow
+      ) {
+        // Resolved where it is used: the percentage is the page width.
+        --bq-content-inset: max(
+          var(--bq-content-gutter),
+          calc((100% - var(--bq-content-max-width)) / 2)
+        );
 
-      > ion-content {
-        --padding-start: var(--bq-content-inset);
-        --padding-end: var(--bq-content-inset);
+        > ion-content {
+          --padding-start: var(--bq-content-inset);
+          --padding-end: var(--bq-content-inset);
+        }
+
+        > ion-footer {
+          padding-left: var(--bq-content-inset);
+          padding-right: var(--bq-content-inset);
+        }
       }
 
-      > ion-footer {
-        padding-left: var(--bq-content-inset);
-        padding-right: var(--bq-content-inset);
+      // A single full-width action would stretch across the column; it keeps a
+      // comfortable width and is centred. Paired actions in a grid are narrower
+      // than the limit and keep their columns.
+      ion-button.button-block {
+        max-width: var(--bq-button-max-width);
+        margin-inline: auto;
       }
-    }
 
-    // A single full-width action would stretch across the column; it keeps a
-    // comfortable width and is centred. Paired actions in a grid are narrower
-    // than the limit and keep their columns.
-    ion-button.button-block {
-      max-width: var(--bq-button-max-width);
-      margin-inline: auto;
-    }
+      // Sheets float as a centred panel instead of spanning the screen. Ionic
+      // sizes overlays only while the viewport is at least 600px tall, so the
+      // panel keeps its width here when the keyboard shortens the viewport.
+      // Ionic squares overlays on tablets (see the rule at the end of this
+      // file), so the top corners are rounded here again.
+      ion-modal.modal-sheet {
+        --width: min(100%, var(--bq-sheet-max-width));
+      }
 
-    // Sheets float as a centred panel instead of spanning the screen. Ionic
-    // squares overlays on tablets (see the rule at the end of this file), so
-    // the top corners are rounded here again.
-    ion-modal.modal-sheet {
-      --width: min(100%, var(--bq-sheet-max-width));
-    }
-
-    ion-modal.modal-sheet::part(content) {
-      border-start-start-radius: var(--bq-radius-sheet);
-      border-start-end-radius: var(--bq-radius-sheet);
+      ion-modal.modal-sheet::part(content) {
+        border-start-start-radius: var(--bq-radius-sheet);
+        border-start-end-radius: var(--bq-radius-sheet);
+      }
     }
 
     ion-modal.half-bottom-modal {

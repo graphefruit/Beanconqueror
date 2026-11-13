@@ -83,6 +83,7 @@ import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevice
 import { DocumentLanguageService } from '../services/documentLanguage/document-language.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import { TabletLayoutService } from '../services/tabletLayout/tablet-layout.service';
 import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
 import { UIAnalytics } from '../services/uiAnalytics';
@@ -152,6 +153,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiAlert = inject(UIAlert);
   private _translate = inject(TranslateService);
   private readonly documentLanguage = inject(DocumentLanguageService);
+  private readonly tabletLayout = inject(TabletLayoutService);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly menu = inject(MenuController);
   private readonly uiUpdate = inject(UIUpdate);
@@ -312,6 +314,7 @@ export class AppComponent implements AfterViewInit {
 
   constructor() {
     this.documentLanguage.start();
+    this.tabletLayout.start();
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6

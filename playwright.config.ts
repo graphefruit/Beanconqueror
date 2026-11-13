@@ -4,6 +4,7 @@ const PORT = 4300;
 const BASE_URL = `http://localhost:${PORT}`;
 const isCI = !!process.env['CI'];
 const TABLET_SPECS = /tablet\.spec\.ts$/;
+const PHONE_LANDSCAPE_SPECS = /phone-landscape\.spec\.ts$/;
 
 /**
  * Browser E2E against the real Angular/Ionic app served by `ng serve`.
@@ -33,14 +34,16 @@ export default defineConfig({
     {
       name: 'pixel-7-chromium',
       use: { ...devices['Pixel 7'] },
-      testIgnore: TABLET_SPECS,
+      testIgnore: [TABLET_SPECS, PHONE_LANDSCAPE_SPECS],
     },
     // Tablet layout rules only: the journeys above do not change with the screen width.
+    // The screen is set explicitly: the tablet rules depend on it, not on the viewport.
     {
       name: 'tablet-landscape-chromium',
       use: {
         ...devices['Galaxy Tab S4 landscape'],
         viewport: { width: 1024, height: 768 },
+        screen: { width: 1024, height: 768 },
       },
       testMatch: TABLET_SPECS,
     },
@@ -49,8 +52,15 @@ export default defineConfig({
       use: {
         ...devices['Galaxy Tab S4'],
         viewport: { width: 768, height: 1024 },
+        screen: { width: 768, height: 1024 },
       },
       testMatch: TABLET_SPECS,
+    },
+    // A phone turned sideways is as wide as a portrait tablet and must keep its phone layout.
+    {
+      name: 'pixel-7-landscape-chromium',
+      use: { ...devices['Pixel 7 landscape'] },
+      testMatch: PHONE_LANDSCAPE_SPECS,
     },
     // Add further projects deliberately, e.g. when a journey depends on WebKit:
     // { name: 'iphone-15-webkit', use: { ...devices['iPhone 15'] } },

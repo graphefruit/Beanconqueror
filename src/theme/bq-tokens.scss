@@ -94,9 +94,10 @@ $bq-on-action-primary: #ffffff;
   --bq-space-8: 32px;
   --bq-space-12: 48px;
 
-  // Layout on tablets (from 768px wide). Phones are narrower than each limit,
-  // so their layout does not change. Fixed px rather than rem: a larger text
-  // size should fill the column, not widen it past the screen.
+  // Layout on tablets: shortest screen side from 600px (TabletLayoutService)
+  // and a viewport from 768px wide. Phones never get these rules, not even in
+  // landscape. Fixed px rather than rem: a larger text size should fill the
+  // column, not widen it past the screen.
   // Content column for lists, forms and cards: about 80 characters of body
   // text, two stat cards side by side, and exactly the width left on a 768px
   // portrait tablet after the gutters.
