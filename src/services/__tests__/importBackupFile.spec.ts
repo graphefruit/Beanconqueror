@@ -132,6 +132,10 @@ function createDeviceDatabase(
         data.set(key, structuredClone(value));
         return Promise.resolve();
       },
+      remove: (key: string) => {
+        data.delete(key);
+        return Promise.resolve();
+      },
       get: (key: string) =>
         Promise.resolve(data.has(key) ? structuredClone(data.get(key)) : null),
       forEach: (cb: (value: unknown, key: string, i: number) => void) => {
@@ -467,6 +471,56 @@ describe('Importing a backup', () => {
     ).toBe(2);
   });
 
+  for (const first of [
+    'Beanconqueror.zip',
+    'the automatic backup of the day',
+  ]) {
+    it(`keeps the data from before several imports in a row that start with ${first}`, async () => {
+      // The app replaces the first file itself, so the backup written
+      // before the second import is not one of an unchanged import either.
+      const before = storedData('own');
+      const device = await startDevice(before);
+      const firstData = imported(entries('first', 5));
+      const series = [
+        {
+          BREWS: firstData,
+          fileName:
+            first === 'Beanconqueror.zip'
+              ? first
+              : automaticBackupName(Date.now()),
+        },
+        ...['b', 'c', 'd', 'e'].map((_name, i) => ({
+          BREWS: entries(`tried-${_name}`, 3),
+          fileName: `Beanconqueror ${i + 2}.zip`,
+        })),
+      ];
+
+      for (const { BREWS, fileName } of series) {
+        const result = await device.helper.importBackup(
+          { SETTINGS: [{ language: 'en' }], BREWS },
+          'import',
+          fileName,
+        );
+        expect(result).toEqual({ BACKUP: false });
+        await new Promise((_resolve) => setTimeout(_resolve, 2));
+      }
+
+      const keptBrews: unknown[] = [];
+      for (const path of writtenBackups(device)) {
+        keptBrews.push((await readBackupFile(device, path)).BREWS);
+      }
+      // Kept besides the newest: the data from before the series and the
+      // data of the first file. The others can be imported again.
+      expect(keptBrews).toEqual(
+        jasmine.arrayWithExactContents([
+          before.BREWS,
+          firstData,
+          imported(series[3].BREWS),
+        ]),
+      );
+    });
+  }
+
   it('keeps the data of the automatic backup of the day when several imports in a row start with it', async () => {
     // Fewer brews than in the automatic backup of the day: some were lost,
     // and nothing was saved since.
@@ -659,8 +713,9 @@ describe('Importing a backup', () => {
     expect(device.directory.files.write).not.toHaveBeenCalled();
     expect(device.uiLog.error).not.toHaveBeenCalled();
     expect(device.data.get('BREWS')).toEqual(imported(entries('brew', 2)));
+    // Two imported brews and the bean of the device, which stays.
     expect(device.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(
-      jasmine.objectContaining({ source: 'import', record_count: 2 }),
+      jasmine.objectContaining({ source: 'import', record_count: 3 }),
     );
   });
 
@@ -770,7 +825,11 @@ describe('The backup before an import of data that was just imported', () => {
     it(`is not marked once an entry was added to ${collection} since`, async () => {
       /** The imported data with an entry in `collection` changed at `_time`. */
       const withEntryChangedAt = (_time: number) => {
-        const stored = afterImport('import');
+        const stored = afterImport(
+          'import',
+          {},
+          { file_name: KEPT_FILE_NAME, record_count: 4 },
+        );
         const [entry]: any[] = imported(entries(`added-${collection}`, 1));
         entry.config.updated_at = _time;
         stored[collection] = [...(stored[collection] ?? []), entry];
@@ -786,6 +845,37 @@ describe('The backup before an import of data that was just imported', () => {
       ).not.toContain(UNCHANGED_IMPORT_ENDING);
     });
   }
+
+  it('is not marked when the clock was set back behind the import', async () => {
+    const stored = afterImport(
+      'import',
+      {},
+      { file_name: KEPT_FILE_NAME, last_restore_at: Date.now() + 10 * 60000 },
+    );
+    // Changed after the import, by the clock before it.
+    stored.BREWS[1].config.updated_at = Date.now();
+
+    expect(await backupBeforeNextImport(stored)).not.toContain(
+      UNCHANGED_IMPORT_ENDING,
+    );
+  });
+
+  it('is not marked when the number of entries is not the one the import stored', async () => {
+    // Added and deleted while the clock was set back: the times of the
+    // entries and of the deletion journal are before the import.
+    const added = afterImport('import');
+    const [entry]: any[] = imported(entries('added', 1));
+    entry.config.updated_at = RESTORED_AT - 1;
+    added.BREWS.push(entry);
+    const deleted = afterImport('import');
+    deleted.BEANS = [];
+
+    for (const stored of [added, deleted]) {
+      expect(await backupBeforeNextImport(stored)).not.toContain(
+        UNCHANGED_IMPORT_ENDING,
+      );
+    }
+  });
 
   it('is not marked once an entry was deleted since', async () => {
     const stored = afterImport('import', {
@@ -846,6 +936,23 @@ describe('The backup before an import of data that was just imported', () => {
         ),
       ),
     ).toContain(UNCHANGED_IMPORT_ENDING);
+  });
+
+  it('is not marked when the automatic backup imported is deleted by now, a week after its day', async () => {
+    const restoredAt = Date.now() - 8 * DAY;
+
+    expect(
+      await backupBeforeNextImport(
+        afterImport(
+          'import',
+          {},
+          {
+            last_restore_at: restoredAt,
+            file_name: automaticBackupName(restoredAt - DAY),
+          },
+        ),
+      ),
+    ).not.toContain(UNCHANGED_IMPORT_ENDING);
   });
 
   it('is not marked when the name of the file imported is not known', async () => {

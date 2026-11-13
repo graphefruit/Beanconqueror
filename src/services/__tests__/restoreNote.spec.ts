@@ -34,16 +34,24 @@ function createDeviceDatabase(_initial: Record<string, unknown>) {
   const data = new Map<string, unknown>(
     Object.entries(structuredClone(_initial)),
   );
+  /** Keys whose next write fails. */
   const failingWrites = new Set<string>();
+  /** Keys whose writes all fail, so a rollback fails as well. */
+  const brokenWrites = new Set<string>();
   return {
     data,
     failingWrites,
+    brokenWrites,
     database: {
       set: (key: string, value: unknown) => {
-        if (failingWrites.delete(key)) {
+        if (failingWrites.delete(key) || brokenWrites.has(key)) {
           return Promise.reject(new Error('write failed'));
         }
         data.set(key, structuredClone(value));
+        return Promise.resolve();
+      },
+      remove: (key: string) => {
+        data.delete(key);
         return Promise.resolve();
       },
       get: (key: string) =>
@@ -159,6 +167,24 @@ describe('The note about the last import', () => {
     expect(note.last_restore_at).toBeLessThanOrEqual(Date.now());
   });
 
+  it('counts the entries of collections the file does not contain, which stay stored', async () => {
+    const device = await startDevice({
+      SETTINGS: [{ language: 'de' }],
+      BREWS: entries('own-brew', 2),
+      MILL: entries('own-mill', 4),
+    });
+
+    await device.uiStorage.import({
+      SETTINGS: [{ language: 'en' }],
+      BREWS: entries('brew', 3),
+    });
+
+    expect(device.data.get('MILL')).toEqual(entries('own-mill', 4));
+    expect(
+      (device.data.get(LAST_RESTORE_STORAGE_KEY) as IRestoreNote).record_count,
+    ).toBe(7);
+  });
+
   it('takes an import without a source for a file chosen in the settings', async () => {
     const device = await startDevice({ SETTINGS: [{ language: 'de' }] });
 
@@ -226,7 +252,31 @@ describe('The note about the last import', () => {
     expect(device.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(PREVIOUS_NOTE);
   });
 
-  it('does not undo the import when the note cannot be stored', async () => {
+  it('does not undo the rollback when the note cannot be stored again', async () => {
+    const device = await startDevice({
+      SETTINGS: [{ language: 'de' }],
+      BREWS: entries('own-brew', 2),
+      [LAST_RESTORE_STORAGE_KEY]: PREVIOUS_NOTE,
+    });
+    device.failingWrites.add('BREWS');
+    device.failingWrites.add(LAST_RESTORE_STORAGE_KEY);
+
+    const result = await device.uiStorage.import({
+      SETTINGS: [{ language: 'en' }],
+      BREWS: entries('brew', 1),
+    });
+
+    // The data is back; without the note it only counts as changed.
+    expect(result).toEqual({ BACKUP: true });
+    expect(device.data.get('BREWS')).toEqual(entries('own-brew', 2));
+    expect(device.data.has(LAST_RESTORE_STORAGE_KEY)).toBeFalse();
+    expect(device.uiLog.error).toHaveBeenCalledOnceWith(
+      'UIStorage - Import - Restore note not kept',
+      jasmine.any(Error),
+    );
+  });
+
+  it('does not undo the import when the note cannot be stored, and the note before is gone', async () => {
     const device = await startDevice({
       SETTINGS: [{ language: 'de' }],
       BREWS: entries('own-brew', 2),
@@ -241,11 +291,32 @@ describe('The note about the last import', () => {
 
     expect(result).toEqual({ BACKUP: false });
     expect(device.data.get('BREWS')).toEqual(entries('brew', 1));
-    expect(device.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(PREVIOUS_NOTE);
+    // The note before was about other data than the one stored now.
+    expect(device.data.has(LAST_RESTORE_STORAGE_KEY)).toBeFalse();
     expect(device.uiLog.error).toHaveBeenCalledOnceWith(
       'UIStorage - Import - Restore note not stored',
       jasmine.any(Error),
     );
+  });
+
+  it('is gone when the import failed and could not be rolled back', async () => {
+    const device = await startDevice({
+      SETTINGS: [{ language: 'de' }],
+      BREWS: entries('own-brew', 2),
+      [LAST_RESTORE_STORAGE_KEY]: PREVIOUS_NOTE,
+    });
+    device.brokenWrites.add('BREWS');
+
+    await expectAsync(
+      device.uiStorage.import({
+        SETTINGS: [{ language: 'en' }],
+        BREWS: entries('brew', 1),
+      }),
+    ).toBeRejectedWith({ BACKUP: true });
+
+    // The settings of the import may be stored by now: the note before
+    // does not describe that data.
+    expect(device.data.has(LAST_RESTORE_STORAGE_KEY)).toBeFalse();
   });
 });
 

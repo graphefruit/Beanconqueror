@@ -10,7 +10,11 @@ export interface IRestoreNote {
   /** Milliseconds since epoch when the import was stored, clock of this device. */
   last_restore_at: number;
   source: RESTORE_SOURCE;
-  /** Number of entries the import stored in the change tracked collections. */
+  /**
+   * Number of entries in the change tracked collections once the import was
+   * stored. Collections the backup file does not contain are left as they
+   * are and count as well.
+   */
   record_count: number;
   /**
    * Name of the backup file chosen in the settings, when it is known. It

@@ -82,6 +82,12 @@ function holdsDataToSave(_stored: any): boolean {
  * itself counts as well, like the standard mill for imported brews without
  * one. Data restored from the internal backup never counts as unchanged, as
  * the automatic backups replace that file.
+ *
+ * The times compared come from the clock of the device, so a change made
+ * after the clock was set back can look older than the import. Two checks
+ * that do not depend on the times of the entries are made first, and in
+ * doubt the data counts as changed: the import must not lie in the future,
+ * and the number of entries must still be the one the import stored.
  */
 function holdsUnchangedImport(_stored: any, _now: number): boolean {
   const note: Partial<IRestoreNote> | undefined =
@@ -91,8 +97,18 @@ function holdsUnchangedImport(_stored: any, _now: number): boolean {
     note?.source !== 'import' ||
     typeof restoredAt !== 'number' ||
     !Number.isFinite(restoredAt) ||
+    restoredAt > _now ||
     !canBeImportedAgain(note.file_name, restoredAt, _now)
   ) {
+    return false;
+  }
+  let recordCount = 0;
+  for (const collection of CHANGE_TRACKED_COLLECTIONS) {
+    if (Array.isArray(_stored[collection])) {
+      recordCount += _stored[collection].length;
+    }
+  }
+  if (recordCount !== note.record_count) {
     return false;
   }
   const isLater = (_time: unknown) =>
@@ -168,8 +184,8 @@ export class UIExportImportHelper {
    *   of all data: there is nothing to save, and an empty file would push a
    *   real backup out of the ones kept.
    *
-   * After a completed import, older backups are removed, but never the
-   * newest one of data that had not just been imported from a file
+   * After a completed import, older backups are removed, those of data
+   * that had not just been imported from a file last
    * (PreImportBackupService.removeOldBackups). A failed import of a file
    * chosen in the settings removes none, so the file it was started from
    * stays available, as it can be one of them. A failed restore of the

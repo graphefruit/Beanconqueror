@@ -295,23 +295,52 @@ export class UIStorage {
   ): Promise<any> {
     // Before we import, we do a saftey backup
     const _backup = await this.__safteyBackup();
+    const previousNote: unknown = _backup?.[LAST_RESTORE_STORAGE_KEY];
     try {
       const importData = this.__withImportedUserProfile(
         this.__keepDeviceSecrets(_data, _backup),
       );
       this.removeDuplicateEntries(importData);
       this.__fillMissingChangeInfo(importData);
+      if (previousNote !== undefined) {
+        // The note is about the data stored so far. It must not be taken
+        // for one about the data of this import, when its own note cannot
+        // be stored or the app is closed before.
+        await this._storage.remove(LAST_RESTORE_STORAGE_KEY);
+      }
       await this.__importBackup(importData);
-      await this.__noteRestore(importData, _source, _fileName);
+      // Collections the backup does not contain stay as they are stored.
+      await this.__noteRestore(
+        { ..._backup, ...importData },
+        _source,
+        _fileName,
+      );
 
       return { BACKUP: false };
     } catch (ex) {
       try {
         await this.__importBackup(_backup);
-        return { BACKUP: true };
       } catch (ex) {
         throw { BACKUP: true };
       }
+      await this.__keepRestoreNote(previousNote);
+      return { BACKUP: true };
+    }
+  }
+
+  /**
+   * Stores the note about the import before again, once an import was
+   * rolled back. Never throws: without the note the data only counts as
+   * changed since the last import.
+   */
+  private async __keepRestoreNote(_note: unknown): Promise<void> {
+    if (_note === undefined) {
+      return;
+    }
+    try {
+      await this._storage.set(LAST_RESTORE_STORAGE_KEY, _note);
+    } catch (ex) {
+      this.uiLog.error('UIStorage - Import - Restore note not kept', ex);
     }
   }
 
@@ -421,12 +450,13 @@ export class UIStorage {
 
   /**
    * Notes the completed import under a local-only key: when, from where and
-   * how many entries (IRestoreNote), and the name of the file when it is
-   * known. One note is enough, no entry is marked: the imported entries keep
+   * how many entries `_data`, the values stored now, holds (IRestoreNote),
+   * and the name of the file when it is known. One note is enough, no entry is marked: the imported entries keep
    * the change info they came with, so they never look like changes made on
    * this device, and a mark on every entry would stay until the entry is
-   * edited again and cost a write of whole collections. An import that was
-   * rolled back leaves the previous note.
+   * edited again and cost a write of whole collections. The previous note
+   * is removed before the data is replaced, and stored again when the import
+   * was rolled back.
    *
    * Never throws: the data is already stored and must not be rolled back
    * because of the note.

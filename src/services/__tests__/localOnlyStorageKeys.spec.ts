@@ -108,6 +108,10 @@ function createDeviceDatabase(initial: Record<string, unknown>) {
         data.set(key, structuredClone(value));
         return Promise.resolve();
       },
+      remove: (key: string) => {
+        data.delete(key);
+        return Promise.resolve();
+      },
       // Like localforage, a missing value is read as null.
       get: (key: string) =>
         Promise.resolve(data.has(key) ? structuredClone(data.get(key)) : null),
