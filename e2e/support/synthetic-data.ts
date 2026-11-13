@@ -23,7 +23,11 @@ export interface DataSetOptions {
   beans?: number;
   /** Seed of the random generator. Default 1. */
   seed?: number;
-  /** Time of the last brew; the data covers the `years` before it. Default 2026-11-01. */
+  /**
+   * End of the period the brews cover (the `years` before it). It is not the time of the last
+   * brew: no brew is later, but the last one can be hours or, with few brews, days earlier.
+   * Default 2026-11-01 18:00 UTC.
+   */
   endDate?: Date;
   /** Default 5. */
   years?: number;

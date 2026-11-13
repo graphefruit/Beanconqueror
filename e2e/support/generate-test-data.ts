@@ -56,8 +56,13 @@ const out =
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, zip);
 
+// Brews are stored oldest first.
+const lastBrew = data.BREWS.at(-1);
 console.log(
   `${out}: ${data.BREWS.length} brews, ${data.BEANS.length} beans ` +
     `(${data.BEANS.filter((b) => b.finished).length} archived), ` +
-    `last brew ${endDate.toISOString()}, ${(zip.length / 1024 / 1024).toFixed(1)} MB`,
+    (lastBrew
+      ? `last brew ${new Date(lastBrew.config.unix_timestamp * 1000).toISOString()}, `
+      : '') +
+    `${(zip.length / 1024 / 1024).toFixed(1)} MB`,
 );

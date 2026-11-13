@@ -35,8 +35,9 @@ import {
 
 const TIERS: PerfTier[] = [7_000, 15_000];
 
-// The last brew is from the start of today, so "time since the last brew" and the analytics
-// reminder behave like for an active user. Within one day the data is the same on every run.
+// The data ends at the start of today (UTC), so the newest brews are from yesterday and "time
+// since the last brew" and the analytics reminder behave like for an active user. Within one day
+// the data is the same on every run.
 const END_DATE = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
 const dataSets = new Map<PerfTier, { data: SyntheticDataSet; json: string }>();
