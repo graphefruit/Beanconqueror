@@ -66,7 +66,10 @@ test('an alert takes focus when it opens and hands it back to its trigger', asyn
 
   const alert = page.getByRole('alertdialog', { name: 'Roast type' });
   await expect(alert).toBeVisible();
-  await expectFocusInside(alert);
+  // The select puts focus on the chosen option while the alert opens, and
+  // Ionic moves it to the alert itself once the alert has opened. Focus put
+  // elsewhere before then would be taken away again.
+  await expect(alert).toBeFocused();
   await expect(alert.getByRole('radio', { name: 'Unknown' })).toBeVisible();
   await expect(alert.getByRole('button', { name: 'Cancel' })).toBeVisible();
 
