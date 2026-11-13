@@ -340,7 +340,7 @@ flowchart LR
 ### Start migrations
 
 `UIUpdate.checkUpdate()` (`src/services/uiUpdate.ts`) runs the data migrations
-`UPDATE_1` … `UPDATE_16` in order. A migration that succeeds is recorded in the
+`UPDATE_1` … `UPDATE_17` in order. A migration that succeeds is recorded in the
 `VERSION` entry (`Version.pushUpdatedDataVersion`) and does not run again. If
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
 migration runs again on the next start (`__checkUpdateForDataVersion`). When
@@ -351,6 +351,12 @@ shown while they run; with existing data they run without it.
 profile of existing installations
 (`src/services/changeTracking/change-tracking-migration.service.ts`). It writes
 each collection once and is only recorded when everything was stored.
+
+`UPDATE_17` cleans up entries that share a uuid
+(`src/services/changeTracking/duplicate-entries-migration.service.ts`, rules in
+`src/classes/changeTracking/duplicateEntries.ts`): copies equal to the first
+entry are removed, differing copies are kept. An imported backup is cleaned up
+the same way.
 
 A new migration touches three places in `src/services/uiUpdate.ts`: the
 `updateVersions` array in `checkUpdate()`, the chain of

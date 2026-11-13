@@ -17,6 +17,7 @@ const NEW_CODE = [
   'src/app/profile/**',
   'src/brew-session/**',
   'src/classes/changeTracking/**',
+  'src/classes/settings/importedUserProfile.ts',
   'src/classes/settings/settingsSecrets.ts',
   'src/services/a11y/**',
   'src/services/attachmentManifest/**',
@@ -24,6 +25,7 @@ const NEW_CODE = [
   'src/services/deletionJournal/**',
   'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',
+  'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
   'src/services/theme/theme-plugins.ts',
 ];

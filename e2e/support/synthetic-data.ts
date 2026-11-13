@@ -285,6 +285,8 @@ export interface SyntheticSettings {
     experience_mode: 'advanced';
     nickname: string;
     whats_new_seen: string;
+    /** The app chose the mode, so the note about it is still to be shown. */
+    mode_hint_pending: true;
   };
 }
 
@@ -315,7 +317,7 @@ export interface SyntheticDataSet {
  * app gets a migration that is missing here.
  */
 export const APPLIED_DATA_VERSIONS = Array.from(
-  { length: 16 },
+  { length: 17 },
   (_, i) => `UPDATE_${i + 1}`,
 );
 
@@ -387,7 +389,12 @@ export function generateDataSet(options: DataSetOptions): SyntheticDataSet {
         matomo_analytics: false,
         matomo_analytics_last_question: end,
         brew_view: '0',
-        user: { experience_mode: 'advanced', nickname: '', whats_new_seen: '' },
+        user: {
+          experience_mode: 'advanced',
+          nickname: '',
+          whats_new_seen: '',
+          mode_hint_pending: true,
+        },
       },
     ],
     VERSION: [
