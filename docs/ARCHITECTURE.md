@@ -49,6 +49,7 @@ sequenceDiagram
     App->>App: ngOnInit: ThemeService.initializeBeforeAppReady()
     App->>App: ngAfterViewInit: Chart.register(), __appReady()
     App->>Storage: platform.ready() → UIStorage.init()
+    App->>Storage: DeviceIdentityService.initialize() (awaited),<br/>DeletionJournalService.initialize() (not awaited)
     App->>App: status bar, logging, iOS quick actions
     App->>App: (native only) UIExportImportHelper.checkBackup()
     App->>Storage: initializeStorage() for all 11 collections
@@ -57,6 +58,7 @@ sequenceDiagram
     App->>App: __checkCleanup() → CleanupService.cleanupOldBrewData()
     App->>App: __initApp(): language, analytics, ThemeService.initialize(),<br/>welcome/update screens, Bluetooth reconnect (after 3 s), startup view
     App->>Helper: setAppReady(1)
+    App->>App: AttachmentManifestService.start() (background, native only)
 ```
 
 Routes wait for this: every top-level route carries the `appReady` resolver,
@@ -98,23 +100,25 @@ If one collection fails to load, the app shows a blocking error message
 
 ### Folder structure
 
-| Folder                         | Content                                                                                     |
-| ------------------------------ | ------------------------------------------------------------------------------------------- |
-| `src/app/`                     | Pages and the components that belong to one page (e.g. `src/app/brew/brew-add/`)            |
-| `src/components/`              | Components shared between pages (cards, brew form parts, header, timer)                     |
-| `src/popover/`                 | Popovers and small modals (welcome, update, loading, device chooser)                        |
-| `src/classes/`                 | Data model classes (`Bean`, `Brew`, `Settings`, …), device drivers, `StorageClass`          |
-| `src/interfaces/`              | `I*` interfaces of the stored data model                                                    |
-| `src/enums/`                   | Enums used by the data model and the UI                                                     |
-| `src/services/`                | Storage services (`ui*Storage.ts`), helpers (`ui*Helper.ts`), platform and feature services |
-| `src/pipes/`, `src/directive/` | Pipes and directives                                                                        |
-| `src/data/`                    | Static data (cupping flavors, default graph colors, tracking names)                         |
-| `src/theme/`                   | Global theme: `variables.scss` (Ionic palette), `bq-tokens.scss` (design tokens)            |
-| `src/native/`                  | Typed bridges to the app's own native plugins                                               |
-| `src/generated/`               | Generated code (icon registry, protobuf); do not edit by hand                               |
-| `src/test-utils/`              | Shared helpers and mocks for unit tests                                                     |
-| `e2e/`                         | Playwright tests, fixtures and the axe baseline                                             |
-| `tools/`                       | Build and release scripts                                                                   |
+| Folder                         | Content                                                                                       |
+| ------------------------------ | --------------------------------------------------------------------------------------------- |
+| `src/app/`                     | Pages and the components that belong to one page (e.g. `src/app/brew/brew-add/`)              |
+| `src/components/`              | Components shared between pages (cards, brew form parts, header, timer)                       |
+| `src/popover/`                 | Popovers and small modals (welcome, update, loading, device chooser)                          |
+| `src/classes/`                 | Data model classes (`Bean`, `Brew`, `Settings`, …), device drivers, `StorageClass`            |
+| `src/classes/changeTracking/`  | Change info of stored entries, attachment references, local-only storage keys (no Angular)    |
+| `src/interfaces/`              | `I*` interfaces of the stored data model                                                      |
+| `src/enums/`                   | Enums used by the data model and the UI                                                       |
+| `src/services/`                | Storage services (`ui*Storage.ts`), helpers (`ui*Helper.ts`), platform and feature services   |
+| `src/brew-session/rules/`      | Rules of the brew views in plain TypeScript (`brewFieldLayout.ts`: which fields, which order) |
+| `src/pipes/`, `src/directive/` | Pipes and directives                                                                          |
+| `src/data/`                    | Static data (cupping flavors, default graph colors, tracking names)                           |
+| `src/theme/`                   | Global theme: `variables.scss` (Ionic palette), `bq-tokens.scss` (design tokens)              |
+| `src/native/`                  | Typed bridges to the app's own native plugins                                                 |
+| `src/generated/`               | Generated code (icon registry, protobuf); do not edit by hand                                 |
+| `src/test-utils/`              | Shared helpers and mocks for unit tests                                                       |
+| `e2e/`                         | Playwright tests, fixtures and the axe baseline                                               |
+| `tools/`                       | Build and release scripts                                                                     |
 
 ### Conventions
 
@@ -125,7 +129,9 @@ If one collection fails to load, the app shows a blocking error message
 - Formatting and import order come from Prettier (`package.json`, `prettier`),
   run on staged files by lint-staged.
 - Unit tests live in a `__tests__` folder next to the code they test
-  (e.g. `src/classes/settings/__tests__/`).
+  (e.g. `src/classes/settings/__tests__/`) or, in the newer service folders,
+  as `*.spec.ts` beside the file
+  (e.g. `src/services/deviceIdentity/device-identity.service.spec.ts`).
 - Dependencies are injected with `inject()`. Several legacy services also expose
   a static `instance` or `getInstance()` for code that cannot inject
   (e.g. `src/services/uiBeanStorage.ts`, `src/services/uiAlert.ts`).
@@ -142,7 +148,7 @@ UIBeanStorage, UIBrewStorage, …      (src/services/ui*Storage.ts)
         │  extends
         ▼
 StorageClass                         (src/classes/storageClass.ts)
-   in-memory array of all entries, add/update/remove, events
+   in-memory array of all entries, add/update/remove, change info, events
         │
         ▼
 UIStorage                            (src/services/uiStorage.ts)
@@ -159,13 +165,68 @@ UIStorage                            (src/services/uiStorage.ts)
   (`__save` → `UIStorage.set(DB_PATH, storedData)`).
 - New entries get `config.uuid` (`crypto.randomUUID()`) and
   `config.unix_timestamp` in `StorageClass.addAndConfirm`.
-- `StorageClass.attachOnEvent()` emits `ADD`, `UPDATE`, `REMOVE` and
-  `REINITIALIZE`. Services that cache class instances (e.g. `UIBeanStorage.getAllEntries()`
-  builds `Bean` objects with `initializeByObject`) clear the cache on every event.
+- `StorageClass.attachOnEvent()` emits `ADD`, `UPDATE`, `DELETE` and
+  `REINITIALIZE`; `ADD` and `UPDATE` of a single entry carry its `uuid`.
+  `attachOnRemove()` emits the id of a deleted entry. Services that cache
+  class instances (e.g. `UIBeanStorage.getAllEntries()` builds `Bean` objects
+  with `initializeByObject`) clear the cache on every event.
 - `UIStorage.set` and `UIStorage.get` retry up to 20 times, reconnect the
   database after 11 failed attempts and finally show the iOS database error
   dialog. A successful `set` dispatches `AppEventType.STORAGE_CHANGED`
   on the `EventQueueService`.
+
+### Change info in the write path
+
+Entries of the collections in `CHANGE_TRACKED_COLLECTIONS`
+(`src/classes/changeTracking/changeTracking.ts`: all collections except
+`SETTINGS` and `VERSION`) carry change info in their `config`
+(`src/interfaces/objectConfig/iObjectConfig.ts`): `created_at` and
+`updated_at` in milliseconds, a revision counter `rev` and `updated_by`, the
+device id of the installation that wrote the entry last. `unix_timestamp`
+keeps its meaning (for brews the brew time the user can edit). The model
+classes do not initialize these fields; `StorageClass` sets them when it
+writes:
+
+- `addAndConfirm` stamps a new entry (`stampAdded`: `rev` 1, both times now).
+- `update` counts as a change by this device (`stampUpdated`: `updated_at`,
+  `rev` + 1, `updated_by`). It stores a copy of the caller's object, so later
+  unsaved changes to that object cannot reach the disk with another write.
+- `update(entry, { touch: false })` is the system write path for migrations
+  and other maintenance: it keeps the stored change info.
+  `backfillWithoutTouch()` does the same for a whole collection with one save.
+- A deletion removes the entry at once and then records a note (collection,
+  uuid, time, device id, last `rev`) in the deletion journal
+  (`src/services/deletionJournal/deletion-journal.service.ts`). Notes of
+  entries that exist again, for example after an import, are dropped when the
+  collection loads.
+
+Entries from before change tracking have `updated_at` 0, `rev` 0 and
+`updated_by` `''` ("unknown") and a `created_at` estimated from
+`unix_timestamp`; `fillMissingChangeInfo()` fills these in and never changes a
+value that is already there.
+
+The device id comes from `DeviceIdentityService`
+(`src/services/deviceIdentity/device-identity.service.ts`), a random value
+created on first start; it is initialized before the collections load. Backups
+made by the operating system copy the database and with it the device id (see
+the comment in that file).
+
+### Local-only keys
+
+Three more storage keys belong to exactly one installation
+(`LOCAL_ONLY_STORAGE_KEYS` in `src/classes/changeTracking/localStorageKeys.ts`):
+
+| Storage key           | Service                                                          | Content                                           |
+| --------------------- | ---------------------------------------------------------------- | ------------------------------------------------- |
+| `DEVICE`              | `src/services/deviceIdentity/device-identity.service.ts`         | Device id of this installation                    |
+| `DELETION_JOURNAL`    | `src/services/deletionJournal/deletion-journal.service.ts`       | Notes about entries deleted here                  |
+| `ATTACHMENT_MANIFEST` | `src/services/attachmentManifest/attachment-manifest.service.ts` | Photo and flow profile files the entries refer to |
+
+They are not collections of entries and do not extend `StorageClass`. They
+never go into a backup or export file, an import never overwrites them, and
+writing them does not dispatch `STORAGE_CHANGED`, so it triggers no automatic
+backup (`UIStorage.internalSet`, `UIStorage.__importBackup`,
+`UIExportImportHelper.buildExportZIP`).
 
 ### Collections
 
@@ -195,6 +256,9 @@ or removed.
 `SETTINGS` holds exactly one entry. `UISettingsStorage` creates it on first
 start and returns it as a `Settings` instance through `getSettings()`
 (`src/services/uiSettingsStorage.ts`, `src/classes/settings/settings.ts`).
+`Settings.user` is the user profile (`src/interfaces/settings/iUserProfile.ts`);
+new installations start in the beginner mode, stored settings without a
+profile load with the advanced mode (`Settings.normalizeUserProfile`).
 Settings that hold credentials are listed in
 `src/classes/settings/settingsSecrets.ts` (see backups).
 
@@ -213,6 +277,15 @@ Android, `src/services/uiFileHelper.ts`). The database only stores the path.
   reference graphs live under `importedGraph/` (`Brew.getGraphPath()` in
   `src/classes/brew/brew.ts`).
 
+`AttachmentManifestService`
+(`src/services/attachmentManifest/attachment-manifest.service.ts`) keeps a
+list of these files with path, size, type and owner under the local-only key
+`ATTACHMENT_MANIFEST`. It is derived from the entries
+(`collectAttachmentRefs` in `src/classes/changeTracking/attachmentRefs.ts`)
+and the files, is built in the background after the app is ready and updated
+when entries change; nothing else reads it yet. It only runs on native
+platforms.
+
 In the browser there is no data directory; `getDataDirectory()` throws and the
 graph code reads bundled sample flow profiles instead (see section 3).
 
@@ -228,15 +301,18 @@ flowchart LR
 ```
 
 - `UIExportImportHelper.buildExportZIP()` (`src/services/uiExportImportHelper.ts`)
-  exports all keys, empties the credential fields and splits `BREWS` and `BEANS`
+  exports all keys except the local-only ones, empties the credential fields
+  and splits `BREWS` and `BEANS`
   into chunks of 500 and `BARISTAMODE_BREWS` into chunks of 250 entries
   (`EXPORT_CHUNKING_CONFIG`). The first chunk stays in `Beanconqueror.json`.
 - `getJSONFromZIPArrayBufferContent()` reads the main file and appends the
   chunk files in order.
 - `UIStorage.import()` (`src/services/uiStorage.ts`) first exports the current
-  data as a safety backup, then writes every imported key. If that fails, it
-  writes the safety backup back. Credentials already on the device are kept
-  (`withDeviceSettingsSecrets`).
+  data as a safety backup, then writes every imported key except the
+  local-only ones. If that fails, it writes the safety backup back. Credentials
+  already on the device are kept (`withDeviceSettingsSecrets`). Entries of the
+  imported file that lack change info get it filled in before they are written
+  (`__fillMissingChangeInfo`); values the file brings along are kept.
 - Credential filter: `SETTINGS_SECRET_PATHS` in
   `src/classes/settings/settingsSecrets.ts` lists the fields (Visualizer login,
   cloud AI key, brew-by-weight webhook credentials). They stay in the file with
@@ -264,18 +340,29 @@ flowchart LR
 ### Start migrations
 
 `UIUpdate.checkUpdate()` (`src/services/uiUpdate.ts`) runs the data migrations
-`UPDATE_1` … `UPDATE_15` in order. A migration that succeeds is recorded in the
+`UPDATE_1` … `UPDATE_16` in order. A migration that succeeds is recorded in the
 `VERSION` entry (`Version.pushUpdatedDataVersion`) and does not run again. If
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
 migration runs again on the next start (`__checkUpdateForDataVersion`). When
 `UIStorage.hasData()` is false and a migration is pending, a loading spinner is
 shown while they run; with existing data they run without it.
 
+`UPDATE_16` fills in the change info of all stored entries and stores the user
+profile of existing installations
+(`src/services/changeTracking/change-tracking-migration.service.ts`). It writes
+each collection once and is only recorded when everything was stored.
+
 A new migration touches three places in `src/services/uiUpdate.ts`: the
 `updateVersions` array in `checkUpdate()`, the chain of
 `__checkUpdateForDataVersion('UPDATE_n', …)` calls below it, and a new `case`
-in `__updateDataVersion()`. Existing migrations are not changed, because
-installations and imported backups can be at any older state.
+in `__updateDataVersion()`. It writes entries with `{ touch: false }` (or
+`backfillWithoutTouch()`), so a migration does not count as a change by the
+user. The synthetic test data lists the migrations it counts as applied
+(`APPLIED_DATA_VERSIONS` in `e2e/support/synthetic-data.ts`); add the new one
+there and generate what it would have written, otherwise
+`src/test-utils/__tests__/synthetic-data.spec.ts` fails. Existing migrations
+are not changed, because installations and imported backups can be at any
+older state.
 
 ## 3. Devices
 
@@ -425,8 +512,8 @@ The brew form and its parts reference each other directly:
 
 ```mermaid
 flowchart LR
-    Form[BrewBrewingComponent<br/>brew-brewing, 1863 lines]
-    Graph[BrewBrewingGraphComponent<br/>brew-brewing-graph, 5037 lines]
+    Form[BrewBrewingComponent<br/>brew-brewing, 1918 lines]
+    Graph[BrewBrewingGraphComponent<br/>brew-brewing-graph, 5035 lines]
     Dev[BrewBrewingPreparationDeviceComponent<br/>1462 lines]
     Flow[BrewFlowComponent<br/>maximised graph modal]
     Max[BrewMaximizeControlsComponent]
@@ -447,8 +534,16 @@ flowchart LR
   data therefore change together.
 - The brew form behaviour is pinned by browser tests
   (`e2e/brew-journey.spec.ts`, `e2e/brew-timer.spec.ts`,
-  `e2e/brew-values.spec.ts`, `e2e/brew-parameters.spec.ts`) before it is
+  `e2e/brew-values.spec.ts`, `e2e/brew-parameters.spec.ts`,
+  `e2e/brew-quick-action.spec.ts`, `e2e/reading-order.spec.ts`) before it is
   restructured.
+- First rule moved out: which fields the brew form and the brew details show,
+  and in which order, is computed by `brewFieldLayout()` in
+  `src/brew-session/rules/brewFieldLayout.ts` from the settings and the chosen
+  preparation. Both templates render their fields in that order with `@for`
+  (`brew-brewing.component.html`, `src/app/brew/brew-detail/brew-detail.component.html`),
+  so the reading order of screen readers and the Tab key matches the screen;
+  the CSS `order` property is no longer used for it.
 
 ### zone.js and change detection workarounds
 
@@ -462,9 +557,9 @@ mutable fields. Counts at the time of writing:
 | `markForCheck()`                             | 6                   | 2     |
 | `ngZone.run(` / `zone.run(`                  | 5                   | 3     |
 | `runOutsideAngular`                          | 22                  | 5     |
-| `setTimeout(` (many used to defer an update) | 188                 | 77    |
+| `setTimeout(` (many used to defer an update) | 192                 | 78    |
 | `ChangeDetectionStrategy.OnPush`             | 1 of 163 components | 1     |
-| `signal(` / `computed(`                      | 5                   | 2     |
+| `signal(` / `computed(`                      | 9                   | 4     |
 
 Re-count with, for example:
 `grep -rE "detectChanges\(" src --include='*.ts' --exclude='*.spec.ts' | wc -l`.
@@ -513,7 +608,9 @@ code is not changed only to satisfy them.
   instances.
 
 `src/components/actions-popover/actions-popover.component.ts` is a small
-example that already uses OnPush, signal inputs and `computed()`.
+example that already uses OnPush, signal inputs and `computed()`;
+`src/brew-session/rules/brewFieldLayout.ts` is an example of domain logic in
+plain TypeScript that two views share.
 
 ## 7. Testing rules
 
@@ -526,9 +623,15 @@ example that already uses OnPush, signal inputs and `computed()`.
 | Performance                                               | Within the budgets below.                                                                    |
 
 Existing tests to extend: `src/classes/__tests__/storageClass.spec.ts`,
-`src/classes/settings/__tests__/`, `src/services/__tests__/uiExportImportHelper.spec.ts`,
-`src/services/__tests__/backupSecrets.spec.ts`. `UIUpdate` has no unit tests
-yet; a change to a migration starts by adding them.
+`src/classes/changeTracking/*.spec.ts`, `src/classes/settings/__tests__/`,
+`src/services/__tests__/uiExportImportHelper.spec.ts`,
+`src/services/__tests__/backupSecrets.spec.ts`,
+`src/services/__tests__/importChangeInfo.spec.ts`,
+`src/services/__tests__/localOnlyStorageKeys.spec.ts` and, for migrations,
+`src/services/__tests__/uiUpdate.spec.ts` (every migration keeps the change
+info) and `src/services/changeTracking/change-tracking-migration.service.spec.ts`.
+`src/test-utils/__tests__/synthetic-data.spec.ts` runs the start-up update
+check against the synthetic test data.
 
 Browser test conventions (fixtures, native boundary, axe baseline) are described
 in `DEVELOPING.md`.
@@ -567,7 +670,8 @@ and `tools/` is outside this rule.
 The Pixel 2 XL is the low-end reference device. The largest known installation
 has about 7,000 brews and 600 beans, so the data sets have 7,000 brews and
 15,000 as headroom, each with 1,000 beans (generated by
-`e2e/support/synthetic-data.ts`). `pnpm e2e:perf` checks app start, the brew
+`e2e/support/synthetic-data.ts` as the data of an installation whose
+migrations have all run, change info included). `pnpm e2e:perf` checks app start, the brew
 list (open and scroll to the end), search, the bean list, statistics, export and
 import in an emulated Pixel 2 XL with 4x CPU throttling against
 `e2e/perf/budgets.ts`. How to run it and how to measure the same flows on the
