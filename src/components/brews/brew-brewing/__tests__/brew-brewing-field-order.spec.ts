@@ -1,12 +1,16 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
   Input,
   NO_ERRORS_SCHEMA,
   OnDestroy,
   Output,
+  Signal,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
@@ -36,6 +40,10 @@ import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
 import { EMPTY, Subject } from 'rxjs';
 
+import {
+  BREW_FORM_FIELDS,
+  BrewFieldLayout,
+} from '../../../../brew-session/rules/brewFieldLayout';
 import { Brew } from '../../../../classes/brew/brew';
 import { Preparation } from '../../../../classes/preparation/preparation';
 import { Settings } from '../../../../classes/settings/settings';
@@ -118,6 +126,8 @@ describe('BrewBrewingComponent field order', () => {
   let preparation: Preparation;
   let settingsEvents: Subject<unknown>;
   let preparationEvents: Subject<unknown>;
+  /** The layout a test sets in place of the one of the settings. */
+  let layout: WritableSignal<BrewFieldLayout | undefined>;
 
   beforeEach(waitForAsync(() => {
     settings = new Settings();
@@ -282,6 +292,14 @@ describe('BrewBrewingComponent field order', () => {
     component = fixture.componentInstance;
     // The sections are shown or hidden by the tests themselves.
     spyOn(component, 'setUIParams').and.stub();
+    // A test can lay the form out itself, to place a field whatever decides
+    // whether it is shown. Until then the settings lay it out.
+    const form = component as unknown as {
+      brewFields: Signal<BrewFieldLayout>;
+    };
+    const laidOutBySettings = form.brewFields;
+    layout = signal<BrewFieldLayout | undefined>(undefined);
+    form.brewFields = computed(() => layout() ?? laidOutBySettings());
 
     brew = new Brew();
     preparation = new Preparation();
@@ -328,6 +346,24 @@ describe('BrewBrewingComponent field order', () => {
     return fixture.debugElement.query(
       By.directive(BrewBrewingGraphStubComponent),
     ).componentInstance as BrewBrewingGraphStubComponent;
+  }
+
+  /**
+   * Lays the form out with these fields alone. The graph is part of every
+   * layout of the form, which renders the fields while brewing around it.
+   */
+  function layOut(_fields: Partial<BrewFieldLayout>): void {
+    layout.set({ before: [], while: ['graph'], after: [], ..._fields });
+    fixture.detectChanges();
+  }
+
+  /** How many rows the form renders before and after the graph. */
+  function rowsAroundGraph(): { before: number; after: number } {
+    const tags = rows('BREW_HEADER_WHILE_BREW').map((row) =>
+      row.tagName.toLowerCase(),
+    );
+    const graphAt = tags.indexOf('brew-brewing-graph');
+    return { before: graphAt, after: tags.length - graphAt - 1 };
   }
 
   /**
@@ -539,6 +575,54 @@ describe('BrewBrewingComponent field order', () => {
     fixture.detectChanges();
 
     expect(labels('BREW_HEADER_AFTER_BREW')).toEqual(['BREW_DATA_TDS']);
+  });
+
+  it('renders every field that can be laid out before and after brewing', () => {
+    // No grinder is chosen, so the fields that depend on it are shown.
+    component.uiShowSectionBeforeBrew = true;
+    component.uiShowSectionAfterBrew = true;
+    const titles = {
+      before: 'BREW_HEADER_BEFORE_BREW',
+      after: 'BREW_HEADER_AFTER_BREW',
+    };
+
+    for (const section of ['before', 'after'] as const) {
+      for (const { key } of BREW_FORM_FIELDS[section]) {
+        layOut({ [section]: [key] });
+        const withField = rows(titles[section]).length;
+        layOut({});
+        const withoutField = rows(titles[section]).length;
+
+        expect(withField)
+          .withContext(`${key} ${section} brewing`)
+          .toBeGreaterThan(withoutField);
+      }
+    }
+  });
+
+  it('renders every field that can be laid out while brewing, on either side of the graph', () => {
+    // The graph is not repeated with the fields: it is always rendered once.
+    layOut({});
+    expect(rowsAroundGraph()).toEqual({ before: 0, after: 0 });
+
+    for (const { key } of BREW_FORM_FIELDS.while) {
+      if (key === 'graph') {
+        continue;
+      }
+      layOut({ while: [key, 'graph'] });
+      const sortedBefore = rowsAroundGraph();
+      layOut({ while: ['graph', key] });
+      const sortedAfter = rowsAroundGraph();
+
+      expect(sortedBefore.before)
+        .withContext(`${key} before the graph`)
+        .toBeGreaterThan(0);
+      expect(sortedBefore.after).withContext(`${key} before the graph`).toBe(0);
+      expect(sortedAfter.before).withContext(`${key} after the graph`).toBe(0);
+      expect(sortedAfter.after)
+        .withContext(`${key} after the graph`)
+        .toBeGreaterThan(0);
+    }
   });
 
   for (const stored of STORED_TIMERS) {

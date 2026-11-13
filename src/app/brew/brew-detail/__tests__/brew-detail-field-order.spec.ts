@@ -1,12 +1,16 @@
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import {
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
   Input,
   NO_ERRORS_SCHEMA,
   OnDestroy,
   Output,
+  Signal,
+  signal,
+  WritableSignal,
 } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -20,6 +24,11 @@ import {
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
+import {
+  BREW_DETAIL_FIELDS,
+  BrewFieldLayout,
+  EMPTY_BREW_FIELD_LAYOUT,
+} from '../../../../brew-session/rules/brewFieldLayout';
 import { Bean } from '../../../../classes/bean/bean';
 import { Brew } from '../../../../classes/brew/brew';
 import { Mill } from '../../../../classes/mill/mill';
@@ -87,6 +96,8 @@ describe('BrewDetailComponent field order', () => {
   let settingsEvents: Subject<unknown>;
   let preparationEvents: Subject<unknown>;
   let uiBrewHelper: jasmine.SpyObj<UIBrewHelper>;
+  /** The layout a test sets in place of the one of the settings. */
+  let layout: WritableSignal<BrewFieldLayout | undefined>;
 
   beforeEach(waitForAsync(() => {
     settings = new Settings();
@@ -218,6 +229,15 @@ describe('BrewDetailComponent field order', () => {
   beforeEach(async () => {
     fixture = TestBed.createComponent(BrewDetailComponent);
     component = fixture.componentInstance;
+    // A test can lay the details out itself, to place a field whatever
+    // decides whether it is shown. Until then the settings lay them out.
+    const details = component as unknown as {
+      brewFields: Signal<BrewFieldLayout>;
+    };
+    const laidOutBySettings = details.brewFields;
+    layout = signal<BrewFieldLayout | undefined>(undefined);
+    details.brewFields = computed(() => layout() ?? laidOutBySettings());
+
     const brew = new Brew();
     brew.flow_profile = 'brews/brew_flow_profile.json';
     component.brew = brew;
@@ -225,25 +245,34 @@ describe('BrewDetailComponent field order', () => {
     fixture.detectChanges();
   });
 
-  /** The labels of the rows of a section, in the order of the markup. */
-  function labels(_title: string): string[] {
+  /** The rows of a section, in the order of the markup. */
+  function rows(_title: string): Element[] {
     const cards: HTMLElement[] = Array.from(
       fixture.nativeElement.querySelectorAll('ion-card.popover'),
     );
     const card = cards.find((element) =>
       element.querySelector('.ion-title')?.textContent.includes(_title),
     );
-    return Array.from(card.children)
-      .filter(
-        (row) =>
-          !row.querySelector('.ion-title') &&
-          !row.classList.contains('last-item'),
-      )
-      .map(
-        (row) =>
-          row.querySelector('h2')?.textContent.trim() ??
-          row.tagName.toLowerCase(),
-      );
+    return Array.from(card.children).filter(
+      (row) =>
+        !row.querySelector('.ion-title') &&
+        !row.classList.contains('last-item'),
+    );
+  }
+
+  /** The labels of the rows of a section, in the order of the markup. */
+  function labels(_title: string): string[] {
+    return rows(_title).map(
+      (row) =>
+        row.querySelector('h2')?.textContent.trim() ??
+        row.tagName.toLowerCase(),
+    );
+  }
+
+  /** Lays the details out with these fields alone. */
+  function layOut(_fields: Partial<BrewFieldLayout>): void {
+    layout.set({ ...EMPTY_BREW_FIELD_LAYOUT, ..._fields });
+    fixture.detectChanges();
   }
 
   function graph(): BrewBrewingGraphStubComponent {
@@ -328,5 +357,31 @@ describe('BrewDetailComponent field order', () => {
     expect(labels('BREW_HEADER_WHILE_BREW')).toContain(
       'BREW_DATA_COFFEE_FIRST_DRIP_TIME:',
     );
+  });
+
+  it('renders every field that can be laid out', () => {
+    // Some fields only show what the brew has: besides its flow profile it
+    // gets a bean with an age and a photo.
+    component.bean.roastingDate = '2026-03-01';
+    component.data.config.unix_timestamp = Date.UTC(2026, 2, 8) / 1000;
+    component.data.attachments = ['brew.jpg'];
+    const titles = {
+      before: 'BREW_HEADER_BEFORE_BREW',
+      while: 'BREW_HEADER_WHILE_BREW',
+      after: 'BREW_HEADER_AFTER_BREW',
+    };
+
+    for (const section of ['before', 'while', 'after'] as const) {
+      for (const { key } of BREW_DETAIL_FIELDS[section]) {
+        layOut({ [section]: [key] });
+        const withField = rows(titles[section]).length;
+        layOut({});
+        const withoutField = rows(titles[section]).length;
+
+        expect(withField)
+          .withContext(`${key} ${section} brewing`)
+          .toBeGreaterThan(withoutField);
+      }
+    }
   });
 });
